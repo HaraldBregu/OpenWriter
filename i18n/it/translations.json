@@ -1,0 +1,100 @@
+{
+  "welcome": "Benvenuto nella mia applicazione!",
+  "selectLanguage": "Seleziona la tua lingua preferita:",
+  "editor": {
+    "sectionTypes": {
+      "body": "Body",
+      "note": "Note",
+      "title": "Titolo",
+      "heading": "Heading",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3"
+    }
+  },
+  "menu": {
+    "file": "File",
+    "new": "Nuovo",
+    "save": "Salva",
+    "open": "Apri",
+    "openRecent": "Apri recente",
+    "close": "Chiudi",
+    "exit": "Esci",
+    "edit": {
+      "label": "Modifica",
+      "undo": "Annulla",
+      "redo": "Ripeti",
+      "cut": "Taglia",
+      "copy": "Copia",
+      "paste": "Incolla",
+      "selectAll": "Seleziona tutto"
+    },
+    "undo": "Annulla",
+    "redo": "Ripeti",
+    "cut": "Taglia",
+    "copy": "Copia",
+    "paste": "Incolla",
+    "selectAll": "Seleziona tutto",
+    "view": "Vedi",
+    "reload": "Ricarica",
+    "toggleDevTools": "Apri Developer Tools",
+    "language": {
+      "label": "Lingua",
+      "en": "Inglese",
+      "it": "Italiano"
+    },
+    "insert": {
+      "label": "Inserisci",
+      "comment": "Commento"
+    },
+    "format": {
+      "label": "Formato",
+      "font": {
+        "label": "Carattere",
+        "bold": "Grassetto",
+        "italic": "Corsivo",
+        "underline": "Sottolineato",
+        "strikethrough": "Barrato",
+        "captalization": {
+          "label": "Maiuscolizzazione",
+          "allCaps": "Tutto Maiuscolo",
+          "smallCaps": "Maiuscoletto",
+          "titleCase": "Titolo",
+          "startCase": "Avvia caso",
+          "none": "Nessuno"
+        },
+        "characterSpacing": {
+          "label": "Spaziatura caratteri",
+          "normal": "Normale",
+          "tighten": "Restringi",
+          "loosen": "Allarga"
+        },
+        "ligature": {
+          "label": "Legatura",
+          "none": "Usa Nessuna",
+          "all": "Usa Tutte",
+          "default": "Usa Predefinito"
+        }
+      },
+      "text": {
+        "label": "Testo",
+        "alignLeft": "Allinea a sinistra",
+        "alignCenter": "Allinea al centro",
+        "alignRight": "Allinea a destra",
+        "justify": "Giustifica",
+        "increaseIndent": "Aumenta livello rientro",
+        "decreaseIndent": "Diminuisci livello rientro",
+        "spacing": {
+          "label": "Spaziatura",
+          "single": "Singolo",
+          "double": "Doppio",
+          "customSpacing": "Spaziatura personalizzata"
+        }
+      },
+      "list": {
+        "label": "Elenco",
+        "bullet": "Elenco puntato",
+        "numbering": "Numerazione"
+      }
+    }
+  }
+}

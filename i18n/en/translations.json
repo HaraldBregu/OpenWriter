@@ -1,0 +1,102 @@
+{
+  "welcome": "Welcome to My App!",
+  "selectLanguage": "Select your preferred language:",
+  "editor": {
+    "sectionTypes": {
+      "body": "Body",
+      "note": "Note",
+      "title": "Title",
+      "heading": "Heading",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3"
+    }
+  },
+  "menu": {
+    "file": "File",
+    "new": "New",
+    "save": "Save",
+    "open": "Open",
+    "openRecent": "Open recent",
+    "close": "Close",
+    "exit": "Exit",
+    "ClearMemory": "Clear Memory",
+    "edit": {
+      "label": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste",
+      "selectAll": "Select All"
+    },
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "selectAll": "Select All",
+    "view": "View",
+    "settings": "Settings",
+    "reload": "Reload",
+    "toggleDevTools": "Toggle Developer Tools",
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "it": "Italian"
+    },
+    "insert": {
+      "label": "Insert",
+      "comment": "Comment"
+    },
+    "format": {
+      "label": "Format",
+      "font": {
+        "label": "Font",
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "strikethrough": "Strikethrough",
+        "characterSpacing": {
+          "label": "Character Spacing",
+          "normal": "None",
+          "tighten": "Tighten",
+          "loosen": "Loosen"
+        },
+        "captalization": {
+          "label": "Captalization",
+          "allCaps": "All Caps",
+          "smallCaps": "Small Caps",
+          "titleCase": "Title Case",
+          "startCase": "Start Case",
+          "none": "None"
+        },
+        "ligature": {
+          "label": "Ligature",
+          "none": "Use None",
+          "all": "Use All",
+          "default": " Use Default"
+        }
+      },
+      "text": {
+        "label": "Text",
+        "alignLeft": "Align Left",
+        "alignCenter": "Align Center",
+        "alignRight": "Align Right",
+        "justify": "Justify",
+        "increaseIndent": "Increase Indent Level",
+        "decreaseIndent": "Decrease Indent Level",
+        "spacing": {
+          "label": "Spacing",
+          "single": "Single",
+          "double": "Double",
+          "customSpacing": "Custom Spacing"
+        }
+      },
+      "list": {
+        "label": "List",
+        "bullet": "Bullet",
+        "numbering": "Numbering"
+      }
+    }
+  }
+}

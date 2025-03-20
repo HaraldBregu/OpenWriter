@@ -1,0 +1,536 @@
+/* EditorComponent.css */
+
+.toolbar {
+  min-height: 1.5rem;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.toolbar-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+  }
+
+.toolbar-item > * {
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.alignment-button{
+  position: relative; /* Ensures the menu aligns with the button */
+  display: inline-block; /* Keeps alignment correct */
+}
+
+.toolbar select,
+.toolbar button,
+.toolbar input[type="color"] {
+  margin-right: 4px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid transparent;
+  outline: none;
+  cursor: pointer;
+  color: black;
+  background-color: inherit !important;
+}
+
+.toolbar div[style*="position: absolute"] button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.toolbar div[style*="position: absolute"] button:hover {
+  background-color: #f0f0f0;
+}
+
+.toolbar select:not(.fontsize-select) {
+  border-right: none;
+}
+
+.toolbar select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 40px;
+  background: white url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L5 6L10 0H0Z' fill='%23000'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 8px;
+}
+
+/* Stili per le opzioni del select delle sezioni */
+.toolbar select option[value="0"] {
+  font-weight: normal;
+  font-size: 1em;
+}
+
+.toolbar select option[value="1"] {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.toolbar select option[value="2"] {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.toolbar select option[value="3"] {
+  font-weight: bold;
+  font-size: 1.17em;
+}
+
+.toolbar select option[value="4"] {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.toolbar select option[value="5"] {
+  font-weight: bold;
+  font-size: 0.83em;
+}
+
+.toolbar select option[value="6"] {
+  font-weight: bold;
+  font-size: 0.67em;
+}
+
+.heading-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+}
+
+.heading-option {
+  padding: 10px 35px;
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Migliora l'aspetto del select delle sezioni */
+.toolbar select[value="headingLevel"] {
+  padding: 5px;
+  min-width: 150px;
+}
+
+.toolbar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+}
+
+.toolbar button.active {
+  background-color: #e0e0e0;
+}
+
+.toolbar select:focus,
+.toolbar button:focus,
+.toolbar input[type="color"]:focus {
+  background-color: #ccc;
+}
+
+.font-size-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  /* border: 1px solid #ccc; */
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.font-size-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.font-size-button:hover {
+  background-color: #f0f0f0;
+}
+
+.font-size-input {
+  width: 32px;
+  text-align: center;
+  outline: none;
+  padding: 2px;
+  font-size: 14px;
+}
+
+.font-size-input:focus {
+  background-color: #f0f0f0;
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: inherit;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 4px;
+  /* border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.editor-content {
+  border: solid 0.5px #ccc;
+  border-top: none;
+  flex: 1;
+  position: relative;
+  margin: 0.05%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.editor-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.text-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background-color: #ffff;
+  height: 5%;
+  font-size: 12px;
+  font-weight: 600;
+  border-left: solid 0.5px #ccc;
+  margin: 0.05%;
+}
+
+.tiptap {
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.editor-wrapper-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 3rem);
+  overflow: hidden;
+}
+
+.alignment-menu-container {
+  position: absolute;
+  top: 100%; /* Places it directly below the button */
+  left: 0; /* Aligns it to the left of the button */
+  z-index: 1000;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.alignment-menu {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  margin-right: 0px;
+  margin-top: 4px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  min-width: 25px;
+}
+
+[data-indent="1"] { padding-left: 40px; }
+[data-indent="2"] { padding-left: 80px; }
+[data-indent="3"] { padding-left: 120px; }
+[data-indent="4"] { padding-left: 160px; }
+
+[data-capitalization="uppercase"] {
+  text-transform: uppercase;
+}
+
+[data-capitalization="small-caps"] {
+  font-variant: small-caps;
+}
+
+[data-capitalization="capitalize"] {
+  text-transform: capitalize;
+}
+
+
+p[data-spacing-before] {
+  margin-top: attr(data-spacing-before);
+}
+
+p[data-spacing-after] {
+  margin-bottom: attr(data-spacing-after);
+}
+
+p[data-line-spacing] {
+  line-height: attr(data-line-spacing);
+}
+
+.recent-actions-panel {
+  width: 300px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.recent-actions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.recent-actions-header h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.clear-button {
+  padding: 4px 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.recent-actions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.recent-action-item {
+  border-bottom: 1px solid #eee;
+}
+
+.revert-button {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.revert-button:hover {
+  background: #f5f5f5;
+}
+
+.action-description {
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+.action-detail {
+  margin-right: 10px;
+  width: 300px;
+  max-width: 150px;
+  font-size: 13px;
+  font-weight: bold;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.action-time {
+  font-size: 12px;
+  color: #666;
+}
+
+.undo-group {
+  display: flex;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-right: 4px;
+  padding: 4px;
+}
+
+.undo-group .undo-button {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background: transparent;
+}
+
+.undo-group .expand-button {
+  font-size: 15px !important;
+  width: 10px;
+  border: none;
+  padding-right: 5px;
+  padding: 0px;
+  background: transparent;
+}
+
+.undo-group button:hover {
+  background-color: #f0f0f0;
+}
+
+.undo-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sostituisci gli stili esistenti del bubble-menu con questi aggiornati */
+
+.bubble-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 0;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  min-width: 180px;
+  box-sizing: border-box;
+}
+
+.bubble-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid transparent;
+  outline: none;
+  cursor: pointer;
+  color: black;
+  background-color: inherit !important;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.bubble-menu button span {
+  font-size: 14px;
+  color: black !important;
+}
+
+button:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* .bubble-menu button.is-active {
+  background-color: #e0e0e0 !important;
+}
+
+.bubble-menu button.is-active span {
+  color: #0077cc !important;
+} */
+
+.bubble-menu .color-picker-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+}
+
+.bubble-menu input[type="color"] {
+  margin-right: 4px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid transparent;
+  outline: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+
+/* Aggiungi questa classe per i divisori come nella toolbar principale */
+.bubble-menu-divider {
+  height: 60%;
+  border-left: 1px solid #ccc;
+  margin: 4px;
+}
+
+/* Assicurati che le icone Material siano caricate e mostrate correttamente */
+.bubble-menu .material-symbols-outlined {
+  font-size: 14px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.hightlight-button .highlight-icon {
+  font-size: 14px !important;
+  margin: 0px;
+  padding: 4px 0px 0px !important;
+}
+
+.spacing-input {
+  width: -webkit-fill-available;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 15px;
+  border-width: 1px;
+}
+
+
+.toolbar-button.active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1;
+  /* Uses filled variant */
+  font-weight: bold;
+  /* Makes it appear bolder */
+}
