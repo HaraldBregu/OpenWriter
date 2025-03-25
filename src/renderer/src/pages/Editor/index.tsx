@@ -6,20 +6,20 @@ import ToolbarComponent from './components/toolbar';
 import EditorWrapper from './components/editorTextArea';
 import { defaultEditorConfig } from './utils/editorConfigs';
 import { useHistoryState } from './hooks';
-import { Box } from '@mui/material';
 import BubbleToolbar from './components/bubbleToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, addCategory, setCategoriesData } from '../Comments/store/comments.slice';
 import { getAllCategories } from '../Comments/store/comments.selector';
 import { v4 as uuidv4 } from 'uuid';
-import { setSidebarOpen } from '../MainContainer/store/main.slice';
+import { setSidebarOpen } from '../store/main.slice';
 import styles from './index.module.css';
 
 interface EditorComponentProps {
   open: boolean;
+  toggleSidebar: () => void;
 }
 
-const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
+const EditorComponent: React.FC<EditorComponentProps> = ({ open, toggleSidebar }) => {
   const textColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
   const undoInputRef = useRef<HTMLInputElement>(null);
@@ -56,8 +56,6 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
   const textHistory = useHistoryState(textEditor);
   const apparatusHistory = useHistoryState(apparatusEditor);
 
-
-
   useEffect(() => {
     if (activeEditor === null) {
       setActiveEditor(textEditor);
@@ -80,23 +78,14 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
     if (!textEditor || !apparatusEditor) return;
 
     const editorContent = {
-      mainText: textEditor.getHTML() || '',
-      apparatusText: apparatusEditor.getHTML() || '',
+      mainText: textEditor.getJSON() || '',
+      apparatusText: apparatusEditor.getJSON() || '',
       comments: categoriesRef.current || []
     };
     console.log("🚀 ~ updateHandler ~ editorContent:", editorContent)
+    console.log("🚀 ~ updateHandler ~ textEditor", textEditor.getHTML())
 
     const taskId = rendererLogger.startTask("TextEditor", "Content update");
-
-    /*
-    remove comment
-    try {
-      window.electron.sendData(editorContent);
-      rendererLogger.endTask(taskId, "TextEditor", "Editor content updated");
-    } catch (error) {
-      rendererLogger.error("TextEditor", "Error while sending data to main process", error as Error);
-    }
-    */
 
     try {
       window.electron.ipcRenderer.send('currentDocumentUpdate', editorContent);
@@ -123,20 +112,8 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
   }, [categories])
 
 
-
-  //  remove comment
-
   useEffect(() => {
     if (!window.electron) return;
-
-    /*
-    const removeUndoListener = window.electron.onUndoChange(() => {
-      activeEditor?.chain().focus().undo().run();
-    });
-
-    const removeRedoListener = window.electron.onRedoChange(() => {
-      activeEditor?.chain().focus().redo().run();
-    });*/
 
     const removeUndoListener = window.electron.ipcRenderer.on("trigger-undo", () => {
       activeEditor?.chain().focus().undo().run();
@@ -145,9 +122,6 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
     const removeRedoListener = window.electron.ipcRenderer.on("trigger-redo", () => {
       activeEditor?.chain().focus().redo().run();
     });
-
-    window.electron.ipcRenderer.removeAllListeners("trigger-undo");
-    window.electron.ipcRenderer.removeAllListeners("trigger-redo");
 
     return () => {
       removeUndoListener();
@@ -158,46 +132,21 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
   useEffect(() => {
     const taskId = rendererLogger.startTask("TextEditor", "DocOpening initialized");
 
-    /*
-        remove comment
-
     try {
-      window.electron.getOpenedDocumentContent((content: DocumentContent) => {
-        if (textEditor) {
-          setOpenedDocContent(content);
-        }
-      });
-      window.electron.startNewDocument((content: DocumentContent) => {
-        if (textEditor) {
-          setOpenedDocContent(content);
-        }
-      });
-      rendererLogger.endTask(taskId, "TextEditor", "DocOpening action completed");
-    } catch (error) {
-      rendererLogger.error("TextEditor", "DocOpening: Error while getting data from main process", error as Error);
-    }
-    */
 
-    try {
-      window.electron.ipcRenderer.on('opened-doc', (_event, content: DocumentContent) => {
-        if (textEditor) {
-          setOpenedDocContent(content);
-        }
-      });
-      window.electron.ipcRenderer.on('opened-doc', (_event, content: DocumentContent) => {
+      window.electron.ipcRenderer.on('opened-doc', (_event, content: any) => {
+        console.log("opened-doc ~ useEffect ~ content:", content)
         if (textEditor) {
           setOpenedDocContent(content);
         }
       });
 
-      window.electron.ipcRenderer.on('new-doc', (_event, content: DocumentContent) => {
+      window.electron.ipcRenderer.on('new-doc', (_event, content: any) => {
+        console.log("new-doc ~ useEffect ~ content:", content)
         if (textEditor) {
           setOpenedDocContent(content);
         }
       });
-
-      window.electron.ipcRenderer.removeAllListeners('opened-doc');
-      window.electron.ipcRenderer.removeAllListeners('new-doc');
 
       rendererLogger.endTask(taskId, "TextEditor", "DocOpening action completed");
     } catch (error) {
@@ -205,12 +154,12 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
     }
   }, [textEditor, apparatusEditor]);
 
-  const setOpenedDocContent = (content: DocumentContent) => {
+  const setOpenedDocContent = (content: DocumentContentParsed) => {
     if (!content) {
       console.error("Received null or undefined document content");
       return;
     }
-    const docContent = JSON.parse(content as string);
+    const docContent = content; // JSON.parse(content as string);
     if (textEditor && apparatusEditor) {
       console.log("🚀 ~ setOpenedDocContent ~ docContent:", docContent)
       textEditor.commands.setContent(docContent?.mainText);
@@ -280,10 +229,6 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
 
   useEffect(() => {
     if (!window.electron) return;
-    /*
-      const removeInsertCommentListener = window.electron.onInsertComment(() => {
-        handleAddComment();
-      });*/
 
     const removeInsertCommentListener = window.electron.ipcRenderer.on("insert-comment", () => {
       handleAddComment();
@@ -296,28 +241,15 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
 
   const currentEditorKey = activeEditor === textEditor ? 'textEditor' : 'apparatusEditor';
   const currentEditorState = editorState[currentEditorKey];
-
   const currentHistory = activeEditor === textEditor ? textHistory : apparatusHistory;
 
   return (activeEditor ?
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        overflow: 'hidden'
-      }}
-      className={styles["editor-container"]}
-    >
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1100,
-          backgroundColor: 'background.paper'
-        }}
+    <div className='absolute w-inherit flex flex-col top-0 right-0 bottom-0'>
+      <div
+        className='position-sticky top-0 z-1100 bg-background-paper'
       >
         <ToolbarComponent
+          toggleSidebar={() => toggleSidebar()}
           open={open}
           activeEditor={activeEditor}
           textColorInputRef={textColorInputRef}
@@ -333,16 +265,9 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
           revertToAction={currentHistory.restoreHistoryAction}
           trackHistoryActions={currentHistory.trackHistoryActions}
         />
-      </Box>
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflow: 'auto',
-          minHeight: 0
-        }}
-        className={styles["editor-wrapper-container"]}
-      >
-        <Box className={styles["editor-wrapper"]}>
+      </div>
+      <div className="flex flex-col h-[calc(100% - 3rem)] grow min-h-0 overflow-auto">
+        <div className="flex flex-row h-full w-full overflow-hidden">
           {activeEditor && (
             <BubbleToolbar
               editor={activeEditor}
@@ -354,9 +279,9 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ open }) => {
           )}
           <EditorWrapper title="Text" editor={textEditor} setActiveEditor={setActiveEditor} />
           <EditorWrapper title="Apparatus" editor={apparatusEditor} setActiveEditor={setActiveEditor} />
-        </Box>
-      </Box>
-    </Box> : null
+        </div>
+      </div>
+    </div> : null
   );
 }
 

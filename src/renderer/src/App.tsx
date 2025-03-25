@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { FallbackLoader, LazyLoader } from "./components/LazyLoader";
 import "./i18n";
+import { EditorLayout } from "./pages/EditorLayout";
 
 const MainContainer = React.lazy(() => import('./pages/MainContainer'));
 const LanguageSelector = React.lazy(() => import('./pages/LanguageSelector'));
@@ -29,6 +30,10 @@ const AppRoutes: React.FC = () => {
         element={<ProtectedComponent child={<MainContainer />} />}
       />
       <Route
+        path="/editor-layout"
+        element={<ProtectedComponent child={<EditorLayout />} />}
+      />
+      <Route
         path="*"
         element={
           localStorage.getItem("appLanguage") ? (
@@ -45,8 +50,6 @@ const AppRoutes: React.FC = () => {
 const App: React.FC = () => {
   const { i18n } = useTranslation();
 
-  
- //remove comment
   useEffect(() => {
     /*
     const handleLanguageChange = (lang: string) => {
@@ -54,16 +57,16 @@ const App: React.FC = () => {
       localStorage.setItem("appLanguage", lang);
     };
 */
-    //const unsubscribe = window.electron.onLanguageChanged(handleLanguageChange);
+    // const unsubscribe = window.electron.onLanguageChanged(handleLanguageChange);
 
     const unsubscribe = window.electron.ipcRenderer.on('language-changed', (_: any, lang: string) => {
       i18n.changeLanguage(lang);
       localStorage.setItem("appLanguage", lang);
       console.log('setting lang', lang)
     });
-    
-    window.electron.ipcRenderer.removeAllListeners('language-changed');
-    
+
+    //window.electron.ipcRenderer.removeAllListeners('language-changed');
+
     const savedLanguage = localStorage.getItem("appLanguage");
     if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);

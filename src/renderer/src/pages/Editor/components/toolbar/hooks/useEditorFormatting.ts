@@ -8,6 +8,7 @@ interface FormattingState {
     strikethrough: boolean;
     alignment: string;
     fontSize: string;
+    hasApparatusText: boolean;
     fontFamily: string;
     headingLevel: number;
     isBlockquote: boolean;
@@ -24,6 +25,7 @@ const defaultFormatting: FormattingState = {
     underline: false,
     strikethrough: false,
     alignment: "left",
+    hasApparatusText: false,
     fontSize: "12px",
     fontFamily: "Times New Roman",
     headingLevel: 0,
@@ -46,6 +48,7 @@ export default function useEditorFormatting(activeEditor: Editor | null) {
                 italic: activeEditor.isActive("italic"),
                 underline: activeEditor.isActive("underline"),
                 strikethrough: activeEditor.isActive("strike"),
+                hasApparatusText: activeEditor?.isActive('apparatusText') || false,
                 alignment: activeEditor.getAttributes("paragraph")?.textAlign || "left",
                 fontSize: activeEditor.getAttributes("textStyle")?.fontSize || "12px",
                 fontFamily: activeEditor.getAttributes("textStyle")?.fontFamily || "Times New Roman",

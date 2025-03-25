@@ -50,7 +50,7 @@ const HighlightColor: React.FC<HighlightColorProps> = ({ onSelect, highlightColo
       height: 20,
       minWidth: 20,
       borderRadius: "2px",
-      border: tempColor === color ? "1px solid black" : "1px solid #ccc",
+      border: tempColor === color ? "1px solid black" : "1px solid #C2C7CF",
     }),
     [tempColor]
   );

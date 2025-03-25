@@ -43,7 +43,7 @@ const FormatTextColor: React.FC<FormatTextColorProps> = ({ onSelect, FormatTextC
       height: 20,
       minWidth: 20,
       borderRadius: "2px",
-      border: tempColor === color ? "2px solid black" : "1px solid #ccc",
+      border: tempColor === color ? "2px solid black" : "1px solid #C2C7CF",
     }),
     [tempColor]
   );

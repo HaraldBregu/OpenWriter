@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { BubbleMenu, Editor } from '@tiptap/react';
-import { Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, addCategory } from '../../../Comments/store/comments.slice';
 import { getAllCategories } from '../../../Comments/store/comments.selector';
 import { v4 as uuidv4 } from 'uuid';
 import CategorySelectionDialog from '../toolbar/components/CategorySelectDialog';
-import { setSidebarOpen } from '../../../MainContainer/store/main.slice';
+import { setSidebarOpen } from '../../../store/main.slice';
 import styles from '../../index.module.css';
+import { CriterionDivider } from '@/components/CriterionDivider';
 interface BubbleToolbarProps {
     editor: Editor;
     textColor: string;
@@ -116,7 +116,7 @@ const BubbleToolbar: React.FC<BubbleToolbarProps> = ({
                 >
                     <span className="material-symbols-outlined">history_edu</span>
                 </button>
-                <Divider orientation="vertical" className={styles["bubble-divider"]} flexItem />
+                <CriterionDivider />
                 <button
                     disabled
                     onClick={() => editor?.chain().focus().toggleBlockquote().run()}
@@ -130,7 +130,7 @@ const BubbleToolbar: React.FC<BubbleToolbarProps> = ({
                 >
                     <span className="material-symbols-outlined">format_quote</span>
                 </button>
-                <Divider orientation="vertical" className={styles["bubble-divider"]} flexItem />
+                <CriterionDivider />
                 <button
                     onClick={(e) => addCommentFromSelection(e)}
                     className={editor?.isActive("blockquote") ? "active" : ""}

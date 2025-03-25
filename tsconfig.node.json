@@ -1,9 +1,19 @@
+/*{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}*/
+
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*"],
   "compilerOptions": {
     "composite": true,
-   // "target": "es5",
+    // "target": "es5",
     //"module": "commonjs",
     //"moduleResolution": "node",
     "module": "ESNext",
@@ -16,6 +26,5 @@
     "noImplicitAny": false,
     "types": ["./types", "electron-vite/node", "node"]
   },
-  "exclude": [ "node_modules" ] 
+  "exclude": ["node_modules"]
 }
-

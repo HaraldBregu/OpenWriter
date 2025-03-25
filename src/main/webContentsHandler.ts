@@ -5,11 +5,11 @@ export const sendAlertMessage = (mainWindow: BrowserWindow, message: Alert) => {
     mainWindow.webContents.send("alert", message);
 }
 
-export const getOpenedDocumentContent = (mainWindow: BrowserWindow, content: DocumentContent) => {
+export const getOpenedDocumentContent = (mainWindow: BrowserWindow, content: JsonObject) => {
     mainWindow.webContents.send("opened-doc", content);
 }
 
-export const startNewDocument = (mainWindow: BrowserWindow, content: DocumentContent) => {
+export const startNewDocument = (mainWindow: BrowserWindow, content: JsonObject) => {
     mainWindow.webContents.send("new-doc", content);
 }
 

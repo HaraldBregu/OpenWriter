@@ -8,8 +8,7 @@ import CodeBlock from '@tiptap/extension-code-block';
 import { Color } from '@tiptap/extension-color';
 import { CustomTextStyle, CustomLetterSpacing, IndentExtension, Capitalization, ParagraphSpacing, LineSpacing, Ligature } from './customTextStyle';
 import { useEditor } from '@tiptap/react';
-
-
+import { IdentifiedText } from '@/components/tiptap/apparatusMark';
 
 const defaultEditorConfig: Parameters<typeof useEditor>[0] = {
     extensions: [
@@ -34,6 +33,7 @@ const defaultEditorConfig: Parameters<typeof useEditor>[0] = {
         FontFamily.configure({
             types: ['textStyle'],
         }),
+        IdentifiedText,
         CustomTextStyle,
         CustomLetterSpacing,
         Capitalization,

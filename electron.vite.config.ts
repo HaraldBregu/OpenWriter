@@ -18,7 +18,6 @@ export default defineConfig({
         '@pages': resolve(__dirname, './src/renderer/src/pages'),
         '@store': resolve(__dirname, './src/renderer/src/store'),
         '@components': resolve(__dirname, './src/renderer/src/components')
-
       }
     },
     plugins: [react()]

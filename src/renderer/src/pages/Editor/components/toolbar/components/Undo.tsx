@@ -22,10 +22,14 @@ const UndoGroup: React.FC<UndoGroupProps> = ({
 }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-    const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+    const recents =  historyState?.recentActions || [];
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        if(recents.length === 0) return;
+
         setAnchorEl(event.currentTarget);
         UndoInputRef.current?.click();
-    }, [UndoInputRef]);
+    };
 
     const handleClose = useCallback(() => {
         setAnchorEl(null);
@@ -48,13 +52,15 @@ const UndoGroup: React.FC<UndoGroupProps> = ({
                 >
                     <span className="material-symbols-outlined">undo</span>
                 </button>
-                {historyState && historyState?.recentActions?.length > 0 && <button
+                <button
                     className={styles["expand-button"]}
                     disabled={!activeEditor?.can().undo()}
                     onClick={handleClick}
                 >
-                    <span className="material-symbols-outlined">expand_more</span>
-                </button>}
+                    <span className="material-symbols-outlined">
+                        {recents.length > 0 ? 'expand_more' : ''}
+                    </span>
+                </button>
             </div>
             <Popover
                 open={Boolean(anchorEl)}
@@ -64,7 +70,7 @@ const UndoGroup: React.FC<UndoGroupProps> = ({
             >
                 <RecentActionsPanel
                     onClose={handleClose}
-                    recentActions={historyState?.recentActions || []}
+                    recentActions={recents}
                     onRevert={revertActionHandler}
                 />
             </Popover>

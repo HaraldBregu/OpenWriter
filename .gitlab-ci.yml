@@ -1,0 +1,84 @@
+stages:
+  - Build-Windows
+  - Build-Linux
+  # - Build-MacOS
+
+build-windows:
+  stage: Build-Windows
+  image: electronuserland/builder:wine
+  script:
+    # Install Mono (required for .NET dependencies)
+    - apt-get update && apt-get install -y mono-complete
+
+    # Install Wine GUI dependencies
+    - apt-get install -y winbind xvfb
+
+    # Install Wine Mono
+    - wget https://dl.winehq.org/wine/wine-mono/9.0.0/wine-mono-9.0.0-x86.msi -O /tmp/wine-mono.msi
+    - wine msiexec /i /tmp/wine-mono.msi /quiet /norestart
+
+    # Install WiX Toolset v3.11.2
+    - wget https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -O /tmp/wix.zip
+    - mkdir -p /opt/wix
+    - unzip /tmp/wix.zip -d /opt/wix
+    - export PATH="$PATH:/opt/wix"
+
+    # Ensure Wine is configured properly
+    - winecfg
+
+    # Use Xvfb to handle GUI dependencies in Wine
+    - Xvfb :0 -screen 0 1024x768x24 &
+    - export DISPLAY=:0
+
+    # Proceed with Windows build
+    - yarn install
+    - yarn dist-win
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG-windows
+    paths:
+      - $CI_PROJECT_DIR/dist/*.exe
+      - $CI_PROJECT_DIR/dist/*.msi
+    when: on_success
+  only:
+    - develop
+  tags:
+    - docker
+
+build-linux:
+  stage: Build-Linux
+  image: electronuserland/builder
+  script:
+    # Proceed with Linux build
+    - yarn install
+    - yarn dist-linux
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG-linux
+    paths:
+      - $CI_PROJECT_DIR/dist/*.AppImage
+      - $CI_PROJECT_DIR/dist/*.deb
+      - $CI_PROJECT_DIR/dist/*.rpm
+    when: on_success
+  only:
+    - develop
+  tags:
+    - docker
+# build-macos:
+#   stage: Build-MacOS
+#   image: electronuserland/builder:latest
+#   script:
+#     # Install macOS build dependencies
+#     - apt-get update && apt-get install -y libatomic1
+
+#     # Proceed with macOS build
+#     - yarn install
+#     - yarn dist-mac
+#   artifacts:
+#     name: $CI_COMMIT_REF_SLUG-macos
+#     paths:
+#       - $CI_PROJECT_DIR/dist/*.dmg
+#       - $CI_PROJECT_DIR/dist/*.pkg
+#     when: on_success
+#   only:
+#     - develop
+#   tags:
+#     - docker

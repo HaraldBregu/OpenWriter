@@ -169,7 +169,6 @@ const IndentExtension = Extension.create<IndentOptions>({
   },
 });
 
-
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     lineSpacing: {

@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
-import { Divider } from "@mui/material";
+
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import HighlightColor from "./components/HighlightColor";
 import FormatTextColor from "./components/FormatTextColor";
@@ -13,7 +14,7 @@ import CategorySelectionDialog from "./components/CategorySelectDialog";
 
 import { addComment, addCategory } from "../../../Comments/store/comments.slice";
 import { getAllCategories } from "../../../Comments/store/comments.selector";
-import { setSidebarOpen } from "../../../MainContainer/store/main.slice";
+import { setSidebarOpen } from "../../../store/main.slice";
 import { sectionTypes } from "../../../../utils/optionsEnums";
 
 import {
@@ -22,7 +23,7 @@ import {
   toggleUnderline,
   setFontFamily,
   setFontSize,
-  unsetMark
+  unsetMark,
 } from "../../utils/editorCommands";
 
 import useEditorFormatting from "./hooks/useEditorFormatting";
@@ -32,7 +33,8 @@ import { adjustCapitalization, adjustLetterSpacing, CapitalizationType, Characte
 import { HistoryState } from "../../hooks/types";
 
 import styles from '../../index.module.css';
-
+import { CriterionDivider } from "@/components/CriterionDivider";
+//import { ResolvedPos } from "@tiptap/pm/model";
 
 // Definire le costanti per i valori comuni
 const MIN_FONT_SIZE = 8;
@@ -55,6 +57,7 @@ interface ToolbarProps {
   historyState?: HistoryState;
   revertToAction?: (actionId: string) => void;
   trackHistoryActions?: (type: string, description: string) => void;
+  toggleSidebar: () => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -71,7 +74,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
   setIsHeading,
   historyState,
   revertToAction,
-  trackHistoryActions
+  trackHistoryActions,
+  toggleSidebar,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -86,6 +90,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
   const [selectedText, setSelectedText] = useState("");
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isAlignmentInProgress, setIsAlignmentInProgress] = useState(false);
+  const alignmentTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const { formatting } = useEditorFormatting(activeEditor);
 
   const handleListStyleChange = useCallback((listType: 'bullet' | 'ordered') => {
@@ -164,7 +171,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
       }
     },
     onTextAlignmentChange: (type: string) => {
-      if (activeEditor) {
+      if (!activeEditor || isAlignmentInProgress) return;
+
+      try {
+        if (alignmentTimeoutRef.current) {
+          clearTimeout(alignmentTimeoutRef.current);
+        }
+
+        setIsAlignmentInProgress(true);
+
         const alignments = {
           "left": "left",
           "center": "center",
@@ -174,12 +189,19 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
         const alignment = alignments[type as keyof typeof alignments];
         if (alignment) {
-          activeEditor.chain().focus().setTextAlign(alignment).run();
+          activeEditor.chain().setTextAlign(alignment).run();
 
           if (trackHistoryActions) {
             trackHistoryActions("alignment", `Set text alignment to ${alignment}`);
           }
         }
+      } catch (error) {
+        console.error(`Errore nell'applicare l'allineamento ${type}:`, error);
+      } finally {
+        alignmentTimeoutRef.current = setTimeout(() => {
+          setIsAlignmentInProgress(false);
+          alignmentTimeoutRef.current = null;
+        }, 500);
       }
     },
     onIndentLevelChange: (increase: boolean) => {
@@ -235,8 +257,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
     /*const handleFontsReceived = (fonts: string[]) => {
       setSystemFonts(fonts);
     };*/
-
-
     //const cleanup = window.electron.getSystemFonts(handleFontsReceived);
     const cleanup = window.electron.ipcRenderer.on('receive-system-fonts', (_: any, fonts: string[]) => {
       setSystemFonts(fonts);
@@ -244,7 +264,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
     return () => cleanup();
   }, []);
-  
 
   // Gestione delle transazioni per il passaggio tra heading e paragrafo
   useEffect(() => {
@@ -417,20 +436,57 @@ const Toolbar: React.FC<ToolbarProps> = ({
     }
   };
 
+  const addIdentifiedText = useCallback(() => {
+    console.log('sto prima')
+    if (!activeEditor) return;
+    console.log('sono qui')
+    try {
+      const { from, to } = activeEditor.state.selection;
+
+      // Verifica se c'è testo selezionato
+      if (from === to) {
+        console.log("Nessun testo selezionato");
+        return;
+      }
+
+      const id = uuidv4();
+      console.log("Sto impostando l'ID:", id);
+
+      // Utilizzo più esplicito del comando
+      activeEditor.chain()
+        .focus()
+        .setMark('apparatusText', { id })
+        .run();
+
+      if (trackHistoryActions) {
+        trackHistoryActions("apparatusText", "Added identified text");
+      }
+
+    } catch (error) {
+      console.error("Errore nell'aggiungere apparatusText:", error);
+    }
+  }, [activeEditor, trackHistoryActions]);
+
   const handleTextFormatColor = useCallback((color: string) => {
     if (!activeEditor) return;
     activeEditor.chain().focus().setColor(color).run();
     setTextColor(color);
   }, [activeEditor, setTextColor]);
 
+
+  const handleToggleSidebar = () => {
+    toggleSidebar()
+    dispatch(setSidebarOpen(!open));
+  }
+
   return (
     <div className={styles["toolbar"]}>
       <div className={styles["toolbar-item"]}>
-        <button onClick={() => dispatch(setSidebarOpen(!open))} className={styles["active"]}>
+        <button onClick={() => handleToggleSidebar()} className={styles["active"]}>
           <span className="material-symbols-outlined">dock_to_right</span>
         </button>
       </div>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <UndoGroup
         activeEditor={activeEditor}
         UndoInputRef={undoInputRef}
@@ -441,7 +497,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
       <button onClick={() => activeEditor?.chain().focus().redo().run()}>
         <span className="material-symbols-outlined">redo</span>
       </button>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <select className={styles["heading-select"]} value={formatting.headingLevel} onChange={handleHeadingChange}>
         {sectionTypes.map((type, index) => (
           <option className={styles["heading-option"]} value={type.value} key={`${type.value}-${index}`}>
@@ -449,7 +505,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </option>
         ))}
       </select>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <select className={styles["font-family-select"]} value={formatting.fontFamily} onChange={handleFontFamilyChange}>
         {systemFonts.map((font, index) => (
           <option key={index} value={font} style={{ fontFamily: font }}>
@@ -457,7 +513,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </option>
         ))}
       </select>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <div className={styles["font-size-controls"]}>
         <button onClick={handleIncreaseFontSize} title="Increase character size" className={styles["font-size-button"]}>
           <span className="material-symbols-outlined">add</span>
@@ -489,7 +545,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <span className="material-symbols-outlined">remove</span>
         </button>
       </div>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <button
         onClick={() => toggleBold(activeEditor)}
         className={`toolbar-button ${formatting.bold ? "active" : ""}`}
@@ -531,7 +587,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           highlightColor={formatting.highlight}
         />
       </div>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <button onClick={() => activeEditor?.chain().focus().toggleBlockquote().run()} className={activeEditor?.isActive("blockquote") ? "active" : ""}>
         <span className="material-symbols-outlined">history_edu</span>
       </button>
@@ -546,7 +602,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
       <button className={formatting.isBlockquote ? "active" : ""} onClick={() => activeEditor?.chain().focus().toggleBlockquote().run()}>
         <span className="material-symbols-outlined">format_quote</span>
       </button>
-      <Divider sx={{ height: "1rem", margin: "4px", padding: "4px", borderColor: "#ccc", alignSelf: "center" }} orientation="vertical" flexItem />
+      <CriterionDivider />
       <button
         onClick={(e) => addCommentFromSelection(e)}
         className={selectedText ? "active" : ""}
@@ -558,8 +614,159 @@ const Toolbar: React.FC<ToolbarProps> = ({
       <button disabled className={formatting.isOrderedList ? "active" : ""} onClick={() => activeEditor?.chain().focus().toggleOrderedList().run()}>
         <span className="material-symbols-outlined">bookmark</span>
       </button>
-      <button disabled onClick={() => activeEditor?.chain().focus().toggleBlockquote().run()} className={formatting.isBulletList ? "active" : ""}>
-        <span className="material-symbols-outlined">add_link</span>
+      <button onClick={() => addIdentifiedText()} className={formatting.isBulletList ? "active" : ""}>
+        <span className="material-symbols-outlined" style={{ color: 'red' }}>add_link</span>
+      </button>
+      <button onClick={() => {
+        console.log('sto qui')
+
+        // let f = activeEditor?.state.doc.descendants((node) => node.type.name === "apparatusText"), null, 2)
+
+        //console.log(JSON.stringify(activeEditor?.state.doc.descendants((node) => node.type.name === "heading"), null, 2))
+        // console.log(JSON.stringify(activeEditor?.state.doc))
+
+        //@ts-ignore
+        const $doc = activeEditor?.$doc
+
+        //activeEditor?.state.doc.
+        /*
+        activeEditor?.state.doc.forEach((node, offset) => {
+          if (node.attrs.id === 'cce391e7-77fa-43e9-af5d-f322137d61c3') {
+            activeEditor?.chain().setNodeSelection(offset).scrollIntoView().run();
+          }
+        })
+        */
+
+        //activeEditor?.chain().setNodeSelection(30).scrollIntoView().run();
+
+
+        // Get all nodes of type 'heading' in the document
+        //const $headings = activeEditor?.$nodes('heading')
+        const $headings = activeEditor?.$nodes('text')
+
+        //@ts-ignore
+        const focusHeadingWithGivenUuid = (uuid: string) => {
+          let posOfHeading = -1
+
+          activeEditor?.state.doc.descendants((node, pos) => {
+
+
+            //console.log(node.type.name);
+            //console.log(node.attrs.id);
+
+            // if (node.type.name !== 'heading' || node.attrs.id !== uuid) return // edit `||` instead of `&&`
+
+            if (node.type.name === 'text' && node.attrs.id === uuid)
+              posOfHeading = pos // `pos + node.nodeSize - 1` if you wanna focus at the end of line, maybe you don't need that `- 1` idk, you can try it out
+            else
+              return
+          })
+
+          //console.log(posOfHeading)
+          if (posOfHeading !== -1) activeEditor?.commands.focus(posOfHeading)
+          // or you can also use `setTextSelection` instead of `focus`
+          // if (posOfHeading !== -1) editor.commands.setTextSelection(posOfHeading)
+        }
+
+        //const nodes = activeEditor?.$node('heading')
+        //const nodes = activeEditor?.$node('apparatusText')
+        // const nodes = activeEditor?.$node('doc')
+        //const nodes = activeEditor?.$node('text')
+        if ($headings) {
+          //activeEditor?.commands.setTextSelection($headings[2].pos);
+          //activeEditor?.commands.focus($headings[5].pos); // or 'start' or a position
+          //activeEditor?.commands.scrollIntoView();
+        }
+
+        //@ts-ignore
+        function findNodePositionByAttribute(editor: Editor, nodeTypeName: string, attrKey: string, attrValue: string): number | null {
+          let foundPos: number | null = null;
+
+          editor.state.doc.descendants((node: ProseMirrorNode, pos: number) => {
+            // console.log(node.content)
+            node.content.forEach((node) => {
+              // console.log(node)
+              //@ts-ignore
+              node.marks.forEach((mark) => {
+                //console.log(mark)
+                console.log(mark.attrs)
+                if (mark.attrs.id === attrValue) {
+                  foundPos = pos;
+                  return false; // stop traversal
+                }
+              })
+              // console.log(node.marks)
+            })
+            return true;
+            /*
+            if (node.type.name === nodeTypeName && node.attrs[attrKey] === attrValue) {
+              foundPos = pos;
+              return false; // stop traversal
+            }
+            return true;
+            */
+          });
+
+          return foundPos;
+        }
+
+        if (activeEditor) {
+          const pos = findNodePositionByAttribute(activeEditor, 'apparatusText', 'id', 'cce391e7-77fa-43e9');
+          console.log(pos)
+          if (pos) {
+            activeEditor?.commands.setTextSelection(pos);
+            activeEditor?.commands.focus(pos);
+            activeEditor?.commands.scrollIntoView();
+          }
+        }
+
+
+
+
+
+        //console.log(focusHeadingWithGivenUuid('cce391e7-77fa-43e9-af5d-f322137d61c3'))
+
+
+
+        /*
+        function findNodePositionByAttribute(editor: Editor, nodeTypeName: string, attrKey: string, attrValue: string): number | null {
+          let foundPos: number | null = null;
+         // activeEditor?.state.doc.descendants((node) => node.type.name === "apparatusText"), null, 2)
+
+          editor.state.doc.descendants((node: , pos: number) => {
+            if (node.type.name === nodeTypeName && node.attrs[attrKey] === attrValue) {
+              foundPos = pos;
+              return false; // stop traversal
+            }
+            return true;
+          });
+        
+          return foundPos;
+        }*/
+
+        /*
+        const pos = nodePos; // The position of the element you want to scroll to
+
+        activeEditor?.commands.setTextSelection(pos);
+*/
+
+        //activeEditor?.commands.focus('end'); // or 'start' or a position
+        //activeEditor?.commands.scrollIntoView();
+
+
+        //console.log(JSON.stringify(activeEditor?.state.doc.descendants((node) => node.type.name === "apparatusText"), null, 2))
+        /*let selection = activeEditor?.view.state.selection
+        if (selection) {
+          activeEditor?.view.state.doc.nodesBetween(selection.from, selection.to, node => {
+            if (node.type.name === 'apparatusText' && node.marks.length > 0) {
+              //console.log("apparatusText found");
+            }
+          })
+        }*/
+
+
+      }}>
+        <span>Scroll to identified text</span>
       </button>
       {isSpacingModalOpen && (
         <SpacingModal

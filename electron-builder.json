@@ -1,15 +1,19 @@
 {
   "appId": "com.finconsgroup.criterion",
   "copyright": "FinconGroup © 2025",
-  "files": ["out", "i18n"],
+  "files": ["out", "i18n", "resources"],
   "extraResources": [
     {
       "from": "./i18n",
       "to": "i18n"
     },
+    {
+      "from": "./resources",
+      "to": "resources"
+    },
     "out/preload/preload.mjs"
   ],
-  "icon": "./appIcon.png",
+  "icon": "./resources/appIcons/appIcon.png",
   "mac": {
     "target": [
       {
@@ -21,13 +25,13 @@
         "arch": ["x64", "arm64"]
       }
     ],
-    "icon": "./appIcon_512.png",
+    "icon": "./resources/appIcons/appIcon_512.png",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities"
     }
   },
   "dmg": {
-    "icon": "./appIcon.png",
+    "icon": "./resources/appIcons/appIcon.png",
     "iconSize": 100,
     "window": {
       "width": 600,
@@ -50,7 +54,7 @@
   "linux": {
     "target": ["AppImage", "deb", "rpm"],
     "category": "Utility",
-    "icon": "./appIcon.png",
+    "icon": "./resources/appIcons/appIcon.png",
     "desktop": {
       "Type": "Application",
       "Name": "Criterion",
@@ -61,7 +65,7 @@
   },
   "win": {
     "target": ["nsis"],
-    "icon": "./appIcon.png",
+    "icon": "./resources/appIcons/appIcon.png",
     "signAndEditExecutable": false,
     "artifactName": "${productName}-${version}.${ext}",
     "asar": true,

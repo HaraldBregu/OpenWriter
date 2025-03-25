@@ -1,8 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import editorReducer from '../pages/Editor/store/editor.slice';
 import commentsReducer from '../pages/Comments/store/comments.slice';
-import mainReducer from '../pages/MainContainer/store/main.slice';
-
+import mainReducer from '../pages/store/main.slice';
 
 
 const rootReducer = combineReducers({

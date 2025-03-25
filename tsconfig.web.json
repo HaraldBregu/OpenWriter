@@ -9,28 +9,19 @@
   ],
   "compilerOptions": {
     "types": ["node", "./types.d.ts", "electron-vite/node"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-     /* "@renderer/*": [
+      /* "@renderer/*": [
         "src/renderer/src/*"
       ],*/
-      "@/*": [
-        "src/renderer/src/*"
-      ],
-      "@utils/*": [
-        "src/renderer/src/utils/*"
-      ],
-      "@pages/*": [
-        "src/renderer/src/pages/*"
-      ],
-      "@store/*": [
-        "src/renderer/src/store/*"
-      ],
-      "@components/*": [
-        "src/renderer/src/components/*"
-      ]
-    },
+      "@/*": ["src/renderer/src/*"],
+      "@utils/*": ["src/renderer/src/utils/*"],
+      "@pages/*": ["src/renderer/src/pages/*"],
+      "@store/*": ["src/renderer/src/store/*"],
+      "@components/*": ["src/renderer/src/components/*"]
+    }
   }
 }
