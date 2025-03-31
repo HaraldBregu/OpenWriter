@@ -1,4 +1,5 @@
 import { RootState } from "src/renderer/src/store/store";
+import colors from "tailwindColors.json"
 
 export const selectEditorData = (state: RootState) => state.editor.data;
 export const selectEditorLoading = (state: RootState) => state.editor.isLoading;
@@ -43,12 +44,12 @@ export const selectFontSize = (state: RootState) => {
 };
 
 export const selectTextColor = (state: RootState) => {
-  if (!state.editor) return "inherit";
+  if (!state.editor) return colors.primary[20];
   return state.editor.textColor;
 };
 
 export const selectHighlightColor = (state: RootState) => {
-  if (!state.editor) return "inherit";
+  if (!state.editor) return colors.primary[20];
   return state.editor.highlightColor;
 };
 
@@ -62,7 +63,13 @@ export const selectBookmark = (state: RootState) => {
   return state.editor.bookmark;
 };
 
-export const selectBookmarks = (state: RootState) => {    
+export const selectBookmarksCategories = (state: RootState) => {
+  if (!state.editor) return [];
+  return state.editor.bookmarkCategories ?? [];
+};
+
+export const selectBookmarks = (state: RootState) => {
   if (!state.editor) return [];
   return state.editor.bookmarks;
 };
+

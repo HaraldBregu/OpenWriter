@@ -1,906 +1,644 @@
 {
-    "type": "doc",
-    "content": [
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": null,
+        "spacingAfter": null,
+        "lineHeight": null
+      },
+      "content": [
+        { "type": "text", "text": "Sto preparando un " },
+        { "type": "text", "marks": [{ "type": "bold" }], "text": "articolo " },
         {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": null,
-                "spacingAfter": null,
-                "lineHeight": null
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Sto preparando un "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "articolo "
-                },
-                {
-                    "type": "text",
-                    "text": "formale su un argomento casuale. Ti aggiornerò appena sarà pronto per la lettura."
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 1
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "Il futuro del lavoro nell’era dell’Intelligenza Artificiale"
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 2
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Introduzione"
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "L’Intelligenza Artificiale (IA) è divenuta una forza trainante dell’innovazione tecnologica ed economica nel mondo attuale. Gli investimenti e l’adozione di soluzioni IA stanno crescendo esponenzialmente: ad esempio, in Italia il mercato dell’IA ha raggiunto 1,2 miliardi di euro nel 2024, con una crescita annuale del +58% (Intelligenza Artificiale in Italia: numeri record per il mercato). Questa rapida diffusione dell’IA sta alimentando un dibattito cruciale sul suo impatto nel mondo del lavoro. Da un lato, l’IA promette di aumentare la produttività e creare nuove opportunità professionali; dall’altro lato, vi è preoccupazione per i posti di lavoro che potrebbero essere automatizzati e per le implicazioni sociali di questa trasformazione. In questo articolo esamineremo in modo obiettivo "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "rischi"
-                },
-                {
-                    "type": "text",
-                    "text": ", "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "opportunità"
-                },
-                {
-                    "type": "text",
-                    "text": " e "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "strategie di adattamento"
-                },
-                {
-                    "type": "text",
-                    "text": " legati all’impatto dell’IA sull’occupazione, basandoci su dati e studi recenti."
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 2
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Rischi per l’occupazioned"
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "L’automazione intelligente pone potenzialmente a rischio alcune occupazioni, soprattutto quelle basate su mansioni ripetitive e a basso contenuto di competenze digitali. Secondo una stima, entro il 2030 l’occupazione nelle attività poco digitalizzate potrebbe ridursi dal 40% al 30% sul totale, mentre i ruoli ad alta intensità di competenze digitali salirebbero dal 40% al 50% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Ciò indica un marcato "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "spostamento della domanda di lavoro"
-                },
-                {
-                    "type": "text",
-                    "text": ": mansioni meccaniche e routinarie sono maggiormente esposte all’automazione, mentre cresce la richiesta di competenze avanzate e digitali. Anche il celebre "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "studio di Oxford"
-                },
-                {
-                    "type": "text",
-                    "text": " di Frey e Osborne (2013) stimava che il 47% delle attuali occupazioni negli Stati Uniti fosse potenzialmente a rischio automazione nell’arco di un paio di decenni (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro), evidenziando il livello di disruption tecnologica possibile. In media, nei Paesi OCSE circa il 27% dei posti di lavoro è considerato ad "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "alto rischio di automazione"
-                },
-                {
-                    "type": "text",
-                    "text": ", quota che in Italia supera il 30% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Non sorprende dunque che le persone guardino con una certa apprensione queste tendenze: un’indagine recente mostra che "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "tre lavoratori su cinque"
-                },
-                {
-                    "type": "text",
-                    "text": " temono di perdere il proprio posto a causa delle nuove tecnologie entro i prossimi dieci anni (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). I timori non sono del tutto infondati, considerando che alcune aziende hanno già rimpiazzato personale con sistemi di IA – si pensi, ad esempio, al caso della compagnia assicurativa Fukoku in Giappone, che ha sostituito 34 impiegati con un algoritmo per la gestione dei calcoli assicurativi, ottenendo significativi risparmi sui costi (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro)."
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "(AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "Figura 1: Aspettative sull’impatto dell’IA sul numero di posti di lavoro secondo un sondaggio globale del 2020 rivolto a responsabili risorse umane. La maggioranza (54%) si attende che l’IA "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        },
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "modificherà radicalmente la natura del lavoro senza alterare il numero complessivo di occupati"
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": ", mentre circa un quarto (25%) teme una "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        },
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "riduzione netta dei posti di lavoro"
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": ". Solo il 12% degli intervistati prevede un "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        },
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "aumento netto dell’occupazione"
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": " grazie all’IA e il restante 9% non si aspetta alcun impatto significativo (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro)."
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Le possibili ripercussioni "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "variano molto da settore a settore"
-                },
-                {
-                    "type": "text",
-                    "text": " e in base alla professione. Ad esempio, per un saldatore industriale la probabilità di essere sostituito da macchine intelligenti è stata stimata intorno al 90%, mentre per un rappresentante commerciale tale probabilità scende al 30% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In generale, le posizioni lavorative che richiedono bassa qualificazione o compiti prevedibili risultano le più minacciate dall’automazione, al contrario di quelle che richiedono competenze cognitive elevate, creatività o interazione umana avanzata. Tali differenze settoriali e professionali suggeriscono che l’IA causerà "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "perdite occupazionali mirate"
-                },
-                {
-                    "type": "text",
-                    "text": " in alcuni ambiti più di altri, potenzialmente amplificando il bisogno di riconversione professionale per i lavoratori colpiti. È importante sottolineare, tuttavia, che le stime sull’impatto netto variano ampiamente: alcuni scenari estremamente pessimisti prospettano forti contrazioni occupazionali, mentre altri suggeriscono che i timori di una disoccupazione tecnologica di massa potrebbero essere esagerati."
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 2
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Opportunità per il lavoro"
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Accanto ai rischi, l’Intelligenza Artificiale offre anche "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "significative opportunità"
-                },
-                {
-                    "type": "text",
-                    "text": " di crescita economica e occupazionale. In molti casi, l’introduzione dell’IA sta già migliorando la qualità del lavoro umano e creando nuovi ruoli. Ad esempio, un recente studio OCSE ha rilevato che quasi i due terzi dei lavoratori (63%) ritengono che l’adozione di sistemi di IA abbia "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "aumentato il loro benessere lavorativo"
-                },
-                {
-                    "type": "text",
-                    "text": ", automatizzando le mansioni più pericolose o monotone e permettendo loro di concentrarsi su compiti più complessi e gratificanti (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Questa evidenza suggerisce che l’IA, se integrata correttamente, può diventare un complemento che "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "alleggerisce il carico di lavoro"
-                },
-                {
-                    "type": "text",
-                    "text": " e potenzia le capacità umane, anziché un semplice sostituto."
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Dal punto di vista macroeconomico, molti analisti prevedono che l’IA genererà "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "più posti di lavoro di quanti ne eliminerà"
-                },
-                {
-                    "type": "text",
-                    "text": ", soprattutto nel medio-lungo termine. Una stima McKinsey calcola che l’automazione potrebbe rimpiazzare fino al 15% della forza lavoro mondiale (circa 400 milioni di lavoratori) entro il 2030, ma nel contempo sarebbero creati dall’IA tra "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "555 e 890 milioni"
-                },
-                {
-                    "type": "text",
-                    "text": " di nuovi posti di lavoro – un saldo quindi positivo (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In modo simile, il "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "World Economic Forum"
-                },
-                {
-                    "type": "text",
-                    "text": " prevede una "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "crescita netta"
-                },
-                {
-                    "type": "text",
-                    "text": " di 78 milioni di occupati a livello globale entro il 2030 grazie all’impatto combinato delle tecnologie emergenti (IA compresa) ( WEF, cambiamenti radicali nel mercato del lavoro entro il 2030 - Economia e Finanza - Repubblica.it ). Nonostante l’automazione tenda a eliminare alcune posizioni, essa fa nascere interi nuovi settori e professioni: figure come data scientist, specialisti di machine learning, esperti di cybersecurity e analisti dei dati sono tra le più richieste e si stima che tali ruoli cresceranno mediamente di circa il 30% entro il 2027 (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Inoltre, secondo indagini del WEF circa il 75% delle aziende mondiali adotterà l’Intelligenza Artificiale nei prossimi anni, e "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "metà di queste si aspetta di ampliare il proprio organico"
-                },
-                {
-                    "type": "text",
-                    "text": " proprio grazie all’IA (solo un quarto prevede una diminuzione) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In altre parole, buona parte dei datori di lavoro vede l’IA come un "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "fattore abilitante"
-                },
-                {
-                    "type": "text",
-                    "text": " per l’espansione del business e la creazione di nuove opportunità lavorative, soprattutto nei campi tech e digital."
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Esemplificativo è il caso di "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "Amazon"
-                },
-                {
-                    "type": "text",
-                    "text": ": la compagnia ha introdotto migliaia di robot intelligenti nei propri magazzini (i robot "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "Kiva"
-                },
-                {
-                    "type": "text",
-                    "text": ") per automatizzare la movimentazione delle merci, raggiungendo una velocità di evasione ordini quattro volte superiore rispetto a quella del lavoro umano tradizionale. Eppure, "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "nonostante"
-                },
-                {
-                    "type": "text",
-                    "text": " questa massiccia automazione, Amazon ha creato circa "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "300.000 nuovi posti di lavoro"
-                },
-                {
-                    "type": "text",
-                    "text": " dal 2012 ad oggi, principalmente in mansioni legate alla supervisione e gestione dei robot stessi o alla risoluzione di problemi che richiedono l’intervento umano (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Questo esempio conferma che l’adozione dell’IA può andare di pari passo con la "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "crescita occupazionale"
-                },
-                {
-                    "type": "text",
-                    "text": ", spostando semplicemente la forza lavoro verso compiti di più alto valore aggiunto. Nuovi ruoli professionali stanno emergendo in ambiti prima inesistenti – dagli "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "AI ethicist"
-                },
-                {
-                    "type": "text",
-                    "text": " (esperti di etica dell’IA) ai trainer di algoritmi di apprendimento – indicando la capacità del mercato del lavoro di adattarsi e ridefinirsi attorno alle tecnologie innovative. In sintesi, l’IA può diventare un "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "motore di creazione di lavoro qualificato"
-                },
-                {
-                    "type": "text",
-                    "text": ", a patto che imprese e società colgano le nuove possibilità che essa offre."
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 2
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Formazione e adattamento"
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Indipendentemente dal saldo finale tra posti di lavoro persi e creati, è ampiamente riconosciuto che l’"
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "aggiornamento delle competenze"
-                },
-                {
-                    "type": "text",
-                    "text": " sarà il fattore chiave per affrontare la trasformazione in atto. L’OCSE prevede che entro il 2030 ben il 63% dei lavoratori dovrà aver aggiornato le proprie competenze "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "almeno una volta ogni cinque anni"
-                },
-                {
-                    "type": "text",
-                    "text": " (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale), evidenziando l’importanza di un apprendimento continuo lungo tutto l’arco della vita professionale. Le competenze digitali avanzate diventeranno sempre più essenziali, ma non solo: abilità trasversali come flessibilità, capacità di problem solving, creatività e apprendimento rapido saranno cruciali per mantenere l’occupabilità in un mercato del lavoro dinamico. Allo stesso tempo, nuove competenze specifiche legate all’IA (ad esempio saper interagire con sistemi di "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "machine learning"
-                },
-                {
-                    "type": "text",
-                    "text": " o interpretare output di algoritmi) stanno entrando a far parte dei requisiti in molti settori."
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Anche le aziende e le istituzioni stanno riconoscendo questa "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "sfida delle competenze"
-                },
-                {
-                    "type": "text",
-                    "text": ". In base al rapporto "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "Future of Jobs 2025"
-                },
-                {
-                    "type": "text",
-                    "text": " del WEF, il 63% dei dirigenti aziendali individua nella carenza di competenze adeguate il principale ostacolo alla trasformazione digitale, motivo per cui l’85% delle imprese ha intenzione di investire in programmi di "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "upskilling"
-                },
-                {
-                    "type": "text",
-                    "text": " e "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "reskilling"
-                },
-                {
-                    "type": "text",
-                    "text": " del personale ( WEF, cambiamenti radicali nel mercato del lavoro entro il 2030 - Economia e Finanza - Repubblica.it ). Ciò significa aumentare le competenze dei lavoratori attuali e riqualificarli per i nuovi ruoli emergenti, piuttosto che procedere solo a nuove assunzioni. "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "Formazione continua"
-                },
-                {
-                    "type": "text",
-                    "text": " interna, corsi di aggiornamento, partnership con istituti educativi e iniziative come il "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "lifelong learning"
-                },
-                {
-                    "type": "text",
-                    "text": " sono strumenti sempre più adottati per colmare il "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "skill gap"
-                },
-                {
-                    "type": "text",
-                    "text": ". Ad esempio, molte grandi aziende tecnologiche hanno implementato piattaforme di apprendimento digitale per i propri dipendenti, e pratiche come il “reverse mentoring” – in cui i giovani esperti formano i colleghi senior sulle nuove tecnologie – stanno prendendo piede (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale) (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale). Gli esperti intervenuti al recente Forum di Davos sottolineano che un investimento costante nelle competenze consentirà all’IA di "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "completare"
-                },
-                {
-                    "type": "text",
-                    "text": " ed esaltare le capacità umane anziché sostituirle completamente (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale). In definitiva, l’adattabilità e la formazione rappresentano l’"
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "ancora di salvezza"
-                },
-                {
-                    "type": "text",
-                    "text": " per i lavoratori nell’era dell’IA: preparare la forza lavoro ai nuovi strumenti e modelli organizzativi mitiga il rischio di disoccupazione tecnologica e massimizza i benefici della trasformazione digitale."
-                }
-            ]
-        },
-        {
-            "type": "heading",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": "",
-                "level": 2
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Conclusione"
-                }
-            ]
-        },
-        {
-            "type": "paragraph",
-            "attrs": {
-                "indent": 0,
-                "textAlign": null,
-                "spacingBefore": "",
-                "spacingAfter": "",
-                "lineHeight": ""
-            },
-            "content": [
-                {
-                    "type": "text",
-                    "text": "L’Intelligenza Artificiale sta indubbiamente rivoluzionando il mondo del lavoro, ma la direzione e l’entità di questa rivoluzione dipenderanno in larga misura da "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "come"
-                },
-                {
-                    "type": "text",
-                    "text": " governi, imprese e lavoratori affronteranno il cambiamento. Le proiezioni sul numero di posti di lavoro persi o creati variano: alcuni studi prospettano impatti negativi significativi, altri delineano scenari di crescita occupazionale netta. In ogni caso, emergono alcuni punti fermi. Come notato da analisti del settore, non è ancora possibile stabilire con certezza se l’IA eliminerà più posti di quanti ne genererà; "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "l’unica certezza è che alcune professioni scompariranno, molte altre nuove nasceranno, e la natura stessa di numerosi lavori sarà ridefinita"
-                },
-                {
-                    "type": "text",
-                    "text": " dalla collaborazione uomo-macchina (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Di fronte a questa realtà, l’atteggiamento migliore è probabilmente un "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "bold"
-                        }
-                    ],
-                    "text": "realismo proattivo"
-                },
-                {
-                    "type": "text",
-                    "text": ": riconoscere i rischi e prepararvisi (attraverso politiche del lavoro attive, tutela dei lavoratori in transizione e contrasto alle disuguaglianze), ma al contempo cogliere le opportunità offerte dall’IA investendo in innovazione, formazione e creazione di nuovi settori. In conclusione, l’IA non va vista unilateralmente come una minaccia o una panacea per l’occupazione, bensì come uno strumento potente che l’umanità può plasmare e indirizzare. Sarà la nostra capacità di "
-                },
-                {
-                    "type": "text",
-                    "marks": [
-                        {
-                            "type": "italic"
-                        }
-                    ],
-                    "text": "gestire"
-                },
-                {
-                    "type": "text",
-                    "text": " questa trasformazione – con visione strategica e responsabilità sociale – a determinare se il futuro del lavoro nell’era dell’intelligenza artificiale sarà prospero e inclusivo per tutti."
-                }
-            ]
+          "type": "text",
+          "text": "formale su un argomento casuale. Ti aggiornerò appena sarà pronto per la lettura."
         }
-    ]
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 1
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "Il futuro del lavoro nell’era dell’Intelligenza Artificiale"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 2
+      },
+      "content": [{ "type": "text", "text": "Introduzione" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "L’Intelligenza Artificiale (IA) è divenuta una forza trainante dell’innovazione tecnologica ed economica nel mondo attuale. Gli investimenti e l’adozione di soluzioni IA stanno crescendo esponenzialmente: ad esempio, in Italia il mercato dell’IA ha raggiunto 1,2 miliardi di euro nel 2024, con una crescita annuale del +58% (Intelligenza Artificiale in Italia: numeri record per il mercato). Questa rapida diffusione dell’IA sta alimentando un dibattito cruciale sul suo impatto nel mondo del lavoro. Da un lato, l’IA promette di aumentare la produttività e creare nuove opportunità professionali; dall’altro lato, vi è preoccupazione per i posti di lavoro che potrebbero essere automatizzati e per le implicazioni sociali di questa trasformazione. In questo articolo esamineremo in modo obiettivo "
+        },
+        { "type": "text", "marks": [{ "type": "bold" }], "text": "rischi" },
+        { "type": "text", "text": ", " },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "opportunità"
+        },
+        { "type": "text", "text": " e " },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "strategie di adattamento"
+        },
+        {
+          "type": "text",
+          "text": " legati all’impatto dell’IA sull’occupazione, basandoci su dati e studi recenti."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 2
+      },
+      "content": [{ "type": "text", "text": "Rischi per l’occupazione" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "L’automazione intelligente pone potenzialmente a rischio alcune occupazioni, soprattutto quelle basate su mansioni ripetitive e a basso contenuto di competenze digitali. Secondo una stima, entro il 2030 l’occupazione nelle attività poco digitalizzate potrebbe ridursi dal 40% al 30% sul totale, mentre i ruoli ad alta intensità di competenze digitali salirebbero dal 40% al 50% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Ciò indica un marcato "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "spostamento della domanda di lavoro"
+        },
+        {
+          "type": "text",
+          "text": ": mansioni meccaniche e routinarie sono maggiormente esposte all’automazione, mentre cresce la richiesta di competenze avanzate e digitali. Anche il celebre "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "studio di Oxford"
+        },
+        {
+          "type": "text",
+          "text": " di Frey e Osborne (2013) stimava che il 47% delle attuali occupazioni negli Stati Uniti fosse potenzialmente a rischio automazione nell’arco di un paio di decenni (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro), evidenziando il livello di disruption tecnologica possibile. In media, nei Paesi OCSE circa il 27% dei posti di lavoro è considerato ad "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "alto rischio di automazione"
+        },
+        {
+          "type": "text",
+          "text": ", quota che in Italia supera il 30% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Non sorprende dunque che le persone guardino con una certa apprensione queste tendenze: un’indagine recente mostra che "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "tre lavoratori su cinque"
+        },
+        {
+          "type": "text",
+          "text": " temono di perdere il proprio posto a causa delle nuove tecnologie entro i prossimi dieci anni (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). I timori non sono del tutto infondati, considerando che alcune aziende hanno già rimpiazzato personale con sistemi di IA – si pensi, ad esempio, al caso della compagnia assicurativa Fukoku in Giappone, che ha sostituito 34 impiegati con un algoritmo per la gestione dei calcoli assicurativi, ottenendo significativi risparmi sui costi (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro)."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "(AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro) "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "Figura 1: Aspettative sull’impatto dell’IA sul numero di posti di lavoro secondo un sondaggio globale del 2020 rivolto a responsabili risorse umane. La maggioranza (54%) si attende che l’IA "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }, { "type": "italic" }],
+          "text": "modificherà radicalmente la natura del lavoro senza alterare il numero complessivo di occupati"
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": ", mentre circa un quarto (25%) teme una "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }, { "type": "italic" }],
+          "text": "riduzione netta dei posti di lavoro"
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": ". Solo il 12% degli intervistati prevede un "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }, { "type": "italic" }],
+          "text": "aumento netto dell’occupazione"
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": " grazie all’IA e il restante 9% non si aspetta alcun impatto significativo (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro)."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 3
+      },
+      "content": [{ "type": "text", "text": "Occupazione a rischio" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        { "type": "text", "text": "Le possibili ripercussioni " },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "variano molto da settore a settore"
+        },
+        {
+          "type": "text",
+          "text": " e in base alla professione. Ad esempio, per un saldatore industriale la probabilità di essere sostituito da macchine intelligenti è stata stimata intorno al 90%, mentre per un rappresentante commerciale tale probabilità scende al 30% (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In generale, le posizioni lavorative che richiedono bassa qualificazione o compiti prevedibili risultano le più minacciate dall’automazione, al contrario di quelle che richiedono competenze cognitive elevate, creatività o interazione umana avanzata. Tali differenze settoriali e professionali suggeriscono che l’IA causerà "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "perdite occupazionali mirate"
+        },
+        {
+          "type": "text",
+          "text": " in alcuni ambiti più di altri, potenzialmente amplificando il bisogno di riconversione professionale per i lavoratori colpiti. È importante sottolineare, tuttavia, che le stime sull’impatto netto variano ampiamente: alcuni scenari estremamente pessimisti prospettano forti contrazioni occupazionali, mentre altri suggeriscono che i timori di una disoccupazione tecnologica di massa potrebbero essere esagerati."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 2
+      },
+      "content": [{ "type": "text", "text": "Opportunità per il lavoro" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Accanto ai rischi, l’Intelligenza Artificiale offre anche "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "significative opportunità"
+        },
+        {
+          "type": "text",
+          "text": " di crescita economica e occupazionale. In molti casi, l’introduzione dell’IA sta già migliorando la qualità del lavoro umano e creando nuovi ruoli. Ad esempio, un recente studio OCSE ha rilevato che quasi i due terzi dei lavoratori (63%) ritengono che l’adozione di sistemi di IA abbia "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "aumentato il loro benessere lavorativo"
+        },
+        {
+          "type": "text",
+          "text": ", automatizzando le mansioni più pericolose o monotone e permettendo loro di concentrarsi su compiti più complessi e gratificanti (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Questa evidenza suggerisce che l’IA, se integrata correttamente, può diventare un complemento che "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "alleggerisce il carico di lavoro"
+        },
+        {
+          "type": "text",
+          "text": " e potenzia le capacità umane, anziché un semplice sostituto."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Dal punto di vista macroeconomico, molti analisti prevedono che l’IA genererà "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "più posti di lavoro di quanti ne eliminerà"
+        },
+        {
+          "type": "text",
+          "text": ", soprattutto nel medio-lungo termine. Una stima McKinsey calcola che l’automazione potrebbe rimpiazzare fino al 15% della forza lavoro mondiale (circa 400 milioni di lavoratori) entro il 2030, ma nel contempo sarebbero creati dall’IA tra "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "555 e 890 milioni"
+        },
+        {
+          "type": "text",
+          "text": " di nuovi posti di lavoro – un saldo quindi positivo (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In modo simile, il "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "World Economic Forum"
+        },
+        { "type": "text", "text": " prevede una " },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "crescita netta"
+        },
+        {
+          "type": "text",
+          "text": " di 78 milioni di occupati a livello globale entro il 2030 grazie all’impatto combinato delle tecnologie emergenti (IA compresa) ( WEF, cambiamenti radicali nel mercato del lavoro entro il 2030 - Economia e Finanza - Repubblica.it ). Nonostante l’automazione tenda a eliminare alcune posizioni, essa fa nascere interi nuovi settori e professioni: figure come data scientist, specialisti di machine learning, esperti di cybersecurity e analisti dei dati sono tra le più richieste e si stima che tali ruoli cresceranno mediamente di circa il 30% entro il 2027 (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Inoltre, secondo indagini del WEF circa il 75% delle aziende mondiali adotterà l’Intelligenza Artificiale nei prossimi anni, e "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "metà di queste si aspetta di ampliare il proprio organico"
+        },
+        {
+          "type": "text",
+          "text": " proprio grazie all’IA (solo un quarto prevede una diminuzione) (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). In altre parole, buona parte dei datori di lavoro vede l’IA come un "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "fattore abilitante"
+        },
+        {
+          "type": "text",
+          "text": " per l’espansione del business e la creazione di nuove opportunità lavorative, soprattutto nei campi tech e digital."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 3
+      },
+      "content": [{ "type": "text", "text": "Il caso Amazon" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        { "type": "text", "text": "Esemplificativo è il caso di " },
+        { "type": "text", "marks": [{ "type": "bold" }], "text": "Amazon" },
+        {
+          "type": "text",
+          "text": ": la compagnia ha introdotto migliaia di robot intelligenti nei propri magazzini (i robot "
+        },
+        { "type": "text", "marks": [{ "type": "italic" }], "text": "Kiva" },
+        {
+          "type": "text",
+          "text": ") per automatizzare la movimentazione delle merci, raggiungendo una velocità di evasione ordini quattro volte superiore rispetto a quella del lavoro umano tradizionale. Eppure, "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "nonostante"
+        },
+        {
+          "type": "text",
+          "text": " questa massiccia automazione, Amazon ha creato circa "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "300.000 nuovi posti di lavoro"
+        },
+        {
+          "type": "text",
+          "text": " dal 2012 ad oggi, principalmente in mansioni legate alla supervisione e gestione dei robot stessi o alla risoluzione di problemi che richiedono l’intervento umano (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Questo esempio conferma che l’adozione dell’IA può andare di pari passo con la "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "crescita occupazionale"
+        },
+        {
+          "type": "text",
+          "text": ", spostando semplicemente la forza lavoro verso compiti di più alto valore aggiunto. Nuovi ruoli professionali stanno emergendo in ambiti prima inesistenti – dagli "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "AI ethicist"
+        },
+        {
+          "type": "text",
+          "text": " (esperti di etica dell’IA) ai trainer di algoritmi di apprendimento – indicando la capacità del mercato del lavoro di adattarsi e ridefinirsi attorno alle tecnologie innovative. In sintesi, l’IA può diventare un "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "motore di creazione di lavoro qualificato"
+        },
+        {
+          "type": "text",
+          "text": ", a patto che imprese e società colgano le nuove possibilità che essa offre."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 2
+      },
+      "content": [{ "type": "text", "text": "Formazione e adattamento" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Indipendentemente dal saldo finale tra posti di lavoro persi e creati, è ampiamente riconosciuto che l’"
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "aggiornamento delle competenze"
+        },
+        {
+          "type": "text",
+          "text": " sarà il fattore chiave per affrontare la trasformazione in atto. L’OCSE prevede che entro il 2030 ben il 63% dei lavoratori dovrà aver aggiornato le proprie competenze "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "almeno una volta ogni cinque anni"
+        },
+        {
+          "type": "text",
+          "text": " (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale), evidenziando l’importanza di un apprendimento continuo lungo tutto l’arco della vita professionale. Le competenze digitali avanzate diventeranno sempre più essenziali, ma non solo: abilità trasversali come flessibilità, capacità di problem solving, creatività e apprendimento rapido saranno cruciali per mantenere l’occupabilità in un mercato del lavoro dinamico. Allo stesso tempo, nuove competenze specifiche legate all’IA (ad esempio saper interagire con sistemi di "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "machine learning"
+        },
+        {
+          "type": "text",
+          "text": " o interpretare output di algoritmi) stanno entrando a far parte dei requisiti in molti settori."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Anche le aziende e le istituzioni stanno riconoscendo questa "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "sfida delle competenze"
+        },
+        { "type": "text", "text": ". In base al rapporto " },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "Future of Jobs 2025"
+        },
+        {
+          "type": "text",
+          "text": " del WEF, il 63% dei dirigenti aziendali individua nella carenza di competenze adeguate il principale ostacolo alla trasformazione digitale, motivo per cui l’85% delle imprese ha intenzione di investire in programmi di "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "upskilling"
+        },
+        { "type": "text", "text": " e " },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "reskilling"
+        },
+        {
+          "type": "text",
+          "text": " del personale ( WEF, cambiamenti radicali nel mercato del lavoro entro il 2030 - Economia e Finanza - Repubblica.it ). Ciò significa aumentare le competenze dei lavoratori attuali e riqualificarli per i nuovi ruoli emergenti, piuttosto che procedere solo a nuove assunzioni. "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "Formazione continua"
+        },
+        {
+          "type": "text",
+          "text": " interna, corsi di aggiornamento, partnership con istituti educativi e iniziative come il "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "lifelong learning"
+        },
+        {
+          "type": "text",
+          "text": " sono strumenti sempre più adottati per colmare il "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "italic" }],
+          "text": "skill gap"
+        },
+        {
+          "type": "text",
+          "text": ". Ad esempio, molte grandi aziende tecnologiche hanno implementato piattaforme di apprendimento digitale per i propri dipendenti, e pratiche come il “reverse mentoring” – in cui i giovani esperti formano i colleghi senior sulle nuove tecnologie – stanno prendendo piede (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale) (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale). Gli esperti intervenuti al recente Forum di Davos sottolineano che un investimento costante nelle competenze consentirà all’IA di "
+        },
+        { "type": "text", "marks": [{ "type": "bold" }], "text": "completare" },
+        {
+          "type": "text",
+          "text": " ed esaltare le capacità umane anziché sostituirle completamente (AI e lavoro, il futuro è nella formazione: cosa dicono i dati Wef - Agenda Digitale). In definitiva, l’adattabilità e la formazione rappresentano l’"
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "ancora di salvezza"
+        },
+        {
+          "type": "text",
+          "text": " per i lavoratori nell’era dell’IA: preparare la forza lavoro ai nuovi strumenti e modelli organizzativi mitiga il rischio di disoccupazione tecnologica e massimizza i benefici della trasformazione digitale."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": "",
+        "level": 2
+      },
+      "content": [{ "type": "text", "text": "Conclusione" }]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "indent": 0,
+        "textAlign": null,
+        "spacingBefore": "",
+        "spacingAfter": "",
+        "lineHeight": ""
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "L’Intelligenza Artificiale sta indubbiamente rivoluzionando il mondo del lavoro, ma la direzione e l’entità di questa rivoluzione dipenderanno in larga misura da "
+        },
+        { "type": "text", "marks": [{ "type": "bold" }], "text": "come" },
+        {
+          "type": "text",
+          "text": " governi, imprese e lavoratori affronteranno il cambiamento. Le proiezioni sul numero di posti di lavoro persi o creati variano: alcuni studi prospettano impatti negativi significativi, altri delineano scenari di crescita occupazionale netta. In ogni caso, emergono alcuni punti fermi. Come notato da analisti del settore, non è ancora possibile stabilire con certezza se l’IA eliminerà più posti di quanti ne genererà; "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "l’unica certezza è che alcune professioni scompariranno, molte altre nuove nasceranno, e la natura stessa di numerosi lavori sarà ridefinita"
+        },
+        {
+          "type": "text",
+          "text": " dalla collaborazione uomo-macchina (AI: L’impatto sul lavoro e sull’occupazione – Digital4Pro). Di fronte a questa realtà, l’atteggiamento migliore è probabilmente un "
+        },
+        {
+          "type": "text",
+          "marks": [{ "type": "bold" }],
+          "text": "realismo proattivo"
+        },
+        {
+          "type": "text",
+          "text": ": riconoscere i rischi e prepararvisi (attraverso politiche del lavoro attive, tutela dei lavoratori in transizione e contrasto alle disuguaglianze), ma al contempo cogliere le opportunità offerte dall’IA investendo in innovazione, formazione e creazione di nuovi settori. In conclusione, l’IA non va vista unilateralmente come una minaccia o una panacea per l’occupazione, bensì come uno strumento potente che l’umanità può plasmare e indirizzare. Sarà la nostra capacità di "
+        },
+        { "type": "text", "marks": [{ "type": "italic" }], "text": "gestire" },
+        {
+          "type": "text",
+          "text": " questa trasformazione – con visione strategica e responsabilità sociale – a determinare se il futuro del lavoro nell’era dell’intelligenza artificiale sarà prospero e inclusivo per tutti."
+        }
+      ]
+    }
+  ]
 }

@@ -12,9 +12,9 @@ import Divider from '@/components/ui/divider';
 interface BubbleToolbarProps {
     editor: Editor;
     textColor: string;
-    highlightColor: string;
-    setTextColor: (color: string) => void;
-    setHighlightColor: (color: string) => void;
+    // highlightColor: string;
+    // setTextColor: (color: string) => void;
+    // setHighlightColor: (color: string) => void;
 }
 
 const BubbleToolbar = ({ editor }: BubbleToolbarProps) => {

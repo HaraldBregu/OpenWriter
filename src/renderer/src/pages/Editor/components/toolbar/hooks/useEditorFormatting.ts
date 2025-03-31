@@ -9,6 +9,7 @@ interface FormattingState {
     alignment: string;
     fontSize: string;
     hasApparatusText: boolean;
+    hasBookmarkText: boolean;
     fontFamily: string;
     headingLevel: number;
     isBlockquote: boolean;
@@ -26,6 +27,7 @@ const defaultFormatting: FormattingState = {
     strikethrough: false,
     alignment: "left",
     hasApparatusText: false,
+    hasBookmarkText: false,
     fontSize: "12px",
     fontFamily: "Times New Roman",
     headingLevel: 0,
@@ -49,6 +51,7 @@ export default function useEditorFormatting(activeEditor: Editor | null) {
                 underline: activeEditor.isActive("underline"),
                 strikethrough: activeEditor.isActive("strike"),
                 hasApparatusText: activeEditor?.isActive('apparatusText') || false,
+                hasBookmarkText: activeEditor?.isActive('bookmarkText') || false,
                 alignment: activeEditor.getAttributes("paragraph")?.textAlign || "left",
                 fontSize: activeEditor.getAttributes("textStyle")?.fontSize || "12px",
                 fontFamily: activeEditor.getAttributes("textStyle")?.fontFamily || "Times New Roman",

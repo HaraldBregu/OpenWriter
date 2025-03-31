@@ -16,6 +16,21 @@ import { setSidebarOpen } from "../../../store/main.slice";
 import { sectionTypes } from "../../../../utils/optionsEnums";
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import {
   toggleBold,
   toggleItalic,
   toggleUnderline,
@@ -62,6 +77,8 @@ interface ToolbarProps {
   textColorInputRef: React.RefObject<HTMLInputElement>;
   highlightColorInputRef: React.RefObject<HTMLInputElement>;
   undoInputRef: React.RefObject<HTMLInputElement>;
+  textColor: string;
+  highlightColor: string;
   setTextColor: (color: string) => void;
   setHighlightColor: (color: string) => void;
   lastFontSize: string | null;
@@ -87,7 +104,8 @@ interface ToolbarProps {
   onIncreaseFontSize: () => void;
   onDecreaseFontSize: () => void;
   onClickAddComment: () => void;
-  onClickAddBookmark: () => void;
+  bookmarksCategories: string[];
+  onClickAddBookmark: (category?: string) => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -95,6 +113,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
   textColorInputRef,
   highlightColorInputRef,
   undoInputRef,
+  textColor,
+  highlightColor,
   setTextColor,
   setHighlightColor,
   lastFontSize,
@@ -121,6 +141,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onDecreaseFontSize,
   onClickAddComment,
   onClickAddBookmark,
+  bookmarksCategories,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -653,27 +674,23 @@ const Toolbar: React.FC<ToolbarProps> = ({
       />
       <Divider />
       {/* TEXT COLOR CONTROL */}
-      <div className={styles["toolbar-item"]}>
-        <FormatTextColor
-          onSelect={(color) => {
-            console.log("🚀 ~ onSelect ~ color:", color)
-            setTextColor(color);
-            handleTextFormatColor(color);
-          }}
-          FormatTextColorInputRef={textColorInputRef}
-          FormatTextColor={formatting.textColor}
-        />
-      </div>
-      <div className={styles["toolbar-item"]}>
-        <HighlightColor
-          onSelect={(color) => {
-            setHighlightColor(color);
-            handleHighlight(color);
-          }}
-          highlightColorInputRef={highlightColorInputRef}
-          highlightColor={formatting.highlight}
-        />
-      </div>
+      <FormatTextColor
+        onSelect={(color) => {
+          console.log("🚀 ~ onSelect ~ color:", color)
+          setTextColor(color);
+          handleTextFormatColor(color);
+        }}
+        FormatTextColorInputRef={textColorInputRef}
+        textColor={textColor}
+      />
+      <HighlightColor
+        onSelect={(color) => {
+          setHighlightColor(color);
+          handleHighlight(color);
+        }}
+        highlightColorInputRef={highlightColorInputRef}
+        highlightColor={highlightColor}
+      />
       <Divider />
       {/* REVIEW THIS PART */}
       <Button
@@ -706,13 +723,36 @@ const Toolbar: React.FC<ToolbarProps> = ({
         icon={<CommentAdd intent='primary' variant='tonal' size='small' />}
         onClick={(_) => onClickAddComment()}
       />
-      <Button
+      {/* BOOKMARK ADD */}
+     {bookmarksCategories.length === 0 && <Button
         intent="secondary"
         variant="icon"
         size="iconSm"
         icon={<Bookmark intent='primary' variant='tonal' size='small' />}
         onClick={(_) => onClickAddBookmark()}
-      />
+      />}
+      {bookmarksCategories.length > 0 && <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            intent="secondary"
+            variant="icon"
+            size="iconSm"
+            icon={<Bookmark intent='primary' variant='tonal' size='small' />}
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Categories</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {bookmarksCategories.map((category) => (
+            <DropdownMenuItem key={category} onClick={() => {
+                console.log("category:", category)
+                onClickAddBookmark(category)
+              }
+            }>{category}</DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>}
+      {/* LINK ADD */}
       <Button
         intent="secondary"
         variant="icon"

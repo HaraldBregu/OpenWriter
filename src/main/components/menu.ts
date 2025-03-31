@@ -39,14 +39,14 @@ export const BuildElectronMenu = (
                 {
                     label: translations("menu.reload"),
                     accelerator: "CmdOrCtrl+R",
-                    click: (_, focusedWindow) => {
+                    click: (_, focusedWindow): void => {
                         if (focusedWindow) (focusedWindow as BrowserWindow).reload();
                     }
                 },
                 {
                     label: translations("menu.toggleDevTools"),
                     accelerator: "Alt+CmdOrCtrl+I",
-                    click: (_, focusedWindow) => {
+                    click: (_, focusedWindow): void => {
                         if (focusedWindow) (focusedWindow as BrowserWindow).webContents.toggleDevTools();
                     }
                 }
@@ -78,12 +78,12 @@ export const BuildElectronMenu = (
                     {
                         label: translations("menu.new"),
                         accelerator: "CmdOrCtrl+N",
-                        click: () => { newFile(mainWindow); }
+                        click: (): void => { newFile(mainWindow); }
                     },
                     {
                         label: translations("menu.open"),
                         accelerator: "CmdOrCtrl+O",
-                        click: () => { openFile(mainWindow); }
+                        click: (): void => { openFile(mainWindow); }
                     },
                     {
                         label: translations("menu.openRecent"),
@@ -92,7 +92,7 @@ export const BuildElectronMenu = (
                     {
                         label: translations("menu.save"),
                         accelerator: "CmdOrCtrl+S",
-                        click: () => { saveCurrentDocument(mainWindow); }
+                        click: (): void => { saveCurrentDocument(mainWindow); }
                     },
                     { type: 'separator' },
                     {
@@ -107,12 +107,12 @@ export const BuildElectronMenu = (
                     {
                         label: translations("menu.undo"),
                         accelerator: "CmdOrCtrl+Z",
-                        click: () => { setUndo(mainWindow); }
+                        click: (): void => { setUndo(mainWindow); }
                     },
                     {
                         label: translations("menu.redo"),
                         accelerator: "CmdOrCtrl+Y",
-                        click: () => { setRedo(mainWindow); }
+                        click: (): void => { setRedo(mainWindow); }
                     },
                 ]
             },
@@ -122,7 +122,7 @@ export const BuildElectronMenu = (
                     {
                         label: translations("menu.insert.comment"),
                         accelerator: "CmdOrCtrl+Alt+M",
-                        click: () => { insertComment(mainWindow); }
+                        click: (): void => { insertComment(mainWindow); }
                     },
                 ]
             },
@@ -234,6 +234,15 @@ export const BuildElectronMenu = (
                         submenu: [
                             { label: translations("menu.format.list.bullet"), click: () => changeListStyle(mainWindow, "bullet") },
                             { label: translations("menu.format.list.numbering"), click: () => changeListStyle(mainWindow, "numbering") }
+                        ]
+                    },
+                    {
+                        label: translations("menu.format.layout.label"),
+                        submenu: [
+                            {
+                                label: translations("menu.format.layout.pageSetup"),
+                                click: () => mainWindow.webContents.send('show-page-setup')
+                            }
                         ]
                     }
                 ]

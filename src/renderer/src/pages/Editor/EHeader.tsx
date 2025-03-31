@@ -11,15 +11,15 @@ import { getAllCategories } from "../Comments/store/comments.selector";
 import { useHistoryState } from "./hooks";
 import { defaultEditorConfig } from "./utils/editorConfigs";
 import { v4 as uuidv4 } from 'uuid';
-import { toggleBold, setHeadingLevel, redo, setFontFamily, setFontSize, increaseFontSize, decreaseFontSize, toggleItalic, toggleUnderline, setComment, executeComment, executeBookmark } from "./store/editor.slice";
-import { selectFontFamily, selectFontSize, selectHeadingLevel, selectIsBold, selectIsHeading, selectIsItalic, selectIsUnderline } from "./store/editor.selector";
+import { toggleBold, setHeadingLevel, redo, setFontFamily, setFontSize, increaseFontSize, decreaseFontSize, toggleItalic, toggleUnderline, setComment, executeComment, executeBookmark, setHighlightColor, setTextColor } from "./store/editor.slice";
+import { selectBookmarksCategories, selectFontFamily, selectFontSize, selectHeadingLevel, selectHighlightColor, selectIsBold, selectIsHeading, selectIsItalic, selectIsUnderline, selectTextColor } from "./store/editor.selector";
 import Toolbar from "./components/toolbar";
 
 interface EHeaderProps {
     editor: Editor | null;
     setActiveEditor: (editor: Editor) => void;
     onClickAddComment: () => void;
-    onClickAddBookmark: () => void;
+    onClickAddBookmark: (category?: string) => void;
 }
 
 export const EHeader = ({
@@ -31,8 +31,6 @@ export const EHeader = ({
     const textColorInputRef = useRef<HTMLInputElement>(null);
     const highlightColorInputRef = useRef<HTMLInputElement>(null);
     const undoInputRef = useRef<HTMLInputElement>(null);
-    const [textColor, setTextColor] = useState<string>('inherit');
-    const [highlightColor, setHighlightColor] = useState<string>('inherit');
     const [editorState, setEditorState] = useState<{
         [editorId: string]: { lastFontSize: string | null; isHeading: boolean }
     }>({
@@ -252,6 +250,8 @@ export const EHeader = ({
     const currentEditorState = editorState[currentEditorKey];
     const currentHistory = editor === textEditor ? textHistory : apparatusHistory;
 
+/*     const categories = useSelector(selectBookmarksCategories);
+ */
     return (
         <Toolbar
             isBold={useSelector(selectIsBold)}
@@ -279,13 +279,16 @@ export const EHeader = ({
                 //dispatch(executeComment())
                 onClickAddComment()
             }}
-            onClickAddBookmark={() => onClickAddBookmark()}
+            onClickAddBookmark={(category?: string) => onClickAddBookmark(category)}
+            bookmarksCategories={useSelector(selectBookmarksCategories)}
             open={true}
             activeEditor={editor}
             textColorInputRef={textColorInputRef}
             highlightColorInputRef={highlightColorInputRef}
-            setTextColor={setTextColor}
-            setHighlightColor={setHighlightColor}
+            textColor={useSelector(selectTextColor)}
+            setTextColor={(value) => dispatch(setTextColor(value))}
+            highlightColor={useSelector(selectHighlightColor)}
+            setHighlightColor={(value) => dispatch(setHighlightColor(value))}
             lastFontSize={currentEditorState.lastFontSize}
             setLastFontSize={(size) => handleIsHeadingChange(false, size)}
             setIsHeading={(heading) => handleIsHeadingChange(heading)}

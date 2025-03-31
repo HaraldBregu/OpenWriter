@@ -4,10 +4,12 @@ import Bookmarks from "@/components/app-bookmarks";
 import { useEffect, useState } from "react";
 import TableOfContents from "@/components/app-table-of-contents";
 import Comments from "../Comments";
-import { useSelector } from "react-redux";
-import { selectBookmarks } from "./store/editor.selector";
+import { useDispatch, useSelector } from "react-redux";
+import { selectBookmarks, selectBookmarksCategories } from "./store/editor.selector";
+import { addBookmarkCategory, deleteBookmark, deleteBookmarkCategory } from "./store/editor.slice";
 
 export function ESidebar({ ...props }) {
+    const dispatch = useDispatch();
 
     const [tab, setTab] = useState<AppTab | null>(null);
 
@@ -21,12 +23,13 @@ export function ESidebar({ ...props }) {
         setTab(tab);
     }
 
-
     const bookmarks = useSelector(selectBookmarks);
+    const categories = useSelector(selectBookmarksCategories);
+
     useEffect(() => {
         console.log("bookmarks:", bookmarks)
-    }, [bookmarks])
-
+        console.log("categories:", categories)
+    }, [bookmarks, categories])
 
     return (
         <Sidebar collapsible="offcanvas" {...props}>
@@ -34,7 +37,7 @@ export function ESidebar({ ...props }) {
                 <AppTabsList
                     tabs={tabs}
                     selectedTab={tab}
-                    selectedIndex={2}
+                    selectedIndex={0}
                     onTabChange={(tab) => handleTabChange(tab)}
                 />
             </SidebarHeader>
@@ -43,16 +46,23 @@ export function ESidebar({ ...props }) {
                 {tab?.value === "bookmarks" &&
                     <Bookmarks
                         title="Bookmarks"
-                        items={bookmarks.map(bookmark => ({
-                            title: bookmark.title,
-                            subitems: [{
-                                id: bookmark.id,
-                                title: bookmark.title,
-                                content: bookmark.content,
-                                createdAt: bookmark.createdAt,
-                                author: bookmark.author
-                            }]
-                        }))}
+                        categories={categories}
+                        onDeleteCategory={(index: number) => {
+                            dispatch(deleteBookmarkCategory(index))
+                        }}
+                        onClickBookmark={(id: string) => {
+                            console.log("id:", id)
+                        }}
+                        onAddCategory={() => {
+                            dispatch(addBookmarkCategory())
+                        }}
+                        onDeleteBookmark={(id: string) => {
+                            dispatch(deleteBookmark(id))
+                        }}
+                        onEditBookmark={(id: string) => {
+                            console.log("id:", id)
+                        }}
+                        items={bookmarks}
                     />}
                 {tab?.value === "tableOfContents" && <TableOfContents />}
             </SidebarContent>

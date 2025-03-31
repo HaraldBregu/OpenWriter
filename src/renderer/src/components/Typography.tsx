@@ -2,11 +2,18 @@ import { cn } from "@/lib/utils";
 import { ClassValue } from "clsx";
 
 type TypographyProps = {
-    component: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
     children: React.ReactNode;
-    className?: ClassValue[];
-};
-const Typogaphy = ({ component, children, className }: TypographyProps) => {
+    className?: ClassValue | ClassValue[];
+} & (
+        {
+            component: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+        } |
+        {
+            component: 'label';
+            htmlFor?: string;
+        }
+    );
+const Typogaphy = ({ component, children, className, ...props }: TypographyProps) => {
     const componentStyle = {
         h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
         h2: 'scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0',
@@ -16,12 +23,13 @@ const Typogaphy = ({ component, children, className }: TypographyProps) => {
         h6: 'leading-7 [&:not(:first-child)]:mt-6 font-bold',
         p: 'leading-7 [&:not(:first-child)]:mt-6',
         span: 'leading-7 [&:not(:first-child)]:mt-6',
+        label: 'leading-7 [&:not(:first-child)]:mt-6',
         div: 'leading-7 [&:not(:first-child)]:mt-6',
     }
     const TagComponent = component;
 
     return (
-        <TagComponent className={cn(componentStyle[component], className)}>{children}</TagComponent>
+        <TagComponent className={cn(componentStyle[component], className)} {...props}>{children}</TagComponent>
     );
 }
 export default Typogaphy;

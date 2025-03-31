@@ -24,12 +24,11 @@ export const ELayout = () => {
         onUpdate: () => setActiveEditor(apparatusEditor)
     });
 
-
     useEffect(() => {
         console.log(JSON.stringify(activeEditor?.getJSON()))
     }, [textEditor])
 
-    const childRef = useRef<any>();
+    const contentChildRef = useRef<any>();
 
     return (
         <SidebarProvider>
@@ -41,15 +40,15 @@ export const ELayout = () => {
                             editor={activeEditor}
                             setActiveEditor={setActiveEditor}
                             onClickAddComment={() => {
-                                childRef.current?.addComment()
+                                contentChildRef.current?.addComment()
                             }}
-                            onClickAddBookmark={() => {
-                                childRef.current?.addBookmark()
+                            onClickAddBookmark={(category?: string) => {
+                                contentChildRef.current?.addBookmark(category)
                             }}
                         />
                     </EditorHeader>
                     <EditorContent>
-                        <EContent ref={childRef} />
+                        <EContent ref={contentChildRef} />
                     </EditorContent>
                     <EditorFooter>
                         <EFooter />

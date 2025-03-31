@@ -1,12 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Bookmark {
-    id: string;
-    title: string;
-    content: string;
-    createdAt: string;
-    author: string;
-}
+import colors from "tailwindColors.json"
 
 interface EditorState {
     data: string[];
@@ -24,6 +17,7 @@ interface EditorState {
     comment: boolean;
     bookmark: boolean;
     bookmarks: Bookmark[];
+    bookmarkCategories: string[];
 }
 
 const initialState: EditorState = {
@@ -37,11 +31,12 @@ const initialState: EditorState = {
     redo: false,
     fontFamily: "Default",
     fontSize: 12,
-    textColor: "inherit",
-    highlightColor: "inherit",
+    textColor: colors.primary[20],
+    highlightColor: colors.primary[20],
     comment: false,
     bookmark: false,
     bookmarks: [],
+    bookmarkCategories: [],
 };
 
 const editorSlice = createSlice({
@@ -81,7 +76,7 @@ const editorSlice = createSlice({
             state.isHeading = action.payload > 0;
         },
         redo(state, action: PayloadAction<boolean>) {
-          state.redo = action.payload;
+            state.redo = action.payload;
         },
         setFontFamily(state, action: PayloadAction<string>) {
             state.fontFamily = action.payload;
@@ -105,10 +100,10 @@ const editorSlice = createSlice({
         setHighlightColor(state, action: PayloadAction<string>) {
             state.highlightColor = action.payload;
         },
-        setComment(state, action: PayloadAction<boolean>) { 
+        setComment(state, action: PayloadAction<boolean>) {
             state.comment = action.payload;
         },
-        executeComment(state) { 
+        executeComment(state) {
             console.log("executeComment:", state)
         },
         setBookmark(state, action: PayloadAction<boolean>) {
@@ -117,11 +112,76 @@ const editorSlice = createSlice({
         executeBookmark(state) {
             console.log("executeBookmark:", state)
         },
-        addBookmark(state, action: PayloadAction<Bookmark>) {
-            console.log("saveBookmark:", action.payload)
-            state.bookmarks.push(action.payload)
-        },
+        addBookmark(state, action: PayloadAction<{ id: string, content: string, category?: string }>) {
+            console.log("addBookmark:", state)
 
+            const bookmarkPattern = /^Bookmark (\d+)$/;
+            const matchingBookmarks = state.bookmarks.filter(bookmark =>
+                bookmarkPattern.test(bookmark.title)
+            );
+
+            const sortedBookmarks = matchingBookmarks.sort((a, b) => {
+                const aMatch = a.title.match(bookmarkPattern);
+                const bMatch = b.title.match(bookmarkPattern);
+                const aNum = aMatch ? parseInt(aMatch[1]) : 0;
+                const bNum = bMatch ? parseInt(bMatch[1]) : 0;
+                return aNum - bNum;
+            });
+
+            var lastSortedNumber = 1;
+            if (sortedBookmarks && sortedBookmarks.length > 0) {
+                const lastBookmark = sortedBookmarks[sortedBookmarks.length - 1];
+                const number = parseInt(lastBookmark.title.match(/\d+/)?.[0] || '0');
+                lastSortedNumber = number + 1;
+            }
+
+            const newBookmark: Bookmark = {
+                id: action.payload.id,
+                content: action.payload.content,
+                title: `Bookmark ${lastSortedNumber}`,
+                description: "New Bookmark",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                author: "Anonymous Author",
+            }
+
+            if (action.payload.category)
+                newBookmark.category = action.payload.category
+
+            state.bookmarks.push(newBookmark)
+        },
+        deleteBookmark(state, action: PayloadAction<string>) {
+            state.bookmarks = state.bookmarks.filter(bookmark => bookmark.id !== action.payload)
+        },
+        addBookmarkCategory(state) {
+            console.log("addBookmarkCategory:", state)
+            const bookmarkCategoryPattern = /^Category (\d+)$/;
+            const matchingBookmarkCategories = state.bookmarkCategories.filter(categoryBookmarks =>
+                bookmarkCategoryPattern.test(categoryBookmarks)
+            );
+
+            const sortedBookmarkCategories = matchingBookmarkCategories.sort((a, b) => {
+                const aMatch = a.match(bookmarkCategoryPattern);
+                const bMatch = b.match(bookmarkCategoryPattern);
+                const aNum = aMatch ? parseInt(aMatch[1]) : 0;
+                const bNum = bMatch ? parseInt(bMatch[1]) : 0;
+                return aNum - bNum;
+            });
+
+            var lastSortedNumber = 1;
+            if (sortedBookmarkCategories && sortedBookmarkCategories.length > 0) {
+                const lastBookmarkCategory = sortedBookmarkCategories[sortedBookmarkCategories.length - 1];
+                const number = parseInt(lastBookmarkCategory.match(/\d+/)?.[0] || '0');
+                lastSortedNumber = number + 1;
+            }
+
+            state.bookmarkCategories.push(`Category ${lastSortedNumber}`)
+        },
+        deleteBookmarkCategory(state, action: PayloadAction<number>) {
+            const categoryName = state.bookmarkCategories[action.payload];
+            state.bookmarks = state.bookmarks.filter(bookmark => bookmark.category !== categoryName);
+            state.bookmarkCategories.splice(action.payload, 1)
+        },
     },
 });
 
@@ -148,6 +208,9 @@ export const {
     setBookmark,
     executeBookmark,
     addBookmark,
+    deleteBookmark,
+    addBookmarkCategory,
+    deleteBookmarkCategory,
 } = editorSlice.actions;
 
 export default editorSlice.reducer;

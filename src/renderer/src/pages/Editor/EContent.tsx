@@ -10,31 +10,36 @@ import { setSidebarOpen } from "../store/main.slice";
 import { useHistoryState } from "./hooks";
 import { defaultEditorConfig } from "./utils/editorConfigs";
 import { v4 as uuidv4 } from 'uuid';
-import { selectBookmark, selectComment, selectFontFamily, selectFontSize, selectHeadingLevel, selectIsBold, selectIsHeading, selectIsItalic, selectIsUnderline } from "./store/editor.selector";
+import { selectBookmark, selectComment, selectFontFamily, selectFontSize, selectHeadingLevel, selectHighlightColor, selectIsBold, selectIsHeading, selectIsItalic, selectIsUnderline, selectTextColor } from "./store/editor.selector";
 import { addBookmark, setBold, setHeadingLevel, setItalic, setUnderline } from "./store/editor.slice";
 import BubbleToolbar from "./components/bubble-toolbar";
-
-interface EContentProps { }
+import { PageSetupDialog } from "../PageSetupDialog";
+interface EContentProps {
+}
 
 export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknown>) => {
     useImperativeHandle(ref, () => {
         return {
-            addBookmark: () => {
-                console.log("addBookmark")
+            addBookmark: (category?: string) => {
                 if (!activeEditor) return;
                 const { from, to } = activeEditor.state.selection;
                 const selectedContent = activeEditor.state.doc.textBetween(from, to, ' ');
-                console.log("selectedContent:", selectedContent)
+
+                const id = uuidv4();
+
                 dispatch(addBookmark({
-                    id: uuidv4(),
+                    id: id,
                     content: selectedContent,
-                    title: "New Bookmark",
-                    createdAt: new Date().toISOString(),
-                    author: "Anonymous"
+                    category: category
                 }));
+
+                activeEditor
+                    .chain()
+                    .focus()
+                    .setBookmarkText(id)
+                    .run()
             },
             addComment: () => {
-                console.log("addComment")
                 if (!activeEditor) return;
                 const { from, to } = activeEditor.state.selection;
                 const selectedContent = activeEditor.state.doc.textBetween(from, to, ' ');
@@ -78,13 +83,13 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
         }
     })
 
-/*     const textColorInputRef = useRef<HTMLInputElement>(null);
-    const highlightColorInputRef = useRef<HTMLInputElement>(null);
-    const undoInputRef = useRef<HTMLInputElement>(null);
- */
+    /*     const textColorInputRef = useRef<HTMLInputElement>(null);
+        const highlightColorInputRef = useRef<HTMLInputElement>(null);
+        const undoInputRef = useRef<HTMLInputElement>(null);
+     */
     const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
-    const [textColor, setTextColor] = useState<string>('inherit');
-    const [highlightColor, setHighlightColor] = useState<string>('inherit');
+    const [isPageSetupOpen, setIsPageSetupOpen] = useState(false)
+
     const [editorState, setEditorState] = useState<{
         [editorId: string]: { lastFontSize: string | null; isHeading: boolean }
     }>({
@@ -141,6 +146,7 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
             comments: categoriesRef.current || []
         };
         console.log("🚀 ~ updateHandler ~ editorContent:", editorContent)
+        console.log("🚀 ~ updateHandler ~ editorContent:", JSON.stringify(textEditor.getJSON()))
         console.log(JSON.stringify(textEditor.getJSON()))
         console.log("🚀 ~ updateHandler ~ textEditor", textEditor.getHTML())
 
@@ -281,8 +287,13 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
             handleAddComment();
         });
 
+        const removeListener = window.electron.ipcRenderer.on('show-page-setup', () => {
+            setIsPageSetupOpen(true)
+        })
+
         return () => {
             removeInsertCommentListener();
+            setIsPageSetupOpen(false)
         };
     }, [activeEditor, categories, handleAddComment]);
 
@@ -391,7 +402,6 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
         };
     }, [textEditor, isHeading, headingLevel]);
 
-
     const fontFamily = useSelector(selectFontFamily);
     useEffect(() => {
         if (!textEditor) return;
@@ -408,6 +418,26 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
         if (!textEditor) return;
         textEditor.chain().focus().setMark("textStyle", { fontSize: `${fontSize}pt` }).run();
     }, [textEditor, fontSize]);
+
+    const textColor = useSelector(selectTextColor);
+    useEffect(() => {
+        if (!textEditor) return;
+        textEditor.chain().focus().setColor(textColor).run();
+    }, [textEditor, textColor]);
+
+    const highlightColor = useSelector(selectHighlightColor);
+    useEffect(() => {
+        if (!textEditor) return;
+        const { from, to } = textEditor.state.selection;
+        if (from !== to) {
+            if (highlightColor !== "none") {
+                textEditor.chain().focus().setHighlight({ color: highlightColor }).run();
+                textEditor.chain().focus().setTextSelection(to).insertContent(" ").unsetMark("highlight").run();
+            } else {
+                textEditor.chain().focus().unsetHighlight().run();
+            }
+        }
+    }, [textEditor, highlightColor]);
 
 
     /*     const redo = useSelector(selectRedo);
@@ -469,12 +499,12 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
     useEffect(() => {
         if (!activeEditor) return;
         if (bookmark) {
-            console.log("bookmark:", bookmark)
-            const { from, to } = activeEditor.state.selection;
-            const selectedContent = activeEditor.state.doc.textBetween(from, to, ' ');
-            console.log("selectedContent:", selectedContent)
-            const id = uuidv4();
-            /* 
+            /*   console.log("bookmark:", bookmark)
+              const { from, to } = activeEditor.state.selection;
+              const selectedContent = activeEditor.state.doc.textBetween(from, to, ' ');
+              console.log("selectedContent:", selectedContent)
+              const id = uuidv4(); */
+            /*
             const didSave = activeEditor.chain()
                 .focus()
                 .setMark('apparatusText', { id })
@@ -482,11 +512,11 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
                 */
 
 
-            if (activeEditor.chain()
-                .focus()
-                .setMark('apparatusText', { id })
-                .run()) {
-            }
+            /*   if (activeEditor.chain()
+                  .focus()
+                  .setMark('apparatusText', { id })
+                  .run()) {
+              } */
 
             // Save Mark id "c9606587-b9a9-46bb-ba2d-b4a599de806d"
             // Save the selectedContent
@@ -540,12 +570,12 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
     return (
         <ResizablePanelGroup direction="horizontal">
             <ResizablePanel>
-                {activeEditor && <BubbleToolbar
-                    editor={activeEditor}
+                {textEditor && <BubbleToolbar
+                    editor={textEditor}
                     textColor={textColor}
-                    highlightColor={highlightColor}
-                    setTextColor={setTextColor}
-                    setHighlightColor={setHighlightColor}
+                // highlightColor={highlightColor}
+                // setTextColor={setTextColor}
+                // setHighlightColor={setHighlightColor}
                 />}
                 <EditorTextArea
                     title="Text"
@@ -556,6 +586,10 @@ export const EContent = forwardRef(({ }: EContentProps, ref: ForwardedRef<unknow
             <ResizableHandle withHandle />
             <ResizablePanel>
             </ResizablePanel>
+            <PageSetupDialog
+                open={isPageSetupOpen}
+                onClose={() => setIsPageSetupOpen(false)}
+            />
         </ResizablePanelGroup>
     )
 })

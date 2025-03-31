@@ -9,6 +9,7 @@ import { Color } from '@tiptap/extension-color';
 import { CustomTextStyle, CustomLetterSpacing, IndentExtension, Capitalization, ParagraphSpacing, LineSpacing, Ligature } from './customTextStyle';
 import { useEditor } from '@tiptap/react';
 import { IdentifiedText } from '@/components/tiptap/apparatusMark';
+import { BookmarkIdentifiedText } from '@/components/tiptap/bookmarkMark';
 
 const defaultEditorConfig: Parameters<typeof useEditor>[0] = {
     extensions: [
@@ -34,6 +35,7 @@ const defaultEditorConfig: Parameters<typeof useEditor>[0] = {
             types: ['textStyle'],
         }),
         IdentifiedText,
+        BookmarkIdentifiedText,
         CustomTextStyle,
         CustomLetterSpacing,
         Capitalization,

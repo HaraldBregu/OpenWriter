@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 export interface SvgIconProps {
     children: ReactNode;
@@ -20,11 +20,16 @@ export const calculateIconColor = ({
     variant = 'filled',
     disabled = false,
 }: Omit<SvgIconProps, 'children'>): string => {
-    let fillColor = color ?? "#001450";
+    let fillColor = "#001450"; // Colore di default
 
+    // Struttura if-else-if per dare la giusta priorità
     if (disabled) {
         // Gestione colori per icone in pulsanti disabilitati
         fillColor = "var(--color-grey-60, #A3A3A3)";
+    } else if (color) {
+        // Se è fornito un colore esplicito, usalo
+        console.log("Utilizzo colore esplicito:", color);
+        fillColor = color;
     } else if (inheritColor) {
         fillColor = "currentColor";
     } else if (intent && variant) {
@@ -69,7 +74,7 @@ export const normalizeSize = (size: string | number = "24px"): string | number =
     return size;
 };
 
-const SvgIcon: React.FC<SvgIconProps> = ({
+const SvgIcon = forwardRef<SVGSVGElement, SvgIconProps>(({
     children,
     color,
     inheritColor = false,
@@ -80,12 +85,13 @@ const SvgIcon: React.FC<SvgIconProps> = ({
     disabled = false,
     viewBox = "0 0 24 24",
     ...restProps
-}) => {
+}, ref) => {
     const fillColor = calculateIconColor({
         color, inheritColor, intent, variant, disabled
     });
 
     const _size = normalizeSize(size);
+    console.log("🚀 ~ fillColor:", fillColor)
 
     return (
         <svg
@@ -95,11 +101,15 @@ const SvgIcon: React.FC<SvgIconProps> = ({
             width={_size}
             height={_size}
             viewBox={viewBox}
+            ref={ref}
             {...restProps}
         >
             {children}
         </svg>
     );
-};
+});
+
+// Aggiungiamo displayName per migliorare il debugging
+SvgIcon.displayName = 'SvgIcon';
 
 export default SvgIcon;
