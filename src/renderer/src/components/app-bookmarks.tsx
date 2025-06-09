@@ -675,7 +675,6 @@ const BookmarkEditItem = forwardRef(({
                 e.preventDefault()
                 const cursorPosition = e.currentTarget.selectionStart
                 const description = form.getValues("description")
-                console.log("description", description)
                 const newValue = description.substring(0, cursorPosition) + "\n" + description.substring(cursorPosition)
                 form.setValue("description", newValue)
 

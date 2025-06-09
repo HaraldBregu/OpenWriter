@@ -192,4 +192,43 @@ const minorWords = new Set([
     "at", "by", "in", "of", "on", "to", "up", "with", "as",
 ]);
 
-export { sectionTypes, sectionDividerLabels, tabLeaderFormat, fontSizes, numberSeparator, numberFormat, levelFormat, fontFamilies, HighlightColors, textFormatColors, minorWords, MIN_FONT_SIZE, MAX_FONT_SIZE, DEFAULT_LINE_SPACING };
+const converterFromEditorToSetup = (type: string): string => {
+    switch (type) {
+        case "TEXT":
+            return "text";
+        case "CRITICAL":
+            return "critical";
+        case "PAGE_NOTES":
+            return "pageNotes";
+        case "SECTION_NOTES":
+            return "sectionNotes";
+        case "INNER_MARGIN":
+            return "innerMargin";
+        case "OUTER_MARGIN":
+            return "outerMargin";
+        default:
+            return "critical"
+
+    }
+}
+
+const converterFromSetupToEditor = (type: string): string => {
+    switch (type) {
+        case "text":
+            return "TEXT";
+        case "critical":
+            return "CRITICAL";
+        case "pageNotes":
+            return "PAGE_NOTES";
+        case "sectionNotes":
+            return "SECTION_NOTES";
+        case "innerMargin":
+            return "INNER_MARGIN";
+        case "outerMargin":
+            return "OUTER_MARGIN";
+        default:
+            return "critical"
+    }
+}
+
+export { converterFromEditorToSetup, converterFromSetupToEditor, sectionTypes, sectionDividerLabels, tabLeaderFormat, fontSizes, numberSeparator, numberFormat, levelFormat, fontFamilies, HighlightColors, textFormatColors, minorWords, MIN_FONT_SIZE, MAX_FONT_SIZE, DEFAULT_LINE_SPACING };

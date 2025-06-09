@@ -2,37 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-.material-symbols-outlined {
-  font-family: "Material Icons";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 18px !important;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: "liga";
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  vertical-align: middle;
-}
-
-.read-the-docs {
-  color: black;
-}
 
 /* Rimuove outline dai pulsanti MUI */
 .MuiButtonBase-root:focus,
@@ -63,7 +32,6 @@
 .ProseMirror {
   flex: 1;
   line-height: 1.5 !important;
-  /* padding: 10px; */
   padding: 5px;
   overflow-y: auto;
   height: inherit;
@@ -116,45 +84,6 @@
   background: #555;
 }
 
-/* .ProseMirror h1{
-  font-family: inherit;
-  font-size: 18pt;
-  color: #000;
-  font-weight: bold;
-}
-.ProseMirror h2{
-  font-family: inherit;
-  font-size: 16pt;
-  color: #000;
-  font-weight: bold;
-}
-.ProseMirror h3{
-  font-family: inherit;
-  font-size: 14pt;
-  color: #000;
-  font-weight: bold;
-}
-.ProseMirror h4{
-  font-family: inherit;
-  font-size: 12pt;
-  font-style: italic;
-  color: #000;
-  font-weight: bold;
-}
-.ProseMirror h5{
-    font-family: inherit;
-    font-size: 12pt;
-    font-style: italic;
-    color: #000;
-    font-weight: normal;
-}
-.ProseMirror h6{
-    font-family: inherit;
-    font-size: 10pt;
-    font-style: italic;
-    color: #000;
-    font-weight: normal;
-} */
 .ProseMirror h1,
 .ProseMirror h2,
 .ProseMirror h3,
@@ -331,3 +260,35 @@
   padding: 0;
   margin: 0;
 }
+
+.npc[data-symbol]::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: attr(data-symbol);
+}
+
+.startcase {
+  text-transform: lowercase;
+}
+
+.startcase::first-letter {
+  text-transform: uppercase;
+}
+
+/* .tiptap p,
+.tiptap li,
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6
+ {
+  margin-left: 10px;
+} */

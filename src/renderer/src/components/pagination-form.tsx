@@ -10,14 +10,6 @@ import { HeaderContentType, HeaderDisplayMode } from "@/utils/headerEnums";
 import { HeaderSettings } from "@/pages/editor/store/pagination/pagination.slice";
 
 /**
- * Interfaccia per le proprietà del componente PaginationSetup
- */
-interface PaginationSetupProps {
-    settings: HeaderSettings;
-    setSettings: (settings: HeaderSettings) => void;
-}
-
-/**
  * Componente memoizzato per la selezione del punto di inizio
  */
 const StartingPoint = memo(({
@@ -35,7 +27,7 @@ const StartingPoint = memo(({
         <TextField
             id="starting-point"
             type="number"
-            className={`w-[72px] h-[28px] ${!isStartMode ? 'opacity-50' : ''}`}
+            className={`w-full sm:w-[4.5em] h-[1.75em] ${!isStartMode ? 'opacity-50' : ''}`}
             value={startFromPage.toString()}
             onChange={(e) => {
                 if (isStartMode) {
@@ -80,12 +72,12 @@ const ShowOptions = memo(({
     }
 
     return (
-        <div className="flex flex-row gap-8">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
             <div className="flex-1">
                 <AppRadioGroup
                     items={[
-                        { label: t('headerFooter.show.none'), value: HeaderDisplayMode.NONE.toString(), className: "text-[13px] font-[600]" },
-                        { label: t('headerFooter.show.firstPage'), value: HeaderDisplayMode.FIRST_PAGE_ONLY.toString(), className: "text-[13px] font-[600]" },
+                        { label: t('headerFooter.show.none'), value: HeaderDisplayMode.NONE.toString(), className: "text-[0.8125em] font-[600]" },
+                        { label: t('headerFooter.show.firstPage'), value: HeaderDisplayMode.FIRST_PAGE_ONLY.toString(), className: "text-[0.8125em] font-[600]" },
                         {
                             label: <div className="flex flex-row gap-2 items-center">
                                 {t('headerFooter.show.fromPage')}
@@ -96,9 +88,9 @@ const ShowOptions = memo(({
                                 />
                             </div>,
                             value: HeaderDisplayMode.FROM_SPECIFIC_PAGE.toString(),
-                            className: "text-[13px] font-[600]"
+                            className: "text-[0.8125em] font-[600]"
                         },
-                        { label: t('headerFooter.show.allSections'), value: HeaderDisplayMode.ALL_SECTIONS.toString(), className: "text-[13px] font-[600]" },
+                        { label: t('headerFooter.show.allSections'), value: HeaderDisplayMode.ALL_SECTIONS.toString(), className: "text-[0.8125em] font-[600]" },
                     ]}
                     value={(settings.displayMode ?? HeaderDisplayMode.NONE).toString()}
                     onValueChange={(value) => {
@@ -119,7 +111,7 @@ const ShowOptions = memo(({
                         {
                             label: (
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[13px] font-[600]">{t('headerFooter.show.selectedSections')}</span>
+                                    <span className="text-[0.8125em] font-[600]">{t('headerFooter.show.selectedSections')}</span>
                                     <div className="flex flex-col gap-1 ml-2 mt-1">
                                         {[
                                             { label: t('headerFooter.show.toc'), value: 1 },
@@ -140,7 +132,7 @@ const ShowOptions = memo(({
                                 </div>
                             ),
                             value: HeaderDisplayMode.SELECTED_SECTIONS.toString(),
-                            className: "text-[13px] font-[600]"
+                            className: "text-[0.8125em] font-[600]"
                         },
                     ]}
                     value={(settings.displayMode ?? HeaderDisplayMode.NONE).toString()}
@@ -175,7 +167,7 @@ const PositionColumn = memo(({
 }) => {
     return (
         <div className="flex flex-col">
-            <Typography component="h6" className="text-[13px] font-[600] mb-2">{position.label}</Typography>
+            <Typography component="h6" className="text-[0.8125em] font-[600] mb-2">{position.label}</Typography>
             <div className="bg-grey-90 rounded-lg shadow-sm border border-secondary-85 p-1 h-full">
                 <div className="space-y-1">
                     {options.map((option) => {
@@ -184,7 +176,7 @@ const PositionColumn = memo(({
                         return (
                             <div
                                 key={option.value}
-                                className="flex items-center px-3 py-1.5 hover:bg-primary hover:text-white rounded-md cursor-pointer text-[14px] font-[400] group"
+                                className="flex items-center px-3 py-1.5 hover:bg-primary hover:text-white rounded-md cursor-pointer text-[0.875em] font-[400] group"
                                 onClick={() => onChange(option.value)}
                             >
                                 <div className="w-5 flex-shrink-0">
@@ -241,7 +233,7 @@ const PaginationSetup = ({ settings, setSettings }: PaginationSetupProps) => {
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1">
-                    <Typography component="h6" className="text-[18px] font-bold">
+                    <Typography component="h6" className="text-[1.125em] font-bold">
                         {t('headerFooter.show.label')}
                     </Typography>
                 </div>
@@ -249,7 +241,7 @@ const PaginationSetup = ({ settings, setSettings }: PaginationSetupProps) => {
             </div>
             <Divider orientation="horizontal" />
             <div className="flex flex-col gap-5">
-                <div className="grid grid-cols-3 gap-4 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
                     {positions.map((position) => (
                         <PositionColumn
                             key={position.key}

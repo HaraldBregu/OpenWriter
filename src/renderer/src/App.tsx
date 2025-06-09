@@ -8,7 +8,13 @@ import { useTranslation } from "react-i18next";
 import "./i18n";
 import { ELayout } from "./pages/editor/ELayout";
 import AppTabs from "./AppTabs";
-import About from "./pages/about";
+import About from "./pages/About";
+import FileViewer from "./pages/FileViewer";
+
+const toolbar: Route = "/browser-tab-bar";
+const root: Route = "/";
+const fileViewer: Route = "/file-viewer";
+const about: Route = "/about";
 
 const ProtectedRoutes = () => {
   return <Outlet />
@@ -17,14 +23,33 @@ const ProtectedRoutes = () => {
 const router = createHashRouter([
   {
     element: <AppTabs />,
-    path: "/browser-tab-bar",
+    path: toolbar,
   },
   {
     element: <ProtectedRoutes />,
     children: [
       {
         element: <ELayout />,
-        path: "/",
+        path: root,
+      },
+    ]
+  },
+  {
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        element: <FileViewer />,
+        path: fileViewer,
+      },
+    ]
+  },
+  // TODO: Add a route for the about page
+  {
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        element: <About isOpen={true} onClose={() => {}} />,
+        path: about,
       },
     ]
   },
@@ -48,7 +73,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = window.electron.ipcRenderer.on('language-changed', (_: unknown, lang: string) => {
-      console.log("Language changed to: ", lang);
       i18n.changeLanguage(lang);
       localStorage.setItem("appLanguage", lang);
     });

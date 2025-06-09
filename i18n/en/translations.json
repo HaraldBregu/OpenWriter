@@ -43,11 +43,11 @@
     "alignCenter": "Align Center",
     "alignRight": "Align Right",
     "justify": "Justify",
-    "nonPrintingCharacters": "Non-printing Characters",
+    "nonPrintingCharacters": "Nonprinting Characters",
     "bulletList": "Bullet List",
     "numberedList": "Numbered List",
-    "increaseIndent": "Increase Indent",
-    "decreaseIndent": "Decrease Indent",
+    "increaseIndent": "Increase",
+    "decreaseIndent": "Decrease",
     "fontSize": "Font Size",
     "fontFamily": "Font Family",
     "fontColor": "Font Color",
@@ -65,15 +65,19 @@
     "sidebar": {
       "toggle": "Toggle Sidebar"
     },
-    "blockquote": "Blockquote",
+    "note": "Note",
     "siglum": "Siglum",
     "citation": "Citation",
-    "addComment": "Add Comment",
-    "addBookmark": "Add Bookmark",
-    "addLink": "Add Link",
+    "readingSeperator": "Reading Separator",
+    "readingType": "Reading Type",
+    "comment": "Comment",
+    "bookmark": "Bookmark",
+    "link": "Link",
+    "symbol": "Symbol",
+    "object": "Object",
     "spacing": "Spacing",
     "list": "List",
-    "search": "Search",
+    "search": "Find",
     "printPreview": "Print Preview",
     "listNumber": "Numbered List",
     "listUppercase": "Uppercase Letter List",
@@ -82,7 +86,9 @@
     "listBulletEmpty": "Empty Bullet List",
     "listBulletSquare": "Square Bullet List",
     "superscript": "Superscript",
-    "subscript": "Subscript"
+    "subscript": "Subscript",
+    "contextMenu": "Customize Toolbar",
+    "modalTitle": "Toggle items to add or remove from the toolbar"
   },
   "dividerSections": {
     "toc": "Table of Contents",
@@ -216,6 +222,9 @@
         "italic": "Italic",
         "underline": "Underline",
         "strikethrough": "Strikethrough",
+        "superscript": "Superscript",
+        "subscript": "Subscript",
+        "npc": "Nonprinting Characters",
         "characterSpacing": {
           "label": "Character Spacing",
           "normal": "None",
@@ -248,6 +257,7 @@
         "spacing": {
           "label": "Spacing",
           "single": "Single",
+          "1_15": "1.15",
           "oneAndHalf": "1.5",
           "double": "Double"
         }
@@ -348,7 +358,7 @@
       "headerFooter": "Header & Footer",
       "tableOfContents": "Table of Contents",
       "toolbar": "Toolbar",
-      "customizeToolbar": "Customize Toolbar",
+      "customizeToolbar": "Customize Toolbar...",
       "statusBar": "Status Bar",
       "customizeStatusBar": "Customize Status Bar",
       "printPreview": "Print Preview",
@@ -366,7 +376,6 @@
       },
       "synchronizeViews": "Synchronize Views",
       "synchronizeDocuments": "Synchronize Documents",
-      "nonprintingCharacters": "Nonprinting Characters",
       "expandCollapse": "Expand & Collapse",
       "thesaurus": "Thesaurus"
     },

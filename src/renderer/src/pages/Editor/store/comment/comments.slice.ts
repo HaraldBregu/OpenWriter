@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface CategoryStateParent {
+export interface CommentState {
     comments: AppComment[];
     commentCategories: CommentCategory[];
     selectedComment: AppComment | null;
 }
 
-const initialState: CategoryStateParent = {
+const initialState: CommentState = {
     comments: [],
     commentCategories: [],
     selectedComment: null,
 };
 
 const commentSlice = createSlice({
-    name: 'comments',
+    name: 'commentState',
     initialState,
     reducers: {
         addCommentCategory(state) {
@@ -161,7 +161,6 @@ const commentSlice = createSlice({
             //         return b;
             //     }, [])
 
-            // console.log(newCommentsFromIds)
 
             // state.comments = [
             //     ...newComments,

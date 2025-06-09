@@ -51,11 +51,11 @@ const FooterModal = ({ isOpen, setIsOpen }: FooterModalProps) => {
             isOpen={isOpen}
             onOpenChange={setIsOpen}
             title={t('headerFooter.footer')}
-            className="min-w-[600px]"
+            className="w-full max-w-full sm:max-w-[37.5em] md:min-w-[37.5em]"
             actions={[
                 <Button
                     key="cancel"
-                    className="w-24"
+                    className="w-full sm:w-[6em]"
                     size="mini"
                     intent="secondary"
                     variant="tonal"
@@ -65,7 +65,7 @@ const FooterModal = ({ isOpen, setIsOpen }: FooterModalProps) => {
                 </Button>,
                 <Button
                     key="save"
-                    className="w-24"
+                    className="w-full sm:w-[6em]"
                     size="mini"
                     intent="primary"
                     onClick={submitHandler}
@@ -74,10 +74,12 @@ const FooterModal = ({ isOpen, setIsOpen }: FooterModalProps) => {
                 </Button>
             ]}
         >
-            <PaginationSetup
-                settings={settings}
-                setSettings={handleSetSettings}
-            />
+            <div className="max-h-[70vh] overflow-y-auto">
+                <PaginationSetup
+                    settings={settings}
+                    setSettings={handleSetSettings}
+                />
+            </div>
         </Modal>
     );
 };

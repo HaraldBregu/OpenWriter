@@ -114,17 +114,15 @@ export const NonPrintableCharacters = Extension.create<NonPrintableCharacterOpti
                                     // Only process single-character invisible characters in text nodes
                                     if (character.char.length === 1) {
                                         let idx = node.text.indexOf(character.char)
-                                        while (idx !== -1) {
+                                        while (idx !== -1 && (pos + idx < doc.content.size)) {
                                             decorations.push(
-                                                Decoration.widget(
+                                                Decoration.inline(
                                                     pos + idx,
-                                                    () => {
-                                                        const span = document.createElement('span');
-                                                        span.className = this.options.className;
-                                                        span.textContent = character.symbol;
-                                                        return span;
-                                                    },
-                                                    { side: 1 }
+                                                    pos + idx + 1,
+                                                    {
+                                                        class: this.options.className,
+                                                        'data-symbol': character.symbol
+                                                    }
                                                 )
                                             )
                                             idx = node.text.indexOf(character.char, idx + 1)
@@ -133,13 +131,15 @@ export const NonPrintableCharacters = Extension.create<NonPrintableCharacterOpti
                                 })
                             } else {
                                 this.options.tagsCharacters.forEach(character => {
-                                    if ((
-                                        node.type.name === character.name &&
+                                    if (
                                         (
-                                            (character.level && node.attrs.level === character.level) ||
-                                            !character.level
-                                        )
-                                    ) || node.type.name === character.tag) {
+                                            node.type.name === character.name &&
+                                            (
+                                                (character.level && node.attrs.level === character.level) ||
+                                                !character.level
+                                            )
+                                        ) || node.type.name === character.tag
+                                    ) {
                                         decorations.push(
                                             Decoration.widget(
                                                 pos + node.nodeSize - 1,

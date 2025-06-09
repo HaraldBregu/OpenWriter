@@ -1,37 +1,3 @@
-interface Bookmark {
-    id: string;
-    title: string;
-    description?: string;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-    author: string;
-    categoryId?: string;
-    visible: boolean;
-}
-
-interface AppComment {
-    id: string;
-    description?: string;
-    content: string;
-    target: 'MAIN_TEXT' | 'APPARATUS_TEXT';
-    createdAt: string;
-    updatedAt: string;
-    author: string;
-    categoryId?: string;
-    visible: boolean;
-}
-
-interface BookmarkCategory {
-    id: string;
-    name: string;
-}
-
-interface CommentCategory {
-    id: string;
-    name: string;
-}
-
 interface HistoryAction {
     id: string;
     type: string;
@@ -40,10 +6,12 @@ interface HistoryAction {
     description: string;
 }
 
-interface BulletStyle {
-    type: 'ORDER' | 'BULLET' | '';
+type BulletStyleType = 'ORDER' | 'BULLET' | '';
+
+type BulletStyle = {
+    type: BulletStyleType;
     style: 'decimal' | 'upper-alpha' | 'lower-alpha' | 'disc' | 'circle' | 'square' | '';
-    previousType: 'ORDER' | 'BULLET' | '';
+    previousType: BulletStyleType;
 }
 
 interface Spacing {
@@ -53,14 +21,14 @@ interface Spacing {
 }
 
 interface EmphasisState {
+    headingLevel: number;
+    fontFamily: string;
+    fontSize: string;
     bold: boolean;
     italic: boolean;
     underline: boolean;
     strikethrough: boolean;
     alignment: string;
-    fontFamily: string;
-    fontSize: number | null;
-    headingLevel: number;
     blockquote: boolean;
     isCodeBlock: boolean;
     bulletStyle: BulletStyle;
@@ -80,7 +48,7 @@ interface HistoryState {
     currentPosition: number;
 }
 
-interface BubbleToolbarItemOption {
+type BubbleToolbarItemOption = {
     label: string;
     value?: string | null;
 }
@@ -91,13 +59,6 @@ interface BubbleToolbarItem {
     disabled?: boolean;
     options?: BubbleToolbarItemOption[];
     onClick?: (data?: any) => void;
-}
-
-type TabInfo = {
-    id: number
-    name: string
-    mode?: string | null
-    changed: boolean
 }
 
 interface UserInfo {
@@ -139,19 +100,29 @@ type SetupDialogStateType = {
     }
 }
 
+interface FontStyle {
+    color: string,
+    fontSize: string,
+    fontStyle: string,
+    fontWeight: string,
+    type: string
+}
+
 interface PageSetupInterface {
     pageSetup: SetupOptionType,
-    sectionOrders: SetupDialogStateKeys[],
-    layoutTemplate: setupDialogState
+    sort: SetupDialogStateKeys[],
+    layoutTemplate: setupDialogState,
+    styles?: FontStyle,
+    templateName?: string
+}
+
+interface PaginationSetupProps {
+    settings: HeaderSettings;
+    setSettings: (settings: HeaderSettings) => void;
 }
 
 interface Template {
     template: PageSetupInterface
 }
 
-interface Apparatus {
-    id: string;
-    title: string;
-    type: 'CRITICAL' | 'PAGE_NOTES' | 'SECTION_NOTES' | 'INNER_MARGIN' | 'OUTER_MARGIN';
-    visible: boolean;
-}
+type CasingType = 'none-case' | 'all-caps' | 'small-caps' | 'title-case' | 'start-case'

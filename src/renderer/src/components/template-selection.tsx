@@ -25,14 +25,15 @@ interface TemplateCategoryProps {
 
 interface TemplateSelectionProps {
   children: ReactNode;
-  defaultValue: string;
+  defaultValue?: string;
   onChange: (value: string) => void;
-  disabled?: boolean
+  disabled?: boolean;
+  value?:string;
 }
 
 export const TEMPLATE_ICONS = {
   blank: <BlankTemplate width="100%" height="100%" />,
-  carocci: <CarocciTemplate width="100%" height="100%" />
+  other: <CarocciTemplate width="100%" height="100%" />
 }
 
 type RadioGroupContextProps = TemplateSelectionProps & {};
@@ -56,16 +57,16 @@ export const RadioGroupProvider = ({ children, value }: RadioGroupProviderProps)
   return <RadioGroupContext.Provider value={value}>{children}</RadioGroupContext.Provider>;
 };
 
-function TemplateItem({ id, value, icon = "carocci", name, as }: TemplateItemProps) {
-  const { disabled } = useRadioGroupContext()
+function TemplateItem({ id, value, icon = "other", name, as }: TemplateItemProps) {
+  const { disabled } = useRadioGroupContext();
   const isInput = as?.type === "input";
 
   const radioItemClasses = cn(
-    "group flex flex-col items-center p-[2px] ",
+    "group flex flex-col items-center p-[2px]",
     {
       "cursor-pointer": !disabled,
     }
-  )
+  );
 
   const iconOverlayClasses = cn(
     "group-data-[state=checked]:bg-primary-80 rounded p-1 pb-0",
@@ -73,7 +74,7 @@ function TemplateItem({ id, value, icon = "carocci", name, as }: TemplateItemPro
       "pb-0": !isInput,
       "pb-[1px]": isInput
     }
-  )
+  );
 
   return (
     <RadioGroup.Item
@@ -87,12 +88,16 @@ function TemplateItem({ id, value, icon = "carocci", name, as }: TemplateItemPro
           <input
             type="text"
             tabIndex={0}
-            className="border rounded focus:outline focus:outline-2 focus:outline-blue-600 mt-2 text-[0.9375rem] font-normal w-[131px] -mx-[2px] px-1"
+            className="border rounded focus:outline focus:outline-2 focus:outline-blue-600 mt-2 text-[0.9375rem] font-normal w-[131px] -mx-4"
             value={as.value}
             onChange={as.onChange}
+            title={name}
           />
         ) : (
-          <div className="mt-2 text-[0.9375rem] font-normal group-data-[state=checked]:font-bold">
+          <div
+            className="mt-2 w-[131px] -mx-[2px] truncate text-[0.9375rem] font-normal group-data-[state=checked]:font-bold px-1"
+            title={name}
+          >
             {name}
           </div>
         )}
@@ -115,7 +120,7 @@ function TemplateCategory({ title, action, children }: TemplateCategoryProps) {
   </section>;
 }
 
-export function TemplateSelection({ defaultValue, children, onChange, disabled = false }: TemplateSelectionProps) {
+export function TemplateSelection({ defaultValue, children, onChange, disabled = false, value ="" }: TemplateSelectionProps) {
   const contextValue: TemplateSelectionProps = {
     disabled,
     defaultValue,
@@ -131,6 +136,7 @@ export function TemplateSelection({ defaultValue, children, onChange, disabled =
         className="flex flex-col ml-4 mr-4"
         aria-label="Choose a template"
         onValueChange={onChange}
+        value={value}
         disabled={disabled}
       >
         {Array.isArray(children) ? children.map((child, index) =>

@@ -4,9 +4,9 @@ import { ipcRenderer } from 'electron'
 import { IApplicationAPI, IDocumentAPI, IMenuAPI, ISystemAPI } from './index.d'
 
 const tabsAPI = {
-    new: (): Promise<number> => ipcRenderer.invoke('tabs:new'),
+    new: (fileType: FileType): Promise<number> => ipcRenderer.invoke('tabs:new', fileType),
     close: (id: number): Promise<void> => ipcRenderer.invoke('tabs:close', id),
-    select: (id: number): Promise<void> => ipcRenderer.invoke('tabs:select', id),
+    select: (id: number, fileType: TabType): Promise<void> => ipcRenderer.invoke('tabs:select', id, fileType),
     reorder: (tabIds: number[]): Promise<void> => ipcRenderer.invoke('tabs:reorder', tabIds),
     getAllContentViewsIds: (): Promise<number[]> => ipcRenderer.invoke('tabs:getAllContentViewsIds'),
     getSelectedTabId: (): Promise<number> => ipcRenderer.invoke('tabs:getSelectedTabId'),
@@ -26,13 +26,22 @@ const systemAPI: ISystemAPI = {
 }
 
 const applicationAPI: IApplicationAPI = {
-    toolbarIsVisible: (): Promise<boolean> => ipcRenderer.invoke('application:toolbarIsVisible')
+    toolbarIsVisible: (): Promise<boolean> => ipcRenderer.invoke('application:toolbarIsVisible'),
+    toolbarAdditionalItems: (): Promise<string[]> => ipcRenderer.invoke('application:toolbarAdditionalItems'),
 }
 
 const documentAPI: IDocumentAPI = {
-    getTemplatesFilenames: (): Promise<string[]> => ipcRenderer.invoke('document:getTemplatesFilenames'),
+    openDocument: (): Promise<void> => ipcRenderer.invoke('document:openDocument'),
+    getTemplates: (): Promise<string[]> => ipcRenderer.invoke('document:getTemplates'),
+    importTemplate: (): Promise<void> => ipcRenderer.invoke('document:importTemplate'),
+    createTemplate: (template: unknown, name: string): Promise<void> => ipcRenderer.invoke('document:createTemplate', template, name),
     getApparatuses: (): Promise<unknown[]> => ipcRenderer.invoke('document:getApparatuses'),
-    setApparatuses: (apparatuses: unknown[]): Promise<void> => ipcRenderer.invoke('document:setApparatuses', apparatuses)
+    setApparatuses: (apparatuses: unknown[]): Promise<void> => ipcRenderer.invoke('document:setApparatuses', apparatuses),
+    setLayoutTemplate: (layoutTemplate: unknown): Promise<void> => ipcRenderer.invoke('document:setLayoutTemplate', layoutTemplate),
+    setPageSetup: (pageSetup: unknown): Promise<void> => ipcRenderer.invoke('document:setPageSetup', pageSetup),
+    setSort: (sort: unknown[]): Promise<void> => ipcRenderer.invoke('document:setSort', sort),
+    setStyles: (style: unknown[]): Promise<void> => ipcRenderer.invoke('document:setStyles', style),
+    setParatextual: (paratextual: unknown): Promise<void> => ipcRenderer.invoke('document:setParatextual', paratextual)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

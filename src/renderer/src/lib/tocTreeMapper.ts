@@ -1,4 +1,4 @@
-import { TocSettings } from '@/pages/editor/store/editor.slice';
+import { TocSettings } from '@/pages/editor/store/editor/editor.slice';
 import { levelFormat } from '@/utils/optionsEnums';
 export interface TreeItem {
     id: string;
@@ -87,17 +87,15 @@ const createTocTreeStructure = (
             return [];
         }
 
-        // Filtriamo solo i titoli con livello <= maxLevel
         const headings = jsonData.content.filter(item =>
             item.type === 'heading' &&
             item.content &&
             item.content.length > 0 &&
-            item.attrs.level <= maxLevel // Limitiamo il livello massimo
+            item.attrs.level <= maxLevel
         );
 
         const extractText = (contentArray: any[]): string => {
             if (!contentArray || !Array.isArray(contentArray)) return "Nameless";
-
             return contentArray.map(item => item.text || "").join(" ").trim() || "Nameless";
         };
 
@@ -105,12 +103,10 @@ const createTocTreeStructure = (
             return jsonData.content.indexOf(a) - jsonData.content.indexOf(b);
         });
 
-        const lastHeadingByLevel: Record<number, TreeItem> = {};
         const result: TreeItem[] = [];
-        // Track counters for each level
+        const headingStack: (TreeItem | null)[] = Array(maxLevel + 1).fill(null);
         const levelCounters: Record<string, number> = {};
 
-        // Get the separator character based on settings
         const getSeparator = (): string => {
             switch (tocSettings?.numberSeparator) {
                 case '1': return ')';
@@ -123,13 +119,14 @@ const createTocTreeStructure = (
         const separator = getSeparator();
 
         const generateStandardId = (level: number, parentId: string | null = null): string => {
-            // Incrementa i contatori per il livello corrente usando un sistema standard
-            if (!levelCounters[`standard_${level}`]) levelCounters[`standard_${level}`] = 1;
-            else levelCounters[`standard_${level}`]++;
+            const parentKey = parentId || 'root';
+            const counterKey = `standard_${level}_${parentKey}`;
 
-            const num = levelCounters[`standard_${level}`];
+            if (!levelCounters[counterKey]) levelCounters[counterKey] = 1;
+            else levelCounters[counterKey]++;
 
-            // ID numerico standard sempre con punto come separatore
+            const num = levelCounters[counterKey];
+
             if (level === 1) {
                 return String(num);
             } else if (parentId) {
@@ -139,21 +136,21 @@ const createTocTreeStructure = (
         };
 
         const generateHeadingId = (level: number, parentId: string | null = null): string | undefined => {
-            // Se showHeadingNumbers è false, non generare headingId
             if (!tocSettings?.showHeadingNumbers) {
                 return undefined;
             }
 
-            // Incrementa i contatori per il livello corrente (custom)
-            if (!levelCounters[`custom_${level}`]) levelCounters[`custom_${level}`] = 1;
-            else levelCounters[`custom_${level}`]++;
+            const parentKey = parentId || 'root';
+            const counterKey = `custom_${level}_${parentKey}`;
 
-            const num = levelCounters[`custom_${level}`];
+            if (!levelCounters[counterKey]) levelCounters[counterKey] = 1;
+            else levelCounters[counterKey]++;
 
-            // Get format for the current level direttamente dalle impostazioni
+            const num = levelCounters[counterKey];
+
+            // Get format for the current level
             let formatType = "1"; // Default numeric format
             if (tocSettings) {
-                // Usando direttamente i valori dalle impostazioni senza alcuna manipolazione
                 switch (level) {
                     case 1: formatType = tocSettings.level1Format || "1"; break;
                     case 2: formatType = tocSettings.level2Format || "2"; break;
@@ -233,13 +230,18 @@ const createTocTreeStructure = (
             const level = heading.attrs.level;
             const name = extractText(heading.content);
 
+            // Aggiorna lo stack per il livello corrente
+            // Quando incontriamo un livello, resettiamo tutti i livelli successivi
+            for (let i = level + 1; i <= maxLevel; i++) {
+                headingStack[i] = null;
+            }
+
+            // Trova il genitore appropriato (il più vicino con livello inferiore)
             let parent: TreeItem | null = null;
-            if (level > 1) {
-                for (let parentLevel = level - 1; parentLevel >= 1; parentLevel--) {
-                    if (lastHeadingByLevel[parentLevel]) {
-                        parent = lastHeadingByLevel[parentLevel];
-                        break;
-                    }
+            for (let i = level - 1; i >= 1; i--) {
+                if (headingStack[i]) {
+                    parent = headingStack[i];
+                    break;
                 }
             }
 
@@ -251,26 +253,21 @@ const createTocTreeStructure = (
                 id: standardId,
                 headingsId: headingId,
                 name,
-                customName: headingId + ' - ' + name,
+                customName: headingId ? headingId + ' - ' + name : name,
                 showHeadingNumbers: tocSettings?.showHeadingNumbers,
                 level,
                 children: []
             };
 
-            if (level === 1) {
-                result.push(newHeading);
-            } else if (parent) {
+            // Aggiungi la nuova intestazione al genitore o alla radice
+            if (parent) {
                 parent.children.push(newHeading);
             } else {
-                // console.warn(`Heading di livello ${level} senza un genitore valido: "${name}"`);
                 result.push(newHeading);
             }
 
-            lastHeadingByLevel[level] = newHeading;
-
-            for (let deeperLevel = level + 1; deeperLevel <= maxLevel; deeperLevel++) {
-                delete lastHeadingByLevel[deeperLevel];
-            }
+            // Aggiorna lo stack per questo livello
+            headingStack[level] = newHeading;
         });
 
         return result;

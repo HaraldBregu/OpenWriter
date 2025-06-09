@@ -14,7 +14,7 @@ const initialState: BookmarkState = {
 };
 
 const bookmarkSlice = createSlice({
-    name: 'bookmark',
+    name: 'bookmarkState',
     initialState,
     reducers: {
         addBookmark(state, action: PayloadAction<{ id: string, baseTitle: string, content: string, categoryId?: string, userInfo?: string }>) {

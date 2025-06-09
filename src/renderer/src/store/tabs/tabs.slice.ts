@@ -22,18 +22,20 @@ const tabsSlice = createSlice({
         state.items.push({
           id: tab,
           name: "Untitled.critx",
-          changed: false
+          changed: false,
+          type: 'critx'
         })
       })
 
       state.selectedTab = state.items[0]
     },
-    add: (state, action: PayloadAction<{ id: number, fileName: string }>) => {
-      const { id, fileName } = action.payload
+    add: (state, action: PayloadAction<{ id: number, fileName: string, type: TabType }>) => {
+      const { id, fileName, type } = action.payload
       state.items.push({
         id,
         name: fileName,
-        changed: false
+        changed: false,
+        type
       })
       state.selectedTab = state.items[state.items.length - 1]
     },

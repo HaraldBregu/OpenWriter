@@ -25,7 +25,7 @@ import {
     selectDisabledRemainingApparatusesTypes,
     selectEnabledRemainingApparatusesTypes,
     selectVisibleApparatuses
-} from "./store/editor.selector";
+} from "./store/editor/editor.selector";
 import {
     addApparatusAfterIndex,
     changeApparatusTitle,
@@ -35,13 +35,13 @@ import {
     setCanAddBookmark,
     toggleVisibilityApparatus,
     updateApparatuses
-} from "./store/editor.slice";
+} from "./store/editor/editor.slice";
 import TextEditor, { EditorData, HTMLTextEditorElement } from "@/components/text-editor";
 import { Input } from "@/components/ui/input";
 import { rendererLogger } from "@/utils/logger";
 import { useIpcRenderer } from "@/hooks/use-ipc-renderer";
+import useSingleAndDoubleClick from "@/hooks/use-single-double-click";
 
-MotionGlobalConfig.skipAnimations = true;
 
 const EditorApparatusLayout = ({
     children,
@@ -58,17 +58,125 @@ const EditorApparatusLayout = ({
 }
 
 interface EditorApparatusProps {
+    onFocusEditor: () => void
 }
 
-export const EditorApparatus = forwardRef((
-    _: EditorApparatusProps,
-    ref: ForwardedRef<unknown>
-) => {
+export const EditorApparatus = forwardRef(({
+    onFocusEditor
+}: EditorApparatusProps, ref: ForwardedRef<unknown>) => {
+    const apparatusRef = useRef<Apparatus | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const editorRefs = useRef<{ [key: string]: HTMLTextEditorElement }>({});
+    const [editorRef, setEditorRef] = useState<HTMLTextEditorElement>();
+
     useImperativeHandle(ref, () => {
         return {
-            editorRefs: editorRefs.current
-        }
-    }, []);
+            focus: () => {
+                editorRef?.focus();
+            },
+            undo: (action?: HistoryAction) => {
+                editorRef?.undo(action);
+            },
+            redo: () => {
+                editorRef?.redo();
+            },
+            setHeadingLevel: (headingLevel: number) => {
+                editorRef?.setHeadingLevel(headingLevel);
+            },
+            setBody: () => {
+                editorRef?.setBody();
+            },
+            setFontFamily: (fontFamily: string) => {
+                editorRef?.setFontFamily(fontFamily);
+            },
+            setFontSize: (fontSize: string) => {
+                editorRef?.setFontSize(fontSize);
+            },
+            setBold: (bold: boolean) => {
+                editorRef?.setBold(bold);
+            },
+            setItalic: (italic: boolean) => {
+                editorRef?.setItalic(italic);
+            },
+            setUnderline: (underline: boolean) => {
+                editorRef?.setUnderline(underline);
+            },
+            setTextColor: (textColor: string) => {
+                editorRef?.setTextColor(textColor);
+            },
+            setHighlightColor: (highlightColor: string) => {
+                editorRef?.setHighlightColor(highlightColor);
+            },
+            setBlockquote: (blockquote: boolean) => {
+                editorRef?.setBlockquote(blockquote);
+            },
+            setTextAlignment: (alignment: string) => {
+                editorRef?.setTextAlignment(alignment);
+            },
+            setLineSpacing: (spacing: Spacing) => {
+                editorRef?.setLineSpacing(spacing);
+            },
+            setListStyle: (style: BulletStyle) => {
+                editorRef?.setListStyle(style);
+            },
+            setSuperscript: (superscript: boolean) => {
+                editorRef?.setSuperscript(superscript);
+            },
+            setSubscript: (subscript: boolean) => {
+                editorRef?.setSubscript(subscript);
+            },
+            increaseIndent: () => {
+                editorRef?.increaseIndent();
+            },
+            decreaseIndent: () => {
+                editorRef?.decreaseIndent();
+            },
+            showCustomSpacing: () => {
+                // setIsCustomSpacingOpen(true);
+            },
+            showResumeNumbering: () => {
+                // setIsResumeNumberingOpen(true);
+            },
+            continuePreviousNumbering: () => {
+                editorRef?.continuePreviousNumbering();
+            },
+            // @ts-ignore
+            addBookmark: (categoryId?: string) => {
+                // bookmarkCategoryIdRef.current = categoryId;
+                // registerBookmark();
+            },
+            unsetBookmark: () => {
+                editorRef?.unsetBookmark();
+            },
+            toggleNonPrintingCharacters: () => {
+                editorRef?.toggleNonPrintingCharacters();
+            },
+            // @ts-ignore
+            scrollToBookmark: (id: string) => {
+                // criticalTextEditorRef?.current?.scrollToBookmark(id);
+            },
+            deleteBookmarks: (bookmarks: Bookmark[]) => {
+                editorRef?.deleteBookmarks(bookmarks);
+            },
+            // @ts-ignore
+            addComment: (categoryId?: string) => {
+                // commentCategoryIdRef.current = categoryId;
+                // registerComment();
+            },
+            unsetComment: () => {
+                editorRef?.unsetComment();
+            },
+            // @ts-ignore
+            scrollToComment: (comment: AppComment) => {
+                // handleScrollToComment(comment);
+            },
+            deleteComments: (comments: AppComment[]) => {
+                editorRef?.deleteComments(comments);
+            },
+        };
+    });
+
+    MotionGlobalConfig.skipAnimations = true;
 
     const dispatch = useDispatch()
 
@@ -78,14 +186,12 @@ export const EditorApparatus = forwardRef((
     const canEdit = useSelector(selectCanEdit)
     const enabledRemainingApparatusesTypes = useSelector(selectEnabledRemainingApparatusesTypes)
     const disabledRemainingApparatusesTypes = useSelector(selectDisabledRemainingApparatusesTypes)
-
     const [expandedApparatuses, setExpandedApparatuses] = useState<Apparatus[]>([])
     const [editingApparatus, setEditingApparatus] = useState<Apparatus | null>(null);
-    const [apparatusesData, setApparatusesData] = useState<any[]>([])
+    const [apparatusesData, setApparatusesData] = useState<any[]>([]);
 
-    const inputRef = useRef<HTMLInputElement>(null);
-    const editorRefs = useRef<{ [key: string]: HTMLTextEditorElement }>({});
-    const [editorRef, setEditorRef] = useState<HTMLTextEditorElement>();
+
+    const [dragging, setDragging] = useState<"y" | "x" | undefined>(undefined)
 
     const types = ['CRITICAL', 'PAGE_NOTES', 'SECTION_NOTES', 'INNER_MARGIN', 'OUTER_MARGIN']
     const apparatusTypeName = (type: Apparatus['type']) => {
@@ -122,6 +228,7 @@ export const EditorApparatus = forwardRef((
                 id: apparatus.id,
                 title: apparatus.title,
                 visible: apparatus.visible,
+                disabled: apparatus.disabled,
             }
         })
         window.menu.updateViewApparatusesMenuItems(items)
@@ -157,14 +264,85 @@ export const EditorApparatus = forwardRef((
         window.doc.setApparatuses(newApparatuses)
     }, [apparatuses, editorRefs])
 
+    const handleClick = useSingleAndDoubleClick(
+        () => { },
+        () => {
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+            (async () => {
+                await delay(100);
+                setEditingApparatus(apparatusRef.current)
+                await delay(100);
+                inputRef.current?.focus()
+                inputRef.current?.select()
+            })();
+        },
+        450
+    );
+
+    const handlePointerEnter = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        (async () => {
+            await delay(10);
+            setDragging("y")
+        })();
+    }, [])
+
+    const handleDragEnd = useCallback((event) => {
+        event.preventDefault()
+        // const apparatusSort: TElement[] = visibleApparatuses.map((el) => ({
+        //     id: el.id,
+        //     title: el.title,
+        //     columns: 1,
+        //     sectionType: converterFromEditorToSetup(el.type) ?? '',
+        //     disabled: el.disabled,
+        //     type: 'apparatus',
+        //     visible: true
+        // }))
+        //dispatch(updateApparatusArrayInCritical([setupDialogState.critical.apparatusDetails.find((el) => el.type === 'text'), ...apparatusSort]));
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        (async () => {
+            await delay(10);
+            setDragging(undefined)
+        })();
+    }, [visibleApparatuses])
+
+    const handleAddNewApparatus = (type: string, index: number) => {
+        // setPreviousVisibleApparatus(visibleApparatuses);
+        dispatch(addApparatusAfterIndex({
+            type: type as Apparatus['type'],
+            index
+        }))
+
+    }
+
+    const handleChangeType = (id: string, type: string) => {
+        // console.log({ apparatusDetails: setupDialogState.critical.apparatusDetails, id })
+        dispatch(changeApparatusType({
+            id: id,
+            type: type as Apparatus['type']
+        }))
+        /* 
+                const updatedApparatusDetails = setupDialogState.critical.apparatusDetails.map(app => {
+                    if (app.id === id) {
+                        return {
+                            ...app,
+                            sectionType: converterFromEditorToSetup(type as Apparatus['type']) || app.sectionType
+                        };
+                    }
+                    return app;
+                });
+        
+                dispatch(updateApparatusArrayInCritical(updatedApparatusDetails)); */
+    }
+
+
     return (
         <EditorApparatusLayout>
             <Reorder.Group
                 as="ul"
                 axis="y"
-                onReorder={(newTabs) => {
-                    dispatch(updateApparatuses(newTabs))
-                }}
+                onReorder={(newTabs) => dispatch(updateApparatuses(newTabs))}
                 className={cn(
                     "flex flex-col w-full",
                     expandedApparatuses.length > 0 ? "h-full" : "h-auto"
@@ -174,8 +352,8 @@ export const EditorApparatus = forwardRef((
                 <AnimatePresence>
                     {visibleApparatuses.map((item, index) => (
                         <Reorder.Item
-                            id={item.title + item.type}
-                            key={item.title + item.type}
+                            id={item.id}
+                            key={item.id}
                             value={item}
                             initial={{
                                 opacity: 1,
@@ -201,6 +379,8 @@ export const EditorApparatus = forwardRef((
                                     ease: 'easeInOut'
                                 }
                             }}
+                            drag={dragging}
+                            onDragEnd={(event) => handleDragEnd(event)}
                             className={cn(
                                 'bg-white',
                                 item !== visibleApparatuses[0] && 'border-t border-grey-70',
@@ -209,10 +389,13 @@ export const EditorApparatus = forwardRef((
                                 "w-full",
                                 expandedApparatuses.includes(item) ? "flex-1" : "flex-none"
                             )}>
-                            <motion.div className='flex flex-col w-full h-full'>
+                            <motion.div
+                                className='flex flex-col w-full h-full'>
                                 <motion.nav
                                     className={cn("h-8 px-2 flex items-center justify-between")}>
-                                    <motion.div className='cursor-grab active:cursor-grabbing'>
+                                    <motion.div className='cursor-grab active:cursor-grabbing'
+                                        onPointerEnter={(event) => handlePointerEnter(event)}
+                                    >
                                         <DragIndicator intent='primary' variant='tonal' size='small' />
                                     </motion.div>
                                     <motion.span className="text-center text-xs font-medium">
@@ -239,18 +422,47 @@ export const EditorApparatus = forwardRef((
                                                         if (e.key == "Escape") {
                                                             e.preventDefault()
                                                             setEditingApparatus(null)
-                                                        } else if (e.key === "Enter" && editingApparatus.title.length >= 1) {
-                                                            setEditingApparatus(null)
+                                                        } else if (e.key === "Enter" && editingApparatus.title.length > 0) {
+                                                            console.log("editingApparatus", editingApparatus)
+                                                            const apparatusesTitles = apparatuses.map((apparatus) => apparatus.title)
+                                                            if (apparatusesTitles.includes(editingApparatus.title) && editingApparatus.title !== item.title) {
+                                                                return
+                                                            }
+
                                                             dispatch(changeApparatusTitle({
                                                                 id: editingApparatus.id,
                                                                 title: editingApparatus.title
                                                             }))
+
+                                                            // const updatedApparatusDetails = setupDialogState.critical.apparatusDetails.map(app => {
+                                                            //     if (app.id === editingApparatus.id) {
+                                                            //         return {
+                                                            //             ...app,
+                                                            //             title: editingApparatus.title
+                                                            //         };
+                                                            //     } else if (app.id === "apparatus1" && setupDialogState.critical.apparatusDetails.length === 2) {
+                                                            //         return {
+                                                            //             ...app,
+                                                            //             title: editingApparatus.title
+                                                            //         };
+
+                                                            //     }
+                                                            //     return app;
+                                                            // });
+                                                            // console.log("🚀 ~ updatedApparatusDetails:", updatedApparatusDetails)
+
+                                                            // dispatch(updateApparatusArrayInCritical(updatedApparatusDetails));
+
+                                                            setEditingApparatus(null)
                                                         }
                                                     }}
                                                 />
                                             )
                                             : (
-                                                <motion.span>
+                                                <motion.span onClick={() => {
+                                                    apparatusRef.current = item
+                                                    handleClick()
+                                                }}>
                                                     {item.title} ({apparatusTypeName(item.type)})
                                                 </motion.span>
                                             )
@@ -278,7 +490,9 @@ export const EditorApparatus = forwardRef((
                                             }}
                                             children={<UnfoldMore className={cn("w-4 h-4")} />}
                                         />
-                                        <DropdownMenu>
+                                        <DropdownMenu onOpenChange={(_) => {
+                                            setEditorRef(editorRefs.current[item.id]);
+                                        }}>
                                             <DropdownMenuTrigger asChild>
                                                 <motion.button
                                                     onPointerDown={(event) => {
@@ -311,12 +525,7 @@ export const EditorApparatus = forwardRef((
                                                                         || (type === 'INNER_MARGIN' && apparatusesTypes.includes('INNER_MARGIN'))
                                                                         || (type === 'OUTER_MARGIN' && apparatusesTypes.includes('OUTER_MARGIN'))
                                                                     }
-                                                                    onClick={() => {
-                                                                        dispatch(changeApparatusType({
-                                                                            id: item.id,
-                                                                            type: type as Apparatus['type']
-                                                                        }))
-                                                                    }}>
+                                                                    onClick={() => handleChangeType(item.id, type)}>
                                                                     {item.type === type && <Check className="w-4 h-4" />}
                                                                     {apparatusTypeName(type as Apparatus['type'])}
                                                                 </DropdownMenuItem>
@@ -330,24 +539,54 @@ export const EditorApparatus = forwardRef((
                                                         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
                                                         (async () => {
                                                             await delay(100);
-                                                            setEditingApparatus(item)
+                                                            setEditingApparatus(item);
                                                             await delay(100);
-                                                            inputRef.current?.focus()
-                                                            inputRef.current?.select()
+                                                            inputRef.current?.focus();
+                                                            inputRef.current?.select();
                                                         })();
                                                     }}>
                                                     Rename
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
+                                                    disabled={apparatuses.length === 1}
                                                     onClick={() => {
                                                         const newExpandedApparatuses = expandedApparatuses.filter(apparatus => apparatus.id !== item.id)
                                                         setExpandedApparatuses(newExpandedApparatuses)
+                                                        dispatch(toggleVisibilityApparatus({
+                                                            id: item.id,
+                                                            visible: !item.visible
+                                                        }))
+                                                        /*        const updatedApparatusDetails = setupDialogState.critical.apparatusDetails.map(app => {
+                                                                   if (app.id === item.id) {
+                                                                       return {
+                                                                           ...app,
+                                                                           visible: false
+                                                                       };
+                                                                   }
+                                                                   return app;
+                                                               });
+       
+                                                               dispatch(updateApparatusArrayInCritical(updatedApparatusDetails)); */
                                                     }}>
                                                     Hide
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
+                                                    disabled={apparatuses.length === 1}
                                                     onClick={() => {
-                                                        dispatch(removeApparatus(item))
+                                                        const newExpandedApparatuses = expandedApparatuses.filter(apparatus => apparatus.id !== item.id);
+                                                        setExpandedApparatuses(newExpandedApparatuses);
+
+                                                        dispatch(removeApparatus(item));
+                                                        /* 
+                                                                                                                const updatedApparatusDetails = setupDialogState.critical.apparatusDetails.filter(
+                                                                                                                    app => app.id !== item.id
+                                                                                                                );
+                                                        
+                                                                                                                dispatch(updateApparatusArrayInCritical(updatedApparatusDetails)); */
+
+                                                        if (editorRefs.current[item.id]) {
+                                                            delete editorRefs.current[item.id];
+                                                        }
                                                     }}>
                                                     Delete
                                                 </DropdownMenuItem>
@@ -370,7 +609,9 @@ export const EditorApparatus = forwardRef((
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                        <DropdownMenu>
+                                        <DropdownMenu onOpenChange={(_) => {
+                                            setEditorRef(editorRefs.current[item.id]);
+                                        }}>
                                             <DropdownMenuTrigger asChild>
                                                 <motion.button
                                                     onPointerDown={(event) => {
@@ -392,12 +633,7 @@ export const EditorApparatus = forwardRef((
                                                 {enabledRemainingApparatusesTypes.map((type: string) => (
                                                     <DropdownMenuItem
                                                         key={type}
-                                                        onClick={() => {
-                                                            dispatch(addApparatusAfterIndex({
-                                                                type: type as Apparatus['type'],
-                                                                index
-                                                            }))
-                                                        }}>
+                                                        onClick={() => handleAddNewApparatus(type, index)}>
                                                         Add {apparatusTypeName(type as Apparatus['type'])}
                                                     </DropdownMenuItem>
                                                 ))}
@@ -436,6 +672,7 @@ export const EditorApparatus = forwardRef((
                                             onFocusEditor={() => {
                                                 setEditorRef(editorRefs.current[item.id]);
                                                 dispatch(setCanAddBookmark(false));
+                                                onFocusEditor()
                                             }}
                                             canEdit={canEdit}
                                             onUpdate={(editor: EditorData) => {

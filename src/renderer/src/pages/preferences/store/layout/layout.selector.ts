@@ -1,6 +1,20 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "@/store/rootReducers";
-import { AvailableApparatusTypes, SetupSettingsState, StandardPageDimensionsState } from "./layout.state";
+// Selettore base per lo stato del layout
+const layoutState = (state: RootState) => state.layout;
 
-export const selectLayoutSettings = (state: RootState): SetupSettingsState => state.layout.settings;
-export const selectLayoutStandardPageDimensions = (state: RootState): StandardPageDimensionsState[]  => state.layout.standardPageDimensions;
-export const selectLayoutAvailableApparatusTypes = (state: RootState): AvailableApparatusTypes => state.layout.availableApparatusTypes;
+// Selettori per le impostazioni di layout
+export const selectLayoutSettings = createSelector(
+    layoutState,
+    (layout) => layout.settings
+);
+
+export const selectLayoutStandardPageDimensions = createSelector(
+    layoutState,
+    (layout) => layout.standardPageDimensions
+);
+
+export const selectLayoutAvailableApparatusTypes = createSelector(
+    layoutState,
+    (layout) => layout.availableApparatusTypes
+);

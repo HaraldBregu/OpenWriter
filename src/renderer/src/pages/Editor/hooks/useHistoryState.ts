@@ -55,7 +55,6 @@ export const useHistoryState = (editor: Editor | null) => {
     }, []);
 
     const analyzeTransaction = useCallback((transaction: Transaction) => {
-        console.log("🚀 ~ analyzeTransaction ~ transaction:", transaction)
         let type = 'text-change';
         let description = 'Modifica del testo';
 

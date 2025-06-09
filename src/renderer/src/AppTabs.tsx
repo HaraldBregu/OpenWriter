@@ -22,14 +22,16 @@ export default function AppTabs() {
   useIpcRenderer((ipc) => {
 
     ipc.on('create-new-document', async (_: any) => {
-      const id = await window.tabs.new()
-      dispatch(add({ id, fileName: 'Untitled.critx' }))
+      const fileType: FileType = "critx"
+      const id = await window.tabs.new(fileType)
+      dispatch(add({ id, fileName: 'Untitled.critx', type: fileType }))
+      ipc.send('open-choose-layout-modal');
     })
 
-    ipc.on('document-opened', async (_: any, filepath: string, filename: string) => {
-      const id = await window.tabs.new()
-      dispatch(add({ id, fileName: filename }))
-      ipc.send('document-opened-at-path', filepath);
+    ipc.on('document-opened', async (_: any, filepath: string, filename: string, fileType: FileType) => {
+      const id = await window.tabs.new(fileType)
+      dispatch(add({ id, fileName: filename, type: fileType }))
+      ipc.send('document-opened-at-path', filepath, fileType);
     });
 
     ipc.on('document-renamed', async (_: any, filename: string) => {
@@ -44,7 +46,7 @@ export default function AppTabs() {
       dispatch(removeTabWithId(tabId))
     });
 
-    ipc.on('critical-text-changed', async (_: any, changed: boolean) => {
+    ipc.on('main-text-changed', async (_: any, changed: boolean) => {
       dispatch(setCurrentTabAsChanged(changed))
     });
 
@@ -58,12 +60,10 @@ export default function AppTabs() {
       tabs={tabs}
       selectedTab={selectedTab}
       onAdd={async () => {
-        const id = await window.tabs.new()
-        dispatch(add({ id, fileName: 'Untitled.critx' }))
-        window.electron.ipcRenderer.send('open-choose-layout-modal');
+        window.doc.openDocument();
       }}
       onSelect={(tab) => {
-        window.tabs.select(tab.id)
+        window.tabs.select(tab.id, tab.type)
         dispatch(select(tab))
       }}
       onRemove={async (tab) => {

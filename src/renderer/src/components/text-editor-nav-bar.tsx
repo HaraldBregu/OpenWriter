@@ -4,7 +4,7 @@ import More from "./icons/More";
 import Button from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
-export interface TextEditorNavBarOptions {
+export type TextEditorNavBarOptions = {
     title?: string;
     icon?: React.ReactNode;
     onClick?: () => void;

@@ -1,4 +1,4 @@
-const sectionDelimiter = (type, label) => [{
+export const sectionDelimiter = (type, label) => [{
     type: "sectionDivider",
     attrs: {
         sectionType: type,
@@ -86,15 +86,9 @@ export const textTemplate = (title?: string, content?: {} | any) => {
         {
             type: "paragraph",
             attrs: {
-                level: 2,
-                sectionType: "maintext",
+                level: 1,
                 indent: 0,
-                textAlign: 'left',
-                lineHeight: 1,
-                marginTop: 10,
-                marginBottom: 10,
-            },
-            ...defaultJsonContent
+            },    
         }
     ]
 

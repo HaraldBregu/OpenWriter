@@ -1,31 +1,32 @@
 import path from "path";
-import { app, dialog, ipcMain, MenuItem, shell } from "electron";
-import Store from "electron-store";
-import { MenuItemId, setApplicationMenu } from "./menu/menu";
+import { app, BaseWindow, dialog, ipcMain, MenuItem, net, protocol, shell } from "electron";
+import { setApplicationMenu } from "./menu/menu";
+import { MenuItemId } from "./shared/types";
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
-import { mainLogger } from "./utils/logger.js";
+import { mainLogger } from "./shared/logger.js";
 import fontList from "font-list";
 import os from "os";
 import {
   getBaseWindow,
-  getToolbarContentView,
+  getToolbarWebContentsView,
   initializeMainWindow,
-  sendToolbarContentViewMessage,
+  toolbarWebContentsViewSend,
 } from "./main-window";
 import * as fsSync from "fs";
-import { getLocalesPath, getTemplatesPath } from "./utils/util.js";
+import { getLocalesPath, getTemplatesPath } from "./shared/util.js";
 import {
-  addNewWebContentsView,
   closeWebContentsViewWithId,
-  getAllContentViewsIds,
-  getSelectedContentView,
-  getSelectedTabId,
+  getWebContentsViewsIds,
+  getSelectedWebContentsView,
+  getSelectedWebContentsViewId,
   getWebContentsViews,
   reorderTabs,
   selectedWebContentsViewSend,
-  setSelectedContentViewWithId,
-} from "./content-views";
+  setSelectedWebContentsViewWithId,
+  createWebContentsView,
+  showWebContentsView,
+} from "./content";
 import {
   closeApplication,
   closeDocument,
@@ -34,38 +35,30 @@ import {
   renameDocument,
   saveDocument,
   saveDocumentAs,
-} from "./document-manager";
+} from "./document/document-manager";
 import { promises as fs } from "fs";
-import { setFilePathForSelectedTab } from "./tabs-store";
-import { compareDate, formatDate } from "./utils/date";
 import {
   createDocument,
   getCurrentDocument,
   setCurrentAnnotations,
   setCurrentApparatuses,
-  setCurrentCriticalText,
+  setCurrentMainText,
   setCurrentDocument,
-  setCurrentTemplate,
+  setCurrentLayoutTemplate,
+  setCurrentPageSetup,
+  setCurrentParatextual,
+  setCurrentSort,
+  setCurrentStyles,
   setRecentDocuments,
   updateRecentDocuments,
-} from "./document";
+} from "./document/document";
 import * as _ from "lodash-es";
-import { setDisabledReferencesMenuItemsIds } from "./menu/references-menu";
-import { setApparatusSubMenuObjectItems } from "./menu/view-menu";
+import { setDisabledReferencesMenuItemsIds } from "./menu/items/references-menu";
+import { setApparatusSubMenuObjectItems, setToolbarVisible } from "./menu/items/view-menu";
+import { fileTypeToRouteMapping, Route, routeToMenuMapping, setMenuViewMode, typeTypeToRouteMapping } from "./shared/constants";
+import { setFilePathForSelectedTab } from "./toolbar";
+import { readAppLanguage, readToolbarAdditionalItems, readToolbarIsVisible, storeAppLanguage, storeToolbarAdditionalItems, storeToolbarIsVisible } from "./store";
 
-export const store = new Store({
-  defaults: {
-    toolbarIsVisible: true,
-  },
-});
-
-interface TemplateData {
-  id: string;
-  name: string;
-  lastUsedDate: string;
-  fileName: string;
-  type: "Proprietary" | "Community";
-}
 
 // .critx protocol configuration
 if (process.defaultApp) {
@@ -78,12 +71,26 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient("critx");
 }
 
-const handleAppClose =
-  (closeFileFn: () => Promise<void>) =>
-    async (event: Electron.Event): Promise<void> => {
-      event.preventDefault();
-      await closeFileFn();
-    };
+const protocolName = "local-resource";
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: protocolName,
+    privileges: {
+      secure: true,
+      supportFetchAPI: true, // impotant
+      standard: true,
+      bypassCSP: true, // impotant
+      stream: true
+    }
+  }
+])
+
+const handleAppClose = (closeFileFn: () => Promise<void>) =>
+  async (event: Electron.Event): Promise<void> => {
+    event.preventDefault();
+    await closeFileFn();
+  };
 
 const updateElectronLocale = async (lang: string): Promise<void> => {
   const taskId = mainLogger.startTask("Electron", "Changing language");
@@ -91,7 +98,7 @@ const updateElectronLocale = async (lang: string): Promise<void> => {
     const baseWindow = getBaseWindow();
     if (!baseWindow) return;
 
-    store.set("appLanguage", lang);
+    storeAppLanguage(lang);
 
     await i18next.changeLanguage(lang);
 
@@ -105,26 +112,19 @@ const updateElectronLocale = async (lang: string): Promise<void> => {
 
 const registerIpcListeners = (): void => {
   ipcMain.on("update-critical-text", async (_event, data: object | null) => {
-    setCurrentCriticalText(data);
-    const criticalText = getCurrentDocument()?.criticalText;
-    if (!data || !criticalText) return;
-    const isEqual = await _.isEqual(data, criticalText);
+    setCurrentMainText(data);
+    const mainText = getCurrentDocument()?.mainText;
+    if (!data || !mainText) return;
+    const isEqual = await _.isEqual(data, mainText);
     const changed = !isEqual;
-    sendToolbarContentViewMessage("critical-text-changed", changed);
+    toolbarWebContentsViewSend("main-text-changed", changed);
   });
-
   ipcMain.on("update-annotations", (_event, data: object | null) => {
     setCurrentAnnotations(data);
   });
-
-  ipcMain.on("update-current-template", (_event, data: object | null) => {
-    setCurrentTemplate(data);
-  });
-
   ipcMain.on("set-electron-language", (_event, language: string) => {
     updateElectronLocale(language);
   });
-
   ipcMain.on("request-system-fonts", async (event) => {
     try {
       const fonts = await fontList.getFonts();
@@ -135,7 +135,6 @@ const registerIpcListeners = (): void => {
       event.reply("receive-system-fonts", []);
     }
   });
-
   ipcMain.on("open-external-file", async (_, filePath: string) => {
     const taskId = mainLogger.startTask("Electron", "Opening external link");
     try {
@@ -149,267 +148,64 @@ const registerIpcListeners = (): void => {
       );
     }
   });
-
   ipcMain.on("open-choose-layout-modal", async () => {
-    const currentWebContentsView = getSelectedContentView();
-    if (!currentWebContentsView) return;
-    currentWebContentsView.webContents.send("receive-open-choose-layout-modal");
+    selectedWebContentsViewSend("receive-open-choose-layout-modal");
   });
 
   // When a new tab from FrontEnd is created it sends the filepath to the main process
   // The main process reads the file and sends the document to the FrontEnd
-  ipcMain.on("document-opened-at-path", async (_, filepath: string) => {
-    const fileContent = await fs.readFile(filepath, "utf8");
-    const documentObject = JSON.parse(fileContent);
-    const document = await createDocument(documentObject);
-
-    setCurrentDocument(document);
-    selectedWebContentsViewSend("load-document", documentObject);
-    selectedWebContentsViewSend("load-document-apparatuses", documentObject.apparatuses);
-
-    setFilePathForSelectedTab(filepath);
-  });
-  ipcMain.on("read-template-with-filename", async (event, fileName) => {
-    const templatesFolderPath = getTemplatesPath();
-    const templatesFilePath = path.join(templatesFolderPath, fileName);
-    const fileContent = await fs.readFile(templatesFilePath, "utf8");
-    event.reply("template-file-structure", fileContent);
-  });
-
-  ipcMain.on("request-templates-files", async (event) => {
-    try {
-      const templatesFolderPath = getTemplatesPath();
-      const files = (await fs.readdir(templatesFolderPath)).filter((file) =>
-        file.endsWith(".tml")
-      );
-      event.reply("receive-templates-files", files); //devo mandare solo con il .tml
-    } catch (error) {
-      console.error("Error reading templates info:", error);
-      event.reply("receive-templates", null);
+  ipcMain.on("document-opened-at-path", async (_, filepath: string, fileType: FileType) => {
+    switch (fileType) {
+      case "critx": {
+        const fileContent = await fs.readFile(filepath, "utf8");
+        const documentObject = JSON.parse(fileContent);
+        const document = await createDocument(documentObject);
+        setCurrentDocument(document);
+        selectedWebContentsViewSend("load-document", documentObject);
+        selectedWebContentsViewSend("load-document-apparatuses", documentObject.apparatuses);
+        setFilePathForSelectedTab(filepath);
+      } break;
+      case 'pdf':
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+        selectedWebContentsViewSend("load-file-at-path", filepath);
+        setFilePathForSelectedTab(filepath);
+        updateRecentDocuments(filepath);
+        setApplicationMenu(onClickMenuItem);
+        break;
     }
+
   });
 
-  ipcMain.on("request-templates", async (event) => {
-    try {
-      const templatesFolderPath = getTemplatesPath();
-      const templatesFilePath = path.join(
-        templatesFolderPath,
-        "templates.json"
+  ipcMain.on('application:updateToolbarAdditionalItems', (_, items) => {
+    storeToolbarAdditionalItems(items);
+    getWebContentsViews().forEach((webContentView) =>
+        webContentView.webContents.send(
+          "toolbar-additional-items",
+          readToolbarAdditionalItems()
+        )
       );
-
-      const templateList: TemplateData[] = JSON.parse(
-        await fs.readFile(templatesFilePath, "utf-8")
-      );
-      const blankTemplateIndex = templateList.findIndex(
-        (template) => template.name.toLowerCase() === "blank"
-      );
-      const blankTemplate =
-        blankTemplateIndex !== -1
-          ? templateList.splice(blankTemplateIndex, 1)[0]
-          : null;
-
-      const recentTemplates = templateList
-        ?.filter(({ type }) => type.toLowerCase() === "proprietary")
-        .sort((a, b) => compareDate(a.lastUsedDate, b.lastUsedDate, "desc"));
-      const publishersTemplates = templateList
-        ?.filter(({ type }) => type.toLowerCase() === "community")
-        .sort((a, b) => compareDate(a.lastUsedDate, b.lastUsedDate, "desc"));
-
-      if (blankTemplate) {
-        recentTemplates.unshift(blankTemplate);
-      }
-
-      const templates = {
-        recentTemplates,
-        publishersTemplates,
-      };
-
-      event.reply("receive-templates", templates);
-    } catch (error) {
-      console.error("Error reading templates info:", error);
-      event.reply("receive-templates", null);
-    }
-  });
-
-  ipcMain.on("import-template", async (event) => {
-    const baseWindow = getBaseWindow();
-    if (!baseWindow) {
-      return;
-    }
-
-    const result = await dialog.showOpenDialog({
-      properties: ["openFile"],
-      defaultPath: path.join(app.getPath("downloads")),
-      filters: [{ name: "Files", extensions: ["*"] }],
-    });
-
-    if (!result.canceled && result.filePaths.length > 0) {
-      const selectedFilePath = result.filePaths[0];
-      const templatesFolderPath = getTemplatesPath();
-      const fileNameWithExt = path.basename(selectedFilePath);
-      const fileName = path.parse(fileNameWithExt).name;
-      const destinationPath = path.join(templatesFolderPath, fileNameWithExt);
-
-      try {
-        // Read the existing templates.json file
-        const templatesJsonPath = path.join(
-          templatesFolderPath,
-          "templates.json"
-        );
-        const templatesContent = await fs.readFile(templatesJsonPath, "utf-8");
-        const templatesArr = JSON.parse(templatesContent);
-
-        // Check if a template with the same name already exists
-        const templateExists = templatesArr.some(
-          (template) => template.fileName === fileNameWithExt
-        );
-
-        if (templateExists) {
-          // Show the confirmation modal
-          const confirmation = await dialog.showMessageBox(baseWindow, {
-            type: "warning",
-            buttons: ["Replace", "Cancel"],
-            defaultId: 1,
-            noLink: true,
-            title: "Confirm Replacement",
-            message: `A template named "${fileNameWithExt}" already exists. Do you want to overwrite it?`,
-          });
-
-          // If the user selects "Cancel", exit the function
-          if (confirmation.response === 1) {
-            event.reply("template-selected", null);
-            return;
-          }
-        }
-
-        // Copy the new file to the templates folder
-        await fs.copyFile(selectedFilePath, destinationPath);
-
-        // Create the new entry
-        const newEntry = {
-          id: crypto.randomUUID(),
-          name: fileName,
-          lastUsedDate: null,
-          fileName: fileNameWithExt,
-          type: "Proprietary",
-        };
-
-        // Remove the existing template if present (to avoid duplicates)
-        const updatedTemplates = templatesArr.filter(
-          (template) => template.fileName !== fileNameWithExt
-        );
-        updatedTemplates.push(newEntry);
-
-        // Save the updated file
-        await fs.writeFile(
-          templatesJsonPath,
-          JSON.stringify(updatedTemplates, null, 4),
-          "utf-8"
-        );
-
-        event.reply("template-selected", destinationPath);
-      } catch (err) {
-        console.error(
-          "Error while reading or updating the templates file:",
-          err
-        );
-        event.reply("template-selected", null);
-      }
-    }
-  });
-
-  ipcMain.on("save-as-template", async (event, fileName) => {
-    const baseWindow = getBaseWindow();
-    if (!baseWindow) {
-      return;
-    }
-
-    const templatesFolderPath = getTemplatesPath();
-    const fileNameWithExt = fileName.newTemplate + ".tml";
-    const destinationPath = path.join(templatesFolderPath, fileNameWithExt);
-
-    try {
-      // Read the existing templates.json file
-      const templatesJsonPath = path.join(
-        templatesFolderPath,
-        "templates.json"
-      );
-      const templatesContent = await fs.readFile(templatesJsonPath, "utf-8");
-      const templatesArr = JSON.parse(templatesContent);
-
-      // Check if a template with the same name already exists
-      const templateExists = templatesArr.some(
-        (template) => template.fileName === fileNameWithExt
-      );
-
-      if (templateExists) {
-        // Show confirmation modal
-        const confirmation = await dialog.showMessageBox({
-          type: "warning",
-          buttons: ["Replace", "Cancel"],
-          defaultId: 1,
-          noLink: true,
-          title: "Confirm Replacement",
-          message: `A template named "${fileNameWithExt}" already exists. Do you want to overwrite it?`,
-        });
-
-        // If the user selects "Cancel", notify the renderer
-        if (confirmation.response === 1) {
-          event.reply("template-saved", null);
-          return;
-        }
-      }
-
-      await fs.writeFile(
-        destinationPath,
-        JSON.stringify(fileName.styleTemplate, null, 2)
-      );
-
-      // Create the new template entry
-      const newEntry = {
-        id: crypto.randomUUID(),
-        name: fileName.newTemplate,
-        lastUsedDate: formatDate(new Date()),
-        fileName: fileNameWithExt,
-        type: "Proprietary",
-      };
-
-      // Remove the existing entry with the same name (if present) to avoid duplicates
-      const updatedTemplates = templatesArr.filter(
-        (template) => template.fileName !== fileNameWithExt
-      );
-      updatedTemplates.push(newEntry);
-
-      // Save the updated templates.json file
-      await fs.writeFile(
-        templatesJsonPath,
-        JSON.stringify(updatedTemplates, null, 4),
-        "utf-8"
-      );
-
-      // Notify the renderer that the template has been successfully saved
-      event.reply("template-saved", destinationPath);
-    } catch (err) {
-      console.error("Error while saving the template:", err);
-      event.reply("template-saved", null);
-    }
   });
 };
 
 export function changeLanguageGlobal(lang: string): void {
   updateElectronLocale(lang);
-  const webContentsView = getSelectedContentView();
+  const webContentsView = getSelectedWebContentsView();
   webContentsView?.webContents.send("language-changed", lang);
 }
 
 async function onDocumentOpened(filePath: string): Promise<void> {
   const fileNameParsed = path.parse(filePath);
   const fileNameBase = fileNameParsed.base;
-  // const fileNameExt = fileNameParsed.ext
-  getToolbarContentView()?.webContents.send(
+  const fileNameExt = fileNameParsed.ext as FileNameExt;
+  const fileType = fileNameExt.slice(1) as FileType;
+
+  getToolbarWebContentsView()?.webContents.send(
     "document-opened",
     filePath,
-    fileNameBase
+    fileNameBase,
+    fileType,
   );
   updateRecentDocuments(filePath);
   setApplicationMenu(onClickMenuItem);
@@ -418,15 +214,14 @@ async function onDocumentOpened(filePath: string): Promise<void> {
 function onDocumentSaved(filePath: string): void {
   const fileNameParsed = path.parse(filePath);
   const fileNameBase = fileNameParsed.base;
-  // const fileNameExt = fileNameParsed.ext
-  sendToolbarContentViewMessage("document-saved", fileNameBase);
-  sendToolbarContentViewMessage("critical-text-changed", false);
+  toolbarWebContentsViewSend("document-saved", fileNameBase);
+  toolbarWebContentsViewSend("main-text-changed", false);
   updateRecentDocuments(filePath);
   setApplicationMenu(onClickMenuItem);
 }
 
 function onDocumentRenamed(filename: string): void {
-  const toolbarContentView = getToolbarContentView();
+  const toolbarContentView = getToolbarWebContentsView();
   toolbarContentView?.webContents.send("document-renamed", filename);
 }
 
@@ -437,7 +232,7 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
 
     // File menu
     case MenuItemId.NEW_FILE:
-      sendToolbarContentViewMessage("create-new-document");
+      toolbarWebContentsViewSend("create-new-document");
       setCurrentDocument(null)
       break;
     case MenuItemId.OPEN_FILE:
@@ -507,16 +302,22 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend('trigger-redo');
       break
     case MenuItemId.CUT:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.COPY:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.COPY_STYLE:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.PASTE:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.PASTE_STYLE:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.PASTE_AND_MATCH_STYLE:
+      // NO IMPPLEMENTATION REQUIRED
       break;
     case MenuItemId.PASTE_WITH_NOTES:
       break;
@@ -654,20 +455,29 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
     case MenuItemId.FONT_STRIKETHROUGH:
       selectedWebContentsViewSend("change-character-style", 'strikethrough');
       break
+    case MenuItemId.FONT_SUPERSCRIPT:
+      selectedWebContentsViewSend("change-character-style", 'superscript');
+      break
+    case MenuItemId.FONT_SUBSCRIPT:
+      selectedWebContentsViewSend("change-character-style", 'subscript');
+      break
+    case MenuItemId.FONT_NPC:
+      selectedWebContentsViewSend("toggle-npc", 'npc');
+      break
     case MenuItemId.FONT_CAPTALIZATION_ALL_CAPS:
-      selectedWebContentsViewSend("change-character-style", 'uppercase');
+      selectedWebContentsViewSend("change-character-style", 'all-caps');
       break
     case MenuItemId.FONT_CAPTALIZATION_SMALL_CAPS:
-      selectedWebContentsViewSend("change-character-style", 'lowercase');
+      selectedWebContentsViewSend("change-character-style", 'small-caps');
       break
     case MenuItemId.FONT_CAPTALIZATION_TITLE_CASE:
-      selectedWebContentsViewSend("change-character-style", 'capitalize');
+      selectedWebContentsViewSend("change-character-style", 'title-case');
       break
     case MenuItemId.FONT_CAPTALIZATION_START_CASE:
-      selectedWebContentsViewSend("change-character-style", 'startcase');
+      selectedWebContentsViewSend("change-character-style", 'start-case');
       break
     case MenuItemId.FONT_CAPTALIZATION_NONE:
-      selectedWebContentsViewSend("change-character-style", 'none');
+      selectedWebContentsViewSend("change-character-style", 'none-case');
       break
     case MenuItemId.FONT_LIGATURE_DEFAULT:
       selectedWebContentsViewSend("set-font-ligature", "standard");
@@ -682,10 +492,10 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("change-character-spacing", "normal");
       break
     case MenuItemId.FONT_CHARACTER_SPACING_TIGHTEN:
-      selectedWebContentsViewSend("change-character-spacing", "increase");
+      selectedWebContentsViewSend("change-character-spacing", "decrease");
       break
     case MenuItemId.FONT_CHARACTER_SPACING_LOOSEN:
-      selectedWebContentsViewSend("change-character-spacing", "decrease");
+      selectedWebContentsViewSend("change-character-spacing", "increase");
       break
     case MenuItemId.TEXT_ALIGN_LEFT:
       selectedWebContentsViewSend("change-alignment", "left");
@@ -707,6 +517,9 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       break
     case MenuItemId.TEXT_SPACING_SINGLE:
       selectedWebContentsViewSend("set-line-spacing", "1");
+      break
+    case MenuItemId.TEXT_SPACING_1_15:
+      selectedWebContentsViewSend("set-line-spacing", "1.15");
       break
     case MenuItemId.TEXT_SPACING_ONE_AND_HALF:
       selectedWebContentsViewSend("set-line-spacing", "1.5");
@@ -761,6 +574,9 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       break;
     case MenuItemId.RESUME_NUMBERING:
       selectedWebContentsViewSend("resume-numbering");
+      break;
+    case MenuItemId.SECTIONS_STYLE:
+      selectedWebContentsViewSend("show-sections-style-modal");
       break;
 
     // Tools menu
@@ -826,11 +642,13 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("table-of-contents");
       break
     case MenuItemId.TOOLBAR:
-      store.set("toolbarIsVisible", !store.get("toolbarIsVisible"));
+      storeToolbarIsVisible(!readToolbarIsVisible())
+      setToolbarVisible(readToolbarIsVisible());
+      setApplicationMenu(onClickMenuItem);
       getWebContentsViews().forEach((webContentView) =>
         webContentView.webContents.send(
-          "toggle toolbar",
-          store.get("toolbarIsVisible")
+          "toggle-toolbar",
+          readToolbarIsVisible()
         )
       );
       break;
@@ -844,7 +662,7 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("customize-status-bar");
       break
     case MenuItemId.PRINT_PREVIEW:
-      selectedWebContentsViewSend("print-preview");
+      selectedWebContentsViewSend("toggle-print-preview");
       break
     case MenuItemId.SHOW_TABS_ALIGNED_HORIZONTALLY:
       selectedWebContentsViewSend("show-tabs-aligned-horizontally");
@@ -856,7 +674,10 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("zoom");
       break
     case MenuItemId.ENTER_FULL_SCREEN:
-      selectedWebContentsViewSend("enter-full-screen");
+      // getBaseWindow()?.maximize()
+      // getBaseWindow()?.show()
+      // getBaseWindow()?.setFullScreen(true)
+      // getBaseWindow()?.setFullScreen(true)
       break
     case MenuItemId.GO_TO_NEXT_PAGE:
       selectedWebContentsViewSend("go-to-next-page");
@@ -953,15 +774,16 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("report-an-issue");
       break
     case MenuItemId.ABOUT:
+      // openChildWindow(getRootUrl() + "/about");
       selectedWebContentsViewSend("show-about");
       break
 
     // Developer menu
     case MenuItemId.RELOAD:
-      getSelectedContentView()?.webContents.reload()
+      getSelectedWebContentsView()?.webContents.reload()
       break
     case MenuItemId.TOGGLE_DEV_TOOLS:
-      getSelectedContentView()?.webContents.toggleDevTools()
+      getSelectedWebContentsView()?.webContents.toggleDevTools()
       break
 
     // Language menu
@@ -1008,7 +830,7 @@ const initializei18next = async (): Promise<void> => {
   const appLanguage = getAppLanguage();
 
   // Store in electron-store for the main process
-  store.set("appLanguage", appLanguage);
+  storeAppLanguage(appLanguage);
 
   mainLogger.info("Electron", "App language: " + appLanguage);
   await i18next.use(Backend).init({
@@ -1022,6 +844,21 @@ const initializei18next = async (): Promise<void> => {
   mainLogger.endTask(langTaskId, "Electron", "i18next configured");
 };
 
+const onBaseWindowReady = async (baseWindow: BaseWindow): Promise<void> => {
+  const route = Route.root
+  const menuViewMode = routeToMenuMapping[route]
+  setMenuViewMode(menuViewMode)
+
+  const selectedContentView = await createWebContentsView(route)
+  if (!selectedContentView)
+    return
+
+  baseWindow.contentView.addChildView(selectedContentView)
+  showWebContentsView(selectedContentView)
+  selectedContentView.webContents.focus()
+  selectedWebContentsViewSend("receive-open-choose-layout-modal");
+}
+
 const initializeApp = async (): Promise<void> => {
   const appTaskId = mainLogger.startTask("Electron", "Starting application");
 
@@ -1029,13 +866,50 @@ const initializeApp = async (): Promise<void> => {
 
   await app.whenReady();
 
+  function convertPath(originalPath): string {
+    const match = originalPath.match(/^\/([a-zA-Z])\/(.*)$/)
+    if (match) {
+      return `${match[1]}:/${match[2]}`
+    } else {
+      return originalPath
+    }
+  }
+
+  // PROTOCOL API (for local resources)
+  protocol.handle('local-resource', async (request) => {
+    const decodedUrl = decodeURIComponent(
+      request.url.replace(new RegExp(`^local-resource://`, 'i'), '/')
+    )
+    const fullPath = process.platform === 'win32' ? convertPath(decodedUrl) : decodedUrl
+    return net.fetch(`file://${fullPath}`)
+  })
+
   // TABS API
-  ipcMain.handle('tabs:new', () => addNewWebContentsView())
-  ipcMain.handle('tabs:close', (_, id: number) => closeWebContentsViewWithId(id))
-  ipcMain.handle('tabs:select', (_, id: number) => setSelectedContentViewWithId(id))
+  ipcMain.handle('tabs:new', async (_, fileType: FileType) => {
+    const route = fileTypeToRouteMapping[fileType]
+    const webContentsView = await createWebContentsView(route)
+    const menuViewMode = routeToMenuMapping[route]
+    setMenuViewMode(menuViewMode)
+    setApplicationMenu(onClickMenuItem);
+    return webContentsView?.webContents.id
+  })
+  ipcMain.handle('tabs:close', (_, id: number) => {
+    const tabs = closeWebContentsViewWithId(id)
+    const route = tabs.find((tab) => tab.selected)?.route
+    const menuViewMode = routeToMenuMapping[route]
+    setMenuViewMode(menuViewMode)
+    setApplicationMenu(onClickMenuItem);
+  })
+  ipcMain.handle('tabs:select', (_, id: number, tabType: TabType) => {
+    const route = typeTypeToRouteMapping[tabType]
+    const menuViewMode = routeToMenuMapping[route]
+    setMenuViewMode(menuViewMode)
+    setApplicationMenu(onClickMenuItem);
+    setSelectedWebContentsViewWithId(id)
+  })
   ipcMain.handle('tabs:reorder', (_, tabIds: number[]) => reorderTabs(tabIds))
-  ipcMain.handle('tabs:getAllContentViewsIds', () => getAllContentViewsIds())
-  ipcMain.handle('tabs:getSelectedTabId', () => getSelectedTabId())
+  ipcMain.handle('tabs:getAllContentViewsIds', () => getWebContentsViewsIds())
+  ipcMain.handle('tabs:getSelectedTabId', () => getSelectedWebContentsViewId())
 
   // MENU API
   ipcMain.handle('menu:disableReferencesMenuItems', (_, data) => {
@@ -1052,15 +926,112 @@ const initializeApp = async (): Promise<void> => {
 
   // APPLICATION API
   ipcMain.handle('application:toolbarIsVisible', () => {
-    return store.get('toolbarIsVisible');
+    return readToolbarIsVisible();
+  })
+
+  ipcMain.handle('application:toolbarAdditionalItems', () => {
+    return readToolbarAdditionalItems();
   })
 
   // DOCUMENT API
-  ipcMain.handle('document:getTemplatesFilenames', () => {
+  ipcMain.handle('document:openDocument', () => {
+    openDocument(null, onDocumentOpened);
+  })
+  ipcMain.handle('document:getTemplates', () => {
     const templatesFolderPath = getTemplatesPath();
     const templatesFilenames = fsSync.readdirSync(templatesFolderPath);
-    return templatesFilenames.filter((filename) => filename.endsWith(".tml"));
+    const templates = templatesFilenames
+      .filter((filename) => filename.endsWith(".tml"))
+      .map(async (filename) => {
+        const filePath = path.join(templatesFolderPath, filename);
+        const content = await fs.readFile(filePath, "utf8");
+        return content
+      });
+
+    return Promise.all(templates);
   });
+  ipcMain.handle('document:importTemplate', async () => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: path.join(app.getPath("downloads")),
+      filters: [{ name: "Files", extensions: ["tml"] }],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) return;
+
+    // Selected template file path
+    const selectedFilePath = result.filePaths[0];
+    const fileNameParsed = path.parse(selectedFilePath);
+    const fileName = fileNameParsed.name;
+    const fileNameWithExt = fileNameParsed.base;
+
+    // Templates folder path
+    const templatesFolderPath = getTemplatesPath();
+    const templatesFilenames = fsSync.readdirSync(templatesFolderPath);
+    const matchFilenames = templatesFilenames.filter((filename) => filename.includes(fileName));
+    const matchFilename = matchFilenames.length > 0
+
+    if (matchFilename) {
+      const confirmation = await dialog.showMessageBox(baseWindow, {
+        type: "warning",
+        buttons: ["Replace", "Cancel"],
+        defaultId: 1,
+        noLink: true,
+        title: "Confirm Replacement",
+        message: `A template named "${fileName}" already exists. Do you want to overwrite it?`,
+      });
+
+      if (confirmation.response === 1) return
+    }
+
+    // Copy the new file to the templates folder
+    const destinationPath = path.join(templatesFolderPath, fileNameWithExt);
+    await fs.copyFile(selectedFilePath, destinationPath);
+  })
+  ipcMain.handle('document:createTemplate', async (_, template: unknown, name: string) => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return
+
+    const templatesFolderPath = getTemplatesPath();
+    const fileNameWithExt = name + ".tml";
+
+    // Templates folder path
+    const templatesFilenames = fsSync.readdirSync(templatesFolderPath);
+    const matchFilenames = templatesFilenames.filter((filename) => filename.includes(name));
+    const matchFilename = matchFilenames.length > 0
+
+    if (matchFilename) {
+      const confirmation = await dialog.showMessageBox({
+        type: "warning",
+        buttons: [
+          "Replace", // to be translated
+          "Cancel", // to be translated
+        ],
+        defaultId: 1,
+        noLink: true,
+        title: "Confirm Replacement", // to be translated
+        message: `A template named "${fileNameWithExt}" already exists. Do you want to overwrite it?`, // to be translated
+      });
+
+      if (confirmation.response === 1) return;
+    }
+
+    const newTemplate = {
+      name: name,
+      type: "PROPRIETARY",
+      createdDate: new Date(),
+      updatedDate: new Date(),
+      ...(template as object),
+    }
+
+    const stringifiedTemplate = JSON.stringify(newTemplate, null, 2);
+
+    const destinationPath = path.join(templatesFolderPath, fileNameWithExt);
+    await fs.writeFile(destinationPath, stringifiedTemplate);
+  })
   ipcMain.handle('document:getApparatuses', () => {
     const document = getCurrentDocument();
     return document?.apparatuses;
@@ -1068,19 +1039,31 @@ const initializeApp = async (): Promise<void> => {
   ipcMain.handle('document:setApparatuses', (_, apparatuses) => {
     setCurrentApparatuses(apparatuses)
   });
+  ipcMain.handle('document:setLayoutTemplate', (_, layoutTemplate) => {
+    setCurrentLayoutTemplate(layoutTemplate)
+  });
+  ipcMain.handle('document:setPageSetup', (_, pageSetup) => {
+    setCurrentPageSetup(pageSetup)
+  });
+  ipcMain.handle('document:setSort', (_, sort) => {
+    setCurrentSort(sort)
+  });
+  ipcMain.handle('document:setStyles', (_, style) => {
+    setCurrentStyles(style)
+  });
+  ipcMain.handle('document:setParatextual', (_, paratextual) => {
+    setCurrentParatextual(paratextual)
+  });
 
   const taskId = mainLogger.startTask("Electron", "Initializing main window");
-  initializeMainWindow();
+  initializeMainWindow(onBaseWindowReady);
   mainLogger.endTask(taskId, "Electron", "Main window created");
 
   const baseWindow = getBaseWindow();
 
-  baseWindow?.on(
-    "close",
-    handleAppClose(() => closeApplication())
-  );
+  baseWindow?.on("close", handleAppClose(() => closeApplication()));
 
-  const language = (store.get("appLanguage") as string) || "en";
+  const language = readAppLanguage()
   await i18next.changeLanguage(language);
 
   await setRecentDocuments();
@@ -1089,8 +1072,8 @@ const initializeApp = async (): Promise<void> => {
 
   registerIpcListeners();
 
-  const webContentsView = getSelectedContentView();
-  const toolbarContentView = getToolbarContentView();
+  const webContentsView = getSelectedWebContentsView();
+  const toolbarContentView = getToolbarWebContentsView();
 
   toolbarContentView?.webContents.send("language-changed", language);
   webContentsView?.webContents.send("language-changed", language);

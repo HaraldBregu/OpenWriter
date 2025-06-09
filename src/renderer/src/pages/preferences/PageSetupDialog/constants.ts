@@ -11,7 +11,7 @@ export const sectionLayouts = {
     ],
     critical: [
       {visible: () => true, name: 'vertical-horizontal' },
-      {visible: () => true, name: 'horizontal-horizontal' },
+      {visible: (apparatusColDetails) => apparatusColDetails.length > 1, name: 'horizontal-horizontal' },
       {visible: () => true, name: 'vertical-vertical' },
       {visible: () => true, name: 'vertical-vertical-reverse'},
     ],
@@ -32,9 +32,11 @@ export const sectionLayouts = {
         critical: {
             columnDetails: {
                 text:{columnNr: 4},
-                critical: {columnNr: 4}, 
-                pageNotes: {columnNr: 4}, 
-                sectionNotes: {columnNr: 4},
+                critical: {columnNr: 2}, 
+                pageNotes: {columnNr: 2}, 
+                sectionNotes: {columnNr: 2},
+                outerMargin:{columnNr:1},
+                innerMargin:{columnNr:1}
             }
         },
         toc: {
@@ -108,10 +110,12 @@ export const sectionLayouts = {
     ["horizontal-horizontal"]: {
         critical: {
             columnDetails: {
-                text:{columnNr: 4},
+             text:{columnNr: 4},
                 critical: {columnNr: 2}, 
                 pageNotes: {columnNr: 2}, 
                 sectionNotes: {columnNr: 2},
+                outerMargin:{columnNr:1},
+                innerMargin:{columnNr:1}
             }
         },
         toc: {

@@ -5,8 +5,8 @@ import Divider from "./ui/divider";
 import Modal from "./ui/modal";
 import TextField from "./ui/textField";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTocSettings } from "@/pages/editor/store/editor.selector";
-import { initialTocSettings, updateTocSettings } from "@/pages/editor/store/editor.slice";
+import { selectTocSettings } from "@/pages/editor/store/editor/editor.selector";
+import { initialTocSettings, updateTocSettings } from "@/pages/editor/store/editor/editor.slice";
 import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { levelFormat, numberSeparator, tabLeaderFormat } from "@/utils/optionsEnums";
@@ -40,14 +40,14 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         title={t('tableOfContents.label')}
-        className="min-w-[600px]"
+        className="w-full max-w-full sm:max-w-[37.5em] md:min-w-[37.5em]"
         actions={[
-            <Button key="cancel" className="w-24" size="mini" intent={"secondary"} variant={"tonal"} onClick={() => setIsOpen(false)}>{t('buttons.cancel')}</Button>,
-            <Button key="save" className="w-24" size="mini" intent={"primary"} onClick={() => submitHandler()}>{t('buttons.done')}</Button>
+            <Button key="cancel" className="w-full sm:w-[6em]" size="mini" intent={"secondary"} variant={"tonal"} onClick={() => setIsOpen(false)}>{t('buttons.cancel')}</Button>,
+            <Button key="save" className="w-full sm:w-[6em]" size="mini" intent={"primary"} onClick={() => submitHandler()}>{t('buttons.done')}</Button>
         ]}
     >
-        <div className="flex flex-col gap-6 min-h-[625px]">
-            <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6 max-h-[70vh] overflow-y-auto">
+            <div className="flex flex-col gap-4 sm:gap-6">
                 <Checkbox
                     label={t('tableOfContents.settings.show')}
                     labelClassName="font-semibold"
@@ -59,7 +59,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                 <TextField
                     id="toc-title"
                     type="text"
-                    className="w-[50%]"
+                    className="w-full sm:w-3/4 md:w-1/2"
                     label={t('tableOfContents.settings.setTitle')}
                     value={settings.title}
                     onChange={(e) => {
@@ -99,7 +99,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-1">
-                        <Typography component="p" className="ml-1 text-[12px] font-semibold">{t('tableOfContents.settings.tabLeader')}</Typography>
+                        <Typography component="p" className="ml-1 text-[0.75em] font-semibold">{t('tableOfContents.settings.tabLeader')}</Typography>
                     </div>
                     <Select
                         onValueChange={(value) => {
@@ -107,7 +107,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                         }}
                         value={settings?.tabLeaderFormat || "1"}
                     >
-                        <SelectTrigger className="w-[170px] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[14px]">
+                        <SelectTrigger className="w-full sm:w-[10.6em] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[0.875em]">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -137,7 +137,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-1">
-                        <Typography component="p" className="ml-1 text-[12px] font-semibold">{t('tableOfContents.settings.numberSeparator')}</Typography>
+                        <Typography component="p" className="ml-1 text-[0.75em] font-semibold">{t('tableOfContents.settings.numberSeparator')}</Typography>
                     </div>
                     <Select
                         onValueChange={(value) => {
@@ -146,7 +146,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                         value={settings?.numberSeparator || "1"}
                         disabled={!settings.showHeadingNumbers}
                     >
-                        <SelectTrigger className="w-[170px] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[14px]">
+                        <SelectTrigger className="w-full sm:w-[10.6em] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[0.875em]">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -165,7 +165,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                     {Array.from({ length: settings.levels }, (_, i) => i + 1).map((level) => (
                         <div key={`level-${level}-format`}>
                             <div className="flex flex-col gap-1">
-                                <Typography component="p" className="ml-1 text-[12px] font-semibold">
+                                <Typography component="p" className="ml-1 text-[0.75em] font-semibold">
                                     {t(`tableOfContents.settings.level${level}Format`)}
                                 </Typography>
                             </div>
@@ -179,7 +179,7 @@ const TocSetupModal = ({ isOpen, setIsOpen }: TocSetupModalProps) => {
                                 value={settings?.[`level${level}Format`] || "1"}
                                 disabled={!settings.showHeadingNumbers}
                             >
-                                <SelectTrigger className="w-[170px] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[14px]">
+                                <SelectTrigger className="w-full sm:w-[10.6em] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[0.875em]">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>

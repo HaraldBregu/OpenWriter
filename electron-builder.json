@@ -105,7 +105,7 @@
       {
         "ext": "critx",
         "name": "Criterion Document",
-        "icon": "./buildResources/appIcons/icon.ico"
+        "icon": "./buildResources/fileIcons/win/fileIcon.ico"
       }
     ]
   },

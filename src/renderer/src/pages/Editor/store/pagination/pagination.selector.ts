@@ -1,73 +1,133 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import { PageNumberSettings } from "./pagination.slice";
 
+// Selettore base per lo stato di paginazione
+const paginationState = (state: RootState) => state.pagination;
+
 // Selettori per line number settings
-const selectLineNumberSettings = (state: RootState) => state.pagination.lineNumberSettings;
-const selectShowLines = (state: RootState) => state.pagination.lineNumberSettings.showLines;
-const selectLinesNumeration = (state: RootState) => state.pagination.lineNumberSettings.linesNumeration;
-const selectSectionLevel = (state: RootState) => state.pagination.lineNumberSettings.sectionLevel;
+export const selectLineNumberSettings = createSelector(
+    paginationState,
+    (pagination) => pagination.lineNumberSettings
+);
+
+export const selectShowLines = createSelector(
+    selectLineNumberSettings,
+    (lineNumberSettings) => lineNumberSettings.showLines
+);
+
+export const selectLinesNumeration = createSelector(
+    selectLineNumberSettings,
+    (lineNumberSettings) => lineNumberSettings.linesNumeration
+);
+
+export const selectSectionLevel = createSelector(
+    selectLineNumberSettings,
+    (lineNumberSettings) => lineNumberSettings.sectionLevel
+);
 
 // Selettori per page number settings
-const selectPageNumberSettings = (state: RootState) => state.pagination.pageNumberSettings;
+export const selectPageNumberSettings = createSelector(
+    paginationState,
+    (pagination) => pagination.pageNumberSettings
+);
 
 // Selettori per sezioni specifiche
-const selectTocNumberSettings = (state: RootState) => state.pagination.pageNumberSettings.toc;
-const selectIntroNumberSettings = (state: RootState) => state.pagination.pageNumberSettings.intro;
-const selectCrtNumberSettings = (state: RootState) => state.pagination.pageNumberSettings.crt;
-const selectBiblioNumberSettings = (state: RootState) => state.pagination.pageNumberSettings.biblio;
+export const selectTocNumberSettings = createSelector(
+    selectPageNumberSettings,
+    (pageNumberSettings) => pageNumberSettings.toc
+);
+
+export const selectIntroNumberSettings = createSelector(
+    selectPageNumberSettings,
+    (pageNumberSettings) => pageNumberSettings.intro
+);
+
+export const selectCrtNumberSettings = createSelector(
+    selectPageNumberSettings,
+    (pageNumberSettings) => pageNumberSettings.crt
+);
+
+export const selectBiblioNumberSettings = createSelector(
+    selectPageNumberSettings,
+    (pageNumberSettings) => pageNumberSettings.biblio
+);
 
 // Selettore per una specifica sezione (usando un parametro)
-const selectSectionNumberSettings = (state: RootState, section: keyof PageNumberSettings) =>
-    state.pagination.pageNumberSettings[section];
+export const selectSectionNumberSettings = (section: keyof PageNumberSettings) =>
+    createSelector(
+        selectPageNumberSettings,
+        (pageNumberSettings) => pageNumberSettings[section]
+    );
 
 // Selettori per le impostazioni dell'header
-const selectHeaderSettings = (state: RootState) => state.pagination.headerSettings;
-const selectHeaderDisplayMode = (state: RootState) => state.pagination.headerSettings.displayMode;
-const selectHeaderStartFromPage = (state: RootState) => state.pagination.headerSettings.startFromPage;
-const selectHeaderSectionsToShow = (state: RootState) => state.pagination.headerSettings.sectionsToShow;
-const selectHeaderLeftContent = (state: RootState) => state.pagination.headerSettings.leftContent;
-const selectHeaderCenterContent = (state: RootState) => state.pagination.headerSettings.centerContent;
-const selectHeaderRightContent = (state: RootState) => state.pagination.headerSettings.rightContent;
+export const selectHeaderSettings = createSelector(
+    paginationState,
+    (pagination) => pagination.headerSettings
+);
+
+export const selectHeaderDisplayMode = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.displayMode
+);
+
+export const selectHeaderStartFromPage = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.startFromPage
+);
+
+export const selectHeaderSectionsToShow = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.sectionsToShow
+);
+
+export const selectHeaderLeftContent = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.leftContent
+);
+
+export const selectHeaderCenterContent = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.centerContent
+);
+
+export const selectHeaderRightContent = createSelector(
+    selectHeaderSettings,
+    (headerSettings) => headerSettings.rightContent
+);
 
 // Selettori per le impostazioni del footer
-const selectFooterSettings = (state: RootState) => state.pagination.footerSettings;
-const selectFooterDisplayMode = (state: RootState) => state.pagination.footerSettings.displayMode;
-const selectFooterStartFromPage = (state: RootState) => state.pagination.footerSettings.startFromPage;
-const selectFooterSectionsToShow = (state: RootState) => state.pagination.footerSettings.sectionsToShow;
-const selectFooterLeftContent = (state: RootState) => state.pagination.footerSettings.leftContent;
-const selectFooterCenterContent = (state: RootState) => state.pagination.footerSettings.centerContent;
-const selectFooterRightContent = (state: RootState) => state.pagination.footerSettings.rightContent;
+export const selectFooterSettings = createSelector(
+    paginationState,
+    (pagination) => pagination.footerSettings
+);
 
-export {
-    // Line number selectors
-    selectLineNumberSettings,
-    selectShowLines,
-    selectLinesNumeration,
-    selectSectionLevel,
-
-    // Page number selectors
-    selectPageNumberSettings,
-    selectTocNumberSettings,
-    selectIntroNumberSettings,
-    selectCrtNumberSettings,
-    selectBiblioNumberSettings,
-    selectSectionNumberSettings,
-
-    // Header selectors
-    selectHeaderSettings,
-    selectHeaderDisplayMode,
-    selectHeaderStartFromPage,
-    selectHeaderSectionsToShow,
-    selectHeaderLeftContent,
-    selectHeaderCenterContent,
-    selectHeaderRightContent,
-
-    // Footer selectors
+export const selectFooterDisplayMode = createSelector(
     selectFooterSettings,
-    selectFooterDisplayMode,
-    selectFooterStartFromPage,
-    selectFooterSectionsToShow,
-    selectFooterLeftContent,
-    selectFooterCenterContent,
-    selectFooterRightContent,
-}
+    (footerSettings) => footerSettings.displayMode
+);
+
+export const selectFooterStartFromPage = createSelector(
+    selectFooterSettings,
+    (footerSettings) => footerSettings.startFromPage
+);
+
+export const selectFooterSectionsToShow = createSelector(
+    selectFooterSettings,
+    (footerSettings) => footerSettings.sectionsToShow
+);
+
+export const selectFooterLeftContent = createSelector(
+    selectFooterSettings,
+    (footerSettings) => footerSettings.leftContent
+);
+
+export const selectFooterCenterContent = createSelector(
+    selectFooterSettings,
+    (footerSettings) => footerSettings.centerContent
+);
+
+export const selectFooterRightContent = createSelector(
+    selectFooterSettings,
+    (footerSettings) => footerSettings.rightContent
+);

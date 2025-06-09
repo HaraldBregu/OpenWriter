@@ -48,9 +48,8 @@ const TextContentManagement = ({
   const { t } = useTranslation();
 
   const [apparatus, setApparatus] = useArray<TElement>([]);
-  const [counter, setCounter] = useCounter(2);
+  const [counter, setCounter] = useCounter(apparatusDetails.length);
 
-  // Stato per modale
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
@@ -65,16 +64,18 @@ const TextContentManagement = ({
       payload: apparatus,
     });
   }, [apparatus]);
-
+  
   const clickHandler = () => {
-    setApparatus.add({
-      id: `element${counter}`,
-      columns: 1,
-      title: `Apparatus ${counter}`,
-      sectionType: "critical",
-      type: "apparatus",
-      disabled: false,
-    });
+  const newElement:TElement = {
+    id: `element${counter}`,
+    columns: 1,
+    title: `Apparatus ${counter}`,
+    sectionType: "critical",
+    type: "apparatus",
+    disabled: false,
+    visible:true,
+  };
+  setApparatus.add(newElement);
     setCounter.increment();
   };
 
@@ -90,17 +91,18 @@ const TextContentManagement = ({
       setDeleteIndex(null);
     }
   };
-  
-  const defaultDetails:TElement = {
-    id: '',
-    title: '',
+
+  const defaultDetails: TElement = {
+    id: "",
+    title: "",
     columns: 1,
-    sectionType: 'critical',
+    sectionType: "critical",
     disabled: false,
-    type: 'apparatus'
+    type: "apparatus",
+    visible:false,
+  };
 
-  }
-
+  
   return (
     <div className="text-[13px] flex flex-col justify-between h-full">
       <div className="flex flex-col gap-4">
@@ -111,9 +113,9 @@ const TextContentManagement = ({
           >
             {t(`pageSetup.component.sectionInclude`)}
           </Typography>
-
+          
           <SortableArea<string>
-            itemLs={apparatus?.map((x) => x?.id || "") || []}
+            itemLs={apparatus?.map((x) => x?.id)}
             readonly={readonly}
             wrapper={(els) => <div className="flex flex-col gap-2">{els}</div>}
             iconClassName={iconClassName}
@@ -122,9 +124,15 @@ const TextContentManagement = ({
                 curLayout={curLayout}
                 key={payload}
                 index={i}
-                details={apparatus.find((x) => x.id === payload) || defaultDetails}
+                setIncludedElements={setIncludedElements}
+                apparatusDetails={apparatusDetails}
+                details={
+                  apparatus.find((x) => x.id === payload) || defaultDetails
+                }
                 onDelete={() => handleDeleteClick(i)}
-                onChangeColumnNr={(_, details) => setApparatus.update(i, details)}
+                onChangeColumnNr={(_, details) =>
+                  setApparatus.update(i, details)
+                }
                 readonly={readonly}
                 sectionTypes={availableApparatusTypes}
                 dragHandler={drag}
@@ -133,7 +141,7 @@ const TextContentManagement = ({
             )}
             readSorted={(result) =>
               setApparatus.replace(
-                result.map((id) => apparatus.find((x) => x.id === id)) as TElement[]
+                result.map(id => apparatus.find(x => x.id === id)).filter((x): x is TElement => x !== undefined)
               )
             }
           />
@@ -169,6 +177,5 @@ const TextContentManagement = ({
     </div>
   );
 };
-
 
 export default TextContentManagement;

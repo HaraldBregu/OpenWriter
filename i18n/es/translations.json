@@ -65,12 +65,16 @@
     "sidebar": {
       "toggle": "Mostrar/ocultar barra lateral"
     },
-    "blockquote": "Cita",
+    "note": "Nota",
     "siglum": "Sigla",
     "citation": "Citación",
-    "addComment": "Añadir comentario",
-    "addBookmark": "Añadir marcador",
-    "addLink": "Añadir enlace",
+    "readingSeperator": "Separador de lectura",
+    "readingType": "Tipo de lectura",
+    "comment": "Comentario",
+    "bookmark": "Marcador",
+    "link": "Enlace",
+    "object": "Objeto",
+    "symbol": "Símbolo",
     "spacing": "Espaciado",
     "list": "Lista",
     "search": "Buscar",
@@ -82,7 +86,9 @@
     "listBulletEmpty": "Lista con viñetas vacías",
     "listBulletSquare": "Lista con viñetas cuadradas",
     "superscript": "Superíndice",
-    "subscript": "Subíndice"
+    "subscript": "Subíndice",
+    "contextMenu": "Customize Toolbar",
+    "modalTitle": "Toggle items to add or remove from the toolbar"
   },
   "dividerSections": {
     "toc": "Tabla de contenidos",
@@ -223,6 +229,9 @@
         "italic": "Cursiva",
         "underline": "Subrayado",
         "strikethrough": "Tachado",
+        "superscript": "Superíndice",
+        "subscript": "Subíndice",
+        "npc": "Caracteres no imprimibles",
         "characterSpacing": {
           "label": "Espaciado de caracteres",
           "normal": "Normal",
@@ -255,6 +264,7 @@
         "spacing": {
           "label": "Espaciado",
           "single": "Simple",
+          "1_15": "1.15",
           "oneAndHalf": "1.5",
           "double": "Doble"
         }

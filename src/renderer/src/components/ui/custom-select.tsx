@@ -90,6 +90,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                             className={cn(defaultItemClassName, itemClassName)}
                             value={item.value}
                             style={item.style}
+                            onClick={() => {
+                                console.log("click item")
+                            }}
                         >
                             {item.label}
                         </SelectItem>

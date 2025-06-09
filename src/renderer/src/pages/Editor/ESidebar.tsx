@@ -12,16 +12,17 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import Button from "@/components/ui/button";
-import { selectBookmarks, selectBookmarksCategories, selectSelectedBookmark } from "./store/bookmark/bookmark.selector";
+import { bookmarkCategoriesSelector, visibleBookmarksSelector, selectedBookmarkSelector } from "./store/bookmark/bookmark.selector";
 import { addBookmarkCategory, deleteBookmark, deleteBookmarkCategory, editBookmark, moveBookmarksFromCategory, moveBookmarkToCategoryId, selectBookmark, updateBookmarkCategory } from "./store/bookmark/bookmark.slice";
-import { selectSelectedSidebarTabIndex, selectTocSettings, selectTocStructure } from "./store/editor.selector";
-import { setSelectedSidebarTabIndex, TocSettings, updateTocSettings } from "./store/editor.slice";
+import { selectSelectedSidebarTabIndex, selectTocSettings, selectTocStructure } from "./store/editor/editor.selector";
+import { setSelectedSidebarTabIndex, TocSettings, updateTocSettings } from "./store/editor/editor.slice";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import AppBookmarks from "@/components/app-bookmarks";
 import AppComments from "@/components/app-comments";
 import { addCommentCategory, deleteComment, deleteCommentCategory, editComment, moveCommentsFromCategory, moveCommentToCategoryId, selectComment, updateCommentCategory } from "./store/comment/comments.slice";
-import { selectComments, selectCommentsCategories, selectSelectedComment } from "./store/comment/comments.selector";
+import { selectLayoutSettings } from "../preferences/store/layout/layout.selector";
+import { commentCategoriesSelector, selectedCommentSelector, visibleCommentsSelector } from "./store/comment/comments.selector";
 
 
 interface ESidebarProps {
@@ -72,11 +73,17 @@ const ESidebar = forwardRef(({
     const tocStructure = useSelector(selectTocStructure)
     const tocSettings = useSelector(selectTocSettings);
 
-    const bookmarks = useSelector(selectBookmarks);
-    const bookmarkCategories = useSelector(selectBookmarksCategories);
+    const bookmarks = useSelector(visibleBookmarksSelector);
+    const bookmarkCategories = useSelector(bookmarkCategoriesSelector);
 
-    const comments = useSelector(selectComments);
-    const commentCategories = useSelector(selectCommentsCategories);
+    const comments = useSelector(visibleCommentsSelector);
+    const commentCategories = useSelector(commentCategoriesSelector);
+
+    const {
+        setupDialogState: layoutTemplate,
+        // setupOption: pageSetup,
+        sort,
+    } = useSelector(selectLayoutSettings);
 
     const [newCategoryIdToMoveBookmarks, setNewCategoryIdToMoveBookmarks] = useState<string | null>(null);
 
@@ -115,8 +122,8 @@ const ESidebar = forwardRef(({
     }>({ open: false });
 
 
-    const selectedComment = useSelector(selectSelectedComment)
-    const selectedBookmark = useSelector(selectSelectedBookmark)
+    const selectedComment = useSelector(selectedCommentSelector)
+    const selectedBookmark = useSelector(selectedBookmarkSelector)
 
     return (
         <Sidebar collapsible="offcanvas" className="border-t border-grey-70">
@@ -577,6 +584,8 @@ const ESidebar = forwardRef(({
                     <TableOfContents
                         tocStructure={tocStructure}
                         tocSettings={tocSettings}
+                        layoutTemplate={layoutTemplate}
+                        templateOrder={sort}
                         onUpdateTocSettings={(tocSettings: TocSettings) => {
                             dispatch(updateTocSettings(tocSettings));
                         }}

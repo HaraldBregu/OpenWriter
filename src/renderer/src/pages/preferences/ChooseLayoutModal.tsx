@@ -1,18 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useIpcRenderer } from "@/hooks/use-ipc-renderer";
 import Modal from "@/components/ui/modal";
 import Button from "@/components/ui/button";
 import TemplateSelection from "@/components/template-selection";
-import {
-  DocumentTemplate,
-} from "./store/preferences.slice";
+import { setDocumentTemplate } from "./store/preferences/preferences.slice";
+
+/**
+ * @todo 
+ * - implement import from git folder (publishers template)
+ */
+
+/**
+ * {/**<a
+    href="*"
+    className="text-xs font-bold leading-4 tracking-normal text-right underline underline-offset-4 font-sans"
+  >
+    {t("choose_template_dialog.browse_link")}
+  </a> 
+*/
+
 
 interface ChooseTemplateModalProps {
   open: boolean;
   onClose: () => void;
-  onContinue: (template: DocumentTemplate) => void;
-  onImportTemplate: () => void;
+  onContinue: (template: any) => void;
 }
 
 const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
@@ -20,71 +32,75 @@ const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
   onClose,
   onContinue,
 }) => {
-
-  const [templatesName, setTemplatesName] = useState<string[]>([]);
-    const [jsonData, setJsonData] = useState<any>();
-
-  const [templates, setTemplates] = useState<{
-    publishersTemplates: DocumentTemplate[];
-    recentTemplates: DocumentTemplate[];
-  } | null>(null);
-  const [selectedTemplate, setSelectedTemplate] =
-    useState<DocumentTemplate | null>(null);
-
-  const { publishersTemplates } = templates ?? {};
+  const [templates, setTemplates] = useState<any | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
 
   const { t } = useTranslation();
-
-  console.log(selectedTemplate);
-  useIpcRenderer(
-    (ipc) => {
-      ipc.send("request-templates-files");
-      ipc.on("receive-templates-files", (_, data) => {
-        setTemplatesName(data);
-      });
-
-      return () => {
-        ipc.cleanup();
-      };
-    },
-    [window.electron.ipcRenderer]
-  );
+  const dispatch = useDispatch();
 
 
-  useIpcRenderer(
-    (ipc) => {
-      window.electron.ipcRenderer.on("template-selected", () => {
-        window.electron.ipcRenderer.send("request-templates");
-        window.electron.ipcRenderer.on("receive-templates", (_, data) => {
-          setTemplates(data);
-        });
-      });
-
-      return () => {
-        ipc.cleanup();
-      };
-    },
-    [window.electron.ipcRenderer]
-  );
-
-  const handleTemplateSelect = (id: string) => {
-
-    window.electron.ipcRenderer.send("read-template-with-filename", id);
-    window.electron.ipcRenderer.on("template-file-structure", (_, data)=>{
-      setJsonData(JSON.parse(data));
-    });
+  const fetchTemplates = async () => {
+    try {
+      const templates = (await window.doc.getTemplates()).map((t) => JSON.parse(t));
+      setTemplates(templates);
+    } catch (error) {
+      console.error("Error fetching templates:", error);
+      setTemplates([]);
+    }
   };
 
-  const handleClose = () => {
-    onClose();
-    setSelectedTemplate(null);
+  useEffect(() => {
+    fetchTemplates();
+  }, [])
+
+  const recentTemplates = useMemo(() => {
+    if (!templates) return [];
+
+    const filtered = templates
+      .filter((template) => template.type === "PROPRIETARY")
+      .sort((a, b) => new Date(b.updatedDate).getTime() - new Date(a.updatedDate).getTime());
+
+    const blankIndex = filtered.findIndex(t => t.name === "Blank");
+
+    if (blankIndex > -1) {
+      const [blankTemplate] = filtered.splice(blankIndex, 1);
+      filtered.unshift(blankTemplate);
+    }
+    return filtered;
+  }, [templates]);
+
+  const publishersTemplates = useMemo(() => {
+    const filtered = templates?.filter((template) => template.type === "COMMUNITY")
+      .sort((a, b) => new Date(b.updatedDate).getTime() - new Date(a.updatedDate).getTime());
+    return filtered;
+  }, [templates]);
+
+  useEffect(() => {
+    if (recentTemplates.length > 0) {
+      setSelectedTemplate(recentTemplates[0])
+    }
+  }, [recentTemplates])
+
+  const handleTemplateSelect = (name: string) => {
+    const found = [...recentTemplates, ...publishersTemplates].find(t => t.name === name);
+    if (found) { setSelectedTemplate(found) };
   };
 
   const handleContinue = () => {
-
-   jsonData && onContinue(jsonData)
+    if (selectedTemplate) {
+      dispatch(setDocumentTemplate(selectedTemplate))
+      onContinue(selectedTemplate);
+    }
   };
 
+  const handleImport = async () => {
+    try {
+      await window.doc.importTemplate()
+      await fetchTemplates()
+    } catch (err) {
+      console.log("err:", err)
+    }
+  }
 
   return (
     <Modal
@@ -92,7 +108,7 @@ const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
       title={t("choose_template_dialog.title")}
       className="max-w-[880px] h-auto max-h-[90%] flex-1 flex flex-col"
       contentClassName="flex-1 overflow-y-auto"
-      onOpenChange={() => {}}
+      onOpenChange={() => { }}
       actions={[
         <Button
           key="cancel"
@@ -100,7 +116,7 @@ const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
           size="mini"
           intent="secondary"
           variant="tonal"
-          onClick={handleClose}
+          onClick={onClose}
         >
           {t("choose_template_dialog.buttons.cancel")}
         </Button>,
@@ -110,9 +126,7 @@ const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
           size="mini"
           intent="primary"
           variant="tonal"
-          onClick={() => {
-            window.electron.ipcRenderer.send("import-template");
-          }}
+          onClick={handleImport}
         >
           {t("choose_template_dialog.buttons.import")}
         </Button>,
@@ -127,52 +141,39 @@ const ChooseLayoutModal: React.FC<ChooseTemplateModalProps> = ({
         </Button>,
       ]}
     >
-      <TemplateSelection
-        defaultValue={'Blank'}
-        onChange={handleTemplateSelect}
-      >
+      <TemplateSelection value={selectedTemplate?.name ?? "Blank"} onChange={handleTemplateSelect}>
         <TemplateSelection.Category
           title={t("choose_template_dialog.sections.recent")}
         >
-            {templatesName?.map(
-            (props, key) => (
-              (
-                <TemplateSelection.Item
-                id={props}
-                  key={key}
-                  name={props}
-                  value={props}
-                  icon={
-                    props.toLowerCase() === "blank" ? "blank" : "carocci"
-                  }
-                />
-              )
-            )
-          )}
-        
+          {recentTemplates?.map(({ name }) => {
+            return (
+              <TemplateSelection.Item
+                id={name}
+                key={name}
+                name={name}
+                value={name}
+                icon={name?.toLowerCase() === "blank" ? "blank" : "other"}
+              />
+            );
+          })}
         </TemplateSelection.Category>
         <TemplateSelection.Category
           title={t("choose_template_dialog.sections.publishers")}
           action={
-            <a
-              href="*"
-              className="text-xs font-bold leading-4 tracking-normal text-right underline underline-offset-4 font-sans"
-            >
-              {t("choose_template_dialog.browse_link")}
-            </a>
+            <div className="text-xs font-bold leading-4 tracking-normal text-right underline underline-offset-4 font-sans">{t("choose_template_dialog.browse_link")}</div>
           }
         >
-          {publishersTemplates?.map((props) => (
-            <TemplateSelection.Item
-              key={props.id}
-              value={props.name}
-              {...props}
+          {publishersTemplates?.map(({ name }) => {
+            return <TemplateSelection.Item
+              id={name}
+              key={name}
+              name={name}
+              value={name}
             />
-          ))}
+          })}
         </TemplateSelection.Category>
       </TemplateSelection>
     </Modal>
-
   );
 };
 

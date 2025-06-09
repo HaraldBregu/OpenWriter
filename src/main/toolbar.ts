@@ -1,28 +1,26 @@
-import { shell, WebContentsView } from 'electron'
+import { BaseWindow, shell, WebContentsView } from 'electron'
 import { join } from 'path'
-import { getBaseWindow } from './main-window'
-import { NavigationRoutes } from './utils/navigation-routes'
-import { getRootUrl } from './utils/util'
-import { is } from '@electron-toolkit/utils'
+import { getRootUrl } from './shared/util'
+import { getTabs, setTabs } from './store';
 
 const toolbarHeight = 32
+const toolbar: Route = "/browser-tab-bar";
 
-let toolbarView: WebContentsView | null = null
+let toolbarWebContentsView: WebContentsView | null = null
 
-export function createToolbar(): Promise<WebContentsView | null> {
+export const getToolbarWebContentsViewHeight = (): number => toolbarHeight
+export const getToolbarWebContentsView = (): WebContentsView | null => toolbarWebContentsView
+
+export function createToolbarWebContentsView(baseWindow: BaseWindow | null): Promise<WebContentsView | null> {
   return new Promise((resolve) => {
 
-    if (toolbarView !== null) {
-      return resolve(toolbarView)
-    }
+    if (toolbarWebContentsView !== null)
+      return resolve(toolbarWebContentsView)
 
-    const baseWindow = getBaseWindow()
-
-    if (baseWindow === null) {
+    if (baseWindow === null)
       return resolve(null)
-    }
 
-    toolbarView = new WebContentsView({
+    toolbarWebContentsView = new WebContentsView({
       webPreferences: {
         preload: join(__dirname, '../preload/index.mjs'),
         sandbox: false,
@@ -31,14 +29,14 @@ export function createToolbar(): Promise<WebContentsView | null> {
       }
     })
 
-    toolbarView.webContents.setWindowOpenHandler((details) => {
+    toolbarWebContentsView.webContents.setWindowOpenHandler((details) => {
       shell.openExternal(details.url)
       return { action: 'deny' }
     })
 
     const bounds = baseWindow.getBounds()
 
-    toolbarView.setBounds({
+    toolbarWebContentsView.setBounds({
       x: 0,
       y: 0,
       width: bounds.width,
@@ -47,10 +45,11 @@ export function createToolbar(): Promise<WebContentsView | null> {
 
     baseWindow.on('resize', () => {
       const newBounds = baseWindow.getBounds()
-      if (toolbarView === null) {
+
+      if (toolbarWebContentsView === null)
         return
-      }
-      toolbarView.setBounds({
+
+      toolbarWebContentsView.setBounds({
         x: 0,
         y: 0,
         width: newBounds.width,
@@ -58,46 +57,78 @@ export function createToolbar(): Promise<WebContentsView | null> {
       })
     })
 
-    const url = getRootUrl() + NavigationRoutes.toolbar
-    toolbarView.webContents.loadURL(url)
+    const url = getRootUrl() + toolbar
+    toolbarWebContentsView.webContents.loadURL(url)
 
-    toolbarView.webContents.on('did-finish-load', () => {
-      return resolve(toolbarView)
+    toolbarWebContentsView.webContents.on('did-finish-load', () => {
+      return resolve(toolbarWebContentsView)
     })
 
-    toolbarView.webContents.on('did-fail-load', () => {
+    toolbarWebContentsView.webContents.on('did-fail-load', () => {
       return resolve(null)
     })
-
-    if (is.dev) {
-      //toolbarView.webContents.toggleDevTools()
-    }
   })
 }
 
-export function getToolbarHeight(): number {
-  return toolbarHeight
-}
-
-export function getToolbar(): WebContentsView | null {
-  return toolbarView
-}
-
-export function resizeToolbar(): void {
-  const baseWindow = getBaseWindow()
-  if (!baseWindow) {
-    return
-  }
-
+export function resizeToolbarWebContentsView(baseWindow: BaseWindow): void {
   const newBounds = baseWindow.getBounds()
-  if (toolbarView === null) {
+
+  if (toolbarWebContentsView === null)
     return
-  }
-  
-  toolbarView.setBounds({
+
+  toolbarWebContentsView.setBounds({
     x: 0,
     y: 0,
     width: newBounds.width,
     height: toolbarHeight
   })
+}
+
+
+export function setTabsFromUrls(urls: WebContentsRoute[]): void {
+  const currentTabs = getTabs()
+  const newTabs = urls.map((tabUrl, index) => ({
+    route: tabUrl,
+    selected: index === urls.length - 1,
+    filePath: currentTabs?.[index]?.filePath,
+  } as Tab))
+
+  setTabs(newTabs)
+}
+
+export function setSelectedTabIndex(index: number): void {
+  const tabs = getTabs()
+
+  tabs?.forEach((tab, i) => {
+    tab.selected = (i === index)
+  })
+
+  setTabs(tabs)
+}
+
+export function getSelectedTab(): Tab | null {
+  return getTabs()?.find((tab) => tab.selected) ?? null
+}
+
+export function getSelectedTabIndex(): number {
+  const tabs = getTabs()
+
+  if (!tabs)
+    return -1
+
+  const selectedTabIndex = tabs.findIndex((tab) => tab.selected)
+
+  if (selectedTabIndex === -1)
+    return -1
+
+  return selectedTabIndex;
+}
+
+export function setFilePathForSelectedTab(path: string): void {
+  const tabs = getTabs()
+  if (!tabs) return
+
+  const selectedTabIndex = getSelectedTabIndex()
+  tabs[selectedTabIndex].filePath = path
+  setTabs(tabs)
 }

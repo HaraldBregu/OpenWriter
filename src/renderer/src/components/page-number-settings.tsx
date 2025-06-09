@@ -65,7 +65,7 @@ const PageNumberModal = ({ isOpen, setIsOpen }: PageNumberModalProps) => {
         return <TextField
             id={`${tabType}-starting-point`}
             type="number"
-            className={`w-[72px] h-[28px] ${!isStartMode ? 'opacity-50' : ''}`}
+            className={`w-full sm:w-[4.5em] h-[1.75em] ${!isStartMode ? 'opacity-50' : ''}`}
             value={settings[tabType]?.startingPointValue?.toString() || "1"}
             onChange={(e) => {
                 if (isStartMode) {
@@ -87,7 +87,7 @@ const PageNumberModal = ({ isOpen, setIsOpen }: PageNumberModalProps) => {
             }}
             value={settings[tabType]?.numberFormat || "1"}
         >
-            <SelectTrigger className="w-[170px] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[14px]">
+            <SelectTrigger className="w-full sm:w-[10.6em] shadow-none focus:ring-0 focus:ring-offset-0 font-[400] text-[0.875em]">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -105,17 +105,17 @@ const PageNumberModal = ({ isOpen, setIsOpen }: PageNumberModalProps) => {
 
     const pageConfigurator = (tabType: keyof PageNumberSettings) => {
         return (
-            <div className="grid grid-cols-3 gap-2 w-full pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full pt-4">
                 <div className="p-1">
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-col gap-1">
-                            <Typography component="p" className="text-[13px] font-bold">{t('pageNumber.numeration')}</Typography>
+                            <Typography component="p" className="text-[0.8125em] font-bold">{t('pageNumber.numeration')}</Typography>
                         </div>
                         <AppRadioGroup
                             items={[
-                                { label: t('pageNumber.none'), value: '1', className: "text-[13px] font-[600]" },
-                                { label: t('pageNumber.continue'), value: '2', className: "text-[13px] font-[600]" },
-                                { label: <div className="flex flex-row gap-2 items-center">{t('pageNumber.start')} {selectStarterPoint(tabType)}</div>, value: '3', className: "text-[13px] font-[600]" },
+                                { label: t('pageNumber.none'), value: '1', className: "text-[0.8125em] font-[600]" },
+                                { label: t('pageNumber.continue'), value: '2', className: "text-[0.8125em] font-[600]" },
+                                { label: <div className="flex flex-row gap-2 items-center">{t('pageNumber.start')} {selectStarterPoint(tabType)}</div>, value: '3', className: "text-[0.8125em] font-[600]" },
                             ]}
                             value={settings[tabType]?.pageNumeration || "1"}
                             onValueChange={(value) => {
@@ -129,7 +129,7 @@ const PageNumberModal = ({ isOpen, setIsOpen }: PageNumberModalProps) => {
                 <div className="p-1">
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-col gap-1">
-                            <Typography component="p" className="text-[13px] font-bold">{t('pageNumber.format.label')}</Typography>
+                            <Typography component="p" className="text-[0.8125em] font-bold">{t('pageNumber.format.label')}</Typography>
                         </div>
                         {numberTypeSelector(tabType)}
                     </div>
@@ -145,32 +145,34 @@ const PageNumberModal = ({ isOpen, setIsOpen }: PageNumberModalProps) => {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         title={t('pageNumber.label')}
-        className="min-w-[700px]"
+        className="w-full max-w-full sm:max-w-[43.75em] md:min-w-[43.75em]"
         actions={[
-            <Button key="cancel" className="w-24" size="mini" intent={"secondary"} variant={"tonal"} onClick={() => setIsOpen(false)}>{t('buttons.cancel')}</Button>,
-            <Button key="save" className="w-24" size="mini" intent={"primary"} onClick={() => submitHandler()}>{t('buttons.done')}</Button>
+            <Button key="cancel" className="w-full sm:w-[6em]" size="mini" intent={"secondary"} variant={"tonal"} onClick={() => setIsOpen(false)}>{t('buttons.cancel')}</Button>,
+            <Button key="save" className="w-full sm:w-[6em]" size="mini" intent={"primary"} onClick={() => submitHandler()}>{t('buttons.done')}</Button>
         ]}
     >
-        <Tabs defaultValue="toc" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="toc">{t('pageSetup.component.section.toc')}</TabsTrigger>
-                <TabsTrigger value="intro">{t('pageSetup.component.section.intro')}</TabsTrigger>
-                <TabsTrigger value="crt">{t('pageSetup.component.section.critical')}</TabsTrigger>
-                <TabsTrigger value="biblio">{t('pageSetup.component.section.bibliography')}</TabsTrigger>
-            </TabsList>
-            <TabsContent value="toc">
-                {pageConfigurator('toc')}
-            </TabsContent>
-            <TabsContent value="intro">
-                {pageConfigurator('intro')}
-            </TabsContent>
-            <TabsContent value="crt">
-                {pageConfigurator('crt')}
-            </TabsContent>
-            <TabsContent value="biblio">
-                {pageConfigurator('biblio')}
-            </TabsContent>
-        </Tabs>
+        <div className="max-h-[70vh] overflow-y-none">
+            <Tabs defaultValue="toc" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+                    <TabsTrigger value="toc">{t('pageSetup.component.section.toc')}</TabsTrigger>
+                    <TabsTrigger value="intro">{t('pageSetup.component.section.intro')}</TabsTrigger>
+                    <TabsTrigger value="crt">{t('pageSetup.component.section.critical')}</TabsTrigger>
+                    <TabsTrigger value="biblio">{t('pageSetup.component.section.bibliography')}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="toc">
+                    {pageConfigurator('toc')}
+                </TabsContent>
+                <TabsContent value="intro">
+                    {pageConfigurator('intro')}
+                </TabsContent>
+                <TabsContent value="crt">
+                    {pageConfigurator('crt')}
+                </TabsContent>
+                <TabsContent value="biblio">
+                    {pageConfigurator('biblio')}
+                </TabsContent>
+            </Tabs>
+        </div>
     </Modal>
 }
 

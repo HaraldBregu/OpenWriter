@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSelector } from "react-redux"
-import { selectWords } from "./store/editor.selector"
+import { selectWords } from "./store/editor/editor.selector"
 
 const EditorFooterLayout = ({ children }: { children: React.ReactNode }) => {
     return (

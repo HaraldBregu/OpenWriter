@@ -4,7 +4,7 @@ import Button from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
 import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
-import { selectToolbarEmphasisState } from '@/pages/editor/store/editor.selector';
+import { selectToolbarEmphasisState } from '@/pages/editor/store/editor/editor.selector';
 import { Label } from '@/components/ui/label';
 
 interface CustomSpacingModalProps {
@@ -16,7 +16,7 @@ interface CustomSpacingModalProps {
 const CustomSpacingModal: React.FC<CustomSpacingModalProps> = ({ isOpen, onCancel, onApply }) => {
     const { t } = useTranslation();
     const textEditorState = useSelector(selectToolbarEmphasisState);
-    
+
     const [lineSpacing, setLineSpacing] = React.useState<number>(1);
     const [marginTop, setMarginTop] = React.useState<number>(0);
     const [marginBottom, setMarginBottom] = React.useState<number>(0);

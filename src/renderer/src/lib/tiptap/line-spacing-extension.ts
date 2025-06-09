@@ -74,11 +74,16 @@ const LineSpacing = Extension.create({
         after: null,
       }),
       'Mod+2': () => this.editor.commands.setLineSpacing({
-        line: 1.5,
+        line: 1.15,
         before: null,
         after: null,
       }),
       'Mod+3': () => this.editor.commands.setLineSpacing({
+        line: 1.5,
+        before: null,
+        after: null,
+      }),
+      'Mod+4': () => this.editor.commands.setLineSpacing({
         line: 2,
         before: null,
         after: null,

@@ -41,7 +41,7 @@ function Modal({
                         </DialogTitle>}
                     </DialogHeader>
                 )}
-                <div className={cn(contentClassName, 'p-4')}>
+                <div className={cn('p-4', contentClassName)}>
                     {children}
                 </div>
                 {actions && (

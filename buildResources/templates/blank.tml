@@ -1,0 +1,150 @@
+{
+  "name": "Blank",
+  "type": "PROPRIETARY",
+  "createdDate": "11/06/2026 09:55:53",
+  "updatedDate": "11/06/2026 09:55:53",
+  "layoutTemplate": {
+    "toc": {
+      "visible": true,
+      "required": false,
+      "layout": "vertical-horizontal",
+      "apparatusDetails": [
+        {
+          "id": "element1",
+          "title": "Text",
+          "sectionType": "text",
+          "type": "text",
+          "columns": 1,
+          "disabled": true,
+          "visible":true
+        }
+      ]
+    },
+    "intro": {
+      "visible": false,
+      "required": false,
+      "layout": "vertical-horizontal",
+      "apparatusDetails": [
+        {
+          "id": "element1",
+          "title": "Text",
+          "sectionType": "text",
+          "type": "text",
+          "columns": 2,
+          "disabled": true,
+          "visible":true
+        }
+      ]
+    },
+    "critical": {
+      "visible": true,
+      "required": true,
+      "layout": "vertical-horizontal",
+      "apparatusDetails": [
+        {
+          "id": "element1",
+          "title": "Text",
+          "sectionType": "text",
+          "type": "text",
+          "columns": 1,
+          "disabled": true,
+          "visible":true
+        },
+        {
+          "id": "apparatus1",
+          "title": "Apparatus notes",
+          "type": "apparatus",
+          "sectionType": "critical",
+          "columns": 1,
+          "disabled": true,
+          "visible":true
+        }
+      ]
+    },
+    "bibliography": {
+      "visible": false,
+      "required": false,
+      "layout": "vertical-horizontal",
+      "apparatusDetails": [
+        {
+          "id": "element1",
+          "title": "Text",
+          "sectionType": "text",
+          "type": "text",
+          "columns": 2,
+          "disabled": true,
+          "visible":true
+        }
+      ]
+    }
+  },
+  "pageSetup": {
+    "template_type": "Private",
+    "paperSize_name": "A4",
+    "paperSize_width": 24,
+    "paperSize_height": 16,
+    "paperSize_orientation": "vertical",
+    "header_show": true,
+    "header_weight": 1,
+    "footer_show": true,
+    "footer_weight": 1,
+    "margin_top": 1.04,
+    "margin_bottom": 1.05,
+    "margin_left": 1,
+    "margin_right": 1,
+    "innerMarginNote_show": true,
+    "innerMarginNote_weight": 1,
+    "outerMarginNote_show": true,
+    "outerMarginNote_weight": 1
+  },
+  "sort": [
+    "toc",
+    "intro",
+    "critical",
+    "bibliography"
+  ],
+  "styles": [
+    {
+      "type": "Title",
+      "fontSize": "18pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "normal"
+    },
+    {
+      "type": "Heading1",
+      "fontSize": "16pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "normal"
+    },
+    {
+      "type": "Heading2",
+      "fontSize": "14pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "normal"
+    },
+    {
+      "type": "Heading3",
+      "fontSize": "12pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "italic"
+    },
+    {
+      "type": "Heading4",
+      "fontSize": "12pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "italic"
+    },
+    {
+      "type": "Heading4",
+      "fontSize": "10pt",
+      "fontWeight": "bold",
+      "color": "#000",
+      "fontStyle": "italic"
+    }
+  ]
+}

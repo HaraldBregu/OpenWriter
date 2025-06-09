@@ -3,7 +3,7 @@ import Pencil from "@/components/icons/Pencil";
 import Button from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import DragHandle from "@/components/icons/DragHandle";
 import Typogaphy from "@/components/Typography";
 import {
@@ -24,14 +24,24 @@ import { useTranslation } from "react-i18next";
 
 interface LayoutPartElementProps {
   details: TElement;
-  onDelete: (index: number) => void,
+  onDelete: (index: number) => void;
   index: number;
   onChangeColumnNr: (i: number, details: TElement) => void;
   readonly?: boolean;
   sectionTypes: { [key in ApparatusTypes]: ColDetailsType };
-  dragHandler: (c: ReactNode) => ReactNode
+  dragHandler: (c: ReactNode) => ReactNode;
   curLayout?: string;
   curSection: string;
+  setIncludedElements: (action: {
+    type:
+    | "textColumns"
+    | "nrApparatus"
+    | "apparatusColumns"
+    | "apparatusDetails";
+    posi: string;
+    payload: number | TElement[];
+  }) => void;
+  apparatusDetails: TElement[];
 }
 
 const LayoutPartElement = ({
@@ -44,12 +54,16 @@ const LayoutPartElement = ({
   readonly,
   sectionTypes,
   dragHandler,
+  setIncludedElements,
+  apparatusDetails,
 }: LayoutPartElementProps) => {
-
   const { t } = useTranslation();
 
   const [edit, setEdit] = useState<boolean>(false);
   const [dets, setDets] = useState<TElement>(details);
+  const [apparatusSectionTypes, setApparatusSectionTypes] = useState<string[]>(
+    Object.keys(sectionTypes).filter((type) => { type !== "text" })
+  );
 
   const editEndHandler = (i, details) => {
     onChangeColumnNr(i, details);
@@ -61,24 +75,82 @@ const LayoutPartElement = ({
   const changeTitleValue = (e) =>
     setDets((prev) => ({ ...prev, title: e.target.value }));
 
-  const apparatusSectionTypes = Object.keys(sectionTypes).filter(
-    (type) => type !== "text"
-  );
+  const sectionTypeLabel = (sectionType) => {
+    switch (sectionType) {
+      case "text":
+        return "Text";
+      case "critical":
+        return "Critical";
+      case "pageNotes":
+        return "Page notes";
+      case "sectionNotes":
+        return "Section notes";
+      case "innerMargin":
+        return "Inner margin";
+      case "outerMargin":
+        return "Outer margin";
+      default:
+        return "Critical";
+    }
+  };
+
+  useEffect(() => {
+    if (!curLayout || !curSection || !dets.sectionType) return;
+
+    const maxColumns =
+      settingsLayout?.[curLayout]?.[curSection]?.columnDetails?.[
+        dets.sectionType
+      ]?.columnNr || 1;
+
+    if ((dets.columns || 1) > maxColumns) {
+      setDets((prev) => ({ ...prev, columns: 1 }));
+    }
+    const updateThumbnails = apparatusDetails.map((app) => ({
+      ...app,
+      columns: 1,
+    }));
+    setIncludedElements({
+      type: "apparatusDetails",
+      posi: curSection,
+      payload: updateThumbnails,
+    });
+  }, [curLayout]);
+
+  useEffect(() => {
+    const updateThumbnails = apparatusDetails.map((app) =>
+      app.id === dets.id ? dets : app
+    );
+    setIncludedElements({
+      type: "apparatusDetails",
+      posi: curSection,
+      payload: updateThumbnails,
+    });
+  }, [dets]);
+
+  useEffect(() => {
+    setApparatusSectionTypes(Object.keys(sectionTypes).filter((type) => type !== "text"));
+  }, [sectionTypes]);
 
   return (
     <div className="flex justify-start">
       <div className="flex items-start gap-1">
-        {!edit && !details.disabled ? (
+        {details.type !== 'text' ? (
           dragHandler(<DragHandle className="cursor-move" />)
         ) : (
           <div className="w-[24px] h-[24px]" />
         )}
 
         <Checkbox
-          className={`${(details.disabled || readonly) && "data-[state=checked]:bg-grey-70 data-[state=checked]:border-grey-70 data-[state=checked]:text-grey-30"} 
+          className={`${(index === 1 || dets.type === 'text') && "data-[state=checked]:bg-grey-70 data-[state=checked]:border-grey-70 data-[state=checked]:text-grey-30"} 
                 mt-2 h-5 w-5 disabled:bg-grey-70 disabled:border-grey-70 disabled:text-grey-30`}
-          defaultChecked={details.disabled || readonly}
-          disabled={details.disabled || readonly}
+          defaultChecked={dets.visible}
+          disabled={index === 1 || dets.type === 'text'}
+          onCheckedChange={(checked) => {
+            setDets((prev) => ({
+              ...prev,
+              visible: checked as boolean,
+            }));
+          }}
         />
         <div className="flex flex-col">
           <div>
@@ -89,7 +161,9 @@ const LayoutPartElement = ({
                 value={dets.title}
               />
             ) : (
-              <Typogaphy component="label" className="font-semibold">{dets.title}</Typogaphy>
+              <Typogaphy component="label" className="font-semibold">
+                {dets.title}
+              </Typogaphy>
             )}
           </div>
 
@@ -97,12 +171,21 @@ const LayoutPartElement = ({
             <Select
               disabled={!edit}
               value={dets.sectionType}
-              onValueChange={(val) =>
-                setDets((prev) => ({
-                  ...prev,
-                  sectionType: val as ApparatusTypes,
-                }))
-              }
+              onValueChange={(val: string) => {
+                setDets((prev) => {
+                  if (val === 'outerMargin' || val === 'innerMargin') {
+                    return ({
+                      ...prev,
+                      columns: 1,
+                      sectionType: val,
+                    })
+                  }
+                  return ({
+                    ...prev,
+                    sectionType: val,
+                  })
+                });
+              }}
             >
               {details && details.type === "apparatus" && (
                 <SelectTrigger
@@ -135,7 +218,7 @@ const LayoutPartElement = ({
                     value={sectionType}
                     key={sectionType}
                   >
-                    {sectionType}
+                    {sectionTypeLabel(sectionType)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -145,7 +228,7 @@ const LayoutPartElement = ({
             {(dets.type === "apparatus" || dets.type === "text") && (
               <Select
                 disabled={!edit}
-                value={(dets?.columns || 0).toString()}
+                value={(dets?.columns || 1).toString()}
                 onValueChange={(val) =>
                   setDets((prev) => ({ ...prev, columns: parseInt(val) }))
                 }
@@ -168,8 +251,7 @@ const LayoutPartElement = ({
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
                   {curLayout &&
-                    settingsLayout[curLayout || "vertical-vertical"][curSection]
-                      .columnDetails &&
+                    settingsLayout[curLayout][curSection].columnDetails &&
                     settingsLayout[curLayout][curSection].columnDetails[
                     dets.sectionType
                     ] &&
@@ -214,7 +296,8 @@ const LayoutPartElement = ({
           <Button variant="icon" size="icon" onClick={() => setEdit(true)}>
             <Pencil size={22} />
           </Button>
-          {!details.disabled && (
+          
+          {(index !== 1) && (
             <Button
               variant="icon"
               size="icon"

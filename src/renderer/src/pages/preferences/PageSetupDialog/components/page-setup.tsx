@@ -179,7 +179,7 @@ const PageSetup = ({
                           <div
                             className={orientationPageClass("horizontal")}
                             style={{
-                              aspectRatio: `${optSetup.paperSize_width}/${optSetup.paperSize_height}`,
+                              aspectRatio: "4/3",
                             }}
                           >
                             {optSetup.paperSize_orientation ===
@@ -201,7 +201,7 @@ const PageSetup = ({
                           <div
                             className={orientationPageClass("vertical")}
                             style={{
-                              aspectRatio: `${optSetup.paperSize_height}/${optSetup.paperSize_width}`,
+                              aspectRatio: "3/4",
                             }}
                           >
                             {optSetup.paperSize_orientation === "vertical" && (

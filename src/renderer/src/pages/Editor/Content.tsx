@@ -1,9 +1,4 @@
 import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import {
     ForwardedRef,
     forwardRef,
     useCallback,
@@ -15,12 +10,13 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    selectApparatuses,
     selectBookmarkHighlighted,
     selectCanEdit,
     selectCommentHighlighted,
     selectTocSettings,
     selectToolbarEmphasisState,
-} from "./store/editor.selector";
+} from "./store/editor/editor.selector";
 import {
     setCanAddBookmark,
     setCanRedo,
@@ -38,7 +34,10 @@ import {
     setCanAddComment,
     setCharacters,
     setWords,
-} from "./store/editor.slice";
+    setSidebarOpen,
+    createApparatusesFromDocument,
+    createApparatusesFromLayout,
+} from "./store/editor/editor.slice";
 import TextEditor, { EditorData } from "@/components/text-editor";
 import HistoryEdu from "@/components/icons/HistoryEdu";
 import Citation from "@/components/icons/Citation";
@@ -55,10 +54,6 @@ import {
     setCommentsCategories,
     updateCommentList,
 } from "./store/comment/comments.slice";
-import {
-    selectComments,
-    selectCommentsCategories,
-} from "./store/comment/comments.selector";
 import { rendererLogger } from "@/utils/logger";
 import {
     addBookmark,
@@ -70,8 +65,8 @@ import {
     updateBookmarkList,
 } from "./store/bookmark/bookmark.slice";
 import {
-    selectBookmarks,
-    selectBookmarksCategories,
+    visibleBookmarksSelector,
+    bookmarkCategoriesSelector,
 } from "./store/bookmark/bookmark.selector";
 import TocSetupModal from "@/components/table-of-contents-setup";
 import LineNumberModal from "@/components/line-number-settings";
@@ -89,7 +84,6 @@ import {
     updateLineNumberSettings,
     updatePageNumberSettings,
 } from "./store/pagination/pagination.slice";
-import { setSidebarOpen } from "../store/main.slice";
 import HeaderModal from "@/components/header-settings";
 import FooterModal from "@/components/footer-settings";
 import {
@@ -104,9 +98,7 @@ import {
     extractSectionsFromGlobalText,
 } from "@/lib/tocTreeMapper";
 import { useTranslation } from "react-i18next";
-import TextEditorNavBar, {
-    TextEditorNavBarOptions,
-} from "@/components/text-editor-nav-bar";
+import TextEditorNavBar from "@/components/text-editor-nav-bar";
 import Check from "@/components/icons/Check";
 import ChooseLayoutModal from "../preferences/ChooseLayoutModal";
 import CustomSpacingModal from "@/pages/preferences/CustomSpacing";
@@ -114,11 +106,16 @@ import { PageSetupDialog } from "../preferences/PageSetupDialog/PageSetupDialog"
 import ResumeNumberingModal from "../preferences/ResumeNumbering";
 import SaveAsTemplateModal from "../preferences/SaveAsTemplateModal";
 import { selectLayoutSettings } from "../preferences/store/layout/layout.selector";
-import { TextEditorContainer } from "@/components/text-editor-container";
-import { EditorApparatus } from "./EditorApparatus";
 import { updateSetupPageState } from "../preferences/store/layout/layout.sclice";
+import SectionsStyleModal from "../preferences/SectionsStyleModal/SectionsStyleModal";
+import { converterFromSetupToEditor } from "@/utils/optionsEnums";
+import { commentCategoriesSelector, commentCategoryOptionsSelector, visibleCommentsSelector } from "./store/comment/comments.selector";
+import { updateStyles } from "../preferences/store/editor-styles/editor-styles.slice";
+import { selectStyles } from "../preferences/store/editor-styles/editor-styles.selector";
+
 
 interface EContentProps {
+    onFocusEditor: () => void;
     showToolbar: boolean;
     onRegisterBookmark: (id: string, categoryId?: string) => void;
     onRegisterComment: (id: string, categoryId?: string) => void;
@@ -128,7 +125,9 @@ const EditorTextLayout = ({ showToolbar, children }: { showToolbar: boolean, chi
     return (
         <div style={{ height: showToolbar ? "calc(100vh - 4.5rem)" : "calc(100vh - 2.25rem)" }}>
             <div className="h-full overflow-auto">
-                {children}
+                <div className="flex flex-col h-full">
+                    {children}
+                </div>
             </div>
         </div>
     )
@@ -136,6 +135,7 @@ const EditorTextLayout = ({ showToolbar, children }: { showToolbar: boolean, chi
 
 export const Content = forwardRef((
     {
+        onFocusEditor,
         showToolbar,
         onRegisterBookmark,
         onRegisterComment
@@ -155,6 +155,9 @@ export const Content = forwardRef((
             },
             setHeadingLevel: (headingLevel: number) => {
                 editorRef?.current?.setHeadingLevel(headingLevel);
+            },
+            setBody: () => {
+                editorRef?.current?.setBody();
             },
             setFontFamily: (fontFamily: string) => {
                 editorRef?.current?.setFontFamily(fontFamily);
@@ -254,29 +257,31 @@ export const Content = forwardRef((
     const emphasisState = useSelector(selectToolbarEmphasisState);
 
     const criticalTextEditorRef = useRef<any>();
-    // const apparatusTextEditorRef = useRef<any>();
-    const apparatusesRef = useRef<any>();
 
     const [editorRef, setEditorRef] = useState<any>(null);
     const [isChooseLayoutModalOpen, setIsChooseLayoutModalOpen] =
         useState(false);
     const [saveTemplateModalOpen, setIsSaveAsTemplateModalOpen] =
         useState(false);
+    const [isSectionsStyleModalOpen, setIsSectionsStyleModalOpen] = useState(false);
 
-    const comments = useSelector(selectComments);
-    const commentsCategories = useSelector(selectCommentsCategories);
-    const bookmarks = useSelector(selectBookmarks);
-    const bookmarkCategories = useSelector(selectBookmarksCategories);
+    const comments = useSelector(visibleCommentsSelector);
+    const commentsCategories = useSelector(commentCategoriesSelector);
+    const bookmarks = useSelector(visibleBookmarksSelector);
+    const bookmarkCategories = useSelector(bookmarkCategoriesSelector);
     const tocSettings = useSelector(selectTocSettings);
     const lineNumberSettings = useSelector(selectLineNumberSettings);
     const pageNumberSettings = useSelector(selectPageNumberSettings);
     const headerSettings = useSelector(selectHeaderSettings);
     const footerSettings = useSelector(selectFooterSettings);
+    const apparatusesList = useSelector(selectApparatuses)
+
     const {
         setupDialogState: layoutTemplate,
         setupOption: pageSetup,
         sort,
     } = useSelector(selectLayoutSettings);
+    const styles = useSelector(selectStyles)
 
     const commentsRef = useRef(comments);
     const commentsCategoriesRef = useRef(commentsCategories);
@@ -303,10 +308,7 @@ export const Content = forwardRef((
                 targetRef.current = "MAIN_TEXT";
                 editorRef?.current?.addComment("MAIN_TEXT");
                 break;
-            // case apparatusTextEditorRef?.current:
-            //     targetRef.current = "APPARATUS_TEXT";
-            //     editorRef?.current?.addComment("APPARATUS_TEXT");
-            //     break;
+
         }
     }, [editorRef]);
 
@@ -319,13 +321,9 @@ export const Content = forwardRef((
             case "MAIN_TEXT":
                 criticalTextEditorRef?.current?.scrollToComment(comment.id);
                 break;
-            // case "APPARATUS_TEXT":
-            //     apparatusTextEditorRef?.current?.scrollToComment(comment.id);
-            //     break;
         }
     }, []);
 
-    // HANDLE IPC EVENTS
     useIpcRenderer(
         (ipc) => {
             ipc.on("show-page-setup", () => {
@@ -390,18 +388,12 @@ export const Content = forwardRef((
                     case "subscript":
                         editorRef?.current?.setSubscript(!emphasisState.subscript);
                         break;
-                    case "uppercase":
-                    case "lowercase":
-                    case "startcase":
-                    case "capitalize":
-                        const currentCap = editorRef?.current?.getCapitalization();
-                        console.log("🚀 ~ capitalization style:", style, currentCap);
-                        editorRef?.current?.setCapitalization(
-                            currentCap === style ? "none" : style
-                        );
-                        break;
-                    case "none":
-                        editorRef?.current?.setCapitalization("none");
+                    case 'none-case':
+                    case 'all-caps':
+                    case 'small-caps':
+                    case 'title-case':
+                    case 'start-case':
+                        editorRef?.current?.setCase(style);
                         break;
                     // Additional style cases could be added here
                     default:
@@ -409,9 +401,20 @@ export const Content = forwardRef((
                 }
             });
 
+            ipc.on("CmdOrCtrl+,", () => {
+                editorRef?.current.setSubscript(!emphasisState.subscript);
+            });
+
+            ipc.on("CmdOrCtrl+.", () => {
+                editorRef?.current.setSuperscript(!emphasisState.superscript);
+            });
+
+            ipc.on('toggle-npc', () => {
+                editorRef?.current?.toggleNonPrintingCharacters();
+            });
+
             ipc.on('set-font-ligature', (_, ligature) => {
                 if (!editorRef) return;
-                
                 editorRef?.current?.setLigature(ligature);
             });
 
@@ -429,16 +432,7 @@ export const Content = forwardRef((
             // @ts-ignore
             ipc.on("change-alignment", (event, alignment) => {
                 if (!editorRef) return;
-
                 editorRef?.current?.setTextAlignment(alignment);
-            });
-
-            // Capitalization listener with their shortcuts
-            // @ts-ignore
-            ipc.on("change-capitalization", (event, capitalization) => {
-                if (!editorRef) return;
-
-                editorRef?.current?.setCapitalization(capitalization);
             });
 
             // Character spacing listeners with their shortcut listener
@@ -586,6 +580,15 @@ export const Content = forwardRef((
                 setIsSaveAsTemplateModalOpen(true);
             });
 
+            ipc.on("show-sections-style-modal", () => {
+                setIsSectionsStyleModalOpen(true)
+            })
+
+
+            ipc.on("show-sections-style-modal", () => {
+                setIsSectionsStyleModalOpen(true)
+            })
+
             return () => {
                 ipc.cleanup();
             };
@@ -602,43 +605,52 @@ export const Content = forwardRef((
         window.electron.ipcRenderer.on(
             "load-document",
             (_event, document: any) => {
-                const criticalText = document.critical_text;
-                // const apparatusText = document.apparatus_text;
+                const criticalText = document.main_text;
                 const annotations = document.annotations;
                 const comments = annotations?.comments;
                 const commentCategories = annotations?.commentCategories;
                 const bookmarks = annotations?.bookmarks;
                 const bookmarkCategories = annotations?.bookmarkCategories;
-                const currentTemplate = document.current_template;
-
+                const currentTemplate = document.template;
                 criticalTextEditorRef.current.setJSON(criticalText);
-                // apparatusTextEditorRef.current.setJSON(apparatusText);
 
                 commentsRef.current = comments;
                 commentsCategoriesRef.current = commentCategories;
                 bookmarksRef.current = bookmarks;
                 bookmarkCategoriesRef.current = bookmarkCategories;
 
-                tocSettingsRef.current = currentTemplate?.tocSettings;
-                lineNumberSettingsRef.current = currentTemplate?.lineNumberSettings;
-                pageNumberSettingsRef.current = currentTemplate?.pageNumberSettings;
-                headerSettingsRef.current = currentTemplate?.headerSettings;
-                footerSettingsRef.current = currentTemplate?.footerSettings;
+                const tocSettings = currentTemplate?.paratextual?.tocSettings
+                const lineNumberSettings = currentTemplate?.paratextual?.lineNumberSettings;
+                const pageNumberSettings = currentTemplate?.paratextual?.pageNumberSettings;
+                const headerSettings = currentTemplate?.paratextual?.headerSettings;
+                const footerSettings = currentTemplate?.paratextual?.footerSettings;
+                const styles = currentTemplate?.styles || [];
+
+                tocSettingsRef.current = tocSettings;
+                lineNumberSettingsRef.current = lineNumberSettings;
+                pageNumberSettingsRef.current = pageNumberSettings;
+                headerSettingsRef.current = headerSettings
+                footerSettingsRef.current = footerSettings;
+
+                dispatch(
+                    updateSetupPageState({
+                        setupDialogState: currentTemplate?.layoutTemplate,
+                        sort: currentTemplate?.sort,
+                        setupOption: currentTemplate?.pageSetup,
+                    }))
 
                 dispatch(setComments(comments));
                 dispatch(setCommentsCategories(commentCategories));
                 dispatch(setBookmarks(bookmarks));
                 dispatch(setBookmarksCategories(bookmarkCategories));
 
-                dispatch(updateTocSettings(currentTemplate?.tocSettings));
-                dispatch(
-                    updateLineNumberSettings(currentTemplate?.lineNumberSettings)
-                );
-                dispatch(
-                    updatePageNumberSettings(currentTemplate?.pageNumberSettings)
-                );
-                dispatch(updateHeaderSettings(currentTemplate?.headerSettings));
-                dispatch(updateFooterSettings(currentTemplate?.footerSettings));
+                dispatch(updateTocSettings(tocSettings));
+                dispatch(updateLineNumberSettings(lineNumberSettings));
+                dispatch(updatePageNumberSettings(pageNumberSettings));
+                dispatch(updateHeaderSettings(headerSettings));
+                dispatch(updateFooterSettings(footerSettings));
+
+                dispatch(updateStyles(styles));
             }
         );
 
@@ -655,15 +667,20 @@ export const Content = forwardRef((
         const textEditorJson = criticalTextEditorRef.current?.getJSON();
 
         window.electron.ipcRenderer.send("update-critical-text", textEditorJson);
-    
+
         window.electron.ipcRenderer.send("update-annotations", {
             comments: commentsRef.current || [],
             commentCategories: commentsCategoriesRef.current,
             bookmarks: bookmarksRef.current,
             bookmarkCategories: bookmarkCategoriesRef.current,
         });
-        
-        window.electron.ipcRenderer.send("update-current-template", {
+
+        window.doc.setLayoutTemplate(layoutTemplate);
+        window.doc.setPageSetup(pageSetup);
+        window.doc.setSort(sort);
+        window.doc.setStyles(styles);
+
+        window.doc.setParatextual({
             tocSettings: tocSettingsRef.current,
             lineNumberSettings: lineNumberSettingsRef.current,
             pageNumberSettings: pageNumberSettingsRef.current,
@@ -673,8 +690,11 @@ export const Content = forwardRef((
 
         rendererLogger.endTask(taskId, "TextEditor", "Editor content updated");
     }, [
+        styles,
+        layoutTemplate,
+        pageSetup,
+        sort,
         criticalTextEditorRef,
-        // apparatusTextEditorRef,
         commentsRef,
         commentsCategoriesRef,
         bookmarksRef,
@@ -758,7 +778,6 @@ export const Content = forwardRef((
         let data: unknown[] = []
         sort.forEach(
             item => {
-                console.log("🚀 ~ item:", item,)
                 if (layoutTemplate[item].visible) {
                     switch (item) {
                         case "toc":
@@ -825,113 +844,13 @@ export const Content = forwardRef((
             label: "Uncategorised",
             value: null,
         },
-        ...useSelector(selectBookmarksCategories).map((category) => ({
+        ...useSelector(bookmarkCategoriesSelector).map((category) => ({
             label: category.name,
             value: category.id,
         })),
     ];
 
-    const toolbarCommentCategories: BubbleToolbarItemOption[] = [
-        {
-            label: "Uncategorised",
-            value: null,
-        },
-        ...useSelector(selectCommentsCategories).map((category) => ({
-            label: category.name,
-            value: category.id,
-        })),
-    ];
-
-    const textEditorOptions: TextEditorNavBarOptions[] = [
-        {
-            type: "ITEM",
-            title: "Update Table of Contents",
-            onClick: () => updateTemplates(),
-        },
-        {
-            type: "ITEM",
-            title: "Import",
-            onClick: () => { },
-        },
-        {
-            type: "ITEM",
-            title: "Paste",
-            onClick: () => { },
-        },
-        {
-            type: "ITEM",
-            title: "Paste with notes",
-            onClick: () => { },
-        },
-        {
-            type: "SEPARATOR",
-        },
-        {
-            type: "ITEM",
-            title: "Show Note highlights",
-            icon: <Check className="w-4 h-4" />,
-            onClick: () => { },
-        },
-        {
-            type: "ITEM",
-            title: "Show Comment highlights",
-            icon: useSelector(selectCommentHighlighted) ? (
-                <Check className="w-4 h-4" />
-            ) : null,
-            onClick: () => {
-                dispatch(toggleCommentHighlighted());
-            },
-        },
-        {
-            type: "ITEM",
-            title: "Show Bookmark highlights",
-            icon: useSelector(selectBookmarkHighlighted) ? (
-                <Check className="w-4 h-4" />
-            ) : null,
-            onClick: () => {
-                dispatch(toggleBookmarkHighlighted());
-            },
-        },
-    ];
-
-    const bubbleToolbarItems: BubbleToolbarItem[] = [
-        {
-            icon: <HistoryEdu intent="primary" variant="tonal" size="small" />,
-            type: "button",
-        },
-        {
-            icon: <Siglum intent="primary" variant="tonal" size="small" />,
-            type: "button",
-        },
-        {
-            icon: <Citation intent="primary" variant="tonal" size="small" />,
-            type: "button",
-        },
-        {
-            icon: <CommentAdd intent="primary" variant="tonal" size="small" />,
-            type: "dropdown",
-            options: toolbarCommentCategories,
-            onClick: (data?: any) => {
-                const categoryId = data?.value;
-                commentCategoryIdRef.current = categoryId;
-                registerComment();
-            },
-        },
-        {
-            icon: <Bookmark intent="primary" variant="tonal" size="small" />,
-            type: "dropdown",
-            options: toolbarBookmarkCategories,
-            onClick: (data?: any) => {
-                const categoryId = data?.value;
-                bookmarkCategoryIdRef.current = categoryId;
-                registerBookmark();
-            },
-        },
-        {
-            icon: <LinkAdd intent="primary" variant="tonal" size="small" />,
-            type: "button",
-        },
-    ];
+    const commentCategoryOptions = useSelector(commentCategoryOptionsSelector)
 
     const [isPageSetupOpen, setIsPageSetupOpen] = useState(false);
     const [isTocSetupOpen, setIsTocSetupOpen] = useState(false);
@@ -982,8 +901,7 @@ export const Content = forwardRef((
         updateHandler();
 
         const textEditorJson = criticalTextEditorRef.current?.getJSON();
-        const { mainTextData, introductionData, bibliographyData } =
-            extractEditorSections(textEditorJson);
+        const { mainTextData, introductionData, bibliographyData } = extractEditorSections(textEditorJson);
 
         const tocStructureData = generateTocStructure(mainTextData);
         const tocForText = generateTocForText(tocStructureData);
@@ -1042,31 +960,32 @@ export const Content = forwardRef((
             },
         ];
 
-        const newTemplate = templateName;
+        const paratextual = {
+            tocSettings: tocSettingsRef.current,
+            lineNumberSettings: lineNumberSettingsRef.current,
+            pageNumberSettings: pageNumberSettingsRef.current,
+            headerSettings: headerSettingsRef.current,
+            footerSettings: footerSettingsRef.current,
+        };
+
         const styleTemplate = {
-            templateName,
             layoutTemplate,
             pageSetup,
             sort,
             styles,
+            paratextual
         };
 
-        window.electron.ipcRenderer.send("save-as-template", {
-            newTemplate,
-            styleTemplate,
-        });
-        window.electron.ipcRenderer.once("template-saved", (_, result) => {
-            if (result) {
-                setIsSaveAsTemplateModalOpen(false);
-            }
-        });
+        async function createTemplate() {
+            await window.doc.createTemplate(styleTemplate, templateName)
+            setIsSaveAsTemplateModalOpen(false);
+        }
+        createTemplate()
     };
 
-    const handleOnClosePageSetupDialog = (data: Template | undefined) => {
-        setIsPageSetupOpen(false);
-
-        const orderSection = data?.template?.sectionOrders;
-        const layoutTemplate = data?.template?.layoutTemplate;
+    const handleEditorViewContent = (data: any) => {
+        const orderSection = data?.sort;
+        const layoutTemplate = data?.layoutTemplate;
         const layoutTemplateNewOrder = orderSection?.map(
             (sectionName: string) => ({
                 [sectionName]: layoutTemplate[sectionName],
@@ -1078,24 +997,80 @@ export const Content = forwardRef((
             const sectionData = sectionObj[key];
 
             if (!sectionData?.visible) return [];
+            const sectionContentParagraph = (cont, sectionType) => cont.length === 0 ? [{
+                type: "paragraph",
+                attrs: {
+                    level: 2,
+                    sectionType: sectionType,
+                    indent: 0,
+                    textAlign: 'left',
+                    lineHeight: 1,
+                    marginTop: 10,
+                    marginBottom: 10,
+                },
+            }] : [...cont]
 
             switch (key) {
                 case "toc":
                     return tocSettingsRef.current?.show
-                        ? tocTemplate(t("dividerSections.toc"))
+                        ?
+                        tocTemplate(
+                            t("dividerSections.toc"),
+                            sectionContentParagraph(tocForTextRef.current?.content, 'toc')
+                        )
+
                         : [];
                 case "intro":
-                    return introTemplate(t("dividerSections.introduction"));
+                    return introTemplate(
+                        t("dividerSections.introduction"),
+                        sectionContentParagraph(introductionContentRef.current, 'intro')
+                    )
                 case "bibliography":
                     return bibliographyTemplate(
-                        t("dividerSections.bibliography")
-                    );
+                        t("dividerSections.bibliography"),
+                        sectionContentParagraph(bibliographyContentRef.current, 'bibliography')
+                    )
+
                 case "critical":
-                    return textTemplate(t("dividerSections.mainText"));
+                    return textTemplate(t("dividerSections.mainText"),
+                        mainTextContentRef.current
+                    )
+
                 default:
-                    return textTemplate(t("dividerSections.mainText"));;
+                    return textTemplate(t("dividerSections.mainText"),
+                        mainTextContentRef.current
+                    )
             }
+
         });
+
+        const tocSettings = data?.paratextual?.tocSettings
+        const lineNumberSettings = data?.paratextual?.lineNumberSettings;
+        const pageNumberSettings = data?.paratextual?.pageNumberSettings;
+        const headerSettings = data?.paratextual?.headerSettings;
+        const footerSettings = data?.paratextual?.footerSettings;
+
+        tocSettingsRef.current = tocSettings;
+        lineNumberSettingsRef.current = lineNumberSettings;
+        pageNumberSettingsRef.current = pageNumberSettings;
+        headerSettingsRef.current = headerSettings
+        footerSettingsRef.current = footerSettings;
+
+        dispatch(updateTocSettings(tocSettings));
+        dispatch(
+            updateLineNumberSettings(lineNumberSettings)
+        );
+        dispatch(
+            updatePageNumberSettings(pageNumberSettings)
+        );
+        dispatch(updateHeaderSettings(headerSettings));
+        dispatch(updateFooterSettings(footerSettings));
+
+        window.doc.setLayoutTemplate(layoutTemplate);
+        window.doc.setPageSetup(data?.pageSetup);
+        window.doc.setSort(orderSection as unknown[]);
+        window.doc.setStyles([]);
+        window.doc.setParatextual(data?.paratextual);
 
         criticalTextEditorRef.current?.setJSON({
             type: "doc",
@@ -1106,129 +1081,215 @@ export const Content = forwardRef((
     return (
         <>
             <EditorTextLayout showToolbar={showToolbar}>
-                <ResizablePanelGroup direction="horizontal">
-                    <ResizablePanel minSize={40}>
-                        <TextEditorContainer>
-                            <TextEditorNavBar
-                                title="Text"
-                                options={textEditorOptions}
-                                className="sticky top-0 z-10"
-                            />
-                            <TextEditor
-                                className="flex-1 overflow-auto relative w-full"
-                                isMainText={true}
-                                ref={criticalTextEditorRef}
-                                canEdit={useSelector(selectCanEdit)}
-                                onUpdate={(editor: EditorData) => {
-                                    dispatch(setCharacters(editor.characters))
-                                    dispatch(setWords(editor.words))
-                                    updateHandlerEffect()
-                                }}
-                                onFocusEditor={() => {
-                                    setEditorRef(criticalTextEditorRef);
-                                    dispatch(setCanAddBookmark(true));
-                                    dispatch(setCanAddComment(true));
-                                }}
-                                bookmarkHighlighted={useSelector(selectBookmarkHighlighted)}
-                                onChangeBookmarks={(bookmarks) => {
-                                    dispatch(updateBookmarkList(bookmarks))
-                                }}
-                                onChangeComments={(comments) => {
-                                    dispatch(updateCommentList({ target: 'MAIN_TEXT', comments: comments }))
-                                }}
-                                onChangeBookmark={(data) => {
-                                    dispatch(editBookmarkContent({ bookmarkId: data.id, content: data.content }))
-                                }}
-                                commentHighlighted={useSelector(selectCommentHighlighted)}
-                                onChangeComment={(data) => {
-                                    dispatch(editCommentContent({ commentId: data.id, content: data.content }))
-                                }}
-                                onSelectionMarks={(selectionMarks) => {
-                                    const commentMarksIds = selectionMarks.filter(mark => mark.type === 'comment')?.map(mark => mark?.attrs?.id)
-                                    const bookmarkMarksIds = selectionMarks.filter(mark => mark.type === 'bookmark')?.map(mark => mark?.attrs?.id)
+                <TextEditorNavBar
+                    title="Text"
+                    options={[
+                        {
+                            type: "ITEM",
+                            title: "Update Table of Contents",
+                            onClick: () => updateTemplates(),
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Import",
+                            onClick: () => { },
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Paste",
+                            onClick: () => { },
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Paste with notes",
+                            onClick: () => { },
+                        },
+                        {
+                            type: "SEPARATOR",
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Show Note highlights",
+                            icon: <Check className="w-4 h-4" />,
+                            onClick: () => { },
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Show Comment highlights",
+                            icon: useSelector(selectCommentHighlighted) ? (
+                                <Check className="w-4 h-4" />
+                            ) : null,
+                            onClick: () => {
+                                dispatch(toggleCommentHighlighted());
+                            },
+                        },
+                        {
+                            type: "ITEM",
+                            title: "Show Bookmark highlights",
+                            icon: useSelector(selectBookmarkHighlighted) ? (
+                                <Check className="w-4 h-4" />
+                            ) : null,
+                            onClick: () => {
+                                dispatch(toggleBookmarkHighlighted());
+                            },
+                        },
+                    ]}
+                    className="sticky top-0 z-10"
+                />
+                <TextEditor
+                    className="flex-1 overflow-auto relative w-full"
+                    isMainText={true}
+                    ref={criticalTextEditorRef}
+                    canEdit={useSelector(selectCanEdit)}
+                    onUpdate={(editor: EditorData) => {
+                        dispatch(setCharacters(editor.characters))
+                        dispatch(setWords(editor.words))
+                        updateHandlerEffect()
+                    }}
+                    onFocusEditor={() => {
+                        setEditorRef(criticalTextEditorRef);
+                        dispatch(setCanAddBookmark(true));
+                        dispatch(setCanAddComment(true));
+                        onFocusEditor()
+                    }}
+                    bookmarkHighlighted={useSelector(selectBookmarkHighlighted)}
+                    onChangeBookmarks={(bookmarks) => {
+                        dispatch(updateBookmarkList(bookmarks))
+                    }}
+                    onChangeComments={(comments) => {
+                        dispatch(updateCommentList({ target: 'MAIN_TEXT', comments: comments }))
+                    }}
+                    onChangeBookmark={(data) => {
+                        dispatch(editBookmarkContent({ bookmarkId: data.id, content: data.content }))
+                    }}
+                    commentHighlighted={useSelector(selectCommentHighlighted)}
+                    onChangeComment={(data) => {
+                        dispatch(editCommentContent({ commentId: data.id, content: data.content }))
+                    }}
+                    onSelectionMarks={(selectionMarks) => {
+                        const commentMarksIds = selectionMarks.filter(mark => mark.type === 'comment')?.map(mark => mark?.attrs?.id)
+                        const bookmarkMarksIds = selectionMarks.filter(mark => mark.type === 'bookmark')?.map(mark => mark?.attrs?.id)
 
-                                    if (commentMarksIds.length > 0) {
-                                        dispatch(selectCommentWithId(commentMarksIds[0]))
-                                        dispatch(setSidebarOpen(true))
-                                        dispatch(setSelectedSidebarTabIndex(0))
-                                    } else if (bookmarkMarksIds.length > 0) {
-                                        dispatch(selectBookmarkWithId(bookmarkMarksIds[0]))
-                                        dispatch(setSidebarOpen(true))
-                                        dispatch(setSelectedSidebarTabIndex(1))
-                                    } else {
-                                        dispatch(selectComment(null))
-                                        dispatch(selectBookmark(null))
-                                    }
-                                }}
-                                onBookmarkStateChange={(active) => {
-                                    dispatch(setBookmark(active));
-                                }}
-                                onCommentStateChange={(active) => {
-                                    dispatch(setComment(active));
-                                }}
-                                onBookmarkCreated={async (id, content) => {
-                                    const userInfo = await window.system.getUserInfo() as unknown as UserInfo
-                                    dispatch(addBookmark({
-                                        id: id,
-                                        baseTitle: "Bookmark",
-                                        content: content ?? '',
-                                        categoryId: bookmarkCategoryIdRef.current,
-                                        userInfo: userInfo.username
-                                    }));
-                                    dispatch(setSidebarOpen(true))
-                                    dispatch(setSelectedSidebarTabIndex(1))
-                                    setTimeout(() => {
-                                        onRegisterBookmark(id, bookmarkCategoryIdRef.current)
-                                    }, 100)
-                                }}
-                                onCommentCreated={async (id, content) => {
-                                    const userInfo = await window.system.getUserInfo() as unknown as UserInfo
-                                    dispatch(addComment({
-                                        id: id,
-                                        content: content ?? '',
-                                        target: targetRef.current,
-                                        categoryId: commentCategoryIdRef.current,
-                                        userInfo: userInfo.username
-                                    }));
-                                    dispatch(setSidebarOpen(true))
-                                    dispatch(setSelectedSidebarTabIndex(0))
-                                    setTimeout(() => {
-                                        onRegisterComment(id, commentCategoryIdRef.current)
-                                    }, 100)
-                                }}
-                                onEmphasisStateChange={(emphasisState) => {
-                                    dispatch(setEmphasisState(emphasisState))
-                                }}
-                                onHistoryStateChange={(historyState) => {
-                                    dispatch(setHistory(historyState))
-                                }}
-                                onCanUndo={(value) => {
-                                    dispatch(setCanUndo(value));
-                                }}
-                                onCanRedo={(value) => {
-                                    dispatch(setCanRedo(value));
-                                }}
-                                onCurrentSection={(section) => {
-                                    dispatch(setHeadingEnabled(section !== 'toc'))
-                                }}
-                                bubbleToolbarItems={bubbleToolbarItems}
-                            />
-                        </TextEditorContainer>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle />
-                    <ResizablePanel minSize={40}>
-                        <EditorApparatus
-                            ref={apparatusesRef}
-                        />
-                    </ResizablePanel>
-                </ResizablePanelGroup>
+                        if (commentMarksIds.length > 0) {
+                            dispatch(selectCommentWithId(commentMarksIds[0]))
+                            dispatch(setSidebarOpen(true))
+                            dispatch(setSelectedSidebarTabIndex(0))
+                        } else if (bookmarkMarksIds.length > 0) {
+                            dispatch(selectBookmarkWithId(bookmarkMarksIds[0]))
+                            dispatch(setSidebarOpen(true))
+                            dispatch(setSelectedSidebarTabIndex(1))
+                        } else {
+                            dispatch(selectComment(null))
+                            dispatch(selectBookmark(null))
+                        }
+                    }}
+                    onBookmarkStateChange={(active) => {
+                        dispatch(setBookmark(active));
+                    }}
+                    onCommentStateChange={(active) => {
+                        dispatch(setComment(active));
+                    }}
+                    onBookmarkCreated={async (id, content) => {
+                        const userInfo = await window.system.getUserInfo() as unknown as UserInfo
+                        dispatch(addBookmark({
+                            id: id,
+                            baseTitle: "Bookmark",
+                            content: content ?? '',
+                            categoryId: bookmarkCategoryIdRef.current,
+                            userInfo: userInfo.username
+                        }));
+                        dispatch(setSidebarOpen(true))
+                        dispatch(setSelectedSidebarTabIndex(1))
+                        setTimeout(() => {
+                            onRegisterBookmark(id, bookmarkCategoryIdRef.current)
+                        }, 100)
+                    }}
+                    onCommentCreated={async (id, content) => {
+                        const userInfo = await window.system.getUserInfo() as unknown as UserInfo
+                        dispatch(addComment({
+                            id: id,
+                            content: content ?? '',
+                            target: targetRef.current,
+                            categoryId: commentCategoryIdRef.current,
+                            userInfo: userInfo.username
+                        }));
+                        dispatch(setSidebarOpen(true))
+                        dispatch(setSelectedSidebarTabIndex(0))
+                        setTimeout(() => {
+                            onRegisterComment(id, commentCategoryIdRef.current)
+                        }, 100)
+                    }}
+                    onEmphasisStateChange={(emphasisState) => {
+                        dispatch(setEmphasisState(emphasisState))
+                    }}
+                    onHistoryStateChange={(historyState) => {
+                        dispatch(setHistory(historyState))
+                    }}
+                    onCanUndo={(value) => {
+                        dispatch(setCanUndo(value));
+                    }}
+                    onCanRedo={(value) => {
+                        dispatch(setCanRedo(value));
+                    }}
+                    onCurrentSection={(section) => {
+                        dispatch(setHeadingEnabled(section !== 'toc'))
+                    }}
+                    bubbleToolbarItems={[
+                        {
+                            icon: <HistoryEdu intent="primary" variant="tonal" size="small" />,
+                            type: "button",
+                        },
+                        {
+                            icon: <Siglum intent="primary" variant="tonal" size="small" />,
+                            type: "button",
+                        },
+                        {
+                            icon: <Citation intent="primary" variant="tonal" size="small" />,
+                            type: "button",
+                        },
+                        {
+                            icon: <CommentAdd intent="primary" variant="tonal" size="small" />,
+                            type: "dropdown",
+                            options: [
+                                {
+                                    label: "Uncategorised",
+                                    value: null,
+                                },
+                                ...commentCategoryOptions,
+                            ],
+                            onClick: (data?: any) => {
+                                const categoryId = data?.value;
+                                commentCategoryIdRef.current = categoryId;
+                                registerComment();
+                            },
+                        },
+                        {
+                            icon: <Bookmark intent="primary" variant="tonal" size="small" />,
+                            type: "dropdown",
+                            options: toolbarBookmarkCategories,
+                            onClick: (data?: any) => {
+                                const categoryId = data?.value;
+                                bookmarkCategoryIdRef.current = categoryId;
+                                registerBookmark();
+                            },
+                        },
+                        {
+                            icon: <LinkAdd intent="primary" variant="tonal" size="small" />,
+                            type: "button",
+                        },
+                    ]}
+                />
             </EditorTextLayout>
 
 
-            <PageSetupDialog
+            {isPageSetupOpen && <PageSetupDialog
                 open={isPageSetupOpen}
-                onClose={(data: Template | undefined) => handleOnClosePageSetupDialog(data)}
-            />
+                onClose={(data: PageSetupInterface | undefined) => { handleEditorViewContent(data); setIsPageSetupOpen(false); }}
+                onSave={(data: any) => {
+                    dispatch(createApparatusesFromLayout(data));
+                }}
+                visibleApparatuses={apparatusesList}
+            />}
             <TocSetupModal isOpen={isTocSetupOpen} setIsOpen={setIsTocSetupOpen} />
             <LineNumberModal
                 isOpen={isLineNumberSetupOpen}
@@ -1262,25 +1323,33 @@ export const Content = forwardRef((
                 isOpen={isFooterSetupOpen}
                 setIsOpen={setIsFooterSetupOpen}
             />
-            {/**
-         * ChooseLayout Modal
-         * TEMPORARY: This modal is placed here to update the state of the sibling component PageSetupDialog.
-         */}
             {isChooseLayoutModalOpen && (
                 <ChooseLayoutModal
                     open={isChooseLayoutModalOpen}
                     onClose={() => setIsChooseLayoutModalOpen(false)}
-                    onContinue={(selectedTemplate: any) => {
+                    onContinue={(selectedTemplate) => {
                         dispatch(
                             updateSetupPageState({
                                 setupDialogState: selectedTemplate.layoutTemplate,
                                 sort: selectedTemplate.sort,
-                                setupOption: selectedTemplate.styles,
+                                setupOption: selectedTemplate.pageSetup,
                             })
                         );
+
+                        const apparatusList = selectedTemplate.layoutTemplate.critical.apparatusDetails.filter(
+                            (app) => app.type !== 'text')
+                        const apparatusEditorList = apparatusList.map((el) => ({
+                            id: el.id,
+                            title: el.title,
+                            type: converterFromSetupToEditor(el.sectionType),
+                            visible: el.visible,
+                            disabled: el.disabled,
+                        }
+                        ))
+                        dispatch(createApparatusesFromDocument(apparatusEditorList));
                         setIsChooseLayoutModalOpen(false);
+                        selectedTemplate.name?.toLowerCase() === 'blank' ? setIsPageSetupOpen(true) : handleEditorViewContent(selectedTemplate)
                     }}
-                    onImportTemplate={() => { }}
                 ></ChooseLayoutModal>
             )}
             {saveTemplateModalOpen && (
@@ -1290,6 +1359,8 @@ export const Content = forwardRef((
                     onSaveTemplate={handleSaveTemplate}
                 ></SaveAsTemplateModal>
             )}
+            {isSectionsStyleModalOpen && (
+                <SectionsStyleModal open={isSectionsStyleModalOpen} onClose={() => setIsSectionsStyleModalOpen(false)}></SectionsStyleModal>)}
         </>
     );
 });

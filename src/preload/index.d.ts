@@ -15,9 +15,9 @@ declare global {
 }
 
 interface ITabsAPI {
-  new: () => Promise<number>
+  new: (fileType: FileType) => Promise<number>
   close: (id: number) => Promise<void>
-  select: (id: number) => Promise<void>
+  select: (id: number, tabType: TabType) => Promise<void>
   reorder: (tabIds: number[]) => Promise<void>
   getAllContentViewsIds: () => Promise<number[]>
   getSelectedTabId: () => Promise<number>
@@ -29,9 +29,17 @@ interface IMenuAPI {
 }
 
 interface IDocumentAPI {
-  getTemplatesFilenames: () => Promise<string[]>
+  openDocument: () => Promise<void>
+  getTemplates: () => Promise<string[]>
+  importTemplate: () => Promise<void>
+  createTemplate: (template: unknown, name: string) => Promise<void>
   getApparatuses: () => Promise<unknown[]>
   setApparatuses: (apparatuses: unknown[]) => Promise<void>
+  setLayoutTemplate: (layoutTemplate: unknown) => Promise<void>
+  setPageSetup: (pageSetup: unknown) => Promise<void>
+  setSort: (sort: unknown[]) => Promise<void>
+  setStyles: (style: unknown[]) => Promise<void>
+  setParatextual: (paratextual: unknown) => Promise<void>
 }
 
 interface ISystemAPI {
@@ -40,5 +48,6 @@ interface ISystemAPI {
 
 interface IApplicationAPI {
   toolbarIsVisible: () => Promise<boolean>
+  toolbarAdditionalItems: () => Promise<string[]>
 }
 

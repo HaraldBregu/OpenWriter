@@ -1,33 +1,34 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import editorReducer, { EditorState } from '../pages/editor/store/editor.slice';
+import editorReducer, { EditorState } from '../pages/editor/store/editor/editor.slice';
 import bookmarkReducer, { BookmarkState } from '../pages/editor/store/bookmark/bookmark.slice';
-import commentsReducer, { CategoryStateParent } from '../pages/editor/store/comment/comments.slice';
+import commentsReducer, { CommentState } from '../pages/editor/store/comment/comments.slice';
 import paginationReducer, { PaginationState } from '../pages/editor/store/pagination/pagination.slice';
 import layoutReducer, { type SetupPageState } from '../pages/preferences/store/layout/layout.sclice';
-import mainReducer, { MainState } from '../pages/store/main.slice';
-import preferencesReducer, { type PreferencesState } from '@/pages/preferences/store/preferences.slice';
+import preferencesReducer, { type PreferencesState } from '@/pages/preferences/store/preferences/preferences.slice';
 import tabsReducer, { TabsState } from './tabs/tabs.slice';
+import stylesReducer from '@/pages/preferences/store/editor-styles/editor-styles.slice';
+import { StylesState } from '@/pages/preferences/store/editor-styles/editor-styles.state';
 // Definisci l'interfaccia dello stato globale
 export interface RootState {
-  main: MainState;
   editor: EditorState;
-  bookmark: BookmarkState;
-  comments: CategoryStateParent;
+  bookmarkState: BookmarkState;
+  commentState: CommentState;
   pagination: PaginationState;
   layout: SetupPageState;
   preferences: PreferencesState
   tabs: TabsState
+  styles: StylesState
 }
 
 const rootReducer = combineReducers({
-  main: mainReducer,
   editor: editorReducer,
-  bookmark: bookmarkReducer,
-  comments: commentsReducer,
+  bookmarkState: bookmarkReducer,
+  commentState: commentsReducer,
   pagination: paginationReducer,
   layout: layoutReducer,
   preferences: preferencesReducer,
-  tabs: tabsReducer
+  tabs: tabsReducer,
+  styles: stylesReducer,
 });
 
 export default rootReducer;

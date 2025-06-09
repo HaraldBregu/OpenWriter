@@ -63,8 +63,8 @@ export const SortableArea = <T extends string>({ includedElements, itemLs, readS
   useEffect(() => {
     if (orderedItems.length > 0 && isMounted.current) {
       readSorted?.(orderedItems)
-    }
-  }, [[...orderedItems]])
+    } 
+  }, [orderedItems])
 
   const handleDragEnd = (event) => {
     const { active, over } = event;

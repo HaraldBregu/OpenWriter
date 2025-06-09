@@ -2,15 +2,18 @@ import { app, BaseWindow, WebContentsView } from "electron";
 import path from 'path'
 import fs from 'fs'
 import { is } from "@electron-toolkit/utils";
-import { createToolbar } from "./toolbar";
-import { restoreContentViews, saveTabs, showWebContentsView } from "./content-views";
-import { mainLogger } from "./utils/logger";
+import { mainLogger } from "./shared/logger";
+import { OnBaseWindowReady } from "./shared/types";
+import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
+import { createToolbarWebContentsView } from "./toolbar";
 
 let baseWindow: BaseWindow | null = null
-let toolbarContentView: WebContentsView | null = null
-let selectedContentView: WebContentsView | null = null
+let toolbarWebContentsView: WebContentsView | null = null
 
-export async function initializeMainWindow(): Promise<void> {
+export const getBaseWindow = (): BaseWindow | null => baseWindow
+export const getToolbarWebContentsView = (): WebContentsView | null => toolbarWebContentsView
+
+export async function initializeMainWindow(onDone: OnBaseWindowReady): Promise<void> {
 
     let iconPath = is.dev
         ? path.join(app.getAppPath(), 'buildResources', 'appIcons', 'icon.ico')
@@ -49,33 +52,20 @@ export async function initializeMainWindow(): Promise<void> {
     })
 
     app.on('before-quit', () => {
-        saveTabs()
     })
 
-    toolbarContentView = await createToolbar()
-    if (!toolbarContentView) return
-    baseWindow.contentView.addChildView(toolbarContentView)
+    toolbarWebContentsView = await createToolbarWebContentsView(baseWindow)
+    if (!toolbarWebContentsView)
+        return
 
-    selectedContentView = await restoreContentViews({ restore: false })
-    if (selectedContentView) {
-        baseWindow.contentView.addChildView(selectedContentView)
-        showWebContentsView(selectedContentView)
-        selectedContentView.webContents.focus()
-    }
+    baseWindow.contentView.addChildView(toolbarWebContentsView)
 
     showWindow()
+    onDone(baseWindow)
 }
 
-export function getBaseWindow(): BaseWindow | null {
-    return baseWindow
-}
-
-export function getToolbarContentView(): WebContentsView | null {
-    return toolbarContentView
-}
-
-export function sendToolbarContentViewMessage(message: string, data?): void {
-    toolbarContentView?.webContents.send(message, data)
+export function toolbarWebContentsViewSend(message: string, ...args: unknown[]): void {
+    toolbarWebContentsView?.webContents.send(message, ...args)
 }
 
 export function showWindow(): void {
@@ -92,3 +82,42 @@ export function showWindow(): void {
         baseWindow!.show()
     }
 }
+
+/**
+ * @param pageUrl - The URL of the page to open.
+ * @param options - The options for the sub window.
+ * @returns A promise that resolves when the sub window is created.
+ */
+export const openChildWindow = async (pageUrl: string, options: BrowserWindowConstructorOptions = {}): Promise<void> => {
+    const taskId = mainLogger.startTask("Electron", "Creating sub window");
+
+    if (!baseWindow)
+        return;
+
+    const subWindow = new BrowserWindow({
+        width: 440,
+        height: 272,
+        webPreferences: {
+            preload: path.join(__dirname, '../preload/index.mjs'),
+            sandbox: false,
+            nodeIntegration: false,
+            contextIsolation: true,
+            devTools: false,
+            webSecurity: true,
+            allowRunningInsecureContent: false,
+        },
+        parent: baseWindow, // Set the parent window
+        modal: true, // Makes the subwindow modal
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        ...options
+    });
+    subWindow.setMenu(null);
+    subWindow.loadURL(pageUrl);
+    subWindow.on('close', () => {
+        subWindow.destroy();
+    });
+
+    mainLogger.endTask(taskId, "Electron", "Sub window created");
+};

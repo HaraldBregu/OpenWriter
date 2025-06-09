@@ -8,7 +8,7 @@
     "src/renderer/i18n.ts"
   ],
   "compilerOptions": {
-    "types": ["node", "./types.d.ts", "electron-vite/node"],
+    "types": ["node", "./src/types.d.ts", "electron-vite/node"],
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "composite": true,
     "jsx": "react-jsx",

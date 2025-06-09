@@ -24,7 +24,7 @@ export const CharacterSpacing = Extension.create<CharacterSpacingOptions>({
         return {
             types: ['textStyle'],
             defaultSpacing: 'normal',
-            step: 0.01, // Default step for increment/decrement
+            step: 0.15, // Default step for increment/decrement
         }
     },
 
@@ -59,12 +59,12 @@ export const CharacterSpacing = Extension.create<CharacterSpacingOptions>({
             increaseCharacterSpacing: () => ({ chain, editor }) => {
                 const currentSpacing = parseFloat(editor.getAttributes('textStyle').letterSpacing) || 0
                 const newSpacing = currentSpacing + this.options.step
-                return chain().setMark('textStyle', { letterSpacing: `${newSpacing}rem` }).run()
+                return chain().setMark('textStyle', { letterSpacing: `${newSpacing}em` }).run()
             },
             decreaseCharacterSpacing: () => ({ chain, editor }) => {
                 const currentSpacing = parseFloat(editor.getAttributes('textStyle').letterSpacing) || 0
                 const newSpacing = currentSpacing - this.options.step // Prevent negative spacing
-                return chain().setMark('textStyle', { letterSpacing: `${newSpacing}rem` }).run()
+                return chain().setMark('textStyle', { letterSpacing: `${newSpacing}em` }).run()
             },
         }
     },

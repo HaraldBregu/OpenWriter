@@ -80,7 +80,7 @@ const LayoutShape = ({
   };
   const layouts = {
     "vertical-horizontal": `border flex flex-col [&>.c-apparatus]:flex-row`,
-    "horizontal-horizontal": `border flex ${apparatusDetails.length===1 ? "flex-col-reverse" : "flex-col"} [&>.c-apparatus]:flex-col`,
+    "horizontal-horizontal": `border flex flex-col [&>.c-apparatus]:flex-col`,
     "vertical-vertical": `border flex flex-row [&>.c-apparatus]:flex-col`,
     "vertical-vertical-reverse": `border flex flex-row-reverse [&>.c-apparatus]:flex-col`,
   };
@@ -131,10 +131,10 @@ const LayoutShape = ({
           </div>
         </>
       ) : (
-        <TextWithoutApparatus
+       <TextWithoutApparatus
           textDetails={textDetails}
           layoutName={layoutName}
-        />
+        /> 
       )}
     </div>
   );

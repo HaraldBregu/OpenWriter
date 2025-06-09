@@ -1,7 +1,7 @@
-import { Editor, EditorContent, JSONContent, useEditor } from '@tiptap/react';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import Button from './ui/button';
-import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { defaultEditorConfig } from '@/lib/tiptap/editor-configs';
 import { HistoryState } from '@/pages/editor/hooks';
 import { useEditorHistory } from '@/hooks/use-editor-history';
@@ -12,9 +12,12 @@ import { useTranslation } from 'react-i18next';
 import { ScissorsIcon, CopyIcon, ClipboardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LigatureType } from '@/lib/tiptap/ligature-mark';
+import { Mark } from 'prosemirror-model';
+import { textTemplate } from '@/lib/tiptap/templates-mock';
+import { Node } from 'prosemirror-model';
 
 export interface EditorData {
-  json: JSONContent;
+  json: object;
   html: string;
   text: string;
   characters: number;
@@ -23,8 +26,9 @@ export interface EditorData {
 
 export interface HTMLTextEditorElement {
   setHeadingLevel: (level: number) => void;
+  setBody: () => void;
   setFontFamily: (fontFamily: string) => void;
-  setFontSize: (fontSize: number) => void;
+  setFontSize: (fontSize: string) => void;
   setBold: (bold: boolean) => void;
   setItalic: (italic: boolean) => void;
   setUnderline: (underline: boolean) => void;
@@ -52,8 +56,7 @@ export interface HTMLTextEditorElement {
   scrollToComment: (id: string) => void;
   scrollToSection: (id: string) => void;
   setLigature: (ligature: LigatureType) => void;
-  setCapitalization: (capitalization: string) => void;
-  getCapitalization: () => string;
+  setCase: (caseType: CasingType) => void;
   increaseIndent: () => void;
   decreaseIndent: () => void;
   increaseCharacterSpacing: () => void;
@@ -123,28 +126,47 @@ const TextEditor = forwardRef(({
   onCurrentSection,
 }: TextEditorProps,
   ref: ForwardedRef<HTMLTextEditorElement>) => {
+  const { t } = useTranslation()
 
   useImperativeHandle(ref, () => {
     return {
       setHeadingLevel: (level: number) => {
-        if (!editor) return;
-        if (level < 1) {
-          editor?.chain().focus().setParagraph().run();
-          editorHistory.trackHistoryActions("paragraphStyle", `Changed heading level to pharagraph`);
-        } else {
-          editor?.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).unsetMark("textStyle").run()
-          editorHistory.trackHistoryActions("paragraphStyle", `Changed heading level to ${level}`);
-        }
+        editor?.chain()
+          .focus()
+          .selectParentNode()
+          .unsetMark("textStyle")
+          .setHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 })
+          .run()
+        editorHistory.trackHistoryActions("headingStyle", `Changed heading level to ${level}`);
+      },
+      setBody: () => {
+        editor?.chain()
+          .focus()
+          .setParagraph()
+          .run();
+        editorHistory.trackHistoryActions("paragraphStyle", `Changed heading level to pharagraph`);
       },
       setFontFamily: (fontFamily: string) => {
         if (!editor) return;
-        editor?.chain().focus().setFontFamily(fontFamily).run();
+        const isHeading = editor.isActive('heading')
+        const heading = editor.getAttributes("heading")
+        const fontSize = editor.getAttributes("textStyle").fontSize
+        editor?.chain()
+          .focus()
+          .setMark("textStyle", {
+            ...editor.getAttributes("textStyle"),
+            fontSize: isHeading ? heading.fontSize : fontSize,
+          })
+          .setFontFamily(fontFamily)
+          .run();
         editorHistory.trackHistoryActions("characterStyle", `Changed font family to ${fontFamily}`);
       },
-      setFontSize: (fontSize: number) => {
+      setFontSize: (fontSize: string) => {
         if (!editor) return;
-        editor.chain().focus().setMark("textStyle", { fontSize: `${fontSize}pt` }).run();
-        editorHistory.trackHistoryActions("characterStyle", `Changed font size to ${fontSize}pt`);
+        editor.chain().focus()
+          .setMark("textStyle", { fontSize: fontSize })
+          .run();
+        editorHistory.trackHistoryActions("characterStyle", `Changed font size to ${fontSize}`);
       },
       setBold: (bold: boolean) => {
         if (!editor) return;
@@ -162,13 +184,25 @@ const TextEditor = forwardRef(({
         editorHistory.trackHistoryActions("characterStyle", `Applied underline style`);
       },
       setTextColor: (color: string) => {
-        if (!editor) return;
-        editor.chain().focus().setColor(color).run();
+        const isHeading = editor?.isActive('heading')
+        const heading = editor?.getAttributes("heading")
+        const fontSize = editor?.getAttributes("textStyle").fontSize
+        const headingFontSize = heading?.fontSize ?? "18pt"
+        editor?.chain()
+          .focus()
+          .setMark("textStyle", {
+            ...editor.getAttributes("textStyle"),
+            fontSize: isHeading ? headingFontSize : fontSize,
+            color: color
+          })
+          .run();
         editorHistory.trackHistoryActions("characterStyle", `Applied text color`);
       },
       setHighlightColor: (color: string) => {
-        if (!editor) return;
-        editor.chain().focus().setHighlight({ color: color }).run();
+        editor?.chain()
+          .focus()
+          .setHighlight({ color: color })
+          .run();
         editorHistory.trackHistoryActions("characterStyle", `Applied highlight color`);
       },
       setBlockquote: (isBlockquote: boolean) => {
@@ -178,38 +212,66 @@ const TextEditor = forwardRef(({
       },
       setTextAlignment: (alignment: string) => {
         if (!editor) return;
-        editor.chain().focus().setTextAlign(alignment).run();
+        editor.chain().focus()
+          .setTextAlign(alignment)
+          .run();
         editorHistory.trackHistoryActions("characterStyle", `Applied font alignment`);
       },
       setLineSpacing: (lineSpacing: Spacing) => {
         if (!editor) return;
-        editor.chain().focus().setLineSpacing(lineSpacing).run();
+        editor.chain().focus()
+          .setLineSpacing(lineSpacing)
+          .run();
         editorHistory.trackHistoryActions("characterStyle", `Applied line spacing`);
       },
       setListStyle: (bulletStyle: BulletStyle) => {
         const { type, style } = bulletStyle;
-        if (type === 'BULLET') {
-          if (editor?.isActive('bulletedList')) {
-            editor?.chain().focus().updateAttributes('bulletedList', { listStyle: style }).run();
-          } else {
-            editor?.chain().focus().toggleBulletedList(style).run();
-          }
-        } else if (type === 'ORDER') {
-          if (editor?.isActive('orderList')) {
-            editor?.chain().focus().updateAttributes('orderList', { listStyle: style }).run();
-          } else {
-            editor?.chain().focus().toggleOrderList(style).run();
-          }
-        } else if (editor?.isActive('bulletedList')) {
-          editor?.chain().focus().unsetBulletList().run();
-        } else if (editor?.isActive('orderList')) {
-          editor?.chain().focus().unsetOrderList().run();
+        console.log("setListStyle: ", bulletStyle)
+
+        const bulletListActive = editor?.isActive('bulletedList');
+        const orderListActive = editor?.isActive('orderList')
+
+        switch (type) {
+          case 'ORDER':
+            if (orderListActive) {
+              editor?.chain().focus()
+                .updateAttributes('orderList', { listStyle: style })
+                .run();
+            } else {
+              editor?.chain().focus()
+                .toggleOrderList(style)
+                .run();
+            }
+            break;
+          case 'BULLET':
+            if (bulletListActive) {
+              editor?.chain().focus()
+                .updateAttributes('bulletedList', { listStyle: style })
+                .run();
+            } else {
+              editor?.chain().focus()
+                .toggleBulletedList(style)
+                .run();
+            }
+            break;
+          default:
+            if (bulletListActive) {
+              editor?.chain().focus()
+                .unsetBulletList()
+                .run();
+            }
+
+            if (orderListActive) {
+              editor?.chain().focus()
+                .unsetOrderList()
+                .run();
+            }
+            break;
         }
+
         editorHistory.trackHistoryActions("characterStyle", `Applied ${type.toLowerCase()} list with ${style} style`);
       },
       toggleNonPrintingCharacters: () => {
-        if (!editor) return;
-
         editor?.chain().focus().toggleNonPrintingCharacters();
       },
       setListNumbering: (numbering: number) => {
@@ -235,13 +297,25 @@ const TextEditor = forwardRef(({
       },
       setSuperscript: (superscript: boolean) => {
         if (!editor) return;
+        editor.chain().focus().unsetSubscript().run()
         editor.chain().focus()[superscript ? 'setSuperscript' : 'unsetSuperscript']().run();
+        setTimeout(() => {
+          if (editor) {
+            updateEmphasisState(editor);
+          }
+        });
         editorHistory.trackHistoryActions("characterStyle", `Applied superscript style`);
 
       },
       setSubscript: (subscript: boolean) => {
         if (!editor) return;
+        editor.chain().focus().unsetSuperscript().run();
         editor.chain().focus()[subscript ? 'setSubscript' : 'unsetSubscript']().run();
+        setTimeout(() => {
+          if (editor) {
+            updateEmphasisState(editor);
+          }
+        });
         editorHistory.trackHistoryActions("characterStyle", `Applied subscript style`);
       },
       undo: (action?: HistoryAction) => {
@@ -257,8 +331,6 @@ const TextEditor = forwardRef(({
         if (!canRedo) return;
         editor?.chain().focus().redo().run()
       },
-
-      // BOOKMARKS
       addBookmark: () => {
         if (!editor) return;
 
@@ -318,8 +390,6 @@ const TextEditor = forwardRef(({
           editor?.commands.focus();
         }, 100);
       },
-
-      // COMMENTS
       addComment: () => {
         if (!editor) return;
 
@@ -412,12 +482,53 @@ const TextEditor = forwardRef(({
         if (!editor) return;
         editor.chain().focus().setLigature(ligature).run();
       },
-      setCapitalization: (capitalization: string) => {
+      setCase: (caseType: CasingType) => {
         if (!editor) return;
-        editor.chain().focus().setCapitalization(capitalization).run();
-      },
-      getCapitalization: () => {
-        return editor?.getAttributes("capitalization")?.style || 'none';
+
+        const { state } = editor;
+        const { selection } = state;
+        const { from, to } = selection;
+
+        let commandChain = editor.chain();
+
+        // Apply transformation to all text nodes in selection, preserving marks/nodes
+        state.doc.nodesBetween(from, to, (node, pos) => {
+          if (node.isText) {
+            const nodeFrom = Math.max(pos, from);
+            const nodeTo = Math.min(pos + node.nodeSize, to);
+            const sliceFrom = nodeFrom - pos;
+            const sliceTo = nodeTo - pos;
+            const original = node.text?.slice(sliceFrom, sliceTo) ?? '';
+            const transformed = transformText(caseType, original);
+
+            // Create a position object for the text node
+            const position = {
+              from: nodeFrom,
+              to: nodeTo
+            }
+
+            // Replace only the selected part of the text node
+            commandChain = commandChain.insertContentAt(
+              position,
+              transformed
+            ).setTextSelection(position);
+            // If you want to support small-caps, implement it via a mark or style here.
+            if (caseType === 'small-caps') {
+              // Apply small-caps by setting the fontVariant property via textStyle mark
+              commandChain = commandChain.setMark('textStyle', { ...editor.getAttributes('textStyle'), fontVariant: 'small-caps' });
+            } else {
+              // Remove small-caps by unsetting fontVariant from textStyle mark
+              const attrs = { ...editor.getAttributes('textStyle') };
+              delete attrs.fontVariant;
+              commandChain = commandChain.unsetMark('textStyle').setMark('textStyle', attrs);
+            }
+          }
+        });
+
+        return commandChain.setTextSelection({
+          from,
+          to
+        }).run();
       },
       increaseIndent: () => {
         editor?.chain().focus().increaseIndent().run();
@@ -489,46 +600,46 @@ const TextEditor = forwardRef(({
 
         function findTargetHeading(headings: { level: number, pos: number, text: string }[], targetId: string) {
           const orderedHeadings = [...headings].sort((a, b) => a.pos - b.pos);
-          const headingsByLevel: Record<number, { id: string; heading: typeof headings[0]; parentId: string | null }[]> = {};
-          const lastHeadingByLevel: Record<number, { id: string; heading: typeof headings[0] }> = {};
 
-          let counter = 1;
+          const headingStack: ({ id: string; heading: typeof headings[0] } | null)[] = Array(7).fill(null);
+
+          const levelCounters: Record<string, number> = {};
+
+          const generateStandardId = (level: number, parentId: string | null = null): string => {
+            const parentKey = parentId || 'root';
+            const counterKey = `standard_${level}_${parentKey}`;
+
+            if (!levelCounters[counterKey]) levelCounters[counterKey] = 1;
+            else levelCounters[counterKey]++;
+
+            const num = levelCounters[counterKey];
+
+            if (level === 1) {
+              return String(num);
+            } else if (parentId) {
+              return `${parentId}.${num}`;
+            }
+            return String(num);
+          };
 
           for (const heading of orderedHeadings) {
             const level = heading.level;
 
-            if (!headingsByLevel[level]) {
-              headingsByLevel[level] = [];
+            for (let i = level + 1; i <= 6; i++) {
+              headingStack[i] = null;
             }
 
-            let parentId: string | null = null;
-            if (level > 1) {
-              for (let parentLevel = level - 1; parentLevel >= 1; parentLevel--) {
-                if (lastHeadingByLevel[parentLevel]) {
-                  parentId = lastHeadingByLevel[parentLevel].id;
-                  break;
-                }
+            let parent: { id: string; heading: typeof headings[0] } | null = null;
+            for (let i = level - 1; i >= 1; i--) {
+              if (headingStack[i]) {
+                parent = headingStack[i];
+                break;
               }
             }
 
-            let currentId: string;
+            const currentId = generateStandardId(level, parent?.id);
 
-            if (level === 1) {
-              currentId = String(counter++);
-            } else if (parentId) {
-              const siblings = headingsByLevel[level].filter(h => h.parentId === parentId);
-              const siblingCount = siblings.length + 1;
-              currentId = `${parentId}.${siblingCount}`;
-            } else {
-              currentId = String(counter++);
-            }
-
-            headingsByLevel[level].push({ id: currentId, heading, parentId });
-            lastHeadingByLevel[level] = { id: currentId, heading };
-
-            for (let deeperLevel = level + 1; deeperLevel <= 6; deeperLevel++) {
-              delete lastHeadingByLevel[deeperLevel];
-            }
+            headingStack[level] = { id: currentId, heading };
 
             if (currentId === targetId) {
               return heading;
@@ -539,20 +650,16 @@ const TextEditor = forwardRef(({
         }
 
         function performScrollToHeading(editor: Editor, target: { level: number, pos: number, text: string }) {
-          // Prima selezione e focus - necessario per posizionare il cursore
           editor.commands.setTextSelection(target.pos);
           editor.commands.focus();
           editor.commands.scrollIntoView();
 
-          // Dopo un breve ritardo, scroll aggiuntivo per garantire la visibilità
           setTimeout(() => {
             const editorElement = document.querySelector('.ProseMirror');
             if (!editorElement) return;
 
-            // Trova tutti i titoli nel documento
             const headings = Array.from(editorElement.querySelectorAll('h1, h2, h3, h4, h5, h6'));
 
-            // Trova il titolo specifico corrispondente al testo target
             const targetHeading = headings.find(el => {
               const text = el.textContent?.trim();
               return text === target.text.trim();
@@ -601,18 +708,11 @@ const TextEditor = forwardRef(({
     }
   }, [])
 
-
   function getEditorState() {
     if (!editor) return;
     const newState = currentEditorState(editor)
     return newState
   }
-
-  // () => {
-  //   if (!editor) return;
-  //   const newState = currentEditorState(editor)
-  //   return newState
-  // },
 
   const handleMarks = useHandleMarks()
   const deleteMarks = useDeleteMarks()
@@ -620,9 +720,168 @@ const TextEditor = forwardRef(({
 
   const [selectionRange, setSelectionRange] = useState<{ from: number; to: number } | null>(null)
 
-  const updateEmphasisState = useCallback((editor: Editor) => {
-    const { from, to } = editor.state.selection;
+  // GET NODES FROM PARENT NODE TYPE
+  const dataForNodeType = useCallback((editor: Editor, type: string) => {
+    const { state } = editor
+    const { from, to } = state.selection;
 
+    if (from === to)
+      return {
+        nodes: [],
+        uniqueNodes: [],
+        childNodes: [],
+        uniqueChildNodes: [],
+        marks: [],
+        uniqueMarks: [],
+      }
+
+    const nodes: Node[] = []
+    const childNodes: Node[] = []
+    const marks: Mark[] = []
+
+    editor.state.doc.nodesBetween(from, to, (node: Node, _pos, parent: Node | null, _index) => {
+      if (parent?.type.name === type) {
+        nodes.push(parent)
+        childNodes.push(node)
+        marks.push(...node.marks)
+      }
+    });
+
+    const uniqueNodes = nodes
+      .filter((item, index, self) => index === self.findIndex(obj => JSON.stringify(obj.attrs) === JSON.stringify(item.attrs)));
+
+    const uniqueChildNodes = childNodes
+      .filter((item, index, self) => index === self.findIndex(obj => JSON.stringify(obj.attrs) === JSON.stringify(item.attrs)));
+
+    const uniqueMarks = marks
+      .filter((mark, index, self) => index === self.findIndex(obj => JSON.stringify(obj) === JSON.stringify(mark)));
+
+    return {
+      nodes,
+      uniqueNodes,
+      childNodes,
+      uniqueChildNodes,
+      marks,
+      uniqueMarks,
+    }
+  }, [])
+
+  const handleHeadingData = useCallback((editor: Editor) => {
+    const {
+      uniqueNodes,
+      uniqueMarks,
+    } = dataForNodeType(editor, 'heading')
+
+    const attributes = uniqueNodes.map(node => node.attrs)
+
+    const fontFamilies = attributes.map(attr => attr.fontFamily)
+    const fontSizes = attributes.map(attr => attr.fontSize)
+
+    const marksTextStyle = uniqueMarks.filter(data => data.type.name === "textStyle")
+
+    const marksFontFamilies = marksTextStyle.flatMap(data => data.attrs.fontFamily)
+    const marksFontSizes = marksTextStyle.flatMap(data => data.attrs.fontSize)
+
+    const allFontFamilies = new Set([...fontFamilies, ...marksFontFamilies])
+    const allFontSizes = new Set([...fontSizes, ...marksFontSizes])
+
+    return {
+      headingsTypes: uniqueNodes.length,
+      hasHeadings: uniqueNodes.length > 0,
+      hasOneHeading: uniqueNodes.length === 1,
+      hasMultipleHeadingTypes: uniqueNodes.length > 1,
+      headingFontFamilies: allFontFamilies,
+      hasMultipleHeadingFontFamilies: allFontFamilies.size > 1,
+      headingFontSizes: allFontSizes,
+      hasMultipleHeadingFontSizes: allFontSizes.size > 1,
+      headingFontSize: allFontSizes[0],
+    }
+  }, [])
+
+  const handleParagraphData = useCallback((editor: Editor) => {
+    const {
+      nodes,
+      uniqueNodes,
+      uniqueMarks,
+    } = dataForNodeType(editor, 'paragraph')
+
+    const attributes = uniqueNodes.map(node => node.attrs)
+
+    const fontFamilies = attributes.map(attr => attr.fontFamily)
+    const fontSizes = attributes.map(attr => attr.fontSize)
+
+    const marksTextStyle = uniqueMarks.filter(data => data.type.name === "textStyle")
+
+    const marksFontFamilies = marksTextStyle.flatMap(data => data.attrs.fontFamily)
+    const marksFontSizes = marksTextStyle.flatMap(data => data.attrs.fontSize)
+
+    const allFontFamilies = new Set([...fontFamilies, ...marksFontFamilies])
+    const allFontSizes = new Set([...fontSizes, ...marksFontSizes])
+
+    return {
+      paragraphLength: nodes.length,
+      hasParagraphs: nodes.length > 0,
+      paragraphFontFamilies: allFontFamilies,
+      hasMultipleParagraphFontFamilies: allFontFamilies.size > 1,
+      paragraphFontSizes: allFontSizes,
+      hasMultipleParagraphFontSizes: allFontSizes.size > 1,
+    }
+  }, [])
+
+  const updateEmphasisState = useCallback((editor: Editor) => {
+    const { hasHeadings, hasOneHeading, hasMultipleHeadingTypes, hasMultipleHeadingFontFamilies, hasMultipleHeadingFontSizes } = handleHeadingData(editor)
+    const { hasParagraphs, hasMultipleParagraphFontFamilies, hasMultipleParagraphFontSizes } = handleParagraphData(editor)
+
+    // Attributes
+    const textStyle = editor.getAttributes("textStyle")
+    const isHeading = editor.isActive('heading')
+    const heading = editor.getAttributes("heading")
+    const isBold = editor.isActive("bold")
+    const isItalic = editor.isActive("italic")
+    const isUnderLine = editor.isActive("underline")
+    const isStrike = editor.isActive("strike")
+    const isBlockquote = editor.isActive("note")
+    const isCodeBlock = editor.isActive("codeBlock")
+
+    // HEADING LEVEL
+    const noHeadingLevel = (hasMultipleHeadingTypes || (hasOneHeading && hasParagraphs))
+    const currHeadingLevel = heading?.level ?? '0'
+    const headingLevel = noHeadingLevel ? '-99' : currHeadingLevel
+
+    // FONT FAMILY
+    const noFontFamily = hasMultipleHeadingFontFamilies || hasMultipleParagraphFontFamilies
+    const currFontFamily = textStyle?.fontFamily
+    const fontFamily = noFontFamily ? '' : currFontFamily
+
+    // FONT SIZE TODO: REFACTOR THIS PART (ADD GLOBAL FONT SIZE)
+    const currTextFontSize = textStyle?.fontSize ?? '12pt'
+    let currHeadingFontSize = '18pt'
+    switch (heading.level) {
+      case 1:
+        currHeadingFontSize = textStyle?.fontSize ?? '18pt'
+        break;
+      case 2:
+        currHeadingFontSize = textStyle?.fontSize ?? '16pt'
+        break;
+      case 3:
+        currHeadingFontSize = textStyle?.fontSize ?? '14pt'
+        break;
+      case 4:
+        currHeadingFontSize = textStyle?.fontSize ?? '12pt'
+        break;
+      case 5:
+        currHeadingFontSize = textStyle?.fontSize ?? '10pt'
+        break;
+    }
+
+    const textFontSize = isHeading
+      ? currHeadingFontSize
+      : currTextFontSize
+    const fontSize = (hasMultipleHeadingFontSizes || hasMultipleParagraphFontSizes || (hasHeadings && hasParagraphs)) ? '0pt' : textFontSize
+
+    // TODO: REFACTOR THIS FUNCTION
+    const { state } = editor
+    const { from, to } = state.selection;
     const getUniqueAttribute = <T extends number | string | null>(type: string, attributeName: string, defaultValue: T, nullReplacement: any = null): T => {
       const attrs = new Set<T>();
       const markAttributes = editor.getAttributes(type);
@@ -632,7 +891,6 @@ const TextEditor = forwardRef(({
           if (node.marks) {
             node.marks.forEach((mark) => {
               if (mark.type.name === type && mark.attrs[attributeName]) {
-                //set fontSize to null if more than one unique value is found
                 let valueToAdd = mark.attrs[attributeName];
                 if (attributeName === 'fontSize' && typeof valueToAdd === 'string') {
                   const numericValue = parseFloat(valueToAdd);
@@ -657,20 +915,22 @@ const TextEditor = forwardRef(({
     const orderListStyle = editor.getAttributes("orderList")?.listStyle || '';
 
     const newEmphasisState: EmphasisState = {
-      headingLevel: editor.isActive('heading') ? editor.getAttributes("heading")?.level || 0 : 0,
-      fontFamily: getUniqueAttribute<string>("textStyle", 'fontFamily', "Times New Roman", ''),
-      fontSize: getUniqueAttribute<number>("textStyle", 'fontSize', 12, null),
-      bold: editor.isActive("bold"),
-      italic: editor.isActive("italic"),
-      underline: editor.isActive("underline"),
+      headingLevel: headingLevel,
+      fontFamily: fontFamily,
+      fontSize: fontSize,
+      bold: isBold,
+      italic: isItalic,
+      underline: isUnderLine,
+      strikethrough: isStrike,
+
+      // REVIEW THIS PART
       textColor: getUniqueAttribute<string>("textStyle", 'color', "black", ''),
       highlight: getUniqueAttribute<string>("highlight", 'color', "white", ''),
 
       // REVIEW THIS PART
-      strikethrough: editor.isActive("strike"),
       alignment: getUniqueAttribute<string>("paragraph", 'textAlign', "left", ''),
-      blockquote: editor.isActive("blockquote"),
-      isCodeBlock: editor.isActive("codeBlock"),
+      blockquote: isBlockquote,
+      isCodeBlock: isCodeBlock,
       showNonPrintingCharacters: editor.storage.nonPrintingCharacter.visibility(),
       bulletStyle: {
         type: editor.isActive("bulletedList") ? 'BULLET' : editor.isActive("orderList") ? 'ORDER' : '',
@@ -692,20 +952,72 @@ const TextEditor = forwardRef(({
   const withSectionDividers: boolean = isMainText;
   const withEditableFilter: boolean = isMainText;
 
+
+  const content = useMemo(() => {
+    if (isMainText) {
+      return {
+        type: "doc",
+        content: [
+          ...textTemplate(t("dividerSections.mainText")),
+        ]
+      }
+    }
+
+    return {
+      type: "doc",
+      content: []
+    }
+  }, [isMainText])
+
   const editor = useEditor({
     ...defaultEditorConfig(
       withSectionDividers,
       withEditableFilter,
     ),
-    onCreate: ({ editor }) => {
-      if (editor) {
-        editor.commands.setMark('textStyle', {
-          fontSize: '12pt',
-          fontFamily: 'Times New Roman',
-          color: '#000000',
-        })
-      }
+    content: content,
+    editorProps: {
+      // attributes: {
+      //   style: 'font-family: "Times New Roman", Arial, sans-serif;'
+      // },
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Enter') {
+          const { state } = view
+          const { selection } = state
+          const { $from } = selection
+
+          if ($from.parent.type.name.startsWith('heading')) {
+
+            // editor?.chain()
+            //   .focus()
+            //   .updateAttributes('paragraph', {
+            //     fontFamily: 'Times New Roman',
+            //     fontSize: '12pt',
+            //     fontWeight: 'normal',
+            //     fontStyle: 'normal',
+            //   })
+            //   // .setMark("textStyle", {
+            //   //   ...editor.getAttributes("textStyle"),
+            //   // })
+            //   .run();
+          }
+        }
+        return false
+      },
+      //@ts-ignore
+      // clipboardTextParser(text, $context, plain, view) {
+      //   const node = view.state.schema.text(text);
+      //   return new Slice(view.state.schema.node('paragraph', null, [node]).content, 0, 0);
+      // },
     },
+    // onCreate: ({ editor }) => {
+    //   editor?.chain().focus()
+    //     .setFontFamily('Times New Roman')
+    //     // .setParagraph()
+    //     // .setMark("textStyle", {
+    //     //   ...editor.getAttributes("textStyle"),
+    //     // })
+    //     .run();
+    // },
     onUpdate: ({ editor }) => {
       const newState = currentEditorState(editor)
       onUpdate?.(newState);
@@ -719,31 +1031,31 @@ const TextEditor = forwardRef(({
       updateEmphasisState(editor);
     },
     onSelectionUpdate: ({ editor }) => {
-      if (!editor) return;
+      const state = editor.state;
+      const { selection } = state;
+      const { from, to } = selection;
+      const selectedContent = state.doc.textBetween(from, to, ' ');
 
-      const { selection } = editor.state;
-      const currentPos = selection.from;
+      // POPOVER
+      if (from === to) setPopoverOpen(false)
+
+      // SECTIONS
       let sections: string[] = [];
-      editor.state.doc.nodesBetween(0, currentPos, (node, _) => {
+      editor.state.doc.nodesBetween(0, from, (node, _) => {
         if (node.type.name === 'sectionDivider') {
           sections.push(node.attrs.sectionType);
           return false;
         }
         return true;
       });
-      const { from, to } = editor.state.selection;
-      const selectedContent = editor.state.doc.textBetween(from, to, ' ');
-
       const currentSection = sections[sections.length - 1]
       onCurrentSection?.(sections.length > 0 ? currentSection : undefined)
 
-      // Usa la nuova funzione getSelectionMarks per ottenere tutti i mark nella selezione
+      // SELECTION MARKS
       const selectedMarks = getSelectionMarks(editor);
-
       if (selectedContent.length === 0) {
         const hasBookmark = selectedMarks.some(mark => mark.type === 'bookmark')
         const hasComment = selectedMarks.some(mark => mark.type === 'comment')
-
         if (hasComment && commentHighlighted) {
           onSelectionMarks?.(selectedMarks.filter(mark => mark.type === 'comment'))
         } else if (hasBookmark && bookmarkHighlighted) {
@@ -752,13 +1064,11 @@ const TextEditor = forwardRef(({
           onSelectionMarks?.([])
         }
       } else {
-        // Qui puoi aggiungere la logica per passare i marks quando c'è una selezione
         onSelectionMarks?.(selectedMarks);
       }
 
       const comments = handleMarks(editor, 'comment')
       onChangeComments?.(comments)
-
       const bookmarks = handleMarks(editor, 'bookmark')
       onChangeBookmarks?.(bookmarks)
 
@@ -768,11 +1078,8 @@ const TextEditor = forwardRef(({
           mark.type === 'comment' &&
           mark.attrs?.id === comment.id
         );
-      });
-
-      if (selectedComment) {
-        onChangeComment?.(selectedComment)
-      }
+      })
+      if (selectedComment) onChangeComment?.(selectedComment)
 
       // SELECT BOOKMARK
       const selectedBookmark = bookmarks.find(bookmark => {
@@ -780,24 +1087,14 @@ const TextEditor = forwardRef(({
           mark.type === 'bookmark' &&
           mark.attrs?.id === bookmark.id
         );
-      });
-
-      if (selectedBookmark) {
-        onChangeBookmark?.(selectedBookmark)
-      }
+      })
+      if (selectedBookmark) onChangeBookmark?.(selectedBookmark)
 
       onSelectedContent?.(selectedContent)
       onSelectedContentChange?.(selectedContent)
-
-      if (from === to) {
-        setPopoverOpen(false)
-      }
-
       onCanUndo?.(editor.can().undo());
       onCanRedo?.(editor.can().redo());
-
       updateEmphasisState(editor);
-
       onBookmarkStateChange?.(editor.isActive("bookmark"))
       onCommentStateChange?.(editor.isActive("comment"))
     },
@@ -807,18 +1104,29 @@ const TextEditor = forwardRef(({
       const selectionStart = transaction.getMeta("selectionStart")
       const selectionEnd = transaction.getMeta("selectionEnd")
 
+      // const isCut = transaction.getMeta("uiEvent") === "cut"
+      // const isCopy = transaction.getMeta("uiEvent") === "copy"
+      // if (isCut || isCopy) {
+      //   const { from, to } = editor.state.selection;
+      //   if (from !== to) {
+      //     const text = editor.state.doc.textBetween(from, to, ' ');
+      //     navigator.clipboard.writeText(text).then(() => {
+      //       if (isCut) {
+      //         editor.commands.deleteRange({ from, to });
+      //       }
+      //     });
+      //   }
+      // }
+
       if (selectionStart) {
         setPopoverOpen(false)
       }
 
       if (selectionEnd) {
         updateEmphasisState(editor);
-        if (editor) {
-          setTimeout(() => {
-            positionPopover()
-            setPopoverOpen(true)
-          }, 0)
-        }
+        setTimeout(() => {
+          positionPopover()
+        }, 0)
       }
     },
     onFocus: (data) => {
@@ -827,7 +1135,65 @@ const TextEditor = forwardRef(({
       onCanUndo?.(editor.can().undo());
       onCanRedo?.(editor.can().redo());
     },
+    //@ts-ignore
+    onPaste: (event, slice) => {
+      // editor?.commands.insertContentAt(0, {
+      //   type: 'paragraph',
+      //   content: [
+      //     {
+      //       type: 'text',
+      //       text: 'Hello, world!'
+      //     }
+      //   ]
+      // });
+
+      if (!editor) return;
+
+      const { clipboardData } = event;
+
+      if (!clipboardData) return;
+
+      // const text = clipboardData.getData('text/plain');
+      // const html = clipboardData.getData('text/html');
+      // const rtf = clipboardData.getData('text/rtf');
+      // const json = clipboardData.getData('text/json');
+
+      // console.log('text', text)
+      // console.log('html', html)
+      // console.log('rtf', rtf)
+      // console.log('json', json)
+
+      // You can handle the pasted content here
+      // For example, you could insert it with specific formatting:
+      // if (text) {
+      //   editor.commands.insertContent(text);
+      // }
+    }
   })
+
+
+  // Add to your editor container
+  // editor?.view.dom.addEventListener('copy', (event) => {
+  //   const selection = editor?.state.selection
+  //   const selectedContent = editor?.state.doc.cut(selection.from, selection.to)
+
+  //   console.log('Copied content (ProseMirror):', selectedContent)
+  //   // console.log('DOM structure of selection:', getSelectedDOMContent(editor))
+
+  //   // You can also modify the clipboard data here
+  //   // event.clipboardData.setData('text/html', customHTML)
+  // })
+
+  // editor?.view.dom.addEventListener('cut', (event) => {
+  //   const selection = editor?.state.selection
+  //   console.log('Cut operation - DOM before:', editor?.view.dom.innerHTML)
+
+  //   // The actual cut will happen after this event
+  //   setTimeout(() => {
+  //     console.log('Cut operation - DOM after:', editor.view.dom.innerHTML)
+  //   }, 0)
+  // })
+
 
 
   const currentEditorState = useCallback((editor: Editor) => {
@@ -851,15 +1217,6 @@ const TextEditor = forwardRef(({
     }
   }, [canEdit])
 
-  useEffect(() => {
-    editor?.on('updateEmphasisState', () => updateEmphasisState(editor));
-
-    return () => {
-      editor?.off('updateEmphasisState');
-    }
-  }, [editor]);
-
-  const { t } = useTranslation()
   const positionPopover = useCallback(() => {
     if (!editor || !editorRef.current) return
 
@@ -912,8 +1269,6 @@ const TextEditor = forwardRef(({
       left: event.clientX,
     });
 
-    // disabled for further info in future
-    // setContextMenuOpen(true);
   }, [editor, canEdit]);
 
   const handleCopy = useCallback(() => {
@@ -1081,7 +1436,9 @@ const TextEditor = forwardRef(({
     <>
       <div
         ref={editorRef}
-        className={cn("relative w-full h-full", className)}>
+        className={cn("relative w-full h-full", className)}
+        onContextMenu={() => setPopoverOpen(true)}
+      >
         {bubbleToolbarItems && bubbleToolbarItems.length > 0 &&
           <div
             ref={popoverTriggerRef}
@@ -1222,13 +1579,6 @@ const TextEditor = forwardRef(({
           onKeyDown={handleEditorKeyDown}
         />
       </div>
-
-      {/* <TextEditorLayout className={cn(className)}>
-        {children} */}
-      {/* <TextEditorContent className={cn(className)}>
-       
-      </TextEditorContent> */}
-      {/* </TextEditorLayout> */}
     </>
   )
 });
@@ -1338,3 +1688,39 @@ const useGetSelectionMarks = () => {
   }, []);
 };
 
+// Helper to convert text to Start Case
+const toStartCase = (text: string): string => {
+  if (!text) return '';
+  // Split on sentence-ending punctuation (., ?, !), keeping the delimiter
+  const segments = text.split(/([.?!])/);
+  let result = '';
+  for (let i = 0; i < segments.length; i += 2) {
+    let segment = segments[i];
+    if (segment.trim().length) {
+      segment = segment.trimStart();
+      const diff = segments[i].length - segment.length;
+      segment = segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase();
+      // If the segment was trimmed, add spaces to match original length
+      segment = ((diff > 0) ? ' '.repeat(diff) : '') + segment;
+    }
+    result += segment;
+    // Add the punctuation if it exists
+    if (segments[i + 1]) {
+      result += segments[i + 1];
+    }
+  }
+  return result;
+}
+
+// Helper to transform text according to caseType
+const transformText = (caseType: string, text: string): string => {
+  if (caseType === 'all-caps') {
+    return text.toUpperCase();
+  } else if (caseType === 'title-case') {
+    return text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  } else if (caseType === 'start-case') {
+    return toStartCase(text);
+  } else {
+    return text.toLowerCase();
+  }
+}

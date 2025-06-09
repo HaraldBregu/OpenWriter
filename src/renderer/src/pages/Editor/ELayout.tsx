@@ -4,17 +4,17 @@ import { EditorFooter } from "./EditorFooter";
 import { useEffect, useRef, useState } from "react";
 import { Content } from "./Content";
 import { useDispatch, useSelector } from "react-redux";
-import { getSidebarOpen } from "../store/main.selector";
-import { setSidebarOpen } from "../store/main.slice";
-import { selectCommentsCategories } from "./store/comment/comments.selector";
 import {
     addApparatusAtTop,
     setBookmark,
     setComment,
     setEditorMode,
     setEmphasisState,
-} from "./store/editor.slice";
+    setSidebarOpen,
+    togglePrintPreviewVisible,
+} from "./store/editor/editor.slice";
 import {
+    getSidebarOpen,
     selectBookmarkActive,
     selectCanAddBookmark,
     selectCanAddComment,
@@ -23,19 +23,32 @@ import {
     selectEditorMode,
     selectHeadingEnabled,
     selectHistory,
+    selectPrintPreviewVisible,
     selectToolbarEmphasisState
-} from "./store/editor.selector";
-import Toolbar from "../../components/toolbar";
-import { selectBookmarksCategories } from "./store/bookmark/bookmark.selector";
+} from "./store/editor/editor.selector";
+import Toolbar from "./EditorToolbar";
 import { useIpcRenderer } from "@/hooks/use-ipc-renderer";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { EditorApparatus } from "./EditorApparatus";
+import EditorPreview from "./EditorPreview";
+import { bookmarkCategoriesSelector } from "./store/bookmark/bookmark.selector";
+import { commentCategoriesSelector } from "./store/comment/comments.selector";
+import CustomizeToolbarModal from "../preferences/CustomizeToolbar";
 
 export const ELayout = () => {
     const sidebarRef = useRef<any>();
-    const contentChildRef = useRef<any>();
+    const editorTextRef = useRef<any>();
+    const editorApparatusesRef = useRef<any>();
+
+    const [editorContainerRef, setEditorContainerRef] = useState<any>();
+    const [isCustomizeToolbarOpen, setIsCustomizeToolbarOpen] = useState(false);
+    const [toolbarAdditionalItems, setToolbarAdditionalItems] = useState<string[]>([]);
+
     const [showToolbar, setShowToolbar] = useState(true);
 
     const headingEnabled = useSelector(selectHeadingEnabled);
     const sidebarOpen = useSelector(getSidebarOpen);
+    const printPreviewVisible = useSelector(selectPrintPreviewVisible);
 
     const dispatch = useDispatch();
     const handleSetSidebarOpen = () => {
@@ -45,12 +58,24 @@ export const ELayout = () => {
     const canUndo = useSelector(selectCanUndo);
 
     useIpcRenderer((ipc) => {
-        ipc.on('toggle toolbar', (_, showToolbar) => {
+        ipc.on('toggle-toolbar', (_, showToolbar) => {
             setShowToolbar(showToolbar);
         });
 
         ipc.on('add-apparatus', (_, type: "CRITICAL" | "PAGE_NOTES" | "SECTION_NOTES" | "INNER_MARGIN" | "OUTER_MARGIN") => {
             dispatch(addApparatusAtTop(type))
+        });
+
+        ipc.on('toggle-print-preview', (_) => {
+            dispatch(togglePrintPreviewVisible())
+        });
+
+        ipc.on("customize-toolbar", () => {
+            setIsCustomizeToolbarOpen(true);
+        });
+
+        ipc.on('toolbar-additional-items', (_, items: string[]) => {
+            setToolbarAdditionalItems(items);
         });
 
         return () => {
@@ -62,106 +87,118 @@ export const ELayout = () => {
         window.application.toolbarIsVisible().then(setShowToolbar);
     }, [window.application.toolbarIsVisible]);
 
+    useEffect(() => {
+        window.application.toolbarAdditionalItems().then(setToolbarAdditionalItems);
+    }, [window.application.toolbarAdditionalItems]);
+
+    const handleSaveToolbarOptions = (items: string[]) => {
+        window.electron.ipcRenderer.send('application:updateToolbarAdditionalItems', items);
+        setIsCustomizeToolbarOpen(false);
+    }
+
     return (
         <SidebarProvider open={sidebarOpen}>
             <ESidebar
                 ref={sidebarRef}
                 onClickBookmark={(bookmark: Bookmark) => {
-                    contentChildRef.current?.scrollToBookmark(bookmark.id)
+                    editorTextRef.current?.scrollToBookmark(bookmark.id)
                 }}
                 onClickHeading={(id: string) => {
-                    contentChildRef.current?.scrollToHeading(id)
+                    editorTextRef.current?.scrollToHeading(id)
                 }}
                 onDeleteBookmarks={(bookmarks?: Bookmark[]) => {
-                    contentChildRef.current?.deleteBookmarks(bookmarks)
+                    editorTextRef.current?.deleteBookmarks(bookmarks)
                 }}
                 onDeleteComments={(comments?: AppComment[]) => {
-                    contentChildRef.current?.deleteComments(comments)
+                    editorTextRef.current?.deleteComments(comments)
                 }}
                 onClickComment={(comment: AppComment) => {
-                    contentChildRef.current?.scrollToComment(comment)
+                    editorTextRef.current?.scrollToComment(comment)
                 }}
             />
             <SidebarInset className="overflow-hidden">
                 <Toolbar
-                    includeOptionals={['NON_PRINTING_CHARACTERS']}
                     viewToolbar={showToolbar}
+                    includeOptionals={toolbarAdditionalItems}
                     sidebarOpen={sidebarOpen}
                     toggleNonPrintingCharacters={() => {
-                        contentChildRef.current?.toggleNonPrintingCharacters()
+                        editorContainerRef.current?.toggleNonPrintingCharacters()
                     }}
                     onClickToggleSidebar={handleSetSidebarOpen}
                     emphasisState={useSelector(selectToolbarEmphasisState)}
                     onEmphasisStateChange={(emphasisState: EmphasisState) => {
                         dispatch(setEmphasisState(emphasisState))
-                        contentChildRef.current?.focus()
+                        editorContainerRef.current?.focus()
                     }}
                     onHeadingLevelChange={(headingLevel: number) => {
-                        contentChildRef.current?.setHeadingLevel(headingLevel)
+                        editorContainerRef.current?.setHeadingLevel(headingLevel)
+                    }}
+                    onSetBody={() => {
+                        editorContainerRef.current?.setBody()
                     }}
                     onFontFamilyChange={(fontFamily: string) => {
-                        contentChildRef.current?.setFontFamily(fontFamily)
+                        editorContainerRef.current?.setFontFamily(fontFamily)
                     }}
                     onFontSizeChange={(fontSize: string) => {
-                        contentChildRef.current?.setFontSize(fontSize)
+                        editorContainerRef.current?.setFontSize(fontSize)
                     }}
                     onBoldChange={(bold: boolean) => {
-                        contentChildRef.current?.setBold(bold)
+                        editorContainerRef.current?.setBold(bold)
                     }}
                     onItalicChange={(italic: boolean) => {
-                        contentChildRef.current?.setItalic(italic)
+                        editorContainerRef.current?.setItalic(italic)
                     }}
                     onUnderlineChange={(underline: boolean) => {
-                        contentChildRef.current?.setUnderline(underline)
+                        editorContainerRef.current?.setUnderline(underline)
                     }}
                     onTextColorChange={(textColor: string) => {
-                        contentChildRef.current?.setTextColor(textColor)
+                        editorContainerRef.current?.setTextColor(textColor)
                     }}
                     onHighlightColorChange={(highlightColor: string) => {
-                        contentChildRef.current?.setHighlightColor(highlightColor)
+                        editorContainerRef.current?.setHighlightColor(highlightColor)
                     }}
                     onSetBlockquote={(blockquote: boolean) => {
-                        contentChildRef.current?.setBlockquote(blockquote)
+                        editorContainerRef.current?.setBlockquote(blockquote)
                     }}
                     onSetTextAlignment={(alignment: string) => {
-                        contentChildRef.current?.setTextAlignment(alignment)
+                        editorContainerRef.current?.setTextAlignment(alignment)
                     }}
                     onSetLineSpacing={(spacing: Spacing) => {
-                        contentChildRef.current?.setLineSpacing(spacing)
+                        editorContainerRef.current?.setLineSpacing(spacing)
                     }}
                     onSetListStyle={(style: BulletStyle) => {
-                        contentChildRef.current?.setListStyle(style)
+                        editorContainerRef.current?.setListStyle(style)
                     }}
                     onSetSuperscript={(superscript: boolean) => {
-                        contentChildRef.current?.setSuperscript(superscript)
+                        editorContainerRef.current?.setSuperscript(superscript)
                     }}
                     onSetSubscript={(subscript: boolean) => {
-                        contentChildRef.current?.setSubscript(subscript)
+                        editorContainerRef.current?.setSubscript(subscript)
                     }}
                     onIncreaseIndent={() => {
-                        contentChildRef.current?.increaseIndent();
+                        editorContainerRef.current?.increaseIndent();
                     }}
                     onDecreaseIndent={() => {
-                        contentChildRef.current?.decreaseIndent();
+                        editorContainerRef.current?.decreaseIndent();
                     }}
                     onShowCustomSpacing={() => {
-                        contentChildRef.current?.showCustomSpacing();
+                        editorContainerRef.current?.showCustomSpacing();
                     }}
                     onShowResumeNumbering={() => {
-                        contentChildRef.current?.showResumeNumbering()
+                        editorContainerRef.current?.showResumeNumbering()
                     }}
                     continuePreviousNumbering={() => {
-                        contentChildRef.current?.continuePreviousNumbering()
+                        editorContainerRef.current?.continuePreviousNumbering()
                     }}
                     headingEnabled={headingEnabled}
                     // UNDO REDO HISTORY
                     history={useSelector(selectHistory)}
                     canUndo={canUndo}
                     onUndo={(action) => {
-                        contentChildRef.current?.undo(action)
+                        editorContainerRef.current?.undo(action)
                     }}
                     onRedo={() => {
-                        contentChildRef.current?.redo()
+                        editorContainerRef.current?.redo()
                     }}
                     // EDITOR MODE
                     editorMode={useSelector(selectEditorMode)}
@@ -169,37 +206,70 @@ export const ELayout = () => {
                         dispatch(setEditorMode(mode))
                     }}
                     // BOOKMARK
-                    bookmarksCategories={useSelector(selectBookmarksCategories)}
+                    bookmarksCategories={useSelector(bookmarkCategoriesSelector)}
                     bookmarkActive={useSelector(selectBookmarkActive)}
                     canAddBookmark={useSelector(selectCanAddBookmark)}
                     onClickAddBookmark={(categoryId?: string) => {
-                        contentChildRef.current?.addBookmark(categoryId)
+                        editorContainerRef.current?.addBookmark(categoryId)
                     }}
                     onUnsetBookmark={() => {
                         dispatch(setBookmark(false))
-                        contentChildRef.current?.unsetBookmark()
+                        editorContainerRef.current?.unsetBookmark()
                     }}
                     // COMMENT
-                    commentCategories={useSelector(selectCommentsCategories)}
+                    commentCategories={useSelector(commentCategoriesSelector)}
                     commentActive={useSelector(selectCommentActive)}
                     canAddComment={useSelector(selectCanAddComment)}
                     onClickAddComment={(categoryId?: string) => {
-                        contentChildRef.current?.addComment(categoryId)
+                        editorContainerRef.current?.addComment(categoryId)
                     }}
                     onUnsetComment={() => {
                         dispatch(setComment(false))
-                        contentChildRef.current?.unsetComment()
+                        editorContainerRef.current?.unsetComment()
+                    }}
+                    showCustomizeToolbar={() => {
+                        setIsCustomizeToolbarOpen(true);
                     }}
                 />
-                <Content
-                    showToolbar={showToolbar}
-                    ref={contentChildRef}
-                    onRegisterBookmark={(id: string, categoryId?: string) => {
-                        sidebarRef.current?.registerBookmark(id, categoryId)
-                    }}
-                    onRegisterComment={(id: string, categoryId?: string) => {
-                        sidebarRef.current?.registerComment(id, categoryId)
-                    }}
+                <ResizablePanelGroup direction="horizontal">
+                    <ResizablePanel minSize={35} defaultSize={40}>
+                        <Content
+                            ref={editorTextRef}
+                            onFocusEditor={() => {
+                                setEditorContainerRef(editorTextRef)
+                            }}
+                            showToolbar={showToolbar}
+                            onRegisterBookmark={(id: string, categoryId?: string) => {
+                                sidebarRef.current?.registerBookmark(id, categoryId)
+                            }}
+                            onRegisterComment={(id: string, categoryId?: string) => {
+                                sidebarRef.current?.registerComment(id, categoryId)
+                            }}
+                        />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel minSize={30} defaultSize={40}>
+                        <EditorApparatus
+                            ref={editorApparatusesRef}
+                            onFocusEditor={() => {
+                                setEditorContainerRef(editorApparatusesRef)
+                            }}
+                        />
+                    </ResizablePanel>
+                    {printPreviewVisible &&
+                        <>
+                            <ResizableHandle withHandle />
+                            <ResizablePanel minSize={15} maxSize={20} collapsible={true}>
+                                <EditorPreview />
+                            </ResizablePanel>
+                        </>
+                    }
+                </ResizablePanelGroup>
+                <CustomizeToolbarModal
+                    existingToolbarItems={toolbarAdditionalItems} // Replace with actual existing toolbar items
+                    isOpen={isCustomizeToolbarOpen}
+                    onCancel={() => setIsCustomizeToolbarOpen(false)}
+                    onSaveToolbarOptions={handleSaveToolbarOptions}
                 />
                 <EditorFooter />
             </SidebarInset>

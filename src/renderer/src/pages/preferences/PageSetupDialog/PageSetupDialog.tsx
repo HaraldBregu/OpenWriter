@@ -18,17 +18,20 @@ import TextContentManagement from "./components/text-content-management";
 import Button from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSetupPageState } from "../store/layout/layout.sclice";
-import { AvailableApparatusTypes } from "../store/layout/layout.state";
+import {AvailableApparatusTypes} from "../store/layout/layout.state";
 import Modal from "@/components/ui/modal";
 import colors from "../../../../../../tailwindColors.json";
 import LayoutShapeText from "./components/layout-shape-text";
+import { converterFromEditorToSetup, converterFromSetupToEditor } from "@/utils/optionsEnums";
 
 interface PageSetupDialogProps {
   open: boolean;
-  onClose: (data: Template | undefined) => void;
+  onClose: (data: PageSetupInterface) => void;
+  onSave: (data: any) => void;
+  visibleApparatuses: Apparatus[];
 }
 
-export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
+export function PageSetupDialog({ open, onClose, onSave, visibleApparatuses }: PageSetupDialogProps) {
   const { setupDialogState, setupOption, sort } =
     useSelector(selectLayoutSettings);
   const standardPageDimensions = useSelector(
@@ -37,9 +40,12 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
   const availableApparatusTypes = useSelector(
     selectLayoutAvailableApparatusTypes
   );
+
+
   const [orderedItms, setOrderedItms] = useState<SetupDialogStateKeys[]>(sort);
   const [curSection, setCurSection] = useState<string>("");
   const [optSetup, setOptSetup] = useState<SetupOptionType>(setupOption);
+
   const [includedElements, setIncludedElements] = useReducer<
     Reducer<
       SetupDialogStateType,
@@ -53,7 +59,33 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
         [action.type]: action.payload,
       },
     }),
-    setupDialogState
+    {
+      ...setupDialogState, critical: {
+        visible: setupDialogState.critical.visible || true,
+        layout: setupDialogState.critical.layout || defaultLayout,
+        apparatusDetails: [
+          {
+            id: 'element1',
+            title: 'Text',
+            sectionType: "text",
+            type: 'text',
+            columns: 1,
+            disabled: true,
+            visible: true
+          },
+          ...visibleApparatuses.map(app => ({
+            ...app,
+            id: app.id,
+            type: "apparatus",
+            sectionType: converterFromEditorToSetup(app.type),
+            columns: setupDialogState.critical.apparatusDetails.find(({id})=>{console.log('id setupDialog: ', id, '   id apparatus: ', app.id);(id===app.id)})?.columns ?? 1,
+            visible: app.visible,
+            disabled: app.disabled || false,
+          }))
+        ],
+        required: setupDialogState.critical.required || false,
+      }
+    }
   );
 
   const { template_type } = optSetup || {};
@@ -77,38 +109,52 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
   const checkboxChangeHdlr = (posi, payload) =>
     setIncludedElements({ type: "visible", posi, payload });
 
-  const cancelButnClickHdlr = () => onClose({template: {
-        pageSetup: setupOption,
-        sectionOrders: sort,
-        layoutTemplate: setupDialogState,
-      }});
-  const saveBtnClickHdlr = () => {
-    dispatch(
-      updateSetupPageState({
-        setupDialogState: includedElements,
-        sort: orderedItms,
-        setupOption: optSetup,
-      })
-    );
-    onClose({template: {
-        pageSetup: optSetup,
-        sectionOrders: orderedItms,
-        layoutTemplate: includedElements,
-      }});
-  };
+  const cancelButnClickHdlr = () => onClose({
+    pageSetup: setupOption,
+    sort: sort,
+    layoutTemplate: setupDialogState,
+  });
 
+  const saveBtnClickHdlr = () => {
+    const apparatusList = includedElements.critical.apparatusDetails.filter(
+      (el) => el.type !== "text"
+    );
+
+    const apparatusPayload = apparatusList.map((app) => ({
+      id: includedElements.critical.apparatusDetails.find(({title})=>title === app.title).id,
+      title: app.title,
+      type: converterFromSetupToEditor(app.sectionType),
+      visible: app.visible,
+      disabled: app.disabled
+    }));
+
+    const setupPayload = {
+      setupDialogState: includedElements,
+      sort: orderedItms,
+      setupOption: optSetup,
+    };
+
+    onSave(apparatusPayload);
+    dispatch(updateSetupPageState(setupPayload));
+    onClose({
+      pageSetup: optSetup,
+      sort: orderedItms,
+      layoutTemplate: includedElements,
+    });
+  };
 
   useEffect(() => {
     setavailableApparatusTypesState(settingsLayout[curLayout]);
   }, [curLayout]);
+
 
   return (
     <>
       <Modal
         title={t("pageSetup.title")}
         isOpen={open}
-        onOpenChange={() => {}}
-        className="!flex overflow-hidden !flex-col !gap-0 min-w-[1100px] h-auto max-h-[100%]"
+        onOpenChange={() => { }}
+        className="flex flex-col w-full xl:max-w-[80vw] max-w-[98vw] h-[98%] xl:h-[90%] overflow-hidden !gap-0"
         actions={[
           <Button
             key="cancel"
@@ -131,13 +177,13 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
             {t("buttons.save")}
           </Button>,
         ]}
-        contentClassName="h-full"
-        headerClassName="!flex-1"
-        footerClassName="!flex-1 items-center h-auto max-h-[20%]"
+        contentClassName="!overflow-y-auto h-full !p-0"
+        headerClassName="h-[8vh]"
+        footerClassName="!flex-1 items-center h-[8vh]"
       >
-        <div className="flex flex-2 flex-row justify-between bg-gray-100 overflow-y-hidden h-[680px] min-w-[1070px]">
+        <div className="flex flex-2 flex-row justify-between bg-gray-100 overflow-y-hidden h-full min-w-[20vw]" >
           <div
-            className="flex w-[259px] pt-5 pb-5 pl-[12px] pr-[12px] overflow-auto flex-col bg-white"
+            className="flex w-[259px] pt-5 pb-5 pl-[12px] pr-[12px] overflow-auto flex-col bg-white h-full"
             style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
           >
             <div>
@@ -162,7 +208,7 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
               </Accordion>
             </div>
           </div>
-          <div className="flex w-[532px] justify-center p-5">
+          <div className="flex w-[532px] justify-center p-5 overflow-y-auto" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
             <SortableArea<SetupDialogStateKeys>
               includedElements={includedElements}
               itemLs={orderedItms}
@@ -178,68 +224,69 @@ export function PageSetupDialog({ open, onClose }: PageSetupDialogProps) {
                   {x}
                 </Accordion>
               )}
-              item={(v, _, drag) =>
-                includedElements[v].visible ? (
-                  <PageLayoutAccordion
-                    accordionDisabled={v === "toc"}
-                    dragHandler={drag}
-                    v={v}
-                    title={t(`pageSetup.component.section.${v}`)}
-                  >
-                    <div className="bg-white w-[393px] p-2 lg:p-5 flex flex-row justify-start gap-4 border-t h-[475px]">
-                      <AppRadioGroup
-                        disabled={isReadonly}
-                        items={layouts
-                          .filter(({ visible }) => visible(apparatusColDetails))
-                          .map(({ name }) => ({
-                            value: name,
-                            label: name,
-                            icon: (
-                              <LayoutShape
-                                variant="small"
-                                key={name}
-                                layoutName={name}
-                                isSelected={name === curLayout}
-                                isReadonly={isReadonly}
-                                className="w-[56px] h-[78px] lg:w-[56px] p-2"
-                                apparatusDetails={apparatusColDetails || []}
-                                textDetails={textColDetails || {}}
-                              />
-                            ),
-                          }))}
-                        onValueChange={(lt) =>
-                          setIncludedElements({
-                            type: "layout",
-                            posi: curSection,
-                            payload: lt,
-                          })
-                        }
-                        className="flex flex-col items-end gap-2 items-center"
-                        variant="icon"
+              item={(v, _, drag) => includedElements[v]?.visible ? (
+                <PageLayoutAccordion
+                  accordionDisabled={v === "toc"}
+                  dragHandler={drag}
+                  v={v}
+                  title={t(`pageSetup.component.section.${v}`)}
+                >
+                  <div className="bg-white w-[393px] p-2 lg:p-5 flex flex-row justify-start gap-4 border-t h-[475px]">
+                    <AppRadioGroup
+                      disabled={isReadonly}
+                      items={layouts
+                        .filter(({ visible }) => visible(apparatusColDetails))
+                        .map(({ name }) => ({
+                          value: name,
+                          label: name,
+                          icon: (
+                            <LayoutShape
+                              variant="small"
+                              key={name}
+                              layoutName={name}
+                              isSelected={name === curLayout}
+                              isReadonly={isReadonly}
+                              className="w-[56px] h-[78px] lg:w-[56px] p-2"
+                              apparatusDetails={apparatusColDetails}
+                              textDetails={textColDetails || {}}
+                            />
+                          ),
+                        }))}
+                      onValueChange={(lt) =>
+                        setIncludedElements({
+                          type: "layout",
+                          posi: curSection,
+                          payload: lt,
+                        })
+                      }
+                      className="flex flex-col gap-2 items-center"
+                      variant="icon"
+                    />
+
+                    {v === "critical" ? (
+                      <LayoutShape
+                        variant="big"
+                        layoutName={curLayout}
+                        apparatusDetails={apparatusColDetails || []}
+                        textDetails={textColDetails || {}}
+                        showDetails
+                        className="!w-[281px] p-4 col-span-3 h-[398px]"
                       />
-                      {v === "critical" ? (
-                        <LayoutShape
-                          variant="big"
-                          layoutName={curLayout}
-                          apparatusDetails={apparatusColDetails || []}
-                          textDetails={textColDetails || {}}
-                          showDetails
-                          className="!w-[281px] p-4 col-span-3 h-[398px]"
-                        />
-                      ) : (
-                        <LayoutShapeText layout={curLayout} />
-                      )}
-                    </div>
-                  </PageLayoutAccordion>
-                ) : (
-                  <div className="d-none" />
-                )
+                    ) : (
+                      <LayoutShapeText layout={curLayout} />
+                    )}
+                  </div>
+                </PageLayoutAccordion>
+              ) : (
+                <div className="d-none" />
+              )
               }
+
             />
           </div>
           {curSection &&
-          curSection !== "intro" &&
-          curSection !== "bibliography" ? (
+            curSection !== "intro" &&
+            curSection !== "bibliography" ? (
             <div
               className="overflow-auto flex w-[280px] gap-3 pt-5 pb-5 pl-[12px] pr-[12px] flex-col bg-white"
               style={{ scrollbarWidth: "none" }}

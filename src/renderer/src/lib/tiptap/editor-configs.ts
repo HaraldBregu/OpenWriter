@@ -4,12 +4,12 @@ import FontFamily from '@tiptap/extension-font-family';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import CodeBlock from '@tiptap/extension-code-block';
-import Superscript from "@tiptap/extension-superscript";
-import Subscript from "@tiptap/extension-subscript";
+import CustomSuperscript from './custom-superscript';
+import CustomSubscript from './custom-subscript';
 import Strikethrough from '@tiptap/extension-strike';
 import ListItem from '@tiptap/extension-list-item'
 import { Color } from '@tiptap/extension-color';
-import { CustomTextStyle, CustomLetterSpacing, IndentExtension, Capitalization } from './custom-text-style';
+import { CustomTextStyle, CustomLetterSpacing } from './custom-text-style';
 import { useEditor } from '@tiptap/react';
 import { BookmarkMark } from '@/lib/tiptap/bookmark-mark';
 import { CommentMark } from '@/lib/tiptap/comment-mark';
@@ -24,10 +24,13 @@ import { CustomBulletedList } from './custom-bullet-list-extension';
 import { CustomOrderList } from './custom-order-list-extension';
 import { CharacterSpacing } from './character-spacing-extension';
 import LineSpacing from './line-spacing-extension';
-import { CustomHeading } from './custom-heading-extension';
 import { NonPrintableCharacters } from './non-printable-character';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import Ligature from './ligature-mark';
+import { ClipboardExtension } from './clipboard-extension';
+import { ExtendedParagraph } from './paragraph-extension';
+import IndentExtension from './indent-extension';
+import { ExtendedHeading } from './heading-extension';
 
 const defaultEditorConfig = (
     withSectionDividers: boolean = false,
@@ -48,6 +51,7 @@ const defaultEditorConfig = (
                 bulletList: false,
                 orderedList: false,
                 heading: false, // Disable heading in StarterKit to avoid conflicts
+                paragraph: false,
             }),
             ListItem,
             CustomBulletedList.configure({
@@ -64,13 +68,11 @@ const defaultEditorConfig = (
             FontFamily.configure({
                 types: ['textStyle']
             }),
-            // Use the CustomHeading instead of configuring the heading here
-            CustomHeading,
+            ExtendedHeading,
+            ExtendedParagraph,
             CharacterSpacing,
-            // IdentifiedText,
             CustomTextStyle,
             CustomLetterSpacing,
-            Capitalization,
             LineSpacing,
             Underline,
             CodeBlock,
@@ -96,9 +98,10 @@ const defaultEditorConfig = (
                 frequency: 5,
                 type: 'arabic',
             }),
-            Superscript,
-            Subscript,            
+            CustomSuperscript,
+            CustomSubscript,
             NonPrintableCharacters,
+            ClipboardExtension,
             CharacterCount.configure({
                 // mode: 'nodeSize',
                 wordCounter: (text) => text.split(/\s+/).filter((word) => word !== '').length,
@@ -114,35 +117,6 @@ const defaultEditorConfig = (
             ] : []),
             ...(withEditableFilter ? [EditableFilter] : []),
         ],
-        content: {}
-    }
-
-    editorConfig.content = {
-        type: 'doc',
-        content: [
-            {
-                type: 'paragraph',
-                attrs: {
-                    textAlign: 'left'
-                },
-                content: [
-                    {
-                        type: 'text',
-                        text: '', // Nodo di testo vuoto
-                        marks: [
-                            {
-                                type: 'textStyle',
-                                attrs: {
-                                    fontSize: '12pt',
-                                    fontFamily: 'Times New Roman',
-                                    color: 'black'
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
     }
 
     return editorConfig;

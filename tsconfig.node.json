@@ -1,21 +1,9 @@
-/*{
-  "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "allowSyntheticDefaultImports": true
-  },
-  "include": ["vite.config.ts"]
-}*/
-
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*"],
   "compilerOptions": {
     "composite": true,
-    // "target": "es5",
-    //"module": "commonjs",
-    //"moduleResolution": "node",
+    "outDir": "./dist",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
@@ -24,7 +12,7 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "types": ["./types", "electron-vite/node", "node"]
+    "types": ["./src/types", "electron-vite/node", "node"]
   },
   "exclude": ["node_modules"]
 }

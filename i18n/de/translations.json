@@ -65,12 +65,16 @@
     "sidebar": {
       "toggle": "Seitenleiste umschalten"
     },
-    "blockquote": "Blockzitat",
+    "note": "Notiz",
     "siglum": "Sigle",
     "citation": "Zitat",
-    "addComment": "Kommentar hinzufügen",
-    "addBookmark": "Lesezeichen hinzufügen",
-    "addLink": "Link hinzufügen",
+    "readingSeperator": "Lesetrennzeichen",
+    "readingType": "Lesetyp",
+    "comment": "Kommentar",
+    "bookmark": "Lesezeichen",
+    "link": "Link",
+    "object": "Objekt",
+    "symbol": "Symbol",
     "spacing": "Abstand",
     "list": "Liste",
     "search": "Suche",
@@ -82,7 +86,9 @@
     "listBulletEmpty": "Leere Aufzählung",
     "listBulletSquare": "Quadratische Aufzählung",
     "superscript": "Hochgestellt",
-    "subscript": "Tiefgestellt"
+    "subscript": "Tiefgestellt",
+    "contextMenu": "Customize Toolbar",
+    "modalTitle": "Toggle items to add or remove from the toolbar"
   },
   "dividerSections": {
     "toc": "Inhaltsverzeichnis",
@@ -223,6 +229,9 @@
         "italic": "Kursiv",
         "underline": "Unterstrichen",
         "strikethrough": "Durchgestrichen",
+        "superscript": "Hochgestellt",
+        "subscript": "Tiefgestellt",
+        "npc": "Nicht druckbare Zeichen",
         "characterSpacing": {
           "label": "Zeichenabstand",
           "normal": "Normal",
@@ -255,6 +264,7 @@
         "spacing": {
           "label": "Zeilenabstand",
           "single": "Einfach",
+          "1_15": "1,15",
           "oneAndHalf": "1,5",
           "double": "Doppelt"
         }
