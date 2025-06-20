@@ -33,6 +33,7 @@ export function buildEditMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
                     accelerator: "Shift+CmdOrCtrl+G",
                     click: (menuItem: MenuItem): void => onClick(menuItem),
                 },
+                { type: 'separator' },
                 {
                     id: MenuItemId.JUMP_TO_SELECTION,
                     label: i18next.t("menu.edit.find.jumpToSelection"),
@@ -44,6 +45,7 @@ export function buildEditMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
         {
             id: MenuItemId.UNDO,
             label: i18next.t("menu.edit.undo"),
+            submenu: [],
             accelerator: "CmdOrCtrl+Z",
             enabled: viewMode === 'critix_editor',
             click: (menuItem: MenuItem): void => onClick(menuItem),
@@ -51,6 +53,7 @@ export function buildEditMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
         {
             id: MenuItemId.REDO,
             label: i18next.t("menu.edit.redo"),
+            submenu: [],
             accelerator: "Shift+CmdOrCtrl+Z",
             enabled: viewMode === 'critix_editor',
             click: (menuItem: MenuItem): void => onClick(menuItem),
@@ -96,8 +99,9 @@ export function buildEditMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
         //     click: (menuItem: MenuItem): void => onClick(menuItem),
         // },
         {
-            id: MenuItemId.PASTE_WITH_NOTES,
-            label: i18next.t("menu.edit.pasteWithNotes"),
+            id: MenuItemId.PASTE_TEXT_WITHOUT_FORMATTING,
+            label: i18next.t("menu.edit.pasteTextWithoutFormatting"),
+            accelerator: "CmdOrCtrl+Del",
             click: (menuItem: MenuItem): void => onClick(menuItem),
             enabled: viewMode === 'critix_editor',
         },

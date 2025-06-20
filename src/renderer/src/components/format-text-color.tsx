@@ -11,8 +11,6 @@ interface FormatTextColorProps {
   tooltip?: string;
 }
 
-// textColor
-
 const FormatTextColor: React.FC<FormatTextColorProps> = ({ onSelect, FormatTextColorInputRef, textColor, tabIndex = 0, ariaLabel = 'Text Color', tooltip }) => {
   const handleClick = (): void => {
     FormatTextColorInputRef?.current?.click();

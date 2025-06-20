@@ -2,12 +2,13 @@ import { createContext, ReactNode, useContext } from "react";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import CarocciTemplate from "./icons/CarocciTemplate";
 import BlankTemplate from "./icons/BlankTemplate";
-import { Typography } from "@mui/material";
+import Typography from "./Typography";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 
 type TemplateItemAs =
-  | { type: 'input'; onChange: (event:any) => void; value: string }
+  | { type: 'input'; onChange: (event: any) => void; value: string }
 
 interface TemplateItemProps {
   id: string,
@@ -28,7 +29,7 @@ interface TemplateSelectionProps {
   defaultValue?: string;
   onChange: (value: string) => void;
   disabled?: boolean;
-  value?:string;
+  value?: string;
 }
 
 export const TEMPLATE_ICONS = {
@@ -88,18 +89,27 @@ function TemplateItem({ id, value, icon = "other", name, as }: TemplateItemProps
           <input
             type="text"
             tabIndex={0}
+            maxLength={200}
             className="border rounded focus:outline focus:outline-2 focus:outline-blue-600 mt-2 text-[0.9375rem] font-normal w-[131px] -mx-4"
             value={as.value}
             onChange={as.onChange}
-            title={name}
           />
         ) : (
-          <div
-            className="mt-2 w-[131px] -mx-[2px] truncate text-[0.9375rem] font-normal group-data-[state=checked]:font-bold px-1"
-            title={name}
-          >
-            {name}
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className="mt-2 w-[131px] -mx-[2px] truncate text-[0.9375rem] font-normal group-data-[state=checked]:font-bold px-1"
+                >
+                  {name}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={4}>
+                {name}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
         )}
       </div>
     </RadioGroup.Item>
@@ -120,7 +130,7 @@ function TemplateCategory({ title, action, children }: TemplateCategoryProps) {
   </section>;
 }
 
-export function TemplateSelection({ defaultValue, children, onChange, disabled = false, value ="" }: TemplateSelectionProps) {
+export function TemplateSelection({ defaultValue, children, onChange, disabled = false, value = "" }: TemplateSelectionProps) {
   const contextValue: TemplateSelectionProps = {
     disabled,
     defaultValue,

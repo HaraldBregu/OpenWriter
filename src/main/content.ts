@@ -8,9 +8,9 @@ import {
   getToolbarWebContentsViewHeight,
   resizeToolbarWebContentsView,
   setSelectedTabIndex,
-  setTabsFromUrls
 } from './toolbar'
-import { getTabs } from './store'
+import { getTabs, setTabs } from './store'
+import { UpdateTabsCallback } from './shared/types'
 
 const webContentViews: WebContentsView[] = []
 let currentWebContentsView: WebContentsView | null = null
@@ -24,6 +24,7 @@ export const getSelectedWebContentsViewId = (): number => currentWebContentsView
 export function createWebContentsView(route: WebContentsRoute): Promise<WebContentsView | null> {
   return new Promise((resolve) => {
     const url = getRootUrl() + route
+    // const startTime = performance.now();
 
     const webContentsView = new WebContentsView({
       webPreferences: {
@@ -34,10 +35,24 @@ export function createWebContentsView(route: WebContentsRoute): Promise<WebConte
       }
     })
 
+    // webContentsView.webContents.on('did-start-loading', () => {
+    //   showWebContentsView(webContentsView);
+    //   updateTabs(webContentViews);
+    //   resolve(webContentsView)
+    // });
+
+    // webContentsView.webContents.on('dom-ready', () => {
+    //   showWebContentsView(webContentsView)
+    //   updateTabs(webContentViews)
+    //   resolve(webContentsView)
+    // })
+
     webContentsView.webContents.on('did-finish-load', () => {
       showWebContentsView(webContentsView)
       updateTabs(webContentViews)
       resolve(webContentsView)
+      // const endTime = performance.now();
+      // console.log(`loading content view took ${endTime - startTime} milliseconds`);
     })
 
     webContentsView.webContents.on('did-fail-load', () => {
@@ -204,15 +219,39 @@ export function hideWebContentsViewWithId(id: number): void {
   baseWindow?.contentView.removeChildView(webContentView)
 }
 
+const updateTabs = (webContentViews: WebContentsView[], onUpdate?: UpdateTabsCallback): void => {
+  const webContentViewsData = webContentViews
+    .map((webContentView) => {
+      const url = webContentView.webContents.getURL()
+      const idx = url.indexOf('#')
+      const path = idx === -1 ? '/' : url.substring(idx + 1)
 
-const updateTabs = (webContentViews: WebContentsView[]): void => {
-  const tabUrls = webContentViews.map((tab) => {
-    const url = tab.webContents.getURL()
-    const idx = url.indexOf('#')
-    return idx === -1 ? '/' : url.substring(idx + 1)
-  }) as WebContentsRoute[]
+      const data = {
+        id: webContentView.webContents.id,
+        path: path,
+      } as const satisfies Record<string, number | WebContentsRoute>
 
-  setTabsFromUrls(tabUrls)
+      return data
+    })
+
+  const currentTabs = getTabs()
+
+  const newTabs = webContentViewsData
+    .map((webContentView, index) => {
+      const currentTab = currentTabs?.find((tab) => tab.id === webContentView.id)
+
+      const tab = {
+        id: webContentView.id,
+        route: webContentView.path,
+        selected: index === webContentViewsData.length - 1,
+        filePath: currentTab?.filePath,
+      } as Tab
+
+      return tab
+    })
+
+  setTabs(newTabs)
+  onUpdate?.(newTabs)
 }
 
 function saveSelectedTab({ tabIndex = -1 }: { tabIndex?: number } = {}): void {

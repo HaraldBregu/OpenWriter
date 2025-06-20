@@ -6,14 +6,19 @@ import { mainLogger } from "./shared/logger";
 import { OnBaseWindowReady } from "./shared/types";
 import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import { createToolbarWebContentsView } from "./toolbar";
+import { resetTabs } from "./store";
 
 let baseWindow: BaseWindow | null = null
+let childWindow: BrowserWindow | null = null
 let toolbarWebContentsView: WebContentsView | null = null
 
 export const getBaseWindow = (): BaseWindow | null => baseWindow
 export const getToolbarWebContentsView = (): WebContentsView | null => toolbarWebContentsView
+export const getChildWindow = (): BrowserWindow | null => childWindow
 
 export async function initializeMainWindow(onDone: OnBaseWindowReady): Promise<void> {
+
+    resetTabs()
 
     let iconPath = is.dev
         ? path.join(app.getAppPath(), 'buildResources', 'appIcons', 'icon.ico')
@@ -68,6 +73,17 @@ export function toolbarWebContentsViewSend(message: string, ...args: unknown[]):
     toolbarWebContentsView?.webContents.send(message, ...args)
 }
 
+export function childWindowSend(message: string, ...args: unknown[]): void {
+    childWindow?.webContents.send(message, ...args)
+}
+
+export function closeChildWindow(): void {
+    if (childWindow) {
+        childWindow.close();
+        childWindow = null;
+    }
+}
+
 export function showWindow(): void {
     if (!baseWindow)
         return
@@ -94,9 +110,9 @@ export const openChildWindow = async (pageUrl: string, options: BrowserWindowCon
     if (!baseWindow)
         return;
 
-    const subWindow = new BrowserWindow({
-        width: 440,
-        height: 272,
+    childWindow = new BrowserWindow({
+        width: 850,
+        height: 700,
         webPreferences: {
             preload: path.join(__dirname, '../preload/index.mjs'),
             sandbox: false,
@@ -107,17 +123,27 @@ export const openChildWindow = async (pageUrl: string, options: BrowserWindowCon
             allowRunningInsecureContent: false,
         },
         parent: baseWindow, // Set the parent window
-        modal: true, // Makes the subwindow modal
+        modal: false, // Makes the subwindow modal
         resizable: false,
         minimizable: false,
         maximizable: false,
+        title: options.title || "Preferences", // Use title from options or default
         ...options
     });
-    subWindow.setMenu(null);
-    subWindow.loadURL(pageUrl);
-    subWindow.on('close', () => {
-        subWindow.destroy();
+    childWindow.setMenu(null);
+
+    // Force the title after window is created and loaded
+    childWindow.webContents.once('did-finish-load', () => {
+        const finalTitle = options.title || "Criterion Preferences";
+        childWindow?.setTitle(finalTitle);
     });
+
+    childWindow.loadURL(pageUrl);
+    childWindow.on('close', () => {
+        childWindow?.destroy();
+    });
+
+    childWindow.webContents.toggleDevTools()
 
     mainLogger.endTask(taskId, "Electron", "Sub window created");
 };

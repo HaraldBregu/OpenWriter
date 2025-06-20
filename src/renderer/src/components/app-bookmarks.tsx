@@ -14,7 +14,6 @@ import PlusSimple from "@/components/icons/PlusSimple";
 import { Input } from "./ui/input";
 import useSingleAndDoubleClick from "@/hooks/use-single-double-click";
 import Bookmark from "./icons/Bookmark";
-import { formatDateWithTime } from "@/utils/date";
 import { Textarea } from "./ui/textarea";
 import {
     Tooltip,
@@ -30,6 +29,7 @@ import { z } from "zod"
 import { useTranslation } from "react-i18next";
 import Dropdown from "./icons/Dropdown";
 import More from "./icons/More";
+import { format } from "date-fns";
 
 interface BookmarksProps {
     title: string;
@@ -511,7 +511,7 @@ const BookmarkUpdatedDateItem = forwardRef(({
 }: BookmarkUpdatedDateItemProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
         <p className="text-xs text-gray-600" {...props} ref={ref}>
-            {formatDateWithTime(value)}
+            {format(new Date(value), 'dd/MM/yyyy HH:mm')}
         </p>
     )
 })

@@ -3,13 +3,13 @@ import { MenuItem, MenuItemConstructorOptions } from "electron";
 import { MenuItemClickHandler, MenuItemId } from '../../shared/types';
 import path from "path";
 import { getRecentDocuments } from '../../document/document';
-import { getMenuViewMode } from '../../shared/constants';
-
+import { getIsNewDocument, getMenuViewMode } from '../../shared/constants';
 
 const menuItems = (onClick: MenuItemClickHandler): MenuItemConstructorOptions[] => {
     const items: MenuItemConstructorOptions[] = []
 
     const viewMode = getMenuViewMode()
+    const isNewDocument = getIsNewDocument()
 
     const recentDocumentsMenu = Array.isArray(getRecentDocuments()) && getRecentDocuments().length > 0 ? [...getRecentDocuments()]
         .map((doc: string) => ({
@@ -81,14 +81,14 @@ const menuItems = (onClick: MenuItemClickHandler): MenuItemConstructorOptions[] 
     items.push({
         id: MenuItemId.RENAME_FILE,
         label: i18next.t("menu.file.rename"),
-        enabled: viewMode === 'critix_editor',
+        enabled: viewMode === 'critix_editor' && !isNewDocument,
         click: (menuItem: MenuItem): void => onClick(menuItem),
     })
 
     items.push({
         id: MenuItemId.MOVE_FILE,
         label: i18next.t("menu.file.moveTo"),
-        enabled: viewMode === 'critix_editor',
+        enabled: viewMode === 'critix_editor' && !isNewDocument,
         click: (menuItem: MenuItem): void => onClick(menuItem),
     })
 
@@ -188,7 +188,7 @@ const menuItems = (onClick: MenuItemClickHandler): MenuItemConstructorOptions[] 
     items.push({ type: "separator" })
 
     items.push({
-        id: MenuItemId.LAYOUT_PAGE_SETUP,
+        id: MenuItemId.PAGE_SETUP,
         label: i18next.t("menu.file.pageSetup"),
         accelerator: "Alt+CmdOrCtrl+P",
         enabled: viewMode === 'critix_editor',
@@ -212,3 +212,23 @@ export function buildFileMenu(onClick: MenuItemClickHandler): MenuItemConstructo
     menu.submenu = menuItems(onClick)
     return menu
 }
+
+export class FileMenu {
+    static #instance: FileMenu | null = null
+
+    static get instance(): FileMenu {
+      if (!FileMenu.#instance)
+        FileMenu.#instance = new FileMenu();
+  
+      return FileMenu.#instance;
+    }
+
+    
+
+    items(onClick: MenuItemClickHandler): MenuItemConstructorOptions {
+        return buildFileMenu(onClick)
+    }
+}
+
+
+

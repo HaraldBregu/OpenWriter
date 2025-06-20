@@ -1,14 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "src/renderer/src/store/store";
 
-// Selettore base per lo stato dell'editor
 const editorState = (state: RootState) => state.editor;
-
-// Conversione dei selettori diretti a selettori creati con createSelector
-export const getSidebarOpen = createSelector(
-  editorState,
-  (editor) => editor.sidebarOpen
-);
 
 export const selectEditorData = createSelector(
   editorState,
@@ -18,11 +11,6 @@ export const selectEditorData = createSelector(
 export const selectToolbarEmphasisState = createSelector(
   editorState,
   (editor) => editor.toolbarEmphasisState
-);
-
-export const selectEditorEmphasisState = createSelector(
-  editorState,
-  (editor) => editor.editorEmphasisState
 );
 
 export const selectApparatuses = createSelector(
@@ -75,6 +63,11 @@ export const selectTocSettings = createSelector(
   (editor) => editor.tocSettings
 );
 
+export const showTocChecked = createSelector(
+  selectTocSettings,
+  (tocSettings) => tocSettings?.show || false
+);
+
 export const selectHistory = createSelector(
   editorState,
   (editor) => editor?.history
@@ -93,16 +86,6 @@ export const selectCanAddBookmark = createSelector(
 export const selectCanAddComment = createSelector(
   editorState,
   (editor) => editor?.canAddComment || false
-);
-
-export const selectSelectedSidebarTabIndex = createSelector(
-  editorState,
-  (editor) => editor?.selectedSidebarTabIndex || 0
-);
-
-export const selectEmphasisState = createSelector(
-  editorState,
-  (editor) => editor?.emphasisState || null
 );
 
 export const selectBookmarkActive = createSelector(
@@ -151,7 +134,13 @@ export const selectEnabledRemainingApparatusesTypes = createSelector(
   (remainingApparatuses, editor) => {
     if (remainingApparatuses <= 0) return []
 
-    const apparatusTypes = ['CRITICAL', 'PAGE_NOTES', 'SECTION_NOTES', 'INNER_MARGIN', 'OUTER_MARGIN'];
+    const apparatusTypes = [
+      'CRITICAL', 
+      'PAGE_NOTES', 
+      'SECTION_NOTES', 
+      'INNER_MARGIN',
+      'OUTER_MARGIN'
+    ] as const satisfies ApparatusType[]
 
     const types = apparatusTypes.filter(type => {
       const innerMargin = editor.apparatuses.some(apparatus => apparatus.type === 'INNER_MARGIN')
@@ -166,7 +155,7 @@ export const selectEnabledRemainingApparatusesTypes = createSelector(
       return true
     })
 
-    return types
+    return types as ApparatusType[]
   }
 );
 
@@ -201,12 +190,8 @@ export const selectMaxRemainingInnerMargins = createSelector(
   }
 );
 
-export const selectCharacters = createSelector(
-  editorState,
-  (editor) => editor?.characters || 0
+export const selectDocumentTemplate = createSelector(
+    [editorState],
+    (editor) => editor.documentTemplate
 );
 
-export const selectWords = createSelector(
-  editorState,
-  (editor) => editor?.words || 0
-);

@@ -5,6 +5,12 @@ import { getMenuViewMode } from "../../shared/constants";
 
 let apparatusSubMenuObjectItems: { id: string, title: string, visible: boolean }[] = []
 let toolbarVisible = true;
+let tocVisible = true;
+let enableTocVisibilityMenuItem = true;
+
+export function setEnableTocVisibilityMenuItem(enable: boolean): void {
+    enableTocVisibilityMenuItem = enable
+}
 
 export function setApparatusSubMenuObjectItems(items: { id: string, title: string, visible: boolean }[]): void {
     apparatusSubMenuObjectItems = items
@@ -12,6 +18,10 @@ export function setApparatusSubMenuObjectItems(items: { id: string, title: strin
 
 export function setToolbarVisible(visible: boolean): void {
     toolbarVisible = visible
+}
+
+export function setTocVisible(visible: boolean): void {
+    tocVisible = visible
 }
 
 export function buildViewMenu(onClick: (menuItem: MenuItem, data?: unknown) => void): MenuItemConstructorOptions {
@@ -49,10 +59,11 @@ export function buildViewMenu(onClick: (menuItem: MenuItem, data?: unknown) => v
         {
             id: MenuItemId.TABLE_OF_CONTENTS,
             label: i18next.t("menu.view.tableOfContents"),
+            type: 'checkbox',
+            checked: tocVisible,
             accelerator: "CmdOrCtrl+Alt+T",
-            type: 'normal',
             click: (menuItem: MenuItem): void => onClick(menuItem),
-            enabled: viewMode === 'critix_editor',
+            enabled: viewMode === 'critix_editor' && enableTocVisibilityMenuItem,
         },
         {
             id: MenuItemId.TOOLBAR,

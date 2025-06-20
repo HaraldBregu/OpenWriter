@@ -3,10 +3,8 @@ import { createRoot } from 'react-dom/client'
 import App from "./App";
 import store from "./store/store";
 import { Provider } from "react-redux";
+import { ThemeProvider } from "./providers/theme-provider";
 import './index.css'
-import '@material-symbols/font-400/outlined.css'
-import '@material-design-icons/font/index.css'
-// import ThemeContainer from './theming';
 
 const rootElement = document.getElementById('root');
 
@@ -16,9 +14,10 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <Provider store={store}>
-    <StrictMode>
-      <App />
-      {/* <ThemeContainer /> */}
-    </StrictMode>
+    <ThemeProvider defaultTheme="system" storageKey="criterion-ui-theme">
+      <StrictMode>
+        <App />
+      </StrictMode>
+    </ThemeProvider>
   </Provider>
 )

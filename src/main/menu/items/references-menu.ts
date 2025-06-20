@@ -1,8 +1,8 @@
 import i18next from 'i18next';
 import { MenuItem, MenuItemConstructorOptions } from "electron";
-import { getShortcutLabel } from '../menu';
 import { MenuItemId } from '../../shared/types';
 import { getMenuViewMode } from '../../shared/constants';
+import { getShortcutLabel } from '../../shared/util';
 
 let disabledReferencesMenuItemsIds: string[] = []
 
@@ -66,7 +66,7 @@ export function buildReferencesMenu(onClick: (menuItem: MenuItem) => void): Menu
             enabled: viewMode === 'critix_editor',
             submenu: [],
         },
-        {
+       /*  {
             id: MenuItemId.INSERT_NOTE_IN_INNER_MARGIN,
             label: i18next.t("menu.references.addNoteInInnerMargin"),
             sublabel: getShortcutLabel("Fn+F1"),
@@ -80,7 +80,7 @@ export function buildReferencesMenu(onClick: (menuItem: MenuItem) => void): Menu
             accelerator: "Fn+F2",
             click: (menuItem: MenuItem): void => onClick(menuItem),
             enabled: viewMode === 'critix_editor',
-        },
+        }, */
         {
             id: MenuItemId.SWAP_MARGIN,
             label: i18next.t("menu.references.swapMargin"),

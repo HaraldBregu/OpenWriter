@@ -28,9 +28,11 @@ import { NonPrintableCharacters } from './non-printable-character';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import Ligature from './ligature-mark';
 import { ClipboardExtension } from './clipboard-extension';
-import { ExtendedParagraph } from './paragraph-extension';
+import { ExtendedParagraph } from './extensions/paragraph-extension';
 import IndentExtension from './indent-extension';
 import { ExtendedHeading } from './heading-extension';
+import { Callout } from './callout-node';
+
 
 const defaultEditorConfig = (
     withSectionDividers: boolean = false,
@@ -39,6 +41,7 @@ const defaultEditorConfig = (
 
     const editorConfig = {
         extensions: [
+            Callout,
             IndentExtension.configure({
                 maxIndent: 8
             }),

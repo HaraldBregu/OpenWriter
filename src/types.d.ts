@@ -1,4 +1,6 @@
 
+// type RequiredProp<T, P extends keyof T> = T & Required<Pick<T, P>>;
+
 // TODO
 type CustomMark = {
     id: string;
@@ -94,7 +96,6 @@ type Apparatus = {
     title: string;
     type: ApparatusType;
     visible: boolean;
-    disabled: boolean;
 }
 
 /**
@@ -116,7 +117,7 @@ type ApparatusType = 'CRITICAL' | 'PAGE_NOTES' | 'SECTION_NOTES' | 'INNER_MARGIN
  * @property title - The title of the apparatus.
  * @property type - The type of the apparatus.
  */
-type DocumentApparatus = Pick<Apparatus, 'title' | 'type'> & {
+type DocumentApparatus = Pick<Apparatus, 'title' | 'type' | 'visible'> & {
     content: object | null
 }
 
@@ -132,7 +133,7 @@ type ElementAttribute = {
     fontWeight: string
     fontStyle: string;
     textAlign: NodeTextAlign;
-    color: string
+    color: string | null | undefined;
     lineHeight: string;
     marginLeft: string;
     marginRight: string;
@@ -141,25 +142,30 @@ type ElementAttribute = {
 }
 
 type TargetTypeStyle =
-    "TOC"
+    | "TOC"
     | "TOC_H1"
     | "TOC_H2"
     | "TOC_H3"
     | "TOC_H4"
     | "TOC_H5"
-    | "TITLE"
     | "H1"
     | "H2"
     | "H3"
     | "H4"
     | "H5"
+    | "H6"
     | "P"
     | "APP_LEM"
     | "APP_VAR"
     | "ANN"
     | "NOTE_REF_TXT"
     | "NOTE_REF_FOOT"
-    | "NOTE";
+    | "NOTE"
+    | "BIB"
+    | "HEAD"
+    | "FOOT"
+    | "CUSTOM"; // Represent the styles created by the user.
+
 
 /**
  * Represents a text style used in the current template.
@@ -217,7 +223,7 @@ interface LogEntry {
     duration?: number;
 }
 
-type Route = '/' | '/file-viewer' | '/browser-tab-bar' | '/about';
+type Route = '/' | '/file-viewer' | '/browser-tab-bar' | '/about' | '/preferences';
 
 type WebContentsRoute = Partial<Route, '/' | '/file-viewer'>
 
@@ -235,4 +241,75 @@ type Tab = {
     route: WebContentsRoute
     selected: boolean
     filePath: string | null
+}
+
+
+type TocSettings = {
+    show: boolean;
+    levels: number;
+    indentLevels: boolean;
+    title: string;
+    tabLeaderFormat: string;
+    showHeadingNumbers: boolean;
+    numberSeparator: string;
+    level1Format?: string;
+    level2Format?: string;
+    level3Format?: string;
+    level4Format?: string;
+    level5Format?: string;
+    level6Format?: string;
+}
+
+type Subset = {
+    name: string;
+    start: number;
+    end: number;
+}
+
+type CharacterSet = {
+    code: number;
+    name: string;
+}[]
+
+type Fonts = Record<string, {
+    name: string;
+    path: string;
+    symbols: CharacterSet
+}>
+type Metadata = {
+    title: string;
+    author: string;
+    language: string;
+    license: string;
+    keywords: string;
+    status: string;
+    creationDate: string;
+    lastSavedDate: string;
+    subject?: string;
+    copyrightHolder?: string;
+    template: string;
+}
+
+type SiglumData = {
+    value: string
+    content: string
+}
+
+type SiglumMetadata = Pick<Metadata, 'author'> & {
+    exportDate: string
+}
+
+type Siglum = {
+    id: string
+    siglum: SiglumData
+    manuscripts: SiglumData
+    description: SiglumData
+}
+
+type DocumentSiglum = Pick<Siglum, 'siglum' | 'manuscripts' | 'description'>
+
+type CharacterConfiguration = {
+    code: number;
+    character: string;
+    shortcut: string | null;
 }

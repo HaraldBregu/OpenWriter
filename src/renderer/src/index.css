@@ -2,31 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* Rimuove outline dai pulsanti MUI */
-.MuiButtonBase-root:focus,
-.MuiButtonBase-root:focus-visible,
-.MuiButton-root:focus,
-.MuiButton-root:focus-visible,
-.MuiIconButton-root:focus,
-.MuiIconButton-root:focus-visible,
-.MuiAccordion-root:focus,
-.MuiAccordion-root:focus-visible,
-.MuiAccordionSummary-root:focus,
-.MuiAccordionSummary-root:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  background-color: transparent !important;
-}
-
-/* Selettore specifico per AccordionSummary in focusVisible */
-.css-1ide3af-MuiButtonBase-root-MuiAccordionSummary-root.Mui-focusVisible,
-.MuiAccordionSummary-root.Mui-focusVisible {
-  background-color: transparent !important;
-}
-
-.toolbar .material-symbols-outlined {
-  padding: 2px;
+.dark .ProseMirror {
+  color: #fff;
 }
 
 .ProseMirror {
@@ -281,7 +258,7 @@
   text-transform: uppercase;
 }
 
-/* .tiptap p,
+.tiptap p,
 .tiptap li,
 .tiptap h1,
 .tiptap h2,
@@ -291,4 +268,4 @@
 .tiptap h6
  {
   margin-left: 10px;
-} */
+}

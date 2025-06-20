@@ -84,18 +84,6 @@ export function resizeToolbarWebContentsView(baseWindow: BaseWindow): void {
   })
 }
 
-
-export function setTabsFromUrls(urls: WebContentsRoute[]): void {
-  const currentTabs = getTabs()
-  const newTabs = urls.map((tabUrl, index) => ({
-    route: tabUrl,
-    selected: index === urls.length - 1,
-    filePath: currentTabs?.[index]?.filePath,
-  } as Tab))
-
-  setTabs(newTabs)
-}
-
 export function setSelectedTabIndex(index: number): void {
   const tabs = getTabs()
 
@@ -130,5 +118,6 @@ export function setFilePathForSelectedTab(path: string): void {
 
   const selectedTabIndex = getSelectedTabIndex()
   tabs[selectedTabIndex].filePath = path
+
   setTabs(tabs)
 }

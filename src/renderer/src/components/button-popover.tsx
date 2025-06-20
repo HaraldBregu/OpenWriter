@@ -1,7 +1,7 @@
 import { useState, MouseEvent, ReactNode, FC } from "react";
-import { Popover } from "@mui/material";
 import cn from "@/utils/classNames";
 import Button from "@components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface ButtonPopoverProps {
     btnFace: ReactNode;
@@ -13,11 +13,6 @@ interface ButtonPopoverProps {
 
 const ButtonPopover: FC<ButtonPopoverProps> = ({ btnFace, children, closeHdlr: closeHdlr, clickHdlr, tooltip }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-    const handleClose = (): void => {
-        setAnchorEl(null);
-        closeHdlr()
-    }
 
     const handleClick = (e: MouseEvent<HTMLButtonElement>): void => {
         setAnchorEl(e.currentTarget);
@@ -36,27 +31,30 @@ const ButtonPopover: FC<ButtonPopoverProps> = ({ btnFace, children, closeHdlr: c
     )
 
     return (
-        <div>
-            <Button
-                onClick={handleClick}
-                className={btnClass}
-                tooltip={tooltip}
-                variant="icon"
-                size="iconSm"
-                intent="secondary"
-            >
-                {btnFace}
-            </Button>
-
-            <Popover
-                open={Boolean(anchorEl)}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            >
+        <Popover
+            open={Boolean(anchorEl)}
+            onOpenChange={(open) => {
+                if (!open) {
+                    setAnchorEl(null);
+                    closeHdlr()
+                }
+            }}>
+            <PopoverTrigger asChild>
+                <Button
+                    onClick={handleClick}
+                    className={btnClass}
+                    tooltip={tooltip}
+                    variant="icon"
+                    size="iconSm"
+                    intent="secondary"
+                >
+                    {btnFace}
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent>
                 {children}
-            </Popover>
-        </div>
+            </PopoverContent>
+        </Popover>
     );
 };
 

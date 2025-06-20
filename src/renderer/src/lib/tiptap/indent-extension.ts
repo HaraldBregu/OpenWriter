@@ -73,6 +73,7 @@ const IndentExtension = Extension.create<IndentOptions>({
           },
     };
   },
+
   addKeyboardShortcuts() {
     return {
       'Shift-Tab': ({ editor }) => {
@@ -172,6 +173,7 @@ const IndentExtension = Extension.create<IndentOptions>({
       },
     };
   },
+  
   addProseMirrorPlugins() {
     return [
       new Plugin({
@@ -181,24 +183,18 @@ const IndentExtension = Extension.create<IndentOptions>({
             if (event.key === 'Tab' && !event.ctrlKey && !event.metaKey) {
               if (this.editor.isActive('bulletedList') || this.editor.isActive('orderList')) {
                 if (!event.shiftKey) {
-                  // Tab in lista - verifica se è il primo elemento
                   event.preventDefault();
-
-                  // Ottieni lo stato e la posizione corrente
                   const { state } = this.editor;
                   const { selection } = state;
                   const { $from } = selection;
 
-                  // Verifica se è il primo elemento della lista
                   const isFirstListItem = () => {
                     const resolvedPos = state.doc.resolve($from.pos);
                     let depth = resolvedPos.depth;
 
-                    // Trova il nodo listItem
                     while (depth > 0) {
                       const node = resolvedPos.node(depth);
                       if (node.type.name === 'listItem') {
-                        // Verifica se è il primo elemento
                         const index = resolvedPos.index(depth);
                         return index === 0;
                       }
@@ -207,25 +203,16 @@ const IndentExtension = Extension.create<IndentOptions>({
                     return false;
                   };
 
-                  // Se è il primo elemento, usa un approccio diverso per la lista
                   if (isFirstListItem()) {
-                    // Determina il tipo di lista (bulleted o order)
                     const listType = this.editor.isActive('bulletedList') ? 'bulletedList' : 'orderList';
-
-                    // Ottieni l'indentazione corrente della lista
                     const listIndent = this.editor.getAttributes(listType).indent || 0;
                     const maxIndent = Math.min(this.options.maxIndent, (this.editor.view.dom.offsetWidth / this.options.indentStep) - 2);
-
-                    // Aumenta l'indentazione della lista completa usando updateAttributes e forceRender
                     try {
                       const newIndent = Math.min(listIndent + 1, maxIndent);
-
-                      // Usiamo questo approccio più diretto
                       const tr = this.editor.state.tr;
                       const selection = this.editor.state.selection;
                       let found = false;
 
-                      // Trova il nodo della lista contenente la selezione
                       this.editor.state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
                         if ((node.type.name === 'bulletedList' || node.type.name === 'orderList') && !found) {
                           found = true;
@@ -243,8 +230,8 @@ const IndentExtension = Extension.create<IndentOptions>({
                         return true;
                       }
 
-                      // Fallback all'approccio standard
-                      return this.editor.chain().focus()
+                      return this.editor.chain()
+                        .focus()
                         .updateAttributes(listType, { indent: newIndent })
                         .run();
                     } catch (e) {
@@ -257,7 +244,8 @@ const IndentExtension = Extension.create<IndentOptions>({
                     }
                   } else {
                     // Comportamento normale per elementi successivi
-                    return this.editor.chain().focus()
+                    return this.editor.chain()
+                      .focus()
                       .splitListItem('listItem')
                       .sinkListItem('listItem')
                       .run();
@@ -268,11 +256,11 @@ const IndentExtension = Extension.create<IndentOptions>({
               }
 
               // Gestione per paragrafi normali
-              if (this.editor.isActive('codeBlock')) return false;
+              if (this.editor.isActive('codeBlock'))
+                return false;
 
               if (event.shiftKey) {
                 event.preventDefault();
-
                 const { selection, doc } = this.editor.state;
                 const { from: initialFrom, to: initialTo } = selection;
 
@@ -363,8 +351,10 @@ const IndentExtension = Extension.create<IndentOptions>({
                   return true;
                 }
               } else {
-
                 event.preventDefault();
+
+                console.log("Tab pressed")
+
 
                 const { selection, doc, tr: initialTr } = this.editor.state;
                 const { from: initialFrom, to: initialTo } = selection;
@@ -375,13 +365,14 @@ const IndentExtension = Extension.create<IndentOptions>({
                   doc.nodesBetween(initialFrom, initialTo, (node, pos) => {
                     if (node.type.name === 'paragraph' || node.type.name === 'heading') {
                       const content = node.content.toJSON() as any[];
+                      
                       if (content && Array.isArray(content)) {
                         let currentLineStartInParagraph = pos + 1;
 
                         if (currentLineStartInParagraph <= initialTo && (pos < initialTo && (pos + node.nodeSize) > initialFrom)) {
 
                           if (!affectedRanges.some(r => r.start === currentLineStartInParagraph)) {
-                            affectedRanges.push({ start: currentLineStartInParagraph, hasTab: false }); // Assuming we always indent now
+                            affectedRanges.push({ start: currentLineStartInParagraph, hasTab: false });
                           }
                         }
 
@@ -418,7 +409,6 @@ const IndentExtension = Extension.create<IndentOptions>({
                     let actualTabsInserted = 0;
 
                     affectedRanges.forEach(range => {
-
                       tr.insertText('\t', range.start);
                       actualTabsInserted++;
                     });
@@ -436,7 +426,11 @@ const IndentExtension = Extension.create<IndentOptions>({
                     return true;
                   }
                 } else {
-                  return this.editor.chain().focus().insertContent('\t').run();
+                  console.log("Tab pressed 2")
+                  return this.editor.chain()
+                    .focus()
+                    .insertContent('\t')
+                    .run();
                 }
               }
             }

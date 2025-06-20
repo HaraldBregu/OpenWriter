@@ -3,6 +3,8 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { ReactNode, useEffect, useRef } from "react";
 import { useArray } from "@/hooks/use-array";
 
+// TODO: Refactor this component
+
 interface SortableProps<T> {
   itemLs: T[],
   item: (value: T, index: number, drag: (children) => ReactNode) => ReactNode,

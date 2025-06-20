@@ -3,13 +3,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import Button from './ui/button';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { defaultEditorConfig } from '@/lib/tiptap/editor-configs';
-import { HistoryState } from '@/pages/editor/hooks';
+import { HistoryState } from '@/pages/editor/hooks/useHistoryState';
 import { useEditorHistory } from '@/hooks/use-editor-history';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { extractSectionsFromGlobalText } from '@/lib/tocTreeMapper';
 import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'react-i18next';
-import { ScissorsIcon, CopyIcon, ClipboardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LigatureType } from '@/lib/tiptap/ligature-mark';
 import { Mark } from 'prosemirror-model';
@@ -25,8 +23,8 @@ export interface EditorData {
 }
 
 export interface HTMLTextEditorElement {
-  setHeadingLevel: (level: number) => void;
-  setBody: () => void;
+  setHeadingLevel: (level: number) => TTextPosition | undefined;
+  setBody: (style?: Style) => void;
   setFontFamily: (fontFamily: string) => void;
   setFontSize: (fontSize: string) => void;
   setBold: (bold: boolean) => void;
@@ -62,8 +60,10 @@ export interface HTMLTextEditorElement {
   increaseCharacterSpacing: () => void;
   decreaseCharacterSpacing: () => void;
   unsetCharacterSpacing: () => void;
-  scrollToHeading: (id: string) => void;
+  scrollToHeadingIndex: (index: number) => void;
   focus: () => void;
+  setTextSelection: (currentPosition: TTextPosition) => void;
+  insertCharacter: (character: number) => void;
   chain: () => any;
   getState: () => any;
   getJSON: () => any;
@@ -131,20 +131,33 @@ const TextEditor = forwardRef(({
   useImperativeHandle(ref, () => {
     return {
       setHeadingLevel: (level: number) => {
+        if (!editor) return;
+
+        const { from, to } = editor.state.selection;
         editor?.chain()
           .focus()
           .selectParentNode()
           .unsetMark("textStyle")
           .setHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 })
-          .run()
-        editorHistory.trackHistoryActions("headingStyle", `Changed heading level to ${level}`);
-      },
-      setBody: () => {
-        editor?.chain()
-          .focus()
-          .setParagraph()
           .run();
-        editorHistory.trackHistoryActions("paragraphStyle", `Changed heading level to pharagraph`);
+        editorHistory.trackHistoryActions("headingStyle", `Changed heading level to ${level}`);
+        return { from, to } as TTextPosition;
+      },
+      setBody: (style?: Style) => {
+        // editor?.commands.setCallout({ type: 'warning' })
+        if (!editor) return;
+
+        const command = editor.chain().focus().setParagraph()
+
+        if (!style) {
+          command.run()
+        } else {
+          command
+            .setMark("textStyle", style)
+            .run()
+        }
+
+        editorHistory.trackHistoryActions("paragraphStyle", `Changed heading level to paragraph`);
       },
       setFontFamily: (fontFamily: string) => {
         if (!editor) return;
@@ -226,7 +239,6 @@ const TextEditor = forwardRef(({
       },
       setListStyle: (bulletStyle: BulletStyle) => {
         const { type, style } = bulletStyle;
-        console.log("setListStyle: ", bulletStyle)
 
         const bulletListActive = editor?.isActive('bulletedList');
         const orderListActive = editor?.isActive('orderList')
@@ -359,20 +371,15 @@ const TextEditor = forwardRef(({
       scrollToBookmark: (id: string) => {
         if (!editor) return;
 
-        function findNodePositionByAttribute(editor: Editor, nodeTypeName: string, attrValue: string): { start: number, end: number }[] {
-          const positions: { start: number, end: number }[] = [];
-          editor.state.doc.descendants((node: any, pos: number) => {
-            if (node.marks?.some(mark => mark.type.name === nodeTypeName && mark.attrs.id === attrValue)) {
-              positions.push({
-                start: pos,
-                end: pos + node.nodeSize
-              });
-            }
-          });
-          return positions;
-        }
-
-        const positions = findNodePositionByAttribute(editor, 'bookmark', id);
+        const positions: { start: number, end: number }[] = [];
+        editor.state.doc.descendants((node: any, pos: number) => {
+          if (node.marks?.some(mark => mark.type.name === "bookmark" && mark.attrs.id === id)) {
+            positions.push({
+              start: pos,
+              end: pos + node.nodeSize
+            });
+          }
+        });
 
         let pos: { start: number, end: number } | null = null
         if (positions.length > 0) {
@@ -383,12 +390,21 @@ const TextEditor = forwardRef(({
 
         if (!pos) return;
 
-        editor?.commands.scrollIntoView();
+        const coords = editor?.view.coordsAtPos(pos.start)
+        const element = editor.view.dom
+
+        const scrollTop = coords.top - element.getBoundingClientRect().top + element.scrollTop
+
+        element.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        });
 
         setTimeout(() => {
           editor?.commands.setTextSelection({ from: pos.start, to: pos.end });
           editor?.commands.focus();
-        }, 100);
+        }, 600);
+
       },
       addComment: () => {
         if (!editor) return;
@@ -419,20 +435,15 @@ const TextEditor = forwardRef(({
       scrollToComment: (id: string) => {
         if (!editor) return;
 
-        function findNodePositionByAttribute(editor: Editor, nodeTypeName: string, attrValue: string): { start: number, end: number }[] {
-          const positions: { start: number, end: number }[] = [];
-          editor.state.doc.descendants((node: any, pos: number) => {
-            if (node.marks?.some(mark => mark.type.name === nodeTypeName && mark.attrs.id === attrValue)) {
-              positions.push({
-                start: pos,
-                end: pos + node.nodeSize
-              });
-            }
-          });
-          return positions;
-        }
-
-        const positions = findNodePositionByAttribute(editor, 'comment', id);
+        const positions: { start: number, end: number }[] = [];
+        editor.state.doc.descendants((node: any, pos: number) => {
+          if (node.marks?.some(mark => mark.type.name === "comment" && mark.attrs.id === id)) {
+            positions.push({
+              start: pos,
+              end: pos + node.nodeSize
+            });
+          }
+        });
 
         let pos: { start: number, end: number } | null = null
         if (positions.length > 0) {
@@ -443,12 +454,20 @@ const TextEditor = forwardRef(({
 
         if (!pos) return;
 
-        editor?.commands.scrollIntoView();
+        const coords = editor?.view.coordsAtPos(pos.start)
+        const element = editor.view.dom
+
+        const scrollTop = coords.top - element.getBoundingClientRect().top + element.scrollTop
+
+        element.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        });
 
         setTimeout(() => {
           editor?.commands.setTextSelection({ from: pos.start, to: pos.end });
           editor?.commands.focus();
-        }, 100);
+        }, 600);
       },
       scrollToSection: (id: string) => {
         if (!editor) return;
@@ -545,157 +564,73 @@ const TextEditor = forwardRef(({
       unsetCharacterSpacing: () => {
         editor?.chain().focus().unsetCharacterSpacing().run();
       },
-      scrollToHeading: (id: string) => {
+      scrollToHeadingIndex: (index: number) => {
         if (!editor) return;
 
-        const mainTextNodes = extractSectionsFromGlobalText(editor.getJSON().content || [], "maintext");
-
-        if (!mainTextNodes || mainTextNodes.length === 0) {
-          console.warn("Nessun nodo trovato nella sezione maintext");
+        const textEditorJson = editor.getJSON();
+        const items = textEditorJson.content || []
+        if (items.length === 0)
           return;
-        }
 
-        const headings = extractHeadingsFromNodes(mainTextNodes);
+        const startIndex = items.findIndex(item =>
+          item
+          && item.type === 'sectionDivider'
+          && item.attrs
+          && typeof item.attrs.sectionType === 'string'
+          && item.attrs.sectionType === "maintext"
+        );
 
-        if (headings.length === 0) {
-          console.warn("Nessun heading trovato nella sezione maintext");
+        if (startIndex === -1)
           return;
-        }
 
-        const target = findTargetHeading(headings, id);
-        if (!target) {
-          console.warn(`Heading con ID ${id} non trovato`);
-          return;
-        }
+        const endIndex = items.findIndex((_, idx) =>
+          idx > startIndex
+          && items[idx]
+          && items[idx].type === 'sectionDivider'
+          && items[idx].attrs
+          && typeof items[idx].attrs.sectionType === 'string'
+        );
 
-        editor.commands.setTextSelection(target.pos);
-        editor.commands.focus();
+        const finalEnd = endIndex === -1 ? items.length : endIndex;
 
-        setTimeout(() => performScrollToHeading(editor, target), 150);
+        const mainTextNodes = items.slice(startIndex + 1, finalEnd);
 
-        function extractHeadingsFromNodes(nodes: any[]) {
-          const result: { level: number, pos: number, text: string }[] = [];
+        if (!mainTextNodes || mainTextNodes.length === 0)
+          return
 
-          editor?.state.doc.descendants((node, pos) => {
-            if (node.type.name === 'heading') {
-              const matchedNode = nodes.find(n =>
-                n.type === 'heading' &&
-                n.attrs?.level === node.attrs.level &&
-                n.content?.[0]?.text === node.textContent
-              );
-
-              if (matchedNode) {
-                result.push({
-                  level: node.attrs.level,
-                  pos,
-                  text: node.textContent
-                });
-              }
-            }
-            return true;
-          });
-
-          return result.sort((a, b) => a.pos - b.pos);
-        }
-
-        function findTargetHeading(headings: { level: number, pos: number, text: string }[], targetId: string) {
-          const orderedHeadings = [...headings].sort((a, b) => a.pos - b.pos);
-
-          const headingStack: ({ id: string; heading: typeof headings[0] } | null)[] = Array(7).fill(null);
-
-          const levelCounters: Record<string, number> = {};
-
-          const generateStandardId = (level: number, parentId: string | null = null): string => {
-            const parentKey = parentId || 'root';
-            const counterKey = `standard_${level}_${parentKey}`;
-
-            if (!levelCounters[counterKey]) levelCounters[counterKey] = 1;
-            else levelCounters[counterKey]++;
-
-            const num = levelCounters[counterKey];
-
-            if (level === 1) {
-              return String(num);
-            } else if (parentId) {
-              return `${parentId}.${num}`;
-            }
-            return String(num);
-          };
-
-          for (const heading of orderedHeadings) {
-            const level = heading.level;
-
-            for (let i = level + 1; i <= 6; i++) {
-              headingStack[i] = null;
-            }
-
-            let parent: { id: string; heading: typeof headings[0] } | null = null;
-            for (let i = level - 1; i >= 1; i--) {
-              if (headingStack[i]) {
-                parent = headingStack[i];
-                break;
-              }
-            }
-
-            const currentId = generateStandardId(level, parent?.id);
-
-            headingStack[level] = { id: currentId, heading };
-
-            if (currentId === targetId) {
-              return heading;
-            }
+        let positions: number[] = []
+        editor?.state.doc.descendants((node, pos) => {
+          if (node.type.name === 'heading') {
+            const matchedNode = mainTextNodes.find(n => n.type === 'heading' && n.attrs?.level === node.attrs.level && n.content?.[0]?.text === node.textContent);
+            if (matchedNode)
+              positions.push(pos)
           }
+          return true;
+        });
 
-          return null;
-        }
+        const position = positions[index]
+        const coords = editor?.view.coordsAtPos(position)
+        const element = editor.view.dom
 
-        function performScrollToHeading(editor: Editor, target: { level: number, pos: number, text: string }) {
-          editor.commands.setTextSelection(target.pos);
-          editor.commands.focus();
-          editor.commands.scrollIntoView();
+        const scrollTop = coords.top - element.getBoundingClientRect().top + element.scrollTop
 
-          setTimeout(() => {
-            const editorElement = document.querySelector('.ProseMirror');
-            if (!editorElement) return;
-
-            const headings = Array.from(editorElement.querySelectorAll('h1, h2, h3, h4, h5, h6'));
-
-            const targetHeading = headings.find(el => {
-              const text = el.textContent?.trim();
-              return text === target.text.trim();
-            });
-
-            if (targetHeading) {
-              const headerOffset = 100;
-              const headingPosition = targetHeading.getBoundingClientRect().top;
-              const offsetPosition = headingPosition - headerOffset + window.scrollY;
-
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-              });
-
-              if (Math.abs(window.scrollY - offsetPosition) > 100) {
-                targetHeading.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start'
-                });
-              }
-            } else {
-              const range = window.getSelection()?.getRangeAt(0);
-              if (range) {
-                const rect = range.getBoundingClientRect();
-                window.scrollTo({
-                  top: rect.top + window.scrollY - 100,
-                  behavior: 'smooth'
-                });
-              }
-            }
-          }, 150);
-        }
+        element.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        })
       },
       focus: () => {
         editor?.commands.focus()
+      },
+      setTextSelection: (currentPosition: TTextPosition) => {
+        if (!editor) return;
+
+        editor.commands.setTextSelection(currentPosition);
+      },
+      insertCharacter: (character: number) => {
+        if (!editor) return;
+
+        editor.chain().focus().insertContent(String.fromCharCode(character)).run();
       },
       chain: () => editor?.chain(),
       getState: () => editor?.state,
@@ -986,38 +921,31 @@ const TextEditor = forwardRef(({
           const { $from } = selection
 
           if ($from.parent.type.name.startsWith('heading')) {
+          }
+        }
+        const isMacOS = /Mac/.test(navigator.userAgent);
 
-            // editor?.chain()
-            //   .focus()
-            //   .updateAttributes('paragraph', {
-            //     fontFamily: 'Times New Roman',
-            //     fontSize: '12pt',
-            //     fontWeight: 'normal',
-            //     fontStyle: 'normal',
-            //   })
-            //   // .setMark("textStyle", {
-            //   //   ...editor.getAttributes("textStyle"),
-            //   // })
-            //   .run();
+        if (isMacOS) {
+          // Gestione per Cmd+V su macOS
+          if (event.metaKey && event.key === 'v' && editor?.isFocused) {
+            event.preventDefault();
+            handlePaste();
+          }
+
+          // Gestione per Cmd+C su macOS
+          if (event.metaKey && event.key === 'c' && editor?.isFocused) {
+            event.preventDefault();
+            handleCopy();
+          }
+
+          if (event.metaKey && event.key === 'x' && editor?.isFocused) {
+            event.preventDefault();
+            handleCut();
           }
         }
         return false
       },
-      //@ts-ignore
-      // clipboardTextParser(text, $context, plain, view) {
-      //   const node = view.state.schema.text(text);
-      //   return new Slice(view.state.schema.node('paragraph', null, [node]).content, 0, 0);
-      // },
     },
-    // onCreate: ({ editor }) => {
-    //   editor?.chain().focus()
-    //     .setFontFamily('Times New Roman')
-    //     // .setParagraph()
-    //     // .setMark("textStyle", {
-    //     //   ...editor.getAttributes("textStyle"),
-    //     // })
-    //     .run();
-    // },
     onUpdate: ({ editor }) => {
       const newState = currentEditorState(editor)
       onUpdate?.(newState);
@@ -1135,6 +1063,10 @@ const TextEditor = forwardRef(({
       onCanUndo?.(editor.can().undo());
       onCanRedo?.(editor.can().redo());
     },
+    // onBlur: (data) => {
+    //   const editor = data.editor;
+    //   onBlurEditor?.();
+    // },
     //@ts-ignore
     onPaste: (event, slice) => {
       // editor?.commands.insertContentAt(0, {
@@ -1254,22 +1186,6 @@ const TextEditor = forwardRef(({
     left?: number
     right?: number
   }>({ top: 0, left: 0 })
-  const [contextMenuPosition, setContextMenuPosition] = useState<{
-    top: number;
-    left: number;
-  }>({ top: 0, left: 0 });
-
-  const handleContextMenu = useCallback((event: React.MouseEvent) => {
-    if (!editor || !canEdit) return;
-
-    event.preventDefault();
-
-    setContextMenuPosition({
-      top: event.clientY,
-      left: event.clientX,
-    });
-
-  }, [editor, canEdit]);
 
   const handleCopy = useCallback(() => {
     if (!editor) return;
@@ -1526,56 +1442,10 @@ const TextEditor = forwardRef(({
             </Popover>
           </div>}
 
-        {/* Menu contestuale */}
-        {contextMenuOpen && (
-          <div
-            className="fixed z-50 w-56 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in fade-in-0 zoom-in-95"
-            style={{
-              top: `${contextMenuPosition.top}px`,
-              left: `${contextMenuPosition.left}px`,
-            }}
-          >
-            <div className="py-1">
-              <button
-                className="relative text-primary-20 flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground "
-                onClick={handleCut}
-              >
-                <ScissorsIcon className="mr-2 h-4 w-4" />
-                <span>{t('buttons.cut')}</span>
-                <span className="ml-auto text-secondary-70 text-xs text-muted-foreground">
-                  {navigator.platform.includes('Mac') ? '⌘X' : 'Ctrl+X'}
-                </span>
-              </button>
-              <button
-                className="relative text-primary-20 flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground "
-                onClick={handleCopy}
-              >
-                <CopyIcon className="mr-2 h-4 w-4" />
-                <span>{t('buttons.copy')}</span>
-                <span className="ml-auto text-secondary-70 text-xs text-muted-foreground">
-                  {navigator.platform.includes('Mac') ? '⌘C' : 'Ctrl+C'}
-                </span>
-              </button>
-              <div className="h-px my-1 bg-muted"></div>
-              <button
-                className="relative text-primary-20 flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
-                onClick={handlePaste}
-              >
-                <ClipboardIcon className="mr-2 h-4 w-4" />
-                <span>{t('buttons.paste')}</span>
-                <span className="ml-auto text-secondary-70 text-xs text-muted-foreground">
-                  {navigator.platform.includes('Mac') ? '⌘V' : 'Ctrl+V'}
-                </span>
-              </button>
-            </div>
-          </div>
-        )}
-
         <EditorContent
           className="h-full"
           editor={editor}
           spellCheck={false}
-          onContextMenu={handleContextMenu}
           onKeyDown={handleEditorKeyDown}
         />
       </div>

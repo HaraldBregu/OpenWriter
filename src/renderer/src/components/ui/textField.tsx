@@ -361,7 +361,7 @@ export default function TextField({
                         (rightIcon || type === "password" || type === "date") && "pr-10",
                         type === "number" && "pr-8 show-number-arrows",
                         error && "border-destructive focus-visible:ring-destructive",
-                        "bg-grey-95"
+                        "bg-grey-95 dark:bg-grey-20"
                     )}
                     disabled={disabled}
                     autoFocus={autoFocus}
@@ -404,6 +404,7 @@ export default function TextField({
                             className="rotate-0"
                             icon={<Up_1
                                 variant="icon"
+                                color="currentColor"
                                 size="small" />}
                             onClick={incrementValue}
                             tabIndex={-1}
@@ -415,6 +416,7 @@ export default function TextField({
                             intent="secondary"
                             className="rotate-0"
                             icon={<Up_1
+                                color="currentColor"
                                 variant="icon"
                                 className="rotate-180"
                                 size="small" />}

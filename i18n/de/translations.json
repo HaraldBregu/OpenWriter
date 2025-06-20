@@ -88,7 +88,7 @@
     "superscript": "Hochgestellt",
     "subscript": "Tiefgestellt",
     "contextMenu": "Customize Toolbar",
-    "modalTitle": "Toggle items to add or remove from the toolbar"
+    "modalTitle": "Select or remove items from the toolbar"
   },
   "dividerSections": {
     "toc": "Inhaltsverzeichnis",
@@ -116,7 +116,7 @@
         "lastSaved": "Letzte Speicherung",
         "browse": "Versionen durchsuchen"
       },
-      "shareForReview": "Zur Überprüfung freigeben",
+      "shareForReview": "Zur Überprüfung freigeben...",
       "lock": "Sperren...",
       "unlock": "Entsperren...",
       "exportTo": {
@@ -128,9 +128,9 @@
       },
       "language&Region": "Sprache und Region...",
       "saveAsTemplate": "Als Vorlage speichern...",
-      "metadata": "Metadaten",
+      "metadata": "Metadaten...",
       "pageSetup": "Seiteneinrichtung...",
-      "print": "Drucken"
+      "print": "Drucken..."
     },
     "edit": {
       "label": "Bearbeiten",
@@ -149,7 +149,7 @@
       "paste": "Einfügen",
       "pasteStyle": "Stil einfügen",
       "pasteAndMatchStyle": "Einfügen und Stil anpassen",
-      "pasteWithNotes": "Mit Notizen einfügen",
+      "pasteTextWithoutFormatting": "Text ohne Formatierung einfügen",
       "delete": "Löschen",
       "duplicateSelection": "Auswahl duplizieren",
       "selectAll": "Alles auswählen",
@@ -178,7 +178,7 @@
       "section": "Abschnitt",
       "comment": "Kommentar",
       "bookmark": "Lesezeichen",
-      "highlight": "Hervorheben",
+      "highlight": "Referenzen hervorheben",
       "link": "Link",
       "image": "Bild",
       "symbol": "Symbol",
@@ -206,12 +206,12 @@
       "addNoteInInnerMargin": "Notiz am inneren Rand hinzufügen",
       "addNoteInOuterMargin": "Notiz am äußeren Rand hinzufügen",
       "swapMargin": "Rand tauschen",
-      "addReadingSeparator": "Lesetrennzeichen hinzufügen",
+      "addReadingSeparator": "Trennzeichen hinzufügen",
       "addSiglum": "Sigle hinzufügen",
-      "siglaSetup": "Siglen konfigurieren",
+      "siglaSetup": "Siglen konfigurieren...",
       "addCitation": "Zitat hinzufügen",
-      "bibliography": "Bibliografie",
-      "referencesFormat": "Referenzformat",
+      "bibliography": "Bibliografie...",
+      "referencesFormat": "Referenzformat...",
       "addApparatus": {
         "label": "Apparat hinzufügen",
         "critical": "Kritisch",
@@ -282,7 +282,7 @@
         "resumeNumbering": "Nummerierung fortsetzen",
         "continuePreviousNumbering": "Vorherige Nummerierung fortsetzen"
       },
-      "sectionsStyle": "Abschnittstil",
+      "sectionsStyle": "Abschnittstil...",
       "table": "Tabelle",
       "shapesAndLines": "Formen und Linien",
       "removeLink": "Link entfernen",
@@ -314,7 +314,7 @@
         }
       },
       "toc": {
-        "label": "Inhaltsverzeichnis"
+        "label": "Inhaltsverzeichnis..."
       },
       "lineNumber": {
         "label": "Zeilennummerierung..."
@@ -329,6 +329,7 @@
         "label": "Seitenzahl..."
       }
     },
+    "headerFooter": "Header && Footer",
     "help": {
       "label": "Hilfe",
       "criterionHelp": "Criterion Hilfe",
@@ -336,6 +337,8 @@
       "forum": "Forum",
       "whatsNewInCriterion": "Was ist neu in Criterion",
       "reportAnIssue": "Problem melden",
+      "criterionFeedback": "Criterionfeedback geben",
+      "checkUpdates": "Nach Updates suchen...",
       "about": "Über Criterion"
     }
   },
@@ -353,8 +356,18 @@
     "cut": "Ausschneiden",
     "copy": "Kopieren",
     "paste": "Einfügen",
+    "insert": "Insert",
     "acknowledgements": "Danksagungen",
     "licenseAgreement": "Lizenzvereinbarung"
+  },
+  "symbols": {
+    "label": "Symbols",
+    "special": "Special Characters",
+    "font": "Schriftart",
+    "subset": "Subset",
+    "symbol": "Symbol",
+    "character": "Character",
+    "keyboardShortcut": "Keyboard Shortcut"
   },
   "customSpacing": {
     "title": "Benutzerdefinierter Abstand",
@@ -645,5 +658,130 @@
       "cancel": "Abbrechen",
       "done": "Speichern"
     }
+  },
+  "sections_styles_dialog": {
+    "title": "Abschnittsstil",
+    "styles_section": {
+      "import_style": "Stil importieren",
+      "add": "Hinzufügen",
+      "select_style": "Stil auswählen"
+    },
+    "name": "Name",
+    "typography_section": {
+      "typography": "Typografie",
+      "font": "Schriftart",
+      "style": "Stil",
+      "size": "Größe",
+      "align": "Ausrichtung",
+      "text_color": "Textfarbe"
+    },
+    "spacing_section": {
+      "spacing": "Abstand",
+      "line_spacing": "Zeilenabstand",
+      "before_paragraph": "Vor dem Absatz",
+      "after_paragraph": "Nach dem Absatz"
+    },
+    "cancel": "Abbrechen",
+    "export_style": "Stil exportieren",
+    "done": "Fertig"
+  },
+  "preferences": {
+    "title": "Einstellungen",
+    "sections": {
+      "general": "Allgemein",
+      "appearance": "Erscheinungsbild",
+      "file": "Datei",
+      "language": "Sprache und Region",
+      "editing": "Bearbeitung",
+      "account": "Konto"
+    },
+    "general": {
+      "fileNameDisplay": {
+        "title": "Dateinamenanzeige",
+        "fullPath": "Dateiname und letztes Verzeichnis anzeigen",
+        "fullPathDescription": "Z.B. */letztes Verzeichnis/Dateiname*",
+        "filenameOnly": "Nur Dateiname anzeigen",
+        "filenameOnlyDescription": "Z.B. *Dateiname*"
+      },
+      "restoreCriterionLayout": {
+        "title": "Criterion-Layout wiederherstellen",
+        "rememberLastLayout": "Letztes visuelles Layout merken",
+        "rememberLastLayoutDescription": "Speichert und stellt das letzte visuelle Layout der Bearbeitungssitzung wieder her."
+      },
+      "recentFiles": {
+        "title": "Zuletzt geöffnete Dateien",
+        "description": "Maximale Anzahl der zuletzt geöffneten Dateien anzeigen."
+      },
+      "links": {
+        "title": "Links",
+        "openInDefaultApp": "In Standard-App öffnen",
+        "openInCriterion": "In Criterion öffnen (png, jpg, pdf)"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "Design",
+        "system": "Systemstandard (Heller Modus)",
+        "light": "Heller Modus",
+        "dark": "Dunkler Modus"
+      },
+      "commentPreviewLimit": {
+        "title": "Zeichenlimit für Kommentarvorschau",
+        "description": "Die Anzahl der Zeichen, die für jeden Kommentar in der linken Seitenleiste angezeigt werden."
+      },
+      "bookmarkPreviewLimit": {
+        "title": "Zeichenlimit für Lesezeichenvorschau",
+        "description": "Die Anzahl der Zeichen, die für jedes Lesezeichen in der linken Seitenleiste angezeigt werden."
+      }
+    },
+    "file": {
+      "fileSavingDirectory": {
+        "title": "Datei-Speicherverzeichnis",
+        "lastOpened": "Zuletzt geöffnetes Verzeichnis",
+        "defaultDirectory": "Standard-Verzeichnis"
+      },
+      "automaticFileSave": {
+        "title": "Automatisches Dateispeichern",
+        "never": "Nie",
+        "every5min": "Alle 5 Minuten",
+        "every10min": "Alle 10 Minuten",
+        "every15min": "Alle 15 Minuten"
+      },
+      "versioningDirectory": {
+        "title": "Versionierung-Verzeichnis",
+        "defaultDirectory": "Standard-Verzeichnis",
+        "customDirectory": "Benutzerdefiniertes Verzeichnis"
+      },
+      "selectPath": "Pfad auswählen...",
+      "defaultEncoding": {
+        "title": "Standard-Kodierung"
+      },
+      "encodingDetection": {
+        "title": "Kodierungserkennung",
+        "enable": "Aktivieren"
+      },
+      "restoreLayout": {
+        "title": "Layout wiederherstellen",
+        "rememberLastLayout": "Letztes visuelles Layout merken",
+        "rememberLastLayoutDescription": "Speichert und stellt das letzte visuelle Layout der Bearbeitungssitzung wieder her."
+      }
+    },
+    "language": {
+      "criterionLanguage": "Criterion-Sprache",
+      "criterionRegion": "Criterion-Region",
+      "dateTimeFormat": "Datum- und Zeitformat"
+    },
+    "editing": {
+      "showHistoryActions": {
+        "title": "Verlaufsaktionen anzeigen",
+        "description": "Die maximale Anzahl der anzuzeigenden Verlaufsaktionen."
+      }
+    },
+    "buttons": {
+      "cancel": "Abbrechen",
+      "resetToDefault": "Auf Standard zurücksetzen",
+      "ok": "OK"
+    },
+    "comingSoon": "Kontoeinstellungen demnächst verfügbar..."
   }
 }

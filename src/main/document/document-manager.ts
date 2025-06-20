@@ -1,10 +1,9 @@
 import path from "path";
-import { getBaseWindow, getToolbarWebContentsView } from "../main-window";
+import { getBaseWindow } from "../main-window";
 import { mainLogger } from "../shared/logger";
 import { promises as fs } from 'fs'
 import { app, dialog } from "electron";
 import * as fsSync from 'fs';
-import { closeWebContentsViewWithId, getSelectedWebContentsView } from "../content";
 import {
     createDocumentObject,
     getCurrentAnnotations,
@@ -16,6 +15,7 @@ import {
     updateRecentDocuments,
 } from "./document";
 import { getSelectedTab, setFilePathForSelectedTab } from "../toolbar";
+import assert from "assert";
 
 
 /**
@@ -49,7 +49,6 @@ export const openDocument = async (filePath: string | null | undefined, onDone?:
             {
                 name: 'Images',
                 extensions: [
-                    'pdf',
                     'jpeg',
                     'jpg',
                     'png',
@@ -57,7 +56,12 @@ export const openDocument = async (filePath: string | null | undefined, onDone?:
                     'bmp',
                     'tiff',
                     'tif',
-                  
+                ]
+            },
+            {
+                name: 'PDF',
+                extensions: [
+                    'pdf',
                 ]
             }
         ],
@@ -73,106 +77,27 @@ export const openDocument = async (filePath: string | null | undefined, onDone?:
 }
 
 /**
- * Saves a new document by showing a save dialog or updates the current document automatically
+ * Saves the current document
+ * @param onDone - The callback to call when the document is saved
  * @returns void
  */
-export const saveDocument = async (onDone?: (filePath: string) => void): Promise<void> => {
-    const taskId = mainLogger.startTask("Electron", "Saving document");
-
+export const saveDocument = async (onDone?: ((filePath: string) => void)): Promise<void> => {
     const currentTab = getSelectedTab()
-    const baseWindow = getBaseWindow()
+    const filePath = currentTab?.filePath
+    const isNewDocument = !filePath
 
-    if (!baseWindow || !currentTab) return
-
-    const filePath = currentTab.filePath
-
-    if (filePath) {
-        const fileContent = await fs.readFile(filePath, 'utf8');
-
-        const document = JSON.parse(fileContent);
-
-        const updatedDocument = await createDocumentObject({
-            version: document.version,
-            createdAt: document.createdAt,
-            updatedAt: new Date().toISOString(),
-            mainText: getCurrentMainText(),
-            apparatuses: getCurrentApparatuses(),
-            annotations: getCurrentAnnotations(),
-            template: getCurrentTemplate(),
-        });
-
-        await fs.writeFile(filePath, JSON.stringify(updatedDocument, null, 2));
-        onDone?.(filePath)
-        await dialog.showMessageBox(baseWindow, { message: 'Document updated!' });
-        mainLogger.endTask(taskId, "Electron", "Document updated");
-        return;
-    }
-
-    const newDocument = await createDocumentObject({
-        version: "1.0",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        mainText: getCurrentMainText(),
-        apparatuses: getCurrentApparatuses(),
-        annotations: getCurrentAnnotations(),
-        template: getCurrentTemplate(),
-        metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        }
-    });
-
-    const result = await dialog.showSaveDialog(baseWindow, {
-        title: 'Save Document', // Translate this
-        defaultPath: path.join(app.getPath('downloads'), 'CRIT_Document.critx'),
-        filters: [{ name: 'Criterion', extensions: ['critx'] }]
-    });
-
-    if (!result.canceled && result.filePath) {
-        await fs.writeFile(result.filePath, JSON.stringify(newDocument, null, 2));
-        onDone?.(result.filePath)
-        await dialog.showMessageBox(baseWindow, { message: 'Document saved!' });
-        mainLogger.endTask(taskId, "Electron", "New document saved");
-    }
+    if (isNewDocument)
+        await createNewDocument(onDone)
+    else
+        await updateCurrentDocument(onDone)
 }
 
 /**
  * Saves current document as a new document by showing a save dialog
  * @returns void
  */
-export const saveDocumentAs = async (): Promise<void> => {
-    const taskId = mainLogger.startTask("Electron", "Saving document as");
-
-    const baseWindow = getBaseWindow();
-    if (!baseWindow) return;
-
-    const result = await dialog.showSaveDialog(baseWindow, {
-        title: 'Save Document As...',
-        defaultPath: path.join(app.getPath('downloads'), 'CRIT_Document.critx'),
-        filters: [{ name: 'Criterion', extensions: ['critx'] }]
-    });
-
-    if (!result.canceled && result.filePath) {
-        const newDocument = await createDocumentObject({
-            version: "1.0",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            mainText: getCurrentMainText(),
-            apparatuses: getCurrentApparatuses(),
-            annotations: getCurrentAnnotations(),
-            template: getCurrentTemplate(),
-            metadata: {
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-            }
-        });
-
-        await fs.writeFile(result.filePath, JSON.stringify(newDocument, null, 2));
-        await dialog.showMessageBox(baseWindow, { message: 'Document saved successfully!' });
-        updateRecentDocuments(result.filePath);
-
-        mainLogger.endTask(taskId, "Electron", "New document saved as");
-    }
+export const saveDocumentAs = async (onDone?: (filePath: string) => void): Promise<void> => {
+    createNewDocument(onDone)
 }
 
 /**
@@ -308,72 +233,6 @@ export const moveDocument = async (): Promise<void> => {
     });
 }
 
-// TODO: Implement this
-export const closeDocument = async (): Promise<void> => {
-    const taskId = mainLogger.startTask("Electron", "Closing document");
-
-    const toolbarWebContentsView = getToolbarWebContentsView()
-    const currentWebContentsView = getSelectedWebContentsView()
-
-    const tabId = currentWebContentsView?.webContents.id ?? -1
-
-    toolbarWebContentsView?.webContents.send("close-current-document", tabId);
-    closeWebContentsViewWithId(tabId)
-
-    // const extractedFileContent = currentDocument
-    // const isNewEmpty = extractedFileContent === null && !isFileContentPopulated(currentFileContent?.mainText) && !isFileContentPopulated(currentFileContent?.apparatusText)
-    // const isNewWithChanges = extractedFileContent === null && isFileContentPopulated(currentFileContent?.mainText) && !isFileContentPopulated(currentFileContent?.apparatusText)
-    // const isLoadedWithChanges = extractedFileContent !== null && JSON.stringify(currentFileContent) !== JSON.stringify(extractedFileContent);
-
-    // let hasUnsavedChanges = false;
-
-    // if (isNewWithChanges || isLoadedWithChanges) {
-    //     hasUnsavedChanges = true;
-    // }
-
-    // if (isNewEmpty) {
-    //     mainLogger.info("Electron", "New empty document closed without prompt.");
-    //     mainLogger.endTask(taskId, "Electron", "File closed");
-    //     app.exit();
-    //     return;
-    // }
-
-    // if (hasUnsavedChanges) {
-    //     const { response } = await dialog.showMessageBox(baseWindow, {
-    //         type: 'warning',
-    //         buttons: ['Save', 'Don\'t Save', 'Cancel'],
-    //         defaultId: 0,
-    //         cancelId: 2,
-    //         title: 'Unsaved Document',
-    //         message: 'The document contains unsaved changes.',
-    //         detail: 'Do you want to save the changes before closing the application?',
-    //         noLink: true
-    //     });
-
-    //     if (response === 0) { // Save
-    //         if (!currentDocumentPath) {
-    //             await saveFile(baseWindow);
-    //         } else {
-    //             await saveCurrentDocument(baseWindow);
-    //         }
-    //         app.exit();
-    //     } else if (response === 1) { // Don't save
-    //         app.exit();
-    //     }
-    // }
-
-    // const isLoadedWithNoChanges = extractedFileContent !== null && !hasUnsavedChanges;
-
-    // if (isLoadedWithNoChanges) {
-    //     mainLogger.info("Electron", "Document loaded and unchanged. Closing without prompt.");
-    //     mainLogger.endTask(taskId, "Electron", "File closed");
-    //     app.exit();
-    //     return;
-    // }
-
-    mainLogger.endTask(taskId, "Electron", "File closed");
-};
-
 /**
  * Closes the application
  * @returns void
@@ -386,68 +245,68 @@ export const closeApplication = async (): Promise<void> => {
     mainLogger.endTask(taskId, "Electron", "Application exited");
 }
 
-/**
- * Clears the storage data
- * @returns void
- */
-// export const clearStorageData = async (): Promise<void> => {
-//     const taskId = mainLogger.startTask("Electron", "Clearing storage");
-//     const baseWindow = getBaseWindow()
-//     if (!baseWindow) return
+const updateCurrentDocument = async (onDone?: ((filePath: string) => void)): Promise<void> => {
+    const taskId = mainLogger.startTask("Electron", "Updating current document");
 
-//     // await Promise.all([
-//     //     webContentsView.webContents.session.clearStorageData({
-//     //         storages: [
-//     //             'cookies',
-//     //             'localstorage',
-//     //             'indexdb'
-//     //         ]
-//     //     }),
-//     //     webContentsView.webContents.session.clearCache(),
-//     //     store.clear(), // Also clears electron-store
-//     //     webContentsView.webContents.reload()
-//     // ]);
+    const baseWindow = getBaseWindow()
+    if (!baseWindow) return
 
-//     await dialog.showMessageBox(baseWindow, {
-//         type: 'info',
-//         message: 'Stored data cleared successfully!',
-//         detail: 'Refresh the application to apply changes.',
-//         buttons: ['OK']
-//     });
-//     mainLogger.endTask(taskId, "Electron", "Storage cleared successfully");
-// }
+    const currentTab = getSelectedTab()
+    const filePath = currentTab?.filePath
+    assert(filePath, "Current tab has no file path");
 
+    const fileContent = await fs.readFile(filePath, 'utf8');
+    const document = JSON.parse(fileContent);
 
-// export const isFileContentPopulated = (node: any): boolean => {
-//     const hasContentPropertyWithContent = (node: any): boolean => {
-//         if (!node || typeof node !== "object") return false;
+    const updatedDocument = await createDocumentObject({
+        version: document.version,
+        createdAt: document.createdAt,
+        updatedAt: new Date().toISOString(),
+        mainText: getCurrentMainText(),
+        apparatuses: getCurrentApparatuses(),
+        annotations: getCurrentAnnotations(),
+        template: getCurrentTemplate(),
+    });
 
-//         if (Array.isArray(node.content)) {
-//             // Se il nodo stesso ha un content valorizzato
-//             if (node.content.length > 0) {
-//                 return node.content.some(child => hasContentPropertyWithContent(child));
-//             }
-//             return false;
-//         }
+    await fs.writeFile(filePath, JSON.stringify(updatedDocument, null, 2));
+    onDone?.(filePath)
+    await dialog.showMessageBox(baseWindow, { message: 'Document updated!' });
 
-//         return false;
-//     };
-//     if (!node || typeof node !== "object") return false;
+    mainLogger.endTask(taskId, "Electron", "Document updated");
+}
 
-//     // Se ha una proprietà 'content' non vuota
-//     if (Array.isArray(node.content) && node.content.length > 0) {
-//         for (const child of node.content) {
-//             // Se un figlio ha un content non vuoto, ritorna true
-//             if (Array.isArray(child.content) && child.content.length > 0) {
-//                 return true;
-//             }
+const createNewDocument = async (onDone?: ((filePath: string) => void)): Promise<void> => {
+    const taskId = mainLogger.startTask("Electron", "Creating new document");
 
-//             // Ricorsione
-//             if (hasContentPropertyWithContent(child)) {
-//                 return true;
-//             }
-//         }
-//     }
+    const baseWindow = getBaseWindow()
+    if (!baseWindow) return
 
-//     return false;
-// };  
+    // New document
+    const newDocument = await createDocumentObject({
+        version: "1.0",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        mainText: getCurrentMainText(),
+        apparatuses: getCurrentApparatuses(),
+        annotations: getCurrentAnnotations(),
+        template: getCurrentTemplate(),
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        }
+    });
+
+    const result = await dialog.showSaveDialog(baseWindow, {
+        title: 'Save Document As...', // Translate this
+        defaultPath: path.join(app.getPath('downloads'), 'CRIT_Document.critx'),
+        filters: [{ name: 'Criterion', extensions: ['critx'] }]
+    });
+
+    if (result.canceled || !result.filePath) return
+
+    await fs.writeFile(result.filePath, JSON.stringify(newDocument, null, 2));
+    onDone?.(result.filePath)
+    await dialog.showMessageBox(baseWindow, { message: 'Document saved!' });
+
+    mainLogger.endTask(taskId, "Electron", "New document created");
+}

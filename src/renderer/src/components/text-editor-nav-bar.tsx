@@ -2,13 +2,20 @@ import { cn } from "@/lib/utils";
 import DragIndicator from "./icons/DragIndicator";
 import More from "./icons/More";
 import Button from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "./ui/dropdown-menu";
 
 export type TextEditorNavBarOptions = {
     title?: string;
     icon?: React.ReactNode;
     onClick?: () => void;
     type: "ITEM" | "SEPARATOR";
+    enabled?: boolean;
 }
 
 interface TextEditorNavBarProps {
@@ -47,7 +54,7 @@ const TextEditorNavBar = ({
                                     return <DropdownMenuSeparator key={option.title + "separator"} />;
                                 }
                                 return (
-                                    <DropdownMenuItem key={option.title + "item"} onClick={option.onClick}>
+                                    <DropdownMenuItem key={option.title + "item"} onClick={option.onClick} disabled={option.enabled === false}>
                                         {option.icon}
                                         {option.title}
                                     </DropdownMenuItem>

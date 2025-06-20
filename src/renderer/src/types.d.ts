@@ -126,3 +126,16 @@ interface Template {
 }
 
 type CasingType = 'none-case' | 'all-caps' | 'small-caps' | 'title-case' | 'start-case'
+
+type TreeItem = {
+    id: string;
+    headingsId?: string; // ID personalizzato per la visualizzazione
+    headingIndex: number;
+    name: string;
+    customName: string; // Nome personalizzato per la visualizzazione
+    showHeadingNumbers?: boolean; // Indica se mostrare i numeri di intestazione
+    level: number;
+    children: TreeItem[];
+}
+
+type TTextPosition = { from: number; to: number };

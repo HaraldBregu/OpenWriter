@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, memo } from "react";
 import { cn } from "@/lib/utils";
 import {
     Select,
@@ -35,6 +35,8 @@ interface CustomSelectProps {
     minWidth?: string;
     tooltip?: string;
 }
+
+ const CustomSelectSeparator = memo(SelectSeparator)
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
     value,
@@ -85,7 +87,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             <SelectContent>
                 {items.map((item, index) => (
                     <Fragment key={`${item.value}-${index}`}>
-                        {showSeparators && index > 0 && <SelectSeparator className="text-xs font-normal" />}
+                        {showSeparators && index > 0 && <CustomSelectSeparator className="text-xs font-normal" />}
                         <SelectItem
                             className={cn(defaultItemClassName, itemClassName)}
                             value={item.value}

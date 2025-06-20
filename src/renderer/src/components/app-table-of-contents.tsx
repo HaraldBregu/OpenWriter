@@ -1,20 +1,47 @@
-import { TreeDataItem, TreeView } from "./tree-view";
+import { TreeView } from "./tree-view";
 import { useEffect, useState } from "react";
-import TocContentDelimiter from "./toc-delimiter";
 import TextField from "./ui/textField";
-import { TocSettings } from "@/pages/editor/store/editor/editor.slice";
 import { useTranslation } from "react-i18next";
-import { TreeItem } from "@/lib/tocTreeMapper";
+import DragHandle from './icons/DragHandle';
+
+
+interface TocContentDelimiterProps {
+    text?: string;
+    className?: string;
+}
+
+const TocContentDelimiter = ({
+    text = "",
+    className = "",
+}: TocContentDelimiterProps) => {
+    return (
+        <div className='flex flex-col items-center'>
+            <div className={`flex items-center w-[95%] border-b border-grey-60 py-0 bg-gray-50 my-2 ${className}`}>
+                <DragHandle className="mr-1" size={18} />
+                <span className="text-[11px] font-semibold text-grey-40">{text}</span>
+            </div>
+        </div>
+    );
+};
+
+
 interface TableOfContentsProps {
     tocStructure: TreeItem[];
     tocSettings: TocSettings;
     layoutTemplate?: unknown;
     templateOrder?: string[];
     onUpdateTocSettings: (tocSettings: TocSettings) => void;
-    onClickTreeItem?: (id: string) => void;
+    onClickHeadingIndex?: (item: number) => void;
 }
 
-export default function TableOfContents({ tocStructure, tocSettings, onClickTreeItem, onUpdateTocSettings, layoutTemplate, templateOrder }: TableOfContentsProps) {
+export default function TableOfContents({
+    tocStructure,
+    tocSettings,
+    onUpdateTocSettings,
+    layoutTemplate,
+    templateOrder,
+    onClickHeadingIndex
+}: TableOfContentsProps) {
     const { t } = useTranslation();
     const [isEditing, setIsEditing] = useState(false);
     const [tempTitle, setTempTitle] = useState(tocSettings.title ?? "");
@@ -23,19 +50,13 @@ export default function TableOfContents({ tocStructure, tocSettings, onClickTree
     const [currentTocSettings, setCurrentTocSettings] = useState<TocSettings | null>(null);
 
     useEffect(() => {
-        console.log("TableOfContents component mounted or updated", layoutTemplate, templateOrder);
-    }, [layoutTemplate, templateOrder]);
-
-    useEffect(() => {
         setCurrentTocStructure(tocStructure);
         setCurrentTocSettings(tocSettings);
     }, [tocStructure, tocSettings])
 
-    const handleTreeItemClick = (item: TreeDataItem) => {
-        if (onClickTreeItem && item.id) {
-            onClickTreeItem(item.id);
-        }
-    };
+    const handleTreeItemClicked = (item: TreeItem) => {
+        onClickHeadingIndex?.(item.headingIndex);
+    }
 
     const handleTocTitle = () => {
         setTempTitle(tocSettings.title);
@@ -113,14 +134,19 @@ export default function TableOfContents({ tocStructure, tocSettings, onClickTree
 
                             case 'critical':
                                 return (
-                                    <div key="critical" className="flex flex-col hover:bg-gray-50 rounded-md mb-4">
+                                    <div
+                                        key="critical"
+                                        className="flex flex-col hover:bg-gray-50 rounded-md mb-4">
                                         <TocContentDelimiter text={t('tableOfContents.sections.criticalText.start')} />
-                                        {currentTocStructure && currentTocSettings && <TreeView
-                                            data={currentTocStructure}
-                                            defaultOpen
-                                            onItemClick={handleTreeItemClick}
-                                            indentLevels={currentTocSettings.indentLevels}
-                                        />}
+                                        {currentTocStructure && currentTocSettings &&
+                                            <TreeView
+                                                data={currentTocStructure}
+                                                defaultOpen
+                                                onTreeItemClicked={(item) => {
+                                                    handleTreeItemClicked(item)
+                                                }}
+                                                indentLevels={currentTocSettings.indentLevels}
+                                            />}
                                         <TocContentDelimiter text={t('tableOfContents.sections.criticalText.end')} />
                                     </div>
                                 );

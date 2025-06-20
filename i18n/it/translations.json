@@ -88,7 +88,7 @@
     "superscript": "Apice",
     "subscript": "Pedice",
     "contextMenu": "Customize Toolbar",
-    "modalTitle": "Toggle items to add or remove from the toolbar"
+    "modalTitle": "Select or remove items from the toolbar"
   },
   "dividerSections": {
     "toc": "Tabella dei contenuti",
@@ -116,7 +116,7 @@
         "lastSaved": "Ultimo salvataggio",
         "browse": "Sfoglia versioni"
       },
-      "shareForReview": "Condividi per revisione",
+      "shareForReview": "Condividi per revisione...",
       "lock": "Blocca...",
       "unlock": "Sblocca...",
       "exportTo": {
@@ -128,9 +128,9 @@
       },
       "language&Region": "Lingua e regione...",
       "saveAsTemplate": "Salva come modello...",
-      "metadata": "Metadati",
+      "metadata": "Metadati...",
       "pageSetup": "Impostazioni di pagina...",
-      "print": "Stampa"
+      "print": "Stampa..."
     },
     "edit": {
       "label": "Modifica",
@@ -149,7 +149,7 @@
       "paste": "Incolla",
       "pasteStyle": "Incolla stile",
       "pasteAndMatchStyle": "Incolla e adatta stile",
-      "pasteWithNotes": "Incolla con note",
+      "pasteTextWithoutFormatting": "Incolla testo senza formattazione",
       "delete": "Elimina",
       "duplicateSelection": "Duplica selezione",
       "selectAll": "Seleziona tutto",
@@ -178,7 +178,7 @@
       "section": "Sezione",
       "comment": "Commento",
       "bookmark": "Segnalibro",
-      "highlight": "Evidenzia",
+      "highlight": "Evidenzia riferimenti",
       "link": "Collegamento",
       "image": "Immagine",
       "symbol": "Simbolo",
@@ -206,12 +206,12 @@
       "addNoteInInnerMargin": "Aggiungi nota nel margine interno",
       "addNoteInOuterMargin": "Aggiungi nota nel margine esterno",
       "swapMargin": "Scambia margine",
-      "addReadingSeparator": "Aggiungi separatore di lettura",
+      "addReadingSeparator": "Aggiungi separatore",
       "addSiglum": "Aggiungi sigla",
-      "siglaSetup": "Configura sigle",
+      "siglaSetup": "Configura sigle...",
       "addCitation": "Aggiungi citazione",
-      "bibliography": "Bibliografia",
-      "referencesFormat": "Formato riferimenti",
+      "bibliography": "Bibliografia...",
+      "referencesFormat": "Formato riferimenti...",
       "addApparatus": {
         "label": "Aggiungi apparato",
         "critical": "Critico",
@@ -282,7 +282,7 @@
         "resumeNumbering": "Riprendi numerazione",
         "continuePreviousNumbering": "Continua numerazione precedente"
       },
-      "sectionsStyle": "Stile sezioni",
+      "sectionsStyle": "Stile sezioni...",
       "table": "Tabella",
       "shapesAndLines": "Forme e linee",
       "removeLink": "Rimuovi collegamento",
@@ -313,7 +313,7 @@
         }
       },
       "toc": {
-        "label": "Tabella dei contenuti"
+        "label": "Tabella dei contenuti..."
       },
       "lineNumber": {
         "label": "Numerazione righe..."
@@ -328,6 +328,7 @@
         "label": "Numero di pagina..."
       }
     },
+    "headerFooter": "Header && Footer",
     "help": {
       "label": "Aiuto",
       "criterionHelp": "Criterion Aiuto",
@@ -335,6 +336,8 @@
       "forum": "Forum",
       "whatsNewInCriterion": "Cosa c'è di nuovo in Criterion",
       "reportAnIssue": "Segnala un problema",
+      "criterionFeedback": "Fornisci un feedback su Criterion",
+      "checkUpdates": "Controllo Aggiornamenti...",
       "about": "Informazioni su Criterion"
     }
   },
@@ -352,8 +355,18 @@
     "cut": "Cut",
     "copy": "Copy",
     "paste": "Paste",
+    "insert": "Insert",
     "acknowledgements": "Acknowledgements",
     "licenseAgreement": "License Agreement"
+  },
+  "symbols": {
+    "label": "Symbols",
+    "special": "Special Characters",
+    "font": "Carattere",
+    "subset": "Subset",
+    "symbol": "Symbol",
+    "character": "Character",
+    "keyboardShortcut": "Keyboard Shortcut"
   },
   "customSpacing": {
     "title": "Spaziatura personalizzata",
@@ -644,6 +657,162 @@
     "buttons": {
       "cancel": "Annulla",
       "done": "Salva"
+    }
+  },
+  "delete_apparatus_dialog": {
+    "title": "Elimina apparato",
+    "description": "Sei sicuro di voler eliminare il testo esistente? Vuoi continuare?",
+    "buttons": {
+      "cancel": "Indietro",
+      "delete": "Elimina"
+    }
+  },
+  "apparatuses": {
+    "options": {
+      "changeType": "Cambia tipo",
+      "rename": "Rinomina",
+      "hide": "Nascondi",
+      "delete": "Elimina",
+      "showNoteHighlights": "Mostra note evidenziate",
+      "showCommentHighlights": "Mostra commenti evidenziati",
+      "showInPrint": "Mostra in stampa"
+    }
+  },
+  "sections_styles_dialog": {
+    "title": "Stile delle Sezioni",
+    "styles_section": {
+      "import_style": "Importa stile",
+      "add": "Aggiungi",
+      "select_style": "Seleziona stile"
+    },
+    "name": "Nome",
+    "typography_section": {
+      "typography": "Tipografia",
+      "font": "Carattere",
+      "style": "Stile",
+      "size": "Dimensione",
+      "align": "Allineamento",
+      "text_color": "Colore del testo"
+    },
+    "spacing_section": {
+      "spacing": "Spaziatura",
+      "line_spacing": "Interlinea",
+      "before_paragraph": "Prima del paragrafo",
+      "after_paragraph": "Dopo il paragrafo"
+    },
+    "cancel": "Annulla",
+    "export_style": "Esporta stile",
+    "done": "Fine"
+  },
+  "preferences": {
+    "title": "Preferenze",
+    "sections": {
+      "general": "Generale",
+      "appearance": "Aspetto",
+      "file": "File",
+      "language": "Lingua e Regione",
+      "editing": "Modifica",
+      "account": "Account"
+    },
+    "general": {
+      "fileNameDisplay": {
+        "title": "Visualizzazione nome file",
+        "fullPath": "Mostra nome file e ultima directory",
+        "fullPathDescription": "Es. */ultima directory/nome file*",
+        "filenameOnly": "Mostra solo nome file",
+        "filenameOnlyDescription": "Es. *nome file*"
+      },
+      "restoreCriterionLayout": {
+        "title": "Ripristina layout Criterion",
+        "rememberLastLayout": "Ricorda l'ultimo layout visivo",
+        "rememberLastLayoutDescription": "Salva e ripristina l'ultimo layout visivo della sessione di modifica."
+      },
+      "recentFiles": {
+        "title": "File recenti da aprire",
+        "description": "Mostra il numero massimo di file aperti di recente da visualizzare."
+      },
+      "links": {
+        "title": "Collegamenti",
+        "openInDefaultApp": "Apri nell'app predefinita",
+        "openInCriterion": "Apri in Criterion (png, jpg, pdf)"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "Tema",
+        "system": "Predefinito del sistema (Modalità Chiara)",
+        "light": "Modalità Chiara",
+        "dark": "Modalità Scura"
+      },
+      "commentPreviewLimit": {
+        "title": "Limite caratteri anteprima commenti",
+        "description": "Il numero di caratteri mostrati per ogni commento nella barra laterale sinistra."
+      },
+      "bookmarkPreviewLimit": {
+        "title": "Limite caratteri anteprima segnalibri",
+        "description": "Il numero di caratteri mostrati per ogni segnalibro nella barra laterale sinistra."
+      }
+    },
+    "file": {
+      "fileSavingDirectory": {
+        "title": "Directory di salvataggio file",
+        "lastOpened": "Ultima directory aperta",
+        "defaultDirectory": "Directory predefinita"
+      },
+      "automaticFileSave": {
+        "title": "Salvataggio automatico file",
+        "never": "Mai",
+        "every5min": "Ogni 5 minuti",
+        "every10min": "Ogni 10 minuti",
+        "every15min": "Ogni 15 minuti"
+      },
+      "versioningDirectory": {
+        "title": "Directory versionamento",
+        "defaultDirectory": "Directory predefinita",
+        "customDirectory": "Directory personalizzata"
+      },
+      "selectPath": "Seleziona percorso...",
+      "defaultEncoding": {
+        "title": "Codifica predefinita"
+      },
+      "encodingDetection": {
+        "title": "Rilevamento codifica",
+        "enable": "Abilita"
+      },
+      "restoreLayout": {
+        "title": "Ripristina layout",
+        "rememberLastLayout": "Ricorda l'ultimo layout visivo",
+        "rememberLastLayoutDescription": "Salva e ripristina l'ultimo layout visivo della sessione di modifica."
+      }
+    },
+    "language": {
+      "criterionLanguage": "Lingua Criterion",
+      "criterionRegion": "Regione Criterion",
+      "dateTimeFormat": "Formato Data e Ora"
+    },
+    "editing": {
+      "showHistoryActions": {
+        "title": "Mostra azioni cronologia",
+        "description": "Il numero massimo di azioni della cronologia da mostrare."
+      }
+    },
+    "buttons": {
+      "cancel": "Annulla",
+      "resetToDefault": "Ripristina Predefiniti",
+      "ok": "OK"
+    },
+    "comingSoon": "Impostazioni account in arrivo..."
+  },
+  "siglum" : {
+    "title": "Sigla",
+    "create": "Crea",
+    "cancel": "Annulla",
+    "import": "Importa",
+    "export": "Esporta",
+    "manuscripts": "Manoscritti",
+    "description": "Descrizione",
+    "empty": {
+      "title": "Create sigla before adding notes"
     }
   }
 }

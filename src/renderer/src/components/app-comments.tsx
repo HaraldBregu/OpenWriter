@@ -13,7 +13,6 @@ import Button from "./ui/button";
 import PlusSimple from "@/components/icons/PlusSimple";
 import { Input } from "./ui/input";
 import useSingleAndDoubleClick from "@/hooks/use-single-double-click";
-import { formatDateWithTime } from "@/utils/date";
 import { Textarea } from "./ui/textarea";
 import {
     Tooltip,
@@ -30,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import Comment from "@/components/icons/Comment";
 import More from "./icons/More";
 import Dropdown from "./icons/Dropdown";
+import { format } from "date-fns";
 
 interface CommentsProps {
     title: string;
@@ -540,7 +540,7 @@ const CommentItem = forwardRef(({
                     <span className={cn("text-sm font-medium truncate text-ellipsis")}>
                         {item.author}
                         <p className="text-xs">
-                            {formatDateWithTime(item.updatedAt)}
+                            {format(new Date(item.updatedAt), 'dd/MM/yyyy HH:mm')}
                         </p>
                     </span>
                 </div>
@@ -667,7 +667,7 @@ const CommentEditItem = forwardRef(({
                         <span className="text-sm font-medium truncate text-ellipsis">
                             {item.author}
                             <p className="text-xs text-gray-600">
-                                {formatDateWithTime(item.updatedAt)}
+                                {format(new Date(item.updatedAt), 'dd/MM/yyyy HH:mm')}
                             </p>
                         </span>
                     </div>

@@ -53,7 +53,7 @@
     ]
   },
   "dmg": {
-    "icon": "./buildResources/appIcons/icon.png",
+    "icon": "./buildResources/appIcons/icon.icns",
     "iconSize": 100,
     "window": {
       "width": 600,
@@ -72,11 +72,11 @@
         "path": "/Applications"
       }
     ],
-    "title": "Criterion Installer",
+    "title": "Criterion_${version}_${arch}",
     "internetEnabled": false,
     "format": "UDZO",
     "sign": true,
-    "artifactName": "${productName}-setup-${version}.${ext}",
+    "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
     "writeUpdateInfo": false
   },
   "linux": {
@@ -117,7 +117,7 @@
     "multiLanguageInstaller": true,
     "warningsAsErrors": false,
     "include": "./scripts/installer.nsh",
-    "deleteAppDataOnUninstall": true,
+    "deleteAppDataOnUninstall": false,
     "installerIcon": "./buildResources/appIcons/icon.ico",
     "uninstallerIcon": "./buildResources/appIcons/icon.ico",
     "perMachine": false,

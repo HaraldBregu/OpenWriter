@@ -16,13 +16,13 @@ import {
     selectCommentHighlighted,
     selectTocSettings,
     selectToolbarEmphasisState,
+    showTocChecked,
 } from "./store/editor/editor.selector";
 import {
     setCanAddBookmark,
     setCanRedo,
     setCanUndo,
     setHistory,
-    setSelectedSidebarTabIndex,
     updateTocSettings,
     setBookmark,
     setEmphasisState,
@@ -32,10 +32,6 @@ import {
     toggleCommentHighlighted,
     setComment,
     setCanAddComment,
-    setCharacters,
-    setWords,
-    setSidebarOpen,
-    createApparatusesFromDocument,
     createApparatusesFromLayout,
 } from "./store/editor/editor.slice";
 import TextEditor, { EditorData } from "@/components/text-editor";
@@ -68,9 +64,6 @@ import {
     visibleBookmarksSelector,
     bookmarkCategoriesSelector,
 } from "./store/bookmark/bookmark.selector";
-import TocSetupModal from "@/components/table-of-contents-setup";
-import LineNumberModal from "@/components/line-number-settings";
-import PageNumberModal from "@/components/page-number-settings";
 import { useIpcRenderer } from "@/hooks/use-ipc-renderer";
 import {
     selectFooterSettings,
@@ -84,8 +77,6 @@ import {
     updateLineNumberSettings,
     updatePageNumberSettings,
 } from "./store/pagination/pagination.slice";
-import HeaderModal from "@/components/header-settings";
-import FooterModal from "@/components/footer-settings";
 import {
     bibliographyTemplate,
     introTemplate,
@@ -96,25 +87,28 @@ import {
     createTiptapJSONStructure,
     createTocTreeStructure,
     extractSectionsFromGlobalText,
-} from "@/lib/tocTreeMapper";
+} from "@/lib/toc-tree-mapper";
 import { useTranslation } from "react-i18next";
 import TextEditorNavBar from "@/components/text-editor-nav-bar";
 import Check from "@/components/icons/Check";
-import ChooseLayoutModal from "../preferences/ChooseLayoutModal";
-import CustomSpacingModal from "@/pages/preferences/CustomSpacing";
-import { PageSetupDialog } from "../preferences/PageSetupDialog/PageSetupDialog";
-import ResumeNumberingModal from "../preferences/ResumeNumbering";
-import SaveAsTemplateModal from "../preferences/SaveAsTemplateModal";
-import { selectLayoutSettings } from "../preferences/store/layout/layout.selector";
-import { updateSetupPageState } from "../preferences/store/layout/layout.sclice";
-import SectionsStyleModal from "../preferences/SectionsStyleModal/SectionsStyleModal";
-import { converterFromSetupToEditor } from "@/utils/optionsEnums";
+import CustomSpacingModal from "@/pages/editor/dialogs/CustomSpacing";
+import { PageSetupDialog } from "./dialogs/PageSetupDialog/PageSetupDialog";
+import ResumeNumberingModal from "./dialogs/ResumeNumbering";
+import SaveAsTemplateModal from "./dialogs/SaveAsTemplateModal";
+import { selectLayoutSettings } from "./store/layout/layout.selector";
+import { updateSetupPageState } from "./store/layout/layout.sclice";
+import SectionsStyleModal from "./dialogs/SectionsStyleModal";
+import { converterFromEditorToSetup, converterFromSetupToEditor } from "@/utils/optionsEnums";
 import { commentCategoriesSelector, commentCategoryOptionsSelector, visibleCommentsSelector } from "./store/comment/comments.selector";
-import { updateStyles } from "../preferences/store/editor-styles/editor-styles.slice";
-import { selectStyles } from "../preferences/store/editor-styles/editor-styles.selector";
+import { updateStyles } from "./store/editor-styles/editor-styles.slice";
+import { selectStyles } from "./store/editor-styles/editor-styles.selector";
+import { useSidebar } from "@/components/ui/sidebar";
+import ChooseTemplateModal from "./dialogs/ChooseTemplateModal";
+import { useEditor } from "./hooks/useEditor";
+import { setCharacters, setEditorFocus, setSelectedSideviewTabIndex, setWords } from "./provider";
 
 
-interface EContentProps {
+interface ContentProps {
     onFocusEditor: () => void;
     showToolbar: boolean;
     onRegisterBookmark: (id: string, categoryId?: string) => void;
@@ -139,7 +133,7 @@ export const Content = forwardRef((
         showToolbar,
         onRegisterBookmark,
         onRegisterComment
-    }: EContentProps,
+    }: ContentProps,
     ref: ForwardedRef<unknown>
 ) => {
     useImperativeHandle(ref, () => {
@@ -153,11 +147,20 @@ export const Content = forwardRef((
             redo: () => {
                 editorRef?.current?.redo();
             },
-            setHeadingLevel: (headingLevel: number) => {
-                editorRef?.current?.setHeadingLevel(headingLevel);
+            setHeadingLevel: async (headingLevel: number) => {
+                const position = editorRef?.current?.setHeadingLevel(headingLevel);
+                setTimeout(() => {
+                    editorRef?.current?.focus();
+                    if (position) {
+                        editorRef?.current?.setTextSelection(position);
+                    }
+                }, 100);
             },
-            setBody: () => {
-                editorRef?.current?.setBody();
+            setBody: (style) => {
+                editorRef?.current?.setBody(style);
+                setTimeout(() => {
+                    editorRef?.current?.focus();
+                }, 100);
             },
             setFontFamily: (fontFamily: string) => {
                 editorRef?.current?.setFontFamily(fontFamily);
@@ -242,24 +245,28 @@ export const Content = forwardRef((
             deleteComments: (comments: AppComment[]) => {
                 editorRef?.current?.deleteComments(comments);
             },
-            scrollToHeading: (id: string) => {
-                criticalTextEditorRef?.current?.scrollToHeading(id);
+            scrollToHeadingIndex: (index: number) => {
+                criticalTextEditorRef?.current?.scrollToHeadingIndex(index);
             },
             scrollToSection: (id?: string) => {
                 criticalTextEditorRef?.current?.scrollToSection(id);
             },
+            insertCharacter: (character: number) => {
+                editorRef?.current?.insertCharacter(character);
+            }
         };
     });
 
     const { t } = useTranslation();
 
+    const [_, dispatchEditor] = useEditor();
     const dispatch = useDispatch();
     const emphasisState = useSelector(selectToolbarEmphasisState);
 
     const criticalTextEditorRef = useRef<any>();
 
     const [editorRef, setEditorRef] = useState<any>(null);
-    const [isChooseLayoutModalOpen, setIsChooseLayoutModalOpen] =
+    const [isChooseTemplateModalOpen, setIsChooseTemplateModalOpen] =
         useState(false);
     const [saveTemplateModalOpen, setIsSaveAsTemplateModalOpen] =
         useState(false);
@@ -274,7 +281,8 @@ export const Content = forwardRef((
     const pageNumberSettings = useSelector(selectPageNumberSettings);
     const headerSettings = useSelector(selectHeaderSettings);
     const footerSettings = useSelector(selectFooterSettings);
-    const apparatusesList = useSelector(selectApparatuses)
+    const apparatusesList = useSelector(selectApparatuses);
+    const showToc = useSelector(showTocChecked);
 
     const {
         setupDialogState: layoutTemplate,
@@ -295,7 +303,6 @@ export const Content = forwardRef((
 
     const bookmarkCategoryIdRef = useRef<string | undefined>(undefined);
     const commentCategoryIdRef = useRef<string | undefined>(undefined);
-    const targetRef = useRef<"MAIN_TEXT" | "APPARATUS_TEXT">("MAIN_TEXT");
 
     const tocForTextRef = useRef<any>(null);
     const mainTextContentRef = useRef<any>(null);
@@ -303,13 +310,7 @@ export const Content = forwardRef((
     const bibliographyContentRef = useRef<any>(null);
 
     const registerComment = useCallback(() => {
-        switch (editorRef?.current) {
-            case criticalTextEditorRef?.current:
-                targetRef.current = "MAIN_TEXT";
-                editorRef?.current?.addComment("MAIN_TEXT");
-                break;
-
-        }
+        editorRef?.current?.addComment("MAIN_TEXT");
     }, [editorRef]);
 
     const registerBookmark = useCallback(() => {
@@ -324,30 +325,11 @@ export const Content = forwardRef((
         }
     }, []);
 
+    // @REFACTOR: some of this functions could be moved to a different file (ELayout.tsx)
     useIpcRenderer(
         (ipc) => {
             ipc.on("show-page-setup", () => {
                 setIsPageSetupOpen(true);
-            });
-
-            ipc.on("line-numbers-settings", () => {
-                setIsLineNumberSetupOpen(true);
-            });
-
-            ipc.on("header-settings", () => {
-                setIsHeaderSetupOpen(true);
-            });
-
-            ipc.on("footer-settings", () => {
-                setIsFooterSetupOpen(true);
-            });
-
-            ipc.on("page-number-settings", () => {
-                setIsPageNumberSetupOpen(true);
-            });
-
-            ipc.on("toc-settings", () => {
-                setIsTocSetupOpen(true);
             });
 
             ipc.on("CmdOrCtrl+Shift+K", () => {
@@ -573,7 +555,7 @@ export const Content = forwardRef((
             });
 
             ipc.on("receive-open-choose-layout-modal", () => {
-                setIsChooseLayoutModalOpen(true);
+                setIsChooseTemplateModalOpen(true);
             });
 
             ipc.on("save-as-template", () => {
@@ -602,6 +584,7 @@ export const Content = forwardRef((
             "DocOpening initialized"
         );
 
+        // @REFACTOR: this is a heavy function, we should refactor it
         window.electron.ipcRenderer.on(
             "load-document",
             (_event, document: any) => {
@@ -612,6 +595,7 @@ export const Content = forwardRef((
                 const bookmarks = annotations?.bookmarks;
                 const bookmarkCategories = annotations?.bookmarkCategories;
                 const currentTemplate = document.template;
+
                 criticalTextEditorRef.current.setJSON(criticalText);
 
                 commentsRef.current = comments;
@@ -624,7 +608,7 @@ export const Content = forwardRef((
                 const pageNumberSettings = currentTemplate?.paratextual?.pageNumberSettings;
                 const headerSettings = currentTemplate?.paratextual?.headerSettings;
                 const footerSettings = currentTemplate?.paratextual?.footerSettings;
-                const styles = currentTemplate?.styles || [];
+                const templateStyles = currentTemplate?.styles || [];
 
                 tocSettingsRef.current = tocSettings;
                 lineNumberSettingsRef.current = lineNumberSettings;
@@ -637,7 +621,7 @@ export const Content = forwardRef((
                         setupDialogState: currentTemplate?.layoutTemplate,
                         sort: currentTemplate?.sort,
                         setupOption: currentTemplate?.pageSetup,
-                    }))
+                    }));
 
                 dispatch(setComments(comments));
                 dispatch(setCommentsCategories(commentCategories));
@@ -650,7 +634,10 @@ export const Content = forwardRef((
                 dispatch(updateHeaderSettings(headerSettings));
                 dispatch(updateFooterSettings(footerSettings));
 
-                dispatch(updateStyles(styles));
+                // Update editor styles only if the template defines at least one style.
+                if (templateStyles.length > 0) {
+                    dispatch(updateStyles(templateStyles));
+                }
             }
         );
 
@@ -661,6 +648,7 @@ export const Content = forwardRef((
         );
     }, [window.electron.ipcRenderer]);
 
+    // @REFACTOR: use a better way to do this, or split this function in smaller ones
     const updateHandler = useCallback(() => {
         const taskId = rendererLogger.startTask("TextEditor", "Content update");
 
@@ -714,6 +702,7 @@ export const Content = forwardRef((
                 textEditorJson,
                 "introduction"
             );
+
             const extractedMainTextSections = extractSectionsFromGlobalText(
                 textEditorJson,
                 "maintext"
@@ -774,19 +763,22 @@ export const Content = forwardRef((
         footerSettings,
     ]);
 
-    const updateTemplates = useCallback(async () => {
+    // @REFACTOR: this is a heavy function, we should refactor it
+    const updateTemplates = useCallback(async (showToc: boolean = true) => {
         let data: unknown[] = []
         sort.forEach(
             item => {
                 if (layoutTemplate[item].visible) {
                     switch (item) {
                         case "toc":
-                            data.push(
-                                ...tocTemplate(
-                                    t("dividerSections.toc"),
-                                    tocForTextRef.current?.content
-                                ),
-                            );
+                            if (showToc) {
+                                data.push(
+                                    ...tocTemplate(
+                                        t("dividerSections.toc"),
+                                        tocForTextRef.current?.content
+                                    ),
+                                );
+                            }
                             break;
                         case "intro":
                             data.push(
@@ -821,6 +813,7 @@ export const Content = forwardRef((
             content: data
         };
 
+        // @REFACTOR: check again this solution, this could generate future issues
         try {
             await criticalTextEditorRef.current.setJSON(content);
             setTimeout(() => {
@@ -836,7 +829,7 @@ export const Content = forwardRef((
         tocForTextRef,
         introductionContentRef,
         mainTextContentRef,
-        bibliographyContentRef,
+        bibliographyContentRef
     ]);
 
     const toolbarBookmarkCategories: BubbleToolbarItemOption[] = [
@@ -853,16 +846,12 @@ export const Content = forwardRef((
     const commentCategoryOptions = useSelector(commentCategoryOptionsSelector)
 
     const [isPageSetupOpen, setIsPageSetupOpen] = useState(false);
-    const [isTocSetupOpen, setIsTocSetupOpen] = useState(false);
-    const [isLineNumberSetupOpen, setIsLineNumberSetupOpen] = useState(false);
-    const [isPageNumberSetupOpen, setIsPageNumberSetupOpen] = useState(false);
-    const [isHeaderSetupOpen, setIsHeaderSetupOpen] = useState(false);
-    const [isFooterSetupOpen, setIsFooterSetupOpen] = useState(false);
     const [isCustomSpacingOpen, setIsCustomSpacingOpen] = useState(false);
     const [isResumeNumberingOpen, setIsResumeNumberingOpen] = useState(false);
 
     const memoizedTocSettings = useMemo(() => tocSettings, [tocSettings]);
 
+    // @REFACTOR: use "useCallback" for this function and generally always use it
     const extractEditorSections = (textEditorJson: any) => {
         const mainTextData = extractSectionsFromGlobalText(
             textEditorJson,
@@ -879,16 +868,6 @@ export const Content = forwardRef((
         return { mainTextData, introductionData, bibliographyData };
     };
 
-    const generateTocStructure = (mainTextData: any) => {
-        return createTocTreeStructure(
-            {
-                type: "doc",
-                content: mainTextData,
-            },
-            memoizedTocSettings // Pass the complete TOC settings
-        );
-    };
-
     const generateTocForText = (tocStructureData: any) => {
         return createTiptapJSONStructure(
             tocStructureData,
@@ -903,7 +882,14 @@ export const Content = forwardRef((
         const textEditorJson = criticalTextEditorRef.current?.getJSON();
         const { mainTextData, introductionData, bibliographyData } = extractEditorSections(textEditorJson);
 
-        const tocStructureData = generateTocStructure(mainTextData);
+        const mainTextContent = {
+            type: "doc",
+            content: mainTextData,
+        }
+
+        const tocStructureData = createTocTreeStructure(mainTextContent, memoizedTocSettings);
+        dispatch(setTocStructure(tocStructureData));
+
         const tocForText = generateTocForText(tocStructureData);
 
         tocForTextRef.current = tocForText;
@@ -911,54 +897,10 @@ export const Content = forwardRef((
         mainTextContentRef.current = mainTextData;
         bibliographyContentRef.current = bibliographyData;
 
-        dispatch(setTocStructure(tocStructureData));
     }, [criticalTextEditorRef, memoizedTocSettings, updateHandler]);
 
+    // @REFACTOR: use "useCallback" for this function and generally always use it
     const handleSaveTemplate = (templateName) => {
-        const styles = [
-            {
-                type: "Title",
-                fontSize: "18pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "normal",
-            },
-            {
-                type: "Heading1",
-                fontSize: "16pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "normal",
-            },
-            {
-                type: "Heading2",
-                fontSize: "14pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "normal",
-            },
-            {
-                type: "Heading3",
-                fontSize: "12pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "italic",
-            },
-            {
-                type: "Heading4",
-                fontSize: "12pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "italic",
-            },
-            {
-                type: "Heading4",
-                fontSize: "10pt",
-                fontWeight: "bold",
-                color: "#000",
-                fontStyle: "italic",
-            },
-        ];
 
         const paratextual = {
             tocSettings: tocSettingsRef.current,
@@ -968,8 +910,37 @@ export const Content = forwardRef((
             footerSettings: footerSettingsRef.current,
         };
 
+        const newLayoutTemplate = {
+            ...layoutTemplate,
+            critical: {
+                visible: layoutTemplate.critical.visible || true,
+                layout: layoutTemplate.critical.layout || 'vertical-horizontal',
+                apparatusDetails: [
+                    {
+                        id: 'element1',
+                        title: 'Text',
+                        sectionType: "text",
+                        type: 'text',
+                        columns: layoutTemplate.critical.apparatusDetails.find(({ type }) => (type === 'text'))?.columns ?? 1,
+                        disabled: true,
+                        visible: true
+                    },
+                    ...apparatusesList.map(app => ({
+                        ...app,
+                        id: app.id,
+                        type: "apparatus",
+                        sectionType: converterFromEditorToSetup(app.type),
+                        columns: layoutTemplate.critical.apparatusDetails.find(({ id }) => (id === app.id))?.columns ?? 1,
+                        visible: layoutTemplate.critical.apparatusDetails.find(({ id }) => (id === app.id))?.visible ?? app.visible,
+                        disabled: layoutTemplate.critical.apparatusDetails.find(({ id }) => (id === app.id))?.disabled || false, //app.disabled || false,
+                    }))
+                ],
+                required: layoutTemplate.critical.required || false,
+            }
+        };
+
         const styleTemplate = {
-            layoutTemplate,
+            layoutTemplate: newLayoutTemplate,
             pageSetup,
             sort,
             styles,
@@ -983,9 +954,11 @@ export const Content = forwardRef((
         createTemplate()
     };
 
+    // @REFACTOR: use "useCallback" for this function and generally always use it
     const handleEditorViewContent = (data: any) => {
         const orderSection = data?.sort;
         const layoutTemplate = data?.layoutTemplate;
+        let tocEnabled = false;
         const layoutTemplateNewOrder = orderSection?.map(
             (sectionName: string) => ({
                 [sectionName]: layoutTemplate[sectionName],
@@ -1012,6 +985,7 @@ export const Content = forwardRef((
 
             switch (key) {
                 case "toc":
+                    tocEnabled = sectionData?.visible;
                     return tocSettingsRef.current?.show
                         ?
                         tocTemplate(
@@ -1049,6 +1023,7 @@ export const Content = forwardRef((
         const pageNumberSettings = data?.paratextual?.pageNumberSettings;
         const headerSettings = data?.paratextual?.headerSettings;
         const footerSettings = data?.paratextual?.footerSettings;
+        const templateStyles = data?.styles;
 
         tocSettingsRef.current = tocSettings;
         lineNumberSettingsRef.current = lineNumberSettings;
@@ -1066,17 +1041,42 @@ export const Content = forwardRef((
         dispatch(updateHeaderSettings(headerSettings));
         dispatch(updateFooterSettings(footerSettings));
 
+        // Apply editor styles only if the template defines at least one style.
+        if (templateStyles?.length > 0) {
+            dispatch(updateStyles(templateStyles))
+        }
+
         window.doc.setLayoutTemplate(layoutTemplate);
         window.doc.setPageSetup(data?.pageSetup);
         window.doc.setSort(orderSection as unknown[]);
-        window.doc.setStyles([]);
+
+        // Apply editor styles only if the template defines at least one style.
+        if (templateStyles?.length > 0) {
+            window.doc.setStyles(templateStyles);
+        } else {
+            // Otherwise, use the editor’s default styles.
+            window.doc.setStyles(styles)
+        }
+
         window.doc.setParatextual(data?.paratextual);
+
+        window.menu.setTocMenuItemsEnabled(tocEnabled);
 
         criticalTextEditorRef.current?.setJSON({
             type: "doc",
             content: _content,
         });
     }
+
+    const sidebar = useSidebar();
+
+    // @REFACTOR: try to find a better way to do this
+    useEffect(() => {
+        // Update the table of contents when the showToc state changes
+        updateTemplates(showToc);
+    }, [showToc]);
+
+    const canEditSelector = useSelector(selectCanEdit)
 
     return (
         <>
@@ -1088,6 +1088,7 @@ export const Content = forwardRef((
                             type: "ITEM",
                             title: "Update Table of Contents",
                             onClick: () => updateTemplates(),
+                            enabled: showToc
                         },
                         {
                             type: "ITEM",
@@ -1140,16 +1141,17 @@ export const Content = forwardRef((
                     className="flex-1 overflow-auto relative w-full"
                     isMainText={true}
                     ref={criticalTextEditorRef}
-                    canEdit={useSelector(selectCanEdit)}
+                    canEdit={canEditSelector}
                     onUpdate={(editor: EditorData) => {
-                        dispatch(setCharacters(editor.characters))
-                        dispatch(setWords(editor.words))
+                        dispatchEditor(setCharacters(editor.characters))
+                        dispatchEditor(setWords(editor.words))
                         updateHandlerEffect()
                     }}
                     onFocusEditor={() => {
                         setEditorRef(criticalTextEditorRef);
                         dispatch(setCanAddBookmark(true));
                         dispatch(setCanAddComment(true));
+                        dispatchEditor(setEditorFocus(true))
                         onFocusEditor()
                     }}
                     bookmarkHighlighted={useSelector(selectBookmarkHighlighted)}
@@ -1172,12 +1174,12 @@ export const Content = forwardRef((
 
                         if (commentMarksIds.length > 0) {
                             dispatch(selectCommentWithId(commentMarksIds[0]))
-                            dispatch(setSidebarOpen(true))
-                            dispatch(setSelectedSidebarTabIndex(0))
+                            sidebar.setOpen(true)
+                            dispatchEditor(setSelectedSideviewTabIndex(0))
                         } else if (bookmarkMarksIds.length > 0) {
                             dispatch(selectBookmarkWithId(bookmarkMarksIds[0]))
-                            dispatch(setSidebarOpen(true))
-                            dispatch(setSelectedSidebarTabIndex(1))
+                            sidebar.setOpen(true)
+                            dispatchEditor(setSelectedSideviewTabIndex(1))
                         } else {
                             dispatch(selectComment(null))
                             dispatch(selectBookmark(null))
@@ -1198,8 +1200,8 @@ export const Content = forwardRef((
                             categoryId: bookmarkCategoryIdRef.current,
                             userInfo: userInfo.username
                         }));
-                        dispatch(setSidebarOpen(true))
-                        dispatch(setSelectedSidebarTabIndex(1))
+                        sidebar.setOpen(true)
+                        dispatchEditor(setSelectedSideviewTabIndex(1))
                         setTimeout(() => {
                             onRegisterBookmark(id, bookmarkCategoryIdRef.current)
                         }, 100)
@@ -1209,12 +1211,12 @@ export const Content = forwardRef((
                         dispatch(addComment({
                             id: id,
                             content: content ?? '',
-                            target: targetRef.current,
+                            target: "MAIN_TEXT",
                             categoryId: commentCategoryIdRef.current,
                             userInfo: userInfo.username
                         }));
-                        dispatch(setSidebarOpen(true))
-                        dispatch(setSelectedSidebarTabIndex(0))
+                        sidebar.setOpen(true)
+                        dispatchEditor(setSelectedSideviewTabIndex(0))
                         setTimeout(() => {
                             onRegisterComment(id, commentCategoryIdRef.current)
                         }, 100)
@@ -1281,28 +1283,15 @@ export const Content = forwardRef((
                 />
             </EditorTextLayout>
 
-
             {isPageSetupOpen && <PageSetupDialog
                 open={isPageSetupOpen}
                 onClose={(data: PageSetupInterface | undefined) => { handleEditorViewContent(data); setIsPageSetupOpen(false); }}
                 onSave={(data: any) => {
                     dispatch(createApparatusesFromLayout(data));
                 }}
-                visibleApparatuses={apparatusesList}
+                apparatusesList={apparatusesList}
             />}
-            <TocSetupModal isOpen={isTocSetupOpen} setIsOpen={setIsTocSetupOpen} />
-            <LineNumberModal
-                isOpen={isLineNumberSetupOpen}
-                setIsOpen={setIsLineNumberSetupOpen}
-            />
-            <PageNumberModal
-                isOpen={isPageNumberSetupOpen}
-                setIsOpen={setIsPageNumberSetupOpen}
-            />
-            <HeaderModal
-                isOpen={isHeaderSetupOpen}
-                setIsOpen={setIsHeaderSetupOpen}
-            />
+
             <CustomSpacingModal
                 isOpen={isCustomSpacingOpen}
                 onCancel={() => setIsCustomSpacingOpen(false)}
@@ -1319,14 +1308,10 @@ export const Content = forwardRef((
                     setIsResumeNumberingOpen(false);
                 }}
             />
-            <FooterModal
-                isOpen={isFooterSetupOpen}
-                setIsOpen={setIsFooterSetupOpen}
-            />
-            {isChooseLayoutModalOpen && (
-                <ChooseLayoutModal
-                    open={isChooseLayoutModalOpen}
-                    onClose={() => setIsChooseLayoutModalOpen(false)}
+            {isChooseTemplateModalOpen && (
+                <ChooseTemplateModal
+                    open={isChooseTemplateModalOpen}
+                    onClose={() => setIsChooseTemplateModalOpen(false)}
                     onContinue={(selectedTemplate) => {
                         dispatch(
                             updateSetupPageState({
@@ -1346,11 +1331,11 @@ export const Content = forwardRef((
                             disabled: el.disabled,
                         }
                         ))
-                        dispatch(createApparatusesFromDocument(apparatusEditorList));
-                        setIsChooseLayoutModalOpen(false);
+                        dispatch(createApparatusesFromLayout(apparatusEditorList));
+                        setIsChooseTemplateModalOpen(false);
                         selectedTemplate.name?.toLowerCase() === 'blank' ? setIsPageSetupOpen(true) : handleEditorViewContent(selectedTemplate)
                     }}
-                ></ChooseLayoutModal>
+                ></ChooseTemplateModal>
             )}
             {saveTemplateModalOpen && (
                 <SaveAsTemplateModal

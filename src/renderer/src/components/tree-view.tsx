@@ -39,6 +39,7 @@ type TreeProps = React.HTMLAttributes<HTMLDivElement> & {
     defaultNodeIcon?: any
     defaultLeafIcon?: any
     onItemClick?: (item: TreeDataItem) => void;
+    onTreeItemClicked?: (item: TreeItem) => void;
     onDocumentDrag?: (sourceItem: TreeDataItem, targetItem: TreeDataItem) => void
     defaultOpen?: boolean
     indentLevels?: boolean
@@ -160,6 +161,7 @@ type TreeItemProps = TreeProps & {
     draggedItem: TreeDataItem | null
     defaultOpen?: boolean
     onItemClick?: (item: TreeDataItem) => void
+    onTreeItemClicked?: (item: TreeItem) => void
     indentLevels?: boolean
 }
 
@@ -178,6 +180,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
             draggedItem,
             defaultOpen,
             onItemClick,
+            onTreeItemClicked,
             indentLevels,
             ...props
         },
@@ -203,7 +206,10 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                     handleDrop={handleDrop}
                                     draggedItem={draggedItem}
                                     defaultOpen={defaultOpen}
-                                    onItemClick={onItemClick}
+                                    onItemClick={(item) => {
+                                        onItemClick?.(item);
+                                        onTreeItemClicked?.(item as TreeItem)
+                                    }}
                                     indentLevels={indentLevels}
                                 />
                             ) : (

@@ -88,7 +88,7 @@
     "superscript": "Superíndice",
     "subscript": "Subíndice",
     "contextMenu": "Customize Toolbar",
-    "modalTitle": "Toggle items to add or remove from the toolbar"
+    "modalTitle": "Select or remove items from the toolbar"
   },
   "dividerSections": {
     "toc": "Tabla de contenidos",
@@ -116,7 +116,7 @@
         "lastSaved": "Último guardado",
         "browse": "Explorar versiones"
       },
-      "shareForReview": "Compartir para revisión",
+      "shareForReview": "Compartir para revisión...",
       "lock": "Bloquear...",
       "unlock": "Desbloquear...",
       "exportTo": {
@@ -128,9 +128,9 @@
       },
       "language&Region": "Idioma y región...",
       "saveAsTemplate": "Guardar como plantilla...",
-      "metadata": "Metadatos",
+      "metadata": "Metadatos...",
       "pageSetup": "Configuración de página...",
-      "print": "Imprimir"
+      "print": "Imprimir..."
     },
     "edit": {
       "label": "Editar",
@@ -149,7 +149,7 @@
       "paste": "Pegar",
       "pasteStyle": "Pegar estilo",
       "pasteAndMatchStyle": "Pegar y adaptar estilo",
-      "pasteWithNotes": "Pegar con notas",
+      "pasteTextWithoutFormatting": "Pegar texto sin formato",
       "delete": "Eliminar",
       "duplicateSelection": "Duplicar selección",
       "selectAll": "Seleccionar todo",
@@ -178,7 +178,7 @@
       "section": "Sección",
       "comment": "Comentario",
       "bookmark": "Marcador",
-      "highlight": "Resaltar",
+      "highlight": "Resaltar referencias.",
       "link": "Enlace",
       "image": "Imagen",
       "symbol": "Símbolo",
@@ -206,12 +206,12 @@
       "addNoteInInnerMargin": "Añadir nota en el margen interno",
       "addNoteInOuterMargin": "Añadir nota en el margen externo",
       "swapMargin": "Intercambiar margen",
-      "addReadingSeparator": "Añadir separador de lectura",
+      "addReadingSeparator": "Añadir separador",
       "addSiglum": "Añadir sigla",
-      "siglaSetup": "Configurar siglas",
+      "siglaSetup": "Configurar siglas...",
       "addCitation": "Añadir cita",
-      "bibliography": "Bibliografía",
-      "referencesFormat": "Formato de referencias",
+      "bibliography": "Bibliografía...",
+      "referencesFormat": "Formato de referencias...",
       "addApparatus": {
         "label": "Añadir aparato",
         "critical": "Crítico",
@@ -282,7 +282,7 @@
         "resumeNumbering": "Reanudar numeración",
         "continuePreviousNumbering": "Continuar numeración anterior"
       },
-      "sectionsStyle": "Estilo de secciones",
+      "sectionsStyle": "Estilo de secciones...",
       "table": "Tabla",
       "shapesAndLines": "Formas y líneas",
       "removeLink": "Eliminar enlace",
@@ -314,7 +314,7 @@
         }
       },
       "toc": {
-        "label": "Tabla de contenidos"
+        "label": "Tabla de contenidos..."
       },
       "lineNumber": {
         "label": "Numeración de líneas..."
@@ -329,6 +329,7 @@
         "label": "Número de página..."
       }
     },
+    "headerFooter": "Header && Footer",
     "help": {
       "label": "Ayuda",
       "criterionHelp": "Ayuda de Criterion",
@@ -336,6 +337,8 @@
       "forum": "Foro",
       "whatsNewInCriterion": "Novedades en Criterion",
       "reportAnIssue": "Reportar un problema",
+      "criterionFeedback": "Proporcionar retroalimentación sobre Criterion",
+      "checkUpdates": "Buscar actualizaciones...",
       "about": "Acerca de Criterion"
     }
   },
@@ -353,8 +356,18 @@
     "cut": "Cortar",
     "copy": "Copiar",
     "paste": "Pegar",
+    "insert": "Insert",
     "acknowledgements": "Agradecimientos",
     "licenseAgreement": "Acuerdo de Licencia"
+  },
+  "symbols": {
+    "label": "Symbols",
+    "special": "Special Characters",
+    "font": "Fuente",
+    "subset": "Subset",
+    "symbol": "Symbol",
+    "character": "Character",
+    "keyboardShortcut": "Keyboard Shortcut"
   },
   "customSpacing": {
     "title": "Espaciado personalizado",
@@ -645,5 +658,130 @@
         "done": "Guardar"
       }
     }
+  },
+  "sections_styles_dialog": {
+    "title": "Estilo de Secciones",
+    "styles_section": {
+      "import_style": "Importar estilo",
+      "add": "Agregar",
+      "select_style": "Seleccionar estilo"
+    },
+    "name": "Nombre",
+    "typography_section": {
+      "typography": "Tipografía",
+      "font": "Fuente",
+      "style": "Estilo",
+      "size": "Tamaño",
+      "align": "Alineación",
+      "text_color": "Color del texto"
+    },
+    "spacing_section": {
+      "spacing": "Espaciado",
+      "line_spacing": "Interlineado",
+      "before_paragraph": "Antes del párrafo",
+      "after_paragraph": "Después del párrafo"
+    },
+    "cancel": "Cancelar",
+    "export_style": "Exportar estilo",
+    "done": "Hecho"
+  },
+  "preferences": {
+    "title": "Preferencias",
+    "sections": {
+      "general": "General",
+      "appearance": "Apariencia",
+      "file": "Archivo",
+      "language": "Idioma y Región",
+      "editing": "Edición",
+      "account": "Cuenta"
+    },
+    "general": {
+      "fileNameDisplay": {
+        "title": "Visualización del nombre de archivo",
+        "fullPath": "Mostrar nombre de archivo y último directorio",
+        "fullPathDescription": "Ej. */último directorio/nombre de archivo*",
+        "filenameOnly": "Mostrar solo nombre de archivo",
+        "filenameOnlyDescription": "Ej. *nombre de archivo*"
+      },
+      "restoreCriterionLayout": {
+        "title": "Restaurar diseño de Criterion",
+        "rememberLastLayout": "Recordar el último diseño visual",
+        "rememberLastLayoutDescription": "Guarda y restaura el último diseño visual de la sesión de edición."
+      },
+      "recentFiles": {
+        "title": "Archivos recientes para abrir",
+        "description": "Mostrar el número máximo de archivos abiertos recientemente para mostrar."
+      },
+      "links": {
+        "title": "Enlaces",
+        "openInDefaultApp": "Abrir en aplicación predeterminada",
+        "openInCriterion": "Abrir en Criterion (png, jpg, pdf)"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "Tema",
+        "system": "Predeterminado del sistema (Modo Claro)",
+        "light": "Modo Claro",
+        "dark": "Modo Oscuro"
+      },
+      "commentPreviewLimit": {
+        "title": "Límite de caracteres de vista previa de comentarios",
+        "description": "El número de caracteres mostrados para cada comentario en la barra lateral izquierda."
+      },
+      "bookmarkPreviewLimit": {
+        "title": "Límite de caracteres de vista previa de marcadores",
+        "description": "El número de caracteres mostrados para cada marcador en la barra lateral izquierda."
+      }
+    },
+    "file": {
+      "fileSavingDirectory": {
+        "title": "Directorio de guardado de archivos",
+        "lastOpened": "Último directorio abierto",
+        "defaultDirectory": "Directorio predeterminado"
+      },
+      "automaticFileSave": {
+        "title": "Guardado automático de archivos",
+        "never": "Nunca",
+        "every5min": "Cada 5 minutos",
+        "every10min": "Cada 10 minutos",
+        "every15min": "Cada 15 minutos"
+      },
+      "versioningDirectory": {
+        "title": "Directorio de versionado",
+        "defaultDirectory": "Directorio predeterminado",
+        "customDirectory": "Directorio personalizado"
+      },
+      "selectPath": "Seleccionar ruta...",
+      "defaultEncoding": {
+        "title": "Codificación predeterminada"
+      },
+      "encodingDetection": {
+        "title": "Detección de codificación",
+        "enable": "Habilitar"
+      },
+      "restoreLayout": {
+        "title": "Restaurar diseño",
+        "rememberLastLayout": "Recordar el último diseño visual",
+        "rememberLastLayoutDescription": "Guarda y restaura el último diseño visual de la sesión de edición."
+      }
+    },
+    "language": {
+      "criterionLanguage": "Idioma de Criterion",
+      "criterionRegion": "Región de Criterion",
+      "dateTimeFormat": "Formato de Fecha y Hora"
+    },
+    "editing": {
+      "showHistoryActions": {
+        "title": "Mostrar acciones del historial",
+        "description": "El número máximo de acciones del historial para mostrar."
+      }
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "resetToDefault": "Restablecer por Defecto",
+      "ok": "OK"
+    },
+    "comingSoon": "Configuración de cuenta próximamente..."
   }
 }

@@ -1,6 +1,18 @@
 import { BaseWindow, MenuItem, WebContentsView } from "electron";
 
 export enum MenuItemId {
+    //Settings menu
+    SETTINGS = "settings",
+    PREFERENCES = "preferences",
+    SIGN_IN = "signIn",
+    NOTIFICATIONS = "notifications",
+    SHARED_FILES = "sharedFiles",
+    FEEDBACK = "feedback",
+    CHECK_FOR_UPDATES = "checkForUpdates",
+    HIDE = "hide",
+    HIDE_OTHERS = "hideOthers",
+    SHOW_ALL = "showAll",
+    QUIT = "quit",
     // File menu
     NEW_FILE = "newFile",
     OPEN_FILE = "openFile",
@@ -38,7 +50,7 @@ export enum MenuItemId {
     PASTE = "paste",
     PASTE_STYLE = "pasteStyle",
     PASTE_AND_MATCH_STYLE = "pasteAndMatchStyle",
-    PASTE_WITH_NOTES = "pasteWithNotes",
+    PASTE_TEXT_WITHOUT_FORMATTING = "pasteTextWithoutFormatting",
     DELETE = "delete",
     DUPLICATE_SELECTION = "duplicateSelection",
     SELECT_ALL = "selectAll",
@@ -201,6 +213,8 @@ export enum MenuItemId {
     FORUM = "forum",
     WHAT_IS_NEW = "whatIsNew",
     REPORT_AN_ISSUE = "reportAnIssue",
+    CRITERION_FEEDBACK="criterionFeedback",
+    CHECK_UPDATES="checkUpdates",
     ABOUT = "about",
 
     // Developer menu
@@ -224,3 +238,5 @@ export type MenuViewMode = "initial" | WebContentsViewMode
 export type OnBaseWindowReady = (baseWindow: BaseWindow) => void
 
 export type OnWebContentsViewCreated = (route: WebContentsRoute, webContentsView: WebContentsView) => void
+
+export type UpdateTabsCallback = (tabs: Tab[]) => void

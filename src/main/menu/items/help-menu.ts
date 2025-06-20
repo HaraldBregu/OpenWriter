@@ -9,9 +9,10 @@ export function buildHelpMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
             {
                 id: MenuItemId.HELP,
                 label: i18next.t("menu.help.criterionHelp"),
-                accelerator: "CmdOrCtrl+Alt+F",
+                accelerator: "CmdOrCtrl+H",
                 click: (menuItem: MenuItem): void => onClick(menuItem),
             },
+            { type: 'separator' },
             {
                 id: MenuItemId.FAQS,
                 label: i18next.t("menu.help.faqs"),
@@ -31,6 +32,16 @@ export function buildHelpMenu(onClick: (menuItem: MenuItem) => void): MenuItemCo
             {
                 id: MenuItemId.REPORT_AN_ISSUE,
                 label: i18next.t("menu.help.reportAnIssue"),
+                click: (menuItem: MenuItem): void => onClick(menuItem),
+            },
+             {
+                id: MenuItemId.CRITERION_FEEDBACK,
+                label: i18next.t("menu.help.criterionFeedback"),
+                click: (menuItem: MenuItem): void => onClick(menuItem),
+            },
+             {
+                id: MenuItemId.CHECK_UPDATES,
+                label: i18next.t("menu.help.checkUpdates"),
                 click: (menuItem: MenuItem): void => onClick(menuItem),
             },
             {

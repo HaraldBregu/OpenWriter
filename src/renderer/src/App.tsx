@@ -6,15 +6,17 @@ import {
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./i18n";
-import { ELayout } from "./pages/editor/ELayout";
-import AppTabs from "./AppTabs";
+import AppTabs from "./views/AppTabs";
 import About from "./pages/About";
 import FileViewer from "./pages/FileViewer";
+import { Editor } from "./pages/editor/ELayout";
+import PreferencesModal from "./pages/preferences/PreferencesPanelView";
 
 const toolbar: Route = "/browser-tab-bar";
 const root: Route = "/";
 const fileViewer: Route = "/file-viewer";
 const about: Route = "/about";
+const preferences: Route = "/preferences";
 
 const ProtectedRoutes = () => {
   return <Outlet />
@@ -29,7 +31,7 @@ const router = createHashRouter([
     element: <ProtectedRoutes />,
     children: [
       {
-        element: <ELayout />,
+        element: <Editor />,
         path: root,
       },
     ]
@@ -43,12 +45,21 @@ const router = createHashRouter([
       },
     ]
   },
+  {
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        element: <PreferencesModal />,
+        path: preferences,
+      },
+    ]
+  },
   // TODO: Add a route for the about page
   {
     element: <ProtectedRoutes />,
     children: [
       {
-        element: <About isOpen={true} onClose={() => {}} />,
+        element: <About isOpen={true} onClose={() => { }} />,
         path: about,
       },
     ]

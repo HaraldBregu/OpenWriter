@@ -1,11 +1,12 @@
 import { useState, ReactNode, FC, ChangeEvent } from "react";
-import { Checkbox, FormControlLabel } from "@mui/material";
 import { textFormatColors } from "@utils/optionsEnums";
 import { useTranslation } from "react-i18next";
 import cn from "@/utils/classNames";
 import Button from "@components/ui/button";
 import Typography from '@components/Typography';
 import ButtonPopover from "./button-popover";
+import { Checkbox } from "./ui/checkbox";
+import { Label } from "./ui/label";
 
 interface FormatTextColorProps {
     onSelect?: (color: string) => void;
@@ -21,10 +22,9 @@ const ButtonColor: FC<FormatTextColorProps> = ({ tabIndex = 0, ariaLabel = 'Text
     const { t } = useTranslation();
     const [curColor, setCurColor] = useState<string | undefined>(initColor);
 
-    const popoverClass = cn('flex', 'flex-col', 'p-1', 'p-[16px]')
+    const popoverClass = cn('flex', 'flex-col', 'p-1')
     const gridTemplateClass = cn('grid', 'grid-cols-8', 'gap-1', 'p-1', 'gap-[8px]')
     const differentColorClass = cn('flex', 'justify-between', 'items-center', 'p-1')
-    const ctrlLabelClass = cn('pl-5', 'pb-5');
     const colorClass = (color: string): string =>
         cn(
             'border rounded-1 aspect-square',
@@ -78,20 +78,17 @@ const ButtonColor: FC<FormatTextColorProps> = ({ tabIndex = 0, ariaLabel = 'Text
                         />
                     </div>
                 </div>
-
-                <FormControlLabel
-                    className={ctrlLabelClass}
-                    control={
-                        <Checkbox
-                            checked={!curColor}
-                            onChange={({ target }) => {
-                                setCurColor(target.checked ? undefined : initColor);
-                            }}
-                            size="small"
-                        />
-                    }
-                    label={t('editor.color.noColor')}
-                />
+                <div className="flex items-start gap-3 p-1">
+                    <Checkbox id="no-color-checkbox"
+                        defaultChecked={!curColor}
+                        checked={!curColor}
+                        onCheckedChange={(value) => {
+                            setCurColor(value ? undefined : initColor);
+                        }} />
+                    <div className="grid gap-2">
+                        <Label htmlFor="no-color-checkbox">{t('editor.color.noColor')}</Label>
+                    </div>
+                </div>
             </>
         </ButtonPopover>
     );

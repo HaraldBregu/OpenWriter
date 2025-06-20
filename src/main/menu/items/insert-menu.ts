@@ -11,12 +11,12 @@ export function buildInsertMenu(onClick: (menuItem: MenuItem) => void): MenuItem
     const menu: MenuItemConstructorOptions = {}
     menu.label = i18next.t("menu.insert.label")
     menu.submenu = [
-        {
+       /*  {
             id: MenuItemId.INSERT_SECTION,
             label: i18next.t("menu.insert.section"),
             click: (menuItem: MenuItem): void => onClick(menuItem),
             enabled: viewMode === 'critix_editor',
-        },
+        }, */
         {
             id: MenuItemId.INSERT_COMMENT,
             label: i18next.t("menu.insert.comment"),
@@ -83,11 +83,11 @@ export function buildInsertMenu(onClick: (menuItem: MenuItem) => void): MenuItem
             click: (menuItem: MenuItem): void => onClick(menuItem),
             enabled: viewMode === 'critix_editor',
         },
-        // {
-        //   id: MenuItemId.INSERT_SECTION_BREAK,
-        //   label: i18next.t("menu.insert.sectionBreak"),
-        //   click: (menuItem: MenuItem): void => onClick(menuItem),
-        // },
+        {
+           id: MenuItemId.INSERT_SECTION_BREAK,
+           label: i18next.t("menu.insert.sectionBreak"),
+           click: (menuItem: MenuItem): void => onClick(menuItem),
+        },
         {
             id: MenuItemId.INSERT_LINE_NUMBER,
             label: i18next.t("menu.insert.lineNumber.label"),
@@ -119,14 +119,15 @@ export function buildInsertMenu(onClick: (menuItem: MenuItem) => void): MenuItem
                 // },
             ],
         },
+
         // { type: "separator" },
-        // {
-        //     id: MenuItemId.INSERT_PAGE_NUMBER,
-        //     label: i18next.t("menu.insert.pageNumber"),
-        //     accelerator: "Alt+CmdOrCtrl+Shift+P",
-        //     click: (menuItem: MenuItem): void => onClick(menuItem),
-        //     enabled: false,
-        // },
+         {
+             id: MenuItemId.INSERT_PAGE_NUMBER,
+             label: i18next.t("menu.insert.pageNumber"),
+             accelerator: "CmdOrCtrl+Shift+P",
+             click: (menuItem: MenuItem): void => onClick(menuItem),
+             enabled: true,
+         },
         // {
         //   id: MenuItemId.INSERT_DATE,
         //   label: i18next.t("menu.insert.date"),

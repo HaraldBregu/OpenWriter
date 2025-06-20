@@ -1,6 +1,6 @@
 import path from "path";
+import * as _ from 'lodash-es';
 import { app, BaseWindow, dialog, ipcMain, MenuItem, net, protocol, shell } from "electron";
-import { setApplicationMenu } from "./menu/menu";
 import { MenuItemId } from "./shared/types";
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
@@ -11,10 +11,12 @@ import {
   getBaseWindow,
   getToolbarWebContentsView,
   initializeMainWindow,
+  openChildWindow,
   toolbarWebContentsViewSend,
+  closeChildWindow,
 } from "./main-window";
 import * as fsSync from "fs";
-import { getLocalesPath, getTemplatesPath } from "./shared/util.js";
+import { getLocalesPath, getRootUrl, getStylesPath, getTemplatesPath } from "./shared/util.js";
 import {
   closeWebContentsViewWithId,
   getWebContentsViewsIds,
@@ -29,7 +31,6 @@ import {
 } from "./content";
 import {
   closeApplication,
-  closeDocument,
   moveDocument,
   openDocument,
   renameDocument,
@@ -52,12 +53,25 @@ import {
   setRecentDocuments,
   updateRecentDocuments,
 } from "./document/document";
-import * as _ from "lodash-es";
 import { setDisabledReferencesMenuItemsIds } from "./menu/items/references-menu";
-import { setApparatusSubMenuObjectItems, setToolbarVisible } from "./menu/items/view-menu";
-import { fileTypeToRouteMapping, Route, routeToMenuMapping, setMenuViewMode, typeTypeToRouteMapping } from "./shared/constants";
+import { setApparatusSubMenuObjectItems, setEnableTocVisibilityMenuItem, setTocVisible, setToolbarVisible } from "./menu/items/view-menu";
+import { fileTypeToRouteMapping, Route, routeToMenuMapping, typeTypeToRouteMapping } from "./shared/constants";
 import { setFilePathForSelectedTab } from "./toolbar";
-import { readAppLanguage, readToolbarAdditionalItems, readToolbarIsVisible, storeAppLanguage, storeToolbarAdditionalItems, storeToolbarIsVisible } from "./store";
+import {
+  getTabs,
+  readAppLanguage,
+  readSpecialCharacterConfig,
+  readToolbarAdditionalItems,
+  readToolbarIsVisible,
+  storeAppLanguage,
+  storeToolbarAdditionalItems,
+  storeToolbarIsVisible,
+  updateTabFilePath,
+} from "./store";
+import { setEnableTocSettingsMenu } from "./menu/items/format-menu";
+import { ApplicationMenu } from "./menu/menu";
+import initializeFonts, { getSymbols, getFonts, getSubsets } from "./shared/fonts";
+import { initializeThemeManager } from "./theme-manager";
 
 
 // .critx protocol configuration
@@ -102,7 +116,7 @@ const updateElectronLocale = async (lang: string): Promise<void> => {
 
     await i18next.changeLanguage(lang);
 
-    setApplicationMenu(onClickMenuItem);
+    ApplicationMenu.build(onClickMenuItem)
 
     mainLogger.endTask(taskId, "Electron", "Language changed");
   } catch (err) {
@@ -161,9 +175,9 @@ const registerIpcListeners = (): void => {
         const documentObject = JSON.parse(fileContent);
         const document = await createDocument(documentObject);
         setCurrentDocument(document);
+        setFilePathForSelectedTab(filepath);
         selectedWebContentsViewSend("load-document", documentObject);
         selectedWebContentsViewSend("load-document-apparatuses", documentObject.apparatuses);
-        setFilePathForSelectedTab(filepath);
       } break;
       case 'pdf':
       case 'png':
@@ -172,7 +186,7 @@ const registerIpcListeners = (): void => {
         selectedWebContentsViewSend("load-file-at-path", filepath);
         setFilePathForSelectedTab(filepath);
         updateRecentDocuments(filepath);
-        setApplicationMenu(onClickMenuItem);
+        ApplicationMenu.build(onClickMenuItem)
         break;
     }
 
@@ -181,11 +195,21 @@ const registerIpcListeners = (): void => {
   ipcMain.on('application:updateToolbarAdditionalItems', (_, items) => {
     storeToolbarAdditionalItems(items);
     getWebContentsViews().forEach((webContentView) =>
-        webContentView.webContents.send(
-          "toolbar-additional-items",
-          readToolbarAdditionalItems()
-        )
-      );
+      webContentView.webContents.send(
+        "toolbar-additional-items",
+        readToolbarAdditionalItems()
+      )
+    );
+  });
+
+
+  ipcMain.on("select-folder-path", async (event) => {
+    console.log("select-folder-path")
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      title: 'Seleziona cartella per il versioning',
+    });
+    event.reply("receive-folder-path", result.filePaths[0]);
   });
 };
 
@@ -194,6 +218,28 @@ export function changeLanguageGlobal(lang: string): void {
   const webContentsView = getSelectedWebContentsView();
   webContentsView?.webContents.send("language-changed", lang);
 }
+
+const closeCurrentDocument = async (): Promise<void> => {
+  const taskId = mainLogger.startTask("Electron", "Closing current document");
+  const toolbarWebContentsView = getToolbarWebContentsView()
+  const currentWebContentsView = getSelectedWebContentsView()
+  const tabId = currentWebContentsView?.webContents.id ?? -1
+  toolbarWebContentsView?.webContents.send("close-current-document", tabId);
+
+  const tabs = closeWebContentsViewWithId(tabId)
+  const route = tabs.find((tab) => tab.selected)?.route
+  const menuViewMode = routeToMenuMapping[route]
+
+  const selectedTab = tabs.find((tab) => tab.selected)
+  const isNewDocument = !selectedTab || !selectedTab.filePath || selectedTab.filePath === null
+
+  ApplicationMenu
+    .setIsNewDocument(isNewDocument)
+    .setMenuViewMode(menuViewMode)
+    .build(onClickMenuItem)
+
+  mainLogger.endTask(taskId, "Electron", "File closed");
+};
 
 async function onDocumentOpened(filePath: string): Promise<void> {
   const fileNameParsed = path.parse(filePath);
@@ -208,7 +254,10 @@ async function onDocumentOpened(filePath: string): Promise<void> {
     fileType,
   );
   updateRecentDocuments(filePath);
-  setApplicationMenu(onClickMenuItem);
+
+  ApplicationMenu
+    .setIsNewDocument(false)
+    .build(onClickMenuItem)
 }
 
 function onDocumentSaved(filePath: string): void {
@@ -217,23 +266,41 @@ function onDocumentSaved(filePath: string): void {
   toolbarWebContentsViewSend("document-saved", fileNameBase);
   toolbarWebContentsViewSend("main-text-changed", false);
   updateRecentDocuments(filePath);
-  setApplicationMenu(onClickMenuItem);
+  ApplicationMenu.build(onClickMenuItem)
+  const selectedContentView = getSelectedWebContentsView()
+  if (!selectedContentView)
+    return
+
+  const selectedContentViewId = selectedContentView?.webContents.id
+  updateTabFilePath(selectedContentViewId, filePath)
+
+  ApplicationMenu
+    .setIsNewDocument(false)
+    .build(onClickMenuItem)
 }
 
 function onDocumentRenamed(filename: string): void {
-  const toolbarContentView = getToolbarWebContentsView();
-  toolbarContentView?.webContents.send("document-renamed", filename);
+  toolbarWebContentsViewSend("document-renamed", filename);
 }
 
 function onClickMenuItem(menuItem: MenuItem, data?: string): void {
   const typeId: MenuItemId = menuItem.id as MenuItemId;
 
   switch (typeId) {
-
+    // Settings menu
+    case MenuItemId.PREFERENCES: {
+      // selectedWebContentsViewSend("open-preferences");
+      const url = getRootUrl() + "preferences"
+      openChildWindow(url, { title: "Criterion Preferences" })
+    }
+      break;
     // File menu
     case MenuItemId.NEW_FILE:
       toolbarWebContentsViewSend("create-new-document");
       setCurrentDocument(null)
+      ApplicationMenu
+        .setIsNewDocument(true)
+        .build(onClickMenuItem)
       break;
     case MenuItemId.OPEN_FILE:
       openDocument(null, onDocumentOpened);
@@ -244,13 +311,14 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
     case MenuItemId.IMPORT_FILE:
       break;
     case MenuItemId.CLOSE_FILE:
-      closeDocument();
+      console.log("close file from menu + shortcut")
+      closeCurrentDocument();
       break;
     case MenuItemId.SAVE_FILE:
       saveDocument(onDocumentSaved);
       break;
     case MenuItemId.SAVE_FILE_AS:
-      saveDocumentAs();
+      saveDocumentAs(onDocumentSaved);
       break;
     case MenuItemId.RENAME_FILE:
       renameDocument(onDocumentRenamed);
@@ -282,6 +350,7 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
     case MenuItemId.METADATA:
       break;
     case MenuItemId.PAGE_SETUP:
+      selectedWebContentsViewSend('page-setup')
       break;
     case MenuItemId.PRINT:
       break;
@@ -319,7 +388,7 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
     case MenuItemId.PASTE_AND_MATCH_STYLE:
       // NO IMPPLEMENTATION REQUIRED
       break;
-    case MenuItemId.PASTE_WITH_NOTES:
+    case MenuItemId.PASTE_TEXT_WITHOUT_FORMATTING:
       break;
     case MenuItemId.DELETE:
       break;
@@ -331,9 +400,9 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       break;
 
     // Insert menu
-    case MenuItemId.INSERT_SECTION:
+    /* case MenuItemId.INSERT_SECTION:
       selectedWebContentsViewSend("insert-section");
-      break
+      break */
     case MenuItemId.INSERT_COMMENT:
       selectedWebContentsViewSend('insert-comment');
       break
@@ -639,12 +708,12 @@ function onClickMenuItem(menuItem: MenuItem, data?: string): void {
       selectedWebContentsViewSend("header-footer");
       break
     case MenuItemId.TABLE_OF_CONTENTS:
-      selectedWebContentsViewSend("table-of-contents");
+      selectedWebContentsViewSend("toggle-toc-visibility");
       break
     case MenuItemId.TOOLBAR:
       storeToolbarIsVisible(!readToolbarIsVisible())
       setToolbarVisible(readToolbarIsVisible());
-      setApplicationMenu(onClickMenuItem);
+      ApplicationMenu.build(onClickMenuItem)
       getWebContentsViews().forEach((webContentView) =>
         webContentView.webContents.send(
           "toggle-toolbar",
@@ -846,12 +915,16 @@ const initializei18next = async (): Promise<void> => {
 
 const onBaseWindowReady = async (baseWindow: BaseWindow): Promise<void> => {
   const route = Route.root
-  const menuViewMode = routeToMenuMapping[route]
-  setMenuViewMode(menuViewMode)
 
   const selectedContentView = await createWebContentsView(route)
   if (!selectedContentView)
     return
+
+  const menuViewMode = routeToMenuMapping[route]
+  ApplicationMenu
+    .setIsNewDocument(true)
+    .setMenuViewMode(menuViewMode)
+    .build(onClickMenuItem)
 
   baseWindow.contentView.addChildView(selectedContentView)
   showWebContentsView(selectedContentView)
@@ -863,6 +936,7 @@ const initializeApp = async (): Promise<void> => {
   const appTaskId = mainLogger.startTask("Electron", "Starting application");
 
   await initializei18next();
+  initializeThemeManager();
 
   await app.whenReady();
 
@@ -887,42 +961,88 @@ const initializeApp = async (): Promise<void> => {
   // TABS API
   ipcMain.handle('tabs:new', async (_, fileType: FileType) => {
     const route = fileTypeToRouteMapping[fileType]
-    const webContentsView = await createWebContentsView(route)
     const menuViewMode = routeToMenuMapping[route]
-    setMenuViewMode(menuViewMode)
-    setApplicationMenu(onClickMenuItem);
+    ApplicationMenu
+      .setMenuViewMode(menuViewMode)
+      .build(onClickMenuItem)
+    const webContentsView = await createWebContentsView(route)
     return webContentsView?.webContents.id
   })
   ipcMain.handle('tabs:close', (_, id: number) => {
+    console.log("close file from tabs:close")
+
+    // Check if the current document in the current tab 
+
     const tabs = closeWebContentsViewWithId(id)
     const route = tabs.find((tab) => tab.selected)?.route
     const menuViewMode = routeToMenuMapping[route]
-    setMenuViewMode(menuViewMode)
-    setApplicationMenu(onClickMenuItem);
+    ApplicationMenu
+      .setMenuViewMode(menuViewMode)
+      .build(onClickMenuItem)
   })
   ipcMain.handle('tabs:select', (_, id: number, tabType: TabType) => {
+    setSelectedWebContentsViewWithId(id)
+    const tabs = getTabs()
+    const selectedTab = tabs.find((tab) => tab.selected)
+    const isNewDocument = !selectedTab || !selectedTab.filePath || selectedTab.filePath === null
     const route = typeTypeToRouteMapping[tabType]
     const menuViewMode = routeToMenuMapping[route]
-    setMenuViewMode(menuViewMode)
-    setApplicationMenu(onClickMenuItem);
-    setSelectedWebContentsViewWithId(id)
+    ApplicationMenu
+      .setIsNewDocument(isNewDocument)
+      .setMenuViewMode(menuViewMode)
+      .build(onClickMenuItem)
   })
-  ipcMain.handle('tabs:reorder', (_, tabIds: number[]) => reorderTabs(tabIds))
+  ipcMain.handle('tabs:reorder', (_, tabIds: number[]) => {
+    reorderTabs(tabIds)
+  })
   ipcMain.handle('tabs:getAllContentViewsIds', () => getWebContentsViewsIds())
   ipcMain.handle('tabs:getSelectedTabId', () => getSelectedWebContentsViewId())
 
   // MENU API
   ipcMain.handle('menu:disableReferencesMenuItems', (_, data) => {
     setDisabledReferencesMenuItemsIds(data)
-    setApplicationMenu(onClickMenuItem)
+    ApplicationMenu.build(onClickMenuItem)
   })
   ipcMain.handle('menu:updateViewApparatusesMenuItems', (_, data) => {
     setApparatusSubMenuObjectItems(data)
-    setApplicationMenu(onClickMenuItem)
+    ApplicationMenu.build(onClickMenuItem)
   })
+  ipcMain.handle('menu:setTocVisibility', (_, isVisible: boolean) => {
+    setTocVisible(isVisible);
+    ApplicationMenu.build(onClickMenuItem)
+  });
+  ipcMain.handle('menu:setTocMenuItemsEnabled', (_, isEnable: boolean) => {
+    setEnableTocSettingsMenu(isEnable);
+    setEnableTocVisibilityMenuItem(isEnable);
+    ApplicationMenu.build(onClickMenuItem)
+  });
 
   // SYSTEM API
   ipcMain.handle('system:getUserInfo', () => os.userInfo())
+
+  ipcMain.handle('system:getFonts', () => Object.values(getFonts()).map(f => f.name).sort((a, b) => a.localeCompare(b)));
+
+  ipcMain.handle('system:getSubsets', () => getSubsets());
+
+  ipcMain.handle('system:getSymbols', (_, fontName: string) => getSymbols(fontName));
+
+  ipcMain.handle('system:getConfiguredSpcialCharactersList', () => readSpecialCharacterConfig());
+
+  ipcMain.handle('system:showMessageBox', async (_, message: string) => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    // @TODO: implement buttons, message and return result
+    await dialog.showMessageBox(baseWindow, {
+      message: message,
+      buttons: [
+        "Yes",
+        "No",
+        "Keep both"
+      ],
+    });
+
+  })
 
   // APPLICATION API
   ipcMain.handle('application:toolbarIsVisible', () => {
@@ -933,11 +1053,15 @@ const initializeApp = async (): Promise<void> => {
     return readToolbarAdditionalItems();
   })
 
+  ipcMain.handle('application:closeChildWindow', () => {
+    closeChildWindow();
+  })
+
   // DOCUMENT API
   ipcMain.handle('document:openDocument', () => {
     openDocument(null, onDocumentOpened);
   })
-  ipcMain.handle('document:getTemplates', () => {
+  ipcMain.handle('document:getTemplates', async () => {
     const templatesFolderPath = getTemplatesPath();
     const templatesFilenames = fsSync.readdirSync(templatesFolderPath);
     const templates = templatesFilenames
@@ -945,7 +1069,7 @@ const initializeApp = async (): Promise<void> => {
       .map(async (filename) => {
         const filePath = path.join(templatesFolderPath, filename);
         const content = await fs.readFile(filePath, "utf8");
-        return content
+        return { filename, content };
       });
 
     return Promise.all(templates);
@@ -957,7 +1081,7 @@ const initializeApp = async (): Promise<void> => {
     const result = await dialog.showOpenDialog({
       properties: ["openFile"],
       defaultPath: path.join(app.getPath("downloads")),
-      filters: [{ name: "Files", extensions: ["tml"] }],
+      filters: [{ name: "Template", extensions: ["tml"] },],
     });
 
     if (result.canceled || result.filePaths.length === 0) return;
@@ -1034,7 +1158,9 @@ const initializeApp = async (): Promise<void> => {
   })
   ipcMain.handle('document:getApparatuses', () => {
     const document = getCurrentDocument();
-    return document?.apparatuses;
+    const apparatuses = document?.apparatuses as DocumentApparatus[];
+    if (!apparatuses) return [];
+    return apparatuses;
   });
   ipcMain.handle('document:setApparatuses', (_, apparatuses) => {
     setCurrentApparatuses(apparatuses)
@@ -1054,10 +1180,159 @@ const initializeApp = async (): Promise<void> => {
   ipcMain.handle('document:setParatextual', (_, paratextual) => {
     setCurrentParatextual(paratextual)
   });
+  ipcMain.handle('document:getStylesNames', () => {
+    const stylesFolderPath = getStylesPath();
+    const stylesFolderContent = fsSync.readdirSync(stylesFolderPath);
+    const filenames = stylesFolderContent.filter((filename) => filename.endsWith(".stl"));
+    return filenames;
+  })
+  ipcMain.handle('document:getStyle', async (_, filename) => {
+    const stylesFolderPath = getStylesPath();
+    const stylesFolderContent = fsSync.readdirSync(stylesFolderPath);
+    const found = stylesFolderContent.find(style => style === filename)
+    if (found) {
+      const filePath = path.join(stylesFolderPath, filename);
+      const content = await fs.readFile(filePath, "utf8");
+      return content;
+    }
+    return null
+  })
+  ipcMain.handle("document:createStyle", async (_, style: unknown) => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    const stylesFolderPath = getStylesPath();
+
+    const result = await dialog.showSaveDialog(baseWindow, {
+      title: 'Export Style',
+      defaultPath: path.join(stylesFolderPath, 'untitled.stl'),
+      filters: [{ name: "Style", extensions: ["stl"] }]
+    });
+
+    if (!result.canceled && result.filePath) {
+      const filePath = result.filePath;
+
+      await fs.writeFile(filePath, JSON.stringify(style, null, 2));
+      await dialog.showMessageBox(baseWindow, { message: 'Style saved successfully!' });
+    }
+
+    mainLogger.endTask(taskId, "Electron", "New style saved");
+  });
+  ipcMain.handle('document:importStyle', async () => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: path.join(app.getPath("downloads")),
+      filters: [{ name: "Style", extensions: ["stl"] },],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) return;
+
+    // Selected template file path
+    const selectedFilePath = result.filePaths[0];
+    const fileNameParsed = path.parse(selectedFilePath);
+    const fileName = fileNameParsed.name;
+    const fileNameWithExt = fileNameParsed.base;
+
+    // Templates folder path
+    const stylesFolderPath = getStylesPath();
+    const stylesFilenames = fsSync.readdirSync(stylesFolderPath);
+    const matchFilenames = stylesFilenames.filter((filename) => filename.includes(fileName));
+    const matchFilename = matchFilenames.length > 0
+
+    if (matchFilename) {
+      const confirmation = await dialog.showMessageBox(baseWindow, {
+        type: "warning",
+        buttons: ["Replace", "Cancel"],
+        defaultId: 1,
+        noLink: true,
+        title: "Confirm Replacement",
+        message: `A style named "${fileName}" already exists. Do you want to overwrite it?`,
+      });
+
+      if (confirmation.response === 1) return
+    }
+
+    // Copy the new file to the templates folder
+    const destinationPath = path.join(stylesFolderPath, fileNameWithExt);
+    await fs.copyFile(selectedFilePath, destinationPath);
+    return fileNameWithExt;
+  })
+  ipcMain.handle('document:exportSiglumList', async (_event, siglumList: Siglum[]) => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    const result = await dialog.showSaveDialog(baseWindow, {
+      title: 'Export Siglum',
+      defaultPath: path.join(app.getPath("downloads"), `Untitled.siglum`),
+      filters: [{ name: "Siglum", extensions: ["siglum"] }]
+    });
+
+    const userInfo = os.userInfo()
+    const metadata = {
+      author: userInfo.username,
+      exportDate: new Date().toISOString(),
+    } satisfies SiglumMetadata
+
+    const scMetadata = await _.mapKeys(metadata, (__, key) => _.snakeCase(key))
+
+    const siglumListData = siglumList.map((item) => ({
+      siglum: item.siglum,
+      manuscripts: item.manuscripts,
+      description: item.description,
+    })) satisfies DocumentSiglum[]
+
+    const data = {
+      metadata: scMetadata,
+      entries: siglumListData,
+    }
+
+    if (result.canceled || result.filePath === undefined) return;
+
+    const filePath = result.filePath;
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    await dialog.showMessageBox(baseWindow, { message: 'Siglum saved successfully!' });
+  })
+  ipcMain.handle('document:importSiglumList', async () => {
+    const baseWindow = getBaseWindow();
+    if (!baseWindow) return;
+
+    const result = await dialog.showOpenDialog(baseWindow, {
+      title: 'Import Siglum', // @MISSING: to be translated
+      defaultPath: path.join(app.getPath("downloads")),
+      filters: [{ name: "Siglum", extensions: ["siglum"] }]
+    });
+
+    if (!result.canceled && result.filePaths.length === 0) return;
+
+    const selectedFilePath = result.filePaths[0];
+    const siglumData = await fs.readFile(selectedFilePath, "utf8");
+    try {
+      const siglumDataParsed = JSON.parse(siglumData)
+
+      const entries = siglumDataParsed.entries.map((entry: DocumentSiglum) => ({
+        siglum: entry.siglum,
+        manuscripts: entry.manuscripts,
+        description: entry.description,
+      })) satisfies DocumentSiglum[]
+
+      return entries;
+    } catch (error) {
+      await dialog.showMessageBox(baseWindow, { message: "Error parsing siglum data", type: 'error' });
+      mainLogger.error("Electron", "Error parsing siglum data", error as Error);
+      return null;
+    }
+  })
 
   const taskId = mainLogger.startTask("Electron", "Initializing main window");
   initializeMainWindow(onBaseWindowReady);
   mainLogger.endTask(taskId, "Electron", "Main window created");
+
+  const fontTaskId = mainLogger.startTask("Font", "Initializing fonts");
+  initializeFonts();
+  mainLogger.endTask(fontTaskId, 'Font', 'Font list initialized');
 
   const baseWindow = getBaseWindow();
 
@@ -1068,7 +1343,7 @@ const initializeApp = async (): Promise<void> => {
 
   await setRecentDocuments();
 
-  setApplicationMenu(onClickMenuItem);
+  ApplicationMenu.build(onClickMenuItem)
 
   registerIpcListeners();
 

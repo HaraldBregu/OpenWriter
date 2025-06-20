@@ -1,28 +1,9 @@
-import { TreeItem } from '@/lib/tocTreeMapper';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import colors from "tailwindColors.json"
-import { HistoryState } from '../../hooks';
 import { v4 as uuidv4 } from 'uuid';
 
-
-export interface TocSettings {
-    show: boolean;
-    levels: number;
-    indentLevels: boolean;
-    title: string;
-    tabLeaderFormat: string;
-    showHeadingNumbers: boolean;
-    numberSeparator: string;
-    level1Format?: string;
-    level2Format?: string;
-    level3Format?: string;
-    level4Format?: string;
-    level5Format?: string;
-    level6Format?: string;
-}
-
 export const initialTocSettings: TocSettings = {
-    show: true,
+    show: false,
     levels: 3,
     indentLevels: true,
     title: "Table of Contents",
@@ -41,7 +22,6 @@ const initialEmphasisState: EmphasisState = {
     headingLevel: 0,
     fontFamily: "Times New Roman",
     fontSize: "12pt",
-
     bold: false,
     italic: false,
     underline: false,
@@ -67,11 +47,8 @@ const initialEmphasisState: EmphasisState = {
 }
 
 export interface EditorState {
-    sidebarOpen: boolean;
     data: string[];
     toolbarEmphasisState: EmphasisState;
-    editorEmphasisState: EmphasisState;
-    emphasisState: EmphasisState;
     editorMode: 'editing' | 'review';
     canEdit: boolean;
     canUndo: boolean;
@@ -85,7 +62,6 @@ export interface EditorState {
     canAddComment: boolean;
     tocSettings: TocSettings;
     history?: HistoryState;
-    selectedSidebarTabIndex: number;
     changeIndent: 'increase' | 'decrease' | null;
     bookmarkActive: boolean;
     commentActive: boolean;
@@ -93,17 +69,13 @@ export interface EditorState {
     bookmarkHighlighted: boolean;
     commentHighlighted: boolean;
     apparatuses: Apparatus[];
-    characters: number;
-    words: number;
     printPreviewVisible: boolean;
+    documentTemplate: any
 }
 
 const initialState: EditorState = {
-    sidebarOpen: false,
     data: [],
     toolbarEmphasisState: initialEmphasisState,
-    editorEmphasisState: initialEmphasisState,
-    emphasisState: initialEmphasisState,
     editorMode: 'editing',
     canEdit: true,
     headingEnabled: true,
@@ -116,7 +88,6 @@ const initialState: EditorState = {
     canAddBookmark: true,
     canAddComment: true,
     tocSettings: initialTocSettings,
-    selectedSidebarTabIndex: 0,
     changeIndent: null,
     bookmarkActive: false,
     commentActive: false,
@@ -129,12 +100,10 @@ const initialState: EditorState = {
             title: "Apparatus 1",
             type: "CRITICAL",
             visible: true,
-            disabled: false,
         },
     ],
-    characters: 0,
-    words: 0,
     printPreviewVisible: false,
+    documentTemplate: null
 };
 
 const editorSlice = createSlice({
@@ -146,7 +115,6 @@ const editorSlice = createSlice({
             state.toolbarEmphasisState = {
                 ...emphasisState,
             };
-            state.emphasisState = emphasisState;
         },
         setCanUndo(state, action: PayloadAction<boolean>) {
             state.canUndo = action.payload;
@@ -158,12 +126,14 @@ const editorSlice = createSlice({
             state.editorMode = action.payload;
             state.canEdit = action.payload === 'editing';
         },
-
         updateTocSettings(state, action: PayloadAction<TocSettings>) {
             state.tocSettings = { ...state.tocSettings, ...action.payload };
         },
         clearTocSettings(state) {
             state.tocSettings = initialTocSettings;
+        },
+        toggleTocVisibility(state) {
+            state.tocSettings.show = !state.tocSettings.show;
         },
         setHistory(state, action: PayloadAction<HistoryState>) {
             state.history = action.payload;
@@ -173,9 +143,6 @@ const editorSlice = createSlice({
         },
         setCanAddComment(state, action: PayloadAction<boolean>) {
             state.canAddComment = action.payload;
-        },
-        setSelectedSidebarTabIndex(state, action: PayloadAction<number>) {
-            state.selectedSidebarTabIndex = action.payload;
         },
         changeIndentention(state, action: PayloadAction<'increase' | 'decrease' | null>) {
             state.changeIndent = action.payload;
@@ -210,13 +177,19 @@ const editorSlice = createSlice({
         updateApparatuses(state, action: PayloadAction<Apparatus[]>) {
             state.apparatuses = action.payload;
         },
+        updateVisibleApparatuses(state, action: PayloadAction<Apparatus[]>) {
+            const invisibleApparatuses = state.apparatuses.filter(apparatus => !apparatus.visible);
+            state.apparatuses = [
+                ...invisibleApparatuses,
+                ...action.payload
+            ]
+        },
         addApparatus(state, action: PayloadAction<ApparatusType>) {
             state.apparatuses.push({
                 id: uuidv4(),
                 title: "Apparatus " + (state.apparatuses.length + 1),
                 type: action.payload,
                 visible: true,
-                disabled: false
             });
         },
         toggleVisibilityApparatus(state, action: PayloadAction<{ id: string, visible: boolean }>) {
@@ -227,33 +200,24 @@ const editorSlice = createSlice({
             }
             state.apparatuses = apparatuses
         },
-        createApparatusesFromDocument(state, action: PayloadAction<any[]>) {
+        createApparatusesFromDocument(state, action: PayloadAction<DocumentApparatus[]>) {
             const apparatusesData = action.payload
-            if (apparatusesData === undefined) return
+            if (apparatusesData.length === 0) return
             state.apparatuses = apparatusesData.map((apparatus) => ({
                 id: uuidv4(),
                 title: apparatus.title,
                 type: apparatus.type,
                 visible: apparatus.visible ?? true,
-                disabled: apparatus.disabled
             }));
         },
         createApparatusesFromLayout(state, action: PayloadAction<any[]>) {
             const apparatusesData = action.payload
             if (apparatusesData === undefined) return
-
-
-            apparatusesData.forEach((apparatus) => {
-                console.log("apparatusesData", apparatus)
-
-            });
-
             state.apparatuses = apparatusesData.map((apparatus) => ({
                 id: apparatus.id,
                 title: apparatus.title,
                 type: apparatus.type,
                 visible: apparatus.visible ?? true,
-                disabled: apparatus.disabled
             }));
         },
         addApparatusAfterIndex(state, action: PayloadAction<{ type: ApparatusType, index: number }>) {
@@ -262,7 +226,6 @@ const editorSlice = createSlice({
                 title: "Apparatus " + (state.apparatuses.length + 1),
                 type: action.payload.type,
                 visible: true,
-                disabled: false
             });
         },
         addApparatusAtTop(state, action: PayloadAction<ApparatusType>) {
@@ -271,7 +234,6 @@ const editorSlice = createSlice({
                 title: "Apparatus " + (state.apparatuses.length + 1),
                 type: action.payload,
                 visible: true,
-                disabled: false
             });
         },
         removeApparatus(state, action: PayloadAction<Apparatus>) {
@@ -289,23 +251,14 @@ const editorSlice = createSlice({
                 apparatus.title = action.payload.title;
             }
         },
-        setCharacters(state, action: PayloadAction<number>) {
-            state.characters = action.payload;
-        },
-        setWords(state, action: PayloadAction<number>) {
-            state.words = action.payload;
-        },
         setPrintPreviewVisible(state, action: PayloadAction<boolean>) {
             state.printPreviewVisible = action.payload;
         },
         togglePrintPreviewVisible(state) {
             state.printPreviewVisible = !state.printPreviewVisible;
         },
-        setSidebarOpen: (state, action: PayloadAction<boolean>) => {
-            state.sidebarOpen = action.payload;
-        },
-        toggleSidebar: (state) => {
-            state.sidebarOpen = !state.sidebarOpen;
+        setDocumentTemplate(state, action: PayloadAction<any>) {
+            state.documentTemplate = action.payload;
         },
     },
 
@@ -316,11 +269,11 @@ export const {
     setCanUndo,
     setCanRedo,
     updateTocSettings,
+    toggleTocVisibility,
     setEditorMode,
     setHistory,
     setCanAddBookmark,
     clearTocSettings,
-    setSelectedSidebarTabIndex,
     changeIndentention,
     setBookmark,
     toggleBookmark,
@@ -333,6 +286,7 @@ export const {
     setCanAddComment,
     setComment,
     updateApparatuses,
+    updateVisibleApparatuses,
     addApparatus,
     toggleVisibilityApparatus,
     createApparatusesFromDocument,
@@ -342,12 +296,9 @@ export const {
     removeApparatus,
     changeApparatusType,
     changeApparatusTitle,
-    setCharacters,
-    setWords,
     setPrintPreviewVisible,
     togglePrintPreviewVisible,
-    setSidebarOpen,
-    toggleSidebar,
+    setDocumentTemplate
 } = editorSlice.actions;
 
 export default editorSlice.reducer;

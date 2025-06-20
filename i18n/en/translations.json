@@ -88,7 +88,7 @@
     "superscript": "Superscript",
     "subscript": "Subscript",
     "contextMenu": "Customize Toolbar",
-    "modalTitle": "Toggle items to add or remove from the toolbar"
+    "modalTitle": "Select or remove items from the toolbar"
   },
   "dividerSections": {
     "toc": "Table of Contents",
@@ -116,7 +116,7 @@
         "lastSaved": "Last Saved",
         "browse": "Browse All Versions"
       },
-      "shareForReview": "Share For Review",
+      "shareForReview": "Share For Review...",
       "lock": "Lock...",
       "unlock": "Unlock...",
       "exportTo": {
@@ -128,9 +128,9 @@
       },
       "language&Region": "Language & Region...",
       "saveAsTemplate": "Save as Template...",
-      "metadata": "Metadata",
+      "metadata": "Metadata...",
       "pageSetup": "Page Setup...",
-      "print": "Print"
+      "print": "Print..."
     },
     "edit": {
       "label": "Edit",
@@ -149,7 +149,7 @@
       "paste": "Paste",
       "pasteStyle": "Paste Style",
       "pasteAndMatchStyle": "Paste And Match Style",
-      "pasteWithNotes": "Paste With Notes",
+      "pasteTextWithoutFormatting": "Paste Text Without Formatting",
       "delete": "Delete",
       "duplicateSelection": "Duplicate Selection",
       "selectAll": "Select All",
@@ -171,7 +171,7 @@
       "section": "Section",
       "comment": "Comment",
       "bookmark": "Bookmark",
-      "highlight": "Highlight",
+      "highlight": "Highlight References",
       "link": "Link",
       "image": "Image",
       "symbol": "Symbol",
@@ -199,12 +199,12 @@
       "addNoteInInnerMargin": "Add Note in Inner Margin",
       "addNoteInOuterMargin": "Add Note in Outer Margin",
       "swapMargin": "Swap Margin",
-      "addReadingSeparator": "Add Reading Separator",
+      "addReadingSeparator": "Add Reading",
       "addSiglum": "Add Siglum",
-      "siglaSetup": "Sigla Setup",
+      "siglaSetup": "Sigla Setup...",
       "addCitation": "Add Citation",
-      "bibliography": "Bibliography",
-      "referencesFormat": "References Format",
+      "bibliography": "Bibliography...",
+      "referencesFormat": "References Format...",
       "addApparatus": {
         "label": "Add Apparatus",
         "critical": "Critical",
@@ -275,7 +275,7 @@
         "resumeNumbering": "Resume Numbering",
         "continuePreviousNumbering": "Continue previous Numbering"
       },
-      "sectionsStyle": "Sections Style",
+      "sectionsStyle": "Sections Style...",
       "table": "Table",
       "shapesAndLines": "Shapes and Lines",
       "removeLink": "Remove Link",
@@ -306,7 +306,7 @@
         }
       },
       "toc": {
-        "label": "Table of Contents"
+        "label": "Table of Contents..."
       },
       "lineNumber": {
         "label": "Line Number..."
@@ -355,7 +355,7 @@
         "apparatus4": "Apparatus 4 (Inner Margin)",
         "pippo": "Pippo (Critical)"
       },
-      "headerFooter": "Header & Footer",
+      "headerFooter": "Header && Footer",
       "tableOfContents": "Table of Contents",
       "toolbar": "Toolbar",
       "customizeToolbar": "Customize Toolbar...",
@@ -404,6 +404,8 @@
       "forum": "Forum",
       "whatsNewInCriterion": "What's New in Criterion",
       "reportAnIssue": "Report an Issue",
+      "criterionFeedback": "Criterion Feedback",
+      "checkUpdates": "Check for Updates...",
       "about": "About Criterion"
     }
   },
@@ -421,8 +423,18 @@
     "cut": "Cut",
     "copy": "Copy",
     "paste": "Paste",
+    "insert": "Insert",
     "acknowledgements": "Acknowledgements",
     "licenseAgreement": "License Agreement"
+  },
+  "symbols": {
+    "label": "Symbols",
+    "special": "Special Characters",
+    "font": "Font",
+    "subset": "Subset",
+    "symbol": "Symbol",
+    "character": "Character",
+    "keyboardShortcut": "Keyboard Shortcut"
   },
   "customSpacing": {
     "title": "Custom Spacing",
@@ -713,6 +725,162 @@
     "buttons": {
       "cancel": "Cancel",
       "done": "Done"
+    }
+  },
+  "delete_apparatus_dialog": {
+    "title": "Delete apparatus",
+    "description": "You are about to delete existing text. Are you sure you want to proceed?",
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "apparatuses": {
+    "options": {
+      "changeType": "Change type",
+      "rename": "Rename",
+      "hide": "Hide",
+      "delete": "Delete",
+      "showNoteHighlights": "Show Note highlights",
+      "showCommentHighlights": "Show Comment highlights",
+      "showInPrint": "Show in print"
+    }
+  },
+  "sections_styles_dialog": {
+    "title": "Sections Style",
+    "styles_section": {
+      "import_style": "Import style",
+      "add": "Add",
+      "select_style": "Select style"
+    },
+    "name": "Name",
+    "typography_section": {
+      "typography": "Tipography",
+      "font": "Font",
+      "style": "Style",
+      "size": "Size",
+      "align": "Align",
+      "text_color": "Text Color"
+    },
+    "spacing_section": {
+      "spacing": "Spacing",
+      "line_spacing": "Line spacing",
+      "before_paragraph": "Before Paragraph",
+      "after_paragraph": "After Paragraph"
+    },
+    "cancel": "Cancel",
+    "export_style": "Export Style",
+    "done": "Done"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "sections": {
+      "general": "General",
+      "appearance": "Appearance",
+      "file": "File",
+      "language": "Language & Region",
+      "editing": "Editing",
+      "account": "Account"
+    },
+    "general": {
+      "fileNameDisplay": {
+        "title": "File name display",
+        "fullPath": "Show filename and last directory",
+        "fullPathDescription": "Ex. */last directory/filename*",
+        "filenameOnly": "Show only filename",
+        "filenameOnlyDescription": "Ex. *filename*"
+      },
+      "restoreCriterionLayout": {
+        "title": "Restore Criterion layout",
+        "rememberLastLayout": "Remember the last visual layout",
+        "rememberLastLayoutDescription": "Saves and restores the last visual layout of the editing session."
+      },
+      "recentFiles": {
+        "title": "Recent files to open",
+        "description": "Show the maximum number of files recently opened to be displayed."
+      },
+      "links": {
+        "title": "Links",
+        "openInDefaultApp": "Open in default app",
+        "openInCriterion": "Open within Criterion (png, jpg, pdf)"
+      }
+    },
+    "appearance": {
+      "theme": {
+        "title": "Theme",
+        "system": "System default (Light Mode)",
+        "light": "Light Mode",
+        "dark": "Dark Mode"
+      },
+      "commentPreviewLimit": {
+        "title": "Comment preview character limit",
+        "description": "The number of characters shown for each comment in left sidebar."
+      },
+      "bookmarkPreviewLimit": {
+        "title": "Bookmark preview character limit",
+        "description": "The number of characters shown for each bookmark in left sidebar."
+      }
+    },
+    "file": {
+      "fileSavingDirectory": {
+        "title": "File saving directory",
+        "lastOpened": "Last opened directory",
+        "defaultDirectory": "Default directory"
+      },
+      "automaticFileSave": {
+        "title": "Automatic file save",
+        "never": "Never",
+        "every5min": "Every 5 minutes",
+        "every10min": "Every 10 minutes",
+        "every15min": "Every 15 minutes"
+      },
+      "versioningDirectory": {
+        "title": "Versioning directory",
+        "defaultDirectory": "Default directory",
+        "customDirectory": "Custom directory"
+      },
+      "selectPath": "Select path...",
+      "defaultEncoding": {
+        "title": "Default encoding"
+      },
+      "encodingDetection": {
+        "title": "Encoding detection",
+        "enable": "Enable"
+      },
+      "restoreLayout": {
+        "title": "Restore layout",
+        "rememberLastLayout": "Remember the last visual layout",
+        "rememberLastLayoutDescription": "Saves and restores the last visual layout of the editing session."
+      }
+    },
+    "language": {
+      "criterionLanguage": "Criterion Language",
+      "criterionRegion": "Criterion Region",
+      "dateTimeFormat": "Date & Time format"
+    },
+    "editing": {
+      "showHistoryActions": {
+        "title": "Show history actions",
+        "description": "The maximum number of history actions to show."
+      }
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "resetToDefault": "Reset to Default",
+      "ok": "OK"
+    },
+    "comingSoon": "Account settings coming soon..."
+  },
+  "siglum": {
+    "title": "Siglum",
+    "create": "Create",
+    "cancel": "Cancel",
+    "import": "Import",
+    "export": "Export",
+    "manuscripts": "Manuscripts",
+    "description": "Description",
+    "empty": {
+      "title": "Create siglum before adding notes"
     }
   }
 }

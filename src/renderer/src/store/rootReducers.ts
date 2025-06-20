@@ -3,11 +3,10 @@ import editorReducer, { EditorState } from '../pages/editor/store/editor/editor.
 import bookmarkReducer, { BookmarkState } from '../pages/editor/store/bookmark/bookmark.slice';
 import commentsReducer, { CommentState } from '../pages/editor/store/comment/comments.slice';
 import paginationReducer, { PaginationState } from '../pages/editor/store/pagination/pagination.slice';
-import layoutReducer, { type SetupPageState } from '../pages/preferences/store/layout/layout.sclice';
-import preferencesReducer, { type PreferencesState } from '@/pages/preferences/store/preferences/preferences.slice';
-import tabsReducer, { TabsState } from './tabs/tabs.slice';
-import stylesReducer from '@/pages/preferences/store/editor-styles/editor-styles.slice';
-import { StylesState } from '@/pages/preferences/store/editor-styles/editor-styles.state';
+import layoutReducer, { type SetupPageState } from '../pages/editor/store/layout/layout.sclice';
+import preferencesReducer, { type PreferencesState } from '@/pages/preferences/store/preferences.slice';
+import stylesReducer from '@/pages/editor/store/editor-styles/editor-styles.slice';
+import { StylesState } from '@/pages/editor/store/editor-styles/editor-styles.state';
 // Definisci l'interfaccia dello stato globale
 export interface RootState {
   editor: EditorState;
@@ -16,7 +15,6 @@ export interface RootState {
   pagination: PaginationState;
   layout: SetupPageState;
   preferences: PreferencesState
-  tabs: TabsState
   styles: StylesState
 }
 
@@ -27,7 +25,6 @@ const rootReducer = combineReducers({
   pagination: paginationReducer,
   layout: layoutReducer,
   preferences: preferencesReducer,
-  tabs: tabsReducer,
   styles: stylesReducer,
 });
 

@@ -5,7 +5,7 @@
   "updatedDate": "11/06/2026 09:55:53",
   "layoutTemplate": {
     "toc": {
-      "visible": true,
+      "visible": false,
       "required": false,
       "layout": "vertical-horizontal",
       "apparatusDetails": [
@@ -52,7 +52,7 @@
         },
         {
           "id": "apparatus1",
-          "title": "Apparatus notes",
+          "title": "Apparatus 1",
           "type": "apparatus",
           "sectionType": "critical",
           "columns": 1,
@@ -85,17 +85,17 @@
     "paperSize_height": 16,
     "paperSize_orientation": "vertical",
     "header_show": true,
-    "header_weight": 1,
+    "header_weight": 1.25,
     "footer_show": true,
-    "footer_weight": 1,
-    "margin_top": 1.04,
-    "margin_bottom": 1.05,
-    "margin_left": 1,
-    "margin_right": 1,
+    "footer_weight": 1.25,
+    "margin_top": 1.25,
+    "margin_bottom": 1.25,
+    "margin_left": 1.25,
+    "margin_right": 1.25,
     "innerMarginNote_show": true,
-    "innerMarginNote_weight": 1,
+    "innerMarginNote_weight": 0.5,
     "outerMarginNote_show": true,
-    "outerMarginNote_weight": 1
+    "outerMarginNote_weight": 0.5
   },
   "sort": [
     "toc",

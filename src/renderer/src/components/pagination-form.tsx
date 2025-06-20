@@ -1,9 +1,9 @@
-import { useEffect, useMemo, memo } from "react";
+import { useMemo, memo } from "react";
 import Divider from "./ui/divider";
 import { useTranslation } from "react-i18next";
 import AppRadioGroup from "./app-radiogroup";
 import Typography from "./Typography";
-import TextField from "./ui/textField";
+// import TextField from "./ui/textField";
 import { Check } from "lucide-react";
 import AppCheckbox from "./app-checkbox";
 import { HeaderContentType, HeaderDisplayMode } from "@/utils/headerEnums";
@@ -12,32 +12,32 @@ import { HeaderSettings } from "@/pages/editor/store/pagination/pagination.slice
 /**
  * Componente memoizzato per la selezione del punto di inizio
  */
-const StartingPoint = memo(({
-    displayMode,
-    startFromPage = 1,
-    onChange
-}: {
-    displayMode: HeaderDisplayMode,
-    startFromPage?: number,
-    onChange: (value: number) => void
-}) => {
-    const isStartMode = displayMode === HeaderDisplayMode.FROM_SPECIFIC_PAGE;
+// const StartingPoint = memo(({
+//     displayMode,
+//     startFromPage = 1,
+//     onChange
+// }: {
+//     displayMode: HeaderDisplayMode,
+//     startFromPage?: number,
+//     onChange: (value: number) => void
+// }) => {
+//     const isStartMode = displayMode === HeaderDisplayMode.FROM_SPECIFIC_PAGE;
 
-    return (
-        <TextField
-            id="starting-point"
-            type="number"
-            className={`w-full sm:w-[4.5em] h-[1.75em] ${!isStartMode ? 'opacity-50' : ''}`}
-            value={startFromPage.toString()}
-            onChange={(e) => {
-                if (isStartMode) {
-                    onChange(parseInt(e.target.value) || 1);
-                }
-            }}
-            disabled={!isStartMode}
-        />
-    );
-});
+//     return (
+//         <TextField
+//             id="starting-point"
+//             type="number"
+//             className={`w-full sm:w-[4.5em] h-[1.75em] ${!isStartMode ? 'opacity-50' : ''}`}
+//             value={startFromPage.toString()}
+//             onChange={(e) => {
+//                 if (isStartMode) {
+//                     onChange(parseInt(e.target.value) || 1);
+//                 }
+//             }}
+//             disabled={!isStartMode}
+//         />
+//     );
+// });
 
 /**
  * Componente memoizzato per le opzioni di visualizzazione
@@ -78,18 +78,18 @@ const ShowOptions = memo(({
                     items={[
                         { label: t('headerFooter.show.none'), value: HeaderDisplayMode.NONE.toString(), className: "text-[0.8125em] font-[600]" },
                         { label: t('headerFooter.show.firstPage'), value: HeaderDisplayMode.FIRST_PAGE_ONLY.toString(), className: "text-[0.8125em] font-[600]" },
-                        {
-                            label: <div className="flex flex-row gap-2 items-center">
-                                {t('headerFooter.show.fromPage')}
-                                <StartingPoint
-                                    displayMode={settings.displayMode}
-                                    startFromPage={settings.startFromPage}
-                                    onChange={(value) => setSettings({ ...settings, startFromPage: value })}
-                                />
-                            </div>,
-                            value: HeaderDisplayMode.FROM_SPECIFIC_PAGE.toString(),
-                            className: "text-[0.8125em] font-[600]"
-                        },
+                        // {
+                        //     label: <div className="flex flex-row gap-2 items-center">
+                        //         {t('headerFooter.show.fromPage')}
+                        //         <StartingPoint
+                        //             displayMode={settings.displayMode}
+                        //             startFromPage={settings.startFromPage}
+                        //             onChange={(value) => setSettings({ ...settings, startFromPage: value })}
+                        //         />
+                        //     </div>,
+                        //     value: HeaderDisplayMode.FROM_SPECIFIC_PAGE.toString(),
+                        //     className: "text-[0.8125em] font-[600]"
+                        // },
                         { label: t('headerFooter.show.allSections'), value: HeaderDisplayMode.ALL_SECTIONS.toString(), className: "text-[0.8125em] font-[600]" },
                     ]}
                     value={(settings.displayMode ?? HeaderDisplayMode.NONE).toString()}
@@ -199,10 +199,6 @@ const PositionColumn = memo(({
  */
 const PaginationSetup = ({ settings, setSettings }: PaginationSetupProps) => {
     const { t } = useTranslation();
-
-    useEffect(() => {
-        console.log("🚀 ~ PaginationSetup ~ settings:", settings)
-    }, [settings]);
 
     // Memorizza le opzioni per evitare ricreazioni ad ogni render
     const positionOptions = useMemo(() => [

@@ -1,0 +1,11 @@
+type RichTextEditorExtension =
+    | "ONE_LINER"
+    | "STARTER_KIT"
+    | "EXTENDED_PARAGRAPH"
+    | "TEXT"
+    | "TEXT_STYLE"
+    | "UNDERLINE"
+    | "SUPERSCRIPT"
+    | "SUBSCRIPT"
+    | "CHARACTER_COUNT"
+    | "FONT_FAMILY"

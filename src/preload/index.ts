@@ -1,7 +1,7 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { ipcRenderer } from 'electron'
-import { IApplicationAPI, IDocumentAPI, IMenuAPI, ISystemAPI } from './index.d'
+import { IApplicationAPI, IDocumentAPI, IMenuAPI, ISystemAPI, IThemeAPI } from './index.d'
 
 const tabsAPI = {
     new: (fileType: FileType): Promise<number> => ipcRenderer.invoke('tabs:new', fileType),
@@ -15,6 +15,8 @@ const tabsAPI = {
 const menuAPI: IMenuAPI = {
     disableReferencesMenuItems: (items: string[]): Promise<void> => ipcRenderer.invoke('menu:disableReferencesMenuItems', items),
     updateViewApparatusesMenuItems: (items: { id: string, title: string, visible: boolean }[]): Promise<void> => ipcRenderer.invoke('menu:updateViewApparatusesMenuItems', items),
+    setTocVisibility: (visibility: boolean): Promise<void> => ipcRenderer.invoke('menu:setTocVisibility', visibility),
+    setTocMenuItemsEnabled: (isEnable: boolean): Promise<void> => ipcRenderer.invoke('menu:setTocMenuItemsEnabled', isEnable),
 }
 
 const api = {}
@@ -23,11 +25,17 @@ const store = {}
 
 const systemAPI: ISystemAPI = {
     getUserInfo: (): Promise<void> => ipcRenderer.invoke('system:getUserInfo'),
+    getFonts: (): Promise<string[]> => ipcRenderer.invoke('system:getFonts'),
+    getSubsets: (): Promise<Subset[]> => ipcRenderer.invoke('system:getSubsets'),
+    getSymbols: (fontName: string): Promise<CharacterSet> => ipcRenderer.invoke('system:getSymbols', fontName),
+    getConfiguredSpcialCharactersList: (): Promise<CharacterConfiguration[]> => ipcRenderer.invoke('system:getConfiguredSpcialCharactersList'),
+    showMessageBox: (message: string): Promise<void> => ipcRenderer.invoke('system:showMessageBox', message)
 }
 
 const applicationAPI: IApplicationAPI = {
     toolbarIsVisible: (): Promise<boolean> => ipcRenderer.invoke('application:toolbarIsVisible'),
     toolbarAdditionalItems: (): Promise<string[]> => ipcRenderer.invoke('application:toolbarAdditionalItems'),
+    closeChildWindow: (): Promise<void> => ipcRenderer.invoke('application:closeChildWindow'),
 }
 
 const documentAPI: IDocumentAPI = {
@@ -35,13 +43,24 @@ const documentAPI: IDocumentAPI = {
     getTemplates: (): Promise<string[]> => ipcRenderer.invoke('document:getTemplates'),
     importTemplate: (): Promise<void> => ipcRenderer.invoke('document:importTemplate'),
     createTemplate: (template: unknown, name: string): Promise<void> => ipcRenderer.invoke('document:createTemplate', template, name),
-    getApparatuses: (): Promise<unknown[]> => ipcRenderer.invoke('document:getApparatuses'),
-    setApparatuses: (apparatuses: unknown[]): Promise<void> => ipcRenderer.invoke('document:setApparatuses', apparatuses),
+    getApparatuses: (): Promise<DocumentApparatus[]> => ipcRenderer.invoke('document:getApparatuses'),
+    setApparatuses: (apparatuses: DocumentApparatus[]): Promise<void> => ipcRenderer.invoke('document:setApparatuses', apparatuses),
     setLayoutTemplate: (layoutTemplate: unknown): Promise<void> => ipcRenderer.invoke('document:setLayoutTemplate', layoutTemplate),
     setPageSetup: (pageSetup: unknown): Promise<void> => ipcRenderer.invoke('document:setPageSetup', pageSetup),
     setSort: (sort: unknown[]): Promise<void> => ipcRenderer.invoke('document:setSort', sort),
     setStyles: (style: unknown[]): Promise<void> => ipcRenderer.invoke('document:setStyles', style),
-    setParatextual: (paratextual: unknown): Promise<void> => ipcRenderer.invoke('document:setParatextual', paratextual)
+    setParatextual: (paratextual: unknown): Promise<void> => ipcRenderer.invoke('document:setParatextual', paratextual),
+    getStylesNames: (): Promise<string[]> => ipcRenderer.invoke("document:getStylesNames"),
+    getStyle: (filename: string): Promise<string> => ipcRenderer.invoke("document:getStyle", filename),
+    createStyle: (style: unknown): Promise<void> => ipcRenderer.invoke('document:createStyle', style, name),
+    importStyle: (): Promise<string> => ipcRenderer.invoke('document:importStyle'),
+    exportSiglumList: (siglumList: Siglum[]): Promise<void> => ipcRenderer.invoke('document:exportSiglumList', siglumList),
+    importSiglumList: (): Promise<DocumentSiglum[]> => ipcRenderer.invoke('document:importSiglumList')
+}
+
+const themeAPI: IThemeAPI = {
+    setTheme: (theme: 'light' | 'dark' | 'system'): Promise<void> => ipcRenderer.invoke('theme:setTheme', theme),
+    getTheme: (): Promise<'light' | 'dark' | 'system'> => ipcRenderer.invoke('theme:getTheme')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -57,6 +76,7 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('system', systemAPI)
         contextBridge.exposeInMainWorld('application', applicationAPI)
         contextBridge.exposeInMainWorld('doc', documentAPI)
+        contextBridge.exposeInMainWorld('theme', themeAPI)
     } catch (error) {
         console.error(error)
     }
@@ -77,4 +97,6 @@ if (process.contextIsolated) {
     window.doc = documentAPI
     // @ts-ignore (define in dts)
     window.menu = menuAPI
+    // @ts-ignore (define in dts)
+    window.theme = themeAPI
 }

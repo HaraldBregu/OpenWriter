@@ -35,7 +35,7 @@ function Modal({
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className={cn(!showCloseIcon && "[&>button]:hidden", "p-0", className)}>
                 {(header || title) && (
-                    <DialogHeader className={cn(headerClassName, "border-b border-grey-80 p-3 max-h-12")}>
+                    <DialogHeader className={cn("border-b border-grey-80 p-3 max-h-12", headerClassName)}>
                         {title && <DialogTitle className={cn("text-grey-100 text-center text-[14px] font-[700]", titleClassName)}>
                             {title}
                         </DialogTitle>}
