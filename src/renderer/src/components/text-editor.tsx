@@ -209,7 +209,7 @@ const TextEditor = forwardRef(
         const comments = handleMarks(editor, 'comment')
         onChangeComments?.(comments)
 
-        updateEmphasisState(editor)
+       //updateEmphasisState(editor)
       },
       onSelectionUpdate: ({ editor }) => {
         const state = editor.state
@@ -273,36 +273,20 @@ const TextEditor = forwardRef(
         onSelectedContentChange?.(selectedContent)
         onCanUndo?.(editor.can().undo())
         onCanRedo?.(editor.can().redo())
-        updateEmphasisState(editor)
+        //updateEmphasisState(editor)
         onBookmarkStateChange?.(editor.isActive('bookmark'))
         onCommentStateChange?.(editor.isActive('comment'))
       },
       onTransaction: ({ editor, transaction }) => {
         onHistoryStateChange?.(editorHistory.current)
-
         const selectionStart = transaction.getMeta('selectionStart')
         const selectionEnd = transaction.getMeta('selectionEnd')
 
-        // const isCut = transaction.getMeta("uiEvent") === "cut"
-        // const isCopy = transaction.getMeta("uiEvent") === "copy"
-        // if (isCut || isCopy) {
-        //   const { from, to } = editor.state.selection;
-        //   if (from !== to) {
-        //     const text = editor.state.doc.textBetween(from, to, ' ');
-        //     navigator.clipboard.writeText(text).then(() => {
-        //       if (isCut) {
-        //         editor.commands.deleteRange({ from, to });
-        //       }
-        //     });
-        //   }
-        // }
-
-        if (selectionStart) {
+        if (selectionStart) 
           setPopoverOpen(false)
-        }
-
+        
         if (selectionEnd) {
-          updateEmphasisState(editor)
+          // updateEmphasisState(editor)
           setTimeout(() => {
             positionPopover()
           }, 0)
@@ -314,43 +298,7 @@ const TextEditor = forwardRef(
         onCanUndo?.(editor.can().undo())
         onCanRedo?.(editor.can().redo())
       },
-      // onBlur: (data) => {
-      //   const editor = data.editor;
-      //   onBlurEditor?.();
-      // },
-      //@ts-ignore
       onPaste: (event, slice) => {
-        // editor?.commands.insertContentAt(0, {
-        //   type: 'paragraph',
-        //   content: [
-        //     {
-        //       type: 'text',
-        //       text: 'Hello, world!'
-        //     }
-        //   ]
-        // });
-
-        if (!editor) return
-
-        const { clipboardData } = event
-
-        if (!clipboardData) return
-
-        // const text = clipboardData.getData('text/plain');
-        // const html = clipboardData.getData('text/html');
-        // const rtf = clipboardData.getData('text/rtf');
-        // const json = clipboardData.getData('text/json');
-
-        // console.log('text', text)
-        // console.log('html', html)
-        // console.log('rtf', rtf)
-        // console.log('json', json)
-
-        // You can handle the pasted content here
-        // For example, you could insert it with specific formatting:
-        // if (text) {
-        //   editor.commands.insertContent(text);
-        // }
       }
     })
 
@@ -524,7 +472,7 @@ const TextEditor = forwardRef(
           editor.chain().focus()[superscript ? 'setSuperscript' : 'unsetSuperscript']().run()
           setTimeout(() => {
             if (editor) {
-              updateEmphasisState(editor)
+              // updateEmphasisState(editor)
             }
           })
           editorHistory.trackHistoryActions('characterStyle', `Applied superscript style`)
@@ -534,7 +482,7 @@ const TextEditor = forwardRef(
           editor.chain().focus()[subscript ? 'setSubscript' : 'unsetSubscript']().run()
           setTimeout(() => {
             if (editor) {
-              updateEmphasisState(editor)
+              // updateEmphasisState(editor)
             }
           })
           editorHistory.trackHistoryActions('characterStyle', `Applied subscript style`)
