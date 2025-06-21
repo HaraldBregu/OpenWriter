@@ -61,14 +61,6 @@ interface BubbleToolbarItem {
   onClick?: (data?: any) => void
 }
 
-interface UserInfo {
-  gid: number
-  homedir: string
-  shell: string | null
-  uid: number
-  username: string
-}
-
 type SetupOptionType = {
   template_type: 'Community' | 'Personal'
   paperSize_name: PaperSizeName

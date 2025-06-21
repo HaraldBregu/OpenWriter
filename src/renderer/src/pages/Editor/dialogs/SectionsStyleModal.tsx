@@ -99,7 +99,9 @@ function SectionsStyleModal({ open, onClose }: SectionsStyleModalProps) {
 
   const fetchExportedStyles = async () => {
     try {
-      const exported = await window.doc.getStylesNames()
+      const exported = await window?.doc?.getStylesNames()
+      if (!exported) return
+
       setExportedStyles(exported)
     } catch (error) {
       console.error('Error fetching styles:', error)
@@ -123,7 +125,9 @@ function SectionsStyleModal({ open, onClose }: SectionsStyleModalProps) {
     setSelectedExportedStyleName(found)
 
     try {
-      const styleData = await window.doc.getStyle(found)
+      const styleData = await window?.doc?.getStyle(found)
+      if (!styleData) return
+
       const enabledStyles = JSON.parse(styleData)
         .filter((s) => s.enabled === true)
         .map((style) => ({
@@ -149,19 +153,19 @@ function SectionsStyleModal({ open, onClose }: SectionsStyleModalProps) {
   const handleSave = () => {
     const updatedStyles = localStyles?.map(({ id, label, ...rest }) => rest)
     dispatch(updateStyles(updatedStyles ?? []))
-    window.doc.setStyles(updatedStyles ?? [])
+    window?.doc?.setStyles(updatedStyles ?? [])
     onClose()
   }
 
   const handleExport = async () => {
     const styles = localStyles?.map(({ id, label, ...rest }) => rest)
-    await window.doc.createStyle(styles)
+    await window?.doc?.createStyle(styles)
     fetchExportedStyles()
   }
 
   const handleImport = async () => {
     try {
-      const styleName = await window.doc.importStyle()
+      const styleName = await window?.doc?.importStyle()
 
       // Attendi che gli stili vengano caricati
       await fetchExportedStyles()
@@ -172,7 +176,8 @@ function SectionsStyleModal({ open, onClose }: SectionsStyleModalProps) {
 
         try {
           // Carica il contenuto dello stile
-          const exportedStyle = JSON.parse(await window.doc.getStyle(styleName))
+          const exportedStyle = JSON.parse(await window?.doc?.getStyle(styleName) ?? '')
+          if (!exportedStyle) return
 
           // Filtra e mappa gli stili abilitati
           const filteredStyles = exportedStyle

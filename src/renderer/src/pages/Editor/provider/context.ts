@@ -4,5 +4,5 @@ import { EditorAction } from './actions'
 
 export const editorContext = createContext<[EditorContextState, Dispatch<EditorAction>]>([
   initialState,
-  () => {}
+  () => { }
 ])

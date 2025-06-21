@@ -158,7 +158,7 @@ const AppTabs = () => {
   }, [window?.tabs])
 
   useEffect(() => {
-    contentViewsIds.then((ids) => {
+    contentViewsIds?.then((ids) => {
       dispatch(actions.addTabsWithIds(ids))
     })
   }, [contentViewsIds])

@@ -2,15 +2,15 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
-    store: unknown
-    tabs: ITabsAPI
-    menu: IMenuAPI
-    system: ISystemAPI
-    application: IApplicationAPI
-    doc: IDocumentAPI
-    theme: IThemeAPI
+    electron?: ElectronAPI
+    api?: unknown
+    store?: unknown
+    tabs?: ITabsAPI
+    menu?: IMenuAPI
+    system?: ISystemAPI
+    application?: IApplicationAPI
+    doc?: IDocumentAPI
+    theme?: IThemeAPI
   }
 }
 
@@ -53,7 +53,7 @@ interface IDocumentAPI {
 }
 
 interface ISystemAPI {
-  getUserInfo: () => Promise<void>
+  getUserInfo: () => Promise<UserInfo>
   getFonts: () => Promise<string[]>
   getSubsets: () => Promise<Subset[]>
   getSymbols: (fontName: string) => Promise<CharacterSet>

@@ -49,8 +49,6 @@ const initialEmphasisState: EmphasisState = {
 export interface EditorState {
   data: string[]
   toolbarEmphasisState: EmphasisState
-  editorMode: 'editing' | 'review'
-  canEdit: boolean
   canUndo: boolean
   canRedo: boolean
   headingEnabled: boolean
@@ -76,8 +74,6 @@ export interface EditorState {
 const initialState: EditorState = {
   data: [],
   toolbarEmphasisState: initialEmphasisState,
-  editorMode: 'editing',
-  canEdit: true,
   headingEnabled: true,
   canUndo: false,
   canRedo: false,
@@ -121,10 +117,6 @@ const editorSlice = createSlice({
     },
     setCanRedo(state, action: PayloadAction<boolean>) {
       state.canRedo = action.payload
-    },
-    setEditorMode(state, action: PayloadAction<'editing' | 'review'>) {
-      state.editorMode = action.payload
-      state.canEdit = action.payload === 'editing'
     },
     updateTocSettings(state, action: PayloadAction<TocSettings>) {
       state.tocSettings = { ...state.tocSettings, ...action.payload }
@@ -268,7 +260,6 @@ export const {
   setCanRedo,
   updateTocSettings,
   toggleTocVisibility,
-  setEditorMode,
   setHistory,
   setCanAddBookmark,
   clearTocSettings,

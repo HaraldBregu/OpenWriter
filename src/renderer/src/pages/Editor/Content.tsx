@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   selectApparatuses,
   selectBookmarkHighlighted,
-  selectCanEdit,
   selectCommentHighlighted,
   selectTocSettings,
   selectToolbarEmphasisState,
@@ -922,7 +921,7 @@ export const Content = forwardRef(
       }
 
       async function createTemplate() {
-        await window.doc.createTemplate(styleTemplate, templateName)
+        await window.doc?.createTemplate(styleTemplate, templateName)
         setIsSaveAsTemplateModalOpen(false)
       }
       createTemplate()
@@ -1042,8 +1041,6 @@ export const Content = forwardRef(
       updateTemplates(showToc)
     }, [showToc])
 
-    const canEditSelector = useSelector(selectCanEdit)
-
     return (
       <>
         <EditorTextLayout showToolbar={showToolbar}>
@@ -1103,7 +1100,6 @@ export const Content = forwardRef(
             className="flex-1 overflow-auto relative w-full"
             isMainText={true}
             ref={criticalTextEditorRef}
-            canEdit={canEditSelector}
             onUpdate={(editor: EditorData) => {
               dispatchEditor(setCharacters(editor.characters))
               dispatchEditor(setWords(editor.words))

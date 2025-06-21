@@ -995,7 +995,7 @@ const initializeApp = async (): Promise<void> => {
   })
 
   // SYSTEM API
-  ipcMain.handle('system:getUserInfo', () => os.userInfo())
+  ipcMain.handle('system:getUserInfo', () => os.userInfo() as UserInfo)
 
   ipcMain.handle('system:getFonts', () =>
     Object.values(getFonts())

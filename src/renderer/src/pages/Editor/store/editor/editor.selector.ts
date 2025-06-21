@@ -32,13 +32,6 @@ export const selectIsBlockquote = createSelector(
 
 export const selectAlignment = createSelector(editorState, (editor) => editor?.alignment || 'left')
 
-export const selectEditorMode = createSelector(
-  editorState,
-  (editor) => editor?.editorMode || 'editing'
-)
-
-export const selectCanEdit = createSelector(editorState, (editor) => editor?.canEdit || false)
-
 export const selectChangeIndent = createSelector(
   editorState,
   (editor) => editor?.changeIndent || null

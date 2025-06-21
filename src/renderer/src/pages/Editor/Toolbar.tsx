@@ -120,8 +120,6 @@ interface ToolbarProps {
   canAddComment: boolean
   onClickAddComment: (categoryId?: string) => void
   onUnsetComment: () => void
-  editorMode: 'editing' | 'review'
-  setEditorMode: (mode: 'editing' | 'review') => void
   onIncreaseIndent: () => void
   onDecreaseIndent: () => void
   onShowCustomSpacing: () => void
@@ -168,8 +166,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onUnsetBookmark,
   bookmarksCategories,
   bookmarkActive,
-  editorMode,
-  setEditorMode,
   canAddBookmark,
   commentCategories,
   commentActive,
@@ -1676,17 +1672,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   <Dropdown inheritColor={true} intent="secondary" variant="tonal" size="small" />
                 }
               >
-                {t(`editor.mode.${editorMode}.label`)}
+                {t(`editor.mode.editing.label`)}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent id="mode-list" role="listbox" className="w-56">
               <DropdownMenuCheckboxItem
-                checked={editorMode === 'editing'}
-                onCheckedChange={() => setEditorMode('editing')}
                 className="items-start"
                 tabIndex={40}
                 role="option"
-                aria-selected={editorMode === 'editing'}
                 aria-label={t('editor.mode.editing.label')}
               >
                 <Label>
@@ -1695,12 +1688,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 </Label>
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
-                checked={editorMode === 'review'}
-                onCheckedChange={() => setEditorMode('review')}
                 className="items-start"
                 tabIndex={41}
                 role="option"
-                aria-selected={editorMode === 'review'}
                 aria-label={t('editor.mode.review.label')}
               >
                 <Label>

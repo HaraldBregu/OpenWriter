@@ -313,3 +313,12 @@ type CharacterConfiguration = {
   character: string
   shortcut: string | null
 }
+
+
+type UserInfo = {
+  gid: number
+  homedir: string
+  shell: string | null
+  uid: number
+  username: string
+}

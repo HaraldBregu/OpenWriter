@@ -223,7 +223,7 @@ const PreferencesPanelView = () => {
       dateTimeFormat,
       historyActionsCount
     })
-    await window.application.closeChildWindow()
+    await window?.application?.closeChildWindow()
   }
 
   const handleReset = () => {
@@ -788,7 +788,7 @@ const PreferencesPanelView = () => {
             size="mini"
             intent="secondary"
             variant="tonal"
-            onClick={async () => await window.application.closeChildWindow()}
+            onClick={async () => await window?.application?.closeChildWindow()}
           >
             {t('preferences.buttons.cancel')}
           </Button>

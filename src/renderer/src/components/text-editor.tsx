@@ -1,4 +1,4 @@
-import { Editor, EditorContent, useEditor } from '@tiptap/react'
+import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,6 @@ import {
 import { defaultEditorConfig } from '@/lib/tiptap/editor-configs'
 import { HistoryState } from '@/pages/editor/hooks/useHistoryState'
 import { useEditorHistory } from '@/hooks/use-editor-history'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -37,6 +36,7 @@ export interface EditorData {
 }
 
 export interface HTMLTextEditorElement {
+  setEditable: (value: boolean) => void
   setHeadingLevel: (level: number) => TTextPosition | undefined
   setBody: (style?: Style) => void
   setFontFamily: (fontFamily: string) => void
@@ -90,7 +90,6 @@ interface TextEditorProps {
   className?: string
   isMainText?: boolean
   bubbleToolbarItems?: BubbleToolbarItem[]
-  canEdit?: boolean
   onUpdate?: (data: EditorData) => void
   onEmphasisStateChange?: (emphasisState: EmphasisState) => void
   onHistoryStateChange?: (historyState: HistoryState) => void
@@ -119,7 +118,6 @@ const TextEditor = forwardRef(
       className,
       isMainText = false,
       bubbleToolbarItems,
-      canEdit = true,
       onUpdate,
       onEmphasisStateChange,
       onHistoryStateChange,
@@ -145,14 +143,230 @@ const TextEditor = forwardRef(
   ) => {
     const { t } = useTranslation()
 
+    const withSectionDividers: boolean = isMainText
+    const withEditableFilter: boolean = isMainText
+
+    const content = useMemo(() => {
+      if (isMainText) {
+        return {
+          type: 'doc',
+          content: [...textTemplate(t('dividerSections.mainText'))]
+        }
+      }
+
+      return {
+        type: 'doc',
+        content: []
+      }
+    }, [isMainText])
+
+    const editor = useEditor({
+      ...defaultEditorConfig(withSectionDividers, withEditableFilter),
+      content: content,
+      editorProps: {
+        // attributes: {
+        //   style: 'font-family: "Times New Roman", Arial, sans-serif;'
+        // },
+        handleKeyDown: (view, event) => {
+          if (event.key === 'Enter') {
+            const { state } = view
+            const { selection } = state
+            const { $from } = selection
+
+            if ($from.parent.type.name.startsWith('heading')) {
+            }
+          }
+          const isMacOS = /Mac/.test(navigator.userAgent)
+
+          if (isMacOS) {
+            // Gestione per Cmd+V su macOS
+            if (event.metaKey && event.key === 'v' && editor?.isFocused) {
+              event.preventDefault()
+              handlePaste()
+            }
+
+            // Gestione per Cmd+C su macOS
+            if (event.metaKey && event.key === 'c' && editor?.isFocused) {
+              event.preventDefault()
+              handleCopy()
+            }
+
+            if (event.metaKey && event.key === 'x' && editor?.isFocused) {
+              event.preventDefault()
+              handleCut()
+            }
+          }
+          return false
+        }
+      },
+      onUpdate: ({ editor }) => {
+        const newState = currentEditorState()
+        onUpdate?.(newState)
+
+        const bookmarks = handleMarks(editor, 'bookmark')
+        onChangeBookmarks?.(bookmarks)
+
+        const comments = handleMarks(editor, 'comment')
+        onChangeComments?.(comments)
+
+        updateEmphasisState(editor)
+      },
+      onSelectionUpdate: ({ editor }) => {
+        const state = editor.state
+        const { selection } = state
+        const { from, to } = selection
+        const selectedContent = state.doc.textBetween(from, to, ' ')
+
+        // POPOVER
+        if (from === to) setPopoverOpen(false)
+
+        // SECTIONS
+        let sections: string[] = []
+        editor.state.doc.nodesBetween(0, from, (node, _) => {
+          if (node.type.name === 'sectionDivider') {
+            sections.push(node.attrs.sectionType)
+            return false
+          }
+          return true
+        })
+        const currentSection = sections[sections.length - 1]
+        onCurrentSection?.(sections.length > 0 ? currentSection : undefined)
+
+        // SELECTION MARKS
+        const selectedMarks = getSelectionMarks(editor)
+        if (selectedContent.length === 0) {
+          const hasBookmark = selectedMarks.some((mark) => mark.type === 'bookmark')
+          const hasComment = selectedMarks.some((mark) => mark.type === 'comment')
+          if (hasComment && commentHighlighted) {
+            onSelectionMarks?.(selectedMarks.filter((mark) => mark.type === 'comment'))
+          } else if (hasBookmark && bookmarkHighlighted) {
+            onSelectionMarks?.(selectedMarks.filter((mark) => mark.type === 'bookmark'))
+          } else {
+            onSelectionMarks?.([])
+          }
+        } else {
+          onSelectionMarks?.(selectedMarks)
+        }
+
+        const comments = handleMarks(editor, 'comment')
+        onChangeComments?.(comments)
+        const bookmarks = handleMarks(editor, 'bookmark')
+        onChangeBookmarks?.(bookmarks)
+
+        // SELECT COMMENT
+        const selectedComment = comments.find((comment) => {
+          return selectedMarks.some(
+            (mark) => mark.type === 'comment' && mark.attrs?.id === comment.id
+          )
+        })
+        if (selectedComment) onChangeComment?.(selectedComment)
+
+        // SELECT BOOKMARK
+        const selectedBookmark = bookmarks.find((bookmark) => {
+          return selectedMarks.some(
+            (mark) => mark.type === 'bookmark' && mark.attrs?.id === bookmark.id
+          )
+        })
+        if (selectedBookmark) onChangeBookmark?.(selectedBookmark)
+
+        onSelectedContent?.(selectedContent)
+        onSelectedContentChange?.(selectedContent)
+        onCanUndo?.(editor.can().undo())
+        onCanRedo?.(editor.can().redo())
+        updateEmphasisState(editor)
+        onBookmarkStateChange?.(editor.isActive('bookmark'))
+        onCommentStateChange?.(editor.isActive('comment'))
+      },
+      onTransaction: ({ editor, transaction }) => {
+        onHistoryStateChange?.(editorHistory.current)
+
+        const selectionStart = transaction.getMeta('selectionStart')
+        const selectionEnd = transaction.getMeta('selectionEnd')
+
+        // const isCut = transaction.getMeta("uiEvent") === "cut"
+        // const isCopy = transaction.getMeta("uiEvent") === "copy"
+        // if (isCut || isCopy) {
+        //   const { from, to } = editor.state.selection;
+        //   if (from !== to) {
+        //     const text = editor.state.doc.textBetween(from, to, ' ');
+        //     navigator.clipboard.writeText(text).then(() => {
+        //       if (isCut) {
+        //         editor.commands.deleteRange({ from, to });
+        //       }
+        //     });
+        //   }
+        // }
+
+        if (selectionStart) {
+          setPopoverOpen(false)
+        }
+
+        if (selectionEnd) {
+          updateEmphasisState(editor)
+          setTimeout(() => {
+            positionPopover()
+          }, 0)
+        }
+      },
+      onFocus: (data) => {
+        const editor = data.editor
+        onFocusEditor?.()
+        onCanUndo?.(editor.can().undo())
+        onCanRedo?.(editor.can().redo())
+      },
+      // onBlur: (data) => {
+      //   const editor = data.editor;
+      //   onBlurEditor?.();
+      // },
+      //@ts-ignore
+      onPaste: (event, slice) => {
+        // editor?.commands.insertContentAt(0, {
+        //   type: 'paragraph',
+        //   content: [
+        //     {
+        //       type: 'text',
+        //       text: 'Hello, world!'
+        //     }
+        //   ]
+        // });
+
+        if (!editor) return
+
+        const { clipboardData } = event
+
+        if (!clipboardData) return
+
+        // const text = clipboardData.getData('text/plain');
+        // const html = clipboardData.getData('text/html');
+        // const rtf = clipboardData.getData('text/rtf');
+        // const json = clipboardData.getData('text/json');
+
+        // console.log('text', text)
+        // console.log('html', html)
+        // console.log('rtf', rtf)
+        // console.log('json', json)
+
+        // You can handle the pasted content here
+        // For example, you could insert it with specific formatting:
+        // if (text) {
+        //   editor.commands.insertContent(text);
+        // }
+      }
+    })
+
+    if (!editor) {
+      throw new Error('Editor not found')
+    }
+
     useImperativeHandle(ref, () => {
       return {
+        setEditable: (value: boolean) => {
+          editor.setEditable(value)
+        },
         setHeadingLevel: (level: number) => {
-          if (!editor) return
-
           const { from, to } = editor.state.selection
           editor
-            ?.chain()
+            .chain()
             .focus()
             .selectParentNode()
             .unsetMark('textStyle')
@@ -176,12 +390,11 @@ const TextEditor = forwardRef(
           editorHistory.trackHistoryActions('paragraphStyle', `Changed heading level to paragraph`)
         },
         setFontFamily: (fontFamily: string) => {
-          if (!editor) return
           const isHeading = editor.isActive('heading')
           const heading = editor.getAttributes('heading')
           const fontSize = editor.getAttributes('textStyle').fontSize
           editor
-            ?.chain()
+            .chain()
             .focus()
             .setMark('textStyle', {
               ...editor.getAttributes('textStyle'),
@@ -195,22 +408,18 @@ const TextEditor = forwardRef(
           )
         },
         setFontSize: (fontSize: string) => {
-          if (!editor) return
           editor.chain().focus().setMark('textStyle', { fontSize: fontSize }).run()
           editorHistory.trackHistoryActions('characterStyle', `Changed font size to ${fontSize}`)
         },
         setBold: (bold: boolean) => {
-          if (!editor) return
           editor.chain().focus()[bold ? 'setBold' : 'unsetBold']().run()
           editorHistory.trackHistoryActions('characterStyle', `Applied bold style`)
         },
         setItalic: (italic: boolean) => {
-          if (!editor) return
           editor.chain().focus()[italic ? 'setItalic' : 'unsetItalic']().run()
           editorHistory.trackHistoryActions('characterStyle', `Applied italic style`)
         },
         setUnderline: (underline: boolean) => {
-          if (!editor) return
           editor.chain().focus()[underline ? 'setUnderline' : 'unsetUnderline']().run()
           editorHistory.trackHistoryActions('characterStyle', `Applied underline style`)
         },
@@ -220,7 +429,7 @@ const TextEditor = forwardRef(
           const fontSize = editor?.getAttributes('textStyle').fontSize
           const headingFontSize = heading?.fontSize ?? '18pt'
           editor
-            ?.chain()
+            .chain()
             .focus()
             .setMark('textStyle', {
               ...editor.getAttributes('textStyle'),
@@ -231,21 +440,18 @@ const TextEditor = forwardRef(
           editorHistory.trackHistoryActions('characterStyle', `Applied text color`)
         },
         setHighlightColor: (color: string) => {
-          editor?.chain().focus().setHighlight({ color: color }).run()
+          editor.chain().focus().setHighlight({ color: color }).run()
           editorHistory.trackHistoryActions('characterStyle', `Applied highlight color`)
         },
         setBlockquote: (isBlockquote: boolean) => {
-          if (!editor) return
           editor.chain().focus()[isBlockquote ? 'setBlockquote' : 'unsetBlockquote']().run()
           editorHistory.trackHistoryActions('characterStyle', `Applied blockquote style`)
         },
         setTextAlignment: (alignment: string) => {
-          if (!editor) return
           editor.chain().focus().setTextAlign(alignment).run()
           editorHistory.trackHistoryActions('characterStyle', `Applied font alignment`)
         },
         setLineSpacing: (lineSpacing: Spacing) => {
-          if (!editor) return
           editor.chain().focus().setLineSpacing(lineSpacing).run()
           editorHistory.trackHistoryActions('characterStyle', `Applied line spacing`)
         },
@@ -290,8 +496,6 @@ const TextEditor = forwardRef(
           editor?.chain().focus().toggleNonPrintingCharacters()
         },
         setListNumbering: (numbering: number) => {
-          if (!editor) return
-
           if (editor.isActive('orderList')) {
             editor.chain().focus().updateAttributes('orderList', { start: numbering }).run()
           } else {
@@ -308,18 +512,14 @@ const TextEditor = forwardRef(
           )
         },
         continuePreviousNumbering: () => {
-          if (!editor) return
-
           editor.chain().focus().continueFromPreviousNumber().run()
           editorHistory.trackHistoryActions('characterStyle', `Continued previous numbering`)
         },
         setStrikeThrough: (value: boolean) => {
-          if (!editor) return
           editor.chain().focus()[value ? 'setStrike' : 'unsetStrike']().run()
           editorHistory.trackHistoryActions('characterStyle', `Applied strikethrough style`)
         },
         setSuperscript: (superscript: boolean) => {
-          if (!editor) return
           editor.chain().focus().unsetSubscript().run()
           editor.chain().focus()[superscript ? 'setSuperscript' : 'unsetSuperscript']().run()
           setTimeout(() => {
@@ -330,7 +530,6 @@ const TextEditor = forwardRef(
           editorHistory.trackHistoryActions('characterStyle', `Applied superscript style`)
         },
         setSubscript: (subscript: boolean) => {
-          if (!editor) return
           editor.chain().focus().unsetSuperscript().run()
           editor.chain().focus()[subscript ? 'setSubscript' : 'unsetSubscript']().run()
           setTimeout(() => {
@@ -354,8 +553,6 @@ const TextEditor = forwardRef(
           editor?.chain().focus().redo().run()
         },
         addBookmark: () => {
-          if (!editor) return
-
           editor.chain().focus().unsetHighlight().run()
 
           const bookmarkColor = bookmarkHighlighted ? '#E5E5E5' : '#ffffff'
@@ -370,17 +567,13 @@ const TextEditor = forwardRef(
           }
         },
         unsetBookmark: () => {
-          if (!editor) return
           editor.chain().focus().unsetBookmark().run()
         },
         deleteBookmarks: (bookmarks: Bookmark[]) => {
-          if (!editor) return
           const bookmarkIds = bookmarks.map((bookmark) => bookmark.id)
           deleteMarks(editor, bookmarkIds, 'bookmark')
         },
         scrollToBookmark: (id: string) => {
-          if (!editor) return
-
           const positions: { start: number; end: number }[] = []
           editor.state.doc.descendants((node: any, pos: number) => {
             if (node.marks?.some((mark) => mark.type.name === 'bookmark' && mark.attrs.id === id)) {
@@ -416,8 +609,6 @@ const TextEditor = forwardRef(
           }, 600)
         },
         addComment: () => {
-          if (!editor) return
-
           editor.chain().focus().unsetHighlight().run()
 
           const commentColor = commentHighlighted ? '#A9BFFF' : '#ffffff'
@@ -433,17 +624,13 @@ const TextEditor = forwardRef(
           }
         },
         unsetComment: () => {
-          if (!editor) return
           editor.chain().focus().unsetComment().run()
         },
         deleteComments: (comments: AppComment[]) => {
-          if (!editor) return
           const commentIds = comments.map((comment) => comment.id)
           deleteMarks(editor, commentIds, 'comment')
         },
         scrollToComment: (id: string) => {
-          if (!editor) return
-
           const positions: { start: number; end: number }[] = []
           editor.state.doc.descendants((node: any, pos: number) => {
             if (node.marks?.some((mark) => mark.type.name === 'comment' && mark.attrs.id === id)) {
@@ -479,7 +666,6 @@ const TextEditor = forwardRef(
           }, 600)
         },
         scrollToSection: (id: string) => {
-          if (!editor) return
           const _id = id ?? 'toc'
 
           function findNodePositionByAttribute(editor: Editor): number[] {
@@ -507,12 +693,9 @@ const TextEditor = forwardRef(
           }, 50)
         },
         setLigature: (ligature: LigatureType) => {
-          if (!editor) return
           editor.chain().focus().setLigature(ligature).run()
         },
         setCase: (caseType: CasingType) => {
-          if (!editor) return
-
           const { state } = editor
           const { selection } = state
           const { from, to } = selection
@@ -578,8 +761,6 @@ const TextEditor = forwardRef(
           editor?.chain().focus().unsetCharacterSpacing().run()
         },
         scrollToHeadingIndex: (index: number) => {
-          if (!editor) return
-
           const textEditorJson = editor.getJSON()
           const items = textEditorJson.content || []
           if (items.length === 0) return
@@ -639,13 +820,9 @@ const TextEditor = forwardRef(
           editor?.commands.focus()
         },
         setTextSelection: (currentPosition: TTextPosition) => {
-          if (!editor) return
-
           editor.commands.setTextSelection(currentPosition)
         },
         insertCharacter: (character: number) => {
-          if (!editor) return
-
           editor.chain().focus().insertContent(String.fromCharCode(character)).run()
         },
         chain: () => editor?.chain(),
@@ -660,8 +837,7 @@ const TextEditor = forwardRef(
     }, [])
 
     function getEditorState() {
-      if (!editor) return
-      const newState = currentEditorState(editor)
+      const newState = currentEditorState()
       return newState
     }
 
@@ -836,8 +1012,8 @@ const TextEditor = forwardRef(
       const textFontSize = isHeading ? currHeadingFontSize : currTextFontSize
       const fontSize =
         hasMultipleHeadingFontSizes ||
-        hasMultipleParagraphFontSizes ||
-        (hasHeadings && hasParagraphs)
+          hasMultipleParagraphFontSizes ||
+          (hasHeadings && hasParagraphs)
           ? '0pt'
           : textFontSize
 
@@ -924,217 +1100,6 @@ const TextEditor = forwardRef(
       onEmphasisStateChange?.(newEmphasisState)
     }, [])
 
-    const withSectionDividers: boolean = isMainText
-    const withEditableFilter: boolean = isMainText
-
-    const content = useMemo(() => {
-      if (isMainText) {
-        return {
-          type: 'doc',
-          content: [...textTemplate(t('dividerSections.mainText'))]
-        }
-      }
-
-      return {
-        type: 'doc',
-        content: []
-      }
-    }, [isMainText])
-
-    const editor = useEditor({
-      ...defaultEditorConfig(withSectionDividers, withEditableFilter),
-      content: content,
-      editorProps: {
-        // attributes: {
-        //   style: 'font-family: "Times New Roman", Arial, sans-serif;'
-        // },
-        handleKeyDown: (view, event) => {
-          if (event.key === 'Enter') {
-            const { state } = view
-            const { selection } = state
-            const { $from } = selection
-
-            if ($from.parent.type.name.startsWith('heading')) {
-            }
-          }
-          const isMacOS = /Mac/.test(navigator.userAgent)
-
-          if (isMacOS) {
-            // Gestione per Cmd+V su macOS
-            if (event.metaKey && event.key === 'v' && editor?.isFocused) {
-              event.preventDefault()
-              handlePaste()
-            }
-
-            // Gestione per Cmd+C su macOS
-            if (event.metaKey && event.key === 'c' && editor?.isFocused) {
-              event.preventDefault()
-              handleCopy()
-            }
-
-            if (event.metaKey && event.key === 'x' && editor?.isFocused) {
-              event.preventDefault()
-              handleCut()
-            }
-          }
-          return false
-        }
-      },
-      onUpdate: ({ editor }) => {
-        const newState = currentEditorState(editor)
-        onUpdate?.(newState)
-
-        const bookmarks = handleMarks(editor, 'bookmark')
-        onChangeBookmarks?.(bookmarks)
-
-        const comments = handleMarks(editor, 'comment')
-        onChangeComments?.(comments)
-
-        updateEmphasisState(editor)
-      },
-      onSelectionUpdate: ({ editor }) => {
-        const state = editor.state
-        const { selection } = state
-        const { from, to } = selection
-        const selectedContent = state.doc.textBetween(from, to, ' ')
-
-        // POPOVER
-        if (from === to) setPopoverOpen(false)
-
-        // SECTIONS
-        let sections: string[] = []
-        editor.state.doc.nodesBetween(0, from, (node, _) => {
-          if (node.type.name === 'sectionDivider') {
-            sections.push(node.attrs.sectionType)
-            return false
-          }
-          return true
-        })
-        const currentSection = sections[sections.length - 1]
-        onCurrentSection?.(sections.length > 0 ? currentSection : undefined)
-
-        // SELECTION MARKS
-        const selectedMarks = getSelectionMarks(editor)
-        if (selectedContent.length === 0) {
-          const hasBookmark = selectedMarks.some((mark) => mark.type === 'bookmark')
-          const hasComment = selectedMarks.some((mark) => mark.type === 'comment')
-          if (hasComment && commentHighlighted) {
-            onSelectionMarks?.(selectedMarks.filter((mark) => mark.type === 'comment'))
-          } else if (hasBookmark && bookmarkHighlighted) {
-            onSelectionMarks?.(selectedMarks.filter((mark) => mark.type === 'bookmark'))
-          } else {
-            onSelectionMarks?.([])
-          }
-        } else {
-          onSelectionMarks?.(selectedMarks)
-        }
-
-        const comments = handleMarks(editor, 'comment')
-        onChangeComments?.(comments)
-        const bookmarks = handleMarks(editor, 'bookmark')
-        onChangeBookmarks?.(bookmarks)
-
-        // SELECT COMMENT
-        const selectedComment = comments.find((comment) => {
-          return selectedMarks.some(
-            (mark) => mark.type === 'comment' && mark.attrs?.id === comment.id
-          )
-        })
-        if (selectedComment) onChangeComment?.(selectedComment)
-
-        // SELECT BOOKMARK
-        const selectedBookmark = bookmarks.find((bookmark) => {
-          return selectedMarks.some(
-            (mark) => mark.type === 'bookmark' && mark.attrs?.id === bookmark.id
-          )
-        })
-        if (selectedBookmark) onChangeBookmark?.(selectedBookmark)
-
-        onSelectedContent?.(selectedContent)
-        onSelectedContentChange?.(selectedContent)
-        onCanUndo?.(editor.can().undo())
-        onCanRedo?.(editor.can().redo())
-        updateEmphasisState(editor)
-        onBookmarkStateChange?.(editor.isActive('bookmark'))
-        onCommentStateChange?.(editor.isActive('comment'))
-      },
-      onTransaction: ({ editor, transaction }) => {
-        onHistoryStateChange?.(editorHistory.current)
-
-        const selectionStart = transaction.getMeta('selectionStart')
-        const selectionEnd = transaction.getMeta('selectionEnd')
-
-        // const isCut = transaction.getMeta("uiEvent") === "cut"
-        // const isCopy = transaction.getMeta("uiEvent") === "copy"
-        // if (isCut || isCopy) {
-        //   const { from, to } = editor.state.selection;
-        //   if (from !== to) {
-        //     const text = editor.state.doc.textBetween(from, to, ' ');
-        //     navigator.clipboard.writeText(text).then(() => {
-        //       if (isCut) {
-        //         editor.commands.deleteRange({ from, to });
-        //       }
-        //     });
-        //   }
-        // }
-
-        if (selectionStart) {
-          setPopoverOpen(false)
-        }
-
-        if (selectionEnd) {
-          updateEmphasisState(editor)
-          setTimeout(() => {
-            positionPopover()
-          }, 0)
-        }
-      },
-      onFocus: (data) => {
-        const editor = data.editor
-        onFocusEditor?.()
-        onCanUndo?.(editor.can().undo())
-        onCanRedo?.(editor.can().redo())
-      },
-      // onBlur: (data) => {
-      //   const editor = data.editor;
-      //   onBlurEditor?.();
-      // },
-      //@ts-ignore
-      onPaste: (event, slice) => {
-        // editor?.commands.insertContentAt(0, {
-        //   type: 'paragraph',
-        //   content: [
-        //     {
-        //       type: 'text',
-        //       text: 'Hello, world!'
-        //     }
-        //   ]
-        // });
-
-        if (!editor) return
-
-        const { clipboardData } = event
-
-        if (!clipboardData) return
-
-        // const text = clipboardData.getData('text/plain');
-        // const html = clipboardData.getData('text/html');
-        // const rtf = clipboardData.getData('text/rtf');
-        // const json = clipboardData.getData('text/json');
-
-        // console.log('text', text)
-        // console.log('html', html)
-        // console.log('rtf', rtf)
-        // console.log('json', json)
-
-        // You can handle the pasted content here
-        // For example, you could insert it with specific formatting:
-        // if (text) {
-        //   editor.commands.insertContent(text);
-        // }
-      }
-    })
-
     // Add to your editor container
     // editor?.view.dom.addEventListener('copy', (event) => {
     //   const selection = editor?.state.selection
@@ -1157,29 +1122,21 @@ const TextEditor = forwardRef(
     //   }, 0)
     // })
 
-    const currentEditorState = useCallback(
-      (editor: Editor) => {
-        const characters = editor.storage.characterCount.characters()
-        const words = editor.storage.characterCount.words()
+    const currentEditorState = useCallback(() => {
+      const characters = editor.storage.characterCount.characters()
+      const words = editor.storage.characterCount.words()
 
-        return {
-          json: editor.getJSON(),
-          html: editor.getHTML(),
-          text: editor.getText(),
-          characters,
-          words
-        }
-      },
+      return {
+        json: editor.getJSON(),
+        html: editor.getHTML(),
+        text: editor.getText(),
+        characters,
+        words
+      }
+    },
       [editor]
     )
 
-    useEffect(() => {
-      if (canEdit) {
-        editor?.setEditable(canEdit)
-      } else {
-        editor?.setEditable(false)
-      }
-    }, [canEdit])
 
     const positionPopover = useCallback(() => {
       if (!editor || !editorRef.current) return
@@ -1399,10 +1356,89 @@ const TextEditor = forwardRef(
       <>
         <div
           ref={editorRef}
-          className={cn('relative w-full h-full', className)}
-          onContextMenu={() => setPopoverOpen(true)}
+          // className={cn('relative w-full h-full', className)}
+          // onContextMenu={() => setPopoverOpen(true)}
         >
-          {bubbleToolbarItems && bubbleToolbarItems.length > 0 && (
+           <BubbleMenu
+                editor={editor}
+                tippyOptions={{
+                    duration: 100,
+                    placement: 'top'
+                }}
+                >
+                  <div                   className="w-auto px-4 py-3"
+                  >
+                       <div className="flex items-center gap-2">
+                    {bubbleToolbarItems?.map((item, index) => (
+                      <div key={`${index}-${item.type}`}>
+                        {item.type === 'button' && (
+                          <Button
+                            key={`${index}-${item.type}`}
+                            intent="secondary"
+                            variant="icon"
+                            size="iconSm"
+                            icon={item.icon}
+                            onClick={() => {
+                              item.onClick?.(item)
+                              setPopoverOpen(false)
+                            }}
+                            disabled={item.disabled}
+                          />
+                        )}
+                        {item.type === 'dropdown' && (!item.options || item.options.length < 2) && (
+                          <Button
+                            key={`${index}-${item.type}`}
+                            intent="secondary"
+                            variant="icon"
+                            size="iconSm"
+                            icon={item.icon}
+                            onClick={() => {
+                              item.onClick?.(item)
+                              setPopoverOpen(false)
+                            }}
+                            disabled={item.disabled}
+                          />
+                        )}
+                        {item.type === 'dropdown' && item.options && item.options.length > 1 && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                intent="secondary"
+                                variant="icon"
+                                size="iconSm"
+                                icon={item.icon}
+                                disabled={item.disabled}
+                              />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="start"
+                              className="w-[100px]"
+                              onCloseAutoFocus={(e) => {
+                                e.preventDefault()
+                                editor?.commands.focus()
+                              }}
+                            >
+                              {item.options?.map((option, index) => (
+                                <DropdownMenuItem
+                                  key={`${index}-${option.label}`}
+                                  onClick={() => {
+                                    item.onClick?.(option)
+                                    setPopoverOpen(false)
+                                  }}
+                                >
+                                  {option.label}
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  </div>
+                </BubbleMenu>
+
+          {/* {bubbleToolbarItems && bubbleToolbarItems.length > 0 && (
             <div
               ref={popoverTriggerRef}
               style={{
@@ -1416,7 +1452,9 @@ const TextEditor = forwardRef(
                 pointerEvents: 'none'
               }}
             >
-              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <Popover
+                open={popoverOpen}
+                onOpenChange={setPopoverOpen}>
                 <PopoverTrigger asChild>
                   <div className="w-1 h-1" />
                 </PopoverTrigger>
@@ -1494,7 +1532,7 @@ const TextEditor = forwardRef(
                 </PopoverContent>
               </Popover>
             </div>
-          )}
+          )} */}
 
           <EditorContent
             className="h-full"

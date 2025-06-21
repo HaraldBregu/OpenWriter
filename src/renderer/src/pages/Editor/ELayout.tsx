@@ -8,7 +8,7 @@ import {
   addApparatusAtTop,
   setBookmark,
   setComment,
-  setEditorMode,
+
   setEmphasisState,
   togglePrintPreviewVisible,
   toggleTocVisibility
@@ -19,7 +19,7 @@ import {
   selectCanAddComment,
   selectCanUndo,
   selectCommentActive,
-  selectEditorMode,
+
   selectHeadingEnabled,
   selectHistory,
   selectPrintPreviewVisible,
@@ -186,7 +186,7 @@ const ELayout = () => {
   useEffect(() => {
     const fetchAppStyles = async () => {
       try {
-        const defaultStyles = JSON.parse(await window?.doc?.getStyle('default.stl'))
+        const defaultStyles = JSON.parse(await window?.doc?.getStyle('default.stl') || '[]')
         if (defaultStyles.length > 0) {
           dispatch(updateStyles(defaultStyles))
         }
@@ -318,11 +318,6 @@ const ELayout = () => {
             }}
             onRedo={() => {
               editorContainerRef.current?.redo()
-            }}
-            // EDITOR MODE
-            editorMode={useSelector(selectEditorMode)}
-            setEditorMode={(mode) => {
-              dispatch(setEditorMode(mode))
             }}
             // BOOKMARK
             bookmarksCategories={useSelector(bookmarkCategoriesSelector)}

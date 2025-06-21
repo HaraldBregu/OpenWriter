@@ -30,7 +30,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   selectApparatuses,
   selectApparatusesTypes,
-  selectCanEdit,
   selectDisabledRemainingApparatusesTypes,
   selectEnabledRemainingApparatusesTypes,
   selectVisibleApparatuses
@@ -207,7 +206,6 @@ const Apparatuses = forwardRef(
     const apparatuses = useSelector(selectApparatuses)
     const visibleApparatuses = useSelector(selectVisibleApparatuses)
     const apparatusesTypes = useSelector(selectApparatusesTypes)
-    const canEdit = useSelector(selectCanEdit)
 
     const hasOneCriticalApparatus = useMemo(() => {
       const criticalApparatuses = apparatuses.filter((apparatus) => apparatus.type === 'CRITICAL')
@@ -280,7 +278,7 @@ const Apparatuses = forwardRef(
     useEffect(() => {
       const taskId = rendererLogger.startTask('TextEditor', 'Load apparatuses')
       async function loadApparatuses() {
-        const apparatuses = (await window.doc.getApparatuses()) as DocumentApparatus[]
+        const apparatuses = (await window?.doc?.getApparatuses()) as DocumentApparatus[]
         setApparatusesData(apparatuses)
         dispatch(createApparatusesFromDocument(apparatuses))
       }
@@ -691,7 +689,6 @@ const Apparatuses = forwardRef(
                           dispatch(setCanAddBookmark(false))
                           onFocusEditor()
                         }}
-                        canEdit={canEdit}
                         commentHighlighted={true}
                         onUpdate={(editor: EditorData) => {
                           updateTextHandler(editor)
@@ -713,7 +710,7 @@ const Apparatuses = forwardRef(
                         }}
                         onCommentCreated={async (id, content) => {
                           const userInfo =
-                            (await window.system.getUserInfo()) as unknown as UserInfo
+                            (await window?.system?.getUserInfo()) as UserInfo
                           dispatch(
                             addComment({
                               id: id,

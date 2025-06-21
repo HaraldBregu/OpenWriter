@@ -30,7 +30,7 @@ const api = {}
 const store = {}
 
 const systemAPI: ISystemAPI = {
-  getUserInfo: (): Promise<void> => ipcRenderer.invoke('system:getUserInfo'),
+  getUserInfo: (): Promise<UserInfo> => ipcRenderer.invoke('system:getUserInfo'),
   getFonts: (): Promise<string[]> => ipcRenderer.invoke('system:getFonts'),
   getSubsets: (): Promise<Subset[]> => ipcRenderer.invoke('system:getSubsets'),
   getSymbols: (fontName: string): Promise<CharacterSet> =>

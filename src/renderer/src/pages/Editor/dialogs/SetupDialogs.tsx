@@ -19,7 +19,8 @@ export const SetupDialogs = () => {
   const fontFamilySymbols = useMemo(() => state.fontFamilySymbols, [state.fontFamilySymbols])
 
   const handleImportSiglum = useCallback(async () => {
-    const importedSiglum = await window.doc.importSiglumList()
+    const importedSiglum = await window?.doc?.importSiglumList()
+    if (!importedSiglum) return
 
     console.log('siglumList', siglumList)
 
@@ -29,7 +30,7 @@ export const SetupDialogs = () => {
 
     // @TODO: manage the duplicate of symbols when importing a siglum list
     if (hasSameSiglum) {
-      window.system.showMessageBox(
+      window?.system?.showMessageBox(
         `The Siglum ${importedSiglum[0].siglum.value} is already present in the document. Do you want to replace it?`
       )
 
@@ -61,12 +62,14 @@ export const SetupDialogs = () => {
         fontFamilyList={fontFamilyList}
         fontFamilySymbols={fontFamilySymbols}
         onSelectFontFamily={async (fontFamily) => {
-          const symbols = await window.system.getSymbols(fontFamily)
+          const symbols = await window?.system?.getSymbols(fontFamily)
+          if (!symbols) return
+
           dispatch(setFontFamilySymbols(symbols))
         }}
         onImportSiglum={handleImportSiglum}
         onExportSiglumList={() => {
-          window.doc.exportSiglumList(state.siglumList)
+          window?.doc?.exportSiglumList(state.siglumList)
         }}
       />
     </>

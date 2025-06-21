@@ -35,7 +35,9 @@ const ChooseTemplateModal: React.FC<ChooseTemplateModalProps> = ({ open, onClose
 
   const fetchTemplates = async () => {
     try {
-      const templatesResponse = await window.doc.getTemplates()
+      const templatesResponse = await window?.doc?.getTemplates()
+      if (!templatesResponse) return
+
       const templates = templatesResponse.map(({ filename, content }: any) => ({
         ...JSON.parse(content),
         filename
@@ -95,7 +97,7 @@ const ChooseTemplateModal: React.FC<ChooseTemplateModalProps> = ({ open, onClose
 
   const handleImport = async () => {
     try {
-      await window.doc.importTemplate()
+      await window?.doc?.importTemplate()
       await fetchTemplates()
     } catch (err) {
       console.log('err:', err)
