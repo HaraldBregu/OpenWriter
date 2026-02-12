@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs rm)",
+      "Bash(rm -rf node_modules yarn.lock package-lock.json)",
+      "Bash(yarn cache clean)",
+      "Bash(npm cache clean --force)",
+      "Bash(yarn cache clean --force)",
+      "Bash(yarn install)",
+      "Bash(yarn install --ignore-engines)",
+      "Bash(yarn install --ignore-scripts)",
+      "Bash(git remote set-url:*)",
+      "Bash(tree:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run typecheck:node:*)",
+      "Bash(npm run typecheck:web:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run typecheck:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

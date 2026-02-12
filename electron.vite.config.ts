@@ -11,7 +11,6 @@ export default defineConfig({
       rollupOptions: {
         input: {
           index: resolve(__dirname, "src/main/index.ts"),
-          'search-worker': resolve(__dirname, "src/main/workers/search-worker.ts"), // ✅ Add worker entry
         },
         output: {
           entryFileNames: "[name].js", // ✅ Ensure .js files are generated
@@ -33,7 +32,7 @@ export default defineConfig({
         '@store': resolve(__dirname, './src/renderer/src/store'),
         '@components': resolve(__dirname, './src/renderer/src/components'),
         '@icons': resolve(__dirname, './src/renderer/src/components/icons'),
-        "@resources": resolve(__dirname, "buildResources"),
+        "@resources": resolve(__dirname, "resources"),
       }
     },
     plugins: [

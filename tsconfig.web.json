@@ -1,5 +1,5 @@
 {
-  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "extends": "./node_modules/@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
@@ -24,7 +24,7 @@
       "@store/*": ["src/renderer/src/store/*"],
       "@components/*": ["src/renderer/src/components/*"],
       "@icons/*": ["src/renderer/src/components/icons/*"],
-      "@resources/*": ["buildResources/*"]
+      "@resources/*": ["resources/*"]
     }
   }
 }

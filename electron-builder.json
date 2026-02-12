@@ -1,25 +1,21 @@
 {
-  "productName": "Criterion",
-  "appId": "com.finconsgroup.criterion",
-  "copyright": "FinconGroup © 2025",
+  "productName": "Tesseract",
+  "appId": "com.tesseract.tesseract",
+  "copyright": "Tesseract Project © 2025",
   "afterAllArtifactBuild": "./scripts/electron-builder-hooks.cjs",
   "files": [
     "out/**",
     "i18n/**",
-    "buildResources/**",
-    "!buildResources/printPreview/jre/**",
-    "!buildResources/printPreview/TinyTeX-lin/**",
-    "!buildResources/printPreview/TinyTeX-win/**",
-    "!buildResources/printPreview/TinyTeX-mac/**"
+    "resources/**"
   ],
-  "icon": "./buildResources/appIcons/icon.ico",
+  "icon": "./resources/appIcons/icon.ico",
   "extraResources": [
     "out/preload/preload.mjs",
     { "from": "./i18n", "to": "i18n" },
     { "from": "./LICENSE", "to": "LICENSE" },
     {
-      "from": "./buildResources",
-      "to": "buildResources",
+      "from": "./resources",
+      "to": "resources",
       "filter": [
         "icons/**",
         "styles/**",
@@ -49,27 +45,27 @@
         "arch": ["x64", "arm64"]
       }
     ],
-    "icon": "./buildResources/appIcons/icon.icns",
+    "icon": "./resources/appIcons/icon.icns",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities",
       "CFBundleDocumentTypes": [
         {
-          "CFBundleTypeName": "Criterion File",
+          "CFBundleTypeName": "Tesseract File",
           "CFBundleTypeIconFile": "fileIcon.icns",
-          "CFBundleTypeExtensions": ["critx"],
+          "CFBundleTypeExtensions": ["tsx"],
           "CFBundleTypeRole": "Editor",
           "LSHandlerRank": "Owner",
-          "LSItemContentTypes": ["com.finconsgroup.criterion.document"]
+          "LSItemContentTypes": ["com.tesseract.tesseract.document"]
         }
       ],
       "UTExportedTypeDeclarations": [
         {
-          "UTTypeIdentifier": "com.finconsgroup.criterion.document",
-          "UTTypeDescription": "Criterion File",
+          "UTTypeIdentifier": "com.tesseract.tesseract.document",
+          "UTTypeDescription": "Tesseract File",
           "UTTypeConformsTo": ["public.data"],
           "UTTypeTagSpecification": {
-            "public.filename-extension": ["critx"],
-            "public.mime-type": ["application/x-criterion-document"]
+            "public.filename-extension": ["tsx"],
+            "public.mime-type": ["application/x-tesseract-document"]
           }
         }
       ]
@@ -78,25 +74,25 @@
     "darkModeSupport": true,
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "entitlements": "./buildResources/entitlements.mac.plist",
-    "entitlementsInherit": "./buildResources/entitlements.mac.plist",
+    "entitlements": "./resources/entitlements.mac.plist",
+    "entitlementsInherit": "./resources/entitlements.mac.plist",
     "identity": null,
     "type": "development",
     "fileAssociations": [
       {
-        "ext": "critx",
-        "name": "Criterion File",
-        "description": "Criterion File",
-        "mimeType": "application/x-criterion-document",
-        "icon": "./buildResources/fileIcons/mac/fileIcon.icns",
+        "ext": "tsx",
+        "name": "Tesseract File",
+        "description": "Tesseract File",
+        "mimeType": "application/x-tesseract-document",
+        "icon": "./resources/fileIcons/mac/fileIcon.icns",
         "role": "Editor",
         "rank": "Owner"
       }
     ],
     "extraResources": [
       {
-        "from": "./buildResources",
-        "to": "buildResources",
+        "from": "./resources",
+        "to": "resources",
         "filter": ["printPreview/jre/macos/**", "printPreview/TinyTeX-mac/**"]
       }
     ]
@@ -116,43 +112,43 @@
     "target": [{ "target": "deb" }],
     "category": "Utility",
     "artifactName": "${productName}-${version}.${ext}",
-    "icon": "./buildResources/appIcons/linux_icons",
-    "maintainer": "Fincons Group S.p.A.",
-    "synopsis": "Criterion",
-    "description": "Criterion",
-    "vendor": "Fincons Group",
-    "executableName": "criterion",
+    "icon": "./resources/appIcons/linux_icons",
+    "maintainer": "Tesseract Project",
+    "synopsis": "Tesseract",
+    "description": "Tesseract - Advanced Text Editor",
+    "vendor": "Tesseract Project",
+    "executableName": "tesseract",
     "desktop": {
       "Type": "Application",
-      "Name": "Criterion",
-      "Comment": "Text editor for Critical editions",
-      "Icon": "criterion",
+      "Name": "Tesseract",
+      "Comment": "Advanced Text Editor",
+      "Icon": "tesseract",
       "Terminal": false,
       "Categories": "Office;WordProcessor;TextEditor;",
-      "MimeType": "application/x-criterion-document;",
+      "MimeType": "application/x-tesseract-document;",
       "StartupNotify": true,
-      "StartupWMClass": "Criterion"
+      "StartupWMClass": "Tesseract"
     },
     "fileAssociations": [
       {
-        "ext": "critx",
-        "name": "Criterion File",
-        "description": "Criterion File",
-        "mimeType": "application/x-criterion-document",
-        "icon": "./buildResources/fileIcons/linux/48x48.png"
+        "ext": "tsx",
+        "name": "Tesseract File",
+        "description": "Tesseract File",
+        "mimeType": "application/x-tesseract-document",
+        "icon": "./resources/fileIcons/linux/48x48.png"
       }
     ],
     "extraResources": [
       {
-        "from": "./buildResources",
-        "to": "buildResources",
+        "from": "./resources",
+        "to": "resources",
         "filter": ["printPreview/jre/linux/**", "printPreview/TinyTeX-lin/**"]
       }
     ]
   },
   "deb": {
     "packageCategory": "utils",
-    "maintainer": "Fincons Group S.p.A. <criterion@finconsgroup.com>",
+    "maintainer": "Tesseract Project <contact@tesseract-editor.org>",
     "afterInstall": "./scripts/postinstall.sh",
     "depends": [
       "libgtk-3-0",
@@ -175,26 +171,26 @@
     ]
   },
   "win": {
-    "icon": "./buildResources/appIcons/icon.ico",
+    "icon": "./resources/appIcons/icon.ico",
     "target": "nsis",
     "signAndEditExecutable": true,
     "artifactName": "${productName}.${ext}",
     "forceCodeSigning": false,
     "signtoolOptions": {
-      "publisherName": "FinconGroup"
+      "publisherName": "Tesseract Project"
     },
     "requestedExecutionLevel": "asInvoker",
     "fileAssociations": [
       {
-        "ext": "critx",
-        "name": "Criterion File",
-        "icon": "./buildResources/fileIcons/win/fileIcon.ico"
+        "ext": "tsx",
+        "name": "Tesseract File",
+        "icon": "./resources/fileIcons/win/fileIcon.ico"
       }
     ],
     "extraResources": [
       {
-        "from": "./buildResources",
-        "to": "buildResources",
+        "from": "./resources",
+        "to": "resources",
         "filter": ["printPreview/jre/win/**", "printPreview/TinyTeX-win/**"]
       }
     ]
@@ -203,13 +199,13 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
-    "shortcutName": "Criterion",
+    "shortcutName": "Tesseract",
     "multiLanguageInstaller": true,
     "warningsAsErrors": false,
     "include": "./scripts/installer.nsh",
     "deleteAppDataOnUninstall": false,
-    "installerIcon": "./buildResources/appIcons/icon.ico",
-    "uninstallerIcon": "./buildResources/appIcons/icon.ico",
+    "installerIcon": "./resources/appIcons/icon.ico",
+    "uninstallerIcon": "./resources/appIcons/icon.ico",
     "perMachine": false,
     "license": "./LICENSE",
     "artifactName": "${productName}-${version}.${ext}",

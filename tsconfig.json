@@ -8,7 +8,7 @@
       "@store/*": ["src/renderer/src/store/*"],
       "@components/*": ["src/renderer/src/components/*"],
       "@icons/*": ["src/src/renderer/src/components/icons/*"],
-      "@resources/*": ["buildResources/*"]
+      "@resources/*": ["resources/*"]
     },
     "jsx": "react-jsx",
     "types": ["jest", "@testing-library/jest-dom"],
