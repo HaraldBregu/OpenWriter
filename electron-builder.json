@@ -31,7 +31,7 @@
         "arch": ["x64", "arm64"]
       }
     ],
-    "icon": "./resources/icons/icon.icns",
+    "icon": "./resources/icons/mac/icon.icns",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities",
       "CFBundleDocumentTypes": [

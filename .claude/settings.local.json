@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(xargs rm)",
@@ -17,13 +21,10 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run typecheck:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
-  },
-  "attribution": {
-    "commit": "",
-    "pr": ""
   }
 }
