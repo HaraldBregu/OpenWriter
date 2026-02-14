@@ -2,31 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar:hover {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #a0a0a0;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6a6a6a;
-}
-
 /* Tailwind CSS variables for theme support */
 @layer base {
   :root {
@@ -73,24 +48,4 @@
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
   }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* Electron titlebar styles */
-.titlebar {
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
-.titlebar-button {
-  -webkit-app-region: no-drag;
 }
