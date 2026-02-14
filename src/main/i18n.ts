@@ -6,7 +6,7 @@ export type Translations = Record<string, Record<string, string> | string>
 
 export function loadTranslations(lng: string): Translations {
   const filePath = is.dev
-    ? path.join(__dirname, `../../resources/internationalization/${lng}/translation.json`)
-    : path.join(process.resourcesPath, `resources/internationalization/${lng}/translation.json`)
+    ? path.join(__dirname, `../../resources/i18n/${lng}/translation.json`)
+    : path.join(process.resourcesPath, `resources/i18n/${lng}/translation.json`)
   return JSON.parse(readFileSync(filePath, 'utf-8'))
 }
