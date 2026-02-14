@@ -35,8 +35,7 @@ export class Tray {
 
   private buildContextMenu(): void {
     if (!this.tray) return
-    const t = loadTranslations(this.currentLanguage)
-    const m = t.menu as Record<string, string>
+    const m = loadTranslations(this.currentLanguage, 'tray')
 
     const contextMenu = Menu.buildFromTemplate([
       {

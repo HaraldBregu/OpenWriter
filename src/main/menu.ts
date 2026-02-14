@@ -26,8 +26,7 @@ export class Menu {
 
   private buildMenu(): void {
     const isMac = process.platform === 'darwin'
-    const t = loadTranslations(this.currentLanguage)
-    const m = t.menu as Record<string, string>
+    const m = loadTranslations(this.currentLanguage, 'menu')
 
     const switchLanguage = (lng: string): void => {
       this.currentLanguage = lng
