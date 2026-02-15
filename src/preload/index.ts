@@ -83,6 +83,81 @@ const api = {
         return () => {
             ipcRenderer.removeListener('network-status-changed', handler)
         }
+    },
+    // Cron
+    cronGetAllJobs: (): Promise<Array<{
+        id: string
+        name: string
+        schedule: string
+        enabled: boolean
+        running: boolean
+        lastRun?: Date
+        nextRun?: Date
+        runCount: number
+        description?: string
+        humanReadable?: string
+    }>> => {
+        return ipcRenderer.invoke('cron-get-all-jobs')
+    },
+    cronGetJob: (id: string): Promise<{
+        id: string
+        name: string
+        schedule: string
+        enabled: boolean
+        running: boolean
+        lastRun?: Date
+        nextRun?: Date
+        runCount: number
+        description?: string
+        humanReadable?: string
+    } | null> => {
+        return ipcRenderer.invoke('cron-get-job', id)
+    },
+    cronStartJob: (id: string): Promise<boolean> => {
+        return ipcRenderer.invoke('cron-start-job', id)
+    },
+    cronStopJob: (id: string): Promise<boolean> => {
+        return ipcRenderer.invoke('cron-stop-job', id)
+    },
+    cronDeleteJob: (id: string): Promise<boolean> => {
+        return ipcRenderer.invoke('cron-delete-job', id)
+    },
+    cronCreateJob: (config: {
+        id: string
+        name: string
+        schedule: string
+        enabled: boolean
+        runCount: number
+        description?: string
+    }): Promise<boolean> => {
+        return ipcRenderer.invoke('cron-create-job', config)
+    },
+    cronUpdateSchedule: (id: string, schedule: string): Promise<boolean> => {
+        return ipcRenderer.invoke('cron-update-schedule', id, schedule)
+    },
+    cronValidateExpression: (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
+        return ipcRenderer.invoke('cron-validate-expression', expression)
+    },
+    onCronJobResult: (callback: (result: {
+        id: string
+        timestamp: Date
+        success: boolean
+        message?: string
+        data?: unknown
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, result: {
+            id: string
+            timestamp: Date
+            success: boolean
+            message?: string
+            data?: unknown
+        }): void => {
+            callback(result)
+        }
+        ipcRenderer.on('cron-job-result', handler)
+        return () => {
+            ipcRenderer.removeListener('cron-job-result', handler)
+        }
     }
 }
 

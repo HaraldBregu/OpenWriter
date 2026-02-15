@@ -29,7 +29,9 @@
       "Bash(npm install:*)",
       "Bash(git push:*)",
       "Bash(git config:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm search:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

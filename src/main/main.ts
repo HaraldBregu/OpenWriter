@@ -5,18 +5,21 @@ import { is } from '@electron-toolkit/utils'
 import { MediaPermissionsService } from './services/media-permissions'
 import { BluetoothService } from './services/bluetooth'
 import { NetworkService } from './services/network'
+import { CronService } from './services/cron'
 
 export class Main {
   private window: BrowserWindow | null = null
   private mediaPermissions: MediaPermissionsService
   private bluetoothService: BluetoothService
   private networkService: NetworkService
+  private cronService: CronService
 
   constructor() {
     // Initialize services
     this.mediaPermissions = new MediaPermissionsService()
     this.bluetoothService = new BluetoothService()
     this.networkService = new NetworkService()
+    this.cronService = new CronService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -86,6 +89,49 @@ export class Main {
     // Network event listeners would go here
     // Note: Electron doesn't have a built-in network status change event
     // For real-time monitoring, consider using a Node.js library like 'internet-available'
+
+    // Cron handlers
+    ipcMain.handle('cron-get-all-jobs', () => {
+      return this.cronService.getAllJobs()
+    })
+
+    ipcMain.handle('cron-get-job', (_event, id: string) => {
+      return this.cronService.getJob(id)
+    })
+
+    ipcMain.handle('cron-start-job', (_event, id: string) => {
+      return this.cronService.startJob(id)
+    })
+
+    ipcMain.handle('cron-stop-job', (_event, id: string) => {
+      return this.cronService.stopJob(id)
+    })
+
+    ipcMain.handle('cron-delete-job', (_event, id: string) => {
+      return this.cronService.deleteJob(id)
+    })
+
+    ipcMain.handle('cron-create-job', (_event, config) => {
+      return this.cronService.createJob(config)
+    })
+
+    ipcMain.handle('cron-update-schedule', (_event, id: string, schedule: string) => {
+      return this.cronService.updateJobSchedule(id, schedule)
+    })
+
+    ipcMain.handle('cron-validate-expression', (_event, expression: string) => {
+      return this.cronService.validateCronExpression(expression)
+    })
+
+    // Set up cron job result listener
+    this.cronService.onJobResult((result) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('cron-job-result', result)
+      })
+    })
+
+    // Initialize default cron jobs
+    this.cronService.initialize()
   }
 
   create(): BrowserWindow {

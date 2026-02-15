@@ -27,6 +27,38 @@ interface NetworkInfo {
   interfaceCount: number
 }
 
+interface CronJobConfig {
+  id: string
+  name: string
+  schedule: string
+  enabled: boolean
+  lastRun?: Date
+  nextRun?: Date
+  runCount: number
+  description?: string
+}
+
+interface CronJobStatus {
+  id: string
+  name: string
+  schedule: string
+  enabled: boolean
+  running: boolean
+  lastRun?: Date
+  nextRun?: Date
+  runCount: number
+  description?: string
+  humanReadable?: string
+}
+
+interface CronJobResult {
+  id: string
+  timestamp: Date
+  success: boolean
+  message?: string
+  data?: unknown
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -50,6 +82,16 @@ declare global {
       networkGetInterfaces: () => Promise<NetworkInterfaceInfo[]>
       networkGetInfo: () => Promise<NetworkInfo>
       onNetworkStatusChange: (callback: (status: NetworkConnectionStatus) => void) => () => void
+      // Cron
+      cronGetAllJobs: () => Promise<CronJobStatus[]>
+      cronGetJob: (id: string) => Promise<CronJobStatus | null>
+      cronStartJob: (id: string) => Promise<boolean>
+      cronStopJob: (id: string) => Promise<boolean>
+      cronDeleteJob: (id: string) => Promise<boolean>
+      cronCreateJob: (config: CronJobConfig) => Promise<boolean>
+      cronUpdateSchedule: (id: string, schedule: string) => Promise<boolean>
+      cronValidateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
+      onCronJobResult: (callback: (result: CronJobResult) => void) => () => void
     }
   }
 }
