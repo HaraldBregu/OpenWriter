@@ -22,6 +22,22 @@ const api = {
         return () => {
             ipcRenderer.removeListener('change-theme', handler)
         }
+    },
+    // Media permissions
+    requestMicrophonePermission: (): Promise<string> => {
+        return ipcRenderer.invoke('request-microphone-permission')
+    },
+    requestCameraPermission: (): Promise<string> => {
+        return ipcRenderer.invoke('request-camera-permission')
+    },
+    getMicrophonePermissionStatus: (): Promise<string> => {
+        return ipcRenderer.invoke('get-microphone-status')
+    },
+    getCameraPermissionStatus: (): Promise<string> => {
+        return ipcRenderer.invoke('get-camera-status')
+    },
+    getMediaDevices: (type: 'audioinput' | 'videoinput'): Promise<MediaDeviceInfo[]> => {
+        return ipcRenderer.invoke('get-media-devices', type)
     }
 }
 

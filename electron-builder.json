@@ -34,6 +34,8 @@
     "icon": "./resources/icons/mac/icon.icns",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities",
+      "NSMicrophoneUsageDescription": "Tesseract needs access to your microphone for audio recording features.",
+      "NSCameraUsageDescription": "Tesseract needs access to your camera for video recording features.",
       "CFBundleDocumentTypes": [
         {
           "CFBundleTypeName": "Tesseract File",
@@ -132,7 +134,9 @@
       "libnspr4",
       "libdrm2",
       "libcups2",
-      "libexpat1"
+      "libexpat1",
+      "libpulse0",
+      "libv4l-0"
     ]
   },
   "win": {

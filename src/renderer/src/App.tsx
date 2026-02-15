@@ -1,9 +1,27 @@
-import React from "react";
-import HomePage from "./pages/HomePage";
-import "./index.css";
+import React from 'react'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { AppLayout } from './components/AppLayout'
+import WelcomePage from './pages/WelcomePage'
+import MicrophonePage from './pages/MicrophonePage'
+import CameraPage from './pages/CameraPage'
+import ScreenPage from './pages/ScreenPage'
+import SettingsPage from './pages/SettingsPage'
+import './index.css'
 
 const App: React.FC = () => {
-  return <HomePage />;
-};
+  return (
+    <Router>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<WelcomePage />} />
+          <Route path="/microphone" element={<MicrophonePage />} />
+          <Route path="/camera" element={<CameraPage />} />
+          <Route path="/screen" element={<ScreenPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Routes>
+      </AppLayout>
+    </Router>
+  )
+}
 
-export default App;
+export default App

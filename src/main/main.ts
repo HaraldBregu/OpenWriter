@@ -2,11 +2,17 @@ import { BrowserWindow, ipcMain } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
+import { MediaPermissionsService } from './services/media-permissions'
 
 export class Main {
   private window: BrowserWindow | null = null
+  private mediaPermissions: MediaPermissionsService
 
   constructor() {
+    // Initialize media permissions service
+    this.mediaPermissions = new MediaPermissionsService()
+
+    // Existing sound handler
     ipcMain.on('play-sound', () => {
       const soundPath = is.dev
         ? path.join(__dirname, '../../resources/sounds/click1.wav')
@@ -18,6 +24,27 @@ export class Main {
       } else {
         exec(`aplay "${soundPath}"`)
       }
+    })
+
+    // Media permission handlers
+    ipcMain.handle('request-microphone-permission', async () => {
+      return await this.mediaPermissions.requestMicrophonePermission()
+    })
+
+    ipcMain.handle('request-camera-permission', async () => {
+      return await this.mediaPermissions.requestCameraPermission()
+    })
+
+    ipcMain.handle('get-microphone-status', async () => {
+      return await this.mediaPermissions.getMicrophonePermissionStatus()
+    })
+
+    ipcMain.handle('get-camera-status', async () => {
+      return await this.mediaPermissions.getCameraPermissionStatus()
+    })
+
+    ipcMain.handle('get-media-devices', async (_event, type: 'audioinput' | 'videoinput') => {
+      return await this.mediaPermissions.getMediaDevices(type)
     })
   }
 
