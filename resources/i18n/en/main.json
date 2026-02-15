@@ -139,7 +139,8 @@
     "confirmDelete": "Are you sure you want to delete '{{name}}'?",
     "note": "Note:",
     "cronInfo": "Cron jobs allow you to schedule tasks to run automatically:",
-    "cronFormat": "Format: minute hour day month weekday (* * * * *)",
+    "cronFormat": "Format: second minute hour day month weekday (* * * * * *)",
+    "exampleEverySecond": "Every second: * * * * * *",
     "exampleEveryMinute": "Every minute: * * * * *",
     "exampleEveryHour": "Every hour: 0 * * * *",
     "exampleDaily": "Daily at 9 AM: 0 9 * * *"

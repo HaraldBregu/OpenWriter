@@ -324,6 +324,7 @@ const CronPage: React.FC = () => {
         </p>
         <ul className="text-sm text-blue-800 dark:text-blue-300 list-disc list-inside mt-2 space-y-1">
           <li>{t('cron.cronFormat')}</li>
+          <li>{t('cron.exampleEverySecond')}</li>
           <li>{t('cron.exampleEveryMinute')}</li>
           <li>{t('cron.exampleEveryHour')}</li>
           <li>{t('cron.exampleDaily')}</li>

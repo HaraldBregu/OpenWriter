@@ -10,20 +10,30 @@ export class CronService {
    * Initialize default cron jobs
    */
   initialize(): void {
+    // Create a heartbeat that runs every second
+    this.createJob({
+      id: 'heartbeat-second',
+      name: 'Heartbeat (1s)',
+      schedule: '* * * * * *', // Every second (6-field format with seconds)
+      enabled: true,
+      runCount: 0,
+      description: 'Heartbeat that updates every second'
+    })
+
     // Create a default job that updates every minute
     this.createJob({
       id: 'update-time',
       name: 'Time Update',
       schedule: '* * * * *', // Every minute
-      enabled: true,
+      enabled: false,
       runCount: 0,
       description: 'Updates current time every minute'
     })
 
     // Create a job that runs every 5 minutes
     this.createJob({
-      id: 'heartbeat',
-      name: 'System Heartbeat',
+      id: 'heartbeat-5min',
+      name: 'System Heartbeat (5min)',
       schedule: '*/5 * * * *', // Every 5 minutes
       enabled: false,
       runCount: 0,
@@ -90,6 +100,20 @@ export class CronService {
     let result: CronJobResult
     try {
       switch (id) {
+        case 'heartbeat-second':
+          result = {
+            id,
+            timestamp: now,
+            success: true,
+            message: 'Heartbeat',
+            data: {
+              time: now.toISOString(),
+              uptime: Math.floor(process.uptime()),
+              memoryUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024)
+            }
+          }
+          break
+
         case 'update-time':
           result = {
             id,
@@ -103,7 +127,7 @@ export class CronService {
           }
           break
 
-        case 'heartbeat':
+        case 'heartbeat-5min':
           result = {
             id,
             timestamp: now,

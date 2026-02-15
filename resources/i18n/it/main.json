@@ -139,7 +139,8 @@
     "confirmDelete": "Sei sicuro di voler eliminare '{{name}}'?",
     "note": "Nota:",
     "cronInfo": "I lavori cron ti permettono di pianificare attività da eseguire automaticamente:",
-    "cronFormat": "Formato: minuto ora giorno mese giornosettimana (* * * * *)",
+    "cronFormat": "Formato: secondo minuto ora giorno mese giornosettimana (* * * * * *)",
+    "exampleEverySecond": "Ogni secondo: * * * * * *",
     "exampleEveryMinute": "Ogni minuto: * * * * *",
     "exampleEveryHour": "Ogni ora: 0 * * * *",
     "exampleDaily": "Giornaliero alle 9: 0 9 * * *"
