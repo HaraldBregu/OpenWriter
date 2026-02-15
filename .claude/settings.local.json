@@ -22,7 +22,12 @@
       "Bash(npm run typecheck:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm install:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
