@@ -32,7 +32,8 @@ import {
   Bell,
   Shield,
   HelpCircle,
-  Info
+  Info,
+  Bluetooth
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -70,6 +71,13 @@ const mediaDriverItems = [
 ]
 
 const deviceDriverItems = [
+  {
+    title: 'Bluetooth',
+    icon: Bluetooth,
+    url: '/bluetooth',
+    description: 'Bluetooth devices',
+    disabled: false
+  },
   {
     title: 'Audio Output',
     icon: Headphones,
@@ -233,21 +241,36 @@ export function AppLayout({ children }: AppLayoutProps) {
               </SidebarGroupLabel>
               <SidebarGroupContent className="mt-1">
                 <SidebarMenu>
-                  {deviceDriverItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        disabled={item.disabled}
-                        className="h-10"
-                        tooltip={item.description}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        {item.disabled && (
-                          <span className="ml-auto text-[10px] text-muted-foreground">Soon</span>
+                  {deviceDriverItems.map((item) => {
+                    const isActive = location.pathname === item.url
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        {item.disabled ? (
+                          <SidebarMenuButton
+                            disabled
+                            className="h-10"
+                            tooltip={item.description}
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                            <span className="ml-auto text-[10px] text-muted-foreground">Soon</span>
+                          </SidebarMenuButton>
+                        ) : (
+                          <SidebarMenuButton
+                            asChild
+                            isActive={isActive}
+                            className="h-10"
+                            tooltip={item.description}
+                          >
+                            <Link to={item.url}>
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
                         )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                      </SidebarMenuItem>
+                    )
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

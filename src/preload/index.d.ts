@@ -22,6 +22,10 @@ declare global {
       getMicrophonePermissionStatus: () => Promise<MediaPermissionStatus>
       getCameraPermissionStatus: () => Promise<MediaPermissionStatus>
       getMediaDevices: (type: 'audioinput' | 'videoinput') => Promise<MediaDeviceInfo[]>
+      // Bluetooth
+      bluetoothIsSupported: () => Promise<boolean>
+      bluetoothGetPermissionStatus: () => Promise<string>
+      bluetoothGetInfo: () => Promise<{ platform: string; supported: boolean; apiAvailable: boolean }>
     }
   }
 }

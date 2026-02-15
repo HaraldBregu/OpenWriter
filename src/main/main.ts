@@ -3,14 +3,17 @@ import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
 import { MediaPermissionsService } from './services/media-permissions'
+import { BluetoothService } from './services/bluetooth'
 
 export class Main {
   private window: BrowserWindow | null = null
   private mediaPermissions: MediaPermissionsService
+  private bluetoothService: BluetoothService
 
   constructor() {
-    // Initialize media permissions service
+    // Initialize services
     this.mediaPermissions = new MediaPermissionsService()
+    this.bluetoothService = new BluetoothService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -45,6 +48,19 @@ export class Main {
 
     ipcMain.handle('get-media-devices', async (_event, type: 'audioinput' | 'videoinput') => {
       return await this.mediaPermissions.getMediaDevices(type)
+    })
+
+    // Bluetooth handlers
+    ipcMain.handle('bluetooth-is-supported', () => {
+      return this.bluetoothService.isBluetoothSupported()
+    })
+
+    ipcMain.handle('bluetooth-get-permission-status', async () => {
+      return await this.bluetoothService.getBluetoothPermissionStatus()
+    })
+
+    ipcMain.handle('bluetooth-get-info', () => {
+      return this.bluetoothService.getBluetoothInfo()
     })
   }
 

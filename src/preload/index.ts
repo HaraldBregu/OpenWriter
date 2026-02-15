@@ -38,6 +38,16 @@ const api = {
     },
     getMediaDevices: (type: 'audioinput' | 'videoinput'): Promise<MediaDeviceInfo[]> => {
         return ipcRenderer.invoke('get-media-devices', type)
+    },
+    // Bluetooth
+    bluetoothIsSupported: (): Promise<boolean> => {
+        return ipcRenderer.invoke('bluetooth-is-supported')
+    },
+    bluetoothGetPermissionStatus: (): Promise<string> => {
+        return ipcRenderer.invoke('bluetooth-get-permission-status')
+    },
+    bluetoothGetInfo: (): Promise<{ platform: string; supported: boolean; apiAvailable: boolean }> => {
+        return ipcRenderer.invoke('bluetooth-get-info')
     }
 }
 

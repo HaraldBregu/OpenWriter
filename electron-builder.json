@@ -36,6 +36,8 @@
       "LSApplicationCategoryType": "public.app-category.utilities",
       "NSMicrophoneUsageDescription": "Tesseract needs access to your microphone for audio recording features.",
       "NSCameraUsageDescription": "Tesseract needs access to your camera for video recording features.",
+      "NSBluetoothAlwaysUsageDescription": "Tesseract needs access to Bluetooth to connect and manage Bluetooth devices.",
+      "NSBluetoothPeripheralUsageDescription": "Tesseract needs access to Bluetooth peripherals for device connectivity.",
       "CFBundleDocumentTypes": [
         {
           "CFBundleTypeName": "Tesseract File",
