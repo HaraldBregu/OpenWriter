@@ -88,9 +88,9 @@ const deviceDriverItems = [
   {
     title: 'Network',
     icon: Wifi,
-    url: '#',
-    description: 'WiFi & Ethernet',
-    disabled: true
+    url: '/network',
+    description: 'Internet and network connections',
+    disabled: false
   },
   {
     title: 'Storage',

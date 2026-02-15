@@ -48,6 +48,41 @@ const api = {
     },
     bluetoothGetInfo: (): Promise<{ platform: string; supported: boolean; apiAvailable: boolean }> => {
         return ipcRenderer.invoke('bluetooth-get-info')
+    },
+    // Network
+    networkIsSupported: (): Promise<boolean> => {
+        return ipcRenderer.invoke('network-is-supported')
+    },
+    networkGetConnectionStatus: (): Promise<string> => {
+        return ipcRenderer.invoke('network-get-connection-status')
+    },
+    networkGetInterfaces: (): Promise<Array<{
+        name: string
+        family: 'IPv4' | 'IPv6'
+        address: string
+        netmask: string
+        mac: string
+        internal: boolean
+        cidr: string | null
+    }>> => {
+        return ipcRenderer.invoke('network-get-interfaces')
+    },
+    networkGetInfo: (): Promise<{
+        platform: string
+        supported: boolean
+        isOnline: boolean
+        interfaceCount: number
+    }> => {
+        return ipcRenderer.invoke('network-get-info')
+    },
+    onNetworkStatusChange: (callback: (status: string) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, status: string): void => {
+            callback(status)
+        }
+        ipcRenderer.on('network-status-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('network-status-changed', handler)
+        }
     }
 }
 

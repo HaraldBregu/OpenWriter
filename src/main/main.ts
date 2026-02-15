@@ -1,19 +1,22 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain, app } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
 import { MediaPermissionsService } from './services/media-permissions'
 import { BluetoothService } from './services/bluetooth'
+import { NetworkService } from './services/network'
 
 export class Main {
   private window: BrowserWindow | null = null
   private mediaPermissions: MediaPermissionsService
   private bluetoothService: BluetoothService
+  private networkService: NetworkService
 
   constructor() {
     // Initialize services
     this.mediaPermissions = new MediaPermissionsService()
     this.bluetoothService = new BluetoothService()
+    this.networkService = new NetworkService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -61,6 +64,31 @@ export class Main {
 
     ipcMain.handle('bluetooth-get-info', () => {
       return this.bluetoothService.getBluetoothInfo()
+    })
+
+    // Network handlers
+    ipcMain.handle('network-is-supported', () => {
+      return this.networkService.isNetworkSupported()
+    })
+
+    ipcMain.handle('network-get-connection-status', async () => {
+      return await this.networkService.getConnectionStatus()
+    })
+
+    ipcMain.handle('network-get-interfaces', () => {
+      return this.networkService.getNetworkInterfaces()
+    })
+
+    ipcMain.handle('network-get-info', () => {
+      return this.networkService.getNetworkInfo()
+    })
+
+    // Network event listeners
+    app.on('network-online-status-changed', async () => {
+      const status = await this.networkService.getConnectionStatus()
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('network-status-changed', status)
+      })
     })
   }
 
