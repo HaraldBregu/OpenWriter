@@ -4,5 +4,116 @@
   "subtitle": "Clean & Simple",
   "description": "A modern, advanced desktop application",
   "focusMessage": "Focus on what matters with a streamlined interface",
-  "clickMe": "Click Me"
+  "clickMe": "Click Me",
+
+  "microphone": {
+    "title": "Microphone",
+    "description": "Record audio from your microphone with live waveform visualization",
+    "permissionRequired": "Microphone Permission Required",
+    "status": "Status",
+    "grantPermission": "Grant Permission"
+  },
+
+  "camera": {
+    "title": "Camera",
+    "description": "Record video from your camera",
+    "permissionRequired": "Camera Permission Required",
+    "status": "Status",
+    "grantPermission": "Grant Permission"
+  },
+
+  "screen": {
+    "title": "Screen Capture",
+    "description": "Capture your screen",
+    "startCapture": "Start Screen Capture",
+    "stopCapture": "Stop Capture"
+  },
+
+  "bluetooth": {
+    "title": "Bluetooth Manager",
+    "description": "Scan and connect to Bluetooth devices",
+    "notAvailable": "Bluetooth Not Available",
+    "platformInfo": "Platform: {{platform}} - Web Bluetooth API might not be enabled",
+    "notSupported": "Your browser or system does not support Bluetooth",
+    "error": "Error:",
+    "connectedDevice": "Connected Device",
+    "disconnect": "Disconnect",
+    "scanning": "Scanning...",
+    "availableDevices": "Available Devices",
+    "scanDevices": "Scan Devices",
+    "noDevicesFound": "No devices found",
+    "clickToScan": "Click \"Scan Devices\" to search for Bluetooth devices",
+    "connected": "Connected",
+    "platformInformation": "Platform Information",
+    "platform": "Platform:",
+    "bluetoothSupported": "Bluetooth Supported:",
+    "webBluetoothAPI": "Web Bluetooth API:",
+    "browserSupport": "Browser Support:",
+    "yes": "Yes",
+    "no": "No",
+    "available": "Available",
+    "notAvailableShort": "Not Available",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "note": "Note:",
+    "bluetoothRequirements": "Bluetooth support requires:",
+    "requirement1": "Web Bluetooth API enabled in your browser",
+    "requirement2": "Bluetooth hardware available on your system",
+    "requirement3": "Appropriate permissions granted",
+    "requirement4": "HTTPS or localhost connection (security requirement)"
+  },
+
+  "network": {
+    "title": "Network Manager",
+    "description": "Monitor internet connectivity and network interfaces",
+    "notAvailable": "Network Monitoring Not Available",
+    "notSupported": "Your system does not support network monitoring",
+    "error": "Error:",
+    "connectionStatus": "Connection Status:",
+    "online": "ONLINE",
+    "offline": "OFFLINE",
+    "unknown": "UNKNOWN",
+    "connectedMessage": "Your device is connected to the internet",
+    "disconnectedMessage": "No internet connection detected",
+    "refresh": "Refresh",
+    "activeInterfaces": "Active Network Interfaces",
+    "noInterfaces": "No active network interfaces found",
+    "checkConnections": "Check your network connections",
+    "loopbackInterfaces": "Loopback Interfaces",
+    "internal": "Internal",
+    "platformInformation": "Platform Information",
+    "platform": "Platform:",
+    "networkSupported": "Network Supported:",
+    "onlineStatus": "Online Status:",
+    "totalInterfaces": "Total Interfaces:",
+    "activeInterfacesCount": "Active Interfaces:",
+    "yes": "Yes",
+    "no": "No",
+    "ipAddress": "IP Address:",
+    "macAddress": "MAC Address:",
+    "netmask": "Netmask:",
+    "cidr": "CIDR:",
+    "active": "Active",
+    "note": "Note:",
+    "networkMonitoring": "Network monitoring provides:",
+    "feature1": "Real-time connection status updates",
+    "feature2": "Details of all network interfaces (Wi-Fi, Ethernet, etc.)",
+    "feature3": "IP addresses, MAC addresses, and subnet information",
+    "feature4": "Platform-specific network information",
+    "feature5": "Read-only access (cannot modify network settings)"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "description": "Configure your application preferences"
+  },
+
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "ok": "OK"
+  }
 }

@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, app } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
@@ -83,13 +83,9 @@ export class Main {
       return this.networkService.getNetworkInfo()
     })
 
-    // Network event listeners
-    app.on('network-online-status-changed', async () => {
-      const status = await this.networkService.getConnectionStatus()
-      BrowserWindow.getAllWindows().forEach((win) => {
-        win.webContents.send('network-status-changed', status)
-      })
-    })
+    // Network event listeners would go here
+    // Note: Electron doesn't have a built-in network status change event
+    // For real-time monitoring, consider using a Node.js library like 'internet-available'
   }
 
   create(): BrowserWindow {

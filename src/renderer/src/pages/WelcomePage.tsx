@@ -1,22 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useTheme } from '../hooks/useTheme'
+import { useLanguage } from '../hooks/useLanguage'
 
 const WelcomePage: React.FC = () => {
-  const { t, i18n } = useTranslation()
-
-  useEffect(() => {
-    const cleanup = window.api.onLanguageChange((lng: string) => {
-      i18n.changeLanguage(lng)
-    })
-    return cleanup
-  }, [i18n])
-
-  useEffect(() => {
-    const cleanup = window.api.onThemeChange((theme: string) => {
-      document.documentElement.classList.toggle('dark', theme === 'dark')
-    })
-    return cleanup
-  }, [])
+  const { t } = useTranslation()
+  useTheme()
+  useLanguage()
 
   return (
     <div className="flex items-center justify-center min-h-screen p-6">

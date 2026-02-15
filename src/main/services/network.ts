@@ -1,4 +1,3 @@
-import { app } from 'electron'
 import * as os from 'os'
 import type {
   NetworkConnectionStatus,
@@ -22,8 +21,10 @@ export class NetworkService {
    */
   async getConnectionStatus(): Promise<NetworkConnectionStatus> {
     try {
-      const isOnline = app.isOnline ? app.isOnline() : navigator.onLine
-      return isOnline ? 'online' : 'offline'
+      // Check if we have any non-loopback network interfaces
+      const interfaces = this.getNetworkInterfaces()
+      const hasActiveInterfaces = interfaces.some(iface => !iface.internal)
+      return hasActiveInterfaces ? 'online' : 'offline'
     } catch (error) {
       console.error('Error getting connection status:', error)
       return 'unknown'
@@ -67,12 +68,13 @@ export class NetworkService {
   getNetworkInfo(): NetworkInfo {
     try {
       const interfaces = this.getNetworkInterfaces()
-      const isOnline = app.isOnline ? app.isOnline() : navigator.onLine
+      // Check if we have any non-loopback interfaces
+      const hasActiveInterfaces = interfaces.some(iface => !iface.internal)
 
       return {
         platform: process.platform,
         supported: this.isNetworkSupported(),
-        isOnline,
+        isOnline: hasActiveInterfaces,
         interfaceCount: interfaces.length
       }
     } catch (error) {

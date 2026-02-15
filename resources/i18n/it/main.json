@@ -4,5 +4,116 @@
   "subtitle": "Pulito e Semplice",
   "description": "Un'applicazione desktop moderna e avanzata",
   "focusMessage": "Concentrati su ciò che conta con un'interfaccia semplificata",
-  "clickMe": "Cliccami"
+  "clickMe": "Cliccami",
+
+  "microphone": {
+    "title": "Microfono",
+    "description": "Registra audio dal tuo microfono con visualizzazione della forma d'onda",
+    "permissionRequired": "Autorizzazione Microfono Richiesta",
+    "status": "Stato",
+    "grantPermission": "Concedi Autorizzazione"
+  },
+
+  "camera": {
+    "title": "Fotocamera",
+    "description": "Registra video dalla tua fotocamera",
+    "permissionRequired": "Autorizzazione Fotocamera Richiesta",
+    "status": "Stato",
+    "grantPermission": "Concedi Autorizzazione"
+  },
+
+  "screen": {
+    "title": "Cattura Schermo",
+    "description": "Cattura il tuo schermo",
+    "startCapture": "Avvia Cattura Schermo",
+    "stopCapture": "Ferma Cattura"
+  },
+
+  "bluetooth": {
+    "title": "Gestore Bluetooth",
+    "description": "Scansiona e connetti dispositivi Bluetooth",
+    "notAvailable": "Bluetooth Non Disponibile",
+    "platformInfo": "Piattaforma: {{platform}} - L'API Web Bluetooth potrebbe non essere abilitata",
+    "notSupported": "Il tuo browser o sistema non supporta il Bluetooth",
+    "error": "Errore:",
+    "connectedDevice": "Dispositivo Connesso",
+    "disconnect": "Disconnetti",
+    "scanning": "Scansione...",
+    "availableDevices": "Dispositivi Disponibili",
+    "scanDevices": "Scansiona Dispositivi",
+    "noDevicesFound": "Nessun dispositivo trovato",
+    "clickToScan": "Clicca \"Scansiona Dispositivi\" per cercare dispositivi Bluetooth",
+    "connected": "Connesso",
+    "platformInformation": "Informazioni Piattaforma",
+    "platform": "Piattaforma:",
+    "bluetoothSupported": "Bluetooth Supportato:",
+    "webBluetoothAPI": "API Web Bluetooth:",
+    "browserSupport": "Supporto Browser:",
+    "yes": "Sì",
+    "no": "No",
+    "available": "Disponibile",
+    "notAvailableShort": "Non Disponibile",
+    "enabled": "Abilitato",
+    "disabled": "Disabilitato",
+    "note": "Nota:",
+    "bluetoothRequirements": "Il supporto Bluetooth richiede:",
+    "requirement1": "API Web Bluetooth abilitata nel browser",
+    "requirement2": "Hardware Bluetooth disponibile sul sistema",
+    "requirement3": "Autorizzazioni appropriate concesse",
+    "requirement4": "Connessione HTTPS o localhost (requisito di sicurezza)"
+  },
+
+  "network": {
+    "title": "Gestore Rete",
+    "description": "Monitora la connettività internet e le interfacce di rete",
+    "notAvailable": "Monitoraggio Rete Non Disponibile",
+    "notSupported": "Il tuo sistema non supporta il monitoraggio della rete",
+    "error": "Errore:",
+    "connectionStatus": "Stato Connessione:",
+    "online": "ONLINE",
+    "offline": "OFFLINE",
+    "unknown": "SCONOSCIUTO",
+    "connectedMessage": "Il tuo dispositivo è connesso a internet",
+    "disconnectedMessage": "Nessuna connessione internet rilevata",
+    "refresh": "Aggiorna",
+    "activeInterfaces": "Interfacce di Rete Attive",
+    "noInterfaces": "Nessuna interfaccia di rete attiva trovata",
+    "checkConnections": "Controlla le tue connessioni di rete",
+    "loopbackInterfaces": "Interfacce Loopback",
+    "internal": "Interna",
+    "platformInformation": "Informazioni Piattaforma",
+    "platform": "Piattaforma:",
+    "networkSupported": "Rete Supportata:",
+    "onlineStatus": "Stato Online:",
+    "totalInterfaces": "Interfacce Totali:",
+    "activeInterfacesCount": "Interfacce Attive:",
+    "yes": "Sì",
+    "no": "No",
+    "ipAddress": "Indirizzo IP:",
+    "macAddress": "Indirizzo MAC:",
+    "netmask": "Maschera di Rete:",
+    "cidr": "CIDR:",
+    "active": "Attivo",
+    "note": "Nota:",
+    "networkMonitoring": "Il monitoraggio della rete fornisce:",
+    "feature1": "Aggiornamenti in tempo reale dello stato della connessione",
+    "feature2": "Dettagli di tutte le interfacce di rete (Wi-Fi, Ethernet, ecc.)",
+    "feature3": "Indirizzi IP, indirizzi MAC e informazioni sulla subnet",
+    "feature4": "Informazioni di rete specifiche della piattaforma",
+    "feature5": "Accesso in sola lettura (non può modificare le impostazioni di rete)"
+  },
+
+  "settings": {
+    "title": "Impostazioni",
+    "description": "Configura le preferenze dell'applicazione"
+  },
+
+  "common": {
+    "close": "Chiudi",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "ok": "OK"
+  }
 }

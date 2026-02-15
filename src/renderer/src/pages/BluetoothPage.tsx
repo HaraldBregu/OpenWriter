@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useBluetooth } from '../hooks/useBluetooth'
+import { useTheme } from '../hooks/useTheme'
+import { useLanguage } from '../hooks/useLanguage'
 import { Bluetooth, BluetoothConnected, BluetoothSearching, Wifi } from 'lucide-react'
 
 const BluetoothPage: React.FC = () => {
+  const { t } = useTranslation()
   const {
     isSupported,
     isScanning,
@@ -12,6 +16,8 @@ const BluetoothPage: React.FC = () => {
     requestDevice,
     disconnectDevice
   } = useBluetooth()
+  useTheme()
+  useLanguage()
 
   const [platformInfo, setPlatformInfo] = useState<{
     platform: string
@@ -34,9 +40,9 @@ const BluetoothPage: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">📡 Bluetooth Manager</h1>
+        <h1 className="text-3xl font-bold mb-2">📡 {t('bluetooth.title')}</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Scan and connect to Bluetooth devices
+          {t('bluetooth.description')}
         </p>
       </div>
 
@@ -44,12 +50,12 @@ const BluetoothPage: React.FC = () => {
       {!isSupported && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <p className="font-semibold text-yellow-800 dark:text-yellow-300">
-            Bluetooth Not Available
+            {t('bluetooth.notAvailable')}
           </p>
           <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
             {platformInfo
-              ? `Platform: ${platformInfo.platform} - Web Bluetooth API might not be enabled`
-              : 'Your browser or system does not support Bluetooth'}
+              ? t('bluetooth.platformInfo', { platform: platformInfo.platform })
+              : t('bluetooth.notSupported')}
           </p>
         </div>
       )}
@@ -57,7 +63,7 @@ const BluetoothPage: React.FC = () => {
       {/* Error Display */}
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <p className="text-red-800 dark:text-red-300 font-semibold">Error:</p>
+          <p className="text-red-800 dark:text-red-300 font-semibold">{t('bluetooth.error')}</p>
           <p className="text-red-600 dark:text-red-400">{error}</p>
         </div>
       )}
@@ -71,7 +77,7 @@ const BluetoothPage: React.FC = () => {
                 <BluetoothConnected className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="font-semibold text-green-800 dark:text-green-300">Connected Device</p>
+                <p className="font-semibold text-green-800 dark:text-green-300">{t('bluetooth.connectedDevice')}</p>
                 <p className="text-green-600 dark:text-green-400">{connectedDevice.name}</p>
                 <p className="text-xs text-green-500 dark:text-green-500 font-mono">
                   ID: {connectedDevice.id}
@@ -82,7 +88,7 @@ const BluetoothPage: React.FC = () => {
               onClick={disconnectDevice}
               className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors"
             >
-              Disconnect
+              {t('bluetooth.disconnect')}
             </button>
           </div>
         </div>
@@ -95,12 +101,12 @@ const BluetoothPage: React.FC = () => {
             {isScanning ? (
               <>
                 <BluetoothSearching className="h-5 w-5 animate-pulse text-blue-500" />
-                Scanning...
+                {t('bluetooth.scanning')}
               </>
             ) : (
               <>
                 <Bluetooth className="h-5 w-5" />
-                Available Devices
+                {t('bluetooth.availableDevices')}
               </>
             )}
           </h2>
@@ -110,7 +116,7 @@ const BluetoothPage: React.FC = () => {
             className="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
           >
             <Wifi className="h-4 w-4" />
-            {isScanning ? 'Scanning...' : 'Scan Devices'}
+            {isScanning ? t('bluetooth.scanning') : t('bluetooth.scanDevices')}
           </button>
         </div>
 
@@ -119,8 +125,8 @@ const BluetoothPage: React.FC = () => {
           {devices.length === 0 ? (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               <Bluetooth className="h-16 w-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg font-medium">No devices found</p>
-              <p className="text-sm mt-2">Click "Scan Devices" to search for Bluetooth devices</p>
+              <p className="text-lg font-medium">{t('bluetooth.noDevicesFound')}</p>
+              <p className="text-sm mt-2">{t('bluetooth.clickToScan')}</p>
             </div>
           ) : (
             devices.map((device) => (
@@ -155,7 +161,7 @@ const BluetoothPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     {connectedDevice?.id === device.id && (
                       <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-semibold rounded">
-                        Connected
+                        {t('bluetooth.connected')}
                       </span>
                     )}
                   </div>
@@ -169,28 +175,28 @@ const BluetoothPage: React.FC = () => {
       {/* Platform Information */}
       {platformInfo && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Platform Information</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('bluetooth.platformInformation')}</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Platform:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('bluetooth.platform')}</span>
               <span className="font-mono">{platformInfo.platform}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Bluetooth Supported:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('bluetooth.bluetoothSupported')}</span>
               <span className={platformInfo.supported ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-                {platformInfo.supported ? 'Yes' : 'No'}
+                {platformInfo.supported ? t('bluetooth.yes') : t('bluetooth.no')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Web Bluetooth API:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('bluetooth.webBluetoothAPI')}</span>
               <span className={platformInfo.apiAvailable ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-                {platformInfo.apiAvailable ? 'Available' : 'Not Available'}
+                {platformInfo.apiAvailable ? t('bluetooth.available') : t('bluetooth.notAvailableShort')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">Browser Support:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('bluetooth.browserSupport')}</span>
               <span className={isSupported ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-                {isSupported ? 'Enabled' : 'Disabled'}
+                {isSupported ? t('bluetooth.enabled') : t('bluetooth.disabled')}
               </span>
             </div>
           </div>
@@ -200,13 +206,13 @@ const BluetoothPage: React.FC = () => {
       {/* Info Section */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-300">
-          <strong>Note:</strong> Bluetooth support requires:
+          <strong>{t('bluetooth.note')}</strong> {t('bluetooth.bluetoothRequirements')}
         </p>
         <ul className="text-sm text-blue-800 dark:text-blue-300 list-disc list-inside mt-2 space-y-1">
-          <li>Web Bluetooth API enabled in your browser</li>
-          <li>Bluetooth hardware available on your system</li>
-          <li>Appropriate permissions granted</li>
-          <li>HTTPS or localhost connection (security requirement)</li>
+          <li>{t('bluetooth.requirement1')}</li>
+          <li>{t('bluetooth.requirement2')}</li>
+          <li>{t('bluetooth.requirement3')}</li>
+          <li>{t('bluetooth.requirement4')}</li>
         </ul>
       </div>
     </div>
