@@ -3,6 +3,7 @@ import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
 
+
 const mainWindow = new Main()
 
 const trayManager = new Tray({
