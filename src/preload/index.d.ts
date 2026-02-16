@@ -72,6 +72,19 @@ interface LifecycleState {
   platform: string
 }
 
+type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
+
+interface ManagedWindowInfo {
+  id: number
+  type: ManagedWindowType
+  title: string
+  createdAt: number
+}
+
+interface WindowManagerState {
+  windows: ManagedWindowInfo[]
+}
+
 type UpdateStatus = 'idle' | 'checking' | 'not-available' | 'downloading' | 'downloaded' | 'error'
 
 interface UpdateInfo {
@@ -129,6 +142,15 @@ declare global {
       lifecycleGetEvents: () => Promise<LifecycleEvent[]>
       lifecycleRestart: () => Promise<void>
       onLifecycleEvent: (callback: (event: LifecycleEvent) => void) => () => void
+      // Window Manager
+      wmGetState: () => Promise<WindowManagerState>
+      wmCreateChild: () => Promise<ManagedWindowInfo>
+      wmCreateModal: () => Promise<ManagedWindowInfo>
+      wmCreateFrameless: () => Promise<ManagedWindowInfo>
+      wmCreateWidget: () => Promise<ManagedWindowInfo>
+      wmCloseWindow: (id: number) => Promise<boolean>
+      wmCloseAll: () => Promise<void>
+      onWmStateChange: (callback: (state: WindowManagerState) => void) => () => void
     }
   }
 }

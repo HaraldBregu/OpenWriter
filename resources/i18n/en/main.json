@@ -146,6 +146,34 @@
     "exampleDaily": "Daily at 9 AM: 0 9 * * *"
   },
 
+  "windowManager": {
+    "title": "Window Manager",
+    "description": "Create and manage different types of application windows",
+    "error": "Error:",
+    "childWindow": "Child Window",
+    "childDesc": "Opens as a child of the current window, stays grouped with parent",
+    "modalWindow": "Modal Window",
+    "modalDesc": "Blocks interaction with the parent window until closed",
+    "framelessWindow": "Frameless Window",
+    "framelessDesc": "No title bar or borders, custom chrome possible",
+    "widgetWindow": "Floating Widget",
+    "widgetDesc": "Always-on-top mini window, skips taskbar",
+    "open": "Open",
+    "openWindows": "Open Windows",
+    "noWindows": "No managed windows open",
+    "noWindowsHint": "Use the buttons above to create different window types",
+    "refresh": "Refresh",
+    "close": "Close",
+    "closeAll": "Close All",
+    "note": "Note:",
+    "windowInfo": "Window manager demonstrates Electron window types:",
+    "feature1": "Child windows stay grouped with their parent window",
+    "feature2": "Modal windows block parent interaction until dismissed",
+    "feature3": "Frameless windows have no native title bar or borders",
+    "feature4": "Widget windows float above all other windows (always-on-top)",
+    "feature5": "All managed windows are tracked and can be closed individually or together"
+  },
+
   "lifecycle": {
     "title": "App Lifecycle",
     "description": "Monitor application lifecycle events and manage instance control",

@@ -26,6 +26,7 @@ import {
   Wifi,
   Bluetooth,
   Activity,
+  AppWindow,
   Calendar,
   FileText,
   Clock,
@@ -110,6 +111,12 @@ const toolsItems = [
     title: 'Lifecycle',
     icon: Activity,
     url: '/lifecycle',
+    disabled: false
+  },
+  {
+    title: 'Windows',
+    icon: AppWindow,
+    url: '/windows',
     disabled: false
   },
   {

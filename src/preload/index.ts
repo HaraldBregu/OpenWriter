@@ -216,6 +216,43 @@ const api = {
         return () => {
             ipcRenderer.removeListener('lifecycle-event', handler)
         }
+    },
+    // Window Manager
+    wmGetState: (): Promise<{
+        windows: Array<{ id: number; type: string; title: string; createdAt: number }>
+    }> => {
+        return ipcRenderer.invoke('wm-get-state')
+    },
+    wmCreateChild: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+        return ipcRenderer.invoke('wm-create-child')
+    },
+    wmCreateModal: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+        return ipcRenderer.invoke('wm-create-modal')
+    },
+    wmCreateFrameless: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+        return ipcRenderer.invoke('wm-create-frameless')
+    },
+    wmCreateWidget: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+        return ipcRenderer.invoke('wm-create-widget')
+    },
+    wmCloseWindow: (id: number): Promise<boolean> => {
+        return ipcRenderer.invoke('wm-close-window', id)
+    },
+    wmCloseAll: (): Promise<void> => {
+        return ipcRenderer.invoke('wm-close-all')
+    },
+    onWmStateChange: (callback: (state: {
+        windows: Array<{ id: number; type: string; title: string; createdAt: number }>
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, state: {
+            windows: Array<{ id: number; type: string; title: string; createdAt: number }>
+        }): void => {
+            callback(state)
+        }
+        ipcRenderer.on('wm-state-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('wm-state-changed', handler)
+        }
     }
 }
 

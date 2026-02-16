@@ -8,6 +8,7 @@ import { NetworkService } from './services/network'
 import { CronService } from './services/cron'
 import { UpdateService } from './services/update'
 import { LifecycleService } from './services/lifecycle'
+import { WindowManagerService } from './services/window-manager'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -17,6 +18,7 @@ export class Main {
   private cronService: CronService
   private updateService: UpdateService
   private lifecycleService: LifecycleService
+  private windowManagerService: WindowManagerService
 
   constructor(lifecycleService: LifecycleService) {
     // Initialize services
@@ -26,6 +28,7 @@ export class Main {
     this.cronService = new CronService()
     this.updateService = new UpdateService()
     this.lifecycleService = lifecycleService
+    this.windowManagerService = new WindowManagerService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -183,6 +186,42 @@ export class Main {
     this.lifecycleService.onEvent((event) => {
       BrowserWindow.getAllWindows().forEach((win) => {
         win.webContents.send('lifecycle-event', event)
+      })
+    })
+
+    // Window Manager handlers
+    ipcMain.handle('wm-get-state', () => {
+      return this.windowManagerService.getState()
+    })
+
+    ipcMain.handle('wm-create-child', () => {
+      return this.windowManagerService.createChildWindow()
+    })
+
+    ipcMain.handle('wm-create-modal', () => {
+      return this.windowManagerService.createModalWindow()
+    })
+
+    ipcMain.handle('wm-create-frameless', () => {
+      return this.windowManagerService.createFramelessWindow()
+    })
+
+    ipcMain.handle('wm-create-widget', () => {
+      return this.windowManagerService.createWidgetWindow()
+    })
+
+    ipcMain.handle('wm-close-window', (_event, id: number) => {
+      return this.windowManagerService.closeWindow(id)
+    })
+
+    ipcMain.handle('wm-close-all', () => {
+      this.windowManagerService.closeAllManaged()
+    })
+
+    // Forward window manager state changes to all renderer windows
+    this.windowManagerService.onStateChange((state) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('wm-state-changed', state)
       })
     })
   }

@@ -9,6 +9,7 @@ import BluetoothPage from './pages/BluetoothPage'
 import NetworkPage from './pages/NetworkPage'
 import CronPage from './pages/CronPage'
 import LifecyclePage from './pages/LifecyclePage'
+import WindowManagerPage from './pages/WindowManagerPage'
 import SettingsPage from './pages/SettingsPage'
 import './index.css'
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/network" element={<NetworkPage />} />
           <Route path="/cron" element={<CronPage />} />
           <Route path="/lifecycle" element={<LifecyclePage />} />
+          <Route path="/windows" element={<WindowManagerPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </AppLayout>
