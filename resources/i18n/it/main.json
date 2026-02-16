@@ -146,6 +146,31 @@
     "exampleDaily": "Giornaliero alle 9: 0 9 * * *"
   },
 
+  "dialogs": {
+    "title": "Finestre di Dialogo Native",
+    "description": "Dimostra le API di dialogo native di Electron con registrazione dei risultati",
+    "error": "Errore:",
+    "openDialog": "Dialogo Apri File",
+    "openDesc": "Mostra il selettore file nativo per scegliere un file dal disco",
+    "saveDialog": "Dialogo Salva File",
+    "saveDesc": "Mostra il dialogo di salvataggio nativo per scegliere un percorso di destinazione",
+    "messageBox": "Finestra di Messaggio",
+    "messageDesc": "Mostra una finestra di messaggio informativa con pulsanti personalizzati",
+    "errorDialog": "Dialogo di Errore",
+    "errorDesc": "Mostra un avviso di errore bloccante a livello di sistema",
+    "show": "Mostra",
+    "resultLog": "Registro Risultati",
+    "noResults": "Nessun risultato di dialogo",
+    "noResultsHint": "Clicca un pulsante sopra per attivare un dialogo nativo",
+    "clear": "Cancella",
+    "note": "Nota:",
+    "dialogInfo": "Dimostrazioni di dialoghi nativi:",
+    "feature1": "Il dialogo di apertura restituisce i percorsi dei file selezionati o lo stato di annullamento",
+    "feature2": "Il dialogo di salvataggio restituisce il percorso di destinazione scelto",
+    "feature3": "La finestra di messaggio restituisce l'indice e l'etichetta del pulsante cliccato",
+    "feature4": "Il dialogo di errore è un avviso bloccante sincrono (showErrorBox)"
+  },
+
   "filesystem": {
     "title": "File System",
     "description": "Apri, leggi, scrivi file e monitora le modifiche alle cartelle",

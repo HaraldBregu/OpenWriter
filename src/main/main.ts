@@ -10,6 +10,7 @@ import { UpdateService } from './services/update'
 import { LifecycleService } from './services/lifecycle'
 import { WindowManagerService } from './services/window-manager'
 import { FilesystemService } from './services/filesystem'
+import { DialogService } from './services/dialogs'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -21,6 +22,7 @@ export class Main {
   private lifecycleService: LifecycleService
   private windowManagerService: WindowManagerService
   private filesystemService: FilesystemService
+  private dialogService: DialogService
 
   constructor(lifecycleService: LifecycleService) {
     // Initialize services
@@ -32,6 +34,7 @@ export class Main {
     this.lifecycleService = lifecycleService
     this.windowManagerService = new WindowManagerService()
     this.filesystemService = new FilesystemService()
+    this.dialogService = new DialogService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -266,6 +269,23 @@ export class Main {
       BrowserWindow.getAllWindows().forEach((win) => {
         win.webContents.send('fs-watch-event', event)
       })
+    })
+
+    // Dialog handlers
+    ipcMain.handle('dialog-open', async () => {
+      return await this.dialogService.showOpenDialog()
+    })
+
+    ipcMain.handle('dialog-save', async () => {
+      return await this.dialogService.showSaveDialog()
+    })
+
+    ipcMain.handle('dialog-message', async (_event, message: string, detail: string, buttons: string[]) => {
+      return await this.dialogService.showMessageBox(message, detail, buttons)
+    })
+
+    ipcMain.handle('dialog-error', async (_event, title: string, content: string) => {
+      return await this.dialogService.showErrorDialog(title, content)
     })
   }
 

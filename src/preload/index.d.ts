@@ -87,6 +87,12 @@ interface FsWatchEvent {
   timestamp: number
 }
 
+interface DialogResult {
+  type: string
+  timestamp: number
+  data: Record<string, unknown>
+}
+
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
@@ -176,6 +182,11 @@ declare global {
       fsUnwatchDirectory: (dirPath: string) => Promise<boolean>
       fsGetWatched: () => Promise<string[]>
       onFsWatchEvent: (callback: (event: FsWatchEvent) => void) => () => void
+      // Dialogs
+      dialogOpen: () => Promise<DialogResult>
+      dialogSave: () => Promise<DialogResult>
+      dialogMessage: (message: string, detail: string, buttons: string[]) => Promise<DialogResult>
+      dialogError: (title: string, content: string) => Promise<DialogResult>
     }
   }
 }

@@ -146,6 +146,31 @@
     "exampleDaily": "Daily at 9 AM: 0 9 * * *"
   },
 
+  "dialogs": {
+    "title": "Native Dialogs",
+    "description": "Demonstrate Electron's native dialog APIs with result logging",
+    "error": "Error:",
+    "openDialog": "Open File Dialog",
+    "openDesc": "Shows the native file picker to select a file from disk",
+    "saveDialog": "Save File Dialog",
+    "saveDesc": "Shows the native save dialog to choose a destination path",
+    "messageBox": "Message Box",
+    "messageDesc": "Shows an informational message box with custom buttons",
+    "errorDialog": "Error Dialog",
+    "errorDesc": "Shows a blocking, system-level error alert box",
+    "show": "Show",
+    "resultLog": "Result Log",
+    "noResults": "No dialog results yet",
+    "noResultsHint": "Click a button above to trigger a native dialog",
+    "clear": "Clear",
+    "note": "Note:",
+    "dialogInfo": "Native dialog demonstrations:",
+    "feature1": "Open dialog returns selected file paths or canceled status",
+    "feature2": "Save dialog returns the chosen destination path",
+    "feature3": "Message box returns the index and label of the clicked button",
+    "feature4": "Error dialog is a synchronous blocking alert (showErrorBox)"
+  },
+
   "filesystem": {
     "title": "Filesystem",
     "description": "Open, read, write files and watch directory changes",

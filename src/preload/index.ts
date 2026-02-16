@@ -315,6 +315,35 @@ const api = {
         return () => {
             ipcRenderer.removeListener('fs-watch-event', handler)
         }
+    },
+    // Dialogs
+    dialogOpen: (): Promise<{
+        type: string
+        timestamp: number
+        data: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('dialog-open')
+    },
+    dialogSave: (): Promise<{
+        type: string
+        timestamp: number
+        data: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('dialog-save')
+    },
+    dialogMessage: (message: string, detail: string, buttons: string[]): Promise<{
+        type: string
+        timestamp: number
+        data: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('dialog-message', message, detail, buttons)
+    },
+    dialogError: (title: string, content: string): Promise<{
+        type: string
+        timestamp: number
+        data: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('dialog-error', title, content)
     }
 }
 

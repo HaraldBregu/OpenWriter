@@ -11,6 +11,7 @@ import CronPage from './pages/CronPage'
 import LifecyclePage from './pages/LifecyclePage'
 import WindowManagerPage from './pages/WindowManagerPage'
 import FilesystemPage from './pages/FilesystemPage'
+import DialogsPage from './pages/DialogsPage'
 import SettingsPage from './pages/SettingsPage'
 import './index.css'
 
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/lifecycle" element={<LifecyclePage />} />
           <Route path="/windows" element={<WindowManagerPage />} />
           <Route path="/filesystem" element={<FilesystemPage />} />
+          <Route path="/dialogs" element={<DialogsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </AppLayout>

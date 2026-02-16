@@ -29,7 +29,7 @@ import {
   AppWindow,
   Calendar,
   FileText,
-  Clock,
+  MessageSquare,
   BarChart3,
   Bell,
   Shield
@@ -126,10 +126,10 @@ const toolsItems = [
     disabled: false
   },
   {
-    title: 'History',
-    icon: Clock,
-    url: '#',
-    disabled: true
+    title: 'Dialogs',
+    icon: MessageSquare,
+    url: '/dialogs',
+    disabled: false
   },
   {
     title: 'Analytics',
