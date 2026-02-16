@@ -2,9 +2,12 @@ import { app, BrowserWindow } from 'electron'
 import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
+import { LifecycleService } from './services/lifecycle'
 
+// Must be created before app.whenReady() for single-instance lock
+const lifecycleService = new LifecycleService()
 
-const mainWindow = new Main()
+const mainWindow = new Main(lifecycleService)
 
 const trayManager = new Tray({
   onShowApp: () => mainWindow.showOrCreate()
@@ -25,6 +28,7 @@ const menuManager = new Menu({
 })
 
 app.whenReady().then(() => {
+  lifecycleService.initialize()
   menuManager.create()
   trayManager.create()
   mainWindow.create()

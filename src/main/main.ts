@@ -7,6 +7,7 @@ import { BluetoothService } from './services/bluetooth'
 import { NetworkService } from './services/network'
 import { CronService } from './services/cron'
 import { UpdateService } from './services/update'
+import { LifecycleService } from './services/lifecycle'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -15,14 +16,16 @@ export class Main {
   private networkService: NetworkService
   private cronService: CronService
   private updateService: UpdateService
+  private lifecycleService: LifecycleService
 
-  constructor() {
+  constructor(lifecycleService: LifecycleService) {
     // Initialize services
     this.mediaPermissions = new MediaPermissionsService()
     this.bluetoothService = new BluetoothService()
     this.networkService = new NetworkService()
     this.cronService = new CronService()
     this.updateService = new UpdateService()
+    this.lifecycleService = lifecycleService
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -162,6 +165,26 @@ export class Main {
 
     // Initialize auto-update
     this.updateService.initialize()
+
+    // Lifecycle handlers
+    ipcMain.handle('lifecycle-get-state', () => {
+      return this.lifecycleService.getState()
+    })
+
+    ipcMain.handle('lifecycle-get-events', () => {
+      return this.lifecycleService.getEvents()
+    })
+
+    ipcMain.handle('lifecycle-restart', () => {
+      this.lifecycleService.restart()
+    })
+
+    // Forward lifecycle events to all renderer windows
+    this.lifecycleService.onEvent((event) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('lifecycle-event', event)
+      })
+    })
   }
 
   create(): BrowserWindow {

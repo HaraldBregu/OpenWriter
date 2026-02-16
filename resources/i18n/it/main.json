@@ -146,6 +146,29 @@
     "exampleDaily": "Giornaliero alle 9: 0 9 * * *"
   },
 
+  "lifecycle": {
+    "title": "Ciclo di Vita App",
+    "description": "Monitora gli eventi del ciclo di vita dell'applicazione e gestisci il controllo dell'istanza",
+    "appStatus": "Stato Applicazione",
+    "platform": "Piattaforma:",
+    "singleInstance": "Blocco Istanza Singola:",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "uptime": "Tempo di attività:",
+    "restart": "Riavvia",
+    "confirmRestart": "Conferma Riavvio",
+    "refresh": "Aggiorna",
+    "eventLog": "Registro Eventi",
+    "noEvents": "Nessun evento del ciclo di vita registrato",
+    "error": "Errore:",
+    "note": "Nota:",
+    "lifecycleInfo": "Il monitoraggio del ciclo di vita fornisce:",
+    "feature1": "Tracciamento in tempo reale degli eventi del ciclo di vita (avvio, chiusura, attivazione)",
+    "feature2": "Blocco istanza singola per prevenire finestre duplicate",
+    "feature3": "Riavvio dell'applicazione con conferma a due clic",
+    "feature4": "Informazioni sulla piattaforma e monitoraggio del tempo di attività"
+  },
+
   "common": {
     "close": "Chiudi",
     "cancel": "Annulla",

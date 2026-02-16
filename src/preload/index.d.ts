@@ -59,6 +59,19 @@ interface CronJobResult {
   data?: unknown
 }
 
+interface LifecycleEvent {
+  type: string
+  timestamp: number
+  detail?: string
+}
+
+interface LifecycleState {
+  isSingleInstance: boolean
+  events: LifecycleEvent[]
+  appReadyAt: number | null
+  platform: string
+}
+
 type UpdateStatus = 'idle' | 'checking' | 'not-available' | 'downloading' | 'downloaded' | 'error'
 
 interface UpdateInfo {
@@ -111,6 +124,11 @@ declare global {
       updateCheck: () => Promise<void>
       updateInstall: () => Promise<void>
       onUpdateStateChange: (callback: (state: UpdateState) => void) => () => void
+      // Lifecycle
+      lifecycleGetState: () => Promise<LifecycleState>
+      lifecycleGetEvents: () => Promise<LifecycleEvent[]>
+      lifecycleRestart: () => Promise<void>
+      onLifecycleEvent: (callback: (event: LifecycleEvent) => void) => () => void
     }
   }
 }

@@ -192,6 +192,30 @@ const api = {
         return () => {
             ipcRenderer.removeListener('update-state-changed', handler)
         }
+    },
+    // Lifecycle
+    lifecycleGetState: (): Promise<{
+        isSingleInstance: boolean
+        events: Array<{ type: string; timestamp: number; detail?: string }>
+        appReadyAt: number | null
+        platform: string
+    }> => {
+        return ipcRenderer.invoke('lifecycle-get-state')
+    },
+    lifecycleGetEvents: (): Promise<Array<{ type: string; timestamp: number; detail?: string }>> => {
+        return ipcRenderer.invoke('lifecycle-get-events')
+    },
+    lifecycleRestart: (): Promise<void> => {
+        return ipcRenderer.invoke('lifecycle-restart')
+    },
+    onLifecycleEvent: (callback: (event: { type: string; timestamp: number; detail?: string }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, lifecycleEvent: { type: string; timestamp: number; detail?: string }): void => {
+            callback(lifecycleEvent)
+        }
+        ipcRenderer.on('lifecycle-event', handler)
+        return () => {
+            ipcRenderer.removeListener('lifecycle-event', handler)
+        }
     }
 }
 

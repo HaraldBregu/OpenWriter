@@ -146,6 +146,29 @@
     "exampleDaily": "Daily at 9 AM: 0 9 * * *"
   },
 
+  "lifecycle": {
+    "title": "App Lifecycle",
+    "description": "Monitor application lifecycle events and manage instance control",
+    "appStatus": "Application Status",
+    "platform": "Platform:",
+    "singleInstance": "Single Instance Lock:",
+    "active": "Active",
+    "inactive": "Inactive",
+    "uptime": "Uptime:",
+    "restart": "Restart",
+    "confirmRestart": "Confirm Restart",
+    "refresh": "Refresh",
+    "eventLog": "Event Log",
+    "noEvents": "No lifecycle events recorded",
+    "error": "Error:",
+    "note": "Note:",
+    "lifecycleInfo": "Lifecycle monitoring provides:",
+    "feature1": "Real-time tracking of app lifecycle events (ready, quit, activate)",
+    "feature2": "Single-instance lock enforcement to prevent duplicate windows",
+    "feature3": "Application restart with two-click confirmation",
+    "feature4": "Platform information and uptime monitoring"
+  },
+
   "common": {
     "close": "Close",
     "cancel": "Cancel",

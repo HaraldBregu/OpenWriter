@@ -25,6 +25,7 @@ import {
   HardDrive,
   Wifi,
   Bluetooth,
+  Activity,
   Calendar,
   FileText,
   Clock,
@@ -103,6 +104,12 @@ const toolsItems = [
     title: 'Cron Jobs',
     icon: Calendar,
     url: '/cron',
+    disabled: false
+  },
+  {
+    title: 'Lifecycle',
+    icon: Activity,
+    url: '/lifecycle',
     disabled: false
   },
   {
