@@ -31,7 +31,8 @@
       "Bash(git config:*)",
       "Bash(node:*)",
       "Bash(npm search:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(yarn add:*)"
     ],
     "deny": [],
     "ask": []
