@@ -253,6 +253,68 @@ const api = {
         return () => {
             ipcRenderer.removeListener('wm-state-changed', handler)
         }
+    },
+    // Filesystem
+    fsOpenFile: (): Promise<{
+        filePath: string
+        fileName: string
+        content: string
+        size: number
+        lastModified: number
+    } | null> => {
+        return ipcRenderer.invoke('fs-open-file')
+    },
+    fsReadFile: (filePath: string): Promise<{
+        filePath: string
+        fileName: string
+        content: string
+        size: number
+        lastModified: number
+    }> => {
+        return ipcRenderer.invoke('fs-read-file', filePath)
+    },
+    fsSaveFile: (defaultName: string, content: string): Promise<{
+        success: boolean
+        filePath: string | null
+    }> => {
+        return ipcRenderer.invoke('fs-save-file', defaultName, content)
+    },
+    fsWriteFile: (filePath: string, content: string): Promise<{
+        success: boolean
+        filePath: string
+    }> => {
+        return ipcRenderer.invoke('fs-write-file', filePath, content)
+    },
+    fsSelectDirectory: (): Promise<string | null> => {
+        return ipcRenderer.invoke('fs-select-directory')
+    },
+    fsWatchDirectory: (dirPath: string): Promise<boolean> => {
+        return ipcRenderer.invoke('fs-watch-directory', dirPath)
+    },
+    fsUnwatchDirectory: (dirPath: string): Promise<boolean> => {
+        return ipcRenderer.invoke('fs-unwatch-directory', dirPath)
+    },
+    fsGetWatched: (): Promise<string[]> => {
+        return ipcRenderer.invoke('fs-get-watched')
+    },
+    onFsWatchEvent: (callback: (event: {
+        eventType: string
+        filename: string | null
+        directory: string
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, fsEvent: {
+            eventType: string
+            filename: string | null
+            directory: string
+            timestamp: number
+        }): void => {
+            callback(fsEvent)
+        }
+        ipcRenderer.on('fs-watch-event', handler)
+        return () => {
+            ipcRenderer.removeListener('fs-watch-event', handler)
+        }
     }
 }
 

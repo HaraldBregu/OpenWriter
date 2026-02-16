@@ -120,10 +120,10 @@ const toolsItems = [
     disabled: false
   },
   {
-    title: 'Files',
+    title: 'Filesystem',
     icon: FileText,
-    url: '#',
-    disabled: true
+    url: '/filesystem',
+    disabled: false
   },
   {
     title: 'History',

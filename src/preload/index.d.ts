@@ -72,6 +72,21 @@ interface LifecycleState {
   platform: string
 }
 
+interface FileInfo {
+  filePath: string
+  fileName: string
+  content: string
+  size: number
+  lastModified: number
+}
+
+interface FsWatchEvent {
+  eventType: string
+  filename: string | null
+  directory: string
+  timestamp: number
+}
+
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
@@ -151,6 +166,16 @@ declare global {
       wmCloseWindow: (id: number) => Promise<boolean>
       wmCloseAll: () => Promise<void>
       onWmStateChange: (callback: (state: WindowManagerState) => void) => () => void
+      // Filesystem
+      fsOpenFile: () => Promise<FileInfo | null>
+      fsReadFile: (filePath: string) => Promise<FileInfo>
+      fsSaveFile: (defaultName: string, content: string) => Promise<{ success: boolean; filePath: string | null }>
+      fsWriteFile: (filePath: string, content: string) => Promise<{ success: boolean; filePath: string }>
+      fsSelectDirectory: () => Promise<string | null>
+      fsWatchDirectory: (dirPath: string) => Promise<boolean>
+      fsUnwatchDirectory: (dirPath: string) => Promise<boolean>
+      fsGetWatched: () => Promise<string[]>
+      onFsWatchEvent: (callback: (event: FsWatchEvent) => void) => () => void
     }
   }
 }

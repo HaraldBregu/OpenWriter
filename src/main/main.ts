@@ -9,6 +9,7 @@ import { CronService } from './services/cron'
 import { UpdateService } from './services/update'
 import { LifecycleService } from './services/lifecycle'
 import { WindowManagerService } from './services/window-manager'
+import { FilesystemService } from './services/filesystem'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -19,6 +20,7 @@ export class Main {
   private updateService: UpdateService
   private lifecycleService: LifecycleService
   private windowManagerService: WindowManagerService
+  private filesystemService: FilesystemService
 
   constructor(lifecycleService: LifecycleService) {
     // Initialize services
@@ -29,6 +31,7 @@ export class Main {
     this.updateService = new UpdateService()
     this.lifecycleService = lifecycleService
     this.windowManagerService = new WindowManagerService()
+    this.filesystemService = new FilesystemService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -222,6 +225,46 @@ export class Main {
     this.windowManagerService.onStateChange((state) => {
       BrowserWindow.getAllWindows().forEach((win) => {
         win.webContents.send('wm-state-changed', state)
+      })
+    })
+
+    // Filesystem handlers
+    ipcMain.handle('fs-open-file', async () => {
+      return await this.filesystemService.openFileDialog()
+    })
+
+    ipcMain.handle('fs-read-file', async (_event, filePath: string) => {
+      return await this.filesystemService.readFile(filePath)
+    })
+
+    ipcMain.handle('fs-save-file', async (_event, defaultName: string, content: string) => {
+      return await this.filesystemService.saveFileDialog(defaultName, content)
+    })
+
+    ipcMain.handle('fs-write-file', async (_event, filePath: string, content: string) => {
+      return await this.filesystemService.writeFile(filePath, content)
+    })
+
+    ipcMain.handle('fs-select-directory', async () => {
+      return await this.filesystemService.selectDirectory()
+    })
+
+    ipcMain.handle('fs-watch-directory', (_event, dirPath: string) => {
+      return this.filesystemService.watchDirectory(dirPath)
+    })
+
+    ipcMain.handle('fs-unwatch-directory', (_event, dirPath: string) => {
+      return this.filesystemService.unwatchDirectory(dirPath)
+    })
+
+    ipcMain.handle('fs-get-watched', () => {
+      return this.filesystemService.getWatchedDirectories()
+    })
+
+    // Forward filesystem watch events to all renderer windows
+    this.filesystemService.onWatchEvent((event) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('fs-watch-event', event)
       })
     })
   }
