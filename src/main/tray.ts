@@ -1,10 +1,14 @@
-import { app, Tray as ElectronTray, Menu, nativeImage } from 'electron'
+import { Tray as ElectronTray, Menu, nativeImage } from 'electron'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
 import { loadTranslations } from './i18n'
 
 interface TrayManagerCallbacks {
   onShowApp: () => void
+  onHideApp: () => void
+  onToggleApp: () => void
+  onQuit: () => void
+  isAppVisible: () => boolean
 }
 
 export class Tray {
@@ -25,6 +29,14 @@ export class Tray {
 
     this.tray = new ElectronTray(icon.resize({ width: 16, height: 16 }))
     this.tray.setToolTip('Tesseract')
+
+    // Double-click to show/hide app
+    this.tray.on('double-click', () => {
+      this.callbacks.onToggleApp()
+      // Rebuild menu to update show/hide label
+      this.buildContextMenu()
+    })
+
     this.buildContextMenu()
   }
 
@@ -33,19 +45,31 @@ export class Tray {
     this.buildContextMenu()
   }
 
+  /**
+   * Rebuild the context menu (useful for updating dynamic labels)
+   */
+  updateContextMenu(): void {
+    this.buildContextMenu()
+  }
+
   private buildContextMenu(): void {
     if (!this.tray) return
     const m = loadTranslations(this.currentLanguage, 'tray')
+    const isVisible = this.callbacks.isAppVisible()
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: m.showTesseract,
-        click: () => this.callbacks.onShowApp()
+        label: isVisible ? m.hideTesseract || 'Hide Tesseract' : m.showTesseract,
+        click: () => {
+          this.callbacks.onToggleApp()
+          // Rebuild menu after toggle to update the label
+          setTimeout(() => this.buildContextMenu(), 100)
+        }
       },
       { type: 'separator' },
       {
         label: m.quit,
-        click: () => app.quit()
+        click: () => this.callbacks.onQuit()
       }
     ])
 

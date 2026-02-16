@@ -32,7 +32,9 @@ import {
   MessageSquare,
   BarChart3,
   Bell,
-  Shield
+  Shield,
+  Clipboard,
+  Download
 } from 'lucide-react'
 import { useUpdate } from '@/hooks/useUpdate'
 
@@ -132,6 +134,18 @@ const toolsItems = [
     disabled: false
   },
   {
+    title: 'Clipboard',
+    icon: Clipboard,
+    url: '/clipboard',
+    disabled: false
+  },
+  {
+    title: 'Auto-Update',
+    icon: Download,
+    url: '/update-simulator',
+    disabled: false
+  },
+  {
     title: 'Analytics',
     icon: BarChart3,
     url: '#',
@@ -143,8 +157,8 @@ const bottomMenuItems = [
   {
     title: 'Notifications',
     icon: Bell,
-    url: '#',
-    disabled: true
+    url: '/notifications',
+    disabled: false
   },
   {
     title: 'Privacy',
@@ -293,14 +307,26 @@ export function AppLayout({ children }: AppLayoutProps) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {bottomMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton disabled className="h-8">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  {bottomMenuItems.map((item) => {
+                    const isActive = location.pathname === item.url
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        {item.disabled ? (
+                          <SidebarMenuButton disabled className="h-8">
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </SidebarMenuButton>
+                        ) : (
+                          <SidebarMenuButton asChild isActive={isActive} className="h-8">
+                            <Link to={item.url}>
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        )}
+                      </SidebarMenuItem>
+                    )
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

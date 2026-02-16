@@ -12,6 +12,9 @@ import LifecyclePage from './pages/LifecyclePage'
 import WindowManagerPage from './pages/WindowManagerPage'
 import FilesystemPage from './pages/FilesystemPage'
 import DialogsPage from './pages/DialogsPage'
+import NotificationsPage from './pages/NotificationsPage'
+import ClipboardPage from './pages/ClipboardPage'
+import UpdateSimulatorPage from './pages/UpdateSimulatorPage'
 import SettingsPage from './pages/SettingsPage'
 import './index.css'
 
@@ -31,6 +34,9 @@ const App: React.FC = () => {
           <Route path="/windows" element={<WindowManagerPage />} />
           <Route path="/filesystem" element={<FilesystemPage />} />
           <Route path="/dialogs" element={<DialogsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/clipboard" element={<ClipboardPage />} />
+          <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </AppLayout>

@@ -11,6 +11,9 @@ import { LifecycleService } from './services/lifecycle'
 import { WindowManagerService } from './services/window-manager'
 import { FilesystemService } from './services/filesystem'
 import { DialogService } from './services/dialogs'
+import { NotificationService } from './services/notification'
+import { ClipboardService } from './services/clipboard'
+import { UpdateSimulator } from './services/update-simulator'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -19,10 +22,14 @@ export class Main {
   private networkService: NetworkService
   private cronService: CronService
   private updateService: UpdateService
+  private updateSimulator: UpdateSimulator
   private lifecycleService: LifecycleService
   private windowManagerService: WindowManagerService
   private filesystemService: FilesystemService
   private dialogService: DialogService
+  private notificationService: NotificationService
+  private clipboardService: ClipboardService
+  private onWindowVisibilityChange?: () => void
 
   constructor(lifecycleService: LifecycleService) {
     // Initialize services
@@ -31,10 +38,13 @@ export class Main {
     this.networkService = new NetworkService()
     this.cronService = new CronService()
     this.updateService = new UpdateService()
+    this.updateSimulator = new UpdateSimulator()
     this.lifecycleService = lifecycleService
     this.windowManagerService = new WindowManagerService()
     this.filesystemService = new FilesystemService()
     this.dialogService = new DialogService()
+    this.notificationService = new NotificationService()
+    this.clipboardService = new ClipboardService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -287,6 +297,110 @@ export class Main {
     ipcMain.handle('dialog-error', async (_event, title: string, content: string) => {
       return await this.dialogService.showErrorDialog(title, content)
     })
+
+    // Notification handlers
+    ipcMain.handle('notification-is-supported', () => {
+      return this.notificationService.isSupported()
+    })
+
+    ipcMain.handle('notification-show', (_event, options: { title: string; body: string; silent?: boolean; urgency?: 'normal' | 'critical' | 'low' }) => {
+      return this.notificationService.showNotification(options)
+    })
+
+    // Forward notification events to all renderer windows
+    this.notificationService.onNotificationEvent((result) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('notification-event', result)
+      })
+    })
+
+    // Clipboard handlers
+    ipcMain.handle('clipboard-write-text', (_event, text: string) => {
+      return this.clipboardService.writeText(text)
+    })
+
+    ipcMain.handle('clipboard-read-text', () => {
+      return this.clipboardService.readText()
+    })
+
+    ipcMain.handle('clipboard-write-html', (_event, html: string) => {
+      return this.clipboardService.writeHTML(html)
+    })
+
+    ipcMain.handle('clipboard-read-html', () => {
+      return this.clipboardService.readHTML()
+    })
+
+    ipcMain.handle('clipboard-write-image', (_event, dataURL: string) => {
+      return this.clipboardService.writeImage(dataURL)
+    })
+
+    ipcMain.handle('clipboard-read-image', () => {
+      return this.clipboardService.readImage()
+    })
+
+    ipcMain.handle('clipboard-clear', () => {
+      return this.clipboardService.clear()
+    })
+
+    ipcMain.handle('clipboard-get-content', () => {
+      return this.clipboardService.getContent()
+    })
+
+    ipcMain.handle('clipboard-get-formats', () => {
+      return this.clipboardService.getAvailableFormats()
+    })
+
+    ipcMain.handle('clipboard-has-text', () => {
+      return this.clipboardService.hasText()
+    })
+
+    ipcMain.handle('clipboard-has-image', () => {
+      return this.clipboardService.hasImage()
+    })
+
+    ipcMain.handle('clipboard-has-html', () => {
+      return this.clipboardService.hasHTML()
+    })
+
+    // Update Simulator handlers
+    ipcMain.handle('update-sim-check', async () => {
+      await this.updateSimulator.checkForUpdates()
+    })
+
+    ipcMain.handle('update-sim-download', async () => {
+      await this.updateSimulator.downloadUpdate()
+    })
+
+    ipcMain.handle('update-sim-install', async () => {
+      await this.updateSimulator.installAndRestart()
+    })
+
+    ipcMain.handle('update-sim-cancel', () => {
+      this.updateSimulator.cancelDownload()
+    })
+
+    ipcMain.handle('update-sim-reset', () => {
+      this.updateSimulator.reset()
+    })
+
+    ipcMain.handle('update-sim-get-state', () => {
+      return this.updateSimulator.getState()
+    })
+
+    // Forward update simulator state changes to all renderer windows
+    this.updateSimulator.onStateChange((state) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('update-sim-state-changed', state)
+      })
+    })
+
+    // Forward update simulator progress to all renderer windows
+    this.updateSimulator.onProgress((progress) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('update-sim-progress', progress)
+      })
+    })
   }
 
   create(): BrowserWindow {
@@ -323,6 +437,24 @@ export class Main {
       this.window?.show()
     })
 
+    // Minimize to tray instead of closing
+    this.window.on('close', (event) => {
+      if (!(app as { isQuitting?: boolean }).isQuitting) {
+        event.preventDefault()
+        this.window?.hide()
+        this.onWindowVisibilityChange?.()
+      }
+    })
+
+    // Update tray menu when window is shown/hidden
+    this.window.on('show', () => {
+      this.onWindowVisibilityChange?.()
+    })
+
+    this.window.on('hide', () => {
+      this.onWindowVisibilityChange?.()
+    })
+
     this.window.on('closed', () => {
       this.window = null
     })
@@ -338,5 +470,36 @@ export class Main {
     } else {
       this.create()
     }
+  }
+
+  hide(): void {
+    const windows = BrowserWindow.getAllWindows()
+    if (windows.length > 0) {
+      windows[0].hide()
+    }
+  }
+
+  toggleVisibility(): void {
+    const windows = BrowserWindow.getAllWindows()
+    if (windows.length > 0) {
+      const mainWindow = windows[0]
+      if (mainWindow.isVisible()) {
+        mainWindow.hide()
+      } else {
+        mainWindow.show()
+        mainWindow.focus()
+      }
+    } else {
+      this.create()
+    }
+  }
+
+  isVisible(): boolean {
+    const windows = BrowserWindow.getAllWindows()
+    return windows.length > 0 && windows[0].isVisible()
+  }
+
+  setOnWindowVisibilityChange(callback: () => void): void {
+    this.onWindowVisibilityChange = callback
   }
 }

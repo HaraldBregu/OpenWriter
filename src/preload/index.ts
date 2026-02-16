@@ -344,6 +344,176 @@ const api = {
         data: Record<string, unknown>
     }> => {
         return ipcRenderer.invoke('dialog-error', title, content)
+    },
+    // Notifications
+    notificationIsSupported: (): Promise<boolean> => {
+        return ipcRenderer.invoke('notification-is-supported')
+    },
+    notificationShow: (options: {
+        title: string
+        body: string
+        silent?: boolean
+        urgency?: 'normal' | 'critical' | 'low'
+    }): Promise<string> => {
+        return ipcRenderer.invoke('notification-show', options)
+    },
+    onNotificationEvent: (callback: (result: {
+        id: string
+        title: string
+        body: string
+        timestamp: number
+        action: 'clicked' | 'closed' | 'shown'
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, result: {
+            id: string
+            title: string
+            body: string
+            timestamp: number
+            action: 'clicked' | 'closed' | 'shown'
+        }): void => {
+            callback(result)
+        }
+        ipcRenderer.on('notification-event', handler)
+        return () => {
+            ipcRenderer.removeListener('notification-event', handler)
+        }
+    },
+    // Clipboard
+    clipboardWriteText: (text: string): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-write-text', text)
+    },
+    clipboardReadText: (): Promise<string> => {
+        return ipcRenderer.invoke('clipboard-read-text')
+    },
+    clipboardWriteHTML: (html: string): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-write-html', html)
+    },
+    clipboardReadHTML: (): Promise<string> => {
+        return ipcRenderer.invoke('clipboard-read-html')
+    },
+    clipboardWriteImage: (dataURL: string): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-write-image', dataURL)
+    },
+    clipboardReadImage: (): Promise<{ dataURL: string; width: number; height: number } | null> => {
+        return ipcRenderer.invoke('clipboard-read-image')
+    },
+    clipboardClear: (): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-clear')
+    },
+    clipboardGetContent: (): Promise<{
+        type: 'text' | 'image' | 'html'
+        text?: string
+        html?: string
+        dataURL?: string
+        width?: number
+        height?: number
+        timestamp: number
+    } | null> => {
+        return ipcRenderer.invoke('clipboard-get-content')
+    },
+    clipboardGetFormats: (): Promise<string[]> => {
+        return ipcRenderer.invoke('clipboard-get-formats')
+    },
+    clipboardHasText: (): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-has-text')
+    },
+    clipboardHasImage: (): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-has-image')
+    },
+    clipboardHasHTML: (): Promise<boolean> => {
+        return ipcRenderer.invoke('clipboard-has-html')
+    },
+    // Update Simulator
+    updateSimCheck: (): Promise<void> => {
+        return ipcRenderer.invoke('update-sim-check')
+    },
+    updateSimDownload: (): Promise<void> => {
+        return ipcRenderer.invoke('update-sim-download')
+    },
+    updateSimInstall: (): Promise<void> => {
+        return ipcRenderer.invoke('update-sim-install')
+    },
+    updateSimCancel: (): Promise<void> => {
+        return ipcRenderer.invoke('update-sim-cancel')
+    },
+    updateSimReset: (): Promise<void> => {
+        return ipcRenderer.invoke('update-sim-reset')
+    },
+    updateSimGetState: (): Promise<{
+        status: string
+        updateInfo: {
+            version: string
+            releaseDate: string
+            releaseNotes: string
+            downloadSize: number
+        } | null
+        progress: {
+            percent: number
+            transferred: number
+            total: number
+            bytesPerSecond: number
+        } | null
+        error: string | null
+    }> => {
+        return ipcRenderer.invoke('update-sim-get-state')
+    },
+    onUpdateSimStateChange: (callback: (state: {
+        status: string
+        updateInfo: {
+            version: string
+            releaseDate: string
+            releaseNotes: string
+            downloadSize: number
+        } | null
+        progress: {
+            percent: number
+            transferred: number
+            total: number
+            bytesPerSecond: number
+        } | null
+        error: string | null
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, state: {
+            status: string
+            updateInfo: {
+                version: string
+                releaseDate: string
+                releaseNotes: string
+                downloadSize: number
+            } | null
+            progress: {
+                percent: number
+                transferred: number
+                total: number
+                bytesPerSecond: number
+            } | null
+            error: string | null
+        }): void => {
+            callback(state)
+        }
+        ipcRenderer.on('update-sim-state-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('update-sim-state-changed', handler)
+        }
+    },
+    onUpdateSimProgress: (callback: (progress: {
+        percent: number
+        transferred: number
+        total: number
+        bytesPerSecond: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, progress: {
+            percent: number
+            transferred: number
+            total: number
+            bytesPerSecond: number
+        }): void => {
+            callback(progress)
+        }
+        ipcRenderer.on('update-sim-progress', handler)
+        return () => {
+            ipcRenderer.removeListener('update-sim-progress', handler)
+        }
     }
 }
 

@@ -93,6 +93,58 @@ interface DialogResult {
   data: Record<string, unknown>
 }
 
+interface NotificationOptions {
+  title: string
+  body: string
+  silent?: boolean
+  urgency?: 'normal' | 'critical' | 'low'
+}
+
+interface NotificationResult {
+  id: string
+  title: string
+  body: string
+  timestamp: number
+  action: 'clicked' | 'closed' | 'shown'
+}
+
+interface ClipboardContent {
+  type: 'text' | 'image' | 'html'
+  text?: string
+  html?: string
+  dataURL?: string
+  width?: number
+  height?: number
+  timestamp: number
+}
+
+interface ClipboardImageData {
+  dataURL: string
+  width: number
+  height: number
+}
+
+interface UpdateSimInfo {
+  version: string
+  releaseDate: string
+  releaseNotes: string
+  downloadSize: number
+}
+
+interface UpdateSimProgress {
+  percent: number
+  transferred: number
+  total: number
+  bytesPerSecond: number
+}
+
+interface UpdateSimState {
+  status: string
+  updateInfo: UpdateSimInfo | null
+  progress: UpdateSimProgress | null
+  error: string | null
+}
+
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
@@ -187,6 +239,32 @@ declare global {
       dialogSave: () => Promise<DialogResult>
       dialogMessage: (message: string, detail: string, buttons: string[]) => Promise<DialogResult>
       dialogError: (title: string, content: string) => Promise<DialogResult>
+      // Notifications
+      notificationIsSupported: () => Promise<boolean>
+      notificationShow: (options: NotificationOptions) => Promise<string>
+      onNotificationEvent: (callback: (result: NotificationResult) => void) => () => void
+      // Clipboard
+      clipboardWriteText: (text: string) => Promise<boolean>
+      clipboardReadText: () => Promise<string>
+      clipboardWriteHTML: (html: string) => Promise<boolean>
+      clipboardReadHTML: () => Promise<string>
+      clipboardWriteImage: (dataURL: string) => Promise<boolean>
+      clipboardReadImage: () => Promise<ClipboardImageData | null>
+      clipboardClear: () => Promise<boolean>
+      clipboardGetContent: () => Promise<ClipboardContent | null>
+      clipboardGetFormats: () => Promise<string[]>
+      clipboardHasText: () => Promise<boolean>
+      clipboardHasImage: () => Promise<boolean>
+      clipboardHasHTML: () => Promise<boolean>
+      // Update Simulator
+      updateSimCheck: () => Promise<void>
+      updateSimDownload: () => Promise<void>
+      updateSimInstall: () => Promise<void>
+      updateSimCancel: () => Promise<void>
+      updateSimReset: () => Promise<void>
+      updateSimGetState: () => Promise<UpdateSimState>
+      onUpdateSimStateChange: (callback: (state: UpdateSimState) => void) => () => void
+      onUpdateSimProgress: (callback: (progress: UpdateSimProgress) => void) => () => void
     }
   }
 }
