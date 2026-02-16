@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain, app } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
@@ -6,6 +6,7 @@ import { MediaPermissionsService } from './services/media-permissions'
 import { BluetoothService } from './services/bluetooth'
 import { NetworkService } from './services/network'
 import { CronService } from './services/cron'
+import { UpdateService } from './services/update'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -13,6 +14,7 @@ export class Main {
   private bluetoothService: BluetoothService
   private networkService: NetworkService
   private cronService: CronService
+  private updateService: UpdateService
 
   constructor() {
     // Initialize services
@@ -20,6 +22,7 @@ export class Main {
     this.bluetoothService = new BluetoothService()
     this.networkService = new NetworkService()
     this.cronService = new CronService()
+    this.updateService = new UpdateService()
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -132,6 +135,33 @@ export class Main {
 
     // Initialize default cron jobs
     this.cronService.initialize()
+
+    // Update handlers
+    ipcMain.handle('update-get-state', () => {
+      return this.updateService.getState()
+    })
+
+    ipcMain.handle('update-get-version', () => {
+      return app.getVersion()
+    })
+
+    ipcMain.handle('update-check', () => {
+      this.updateService.checkForUpdates()
+    })
+
+    ipcMain.handle('update-install', () => {
+      this.updateService.installUpdate()
+    })
+
+    // Forward update state changes to all renderer windows
+    this.updateService.onStateChange((state) => {
+      BrowserWindow.getAllWindows().forEach((win) => {
+        win.webContents.send('update-state-changed', state)
+      })
+    })
+
+    // Initialize auto-update
+    this.updateService.initialize()
   }
 
   create(): BrowserWindow {

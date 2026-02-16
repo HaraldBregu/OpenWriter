@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMediaPermissions } from '../hooks/useMediaPermissions'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
+import { useUpdate } from '../hooks/useUpdate'
 
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation()
@@ -15,6 +16,14 @@ const SettingsPage: React.FC = () => {
   } = useMediaPermissions()
   useTheme()
   useLanguage()
+  const {
+    version,
+    status,
+    updateInfo,
+    error: updateError,
+    checkForUpdates,
+    installUpdate
+  } = useUpdate()
 
   const getStatusBadge = (status: string) => {
     const colors = {
@@ -116,15 +125,64 @@ const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* About */}
+      {/* About & Updates */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">About</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-2">
           Tesseract Media Recorder
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-500">
-          Version 1.0.0
+        <p className="text-sm text-gray-500 dark:text-gray-500 mb-4">
+          Version {version || '...'}
         </p>
+
+        <div className="space-y-3">
+          {/* Check for updates */}
+          {(status === 'idle' || status === 'not-available' || status === 'error') && (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={checkForUpdates}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              >
+                Check for Updates
+              </button>
+              {status === 'not-available' && (
+                <span className="text-sm text-green-600 dark:text-green-400">You&apos;re up to date!</span>
+              )}
+            </div>
+          )}
+
+          {/* Checking spinner */}
+          {status === 'checking' && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">Checking for updates...</p>
+          )}
+
+          {/* Downloading */}
+          {status === 'downloading' && (
+            <p className="text-sm text-blue-600 dark:text-blue-400">Downloading update...</p>
+          )}
+
+          {/* Ready to install */}
+          {status === 'downloaded' && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-green-600 dark:text-green-400">
+                {updateInfo ? `Version ${updateInfo.version} ready` : 'Update downloaded'}
+              </span>
+              <button
+                onClick={installUpdate}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 active:bg-green-700 transition-colors"
+              >
+                Install and Restart
+              </button>
+            </div>
+          )}
+
+          {/* Error */}
+          {status === 'error' && updateError && (
+            <p className="text-sm text-red-500 dark:text-red-400">
+              Update error: {updateError}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )

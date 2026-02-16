@@ -59,6 +59,19 @@ interface CronJobResult {
   data?: unknown
 }
 
+type UpdateStatus = 'idle' | 'checking' | 'not-available' | 'downloading' | 'downloaded' | 'error'
+
+interface UpdateInfo {
+  version: string
+  releaseNotes?: string
+}
+
+interface UpdateState {
+  status: UpdateStatus
+  updateInfo: UpdateInfo | null
+  error: string | null
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -92,6 +105,12 @@ declare global {
       cronUpdateSchedule: (id: string, schedule: string) => Promise<boolean>
       cronValidateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
       onCronJobResult: (callback: (result: CronJobResult) => void) => () => void
+      // Update
+      updateGetState: () => Promise<UpdateState>
+      updateGetVersion: () => Promise<string>
+      updateCheck: () => Promise<void>
+      updateInstall: () => Promise<void>
+      onUpdateStateChange: (callback: (state: UpdateState) => void) => () => void
     }
   }
 }

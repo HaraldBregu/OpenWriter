@@ -2,15 +2,20 @@
   "productName": "Tesseract",
   "appId": "com.tesseract.tesseract",
   "copyright": "Tesseract Project © 2025",
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "HaraldBregu",
+      "repo": "tesseract"
+    }
+  ],
   "files": [
     "out/**",
-    "i18n/**",
     "resources/**"
   ],
   "icon": "./resources/icons/icon.ico",
   "extraResources": [
     "out/preload/preload.mjs",
-    { "from": "./i18n", "to": "i18n" },
     {
       "from": "./resources",
       "to": "resources",
@@ -28,6 +33,10 @@
     "target": [
       {
         "target": "pkg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "dmg",
         "arch": ["x64", "arm64"]
       }
     ],
@@ -87,7 +96,7 @@
     "artifactName": "${productName}-installer-${version}-${arch}.${ext}"
   },
   "linux": {
-    "target": [{ "target": "deb" }],
+    "target": [{ "target": "deb" }, { "target": "AppImage" }],
     "category": "Utility",
     "artifactName": "${productName}-${version}.${ext}",
     "icon": "./resources/icons/linux",
@@ -142,7 +151,7 @@
     ]
   },
   "win": {
-    "icon": "./resources/icons/icon.ico",
+    "icon": "./resources/icons/win/icon.ico",
     "target": "nsis",
     "signAndEditExecutable": true,
     "artifactName": "${productName}.${ext}",
@@ -167,8 +176,8 @@
     "multiLanguageInstaller": true,
     "warningsAsErrors": false,
     "deleteAppDataOnUninstall": false,
-    "installerIcon": "./resources/icons/icon.ico",
-    "uninstallerIcon": "./resources/icons/icon.ico",
+    "installerIcon": "./resources/icons/win/icon.ico",
+    "uninstallerIcon": "./resources/icons/win/icon.ico",
     "perMachine": false,
     "artifactName": "${productName}-${version}.${ext}",
     "displayLanguageSelector": true,

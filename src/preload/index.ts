@@ -158,6 +158,40 @@ const api = {
         return () => {
             ipcRenderer.removeListener('cron-job-result', handler)
         }
+    },
+    // Update
+    updateGetState: (): Promise<{
+        status: string
+        updateInfo: { version: string; releaseNotes?: string } | null
+        error: string | null
+    }> => {
+        return ipcRenderer.invoke('update-get-state')
+    },
+    updateGetVersion: (): Promise<string> => {
+        return ipcRenderer.invoke('update-get-version')
+    },
+    updateCheck: (): Promise<void> => {
+        return ipcRenderer.invoke('update-check')
+    },
+    updateInstall: (): Promise<void> => {
+        return ipcRenderer.invoke('update-install')
+    },
+    onUpdateStateChange: (callback: (state: {
+        status: string
+        updateInfo: { version: string; releaseNotes?: string } | null
+        error: string | null
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, state: {
+            status: string
+            updateInfo: { version: string; releaseNotes?: string } | null
+            error: string | null
+        }): void => {
+            callback(state)
+        }
+        ipcRenderer.on('update-state-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('update-state-changed', handler)
+        }
     }
 }
 
