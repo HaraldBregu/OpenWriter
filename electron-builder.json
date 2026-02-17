@@ -1,12 +1,12 @@
 {
-  "productName": "Tesseract",
-  "appId": "com.tesseract.tesseract",
-  "copyright": "Tesseract Project © 2025",
+  "productName": "Tesseract AI",
+  "appId": "com.tesseract-ai.tesseract-ai",
+  "copyright": "Tesseract AI Project © 2025",
   "publish": [
     {
       "provider": "github",
       "owner": "HaraldBregu",
-      "repo": "tesseract"
+      "repo": "tesseract-ai"
     }
   ],
   "files": [
@@ -43,28 +43,28 @@
     "icon": "./resources/icons/mac/icon.icns",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities",
-      "NSMicrophoneUsageDescription": "Tesseract needs access to your microphone for audio recording features.",
-      "NSCameraUsageDescription": "Tesseract needs access to your camera for video recording features.",
-      "NSBluetoothAlwaysUsageDescription": "Tesseract needs access to Bluetooth to connect and manage Bluetooth devices.",
-      "NSBluetoothPeripheralUsageDescription": "Tesseract needs access to Bluetooth peripherals for device connectivity.",
+      "NSMicrophoneUsageDescription": "Tesseract AI needs access to your microphone for audio recording features.",
+      "NSCameraUsageDescription": "Tesseract AI needs access to your camera for video recording features.",
+      "NSBluetoothAlwaysUsageDescription": "Tesseract AI needs access to Bluetooth to connect and manage Bluetooth devices.",
+      "NSBluetoothPeripheralUsageDescription": "Tesseract AI needs access to Bluetooth peripherals for device connectivity.",
       "CFBundleDocumentTypes": [
         {
-          "CFBundleTypeName": "Tesseract File",
+          "CFBundleTypeName": "Tesseract AI File",
           "CFBundleTypeIconFile": "fileIcon.icns",
           "CFBundleTypeExtensions": ["tsx"],
           "CFBundleTypeRole": "Editor",
           "LSHandlerRank": "Owner",
-          "LSItemContentTypes": ["com.tesseract.tesseract.document"]
+          "LSItemContentTypes": ["com.tesseract-ai.tesseract-ai.document"]
         }
       ],
       "UTExportedTypeDeclarations": [
         {
-          "UTTypeIdentifier": "com.tesseract.tesseract.document",
-          "UTTypeDescription": "Tesseract File",
+          "UTTypeIdentifier": "com.tesseract-ai.tesseract-ai.document",
+          "UTTypeDescription": "Tesseract AI File",
           "UTTypeConformsTo": ["public.data"],
           "UTTypeTagSpecification": {
             "public.filename-extension": ["tsx"],
-            "public.mime-type": ["application/x-tesseract-document"]
+            "public.mime-type": ["application/x-tesseract-ai-document"]
           }
         }
       ]
@@ -100,21 +100,21 @@
     "category": "Utility",
     "artifactName": "${productName}-${version}.${ext}",
     "icon": "./resources/icons/linux",
-    "maintainer": "Tesseract Project",
-    "synopsis": "Tesseract",
-    "description": "Tesseract - Advanced Text Editor",
-    "vendor": "Tesseract Project",
-    "executableName": "tesseract",
+    "maintainer": "Tesseract AI Project",
+    "synopsis": "Tesseract AI",
+    "description": "Tesseract AI - Advanced Text Editor",
+    "vendor": "Tesseract AI Project",
+    "executableName": "tesseract-ai",
     "desktop": {
       "Type": "Application",
-      "Name": "Tesseract",
+      "Name": "Tesseract AI",
       "Comment": "Advanced Text Editor",
-      "Icon": "tesseract",
+      "Icon": "tesseract-ai",
       "Terminal": false,
       "Categories": "Office;WordProcessor;TextEditor;",
-      "MimeType": "application/x-tesseract-document;",
+      "MimeType": "application/x-tesseract-ai-document;",
       "StartupNotify": true,
-      "StartupWMClass": "Tesseract"
+      "StartupWMClass": "Tesseract AI"
     },
     "extraResources": [
       {
@@ -126,7 +126,7 @@
   },
   "deb": {
     "packageCategory": "utils",
-    "maintainer": "Tesseract Project <contact@tesseract-editor.org>",
+    "maintainer": "Tesseract AI Project <contact@tesseract-ai-editor.org>",
     "afterInstall": "./scripts/postinstall.sh",
     "depends": [
       "libgtk-3-0",
@@ -157,7 +157,7 @@
     "artifactName": "${productName}.${ext}",
     "forceCodeSigning": false,
     "signtoolOptions": {
-      "publisherName": "Tesseract Project"
+      "publisherName": "Tesseract AI Project"
     },
     "requestedExecutionLevel": "asInvoker",
     "extraResources": [
@@ -172,7 +172,7 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
-    "shortcutName": "Tesseract",
+    "shortcutName": "Tesseract AI",
     "multiLanguageInstaller": true,
     "warningsAsErrors": false,
     "deleteAppDataOnUninstall": false,

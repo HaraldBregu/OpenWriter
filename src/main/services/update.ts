@@ -16,7 +16,7 @@ export class UpdateService {
     if (is.dev) return
 
     const server = 'https://update.electronjs.org'
-    const feed = `${server}/HaraldBregu/tesseract/${process.platform}/${app.getVersion()}`
+    const feed = `${server}/HaraldBregu/tesseract-ai/${process.platform}/${app.getVersion()}`
     autoUpdater.setFeedURL({ url: feed })
 
     autoUpdater.on('checking-for-update', () => {

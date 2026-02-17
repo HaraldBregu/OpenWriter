@@ -28,7 +28,7 @@ export class Tray {
     )
 
     this.tray = new ElectronTray(icon.resize({ width: 16, height: 16 }))
-    this.tray.setToolTip('Tesseract')
+    this.tray.setToolTip('Tesseract AI')
 
     // Double-click to show/hide app
     this.tray.on('double-click', () => {
@@ -59,7 +59,7 @@ export class Tray {
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: isVisible ? m.hideTesseract || 'Hide Tesseract' : m.showTesseract,
+        label: isVisible ? m.hideTesseractAI || 'Hide Tesseract AI' : m.showTesseractAI,
         click: () => {
           this.callbacks.onToggleApp()
           // Rebuild menu after toggle to update the label

@@ -1,5 +1,5 @@
 {
-  "showTesseract": "Show Tesseract",
-  "hideTesseract": "Hide Tesseract",
+  "showTesseractAI": "Show Tesseract AI",
+  "hideTesseractAI": "Hide Tesseract AI",
   "quit": "Quit"
 }

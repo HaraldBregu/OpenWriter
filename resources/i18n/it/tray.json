@@ -1,5 +1,5 @@
 {
-  "showTesseract": "Mostra Tesseract",
-  "hideTesseract": "Nascondi Tesseract",
+  "showTesseractAI": "Mostra Tesseract AI",
+  "hideTesseractAI": "Nascondi Tesseract AI",
   "quit": "Esci"
 }

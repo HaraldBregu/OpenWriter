@@ -178,7 +178,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Sidebar className="border-r">
           {/* Header */}
           <SidebarHeader className="border-b px-6 py-3">
-            <h2 className="text-sm font-semibold">Tesseract</h2>
+            <h2 className="text-sm font-semibold">Tesseract AI</h2>
           </SidebarHeader>
 
           <SidebarContent>
@@ -358,7 +358,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="flex h-12 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
             <SidebarTrigger className="-ml-2" />
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold tracking-tight">Tesseract</h1>
+              <h1 className="text-xl font-semibold tracking-tight">Tesseract AI</h1>
             </div>
           </header>
           <main className="flex-1 overflow-y-auto bg-muted/30">

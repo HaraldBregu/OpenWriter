@@ -44,7 +44,7 @@ const NotificationsPage: React.FC = () => {
       color: 'bg-blue-500 hover:bg-blue-600',
       options: {
         title: 'Information',
-        body: 'This is an informational notification from Tesseract.',
+        body: 'This is an informational notification from Tesseract AI.',
         urgency: 'normal' as const
       }
     },

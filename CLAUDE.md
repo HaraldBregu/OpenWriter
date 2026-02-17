@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tesseract is an Electron-based advanced text editor application. It's built with React, TypeScript, and uses Electron-Vite for the build system. The application supports multi-platform distribution (Windows, macOS, Linux) and handles custom file formats (.tsx).
+Tesseract AI is an Electron-based advanced text editor application. It's built with React, TypeScript, and uses Electron-Vite for the build system. The application supports multi-platform distribution (Windows, macOS, Linux) and handles custom file formats (.tsx).
 
 ## Development Commands
 
@@ -70,7 +70,7 @@ Tesseract is an Electron-based advanced text editor application. It's built with
 - Environment-specific configurations (.env.development, .env.staging, .env.production)
 
 ### Custom File Format
-The application handles `.tsx` files (Tesseract documents) with proper file associations configured for all target platforms.
+The application handles `.tsx` files (Tesseract AI documents) with proper file associations configured for all target platforms.
 
 ## Environment Requirements
 - Node.js >= 22.0.0
