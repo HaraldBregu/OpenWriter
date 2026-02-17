@@ -67,6 +67,9 @@
 }
 
 @layer base {
+  html {
+    font-size: 15px;
+  }
   * {
     border-color: hsl(var(--border));
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;

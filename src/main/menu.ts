@@ -8,7 +8,7 @@ interface MenuManagerCallbacks {
 
 export class Menu {
   private currentLanguage = 'en'
-  private currentTheme = 'light'
+  private currentTheme = 'dark'
   private callbacks: MenuManagerCallbacks
 
   constructor(callbacks: MenuManagerCallbacks) {

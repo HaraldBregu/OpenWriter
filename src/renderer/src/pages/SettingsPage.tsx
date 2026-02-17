@@ -41,18 +41,18 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="mx-auto w-full p-6 space-y-8">
       <div>
-        <h1 className="text-lg font-semibold">{t('settings.title')}</h1>
+        <h1 className="text-lg font-normal">{t('settings.title')}</h1>
         <p className="text-sm text-muted-foreground">{t('settings.description')}</p>
       </div>
 
       {/* Permissions */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Permissions</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">Permissions</h2>
 
         <div className="rounded-md border divide-y">
           <div className="flex items-center justify-between px-4 py-3">
             <div>
-              <p className="text-sm font-medium">Microphone</p>
+              <p className="text-sm font-normal">Microphone</p>
               <p className={`text-xs ${statusColor(microphoneStatus)}`}>
                 {statusLabel(microphoneStatus)}
               </p>
@@ -60,7 +60,7 @@ const SettingsPage: React.FC = () => {
             {microphoneStatus !== 'granted' && (
               <button
                 onClick={requestMicrophone}
-                className="text-xs font-medium px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="text-xs font-normal px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Request
               </button>
@@ -69,7 +69,7 @@ const SettingsPage: React.FC = () => {
 
           <div className="flex items-center justify-between px-4 py-3">
             <div>
-              <p className="text-sm font-medium">Camera</p>
+              <p className="text-sm font-normal">Camera</p>
               <p className={`text-xs ${statusColor(cameraStatus)}`}>
                 {statusLabel(cameraStatus)}
               </p>
@@ -77,7 +77,7 @@ const SettingsPage: React.FC = () => {
             {cameraStatus !== 'granted' && (
               <button
                 onClick={requestCamera}
-                className="text-xs font-medium px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="text-xs font-normal px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Request
               </button>
@@ -95,7 +95,7 @@ const SettingsPage: React.FC = () => {
 
       {/* System */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground">System</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">System</h2>
 
         <div className="rounded-md border divide-y text-sm">
           <div className="flex justify-between px-4 py-2.5">
@@ -111,7 +111,7 @@ const SettingsPage: React.FC = () => {
 
       {/* About */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground">About</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">About</h2>
 
         <div className="rounded-md border divide-y text-sm">
           <div className="flex justify-between px-4 py-2.5">
@@ -125,7 +125,7 @@ const SettingsPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={checkForUpdates}
-                className="text-xs font-medium px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="text-xs font-normal px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Check for updates
               </button>
@@ -150,7 +150,7 @@ const SettingsPage: React.FC = () => {
               </span>
               <button
                 onClick={installUpdate}
-                className="text-xs font-medium px-3 py-1.5 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
+                className="text-xs font-normal px-3 py-1.5 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
               >
                 Install and restart
               </button>
