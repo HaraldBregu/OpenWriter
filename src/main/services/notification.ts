@@ -36,19 +36,31 @@ export class NotificationService {
   showNotification(options: NotificationOptions): string {
     const id = `notification-${Date.now()}-${++this.notificationCount}`
 
-    // Get app icon path
+    // Get app icon path — __dirname resolves to out/main/ regardless of source file location
     const iconPath = is.dev
-      ? path.join(__dirname, '../../../resources/icons/icon.png')
+      ? path.join(__dirname, '../../resources/icons/icon.png')
       : path.join(process.resourcesPath, 'resources/icons/icon.png')
 
-    const notification = new Notification({
+    const icon = nativeImage.createFromPath(iconPath)
+
+    const notificationOptions: Electron.NotificationConstructorOptions = {
       title: options.title,
       body: options.body,
-      icon: nativeImage.createFromPath(iconPath),
       silent: options.silent || false,
-      urgency: options.urgency || 'normal',
       timeoutType: 'default'
-    })
+    }
+
+    // Only set icon if the image loaded successfully (avoids silent failure on bad path)
+    if (!icon.isEmpty()) {
+      notificationOptions.icon = icon
+    }
+
+    // urgency is Linux-only — skip on other platforms to avoid silent failures
+    if (process.platform === 'linux') {
+      notificationOptions.urgency = options.urgency || 'normal'
+    }
+
+    const notification = new Notification(notificationOptions)
 
     // Handle notification shown
     notification.on('show', () => {
