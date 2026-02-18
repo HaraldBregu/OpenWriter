@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, app } from 'electron'
+import { BrowserWindow, ipcMain, app, Menu } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
@@ -67,6 +67,40 @@ export class Main {
       } else {
         exec(`aplay "${soundPath}"`)
       }
+    })
+
+    // Context menu handler
+    ipcMain.on('context-menu', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+
+      const editMenu = Menu.buildFromTemplate([
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' }
+      ])
+      editMenu.popup({ window: win })
+    })
+
+    ipcMain.on('context-menu-editable', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+
+      const editMenu = Menu.buildFromTemplate([
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { type: 'separator' },
+        { role: 'selectAll' }
+      ])
+      editMenu.popup({ window: win })
     })
 
     // Media permission handlers

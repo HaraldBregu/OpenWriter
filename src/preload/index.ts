@@ -5,6 +5,12 @@ const api = {
     playSound: (): void => {
         ipcRenderer.send('play-sound')
     },
+    showContextMenu: (): void => {
+        ipcRenderer.send('context-menu')
+    },
+    showContextMenuEditable: (): void => {
+        ipcRenderer.send('context-menu-editable')
+    },
     onLanguageChange: (callback: (lng: string) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, lng: string): void => {
             callback(lng)

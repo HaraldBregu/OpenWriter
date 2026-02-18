@@ -176,6 +176,8 @@ declare global {
     electron: ElectronAPI
     api: {
       playSound: () => void
+      showContextMenu: () => void
+      showContextMenuEditable: () => void
       onLanguageChange: (callback: (lng: string) => void) => () => void
       onThemeChange: (callback: (theme: string) => void) => () => void
       onFileOpened: (callback: (filePath: string) => void) => () => void
