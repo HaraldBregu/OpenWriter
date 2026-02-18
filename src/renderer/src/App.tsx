@@ -19,6 +19,7 @@ import NotificationsPage from './pages/NotificationsPage'
 import ClipboardPage from './pages/ClipboardPage'
 import UpdateSimulatorPage from './pages/UpdateSimulatorPage'
 import SettingsPage from './pages/SettingsPage'
+import RagPage from './pages/RagPage'
 import './index.css'
 
 const App: React.FC = () => {
@@ -43,6 +44,7 @@ const App: React.FC = () => {
           <Route path="/clipboard" element={<ClipboardPage />} />
           <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/rag" element={<RagPage />} />
         </Routes>
       </AppLayout>
     </Router>

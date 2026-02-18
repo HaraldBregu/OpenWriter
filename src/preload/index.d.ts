@@ -263,6 +263,12 @@ declare global {
       storeSetSelectedModel: (providerId: string, modelId: string) => Promise<void>
       storeSetApiToken: (providerId: string, token: string) => Promise<void>
       storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
+      // RAG
+      ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
+      ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>
+      ragCancel: (runId: string) => void
+      ragGetStatus: () => Promise<{ files: Array<{ filePath: string; chunkCount: number; indexedAt: number }> }>
+      onRagEvent: (callback: (eventType: string, data: unknown) => void) => () => void
       // Agent
       agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string) => Promise<void>
       agentCancel: (runId: string) => void

@@ -1,0 +1,84 @@
+# Tesseract AI — Product Documentation
+
+## Overview
+
+Tesseract AI is an advanced desktop application built with Electron, React, and TypeScript.
+It provides a powerful AI-assisted workspace for knowledge workers, developers, and researchers.
+The application supports multi-platform distribution across Windows, macOS, and Linux.
+
+## Core Features
+
+### AI Chat Interface
+Tesseract AI includes a real-time streaming chat interface powered by LangChain JS and the OpenAI API.
+Users can create multiple chat threads, each with its own conversation history.
+Messages are rendered with full Markdown support, including syntax-highlighted code blocks.
+The system uses Retrieval-Augmented Generation (RAG) to answer questions grounded in uploaded documents.
+
+### Thread Management
+Each conversation is stored as a thread. Threads are listed in the sidebar and persist across sessions.
+Users can create, switch between, and delete threads. Only one thread can be running at a time.
+Thread titles are auto-generated from the first user message.
+
+### Document RAG
+Users can index local files (TXT, Markdown, PDF) and query them using natural language.
+The RAG pipeline uses:
+- LangChain JS for orchestration
+- OpenAI Embeddings (text-embedding-3-small) for vector encoding
+- MemoryVectorStore for in-process vector storage
+- RecursiveCharacterTextSplitter with chunkSize=1000, chunkOverlap=200
+- ChatOpenAI (gpt-4o-mini by default) for answer generation
+
+### Settings and Model Management
+Users can configure API tokens and select AI models per provider.
+Supported providers: Anthropic, OpenAI, Google, Meta, Mistral.
+Settings are persisted to a local JSON file in the Electron userData directory.
+
+## Architecture
+
+### Electron Multi-Process Design
+- Main Process (Node.js): handles file system, AI agent, RAG pipeline, IPC routing
+- Renderer Process (React): UI layer using Redux Toolkit for state management
+- Preload Script: secure contextBridge between main and renderer
+
+### State Management
+Redux Toolkit manages all client-side state:
+- Chat threads and messages are stored in the `chatSlice`
+- Agent running state (`isAgentRunning`, `runningThreadId`) is globally tracked
+- Theme and language preferences are handled via IPC events from the Electron menu
+
+### IPC Channel Design
+All main-process capabilities are exposed through typed IPC channels:
+- `agent:run` / `agent:cancel` — streaming AI responses
+- `rag:index` / `rag:query` / `rag:cancel` — RAG pipeline
+- `store-*` — settings persistence
+- `fs-*` — filesystem operations
+- `clipboard-*` — clipboard access
+
+## Technical Stack
+
+| Layer       | Technology                          |
+|-------------|-------------------------------------|
+| Shell       | Electron 38                         |
+| UI          | React 19, Tailwind CSS, Radix UI    |
+| State       | Redux Toolkit                       |
+| AI          | LangChain JS, OpenAI API            |
+| Build       | electron-vite, Vite 6, TypeScript 5 |
+| Testing     | Jest, React Testing Library         |
+
+## Keyboard Shortcuts
+
+- Ctrl+Shift+I  — Toggle DevTools
+- Ctrl+R        — Reload renderer
+- Enter         — Send chat message
+- Shift+Enter   — Insert newline in chat input
+
+## File Format
+
+Tesseract AI uses the `.tsrct` file extension for its native document format.
+Double-clicking a `.tsrct` file opens it in a new window on all platforms.
+
+## Versioning
+
+Current version: 1.0.0
+License: Open
+Copyright: © 2026 Tesseract AI Project

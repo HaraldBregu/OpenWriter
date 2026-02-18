@@ -547,6 +547,32 @@ const api = {
     agentCancel: (runId: string): void => {
         ipcRenderer.send('agent:cancel', runId)
     },
+    // RAG
+    ragIndex: (filePath: string, providerId: string): Promise<{ filePath: string; chunkCount: number }> => {
+        return ipcRenderer.invoke('rag:index', filePath, providerId)
+    },
+    ragQuery: (filePath: string, question: string, runId: string, providerId: string): Promise<void> => {
+        return ipcRenderer.invoke('rag:query', filePath, question, runId, providerId)
+    },
+    ragCancel: (runId: string): void => {
+        ipcRenderer.send('rag:cancel', runId)
+    },
+    ragGetStatus: (): Promise<{ files: Array<{ filePath: string; chunkCount: number; indexedAt: number }> }> => {
+        return ipcRenderer.invoke('rag:status')
+    },
+    onRagEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
+        const channels = ['rag:token', 'rag:done', 'rag:error', 'rag:status']
+        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
+            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
+                callback(channel, data)
+            }
+            ipcRenderer.on(channel, handler)
+            return [channel, handler]
+        })
+        return (): void => {
+            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
+        }
+    },
     onAgentEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
         const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
         const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
@@ -8,13 +8,15 @@ import {
   deleteThread,
   setActiveThread,
   selectThreads,
-  selectActiveThreadId
+  selectActiveThreadId,
+  selectRunningThreadId
 } from '../store/chatSlice'
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -26,21 +28,13 @@ import {
 } from './ui/sidebar'
 import {
   Home,
-  PenLine,
-  BookMarked,
-  Send,
-  Image,
-  Film,
-  File,
-  BookOpen,
-  ChevronRight,
-  LogOut,
-  Star,
-  UserCog,
-  CreditCard,
+  FileText,
+  Cloud,
+  HardDrive,
+  Settings as SettingsIcon,
   Bell as BellIcon,
-  ChevronUp,
-  Brain,
+  Shield,
+  LogOut,
   MessageSquare,
   Plus,
   Trash2
@@ -50,120 +44,30 @@ interface AppLayoutProps {
   readonly children: React.ReactNode
 }
 
-interface NavItem {
-  title: string
-  icon?: React.ElementType
-  url: string
-  disabled?: boolean
-  description?: string
-  count?: number
-}
+// ---------------------------------------------------------------------------
+// Documents nav items
+// ---------------------------------------------------------------------------
 
-interface NavGroup {
-  label: string
-  icon?: React.ElementType
-  items: NavItem[]
-}
-
-const navGroups: NavGroup[] = [
-  {
-    label: 'POSTS',
-    items: [
-      { title: 'All Posts', icon: BookMarked, url: '/posts', count: 12 },
-      { title: 'Drafts', icon: PenLine, url: '/posts/drafts', count: 4 },
-      { title: 'Published', icon: Send, url: '/posts/published', count: 8 },
-    ]
-  },
-  {
-    label: 'RESOURCES',
-    items: [
-      { title: 'Images', icon: Image, url: '/resources/images' },
-      { title: 'Media', icon: Film, url: '/resources/media' },
-      { title: 'Files', icon: File, url: '/resources/files' },
-      { title: 'Documents', icon: BookOpen, url: '/resources/documents' }
-    ]
-  },
-  {
-    label: 'BRAIN',
-    icon: Brain,
-    items: [
-      { title: 'Decider', url: '/brain/decider' },
-      { title: 'Memory', url: '/brain/memory' },
-      { title: 'Perception', url: '/brain/perception' },
-      { title: 'Reasoning', url: '/brain/reasoning' },
-      { title: 'Intuition', url: '/brain/intuition' },
-      { title: 'Attention', url: '/brain/attention' },
-      { title: 'Emotions', url: '/brain/emotions' }
-    ]
-  }
+const documentItems = [
+  { title: 'Recent Documents', icon: FileText, url: '#' },
+  { title: 'Remote Documents', icon: Cloud, url: '#' },
+  { title: 'Local Storage', icon: HardDrive, url: '#' },
+  { title: 'Document RAG', icon: FileText, url: '/rag' }
 ]
 
-function NavGroupSection({
-  group,
-  currentPath
-}: {
-  group: NavGroup
-  currentPath: string
-}) {
-  const [open, setOpen] = useState(false)
+// ---------------------------------------------------------------------------
+// Settings nav items
+// ---------------------------------------------------------------------------
 
-  return (
-    <SidebarGroup className="mb-4 py-0">
-      {/* Section label — clickable to collapse */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center px-3 py-2 text-xs font-normal tracking-widest text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors"
-      >
-        {group.icon && <group.icon className="h-3 w-3 mr-1.5 shrink-0" />}
-        <span className="flex-1 text-left">{group.label}</span>
-        <ChevronRight
-          className={`h-3 w-3 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`}
-        />
-      </button>
+const settingsItems = [
+  { title: 'General', icon: SettingsIcon, url: '/settings', disabled: false },
+  { title: 'Notifications', icon: BellIcon, url: '/notifications', disabled: false },
+  { title: 'Privacy', icon: Shield, url: '#', disabled: true }
+]
 
-      {open && (
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {group.items.map((item) => {
-              const isActive = currentPath === item.url
-              const ItemIcon = item.icon
-              const inner = (
-                <>
-                  {ItemIcon && <ItemIcon className="h-3.5 w-3.5 shrink-0" />}
-                  <span className="flex-1 truncate text-md">{item.title}</span>
-                  {item.count !== undefined && (
-                    <span className="ml-auto text-[11px] tabular-nums text-muted-foreground/40">
-                      {item.count}
-                    </span>
-                  )}
-                </>
-              )
-
-              return (
-                <SidebarMenuItem key={item.title}>
-                  {item.disabled ? (
-                    <SidebarMenuButton disabled className="h-9 px-3 opacity-40">
-                      {inner}
-                    </SidebarMenuButton>
-                  ) : (
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      className="h-9 px-3"
-                      tooltip={item.description}
-                    >
-                      <Link to={item.url}>{inner}</Link>
-                    </SidebarMenuButton>
-                  )}
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      )}
-    </SidebarGroup>
-  )
-}
+// ---------------------------------------------------------------------------
+// Thread list
+// ---------------------------------------------------------------------------
 
 function ThreadList({
   currentPath,
@@ -175,6 +79,7 @@ function ThreadList({
   const dispatch = useAppDispatch()
   const threads = useAppSelector(selectThreads)
   const activeThreadId = useAppSelector(selectActiveThreadId)
+  const runningThreadId = useAppSelector(selectRunningThreadId)
 
   const handleNew = () => {
     dispatch(createThread('openai'))
@@ -223,6 +128,9 @@ function ThreadList({
                   >
                     <MessageSquare className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                     <span className="flex-1 truncate text-sm">{thread.title}</span>
+                    {thread.id === runningThreadId && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse shrink-0" />
+                    )}
                     <button
                       type="button"
                       onClick={(e) => handleDelete(e, thread.id)}
@@ -242,10 +150,13 @@ function ThreadList({
   )
 }
 
+// ---------------------------------------------------------------------------
+// AppLayout
+// ---------------------------------------------------------------------------
+
 export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [footerOpen, setFooterOpen] = useState(false)
   useTheme()
   useLanguage()
 
@@ -257,12 +168,12 @@ export function AppLayout({ children }: AppLayoutProps) {
           {/* Header */}
           <SidebarHeader className="border-b p-4">
             <div className="flex items-center gap-2">
-              
               <span className="text-md font-normal tracking-tight">Tesseract AI</span>
             </div>
           </SidebarHeader>
 
           <SidebarContent className="gap-0 py-2">
+
             {/* Dashboard — top-level, no group label */}
             <SidebarGroup className="mb-3 py-0">
               <SidebarGroupContent>
@@ -271,7 +182,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <SidebarMenuButton
                       asChild
                       isActive={location.pathname === '/'}
-                      className="h-9 px-3">
+                      className="h-9 px-3"
+                    >
                       <Link to="/">
                         <Home className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 text-md font-normal">Dashboard</span>
@@ -288,69 +200,97 @@ export function AppLayout({ children }: AppLayoutProps) {
               onNavigate={() => navigate('/')}
             />
 
-            {/* Dynamic nav groups */}
-            {navGroups.map((group) => (
-              <NavGroupSection key={group.label} group={group} currentPath={location.pathname} />
-            ))}
+            {/* Documents */}
+            <SidebarGroup className="mb-4 py-0">
+              <SidebarGroupLabel className="text-xs font-normal tracking-widest text-muted-foreground/30 px-3 h-8">
+                Documents
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {documentItems.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={location.pathname === item.url && item.url !== '#'}
+                          className="h-9 px-3"
+                        >
+                          <Link to={item.url}>
+                            <Icon className="h-3.5 w-3.5 shrink-0" />
+                            <span className="flex-1 truncate text-md">{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Settings */}
+            <SidebarGroup className="mb-4 py-0">
+              <SidebarGroupLabel className="text-xs font-normal tracking-widest text-muted-foreground/30 px-3 h-8">
+                Settings
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {settingsItems.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        {item.disabled ? (
+                          <SidebarMenuButton disabled className="h-9 px-3 opacity-40">
+                            <Icon className="h-3.5 w-3.5 shrink-0" />
+                            <span className="flex-1 truncate text-md">{item.title}</span>
+                          </SidebarMenuButton>
+                        ) : (
+                          <SidebarMenuButton
+                            asChild
+                            isActive={location.pathname === item.url}
+                            className="h-9 px-3"
+                          >
+                            <Link to={item.url}>
+                              <Icon className="h-3.5 w-3.5 shrink-0" />
+                              <span className="flex-1 truncate text-md">{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        )}
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
           </SidebarContent>
 
           {/* Footer — Account */}
-          <SidebarFooter className="border-t px-3 py-2 gap-1">
-
-            <button
-              onClick={() => setFooterOpen((v) => !v)}
-              className="flex w-full items-center px-2 py-2 text-xs font-normal tracking-widest text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors"
-            >
-              <span className="flex-1 text-left">ACCOUNT</span>
-              <ChevronUp
-                className={`h-3 w-3 shrink-0 transition-transform ${footerOpen ? '' : 'rotate-180'}`}
-              />
-            </button>
-
-            {/* Dropdown Menu */}
-            {footerOpen && (
-              <SidebarMenu className="gap-1">
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="h-9 px-3">
-                    <Star className="h-4 w-4 shrink-0" />
-                    <span className="text-sm">Upgrade to Pro</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === '/settings'}
-                    className="h-9 px-3"
-                  >
-                    <Link to="/settings">
-                      <UserCog className="h-4 w-4 shrink-0" />
-                      <span className="text-sm">Account</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="h-9 px-3">
-                    <CreditCard className="h-4 w-4 shrink-0" />
-                    <span className="text-sm">Billing</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="h-9 px-3">
-                    <BellIcon className="h-4 w-4 shrink-0" />
-                    <span className="text-sm">Notifications</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <div className="my-1 mx-2 border-t border-border/50" />
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="h-9 px-3 text-destructive hover:text-destructive hover:bg-destructive/10">
-                    <LogOut className="h-4 w-4 shrink-0" />
-                    <span className="text-sm">Log out</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            )}
-
+          <SidebarFooter className="border-t px-3 py-3">
+            <div className="flex items-center gap-3 px-2">
+              {/* Avatar */}
+              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0 select-none">
+                JD
+              </div>
+              {/* Name + status */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate leading-tight">John Doe</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500 shrink-0" />
+                  <span className="text-xs text-muted-foreground">Online</span>
+                </div>
+              </div>
+              {/* Log out */}
+              <button
+                type="button"
+                className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground/50 hover:text-foreground hover:bg-muted transition-colors"
+                title="Log out"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </SidebarFooter>
+
         </Sidebar>
 
         <SidebarInset className="flex-1">

@@ -33,7 +33,8 @@
       "Bash(npm search:*)",
       "WebSearch",
       "Bash(yarn add:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

@@ -16,6 +16,7 @@ import { ClipboardService } from './services/clipboard'
 import { UpdateSimulator } from './services/update-simulator'
 import { StoreService } from './services/store'
 import { AgentController, type ChatMessage } from './agent/AgentController'
+import { RagController } from './rag/RagController'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -33,6 +34,7 @@ export class Main {
   private clipboardService: ClipboardService
   private storeService: StoreService
   private agentController: AgentController
+  private ragController: RagController
   private onWindowVisibilityChange?: () => void
 
   constructor(lifecycleService: LifecycleService) {
@@ -51,6 +53,7 @@ export class Main {
     this.clipboardService = new ClipboardService()
     this.storeService = new StoreService()
     this.agentController = new AgentController(this.storeService)
+    this.ragController = new RagController(this.storeService)
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
@@ -441,6 +444,35 @@ export class Main {
 
     ipcMain.on('agent:cancel', (_event, runId: string) => {
       this.agentController.cancel(runId)
+    })
+
+    // RAG handlers
+    ipcMain.handle(
+      'rag:index',
+      async (_event, filePath: string, providerId: string) => {
+        const win = BrowserWindow.fromWebContents(_event.sender)
+        if (!win) throw new Error('No window')
+        return this.ragController.indexFile(filePath, providerId, win)
+      }
+    )
+
+    ipcMain.handle(
+      'rag:query',
+      (_event, filePath: string, question: string, runId: string, providerId: string) => {
+        const win = BrowserWindow.fromWebContents(_event.sender)
+        if (!win) return
+        this.ragController.queryFile(filePath, question, runId, providerId, win).catch((err) => {
+          console.error('[RAG] Unhandled error:', err)
+        })
+      }
+    )
+
+    ipcMain.on('rag:cancel', (_event, runId: string) => {
+      this.ragController.cancel(runId)
+    })
+
+    ipcMain.handle('rag:status', () => {
+      return this.ragController.getStatus()
     })
   }
 
