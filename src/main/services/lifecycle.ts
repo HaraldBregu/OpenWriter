@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron'
+import path from 'node:path'
 
 export interface LifecycleEvent {
   type: string
@@ -13,13 +14,17 @@ export interface LifecycleState {
   platform: string
 }
 
+export interface LifecycleCallbacks {
+  onSecondInstanceFile?: (filePath: string) => void
+}
+
 export class LifecycleService {
   private events: LifecycleEvent[] = []
   private isSingleInstance: boolean
   private appReadyAt: number | null = null
   private eventCallback: ((event: LifecycleEvent) => void) | null = null
 
-  constructor() {
+  constructor(callbacks?: LifecycleCallbacks) {
     this.isSingleInstance = app.requestSingleInstanceLock()
 
     if (!this.isSingleInstance) {
@@ -27,12 +32,22 @@ export class LifecycleService {
       return
     }
 
-    app.on('second-instance', () => {
+    app.on('second-instance', (_event, argv) => {
       this.pushEvent('second-instance-blocked', 'Another instance attempted to launch')
-      const windows = BrowserWindow.getAllWindows()
-      if (windows.length > 0) {
-        if (windows[0].isMinimized()) windows[0].restore()
-        windows[0].focus()
+
+      // Check if argv contains a .tsrct file path (Windows/Linux double-click)
+      const filePath = argv.find(
+        (arg) => path.extname(arg).toLowerCase() === '.tsrct'
+      )
+
+      if (filePath && callbacks?.onSecondInstanceFile) {
+        callbacks.onSecondInstanceFile(filePath)
+      } else {
+        const windows = BrowserWindow.getAllWindows()
+        if (windows.length > 0) {
+          if (windows[0].isMinimized()) windows[0].restore()
+          windows[0].focus()
+        }
       }
     })
   }

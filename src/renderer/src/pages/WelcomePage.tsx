@@ -1,12 +1,8 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '../hooks/useTheme'
-import { useLanguage } from '../hooks/useLanguage'
 
 const WelcomePage: React.FC = () => {
   const { t } = useTranslation()
-  useTheme()
-  useLanguage()
 
   return (
     <div className="flex items-center justify-center min-h-screen p-6">

@@ -178,6 +178,7 @@ declare global {
       playSound: () => void
       onLanguageChange: (callback: (lng: string) => void) => () => void
       onThemeChange: (callback: (theme: string) => void) => () => void
+      onFileOpened: (callback: (filePath: string) => void) => () => void
       // Media permissions
       requestMicrophonePermission: () => Promise<MediaPermissionStatus>
       requestCameraPermission: () => Promise<MediaPermissionStatus>
@@ -256,6 +257,16 @@ declare global {
       clipboardHasText: () => Promise<boolean>
       clipboardHasImage: () => Promise<boolean>
       clipboardHasHTML: () => Promise<boolean>
+      // Store
+      storeGetAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
+      storeGetModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
+      storeSetSelectedModel: (providerId: string, modelId: string) => Promise<void>
+      storeSetApiToken: (providerId: string, token: string) => Promise<void>
+      storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
+      // Agent
+      agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string) => Promise<void>
+      agentCancel: (runId: string) => void
+      onAgentEvent: (callback: (eventType: string, data: unknown) => void) => () => void
       // Update Simulator
       updateSimCheck: () => Promise<void>
       updateSimDownload: () => Promise<void>

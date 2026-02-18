@@ -6,6 +6,9 @@ import { useEffect } from 'react'
  */
 export function useTheme(): void {
   useEffect(() => {
+    // Start in dark mode to match Electron's nativeTheme default
+    document.documentElement.classList.add('dark')
+
     const cleanup = window.api.onThemeChange((theme: string) => {
       document.documentElement.classList.toggle('dark', theme === 'dark')
     })

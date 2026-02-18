@@ -1,5 +1,15 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTheme } from '../hooks/useTheme'
+import { useLanguage } from '../hooks/useLanguage'
+import { useAppDispatch, useAppSelector } from '../store'
+import {
+  createThread,
+  deleteThread,
+  setActiveThread,
+  selectThreads,
+  selectActiveThreadId
+} from '../store/chatSlice'
 import {
   Sidebar,
   SidebarContent,
@@ -16,24 +26,6 @@ import {
 } from './ui/sidebar'
 import {
   Home,
-  Mic,
-  Camera,
-  Monitor,
-  Settings,
-  Headphones,
-  HardDrive,
-  Wifi,
-  Bluetooth,
-  Activity,
-  AppWindow,
-  Calendar,
-  FileText,
-  MessageSquare,
-  BarChart3,
-  Bell,
-  Shield,
-  Clipboard,
-  Download,
   PenLine,
   BookMarked,
   Send,
@@ -42,25 +34,25 @@ import {
   File,
   BookOpen,
   ChevronRight,
-  Sun,
   LogOut,
-  Cpu,
-  User,
   Star,
   UserCog,
   CreditCard,
   Bell as BellIcon,
-  ChevronUp
+  ChevronUp,
+  Brain,
+  MessageSquare,
+  Plus,
+  Trash2
 } from 'lucide-react'
-import { useUpdate } from '@/hooks/useUpdate'
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  readonly children: React.ReactNode
 }
 
 interface NavItem {
   title: string
-  icon: React.ElementType
+  icon?: React.ElementType
   url: string
   disabled?: boolean
   description?: string
@@ -69,6 +61,7 @@ interface NavItem {
 
 interface NavGroup {
   label: string
+  icon?: React.ElementType
   items: NavItem[]
 }
 
@@ -90,43 +83,19 @@ const navGroups: NavGroup[] = [
       { title: 'Documents', icon: BookOpen, url: '/resources/documents' }
     ]
   },
-  // {
-  //   label: 'MEDIA',
-  //   items: [
-  //     { title: 'Microphone', icon: Mic, url: '/microphone', description: 'Audio recording' },
-  //     { title: 'Camera', icon: Camera, url: '/camera', description: 'Video recording' },
-  //     { title: 'Screen', icon: Monitor, url: '/screen', description: 'Screen capture' }
-  //   ]
-  // },
-  // {
-  //   label: 'DEVICES',
-  //   items: [
-  //     { title: 'Bluetooth', icon: Bluetooth, url: '/bluetooth' },
-  //     { title: 'Audio Output', icon: Headphones, url: '#', disabled: true },
-  //     { title: 'Network', icon: Wifi, url: '/network' },
-  //     { title: 'Storage', icon: HardDrive, url: '#', disabled: true }
-  //   ]
-  // },
-  // {
-  //   label: 'TOOLS',
-  //   items: [
-  //     { title: 'Cron Jobs', icon: Calendar, url: '/cron' },
-  //     { title: 'Lifecycle', icon: Activity, url: '/lifecycle' },
-  //     { title: 'Windows', icon: AppWindow, url: '/windows' },
-  //     { title: 'Filesystem', icon: FileText, url: '/filesystem' },
-  //     { title: 'Dialogs', icon: MessageSquare, url: '/dialogs' },
-  //     { title: 'Clipboard', icon: Clipboard, url: '/clipboard' },
-  //     { title: 'Auto-Update', icon: Download, url: '/update-simulator' },
-  //     { title: 'Analytics', icon: BarChart3, url: '#', disabled: true }
-  //   ]
-  // },
-  // {
-  //   label: 'SYSTEM',
-  //   items: [
-  //     { title: 'Notifications', icon: Bell, url: '/notifications' },
-  //     { title: 'Privacy', icon: Shield, url: '#', disabled: true }
-  //   ]
-  // }
+  {
+    label: 'BRAIN',
+    icon: Brain,
+    items: [
+      { title: 'Decider', url: '/brain/decider' },
+      { title: 'Memory', url: '/brain/memory' },
+      { title: 'Perception', url: '/brain/perception' },
+      { title: 'Reasoning', url: '/brain/reasoning' },
+      { title: 'Intuition', url: '/brain/intuition' },
+      { title: 'Attention', url: '/brain/attention' },
+      { title: 'Emotions', url: '/brain/emotions' }
+    ]
+  }
 ]
 
 function NavGroupSection({
@@ -136,7 +105,7 @@ function NavGroupSection({
   group: NavGroup
   currentPath: string
 }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   return (
     <SidebarGroup className="mb-4 py-0">
@@ -145,6 +114,7 @@ function NavGroupSection({
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center px-3 py-2 text-xs font-normal tracking-widest text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors"
       >
+        {group.icon && <group.icon className="h-3 w-3 mr-1.5 shrink-0" />}
         <span className="flex-1 text-left">{group.label}</span>
         <ChevronRight
           className={`h-3 w-3 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`}
@@ -156,9 +126,10 @@ function NavGroupSection({
           <SidebarMenu>
             {group.items.map((item) => {
               const isActive = currentPath === item.url
+              const ItemIcon = item.icon
               const inner = (
                 <>
-                  <item.icon className="h-3.5 w-3.5 shrink-0" />
+                  {ItemIcon && <ItemIcon className="h-3.5 w-3.5 shrink-0" />}
                   <span className="flex-1 truncate text-md">{item.title}</span>
                   {item.count !== undefined && (
                     <span className="ml-auto text-[11px] tabular-nums text-muted-foreground/40">
@@ -194,9 +165,89 @@ function NavGroupSection({
   )
 }
 
+function ThreadList({
+  currentPath,
+  onNavigate
+}: {
+  currentPath: string
+  onNavigate: () => void
+}) {
+  const dispatch = useAppDispatch()
+  const threads = useAppSelector(selectThreads)
+  const activeThreadId = useAppSelector(selectActiveThreadId)
+
+  const handleNew = () => {
+    dispatch(createThread('openai'))
+    onNavigate()
+  }
+
+  const handleSelect = (id: string) => {
+    dispatch(setActiveThread(id))
+    onNavigate()
+  }
+
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    dispatch(deleteThread(id))
+  }
+
+  return (
+    <SidebarGroup className="mb-4 py-0">
+      <div className="flex items-center justify-between px-3 py-2">
+        <span className="text-xs font-normal tracking-widest text-muted-foreground/30">
+          THREADS
+        </span>
+        <button
+          type="button"
+          onClick={handleNew}
+          className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground/40 hover:text-muted-foreground/70 hover:bg-muted transition-colors"
+          title="New thread"
+        >
+          <Plus className="h-3 w-3" />
+        </button>
+      </div>
+
+      {threads.length === 0 ? (
+        <p className="px-3 py-1 text-xs text-muted-foreground/30 italic">No threads yet</p>
+      ) : (
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {threads.map((thread) => {
+              const isActive = currentPath === '/' && thread.id === activeThreadId
+              return (
+                <SidebarMenuItem key={thread.id}>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                    className="h-9 px-3 group/thread"
+                    onClick={() => handleSelect(thread.id)}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 truncate text-sm">{thread.title}</span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDelete(e, thread.id)}
+                      className="opacity-0 group-hover/thread:opacity-100 h-4 w-4 flex items-center justify-center rounded text-muted-foreground/50 hover:text-destructive transition-all"
+                      title="Delete thread"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      )}
+    </SidebarGroup>
+  )
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation()
-  const [footerOpen, setFooterOpen] = useState(true)
+  const navigate = useNavigate()
+  const [footerOpen, setFooterOpen] = useState(false)
+  useTheme()
+  useLanguage()
 
   return (
     <SidebarProvider>
@@ -231,34 +282,28 @@ export function AppLayout({ children }: AppLayoutProps) {
               </SidebarGroupContent>
             </SidebarGroup>
 
+            {/* Thread list */}
+            <ThreadList
+              currentPath={location.pathname}
+              onNavigate={() => navigate('/')}
+            />
+
             {/* Dynamic nav groups */}
             {navGroups.map((group) => (
               <NavGroupSection key={group.label} group={group} currentPath={location.pathname} />
             ))}
           </SidebarContent>
 
-          {/* Footer — User Profile */}
-          <SidebarFooter className="border-t px-3 py-3 gap-2">
+          {/* Footer — Account */}
+          <SidebarFooter className="border-t px-3 py-2 gap-1">
 
-            {/* User Profile Card — Dropdown Trigger */}
             <button
               onClick={() => setFooterOpen((v) => !v)}
-              className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-accent/50 transition-colors text-left"
+              className="flex w-full items-center px-2 py-2 text-xs font-normal tracking-widest text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors"
             >
-              {/* Avatar */}
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shrink-0">
-                <User className="h-5 w-5 text-white" />
-              </div>
-
-              {/* User Info */}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-normal truncate">Tesseract User</p>
-                <p className="text-xs text-muted-foreground truncate">user@tesseract.ai</p>
-              </div>
-
-              {/* Expand/Collapse Chevron */}
+              <span className="flex-1 text-left">ACCOUNT</span>
               <ChevronUp
-                className={`h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform ${footerOpen ? '' : '-rotate-180'}`}
+                className={`h-3 w-3 shrink-0 transition-transform ${footerOpen ? '' : 'rotate-180'}`}
               />
             </button>
 

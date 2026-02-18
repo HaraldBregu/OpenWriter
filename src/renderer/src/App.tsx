@@ -1,6 +1,9 @@
 import React from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { store } from './store'
 import { AppLayout } from './components/AppLayout'
+import DashboardPage from './pages/DashboardPage'
 import WelcomePage from './pages/WelcomePage'
 import MicrophonePage from './pages/MicrophonePage'
 import CameraPage from './pages/CameraPage'
@@ -20,10 +23,12 @@ import './index.css'
 
 const App: React.FC = () => {
   return (
+    <Provider store={store}>
     <Router>
       <AppLayout>
         <Routes>
-          <Route path="/" element={<WelcomePage />} />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/microphone" element={<MicrophonePage />} />
           <Route path="/camera" element={<CameraPage />} />
           <Route path="/screen" element={<ScreenPage />} />
@@ -41,6 +46,7 @@ const App: React.FC = () => {
         </Routes>
       </AppLayout>
     </Router>
+    </Provider>
   )
 }
 

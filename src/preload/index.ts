@@ -23,6 +23,15 @@ const api = {
             ipcRenderer.removeListener('change-theme', handler)
         }
     },
+    onFileOpened: (callback: (filePath: string) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, filePath: string): void => {
+            callback(filePath)
+        }
+        ipcRenderer.on('file-opened', handler)
+        return () => {
+            ipcRenderer.removeListener('file-opened', handler)
+        }
+    },
     // Media permissions
     requestMicrophonePermission: (): Promise<string> => {
         return ipcRenderer.invoke('request-microphone-permission')
@@ -423,6 +432,22 @@ const api = {
     clipboardHasHTML: (): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-has-html')
     },
+    // Store
+    storeGetAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
+        return ipcRenderer.invoke('store-get-all-model-settings')
+    },
+    storeGetModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
+        return ipcRenderer.invoke('store-get-model-settings', providerId)
+    },
+    storeSetSelectedModel: (providerId: string, modelId: string): Promise<void> => {
+        return ipcRenderer.invoke('store-set-selected-model', providerId, modelId)
+    },
+    storeSetApiToken: (providerId: string, token: string): Promise<void> => {
+        return ipcRenderer.invoke('store-set-api-token', providerId, token)
+    },
+    storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
+        return ipcRenderer.invoke('store-set-model-settings', providerId, settings)
+    },
     // Update Simulator
     updateSimCheck: (): Promise<void> => {
         return ipcRenderer.invoke('update-sim-check')
@@ -513,6 +538,26 @@ const api = {
         ipcRenderer.on('update-sim-progress', handler)
         return () => {
             ipcRenderer.removeListener('update-sim-progress', handler)
+        }
+    },
+    // Agent
+    agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
+        return ipcRenderer.invoke('agent:run', messages, runId, providerId)
+    },
+    agentCancel: (runId: string): void => {
+        ipcRenderer.send('agent:cancel', runId)
+    },
+    onAgentEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
+        const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
+        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
+            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
+                callback(channel, data)
+            }
+            ipcRenderer.on(channel, handler)
+            return [channel, handler]
+        })
+        return (): void => {
+            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
         }
     }
 }

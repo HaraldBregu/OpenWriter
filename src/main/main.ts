@@ -14,6 +14,8 @@ import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { UpdateSimulator } from './services/update-simulator'
+import { StoreService } from './services/store'
+import { AgentController, type ChatMessage } from './agent/AgentController'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -29,6 +31,8 @@ export class Main {
   private dialogService: DialogService
   private notificationService: NotificationService
   private clipboardService: ClipboardService
+  private storeService: StoreService
+  private agentController: AgentController
   private onWindowVisibilityChange?: () => void
 
   constructor(lifecycleService: LifecycleService) {
@@ -45,12 +49,14 @@ export class Main {
     this.dialogService = new DialogService()
     this.notificationService = new NotificationService()
     this.clipboardService = new ClipboardService()
+    this.storeService = new StoreService()
+    this.agentController = new AgentController(this.storeService)
 
     // Existing sound handler
     ipcMain.on('play-sound', () => {
       const soundPath = is.dev
-        ? path.join(__dirname, '../../resources/sounds/click1.wav')
-        : path.join(process.resourcesPath, 'resources/sounds/click1.wav')
+        ? path.join(__dirname, '../../resources/sounds/click6.wav')
+        : path.join(process.resourcesPath, 'resources/sounds/click6.wav')
       if (process.platform === 'darwin') {
         exec(`afplay "${soundPath}"`)
       } else if (process.platform === 'win32') {
@@ -363,6 +369,27 @@ export class Main {
       return this.clipboardService.hasHTML()
     })
 
+    // Store handlers
+    ipcMain.handle('store-get-all-model-settings', () => {
+      return this.storeService.getAllModelSettings()
+    })
+
+    ipcMain.handle('store-get-model-settings', (_event, providerId: string) => {
+      return this.storeService.getModelSettings(providerId)
+    })
+
+    ipcMain.handle('store-set-selected-model', (_event, providerId: string, modelId: string) => {
+      this.storeService.setSelectedModel(providerId, modelId)
+    })
+
+    ipcMain.handle('store-set-api-token', (_event, providerId: string, token: string) => {
+      this.storeService.setApiToken(providerId, token)
+    })
+
+    ipcMain.handle('store-set-model-settings', (_event, providerId: string, settings: { selectedModel: string; apiToken: string }) => {
+      this.storeService.setModelSettings(providerId, settings)
+    })
+
     // Update Simulator handlers
     ipcMain.handle('update-sim-check', async () => {
       await this.updateSimulator.checkForUpdates()
@@ -400,6 +427,20 @@ export class Main {
       BrowserWindow.getAllWindows().forEach((win) => {
         win.webContents.send('update-sim-progress', progress)
       })
+    })
+
+    // Agent handlers
+    ipcMain.handle('agent:run', (_event, messages: ChatMessage[], runId: string, providerId: string) => {
+      const win = BrowserWindow.fromWebContents(_event.sender)
+      if (!win) return
+      // Run in background — stream events back via webContents.send
+      this.agentController.runAgent(messages, runId, providerId, win).catch((err) => {
+        console.error('[Agent] Unhandled error:', err)
+      })
+    })
+
+    ipcMain.on('agent:cancel', (_event, runId: string) => {
+      this.agentController.cancel(runId)
     })
   }
 
@@ -501,5 +542,47 @@ export class Main {
 
   setOnWindowVisibilityChange(callback: () => void): void {
     this.onWindowVisibilityChange = callback
+  }
+
+  createWindowForFile(filePath: string): BrowserWindow {
+    const win = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      minWidth: 800,
+      minHeight: 600,
+      show: false,
+      icon: path.join(__dirname, '../../resources/icons/icon.png'),
+      webPreferences: {
+        preload: path.join(__dirname, '../preload/index.mjs'),
+        sandbox: false,
+        nodeIntegration: false,
+        contextIsolation: true,
+        devTools: is.dev,
+        webSecurity: true,
+        allowRunningInsecureContent: false
+      },
+      trafficLightPosition: {
+        x: 9,
+        y: 9
+      },
+      backgroundColor: '#FFFFFF'
+    })
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      win.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+      win.loadFile(path.join(__dirname, '../renderer/index.html'))
+    }
+
+    win.once('ready-to-show', () => {
+      win.show()
+      win.webContents.send('file-opened', filePath)
+    })
+
+    return win
+  }
+
+  getWindow(): BrowserWindow | null {
+    return this.window
   }
 }

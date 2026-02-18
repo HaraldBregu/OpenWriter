@@ -24,6 +24,16 @@
       ]
     }
   ],
+  "fileAssociations": [
+    {
+      "ext": "tsrct",
+      "name": "Tesseract AI Document",
+      "description": "Tesseract AI Document File",
+      "mimeType": "application/x-tesseract-ai-document",
+      "role": "Manager",
+      "icon": "./resources/icons/icon.png"
+    }
+  ],
   "asar": true,
   "asarUnpack": [],
   "nodeGypRebuild": false,
@@ -51,8 +61,8 @@
         {
           "CFBundleTypeName": "Tesseract AI File",
           "CFBundleTypeIconFile": "fileIcon.icns",
-          "CFBundleTypeExtensions": ["tsx"],
-          "CFBundleTypeRole": "Editor",
+          "CFBundleTypeExtensions": ["tsrct"],
+          "CFBundleTypeRole": "Manager",
           "LSHandlerRank": "Owner",
           "LSItemContentTypes": ["com.tesseract-ai.tesseract-ai.document"]
         }
@@ -63,7 +73,7 @@
           "UTTypeDescription": "Tesseract AI File",
           "UTTypeConformsTo": ["public.data"],
           "UTTypeTagSpecification": {
-            "public.filename-extension": ["tsx"],
+            "public.filename-extension": ["tsrct"],
             "public.mime-type": ["application/x-tesseract-ai-document"]
           }
         }
@@ -102,16 +112,16 @@
     "icon": "./resources/icons/linux",
     "maintainer": "Tesseract AI Project",
     "synopsis": "Tesseract AI",
-    "description": "Tesseract AI - Advanced Text Editor",
+    "description": "Tesseract AI - Advanced AI manager",
     "vendor": "Tesseract AI Project",
     "executableName": "tesseract-ai",
     "desktop": {
       "Type": "Application",
       "Name": "Tesseract AI",
-      "Comment": "Advanced Text Editor",
+      "Comment": "Advanced AI manager",
       "Icon": "tesseract-ai",
       "Terminal": false,
-      "Categories": "Office;WordProcessor;TextEditor;",
+      "Categories": "Office;WordProcessor;AI;",
       "MimeType": "application/x-tesseract-ai-document;",
       "StartupNotify": true,
       "StartupWMClass": "Tesseract AI"
@@ -126,7 +136,7 @@
   },
   "deb": {
     "packageCategory": "utils",
-    "maintainer": "Tesseract AI Project <contact@tesseract-ai-editor.org>",
+    "maintainer": "Tesseract AI Project <contact@tesseract-ai.org>",
     "afterInstall": "./scripts/postinstall.sh",
     "depends": [
       "libgtk-3-0",

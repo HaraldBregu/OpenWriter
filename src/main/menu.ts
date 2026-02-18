@@ -1,4 +1,4 @@
-import { app, Menu as ElectronMenu } from 'electron'
+import { app, BrowserWindow, Menu as ElectronMenu } from 'electron'
 import { loadTranslations } from './i18n'
 
 interface MenuManagerCallbacks {
@@ -138,6 +138,23 @@ export class Menu {
                 click: (): void => switchTheme('dark')
               }
             ]
+          },
+          { type: 'separator' as const },
+          {
+            label: 'Show Console',
+            accelerator: 'CmdOrCtrl+Shift+I',
+            click: (): void => {
+              const win = BrowserWindow.getFocusedWindow()
+              if (win) win.webContents.toggleDevTools()
+            }
+          },
+          {
+            label: 'Refresh',
+            accelerator: 'CmdOrCtrl+R',
+            click: (): void => {
+              const win = BrowserWindow.getFocusedWindow()
+              if (win) win.webContents.reload()
+            }
           }
         ]
       }

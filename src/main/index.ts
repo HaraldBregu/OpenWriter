@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, nativeTheme } from 'electron'
+import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
@@ -7,8 +8,27 @@ import { LifecycleService } from './services/lifecycle'
 // Add isQuitting property to app
 ;(app as { isQuitting?: boolean }).isQuitting = false
 
+const TSRCT_EXT = '.tsrct'
+
+function isTsrctFile(filePath: string): boolean {
+  return path.extname(filePath).toLowerCase() === TSRCT_EXT
+}
+
+function extractFilePathFromArgs(args: string[]): string | null {
+  for (const arg of args) {
+    if (isTsrctFile(arg)) {
+      return arg
+    }
+  }
+  return null
+}
+
 // Must be created before app.whenReady() for single-instance lock
-const lifecycleService = new LifecycleService()
+const lifecycleService = new LifecycleService({
+  onSecondInstanceFile: (filePath) => {
+    mainWindow.createWindowForFile(filePath)
+  }
+})
 
 const mainWindow = new Main(lifecycleService)
 
@@ -31,13 +51,29 @@ const menuManager = new Menu({
     })
   },
   onThemeChange: (theme) => {
+    nativeTheme.themeSource = theme as 'light' | 'dark' | 'system'
     BrowserWindow.getAllWindows().forEach((win) => {
       win.webContents.send('change-theme', theme)
     })
   }
 })
 
+// macOS: handle file open via Finder / double-click (before and after ready)
+let pendingFilePath: string | null = null
+
+app.on('open-file', (event, filePath) => {
+  event.preventDefault()
+  if (!isTsrctFile(filePath)) return
+
+  if (app.isReady()) {
+    mainWindow.createWindowForFile(filePath)
+  } else {
+    pendingFilePath = filePath
+  }
+})
+
 app.whenReady().then(() => {
+  nativeTheme.themeSource = 'dark'
   lifecycleService.initialize()
   menuManager.create()
   trayManager.create()
@@ -47,6 +83,18 @@ app.whenReady().then(() => {
   mainWindow.setOnWindowVisibilityChange(() => {
     trayManager.updateContextMenu()
   })
+
+  // Handle file from macOS open-file event that arrived before ready
+  if (pendingFilePath) {
+    mainWindow.createWindowForFile(pendingFilePath)
+    pendingFilePath = null
+  }
+
+  // Windows/Linux: handle file passed as command-line argument on first launch
+  const fileFromArgs = extractFilePathFromArgs(process.argv.slice(1))
+  if (fileFromArgs) {
+    mainWindow.createWindowForFile(fileFromArgs)
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
