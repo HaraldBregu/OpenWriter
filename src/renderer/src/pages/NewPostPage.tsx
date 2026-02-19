@@ -4,6 +4,8 @@ import { Reorder, useDragControls } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Select } from '@/components/ui/select'
+import { Radio } from '@/components/ui/radio'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -274,16 +276,15 @@ const NewPostPage: React.FC = () => {
               {/* Category */}
               <div className="flex flex-col gap-2">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</Label>
-                <select
+                <Select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="technology">Technology</option>
                   <option value="business">Business</option>
                   <option value="lifestyle">Lifestyle</option>
                   <option value="education">Education</option>
-                </select>
+                </Select>
               </div>
 
               {/* Tags */}
@@ -332,13 +333,11 @@ const NewPostPage: React.FC = () => {
                 <div className="flex flex-col gap-1.5">
                   {['public', 'private', 'draft'].map(option => (
                     <Label key={option} className="flex items-center gap-2 cursor-pointer text-sm font-normal">
-                      <input
-                        type="radio"
+                      <Radio
                         name="visibility"
                         value={option}
                         checked={visibility === option}
                         onChange={(e) => setVisibility(e.target.value)}
-                        className="w-4 h-4 accent-foreground"
                       />
                       <span className="capitalize">{option}</span>
                     </Label>
