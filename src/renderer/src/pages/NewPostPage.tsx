@@ -225,9 +225,9 @@ const NewPostPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden bg-background">
         {/* Main content */}
-        <div className="flex-1 overflow-y-auto bg-muted/10">
+        <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
 
             <Reorder.Group
@@ -263,7 +263,7 @@ const NewPostPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-72 border-l border-border bg-muted/30 overflow-y-auto">
+          <div className="w-72 border-l border-border bg-muted/20 overflow-y-auto">
             <div className="p-5 flex flex-col gap-5">
 
               {/* Close button */}

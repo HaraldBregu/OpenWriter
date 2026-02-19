@@ -57,7 +57,7 @@ export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = 
 
   return (
     <div
-      className={`relative flex h-12 shrink-0 items-center select-none border-b border-black/[0.08] dark:border-white/[0.05] bg-[#f3f3f3] dark:bg-[#1e1e1e] ${className}`}
+      className={`relative flex h-12 shrink-0 items-center select-none border-b border-border bg-muted/20 ${className}`}
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       {/* ── Left: sidebar toggle (macOS) + burger menu + sidebar toggle (Windows) ── */}

@@ -364,7 +364,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         </Sidebar>
 
         <SidebarInset className="flex flex-col flex-1 min-h-0">
-          <main className="flex-1 overflow-y-auto bg-muted/30">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-background">{children}</main>
         </SidebarInset>
       </div>
     </>
