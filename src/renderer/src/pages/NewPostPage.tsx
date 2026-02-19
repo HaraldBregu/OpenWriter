@@ -72,13 +72,15 @@ function BlockItem({ block, isOnly, onChange, onDelete }: BlockItemProps) {
     >
       <div className="flex items-start gap-3">
         {/* Drag handle */}
-        <button
+        <Button
           type="button"
           onPointerDown={(e) => dragControls.start(e)}
-          className="mt-0.5 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity touch-none"
+          variant="ghost"
+          size="icon"
+          className="mt-0.5 h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity touch-none"
         >
           <GripVertical className="h-4 w-4" />
-        </button>
+        </Button>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
