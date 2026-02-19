@@ -4,6 +4,7 @@ import { Reorder, useDragControls } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -82,15 +83,14 @@ function BlockItem({ block, isOnly, onChange, onDelete }: BlockItemProps) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {editing ? (
-            <textarea
+            <Textarea
               ref={textareaRef}
               value={block.content}
               onChange={handleInput}
               onBlur={handleBlur}
               placeholder="Write something..."
-              rows={3}
-              className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none leading-relaxed"
-              style={{ overflow: 'hidden' }}
+              className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none leading-relaxed border-0 ring-offset-0 focus-visible:ring-0 p-0"
+              style={{ overflow: 'hidden', minHeight: 'auto' }}
             />
           ) : (
             <p
@@ -136,19 +136,17 @@ interface ActionButtonProps {
 
 function ActionButton({ title, onClick, disabled = false, danger = false, children }: ActionButtonProps) {
   return (
-    <button
+    <Button
       type="button"
       title={title}
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-6 w-6 items-center justify-center rounded-md transition-colors disabled:opacity-30 disabled:pointer-events-none
-        ${danger
-          ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
+      variant={danger ? 'ghost' : 'ghost'}
+      size="icon"
+      className={`h-6 w-6 ${danger ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : ''}`}
     >
       {children}
-    </button>
+    </Button>
   )
 }
 
@@ -194,33 +192,33 @@ const NewPostPage: React.FC = () => {
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
         <h1 className="text-xl font-semibold text-foreground">New Post</h1>
         <div className="flex items-center gap-3">
-          <button
+          <Button
             type="button"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            variant="ghost"
           >
             <Eye className="h-4 w-4" />
             Preview
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            variant="ghost"
           >
             <Download className="h-4 w-4" />
             Download
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="flex items-center gap-2 px-3 py-2.5 rounded-full text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            variant="ghost"
+            size="icon"
           >
             <MoreHorizontal className="h-4 w-4" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-foreground text-background hover:opacity-90 transition-opacity"
           >
             <Send className="h-4 w-4" />
             Publish
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -247,14 +245,15 @@ const NewPostPage: React.FC = () => {
             </Reorder.Group>
 
             {/* Add block */}
-            <button
+            <Button
               type="button"
               onClick={handleAddBlock}
-              className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border py-3 text-xs text-muted-foreground/50 hover:border-border/80 hover:text-muted-foreground transition-colors"
+              variant="outline"
+              className="mt-1 w-full text-xs text-muted-foreground/50 hover:text-muted-foreground"
             >
               <Plus className="h-3.5 w-3.5" />
               Add block
-            </button>
+            </Button>
 
           </div>
         </div>
@@ -270,13 +269,15 @@ const NewPostPage: React.FC = () => {
                   <Filter className="h-4 w-4" />
                   Post Settings
                 </h3>
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowSidebar(false)}
-                  className="text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground transition-colors"
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
 
               {/* Category */}
@@ -320,14 +321,16 @@ const NewPostPage: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {tags.map(tag => (
-                    <button
+                    <Button
                       key={tag}
                       onClick={() => handleRemoveTag(tag)}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted/80 dark:bg-muted/40 dark:hover:bg-muted/60 text-xs text-foreground transition-colors"
+                      variant="secondary"
+                      size="sm"
+                      className="rounded-full text-xs h-auto py-1"
                     >
                       {tag}
-                      <X className="h-3 w-3" />
-                    </button>
+                      <X className="h-3 w-3 ml-1" />
+                    </Button>
                   ))}
                 </div>
               </div>
