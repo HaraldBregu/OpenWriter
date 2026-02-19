@@ -4,7 +4,13 @@ import { Reorder, useDragControls } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Radio } from '@/components/ui/radio'
 
 // ---------------------------------------------------------------------------
@@ -276,14 +282,16 @@ const NewPostPage: React.FC = () => {
               {/* Category */}
               <div className="flex flex-col gap-2">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</Label>
-                <Select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="technology">Technology</option>
-                  <option value="business">Business</option>
-                  <option value="lifestyle">Lifestyle</option>
-                  <option value="education">Education</option>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="lifestyle">Lifestyle</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
 

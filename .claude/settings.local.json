@@ -36,7 +36,9 @@
       "Bash(git remote:*)",
       "Bash(python3:*)",
       "WebFetch(domain:ui.shadcn.com)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(npx shadcn-ui@latest:*)",
+      "Bash(npx shadcn@latest:*)"
     ],
     "deny": [],
     "ask": []

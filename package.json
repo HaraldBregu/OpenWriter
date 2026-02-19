@@ -39,13 +39,14 @@
     "shadcn": "shadcn-ui"
   },
   "dependencies": {
-    "framer-motion": "^11.0.0",
+    "@base-ui/react": "^1.2.0",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "@langchain/core": "^1.1.26",
     "@langchain/openai": "^1.2.8",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
@@ -56,7 +57,9 @@
     "cron": "^4.4.0",
     "cronstrue": "^3.12.0",
     "electron-icon-builder": "^2.0.1",
+    "framer-motion": "^11.0.0",
     "i18next": "^25.8.7",
+    "langchain": "latest",
     "lucide-react": "^0.564.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -68,8 +71,7 @@
     "remark-gfm": "^4.0.1",
     "shadcn-ui": "^0.9.5",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7",
-    "langchain": "latest"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-ts": "^3.0.0",
