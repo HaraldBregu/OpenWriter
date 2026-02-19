@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Send, Download, Eye, MoreHorizontal, X, Filter, Tag, Clock, Globe } from 'lucide-react'
+import { Plus, Send, Download, Eye, MoreHorizontal, X, Filter, Tag, Clock, Globe, Share2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -78,9 +78,18 @@ const NewPostPage: React.FC = () => {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
           >
-            <MoreHorizontal className="h-4 w-4" />
+            <Share2 className="h-4 w-4" />
+            Share
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowSidebar(!showSidebar)}
+            title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
+          >
+            <Filter className="h-4 w-4" />
           </Button>
           <Button
             type="button"
