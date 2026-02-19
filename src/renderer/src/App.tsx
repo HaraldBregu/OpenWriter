@@ -24,10 +24,22 @@ import './index.css'
 import HomePage from './pages/HomePage'
 
 
+ function TitleBar({ title = "My App" }) {
+  return (
+    <div className="titlebar">
+      <div className="title">
+        {title}
+      </div>
+    </div>
+  );
+}
+
+
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
+        <TitleBar/>
         <AppLayout>
           <Routes>
             <Route path="/" element={<DashboardPage />} />

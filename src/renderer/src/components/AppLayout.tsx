@@ -162,7 +162,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex w-full">
         <Sidebar className="border-r">
 
           {/* Header */}
