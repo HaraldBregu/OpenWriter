@@ -223,7 +223,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           <Link to={item.url}>
                             <Icon className="h-3.5 w-3.5 shrink-0" />
                             <span className="flex-1 truncate">{item.title}</span>
-                            <span className="text-xs text-muted-foreground/50 opacity-0 group-hover/item:opacity-100 transition-opacity duration-150">
+                            <span className="text-xs text-muted-foreground/20 group-hover/item:text-muted-foreground/50">
                               {item.shortcut}
                             </span>
                           </Link>
