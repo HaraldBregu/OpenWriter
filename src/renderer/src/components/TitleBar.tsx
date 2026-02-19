@@ -60,8 +60,8 @@ export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = 
       className={`relative flex h-12 shrink-0 items-center select-none border-b border-black/[0.08] dark:border-white/[0.05] bg-[#f3f3f3] dark:bg-[#1e1e1e] ${className}`}
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
-      {/* ── Left: burger menu + sidebar toggle (Windows only) ── */}
-      {isWindows && (
+      {/* ── Left: sidebar toggle (macOS) + burger menu + sidebar toggle (Windows) ── */}
+      {isWindows ? (
         <div
           className="flex items-center h-full z-10"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
@@ -82,6 +82,20 @@ export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = 
             title="Toggle sidebar"
           >
             <PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+          </button>
+        </div>
+      ) : (
+        <div
+          className="flex items-center h-full z-10 ml-20 mt-1"
+          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        >
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="flex items-center justify-center h-full px-3 text-neutral-600 dark:text-neutral-300"
+            title="Toggle sidebar"
+          >
+            <PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
           </button>
         </div>
       )}
