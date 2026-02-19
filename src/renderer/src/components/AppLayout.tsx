@@ -133,7 +133,7 @@ function SettingsPopover() {
             minWidth: 200,
             zIndex: 9999
           }}
-          className="rounded-lg border border-border bg-background shadow-xl overflow-hidden"
+          className="rounded-lg border border-border bg-popover text-popover-foreground shadow-xl backdrop-blur-sm overflow-hidden"
         >
           <ul className="py-1" role="menu">
             {settingsMenuItems.map((item) => {
