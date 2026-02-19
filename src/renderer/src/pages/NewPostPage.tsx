@@ -250,11 +250,11 @@ const NewPostPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-72 border-l border-border bg-muted/30 overflow-y-auto">
+          <div className="w-72 border-l border-border bg-background overflow-y-auto">
             <div className="p-5 flex flex-col gap-5">
 
               {/* Close button */}
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center mb-2 pb-2 border-b border-border">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <Filter className="h-4 w-4" />
                   Post Settings
@@ -262,7 +262,7 @@ const NewPostPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowSidebar(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -270,11 +270,11 @@ const NewPostPage: React.FC = () => {
 
               {/* Category */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</label>
+                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
                 >
                   <option value="technology">Technology</option>
                   <option value="business">Business</option>
@@ -285,7 +285,7 @@ const NewPostPage: React.FC = () => {
 
               {/* Tags */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
                   <Tag className="h-3.5 w-3.5" />
                   Tags
                 </label>
@@ -296,12 +296,12 @@ const NewPostPage: React.FC = () => {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                     placeholder="Add tag..."
-                    className="flex-1 px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="flex-1 px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground placeholder:text-muted-foreground/50 dark:placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm font-medium text-foreground transition-colors"
+                    className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 dark:bg-muted/50 dark:hover:bg-muted/70 text-sm font-medium text-foreground transition-colors"
                   >
                     Add
                   </button>
@@ -311,7 +311,7 @@ const NewPostPage: React.FC = () => {
                     <button
                       key={tag}
                       onClick={() => handleRemoveTag(tag)}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/80 hover:bg-muted text-xs text-foreground transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted/80 dark:bg-muted/40 dark:hover:bg-muted/60 text-xs text-foreground transition-colors"
                     >
                       {tag}
                       <X className="h-3 w-3" />
@@ -322,7 +322,7 @@ const NewPostPage: React.FC = () => {
 
               {/* Visibility */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
                   <Globe className="h-3.5 w-3.5" />
                   Visibility
                 </label>
@@ -345,13 +345,13 @@ const NewPostPage: React.FC = () => {
 
               {/* Schedule */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" />
                   Schedule
                 </label>
                 <input
                   type="datetime-local"
-                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
                 />
               </div>
 
@@ -359,13 +359,13 @@ const NewPostPage: React.FC = () => {
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
                 <button
                   type="button"
-                  className="w-full px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg bg-foreground hover:bg-foreground/90 dark:bg-foreground dark:hover:bg-foreground/80 text-background dark:text-foreground text-sm font-medium transition-colors"
                 >
                   Save Draft
                 </button>
                 <button
                   type="button"
-                  className="w-full px-4 py-2.5 rounded-lg border border-border hover:bg-muted text-foreground text-sm font-medium transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-input hover:bg-muted hover:border-input text-foreground text-sm font-medium transition-colors"
                 >
                   Preview
                 </button>
