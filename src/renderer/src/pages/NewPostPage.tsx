@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Pencil, Sparkles, Trash2, Plus, Copy, GripVertical, Send, Download, Eye, MoreHorizontal, X, Filter, Tag, Clock, Globe } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -270,11 +273,11 @@ const NewPostPage: React.FC = () => {
 
               {/* Category */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider">Category</label>
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</Label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
+                  className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="technology">Technology</option>
                   <option value="business">Business</option>
@@ -285,26 +288,26 @@ const NewPostPage: React.FC = () => {
 
               {/* Tags */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Tag className="h-3.5 w-3.5" />
                   Tags
-                </label>
+                </Label>
                 <div className="flex gap-2">
-                  <input
+                  <Input
                     type="text"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                     placeholder="Add tag..."
-                    className="flex-1 px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground placeholder:text-muted-foreground/50 dark:placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 dark:bg-muted/50 dark:hover:bg-muted/70 text-sm font-medium text-foreground transition-colors"
+                    variant="secondary"
+                    size="sm"
                   >
                     Add
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {tags.map(tag => (
@@ -322,53 +325,53 @@ const NewPostPage: React.FC = () => {
 
               {/* Visibility */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Globe className="h-3.5 w-3.5" />
                   Visibility
-                </label>
+                </Label>
                 <div className="flex flex-col gap-1.5">
                   {['public', 'private', 'draft'].map(option => (
-                    <label key={option} className="flex items-center gap-2 cursor-pointer">
+                    <Label key={option} className="flex items-center gap-2 cursor-pointer text-sm font-normal">
                       <input
                         type="radio"
                         name="visibility"
                         value={option}
                         checked={visibility === option}
                         onChange={(e) => setVisibility(e.target.value)}
-                        className="w-4 h-4 rounded-full border-2 border-input"
+                        className="w-4 h-4 accent-foreground"
                       />
-                      <span className="text-sm text-foreground capitalize">{option}</span>
-                    </label>
+                      <span className="capitalize">{option}</span>
+                    </Label>
                   ))}
                 </div>
               </div>
 
               {/* Schedule */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground/80 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" />
                   Schedule
-                </label>
-                <input
+                </Label>
+                <Input
                   type="datetime-local"
-                  className="w-full px-3 py-2 rounded-lg border border-input bg-background dark:bg-muted/30 text-sm text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-ring dark:focus:ring-ring/50"
                 />
               </div>
 
               {/* Action buttons */}
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                <button
+                <Button
                   type="button"
-                  className="w-full px-4 py-2.5 rounded-lg bg-foreground hover:bg-foreground/90 dark:bg-foreground dark:hover:bg-foreground/80 text-background dark:text-foreground text-sm font-medium transition-colors"
+                  className="w-full"
                 >
                   Save Draft
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  className="w-full px-4 py-2.5 rounded-lg border border-input hover:bg-muted hover:border-input text-foreground text-sm font-medium transition-colors"
+                  variant="outline"
+                  className="w-full"
                 >
                   Preview
-                </button>
+                </Button>
               </div>
 
             </div>
