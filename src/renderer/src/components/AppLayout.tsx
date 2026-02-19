@@ -54,10 +54,10 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateItems = [
-  { title: 'New Post', icon: Newspaper, url: '/new/post' },
-  { title: 'New Writing', icon: PenLine, url: '/new/writing' },
-  { title: 'New Note', icon: StickyNote, url: '/new/note' },
-  { title: 'New Message', icon: MessageSquare, url: '/new/message' }
+  { title: 'New Post', icon: Newspaper, url: '/new/post', shortcut: '⌘N' },
+  { title: 'New Writing', icon: PenLine, url: '/new/writing', shortcut: '⌘W' },
+  { title: 'New Note', icon: StickyNote, url: '/new/note', shortcut: '⌘⇧N' },
+  { title: 'New Message', icon: MessageSquare, url: '/new/message', shortcut: '⌘M' }
 ]
 
 const topNavSections = ['Posts', 'Writing', 'Notes', 'Messages']
@@ -214,7 +214,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon
                     return (
-                      <SidebarMenuItem key={item.title}>
+                      <SidebarMenuItem key={item.title} className="group">
                         <SidebarMenuButton
                           asChild
                           isActive={location.pathname === item.url}
@@ -223,6 +223,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           <Link to={item.url}>
                             <Icon className="h-3.5 w-3.5 shrink-0" />
                             <span className="flex-1 truncate">{item.title}</span>
+                            <span className="text-xs text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {item.shortcut}
+                            </span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
