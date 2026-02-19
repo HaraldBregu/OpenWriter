@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Pencil, Sparkles, Trash2, Plus, Copy, GripVertical, Send, Download, Eye, MoreHorizontal } from 'lucide-react'
+import { Pencil, Sparkles, Trash2, Plus, Copy, GripVertical, Send, Download, Eye, MoreHorizontal, X, Filter, Tag, Clock, Globe } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 
 // ---------------------------------------------------------------------------
@@ -147,6 +147,11 @@ function ActionButton({ title, onClick, disabled = false, danger = false, childr
 
 const NewPostPage: React.FC = () => {
   const [blocks, setBlocks] = useState<Block[]>([createBlock()])
+  const [category, setCategory] = useState('technology')
+  const [tags, setTags] = useState<string[]>(['AI', 'Writing'])
+  const [visibility, setVisibility] = useState('public')
+  const [tagInput, setTagInput] = useState('')
+  const [showSidebar, setShowSidebar] = useState(true)
 
   const handleChange = (id: string, content: string) => {
     setBlocks(prev => prev.map(b => b.id === id ? { ...b, content } : b))
@@ -158,6 +163,17 @@ const NewPostPage: React.FC = () => {
 
   const handleAddBlock = () => {
     setBlocks(prev => [...prev, createBlock()])
+  }
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput)) {
+      setTags(prev => [...prev, tagInput])
+      setTagInput('')
+    }
+  }
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(prev => prev.filter(tag => tag !== tagToRemove))
   }
 
   return (
@@ -197,37 +213,167 @@ const NewPostPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-      <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
 
-        <Reorder.Group
-          axis="y"
-          values={blocks}
-          onReorder={setBlocks}
-          className="flex flex-col gap-2"
-        >
-          {blocks.map(block => (
-            <BlockItem
-              key={block.id}
-              block={block}
-              isOnly={blocks.length === 1}
-              onChange={handleChange}
-              onDelete={handleDelete}
-            />
-          ))}
-        </Reorder.Group>
+            <Reorder.Group
+              axis="y"
+              values={blocks}
+              onReorder={setBlocks}
+              className="flex flex-col gap-2"
+            >
+              {blocks.map(block => (
+                <BlockItem
+                  key={block.id}
+                  block={block}
+                  isOnly={blocks.length === 1}
+                  onChange={handleChange}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </Reorder.Group>
 
-        {/* Add block */}
-        <button
-          type="button"
-          onClick={handleAddBlock}
-          className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border py-3 text-xs text-muted-foreground/50 hover:border-border/80 hover:text-muted-foreground transition-colors"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add block
-        </button>
+            {/* Add block */}
+            <button
+              type="button"
+              onClick={handleAddBlock}
+              className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border py-3 text-xs text-muted-foreground/50 hover:border-border/80 hover:text-muted-foreground transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add block
+            </button>
 
-      </div>
+          </div>
+        </div>
+
+        {/* Right sidebar */}
+        {showSidebar && (
+          <div className="w-72 border-l border-border bg-muted/30 overflow-y-auto">
+            <div className="p-5 flex flex-col gap-5">
+
+              {/* Close button */}
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Post Settings
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowSidebar(false)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Category */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="technology">Technology</option>
+                  <option value="business">Business</option>
+                  <option value="lifestyle">Lifestyle</option>
+                  <option value="education">Education</option>
+                </select>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Tag className="h-3.5 w-3.5" />
+                  Tags
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                    placeholder="Add tag..."
+                    className="flex-1 px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm font-medium text-foreground transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => handleRemoveTag(tag)}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/80 hover:bg-muted text-xs text-foreground transition-colors"
+                    >
+                      {tag}
+                      <X className="h-3 w-3" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Visibility */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Globe className="h-3.5 w-3.5" />
+                  Visibility
+                </label>
+                <div className="flex flex-col gap-1.5">
+                  {['public', 'private', 'draft'].map(option => (
+                    <label key={option} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value={option}
+                        checked={visibility === option}
+                        onChange={(e) => setVisibility(e.target.value)}
+                        className="w-4 h-4 rounded-full border-2 border-input"
+                      />
+                      <span className="text-sm text-foreground capitalize">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Schedule */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5" />
+                  Schedule
+                </label>
+                <input
+                  type="datetime-local"
+                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex flex-col gap-2 pt-2 border-t border-border">
+                <button
+                  type="button"
+                  className="w-full px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+                >
+                  Save Draft
+                </button>
+                <button
+                  type="button"
+                  className="w-full px-4 py-2.5 rounded-lg border border-border hover:bg-muted text-foreground text-sm font-medium transition-colors"
+                >
+                  Preview
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
