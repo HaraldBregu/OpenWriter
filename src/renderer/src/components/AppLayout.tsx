@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { TitleBar } from './TitleBar'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
+import { Separator } from './ui/separator'
 import {
   Sidebar,
   SidebarContent,
@@ -96,97 +97,54 @@ const settingsMenuItems: SettingsMenuItem[] = [
 const currentUser: { name: string } | null = { name: 'John Doe' }
 
 function SettingsPopover() {
-  const [open, setOpen] = useState(false)
-  const [rect, setRect] = useState<DOMRect | null>(null)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
-
-  const handleToggle = () => {
-    if (!open && triggerRef.current) {
-      setRect(triggerRef.current.getBoundingClientRect())
-    }
-    setOpen((v) => !v)
-  }
-
-  useEffect(() => {
-    function handleOutside(e: MouseEvent) {
-      if (
-        panelRef.current?.contains(e.target as Node) ||
-        triggerRef.current?.contains(e.target as Node)
-      ) return
-      setOpen(false)
-    }
-    if (open) document.addEventListener('mousedown', handleOutside)
-    return () => document.removeEventListener('mousedown', handleOutside)
-  }, [open])
-
   return (
-    <div className="w-full">
-      {/* Panel — portalled to document.body to escape all stacking contexts */}
-      {open && rect && createPortal(
-        <div
-          ref={panelRef}
-          style={{
-            position: 'fixed',
-            left: rect.right + 8,
-            bottom: window.innerHeight - rect.bottom,
-            minWidth: 200,
-            zIndex: 9999
-          }}
-          className="rounded-lg border border-border bg-popover text-popover-foreground shadow-xl overflow-hidden"
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
-          <ul className="py-1" role="menu">
-            {settingsMenuItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <li key={item.title} role="menuitem">
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                    onClick={() => setOpen(false)}
-                  >
-                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <span>{item.title}</span>
-                  </button>
-                </li>
-              )
-            })}
-
-            {currentUser && (
-              <>
-                <li role="separator" className="my-1 border-t border-border" />
-                <li role="menuitem">
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
-                    onClick={() => setOpen(false)}
-                  >
-                    <LogOut className="h-4 w-4 shrink-0" />
-                    <span>Log out</span>
-                  </button>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>,
-        document.body
-      )}
-
-      {/* Trigger */}
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={handleToggle}
-        className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+          <span className="flex-1 truncate text-sm text-left">
+            {currentUser ? currentUser.name : 'Sign in'}
+          </span>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="right"
+        align="end"
+        className="w-56 p-0"
       >
-        <span className="flex-1 truncate text-sm text-left">
-          {currentUser ? currentUser.name : 'Sign in'}
-        </span>
-        <ChevronRight
-          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${open ? 'rotate-90' : ''}`}
-        />
-      </button>
-    </div>
+        <div className="py-1">
+          {settingsMenuItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.title}
+                type="button"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span>{item.title}</span>
+              </button>
+            )
+          })}
+
+          {currentUser && (
+            <>
+              <Separator className="my-1" />
+              <button
+                type="button"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+                <span>Log out</span>
+              </button>
+            </>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 
