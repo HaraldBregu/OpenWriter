@@ -284,6 +284,14 @@ declare global {
       updateSimGetState: () => Promise<UpdateSimState>
       onUpdateSimStateChange: (callback: (state: UpdateSimState) => void) => () => void
       onUpdateSimProgress: (callback: (progress: UpdateSimProgress) => void) => () => void
+      // Window controls
+      popupMenu: () => Promise<void>
+      windowMinimize: () => void
+      windowMaximize: () => void
+      windowClose: () => void
+      windowIsMaximized: () => Promise<boolean>
+      getPlatform: () => Promise<string>
+      onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void
     }
   }
 }

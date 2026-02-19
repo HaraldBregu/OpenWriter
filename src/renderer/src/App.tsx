@@ -20,30 +20,22 @@ import ClipboardPage from './pages/ClipboardPage'
 import UpdateSimulatorPage from './pages/UpdateSimulatorPage'
 import SettingsPage from './pages/SettingsPage'
 import RagPage from './pages/RagPage'
+import NewPostPage from './pages/NewPostPage'
+import NewWritingPage from './pages/NewWritingPage'
+import NewNotePage from './pages/NewNotePage'
+import NewMessagePage from './pages/NewMessagePage'
 import './index.css'
 import HomePage from './pages/HomePage'
-
-
- function TitleBar({ title = "My App" }) {
-  return (
-    <div className="titlebar">
-      <div className="title">
-        {title}
-      </div>
-    </div>
-  );
-}
 
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
-        <TitleBar/>
         <AppLayout>
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/welcome" element={<WelcomePage />} />
             <Route path="/microphone" element={<MicrophonePage />} />
             <Route path="/camera" element={<CameraPage />} />
@@ -60,6 +52,10 @@ const App: React.FC = () => {
             <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/rag" element={<RagPage />} />
+            <Route path="/new/post" element={<NewPostPage />} />
+            <Route path="/new/writing" element={<NewWritingPage />} />
+            <Route path="/new/note" element={<NewNotePage />} />
+            <Route path="/new/message" element={<NewMessagePage />} />
           </Routes>
         </AppLayout>
       </Router>

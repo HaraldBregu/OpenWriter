@@ -508,6 +508,91 @@ export class Main {
     ipcMain.handle('rag:status', () => {
       return this.ragController.getStatus()
     })
+
+    // Application popup menu (hamburger button)
+    ipcMain.handle('window:popup-menu', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+
+      const menu = Menu.buildFromTemplate([
+        {
+          label: 'File',
+          submenu: [
+            { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {} },
+            { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => {} },
+            { type: 'separator' },
+            { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => {} },
+            { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => {} },
+            { type: 'separator' },
+            {
+              label: 'Exit',
+              click: () => {
+                ;(app as { isQuitting?: boolean }).isQuitting = true
+                app.quit()
+              }
+            }
+          ]
+        },
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'undo' as const },
+            { role: 'redo' as const },
+            { type: 'separator' as const },
+            { role: 'cut' as const },
+            { role: 'copy' as const },
+            { role: 'paste' as const },
+            { role: 'selectAll' as const }
+          ]
+        },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'reload' as const },
+            { role: 'forceReload' as const },
+            { type: 'separator' as const },
+            { role: 'zoomIn' as const },
+            { role: 'zoomOut' as const },
+            { role: 'resetZoom' as const },
+            { type: 'separator' as const },
+            { role: 'togglefullscreen' as const }
+          ]
+        },
+        {
+          label: 'Help',
+          submenu: [{ label: 'About Tesseract AI', click: () => {} }]
+        }
+      ])
+
+      menu.popup({ window: win })
+    })
+
+    // Window control handlers
+    ipcMain.on('window:minimize', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.minimize()
+    })
+
+    ipcMain.on('window:maximize', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+      if (win.isMaximized()) {
+        win.unmaximize()
+      } else {
+        win.maximize()
+      }
+    })
+
+    ipcMain.on('window:close', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.close()
+    })
+
+    ipcMain.handle('window:is-maximized', (event) => {
+      return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+    })
+
+    ipcMain.handle('window:get-platform', () => {
+      return process.platform
+    })
   }
 
   create(): BrowserWindow {
@@ -517,7 +602,6 @@ export class Main {
       minWidth: 800,
       minHeight: 600,
       show: false,
-      frame: false,
       // titleBarStyle: 'hidden', // optional macOS polish
       // titleBarStyle: "hiddenInset",
       // titleBarOverlay: true,
@@ -531,6 +615,7 @@ export class Main {
         webSecurity: true,
         allowRunningInsecureContent: false
       },
+      frame: false,
       titleBarStyle: 'hidden',
       trafficLightPosition: {
         x: 16,
@@ -547,6 +632,14 @@ export class Main {
 
     this.window.once('ready-to-show', () => {
       this.window?.show()
+    })
+
+    this.window.on('maximize', () => {
+      this.window?.webContents.send('window:maximize-change', true)
+    })
+
+    this.window.on('unmaximize', () => {
+      this.window?.webContents.send('window:maximize-change', false)
     })
 
     // Minimize to tray instead of closing

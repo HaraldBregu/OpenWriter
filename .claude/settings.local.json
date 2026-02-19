@@ -34,7 +34,9 @@
       "WebSearch",
       "Bash(yarn add:*)",
       "Bash(git remote:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []

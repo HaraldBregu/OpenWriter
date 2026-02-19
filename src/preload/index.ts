@@ -591,6 +591,34 @@ const api = {
         return (): void => {
             handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
         }
+    },
+    // Window controls
+    popupMenu: (): Promise<void> => {
+        return ipcRenderer.invoke('window:popup-menu')
+    },
+    windowMinimize: (): void => {
+        ipcRenderer.send('window:minimize')
+    },
+    windowMaximize: (): void => {
+        ipcRenderer.send('window:maximize')
+    },
+    windowClose: (): void => {
+        ipcRenderer.send('window:close')
+    },
+    windowIsMaximized: (): Promise<boolean> => {
+        return ipcRenderer.invoke('window:is-maximized')
+    },
+    getPlatform: (): Promise<string> => {
+        return ipcRenderer.invoke('window:get-platform')
+    },
+    onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, isMaximized: boolean): void => {
+            callback(isMaximized)
+        }
+        ipcRenderer.on('window:maximize-change', handler)
+        return () => {
+            ipcRenderer.removeListener('window:maximize-change', handler)
+        }
     }
 }
 
