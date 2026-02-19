@@ -40,7 +40,8 @@ import {
   CreditCard,
   HelpCircle,
   ChevronRight,
-  Bell
+  Bell,
+  Home
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -234,6 +235,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <SidebarGroup className="py-0">
               <SidebarGroupContent>
                 <SidebarMenu>
+
+                  {/* Home */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/'}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/">
+                        <Home className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Home</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarSeparator className="my-1" />
 
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
