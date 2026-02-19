@@ -38,7 +38,8 @@
       "WebFetch(domain:ui.shadcn.com)",
       "Bash(git restore:*)",
       "Bash(npx shadcn-ui@latest:*)",
-      "Bash(npx shadcn@latest:*)"
+      "Bash(npx shadcn@latest:*)",
+      "Bash(npm run build:dev:*)"
     ],
     "deny": [],
     "ask": []

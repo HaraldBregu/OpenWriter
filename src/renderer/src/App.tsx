@@ -24,6 +24,7 @@ import NewPostPage from './pages/NewPostPage'
 import NewWritingPage from './pages/NewWritingPage'
 import NewNotePage from './pages/NewNotePage'
 import NewMessagePage from './pages/NewMessagePage'
+import WorkspaceSelectorPage from './pages/WorkspaceSelectorPage'
 import './index.css'
 import HomePage from './pages/HomePage'
 
@@ -32,32 +33,40 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
-        <AppLayout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/welcome" element={<WelcomePage />} />
-            <Route path="/microphone" element={<MicrophonePage />} />
-            <Route path="/camera" element={<CameraPage />} />
-            <Route path="/screen" element={<ScreenPage />} />
-            <Route path="/bluetooth" element={<BluetoothPage />} />
-            <Route path="/network" element={<NetworkPage />} />
-            <Route path="/cron" element={<CronPage />} />
-            <Route path="/lifecycle" element={<LifecyclePage />} />
-            <Route path="/windows" element={<WindowManagerPage />} />
-            <Route path="/filesystem" element={<FilesystemPage />} />
-            <Route path="/dialogs" element={<DialogsPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/clipboard" element={<ClipboardPage />} />
-            <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/rag" element={<RagPage />} />
-            <Route path="/new/post" element={<NewPostPage />} />
-            <Route path="/new/writing" element={<NewWritingPage />} />
-            <Route path="/new/note" element={<NewNotePage />} />
-            <Route path="/new/message" element={<NewMessagePage />} />
-          </Routes>
-        </AppLayout>
+        <Routes>
+          {/* Workspace selector - standalone without AppLayout */}
+          <Route path="/workspace-selector" element={<WorkspaceSelectorPage />} />
+
+          {/* All other routes use AppLayout */}
+          <Route path="*" element={
+            <AppLayout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/welcome" element={<WelcomePage />} />
+                <Route path="/microphone" element={<MicrophonePage />} />
+                <Route path="/camera" element={<CameraPage />} />
+                <Route path="/screen" element={<ScreenPage />} />
+                <Route path="/bluetooth" element={<BluetoothPage />} />
+                <Route path="/network" element={<NetworkPage />} />
+                <Route path="/cron" element={<CronPage />} />
+                <Route path="/lifecycle" element={<LifecyclePage />} />
+                <Route path="/windows" element={<WindowManagerPage />} />
+                <Route path="/filesystem" element={<FilesystemPage />} />
+                <Route path="/dialogs" element={<DialogsPage />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/clipboard" element={<ClipboardPage />} />
+                <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/rag" element={<RagPage />} />
+                <Route path="/new/post" element={<NewPostPage />} />
+                <Route path="/new/writing" element={<NewWritingPage />} />
+                <Route path="/new/note" element={<NewNotePage />} />
+                <Route path="/new/message" element={<NewMessagePage />} />
+              </Routes>
+            </AppLayout>
+          } />
+        </Routes>
       </Router>
     </Provider>
   )

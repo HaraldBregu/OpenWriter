@@ -427,6 +427,23 @@ export class Main {
       this.storeService.setModelSettings(providerId, settings)
     })
 
+    // Workspace handlers
+    ipcMain.handle('workspace-get-current', () => {
+      return this.storeService.getCurrentWorkspace()
+    })
+
+    ipcMain.handle('workspace-set-current', (_event, workspacePath: string) => {
+      this.storeService.setCurrentWorkspace(workspacePath)
+    })
+
+    ipcMain.handle('workspace-get-recent', () => {
+      return this.storeService.getRecentWorkspaces()
+    })
+
+    ipcMain.handle('workspace-clear', () => {
+      this.storeService.clearCurrentWorkspace()
+    })
+
     // Update Simulator handlers
     ipcMain.handle('update-sim-check', async () => {
       await this.updateSimulator.checkForUpdates()

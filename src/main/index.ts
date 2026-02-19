@@ -4,6 +4,8 @@ import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
 import { LifecycleService } from './services/lifecycle'
+import { WorkspaceSelector } from './workspace'
+import { StoreService } from './services/store'
 
 // Add isQuitting property to app
 ;(app as { isQuitting?: boolean }).isQuitting = false
@@ -72,11 +74,32 @@ app.on('open-file', (event, filePath) => {
   }
 })
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   nativeTheme.themeSource = 'dark'
   lifecycleService.initialize()
   menuManager.create()
   trayManager.create()
+
+  // Check for existing workspace
+  const storeService = new StoreService()
+  let currentWorkspace = storeService.getCurrentWorkspace()
+
+  // If no workspace is set, show workspace selector
+  if (!currentWorkspace) {
+    const workspaceSelector = new WorkspaceSelector()
+    currentWorkspace = await workspaceSelector.show()
+
+    // If user cancelled workspace selection, quit the app
+    if (!currentWorkspace) {
+      app.quit()
+      return
+    }
+
+    // Save the selected workspace
+    storeService.setCurrentWorkspace(currentWorkspace)
+  }
+
+  // Create main window with workspace
   mainWindow.create()
 
   // Update tray menu when window visibility changes

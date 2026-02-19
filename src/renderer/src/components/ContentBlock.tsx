@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Pencil, Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
+import React, { useRef, useEffect } from 'react'
+import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,6 +19,7 @@ export interface ContentBlockProps {
   onChange: (id: string, content: string) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
+  placeholder?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -42,7 +43,7 @@ function ActionButton({ title, onClick, disabled = false, danger = false, childr
       disabled={disabled}
       variant="ghost"
       size="icon"
-      className={`h-6 w-6 ${danger ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : ''}`}
+      className={`h-6 w-6 rounded-none ${danger ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : ''}`}
     >
       {children}
     </Button>
@@ -53,18 +54,17 @@ function ActionButton({ title, onClick, disabled = false, danger = false, childr
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
-export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd }: ContentBlockProps) {
-  const [editing, setEditing] = useState(block.content === '')
+export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Write something...' }: ContentBlockProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dragControls = useDragControls()
 
   useEffect(() => {
-    if (editing && textareaRef.current) {
-      textareaRef.current.focus()
-      const len = textareaRef.current.value.length
-      textareaRef.current.setSelectionRange(len, len)
+    if (textareaRef.current) {
+      const textarea = textareaRef.current
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
     }
-  }, [editing])
+  }, [block.content])
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(block.id, e.target.value)
@@ -72,71 +72,56 @@ export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd }: Conte
     e.target.style.height = `${e.target.scrollHeight}px`
   }
 
-  const handleBlur = () => {
-    if (block.content.trim()) setEditing(false)
-  }
-
   return (
     <Reorder.Item
       value={block}
       dragListener={false}
       dragControls={dragControls}
-      className="group relative rounded-xl border border-border bg-card text-card-foreground shadow-sm px-5 py-4 cursor-default select-none hover:shadow-md transition-shadow"
-      whileDrag={{ scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 10 }}
-      transition={{ duration: 0.15 }}
+      className="group relative px-5 py-4 cursor-default select-none"
+      style={{ zIndex: 1 }}
     >
       <div className="flex items-start gap-3">
-        {/* Plus button */}
-        {onAdd && (
+        {/* Left buttons group */}
+        <div className="flex items-center gap-0.5 mt-0.5 group/buttons">
+          {/* Plus button */}
+          {onAdd && (
+            <Button
+              type="button"
+              onClick={() => onAdd(block.id)}
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 rounded-none"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
+
+          {/* Drag handle */}
           <Button
             type="button"
-            onClick={() => onAdd(block.id)}
+            onPointerDown={(e) => dragControls.start(e)}
             variant="ghost"
             size="icon"
-            className="mt-0.5 h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 touch-none rounded-none"
           >
-            <Plus className="h-4 w-4" />
+            <GripVertical className="h-4 w-4" />
           </Button>
-        )}
-
-        {/* Drag handle */}
-        <Button
-          type="button"
-          onPointerDown={(e) => dragControls.start(e)}
-          variant="ghost"
-          size="icon"
-          className="mt-0.5 h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity touch-none"
-        >
-          <GripVertical className="h-4 w-4" />
-        </Button>
+        </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {editing ? (
-            <Textarea
-              ref={textareaRef}
-              value={block.content}
-              onChange={handleInput}
-              onBlur={handleBlur}
-              placeholder="Write something..."
-              className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none leading-relaxed border-0 ring-offset-0 focus-visible:ring-0 p-0"
-              style={{ overflow: 'hidden', minHeight: 'auto' }}
-            />
-          ) : (
-            <p
-              className="text-sm text-foreground leading-relaxed whitespace-pre-wrap cursor-text"
-              onClick={() => setEditing(true)}
-            >
-              {block.content}
-            </p>
-          )}
+          <Textarea
+            ref={textareaRef}
+            value={block.content}
+            onChange={handleInput}
+            placeholder={placeholder}
+            className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-relaxed border-0 p-0 rounded-none m-0"
+            style={{ overflow: 'hidden', minHeight: '1.625em', outline: 'none', boxShadow: 'none' }}
+          />
         </div>
 
         {/* Action bar */}
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-          <ActionButton title="Edit" onClick={() => setEditing(true)}>
-            <Pencil className="h-3.5 w-3.5" />
-          </ActionButton>
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 shrink-0">
           <ActionButton title="Enhance with AI" onClick={() => {/* TODO */}}>
             <Sparkles className="h-3.5 w-3.5" />
           </ActionButton>

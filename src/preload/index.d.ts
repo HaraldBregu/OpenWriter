@@ -124,6 +124,11 @@ interface ClipboardImageData {
   height: number
 }
 
+interface WorkspaceInfo {
+  path: string
+  lastOpened: number
+}
+
 interface UpdateSimInfo {
   version: string
   releaseDate: string
@@ -265,6 +270,14 @@ declare global {
       storeSetSelectedModel: (providerId: string, modelId: string) => Promise<void>
       storeSetApiToken: (providerId: string, token: string) => Promise<void>
       storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
+      // Workspace
+      workspaceSelectFolder: () => Promise<string | null>
+      workspaceConfirm: (workspacePath: string) => Promise<void>
+      workspaceCancel: () => Promise<void>
+      workspaceGetCurrent: () => Promise<string | null>
+      workspaceSetCurrent: (workspacePath: string) => Promise<void>
+      workspaceGetRecent: () => Promise<WorkspaceInfo[]>
+      workspaceClear: () => Promise<void>
       // RAG
       ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
       ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>

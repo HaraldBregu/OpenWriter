@@ -35,10 +35,6 @@ const NewPostPage: React.FC = () => {
     setBlocks(prev => prev.filter(b => b.id !== id))
   }
 
-  const handleAddBlock = () => {
-    setBlocks(prev => [...prev, createBlock()])
-  }
-
   const handleAddBlockAfter = (afterId: string) => {
     setBlocks(prev => {
       const index = prev.findIndex(b => b.id === afterId)
@@ -106,7 +102,7 @@ const NewPostPage: React.FC = () => {
               onReorder={setBlocks}
               className="flex flex-col gap-2"
             >
-              {blocks.map(block => (
+              {blocks.map((block, index) => (
                 <ContentBlock
                   key={block.id}
                   block={block}
@@ -114,20 +110,10 @@ const NewPostPage: React.FC = () => {
                   onChange={handleChange}
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
+                  placeholder={`Block ${index + 1}`}
                 />
               ))}
             </Reorder.Group>
-
-            {/* Add block */}
-            <Button
-              type="button"
-              onClick={handleAddBlock}
-              variant="outline"
-              className="mt-1 w-full text-xs text-muted-foreground/50 hover:text-muted-foreground"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add block
-            </Button>
 
           </div>
         </div>

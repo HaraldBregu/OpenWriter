@@ -103,6 +103,7 @@ const SettingsPage: React.FC = () => {
   const [showTokens, setShowTokens] = useState<Record<string, boolean>>(
     Object.fromEntries(aiProviders.map((p) => [p.id, false]))
   )
+  const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null)
 
   const loadedFromStore = useRef(false)
   const prevSelectedModels = useRef<Record<string, string>>({})
@@ -128,6 +129,11 @@ const SettingsPage: React.FC = () => {
         return next
       })
     })
+
+    // Load current workspace
+    window.api.workspaceGetCurrent().then((workspace) => {
+      setCurrentWorkspace(workspace)
+    }).catch(console.error)
   }, [])
 
   // Persist model selections to store whenever they change (skip initial/store-load updates)
@@ -260,6 +266,19 @@ const SettingsPage: React.FC = () => {
               >
                 Refresh status
               </button>
+            </section>
+
+            {/* Workspace */}
+            <section className="space-y-3">
+              <h2 className="text-sm font-normal text-muted-foreground">Workspace</h2>
+              <div className="rounded-md border divide-y text-sm">
+                <div className="flex justify-between px-4 py-2.5">
+                  <span className="text-muted-foreground">Current Workspace</span>
+                  <span className="font-mono text-xs truncate max-w-md" title={currentWorkspace || 'Not set'}>
+                    {currentWorkspace || 'Not set'}
+                  </span>
+                </div>
+              </div>
             </section>
 
             {/* System */}

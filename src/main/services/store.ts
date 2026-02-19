@@ -7,12 +7,21 @@ export interface ModelSettings {
   apiToken: string
 }
 
+export interface WorkspaceInfo {
+  path: string
+  lastOpened: number
+}
+
 export interface StoreSchema {
   modelSettings: Record<string, ModelSettings>
+  currentWorkspace: string | null
+  recentWorkspaces: WorkspaceInfo[]
 }
 
 const DEFAULTS: StoreSchema = {
-  modelSettings: {}
+  modelSettings: {},
+  currentWorkspace: null,
+  recentWorkspaces: []
 }
 
 export class StoreService {
@@ -71,6 +80,43 @@ export class StoreService {
 
   setModelSettings(providerId: string, settings: ModelSettings): void {
     this.data.modelSettings[providerId] = settings
+    this.save()
+  }
+
+  // --- Workspace settings ---
+
+  getCurrentWorkspace(): string | null {
+    return this.data.currentWorkspace
+  }
+
+  setCurrentWorkspace(workspacePath: string): void {
+    this.data.currentWorkspace = workspacePath
+    this.addRecentWorkspace(workspacePath)
+    this.save()
+  }
+
+  getRecentWorkspaces(): WorkspaceInfo[] {
+    return [...this.data.recentWorkspaces]
+  }
+
+  private addRecentWorkspace(workspacePath: string): void {
+    // Remove if already exists
+    this.data.recentWorkspaces = this.data.recentWorkspaces.filter(
+      (w) => w.path !== workspacePath
+    )
+
+    // Add to front
+    this.data.recentWorkspaces.unshift({
+      path: workspacePath,
+      lastOpened: Date.now()
+    })
+
+    // Keep only last 10
+    this.data.recentWorkspaces = this.data.recentWorkspaces.slice(0, 10)
+  }
+
+  clearCurrentWorkspace(): void {
+    this.data.currentWorkspace = null
     this.save()
   }
 }

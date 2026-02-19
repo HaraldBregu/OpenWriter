@@ -454,6 +454,28 @@ const api = {
     storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
         return ipcRenderer.invoke('store-set-model-settings', providerId, settings)
     },
+    // Workspace
+    workspaceSelectFolder: (): Promise<string | null> => {
+        return ipcRenderer.invoke('workspace:select-folder')
+    },
+    workspaceConfirm: (workspacePath: string): Promise<void> => {
+        return ipcRenderer.invoke('workspace:confirm', workspacePath)
+    },
+    workspaceCancel: (): Promise<void> => {
+        return ipcRenderer.invoke('workspace:cancel')
+    },
+    workspaceGetCurrent: (): Promise<string | null> => {
+        return ipcRenderer.invoke('workspace-get-current')
+    },
+    workspaceSetCurrent: (workspacePath: string): Promise<void> => {
+        return ipcRenderer.invoke('workspace-set-current', workspacePath)
+    },
+    workspaceGetRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
+        return ipcRenderer.invoke('workspace-get-recent')
+    },
+    workspaceClear: (): Promise<void> => {
+        return ipcRenderer.invoke('workspace-clear')
+    },
     // Update Simulator
     updateSimCheck: (): Promise<void> => {
         return ipcRenderer.invoke('update-sim-check')
