@@ -95,3 +95,33 @@
     background-color: hsl(var(--muted-foreground) / 0.5);
   }
 }
+
+.titlebar {
+  -webkit-app-region: drag;
+}
+
+.titlebar button {
+  -webkit-app-region: no-drag;
+}
+
+.titlebar {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e1e1e;
+  color: white;
+  font-size: 14px;
+
+  user-select: none;
+
+  /* IMPORTANT: makes window draggable */
+  -webkit-app-region: drag;
+
+  z-index: 50;
+}
+
+.title {
+  pointer-events: none;
+}

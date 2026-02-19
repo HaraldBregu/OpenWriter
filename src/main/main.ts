@@ -517,6 +517,10 @@ export class Main {
       minWidth: 800,
       minHeight: 600,
       show: false,
+      frame: false,
+      // titleBarStyle: 'hidden', // optional macOS polish
+      // titleBarStyle: "hiddenInset",
+      // titleBarOverlay: true,
       icon: path.join(__dirname, '../../resources/icons/icon.png'),
       webPreferences: {
         preload: path.join(__dirname, '../preload/index.mjs'),
@@ -527,9 +531,10 @@ export class Main {
         webSecurity: true,
         allowRunningInsecureContent: false
       },
+      titleBarStyle: 'hidden',
       trafficLightPosition: {
-        x: 9,
-        y: 9
+        x: 16,
+        y: 16,
       },
       backgroundColor: '#FFFFFF'
     })
