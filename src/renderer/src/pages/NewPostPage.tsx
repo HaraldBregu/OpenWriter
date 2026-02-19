@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -12,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Radio } from '@/components/ui/radio'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -66,7 +67,7 @@ function BlockItem({ block, isOnly, onChange, onDelete }: BlockItemProps) {
       value={block}
       dragListener={false}
       dragControls={dragControls}
-      className="group relative rounded-xl border border-border bg-background px-5 py-4 cursor-default select-none"
+      className="group relative rounded-xl border border-border bg-card text-card-foreground shadow-sm px-5 py-4 cursor-default select-none hover:shadow-md transition-shadow"
       whileDrag={{ scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 10 }}
       transition={{ duration: 0.15 }}
     >
@@ -226,7 +227,7 @@ const NewPostPage: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Main content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-muted/10">
           <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
 
             <Reorder.Group
@@ -262,7 +263,7 @@ const NewPostPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-72 border-l border-border bg-background overflow-y-auto">
+          <div className="w-72 border-l border-border bg-muted/30 overflow-y-auto">
             <div className="p-5 flex flex-col gap-5">
 
               {/* Close button */}
@@ -324,16 +325,15 @@ const NewPostPage: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {tags.map(tag => (
-                    <Button
+                    <Badge
                       key={tag}
-                      onClick={() => handleRemoveTag(tag)}
                       variant="secondary"
-                      size="sm"
-                      className="rounded-full text-xs h-auto py-1"
+                      className="cursor-pointer hover:bg-secondary/80"
+                      onClick={() => handleRemoveTag(tag)}
                     >
                       {tag}
                       <X className="h-3 w-3 ml-1" />
-                    </Button>
+                    </Badge>
                   ))}
                 </div>
               </div>
@@ -344,19 +344,16 @@ const NewPostPage: React.FC = () => {
                   <Globe className="h-3.5 w-3.5" />
                   Visibility
                 </Label>
-                <div className="flex flex-col gap-1.5">
+                <RadioGroup value={visibility} onValueChange={setVisibility}>
                   {['public', 'private', 'draft'].map(option => (
-                    <Label key={option} className="flex items-center gap-2 cursor-pointer text-sm font-normal">
-                      <Radio
-                        name="visibility"
-                        value={option}
-                        checked={visibility === option}
-                        onChange={(e) => setVisibility(e.target.value)}
-                      />
-                      <span className="capitalize">{option}</span>
-                    </Label>
+                    <div key={option} className="flex items-center gap-2">
+                      <RadioGroupItem value={option} id={option} />
+                      <Label htmlFor={option} className="text-sm font-normal cursor-pointer">
+                        <span className="capitalize">{option}</span>
+                      </Label>
+                    </div>
                   ))}
-                </div>
+                </RadioGroup>
               </div>
 
               {/* Schedule */}
