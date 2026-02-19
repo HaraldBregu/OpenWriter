@@ -311,6 +311,7 @@ const NewPostPage: React.FC = () => {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                     placeholder="Add tag..."
+                    className="h-10"
                   />
                   <Button
                     type="button"
@@ -366,6 +367,7 @@ const NewPostPage: React.FC = () => {
                 </Label>
                 <Input
                   type="datetime-local"
+                  className="h-10"
                 />
               </div>
 
