@@ -214,16 +214,16 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon
                     return (
-                      <SidebarMenuItem key={item.title} className="group">
+                      <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
                           isActive={location.pathname === item.url}
-                          className="h-9 px-3"
+                          className="h-9 px-3 group/item"
                         >
                           <Link to={item.url}>
                             <Icon className="h-3.5 w-3.5 shrink-0" />
                             <span className="flex-1 truncate">{item.title}</span>
-                            <span className="text-xs text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="text-xs text-muted-foreground/50 opacity-0 group-hover/item:opacity-100 transition-opacity duration-150">
                               {item.shortcut}
                             </span>
                           </Link>
