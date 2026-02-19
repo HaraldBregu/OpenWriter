@@ -575,6 +575,83 @@ const api = {
     agentCancel: (runId: string): void => {
         ipcRenderer.send('agent:cancel', runId)
     },
+    // Agent - Session Management
+    agentCreateSession: (config: {
+        sessionId: string
+        providerId: string
+        modelId?: string
+        systemPrompt?: string
+        temperature?: number
+        maxTokens?: number
+        metadata?: Record<string, unknown>
+    }): Promise<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('agent:create-session', config)
+    },
+    agentDestroySession: (sessionId: string): Promise<boolean> => {
+        return ipcRenderer.invoke('agent:destroy-session', sessionId)
+    },
+    agentGetSession: (sessionId: string): Promise<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+    } | null> => {
+        return ipcRenderer.invoke('agent:get-session', sessionId)
+    },
+    agentListSessions: (): Promise<Array<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+    }>> => {
+        return ipcRenderer.invoke('agent:list-sessions')
+    },
+    agentClearSessions: (): Promise<number> => {
+        return ipcRenderer.invoke('agent:clear-sessions')
+    },
+    // Agent - Enhanced Execution
+    agentRunSession: (options: {
+        sessionId: string
+        runId: string
+        messages: Array<{ role: 'user' | 'assistant'; content: string }>
+        providerId: string
+        temperature?: number
+        maxTokens?: number
+        stream?: boolean
+    }): Promise<void> => {
+        return ipcRenderer.invoke('agent:run-session', options)
+    },
+    agentCancelSession: (sessionId: string): Promise<boolean> => {
+        return ipcRenderer.invoke('agent:cancel-session', sessionId)
+    },
+    // Agent - Status
+    agentGetStatus: (): Promise<{
+        totalSessions: number
+        activeSessions: number
+        totalMessages: number
+    }> => {
+        return ipcRenderer.invoke('agent:get-status')
+    },
+    agentIsRunning: (runId: string): Promise<boolean> => {
+        return ipcRenderer.invoke('agent:is-running', runId)
+    },
     // RAG
     ragIndex: (filePath: string, providerId: string): Promise<{ filePath: string; chunkCount: number }> => {
         return ipcRenderer.invoke('rag:index', filePath, providerId)

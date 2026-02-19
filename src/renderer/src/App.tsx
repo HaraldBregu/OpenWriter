@@ -28,22 +28,23 @@ import WorkspaceSelectorPage from './pages/WorkspaceSelectorPage'
 import './index.css'
 import HomePage from './pages/HomePage'
 
-
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
+          {/* Welcome page - standalone, shown first */}
+          <Route path="/" element={<WelcomePage />} />
+
           {/* Workspace selector - standalone without AppLayout */}
-          <Route path="/workspace-selector" element={<WorkspaceSelectorPage />} />
+          {/* <Route path="/workspace-selector" element={<WorkspaceSelectorPage />} /> */}
 
           {/* All other routes use AppLayout */}
           <Route path="*" element={
             <AppLayout>
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/home" element={<HomePage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/welcome" element={<WelcomePage />} />
                 <Route path="/microphone" element={<MicrophonePage />} />
                 <Route path="/camera" element={<CameraPage />} />
                 <Route path="/screen" element={<ScreenPage />} />

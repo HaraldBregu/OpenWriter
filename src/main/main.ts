@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, app, Menu } from 'electron'
+import { BrowserWindow, ipcMain, app, Menu, dialog } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
@@ -15,7 +15,7 @@ import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { UpdateSimulator } from './services/update-simulator'
 import { StoreService } from './services/store'
-import { AgentController, type ChatMessage } from './agent/AgentController'
+import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
 
 export class Main {
@@ -33,8 +33,9 @@ export class Main {
   private notificationService: NotificationService
   private clipboardService: ClipboardService
   private storeService: StoreService
-  private agentController: AgentController
+  private agentService: AgentService
   private ragController: RagController
+  private currentWorkspace: string | null = null
   private onWindowVisibilityChange?: () => void
 
   constructor(lifecycleService: LifecycleService) {
@@ -52,7 +53,7 @@ export class Main {
     this.notificationService = new NotificationService()
     this.clipboardService = new ClipboardService()
     this.storeService = new StoreService()
-    this.agentController = new AgentController(this.storeService)
+    this.agentService = new AgentService(this.storeService)
     this.ragController = new RagController(this.storeService)
 
     // Existing sound handler
@@ -428,11 +429,27 @@ export class Main {
     })
 
     // Workspace handlers
+    ipcMain.handle('workspace:select-folder', async () => {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory', 'createDirectory'],
+        title: 'Select Workspace Folder',
+        buttonLabel: 'Select Workspace'
+      })
+
+      if (!result.canceled && result.filePaths.length > 0) {
+        return result.filePaths[0]
+      }
+      return null
+    })
+
     ipcMain.handle('workspace-get-current', () => {
-      return this.storeService.getCurrentWorkspace()
+      return this.currentWorkspace
     })
 
     ipcMain.handle('workspace-set-current', (_event, workspacePath: string) => {
+      console.log('[Main] Setting current workspace:', workspacePath)
+      this.currentWorkspace = workspacePath
+      // Add to recent workspaces in store for persistence
       this.storeService.setCurrentWorkspace(workspacePath)
     })
 
@@ -441,6 +458,8 @@ export class Main {
     })
 
     ipcMain.handle('workspace-clear', () => {
+      console.log('[Main] Clearing current workspace')
+      this.currentWorkspace = null
       this.storeService.clearCurrentWorkspace()
     })
 
@@ -483,19 +502,8 @@ export class Main {
       })
     })
 
-    // Agent handlers
-    ipcMain.handle('agent:run', (_event, messages: ChatMessage[], runId: string, providerId: string) => {
-      const win = BrowserWindow.fromWebContents(_event.sender)
-      if (!win) return
-      // Run in background — stream events back via webContents.send
-      this.agentController.runAgent(messages, runId, providerId, win).catch((err) => {
-        console.error('[Agent] Unhandled error:', err)
-      })
-    })
-
-    ipcMain.on('agent:cancel', (_event, runId: string) => {
-      this.agentController.cancel(runId)
-    })
+    // Agent handlers - register all multi-agent IPC handlers
+    this.agentService.registerHandlers()
 
     // RAG handlers
     ipcMain.handle(

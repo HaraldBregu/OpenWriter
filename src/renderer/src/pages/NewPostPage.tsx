@@ -63,39 +63,33 @@ const NewPostPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
           >
             <Eye className="h-4 w-4" />
             Preview
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
           >
             <Download className="h-4 w-4" />
             Download
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
           >
             <Share2 className="h-4 w-4" />
             Share
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => setShowSidebar(!showSidebar)}
             title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
           >
             <Filter className="h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-          >
-            <Send className="h-4 w-4" />
-            Publish
           </Button>
         </div>
       </div>
@@ -183,7 +177,7 @@ const NewPostPage: React.FC = () => {
                   <Button
                     type="button"
                     onClick={handleAddTag}
-                    variant="secondary"
+                    variant="outline"
                     size="sm"
                   >
                     Add
@@ -238,6 +232,7 @@ const NewPostPage: React.FC = () => {
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
                 <Button
                   type="button"
+                  variant="outline"
                   className="w-full"
                 >
                   Save Draft
@@ -245,6 +240,7 @@ const NewPostPage: React.FC = () => {
                 <Button
                   type="button"
                   variant="outline"
+                  size="default"
                   className="w-full"
                 >
                   Preview

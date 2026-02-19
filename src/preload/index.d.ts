@@ -288,6 +288,65 @@ declare global {
       agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string) => Promise<void>
       agentCancel: (runId: string) => void
       onAgentEvent: (callback: (eventType: string, data: unknown) => void) => () => void
+      // Agent - Session Management
+      agentCreateSession: (config: {
+        sessionId: string
+        providerId: string
+        modelId?: string
+        systemPrompt?: string
+        temperature?: number
+        maxTokens?: number
+        metadata?: Record<string, unknown>
+      }) => Promise<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+      }>
+      agentDestroySession: (sessionId: string) => Promise<boolean>
+      agentGetSession: (sessionId: string) => Promise<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+      } | null>
+      agentListSessions: () => Promise<Array<{
+        sessionId: string
+        providerId: string
+        modelId: string
+        createdAt: number
+        lastActivity: number
+        isActive: boolean
+        messageCount: number
+        metadata?: Record<string, unknown>
+      }>>
+      agentClearSessions: () => Promise<number>
+      // Agent - Enhanced Execution
+      agentRunSession: (options: {
+        sessionId: string
+        runId: string
+        messages: Array<{ role: 'user' | 'assistant'; content: string }>
+        providerId: string
+        temperature?: number
+        maxTokens?: number
+        stream?: boolean
+      }) => Promise<void>
+      agentCancelSession: (sessionId: string) => Promise<boolean>
+      // Agent - Status
+      agentGetStatus: () => Promise<{
+        totalSessions: number
+        activeSessions: number
+        totalMessages: number
+      }>
+      agentIsRunning: (runId: string) => Promise<boolean>
       // Update Simulator
       updateSimCheck: () => Promise<void>
       updateSimDownload: () => Promise<void>

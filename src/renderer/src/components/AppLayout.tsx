@@ -5,6 +5,7 @@ import { useLanguage } from '../hooks/useLanguage'
 import { TitleBar } from './TitleBar'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Separator } from './ui/separator'
+import logoIcon from '@resources/icons/icon.png'
 import {
   Sidebar,
   SidebarContent,
@@ -183,9 +184,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
           {/* Header */}
           <SidebarHeader className="border-b p-4">
-            <div className="flex items-center gap-2">
+            <Link to="/home" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <img
+                src={logoIcon}
+                alt="Tesseract AI"
+                className="h-6 w-6 rounded-full object-cover"
+              />
               <span className="text-md font-normal tracking-tight">Tesseract AI</span>
-            </div>
+            </Link>
           </SidebarHeader>
 
           {/* Nav */}
@@ -194,22 +200,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
 
-                  {/* Home */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={location.pathname === '/'}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/">
-                        <Home className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Home</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarSeparator className="my-1" />
-
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon
@@ -217,7 +207,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
-                          isActive={location.pathname === item.url}
+                          // isActive={location.pathname === item.url}
                           className="h-9 px-3 group/item"
                         >
                           <Link to={item.url}>
