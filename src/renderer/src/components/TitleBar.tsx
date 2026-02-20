@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, PanelLeft, Minus, X } from 'lucide-react'
+import { usePlatform } from '../hooks/usePlatform'
 
 // Windows-style maximize icon
 function MaximizeIcon() {
@@ -29,13 +30,11 @@ export interface TitleBarProps {
 }
 
 export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = '' }: TitleBarProps) {
-  const [isWindows, setIsWindows] = useState(false)
+  const platform = usePlatform()
+  const isWindows = platform === 'win32'
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
-    window.api.getPlatform().then((platform) => {
-      setIsWindows(platform === 'win32')
-    })
     window.api.windowIsMaximized().then(setIsMaximized)
 
     const unsub = window.api.onMaximizeChange(setIsMaximized)

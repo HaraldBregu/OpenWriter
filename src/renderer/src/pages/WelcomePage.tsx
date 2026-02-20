@@ -21,15 +21,7 @@ const WelcomePage: React.FC = () => {
 
   const checkAndLoadWorkspace = async () => {
     try {
-      // Check if workspace is already set
-      const currentWorkspace = await window.api.workspaceGetCurrent()
-      if (currentWorkspace) {
-        console.log('[WelcomePage] Workspace already set, redirecting to home')
-        navigate('/home')
-        return
-      }
-
-      // Load recent projects
+      // Always load recent projects — let the user pick a workspace explicitly
       loadRecentProjects()
     } catch (error) {
       console.error('Failed to check workspace:', error)

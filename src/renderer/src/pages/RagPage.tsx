@@ -9,10 +9,6 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import {
   FileText,
   Search,
@@ -27,77 +23,9 @@ import {
   Loader2
 } from 'lucide-react'
 import { useRag } from '../hooks/useRag'
+import { MarkdownContent } from '../components/MarkdownContent'
 
 const isDev = import.meta.env.DEV
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function useIsDark(): boolean {
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark')
-  )
-  useEffect(() => {
-    const observer = new MutationObserver(() =>
-      setIsDark(document.documentElement.classList.contains('dark'))
-    )
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
-  }, [])
-  return isDark
-}
-
-// ---------------------------------------------------------------------------
-// Markdown renderer (reused from DashboardPage pattern)
-// ---------------------------------------------------------------------------
-
-function MarkdownAnswer({ content }: { content: string }) {
-  const isDark = useIsDark()
-  const codeTheme = isDark ? oneDark : oneLight
-
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-        h1: ({ children }) => <h1 className="text-xl font-bold mb-2 mt-3">{children}</h1>,
-        h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 mt-3">{children}</h2>,
-        h3: ({ children }) => <h3 className="text-base font-semibold mb-1 mt-2">{children}</h3>,
-        ul: ({ children }) => <ul className="list-disc list-outside pl-4 mb-2 space-y-0.5">{children}</ul>,
-        ol: ({ children }) => <ol className="list-decimal list-outside pl-4 mb-2 space-y-0.5">{children}</ol>,
-        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-        a: ({ href, children }) => (
-          <a onClick={(e) => { e.preventDefault(); if (href) window.open(href) }}
-            className="underline underline-offset-2 hover:opacity-75 cursor-pointer">{children}</a>
-        ),
-        code: ({ className, children }) => {
-          const match = /language-(\w+)/.exec(className || '')
-          if (!match) {
-            return (
-              <code className="rounded px-1 py-0.5 text-xs font-mono bg-muted text-foreground">
-                {children}
-              </code>
-            )
-          }
-          return (
-            <SyntaxHighlighter
-              style={codeTheme}
-              language={match[1]}
-              PreTag="div"
-              customStyle={{ margin: '0.5rem 0', borderRadius: '0.375rem', fontSize: '0.75rem', overflowX: 'auto' }}
-            >
-              {String(children).replace(/\n$/, '')}
-            </SyntaxHighlighter>
-          )
-        }
-      }}
-    >
-      {content}
-    </ReactMarkdown>
-  )
-}
 
 // ---------------------------------------------------------------------------
 // Index panel
@@ -258,7 +186,7 @@ function ChatArea({ messages, isQuerying, queryError, onAsk, onCancel, onClear }
                 <div className="min-w-0 max-w-[90%] rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm bg-muted text-foreground">
                   {!msg.content
                     ? <span className="opacity-40 animate-pulse">▋</span>
-                    : <MarkdownAnswer content={msg.content} />
+                    : <MarkdownContent content={msg.content} />
                   }
                 </div>
               )}

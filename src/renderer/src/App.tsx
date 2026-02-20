@@ -1,72 +1,87 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store'
 import { AppLayout } from './components/AppLayout'
-import DashboardPage from './pages/DashboardPage'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import { LoadingSkeleton } from './components/LoadingSkeleton'
 import WelcomePage from './pages/WelcomePage'
-import MicrophonePage from './pages/MicrophonePage'
-import CameraPage from './pages/CameraPage'
-import ScreenPage from './pages/ScreenPage'
-import BluetoothPage from './pages/BluetoothPage'
-import NetworkPage from './pages/NetworkPage'
-import CronPage from './pages/CronPage'
-import LifecyclePage from './pages/LifecyclePage'
-import WindowManagerPage from './pages/WindowManagerPage'
-import FilesystemPage from './pages/FilesystemPage'
-import DialogsPage from './pages/DialogsPage'
-import NotificationsPage from './pages/NotificationsPage'
-import ClipboardPage from './pages/ClipboardPage'
-import SettingsPage from './pages/SettingsPage'
-import RagPage from './pages/RagPage'
-import NewPostPage from './pages/NewPostPage'
-import NewWritingPage from './pages/NewWritingPage'
-import NewNotePage from './pages/NewNotePage'
-import NewMessagePage from './pages/NewMessagePage'
 import './index.css'
-import HomePage from './pages/HomePage'
+
+// Lazy-loaded pages
+const HomePage = lazy(() => import('./pages/HomePage'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const MicrophonePage = lazy(() => import('./pages/MicrophonePage'))
+const CameraPage = lazy(() => import('./pages/CameraPage'))
+const ScreenPage = lazy(() => import('./pages/ScreenPage'))
+const BluetoothPage = lazy(() => import('./pages/BluetoothPage'))
+const NetworkPage = lazy(() => import('./pages/NetworkPage'))
+const CronPage = lazy(() => import('./pages/CronPage'))
+const LifecyclePage = lazy(() => import('./pages/LifecyclePage'))
+const WindowManagerPage = lazy(() => import('./pages/WindowManagerPage'))
+const FilesystemPage = lazy(() => import('./pages/FilesystemPage'))
+const DialogsPage = lazy(() => import('./pages/DialogsPage'))
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
+const ClipboardPage = lazy(() => import('./pages/ClipboardPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const RagPage = lazy(() => import('./pages/RagPage'))
+const NewPostPage = lazy(() => import('./pages/NewPostPage'))
+const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
+const NewNotePage = lazy(() => import('./pages/NewNotePage'))
+const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
+
+function RouteWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary level="route">
+      <Suspense fallback={<LoadingSkeleton />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <Router>
-        <Routes>
-          {/* Welcome page - standalone, shown first */}
-          <Route path="/" element={<WelcomePage />} />
+    <ErrorBoundary level="root">
+      <Provider store={store}>
+        <Router>
+          <Routes>
+            {/* Welcome page - standalone, shown first */}
+            <Route path="/" element={<WelcomePage />} />
 
-          {/* Workspace selector - standalone without AppLayout */}
-          {/* <Route path="/workspace-selector" element={<WorkspaceSelectorPage />} /> */}
-
-          {/* All other routes use AppLayout */}
-          <Route path="*" element={
-            <AppLayout>
-              <Routes>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/microphone" element={<MicrophonePage />} />
-                <Route path="/camera" element={<CameraPage />} />
-                <Route path="/screen" element={<ScreenPage />} />
-                <Route path="/bluetooth" element={<BluetoothPage />} />
-                <Route path="/network" element={<NetworkPage />} />
-                <Route path="/cron" element={<CronPage />} />
-                <Route path="/lifecycle" element={<LifecyclePage />} />
-                <Route path="/windows" element={<WindowManagerPage />} />
-                <Route path="/filesystem" element={<FilesystemPage />} />
-                <Route path="/dialogs" element={<DialogsPage />} />
-                <Route path="/notifications" element={<NotificationsPage />} />
-                <Route path="/clipboard" element={<ClipboardPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/rag" element={<RagPage />} />
-                <Route path="/new/post" element={<NewPostPage />} />
-                <Route path="/new/writing" element={<NewWritingPage />} />
-                <Route path="/new/note" element={<NewNotePage />} />
-                <Route path="/new/message" element={<NewMessagePage />} />
-              </Routes>
-            </AppLayout>
-          } />
-        </Routes>
-      </Router>
-    </Provider>
+            {/* All other routes use AppLayout */}
+            <Route path="*" element={
+              <AppLayout>
+                <Suspense fallback={<LoadingSkeleton />}>
+                  <Routes>
+                    <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
+                    <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
+                    <Route path="/microphone" element={<RouteWrapper><MicrophonePage /></RouteWrapper>} />
+                    <Route path="/camera" element={<RouteWrapper><CameraPage /></RouteWrapper>} />
+                    <Route path="/screen" element={<RouteWrapper><ScreenPage /></RouteWrapper>} />
+                    <Route path="/bluetooth" element={<RouteWrapper><BluetoothPage /></RouteWrapper>} />
+                    <Route path="/network" element={<RouteWrapper><NetworkPage /></RouteWrapper>} />
+                    <Route path="/cron" element={<RouteWrapper><CronPage /></RouteWrapper>} />
+                    <Route path="/lifecycle" element={<RouteWrapper><LifecyclePage /></RouteWrapper>} />
+                    <Route path="/windows" element={<RouteWrapper><WindowManagerPage /></RouteWrapper>} />
+                    <Route path="/filesystem" element={<RouteWrapper><FilesystemPage /></RouteWrapper>} />
+                    <Route path="/dialogs" element={<RouteWrapper><DialogsPage /></RouteWrapper>} />
+                    <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
+                    <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
+                    <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
+                    <Route path="/rag" element={<RouteWrapper><RagPage /></RouteWrapper>} />
+                    <Route path="/new/post" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
+                    <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
+                    <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
+                    <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
+                  </Routes>
+                </Suspense>
+              </AppLayout>
+            } />
+          </Routes>
+        </Router>
+      </Provider>
+    </ErrorBoundary>
   )
 }
 

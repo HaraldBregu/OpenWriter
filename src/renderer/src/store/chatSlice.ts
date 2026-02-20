@@ -1,4 +1,4 @@
-import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
 
 export interface ChatMessage {
   id: string
@@ -143,8 +143,21 @@ export const {
 export const selectThreads = (state: { chat: ChatState }): ChatThread[] => state.chat.threads
 export const selectActiveThreadId = (state: { chat: ChatState }): string | null =>
   state.chat.activeThreadId
-export const selectActiveThread = (state: { chat: ChatState }): ChatThread | null =>
-  state.chat.threads.find((t) => t.id === state.chat.activeThreadId) ?? null
+
+export const selectActiveThread = createSelector(
+  [selectThreads, selectActiveThreadId],
+  (threads, activeId): ChatThread | null =>
+    threads.find((t) => t.id === activeId) ?? null
+)
+
+export const selectActiveThreadMessages = createSelector(
+  [selectActiveThread],
+  (thread): ChatMessage[] => thread?.messages ?? []
+)
+
+export const selectThreadById = (id: string) =>
+  createSelector([selectThreads], (threads) => threads.find((t) => t.id === id) ?? null)
+
 export const selectIsAgentRunning = (state: { chat: ChatState }): boolean =>
   state.chat.isAgentRunning
 export const selectRunningThreadId = (state: { chat: ChatState }): string | null =>
