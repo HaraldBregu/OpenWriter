@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
 
@@ -8,19 +8,8 @@ export class WorkspaceSelector {
   private resolveWorkspace: ((workspace: string | null) => void) | null = null
 
   constructor() {
-    // Handle workspace selection IPC
-    ipcMain.handle('workspace:select-folder', async () => {
-      const result = await dialog.showOpenDialog({
-        properties: ['openDirectory', 'createDirectory'],
-        title: 'Select Workspace Folder',
-        buttonLabel: 'Select Workspace'
-      })
-
-      if (!result.canceled && result.filePaths.length > 0) {
-        return result.filePaths[0]
-      }
-      return null
-    })
+    // Note: 'workspace:select-folder' is now registered in WorkspaceIpc module
+    // to avoid duplicate registration. Kept here are only the window-specific handlers.
 
     ipcMain.handle('workspace:confirm', (_event, workspacePath: string) => {
       this.selectedWorkspace = workspacePath

@@ -6,8 +6,17 @@ import { Menu } from './menu'
 import { LifecycleService } from './services/lifecycle'
 import { WorkspaceSelector } from './workspace'
 import { StoreService } from './services/store'
+import { bootstrapServices, setupAppLifecycle, cleanup } from './bootstrap'
 
-// Add isQuitting property to app
+// Bootstrap new architecture (services only - IPC modules disabled until Main class is refactored)
+console.log('[Main] Bootstrapping core infrastructure...')
+const { container, appState } = bootstrapServices()
+// TODO: Enable IPC modules after removing handlers from Main class constructor
+// import { bootstrapIpcModules } from './bootstrap'
+// bootstrapIpcModules(container, eventBus)
+setupAppLifecycle(appState)
+
+// Add isQuitting property to app (legacy - will be replaced with appState)
 ;(app as { isQuitting?: boolean }).isQuitting = false
 
 const TSRCT_EXT = '.tsrct'
@@ -137,4 +146,8 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   ;(app as { isQuitting?: boolean }).isQuitting = true
+})
+
+app.on('quit', () => {
+  cleanup(container)
 })

@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, app, Menu, dialog } from 'electron'
+import { BrowserWindow, ipcMain, app, Menu } from 'electron'
 import { exec } from 'node:child_process'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
@@ -396,7 +396,9 @@ export class Main {
     })
 
     // Workspace handlers
+    // TODO: Move to WorkspaceIpc module after IPC modules are enabled
     ipcMain.handle('workspace:select-folder', async () => {
+      const dialog = await import('electron').then(m => m.dialog)
       const result = await dialog.showOpenDialog({
         properties: ['openDirectory', 'createDirectory'],
         title: 'Select Workspace Folder',
