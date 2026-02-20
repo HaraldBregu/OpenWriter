@@ -19,8 +19,8 @@ export class Main {
   create(): BrowserWindow {
     const isMac = process.platform === 'darwin'
     this.window = this.windowFactory.create({
-      width: 1600,
-      height: 1000,
+      width: 1200,
+      height: 800,
       minWidth: 800,
       minHeight: 600,
       frame: false,

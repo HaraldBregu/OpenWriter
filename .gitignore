@@ -3,3 +3,8 @@ node_modules
 out
 dist
 .env
+
+# Test artifacts
+coverage
+playwright-report
+test-results
