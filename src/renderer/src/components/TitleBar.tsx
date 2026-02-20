@@ -34,7 +34,7 @@ export interface TitleBarProps {
   className?: string
 }
 
-export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = '' }: TitleBarProps) {
+export function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
