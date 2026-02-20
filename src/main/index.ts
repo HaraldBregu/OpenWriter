@@ -3,21 +3,17 @@ import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
-import { LifecycleService } from './services/lifecycle'
 import { WorkspaceSelector } from './workspace'
-import { StoreService } from './services/store'
-import { bootstrapServices, setupAppLifecycle, cleanup } from './bootstrap'
+import type { StoreService } from './services/store'
+import type { LifecycleService } from './services/lifecycle'
+import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, cleanup } from './bootstrap'
 
-// Bootstrap new architecture (services only - IPC modules disabled until Main class is refactored)
+// Bootstrap new architecture - FULL INTEGRATION ENABLED
 console.log('[Main] Bootstrapping core infrastructure...')
-const { container, appState } = bootstrapServices()
-// TODO: Enable IPC modules after removing handlers from Main class constructor
-// import { bootstrapIpcModules } from './bootstrap'
-// bootstrapIpcModules(container, eventBus)
+const { container, eventBus, appState } = bootstrapServices()
+console.log('[Main] Enabling IPC modules...')
+bootstrapIpcModules(container, eventBus)
 setupAppLifecycle(appState)
-
-// Add isQuitting property to app (legacy - will be replaced with appState)
-;(app as { isQuitting?: boolean }).isQuitting = false
 
 const TSRCT_EXT = '.tsrct'
 
@@ -34,21 +30,14 @@ function extractFilePathFromArgs(args: string[]): string | null {
   return null
 }
 
-// Must be created before app.whenReady() for single-instance lock
-const lifecycleService = new LifecycleService({
-  onSecondInstanceFile: (filePath) => {
-    mainWindow.createWindowForFile(filePath)
-  }
-})
-
-const mainWindow = new Main(lifecycleService)
+const mainWindow = new Main(appState)
 
 const trayManager = new Tray({
   onShowApp: () => mainWindow.showOrCreate(),
   onHideApp: () => mainWindow.hide(),
   onToggleApp: () => mainWindow.toggleVisibility(),
   onQuit: () => {
-    ;(app as { isQuitting?: boolean }).isQuitting = true
+    appState.setQuitting()
     app.quit()
   },
   isAppVisible: () => mainWindow.isVisible()
@@ -85,12 +74,19 @@ app.on('open-file', (event, filePath) => {
 
 app.whenReady().then(async () => {
   nativeTheme.themeSource = 'dark'
+
+  // Get services from container
+  const lifecycleService = container.get<LifecycleService>('lifecycle')
+  const storeService = container.get<StoreService>('store')
+
+  // Initialize lifecycle service
+  // Note: Second instance file handler is configured in bootstrap
   lifecycleService.initialize()
+
   menuManager.create()
   trayManager.create()
 
   // Check for existing workspace
-  const storeService = new StoreService()
   let currentWorkspace = storeService.getCurrentWorkspace()
 
   // If no workspace is set, show workspace selector
@@ -135,18 +131,7 @@ app.whenReady().then(async () => {
   })
 })
 
-app.on('window-all-closed', () => {
-  // Don't quit the app when all windows are closed
-  // The app will continue running in the system tray
-  // Only quit if explicitly requested via tray menu or app.quit()
-  if (process.platform !== 'darwin' && (app as { isQuitting?: boolean }).isQuitting) {
-    app.quit()
-  }
-})
-
-app.on('before-quit', () => {
-  ;(app as { isQuitting?: boolean }).isQuitting = true
-})
+// Note: window-all-closed and before-quit handlers are now managed by setupAppLifecycle
 
 app.on('quit', () => {
   cleanup(container)
