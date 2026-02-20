@@ -16,11 +16,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: yarn
 
-      - run: npm ci
+      - run: yarn install --frozen-lockfile
 
-      - run: npm test
+      - run: yarn test
 
   build-windows:
     needs: test
@@ -31,18 +31,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: yarn
 
-      - run: npm ci
+      - run: yarn install --frozen-lockfile
 
       - name: Build app
-        run: npx electron-vite build
+        run: yarn electron-vite build
 
       - name: Build Windows installer
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-        run: npx electron-builder --win --x64
+        run: yarn electron-builder --win --x64
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -60,24 +60,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: yarn
 
-      - run: npm ci
+      - run: yarn install --frozen-lockfile
 
       - name: Build app
-        run: npx electron-vite build
+        run: yarn electron-vite build
 
       - name: Build macOS DMG (x64)
         env:
           CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
-        run: npx electron-builder --mac dmg --x64
+        run: yarn electron-builder --mac dmg --x64
 
       - name: Build macOS DMG (arm64)
         env:
           CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
-        run: npx electron-builder --mac dmg --arm64
+        run: yarn electron-builder --mac dmg --arm64
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
