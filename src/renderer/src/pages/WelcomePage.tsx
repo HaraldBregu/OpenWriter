@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FolderOpen, GitBranch, Terminal } from 'lucide-react'
+import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TitleBar } from '@/components/TitleBar'
 import logoIcon from '@resources/icons/icon.png'
@@ -10,31 +10,33 @@ interface RecentProject {
   lastOpened: number
 }
 
+// Dummy projects shown when the API returns an empty list.
+// Using realistic-looking paths that work across platforms.
+const DUMMY_RECENT_PROJECTS: RecentProject[] = [
+  { path: 'C:\\Users\\Alex\\Documents\\Projects\\ecommerce-platform', lastOpened: Date.now() - 1000 * 60 * 30 },
+  { path: 'C:\\Users\\Alex\\Documents\\Projects\\design-system-v2', lastOpened: Date.now() - 1000 * 60 * 60 * 3 },
+  { path: 'C:\\Users\\Alex\\Documents\\Projects\\mobile-app-backend', lastOpened: Date.now() - 1000 * 60 * 60 * 24 },
+  { path: 'C:\\Users\\Alex\\Documents\\Projects\\analytics-dashboard', lastOpened: Date.now() - 1000 * 60 * 60 * 24 * 3 },
+  { path: 'C:\\Users\\Alex\\Documents\\Projects\\internal-docs', lastOpened: Date.now() - 1000 * 60 * 60 * 24 * 7 },
+]
+
 const WelcomePage: React.FC = () => {
   const navigate = useNavigate()
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
 
   useEffect(() => {
-    checkAndLoadWorkspace()
+    loadRecentProjects()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const checkAndLoadWorkspace = async () => {
-    try {
-      // Always load recent projects — let the user pick a workspace explicitly
-      loadRecentProjects()
-    } catch (error) {
-      console.error('Failed to check workspace:', error)
-      loadRecentProjects()
-    }
-  }
 
   const loadRecentProjects = async () => {
     try {
       const projects = await window.api.workspaceGetRecent()
-      setRecentProjects(projects)
+      // Fall back to dummy data so the section is never empty on first launch.
+      setRecentProjects(projects.length > 0 ? projects : DUMMY_RECENT_PROJECTS)
     } catch (error) {
       console.error('Failed to load recent projects:', error)
+      setRecentProjects(DUMMY_RECENT_PROJECTS)
     }
   }
 
@@ -60,24 +62,17 @@ const WelcomePage: React.FC = () => {
   }
 
   const formatPath = (path: string) => {
-    // Simple path formatting - show relative to common base paths
     if (path.includes('/Users/')) {
       const parts = path.split('/Users/')
-      if (parts[1]) {
-        return '~/' + parts[1].split('/').slice(1).join('/')
-      }
+      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/')
     }
     if (path.includes('/home/')) {
       const parts = path.split('/home/')
-      if (parts[1]) {
-        return '~/' + parts[1].split('/').slice(1).join('/')
-      }
+      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/')
     }
     if (path.includes('\\Users\\')) {
       const parts = path.split('\\Users\\')
-      if (parts[1]) {
-        return '~\\' + parts[1].split('\\').slice(1).join('\\')
-      }
+      if (parts[1]) return '~\\' + parts[1].split('\\').slice(1).join('\\')
     }
     return path
   }
@@ -86,71 +81,137 @@ const WelcomePage: React.FC = () => {
     return path.split(/[/\\]/).pop() || path
   }
 
+  const formatRelativeTime = (timestamp: number) => {
+    const seconds = Math.floor((Date.now() - timestamp) / 1000)
+    if (seconds < 60) return 'just now'
+    const minutes = Math.floor(seconds / 60)
+    if (minutes < 60) return `${minutes}m ago`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h ago`
+    const days = Math.floor(hours / 24)
+    if (days === 1) return 'yesterday'
+    if (days < 7) return `${days}d ago`
+    return `${Math.floor(days / 7)}w ago`
+  }
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-background">
       <TitleBar title="Tesseract AI" />
-      <div className="flex flex-col items-center justify-center flex-1 bg-background px-8">
-      {/* Logo and Title */}
-      <div className="flex flex-col items-center mb-12">
-        <img
-          src={logoIcon}
-          alt="Tesseract AI"
-          className="h-16 w-16 mb-4"
-        />
-        <h1 className="text-3xl font-semibold text-foreground mb-2">Tesseract AI</h1>
-        <p className="text-muted-foreground">Free Plan • <span className="text-primary cursor-pointer hover:underline">Upgrade</span></p>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-4 mb-16">
-        <Button
-          variant="outline"
-          className="h-24 w-44 flex flex-col items-center justify-center gap-3 hover:bg-accent"
-          onClick={handleOpenProject}
-        >
-          <FolderOpen className="h-6 w-6" />
-          <span className="text-sm font-medium">Open project</span>
-        </Button>
-        <Button
-          variant="outline"
-          className="h-24 w-44 flex flex-col items-center justify-center gap-3 hover:bg-accent"
-          disabled
-        >
-          <GitBranch className="h-6 w-6" />
-          <span className="text-sm font-medium">Clone repo</span>
-        </Button>
-        <Button
-          variant="outline"
-          className="h-24 w-44 flex flex-col items-center justify-center gap-3 hover:bg-accent"
-          disabled
-        >
-          <Terminal className="h-6 w-6" />
-          <span className="text-sm font-medium">Connect via SSH</span>
-        </Button>
-      </div>
+      {/* Main content — vertically centered, scrollable if viewport is very small */}
+      <div className="flex flex-col items-center flex-1 overflow-y-auto px-8 py-12">
 
-      {/* Recent Projects */}
-      {recentProjects.length > 0 && (
-        <div className="w-full max-w-3xl">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-medium text-muted-foreground">Recent projects</h2>
-            <span className="text-sm text-muted-foreground">View all ({recentProjects.length})</span>
+        {/* ── Hero ── */}
+        <div className="flex flex-col items-center mb-10">
+          <img
+            src={logoIcon}
+            alt="Tesseract AI"
+            className="h-16 w-16 mb-5 drop-shadow-sm"
+          />
+          <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
+            Tesseract AI
+          </h1>
+          <p className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
+            An intelligent text editor for developers and writers.
+            Open a project to get started.
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Free Plan
+            {' '}
+            &bull;
+            {' '}
+            <span className="text-primary cursor-pointer hover:underline">
+              Upgrade to Pro
+            </span>
+          </p>
+        </div>
+
+        {/* ── Action buttons ── */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <Button
+            variant="outline"
+            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
+            onClick={handleOpenProject}
+          >
+            <FolderOpen className="h-5 w-5 text-foreground/70" />
+            <span className="text-sm font-medium">Open Folder</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
+            disabled
+          >
+            <CloudDownload className="h-5 w-5 text-foreground/70" />
+            <span className="text-sm font-medium">Load from Remote</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
+            disabled
+          >
+            <GitBranch className="h-5 w-5 text-foreground/70" />
+            <span className="text-sm font-medium">Clone Repo</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
+            disabled
+          >
+            <Terminal className="h-5 w-5 text-foreground/70" />
+            <span className="text-sm font-medium">Connect via SSH</span>
+          </Button>
+        </div>
+
+        {/* ── Recent projects ── */}
+        <div className="w-full max-w-2xl">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Recent Projects
+            </h2>
+            <span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+              View all
+            </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="rounded-xl border border-border overflow-hidden">
             {recentProjects.slice(0, 5).map((project, index) => (
               <button
                 key={index}
                 onClick={() => handleOpenRecentProject(project.path)}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-md hover:bg-accent transition-colors text-left"
+                className={`
+                  w-full flex items-center gap-4 px-4 py-3
+                  hover:bg-accent transition-colors text-left
+                  ${index !== 0 ? 'border-t border-border' : ''}
+                `}
               >
-                <span className="text-sm text-foreground">{getProjectName(project.path)}</span>
-                <span className="text-sm text-muted-foreground">{formatPath(project.path)}</span>
+                {/* Folder color indicator */}
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                  <FolderOpen className="h-4 w-4 text-primary" />
+                </div>
+
+                {/* Name + path */}
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="text-sm font-medium text-foreground truncate">
+                    {getProjectName(project.path)}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate mt-0.5">
+                    {formatPath(project.path)}
+                  </span>
+                </div>
+
+                {/* Relative time */}
+                <div className="flex items-center gap-1.5 shrink-0 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>{formatRelativeTime(project.lastOpened)}</span>
+                </div>
               </button>
             ))}
           </div>
         </div>
-      )}
+
       </div>
     </div>
   )

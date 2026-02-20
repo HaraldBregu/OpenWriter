@@ -62,7 +62,7 @@ export function TitleBar({ title = 'Application Name', onToggleSidebar, classNam
       className={`relative flex h-12 shrink-0 items-center select-none border-b border-border bg-muted/20 ${className}`}
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
-      {/* ── Left: sidebar toggle (macOS) + burger menu + sidebar toggle (Windows) ── */}
+      {/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
       {!isMac ? (
         <div
           className="flex items-center h-full z-10"
@@ -77,29 +77,33 @@ export function TitleBar({ title = 'Application Name', onToggleSidebar, classNam
             <Menu className="h-[18px] w-[18px]" strokeWidth={1.5} />
           </button>
 
-          <button
-            type="button"
-            onClick={onToggleSidebar}
-            className={btnNoHover}
-            title="Toggle sidebar"
-          >
-            <PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
-          </button>
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className={btnNoHover}
+              title="Toggle sidebar"
+            >
+              <PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+            </button>
+          )}
         </div>
       ) : (
-        <div
-          className="flex items-center h-full z-10 ml-20 mt-1"
-          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-        >
-          <button
-            type="button"
-            onClick={onToggleSidebar}
-            className="flex items-center justify-center h-full px-3 text-neutral-600 dark:text-neutral-300"
-            title="Toggle sidebar"
+        onToggleSidebar && (
+          <div
+            className="flex items-center h-full z-10 ml-20 mt-1"
+            style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
           >
-            <PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="flex items-center justify-center h-full px-3 text-neutral-600 dark:text-neutral-300"
+              title="Toggle sidebar"
+            >
+              <PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
+            </button>
+          </div>
+        )
       )}
 
       {/* ── Center: app title (absolutely placed so it's always truly centered) ── */}
