@@ -1,8 +1,9 @@
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow, Menu, app } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WindowManagerService } from '../services/window-manager'
+import type { AppState } from '../core/AppState'
 
 /**
  * IPC handlers for window management operations.
@@ -13,6 +14,7 @@ export class WindowIpc implements IpcModule {
 
   register(container: ServiceContainer, eventBus: EventBus): void {
     const windowManager = container.get<WindowManagerService>('windowManager')
+    const appState = container.get<AppState>('appState')
 
     // Window creation
     ipcMain.handle('window-create-child', () => windowManager.createChildWindow())
@@ -24,6 +26,91 @@ export class WindowIpc implements IpcModule {
     ipcMain.handle('window-close', (_e, id: number) => windowManager.closeWindow(id))
     ipcMain.handle('window-close-all-managed', () => windowManager.closeAllManaged())
     ipcMain.handle('window-get-state', () => windowManager.getState())
+
+    // Window control handlers
+    ipcMain.on('window:minimize', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.minimize()
+    })
+
+    ipcMain.on('window:maximize', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+      if (win.isMaximized()) {
+        win.unmaximize()
+      } else {
+        win.maximize()
+      }
+    })
+
+    ipcMain.on('window:close', (event) => {
+      BrowserWindow.fromWebContents(event.sender)?.close()
+    })
+
+    ipcMain.handle('window:is-maximized', (event) => {
+      return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+    })
+
+    ipcMain.handle('window:get-platform', () => {
+      return process.platform
+    })
+
+    // Application popup menu (hamburger button)
+    ipcMain.handle('window:popup-menu', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+
+      const menu = Menu.buildFromTemplate([
+        {
+          label: 'File',
+          submenu: [
+            { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {} },
+            { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => {} },
+            { type: 'separator' },
+            { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => {} },
+            { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => {} },
+            { type: 'separator' },
+            {
+              label: 'Exit',
+              click: () => {
+                appState.setQuitting()
+                app.quit()
+              }
+            }
+          ]
+        },
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'undo' as const },
+            { role: 'redo' as const },
+            { type: 'separator' as const },
+            { role: 'cut' as const },
+            { role: 'copy' as const },
+            { role: 'paste' as const },
+            { role: 'selectAll' as const }
+          ]
+        },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'reload' as const },
+            { role: 'forceReload' as const },
+            { type: 'separator' as const },
+            { role: 'zoomIn' as const },
+            { role: 'zoomOut' as const },
+            { role: 'resetZoom' as const },
+            { type: 'separator' as const },
+            { role: 'togglefullscreen' as const }
+          ]
+        },
+        {
+          label: 'Help',
+          submenu: [{ label: 'About Tesseract AI', click: () => {} }]
+        }
+      ])
+
+      menu.popup({ window: win })
+    })
 
     // Broadcast window state changes to all windows
     windowManager.onStateChange((state) => {
