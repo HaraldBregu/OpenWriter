@@ -24,7 +24,8 @@ export class AgentController {
   ): Promise<void> {
     const settings = this.storeService.getModelSettings(providerId)
 
-    if (!settings?.apiToken) {
+    const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    if (!apiKey) {
       win.webContents.send('agent:error', {
         runId,
         error: `No API token configured for provider: ${providerId}`
@@ -32,12 +33,14 @@ export class AgentController {
       return
     }
 
+    const modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
+
     const abortController = new AbortController()
     this.activeRuns.set(runId, abortController)
 
     try {
       console.log(
-        `[Agent] Starting run ${runId} with provider=${providerId} model=${settings.selectedModel} history=${messages.length} messages`
+        `[Agent] Starting run ${runId} with provider=${providerId} model=${modelName} history=${messages.length} messages`
       )
 
       win.webContents.send('agent:thinking', {
@@ -46,8 +49,8 @@ export class AgentController {
       })
 
       const model = new ChatOpenAI({
-        apiKey: settings.apiToken,
-        model: settings.selectedModel || 'gpt-4o-mini',
+        apiKey,
+        model: modelName,
         streaming: true
       })
 

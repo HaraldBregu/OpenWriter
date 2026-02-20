@@ -1,7 +1,9 @@
 import React, { useState }  from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
+import { useAppDispatch, useAppSelector } from '../store'
+import { createPost, selectPosts } from '../store/postsSlice'
 import { TitleBar } from './TitleBar'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Separator } from './ui/separator'
@@ -76,13 +78,14 @@ const documentSubItems = [
 interface SettingsMenuItem {
   title: string
   icon: React.ElementType
+  url?: string
   danger?: boolean
   divider?: boolean
 }
 
 const settingsMenuItems: SettingsMenuItem[] = [
   { title: 'Account', icon: User },
-  { title: 'Settings', icon: Settings },
+  { title: 'Settings', icon: Settings, url: '/settings' },
   { title: 'Notifications', icon: Bell },
   { title: 'Privacy', icon: Shield },
   { title: 'Billing', icon: CreditCard },
@@ -118,11 +121,21 @@ function SettingsPopover() {
         <div className="py-1">
           {settingsMenuItems.map((item) => {
             const Icon = item.icon
-            return (
+            const className = "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            return item.url ? (
+              <Link
+                key={item.title}
+                to={item.url}
+                className={className}
+              >
+                <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span>{item.title}</span>
+              </Link>
+            ) : (
               <button
                 key={item.title}
                 type="button"
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                className={className}
               >
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span>{item.title}</span>
@@ -149,12 +162,31 @@ function SettingsPopover() {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function formatRelativeTime(timestamp: number): string {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000)
+  if (seconds < 60) return 'just now'
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
+}
+
+// ---------------------------------------------------------------------------
 // AppLayoutInner — rendered inside SidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
 function AppLayoutInner({ children }: AppLayoutProps) {
   const { toggleSidebar } = useSidebar()
   const location = useLocation()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const posts = useAppSelector(selectPosts)
+
   const [docsOpen, setDocsOpen] = useState(false)
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: false,
@@ -165,6 +197,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const toggleSection = (title: string) =>
     setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] }))
+
+  const handleNewPost = () => {
+    const action = createPost()
+    dispatch(action)
+    navigate(`/new/post/${action.payload.id}`)
+  }
 
   // Auto-expand Documents if a sub-route is active
   const isDocsActive = location.pathname.startsWith('/documents')
@@ -202,20 +240,32 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon
+                    const isNewPost = item.title === 'New Post'
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          asChild
+                          asChild={!isNewPost}
                           // isActive={location.pathname === item.url}
                           className="h-9 px-3 group/item"
+                          onClick={isNewPost ? handleNewPost : undefined}
                         >
-                          <Link to={item.url}>
-                            <Icon className="h-3.5 w-3.5 shrink-0" />
-                            <span className="flex-1 truncate">{item.title}</span>
-                            <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
-                              {item.shortcut}
-                            </span>
-                          </Link>
+                          {isNewPost ? (
+                            <>
+                              <Icon className="h-3.5 w-3.5 shrink-0" />
+                              <span className="flex-1 truncate">{item.title}</span>
+                              <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
+                                {item.shortcut}
+                              </span>
+                            </>
+                          ) : (
+                            <Link to={item.url}>
+                              <Icon className="h-3.5 w-3.5 shrink-0" />
+                              <span className="flex-1 truncate">{item.title}</span>
+                              <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
+                                {item.shortcut}
+                              </span>
+                            </Link>
+                          )}
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )
@@ -226,6 +276,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {/* Posts, Writing, Notes, Messages — collapsible section headers */}
                   {topNavSections.map((section) => {
                     const isOpen = sectionsOpen[section]
+                    const isPosts = section === 'Posts'
                     return (
                       <SidebarMenuItem key={section}>
                         <button
@@ -239,12 +290,24 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           />
                         </button>
                         {isOpen && (
-                          <SidebarMenuSub>
-                            <SidebarMenuSubItem>
-                              <SidebarMenuSubButton className="text-muted-foreground/50 italic">
-                                <span>Create new</span>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
+                          <SidebarMenuSub className="border-none">
+                            {isPosts && (
+                              posts.map((post) => (
+                                <SidebarMenuSubItem key={post.id}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={location.pathname === `/new/post/${post.id}`}
+                                  >
+                                    <Link to={`/new/post/${post.id}`}>
+                                      <span className="flex-1 truncate">{post.title || 'Untitled Post'}</span>
+                                      <span className="text-xs text-muted-foreground/40 shrink-0">
+                                        {formatRelativeTime(post.updatedAt)}
+                                      </span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))
+                            )}
                           </SidebarMenuSub>
                         )}
                       </SidebarMenuItem>

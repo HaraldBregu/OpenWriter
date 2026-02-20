@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Newspaper,
@@ -9,8 +9,13 @@ import {
   Puzzle,
   ArrowRight,
   Clock,
-  Star
+  Star,
+  Loader2,
+  Square
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { usePipeline } from '../hooks/usePipeline'
 
 // ---------------------------------------------------------------------------
 // Quick-action cards
@@ -113,6 +118,118 @@ function RecentItem({
 }
 
 // ---------------------------------------------------------------------------
+// Pipeline test section
+// ---------------------------------------------------------------------------
+
+/**
+ * Self-contained test widget for the pipeline streaming system.
+ * Intentionally kept simple — this is a dev/demo surface, not production UI.
+ * Remove or gate behind a feature flag once the pipeline is production-ready.
+ */
+const AGENTS = [
+  { value: 'echo', label: 'Echo (test)' },
+  { value: 'chat', label: 'Chat (OpenAI)' }
+]
+
+function PipelineTestSection(): React.ReactElement {
+  const { run, cancel, response, status, error } = usePipeline()
+  const [inputValue, setInputValue] = useState('')
+  const [agent, setAgent] = useState('echo')
+
+  useEffect(() => {
+    if (response) {
+      console.log('[Pipeline Test]', response)
+    }
+  }, [response])
+
+  const handleRun = async (): Promise<void> => {
+    if (!inputValue.trim()) return
+    await run(agent, { prompt: inputValue.trim() })
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter' && status !== 'running') {
+      handleRun()
+    }
+  }
+
+  const statusBadge: Record<typeof status, string> = {
+    idle: 'text-muted-foreground',
+    running: 'text-blue-500 dark:text-blue-400',
+    done: 'text-green-600 dark:text-green-400',
+    error: 'text-destructive'
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        Pipeline test
+      </h2>
+
+      <div className="rounded-xl border border-border bg-background p-5 space-y-4">
+        {/* Agent selector + input row */}
+        <div className="flex gap-2">
+          <select
+            value={agent}
+            onChange={(e) => setAgent(e.target.value)}
+            disabled={status === 'running'}
+            className="h-10 rounded-full border border-input bg-background px-3 text-sm text-foreground"
+          >
+            {AGENTS.map((a) => (
+              <option key={a.value} value={a.value}>{a.label}</option>
+            ))}
+          </select>
+
+          <Input
+            placeholder={agent === 'chat' ? 'Ask the AI anything...' : 'Enter a prompt for the echo agent...'}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={status === 'running'}
+            className="flex-1"
+          />
+
+          {status === 'running' ? (
+            <Button variant="outline" size="default" onClick={cancel}>
+              <Square className="h-3.5 w-3.5" />
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              size="default"
+              onClick={handleRun}
+              disabled={!inputValue.trim()}
+            >
+              Run
+            </Button>
+          )}
+        </div>
+
+        {/* Status indicator */}
+        <div className={`flex items-center gap-1.5 text-xs font-medium ${statusBadge[status]}`}>
+          {status === 'running' && (
+            <Loader2 className="h-3 w-3 animate-spin" />
+          )}
+          <span>
+            {status === 'idle' && 'Idle — select an agent, enter a prompt, and click Run'}
+            {status === 'running' && 'Running…'}
+            {status === 'done' && 'Done'}
+            {status === 'error' && `Error: ${error}`}
+          </span>
+        </div>
+
+        {/* Streaming response */}
+        {response && (
+          <pre className="rounded-lg bg-muted/60 border border-border px-4 py-3 text-xs text-foreground font-mono whitespace-pre-wrap break-words max-h-64 overflow-y-auto leading-relaxed">
+            {response}
+          </pre>
+        )}
+      </div>
+    </section>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
@@ -203,6 +320,9 @@ const HomePage: React.FC = () => {
             </Link>
           </div>
         </section>
+
+        {/* Pipeline test */}
+        <PipelineTestSection />
 
         {/* Tips */}
         <section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">

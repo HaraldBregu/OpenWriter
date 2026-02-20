@@ -129,6 +129,17 @@ interface WorkspaceInfo {
   lastOpened: number
 }
 
+interface PipelineEvent {
+  type: 'token' | 'thinking' | 'done' | 'error'
+  data: unknown
+}
+
+interface PipelineActiveRun {
+  runId: string
+  agentName: string
+  startedAt: number
+}
+
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
@@ -243,6 +254,12 @@ declare global {
       ragCancel: (runId: string) => void
       ragGetStatus: () => Promise<{ files: Array<{ filePath: string; chunkCount: number; indexedAt: number }> }>
       onRagEvent: (callback: (eventType: string, data: unknown) => void) => () => void
+      // Pipeline
+      pipelineRun: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
+      pipelineCancel: (runId: string) => void
+      pipelineListAgents: () => Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }>
+      pipelineListRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
+      onPipelineEvent: (callback: (event: PipelineEvent) => void) => () => void
       // Agent
       agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string) => Promise<void>
       agentCancel: (runId: string) => void

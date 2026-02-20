@@ -2,10 +2,12 @@ import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import chatReducer from './chatSlice'
+import postsReducer from './postsSlice'
 
 export const store = configureStore({
   reducer: {
-    chat: chatReducer
+    chat: chatReducer,
+    posts: postsReducer
   }
 })
 

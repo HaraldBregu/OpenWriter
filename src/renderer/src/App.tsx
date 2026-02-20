@@ -70,7 +70,7 @@ const App: React.FC = () => {
                     <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
                     <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
                     <Route path="/rag" element={<RouteWrapper><RagPage /></RouteWrapper>} />
-                    <Route path="/new/post" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
+                    <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                     <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                     <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
                     <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />

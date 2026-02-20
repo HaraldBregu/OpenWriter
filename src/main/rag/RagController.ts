@@ -68,7 +68,8 @@ export class RagController {
     win: BrowserWindow
   ): Promise<RagIndexResult> {
     const settings = this.storeService.getModelSettings(providerId)
-    if (!settings?.apiToken) {
+    const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    if (!apiKey) {
       throw new Error(`No API token configured for provider: ${providerId}`)
     }
 
@@ -76,7 +77,7 @@ export class RagController {
 
     const result = await indexFile({
       filePath,
-      apiKey: settings.apiToken,
+      apiKey,
       chunkSize: 1000,
       chunkOverlap: 200,
       topK: 4
@@ -126,7 +127,8 @@ export class RagController {
     }
 
     const settings = this.storeService.getModelSettings(providerId)
-    if (!settings?.apiToken) {
+    const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    if (!apiKey) {
       win.webContents.send('rag:error', {
         runId,
         error: `No API token configured for provider: ${providerId}`
@@ -142,8 +144,8 @@ export class RagController {
 
       const chain = buildRagChain({
         retriever: indexed.retriever,
-        apiKey: settings.apiToken,
-        modelId: settings.selectedModel || 'gpt-4o-mini',
+        apiKey,
+        modelId: settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini',
         signal: abortController.signal
       })
 

@@ -129,7 +129,15 @@ export class WindowIpc implements IpcModule {
             { role: 'zoomOut' as const },
             { role: 'resetZoom' as const },
             { type: 'separator' as const },
-            { role: 'togglefullscreen' as const }
+            { role: 'togglefullscreen' as const },
+            { type: 'separator' as const },
+            {
+              label: 'Toggle Console',
+              accelerator: 'CmdOrCtrl+Shift+I',
+              click: () => {
+                win.webContents.toggleDevTools()
+              }
+            }
           ]
         },
         {

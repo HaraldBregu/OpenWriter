@@ -5,6 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   main: {
+    envPrefix: ['MAIN_VITE_', 'VITE_'],
     plugins: [externalizeDepsPlugin()],
     build: {
       rollupOptions: {

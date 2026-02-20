@@ -559,6 +559,28 @@ const api = {
             handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
         }
     },
+    // Pipeline
+    pipelineRun: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:run', agentName, input)
+    },
+    pipelineCancel: (runId: string): void => {
+        ipcRenderer.send('pipeline:cancel', runId)
+    },
+    pipelineListAgents: (): Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:list-agents')
+    },
+    pipelineListRuns: (): Promise<{ success: true; data: Array<{ runId: string; agentName: string; startedAt: number }> } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:list-runs')
+    },
+    onPipelineEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, pipelineEvent: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }): void => {
+            callback(pipelineEvent)
+        }
+        ipcRenderer.on('pipeline:event', handler)
+        return () => {
+            ipcRenderer.removeListener('pipeline:event', handler)
+        }
+    },
     // Window controls
     popupMenu: (): Promise<void> => {
         return ipcRenderer.invoke('window:popup-menu')

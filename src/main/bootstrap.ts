@@ -29,6 +29,7 @@ import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
+import { AgentRegistry, PipelineService, EchoAgent, ChatAgent } from './pipeline'
 
 // IPC modules
 import type { IpcModule } from './ipc'
@@ -44,6 +45,7 @@ import {
   MediaPermissionsIpc,
   NetworkIpc,
   NotificationIpc,
+  PipelineIpc,
   RagIpc,
   StoreIpc,
   WindowIpc,
@@ -103,6 +105,12 @@ export function bootstrapServices(): BootstrapResult {
   container.register('agent', new AgentService(storeService))
   container.register('rag', new RagController(storeService))
 
+  // Pipeline -- agent registry + pipeline service + built-in agents
+  const agentRegistry = container.register('agentRegistry', new AgentRegistry())
+  agentRegistry.register(new EchoAgent())
+  agentRegistry.register(new ChatAgent(storeService))
+  container.register('pipeline', new PipelineService(agentRegistry, eventBus))
+
   console.log(`[Bootstrap] Registered ${container.has('store') ? 'all' : 'some'} services`)
 
   return { container, eventBus, windowFactory, appState }
@@ -127,6 +135,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new MediaPermissionsIpc(),
     new NetworkIpc(),
     new NotificationIpc(),
+    new PipelineIpc(),
     new RagIpc(),
     new StoreIpc(),
     new WindowIpc(),

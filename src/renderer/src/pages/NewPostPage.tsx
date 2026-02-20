@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import { Input } from '@/components/ui/input'
@@ -14,44 +15,73 @@ import {
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock'
+import { useAppDispatch, useAppSelector } from '../store'
+import {
+  selectPostById,
+  updatePostBlocks,
+  updatePostTitle,
+  updatePostCategory,
+  updatePostTags,
+  updatePostVisibility
+} from '../store/postsSlice'
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 const NewPostPage: React.FC = () => {
-  const [blocks, setBlocks] = useState<Block[]>([createBlock()])
-  const [category, setCategory] = useState('technology')
-  const [tags, setTags] = useState<string[]>(['AI', 'Writing'])
-  const [visibility, setVisibility] = useState('public')
+  const { id } = useParams<{ id: string }>()
+  const dispatch = useAppDispatch()
+
+  // Stable selector instance — created once per render cycle; safe because id
+  // is stable for the lifetime of this mounted route.
+  const post = useAppSelector(selectPostById(id ?? ''))
+
   const [tagInput, setTagInput] = useState('')
   const [showSidebar, setShowSidebar] = useState(true)
 
-  const handleChange = (id: string, content: string) => {
-    setBlocks(prev => prev.map(b => b.id === id ? { ...b, content } : b))
+  // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
+  // stale URL), show a fallback rather than crashing.
+  if (!post) {
+    return (
+      <div className="h-full flex items-center justify-center text-muted-foreground">
+        <p>Post not found.</p>
+      </div>
+    )
   }
 
-  const handleDelete = (id: string) => {
-    setBlocks(prev => prev.filter(b => b.id !== id))
+  const { blocks, category, tags, visibility } = post
+
+  const handleChange = (blockId: string, content: string) => {
+    const updated = blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
+  }
+
+  const handleDelete = (blockId: string) => {
+    const updated = blocks.filter((b) => b.id !== blockId)
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
   }
 
   const handleAddBlockAfter = (afterId: string) => {
-    setBlocks(prev => {
-      const index = prev.findIndex(b => b.id === afterId)
-      const newBlock = createBlock()
-      return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
-    })
+    const index = blocks.findIndex((b) => b.id === afterId)
+    const newBlock: Block = createBlock()
+    const updated = [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)]
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
+  }
+
+  const handleReorder = (reordered: Block[]) => {
+    dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
   }
 
   const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput)) {
-      setTags(prev => [...prev, tagInput])
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      dispatch(updatePostTags({ postId: post.id, tags: [...tags, tagInput.trim()] }))
       setTagInput('')
     }
   }
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(prev => prev.filter(tag => tag !== tagToRemove))
+    dispatch(updatePostTags({ postId: post.id, tags: tags.filter((t) => t !== tagToRemove) }))
   }
 
   return (
@@ -59,7 +89,13 @@ const NewPostPage: React.FC = () => {
 
       {/* Header */}
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
-        <h1 className="text-xl font-semibold text-foreground">New Post</h1>
+        <input
+          type="text"
+          value={post.title}
+          onChange={(e) => dispatch(updatePostTitle({ postId: post.id, title: e.target.value }))}
+          placeholder="New post"
+          className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
+        />
         <div className="flex items-center gap-3">
           <Button
             type="button"
@@ -102,7 +138,7 @@ const NewPostPage: React.FC = () => {
             <Reorder.Group
               axis="y"
               values={blocks}
-              onReorder={setBlocks}
+              onReorder={handleReorder}
               className="flex flex-col gap-2"
             >
               {blocks.map((block, index) => (
@@ -146,7 +182,12 @@ const NewPostPage: React.FC = () => {
               {/* Category */}
               <div className="flex flex-col gap-2">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</Label>
-                <Select value={category} onValueChange={setCategory}>
+                <Select
+                  value={category}
+                  onValueChange={(value) =>
+                    dispatch(updatePostCategory({ postId: post.id, category: value }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -184,7 +225,7 @@ const NewPostPage: React.FC = () => {
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {tags.map(tag => (
+                  {tags.map((tag) => (
                     <Badge
                       key={tag}
                       variant="secondary"
@@ -204,11 +245,16 @@ const NewPostPage: React.FC = () => {
                   <Globe className="h-3.5 w-3.5" />
                   Visibility
                 </Label>
-                <RadioGroup value={visibility} onValueChange={setVisibility}>
-                  {['public', 'private', 'draft'].map(option => (
+                <RadioGroup
+                  value={visibility}
+                  onValueChange={(value) =>
+                    dispatch(updatePostVisibility({ postId: post.id, visibility: value }))
+                  }
+                >
+                  {['public', 'private', 'draft'].map((option) => (
                     <div key={option} className="flex items-center gap-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option} className="text-sm font-normal cursor-pointer">
+                      <RadioGroupItem value={option} id={`${post.id}-${option}`} />
+                      <Label htmlFor={`${post.id}-${option}`} className="text-sm font-normal cursor-pointer">
                         <span className="capitalize">{option}</span>
                       </Label>
                     </div>

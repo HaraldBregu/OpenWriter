@@ -26,5 +26,18 @@
 - AI: LangChain (OpenAI), RAG pipeline
 - Custom file format: `.tsrct`
 
+## Pipeline Architecture (Feb 2026)
+- `src/main/pipeline/` module: AgentBase (interface+types), AgentRegistry, PipelineService, agents/EchoAgent
+- Pattern: Agent interface yields `AsyncGenerator<AgentEvent>`, PipelineService drives the generator and forwards events via EventBus
+- IPC: single `pipeline:event` channel carries all event types (token/thinking/done/error) as `{ type, data }` objects
+- Renderer hook: `src/renderer/src/hooks/usePipeline.ts` accumulates tokens, filters by runId
+- Adding a new agent: implement Agent interface + register in bootstrap.ts (2 lines)
+- PipelineService implements Disposable for graceful shutdown
+- `wrapIpcHandler` returns `{ success, data }` envelope -- renderer must unwrap
+
+## Known Lint Issues
+- ESLint config does not respect `_` prefix for unused params; `_eventBus` in IpcModules triggers @typescript-eslint/no-unused-vars (pre-existing in StoreIpc, PipelineIpc, etc.)
+- `src/renderer/src/utils/ipc-helpers.ts` imports from `src/main/` causing TS6307 in tsconfig.web.json (pre-existing)
+
 ## File Links
 - [architecture-refactoring-plan.md](./architecture-refactoring-plan.md) - Detailed refactoring plan for main process
