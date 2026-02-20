@@ -40,7 +40,9 @@
       "Bash(npx shadcn-ui@latest:*)",
       "Bash(npx shadcn@latest:*)",
       "Bash(npm run build:dev:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npm run dist-mac:*)",
+      "Bash(npm run dist:mac:*)"
     ],
     "deny": [],
     "ask": []

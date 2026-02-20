@@ -6,14 +6,12 @@ import { MediaPermissionsService } from './services/media-permissions'
 import { BluetoothService } from './services/bluetooth'
 import { NetworkService } from './services/network'
 import { CronService } from './services/cron'
-import { UpdateService } from './services/update'
 import { LifecycleService } from './services/lifecycle'
 import { WindowManagerService } from './services/window-manager'
 import { FilesystemService } from './services/filesystem'
 import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
-import { UpdateSimulator } from './services/update-simulator'
 import { StoreService } from './services/store'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
@@ -24,8 +22,6 @@ export class Main {
   private bluetoothService: BluetoothService
   private networkService: NetworkService
   private cronService: CronService
-  private updateService: UpdateService
-  private updateSimulator: UpdateSimulator
   private lifecycleService: LifecycleService
   private windowManagerService: WindowManagerService
   private filesystemService: FilesystemService
@@ -44,8 +40,6 @@ export class Main {
     this.bluetoothService = new BluetoothService()
     this.networkService = new NetworkService()
     this.cronService = new CronService()
-    this.updateService = new UpdateService()
-    this.updateSimulator = new UpdateSimulator()
     this.lifecycleService = lifecycleService
     this.windowManagerService = new WindowManagerService()
     this.filesystemService = new FilesystemService()
@@ -201,34 +195,7 @@ export class Main {
 
     // Initialize default cron jobs
     this.cronService.initialize()
-
-    // Update handlers
-    ipcMain.handle('update-get-state', () => {
-      return this.updateService.getState()
-    })
-
-    ipcMain.handle('update-get-version', () => {
-      return app.getVersion()
-    })
-
-    ipcMain.handle('update-check', () => {
-      this.updateService.checkForUpdates()
-    })
-
-    ipcMain.handle('update-install', () => {
-      this.updateService.installUpdate()
-    })
-
-    // Forward update state changes to all renderer windows
-    this.updateService.onStateChange((state) => {
-      BrowserWindow.getAllWindows().forEach((win) => {
-        win.webContents.send('update-state-changed', state)
-      })
-    })
-
-    // Initialize auto-update
-    this.updateService.initialize()
-
+    
     // Lifecycle handlers
     ipcMain.handle('lifecycle-get-state', () => {
       return this.lifecycleService.getState()
@@ -463,44 +430,6 @@ export class Main {
       this.storeService.clearCurrentWorkspace()
     })
 
-    // Update Simulator handlers
-    ipcMain.handle('update-sim-check', async () => {
-      await this.updateSimulator.checkForUpdates()
-    })
-
-    ipcMain.handle('update-sim-download', async () => {
-      await this.updateSimulator.downloadUpdate()
-    })
-
-    ipcMain.handle('update-sim-install', async () => {
-      await this.updateSimulator.installAndRestart()
-    })
-
-    ipcMain.handle('update-sim-cancel', () => {
-      this.updateSimulator.cancelDownload()
-    })
-
-    ipcMain.handle('update-sim-reset', () => {
-      this.updateSimulator.reset()
-    })
-
-    ipcMain.handle('update-sim-get-state', () => {
-      return this.updateSimulator.getState()
-    })
-
-    // Forward update simulator state changes to all renderer windows
-    this.updateSimulator.onStateChange((state) => {
-      BrowserWindow.getAllWindows().forEach((win) => {
-        win.webContents.send('update-sim-state-changed', state)
-      })
-    })
-
-    // Forward update simulator progress to all renderer windows
-    this.updateSimulator.onProgress((progress) => {
-      BrowserWindow.getAllWindows().forEach((win) => {
-        win.webContents.send('update-sim-progress', progress)
-      })
-    })
 
     // Agent handlers - register all multi-agent IPC handlers
     this.agentService.registerHandlers()

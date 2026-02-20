@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Send, Download, Eye, MoreHorizontal, X, Filter, Tag, Clock, Globe, Share2 } from 'lucide-react'
+import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'

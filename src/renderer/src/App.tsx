@@ -17,14 +17,12 @@ import FilesystemPage from './pages/FilesystemPage'
 import DialogsPage from './pages/DialogsPage'
 import NotificationsPage from './pages/NotificationsPage'
 import ClipboardPage from './pages/ClipboardPage'
-import UpdateSimulatorPage from './pages/UpdateSimulatorPage'
 import SettingsPage from './pages/SettingsPage'
 import RagPage from './pages/RagPage'
 import NewPostPage from './pages/NewPostPage'
 import NewWritingPage from './pages/NewWritingPage'
 import NewNotePage from './pages/NewNotePage'
 import NewMessagePage from './pages/NewMessagePage'
-import WorkspaceSelectorPage from './pages/WorkspaceSelectorPage'
 import './index.css'
 import HomePage from './pages/HomePage'
 
@@ -57,7 +55,6 @@ const App: React.FC = () => {
                 <Route path="/dialogs" element={<DialogsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="/clipboard" element={<ClipboardPage />} />
-                <Route path="/update-simulator" element={<UpdateSimulatorPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/rag" element={<RagPage />} />
                 <Route path="/new/post" element={<NewPostPage />} />

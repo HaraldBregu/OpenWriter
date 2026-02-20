@@ -3,6 +3,7 @@
   "productName": "Tesseract AI",
   "homepage": "https://github.com/HaraldBregu/tesseract-ai",
   "description": "A desktop app with multi prebuilt features",
+  "author": "Harald Bregu <harald@9spartans.com>",
   "version": "1.0.0",
   "copyright": "© 2026 Tesseract AI Project. All rights reserved.",
   "type": "module",

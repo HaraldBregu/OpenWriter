@@ -129,27 +129,6 @@ interface WorkspaceInfo {
   lastOpened: number
 }
 
-interface UpdateSimInfo {
-  version: string
-  releaseDate: string
-  releaseNotes: string
-  downloadSize: number
-}
-
-interface UpdateSimProgress {
-  percent: number
-  transferred: number
-  total: number
-  bytesPerSecond: number
-}
-
-interface UpdateSimState {
-  status: string
-  updateInfo: UpdateSimInfo | null
-  progress: UpdateSimProgress | null
-  error: string | null
-}
-
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
@@ -161,19 +140,6 @@ interface ManagedWindowInfo {
 
 interface WindowManagerState {
   windows: ManagedWindowInfo[]
-}
-
-type UpdateStatus = 'idle' | 'checking' | 'not-available' | 'downloading' | 'downloaded' | 'error'
-
-interface UpdateInfo {
-  version: string
-  releaseNotes?: string
-}
-
-interface UpdateState {
-  status: UpdateStatus
-  updateInfo: UpdateInfo | null
-  error: string | null
 }
 
 declare global {
@@ -212,12 +178,6 @@ declare global {
       cronUpdateSchedule: (id: string, schedule: string) => Promise<boolean>
       cronValidateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
       onCronJobResult: (callback: (result: CronJobResult) => void) => () => void
-      // Update
-      updateGetState: () => Promise<UpdateState>
-      updateGetVersion: () => Promise<string>
-      updateCheck: () => Promise<void>
-      updateInstall: () => Promise<void>
-      onUpdateStateChange: (callback: (state: UpdateState) => void) => () => void
       // Lifecycle
       lifecycleGetState: () => Promise<LifecycleState>
       lifecycleGetEvents: () => Promise<LifecycleEvent[]>
@@ -347,15 +307,6 @@ declare global {
         totalMessages: number
       }>
       agentIsRunning: (runId: string) => Promise<boolean>
-      // Update Simulator
-      updateSimCheck: () => Promise<void>
-      updateSimDownload: () => Promise<void>
-      updateSimInstall: () => Promise<void>
-      updateSimCancel: () => Promise<void>
-      updateSimReset: () => Promise<void>
-      updateSimGetState: () => Promise<UpdateSimState>
-      onUpdateSimStateChange: (callback: (state: UpdateSimState) => void) => () => void
-      onUpdateSimProgress: (callback: (progress: UpdateSimProgress) => void) => () => void
       // Window controls
       popupMenu: () => Promise<void>
       windowMinimize: () => void

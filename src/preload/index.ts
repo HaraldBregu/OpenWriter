@@ -174,40 +174,6 @@ const api = {
             ipcRenderer.removeListener('cron-job-result', handler)
         }
     },
-    // Update
-    updateGetState: (): Promise<{
-        status: string
-        updateInfo: { version: string; releaseNotes?: string } | null
-        error: string | null
-    }> => {
-        return ipcRenderer.invoke('update-get-state')
-    },
-    updateGetVersion: (): Promise<string> => {
-        return ipcRenderer.invoke('update-get-version')
-    },
-    updateCheck: (): Promise<void> => {
-        return ipcRenderer.invoke('update-check')
-    },
-    updateInstall: (): Promise<void> => {
-        return ipcRenderer.invoke('update-install')
-    },
-    onUpdateStateChange: (callback: (state: {
-        status: string
-        updateInfo: { version: string; releaseNotes?: string } | null
-        error: string | null
-    }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, state: {
-            status: string
-            updateInfo: { version: string; releaseNotes?: string } | null
-            error: string | null
-        }): void => {
-            callback(state)
-        }
-        ipcRenderer.on('update-state-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('update-state-changed', handler)
-        }
-    },
     // Lifecycle
     lifecycleGetState: (): Promise<{
         isSingleInstance: boolean
@@ -475,98 +441,6 @@ const api = {
     },
     workspaceClear: (): Promise<void> => {
         return ipcRenderer.invoke('workspace-clear')
-    },
-    // Update Simulator
-    updateSimCheck: (): Promise<void> => {
-        return ipcRenderer.invoke('update-sim-check')
-    },
-    updateSimDownload: (): Promise<void> => {
-        return ipcRenderer.invoke('update-sim-download')
-    },
-    updateSimInstall: (): Promise<void> => {
-        return ipcRenderer.invoke('update-sim-install')
-    },
-    updateSimCancel: (): Promise<void> => {
-        return ipcRenderer.invoke('update-sim-cancel')
-    },
-    updateSimReset: (): Promise<void> => {
-        return ipcRenderer.invoke('update-sim-reset')
-    },
-    updateSimGetState: (): Promise<{
-        status: string
-        updateInfo: {
-            version: string
-            releaseDate: string
-            releaseNotes: string
-            downloadSize: number
-        } | null
-        progress: {
-            percent: number
-            transferred: number
-            total: number
-            bytesPerSecond: number
-        } | null
-        error: string | null
-    }> => {
-        return ipcRenderer.invoke('update-sim-get-state')
-    },
-    onUpdateSimStateChange: (callback: (state: {
-        status: string
-        updateInfo: {
-            version: string
-            releaseDate: string
-            releaseNotes: string
-            downloadSize: number
-        } | null
-        progress: {
-            percent: number
-            transferred: number
-            total: number
-            bytesPerSecond: number
-        } | null
-        error: string | null
-    }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, state: {
-            status: string
-            updateInfo: {
-                version: string
-                releaseDate: string
-                releaseNotes: string
-                downloadSize: number
-            } | null
-            progress: {
-                percent: number
-                transferred: number
-                total: number
-                bytesPerSecond: number
-            } | null
-            error: string | null
-        }): void => {
-            callback(state)
-        }
-        ipcRenderer.on('update-sim-state-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('update-sim-state-changed', handler)
-        }
-    },
-    onUpdateSimProgress: (callback: (progress: {
-        percent: number
-        transferred: number
-        total: number
-        bytesPerSecond: number
-    }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, progress: {
-            percent: number
-            transferred: number
-            total: number
-            bytesPerSecond: number
-        }): void => {
-            callback(progress)
-        }
-        ipcRenderer.on('update-sim-progress', handler)
-        return () => {
-            ipcRenderer.removeListener('update-sim-progress', handler)
-        }
     },
     // Agent
     agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {

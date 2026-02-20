@@ -2,13 +2,6 @@
   "productName": "Tesseract AI",
   "appId": "com.tesseract-ai.tesseract-ai",
   "copyright": "Tesseract AI Project © 2025",
-  "publish": [
-    {
-      "provider": "github",
-      "owner": "HaraldBregu",
-      "repo": "tesseract-ai"
-    }
-  ],
   "files": [
     "out/**",
     "resources/**"
@@ -116,15 +109,17 @@
     "vendor": "Tesseract AI Project",
     "executableName": "tesseract-ai",
     "desktop": {
-      "Type": "Application",
-      "Name": "Tesseract AI",
-      "Comment": "Advanced AI manager",
-      "Icon": "tesseract-ai",
-      "Terminal": false,
-      "Categories": "Office;WordProcessor;AI;",
-      "MimeType": "application/x-tesseract-ai-document;",
-      "StartupNotify": true,
-      "StartupWMClass": "Tesseract AI"
+      "entry": {
+        "Type": "Application",
+        "Name": "Tesseract AI",
+        "Comment": "Advanced AI manager",
+        "Icon": "tesseract-ai",
+        "Terminal": false,
+        "Categories": "Office;WordProcessor;AI;",
+        "MimeType": "application/x-tesseract-ai-document;",
+        "StartupNotify": true,
+        "StartupWMClass": "Tesseract AI"
+      }
     },
     "extraResources": [
       {
