@@ -4,6 +4,7 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WindowManagerService } from '../services/window-manager'
 import type { AppState } from '../core/AppState'
+import { wrapIpcHandler, wrapSimpleHandler } from './IpcErrorHandler'
 
 /**
  * IPC handlers for window management operations.
@@ -17,15 +18,36 @@ export class WindowIpc implements IpcModule {
     const appState = container.get<AppState>('appState')
 
     // Window creation
-    ipcMain.handle('window-create-child', () => windowManager.createChildWindow())
-    ipcMain.handle('window-create-modal', () => windowManager.createModalWindow())
-    ipcMain.handle('window-create-frameless', () => windowManager.createFramelessWindow())
-    ipcMain.handle('window-create-widget', () => windowManager.createWidgetWindow())
+    ipcMain.handle(
+      'window-create-child',
+      wrapSimpleHandler(() => windowManager.createChildWindow(), 'window-create-child')
+    )
+    ipcMain.handle(
+      'window-create-modal',
+      wrapSimpleHandler(() => windowManager.createModalWindow(), 'window-create-modal')
+    )
+    ipcMain.handle(
+      'window-create-frameless',
+      wrapSimpleHandler(() => windowManager.createFramelessWindow(), 'window-create-frameless')
+    )
+    ipcMain.handle(
+      'window-create-widget',
+      wrapSimpleHandler(() => windowManager.createWidgetWindow(), 'window-create-widget')
+    )
 
     // Window management
-    ipcMain.handle('window-close', (_e, id: number) => windowManager.closeWindow(id))
-    ipcMain.handle('window-close-all-managed', () => windowManager.closeAllManaged())
-    ipcMain.handle('window-get-state', () => windowManager.getState())
+    ipcMain.handle(
+      'window-close',
+      wrapSimpleHandler((id: number) => windowManager.closeWindow(id), 'window-close')
+    )
+    ipcMain.handle(
+      'window-close-all-managed',
+      wrapSimpleHandler(() => windowManager.closeAllManaged(), 'window-close-all-managed')
+    )
+    ipcMain.handle(
+      'window-get-state',
+      wrapSimpleHandler(() => windowManager.getState(), 'window-get-state')
+    )
 
     // Window control handlers
     ipcMain.on('window:minimize', (event) => {
@@ -46,18 +68,25 @@ export class WindowIpc implements IpcModule {
       BrowserWindow.fromWebContents(event.sender)?.close()
     })
 
-    ipcMain.handle('window:is-maximized', (event) => {
-      return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
-    })
+    ipcMain.handle(
+      'window:is-maximized',
+      wrapIpcHandler(
+        (event) => BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false,
+        'window:is-maximized'
+      )
+    )
 
-    ipcMain.handle('window:get-platform', () => {
-      return process.platform
-    })
+    ipcMain.handle(
+      'window:get-platform',
+      wrapSimpleHandler(() => process.platform, 'window:get-platform')
+    )
 
     // Application popup menu (hamburger button)
-    ipcMain.handle('window:popup-menu', (event) => {
-      const win = BrowserWindow.fromWebContents(event.sender)
-      if (!win) return
+    ipcMain.handle(
+      'window:popup-menu',
+      wrapIpcHandler((event) => {
+        const win = BrowserWindow.fromWebContents(event.sender)
+        if (!win) return
 
       const menu = Menu.buildFromTemplate([
         {
@@ -109,8 +138,9 @@ export class WindowIpc implements IpcModule {
         }
       ])
 
-      menu.popup({ window: win })
-    })
+        menu.popup({ window: win })
+      }, 'window:popup-menu')
+    )
 
     // Broadcast window state changes to all windows
     windowManager.onStateChange((state) => {

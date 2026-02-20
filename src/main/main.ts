@@ -1,13 +1,15 @@
 import { BrowserWindow } from 'electron'
-import path from 'node:path'
-import { is } from '@electron-toolkit/utils'
 import type { AppState } from './core/AppState'
+import type { WindowFactory } from './core/WindowFactory'
 
 export class Main {
   private window: BrowserWindow | null = null
   private onWindowVisibilityChange?: () => void
 
-  constructor(private appState: AppState) {
+  constructor(
+    private appState: AppState,
+    private windowFactory: WindowFactory
+  ) {
     // Constructor is now minimal
     // All services are managed by ServiceContainer in bootstrap
     // All IPC handlers are registered in IPC modules via bootstrap
@@ -15,39 +17,19 @@ export class Main {
   }
 
   create(): BrowserWindow {
-    this.window = new BrowserWindow({
+    this.window = this.windowFactory.create({
       width: 1200,
       height: 800,
       minWidth: 800,
       minHeight: 600,
-      show: false,
-      // titleBarStyle: 'hidden', // optional macOS polish
-      // titleBarStyle: "hiddenInset",
-      // titleBarOverlay: true,
-      icon: path.join(__dirname, '../../resources/icons/icon.png'),
-      webPreferences: {
-        preload: path.join(__dirname, '../preload/index.mjs'),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true,
-        devTools: is.dev,
-        webSecurity: true,
-        allowRunningInsecureContent: false
-      },
       frame: false,
       titleBarStyle: 'hidden',
       trafficLightPosition: {
         x: 16,
-        y: 16,
+        y: 16
       },
       backgroundColor: '#FFFFFF'
     })
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      this.window.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-      this.window.loadFile(path.join(__dirname, '../renderer/index.html'))
-    }
 
     this.window.once('ready-to-show', () => {
       this.window?.show()
@@ -128,34 +110,17 @@ export class Main {
   }
 
   createWindowForFile(filePath: string): BrowserWindow {
-    const win = new BrowserWindow({
+    const win = this.windowFactory.create({
       width: 1200,
       height: 800,
       minWidth: 800,
       minHeight: 600,
-      show: false,
-      icon: path.join(__dirname, '../../resources/icons/icon.png'),
-      webPreferences: {
-        preload: path.join(__dirname, '../preload/index.mjs'),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true,
-        devTools: is.dev,
-        webSecurity: true,
-        allowRunningInsecureContent: false
-      },
       trafficLightPosition: {
         x: 9,
         y: 9
       },
       backgroundColor: '#FFFFFF'
     })
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      win.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-      win.loadFile(path.join(__dirname, '../renderer/index.html'))
-    }
 
     win.once('ready-to-show', () => {
       win.show()

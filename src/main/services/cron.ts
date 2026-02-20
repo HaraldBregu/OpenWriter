@@ -1,10 +1,10 @@
 import { CronJob } from 'cron'
 import cronstrue from 'cronstrue'
 import type { CronJobConfig, CronJobStatus, CronJobResult } from '../types/cron'
+import { Observable, type Unsubscribe } from '../core/Observable'
 
-export class CronService {
+export class CronService extends Observable<CronJobResult> {
   private jobs: Map<string, { config: CronJobConfig; job: CronJob }> = new Map()
-  private resultCallback: ((result: CronJobResult) => void) | null = null
 
   /**
    * Initialize default cron jobs
@@ -163,9 +163,7 @@ export class CronService {
       }
 
       // Notify renderer process
-      if (this.resultCallback) {
-        this.resultCallback(result)
-      }
+      this.notify(result)
     } catch (error) {
       console.error(`Error executing job ${id}:`, error)
       result = {
@@ -175,9 +173,7 @@ export class CronService {
         message: error instanceof Error ? error.message : 'Unknown error'
       }
 
-      if (this.resultCallback) {
-        this.resultCallback(result)
-      }
+      this.notify(result)
     }
   }
 
@@ -342,18 +338,19 @@ export class CronService {
   }
 
   /**
-   * Set callback for job results
+   * Subscribe to job results.
+   * Returns an unsubscribe function to stop receiving notifications.
    */
-  onJobResult(callback: (result: CronJobResult) => void): void {
-    this.resultCallback = callback
+  onJobResult(callback: (result: CronJobResult) => void): Unsubscribe {
+    return this.subscribe(callback)
   }
 
   /**
-   * Clean up all jobs
+   * Clean up all jobs and clear subscribers
    */
   destroy(): void {
     this.jobs.forEach(({ job }) => job.stop())
     this.jobs.clear()
-    this.resultCallback = null
+    this.clearSubscribers()
   }
 }

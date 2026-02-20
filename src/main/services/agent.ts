@@ -1,6 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { AgentController } from '../agent/AgentController'
 import type { StoreService } from './store'
+import { AgentValidators, StoreValidators } from '../shared/validators'
 
 /**
  * Agent Session Configuration
@@ -82,6 +83,11 @@ export class AgentService {
 
     // Agent execution
     ipcMain.handle('agent:run', async (event, messages, runId, providerId) => {
+      // Validate inputs
+      AgentValidators.validateMessages(messages)
+      AgentValidators.validateRunId(runId)
+      StoreValidators.validateProviderId(providerId)
+
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) throw new Error('No window found')
 
@@ -99,6 +105,12 @@ export class AgentService {
     })
 
     ipcMain.handle('agent:run-session', async (event, options: AgentRunOptions) => {
+      // Validate inputs
+      AgentValidators.validateSessionId(options.sessionId)
+      AgentValidators.validateRunId(options.runId)
+      AgentValidators.validateMessages(options.messages)
+      StoreValidators.validateProviderId(options.providerId)
+
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) throw new Error('No window found')
 
@@ -127,6 +139,13 @@ export class AgentService {
    * Create a new agent session
    */
   private createSession(config: AgentSessionConfig): AgentSessionInfo {
+    // Validate inputs
+    AgentValidators.validateSessionId(config.sessionId)
+    StoreValidators.validateProviderId(config.providerId)
+    if (config.modelId) {
+      StoreValidators.validateModelName(config.modelId)
+    }
+
     if (this.sessions.has(config.sessionId)) {
       throw new Error(`Session ${config.sessionId} already exists`)
     }

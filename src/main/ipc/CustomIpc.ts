@@ -1,10 +1,13 @@
 import { ipcMain, BrowserWindow, Menu } from 'electron'
-import { exec } from 'node:child_process'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+
+const execFileAsync = promisify(execFile)
 
 /**
  * IPC handlers for custom application-specific operations.
@@ -15,17 +18,27 @@ export class CustomIpc implements IpcModule {
 
   register(_container: ServiceContainer, _eventBus: EventBus): void {
     // Play sound handler
-    ipcMain.on('play-sound', () => {
+    ipcMain.on('play-sound', async () => {
       const soundPath = is.dev
         ? path.join(__dirname, '../../resources/sounds/click6.wav')
         : path.join(process.resourcesPath, 'resources/sounds/click6.wav')
 
-      if (process.platform === 'darwin') {
-        exec(`afplay "${soundPath}"`)
-      } else if (process.platform === 'win32') {
-        exec(`powershell -c "(New-Object Media.SoundPlayer '${soundPath}').PlaySync()"`)
-      } else {
-        exec(`aplay "${soundPath}"`)
+      try {
+        if (process.platform === 'darwin') {
+          await execFileAsync('afplay', [soundPath])
+        } else if (process.platform === 'win32') {
+          // Escape single quotes in path for PowerShell
+          const escapedPath = soundPath.replace(/'/g, "''")
+          await execFileAsync('powershell', [
+            '-NoProfile',
+            '-Command',
+            `(New-Object Media.SoundPlayer '${escapedPath}').PlaySync()`
+          ])
+        } else {
+          await execFileAsync('aplay', [soundPath])
+        }
+      } catch (err) {
+        console.error('[CustomIpc] Sound playback failed:', err)
       }
     })
 

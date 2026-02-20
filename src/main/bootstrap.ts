@@ -90,7 +90,12 @@ export function bootstrapServices(): BootstrapResult {
   container.register('bluetooth', new BluetoothService())
   container.register('network', new NetworkService())
   container.register('cron', new CronService())
-  container.register('windowManager', new WindowManagerService())
+
+  // WindowManagerService needs WindowFactory
+  const windowManager = new WindowManagerService()
+  windowManager.setWindowFactory(windowFactory)
+  container.register('windowManager', windowManager)
+
   container.register('filesystem', new FilesystemService())
   container.register('dialog', new DialogService())
   container.register('notification', new NotificationService())

@@ -3,6 +3,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { CronService } from '../services/cron'
+import { wrapSimpleHandler } from './IpcErrorHandler'
 
 /**
  * IPC handlers for cron job management.
@@ -14,17 +15,43 @@ export class CronIpc implements IpcModule {
   register(container: ServiceContainer, eventBus: EventBus): void {
     const cron = container.get<CronService>('cron')
 
-    ipcMain.handle('cron-get-all-jobs', () => cron.getAllJobs())
-    ipcMain.handle('cron-get-job', (_e, id: string) => cron.getJob(id))
-    ipcMain.handle('cron-start-job', (_e, id: string) => cron.startJob(id))
-    ipcMain.handle('cron-stop-job', (_e, id: string) => cron.stopJob(id))
-    ipcMain.handle('cron-delete-job', (_e, id: string) => cron.deleteJob(id))
-    ipcMain.handle('cron-create-job', (_e, config) => cron.createJob(config))
-    ipcMain.handle('cron-update-schedule', (_e, id: string, schedule: string) =>
-      cron.updateJobSchedule(id, schedule)
+    ipcMain.handle(
+      'cron-get-all-jobs',
+      wrapSimpleHandler(() => cron.getAllJobs(), 'cron-get-all-jobs')
     )
-    ipcMain.handle('cron-validate-expression', (_e, expression: string) =>
-      cron.validateCronExpression(expression)
+    ipcMain.handle(
+      'cron-get-job',
+      wrapSimpleHandler((id: string) => cron.getJob(id), 'cron-get-job')
+    )
+    ipcMain.handle(
+      'cron-start-job',
+      wrapSimpleHandler((id: string) => cron.startJob(id), 'cron-start-job')
+    )
+    ipcMain.handle(
+      'cron-stop-job',
+      wrapSimpleHandler((id: string) => cron.stopJob(id), 'cron-stop-job')
+    )
+    ipcMain.handle(
+      'cron-delete-job',
+      wrapSimpleHandler((id: string) => cron.deleteJob(id), 'cron-delete-job')
+    )
+    ipcMain.handle(
+      'cron-create-job',
+      wrapSimpleHandler((config) => cron.createJob(config), 'cron-create-job')
+    )
+    ipcMain.handle(
+      'cron-update-schedule',
+      wrapSimpleHandler(
+        (id: string, schedule: string) => cron.updateJobSchedule(id, schedule),
+        'cron-update-schedule'
+      )
+    )
+    ipcMain.handle(
+      'cron-validate-expression',
+      wrapSimpleHandler(
+        (expression: string) => cron.validateCronExpression(expression),
+        'cron-validate-expression'
+      )
     )
 
     // Replace the single-callback pattern with EventBus broadcast

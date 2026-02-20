@@ -10,7 +10,7 @@ import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, cleanup } fr
 
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
 console.log('[Main] Bootstrapping core infrastructure...')
-const { container, eventBus, appState } = bootstrapServices()
+const { container, eventBus, appState, windowFactory } = bootstrapServices()
 console.log('[Main] Enabling IPC modules...')
 bootstrapIpcModules(container, eventBus)
 setupAppLifecycle(appState)
@@ -30,7 +30,7 @@ function extractFilePathFromArgs(args: string[]): string | null {
   return null
 }
 
-const mainWindow = new Main(appState)
+const mainWindow = new Main(appState, windowFactory)
 
 const trayManager = new Tray({
   onShowApp: () => mainWindow.showOrCreate(),

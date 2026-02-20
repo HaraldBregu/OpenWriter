@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron'
-import path from 'node:path'
-import { is } from '@electron-toolkit/utils'
+import type { WindowFactory } from '../core/WindowFactory'
+import { Observable, type Unsubscribe } from '../core/Observable'
 
 export type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
@@ -15,20 +15,16 @@ export interface WindowManagerState {
   windows: ManagedWindowInfo[]
 }
 
-export class WindowManagerService {
+export class WindowManagerService extends Observable<WindowManagerState> {
   private managedWindows: Map<number, ManagedWindowInfo> = new Map()
-  private eventCallback: ((state: WindowManagerState) => void) | null = null
+  private windowFactory: WindowFactory | null = null
 
-  private getPreloadPath(): string {
-    return path.join(__dirname, '../preload/index.mjs')
-  }
-
-  private loadContent(win: BrowserWindow): void {
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      win.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-      win.loadFile(path.join(__dirname, '../renderer/index.html'))
-    }
+  /**
+   * Set the WindowFactory for creating windows.
+   * Called during service initialization in bootstrap.
+   */
+  setWindowFactory(factory: WindowFactory): void {
+    this.windowFactory = factory
   }
 
   private trackWindow(win: BrowserWindow, type: ManagedWindowType, title: string): ManagedWindowInfo {
@@ -50,92 +46,76 @@ export class WindowManagerService {
   }
 
   createChildWindow(): ManagedWindowInfo {
+    if (!this.windowFactory) {
+      throw new Error('WindowFactory not set. Call setWindowFactory() first.')
+    }
+
     const parent = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-    const win = new BrowserWindow({
+    const win = this.windowFactory.create({
       width: 800,
       height: 600,
       parent: parent || undefined,
-      title: 'Child Window',
-      show: false,
-      webPreferences: {
-        preload: this.getPreloadPath(),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true
-      }
+      title: 'Child Window'
     })
 
-    this.loadContent(win)
     win.once('ready-to-show', () => win.show())
     return this.trackWindow(win, 'child', 'Child Window')
   }
 
   createModalWindow(): ManagedWindowInfo {
+    if (!this.windowFactory) {
+      throw new Error('WindowFactory not set. Call setWindowFactory() first.')
+    }
+
     const parent = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-    const win = new BrowserWindow({
+    const win = this.windowFactory.create({
       width: 500,
       height: 400,
       parent: parent || undefined,
       modal: true,
       title: 'Modal Window',
-      show: false,
       resizable: false,
       minimizable: false,
-      maximizable: false,
-      webPreferences: {
-        preload: this.getPreloadPath(),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true
-      }
+      maximizable: false
     })
 
-    this.loadContent(win)
     win.once('ready-to-show', () => win.show())
     return this.trackWindow(win, 'modal', 'Modal Window')
   }
 
   createFramelessWindow(): ManagedWindowInfo {
-    const win = new BrowserWindow({
+    if (!this.windowFactory) {
+      throw new Error('WindowFactory not set. Call setWindowFactory() first.')
+    }
+
+    const win = this.windowFactory.create({
       width: 700,
       height: 500,
       frame: false,
       title: 'Frameless Window',
-      show: false,
-      transparent: false,
-      webPreferences: {
-        preload: this.getPreloadPath(),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true
-      }
+      transparent: false
     })
 
-    this.loadContent(win)
     win.once('ready-to-show', () => win.show())
     return this.trackWindow(win, 'frameless', 'Frameless Window')
   }
 
   createWidgetWindow(): ManagedWindowInfo {
-    const win = new BrowserWindow({
+    if (!this.windowFactory) {
+      throw new Error('WindowFactory not set. Call setWindowFactory() first.')
+    }
+
+    const win = this.windowFactory.create({
       width: 300,
       height: 200,
       alwaysOnTop: true,
       frame: false,
       title: 'Widget',
-      show: false,
       resizable: true,
       skipTaskbar: true,
-      transparent: false,
-      webPreferences: {
-        preload: this.getPreloadPath(),
-        sandbox: false,
-        nodeIntegration: false,
-        contextIsolation: true
-      }
+      transparent: false
     })
 
-    this.loadContent(win)
     win.once('ready-to-show', () => win.show())
     return this.trackWindow(win, 'widget', 'Floating Widget')
   }
@@ -164,15 +144,16 @@ export class WindowManagerService {
     }
   }
 
-  onStateChange(callback: (state: WindowManagerState) => void): void {
-    this.eventCallback = callback
+  onStateChange(callback: (state: WindowManagerState) => void): Unsubscribe {
+    return this.subscribe(callback)
   }
 
   destroy(): void {
     this.closeAllManaged()
+    this.clearSubscribers()
   }
 
   private notifyStateChange(): void {
-    this.eventCallback?.(this.getState())
+    this.notify(this.getState())
   }
 }
