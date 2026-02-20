@@ -232,8 +232,7 @@ declare global {
       storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
       // Workspace
       workspaceSelectFolder: () => Promise<string | null>
-      workspaceConfirm: (workspacePath: string) => Promise<void>
-      workspaceCancel: () => Promise<void>
+
       workspaceGetCurrent: () => Promise<string | null>
       workspaceSetCurrent: (workspacePath: string) => Promise<void>
       workspaceGetRecent: () => Promise<WorkspaceInfo[]>

@@ -160,6 +160,13 @@ export class Menu {
       }
     ]
 
+    if (!isMac) {
+      // On Windows/Linux the custom React TitleBar handles all menu actions.
+      // Remove the native menu bar entirely (including the Alt-key overlay).
+      ElectronMenu.setApplicationMenu(null)
+      return
+    }
+
     const menu = ElectronMenu.buildFromTemplate(template)
     ElectronMenu.setApplicationMenu(menu)
   }

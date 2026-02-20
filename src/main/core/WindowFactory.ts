@@ -9,8 +9,8 @@ export interface WindowPreset {
 
 /**
  * Factory for creating BrowserWindow instances with consistent configuration.
- * Eliminates duplicated webPreferences and window config across Main,
- * WindowManagerService, and WorkspaceSelector.
+ * Eliminates duplicated webPreferences and window config across Main
+ * and WindowManagerService.
  */
 export class WindowFactory {
   private readonly baseWebPreferences: Electron.WebPreferences = {
@@ -30,8 +30,8 @@ export class WindowFactory {
    */
   create(overrides: Partial<BrowserWindowConstructorOptions> = {}): BrowserWindow {
     const options: BrowserWindowConstructorOptions = {
-      width: 1200,
-      height: 800,
+      width: 1600,
+      height: 1000,
       minWidth: 800,
       minHeight: 600,
       show: false,

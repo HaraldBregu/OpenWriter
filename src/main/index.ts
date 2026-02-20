@@ -3,8 +3,7 @@ import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
-import { WorkspaceSelector } from './workspace'
-import type { StoreService } from './services/store'
+
 import type { LifecycleService } from './services/lifecycle'
 import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, cleanup } from './bootstrap'
 
@@ -77,7 +76,6 @@ app.whenReady().then(async () => {
 
   // Get services from container
   const lifecycleService = container.get<LifecycleService>('lifecycle')
-  const storeService = container.get<StoreService>('store')
 
   // Initialize lifecycle service
   // Note: Second instance file handler is configured in bootstrap
@@ -86,25 +84,7 @@ app.whenReady().then(async () => {
   menuManager.create()
   trayManager.create()
 
-  // Check for existing workspace
-  let currentWorkspace = storeService.getCurrentWorkspace()
-
-  // If no workspace is set, show workspace selector
-  if (!currentWorkspace) {
-    const workspaceSelector = new WorkspaceSelector()
-    currentWorkspace = await workspaceSelector.show()
-
-    // If user cancelled workspace selection, quit the app
-    if (!currentWorkspace) {
-      app.quit()
-      return
-    }
-
-    // Save the selected workspace
-    storeService.setCurrentWorkspace(currentWorkspace)
-  }
-
-  // Create main window with workspace
+  // Create main window
   mainWindow.create()
 
   // Update tray menu when window visibility changes

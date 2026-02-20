@@ -17,19 +17,26 @@ export class Main {
   }
 
   create(): BrowserWindow {
+    const isMac = process.platform === 'darwin'
     this.window = this.windowFactory.create({
-      width: 1200,
-      height: 800,
+      width: 1600,
+      height: 1000,
       minWidth: 800,
       minHeight: 600,
       frame: false,
-      titleBarStyle: 'hidden',
-      trafficLightPosition: {
-        x: 16,
-        y: 16
-      },
+      // titleBarStyle:'hidden' on Windows retains native min/max/close buttons.
+      // Only use it on macOS where it hides the title bar while keeping traffic lights.
+      ...(isMac && {
+        titleBarStyle: 'hidden' as const,
+        trafficLightPosition: { x: 16, y: 16 }
+      }),
       backgroundColor: '#FFFFFF'
     })
+
+    // Registering a handler for update-target-url tells Electron that the app
+    // owns the status-bar display. An intentional no-op suppresses the native
+    // Chromium URL bubble that would otherwise appear on link hover.
+    this.window.webContents.on('update-target-url', () => {})
 
     this.window.once('ready-to-show', () => {
       this.window?.show()
@@ -110,15 +117,17 @@ export class Main {
   }
 
   createWindowForFile(filePath: string): BrowserWindow {
+    const isMac = process.platform === 'darwin'
     const win = this.windowFactory.create({
-      width: 1200,
-      height: 800,
+      width: 1600,
+      height: 1000,
       minWidth: 800,
       minHeight: 600,
-      trafficLightPosition: {
-        x: 9,
-        y: 9
-      },
+      frame: false,
+      ...(isMac && {
+        titleBarStyle: 'hidden' as const,
+        trafficLightPosition: { x: 9, y: 9 }
+      }),
       backgroundColor: '#FFFFFF'
     })
 

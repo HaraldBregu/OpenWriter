@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, PanelLeft, Minus, X } from 'lucide-react'
-import { usePlatform } from '../hooks/usePlatform'
+
+// Synchronous platform check — no hooks, no async, no state.
+// macOS uses native traffic-light buttons; every other OS needs custom controls.
+const isMac =
+  typeof navigator !== 'undefined' &&
+  (navigator.platform === 'MacIntel' || navigator.platform.startsWith('Mac'))
 
 // Windows-style maximize icon
 function MaximizeIcon() {
@@ -23,15 +28,13 @@ function RestoreIcon() {
 export interface TitleBarProps {
   /** Text displayed centered in the title bar */
   title?: string
-  /** Called when the sidebar toggle button is clicked (Windows only) */
+  /** Called when the sidebar toggle button is clicked */
   onToggleSidebar?: () => void
   /** Extra Tailwind classes applied to the root element */
   className?: string
 }
 
 export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = '' }: TitleBarProps) {
-  const platform = usePlatform()
-  const isWindows = platform === 'win32'
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = 
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       {/* ── Left: sidebar toggle (macOS) + burger menu + sidebar toggle (Windows) ── */}
-      {isWindows ? (
+      {!isMac ? (
         <div
           className="flex items-center h-full z-10"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
@@ -110,7 +113,7 @@ export function TitleBar({ title = 'Tesseract AI', onToggleSidebar, className = 
       <div className="flex-1" />
 
       {/* ── Right: minimize / maximize / close (Windows only) ── */}
-      {isWindows && (
+      {!isMac && (
         <div
           className="flex items-center h-full z-10"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}

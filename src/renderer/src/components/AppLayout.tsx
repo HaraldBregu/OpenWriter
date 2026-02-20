@@ -176,7 +176,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   return (
     <>
-      <TitleBar title="Tesseract AI" onToggleSidebar={toggleSidebar} />
+      <TitleBar title="Tesseract AI * " onToggleSidebar={toggleSidebar} />
 
       <div className="flex flex-1 min-h-0 w-full">
         <Sidebar className="border-r">

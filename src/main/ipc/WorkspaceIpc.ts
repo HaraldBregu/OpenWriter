@@ -6,10 +6,7 @@ import type { StoreService } from '../services/store'
 import { wrapSimpleHandler } from './IpcErrorHandler'
 
 /**
- * IPC handlers for workspace selection and management.
- *
- * NOTE: This module fixes the duplicate registration bug.
- * The WorkspaceSelector class should NOT register its own IPC handlers.
+ * IPC handlers for workspace management.
  * All workspace-related IPC handlers are centralized here.
  */
 export class WorkspaceIpc implements IpcModule {
@@ -68,10 +65,6 @@ export class WorkspaceIpc implements IpcModule {
         storeService.clearCurrentWorkspace()
       }, 'workspace-clear')
     )
-
-    // Note: workspace:confirm and workspace:cancel handlers are still
-    // registered in WorkspaceSelector because they're specific to that
-    // window's lifecycle. The duplicate 'workspace:select-folder' is fixed.
 
     console.log(`[IPC] Registered ${this.name} module`)
   }

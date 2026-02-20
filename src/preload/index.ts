@@ -424,12 +424,6 @@ const api = {
     workspaceSelectFolder: (): Promise<string | null> => {
         return ipcRenderer.invoke('workspace:select-folder')
     },
-    workspaceConfirm: (workspacePath: string): Promise<void> => {
-        return ipcRenderer.invoke('workspace:confirm', workspacePath)
-    },
-    workspaceCancel: (): Promise<void> => {
-        return ipcRenderer.invoke('workspace:cancel')
-    },
     workspaceGetCurrent: (): Promise<string | null> => {
         return ipcRenderer.invoke('workspace-get-current')
     },
