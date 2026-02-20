@@ -48,7 +48,11 @@
       "Bash(git merge:*)",
       "Bash(npm test:*)",
       "Bash(npx jest:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(npx electron-vite build:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
