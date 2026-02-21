@@ -215,6 +215,7 @@ declare global {
       onFsWatchEvent: (callback: (event: FsWatchEvent) => void) => () => void
       // Dialogs
       dialogOpen: () => Promise<DialogResult>
+      dialogOpenDirectory: (multiSelections?: boolean) => Promise<DialogResult>
       dialogSave: () => Promise<DialogResult>
       dialogMessage: (message: string, detail: string, buttons: string[]) => Promise<DialogResult>
       dialogError: (title: string, content: string) => Promise<DialogResult>

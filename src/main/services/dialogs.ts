@@ -29,6 +29,26 @@ export class DialogService {
     }
   }
 
+  async showOpenDirectoryDialog(multiSelections = false): Promise<DialogResult> {
+    const properties: Array<'openDirectory' | 'multiSelections' | 'createDirectory'> = ['openDirectory']
+    if (multiSelections) {
+      properties.push('multiSelections')
+    }
+
+    const result = await dialog.showOpenDialog(this.getParent()!, {
+      properties
+    })
+
+    return {
+      type: 'open',
+      timestamp: Date.now(),
+      data: {
+        canceled: result.canceled,
+        filePaths: result.filePaths
+      }
+    }
+  }
+
   async showSaveDialog(): Promise<DialogResult> {
     const result = await dialog.showSaveDialog(this.getParent()!, {
       defaultPath: 'untitled.txt',

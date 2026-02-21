@@ -15,26 +15,33 @@ export class DialogIpc implements IpcModule {
     const dialog = container.get<DialogService>('dialog')
 
     ipcMain.handle(
-      'dialog-show-open',
-      wrapSimpleHandler(() => dialog.showOpenDialog(), 'dialog-show-open')
+      'dialog-open',
+      wrapSimpleHandler(() => dialog.showOpenDialog(), 'dialog-open')
     )
     ipcMain.handle(
-      'dialog-show-save',
-      wrapSimpleHandler(() => dialog.showSaveDialog(), 'dialog-show-save')
-    )
-    ipcMain.handle(
-      'dialog-show-message',
+      'dialog-open-directory',
       wrapSimpleHandler(
-        (message: string, detail: string, buttons: string[]) =>
-          dialog.showMessageBox(message, detail, buttons),
-        'dialog-show-message'
+        (multiSelections: boolean) => dialog.showOpenDirectoryDialog(multiSelections),
+        'dialog-open-directory'
       )
     )
     ipcMain.handle(
-      'dialog-show-error',
+      'dialog-save',
+      wrapSimpleHandler(() => dialog.showSaveDialog(), 'dialog-save')
+    )
+    ipcMain.handle(
+      'dialog-message',
+      wrapSimpleHandler(
+        (message: string, detail: string, buttons: string[]) =>
+          dialog.showMessageBox(message, detail, buttons),
+        'dialog-message'
+      )
+    )
+    ipcMain.handle(
+      'dialog-error',
       wrapSimpleHandler(
         (title: string, content: string) => dialog.showErrorDialog(title, content),
-        'dialog-show-error'
+        'dialog-error'
       )
     )
 

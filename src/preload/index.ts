@@ -342,6 +342,13 @@ const api = {
     }> => {
         return ipcRenderer.invoke('dialog-open')
     },
+    dialogOpenDirectory: (multiSelections = false): Promise<{
+        type: string
+        timestamp: number
+        data: Record<string, unknown>
+    }> => {
+        return ipcRenderer.invoke('dialog-open-directory', multiSelections)
+    },
     dialogSave: (): Promise<{
         type: string
         timestamp: number

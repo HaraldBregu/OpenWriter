@@ -411,6 +411,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
+                  {/* Directories */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/directories'}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/directories">
+                        <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Directories</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
+                  <AppSidebarSeparator className="my-1" />
+
                   {/* Integrations */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
