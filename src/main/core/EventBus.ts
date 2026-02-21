@@ -25,6 +25,8 @@ export interface AppEvents {
   'workspace:changed': { currentPath: string | null; previousPath: string | null }
   'posts:file-changed': { type: 'added' | 'changed' | 'removed'; postId: string; filePath: string; timestamp: number }
   'posts:watcher-error': { error: string; timestamp: number }
+  'documents:file-changed': { type: 'added' | 'changed' | 'removed'; fileId: string; filePath: string; timestamp: number }
+  'documents:watcher-error': { error: string; timestamp: number }
 }
 
 /**

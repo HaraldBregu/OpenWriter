@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import {
-  FolderOpen,
   Upload,
   Download,
   Search,
@@ -8,7 +7,6 @@ import {
   List,
   FileText,
   File,
-  Folder,
   X,
   Loader2,
   CheckCircle2,
@@ -24,13 +22,11 @@ import {
 import {
   AppButton,
   AppInput,
-  AppBadge,
   AppDropdownMenu,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
   AppDropdownMenuSeparator,
-  AppDropdownMenuTrigger,
-  AppSeparator
+  AppDropdownMenuTrigger
 } from '@/components/app'
 
 // ---------------------------------------------------------------------------
@@ -42,7 +38,6 @@ interface Document {
   name: string
   path: string
   size: number
-  type: 'file' | 'folder'
   mimeType?: string
   importedAt: number
   lastModified: number
@@ -81,8 +76,6 @@ function formatDate(timestamp: number): string {
 }
 
 function getFileIcon(doc: Document): React.ComponentType<{ className?: string }> {
-  if (doc.type === 'folder') return Folder
-
   const ext = doc.name.split('.').pop()?.toLowerCase()
 
   // Add more specific icons based on file type if needed
@@ -109,8 +102,10 @@ function sortDocuments(docs: Document[], sortBy: SortBy): Document[] {
       return sorted.sort((a, b) => b.size - a.size)
     case 'type':
       return sorted.sort((a, b) => {
-        if (a.type === b.type) return a.name.localeCompare(b.name)
-        return a.type === 'folder' ? -1 : 1
+        const extA = a.name.split('.').pop()?.toLowerCase() || ''
+        const extB = b.name.split('.').pop()?.toLowerCase() || ''
+        if (extA === extB) return a.name.localeCompare(b.name)
+        return extA.localeCompare(extB)
       })
     default:
       return sorted
@@ -123,19 +118,17 @@ function sortDocuments(docs: Document[], sortBy: SortBy): Document[] {
 
 interface EmptyStateProps {
   onImportFiles: () => void
-  onImportFolder: () => void
   onDownloadRemote: () => void
 }
 
 const EmptyState = React.memo(function EmptyState({
   onImportFiles,
-  onImportFolder,
   onDownloadRemote
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 text-center">
       <div className="w-20 h-20 rounded-2xl bg-muted/60 flex items-center justify-center mb-6">
-        <FolderOpen className="h-10 w-10 text-muted-foreground/40" />
+        <Upload className="h-10 w-10 text-muted-foreground/40" />
       </div>
 
       <h2 className="text-xl font-semibold text-foreground mb-2">
@@ -150,13 +143,9 @@ const EmptyState = React.memo(function EmptyState({
           <Upload className="h-4 w-4" />
           Import Files
         </AppButton>
-        <AppButton onClick={onImportFolder} variant="outline" size="default">
-          <FolderOpen className="h-4 w-4" />
-          Import Folder
-        </AppButton>
         <AppButton onClick={onDownloadRemote} variant="outline" size="default">
           <Download className="h-4 w-4" />
-          Download from URL
+          Download from URL/Remote
         </AppButton>
       </div>
     </div>
@@ -176,7 +165,7 @@ const DropZoneOverlay = React.memo(function DropZoneOverlay({ isDragging }: Drop
       <div className="text-center">
         <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
         <p className="text-lg font-medium text-foreground">Drop files here to import</p>
-        <p className="text-sm text-muted-foreground mt-2">Files and folders will be copied to your workspace</p>
+        <p className="text-sm text-muted-foreground mt-2">Files will be copied to your workspace</p>
       </div>
     </div>
   )
@@ -199,11 +188,7 @@ const DocumentCard = React.memo(function DocumentCard({
   return (
     <div className="group relative rounded-lg border border-border bg-background p-4 hover:shadow-sm hover:border-border/80 transition-all">
       <div className="flex items-start gap-3">
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-          document.type === 'folder'
-            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-            : 'bg-muted'
-        }`}>
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-muted">
           <Icon className="h-5 w-5" />
         </div>
 
@@ -268,11 +253,7 @@ const DocumentListItem = React.memo(function DocumentListItem({
 
   return (
     <div className="group flex items-center gap-4 px-4 py-3 hover:bg-muted/60 transition-colors">
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-        document.type === 'folder'
-          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-          : 'bg-muted'
-      }`}>
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-muted">
         <Icon className="h-4 w-4" />
       </div>
 
@@ -285,9 +266,6 @@ const DocumentListItem = React.memo(function DocumentListItem({
       <div className="flex items-center gap-6 text-xs text-muted-foreground">
         <span className="w-20 text-right">{formatFileSize(document.size)}</span>
         <span className="w-24 text-right">{formatDate(document.importedAt)}</span>
-        <AppBadge variant="secondary" className="text-xs">
-          {document.type === 'folder' ? 'Folder' : 'File'}
-        </AppBadge>
       </div>
 
       <AppDropdownMenu>
@@ -498,22 +476,50 @@ const DocumentsPage: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [isRemoteModalOpen, setIsRemoteModalOpen] = useState(false)
   const dragCounterRef = useRef(0)
+  const isListeningRef = useRef(false)
 
-  // TODO: Load documents from workspace on mount
-  useEffect(() => {
-    // Load existing documents from workspace
-    // const loadDocuments = async () => {
-    //   try {
-    //     const workspace = await window.api.workspaceGetCurrent()
-    //     if (workspace) {
-    //       // Load documents from workspace directory
-    //     }
-    //   } catch (error) {
-    //     console.error('Failed to load documents:', error)
-    //   }
-    // }
-    // loadDocuments()
+  // Shared reload function — always fetches from disk for consistency
+  const reloadDocuments = useCallback(async () => {
+    try {
+      const docs = await window.api.documentsLoadAll()
+      setDocuments(docs)
+      return docs
+    } catch (error) {
+      console.error('[DocumentsPage] Failed to load documents:', error)
+      return null
+    }
   }, [])
+
+  // Load documents from workspace on mount
+  useEffect(() => {
+    reloadDocuments()
+  }, [reloadDocuments])
+
+  // File watcher: Listen for external document changes
+  useEffect(() => {
+    if (isListeningRef.current) return
+    isListeningRef.current = true
+
+    const handleFileChange = async (event: {
+      type: 'added' | 'changed' | 'removed'
+      fileId: string
+      filePath: string
+      timestamp: number
+    }): Promise<void> => {
+      console.log('[DocumentsPage] File change detected:', event.type, event.fileId)
+
+      // Always reload the full list from disk — this is the simplest
+      // way to stay in sync regardless of event type
+      await reloadDocuments()
+    }
+
+    const unsubscribeFileChange = window.api.onDocumentsFileChange(handleFileChange)
+
+    return () => {
+      unsubscribeFileChange()
+      isListeningRef.current = false
+    }
+  }, [reloadDocuments])
 
   // Filter and sort documents
   const filteredDocuments = sortDocuments(
@@ -526,110 +532,34 @@ const DocumentsPage: React.FC = () => {
   // Import files handler
   const handleImportFiles = useCallback(async () => {
     try {
-      // TODO: Implement file import using Electron dialog API
-      // This will be added to the preload bridge
-      // const result = await window.api.dialogOpenFiles()
-      // if (result?.filePaths) {
-      //   // Copy files to workspace and add to documents
-      //   const workspace = await window.api.workspaceGetCurrent()
-      //   if (workspace) {
-      //     // Process and import files
-      //   }
-      // }
-
-      // Placeholder: Simulate file import
-      console.log('[DocumentsPage] Import files requested')
-
-      // Example: Add a mock document
-      const mockDoc: Document = {
-        id: `doc-${Date.now()}`,
-        name: 'Sample Document.txt',
-        path: '/workspace/documents/sample.txt',
-        size: 1024 * 15, // 15 KB
-        type: 'file',
-        mimeType: 'text/plain',
-        importedAt: Date.now(),
-        lastModified: Date.now()
-      }
-
-      setDocuments(prev => [...prev, mockDoc])
+      await window.api.documentsImportFiles()
+      // Reload from disk to get the authoritative state
+      await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)
     }
-  }, [])
-
-  // Import folder handler
-  const handleImportFolder = useCallback(async () => {
-    try {
-      // TODO: Implement folder import using Electron dialog API
-      // const result = await window.api.dialogOpenDirectory()
-      // if (result?.folderPath) {
-      //   const workspace = await window.api.workspaceGetCurrent()
-      //   if (workspace) {
-      //     // Copy folder to workspace and add to documents
-      //   }
-      // }
-
-      // Placeholder: Simulate folder import
-      console.log('[DocumentsPage] Import folder requested')
-
-      const mockFolder: Document = {
-        id: `doc-${Date.now()}`,
-        name: 'Project Files',
-        path: '/workspace/documents/project-files',
-        size: 1024 * 1024 * 2.5, // 2.5 MB
-        type: 'folder',
-        importedAt: Date.now(),
-        lastModified: Date.now()
-      }
-
-      setDocuments(prev => [...prev, mockFolder])
-    } catch (error) {
-      console.error('[DocumentsPage] Failed to import folder:', error)
-    }
-  }, [])
+  }, [reloadDocuments])
 
   // Download from remote handler
   const handleDownloadRemote = useCallback(async (url: string) => {
     try {
-      // TODO: Implement remote download
-      // const workspace = await window.api.workspaceGetCurrent()
-      // if (workspace) {
-      //   // Download file from URL and save to workspace
-      //   // const result = await window.api.downloadFile(url, workspace)
-      // }
-
-      // Placeholder: Simulate download
-      console.log('[DocumentsPage] Download from URL:', url)
-
-      const fileName = url.split('/').pop() || 'downloaded-file'
-      const mockDoc: Document = {
-        id: `doc-${Date.now()}`,
-        name: fileName,
-        path: `/workspace/documents/${fileName}`,
-        size: 1024 * 512, // 512 KB
-        type: 'file',
-        importedAt: Date.now(),
-        lastModified: Date.now()
-      }
-
-      setDocuments(prev => [...prev, mockDoc])
+      await window.api.documentsDownloadFromUrl(url)
+      await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to download file:', error)
       throw error
     }
-  }, [])
+  }, [reloadDocuments])
 
   // Delete document handler
-  const handleDeleteDocument = useCallback((id: string) => {
-    // TODO: Delete file from workspace
-    // const doc = documents.find(d => d.id === id)
-    // if (doc) {
-    //   await window.api.fsDeleteFile(doc.path)
-    // }
-
-    setDocuments(prev => prev.filter(doc => doc.id !== id))
-  }, [])
+  const handleDeleteDocument = useCallback(async (id: string) => {
+    try {
+      await window.api.documentsDeleteFile(id)
+      await reloadDocuments()
+    } catch (error) {
+      console.error('[DocumentsPage] Failed to delete document:', error)
+    }
+  }, [reloadDocuments])
 
   // View document handler
   const handleViewDocument = useCallback((doc: Document) => {
@@ -669,36 +599,15 @@ const DocumentsPage: React.FC = () => {
 
     try {
       const files = Array.from(e.dataTransfer.files)
-
       if (files.length === 0) return
 
-      // TODO: Copy dropped files to workspace
-      // const workspace = await window.api.workspaceGetCurrent()
-      // if (workspace) {
-      //   for (const file of files) {
-      //     // Copy file to workspace and add to documents
-      //   }
-      // }
-
-      // Placeholder: Add dropped files
-      console.log('[DocumentsPage] Files dropped:', files.length)
-
-      const newDocs: Document[] = files.map(file => ({
-        id: `doc-${Date.now()}-${Math.random()}`,
-        name: file.name,
-        path: `/workspace/documents/${file.name}`,
-        size: file.size,
-        type: 'file',
-        mimeType: file.type,
-        importedAt: Date.now(),
-        lastModified: file.lastModified
-      }))
-
-      setDocuments(prev => [...prev, ...newDocs])
+      const paths = files.map(file => (file as File & { path: string }).path)
+      await window.api.documentsImportByPaths(paths)
+      await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
     }
-  }, [])
+  }, [reloadDocuments])
 
   const hasDocuments = documents.length > 0
   const hasFilteredDocuments = filteredDocuments.length > 0
@@ -716,7 +625,6 @@ const DocumentsPage: React.FC = () => {
       {!hasDocuments ? (
         <EmptyState
           onImportFiles={handleImportFiles}
-          onImportFolder={handleImportFolder}
           onDownloadRemote={() => setIsRemoteModalOpen(true)}
         />
       ) : (
@@ -736,13 +644,9 @@ const DocumentsPage: React.FC = () => {
                   <Upload className="h-4 w-4" />
                   Import Files
                 </AppButton>
-                <AppButton onClick={handleImportFolder} variant="outline" size="sm">
-                  <FolderOpen className="h-4 w-4" />
-                  Folder
-                </AppButton>
                 <AppButton onClick={() => setIsRemoteModalOpen(true)} variant="outline" size="sm">
                   <Download className="h-4 w-4" />
-                  Remote
+                  Download from URL/Remote
                 </AppButton>
               </div>
             </div>

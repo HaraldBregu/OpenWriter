@@ -546,6 +546,62 @@ const api = {
             ipcRenderer.removeListener('posts:watcher-error', handler)
         }
     },
+    // Documents
+    documentsImportFiles: (): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('documents:import-files'))
+    },
+    documentsImportByPaths: (paths: string[]): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('documents:import-by-paths', paths))
+    },
+    documentsDownloadFromUrl: (url: string): Promise<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('documents:download-from-url', url))
+    },
+    documentsLoadAll: (): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('documents:load-all'))
+    },
+    documentsDeleteFile: (id: string): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('documents:delete-file', id))
+    },
+    onDocumentsFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed';
+        fileId: string;
+        filePath: string;
+        timestamp: number;
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
+            type: 'added' | 'changed' | 'removed';
+            fileId: string;
+            filePath: string;
+            timestamp: number;
+        }): void => {
+            callback(changeEvent)
+        }
+        ipcRenderer.on('documents:file-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('documents:file-changed', handler)
+        }
+    },
+    onDocumentsWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
+            callback(errorData)
+        }
+        ipcRenderer.on('documents:watcher-error', handler)
+        return () => {
+            ipcRenderer.removeListener('documents:watcher-error', handler)
+        }
+    },
     // Agent
     agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
         return ipcRenderer.invoke('agent:run', messages, runId, providerId)

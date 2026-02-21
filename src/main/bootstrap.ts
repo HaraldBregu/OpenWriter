@@ -30,6 +30,7 @@ import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { WorkspaceService } from './services/workspace'
 import { FileWatcherService } from './services/file-watcher'
+import { DocumentsWatcherService } from './services/documents-watcher'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
@@ -44,6 +45,7 @@ import {
   CronIpc,
   CustomIpc,
   DialogIpc,
+  DocumentsIpc,
   FilesystemIpc,
   LifecycleIpc,
   MediaPermissionsIpc,
@@ -121,6 +123,15 @@ export function bootstrapServices(): BootstrapResult {
   })
   container.register('fileWatcher', fileWatcherService)
 
+  // DocumentsWatcherService watches the documents directory for external changes
+  // Must be registered after workspace service but before IPC modules
+  const documentsWatcherService = new DocumentsWatcherService(eventBus)
+  // Initialize with current workspace (if any) so it starts watching immediately
+  documentsWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
+    console.error('[Bootstrap] Failed to initialize DocumentsWatcherService:', error)
+  })
+  container.register('documentsWatcher', documentsWatcherService)
+
   // Initialize logger after workspace service (needs workspace for log directory)
   const logger = new LoggerService(workspaceService, eventBus)
   container.register('logger', logger)
@@ -156,6 +167,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new CronIpc(),
     new CustomIpc(),
     new DialogIpc(),
+    new DocumentsIpc(),
     new FilesystemIpc(),
     new LifecycleIpc(),
     new MediaPermissionsIpc(),

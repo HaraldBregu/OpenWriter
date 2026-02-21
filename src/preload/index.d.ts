@@ -291,6 +291,51 @@ declare global {
         timestamp: number
       }) => void) => () => void
       onPostsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+      // Documents
+      documentsImportFiles: () => Promise<Array<{
+        id: string
+        name: string
+        path: string
+        size: number
+        mimeType: string
+        importedAt: number
+        lastModified: number
+      }>>
+      documentsImportByPaths: (paths: string[]) => Promise<Array<{
+        id: string
+        name: string
+        path: string
+        size: number
+        mimeType: string
+        importedAt: number
+        lastModified: number
+      }>>
+      documentsDownloadFromUrl: (url: string) => Promise<{
+        id: string
+        name: string
+        path: string
+        size: number
+        mimeType: string
+        importedAt: number
+        lastModified: number
+      }>
+      documentsLoadAll: () => Promise<Array<{
+        id: string
+        name: string
+        path: string
+        size: number
+        mimeType: string
+        importedAt: number
+        lastModified: number
+      }>>
+      documentsDeleteFile: (id: string) => Promise<void>
+      onDocumentsFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        fileId: string
+        filePath: string
+        timestamp: number
+      }) => void) => () => void
+      onDocumentsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
       // RAG
       ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
       ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>
