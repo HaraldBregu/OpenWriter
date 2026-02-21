@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 interface TokenEntry {
   index: number
@@ -106,7 +106,7 @@ const PipelineTestPage: React.FC = () => {
     return cleanup
   }, [])
 
-  const runAgent = async (agentName: string, prompt: string) => {
+  const runAgent = useCallback(async (agentName: string, prompt: string) => {
     try {
       const result = await window.api.pipelineRun(agentName, { prompt })
       if (result.success) {
@@ -133,15 +133,15 @@ const PipelineTestPage: React.FC = () => {
     } catch (err) {
       console.error('[PipelineTest] Error starting run:', err)
     }
-  }
+  }, [])
 
-  const runBothConcurrent = () => {
+  const runBothConcurrent = useCallback(() => {
     console.log('[PipelineTest] Running counter and alphabet concurrently...')
     runAgent('counter', 'Count to 10 with fun facts about each number')
     runAgent('alphabet', 'List the alphabet with an animal for each letter')
-  }
+  }, [runAgent])
 
-  const runAgentMultipleTimes = async (agentName: string, prompt: string, times: number) => {
+  const runAgentMultipleTimes = useCallback(async (agentName: string, prompt: string, times: number) => {
     console.log(`[PipelineTest] Running ${agentName} ${times} times concurrently...`)
     for (let i = 0; i < times; i++) {
       // Add slight delay between starts to avoid overwhelming the system
@@ -149,11 +149,11 @@ const PipelineTestPage: React.FC = () => {
       const instancePrompt = `[Instance ${i + 1}/${times}] ${prompt}`
       runAgent(agentName, instancePrompt)
     }
-  }
+  }, [runAgent])
 
-  const clearRuns = () => {
+  const clearRuns = useCallback(() => {
     setRuns(new Map())
-  }
+  }, [])
 
   return (
     <div className="flex flex-col h-full p-6 space-y-6">

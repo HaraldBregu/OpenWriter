@@ -8,7 +8,7 @@
  * The file path for the bundled example doc is shown as a preset.
  */
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import {
   FileText,
   Search,
@@ -37,7 +37,7 @@ interface IndexPanelProps {
   error: string | null
 }
 
-function IndexPanel({ onIndex, isIndexing, error }: IndexPanelProps) {
+const IndexPanel = React.memo(function IndexPanel({ onIndex, isIndexing, error }: IndexPanelProps) {
   const [filePath, setFilePath] = useState('')
 
   const handleBrowse = async () => {
@@ -116,7 +116,8 @@ function IndexPanel({ onIndex, isIndexing, error }: IndexPanelProps) {
       </button>
     </div>
   )
-}
+})
+IndexPanel.displayName = 'IndexPanel'
 
 // ---------------------------------------------------------------------------
 // Chat area
@@ -131,7 +132,7 @@ interface ChatAreaProps {
   onClear: () => void
 }
 
-function ChatArea({ messages, isQuerying, queryError, onAsk, onCancel, onClear }: ChatAreaProps) {
+const ChatArea = React.memo(function ChatArea({ messages, isQuerying, queryError, onAsk, onCancel, onClear }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const endRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -147,19 +148,19 @@ function ChatArea({ messages, isQuerying, queryError, onAsk, onCancel, onClear }
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`
   }, [input])
 
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     const q = input.trim()
     if (!q || isQuerying) return
     setInput('')
     onAsk(q)
-  }
+  }, [input, isQuerying, onAsk])
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
-  }
+  }, [handleSend])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -244,7 +245,8 @@ function ChatArea({ messages, isQuerying, queryError, onAsk, onCancel, onClear }
       </div>
     </div>
   )
-}
+})
+ChatArea.displayName = 'ChatArea'
 
 // ---------------------------------------------------------------------------
 // Page

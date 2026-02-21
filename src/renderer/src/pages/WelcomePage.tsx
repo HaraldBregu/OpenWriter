@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
 import logoIcon from '@resources/icons/icon.png'
 
@@ -40,7 +40,7 @@ const WelcomePage: React.FC = () => {
     }
   }
 
-  const handleOpenProject = async () => {
+  const handleOpenProject = useCallback(async () => {
     try {
       const folderPath = await window.api.workspaceSelectFolder()
       if (folderPath) {
@@ -50,16 +50,16 @@ const WelcomePage: React.FC = () => {
     } catch (error) {
       console.error('Failed to open project:', error)
     }
-  }
+  }, [navigate])
 
-  const handleOpenRecentProject = async (path: string) => {
+  const handleOpenRecentProject = useCallback(async (path: string) => {
     try {
       await window.api.workspaceSetCurrent(path)
       navigate('/home')
     } catch (error) {
       console.error('Failed to open recent project:', error)
     }
-  }
+  }, [navigate])
 
   const formatPath = (path: string) => {
     if (path.includes('/Users/')) {
@@ -128,41 +128,41 @@ const WelcomePage: React.FC = () => {
 
         {/* ── Action buttons ── */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          <Button
+          <AppButton
             variant="outline"
             className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
             onClick={handleOpenProject}
           >
             <FolderOpen className="h-5 w-5 text-foreground/70" />
             <span className="text-sm font-medium">Open Folder</span>
-          </Button>
+          </AppButton>
 
-          <Button
+          <AppButton
             variant="outline"
             className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
             disabled
           >
             <CloudDownload className="h-5 w-5 text-foreground/70" />
             <span className="text-sm font-medium">Load from Remote</span>
-          </Button>
+          </AppButton>
 
-          <Button
+          <AppButton
             variant="outline"
             className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
             disabled
           >
             <GitBranch className="h-5 w-5 text-foreground/70" />
             <span className="text-sm font-medium">Clone Repo</span>
-          </Button>
+          </AppButton>
 
-          <Button
+          <AppButton
             variant="outline"
             className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
             disabled
           >
             <Terminal className="h-5 w-5 text-foreground/70" />
             <span className="text-sm font-medium">Connect via SSH</span>
-          </Button>
+          </AppButton>
         </div>
 
         {/* ── Recent projects ── */}

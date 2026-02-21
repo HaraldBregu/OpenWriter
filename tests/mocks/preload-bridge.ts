@@ -172,6 +172,13 @@ export const mockApi = {
   onRagEvent: jest.fn().mockReturnValue(jest.fn()),
   onAgentEvent: jest.fn().mockReturnValue(jest.fn()),
 
+  // Pipeline
+  pipelineRun: jest.fn().mockResolvedValue({ success: true, data: { runId: 'test-run-id' } }),
+  pipelineCancel: jest.fn().mockResolvedValue({ success: true }),
+  pipelineListAgents: jest.fn().mockResolvedValue({ success: true, data: ['echo', 'counter'] }),
+  pipelineListRuns: jest.fn().mockResolvedValue({ success: true, data: [] }),
+  onPipelineEvent: jest.fn().mockReturnValue(jest.fn()),
+
   // Window controls
   popupMenu: jest.fn().mockResolvedValue(undefined),
   windowMinimize: jest.fn(),

@@ -1,26 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  AppInput,
+  AppLabel,
+  AppButton,
+  AppBadge,
+  AppSelect,
+  AppSelectContent,
+  AppSelectItem,
+  AppSelectTrigger,
+  AppSelectValue,
+  AppRadioGroup,
+  AppRadioGroupItem,
+  AppDropdownMenu,
+  AppDropdownMenuContent,
+  AppDropdownMenuItem,
+  AppDropdownMenuSeparator,
+  AppDropdownMenuTrigger,
+} from '@/components/app'
 import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock'
 import { useAppDispatch, useAppSelector } from '../store'
 import {
@@ -59,37 +58,37 @@ const NewPostPage: React.FC = () => {
 
   const { blocks, category, tags, visibility } = post
 
-  const handleChange = (blockId: string, content: string) => {
+  const handleChange = useCallback((blockId: string, content: string) => {
     const updated = blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }
+  }, [blocks, dispatch, post.id])
 
-  const handleDelete = (blockId: string) => {
+  const handleDelete = useCallback((blockId: string) => {
     const updated = blocks.filter((b) => b.id !== blockId)
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }
+  }, [blocks, dispatch, post.id])
 
-  const handleAddBlockAfter = (afterId: string) => {
+  const handleAddBlockAfter = useCallback((afterId: string) => {
     const index = blocks.findIndex((b) => b.id === afterId)
     const newBlock: Block = createBlock()
     const updated = [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)]
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }
+  }, [blocks, dispatch, post.id])
 
-  const handleReorder = (reordered: Block[]) => {
+  const handleReorder = useCallback((reordered: Block[]) => {
     dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
-  }
+  }, [dispatch, post.id])
 
-  const handleAddTag = () => {
+  const handleAddTag = useCallback(() => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       dispatch(updatePostTags({ postId: post.id, tags: [...tags, tagInput.trim()] }))
       setTagInput('')
     }
-  }
+  }, [tagInput, tags, dispatch, post.id])
 
-  const handleRemoveTag = (tagToRemove: string) => {
+  const handleRemoveTag = useCallback((tagToRemove: string) => {
     dispatch(updatePostTags({ postId: post.id, tags: tags.filter((t) => t !== tagToRemove) }))
-  }
+  }, [tags, dispatch, post.id])
 
   return (
     <div className="h-full flex flex-col">
@@ -104,42 +103,42 @@ const NewPostPage: React.FC = () => {
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
         <div className="flex items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
+          <AppDropdownMenu>
+            <AppDropdownMenuTrigger asChild>
+              <AppButton
                 type="button"
                 variant="outline"
                 size="icon"
                 title="More options"
               >
                 <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              </AppButton>
+            </AppDropdownMenuTrigger>
+            <AppDropdownMenuContent align="end">
+              <AppDropdownMenuItem>
                 <Eye className="h-4 w-4" />
                 Preview
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              </AppDropdownMenuItem>
+              <AppDropdownMenuItem>
                 <Download className="h-4 w-4" />
                 Download
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              </AppDropdownMenuItem>
+              <AppDropdownMenuItem>
                 <Share2 className="h-4 w-4" />
                 Share
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              </AppDropdownMenuItem>
+              <AppDropdownMenuSeparator />
+              <AppDropdownMenuItem>
                 <Copy className="h-4 w-4" />
                 Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive focus:text-destructive">
+              </AppDropdownMenuItem>
+              <AppDropdownMenuItem className="text-destructive focus:text-destructive">
                 <Trash2 className="h-4 w-4" />
                 Move to Trash
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
+              </AppDropdownMenuItem>
+            </AppDropdownMenuContent>
+          </AppDropdownMenu>
+          <AppButton
             type="button"
             variant="outline"
             size="icon"
@@ -147,7 +146,7 @@ const NewPostPage: React.FC = () => {
             title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
           >
             <Filter className="h-4 w-4" />
-          </Button>
+          </AppButton>
         </div>
       </div>
 
@@ -189,7 +188,7 @@ const NewPostPage: React.FC = () => {
                   <Filter className="h-4 w-4" />
                   Post Settings
                 </h3>
-                <Button
+                <AppButton
                   type="button"
                   onClick={() => setShowSidebar(false)}
                   variant="ghost"
@@ -197,38 +196,38 @@ const NewPostPage: React.FC = () => {
                   className="h-6 w-6"
                 >
                   <X className="h-4 w-4" />
-                </Button>
+                </AppButton>
               </div>
 
               {/* Category */}
               <div className="flex flex-col gap-2">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</Label>
-                <Select
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</AppLabel>
+                <AppSelect
                   value={category}
                   onValueChange={(value) =>
                     dispatch(updatePostCategory({ postId: post.id, category: value }))
                   }
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="technology">Technology</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                    <SelectItem value="lifestyle">Lifestyle</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <AppSelectTrigger>
+                    <AppSelectValue placeholder="Select a category" />
+                  </AppSelectTrigger>
+                  <AppSelectContent>
+                    <AppSelectItem value="technology">Technology</AppSelectItem>
+                    <AppSelectItem value="business">Business</AppSelectItem>
+                    <AppSelectItem value="lifestyle">Lifestyle</AppSelectItem>
+                    <AppSelectItem value="education">Education</AppSelectItem>
+                  </AppSelectContent>
+                </AppSelect>
               </div>
 
               {/* Tags */}
               <div className="flex flex-col gap-2">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Tag className="h-3.5 w-3.5" />
                   Tags
-                </Label>
+                </AppLabel>
                 <div className="flex gap-2">
-                  <Input
+                  <AppInput
                     type="text"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
@@ -236,18 +235,18 @@ const NewPostPage: React.FC = () => {
                     placeholder="Add tag..."
                     className="h-10"
                   />
-                  <Button
+                  <AppButton
                     type="button"
                     onClick={handleAddTag}
                     variant="outline"
                     size="sm"
                   >
                     Add
-                  </Button>
+                  </AppButton>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {tags.map((tag) => (
-                    <Badge
+                    <AppBadge
                       key={tag}
                       variant="secondary"
                       className="cursor-pointer hover:bg-secondary/80"
@@ -255,18 +254,18 @@ const NewPostPage: React.FC = () => {
                     >
                       {tag}
                       <X className="h-3 w-3 ml-1" />
-                    </Badge>
+                    </AppBadge>
                   ))}
                 </div>
               </div>
 
               {/* Visibility */}
               <div className="flex flex-col gap-2">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Globe className="h-3.5 w-3.5" />
                   Visibility
-                </Label>
-                <RadioGroup
+                </AppLabel>
+                <AppRadioGroup
                   value={visibility}
                   onValueChange={(value) =>
                     dispatch(updatePostVisibility({ postId: post.id, visibility: value }))
@@ -274,22 +273,22 @@ const NewPostPage: React.FC = () => {
                 >
                   {['public', 'private', 'draft'].map((option) => (
                     <div key={option} className="flex items-center gap-2">
-                      <RadioGroupItem value={option} id={`${post.id}-${option}`} />
-                      <Label htmlFor={`${post.id}-${option}`} className="text-sm font-normal cursor-pointer">
+                      <AppRadioGroupItem value={option} id={`${post.id}-${option}`} />
+                      <AppLabel htmlFor={`${post.id}-${option}`} className="text-sm font-normal cursor-pointer">
                         <span className="capitalize">{option}</span>
-                      </Label>
+                      </AppLabel>
                     </div>
                   ))}
-                </RadioGroup>
+                </AppRadioGroup>
               </div>
 
               {/* Schedule */}
               <div className="flex flex-col gap-2">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" />
                   Schedule
-                </Label>
-                <Input
+                </AppLabel>
+                <AppInput
                   type="datetime-local"
                   className="h-10"
                 />
@@ -297,21 +296,21 @@ const NewPostPage: React.FC = () => {
 
               {/* Action buttons */}
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                <Button
+                <AppButton
                   type="button"
                   variant="outline"
                   className="w-full"
                 >
                   Save Draft
-                </Button>
-                <Button
+                </AppButton>
+                <AppButton
                   type="button"
                   variant="outline"
                   size="default"
                   className="w-full"
                 >
                   Preview
-                </Button>
+                </AppButton>
               </div>
 
             </div>

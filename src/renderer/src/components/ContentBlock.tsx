@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import { AppButton } from '@/components/app'
+import { AppTextarea } from '@/components/app'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -34,9 +34,9 @@ interface ActionButtonProps {
   children: React.ReactNode
 }
 
-function ActionButton({ title, onClick, disabled = false, danger = false, children }: ActionButtonProps) {
+const ActionButton = React.memo(function ActionButton({ title, onClick, disabled = false, danger = false, children }: ActionButtonProps) {
   return (
-    <Button
+    <AppButton
       type="button"
       title={title}
       onClick={onClick}
@@ -46,15 +46,16 @@ function ActionButton({ title, onClick, disabled = false, danger = false, childr
       className={`h-6 w-6 rounded-none ${danger ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : ''}`}
     >
       {children}
-    </Button>
+    </AppButton>
   )
-}
+})
+ActionButton.displayName = 'ActionButton'
 
 // ---------------------------------------------------------------------------
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
-export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Write something...' }: ContentBlockProps) {
+export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Write something...' }: ContentBlockProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dragControls = useDragControls()
 
@@ -85,7 +86,7 @@ export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeho
         <div className="flex items-center gap-0.5 mt-0.5 group/buttons">
           {/* Plus button */}
           {onAdd && (
-            <Button
+            <AppButton
               type="button"
               onClick={() => onAdd(block.id)}
               variant="ghost"
@@ -93,11 +94,11 @@ export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeho
               className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 rounded-none"
             >
               <Plus className="h-4 w-4" />
-            </Button>
+            </AppButton>
           )}
 
           {/* Drag handle */}
-          <Button
+          <AppButton
             type="button"
             onPointerDown={(e) => dragControls.start(e)}
             variant="ghost"
@@ -105,12 +106,12 @@ export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeho
             className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 touch-none rounded-none"
           >
             <GripVertical className="h-4 w-4" />
-          </Button>
+          </AppButton>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <Textarea
+          <AppTextarea
             ref={textareaRef}
             value={block.content}
             onChange={handleInput}
@@ -135,7 +136,8 @@ export function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeho
       </div>
     </Reorder.Item>
   )
-}
+})
+ContentBlock.displayName = 'ContentBlock'
 
 export function createBlock(): Block {
   return { id: crypto.randomUUID(), content: '' }

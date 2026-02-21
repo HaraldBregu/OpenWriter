@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Newspaper,
@@ -13,9 +13,7 @@ import {
   Loader2,
   Square
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
+import { AppButton, AppInput, AppSeparator } from '@/components/app'
 import { usePipeline } from '../hooks/usePipeline'
 import { useAppDispatch } from '../store'
 import { createPost } from '../store/postsSlice'
@@ -74,7 +72,7 @@ const recentItems = [
 // Sub-components
 // ---------------------------------------------------------------------------
 
-function CategoryCard({
+const CategoryCard = React.memo(function CategoryCard({
   icon: Icon,
   label,
   description,
@@ -85,7 +83,7 @@ function CategoryCard({
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (requiresPostCreation) {
       const action = createPost()
       dispatch(action)
@@ -93,7 +91,7 @@ function CategoryCard({
     } else {
       navigate(route)
     }
-  }
+  }, [requiresPostCreation, dispatch, navigate, route])
 
   return (
     <button
@@ -111,9 +109,10 @@ function CategoryCard({
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all mt-auto self-end" />
     </button>
   )
-}
+})
+CategoryCard.displayName = 'CategoryCard'
 
-function RecentItem({
+const RecentItem = React.memo(function RecentItem({
   icon: Icon,
   label,
   meta,
@@ -123,7 +122,7 @@ function RecentItem({
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (requiresPostCreation) {
       const action = createPost()
       dispatch(action)
@@ -131,7 +130,7 @@ function RecentItem({
     } else {
       navigate(route)
     }
-  }
+  }, [requiresPostCreation, dispatch, navigate, route])
 
   return (
     <button
@@ -152,7 +151,8 @@ function RecentItem({
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
     </button>
   )
-}
+})
+RecentItem.displayName = 'RecentItem'
 
 // ---------------------------------------------------------------------------
 // Pipeline test section
@@ -174,16 +174,16 @@ function PipelineTestSection(): React.ReactElement {
     }
   }, [response])
 
-  const handleRun = async (): Promise<void> => {
+  const handleRun = useCallback(async (): Promise<void> => {
     if (!inputValue.trim()) return
     await run(agent, { prompt: inputValue.trim() })
-  }
+  }, [inputValue, run, agent])
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter' && status !== 'running') {
       handleRun()
     }
-  }
+  }, [handleRun, status])
 
   const statusBadge: Record<typeof status, string> = {
     idle: 'text-muted-foreground',
@@ -211,7 +211,7 @@ function PipelineTestSection(): React.ReactElement {
             ))}
           </select>
 
-          <Input
+          <AppInput
             placeholder={agent === 'chat' ? 'Ask the AI anything...' : 'Enter a prompt for the echo agent...'}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -221,18 +221,18 @@ function PipelineTestSection(): React.ReactElement {
           />
 
           {status === 'running' ? (
-            <Button variant="outline" size="default" onClick={cancel}>
+            <AppButton variant="outline" size="default" onClick={cancel}>
               <Square className="h-3.5 w-3.5" />
               Cancel
-            </Button>
+            </AppButton>
           ) : (
-            <Button
+            <AppButton
               size="default"
               onClick={handleRun}
               disabled={!inputValue.trim()}
             >
               Run
-            </Button>
+            </AppButton>
           )}
         </div>
 
@@ -291,7 +291,7 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <Separator />
+        <AppSeparator />
 
         {/* Recent */}
         <section className="space-y-1">
@@ -315,7 +315,7 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <Separator />
+        <AppSeparator />
 
         {/* Documents & Integrations */}
         <section className="space-y-3">
@@ -352,12 +352,12 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <Separator />
+        <AppSeparator />
 
         {/* Pipeline test */}
         <PipelineTestSection />
 
-        <Separator />
+        <AppSeparator />
 
         {/* Tips */}
         <section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">

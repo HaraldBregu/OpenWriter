@@ -62,7 +62,7 @@ const MessageBubble = React.memo(function MessageBubble({ message }: { message: 
 // Provider dropdown
 // ---------------------------------------------------------------------------
 
-function ProviderSelect({
+const ProviderSelect = React.memo(function ProviderSelect({
   value,
   onChange,
   disabled
@@ -115,13 +115,14 @@ function ProviderSelect({
       )}
     </div>
   )
-}
+})
+ProviderSelect.displayName = 'ProviderSelect'
 
 // ---------------------------------------------------------------------------
 // Empty state
 // ---------------------------------------------------------------------------
 
-function EmptyState({ onNew }: { onNew: () => void }) {
+const EmptyState = React.memo(function EmptyState({ onNew }: { onNew: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-6">
       <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
@@ -143,7 +144,8 @@ function EmptyState({ onNew }: { onNew: () => void }) {
       </button>
     </div>
   )
-}
+})
+EmptyState.displayName = 'EmptyState'
 
 // ---------------------------------------------------------------------------
 // Main page

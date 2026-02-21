@@ -34,7 +34,7 @@ export interface TitleBarProps {
   className?: string
 }
 
-export function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
+export const TitleBar = React.memo(function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState(false)
 
@@ -65,7 +65,7 @@ export function TitleBar({ title = 'Application Name', onToggleSidebar, classNam
 
   return (
     <div
-      className={`relative flex h-12 shrink-0 items-center select-none border-b border-border bg-muted/20 ${className}`}
+      className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-muted/20 ${className}`}
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       {/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
@@ -164,4 +164,5 @@ export function TitleBar({ title = 'Application Name', onToggleSidebar, classNam
       )}
     </div>
   )
-}
+})
+TitleBar.displayName = 'TitleBar'

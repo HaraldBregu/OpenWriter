@@ -1,31 +1,33 @@
-import React, { useState }  from 'react'
+import React, { useState, useCallback }  from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { useAppDispatch, useAppSelector } from '../store'
 import { createPost, selectPosts } from '../store/postsSlice'
 import { TitleBar } from './TitleBar'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { Separator } from './ui/separator'
-import logoIcon from '@resources/icons/icon.png'
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
-  SidebarSeparator,
-  SidebarProvider,
-  SidebarInset,
-  SidebarHeader,
-  SidebarFooter,
+  AppPopover,
+  AppPopoverContent,
+  AppPopoverTrigger,
+  AppSeparator,
+  AppSidebar,
+  AppSidebarContent,
+  AppSidebarGroup,
+  AppSidebarGroupContent,
+  AppSidebarMenu,
+  AppSidebarMenuButton,
+  AppSidebarMenuItem,
+  AppSidebarMenuSub,
+  AppSidebarMenuSubItem,
+  AppSidebarMenuSubButton,
+  AppSidebarSeparator,
+  AppSidebarProvider,
+  AppSidebarInset,
+  AppSidebarHeader,
+  AppSidebarFooter,
   useSidebar
-} from './ui/sidebar'
+} from './app'
+import logoIcon from '@resources/icons/icon.png'
 import {
   Newspaper,
   PenLine,
@@ -100,10 +102,10 @@ const settingsMenuItems: SettingsMenuItem[] = [
 // Stub — replace with real auth state
 const currentUser: { name: string } | null = { name: 'John Doe' }
 
-function SettingsPopover() {
+const SettingsPopover = React.memo(function SettingsPopover() {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <AppPopover>
+      <AppPopoverTrigger asChild>
         <button
           type="button"
           className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
@@ -113,8 +115,8 @@ function SettingsPopover() {
           </span>
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
         </button>
-      </PopoverTrigger>
-      <PopoverContent
+      </AppPopoverTrigger>
+      <AppPopoverContent
         side="right"
         align="end"
         className="w-56 p-0"
@@ -146,7 +148,7 @@ function SettingsPopover() {
 
           {currentUser && (
             <>
-              <Separator className="my-1" />
+              <AppSeparator className="my-1" />
               <button
                 type="button"
                 className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
@@ -157,10 +159,11 @@ function SettingsPopover() {
             </>
           )}
         </div>
-      </PopoverContent>
-    </Popover>
+      </AppPopoverContent>
+    </AppPopover>
   )
-}
+})
+SettingsPopover.displayName = 'SettingsPopover'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -178,7 +181,7 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// AppLayoutInner — rendered inside SidebarProvider so it can call useSidebar
+// AppLayoutInner — rendered inside AppSidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
 function AppLayoutInner({ children }: AppLayoutProps) {
@@ -196,14 +199,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Messages: false
   })
 
-  const toggleSection = (title: string) =>
-    setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] }))
+  const toggleSection = useCallback((title: string) =>
+    setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] })), [])
 
-  const handleNewPost = () => {
+  const handleNewPost = useCallback(() => {
     const action = createPost()
     dispatch(action)
     navigate(`/new/post/${action.payload.id}`)
-  }
+  }, [dispatch, navigate])
 
   // Auto-expand Documents if a sub-route is active
   const isDocsActive = location.pathname.startsWith('/documents')
@@ -218,10 +221,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
       <TitleBar title="Tesseract AI * " onToggleSidebar={toggleSidebar} />
 
       <div className="flex flex-1 min-h-0 w-full">
-        <Sidebar className="border-r">
+        <AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
 
           {/* Header */}
-          <SidebarHeader className="border-b p-4">
+          <AppSidebarHeader className="border-b p-4">
             <Link to="/home" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <img
                 src={logoIcon}
@@ -230,21 +233,21 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               />
               <span className="text-md font-normal tracking-tight">Tesseract AI</span>
             </Link>
-          </SidebarHeader>
+          </AppSidebarHeader>
 
           {/* Nav */}
-          <SidebarContent className="gap-0 py-2">
-            <SidebarGroup className="py-0">
-              <SidebarGroupContent>
-                <SidebarMenu>
+          <AppSidebarContent className="gap-0 py-2">
+            <AppSidebarGroup className="py-0">
+              <AppSidebarGroupContent>
+                <AppSidebarMenu>
 
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon
                     const isNewPost = item.title === 'New Post'
                     return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
+                      <AppSidebarMenuItem key={item.title}>
+                        <AppSidebarMenuButton
                           asChild={!isNewPost}
                           // isActive={location.pathname === item.url}
                           className="h-9 px-3 group/item"
@@ -267,19 +270,19 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                               </span>
                             </Link>
                           )}
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
+                        </AppSidebarMenuButton>
+                      </AppSidebarMenuItem>
                     )
                   })}
 
-                  <SidebarSeparator className="my-1" />
+                  <AppSidebarSeparator className="my-1" />
 
                   {/* Posts, Writing, Notes, Messages — collapsible section headers */}
                   {topNavSections.map((section) => {
                     const isOpen = sectionsOpen[section]
                     const isPosts = section === 'Posts'
                     return (
-                      <SidebarMenuItem key={section}>
+                      <AppSidebarMenuItem key={section}>
                         <button
                           type="button"
                           onClick={() => toggleSection(section)}
@@ -291,11 +294,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           />
                         </button>
                         {isOpen && (
-                          <SidebarMenuSub className="border-none">
+                          <AppSidebarMenuSub className="border-none">
                             {isPosts && (
                               posts.map((post) => (
-                                <SidebarMenuSubItem key={post.id}>
-                                  <SidebarMenuSubButton
+                                <AppSidebarMenuSubItem key={post.id}>
+                                  <AppSidebarMenuSubButton
                                     asChild
                                     isActive={location.pathname === `/new/post/${post.id}`}
                                   >
@@ -305,21 +308,21 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                         {formatRelativeTime(post.updatedAt)}
                                       </span>
                                     </Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
+                                  </AppSidebarMenuSubButton>
+                                </AppSidebarMenuSubItem>
                               ))
                             )}
-                          </SidebarMenuSub>
+                          </AppSidebarMenuSub>
                         )}
-                      </SidebarMenuItem>
+                      </AppSidebarMenuItem>
                     )
                   })}
 
-                  <SidebarSeparator className="my-1" />
+                  <AppSidebarSeparator className="my-1" />
 
                   {/* Documents — collapsible */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
                       isActive={isDocsActive}
                       className="h-9 px-3"
                       onClick={() => setDocsOpen((v) => !v)}
@@ -329,15 +332,15 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       <ChevronRight
                         className={`h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${docsOpen ? 'rotate-90' : ''}`}
                       />
-                    </SidebarMenuButton>
+                    </AppSidebarMenuButton>
 
                     {docsOpen && (
-                      <SidebarMenuSub>
+                      <AppSidebarMenuSub>
                         {documentSubItems.map((sub) => {
                           const Icon = sub.icon
                           return (
-                            <SidebarMenuSubItem key={sub.title}>
-                              <SidebarMenuSubButton
+                            <AppSidebarMenuSubItem key={sub.title}>
+                              <AppSidebarMenuSubButton
                                 asChild
                                 isActive={location.pathname === sub.url}
                               >
@@ -345,17 +348,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                   <Icon className="h-3.5 w-3.5 shrink-0" />
                                   <span>{sub.title}</span>
                                 </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
+                              </AppSidebarMenuSubButton>
+                            </AppSidebarMenuSubItem>
                           )
                         })}
-                      </SidebarMenuSub>
+                      </AppSidebarMenuSub>
                     )}
-                  </SidebarMenuItem>
+                  </AppSidebarMenuItem>
 
                   {/* Integrations */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
                       asChild
                       isActive={location.pathname === '/integrations'}
                       className="h-9 px-3"
@@ -364,14 +367,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                         <Puzzle className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Integrations</span>
                       </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
 
-                  <SidebarSeparator className="my-1" />
+                  <AppSidebarSeparator className="my-1" />
 
                   {/* Pipeline Test (Dev Tool) */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
                       asChild
                       isActive={location.pathname === '/pipeline-test'}
                       className="h-9 px-3"
@@ -383,24 +386,24 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           Dev
                         </span>
                       </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
 
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
+                </AppSidebarMenu>
+              </AppSidebarGroupContent>
+            </AppSidebarGroup>
+          </AppSidebarContent>
 
           {/* Footer — Settings popover */}
-          <SidebarFooter className="border-t px-3 py-3">
+          <AppSidebarFooter className="border-t px-3 py-3">
             <SettingsPopover />
-          </SidebarFooter>
+          </AppSidebarFooter>
 
-        </Sidebar>
+        </AppSidebar>
 
-        <SidebarInset className="flex flex-col flex-1 min-h-0">
+        <AppSidebarInset className="flex flex-col flex-1 min-h-0">
           <main className="flex-1 overflow-y-auto bg-background">{children}</main>
-        </SidebarInset>
+        </AppSidebarInset>
       </div>
     </>
   )
@@ -416,9 +419,9 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="flex flex-col h-screen">
-      <SidebarProvider className="flex-col flex-1 min-h-0">
+      <AppSidebarProvider className="flex-col flex-1 min-h-0">
         <AppLayoutInner>{children}</AppLayoutInner>
-      </SidebarProvider>
+      </AppSidebarProvider>
     </div>
   )
 }

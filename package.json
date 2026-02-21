@@ -68,7 +68,7 @@
     "framer-motion": "^11.0.0",
     "i18next": "^25.8.7",
     "langchain": "latest",
-    "lucide-react": "^0.564.0",
+    "lucide-react": "^0.575.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^16.5.4",

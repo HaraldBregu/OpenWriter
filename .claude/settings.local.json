@@ -55,9 +55,17 @@
       "Bash(ls:*)",
       "Bash(npx eslint:*)",
       "Bash(wc:*)",
-      "Bash(~/Library/Application Support/Tesseract:*)"
+      "Bash(~/Library/Application Support/Tesseract:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(yarn:*)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)"
+    ],
     "ask": []
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   }
 }
