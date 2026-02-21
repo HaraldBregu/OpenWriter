@@ -340,35 +340,35 @@ const api = {
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('dialog-open')
+        return unwrapIpcResult(ipcRenderer.invoke('dialog-open'))
     },
     dialogOpenDirectory: (multiSelections = false): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('dialog-open-directory', multiSelections)
+        return unwrapIpcResult(ipcRenderer.invoke('dialog-open-directory', multiSelections))
     },
     dialogSave: (): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('dialog-save')
+        return unwrapIpcResult(ipcRenderer.invoke('dialog-save'))
     },
     dialogMessage: (message: string, detail: string, buttons: string[]): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('dialog-message', message, detail, buttons)
+        return unwrapIpcResult(ipcRenderer.invoke('dialog-message', message, detail, buttons))
     },
     dialogError: (title: string, content: string): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('dialog-error', title, content)
+        return unwrapIpcResult(ipcRenderer.invoke('dialog-error', title, content))
     },
     // Notifications
     notificationIsSupported: (): Promise<boolean> => {

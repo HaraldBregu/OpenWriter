@@ -60,9 +60,12 @@ const DirectoriesPage: React.FC = () => {
       // Use Electron dialog to select multiple directories
       const result = await window.api.dialogOpenDirectory(true)
 
-      console.log('[DirectoriesPage] Dialog result:', result)
+      console.log('[DirectoriesPage] Dialog result (raw):', result)
 
+      // The result is wrapped in IpcResult format: { success: true, data: DialogResult }
       const resultData = result.data as { canceled: boolean; filePaths: string[] }
+
+      console.log('[DirectoriesPage] Dialog result data:', resultData)
 
       if (resultData.canceled || !resultData.filePaths || resultData.filePaths.length === 0) {
         console.log('[DirectoriesPage] Dialog canceled or no paths selected')
@@ -88,6 +91,8 @@ const DirectoriesPage: React.FC = () => {
         const updated = [...directories, ...newDirs]
         console.log('[DirectoriesPage] Updated directories list:', updated)
         await saveDirectories(updated)
+      } else {
+        console.log('[DirectoriesPage] No new directories to add (all selected already exist)')
       }
     } catch (error) {
       console.error('[DirectoriesPage] Failed to add directories:', error)
