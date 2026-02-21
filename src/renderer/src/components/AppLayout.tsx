@@ -212,7 +212,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
           // Extract folder name from path
           const pathParts = workspacePath.split(/[/\\]/)
           const folderName = pathParts[pathParts.length - 1]
-          setWorkspaceName(folderName || 'Tesseract AI')
+          setWorkspaceName(`${folderName} (workspace)` || 'Tesseract AI')
         }
       } catch (error) {
         console.error('[AppLayout] Failed to load workspace name:', error)
