@@ -69,6 +69,9 @@ export class RagController {
   ): Promise<RagIndexResult> {
     const settings = this.storeService.getModelSettings(providerId)
     const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+
+    console.log("api key from Rag controller: "+ apiKey)
+
     if (!apiKey) {
       throw new Error(`No API token configured for provider: ${providerId}`)
     }
@@ -128,6 +131,8 @@ export class RagController {
 
     const settings = this.storeService.getModelSettings(providerId)
     const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    console.log("api key from rag 2 controller: "+ apiKey)
+
     if (!apiKey) {
       win.webContents.send('rag:error', {
         runId,

@@ -45,6 +45,7 @@ import {
   HelpCircle,
   ChevronRight,
   Bell,
+  FlaskConical,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -314,6 +315,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     )
                   })}
 
+                  <SidebarSeparator className="my-1" />
+
                   {/* Documents — collapsible */}
                   <SidebarMenuItem>
                     <SidebarMenuButton
@@ -360,6 +363,25 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       <Link to="/integrations">
                         <Puzzle className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Integrations</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarSeparator className="my-1" />
+
+                  {/* Pipeline Test (Dev Tool) */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/pipeline-test'}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/pipeline-test">
+                        <FlaskConical className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Pipeline Test</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono uppercase tracking-wider">
+                          Dev
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

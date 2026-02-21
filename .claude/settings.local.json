@@ -54,7 +54,8 @@
       "Bash(npx playwright test:*)",
       "Bash(ls:*)",
       "Bash(npx eslint:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(~/Library/Application Support/Tesseract:*)"
     ],
     "deny": [],
     "ask": []

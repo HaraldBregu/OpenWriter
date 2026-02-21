@@ -36,12 +36,18 @@ export interface TitleBarProps {
 
 export function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false)
+  const [isFullScreen, setIsFullScreen] = useState(false)
 
   useEffect(() => {
     window.api.windowIsMaximized().then(setIsMaximized)
+    window.api.windowIsFullScreen().then(setIsFullScreen)
 
-    const unsub = window.api.onMaximizeChange(setIsMaximized)
-    return unsub
+    const unsubMax = window.api.onMaximizeChange(setIsMaximized)
+    const unsubFs = window.api.onFullScreenChange(setIsFullScreen)
+    return () => {
+      unsubMax()
+      unsubFs()
+    }
   }, [])
 
   const btnBase = `
@@ -91,7 +97,7 @@ export function TitleBar({ title = 'Application Name', onToggleSidebar, classNam
       ) : (
         onToggleSidebar && (
           <div
-            className="flex items-center h-full z-10 ml-20 mt-1"
+            className={`flex items-center h-full z-10 ${isFullScreen ? 'ml-2' : 'ml-20 mt-1'}`}
             style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
           >
             <button

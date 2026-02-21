@@ -331,6 +331,8 @@ declare global {
       windowIsMaximized: () => Promise<boolean>
       getPlatform: () => Promise<string>
       onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void
+      windowIsFullScreen: () => Promise<boolean>
+      onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
     }
   }
 }

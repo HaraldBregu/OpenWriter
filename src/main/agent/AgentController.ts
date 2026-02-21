@@ -25,6 +25,7 @@ export class AgentController {
     const settings = this.storeService.getModelSettings(providerId)
 
     const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    console.log("api key from Agent controller: "+ apiKey)
     if (!apiKey) {
       win.webContents.send('agent:error', {
         runId,

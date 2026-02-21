@@ -50,6 +50,14 @@ export class Main {
       this.window?.webContents.send('window:maximize-change', false)
     })
 
+    this.window.on('enter-full-screen', () => {
+      this.window?.webContents.send('window:fullscreen-change', true)
+    })
+
+    this.window.on('leave-full-screen', () => {
+      this.window?.webContents.send('window:fullscreen-change', false)
+    })
+
     // Minimize to tray instead of closing
     this.window.on('close', (event) => {
       if (!this.appState.isQuitting) {

@@ -77,6 +77,14 @@ export class WindowIpc implements IpcModule {
     )
 
     ipcMain.handle(
+      'window:is-fullscreen',
+      wrapIpcHandler(
+        (event) => BrowserWindow.fromWebContents(event.sender)?.isFullScreen() ?? false,
+        'window:is-fullscreen'
+      )
+    )
+
+    ipcMain.handle(
       'window:get-platform',
       wrapSimpleHandler(() => process.platform, 'window:get-platform')
     )

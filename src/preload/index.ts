@@ -1,6 +1,43 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
+/**
+ * IPC Result types matching the main process wrappers
+ */
+interface IpcError {
+  success: false
+  error: {
+    code: string
+    message: string
+    stack?: string
+  }
+}
+
+interface IpcSuccess<T> {
+  success: true
+  data: T
+}
+
+type IpcResult<T> = IpcSuccess<T> | IpcError
+
+/**
+ * Helper to unwrap IpcResult from main process handlers
+ * Throws an error if the IPC call failed
+ */
+async function unwrapIpcResult<T>(promise: Promise<IpcResult<T>>): Promise<T> {
+  const result = await promise
+  if (result.success) {
+    return result.data
+  } else {
+    const error = new Error(result.error.message)
+    error.name = result.error.code
+    if (result.error.stack) {
+      error.stack = result.error.stack
+    }
+    throw error
+  }
+}
+
 const api = {
     playSound: (): void => {
         ipcRenderer.send('play-sound')
@@ -406,35 +443,35 @@ const api = {
     },
     // Store
     storeGetAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
-        return ipcRenderer.invoke('store-get-all-model-settings')
+        return unwrapIpcResult(ipcRenderer.invoke('store-get-all-model-settings'))
     },
     storeGetModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
-        return ipcRenderer.invoke('store-get-model-settings', providerId)
+        return unwrapIpcResult(ipcRenderer.invoke('store-get-model-settings', providerId))
     },
     storeSetSelectedModel: (providerId: string, modelId: string): Promise<void> => {
-        return ipcRenderer.invoke('store-set-selected-model', providerId, modelId)
+        return unwrapIpcResult(ipcRenderer.invoke('store-set-selected-model', providerId, modelId))
     },
     storeSetApiToken: (providerId: string, token: string): Promise<void> => {
-        return ipcRenderer.invoke('store-set-api-token', providerId, token)
+        return unwrapIpcResult(ipcRenderer.invoke('store-set-api-token', providerId, token))
     },
     storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
-        return ipcRenderer.invoke('store-set-model-settings', providerId, settings)
+        return unwrapIpcResult(ipcRenderer.invoke('store-set-model-settings', providerId, settings))
     },
     // Workspace
     workspaceSelectFolder: (): Promise<string | null> => {
-        return ipcRenderer.invoke('workspace:select-folder')
+        return unwrapIpcResult(ipcRenderer.invoke('workspace:select-folder'))
     },
     workspaceGetCurrent: (): Promise<string | null> => {
-        return ipcRenderer.invoke('workspace-get-current')
+        return unwrapIpcResult(ipcRenderer.invoke('workspace-get-current'))
     },
     workspaceSetCurrent: (workspacePath: string): Promise<void> => {
-        return ipcRenderer.invoke('workspace-set-current', workspacePath)
+        return unwrapIpcResult(ipcRenderer.invoke('workspace-set-current', workspacePath))
     },
     workspaceGetRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
-        return ipcRenderer.invoke('workspace-get-recent')
+        return unwrapIpcResult(ipcRenderer.invoke('workspace-get-recent'))
     },
     workspaceClear: (): Promise<void> => {
-        return ipcRenderer.invoke('workspace-clear')
+        return unwrapIpcResult(ipcRenderer.invoke('workspace-clear'))
     },
     // Agent
     agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
@@ -595,7 +632,7 @@ const api = {
         ipcRenderer.send('window:close')
     },
     windowIsMaximized: (): Promise<boolean> => {
-        return ipcRenderer.invoke('window:is-maximized')
+        return unwrapIpcResult(ipcRenderer.invoke('window:is-maximized'))
     },
     getPlatform: (): Promise<string> => {
         return ipcRenderer.invoke('window:get-platform')
@@ -607,6 +644,18 @@ const api = {
         ipcRenderer.on('window:maximize-change', handler)
         return () => {
             ipcRenderer.removeListener('window:maximize-change', handler)
+        }
+    },
+    windowIsFullScreen: (): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('window:is-fullscreen'))
+    },
+    onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, isFullScreen: boolean): void => {
+            callback(isFullScreen)
+        }
+        ipcRenderer.on('window:fullscreen-change', handler)
+        return () => {
+            ipcRenderer.removeListener('window:fullscreen-change', handler)
         }
     }
 }

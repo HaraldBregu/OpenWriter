@@ -29,7 +29,7 @@ import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
-import { AgentRegistry, PipelineService, EchoAgent, ChatAgent } from './pipeline'
+import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
 
 // IPC modules
 import type { IpcModule } from './ipc'
@@ -109,6 +109,8 @@ export function bootstrapServices(): BootstrapResult {
   const agentRegistry = container.register('agentRegistry', new AgentRegistry())
   agentRegistry.register(new EchoAgent())
   agentRegistry.register(new ChatAgent(storeService))
+  agentRegistry.register(new CounterAgent(storeService))
+  agentRegistry.register(new AlphabetAgent(storeService))
   container.register('pipeline', new PipelineService(agentRegistry, eventBus))
 
   console.log(`[Bootstrap] Registered ${container.has('store') ? 'all' : 'some'} services`)
