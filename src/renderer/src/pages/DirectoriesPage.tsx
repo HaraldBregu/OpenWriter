@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { FolderPlus, FolderOpen, Trash2, RefreshCw, Database, CheckCircle2, XCircle } from 'lucide-react'
 import {
   AppButton,
@@ -22,44 +22,54 @@ const DirectoriesPage: React.FC = () => {
   const [directories, setDirectories] = useState<IndexedDirectory[]>([])
   const [isIndexing, setIsIndexing] = useState(false)
 
-  // Load saved directories from store on mount
-  useEffect(() => {
-    loadDirectories()
-  }, [])
-
-  async function loadDirectories() {
+  const loadDirectories = useCallback(async () => {
     try {
       // TODO: Load from store/service
       // For now, use localStorage as placeholder
       const saved = localStorage.getItem('indexed_directories')
+      console.log('[DirectoriesPage] Loading directories from localStorage:', saved)
       if (saved) {
-        setDirectories(JSON.parse(saved))
+        const parsed = JSON.parse(saved)
+        console.log('[DirectoriesPage] Parsed directories:', parsed)
+        setDirectories(parsed)
       }
     } catch (error) {
       console.error('[DirectoriesPage] Failed to load directories:', error)
     }
-  }
+  }, [])
 
-  async function saveDirectories(dirs: IndexedDirectory[]) {
+  // Load saved directories from store on mount
+  useEffect(() => {
+    loadDirectories()
+  }, [loadDirectories])
+
+  const saveDirectories = useCallback(async (dirs: IndexedDirectory[]) => {
     try {
+      console.log('[DirectoriesPage] Saving directories:', dirs)
       // TODO: Save to store/service
       localStorage.setItem('indexed_directories', JSON.stringify(dirs))
       setDirectories(dirs)
     } catch (error) {
       console.error('[DirectoriesPage] Failed to save directories:', error)
     }
-  }
+  }, [])
 
-  async function handleAddDirectories() {
+  const handleAddDirectories = useCallback(async () => {
     try {
+      console.log('[DirectoriesPage] Opening directory dialog...')
       // Use Electron dialog to select multiple directories
       const result = await window.api.dialogOpenDirectory(true)
+
+      console.log('[DirectoriesPage] Dialog result:', result)
 
       const resultData = result.data as { canceled: boolean; filePaths: string[] }
 
       if (resultData.canceled || !resultData.filePaths || resultData.filePaths.length === 0) {
+        console.log('[DirectoriesPage] Dialog canceled or no paths selected')
         return
       }
+
+      console.log('[DirectoriesPage] Selected paths:', resultData.filePaths)
 
       // Add new directories (avoid duplicates)
       const newDirs: IndexedDirectory[] = resultData.filePaths
@@ -71,8 +81,13 @@ const DirectoriesPage: React.FC = () => {
           isIndexed: false
         }))
 
+      console.log('[DirectoriesPage] New directories to add:', newDirs)
+      console.log('[DirectoriesPage] Current directories:', directories)
+
       if (newDirs.length > 0) {
-        await saveDirectories([...directories, ...newDirs])
+        const updated = [...directories, ...newDirs]
+        console.log('[DirectoriesPage] Updated directories list:', updated)
+        await saveDirectories(updated)
       }
     } catch (error) {
       console.error('[DirectoriesPage] Failed to add directories:', error)
@@ -82,14 +97,14 @@ const DirectoriesPage: React.FC = () => {
         urgency: 'normal'
       })
     }
-  }
+  }, [directories, saveDirectories])
 
-  async function handleRemoveDirectory(id: string) {
+  const handleRemoveDirectory = useCallback(async (id: string) => {
     const updated = directories.filter((dir) => dir.id !== id)
     await saveDirectories(updated)
-  }
+  }, [directories, saveDirectories])
 
-  async function handleIndexDirectories() {
+  const handleIndexDirectories = useCallback(async () => {
     if (directories.length === 0) {
       await window.api.notificationShow({
         title: 'No Directories',
@@ -129,7 +144,7 @@ const DirectoriesPage: React.FC = () => {
     } finally {
       setIsIndexing(false)
     }
-  }
+  }, [directories, saveDirectories])
 
   function formatPath(path: string): string {
     // Show only the last 2-3 parts of the path for readability
