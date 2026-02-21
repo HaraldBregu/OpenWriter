@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import {
@@ -28,7 +28,8 @@ import {
   updatePostTitle,
   updatePostCategory,
   updatePostTags,
-  updatePostVisibility
+  updatePostVisibility,
+  deletePost
 } from '../store/postsSlice'
 
 // ---------------------------------------------------------------------------
@@ -37,6 +38,7 @@ import {
 
 const NewPostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
   // Stable selector instance — created once per render cycle; safe because id
@@ -44,7 +46,7 @@ const NewPostPage: React.FC = () => {
   const post = useAppSelector(selectPostById(id ?? ''))
 
   const [tagInput, setTagInput] = useState('')
-  const [showSidebar, setShowSidebar] = useState(true)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
   // stale URL), show a fallback rather than crashing.
@@ -132,7 +134,13 @@ const NewPostPage: React.FC = () => {
                 <Copy className="h-4 w-4" />
                 Duplicate
               </AppDropdownMenuItem>
-              <AppDropdownMenuItem className="text-destructive focus:text-destructive">
+              <AppDropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => {
+                  dispatch(deletePost(post.id))
+                  navigate('/')
+                }}
+              >
                 <Trash2 className="h-4 w-4" />
                 Move to Trash
               </AppDropdownMenuItem>

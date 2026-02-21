@@ -117,9 +117,9 @@ const SettingsPopover = React.memo(function SettingsPopover() {
         </button>
       </AppPopoverTrigger>
       <AppPopoverContent
-        side="right"
+        side="top"
         align="end"
-        className="w-56 p-0"
+        className="w-60 p-0"
       >
         <div className="py-1">
           {settingsMenuItems.map((item) => {
