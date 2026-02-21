@@ -201,6 +201,27 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Messages: false
   })
 
+  const [workspaceName, setWorkspaceName] = useState<string>('Tesseract AI')
+
+  // Load workspace name on mount
+  useEffect(() => {
+    async function loadWorkspaceName() {
+      try {
+        const workspacePath = await window.api.workspaceGetCurrent()
+        if (workspacePath) {
+          // Extract folder name from path
+          const pathParts = workspacePath.split(/[/\\]/)
+          const folderName = pathParts[pathParts.length - 1]
+          setWorkspaceName(folderName || 'Tesseract AI')
+        }
+      } catch (error) {
+        console.error('[AppLayout] Failed to load workspace name:', error)
+      }
+    }
+
+    loadWorkspaceName()
+  }, [])
+
   const toggleSection = useCallback((title: string) =>
     setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] })), [])
 
@@ -266,7 +287,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   return (
     <>
-      <TitleBar title="Tesseract AI * " onToggleSidebar={toggleSidebar} />
+      <TitleBar title={workspaceName} onToggleSidebar={toggleSidebar} />
 
       <div className="flex flex-1 min-h-0 w-full">
         <AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
