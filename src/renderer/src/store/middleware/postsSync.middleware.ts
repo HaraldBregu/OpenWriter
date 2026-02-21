@@ -132,6 +132,44 @@ function debouncedSync(posts: Post[]): void {
 }
 
 /**
+ * Delete a post file from the workspace immediately
+ * Called when a post is deleted from Redux
+ */
+async function deletePostFile(postId: string): Promise<void> {
+  try {
+    // Check if there's an active workspace
+    const workspacePath = await window.api.workspaceGetCurrent()
+
+    if (!workspacePath) {
+      console.debug('[PostsSync] No workspace selected, skipping file deletion')
+      return
+    }
+
+    console.debug('[PostsSync] Deleting post file:', postId)
+
+    // Call IPC method to delete the post file
+    await window.api.postsDeletePost(postId)
+
+    console.debug('[PostsSync] Successfully deleted post file:', postId)
+  } catch (error) {
+    console.error('[PostsSync] Failed to delete post file:', error)
+
+    // Show user-facing error notification
+    try {
+      await window.api.notificationShow({
+        title: 'Delete Failed',
+        body: `Failed to delete post file. The file may still exist in the workspace.`,
+        urgency: 'normal'
+      })
+    } catch (notifError) {
+      console.error('[PostsSync] Failed to show notification:', notifError)
+    }
+
+    throw error
+  }
+}
+
+/**
  * Redux middleware that listens to post actions and syncs to Electron
  *
  * This middleware intercepts all Redux actions and triggers a sync
@@ -163,7 +201,17 @@ export const postsSyncMiddleware: Middleware<object, PostsState> = (store) => (n
         postCount: posts.length
       })
 
-      // Trigger debounced sync
+      // Handle post deletion specially - delete file immediately
+      if (actionType === 'posts/deletePost' && 'payload' in action) {
+        const postId = action.payload as string
+
+        // Delete the post file immediately (don't wait for debounce)
+        deletePostFile(postId).catch((error) => {
+          console.error('[PostsSync] Failed to delete post file:', error)
+        })
+      }
+
+      // Trigger debounced sync for all post changes
       debouncedSync(posts)
     }
   }

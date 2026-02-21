@@ -59,6 +59,8 @@ import {
   Bell,
   FlaskConical,
   Bug,
+  PlusCircle,
+  FileText,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -70,7 +72,7 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateItems = [
-  { title: 'New Post', icon: Newspaper, url: '/new/post', shortcut: '⌘N' },
+  { title: 'New Post', icon: PlusCircle, url: '/new/post', shortcut: '⌘N' },
   { title: 'New Writing', icon: PenLine, url: '/new/writing', shortcut: '⌘W' },
   { title: 'New Note', icon: StickyNote, url: '/new/note', shortcut: '⌘⇧N' },
   { title: 'New Message', icon: MessageSquare, url: '/new/message', shortcut: '⌘M' }
@@ -359,7 +361,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           />
                         </button>
                         {isOpen && (
-                          <AppSidebarMenuSub className="border-none">
+                          <AppSidebarMenuSub className="border-none ml-0">
                             {isPosts && (
                               posts.map((post) => (
                                 <AppSidebarMenuSubItem
@@ -372,8 +374,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                   <AppSidebarMenuSubButton
                                     asChild
                                     isActive={location.pathname === `/new/post/${post.id}`}
+                                    className="ml-0"
                                   >
-                                    <Link to={`/new/post/${post.id}`}>
+                                    <Link to={`/new/post/${post.id}`} className="ml-0">
+                                      <FileText className="h-3.5 w-3.5 shrink-0" />
                                       <span className="flex-1 truncate">{post.title || 'Untitled Post'}</span>
                                       <span className="text-xs text-muted-foreground/40 shrink-0">
                                         {formatRelativeTime(post.updatedAt)}
