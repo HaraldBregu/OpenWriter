@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock } from 'lucide-react'
 import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
+import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
+import { useAppDispatch } from '../store'
 import logoIcon from '@resources/icons/icon.png'
 
 interface RecentProject {
@@ -22,6 +24,7 @@ const DUMMY_RECENT_PROJECTS: RecentProject[] = [
 
 const WelcomePage: React.FC = () => {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
 
   useEffect(() => {
@@ -44,22 +47,44 @@ const WelcomePage: React.FC = () => {
     try {
       const folderPath = await window.api.workspaceSelectFolder()
       if (folderPath) {
+        // Set the workspace
         await window.api.workspaceSetCurrent(folderPath)
+
+        // Load posts from the newly selected workspace
+        try {
+          await reloadPostsFromWorkspace(dispatch)
+        } catch (error) {
+          console.error('[WelcomePage] Failed to load posts after workspace selection:', error)
+          // Don't block navigation if posts fail to load
+        }
+
+        // Navigate to home
         navigate('/home')
       }
     } catch (error) {
       console.error('Failed to open project:', error)
     }
-  }, [navigate])
+  }, [navigate, dispatch])
 
   const handleOpenRecentProject = useCallback(async (path: string) => {
     try {
+      // Set the workspace
       await window.api.workspaceSetCurrent(path)
+
+      // Load posts from the selected workspace
+      try {
+        await reloadPostsFromWorkspace(dispatch)
+      } catch (error) {
+        console.error('[WelcomePage] Failed to load posts after selecting recent project:', error)
+        // Don't block navigation if posts fail to load
+      }
+
+      // Navigate to home
       navigate('/home')
     } catch (error) {
       console.error('Failed to open recent project:', error)
     }
-  }, [navigate])
+  }, [navigate, dispatch])
 
   const formatPath = (path: string) => {
     if (path.includes('/Users/')) {

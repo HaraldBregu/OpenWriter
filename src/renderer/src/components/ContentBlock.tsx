@@ -34,16 +34,16 @@ interface ActionButtonProps {
   children: React.ReactNode
 }
 
-const ActionButton = React.memo(function ActionButton({ title, onClick, disabled = false, danger = false, children }: ActionButtonProps) {
+const ActionButton = React.memo(function ActionButton({ title, onClick, disabled = false, children }: ActionButtonProps) {
   return (
     <AppButton
       type="button"
       title={title}
       onClick={onClick}
       disabled={disabled}
-      variant="ghost"
+      variant={"ghost"}
       size="icon"
-      className={`h-6 w-6 rounded-none ${danger ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : ''}`}
+      className={`h-6 w-6 rounded-none`}
     >
       {children}
     </AppButton>
@@ -91,9 +91,9 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
               onClick={() => onAdd(block.id)}
               variant="ghost"
               size="icon"
-              className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 rounded-none"
+              className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 rounded-none"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-5 w-5" />
             </AppButton>
           )}
 
@@ -103,9 +103,9 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
             onPointerDown={(e) => dragControls.start(e)}
             variant="ghost"
             size="icon"
-            className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-0 group-hover/buttons:opacity-100 touch-none rounded-none"
+            className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 touch-none rounded-none"
           >
-            <GripVertical className="h-4 w-4" />
+            <GripVertical className="h-5 w-5" />
           </AppButton>
         </div>
 
@@ -116,20 +116,19 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
             value={block.content}
             onChange={handleInput}
             placeholder={placeholder}
-            className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-relaxed border-0 p-0 rounded-none m-0"
-            style={{ overflow: 'hidden', minHeight: '1.625em', outline: 'none', boxShadow: 'none' }}
+            className="w-full h-10 resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-relaxed border-0 p-0 rounded-none m-0 overflow-hidden min-h-[1em] outline-none shadow-none ring-0 focus:outline-none focus:ring-0 focus:border-0 focus:shadow-none focus-visible:ring-0"
           />
         </div>
 
         {/* Action bar */}
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 shrink-0">
+        <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0">
           <ActionButton title="Enhance with AI" onClick={() => {/* TODO */}}>
             <Sparkles className="h-3.5 w-3.5" />
           </ActionButton>
           <ActionButton title="Copy" onClick={() => navigator.clipboard.writeText(block.content)}>
             <Copy className="h-3.5 w-3.5" />
           </ActionButton>
-          <ActionButton title="Delete" onClick={() => onDelete(block.id)} disabled={isOnly} danger>
+          <ActionButton title="Delete" onClick={() => onDelete(block.id)} disabled={isOnly}>
             <Trash2 className="h-3.5 w-3.5" />
           </ActionButton>
         </div>

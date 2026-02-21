@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store'
+import { AppProvider } from './contexts'
 import { AppLayout } from './components/AppLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingSkeleton } from './components/LoadingSkeleton'
@@ -30,6 +31,7 @@ const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const NewNotePage = lazy(() => import('./pages/NewNotePage'))
 const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
 const PipelineTestPage = lazy(() => import('./pages/PipelineTestPage'))
+const DebugPage = lazy(() => import('./pages/DebugPage'))
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -45,43 +47,46 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary level="root">
       <Provider store={store}>
-        <Router>
-            <Routes>
-              {/* Welcome page - standalone, shown first */}
-              <Route path="/" element={<WelcomePage />} />
+        <AppProvider>
+          <Router>
+              <Routes>
+                {/* Welcome page - standalone, shown first */}
+                <Route path="/" element={<WelcomePage />} />
 
-              {/* All other routes use AppLayout */}
-              <Route path="*" element={
-                <AppLayout>
-                  <Suspense fallback={<LoadingSkeleton />}>
-                    <Routes>
-                      <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
-                      <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
-                      <Route path="/microphone" element={<RouteWrapper><MicrophonePage /></RouteWrapper>} />
-                      <Route path="/camera" element={<RouteWrapper><CameraPage /></RouteWrapper>} />
-                      <Route path="/screen" element={<RouteWrapper><ScreenPage /></RouteWrapper>} />
-                      <Route path="/bluetooth" element={<RouteWrapper><BluetoothPage /></RouteWrapper>} />
-                      <Route path="/network" element={<RouteWrapper><NetworkPage /></RouteWrapper>} />
-                      <Route path="/cron" element={<RouteWrapper><CronPage /></RouteWrapper>} />
-                      <Route path="/lifecycle" element={<RouteWrapper><LifecyclePage /></RouteWrapper>} />
-                      <Route path="/windows" element={<RouteWrapper><WindowManagerPage /></RouteWrapper>} />
-                      <Route path="/filesystem" element={<RouteWrapper><FilesystemPage /></RouteWrapper>} />
-                      <Route path="/dialogs" element={<RouteWrapper><DialogsPage /></RouteWrapper>} />
-                      <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
-                      <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
-                      <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
-                      <Route path="/rag" element={<RouteWrapper><RagPage /></RouteWrapper>} />
-                      <Route path="/pipeline-test" element={<RouteWrapper><PipelineTestPage /></RouteWrapper>} />
-                      <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
-                      <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
-                      <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
-                      <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
-                    </Routes>
-                  </Suspense>
-                </AppLayout>
-              } />
-            </Routes>
-        </Router>
+                {/* All other routes use AppLayout */}
+                <Route path="*" element={
+                  <AppLayout>
+                    <Suspense fallback={<LoadingSkeleton />}>
+                      <Routes>
+                        <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
+                        <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
+                        <Route path="/microphone" element={<RouteWrapper><MicrophonePage /></RouteWrapper>} />
+                        <Route path="/camera" element={<RouteWrapper><CameraPage /></RouteWrapper>} />
+                        <Route path="/screen" element={<RouteWrapper><ScreenPage /></RouteWrapper>} />
+                        <Route path="/bluetooth" element={<RouteWrapper><BluetoothPage /></RouteWrapper>} />
+                        <Route path="/network" element={<RouteWrapper><NetworkPage /></RouteWrapper>} />
+                        <Route path="/cron" element={<RouteWrapper><CronPage /></RouteWrapper>} />
+                        <Route path="/lifecycle" element={<RouteWrapper><LifecyclePage /></RouteWrapper>} />
+                        <Route path="/windows" element={<RouteWrapper><WindowManagerPage /></RouteWrapper>} />
+                        <Route path="/filesystem" element={<RouteWrapper><FilesystemPage /></RouteWrapper>} />
+                        <Route path="/dialogs" element={<RouteWrapper><DialogsPage /></RouteWrapper>} />
+                        <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
+                        <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
+                        <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
+                        <Route path="/rag" element={<RouteWrapper><RagPage /></RouteWrapper>} />
+                        <Route path="/pipeline-test" element={<RouteWrapper><PipelineTestPage /></RouteWrapper>} />
+                        <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
+                        <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
+                        <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
+                        <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
+                        <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
+                      </Routes>
+                    </Suspense>
+                  </AppLayout>
+                } />
+              </Routes>
+          </Router>
+        </AppProvider>
       </Provider>
     </ErrorBoundary>
   )

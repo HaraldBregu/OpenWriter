@@ -17,6 +17,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState } from './core'
 
 // Services
 import { StoreService } from './services/store'
+import { LoggerService } from './services/logger'
 import { LifecycleService } from './services/lifecycle'
 import { MediaPermissionsService } from './services/media-permissions'
 import { BluetoothService } from './services/bluetooth'
@@ -27,6 +28,7 @@ import { FilesystemService } from './services/filesystem'
 import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
+import { WorkspaceService } from './services/workspace'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
@@ -37,6 +39,7 @@ import {
   AgentIpc,
   BluetoothIpc,
   ClipboardIpc,
+  ContextMenuIpc,
   CronIpc,
   CustomIpc,
   DialogIpc,
@@ -46,6 +49,7 @@ import {
   NetworkIpc,
   NotificationIpc,
   PipelineIpc,
+  PostsIpc,
   RagIpc,
   StoreIpc,
   WindowIpc,
@@ -57,6 +61,7 @@ export interface BootstrapResult {
   eventBus: EventBus
   windowFactory: WindowFactory
   appState: AppState
+  logger: LoggerService
 }
 
 /**
@@ -102,6 +107,14 @@ export function bootstrapServices(): BootstrapResult {
   container.register('dialog', new DialogService())
   container.register('notification', new NotificationService())
   container.register('clipboard', new ClipboardService())
+  const workspaceService = new WorkspaceService(storeService, eventBus)
+  workspaceService.initialize()
+  container.register('workspace', workspaceService)
+
+  // Initialize logger after workspace service (needs workspace for log directory)
+  const logger = new LoggerService(workspaceService, eventBus)
+  container.register('logger', logger)
+
   container.register('agent', new AgentService(storeService))
   container.register('rag', new RagController(storeService))
 
@@ -115,7 +128,7 @@ export function bootstrapServices(): BootstrapResult {
 
   console.log(`[Bootstrap] Registered ${container.has('store') ? 'all' : 'some'} services`)
 
-  return { container, eventBus, windowFactory, appState }
+  return { container, eventBus, windowFactory, appState, logger }
 }
 
 /**
@@ -129,6 +142,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new AgentIpc(),
     new BluetoothIpc(),
     new ClipboardIpc(),
+    new ContextMenuIpc(),
     new CronIpc(),
     new CustomIpc(),
     new DialogIpc(),
@@ -138,6 +152,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new NetworkIpc(),
     new NotificationIpc(),
     new PipelineIpc(),
+    new PostsIpc(),
     new RagIpc(),
     new StoreIpc(),
     new WindowIpc(),
@@ -159,16 +174,158 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
  * Setup app lifecycle handlers using AppState.
  * Replaces the unsafe (app as { isQuitting?: boolean }).isQuitting pattern.
  */
-export function setupAppLifecycle(appState: AppState): void {
+export function setupAppLifecycle(appState: AppState, logger?: LoggerService): void {
   app.on('before-quit', () => {
     appState.setQuitting()
-    console.log('[AppState] App is quitting')
+    logger?.info('App', 'Application is quitting')
   })
 
   app.on('window-all-closed', () => {
+    logger?.info('App', 'All windows closed')
     if (process.platform !== 'darwin' && appState.isQuitting) {
       app.quit()
     }
+  })
+
+  app.on('activate', () => {
+    logger?.debug('App', 'Application activated')
+  })
+
+  app.on('will-quit', () => {
+    logger?.info('App', 'Application will quit')
+  })
+
+  app.on('quit', (_event, exitCode) => {
+    logger?.info('App', `Application quit with exit code: ${exitCode}`)
+  })
+}
+
+/**
+ * Setup Electron event logging hooks.
+ * Captures various Electron lifecycle and window events for debugging.
+ */
+export function setupEventLogging(logger: LoggerService): void {
+  // App lifecycle events
+  app.on('ready', () => {
+    logger.info('App', 'Application ready', {
+      version: app.getVersion(),
+      platform: process.platform,
+      arch: process.arch,
+      electron: process.versions.electron,
+      chrome: process.versions.chrome,
+      node: process.versions.node
+    })
+  })
+
+  app.on('browser-window-created', (_event, window) => {
+    logger.debug('App', `Browser window created: ID ${window.id}`)
+
+    // Window-specific events
+    window.on('ready-to-show', () => {
+      logger.debug('Window', `Window ready to show: ID ${window.id}`)
+    })
+
+    window.on('show', () => {
+      logger.debug('Window', `Window shown: ID ${window.id}`)
+    })
+
+    window.on('hide', () => {
+      logger.debug('Window', `Window hidden: ID ${window.id}`)
+    })
+
+    window.on('focus', () => {
+      logger.debug('Window', `Window focused: ID ${window.id}`)
+    })
+
+    window.on('blur', () => {
+      logger.debug('Window', `Window blurred: ID ${window.id}`)
+    })
+
+    window.on('maximize', () => {
+      logger.debug('Window', `Window maximized: ID ${window.id}`)
+    })
+
+    window.on('unmaximize', () => {
+      logger.debug('Window', `Window unmaximized: ID ${window.id}`)
+    })
+
+    window.on('minimize', () => {
+      logger.debug('Window', `Window minimized: ID ${window.id}`)
+    })
+
+    window.on('restore', () => {
+      logger.debug('Window', `Window restored: ID ${window.id}`)
+    })
+
+    window.on('close', () => {
+      logger.debug('Window', `Window closing: ID ${window.id}`)
+    })
+
+    window.on('closed', () => {
+      logger.debug('Window', `Window closed: ID ${window.id}`)
+    })
+
+    window.webContents.on('did-finish-load', () => {
+      logger.debug('WebContents', `Page loaded: Window ID ${window.id}`)
+    })
+
+    window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+      logger.error('WebContents', `Page failed to load: ${validatedURL}`, {
+        windowId: window.id,
+        errorCode,
+        errorDescription
+      })
+    })
+
+    window.webContents.on('render-process-gone', (_event, details) => {
+      logger.error('WebContents', `Renderer process gone: Window ID ${window.id}`, {
+        reason: details.reason,
+        exitCode: details.exitCode
+      })
+    })
+
+    window.webContents.on('unresponsive', () => {
+      logger.warn('WebContents', `Renderer process unresponsive: Window ID ${window.id}`)
+    })
+
+    window.webContents.on('responsive', () => {
+      logger.info('WebContents', `Renderer process responsive again: Window ID ${window.id}`)
+    })
+  })
+
+  app.on('browser-window-focus', (_event, window) => {
+    logger.debug('App', `Browser window focused: ID ${window.id}`)
+  })
+
+  app.on('browser-window-blur', (_event, window) => {
+    logger.debug('App', `Browser window blurred: ID ${window.id}`)
+  })
+
+  app.on('child-process-gone', (_event, details) => {
+    logger.error('App', 'Child process gone', {
+      type: details.type,
+      reason: details.reason,
+      exitCode: details.exitCode
+    })
+  })
+
+  // Certificate errors
+  app.on('certificate-error', (_event, _webContents, url, error, certificate) => {
+    logger.error('App', 'Certificate error', {
+      url,
+      error,
+      issuer: certificate.issuerName
+    })
+  })
+
+  // Session events
+  app.on('web-contents-created', (_event, webContents) => {
+    logger.debug('App', `WebContents created: ID ${webContents.id}`)
+  })
+
+  // Accessibility support
+  app.on('accessibility-support-changed', (_event, accessibilitySupportEnabled) => {
+    logger.info('App', `Accessibility support: ${accessibilitySupportEnabled ? 'enabled' : 'disabled'}`)
   })
 }
 

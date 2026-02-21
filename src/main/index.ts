@@ -5,14 +5,15 @@ import { Tray } from './tray'
 import { Menu } from './menu'
 
 import type { LifecycleService } from './services/lifecycle'
-import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, cleanup } from './bootstrap'
+import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, setupEventLogging, cleanup } from './bootstrap'
 
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
 console.log('[Main] Bootstrapping core infrastructure...')
-const { container, eventBus, appState, windowFactory } = bootstrapServices()
+const { container, eventBus, appState, windowFactory, logger } = bootstrapServices()
 console.log('[Main] Enabling IPC modules...')
 bootstrapIpcModules(container, eventBus)
-setupAppLifecycle(appState)
+setupAppLifecycle(appState, logger)
+setupEventLogging(logger)
 
 const TSRCT_EXT = '.tsrct'
 
@@ -54,6 +55,9 @@ const menuManager = new Menu({
     BrowserWindow.getAllWindows().forEach((win) => {
       win.webContents.send('change-theme', theme)
     })
+  },
+  onNewWorkspace: () => {
+    mainWindow.createWorkspaceWindow()
   }
 })
 
@@ -62,6 +66,7 @@ let pendingFilePath: string | null = null
 
 app.on('open-file', (event, filePath) => {
   event.preventDefault()
+  logger.debug('App', `File open request: ${filePath}`)
   if (!isTsrctFile(filePath)) return
 
   if (app.isReady()) {
@@ -94,6 +99,7 @@ app.whenReady().then(async () => {
 
   // Handle file from macOS open-file event that arrived before ready
   if (pendingFilePath) {
+    logger.info('App', `Opening pending file from macOS: ${pendingFilePath}`)
     mainWindow.createWindowForFile(pendingFilePath)
     pendingFilePath = null
   }
@@ -101,6 +107,7 @@ app.whenReady().then(async () => {
   // Windows/Linux: handle file passed as command-line argument on first launch
   const fileFromArgs = extractFilePathFromArgs(process.argv.slice(1))
   if (fileFromArgs) {
+    logger.info('App', `Opening file from command line: ${fileFromArgs}`)
     mainWindow.createWindowForFile(fileFromArgs)
   }
 

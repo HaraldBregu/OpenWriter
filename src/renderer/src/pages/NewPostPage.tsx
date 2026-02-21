@@ -138,7 +138,7 @@ const NewPostPage: React.FC = () => {
                 className="text-destructive focus:text-destructive"
                 onClick={() => {
                   dispatch(deletePost(post.id))
-                  navigate('/')
+                  navigate('/home')
                 }}
               >
                 <Trash2 className="h-4 w-4" />
@@ -167,9 +167,9 @@ const NewPostPage: React.FC = () => {
               axis="y"
               values={blocks}
               onReorder={handleReorder}
-              className="flex flex-col gap-2"
+              className="flex flex-col gap-0"
             >
-              {blocks.map((block, index) => (
+              {blocks.map((block) => (
                 <ContentBlock
                   key={block.id}
                   block={block}
@@ -177,7 +177,7 @@ const NewPostPage: React.FC = () => {
                   onChange={handleChange}
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
-                  placeholder={`Block ${index + 1}`}
+                  placeholder={`Write something...`}
                 />
               ))}
             </Reorder.Group>

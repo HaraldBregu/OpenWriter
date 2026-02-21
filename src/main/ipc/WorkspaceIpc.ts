@@ -2,19 +2,20 @@ import { ipcMain, dialog } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
-import type { StoreService } from '../services/store'
+import type { WorkspaceService } from '../services/workspace'
 import { wrapSimpleHandler } from './IpcErrorHandler'
 
 /**
  * IPC handlers for workspace management.
- * All workspace-related IPC handlers are centralized here.
+ *
+ * This is a thin routing layer -- all state and logic live in WorkspaceService.
+ * Each handler delegates to the service and lets the error wrapper handle failures.
  */
 export class WorkspaceIpc implements IpcModule {
   readonly name = 'workspace'
-  private currentWorkspace: string | null = null
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
-    const storeService = container.get<StoreService>('store')
+    const workspace = container.get<WorkspaceService>('workspace')
 
     // Workspace folder selection dialog
     ipcMain.handle(
@@ -36,33 +37,28 @@ export class WorkspaceIpc implements IpcModule {
     // Get current workspace
     ipcMain.handle(
       'workspace-get-current',
-      wrapSimpleHandler(() => this.currentWorkspace, 'workspace-get-current')
+      wrapSimpleHandler(() => workspace.getCurrent(), 'workspace-get-current')
     )
 
     // Set current workspace
     ipcMain.handle(
       'workspace-set-current',
       wrapSimpleHandler((workspacePath: string) => {
-        console.log('[WorkspaceIpc] Setting current workspace:', workspacePath)
-        this.currentWorkspace = workspacePath
-        // Add to recent workspaces in store for persistence
-        storeService.setCurrentWorkspace(workspacePath)
+        workspace.setCurrent(workspacePath)
       }, 'workspace-set-current')
     )
 
     // Get recent workspaces
     ipcMain.handle(
       'workspace-get-recent',
-      wrapSimpleHandler(() => storeService.getRecentWorkspaces(), 'workspace-get-recent')
+      wrapSimpleHandler(() => workspace.getRecent(), 'workspace-get-recent')
     )
 
     // Clear current workspace
     ipcMain.handle(
       'workspace-clear',
       wrapSimpleHandler(() => {
-        console.log('[WorkspaceIpc] Clearing current workspace')
-        this.currentWorkspace = null
-        storeService.clearCurrentWorkspace()
+        workspace.clear()
       }, 'workspace-clear')
     )
 

@@ -104,6 +104,10 @@ export const postsSlice = createSlice({
 
     deletePost(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
+    },
+
+    loadPosts(state, action: PayloadAction<Post[]>) {
+      state.posts = action.payload
     }
   }
 })
@@ -115,7 +119,8 @@ export const {
   updatePostCategory,
   updatePostTags,
   updatePostVisibility,
-  deletePost
+  deletePost,
+  loadPosts
 } = postsSlice.actions
 
 // ---------------------------------------------------------------------------

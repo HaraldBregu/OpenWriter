@@ -147,6 +147,60 @@ export class Main {
     return win
   }
 
+  createWorkspaceWindow(): BrowserWindow {
+    // Get the main window dimensions to calculate 10% smaller size
+    const mainWindow = this.window
+    let width = 1080 // 1200 * 0.9
+    let height = 720 // 800 * 0.9
+
+    if (mainWindow) {
+      const [mainWidth, mainHeight] = mainWindow.getSize()
+      width = Math.floor(mainWidth * 0.9)
+      height = Math.floor(mainHeight * 0.9)
+    }
+
+    const isMac = process.platform === 'darwin'
+    const workspaceWindow = this.windowFactory.create({
+      width,
+      height,
+      minWidth: 800,
+      minHeight: 600,
+      frame: false,
+      ...(isMac && {
+        titleBarStyle: 'hidden' as const,
+        trafficLightPosition: { x: 16, y: 16 }
+      }),
+      backgroundColor: '#FFFFFF'
+    })
+
+    // Registering a handler for update-target-url tells Electron that the app
+    // owns the status-bar display. An intentional no-op suppresses the native
+    // Chromium URL bubble that would otherwise appear on link hover.
+    workspaceWindow.webContents.on('update-target-url', () => {})
+
+    workspaceWindow.once('ready-to-show', () => {
+      workspaceWindow.show()
+    })
+
+    workspaceWindow.on('maximize', () => {
+      workspaceWindow?.webContents.send('window:maximize-change', true)
+    })
+
+    workspaceWindow.on('unmaximize', () => {
+      workspaceWindow?.webContents.send('window:maximize-change', false)
+    })
+
+    workspaceWindow.on('enter-full-screen', () => {
+      workspaceWindow?.webContents.send('window:fullscreen-change', true)
+    })
+
+    workspaceWindow.on('leave-full-screen', () => {
+      workspaceWindow?.webContents.send('window:fullscreen-change', false)
+    })
+
+    return workspaceWindow
+  }
+
   getWindow(): BrowserWindow | null {
     return this.window
   }

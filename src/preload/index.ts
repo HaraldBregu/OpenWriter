@@ -473,6 +473,51 @@ const api = {
     workspaceClear: (): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-clear'))
     },
+    // Posts - Sync posts to workspace filesystem
+    postsSyncToWorkspace: (posts: Array<{
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+    }>): Promise<{
+        success: boolean
+        syncedCount: number
+        failedCount: number
+        errors?: Array<{ postId: string; error: string }>
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('posts:sync-to-workspace', posts))
+    },
+    postsUpdatePost: (post: {
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+    }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('posts:update-post', post))
+    },
+    postsDeletePost: (postId: string): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('posts:delete-post', postId))
+    },
+    postsLoadFromWorkspace: (): Promise<Array<{
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('posts:load-from-workspace'))
+    },
     // Agent
     agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
         return ipcRenderer.invoke('agent:run', messages, runId, providerId)
@@ -656,6 +701,19 @@ const api = {
         ipcRenderer.on('window:fullscreen-change', handler)
         return () => {
             ipcRenderer.removeListener('window:fullscreen-change', handler)
+        }
+    },
+    // Context Menu
+    showPostContextMenu: (postId: string, postTitle: string): Promise<void> => {
+        return ipcRenderer.invoke('context-menu:post', postId, postTitle)
+    },
+    onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, data: { action: string; postId: string }): void => {
+            callback(data)
+        }
+        ipcRenderer.on('context-menu:post-action', handler)
+        return () => {
+            ipcRenderer.removeListener('context-menu:post-action', handler)
         }
     }
 }

@@ -1,9 +1,19 @@
-import React, { useState, useCallback }  from 'react'
+import React, { useState, useCallback, useEffect }  from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
+import { usePostsLoader } from '../hooks/usePostsLoader'
 import { useAppDispatch, useAppSelector } from '../store'
-import { createPost, selectPosts } from '../store/postsSlice'
+import {
+  createPost,
+  selectPosts,
+  deletePost,
+  updatePostTitle,
+  updatePostBlocks,
+  updatePostCategory,
+  updatePostTags,
+  updatePostVisibility
+} from '../store/postsSlice'
 import { TitleBar } from './TitleBar'
 import {
   AppPopover,
@@ -48,6 +58,7 @@ import {
   ChevronRight,
   Bell,
   FlaskConical,
+  Bug,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -118,8 +129,8 @@ const SettingsPopover = React.memo(function SettingsPopover() {
       </AppPopoverTrigger>
       <AppPopoverContent
         side="top"
-        align="end"
-        className="w-60 p-0"
+        align="start"
+        className="w-64 p-0"
       >
         <div className="py-1">
           {settingsMenuItems.map((item) => {
@@ -207,6 +218,60 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     dispatch(action)
     navigate(`/new/post/${action.payload.id}`)
   }, [dispatch, navigate])
+
+  const handlePostContextMenu = useCallback((postId: string, postTitle: string) => {
+    window.api.showPostContextMenu(postId, postTitle)
+  }, [])
+
+  // Listen for context menu actions
+  useEffect(() => {
+    const cleanup = window.api.onPostContextMenuAction((data) => {
+      const { action, postId } = data
+
+      switch (action) {
+        case 'open':
+          navigate(`/new/post/${postId}`)
+          break
+
+        case 'duplicate': {
+          // Find the source post
+          const sourcePost = posts.find((p) => p.id === postId)
+          if (!sourcePost) break
+
+          // Create a new post
+          const newPostAction = createPost()
+          dispatch(newPostAction)
+          const newPostId = newPostAction.payload.id
+
+          // Copy all fields from source post to new post
+          dispatch(updatePostTitle({ postId: newPostId, title: `${sourcePost.title} (Copy)` }))
+          dispatch(updatePostBlocks({ postId: newPostId, blocks: sourcePost.blocks }))
+          dispatch(updatePostCategory({ postId: newPostId, category: sourcePost.category }))
+          dispatch(updatePostTags({ postId: newPostId, tags: sourcePost.tags }))
+          dispatch(updatePostVisibility({ postId: newPostId, visibility: sourcePost.visibility }))
+
+          // Navigate to the new post
+          navigate(`/new/post/${newPostId}`)
+          break
+        }
+
+        case 'rename':
+          // Navigate to the post page (title is editable there)
+          navigate(`/new/post/${postId}`)
+          break
+
+        case 'delete':
+          dispatch(deletePost(postId))
+          // If currently viewing this post, navigate to home
+          if (location.pathname === `/new/post/${postId}`) {
+            navigate('/home')
+          }
+          break
+      }
+    })
+
+    return cleanup
+  }, [dispatch, navigate, location.pathname, posts])
 
   // Auto-expand Documents if a sub-route is active
   const isDocsActive = location.pathname.startsWith('/documents')
@@ -297,7 +362,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           <AppSidebarMenuSub className="border-none">
                             {isPosts && (
                               posts.map((post) => (
-                                <AppSidebarMenuSubItem key={post.id}>
+                                <AppSidebarMenuSubItem
+                                  key={post.id}
+                                  onContextMenu={(e) => {
+                                    e.preventDefault()
+                                    handlePostContextMenu(post.id, post.title || 'Untitled Post')
+                                  }}
+                                >
                                   <AppSidebarMenuSubButton
                                     asChild
                                     isActive={location.pathname === `/new/post/${post.id}`}
@@ -389,6 +460,23 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
+                  {/* Debug (Dev Tool) */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/debug'}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/debug">
+                        <Bug className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Debug Tools</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 font-mono uppercase tracking-wider">
+                          Dev
+                        </span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
@@ -416,6 +504,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 export function AppLayout({ children }: AppLayoutProps) {
   useTheme()
   useLanguage()
+  usePostsLoader() // Load posts from workspace on app startup
 
   return (
     <div className="flex flex-col h-screen">

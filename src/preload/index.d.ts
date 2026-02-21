@@ -243,11 +243,47 @@ declare global {
       storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
       // Workspace
       workspaceSelectFolder: () => Promise<string | null>
-
       workspaceGetCurrent: () => Promise<string | null>
       workspaceSetCurrent: (workspacePath: string) => Promise<void>
       workspaceGetRecent: () => Promise<WorkspaceInfo[]>
       workspaceClear: () => Promise<void>
+      // Posts - Sync posts to workspace filesystem
+      postsSyncToWorkspace: (posts: Array<{
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+      }>) => Promise<{
+        success: boolean
+        syncedCount: number
+        failedCount: number
+        errors?: Array<{ postId: string; error: string }>
+      }>
+      postsUpdatePost: (post: {
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+      }) => Promise<void>
+      postsDeletePost: (postId: string) => Promise<void>
+      postsLoadFromWorkspace: () => Promise<Array<{
+        id: string
+        title: string
+        blocks: Array<{ id: string; content: string }>
+        category: string
+        tags: string[]
+        visibility: string
+        createdAt: number
+        updatedAt: number
+      }>>
       // RAG
       ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
       ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>
@@ -333,6 +369,9 @@ declare global {
       onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void
       windowIsFullScreen: () => Promise<boolean>
       onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
+      // Context Menu
+      showPostContextMenu: (postId: string, postTitle: string) => Promise<void>
+      onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void) => () => void
     }
   }
 }

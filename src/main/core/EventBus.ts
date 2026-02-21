@@ -22,6 +22,7 @@ export interface AppEvents {
   'error:critical': { error: Error; context: string }
   'window:created': { windowId: number; type: string }
   'window:closed': { windowId: number }
+  'workspace:changed': { currentPath: string | null; previousPath: string | null }
 }
 
 /**

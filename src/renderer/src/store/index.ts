@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import chatReducer from './chatSlice'
 import postsReducer from './postsSlice'
+import { postsSyncMiddleware } from './middleware/postsSync.middleware'
 
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
     posts: postsReducer
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(postsSyncMiddleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

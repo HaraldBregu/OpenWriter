@@ -4,6 +4,7 @@ import { loadTranslations } from './i18n'
 interface MenuManagerCallbacks {
   onLanguageChange: (lng: string) => void
   onThemeChange: (theme: string) => void
+  onNewWorkspace: () => void
 }
 
 export class Menu {
@@ -62,6 +63,14 @@ export class Menu {
       {
         label: m.file,
         submenu: [
+          {
+            label: m.newWorkspace,
+            accelerator: 'CmdOrCtrl+Shift+N',
+            click: (): void => {
+              this.callbacks.onNewWorkspace()
+            }
+          },
+          { type: 'separator' as const },
           isMac
             ? { label: m.close, role: 'close' as const }
             : { label: m.quit, role: 'quit' as const }
