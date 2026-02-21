@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { usePostsLoader } from '../hooks/usePostsLoader'
+import { usePostsFileWatcher } from '../hooks/usePostsFileWatcher'
 import { useAppDispatch, useAppSelector } from '../store'
 import {
   createPost,
@@ -39,16 +40,11 @@ import {
 } from './app'
 import logoIcon from '@resources/icons/icon.png'
 import {
-  Newspaper,
   PenLine,
   StickyNote,
   MessageSquare,
   Puzzle,
   FolderOpen,
-  HardDrive,
-  Cloud,
-  FolderKanban,
-  Share2,
   Settings,
   User,
   Shield,
@@ -80,12 +76,6 @@ const quickCreateItems = [
 
 const topNavSections = ['Posts', 'Writing', 'Notes', 'Messages']
 
-const documentSubItems = [
-  { title: 'Local Documents', icon: HardDrive, url: '/documents/local' },
-  { title: 'Remote Documents', icon: Cloud, url: '/documents/remote' },
-  { title: 'Project Documents', icon: FolderKanban, url: '/documents/projects' },
-  { title: 'Shared with Me', icon: Share2, url: '/documents/shared' }
-]
 
 // ---------------------------------------------------------------------------
 // Settings popover menu items
@@ -204,7 +194,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const dispatch = useAppDispatch()
   const posts = useAppSelector(selectPosts)
 
-  const [docsOpen, setDocsOpen] = useState(false)
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: false,
     Writing: false,
@@ -274,14 +263,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
     return cleanup
   }, [dispatch, navigate, location.pathname, posts])
-
-  // Auto-expand Documents if a sub-route is active
-  const isDocsActive = location.pathname.startsWith('/documents')
-  const [initialized, setInitialized] = useState(false)
-  if (!initialized && isDocsActive) {
-    setDocsOpen(true)
-    setInitialized(true)
-  }
 
   return (
     <>
@@ -395,40 +376,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
                   <AppSidebarSeparator className="my-1" />
 
-                  {/* Documents — collapsible */}
+                  {/* Documents */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
-                      isActive={isDocsActive}
+                      asChild
+                      isActive={location.pathname === '/documents'}
                       className="h-9 px-3"
-                      onClick={() => setDocsOpen((v) => !v)}
                     >
-                      <FolderOpen className="h-3.5 w-3.5 shrink-0" />
-                      <span className="flex-1 truncate">Documents</span>
-                      <ChevronRight
-                        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${docsOpen ? 'rotate-90' : ''}`}
-                      />
+                      <Link to="/documents">
+                        <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Documents</span>
+                      </Link>
                     </AppSidebarMenuButton>
-
-                    {docsOpen && (
-                      <AppSidebarMenuSub>
-                        {documentSubItems.map((sub) => {
-                          const Icon = sub.icon
-                          return (
-                            <AppSidebarMenuSubItem key={sub.title}>
-                              <AppSidebarMenuSubButton
-                                asChild
-                                isActive={location.pathname === sub.url}
-                              >
-                                <Link to={sub.url}>
-                                  <Icon className="h-3.5 w-3.5 shrink-0" />
-                                  <span>{sub.title}</span>
-                                </Link>
-                              </AppSidebarMenuSubButton>
-                            </AppSidebarMenuSubItem>
-                          )
-                        })}
-                      </AppSidebarMenuSub>
-                    )}
                   </AppSidebarMenuItem>
 
                   {/* Integrations */}
@@ -509,6 +468,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   useTheme()
   useLanguage()
   usePostsLoader() // Load posts from workspace on app startup
+  usePostsFileWatcher() // Listen for external file changes in posts directory
 
   return (
     <div className="flex flex-col h-screen">

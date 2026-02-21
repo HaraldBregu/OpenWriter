@@ -518,6 +518,34 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('posts:load-from-workspace'))
     },
+    onPostsFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        postId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
+            type: 'added' | 'changed' | 'removed'
+            postId: string
+            filePath: string
+            timestamp: number
+        }): void => {
+            callback(changeEvent)
+        }
+        ipcRenderer.on('posts:file-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('posts:file-changed', handler)
+        }
+    },
+    onPostsWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
+            callback(errorData)
+        }
+        ipcRenderer.on('posts:watcher-error', handler)
+        return () => {
+            ipcRenderer.removeListener('posts:watcher-error', handler)
+        }
+    },
     // Agent
     agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
         return ipcRenderer.invoke('agent:run', messages, runId, providerId)

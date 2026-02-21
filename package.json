@@ -60,6 +60,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "latest",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "chokidar": "^5.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cron": "^4.4.0",

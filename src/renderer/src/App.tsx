@@ -31,6 +31,7 @@ const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const NewNotePage = lazy(() => import('./pages/NewNotePage'))
 const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
 const PipelineTestPage = lazy(() => import('./pages/PipelineTestPage'))
+const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DebugPage = lazy(() => import('./pages/DebugPage'))
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
@@ -79,6 +80,7 @@ const App: React.FC = () => {
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
                         <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
+                        <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
                         <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
                       </Routes>
                     </Suspense>

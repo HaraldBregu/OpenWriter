@@ -284,6 +284,13 @@ declare global {
         createdAt: number
         updatedAt: number
       }>>
+      onPostsFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        postId: string
+        filePath: string
+        timestamp: number
+      }) => void) => () => void
+      onPostsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
       // RAG
       ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
       ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>

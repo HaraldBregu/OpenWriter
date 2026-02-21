@@ -29,6 +29,7 @@ import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { WorkspaceService } from './services/workspace'
+import { FileWatcherService } from './services/file-watcher'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
@@ -110,6 +111,15 @@ export function bootstrapServices(): BootstrapResult {
   const workspaceService = new WorkspaceService(storeService, eventBus)
   workspaceService.initialize()
   container.register('workspace', workspaceService)
+
+  // FileWatcherService watches the posts directory for external changes
+  // Must be registered after workspace service but before IPC modules
+  const fileWatcherService = new FileWatcherService(eventBus)
+  // Initialize with current workspace (if any) so it starts watching immediately
+  fileWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
+    console.error('[Bootstrap] Failed to initialize FileWatcherService:', error)
+  })
+  container.register('fileWatcher', fileWatcherService)
 
   // Initialize logger after workspace service (needs workspace for log directory)
   const logger = new LoggerService(workspaceService, eventBus)

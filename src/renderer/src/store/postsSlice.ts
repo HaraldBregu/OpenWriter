@@ -108,6 +108,29 @@ export const postsSlice = createSlice({
 
     loadPosts(state, action: PayloadAction<Post[]>) {
       state.posts = action.payload
+    },
+
+    /**
+     * Handle external file change event from the file watcher.
+     * This is triggered when a post file is modified outside the app.
+     */
+    handleExternalPostChange(state, action: PayloadAction<Post>) {
+      const existingIndex = state.posts.findIndex((p) => p.id === action.payload.id)
+      if (existingIndex !== -1) {
+        // Update existing post (external modification)
+        state.posts[existingIndex] = action.payload
+      } else {
+        // Add new post (external creation)
+        state.posts.unshift(action.payload)
+      }
+    },
+
+    /**
+     * Handle external file deletion event from the file watcher.
+     * This is triggered when a post file is deleted outside the app.
+     */
+    handleExternalPostDelete(state, action: PayloadAction<string>) {
+      state.posts = state.posts.filter((p) => p.id !== action.payload)
     }
   }
 })
@@ -120,7 +143,9 @@ export const {
   updatePostTags,
   updatePostVisibility,
   deletePost,
-  loadPosts
+  loadPosts,
+  handleExternalPostChange,
+  handleExternalPostDelete
 } = postsSlice.actions
 
 // ---------------------------------------------------------------------------

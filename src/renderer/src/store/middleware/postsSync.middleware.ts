@@ -193,6 +193,17 @@ export const postsSyncMiddleware: Middleware<object, PostsState> = (store) => (n
     const actionType = (action as { type: string }).type
 
     if (actionType.startsWith('posts/')) {
+      // Skip external change actions - these come from the file watcher
+      // and are already synced with the file system
+      if (
+        actionType === 'posts/handleExternalPostChange' ||
+        actionType === 'posts/handleExternalPostDelete' ||
+        actionType === 'posts/loadPosts' // loadPosts also comes from file system
+      ) {
+        console.debug('[PostsSync] Skipping sync for external action:', actionType)
+        return result
+      }
+
       // Get current posts state after the action
       const state = store.getState()
       const posts = state.posts.posts

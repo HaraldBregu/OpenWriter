@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
+import { Download, Eye, X, Settings2, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2, Brain, Cpu, Zap, Database, Sparkles } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import {
   AppInput,
@@ -45,11 +45,64 @@ const NewPostPage: React.FC = () => {
   // is stable for the lifetime of this mounted page.
   const post = useAppSelector(selectPostById(id ?? ''))
 
+  // IMPORTANT: All hooks must be called before any early returns
+  // to maintain consistent hook ordering between renders
   const [tagInput, setTagInput] = useState('')
-  const [showSidebar, setShowSidebar] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(true)
+
+  // AI Settings state
+  const [ragEnabled, setRagEnabled] = useState(false)
+  const [reasoningModel, setReasoningModel] = useState('gpt-4')
+  const [modelName, setModelName] = useState('claude-sonnet-4.5')
+  const [temperature, setTemperature] = useState('0.7')
+  const [maxTokens, setMaxTokens] = useState('4096')
+
+  // Callbacks must also be before early return to maintain hook order
+  const handleChange = useCallback((blockId: string, content: string) => {
+    if (!post) return
+    const blocks = post.blocks
+    const updated = blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
+  }, [post, dispatch])
+
+  const handleDelete = useCallback((blockId: string) => {
+    if (!post) return
+    const blocks = post.blocks
+    const updated = blocks.filter((b) => b.id !== blockId)
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
+  }, [post, dispatch])
+
+  const handleAddBlockAfter = useCallback((afterId: string) => {
+    if (!post) return
+    const blocks = post.blocks
+    const index = blocks.findIndex((b) => b.id === afterId)
+    const newBlock: Block = createBlock()
+    const updated = [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)]
+    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
+  }, [post, dispatch])
+
+  const handleReorder = useCallback((reordered: Block[]) => {
+    if (!post) return
+    dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
+  }, [post, dispatch])
+
+  const handleAddTag = useCallback(() => {
+    if (!post) return
+    const tags = post.tags
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      dispatch(updatePostTags({ postId: post.id, tags: [...tags, tagInput.trim()] }))
+      setTagInput('')
+    }
+  }, [post, tagInput, dispatch])
+
+  const handleRemoveTag = useCallback((tagToRemove: string) => {
+    if (!post) return
+    const tags = post.tags
+    dispatch(updatePostTags({ postId: post.id, tags: tags.filter((t) => t !== tagToRemove) }))
+  }, [post, dispatch])
 
   // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
-  // stale URL), show a fallback rather than crashing.
+  // stale URL or deleted externally), show a fallback rather than crashing.
   if (!post) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
@@ -59,38 +112,6 @@ const NewPostPage: React.FC = () => {
   }
 
   const { blocks, category, tags, visibility } = post
-
-  const handleChange = useCallback((blockId: string, content: string) => {
-    const updated = blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
-    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }, [blocks, dispatch, post.id])
-
-  const handleDelete = useCallback((blockId: string) => {
-    const updated = blocks.filter((b) => b.id !== blockId)
-    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }, [blocks, dispatch, post.id])
-
-  const handleAddBlockAfter = useCallback((afterId: string) => {
-    const index = blocks.findIndex((b) => b.id === afterId)
-    const newBlock: Block = createBlock()
-    const updated = [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)]
-    dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
-  }, [blocks, dispatch, post.id])
-
-  const handleReorder = useCallback((reordered: Block[]) => {
-    dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
-  }, [dispatch, post.id])
-
-  const handleAddTag = useCallback(() => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      dispatch(updatePostTags({ postId: post.id, tags: [...tags, tagInput.trim()] }))
-      setTagInput('')
-    }
-  }, [tagInput, tags, dispatch, post.id])
-
-  const handleRemoveTag = useCallback((tagToRemove: string) => {
-    dispatch(updatePostTags({ postId: post.id, tags: tags.filter((t) => t !== tagToRemove) }))
-  }, [tags, dispatch, post.id])
 
   return (
     <div className="h-full flex flex-col">
@@ -151,9 +172,9 @@ const NewPostPage: React.FC = () => {
             variant="outline"
             size="icon"
             onClick={() => setShowSidebar(!showSidebar)}
-            title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
+            title={showSidebar ? 'Hide settings' : 'Show settings'}
           >
-            <Filter className="h-4 w-4" />
+            <Settings2 className="h-4 w-4" />
           </AppButton>
         </div>
       </div>
@@ -187,14 +208,14 @@ const NewPostPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-72 border-l border-border bg-muted/20 overflow-y-auto">
+          <div className="w-96 border-l border-border bg-muted/20 overflow-y-auto">
             <div className="p-5 flex flex-col gap-5">
 
               {/* Close button */}
               <div className="flex justify-between items-center mb-2 pb-2 border-b border-border">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Post Settings
+                  <Settings2 className="h-4 w-4" />
+                  AI Settings
                 </h3>
                 <AppButton
                   type="button"
@@ -207,118 +228,112 @@ const NewPostPage: React.FC = () => {
                 </AppButton>
               </div>
 
-              {/* Category */}
+              {/* Use Knowledge Base */}
               <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</AppLabel>
-                <AppSelect
-                  value={category}
-                  onValueChange={(value) =>
-                    dispatch(updatePostCategory({ postId: post.id, category: value }))
-                  }
-                >
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Database className="h-3.5 w-3.5" />
+                  Use Your Documents
+                </AppLabel>
+                <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">Search my files</span>
+                    <span className="text-xs text-muted-foreground">Include your documents in responses</span>
+                  </div>
+                  <AppButton
+                    type="button"
+                    variant={ragEnabled ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setRagEnabled(!ragEnabled)}
+                  >
+                    {ragEnabled ? 'On' : 'Off'}
+                  </AppButton>
+                </div>
+              </div>
+
+              {/* AI Assistant */}
+              <div className="flex flex-col gap-2">
+                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Cpu className="h-3.5 w-3.5" />
+                  AI Assistant
+                </AppLabel>
+                <AppSelect value={modelName} onValueChange={setModelName}>
                   <AppSelectTrigger>
-                    <AppSelectValue placeholder="Select a category" />
+                    <AppSelectValue placeholder="Choose your assistant" />
                   </AppSelectTrigger>
                   <AppSelectContent>
-                    <AppSelectItem value="technology">Technology</AppSelectItem>
-                    <AppSelectItem value="business">Business</AppSelectItem>
-                    <AppSelectItem value="lifestyle">Lifestyle</AppSelectItem>
-                    <AppSelectItem value="education">Education</AppSelectItem>
+                    <AppSelectItem value="claude-sonnet-4.5">Claude (Fast & Smart)</AppSelectItem>
+                    <AppSelectItem value="claude-opus-4">Claude (Most Capable)</AppSelectItem>
+                    <AppSelectItem value="claude-haiku-4">Claude (Quick Responses)</AppSelectItem>
+                    <AppSelectItem value="gpt-4-turbo">ChatGPT (Latest)</AppSelectItem>
+                    <AppSelectItem value="gpt-4">ChatGPT (Classic)</AppSelectItem>
                   </AppSelectContent>
                 </AppSelect>
               </div>
 
-              {/* Tags */}
+              {/* Thinking Style */}
               <div className="flex flex-col gap-2">
                 <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Tag className="h-3.5 w-3.5" />
-                  Tags
+                  <Brain className="h-3.5 w-3.5" />
+                  Thinking Style
                 </AppLabel>
-                <div className="flex gap-2">
-                  <AppInput
-                    type="text"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-                    placeholder="Add tag..."
-                    className="h-10"
-                  />
-                  <AppButton
-                    type="button"
-                    onClick={handleAddTag}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Add
-                  </AppButton>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <AppBadge
-                      key={tag}
-                      variant="secondary"
-                      className="cursor-pointer hover:bg-secondary/80"
-                      onClick={() => handleRemoveTag(tag)}
-                    >
-                      {tag}
-                      <X className="h-3 w-3 ml-1" />
-                    </AppBadge>
-                  ))}
-                </div>
+                <AppSelect value={reasoningModel} onValueChange={setReasoningModel}>
+                  <AppSelectTrigger>
+                    <AppSelectValue placeholder="How should AI think?" />
+                  </AppSelectTrigger>
+                  <AppSelectContent>
+                    <AppSelectItem value="gpt-4">Step-by-step thinking</AppSelectItem>
+                    <AppSelectItem value="claude-3-opus">Deep analysis</AppSelectItem>
+                    <AppSelectItem value="deepseek-r1">Advanced reasoning</AppSelectItem>
+                    <AppSelectItem value="o1-preview">Expert problem solving</AppSelectItem>
+                  </AppSelectContent>
+                </AppSelect>
               </div>
 
-              {/* Visibility */}
+              {/* Creativity Level */}
               <div className="flex flex-col gap-2">
                 <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Globe className="h-3.5 w-3.5" />
-                  Visibility
+                  <Zap className="h-3.5 w-3.5" />
+                  Creativity Level
                 </AppLabel>
-                <AppRadioGroup
-                  value={visibility}
-                  onValueChange={(value) =>
-                    dispatch(updatePostVisibility({ postId: post.id, visibility: value }))
-                  }
-                >
-                  {['public', 'private', 'draft'].map((option) => (
-                    <div key={option} className="flex items-center gap-2">
-                      <AppRadioGroupItem value={option} id={`${post.id}-${option}`} />
-                      <AppLabel htmlFor={`${post.id}-${option}`} className="text-sm font-normal cursor-pointer">
-                        <span className="capitalize">{option}</span>
-                      </AppLabel>
-                    </div>
-                  ))}
-                </AppRadioGroup>
+                <AppSelect value={temperature} onValueChange={setTemperature}>
+                  <AppSelectTrigger>
+                    <AppSelectValue placeholder="Set creativity" />
+                  </AppSelectTrigger>
+                  <AppSelectContent>
+                    <AppSelectItem value="0.0">Precise & Consistent</AppSelectItem>
+                    <AppSelectItem value="0.3">Mostly Focused</AppSelectItem>
+                    <AppSelectItem value="0.7">Balanced</AppSelectItem>
+                    <AppSelectItem value="1.0">More Creative</AppSelectItem>
+                    <AppSelectItem value="1.5">Very Creative</AppSelectItem>
+                  </AppSelectContent>
+                </AppSelect>
               </div>
 
-              {/* Schedule */}
+              {/* Response Length */}
               <div className="flex flex-col gap-2">
                 <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5" />
-                  Schedule
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Response Length
                 </AppLabel>
-                <AppInput
-                  type="datetime-local"
-                  className="h-10"
-                />
+                <AppSelect value={maxTokens} onValueChange={setMaxTokens}>
+                  <AppSelectTrigger>
+                    <AppSelectValue placeholder="How long should responses be?" />
+                  </AppSelectTrigger>
+                  <AppSelectContent>
+                    <AppSelectItem value="1024">Brief</AppSelectItem>
+                    <AppSelectItem value="2048">Moderate</AppSelectItem>
+                    <AppSelectItem value="4096">Detailed</AppSelectItem>
+                    <AppSelectItem value="8192">Comprehensive</AppSelectItem>
+                    <AppSelectItem value="16384">Very Detailed</AppSelectItem>
+                  </AppSelectContent>
+                </AppSelect>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                <AppButton
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Save Draft
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="outline"
-                  size="default"
-                  className="w-full"
-                >
-                  Preview
-                </AppButton>
+              {/* Info */}
+              <div className="flex flex-col gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-xs text-blue-800 dark:text-blue-300">
+                  <strong>Tip:</strong> These settings help customize how the AI assists you with writing.
+                </p>
               </div>
 
             </div>

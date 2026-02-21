@@ -5,6 +5,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WorkspaceService } from '../services/workspace'
+import type { FileWatcherService } from '../services/file-watcher'
 import { wrapSimpleHandler } from './IpcErrorHandler'
 
 /**
@@ -65,6 +66,10 @@ export class PostsIpc implements IpcModule {
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
     const workspace = container.get<WorkspaceService>('workspace')
+    // FileWatcherService may not be registered yet (optional dependency)
+    const fileWatcher = container.has('fileWatcher')
+      ? container.get<FileWatcherService>('fileWatcher')
+      : null
 
     /**
      * Sync all posts to the workspace directory.
@@ -91,7 +96,7 @@ export class PostsIpc implements IpcModule {
 
         // Sync each post
         const results = await Promise.allSettled(
-          posts.map((post) => this.writePostFile(postsDir, post))
+          posts.map((post) => this.writePostFile(postsDir, post, fileWatcher))
         )
 
         // Aggregate results
@@ -145,7 +150,7 @@ export class PostsIpc implements IpcModule {
 
         const postsDir = path.join(currentWorkspace, this.POSTS_DIR_NAME)
         await this.ensurePostsDirectory(postsDir)
-        await this.writePostFile(postsDir, post)
+        await this.writePostFile(postsDir, post, fileWatcher)
 
         console.log(`[PostsIpc] Updated post ${post.id}`)
 
@@ -174,6 +179,11 @@ export class PostsIpc implements IpcModule {
         const postFilePath = this.getPostFilePath(postsDir, postId)
 
         try {
+          // Mark file as app-written before deleting (prevents watcher from emitting event)
+          if (fileWatcher) {
+            fileWatcher.markFileAsWritten(postFilePath)
+          }
+
           await fs.unlink(postFilePath)
           console.log(`[PostsIpc] Deleted post file: ${postFilePath}`)
 
@@ -369,11 +379,20 @@ export class PostsIpc implements IpcModule {
    * Write a post to disk using atomic write pattern.
    * Uses a temporary file and rename to prevent corruption.
    */
-  private async writePostFile(postsDir: string, post: Post): Promise<void> {
+  private async writePostFile(
+    postsDir: string,
+    post: Post,
+    fileWatcher: FileWatcherService | null
+  ): Promise<void> {
     const filePath = this.getPostFilePath(postsDir, post.id)
     const tempFilePath = `${filePath}.tmp`
 
     try {
+      // Mark file as app-written BEFORE writing (prevents watcher from emitting event)
+      if (fileWatcher) {
+        fileWatcher.markFileAsWritten(filePath)
+      }
+
       // Serialize post to JSON with pretty formatting for human readability
       const jsonContent = JSON.stringify(post, null, 2)
 
