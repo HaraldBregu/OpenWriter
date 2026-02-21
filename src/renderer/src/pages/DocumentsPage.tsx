@@ -119,11 +119,13 @@ function sortDocuments(docs: Document[], sortBy: SortBy): Document[] {
 interface EmptyStateProps {
   onImportFiles: () => void
   onDownloadRemote: () => void
+  isImporting: boolean
 }
 
 const EmptyState = React.memo(function EmptyState({
   onImportFiles,
-  onDownloadRemote
+  onDownloadRemote,
+  isImporting
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 text-center">
@@ -139,9 +141,9 @@ const EmptyState = React.memo(function EmptyState({
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <AppButton onClick={onImportFiles} size="default">
-          <Upload className="h-4 w-4" />
-          Import Files
+        <AppButton onClick={onImportFiles} size="default" disabled={isImporting}>
+          {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {isImporting ? 'Importing...' : 'Import Files'}
         </AppButton>
         <AppButton onClick={onDownloadRemote} variant="outline" size="default">
           <Download className="h-4 w-4" />
@@ -475,6 +477,7 @@ const DocumentsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [isRemoteModalOpen, setIsRemoteModalOpen] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
   const dragCounterRef = useRef(0)
   const isListeningRef = useRef(false)
 
@@ -532,11 +535,13 @@ const DocumentsPage: React.FC = () => {
   // Import files handler
   const handleImportFiles = useCallback(async () => {
     try {
+      setIsImporting(true)
       await window.api.documentsImportFiles()
-      // Reload from disk to get the authoritative state
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)
+    } finally {
+      setIsImporting(false)
     }
   }, [reloadDocuments])
 
@@ -601,11 +606,14 @@ const DocumentsPage: React.FC = () => {
       const files = Array.from(e.dataTransfer.files)
       if (files.length === 0) return
 
+      setIsImporting(true)
       const paths = files.map(file => (file as File & { path: string }).path)
       await window.api.documentsImportByPaths(paths)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
+    } finally {
+      setIsImporting(false)
     }
   }, [reloadDocuments])
 
@@ -626,6 +634,7 @@ const DocumentsPage: React.FC = () => {
         <EmptyState
           onImportFiles={handleImportFiles}
           onDownloadRemote={() => setIsRemoteModalOpen(true)}
+          isImporting={isImporting}
         />
       ) : (
         <>
@@ -640,9 +649,9 @@ const DocumentsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <AppButton onClick={handleImportFiles} size="sm">
-                  <Upload className="h-4 w-4" />
-                  Import Files
+                <AppButton onClick={handleImportFiles} size="sm" disabled={isImporting}>
+                  {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {isImporting ? 'Importing...' : 'Import Files'}
                 </AppButton>
                 <AppButton onClick={() => setIsRemoteModalOpen(true)} variant="outline" size="sm">
                   <Download className="h-4 w-4" />
