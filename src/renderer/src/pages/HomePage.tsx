@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Newspaper,
   PenLine,
@@ -15,40 +15,47 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import { usePipeline } from '../hooks/usePipeline'
+import { useAppDispatch } from '../store'
+import { createPost } from '../store/postsSlice'
 
 // ---------------------------------------------------------------------------
-// Quick-action cards
+// Categories
 // ---------------------------------------------------------------------------
 
-const quickActions = [
+const categories = [
   {
-    icon: PenLine,
-    label: 'New Writing',
-    description: 'Start a blank document',
-    url: '/writing',
-    accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+    icon: Newspaper,
+    label: 'Posts',
+    description: 'Publish to your audience',
+    route: '/new/post',
+    accent: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+    requiresPostCreation: true
   },
   {
     icon: StickyNote,
-    label: 'New Note',
-    description: 'Capture a quick thought',
-    url: '/notes',
-    accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+    label: 'Notes',
+    description: 'Capture quick thoughts',
+    route: '/new/note',
+    accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+    requiresPostCreation: false
   },
   {
-    icon: Newspaper,
-    label: 'New Post',
-    description: 'Publish to your audience',
-    url: '/posts',
-    accent: 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
+    icon: PenLine,
+    label: 'Writing',
+    description: 'Start a blank document',
+    route: '/new/writing',
+    accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+    requiresPostCreation: false
   },
   {
     icon: MessageSquare,
     label: 'Messages',
     description: 'View conversations',
-    url: '/messages',
-    accent: 'bg-green-500/10 text-green-600 dark:text-green-400'
+    route: '/new/message',
+    accent: 'bg-green-500/10 text-green-600 dark:text-green-400',
+    requiresPostCreation: false
   }
 ]
 
@@ -57,27 +64,42 @@ const quickActions = [
 // ---------------------------------------------------------------------------
 
 const recentItems = [
-  { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', url: '/writing' },
-  { icon: StickyNote, label: 'Product Ideas', meta: 'Yesterday', url: '/notes' },
-  { icon: Newspaper, label: 'Release Announcement', meta: '3 days ago', url: '/posts' },
-  { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', url: '/documents/local' }
+  { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing', requiresPostCreation: false },
+  { icon: StickyNote, label: 'Product Ideas', meta: 'Yesterday', route: '/new/note', requiresPostCreation: false },
+  { icon: Newspaper, label: 'Release Announcement', meta: '3 days ago', route: '/new/post', requiresPostCreation: true },
+  { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local', requiresPostCreation: false }
 ]
 
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
-function QuickActionCard({
+function CategoryCard({
   icon: Icon,
   label,
   description,
-  url,
-  accent
-}: (typeof quickActions)[number]) {
+  route,
+  accent,
+  requiresPostCreation
+}: (typeof categories)[number]) {
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const handleClick = () => {
+    if (requiresPostCreation) {
+      const action = createPost()
+      dispatch(action)
+      navigate(`/new/post/${action.payload.id}`)
+    } else {
+      navigate(route)
+    }
+  }
+
   return (
-    <Link
-      to={url}
-      className="group flex flex-col gap-3 rounded-xl border border-border bg-background p-5 hover:border-border/80 hover:shadow-sm transition-all"
+    <button
+      type="button"
+      onClick={handleClick}
+      className="group flex flex-col gap-3 rounded-xl border border-border bg-background p-5 hover:border-border/80 hover:shadow-sm transition-all text-left"
     >
       <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
         <Icon className="h-4 w-4" />
@@ -87,7 +109,7 @@ function QuickActionCard({
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all mt-auto self-end" />
-    </Link>
+    </button>
   )
 }
 
@@ -95,12 +117,27 @@ function RecentItem({
   icon: Icon,
   label,
   meta,
-  url
+  route,
+  requiresPostCreation
 }: (typeof recentItems)[number]) {
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const handleClick = () => {
+    if (requiresPostCreation) {
+      const action = createPost()
+      dispatch(action)
+      navigate(`/new/post/${action.payload.id}`)
+    } else {
+      navigate(route)
+    }
+  }
+
   return (
-    <Link
-      to={url}
-      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/60 transition-colors group"
+    <button
+      type="button"
+      onClick={handleClick}
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/60 transition-colors group w-full text-left"
     >
       <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
         <Icon className="h-3.5 w-3.5 text-muted-foreground" />
@@ -113,7 +150,7 @@ function RecentItem({
         </p>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
-    </Link>
+    </button>
   )
 }
 
@@ -121,11 +158,6 @@ function RecentItem({
 // Pipeline test section
 // ---------------------------------------------------------------------------
 
-/**
- * Self-contained test widget for the pipeline streaming system.
- * Intentionally kept simple — this is a dev/demo surface, not production UI.
- * Remove or gate behind a feature flag once the pipeline is production-ready.
- */
 const AGENTS = [
   { value: 'echo', label: 'Echo (test)' },
   { value: 'chat', label: 'Chat (OpenAI)' }
@@ -167,7 +199,6 @@ function PipelineTestSection(): React.ReactElement {
       </h2>
 
       <div className="rounded-xl border border-border bg-background p-5 space-y-4">
-        {/* Agent selector + input row */}
         <div className="flex gap-2">
           <select
             value={agent}
@@ -205,7 +236,6 @@ function PipelineTestSection(): React.ReactElement {
           )}
         </div>
 
-        {/* Status indicator */}
         <div className={`flex items-center gap-1.5 text-xs font-medium ${statusBadge[status]}`}>
           {status === 'running' && (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -218,7 +248,6 @@ function PipelineTestSection(): React.ReactElement {
           </span>
         </div>
 
-        {/* Streaming response */}
         {response && (
           <pre className="rounded-lg bg-muted/60 border border-border px-4 py-3 text-xs text-foreground font-mono whitespace-pre-wrap break-words max-h-64 overflow-y-auto leading-relaxed">
             {response}
@@ -234,6 +263,7 @@ function PipelineTestSection(): React.ReactElement {
 // ---------------------------------------------------------------------------
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate()
   const hour = new Date().getHours()
   const greeting =
     hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
@@ -252,17 +282,16 @@ const HomePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Quick actions */}
+        {/* Categories: Posts, Notes, Writing, Messages */}
         <section className="space-y-3">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Quick actions
-          </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {quickActions.map((action) => (
-              <QuickActionCard key={action.url} {...action} />
+            {categories.map((cat) => (
+              <CategoryCard key={cat.label} {...cat} />
             ))}
           </div>
         </section>
+
+        <Separator />
 
         {/* Recent */}
         <section className="space-y-1">
@@ -270,13 +299,14 @@ const HomePage: React.FC = () => {
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Recent
             </h2>
-            <Link
-              to="/documents/local"
+            <button
+              type="button"
+              onClick={() => navigate('/documents/local')}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
               View all
               <ArrowRight className="h-3 w-3" />
-            </Link>
+            </button>
           </div>
           <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
             {recentItems.map((item) => (
@@ -285,15 +315,15 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Explore */}
+        <Separator />
+
+        {/* Documents & Integrations */}
         <section className="space-y-3">
-          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Explore
-          </h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Link
-              to="/documents/local"
-              className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group"
+            <button
+              type="button"
+              onClick={() => navigate('/documents/local')}
+              className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group text-left"
             >
               <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
@@ -303,11 +333,12 @@ const HomePage: React.FC = () => {
                 <p className="text-xs text-muted-foreground mt-0.5">Browse your files</p>
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
-            </Link>
+            </button>
 
-            <Link
-              to="/integrations"
-              className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group"
+            <button
+              type="button"
+              onClick={() => navigate('/integrations')}
+              className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group text-left"
             >
               <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
                 <Puzzle className="h-4 w-4 text-muted-foreground" />
@@ -317,12 +348,16 @@ const HomePage: React.FC = () => {
                 <p className="text-xs text-muted-foreground mt-0.5">Connect your tools</p>
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
-            </Link>
+            </button>
           </div>
         </section>
 
+        <Separator />
+
         {/* Pipeline test */}
         <PipelineTestSection />
+
+        <Separator />
 
         {/* Tips */}
         <section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">

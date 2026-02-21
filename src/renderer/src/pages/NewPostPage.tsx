@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2 } from 'lucide-react'
+import { Download, Eye, X, Filter, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,6 +14,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock'
 import { useAppDispatch, useAppSelector } from '../store'
 import {
@@ -34,7 +41,7 @@ const NewPostPage: React.FC = () => {
   const dispatch = useAppDispatch()
 
   // Stable selector instance — created once per render cycle; safe because id
-  // is stable for the lifetime of this mounted route.
+  // is stable for the lifetime of this mounted page.
   const post = useAppSelector(selectPostById(id ?? ''))
 
   const [tagInput, setTagInput] = useState('')
@@ -97,27 +104,41 @@ const NewPostPage: React.FC = () => {
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
         <div className="flex items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-          >
-            <Eye className="h-4 w-4" />
-            Preview
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-          >
-            <Download className="h-4 w-4" />
-            Download
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                title="More options"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Eye className="h-4 w-4" />
+                Preview
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="h-4 w-4" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Share2 className="h-4 w-4" />
+                Share
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Copy className="h-4 w-4" />
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <Trash2 className="h-4 w-4" />
+                Move to Trash
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button
             type="button"
             variant="outline"
