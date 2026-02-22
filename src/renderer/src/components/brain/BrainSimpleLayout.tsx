@@ -1,7 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Send, StopCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { Send, StopCircle, AlertCircle, Loader2, Save, Check } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
 import { useAI } from '@/hooks/useAI'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { saveBrainFile, selectBrainFilesLoading, selectLastSaved, clearLastSaved } from '@/store/brainFilesSlice'
+import type { SaveBrainFileInput } from '@/store/brainFilesSlice'
 
 export interface BrainSimpleLayoutProps {
   sectionId: string
@@ -21,7 +24,13 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   title
 }) => {
   const [inputValue, setInputValue] = useState('')
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false)
+  const [lastSavedId, setLastSavedId] = useState<string | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+
+  const dispatch = useAppDispatch()
+  const isSaving = useAppSelector(selectBrainFilesLoading)
+  const lastSaved = useAppSelector(selectLastSaved)
 
   const {
     messages,
@@ -39,6 +48,20 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
       console.error(`[BrainSimpleLayout:${sectionId}] Error:`, error)
     }
   })
+
+  // Show save success feedback
+  useEffect(() => {
+    if (lastSaved && lastSaved.fileId === lastSavedId) {
+      setShowSaveSuccess(true)
+      const timer = setTimeout(() => {
+        setShowSaveSuccess(false)
+        dispatch(clearLastSaved())
+        setLastSavedId(null)
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+    return undefined
+  }, [lastSaved, lastSavedId, dispatch])
 
   // Auto-scroll content to bottom when streaming
   useEffect(() => {
@@ -66,6 +89,44 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     cancel()
   }, [cancel])
 
+  const handleSave = useCallback(async () => {
+    // Only save if there are messages
+    if (messages.length === 0) return
+
+    // Generate title from first user message or use default
+    const firstUserMessage = messages.find(m => m.role === 'user')
+    const autoTitle = firstUserMessage
+      ? firstUserMessage.content.slice(0, 50) + (firstUserMessage.content.length > 50 ? '...' : '')
+      : 'Untitled Conversation'
+
+    // Convert messages to markdown format
+    const markdownContent = messages.map((msg) => {
+      const role = msg.role === 'user' ? 'User' : 'Assistant'
+      const timestamp = new Date(msg.timestamp).toISOString()
+      return `## ${role} (${timestamp})\n\n${msg.content}\n`
+    }).join('\n---\n\n')
+
+    const saveInput: SaveBrainFileInput = {
+      sectionId,
+      content: markdownContent,
+      metadata: {
+        title: autoTitle,
+        providerId,
+        messageCount: messages.length,
+        createdAt: messages[0]?.timestamp || Date.now(),
+        updatedAt: Date.now()
+      }
+    }
+
+    try {
+      const result = await dispatch(saveBrainFile(saveInput)).unwrap()
+      setLastSavedId(result.id)
+      console.log(`[BrainSimpleLayout:${sectionId}] Saved conversation:`, result.id)
+    } catch (error) {
+      console.error(`[BrainSimpleLayout:${sectionId}] Failed to save:`, error)
+    }
+  }, [messages, sectionId, providerId, dispatch])
+
   // Get the latest assistant message for display
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
@@ -77,9 +138,37 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border px-6 py-4">
-        {icon}
-        <h1 className="text-xl font-semibold">{title}</h1>
+      <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
+        <div className="flex items-center gap-3">
+          {icon}
+          <h1 className="text-xl font-semibold">{title}</h1>
+        </div>
+
+        {/* Save Button */}
+        <AppButton
+          onClick={handleSave}
+          disabled={messages.length === 0 || isSaving}
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+        >
+          {showSaveSuccess ? (
+            <>
+              <Check className="mr-2 h-4 w-4 text-green-600" />
+              Saved
+            </>
+          ) : isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save
+            </>
+          )}
+        </AppButton>
       </div>
 
       {/* Error Banner */}

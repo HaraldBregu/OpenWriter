@@ -495,6 +495,69 @@ declare global {
         isIndexed: boolean
         lastIndexedAt?: number
       }>) => void) => () => void
+      // Brain - Conversation file management (markdown with YAML frontmatter)
+      brainSave: (input: {
+        sectionId: string
+        content: string
+        metadata?: Record<string, unknown>
+      }) => Promise<{
+        id: string
+        path: string
+        savedAt: number
+      }>
+      brainLoadAll: () => Promise<Array<{
+        id: string
+        sectionId: string
+        path: string
+        metadata: {
+          sectionId: string
+          title?: string
+          createdAt: number
+          updatedAt: number
+          tags?: string[]
+          [key: string]: unknown
+        }
+        content: string
+        savedAt: number
+      }>>
+      brainLoadOne: (params: {
+        sectionId: string
+        id: string
+      }) => Promise<{
+        id: string
+        sectionId: string
+        path: string
+        metadata: {
+          sectionId: string
+          title?: string
+          createdAt: number
+          updatedAt: number
+          tags?: string[]
+          [key: string]: unknown
+        }
+        content: string
+        savedAt: number
+      } | null>
+      brainDelete: (params: {
+        sectionId: string
+        id: string
+      }) => Promise<void>
+      onBrainFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        sectionId: string
+        fileId: string
+        filePath: string
+        timestamp: number
+      }) => void) => () => void
+      onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+      onBrainFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        fileId: string
+        sectionId: string
+        filePath: string
+        timestamp: number
+      }) => void) => () => void
+      onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
     }
   }
 }

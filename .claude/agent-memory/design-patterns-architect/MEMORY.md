@@ -57,5 +57,16 @@
 - **Command Pattern**: PromptCommand objects for history/replay, usePromptHistory hook, prompt templates per domain
 - Key principle: reuse existing pipeline infrastructure, do NOT build parallel systems
 
+## Brain Files Persistence Design (Feb 2026)
+- Pattern follows PostsIpc: IPC module with CRUD, Redux slice, renderer hook
+- File format: Markdown with YAML frontmatter (not JSON -- conversations are text-first)
+- Workspace path: `<workspace>/brain/<section>/<id>.md` (5 section subdirs)
+- Lazy loading: `brain:load-all` returns metadata only, `brain:get` loads full content
+- No dedicated service -- logic in BrainFilesIpc (simple CRUD, no complex business rules)
+- No file watcher -- write-once-read-many pattern, external edits are edge case
+- Per-section `isSaving` state in Redux for multi-window safety
+- Key files: BrainFilesIpc.ts, brainFilesSlice.ts, useBrainFiles.ts
+- Brain pages use `useAI` hook (not usePipeline directly) with `AIMessage` type
+
 ## File Links
 - [architecture-refactoring-plan.md](./architecture-refactoring-plan.md) - Detailed refactoring plan for main process

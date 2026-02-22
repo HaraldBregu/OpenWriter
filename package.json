@@ -67,6 +67,7 @@
     "cronstrue": "^3.12.0",
     "electron-icon-builder": "^2.0.1",
     "framer-motion": "^11.0.0",
+    "gray-matter": "^4.0.3",
     "i18next": "^25.8.7",
     "langchain": "latest",
     "lucide-react": "^0.575.0",

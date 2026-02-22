@@ -20,6 +20,7 @@ import { WorkspaceService } from '../services/workspace'
 import { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { FileWatcherService } from '../services/file-watcher'
 import { DocumentsWatcherService } from '../services/documents-watcher'
+import { BrainFilesService } from '../services/brain-files'
 
 export interface WindowContextConfig {
   window: BrowserWindow
@@ -84,6 +85,13 @@ export class WindowContext {
       console.error(`[WindowContext] Failed to initialize DocumentsWatcherService for window ${this.windowId}:`, error)
     })
     this.container.register('documentsWatcher', documentsWatcherService)
+
+    // Brain files service - scoped to this window's workspace
+    const brainFilesService = new BrainFilesService(workspaceService, this.eventBus)
+    brainFilesService.initialize().catch((error) => {
+      console.error(`[WindowContext] Failed to initialize BrainFilesService for window ${this.windowId}:`, error)
+    })
+    this.container.register('brainFiles', brainFilesService)
 
     console.log(`[WindowContext] Initialized ${this.container.has('workspace') ? 'all' : 'some'} services for window ${this.windowId}`)
   }

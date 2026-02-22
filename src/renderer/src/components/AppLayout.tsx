@@ -4,6 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
+import { useBrainFiles } from "../hooks/useBrainFiles";
 import { useAppDispatch, useAppSelector } from "../store";
 import {
   createPost,
@@ -633,6 +634,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
   usePostsLoader(); // Load posts from workspace on app startup
   usePostsFileWatcher(); // Listen for external file changes in posts directory
+  useBrainFiles(); // Load brain files from workspace on app startup
 
   return (
     <div className="flex flex-col h-screen">

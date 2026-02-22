@@ -847,6 +847,121 @@ const api = {
         return () => {
             ipcRenderer.removeListener('directories:changed', handler)
         }
+    },
+    // Brain - Conversation file management (markdown with YAML frontmatter)
+    brainSave: (input: {
+        sectionId: string
+        content: string
+        metadata?: Record<string, unknown>
+    }): Promise<{
+        id: string
+        path: string
+        savedAt: number
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('brain:save', input))
+    },
+    brainLoadAll: (): Promise<Array<{
+        id: string
+        sectionId: string
+        path: string
+        metadata: {
+            sectionId: string
+            title?: string
+            createdAt: number
+            updatedAt: number
+            tags?: string[]
+            [key: string]: unknown
+        }
+        content: string
+        savedAt: number
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('brain:load-all'))
+    },
+    brainLoadOne: (params: {
+        sectionId: string
+        id: string
+    }): Promise<{
+        id: string
+        sectionId: string
+        path: string
+        metadata: {
+            sectionId: string
+            title?: string
+            createdAt: number
+            updatedAt: number
+            tags?: string[]
+            [key: string]: unknown
+        }
+        content: string
+        savedAt: number
+    } | null> => {
+        return unwrapIpcResult(ipcRenderer.invoke('brain:load-one', params))
+    },
+    brainDelete: (params: {
+        sectionId: string
+        id: string
+    }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('brain:delete', params))
+    },
+    onBrainFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        sectionId: string
+        fileId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
+            type: 'added' | 'changed' | 'removed'
+            sectionId: string
+            fileId: string
+            filePath: string
+            timestamp: number
+        }): void => {
+            callback(changeEvent)
+        }
+        ipcRenderer.on('brain:file-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('brain:file-changed', handler)
+        }
+    },
+    onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
+            callback(errorData)
+        }
+        ipcRenderer.on('brain:watcher-error', handler)
+        return () => {
+            ipcRenderer.removeListener('brain:watcher-error', handler)
+        }
+    },
+    onBrainFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        fileId: string
+        sectionId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, brainEvent: {
+            type: 'added' | 'changed' | 'removed'
+            fileId: string
+            sectionId: string
+            filePath: string
+            timestamp: number
+        }): void => {
+            callback(brainEvent)
+        }
+        ipcRenderer.on('brain:file-change', handler)
+        return () => {
+            ipcRenderer.removeListener('brain:file-change', handler)
+        }
+    },
+    onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
+            callback(errorData)
+        }
+        ipcRenderer.on('brain:watcher-error', handler)
+        return () => {
+            ipcRenderer.removeListener('brain:watcher-error', handler)
+        }
     }
 }
 

@@ -4,13 +4,15 @@ import type { TypedUseSelectorHook } from 'react-redux'
 import chatReducer from './chatSlice'
 import postsReducer from './postsSlice'
 import directoriesReducer from './directoriesSlice'
+import brainFilesReducer from './brainFilesSlice'
 import { postsSyncMiddleware } from './middleware/postsSync.middleware'
 
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
     posts: postsReducer,
-    directories: directoriesReducer
+    directories: directoriesReducer,
+    brainFiles: brainFilesReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(postsSyncMiddleware)
