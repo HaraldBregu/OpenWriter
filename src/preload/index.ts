@@ -850,50 +850,6 @@ const api = {
     }
 }
 
-const ai = {
-    // LLM Chat - Inference for brain sections
-    chat: (request: {
-        messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
-        sessionId: string
-        providerId: string
-        temperature?: number
-        maxTokens?: number
-    }): Promise<{ runId: string; sessionId: string }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('llm:chat', request))
-    },
-    cancel: (runId: string): void => {
-        ipcRenderer.send('llm:cancel', runId)
-    },
-    // Session Management
-    createSession: (config: {
-        sessionId: string
-        providerId: string
-        systemPrompt?: string
-        temperature?: number
-        maxTokens?: number
-    }): Promise<{
-        sessionId: string
-        providerId: string
-        createdAt: number
-        isActive: boolean
-    }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('llm:create-session', config))
-    },
-    destroySession: (sessionId: string): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('llm:destroy-session', sessionId))
-    },
-    // Pipeline Events - Streaming tokens and status updates
-    onPipelineEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, pipelineEvent: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }): void => {
-            callback(pipelineEvent)
-        }
-        ipcRenderer.on('pipeline:event', handler)
-        return () => {
-            ipcRenderer.removeListener('pipeline:event', handler)
-        }
-    }
-}
-
 const task = {
     submit: (type: string, input: unknown, options?: {
         priority?: 'low' | 'normal' | 'high'
@@ -940,7 +896,6 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('electron', electronAPI)
         contextBridge.exposeInMainWorld('api', api)
         contextBridge.exposeInMainWorld('task', task)
-        contextBridge.exposeInMainWorld('ai', ai)
     } catch (error) {
         console.error(error)
     }
@@ -951,6 +906,4 @@ if (process.contextIsolated) {
     globalThis.api = api
     // @ts-ignore (define in dts)
     globalThis.task = task
-    // @ts-ignore (define in dts)
-    globalThis.ai = ai
 }

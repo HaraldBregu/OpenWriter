@@ -42,7 +42,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
   // Listen for pipeline events (streaming tokens)
   useEffect(() => {
-    const unsubscribe = window.ai.onPipelineEvent((event) => {
+    const unsubscribe = window.api.onPipelineEvent((event) => {
       if (event.type === 'token' && currentRunIdRef.current) {
         const data = event.data as { runId: string; token: string }
 
@@ -85,9 +85,9 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
           assistantMessageIdRef.current = null
         }
       } else if (event.type === 'error') {
-        const data = event.data as { runId: string; error: string }
+        const data = event.data as { runId: string; message: string }
         if (data.runId === currentRunIdRef.current) {
-          const errorMessage = data.error || 'An error occurred'
+          const errorMessage = data.message || 'An error occurred'
           setError(errorMessage)
           setIsLoading(false)
           setIsStreaming(false)
@@ -122,21 +122,20 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
     setMessages(prev => [...prev, userMessage])
 
-    // Prepare messages for API (include system prompt if provided)
-    const apiMessages = [
-      ...(systemPrompt ? [{ role: 'system' as const, content: systemPrompt }] : []),
-      ...messages.map(m => ({ role: m.role, content: m.content })),
-      { role: 'user' as const, content: prompt.trim() }
-    ]
+    // Prepare conversation history for the ChatAgent
+    const conversationHistory = messages.map(m => ({
+      role: m.role,
+      content: m.content
+    }))
 
     try {
-      // Use pipeline for inference
+      // Use pipeline with ChatAgent for inference
       const result = await window.api.pipelineRun('chat', {
         prompt: prompt.trim(),
         context: {
           sectionId,
           providerId,
-          messages: apiMessages,
+          messages: conversationHistory,
           systemPrompt
         }
       })
@@ -160,7 +159,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
   const cancel = useCallback(() => {
     if (currentRunIdRef.current) {
-      window.ai.cancel(currentRunIdRef.current)
+      window.api.pipelineCancel(currentRunIdRef.current)
       setIsLoading(false)
       setIsStreaming(false)
       currentRunIdRef.current = null
