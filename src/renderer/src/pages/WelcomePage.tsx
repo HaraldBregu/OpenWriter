@@ -186,24 +186,26 @@ const WelcomePage: React.FC = () => {
         </div>
 
         {/* ── Workspace section ── */}
-        <div className="w-full max-w-2xl flex flex-col mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Workspace
-            </h2>
-          </div>
+        <div className="w-full max-w-2xl mb-8">
+          <div className="rounded-xl border border-border p-6 flex items-center justify-between gap-6">
+            {/* Left: Title and description */}
+            <div className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold text-foreground">
+                Open Workspace
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Select a folder to begin working on your project
+              </p>
+            </div>
 
-          <div className="rounded-xl border border-border p-8 flex items-center justify-center">
+            {/* Right: Button */}
             <AppButton
               variant="outline"
-              className="h-32 w-full max-w-md flex flex-col items-center justify-center gap-4 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
+              className="h-14 px-6 flex items-center gap-3 rounded-lg border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors shrink-0"
               onClick={handleOpenProject}
             >
-              <FolderOpen className="h-8 w-8 text-foreground/70" />
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-lg font-medium">Open Workspace</span>
-                <span className="text-xs text-muted-foreground">Select a folder to begin</span>
-              </div>
+              <FolderOpen className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm font-medium">Browse...</span>
             </AppButton>
           </div>
         </div>
