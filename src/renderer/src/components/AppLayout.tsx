@@ -43,7 +43,6 @@ import {
   PenLine,
   StickyNote,
   MessageSquare,
-  Puzzle,
   FolderOpen,
   Settings,
   User,
