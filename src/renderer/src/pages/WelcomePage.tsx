@@ -229,7 +229,7 @@ const WelcomePage: React.FC = () => {
                 <div
                   key={index}
                   className={`
-                    flex items-center gap-4 px-4 py-3
+                    flex items-center justify-between px-4 py-3
                     transition-colors
                     ${index !== 0 ? 'border-t border-border' : ''}
                     ${exists
@@ -238,6 +238,7 @@ const WelcomePage: React.FC = () => {
                     }
                   `}
                 >
+                  {/* Left: Folder icon and content */}
                   <button
                     onClick={() => handleOpenRecentProject(project.path, exists)}
                     disabled={!exists}
@@ -252,7 +253,7 @@ const WelcomePage: React.FC = () => {
                     </div>
 
                     {/* Name + path */}
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex flex-col min-w-0">
                       <span className="text-sm font-medium truncate text-foreground">
                         {getProjectName(project.path)}
                         {!exists && ' (Not Found)'}
@@ -261,22 +262,24 @@ const WelcomePage: React.FC = () => {
                         {formatPath(project.path)}
                       </span>
                     </div>
+                  </button>
 
-                    {/* Relative time */}
-                    <div className="flex items-center gap-1.5 shrink-0 text-xs text-muted-foreground">
+                  {/* Right: Timestamp and remove button */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       <span>{formatRelativeTime(project.lastOpened)}</span>
                     </div>
-                  </button>
 
-                  {/* Remove button - positioned after timestamp */}
-                  <button
-                    onClick={(e) => handleRemoveRecentProject(project.path, e)}
-                    className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center shrink-0 transition-colors"
-                    title="Remove from recent projects"
-                  >
-                    <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </button>
+                    {/* Remove button */}
+                    <button
+                      onClick={(e) => handleRemoveRecentProject(project.path, e)}
+                      className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
+                      title="Remove from recent projects"
+                    >
+                      <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                    </button>
+                  </div>
                 </div>
               )
             })}
