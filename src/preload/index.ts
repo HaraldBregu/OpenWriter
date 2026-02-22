@@ -5,17 +5,17 @@ import { electronAPI } from '@electron-toolkit/preload'
  * IPC Result types matching the main process wrappers
  */
 interface IpcError {
-  success: false
-  error: {
-    code: string
-    message: string
-    stack?: string
-  }
+    success: false
+    error: {
+        code: string
+        message: string
+        stack?: string
+    }
 }
 
 interface IpcSuccess<T> {
-  success: true
-  data: T
+    success: true
+    data: T
 }
 
 type IpcResult<T> = IpcSuccess<T> | IpcError
@@ -25,17 +25,17 @@ type IpcResult<T> = IpcSuccess<T> | IpcError
  * Throws an error if the IPC call failed
  */
 async function unwrapIpcResult<T>(promise: Promise<IpcResult<T>>): Promise<T> {
-  const result = await promise
-  if (result.success) {
-    return result.data
-  } else {
-    const error = new Error(result.error.message)
-    error.name = result.error.code
-    if (result.error.stack) {
-      error.stack = result.error.stack
+    const result = await promise
+    if (result.success) {
+        return result.data
+    } else {
+        const error = new Error(result.error.message)
+        error.name = result.error.code
+        if (result.error.stack) {
+            error.stack = result.error.stack
+        }
+        throw error
     }
-    throw error
-  }
 }
 
 const api = {
@@ -616,7 +616,7 @@ const api = {
         }
     },
     // Agent
-    agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string): Promise<void> => {
+    agentRun: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
         return ipcRenderer.invoke('agent:run', messages, runId, providerId)
     },
     agentCancel: (runId: string): void => {
@@ -861,16 +861,18 @@ const task = {
     cancel: (taskId: string): Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }> => {
         return ipcRenderer.invoke('task:cancel', taskId)
     },
-    list: (): Promise<{ success: true; data: Array<{
-        taskId: string
-        type: string
-        status: string
-        priority: string
-        startedAt?: number
-        completedAt?: number
-        windowId?: number
-        error?: string
-    }> } | { success: false; error: { code: string; message: string } }> => {
+    list: (): Promise<{
+        success: true; data: Array<{
+            taskId: string
+            type: string
+            status: string
+            priority: string
+            startedAt?: number
+            completedAt?: number
+            windowId?: number
+            error?: string
+        }>
+    } | { success: false; error: { code: string; message: string } }> => {
         return ipcRenderer.invoke('task:list')
     },
     onEvent: (callback: (event: {
@@ -937,4 +939,6 @@ if (process.contextIsolated) {
     globalThis.api = api
     // @ts-ignore (define in dts)
     globalThis.task = task
+    // @ts-ignore (define in dts)
+    globalThis.ai = ai
 }

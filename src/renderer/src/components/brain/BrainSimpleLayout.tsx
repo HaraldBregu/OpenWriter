@@ -45,7 +45,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     if (contentRef.current && isStreaming) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight
     }
-  }, [messages, isStreaming])
+  }, [latestResponse, isStreaming])
 
   const handleSubmit = useCallback(async () => {
     const trimmed = inputValue.trim()
@@ -70,6 +70,9 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
     .slice(-1)[0]
+
+  // Determine what content to show: streaming content OR completed message
+  const displayContent = isStreaming ? latestResponse : (latestAssistantMessage?.content || '')
 
   return (
     <div className="flex h-full flex-col">
@@ -98,10 +101,10 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
         className="flex-1 overflow-auto p-6"
       >
         <div className="mx-auto max-w-4xl">
-          {latestAssistantMessage ? (
+          {displayContent ? (
             <div className="rounded-lg border border-border bg-card p-6">
               <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {latestAssistantMessage.content}
+                {displayContent}
               </div>
             </div>
           ) : (

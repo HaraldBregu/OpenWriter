@@ -81,52 +81,62 @@ export function useAI(options: UseAIOptions): UseAIReturn {
     console.log('[useAI] Setting up AI event listener for session:', sessionId)
 
     const unsubscribe = window.ai.onEvent((event) => {
-      console.log('[useAI] Received event:', event.type, event.data)
+      console.log('[useAI] ======== EVENT RECEIVED ========')
+      console.log('[useAI] Event type:', event.type)
+      console.log('[useAI] Event data:', event.data)
+      console.log('[useAI] Current runId:', currentRunIdRef.current)
 
-      if (event.type === 'token' && currentRunIdRef.current) {
+      if (event.type === 'token') {
         const data = event.data as { runId: string; token: string }
+
+        // If we receive a token but don't have a runId yet, set it
+        // This handles the race condition where events arrive before the promise resolves
+        if (!currentRunIdRef.current) {
+          console.warn('[useAI] Token arrived before runId was set. Setting it now:', data.runId)
+          currentRunIdRef.current = data.runId
+          accumulatedContentRef.current = ''
+          assistantMessageIdRef.current = null
+        }
 
         if (data.runId === currentRunIdRef.current) {
           const isFirstToken = accumulatedContentRef.current.length === 0
           if (isFirstToken) {
             console.log('[useAI] ======== AI RESPONSE STARTING ========')
+            setIsStreaming(true)
             onStreamStart?.()
+
+            // Create assistant message placeholder only on first token
+            const newId = `msg-${Date.now()}`
+            assistantMessageIdRef.current = newId
+            console.log('[useAI] Creating new assistant message:', newId)
+
+            setMessages(prev => [
+              ...prev,
+              {
+                id: newId,
+                role: 'assistant' as const,
+                content: '',
+                timestamp: Date.now()
+              }
+            ])
           }
+
           console.log('[useAI] Token received:', JSON.stringify(data.token))
-          setIsStreaming(true)
           accumulatedContentRef.current += data.token
+          // Only update latestResponse during streaming - this triggers re-renders
           setLatestResponse(accumulatedContentRef.current)
-
-          setMessages(prev => {
-            const assistantMsgId = assistantMessageIdRef.current
-            if (!assistantMsgId) {
-              // Create new assistant message
-              const newId = `msg-${Date.now()}`
-              assistantMessageIdRef.current = newId
-              console.log('[useAI] Creating new assistant message:', newId)
-              return [
-                ...prev,
-                {
-                  id: newId,
-                  role: 'assistant' as const,
-                  content: accumulatedContentRef.current,
-                  timestamp: Date.now()
-                }
-              ]
-            }
-
-            // Update existing assistant message
-            return prev.map(msg =>
-              msg.id === assistantMsgId
-                ? { ...msg, content: accumulatedContentRef.current }
-                : msg
-            )
+        } else {
+          console.warn('[useAI] Received token for different runId:', {
+            received: data.runId,
+            expected: currentRunIdRef.current
           })
         }
       } else if (event.type === 'thinking') {
         console.log('[useAI] Thinking event:', event.data)
       } else if (event.type === 'done') {
         const data = event.data as { runId: string }
+        console.log('[useAI] Done event - runId:', data.runId, 'current:', currentRunIdRef.current)
+
         if (data.runId === currentRunIdRef.current) {
           console.log('[useAI] Stream completed')
           console.log('[useAI] ========================================')
@@ -136,6 +146,19 @@ export function useAI(options: UseAIOptions): UseAIReturn {
           console.log('[useAI] Response length:', accumulatedContentRef.current.length, 'characters')
 
           const finalResponse = accumulatedContentRef.current
+          const assistantMsgId = assistantMessageIdRef.current
+
+          // Update the assistant message with final content
+          if (assistantMsgId) {
+            setMessages(prev =>
+              prev.map(msg =>
+                msg.id === assistantMsgId
+                  ? { ...msg, content: finalResponse }
+                  : msg
+              )
+            )
+          }
+
           onStreamComplete?.(finalResponse)
 
           setIsLoading(false)
@@ -146,6 +169,8 @@ export function useAI(options: UseAIOptions): UseAIReturn {
         }
       } else if (event.type === 'error') {
         const data = event.data as { runId: string; message: string }
+        console.log('[useAI] Error event - runId:', data.runId, 'current:', currentRunIdRef.current)
+
         if (data.runId === currentRunIdRef.current) {
           const errorMessage = data.message || 'An error occurred'
           console.error('[useAI] Error event:', errorMessage)
@@ -160,6 +185,8 @@ export function useAI(options: UseAIOptions): UseAIReturn {
           assistantMessageIdRef.current = null
         }
       }
+
+      console.log('[useAI] ======== EVENT PROCESSED ========')
     })
 
     return () => {
