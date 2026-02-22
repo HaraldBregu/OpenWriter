@@ -62,7 +62,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(yarn:*)",
       "Bash(git status:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(tee:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

@@ -185,16 +185,27 @@ const WelcomePage: React.FC = () => {
           </p>
         </div>
 
-        {/* ── Action button ── */}
-        <div className="flex justify-center mb-12">
-          <AppButton
-            variant="outline"
-            className="h-24 w-56 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
-            onClick={handleOpenProject}
-          >
-            <FolderOpen className="h-6 w-6 text-foreground/70" />
-            <span className="text-base font-medium">Open Workspace</span>
-          </AppButton>
+        {/* ── Workspace section ── */}
+        <div className="w-full max-w-2xl flex flex-col mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Workspace
+            </h2>
+          </div>
+
+          <div className="rounded-xl border border-border p-8 flex items-center justify-center">
+            <AppButton
+              variant="outline"
+              className="h-32 w-full max-w-md flex flex-col items-center justify-center gap-4 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
+              onClick={handleOpenProject}
+            >
+              <FolderOpen className="h-8 w-8 text-foreground/70" />
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-lg font-medium">Open Workspace</span>
+                <span className="text-xs text-muted-foreground">Select a folder to begin</span>
+              </div>
+            </AppButton>
+          </div>
         </div>
 
         {/* ── Recent projects ── */}

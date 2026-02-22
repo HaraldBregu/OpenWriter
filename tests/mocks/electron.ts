@@ -57,10 +57,12 @@ const BrowserWindow = jest.fn(() => mockBrowserWindowInstance) as unknown as jes
   getAllWindows: jest.Mock
   fromId: jest.Mock
   getFocusedWindow: jest.Mock
+  fromWebContents: jest.Mock
 }
 BrowserWindow.getAllWindows = jest.fn().mockReturnValue([mockBrowserWindowInstance])
 BrowserWindow.fromId = jest.fn().mockReturnValue(mockBrowserWindowInstance)
 BrowserWindow.getFocusedWindow = jest.fn().mockReturnValue(mockBrowserWindowInstance)
+BrowserWindow.fromWebContents = jest.fn().mockReturnValue(mockBrowserWindowInstance)
 
 // ---------------------------------------------------------------------------
 // app
@@ -86,6 +88,7 @@ const app = {
   quit: jest.fn(),
   exit: jest.fn(),
   relaunch: jest.fn(),
+  show: jest.fn(),
   on: jest.fn(),
   once: jest.fn(),
   requestSingleInstanceLock: jest.fn().mockReturnValue(true),
