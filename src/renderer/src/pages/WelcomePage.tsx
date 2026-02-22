@@ -254,32 +254,29 @@ const WelcomePage: React.FC = () => {
                       w-full flex items-center gap-4 px-4 py-3
                       transition-colors text-left
                       ${exists
-                        ? 'hover:bg-accent cursor-pointer'
-                        : 'cursor-not-allowed opacity-60 bg-destructive/5'
+                        ? 'hover:bg-accent cursor-pointer opacity-100'
+                        : 'cursor-not-allowed opacity-40'
                       }
                     `}
                   >
                     {/* Folder color indicator */}
-                    <div className={`
-                      h-8 w-8 rounded-md flex items-center justify-center shrink-0
-                      ${exists ? 'bg-primary/10' : 'bg-destructive/10'}
-                    `}>
-                      <FolderOpen className={`h-4 w-4 ${exists ? 'text-primary' : 'text-destructive'}`} />
+                    <div className="h-8 w-8 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
+                      <FolderOpen className="h-4 w-4 text-primary" />
                     </div>
 
                     {/* Name + path */}
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className={`text-sm font-medium truncate ${exists ? 'text-foreground' : 'text-destructive'}`}>
+                      <span className="text-sm font-medium truncate text-foreground">
                         {getProjectName(project.path)}
                         {!exists && ' (Not Found)'}
                       </span>
-                      <span className={`text-xs truncate mt-0.5 ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                      <span className="text-xs truncate mt-0.5 text-muted-foreground">
                         {formatPath(project.path)}
                       </span>
                     </div>
 
                     {/* Relative time */}
-                    <div className={`flex items-center gap-1.5 shrink-0 text-xs ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                    <div className="flex items-center gap-1.5 shrink-0 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       <span>{formatRelativeTime(project.lastOpened)}</span>
                     </div>
