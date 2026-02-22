@@ -1,0 +1,341 @@
+/**
+ * TaskExecutorService -- orchestrator for background task execution.
+ *
+ * Responsibilities:
+ *  1. Accept task submissions (type + input) and queue them by priority.
+ *  2. Look up the handler in TaskHandlerRegistry.
+ *  3. Execute tasks concurrently up to a configurable limit.
+ *  4. Create an AbortController per task for independent cancellation.
+ *  5. Forward TaskEvents to the EventBus for renderer delivery.
+ *  6. Drain the queue automatically when execution slots free up.
+ *
+ * Implements Disposable so ServiceContainer calls destroy() on shutdown,
+ * aborting any in-flight tasks.
+ */
+
+import { randomUUID } from 'crypto'
+import type { Disposable } from '../core/ServiceContainer'
+import type { EventBus } from '../core/EventBus'
+import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
+import type { TaskEvent } from './TaskEvents'
+import type { ProgressReporter } from './TaskHandler'
+import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor'
+
+/** Priority ordering for queue sorting (higher number = higher priority). */
+const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
+  high: 3,
+  normal: 2,
+  low: 1
+}
+
+/** Queued task waiting for an execution slot. */
+interface QueuedTask {
+  taskId: string
+  type: string
+  input: unknown
+  priority: TaskPriority
+  windowId?: number
+  timeoutMs?: number
+  controller: AbortController
+  queuedAt: number
+}
+
+export class TaskExecutorService implements Disposable {
+  private activeTasks = new Map<string, ActiveTask>()
+  private queue: QueuedTask[] = []
+  private runningCount = 0
+
+  constructor(
+    private readonly registry: TaskHandlerRegistry,
+    private readonly eventBus: EventBus,
+    private readonly maxConcurrency: number = 5
+  ) {}
+
+  // ---------------------------------------------------------------------------
+  // Public API
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Submit a task for execution. Returns the taskId immediately.
+   *
+   * The task is either started right away (if slots are available)
+   * or placed in the priority queue.
+   */
+  submit<TInput>(type: string, input: TInput, options?: TaskOptions): string {
+    const handler = this.registry.get(type)
+
+    // Validate input if handler supports it
+    if (handler.validate) {
+      handler.validate(input)
+    }
+
+    const taskId = randomUUID()
+    const priority = options?.priority ?? 'normal'
+    const controller = new AbortController()
+
+    const activeTask: ActiveTask = {
+      taskId,
+      type,
+      status: 'queued',
+      priority,
+      controller,
+      windowId: options?.windowId
+    }
+
+    this.activeTasks.set(taskId, activeTask)
+
+    const queued: QueuedTask = {
+      taskId,
+      type,
+      input,
+      priority,
+      windowId: options?.windowId,
+      timeoutMs: options?.timeoutMs,
+      controller,
+      queuedAt: Date.now()
+    }
+
+    this.queue.push(queued)
+    this.sortQueue()
+
+    const position = this.queue.indexOf(queued) + 1
+    this.send(options?.windowId, 'task:event', {
+      type: 'queued',
+      data: { taskId, position }
+    } satisfies TaskEvent)
+
+    console.log(`[TaskExecutorService] Task ${taskId} queued (type="${type}", priority=${priority})`)
+
+    this.drainQueue()
+
+    return taskId
+  }
+
+  /**
+   * Cancel a task by its ID.
+   * Works for both queued and running tasks.
+   * Returns true if the task was found and cancelled.
+   */
+  cancel(taskId: string): boolean {
+    const task = this.activeTasks.get(taskId)
+    if (!task) return false
+
+    console.log(`[TaskExecutorService] Cancelling task ${taskId}`)
+
+    // Abort the controller (signals running task or prevents queued task from starting)
+    task.controller.abort()
+
+    // Remove from queue if still queued
+    const queueIdx = this.queue.findIndex((q) => q.taskId === taskId)
+    if (queueIdx !== -1) {
+      this.queue.splice(queueIdx, 1)
+    }
+
+    // Clean up timeout
+    if (task.timeoutHandle) {
+      clearTimeout(task.timeoutHandle)
+    }
+
+    task.status = 'cancelled'
+    task.completedAt = Date.now()
+
+    this.send(task.windowId, 'task:event', {
+      type: 'cancelled',
+      data: { taskId }
+    } satisfies TaskEvent)
+
+    this.activeTasks.delete(taskId)
+
+    return true
+  }
+
+  /**
+   * Return a snapshot of all active tasks (queued + running).
+   */
+  listTasks(): ActiveTask[] {
+    return Array.from(this.activeTasks.values()).map(
+      ({ taskId, type, status, priority, startedAt, completedAt, windowId }) => ({
+        taskId,
+        type,
+        status,
+        priority,
+        startedAt,
+        completedAt,
+        windowId,
+        controller: undefined as unknown as AbortController
+      })
+    )
+  }
+
+  /**
+   * Disposable -- abort every active task on shutdown.
+   */
+  destroy(): void {
+    console.log(
+      `[TaskExecutorService] Destroying, aborting ${this.activeTasks.size} task(s)`
+    )
+    for (const task of this.activeTasks.values()) {
+      task.controller.abort()
+      if (task.timeoutHandle) {
+        clearTimeout(task.timeoutHandle)
+      }
+    }
+    this.activeTasks.clear()
+    this.queue = []
+    this.runningCount = 0
+  }
+
+  // ---------------------------------------------------------------------------
+  // Internal
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Process queued tasks whenever execution slots are available.
+   */
+  private drainQueue(): void {
+    while (this.runningCount < this.maxConcurrency && this.queue.length > 0) {
+      const queued = this.queue.shift()!
+
+      // Skip if already cancelled while in queue
+      if (queued.controller.signal.aborted) {
+        continue
+      }
+
+      this.runningCount++
+      this.executeTask(queued)
+    }
+  }
+
+  /**
+   * Execute a single task. Handles lifecycle events, progress reporting,
+   * timeout, and cleanup.
+   *
+   * Does NOT throw -- all errors are caught and delivered as events.
+   */
+  private async executeTask(queued: QueuedTask): Promise<void> {
+    const { taskId, type, input, controller, windowId, timeoutMs } = queued
+    const task = this.activeTasks.get(taskId)
+
+    if (!task) {
+      this.runningCount--
+      this.drainQueue()
+      return
+    }
+
+    task.status = 'running'
+    task.startedAt = Date.now()
+
+    // Set up timeout if specified
+    if (timeoutMs !== undefined) {
+      task.timeoutHandle = setTimeout(() => {
+        console.log(`[TaskExecutorService] Task ${taskId} timed out after ${timeoutMs}ms`)
+        controller.abort()
+      }, timeoutMs)
+    }
+
+    this.send(windowId, 'task:event', {
+      type: 'started',
+      data: { taskId }
+    } satisfies TaskEvent)
+
+    console.log(`[TaskExecutorService] Task ${taskId} started (type="${type}")`)
+
+    try {
+      const handler = this.registry.get(type)
+
+      const reporter: ProgressReporter = {
+        progress: (percent, message?, detail?) => {
+          // Don't emit progress if task is already done
+          if (!this.activeTasks.has(taskId)) return
+
+          this.send(windowId, 'task:event', {
+            type: 'progress',
+            data: { taskId, percent, message, detail }
+          } satisfies TaskEvent)
+        }
+      }
+
+      const result = await handler.execute(input, controller.signal, reporter)
+
+      // Task may have been cancelled during execution
+      if (!this.activeTasks.has(taskId)) return
+
+      const durationMs = Date.now() - task.startedAt!
+
+      task.status = 'completed'
+      task.completedAt = Date.now()
+      task.result = result
+
+      this.send(windowId, 'task:event', {
+        type: 'completed',
+        data: { taskId, result, durationMs }
+      } satisfies TaskEvent)
+
+      console.log(`[TaskExecutorService] Task ${taskId} completed in ${durationMs}ms`)
+    } catch (err) {
+      // Task may have been cancelled via cancel()
+      if (!this.activeTasks.has(taskId)) return
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.log(`[TaskExecutorService] Task ${taskId} aborted`)
+        task.status = 'cancelled'
+        task.completedAt = Date.now()
+
+        this.send(windowId, 'task:event', {
+          type: 'cancelled',
+          data: { taskId }
+        } satisfies TaskEvent)
+      } else {
+        const message = err instanceof Error ? err.message : String(err)
+        console.error(`[TaskExecutorService] Task ${taskId} failed:`, err)
+
+        task.status = 'error'
+        task.completedAt = Date.now()
+        task.error = message
+
+        this.send(windowId, 'task:event', {
+          type: 'error',
+          data: { taskId, message }
+        } satisfies TaskEvent)
+      }
+    } finally {
+      // Clean up timeout
+      if (task.timeoutHandle) {
+        clearTimeout(task.timeoutHandle)
+      }
+
+      this.activeTasks.delete(taskId)
+      this.runningCount--
+
+      console.log(
+        `[TaskExecutorService] Task ${taskId} (${type}) finished. ` +
+          `Running: ${this.runningCount}, Queued: ${this.queue.length}`
+      )
+
+      // Process next tasks in queue
+      this.drainQueue()
+    }
+  }
+
+  /**
+   * Sort queue by priority (high first), then by FIFO within same priority.
+   */
+  private sortQueue(): void {
+    this.queue.sort((a, b) => {
+      const priorityDiff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority]
+      if (priorityDiff !== 0) return priorityDiff
+      return a.queuedAt - b.queuedAt
+    })
+  }
+
+  /**
+   * Send an event to a specific window or broadcast to all windows.
+   */
+  private send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
+    if (windowId !== undefined) {
+      this.eventBus.sendTo(windowId, channel, ...args)
+    } else {
+      this.eventBus.broadcast(channel, ...args)
+    }
+  }
+}

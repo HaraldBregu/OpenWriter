@@ -93,7 +93,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
               size="icon"
               className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 rounded-none"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
             </AppButton>
           )}
 
@@ -105,7 +105,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
             size="icon"
             className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 touch-none rounded-none"
           >
-            <GripVertical className="h-5 w-5" />
+            <GripVertical className="h-4 w-4" />
           </AppButton>
         </div>
 
@@ -122,19 +122,31 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
 
         {/* Action bar */}
         <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0">
-          <ActionButton title="Enhance with AI" onClick={() => {/* TODO */}}>
+          <ActionButton
+            title="Enhance with AI"
+            onClick={() => {
+              /* TODO */
+            }}
+          >
             <Sparkles className="h-3.5 w-3.5" />
           </ActionButton>
-          <ActionButton title="Copy" onClick={() => navigator.clipboard.writeText(block.content)}>
+          <ActionButton
+            title="Copy"
+            onClick={() => navigator.clipboard.writeText(block.content)}
+          >
             <Copy className="h-3.5 w-3.5" />
           </ActionButton>
-          <ActionButton title="Delete" onClick={() => onDelete(block.id)} disabled={isOnly}>
+          <ActionButton
+            title="Delete"
+            onClick={() => onDelete(block.id)}
+            disabled={isOnly}
+          >
             <Trash2 className="h-3.5 w-3.5" />
           </ActionButton>
         </div>
       </div>
     </Reorder.Item>
-  )
+  );
 })
 ContentBlock.displayName = 'ContentBlock'
 

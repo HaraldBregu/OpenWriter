@@ -3,10 +3,10 @@
   "include": [
     "electron.vite.config.*",
     "src/main/**/*",
-    "src/preload/**/*",
+    "src/renderer/preload/**/*",
     "package.json",
     "resources/*.json",
-    "src/env.d.ts",
+    "src/env.d.ts"
   ],
   "compilerOptions": {
     "composite": true,

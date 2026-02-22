@@ -49,5 +49,15 @@
 - Renderer pages use relative imports (`'../store'`), NOT alias imports (`'@store/'`)
 - Service registered as `'workspaceMetadata'` in ServiceContainer
 
+## RAG Architecture (Feb 2026)
+- `RagController` in `src/main/rag/RagController.ts` -- manages indexed files via `Map<string, IndexedFile>`, streams query tokens via IPC
+- `ragLoader.ts` -- `indexFile()` reads fs, splits, embeds with OpenAI, returns `SimpleRetriever` (not exported, needs export for reuse)
+- `ragChain.ts` -- LCEL chain: retriever | formatDocs -> prompt -> ChatOpenAI -> StringOutputParser
+- `RagIpc.ts` -- thin IPC routing: `rag:index`, `rag:query`, `rag:cancel`, `rag:status`
+- Preload: `ragIndex`, `ragQuery`, `ragCancel`, `ragGetStatus`, `onRagEvent`
+- Renderer hook: `useRag.ts` -- local state (no Redux), streams via `onRagEvent` filtered by runId
+- Existing `RagPage.tsx` -- two-phase UI (index file -> query chat)
+- Extension pattern: add `indexDocuments()` to accept raw text instead of file path, use synthetic key in index Map
+
 ## File Links
 - [architecture-refactoring-plan.md](./architecture-refactoring-plan.md) - Detailed refactoring plan for main process

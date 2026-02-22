@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect }  from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useTheme } from '../hooks/useTheme'
-import { useLanguage } from '../hooks/useLanguage'
-import { usePostsLoader } from '../hooks/usePostsLoader'
-import { usePostsFileWatcher } from '../hooks/usePostsFileWatcher'
-import { useAppDispatch, useAppSelector } from '../store'
+import React, { useState, useCallback, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { usePostsLoader } from "../hooks/usePostsLoader";
+import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
+import { useAppDispatch, useAppSelector } from "../store";
 import {
   createPost,
   selectPosts,
@@ -13,9 +13,9 @@ import {
   updatePostBlocks,
   updatePostCategory,
   updatePostTags,
-  updatePostVisibility
-} from '../store/postsSlice'
-import { TitleBar } from './TitleBar'
+  updatePostVisibility,
+} from "../store/postsSlice";
+import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
   AppPopoverContent,
@@ -36,9 +36,9 @@ import {
   AppSidebarInset,
   AppSidebarHeader,
   AppSidebarFooter,
-  useSidebar
-} from './app'
-import logoIcon from '@resources/icons/icon.png'
+  useSidebar,
+} from "./app";
+import logoIcon from "@resources/icons/icon.png";
 import {
   PenLine,
   StickyNote,
@@ -57,10 +57,16 @@ import {
   Bug,
   PlusCircle,
   FileText,
-} from 'lucide-react'
+  Download,
+  Sparkles,
+  Lightbulb,
+  Database,
+  BrainCircuit,
+  Eye,
+} from "lucide-react";
 
 interface AppLayoutProps {
-  readonly children: React.ReactNode
+  readonly children: React.ReactNode;
 }
 
 // ---------------------------------------------------------------------------
@@ -68,42 +74,46 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateItems = [
-  { title: 'New Post', icon: PlusCircle, url: '/new/post', shortcut: '⌘N' },
-  { title: 'New Writing', icon: PenLine, url: '/new/writing', shortcut: '⌘W' },
-  { title: 'New Note', icon: StickyNote, url: '/new/note', shortcut: '⌘⇧N' },
-  { title: 'New Message', icon: MessageSquare, url: '/new/message', shortcut: '⌘M' }
-]
+  { title: "New Post", icon: PlusCircle, url: "/new/post", shortcut: "⌘N" },
+  { title: "New Writing", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
+  { title: "New Note", icon: StickyNote, url: "/new/note", shortcut: "⌘⇧N" },
+  {
+    title: "New Message",
+    icon: MessageSquare,
+    url: "/new/message",
+    shortcut: "⌘M",
+  },
+];
 
-const topNavSections = ['Posts', 'Writing', 'Notes', 'Messages']
-
+const topNavSections = ["Posts", "Writing", "Notes", "Messages"];
 
 // ---------------------------------------------------------------------------
 // Settings popover menu items
 // ---------------------------------------------------------------------------
 
 interface SettingsMenuItem {
-  title: string
-  icon: React.ElementType
-  url?: string
-  danger?: boolean
-  divider?: boolean
+  title: string;
+  icon: React.ElementType;
+  url?: string;
+  danger?: boolean;
+  divider?: boolean;
 }
 
 const settingsMenuItems: SettingsMenuItem[] = [
-  { title: 'Account', icon: User },
-  { title: 'Settings', icon: Settings, url: '/settings' },
-  { title: 'Notifications', icon: Bell },
-  { title: 'Privacy', icon: Shield },
-  { title: 'Billing', icon: CreditCard },
-  { title: 'Help & Support', icon: HelpCircle }
-]
+  { title: "Account", icon: User },
+  { title: "Settings", icon: Settings, url: "/settings" },
+  { title: "Notifications", icon: Bell },
+  { title: "Privacy", icon: Shield },
+  { title: "Billing", icon: CreditCard },
+  { title: "Help & Support", icon: HelpCircle },
+];
 
 // ---------------------------------------------------------------------------
 // SettingsPopover
 // ---------------------------------------------------------------------------
 
 // Stub — replace with real auth state
-const currentUser: { name: string } | null = { name: 'John Doe' }
+const currentUser: { name: string } | null = { name: "John Doe" };
 
 const SettingsPopover = React.memo(function SettingsPopover() {
   return (
@@ -114,39 +124,28 @@ const SettingsPopover = React.memo(function SettingsPopover() {
           className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
           <span className="flex-1 truncate text-sm text-left">
-            {currentUser ? currentUser.name : 'Sign in'}
+            {currentUser ? currentUser.name : "Sign in"}
           </span>
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
         </button>
       </AppPopoverTrigger>
-      <AppPopoverContent
-        side="top"
-        align="start"
-        className="w-64 p-0"
-      >
+      <AppPopoverContent side="top" align="start" className="w-64 p-0">
         <div className="py-1">
           {settingsMenuItems.map((item) => {
-            const Icon = item.icon
-            const className = "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            const Icon = item.icon;
+            const className =
+              "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
             return item.url ? (
-              <Link
-                key={item.title}
-                to={item.url}
-                className={className}
-              >
+              <Link key={item.title} to={item.url} className={className}>
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span>{item.title}</span>
               </Link>
             ) : (
-              <button
-                key={item.title}
-                type="button"
-                className={className}
-              >
+              <button key={item.title} type="button" className={className}>
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span>{item.title}</span>
               </button>
-            )
+            );
           })}
 
           {currentUser && (
@@ -164,23 +163,23 @@ const SettingsPopover = React.memo(function SettingsPopover() {
         </div>
       </AppPopoverContent>
     </AppPopover>
-  )
-})
-SettingsPopover.displayName = 'SettingsPopover'
+  );
+});
+SettingsPopover.displayName = "SettingsPopover";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function formatRelativeTime(timestamp: number): string {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000)
-  if (seconds < 60) return 'just now'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
 // ---------------------------------------------------------------------------
@@ -188,102 +187,127 @@ function formatRelativeTime(timestamp: number): string {
 // ---------------------------------------------------------------------------
 
 function AppLayoutInner({ children }: AppLayoutProps) {
-  const { toggleSidebar } = useSidebar()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const posts = useAppSelector(selectPosts)
+  const { toggleSidebar } = useSidebar();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const posts = useAppSelector(selectPosts);
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: false,
     Writing: false,
     Notes: false,
-    Messages: false
-  })
+    Messages: false,
+  });
 
-  const [workspaceName, setWorkspaceName] = useState<string>('Tesseract AI')
+  const [workspaceName, setWorkspaceName] = useState<string>("Tesseract AI");
 
   // Load workspace name on mount
   useEffect(() => {
     async function loadWorkspaceName() {
       try {
-        const workspacePath = await window.api.workspaceGetCurrent()
+        const workspacePath = await window.api.workspaceGetCurrent();
         if (workspacePath) {
           // Extract folder name from path
-          const pathParts = workspacePath.split(/[/\\]/)
-          const folderName = pathParts[pathParts.length - 1]
-          setWorkspaceName(`${folderName} (workspace)` || 'Tesseract AI')
+          const pathParts = workspacePath.split(/[/\\]/);
+          const folderName = pathParts[pathParts.length - 1];
+          setWorkspaceName(`${folderName} (workspace)` || "Tesseract AI");
         }
       } catch (error) {
-        console.error('[AppLayout] Failed to load workspace name:', error)
+        console.error("[AppLayout] Failed to load workspace name:", error);
       }
     }
 
-    loadWorkspaceName()
-  }, [])
+    loadWorkspaceName();
+  }, []);
 
-  const toggleSection = useCallback((title: string) =>
-    setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] })), [])
+  const toggleSection = useCallback(
+    (title: string) =>
+      setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] })),
+    [],
+  );
 
   const handleNewPost = useCallback(() => {
-    const action = createPost()
-    dispatch(action)
-    navigate(`/new/post/${action.payload.id}`)
-  }, [dispatch, navigate])
+    const action = createPost();
+    dispatch(action);
+    navigate(`/new/post/${action.payload.id}`);
+  }, [dispatch, navigate]);
 
-  const handlePostContextMenu = useCallback((postId: string, postTitle: string) => {
-    window.api.showPostContextMenu(postId, postTitle)
-  }, [])
+  const handlePostContextMenu = useCallback(
+    (postId: string, postTitle: string) => {
+      window.api.showPostContextMenu(postId, postTitle);
+    },
+    [],
+  );
 
   // Listen for context menu actions
   useEffect(() => {
     const cleanup = window.api.onPostContextMenuAction((data) => {
-      const { action, postId } = data
+      const { action, postId } = data;
 
       switch (action) {
-        case 'open':
-          navigate(`/new/post/${postId}`)
-          break
+        case "open":
+          navigate(`/new/post/${postId}`);
+          break;
 
-        case 'duplicate': {
+        case "duplicate": {
           // Find the source post
-          const sourcePost = posts.find((p) => p.id === postId)
-          if (!sourcePost) break
+          const sourcePost = posts.find((p) => p.id === postId);
+          if (!sourcePost) break;
 
           // Create a new post
-          const newPostAction = createPost()
-          dispatch(newPostAction)
-          const newPostId = newPostAction.payload.id
+          const newPostAction = createPost();
+          dispatch(newPostAction);
+          const newPostId = newPostAction.payload.id;
 
           // Copy all fields from source post to new post
-          dispatch(updatePostTitle({ postId: newPostId, title: `${sourcePost.title} (Copy)` }))
-          dispatch(updatePostBlocks({ postId: newPostId, blocks: sourcePost.blocks }))
-          dispatch(updatePostCategory({ postId: newPostId, category: sourcePost.category }))
-          dispatch(updatePostTags({ postId: newPostId, tags: sourcePost.tags }))
-          dispatch(updatePostVisibility({ postId: newPostId, visibility: sourcePost.visibility }))
+          dispatch(
+            updatePostTitle({
+              postId: newPostId,
+              title: `${sourcePost.title} (Copy)`,
+            }),
+          );
+          dispatch(
+            updatePostBlocks({ postId: newPostId, blocks: sourcePost.blocks }),
+          );
+          dispatch(
+            updatePostCategory({
+              postId: newPostId,
+              category: sourcePost.category,
+            }),
+          );
+          dispatch(
+            updatePostTags({ postId: newPostId, tags: sourcePost.tags }),
+          );
+          dispatch(
+            updatePostVisibility({
+              postId: newPostId,
+              visibility: sourcePost.visibility,
+            }),
+          );
 
           // Navigate to the new post
-          navigate(`/new/post/${newPostId}`)
-          break
+          navigate(`/new/post/${newPostId}`);
+          break;
         }
 
-        case 'rename':
+        case "rename":
           // Navigate to the post page (title is editable there)
-          navigate(`/new/post/${postId}`)
-          break
+          navigate(`/new/post/${postId}`);
+          break;
 
-        case 'delete':
-          dispatch(deletePost(postId))
+        case "delete":
+          dispatch(deletePost(postId));
           // If currently viewing this post, navigate to home
           if (location.pathname === `/new/post/${postId}`) {
-            navigate('/home')
+            navigate("/home");
           }
-          break
+          break;
       }
-    })
+    });
 
-    return cleanup
-  }, [dispatch, navigate, location.pathname, posts])
+    return cleanup;
+  }, [dispatch, navigate, location.pathname, posts]);
 
   return (
     <>
@@ -291,16 +315,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
       <div className="flex flex-1 min-h-0 w-full">
         <AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
-
           {/* Header */}
           <AppSidebarHeader className="border-b p-4">
-            <Link to="/home" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link
+              to="/home"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
               <img
                 src={logoIcon}
                 alt="Tesseract AI"
                 className="h-6 w-6 rounded-full object-cover"
               />
-              <span className="text-md font-normal tracking-tight">Tesseract AI</span>
+              <span className="text-md font-normal tracking-tight">
+                Tesseract AI
+              </span>
             </Link>
           </AppSidebarHeader>
 
@@ -309,11 +337,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
-
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
-                    const Icon = item.icon
-                    const isNewPost = item.title === 'New Post'
+                    const Icon = item.icon;
+                    const isNewPost = item.title === "New Post";
                     return (
                       <AppSidebarMenuItem key={item.title}>
                         <AppSidebarMenuButton
@@ -325,7 +352,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           {isNewPost ? (
                             <>
                               <Icon className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">{item.title}</span>
+                              <span className="flex-1 truncate">
+                                {item.title}
+                              </span>
                               <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
                                 {item.shortcut}
                               </span>
@@ -333,7 +362,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           ) : (
                             <Link to={item.url}>
                               <Icon className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">{item.title}</span>
+                              <span className="flex-1 truncate">
+                                {item.title}
+                              </span>
                               <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
                                 {item.shortcut}
                               </span>
@@ -341,15 +372,15 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           )}
                         </AppSidebarMenuButton>
                       </AppSidebarMenuItem>
-                    )
+                    );
                   })}
 
                   <AppSidebarSeparator className="my-1" />
 
                   {/* Posts, Writing, Notes, Messages — collapsible section headers */}
                   {topNavSections.map((section) => {
-                    const isOpen = sectionsOpen[section]
-                    const isPosts = section === 'Posts'
+                    const isOpen = sectionsOpen[section];
+                    const isPosts = section === "Posts";
                     return (
                       <AppSidebarMenuItem key={section}>
                         <button
@@ -357,51 +388,70 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           onClick={() => toggleSection(section)}
                           className="flex w-full items-center gap-1 h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                         >
-                          <span className="uppercase tracking-wider">{section}</span>
+                          <span className="uppercase tracking-wider">
+                            {section}
+                          </span>
                           <ChevronRight
-                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                           />
                         </button>
                         {isOpen && (
                           <AppSidebarMenuSub className="border-none ml-0">
-                            {isPosts && (
+                            {isPosts &&
                               posts.map((post) => (
                                 <AppSidebarMenuSubItem
                                   key={post.id}
                                   onContextMenu={(e) => {
-                                    e.preventDefault()
-                                    handlePostContextMenu(post.id, post.title || 'Untitled Post')
+                                    e.preventDefault();
+                                    handlePostContextMenu(
+                                      post.id,
+                                      post.title || "Untitled Post",
+                                    );
                                   }}
                                 >
                                   <AppSidebarMenuSubButton
                                     asChild
-                                    isActive={location.pathname === `/new/post/${post.id}`}
+                                    isActive={
+                                      location.pathname ===
+                                      `/new/post/${post.id}`
+                                    }
                                     className="ml-0"
                                   >
-                                    <Link to={`/new/post/${post.id}`} className="ml-0">
+                                    <Link
+                                      to={`/new/post/${post.id}`}
+                                      className="ml-0"
+                                    >
                                       <FileText className="h-3.5 w-3.5 shrink-0" />
-                                      <span className="flex-1 truncate">{post.title || 'Untitled Post'}</span>
+                                      <span className="flex-1 truncate">
+                                        {post.title || "Untitled Post"}
+                                      </span>
                                       <span className="text-xs text-muted-foreground/40 shrink-0">
                                         {formatRelativeTime(post.updatedAt)}
                                       </span>
                                     </Link>
                                   </AppSidebarMenuSubButton>
                                 </AppSidebarMenuSubItem>
-                              ))
-                            )}
+                              ))}
                           </AppSidebarMenuSub>
                         )}
                       </AppSidebarMenuItem>
-                    )
+                    );
                   })}
 
                   <AppSidebarSeparator className="my-1" />
+
+                  {/* Knowledge - Label */}
+                  <div className="px-3 py-2">
+                    <span className="text-xs font-medium text-muted-foreground/50">
+                      Knowledge
+                    </span>
+                  </div>
 
                   {/* Documents */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === '/documents'}
+                      isActive={location.pathname === "/documents"}
                       className="h-9 px-3"
                     >
                       <Link to="/documents">
@@ -415,7 +465,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === '/directories'}
+                      isActive={location.pathname === "/directories"}
                       className="h-9 px-3"
                     >
                       <Link to="/directories">
@@ -425,18 +475,79 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  <AppSidebarSeparator className="my-1" />
+                  {/* Brain - Label */}
+                  <div className="px-3 py-2">
+                    <span className="text-xs font-medium text-muted-foreground/50">
+                      Brain
+                    </span>
+                  </div>
 
-                  {/* Integrations */}
+                  {/* Principles */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === '/integrations'}
+                      isActive={location.pathname === "/brain/principles"}
                       className="h-9 px-3"
                     >
-                      <Link to="/integrations">
-                        <Puzzle className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Integrations</span>
+                      <Link to="/brain/principles">
+                        <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Principles</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
+                  {/* Consciousness */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === "/brain/consciousness"}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/brain/consciousness">
+                        <Lightbulb className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Consciousness</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
+                  {/* Memory */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === "/brain/memory"}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/brain/memory">
+                        <Database className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Memory</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
+                  {/* Reasoning */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === "/brain/reasoning"}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/brain/reasoning">
+                        <BrainCircuit className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Reasoning</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
+                  {/* Perception */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === "/brain/perception"}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/brain/perception">
+                        <Eye className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Perception</span>
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
@@ -447,7 +558,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === '/pipeline-test'}
+                      isActive={location.pathname === "/pipeline-test"}
                       className="h-9 px-3"
                     >
                       <Link to="/pipeline-test">
@@ -464,7 +575,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === '/debug'}
+                      isActive={location.pathname === "/debug"}
                       className="h-9 px-3"
                     >
                       <Link to="/debug">
@@ -477,6 +588,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
+                  {/* Downloads Demo (Dev Tool) */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      isActive={location.pathname === "/downloads-demo"}
+                      className="h-9 px-3"
+                    >
+                      <Link to="/downloads-demo">
+                        <Download className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Downloads Demo</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-600 dark:text-green-400 font-mono uppercase tracking-wider">
+                          Demo
+                        </span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
@@ -486,15 +613,16 @@ function AppLayoutInner({ children }: AppLayoutProps) {
           <AppSidebarFooter className="border-t px-3 py-3">
             <SettingsPopover />
           </AppSidebarFooter>
-
         </AppSidebar>
 
         <AppSidebarInset className="flex flex-col flex-1 min-h-0">
-          <main className="flex-1 overflow-y-auto bg-background">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-background">
+            {children}
+          </main>
         </AppSidebarInset>
       </div>
     </>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -502,10 +630,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 // ---------------------------------------------------------------------------
 
 export function AppLayout({ children }: AppLayoutProps) {
-  useTheme()
-  useLanguage()
-  usePostsLoader() // Load posts from workspace on app startup
-  usePostsFileWatcher() // Listen for external file changes in posts directory
+  useTheme();
+  useLanguage();
+  usePostsLoader(); // Load posts from workspace on app startup
+  usePostsFileWatcher(); // Listen for external file changes in posts directory
 
   return (
     <div className="flex flex-col h-screen">
@@ -513,5 +641,5 @@ export function AppLayout({ children }: AppLayoutProps) {
         <AppLayoutInner>{children}</AppLayoutInner>
       </AppSidebarProvider>
     </div>
-  )
+  );
 }

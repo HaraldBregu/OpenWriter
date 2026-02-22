@@ -5,11 +5,11 @@
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
     "src/renderer/i18n.ts",
-    "src/env.d.ts",
+    "src/env.d.ts"
   ],
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
-    "types": ["node", "./src/types.d.ts", "./src/env.d.ts", "electron-vite/node"],
+    "types": ["node", "./src/types.d.ts", "./src/env.d.ts", "./src/preload/index.d.ts", "electron-vite/node"],
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "composite": true,
     "jsx": "react-jsx",

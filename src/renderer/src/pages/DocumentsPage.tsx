@@ -17,7 +17,11 @@ import {
   Copy,
   Filter,
   Calendar,
-  HardDrive
+  HardDrive,
+  Info,
+  FileCode,
+  FileJson,
+  Code2
 } from 'lucide-react'
 import {
   AppButton,
@@ -46,6 +50,16 @@ interface Document {
 type ViewMode = 'grid' | 'list'
 type SortBy = 'name' | 'date' | 'size' | 'type'
 type DownloadStatus = 'idle' | 'downloading' | 'success' | 'error'
+
+// Supported text file types for display
+const SUPPORTED_FILE_TYPES = [
+  'Text files (.txt, .md)',
+  'Code files (.js, .ts, .jsx, .tsx, .py, .java, etc.)',
+  'Web files (.html, .css, .scss, .json, .xml)',
+  'Config files (.yaml, .yml, .toml, .ini, .env)',
+  'Shell scripts (.sh, .bash)',
+  'And other text-based formats'
+]
 
 // ---------------------------------------------------------------------------
 // Helper Functions
@@ -78,13 +92,47 @@ function formatDate(timestamp: number): string {
 function getFileIcon(doc: Document): React.ComponentType<{ className?: string }> {
   const ext = doc.name.split('.').pop()?.toLowerCase()
 
-  // Add more specific icons based on file type if needed
+  // Return specific icons based on file type
   switch (ext) {
+    // Text and markdown
     case 'txt':
     case 'md':
-    case 'doc':
-    case 'docx':
+    case 'markdown':
       return FileText
+
+    // Code files
+    case 'js':
+    case 'jsx':
+    case 'ts':
+    case 'tsx':
+    case 'py':
+    case 'java':
+    case 'cpp':
+    case 'c':
+    case 'cs':
+    case 'go':
+    case 'rs':
+    case 'php':
+    case 'rb':
+    case 'sh':
+    case 'bash':
+      return FileCode
+
+    // JSON and config
+    case 'json':
+    case 'yaml':
+    case 'yml':
+    case 'toml':
+    case 'xml':
+      return FileJson
+
+    // Web files
+    case 'html':
+    case 'css':
+    case 'scss':
+    case 'sass':
+      return Code2
+
     default:
       return File
   }
@@ -136,11 +184,11 @@ const EmptyState = React.memo(function EmptyState({
       <h2 className="text-xl font-semibold text-foreground mb-2">
         No documents yet
       </h2>
-      <p className="text-sm text-muted-foreground mb-8 max-w-md">
-        Import files from your computer or download documents from a remote source to get started.
+      <p className="text-sm text-muted-foreground mb-4 max-w-md">
+        Import text-based files from your computer or download documents from a remote source to get started.
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <AppButton onClick={onImportFiles} size="default" disabled={isImporting}>
           {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           {isImporting ? 'Importing...' : 'Import Files'}
@@ -149,6 +197,23 @@ const EmptyState = React.memo(function EmptyState({
           <Download className="h-4 w-4" />
           Download from URL/Remote
         </AppButton>
+      </div>
+
+      <div className="max-w-lg rounded-lg border border-border bg-muted/30 p-4">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+          <div className="text-left">
+            <p className="text-sm font-medium text-foreground mb-2">Supported file types:</p>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              {SUPPORTED_FILE_TYPES.map((type, index) => (
+                <li key={index}>• {type}</li>
+              ))}
+            </ul>
+            <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+              <span className="font-medium">Note:</span> Images, videos, and binary documents are not supported.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -164,10 +229,13 @@ const DropZoneOverlay = React.memo(function DropZoneOverlay({ isDragging }: Drop
 
   return (
     <div className="absolute inset-0 z-50 bg-background/95 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center backdrop-blur-sm">
-      <div className="text-center">
+      <div className="text-center max-w-md">
         <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
-        <p className="text-lg font-medium text-foreground">Drop files here to import</p>
+        <p className="text-lg font-medium text-foreground">Drop text files here to import</p>
         <p className="text-sm text-muted-foreground mt-2">Files will be copied to your workspace</p>
+        <p className="text-xs text-muted-foreground mt-3 px-4">
+          Only text-based files are accepted. Images, videos, and binary files will be rejected.
+        </p>
       </div>
     </div>
   )
@@ -478,6 +546,7 @@ const DocumentsPage: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [isRemoteModalOpen, setIsRemoteModalOpen] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
+  const [importError, setImportError] = useState<string | null>(null)
   const dragCounterRef = useRef(0)
   const isListeningRef = useRef(false)
 
@@ -536,10 +605,12 @@ const DocumentsPage: React.FC = () => {
   const handleImportFiles = useCallback(async () => {
     try {
       setIsImporting(true)
+      setImportError(null)
       await window.api.documentsImportFiles()
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)
+      setImportError(error instanceof Error ? error.message : 'Failed to import files')
     } finally {
       setIsImporting(false)
     }
@@ -607,11 +678,13 @@ const DocumentsPage: React.FC = () => {
       if (files.length === 0) return
 
       setIsImporting(true)
+      setImportError(null)
       const paths = files.map(file => (file as File & { path: string }).path)
       await window.api.documentsImportByPaths(paths)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
+      setImportError(error instanceof Error ? error.message : 'Failed to import dropped files')
     } finally {
       setIsImporting(false)
     }
@@ -640,11 +713,30 @@ const DocumentsPage: React.FC = () => {
         <>
           {/* Header */}
           <div className="shrink-0 px-8 py-5 border-b border-border">
+            {/* Error notification */}
+            {importError && (
+              <div className="mb-4 flex items-start gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-destructive">Import Failed</p>
+                  <p className="text-xs text-destructive/80 mt-1">{importError}</p>
+                </div>
+                <AppButton
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setImportError(null)}
+                  className="h-6 w-6 shrink-0"
+                >
+                  <X className="h-4 w-4" />
+                </AppButton>
+              </div>
+            )}
+
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">Documents</h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {documents.length} {documents.length === 1 ? 'item' : 'items'} in workspace
+                  {documents.length} {documents.length === 1 ? 'item' : 'items'} in workspace • Text files only
                 </p>
               </div>
 
@@ -661,58 +753,72 @@ const DocumentsPage: React.FC = () => {
             </div>
 
             {/* Filters and controls */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <AppInput
-                  type="text"
-                  placeholder="Search documents..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <AppInput
+                    type="text"
+                    placeholder="Search documents..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+
+                <AppDropdownMenu>
+                  <AppDropdownMenuTrigger asChild>
+                    <AppButton variant="outline" size="sm">
+                      <Filter className="h-4 w-4" />
+                      Sort: {sortBy === 'name' ? 'Name' : sortBy === 'date' ? 'Date' : sortBy === 'size' ? 'Size' : 'Type'}
+                    </AppButton>
+                  </AppDropdownMenuTrigger>
+                  <AppDropdownMenuContent align="end">
+                    <AppDropdownMenuItem onClick={() => setSortBy('name')}>
+                      Sort by Name
+                    </AppDropdownMenuItem>
+                    <AppDropdownMenuItem onClick={() => setSortBy('date')}>
+                      Sort by Date
+                    </AppDropdownMenuItem>
+                    <AppDropdownMenuItem onClick={() => setSortBy('size')}>
+                      Sort by Size
+                    </AppDropdownMenuItem>
+                    <AppDropdownMenuItem onClick={() => setSortBy('type')}>
+                      Sort by Type
+                    </AppDropdownMenuItem>
+                  </AppDropdownMenuContent>
+                </AppDropdownMenu>
+
+                <div className="flex items-center gap-1 border border-border rounded-lg p-1">
+                  <AppButton
+                    variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => setViewMode('grid')}
+                  >
+                    <Grid3x3 className="h-4 w-4" />
+                  </AppButton>
+                  <AppButton
+                    variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => setViewMode('list')}
+                  >
+                    <List className="h-4 w-4" />
+                  </AppButton>
+                </div>
               </div>
 
-              <AppDropdownMenu>
-                <AppDropdownMenuTrigger asChild>
-                  <AppButton variant="outline" size="sm">
-                    <Filter className="h-4 w-4" />
-                    Sort: {sortBy === 'name' ? 'Name' : sortBy === 'date' ? 'Date' : sortBy === 'size' ? 'Size' : 'Type'}
-                  </AppButton>
-                </AppDropdownMenuTrigger>
-                <AppDropdownMenuContent align="end">
-                  <AppDropdownMenuItem onClick={() => setSortBy('name')}>
-                    Sort by Name
-                  </AppDropdownMenuItem>
-                  <AppDropdownMenuItem onClick={() => setSortBy('date')}>
-                    Sort by Date
-                  </AppDropdownMenuItem>
-                  <AppDropdownMenuItem onClick={() => setSortBy('size')}>
-                    Sort by Size
-                  </AppDropdownMenuItem>
-                  <AppDropdownMenuItem onClick={() => setSortBy('type')}>
-                    Sort by Type
-                  </AppDropdownMenuItem>
-                </AppDropdownMenuContent>
-              </AppDropdownMenu>
-
-              <div className="flex items-center gap-1 border border-border rounded-lg p-1">
-                <AppButton
-                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => setViewMode('grid')}
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </AppButton>
-                <AppButton
-                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => setViewMode('list')}
-                >
-                  <List className="h-4 w-4" />
-                </AppButton>
+              {/* File type info */}
+              <div className="flex items-start gap-2 px-3 py-2 bg-muted/30 rounded-lg border border-border/50">
+                <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">Supported:</span> Text files (.txt, .md), code files (.js, .ts, .py, .html, .css, .json, etc.)
+                    <span className="mx-1.5">•</span>
+                    <span className="font-medium text-foreground">Not supported:</span> Images, videos, audio, binary documents
+                  </p>
+                </div>
               </div>
             </div>
           </div>

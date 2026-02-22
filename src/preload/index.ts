@@ -696,32 +696,6 @@ const api = {
     agentIsRunning: (runId: string): Promise<boolean> => {
         return ipcRenderer.invoke('agent:is-running', runId)
     },
-    // RAG
-    ragIndex: (filePath: string, providerId: string): Promise<{ filePath: string; chunkCount: number }> => {
-        return ipcRenderer.invoke('rag:index', filePath, providerId)
-    },
-    ragQuery: (filePath: string, question: string, runId: string, providerId: string): Promise<void> => {
-        return ipcRenderer.invoke('rag:query', filePath, question, runId, providerId)
-    },
-    ragCancel: (runId: string): void => {
-        ipcRenderer.send('rag:cancel', runId)
-    },
-    ragGetStatus: (): Promise<{ files: Array<{ filePath: string; chunkCount: number; indexedAt: number }> }> => {
-        return ipcRenderer.invoke('rag:status')
-    },
-    onRagEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
-        const channels = ['rag:token', 'rag:done', 'rag:error', 'rag:status']
-        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
-            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
-                callback(channel, data)
-            }
-            ipcRenderer.on(channel, handler)
-            return [channel, handler]
-        })
-        return (): void => {
-            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
-        }
-    },
     onAgentEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
         const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
         const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
@@ -873,11 +847,52 @@ const api = {
     }
 }
 
+const task = {
+    submit: (type: string, input: unknown, options?: {
+        priority?: 'low' | 'normal' | 'high'
+        timeoutMs?: number
+        windowId?: number
+    }): Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('task:submit', { type, input, options })
+    },
+    cancel: (taskId: string): Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('task:cancel', taskId)
+    },
+    list: (): Promise<{ success: true; data: Array<{
+        taskId: string
+        type: string
+        status: string
+        priority: string
+        startedAt?: number
+        completedAt?: number
+        windowId?: number
+        error?: string
+    }> } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('task:list')
+    },
+    onEvent: (callback: (event: {
+        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+        data: unknown
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, taskEvent: {
+            type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+            data: unknown
+        }): void => {
+            callback(taskEvent)
+        }
+        ipcRenderer.on('task:event', handler)
+        return () => {
+            ipcRenderer.removeListener('task:event', handler)
+        }
+    }
+}
+
 // Minimal preload for simplified app
 if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('electron', electronAPI)
         contextBridge.exposeInMainWorld('api', api)
+        contextBridge.exposeInMainWorld('task', task)
     } catch (error) {
         console.error(error)
     }
@@ -886,4 +901,6 @@ if (process.contextIsolated) {
     globalThis.electron = electronAPI
     // @ts-ignore (define in dts)
     globalThis.api = api
+    // @ts-ignore (define in dts)
+    globalThis.task = task
 }

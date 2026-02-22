@@ -25,7 +25,6 @@ const DialogsPage = lazy(() => import('./pages/DialogsPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const ClipboardPage = lazy(() => import('./pages/ClipboardPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const RagPage = lazy(() => import('./pages/RagPage'))
 const NewPostPage = lazy(() => import('./pages/NewPostPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const NewNotePage = lazy(() => import('./pages/NewNotePage'))
@@ -33,7 +32,13 @@ const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
 const PipelineTestPage = lazy(() => import('./pages/PipelineTestPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
+const PrinciplesPage = lazy(() => import('./pages/brain/PrinciplesPage'))
+const ConsciousnessPage = lazy(() => import('./pages/brain/ConsciousnessPage'))
+const MemoryPage = lazy(() => import('./pages/brain/MemoryPage'))
+const ReasoningPage = lazy(() => import('./pages/brain/ReasoningPage'))
+const PerceptionPage = lazy(() => import('./pages/brain/PerceptionPage'))
 const DebugPage = lazy(() => import('./pages/DebugPage'))
+const DownloadsDemoPage = lazy(() => import('./pages/DownloadsDemo').then(m => ({ default: m.DownloadsDemo })))
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -75,7 +80,6 @@ const App: React.FC = () => {
                         <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
                         <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
                         <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
-                        <Route path="/rag" element={<RouteWrapper><RagPage /></RouteWrapper>} />
                         <Route path="/pipeline-test" element={<RouteWrapper><PipelineTestPage /></RouteWrapper>} />
                         <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
@@ -83,7 +87,13 @@ const App: React.FC = () => {
                         <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
                         <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
                         <Route path="/directories" element={<RouteWrapper><DirectoriesPage /></RouteWrapper>} />
+                        <Route path="/brain/principles" element={<RouteWrapper><PrinciplesPage /></RouteWrapper>} />
+                        <Route path="/brain/consciousness" element={<RouteWrapper><ConsciousnessPage /></RouteWrapper>} />
+                        <Route path="/brain/memory" element={<RouteWrapper><MemoryPage /></RouteWrapper>} />
+                        <Route path="/brain/reasoning" element={<RouteWrapper><ReasoningPage /></RouteWrapper>} />
+                        <Route path="/brain/perception" element={<RouteWrapper><PerceptionPage /></RouteWrapper>} />
                         <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
+                        <Route path="/downloads-demo" element={<RouteWrapper><DownloadsDemoPage /></RouteWrapper>} />
                       </Routes>
                     </Suspense>
                   </AppLayout>

@@ -11,6 +11,7 @@ import type { WorkspaceService } from '../services/workspace'
 import type { DocumentsWatcherService } from '../services/documents-watcher'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { validateTextFiles, getAllTextExtensions, getSupportedFileTypesDescription } from '../utils/file-type-validator'
 
 /**
  * Document file metadata structure returned to the renderer process.
@@ -69,28 +70,51 @@ export class DocumentsIpc implements IpcModule {
         const docsDir = path.join(currentWorkspace, this.DOCS_DIR_NAME)
         await this.ensureDocumentsDirectory(docsDir)
 
-        // Open file picker dialog
+        // Get text file extensions for dialog filter
+        const textExtensions = getAllTextExtensions().map(ext => ext.replace('.', ''))
+
+        // Open file picker dialog with text-only filters
         const result = await dialog.showOpenDialog({
           properties: ['openFile', 'multiSelections'],
           filters: [
-            { name: 'All Files', extensions: ['*'] },
-            { name: 'Documents', extensions: ['pdf', 'doc', 'docx', 'txt', 'md'] },
-            { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'] },
-            { name: 'Videos', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm'] },
-            { name: 'Audio', extensions: ['mp3', 'wav', 'ogg', 'flac', 'm4a'] }
-          ]
+            { name: 'Text Files', extensions: textExtensions },
+            { name: 'All Files', extensions: ['*'] }
+          ],
+          message: getSupportedFileTypesDescription()
         })
 
         if (result.canceled || result.filePaths.length === 0) {
           return []
         }
 
-        // Import each selected file
+        // Validate file types
+        const { validFiles, invalidFiles } = validateTextFiles(result.filePaths)
+
+        // Show error dialog if any files are invalid
+        if (invalidFiles.length > 0) {
+          const fileList = invalidFiles
+            .map(({ path: filePath, reason }) => `• ${path.basename(filePath)}: ${reason}`)
+            .join('\n')
+
+          await dialog.showMessageBox({
+            type: 'warning',
+            title: 'Invalid File Types',
+            message: `${invalidFiles.length} file(s) were rejected:`,
+            detail: `${fileList}\n\n${getSupportedFileTypesDescription()}`
+          })
+        }
+
+        // If no valid files, return empty array
+        if (validFiles.length === 0) {
+          return []
+        }
+
+        // Import each valid file
         const importedFiles = await Promise.all(
-          result.filePaths.map((filePath) => this.importFile(filePath, docsDir, documentsWatcher))
+          validFiles.map((filePath) => this.importFile(filePath, docsDir, documentsWatcher))
         )
 
-        console.log(`[DocumentsIpc] Imported ${importedFiles.length} files`)
+        console.log(`[DocumentsIpc] Imported ${importedFiles.length} files (rejected ${invalidFiles.length})`)
 
         return importedFiles
       }, 'documents:import-files')
@@ -118,12 +142,30 @@ export class DocumentsIpc implements IpcModule {
         const docsDir = path.join(currentWorkspace, this.DOCS_DIR_NAME)
         await this.ensureDocumentsDirectory(docsDir)
 
-        // Import each file
+        // Validate file types
+        const { validFiles, invalidFiles } = validateTextFiles(paths)
+
+        // Log rejected files
+        if (invalidFiles.length > 0) {
+          console.warn(`[DocumentsIpc] Rejected ${invalidFiles.length} invalid files:`)
+          invalidFiles.forEach(({ path: filePath, reason }) => {
+            console.warn(`  - ${path.basename(filePath)}: ${reason}`)
+          })
+        }
+
+        // If no valid files, throw error with details
+        if (validFiles.length === 0 && invalidFiles.length > 0) {
+          throw new Error(
+            `All ${invalidFiles.length} file(s) were rejected. ${getSupportedFileTypesDescription()}`
+          )
+        }
+
+        // Import each valid file
         const importedFiles = await Promise.all(
-          paths.map((filePath) => this.importFile(filePath, docsDir, documentsWatcher))
+          validFiles.map((filePath) => this.importFile(filePath, docsDir, documentsWatcher))
         )
 
-        console.log(`[DocumentsIpc] Imported ${importedFiles.length} files from paths`)
+        console.log(`[DocumentsIpc] Imported ${importedFiles.length} files from paths (rejected ${invalidFiles.length})`)
 
         return importedFiles
       }, 'documents:import-by-paths')

@@ -29,8 +29,10 @@ import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { AgentService } from './services/agent'
-import { RagController } from './rag/RagController'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
+import { TaskHandlerRegistry } from './tasks/TaskHandlerRegistry'
+import { TaskExecutorService } from './tasks/TaskExecutorService'
+import { FileDownloadHandler } from './tasks/handlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
@@ -50,11 +52,11 @@ import {
   NotificationIpc,
   PipelineIpc,
   PostsIpc,
-  RagIpc,
   StoreIpc,
   WindowIpc,
   WorkspaceIpc,
-  DirectoriesIpc
+  DirectoriesIpc,
+  TaskIpc
 } from './ipc'
 
 export interface BootstrapResult {
@@ -116,7 +118,6 @@ export function bootstrapServices(): BootstrapResult {
   container.register('logger', logger)
 
   container.register('agent', new AgentService(storeService))
-  container.register('rag', new RagController(storeService))
 
   // Pipeline -- agent registry + pipeline service + built-in agents
   const agentRegistry = container.register('agentRegistry', new AgentRegistry())
@@ -125,6 +126,11 @@ export function bootstrapServices(): BootstrapResult {
   agentRegistry.register(new CounterAgent(storeService))
   agentRegistry.register(new AlphabetAgent(storeService))
   container.register('pipeline', new PipelineService(agentRegistry, eventBus))
+
+  // Task system -- handler registry + executor service + built-in handlers
+  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
+  taskHandlerRegistry.register(new FileDownloadHandler())
+  container.register('taskExecutor', new TaskExecutorService(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
   const windowContextManager = new WindowContextManager(container, eventBus)
@@ -158,11 +164,11 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new NotificationIpc(),
     new PipelineIpc(),
     new PostsIpc(),
-    new RagIpc(),
     new StoreIpc(),
     new WindowIpc(),
     new WorkspaceIpc(),
-    new DirectoriesIpc()
+    new DirectoriesIpc(),
+    new TaskIpc()
   ]
 
   for (const module of ipcModules) {

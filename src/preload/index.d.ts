@@ -134,6 +134,32 @@ interface PipelineEvent {
   data: unknown
 }
 
+interface TaskSubmitPayload {
+  type: string
+  input: unknown
+  options?: {
+    priority?: 'low' | 'normal' | 'high'
+    timeoutMs?: number
+    windowId?: number
+  }
+}
+
+interface TaskInfo {
+  taskId: string
+  type: string
+  status: string
+  priority: string
+  startedAt?: number
+  completedAt?: number
+  windowId?: number
+  error?: string
+}
+
+interface TaskEvent {
+  type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+  data: unknown
+}
+
 interface PipelineActiveRun {
   runId: string
   agentName: string
@@ -156,6 +182,12 @@ interface WindowManagerState {
 declare global {
   interface Window {
     electron: ElectronAPI
+    task: {
+      submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }>
+      cancel: (taskId: string) => Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }>
+      list: () => Promise<{ success: true; data: TaskInfo[] } | { success: false; error: { code: string; message: string } }>
+      onEvent: (callback: (event: TaskEvent) => void) => () => void
+    }
     api: {
       playSound: () => void
       showContextMenu: () => void
@@ -338,12 +370,6 @@ declare global {
         timestamp: number
       }) => void) => () => void
       onDocumentsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-      // RAG
-      ragIndex: (filePath: string, providerId: string) => Promise<{ filePath: string; chunkCount: number }>
-      ragQuery: (filePath: string, question: string, runId: string, providerId: string) => Promise<void>
-      ragCancel: (runId: string) => void
-      ragGetStatus: () => Promise<{ files: Array<{ filePath: string; chunkCount: number; indexedAt: number }> }>
-      onRagEvent: (callback: (eventType: string, data: unknown) => void) => () => void
       // Pipeline
       pipelineRun: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
       pipelineCancel: (runId: string) => void
