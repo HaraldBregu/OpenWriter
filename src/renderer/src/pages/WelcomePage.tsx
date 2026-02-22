@@ -13,16 +13,6 @@ interface RecentProject {
   exists?: boolean
 }
 
-// Dummy projects shown when the API returns an empty list.
-// Using realistic-looking paths that work across platforms.
-const DUMMY_RECENT_PROJECTS: RecentProject[] = [
-  { path: 'C:\\Users\\Alex\\Documents\\Projects\\ecommerce-platform', lastOpened: Date.now() - 1000 * 60 * 30 },
-  { path: 'C:\\Users\\Alex\\Documents\\Projects\\design-system-v2', lastOpened: Date.now() - 1000 * 60 * 60 * 3 },
-  { path: 'C:\\Users\\Alex\\Documents\\Projects\\mobile-app-backend', lastOpened: Date.now() - 1000 * 60 * 60 * 24 },
-  { path: 'C:\\Users\\Alex\\Documents\\Projects\\analytics-dashboard', lastOpened: Date.now() - 1000 * 60 * 60 * 24 * 3 },
-  { path: 'C:\\Users\\Alex\\Documents\\Projects\\internal-docs', lastOpened: Date.now() - 1000 * 60 * 60 * 24 * 7 },
-]
-
 const WelcomePage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -36,12 +26,10 @@ const WelcomePage: React.FC = () => {
   const loadRecentProjects = async () => {
     try {
       const projects = await window.api.workspaceGetRecent()
-      // Fall back to dummy data so the section is never empty on first launch.
-      const projectsToUse = projects.length > 0 ? projects : DUMMY_RECENT_PROJECTS
 
       // Check if each directory exists
       const projectsWithExistence = await Promise.all(
-        projectsToUse.map(async (project) => {
+        projects.map(async (project) => {
           try {
             const exists = await window.api.workspaceDirectoryExists(project.path)
             return { ...project, exists }
@@ -54,7 +42,7 @@ const WelcomePage: React.FC = () => {
       setRecentProjects(projectsWithExistence)
     } catch (error) {
       console.error('Failed to load recent projects:', error)
-      setRecentProjects(DUMMY_RECENT_PROJECTS)
+      setRecentProjects([])
     }
   }
 
@@ -211,17 +199,18 @@ const WelcomePage: React.FC = () => {
         </div>
 
         {/* ── Recent projects ── */}
-        <div className="w-full max-w-2xl flex flex-col min-h-0">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Recent Projects
-            </h2>
-            <span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-              View all
-            </span>
-          </div>
+        {recentProjects.length > 0 && (
+          <div className="w-full max-w-2xl flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Recent Projects
+              </h2>
+              <span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                View all
+              </span>
+            </div>
 
-          <div className="rounded-xl border border-border overflow-y-auto max-h-96">
+            <div className="rounded-xl border border-border overflow-y-auto max-h-96">
             {recentProjects.slice(0, 5).map((project, index) => {
               const exists = project.exists !== false // Default to true if not checked yet
 
@@ -283,8 +272,9 @@ const WelcomePage: React.FC = () => {
                 </div>
               )
             })}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>
