@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock, X } from 'lucide-react'
+import { FolderOpen, Clock, X } from 'lucide-react'
 import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
 import { useAppDispatch } from '../store'
@@ -185,42 +185,15 @@ const WelcomePage: React.FC = () => {
           </p>
         </div>
 
-        {/* ── Action buttons ── */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        {/* ── Action button ── */}
+        <div className="flex justify-center mb-12">
           <AppButton
             variant="outline"
-            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
+            className="h-24 w-56 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
             onClick={handleOpenProject}
           >
-            <FolderOpen className="h-5 w-5 text-foreground/70" />
-            <span className="text-sm font-medium">Open Folder</span>
-          </AppButton>
-
-          <AppButton
-            variant="outline"
-            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
-            disabled
-          >
-            <CloudDownload className="h-5 w-5 text-foreground/70" />
-            <span className="text-sm font-medium">Load from Remote</span>
-          </AppButton>
-
-          <AppButton
-            variant="outline"
-            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
-            disabled
-          >
-            <GitBranch className="h-5 w-5 text-foreground/70" />
-            <span className="text-sm font-medium">Clone Repo</span>
-          </AppButton>
-
-          <AppButton
-            variant="outline"
-            className="h-24 w-44 flex flex-col items-center justify-center gap-3 rounded-xl border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors opacity-60 cursor-not-allowed"
-            disabled
-          >
-            <Terminal className="h-5 w-5 text-foreground/70" />
-            <span className="text-sm font-medium">Connect via SSH</span>
+            <FolderOpen className="h-6 w-6 text-foreground/70" />
+            <span className="text-base font-medium">Open Workspace</span>
           </AppButton>
         </div>
 
