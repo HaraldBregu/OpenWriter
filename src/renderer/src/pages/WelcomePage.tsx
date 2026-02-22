@@ -229,20 +229,21 @@ const WelcomePage: React.FC = () => {
                 <div
                   key={index}
                   className={`
-                    relative group
+                    flex items-center gap-4 px-4 py-3
+                    transition-colors
                     ${index !== 0 ? 'border-t border-border' : ''}
+                    ${exists
+                      ? 'hover:bg-accent opacity-100'
+                      : 'opacity-40'
+                    }
                   `}
                 >
                   <button
                     onClick={() => handleOpenRecentProject(project.path, exists)}
                     disabled={!exists}
                     className={`
-                      w-full flex items-center gap-4 px-4 py-3
-                      transition-colors text-left
-                      ${exists
-                        ? 'hover:bg-accent cursor-pointer opacity-100'
-                        : 'cursor-not-allowed opacity-40'
-                      }
+                      flex items-center gap-4 flex-1 min-w-0
+                      ${exists ? 'cursor-pointer' : 'cursor-not-allowed'}
                     `}
                   >
                     {/* Folder color indicator */}
@@ -268,10 +269,10 @@ const WelcomePage: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Remove button - appears on hover */}
+                  {/* Remove button - positioned after timestamp */}
                   <button
                     onClick={(e) => handleRemoveRecentProject(project.path, e)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-md hover:bg-accent flex items-center justify-center"
+                    className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center shrink-0 transition-colors"
                     title="Remove from recent projects"
                   >
                     <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
