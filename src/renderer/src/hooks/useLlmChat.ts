@@ -51,7 +51,11 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
         const data = event.data as { runId: string; token: string }
 
         if (data.runId === currentRunIdRef.current) {
-          console.log('[useLlmChat] Token received:', data.token.substring(0, 20))
+          const isFirstToken = accumulatedContentRef.current.length === 0
+          if (isFirstToken) {
+            console.log('[useLlmChat] ======== AI RESPONSE STARTING ========')
+          }
+          console.log('[useLlmChat] Token received:', JSON.stringify(data.token))
           setIsStreaming(true)
           accumulatedContentRef.current += data.token
 
@@ -87,6 +91,11 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
         const data = event.data as { runId: string }
         if (data.runId === currentRunIdRef.current) {
           console.log('[useLlmChat] Stream completed')
+          console.log('[useLlmChat] ========================================')
+          console.log('[useLlmChat] COMPLETE AI RESPONSE:')
+          console.log(accumulatedContentRef.current)
+          console.log('[useLlmChat] ========================================')
+          console.log('[useLlmChat] Response length:', accumulatedContentRef.current.length, 'characters')
           setIsLoading(false)
           setIsStreaming(false)
           currentRunIdRef.current = null
@@ -143,12 +152,16 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
     setMessages(prev => [...prev, userMessage])
 
     try {
-      console.log('[useLlmChat] Calling pipelineRun with:', {
-        agent: 'chat',
-        promptLength: prompt.trim().length,
-        historyLength: conversationHistory.length,
-        hasSystemPrompt: !!systemPrompt
+      console.log('[useLlmChat] ======== SENDING REQUEST TO AI ========')
+      console.log('[useLlmChat] Section:', sectionId)
+      console.log('[useLlmChat] Provider:', providerId)
+      console.log('[useLlmChat] System Prompt:', systemPrompt)
+      console.log('[useLlmChat] Conversation History:')
+      conversationHistory.forEach((msg, idx) => {
+        console.log(`  [${idx}] ${msg.role}: ${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}`)
       })
+      console.log('[useLlmChat] Current User Message:', prompt.trim())
+      console.log('[useLlmChat] ======================================')
 
       // Use pipeline with ChatAgent for inference
       const result = await window.api.pipelineRun('chat', {
