@@ -890,12 +890,43 @@ const task = {
     }
 }
 
+// AI inference API - dedicated namespace for AI operations
+const ai = {
+    // Run AI inference using the pipeline
+    inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:run', agentName, input)
+    },
+    // Cancel a running AI inference
+    cancel: (runId: string): void => {
+        ipcRenderer.send('pipeline:cancel', runId)
+    },
+    // Listen for AI inference events (tokens, thinking, done, error)
+    onEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, pipelineEvent: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }): void => {
+            callback(pipelineEvent)
+        }
+        ipcRenderer.on('pipeline:event', handler)
+        return () => {
+            ipcRenderer.removeListener('pipeline:event', handler)
+        }
+    },
+    // List available AI agents
+    listAgents: (): Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:list-agents')
+    },
+    // List active AI runs
+    listRuns: (): Promise<{ success: true; data: Array<{ runId: string; agentName: string; startedAt: number }> } | { success: false; error: { code: string; message: string } }> => {
+        return ipcRenderer.invoke('pipeline:list-runs')
+    }
+}
+
 // Minimal preload for simplified app
 if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('electron', electronAPI)
         contextBridge.exposeInMainWorld('api', api)
         contextBridge.exposeInMainWorld('task', task)
+        contextBridge.exposeInMainWorld('ai', ai)
     } catch (error) {
         console.error(error)
     }

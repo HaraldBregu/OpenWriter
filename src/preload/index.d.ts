@@ -188,6 +188,13 @@ declare global {
       list: () => Promise<{ success: true; data: TaskInfo[] } | { success: false; error: { code: string; message: string } }>
       onEvent: (callback: (event: TaskEvent) => void) => () => void
     }
+    ai: {
+      inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
+      cancel: (runId: string) => void
+      onEvent: (callback: (event: PipelineEvent) => void) => () => void
+      listAgents: () => Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }>
+      listRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
+    }
     api: {
       playSound: () => void
       showContextMenu: () => void

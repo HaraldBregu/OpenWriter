@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Send, StopCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
-import { useLlmChat } from '@/hooks/useLlmChat'
+import { useAI } from '@/hooks/useAI'
 
 export interface BrainSimpleLayoutProps {
   sectionId: string
@@ -29,9 +29,10 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     isStreaming,
     error,
     submit,
-    cancel
-  } = useLlmChat({
-    sectionId,
+    cancel,
+    latestResponse
+  } = useAI({
+    sessionId: sectionId,
     systemPrompt,
     providerId,
     onError: (error) => {

@@ -32,7 +32,7 @@ export interface UsePipelineReturn {
 
 /**
  * usePipeline — local-state hook for consuming AI agent streaming events
- * from the Electron main process via window.api.
+ * from the Electron main process via window.ai.
  *
  * Responsibilities:
  *  - Starts a named pipeline run and tracks its lifecycle (idle → running → done/error)
@@ -40,7 +40,7 @@ export interface UsePipelineReturn {
  *  - Filters all events by runId so concurrent runs on other hook instances never
  *    bleed into this one
  *  - Cleans up the IPC event listener on component unmount (no leaks)
- *  - Gracefully no-ops when window.api.pipelineRun is not yet wired up in the
+ *  - Gracefully no-ops when window.ai.inference is not yet wired up in the
  *    main process (safe to use before the backend is implemented)
  *
  * Usage:
@@ -88,14 +88,14 @@ export function usePipeline(): UsePipelineReturn {
       // Guard: only one active run per hook instance at a time.
       if (runningRef.current) return null
 
-      // Graceful fallback: pipeline API not yet available in the main process.
-      if (typeof window.api?.pipelineRun !== 'function') {
+      // Graceful fallback: AI inference API not yet available in the main process.
+      if (typeof window.ai?.inference !== 'function') {
         console.warn(
-          '[usePipeline] window.api.pipelineRun is not available. ' +
-            'The main-process pipeline IPC handlers have not been registered yet.'
+          '[usePipeline] window.ai.inference is not available. ' +
+            'The main-process AI IPC handlers have not been registered yet.'
         )
         setStatus('error')
-        setError('Pipeline IPC not available. Check main process registration.')
+        setError('AI inference IPC not available. Check main process registration.')
         return null
       }
 
@@ -146,7 +146,7 @@ export function usePipeline(): UsePipelineReturn {
       let resolvedRunId: string | null = null
       const bufferedEvents: Array<{ type: string; data: unknown }> = []
 
-      const unsub = window.api.onPipelineEvent((event) => {
+      const unsub = window.ai.onEvent((event) => {
         const d = event.data as Record<string, unknown>
 
         if (resolvedRunId === null) {
@@ -166,8 +166,8 @@ export function usePipeline(): UsePipelineReturn {
       let runId: string
 
       try {
-        const result = await window.api.pipelineRun(agentName, input)
-        // pipelineRun returns an IpcResult envelope from wrapIpcHandler
+        const result = await window.ai.inference(agentName, input)
+        // inference returns an IpcResult envelope from wrapIpcHandler
         if (!result.success) {
           cleanupSubscription()
           runningRef.current = false
@@ -178,7 +178,7 @@ export function usePipeline(): UsePipelineReturn {
         runId = result.data.runId
       } catch (err) {
         cleanupSubscription()
-        const message = err instanceof Error ? err.message : 'Failed to start pipeline run'
+        const message = err instanceof Error ? err.message : 'Failed to start AI inference'
         runningRef.current = false
         setStatus('error')
         setError(message)
@@ -208,8 +208,8 @@ export function usePipeline(): UsePipelineReturn {
     if (!runId) return
 
     // Best-effort cancellation signal to the main process.
-    if (typeof window.api?.pipelineCancel === 'function') {
-      window.api.pipelineCancel(runId)
+    if (typeof window.ai?.cancel === 'function') {
+      window.ai.cancel(runId)
     }
 
     cleanupSubscription()
