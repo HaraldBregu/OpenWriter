@@ -8,7 +8,7 @@ The LoggerService is a production-ready logging system for the Electron main pro
 
 - 📁 **Daily Log Files**: Automatically creates new log files each day (e.g., `2026-02-21.log`)
 - 🔄 **Auto-Rotation**: Switches to new file at midnight
-- 📍 **Workspace-Aware**: Saves logs in workspace directory or app data folder
+- 📍 **App Data Storage**: Saves logs in application data folder
 - ⚡ **Buffered Writes**: High performance with batched disk writes
 - 🎯 **Multiple Levels**: DEBUG, INFO, WARN, ERROR
 - 🤖 **Auto-Capture**: Automatically logs Electron events (window, app, errors)
@@ -16,17 +16,17 @@ The LoggerService is a production-ready logging system for the Electron main pro
 
 ## Where Are Logs Stored?
 
-### With Workspace Selected
-```
-{workspace}/logs/2026-02-21.log
-{workspace}/logs/2026-02-22.log
-...
-```
-
-### Without Workspace
+Logs are stored in the application data directory:
 - **macOS**: `~/Library/Application Support/Tesseract AI/logs/`
 - **Windows**: `%APPDATA%\Tesseract AI\logs\`
-- **Linux**: `~/.config/Tesseract AI/logs\`
+- **Linux**: `~/.config/Tesseract AI/logs/`
+
+Example log files:
+```
+2026-02-21.log
+2026-02-22.log
+...
+```
 
 ## How to Use
 
@@ -239,7 +239,7 @@ logger.error('Error', 'Failed')  // Not helpful
 The logger uses sensible defaults but can be configured:
 
 ```typescript
-const logger = new LoggerService(workspaceService, eventBus, {
+const logger = new LoggerService(eventBus, {
   minLevel: LogLevel.DEBUG,      // Minimum level to log
   maxRetentionDays: 30,           // Keep logs for 30 days
   flushInterval: 5000,            // Flush every 5 seconds
@@ -275,15 +275,12 @@ explorer %APPDATA%\Tesseract AI\logs
 
 # Linux
 xdg-open ~/.config/Tesseract\ AI/logs/
-```
 
-Or if workspace is selected:
-```bash
-# View today's log
-cat {workspace}/logs/2026-02-21.log
+# View today's log (replace with actual date)
+cat ~/.config/Tesseract\ AI/logs/2026-02-21.log
 
 # View all logs
-ls -la {workspace}/logs/
+ls -la ~/.config/Tesseract\ AI/logs/
 ```
 
 ## Troubleshooting

@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron'
+import type { IpcMainInvokeEvent } from 'electron'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import type { IpcModule } from './IpcModule'
@@ -6,7 +7,8 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WorkspaceService } from '../services/workspace'
 import type { FileWatcherService } from '../services/file-watcher'
-import { wrapSimpleHandler } from './IpcErrorHandler'
+import { wrapIpcHandler } from './IpcErrorHandler'
+import { getWindowService } from './IpcHelpers'
 
 /**
  * Post structure from the renderer process.
@@ -65,12 +67,6 @@ export class PostsIpc implements IpcModule {
   private readonly CACHE_TTL_MS = 5000 // 5 seconds cache validity
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
-    const workspace = container.get<WorkspaceService>('workspace')
-    // FileWatcherService may not be registered yet (optional dependency)
-    const fileWatcher = container.has('fileWatcher')
-      ? container.get<FileWatcherService>('fileWatcher')
-      : null
-
     /**
      * Sync all posts to the workspace directory.
      * Creates the posts directory if needed and writes each post as a JSON file.
@@ -81,7 +77,11 @@ export class PostsIpc implements IpcModule {
      */
     ipcMain.handle(
       'posts:sync-to-workspace',
-      wrapSimpleHandler(async (posts: Post[]): Promise<SyncResult> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, posts: Post[]): Promise<SyncResult> => {
+        // Get window-scoped services
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const fileWatcher = this.tryGetWindowService<FileWatcherService>(event, container, 'fileWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         // Validate workspace is set
@@ -141,7 +141,11 @@ export class PostsIpc implements IpcModule {
      */
     ipcMain.handle(
       'posts:update-post',
-      wrapSimpleHandler(async (post: Post): Promise<void> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, post: Post): Promise<void> => {
+        // Get window-scoped services
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const fileWatcher = this.tryGetWindowService<FileWatcherService>(event, container, 'fileWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -168,7 +172,11 @@ export class PostsIpc implements IpcModule {
      */
     ipcMain.handle(
       'posts:delete-post',
-      wrapSimpleHandler(async (postId: string): Promise<void> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, postId: string): Promise<void> => {
+        // Get window-scoped services
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const fileWatcher = this.tryGetWindowService<FileWatcherService>(event, container, 'fileWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -214,7 +222,10 @@ export class PostsIpc implements IpcModule {
      */
     ipcMain.handle(
       'posts:load-from-workspace',
-      wrapSimpleHandler(async (): Promise<Post[]> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<Post[]> => {
+        // Get window-scoped workspace service
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -326,6 +337,22 @@ export class PostsIpc implements IpcModule {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * Try to get a window-scoped service, returning null if not found.
+   * Useful for optional services like FileWatcherService.
+   */
+  private tryGetWindowService<T>(
+    event: IpcMainInvokeEvent,
+    container: ServiceContainer,
+    serviceKey: string
+  ): T | null {
+    try {
+      return getWindowService<T>(event, container, serviceKey)
+    } catch {
+      return null
+    }
+  }
 
   /**
    * Invalidate the load cache.

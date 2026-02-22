@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { FolderPlus, FolderOpen, Trash2, RefreshCw, Database, CheckCircle2, XCircle } from 'lucide-react'
 import {
   AppButton,
@@ -9,105 +9,121 @@ import {
   AppCardTitle,
   AppSeparator
 } from '@/components/app'
-
-interface IndexedDirectory {
-  id: string
-  path: string
-  addedAt: number
-  isIndexed: boolean
-  lastIndexedAt?: number
-}
+import { useAppDispatch, useAppSelector } from '../store'
+import {
+  loadDirectories,
+  addDirectories,
+  removeDirectory,
+  markDirectoryIndexed,
+  setLoading,
+  setError,
+  handleExternalDirectoriesChange,
+  clearDirectories,
+  selectDirectories,
+  selectDirectoriesLoading,
+  selectDirectoriesError,
+  selectIndexedCount,
+  selectPendingCount
+} from '../store/directoriesSlice'
 
 const DirectoriesPage: React.FC = () => {
-  const [directories, setDirectories] = useState<IndexedDirectory[]>([])
-  const [isIndexing, setIsIndexing] = useState(false)
+  const dispatch = useAppDispatch()
+  const directories = useAppSelector(selectDirectories)
+  const isLoading = useAppSelector(selectDirectoriesLoading)
+  const error = useAppSelector(selectDirectoriesError)
+  const indexedCount = useAppSelector(selectIndexedCount)
+  const pendingCount = useAppSelector(selectPendingCount)
 
-  const loadDirectories = useCallback(async () => {
+  const [isIndexing, setIsIndexing] = React.useState(false)
+
+  // Load directories from main process on mount
+  const fetchDirectories = useCallback(async () => {
+    console.log('[DirectoriesPage] Fetching directories from main process...')
+    dispatch(setLoading(true))
+    // Clear existing directories to prevent showing stale data
+    dispatch(clearDirectories())
     try {
-      // TODO: Load from store/service
-      // For now, use localStorage as placeholder
-      const saved = localStorage.getItem('indexed_directories')
-      console.log('[DirectoriesPage] Loading directories from localStorage:', saved)
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        console.log('[DirectoriesPage] Parsed directories:', parsed)
-        setDirectories(parsed)
-      }
-    } catch (error) {
-      console.error('[DirectoriesPage] Failed to load directories:', error)
+      const dirs = await window.api.directoriesList()
+      console.log('[DirectoriesPage] Received', dirs.length, 'directories from main process')
+      dispatch(loadDirectories(dirs))
+    } catch (err) {
+      console.error('[DirectoriesPage] Failed to load directories:', err)
+      dispatch(setError(err instanceof Error ? err.message : 'Failed to load directories'))
     }
-  }, [])
+  }, [dispatch])
 
-  // Load saved directories from store on mount
   useEffect(() => {
-    loadDirectories()
-  }, [loadDirectories])
+    console.log('[DirectoriesPage] Component mounted, fetching directories')
+    fetchDirectories()
+  }, [fetchDirectories])
 
-  const saveDirectories = useCallback(async (dirs: IndexedDirectory[]) => {
-    try {
-      console.log('[DirectoriesPage] Saving directories:', dirs)
-      // TODO: Save to store/service
-      localStorage.setItem('indexed_directories', JSON.stringify(dirs))
-      setDirectories(dirs)
-    } catch (error) {
-      console.error('[DirectoriesPage] Failed to save directories:', error)
-    }
-  }, [])
+  // Listen for external directory changes from main process
+  useEffect(() => {
+    const unsubscribe = window.api.onDirectoriesChanged((dirs) => {
+      console.log('[DirectoriesPage] Received directories:changed event with', dirs.length, 'directories')
+      dispatch(handleExternalDirectoriesChange(dirs))
+    })
+    return unsubscribe
+  }, [dispatch])
 
   const handleAddDirectories = useCallback(async () => {
     try {
-      console.log('[DirectoriesPage] Opening directory dialog...')
       // Use Electron dialog to select multiple directories
       const result = await window.api.dialogOpenDirectory(true)
-
-      console.log('[DirectoriesPage] Dialog result (raw):', result)
-
-      // The result is wrapped in IpcResult format: { success: true, data: DialogResult }
       const resultData = result.data as { canceled: boolean; filePaths: string[] }
 
-      console.log('[DirectoriesPage] Dialog result data:', resultData)
-
       if (resultData.canceled || !resultData.filePaths || resultData.filePaths.length === 0) {
-        console.log('[DirectoriesPage] Dialog canceled or no paths selected')
         return
       }
 
-      console.log('[DirectoriesPage] Selected paths:', resultData.filePaths)
+      // Send paths to main process for validation and persistence
+      const response = await window.api.directoriesAddMany(resultData.filePaths)
 
-      // Add new directories (avoid duplicates)
-      const newDirs: IndexedDirectory[] = resultData.filePaths
-        .filter((path) => !directories.some((dir) => dir.path === path))
-        .map((path) => ({
-          id: `dir-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          path,
-          addedAt: Date.now(),
-          isIndexed: false
-        }))
-
-      console.log('[DirectoriesPage] New directories to add:', newDirs)
-      console.log('[DirectoriesPage] Current directories:', directories)
-
-      if (newDirs.length > 0) {
-        const updated = [...directories, ...newDirs]
-        console.log('[DirectoriesPage] Updated directories list:', updated)
-        await saveDirectories(updated)
-      } else {
-        console.log('[DirectoriesPage] No new directories to add (all selected already exist)')
+      if (response.added.length > 0) {
+        dispatch(addDirectories(response.added))
       }
-    } catch (error) {
-      console.error('[DirectoriesPage] Failed to add directories:', error)
+
+      // Report errors for any paths that failed validation
+      if (response.errors.length > 0) {
+        const errorMessages = response.errors
+          .map((e) => `${formatPath(e.path)}: ${e.error}`)
+          .join('\n')
+        console.warn('[DirectoriesPage] Some directories could not be added:', errorMessages)
+
+        await window.api.notificationShow({
+          title: 'Some Directories Skipped',
+          body: `${response.errors.length} director${response.errors.length === 1 ? 'y' : 'ies'} could not be added. Check console for details.`,
+          urgency: 'normal'
+        })
+      }
+    } catch (err) {
+      console.error('[DirectoriesPage] Failed to add directories:', err)
       await window.api.notificationShow({
         title: 'Error',
         body: 'Failed to add directories. Please try again.',
         urgency: 'normal'
       })
     }
-  }, [directories, saveDirectories])
+  }, [dispatch])
 
-  const handleRemoveDirectory = useCallback(async (id: string) => {
-    const updated = directories.filter((dir) => dir.id !== id)
-    await saveDirectories(updated)
-  }, [directories, saveDirectories])
+  const handleRemoveDirectory = useCallback(
+    async (id: string) => {
+      try {
+        const removed = await window.api.directoriesRemove(id)
+        if (removed) {
+          dispatch(removeDirectory(id))
+        }
+      } catch (err) {
+        console.error('[DirectoriesPage] Failed to remove directory:', err)
+        await window.api.notificationShow({
+          title: 'Error',
+          body: 'Failed to remove directory. Please try again.',
+          urgency: 'normal'
+        })
+      }
+    },
+    [dispatch]
+  )
 
   const handleIndexDirectories = useCallback(async () => {
     if (directories.length === 0) {
@@ -125,22 +141,27 @@ const DirectoriesPage: React.FC = () => {
       // For now, simulate indexing
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Mark all as indexed
-      const updated = directories.map((dir) => ({
-        ...dir,
-        isIndexed: true,
-        lastIndexedAt: Date.now()
-      }))
-
-      await saveDirectories(updated)
+      // Mark all as indexed via main process
+      for (const dir of directories) {
+        if (!dir.isIndexed) {
+          const success = await window.api.directoriesMarkIndexed(dir.id, true)
+          if (success) {
+            dispatch(markDirectoryIndexed({
+              id: dir.id,
+              isIndexed: true,
+              lastIndexedAt: Date.now()
+            }))
+          }
+        }
+      }
 
       await window.api.notificationShow({
         title: 'Indexing Complete',
         body: `Successfully indexed ${directories.length} ${directories.length === 1 ? 'directory' : 'directories'}.`,
         urgency: 'normal'
       })
-    } catch (error) {
-      console.error('[DirectoriesPage] Failed to index directories:', error)
+    } catch (err) {
+      console.error('[DirectoriesPage] Failed to index directories:', err)
       await window.api.notificationShow({
         title: 'Indexing Failed',
         body: 'Failed to index directories. Please try again.',
@@ -149,15 +170,14 @@ const DirectoriesPage: React.FC = () => {
     } finally {
       setIsIndexing(false)
     }
-  }, [directories, saveDirectories])
+  }, [directories, dispatch])
 
-  function formatPath(path: string): string {
-    // Show only the last 2-3 parts of the path for readability
-    const parts = path.split(/[/\\]/)
+  function formatPath(filePath: string): string {
+    const parts = filePath.split(/[/\\]/)
     if (parts.length > 3) {
       return `.../${parts.slice(-3).join('/')}`
     }
-    return path
+    return filePath
   }
 
   function formatDate(timestamp: number): string {
@@ -211,6 +231,15 @@ const DirectoriesPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Error Banner */}
+          {error && (
+            <AppCard className="mb-6 border-destructive">
+              <AppCardContent className="pt-6">
+                <p className="text-sm text-destructive">{error}</p>
+              </AppCardContent>
+            </AppCard>
+          )}
+
           {/* Stats Card */}
           <AppCard className="mb-6">
             <AppCardContent className="pt-6">
@@ -221,24 +250,32 @@ const DirectoriesPage: React.FC = () => {
                 </div>
                 <AppSeparator orientation="vertical" className="h-12" />
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-foreground">
-                    {directories.filter((d) => d.isIndexed).length}
-                  </p>
+                  <p className="text-3xl font-bold text-foreground">{indexedCount}</p>
                   <p className="text-sm text-muted-foreground">Indexed</p>
                 </div>
                 <AppSeparator orientation="vertical" className="h-12" />
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-foreground">
-                    {directories.filter((d) => !d.isIndexed).length}
-                  </p>
+                  <p className="text-3xl font-bold text-foreground">{pendingCount}</p>
                   <p className="text-sm text-muted-foreground">Pending</p>
                 </div>
               </div>
             </AppCardContent>
           </AppCard>
 
+          {/* Loading State */}
+          {isLoading && (
+            <AppCard className="mb-6">
+              <AppCardContent className="pt-6">
+                <div className="flex items-center justify-center py-8">
+                  <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground mr-3" />
+                  <p className="text-muted-foreground">Loading directories...</p>
+                </div>
+              </AppCardContent>
+            </AppCard>
+          )}
+
           {/* Directories List */}
-          {directories.length === 0 ? (
+          {!isLoading && directories.length === 0 ? (
             <AppCard>
               <AppCardContent className="pt-6">
                 <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -282,7 +319,7 @@ const DirectoriesPage: React.FC = () => {
                           <span>Added: {formatDate(dir.addedAt)}</span>
                           {dir.lastIndexedAt && (
                             <>
-                              <span>•</span>
+                              <span>-</span>
                               <span>Indexed: {formatDate(dir.lastIndexedAt)}</span>
                             </>
                           )}

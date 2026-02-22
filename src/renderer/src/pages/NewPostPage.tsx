@@ -1,19 +1,15 @@
 import React, { useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Download, Eye, X, Settings2, Tag, Clock, Globe, Share2, MoreHorizontal, Copy, Trash2, Brain, Cpu, Zap, Database, Sparkles } from 'lucide-react'
+import { Download, Eye, X, Settings2, Share2, MoreHorizontal, Copy, Trash2, Brain, Cpu, Zap, Database, Sparkles } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import {
-  AppInput,
   AppLabel,
   AppButton,
-  AppBadge,
   AppSelect,
   AppSelectContent,
   AppSelectItem,
   AppSelectTrigger,
   AppSelectValue,
-  AppRadioGroup,
-  AppRadioGroupItem,
   AppDropdownMenu,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
@@ -26,9 +22,6 @@ import {
   selectPostById,
   updatePostBlocks,
   updatePostTitle,
-  updatePostCategory,
-  updatePostTags,
-  updatePostVisibility,
   deletePost
 } from '../store/postsSlice'
 
@@ -47,7 +40,6 @@ const NewPostPage: React.FC = () => {
 
   // IMPORTANT: All hooks must be called before any early returns
   // to maintain consistent hook ordering between renders
-  const [tagInput, setTagInput] = useState('')
   const [showSidebar, setShowSidebar] = useState(true)
 
   // AI Settings state
@@ -86,21 +78,6 @@ const NewPostPage: React.FC = () => {
     dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
   }, [post, dispatch])
 
-  const handleAddTag = useCallback(() => {
-    if (!post) return
-    const tags = post.tags
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      dispatch(updatePostTags({ postId: post.id, tags: [...tags, tagInput.trim()] }))
-      setTagInput('')
-    }
-  }, [post, tagInput, dispatch])
-
-  const handleRemoveTag = useCallback((tagToRemove: string) => {
-    if (!post) return
-    const tags = post.tags
-    dispatch(updatePostTags({ postId: post.id, tags: tags.filter((t) => t !== tagToRemove) }))
-  }, [post, dispatch])
-
   // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
   // stale URL or deleted externally), show a fallback rather than crashing.
   if (!post) {
@@ -111,7 +88,7 @@ const NewPostPage: React.FC = () => {
     )
   }
 
-  const { blocks, category, tags, visibility } = post
+  const { blocks } = post
 
   return (
     <div className="h-full flex flex-col">

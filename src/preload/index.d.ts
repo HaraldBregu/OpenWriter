@@ -425,6 +425,41 @@ declare global {
       // Context Menu
       showPostContextMenu: (postId: string, postTitle: string) => Promise<void>
       onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void) => () => void
+      // Directories - Indexed directory management
+      directoriesList: () => Promise<Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+      }>>
+      directoriesAdd: (dirPath: string) => Promise<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+      }>
+      directoriesAddMany: (dirPaths: string[]) => Promise<{
+        added: Array<{
+          id: string
+          path: string
+          addedAt: number
+          isIndexed: boolean
+          lastIndexedAt?: number
+        }>
+        errors: Array<{ path: string; error: string }>
+      }>
+      directoriesRemove: (id: string) => Promise<boolean>
+      directoriesValidate: (dirPath: string) => Promise<{ valid: boolean; error?: string }>
+      directoriesMarkIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
+      onDirectoriesChanged: (callback: (directories: Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+      }>) => void) => () => void
     }
   }
 }

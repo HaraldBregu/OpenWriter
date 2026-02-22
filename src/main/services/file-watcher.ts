@@ -80,7 +80,6 @@ export class FileWatcherService implements Disposable {
   private readonly CLEANUP_INTERVAL_MS = 10000 // Clean up ignored writes every 10s
 
   private cleanupInterval: NodeJS.Timeout | null = null
-  private initialWorkspacePath: string | null = null
 
   constructor(private readonly eventBus: EventBus) {
     this.config = {
@@ -111,7 +110,6 @@ export class FileWatcherService implements Disposable {
    */
   async initialize(workspacePath: string | null): Promise<void> {
     console.log('[FileWatcherService] Initializing with workspace:', workspacePath)
-    this.initialWorkspacePath = workspacePath
 
     if (workspacePath) {
       await this.startWatching(workspacePath)

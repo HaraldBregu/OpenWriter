@@ -1,15 +1,27 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, dialog } from 'electron'
 import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
 import { Menu } from './menu'
+import { WorkspaceProcessManager } from './workspace-process'
 
 import type { LifecycleService } from './services/lifecycle'
+import type { WorkspaceService } from './services/workspace'
+import type { WorkspaceMetadataService } from './services/workspace-metadata'
 import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, setupEventLogging, cleanup } from './bootstrap'
+
+// Check if running in workspace mode
+const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode()
+const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs()
+
+console.log(`[Main] Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`)
+if (isWorkspaceMode && workspacePath) {
+  console.log(`[Main] Workspace path: ${workspacePath}`)
+}
 
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
 console.log('[Main] Bootstrapping core infrastructure...')
-const { container, eventBus, appState, windowFactory, logger } = bootstrapServices()
+const { container, eventBus, appState, windowFactory, logger, windowContextManager } = bootstrapServices()
 console.log('[Main] Enabling IPC modules...')
 bootstrapIpcModules(container, eventBus)
 setupAppLifecycle(appState, logger)
@@ -30,7 +42,7 @@ function extractFilePathFromArgs(args: string[]): string | null {
   return null
 }
 
-const mainWindow = new Main(appState, windowFactory)
+const mainWindow = new Main(appState, windowFactory, windowContextManager)
 
 const trayManager = new Tray({
   onShowApp: () => mainWindow.showOrCreate(),
@@ -56,8 +68,31 @@ const menuManager = new Menu({
       win.webContents.send('change-theme', theme)
     })
   },
-  onNewWorkspace: () => {
-    mainWindow.createWorkspaceWindow()
+  onNewWorkspace: async () => {
+    // Show folder selection dialog
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory', 'createDirectory'],
+      title: 'Select Workspace Folder',
+      buttonLabel: 'Select Workspace'
+    })
+
+    // If user selected a folder, spawn a new Electron instance
+    if (!result.canceled && result.filePaths.length > 0) {
+      const workspacePath = result.filePaths[0]
+
+      logger.info('Menu', `Spawning separate process for workspace: ${workspacePath}`)
+
+      // Create WorkspaceProcessManager instance
+      const workspaceProcessManager = new WorkspaceProcessManager(logger)
+
+      // Spawn a new Electron instance for this workspace
+      const pid = workspaceProcessManager.spawnWorkspaceProcess({
+        workspacePath,
+        logger
+      })
+
+      logger.info('Menu', `Workspace process spawned with PID: ${pid}`)
+    }
   }
 })
 
@@ -86,6 +121,39 @@ app.whenReady().then(async () => {
   // Note: Second instance file handler is configured in bootstrap
   lifecycleService.initialize()
 
+  // WORKSPACE MODE: Open workspace directly without launcher UI
+  if (isWorkspaceMode && workspacePath) {
+    logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
+
+    // Create workspace window directly - no menu, no tray
+    const workspaceWindow = mainWindow.createWorkspaceWindow()
+
+    // Set the workspace path immediately
+    const context = windowContextManager.get(workspaceWindow.id)
+    const workspaceService = context.getService<WorkspaceService>('workspace', container)
+    workspaceService.setCurrent(workspacePath)
+
+    // CRITICAL: Reinitialize WorkspaceMetadataService after workspace path is set
+    // This ensures the service reads from the correct workspace.tsrct file
+    // and doesn't have stale cache from initialization
+    const metadataService = context.getService<WorkspaceMetadataService>('workspaceMetadata', container)
+
+    // Force cache clear and re-read from file
+    logger.info('App', `Reinitializing WorkspaceMetadataService for workspace: ${workspacePath}`)
+    metadataService.initialize()
+
+    logger.info('App', `Workspace process ready with PID: ${process.pid}`)
+
+    // Handle window close: quit app when workspace window closes
+    workspaceWindow.on('closed', () => {
+      logger.info('App', 'Workspace window closed, quitting process')
+      app.quit()
+    })
+
+    return
+  }
+
+  // LAUNCHER MODE: Normal startup with menu, tray, and workspace selector
   menuManager.create()
   trayManager.create()
 

@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import chatReducer from './chatSlice'
 import postsReducer from './postsSlice'
+import directoriesReducer from './directoriesSlice'
 import { postsSyncMiddleware } from './middleware/postsSync.middleware'
 
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
-    posts: postsReducer
+    posts: postsReducer,
+    directories: directoriesReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(postsSyncMiddleware)

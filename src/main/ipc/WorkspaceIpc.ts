@@ -1,9 +1,13 @@
 import { ipcMain, dialog } from 'electron'
+import type { IpcMainInvokeEvent } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WorkspaceService } from '../services/workspace'
-import { wrapSimpleHandler } from './IpcErrorHandler'
+import type { LoggerService } from '../services/logger'
+import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
+import { getWindowService } from './IpcHelpers'
+import { WorkspaceProcessManager } from '../workspace-process'
 
 /**
  * IPC handlers for workspace management.
@@ -15,9 +19,11 @@ export class WorkspaceIpc implements IpcModule {
   readonly name = 'workspace'
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
-    const workspace = container.get<WorkspaceService>('workspace')
+    const logger = container.get<LoggerService>('logger')
+    const workspaceProcessManager = new WorkspaceProcessManager(logger)
 
-    // Workspace folder selection dialog
+    // Workspace folder selection dialog (global, not window-specific)
+    // When a folder is selected, spawn a new Electron process for that workspace
     ipcMain.handle(
       'workspace:select-folder',
       wrapSimpleHandler(async () => {
@@ -28,36 +34,56 @@ export class WorkspaceIpc implements IpcModule {
         })
 
         if (!result.canceled && result.filePaths.length > 0) {
-          return result.filePaths[0]
+          const workspacePath = result.filePaths[0]
+
+          // Spawn a separate Electron process for this workspace
+          // This provides complete isolation - separate main process, memory, services
+          logger.info('WorkspaceIpc', `Spawning separate process for workspace: ${workspacePath}`)
+          const pid = workspaceProcessManager.spawnWorkspaceProcess({
+            workspacePath,
+            logger
+          })
+
+          logger.info('WorkspaceIpc', `Workspace process spawned with PID: ${pid}`)
+
+          return workspacePath
         }
         return null
       }, 'workspace:select-folder')
     )
 
-    // Get current workspace
+    // Get current workspace (window-scoped)
     ipcMain.handle(
       'workspace-get-current',
-      wrapSimpleHandler(() => workspace.getCurrent(), 'workspace-get-current')
+      wrapIpcHandler((event: IpcMainInvokeEvent) => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        return workspace.getCurrent()
+      }, 'workspace-get-current')
     )
 
-    // Set current workspace
+    // Set current workspace (window-scoped)
     ipcMain.handle(
       'workspace-set-current',
-      wrapSimpleHandler((workspacePath: string) => {
+      wrapIpcHandler((event: IpcMainInvokeEvent, workspacePath: string) => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         workspace.setCurrent(workspacePath)
       }, 'workspace-set-current')
     )
 
-    // Get recent workspaces
+    // Get recent workspaces (window-scoped)
     ipcMain.handle(
       'workspace-get-recent',
-      wrapSimpleHandler(() => workspace.getRecent(), 'workspace-get-recent')
+      wrapIpcHandler((event: IpcMainInvokeEvent) => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        return workspace.getRecent()
+      }, 'workspace-get-recent')
     )
 
-    // Clear current workspace
+    // Clear current workspace (window-scoped)
     ipcMain.handle(
       'workspace-clear',
-      wrapSimpleHandler(() => {
+      wrapIpcHandler((event: IpcMainInvokeEvent) => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         workspace.clear()
       }, 'workspace-clear')
     )

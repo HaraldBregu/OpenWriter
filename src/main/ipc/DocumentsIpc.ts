@@ -1,4 +1,5 @@
 import { ipcMain, dialog } from 'electron'
+import type { IpcMainInvokeEvent } from 'electron'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import https from 'node:https'
@@ -8,7 +9,8 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WorkspaceService } from '../services/workspace'
 import type { DocumentsWatcherService } from '../services/documents-watcher'
-import { wrapSimpleHandler } from './IpcErrorHandler'
+import { wrapIpcHandler } from './IpcErrorHandler'
+import { getWindowService } from './IpcHelpers'
 
 /**
  * Document file metadata structure returned to the renderer process.
@@ -44,12 +46,6 @@ export class DocumentsIpc implements IpcModule {
   private readonly DOCS_DIR_NAME = 'documents'
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
-    const workspace = container.get<WorkspaceService>('workspace')
-    // DocumentsWatcherService may not be registered yet (optional dependency)
-    const documentsWatcher = container.has('documentsWatcher')
-      ? container.get<DocumentsWatcherService>('documentsWatcher')
-      : null
-
     /**
      * Import files using system file picker dialog.
      *
@@ -59,7 +55,11 @@ export class DocumentsIpc implements IpcModule {
      */
     ipcMain.handle(
       'documents:import-files',
-      wrapSimpleHandler(async (): Promise<DocumentMetadata[]> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<DocumentMetadata[]> => {
+        // Get window-scoped services
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const documentsWatcher = this.tryGetWindowService<DocumentsWatcherService>(event, container, 'documentsWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -105,7 +105,10 @@ export class DocumentsIpc implements IpcModule {
      */
     ipcMain.handle(
       'documents:import-by-paths',
-      wrapSimpleHandler(async (paths: string[]): Promise<DocumentMetadata[]> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, paths: string[]): Promise<DocumentMetadata[]> => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const documentsWatcher = this.tryGetWindowService<DocumentsWatcherService>(event, container, 'documentsWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -135,7 +138,10 @@ export class DocumentsIpc implements IpcModule {
      */
     ipcMain.handle(
       'documents:download-from-url',
-      wrapSimpleHandler(async (url: string): Promise<DocumentMetadata> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, url: string): Promise<DocumentMetadata> => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const documentsWatcher = this.tryGetWindowService<DocumentsWatcherService>(event, container, 'documentsWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -163,7 +169,9 @@ export class DocumentsIpc implements IpcModule {
      */
     ipcMain.handle(
       'documents:load-all',
-      wrapSimpleHandler(async (): Promise<DocumentMetadata[]> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<DocumentMetadata[]> => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -238,7 +246,10 @@ export class DocumentsIpc implements IpcModule {
      */
     ipcMain.handle(
       'documents:delete-file',
-      wrapSimpleHandler(async (id: string): Promise<void> => {
+      wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string): Promise<void> => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        const documentsWatcher = this.tryGetWindowService<DocumentsWatcherService>(event, container, 'documentsWatcher')
+
         const currentWorkspace = workspace.getCurrent()
 
         if (!currentWorkspace) {
@@ -272,6 +283,22 @@ export class DocumentsIpc implements IpcModule {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * Try to get a window-scoped service, returning null if not found.
+   * Useful for optional services like DocumentsWatcherService.
+   */
+  private tryGetWindowService<T>(
+    event: IpcMainInvokeEvent,
+    container: ServiceContainer,
+    serviceKey: string
+  ): T | null {
+    try {
+      return getWindowService<T>(event, container, serviceKey)
+    } catch {
+      return null
+    }
+  }
 
   /**
    * Ensure the documents directory exists, creating it if necessary.

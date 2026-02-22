@@ -39,5 +39,15 @@
 - ESLint config does not respect `_` prefix for unused params; `_eventBus` in IpcModules triggers @typescript-eslint/no-unused-vars (pre-existing in StoreIpc, PipelineIpc, etc.)
 - `src/renderer/src/utils/ipc-helpers.ts` imports from `src/main/` causing TS6307 in tsconfig.web.json (pre-existing)
 
+## Workspace Metadata (.tsrct) Feature (Feb 2026)
+- `WorkspaceMetadataService` in `src/main/services/workspace-metadata.ts` manages `.tsrct` file
+- Pattern: Repository (encapsulates file I/O) + Observer (EventBus for changes)
+- Debounced writes (800ms) via `scheduleSave()` / `flush()` pattern
+- Validates directories: existence, is-directory, read permission, symlink-aware duplicate detection
+- `DirectoriesIpc` in `src/main/ipc/DirectoriesIpc.ts` - thin IPC routing layer
+- Redux: `directoriesSlice.ts` with loading/error states, selectors for indexed/pending counts
+- Renderer pages use relative imports (`'../store'`), NOT alias imports (`'@store/'`)
+- Service registered as `'workspaceMetadata'` in ServiceContainer
+
 ## File Links
 - [architecture-refactoring-plan.md](./architecture-refactoring-plan.md) - Detailed refactoring plan for main process

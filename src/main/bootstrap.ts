@@ -13,7 +13,7 @@
 import { app } from 'electron'
 
 // Core infrastructure
-import { ServiceContainer, EventBus, WindowFactory, AppState } from './core'
+import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManager } from './core'
 
 // Services
 import { StoreService } from './services/store'
@@ -28,9 +28,6 @@ import { FilesystemService } from './services/filesystem'
 import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
-import { WorkspaceService } from './services/workspace'
-import { FileWatcherService } from './services/file-watcher'
-import { DocumentsWatcherService } from './services/documents-watcher'
 import { AgentService } from './services/agent'
 import { RagController } from './rag/RagController'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
@@ -56,7 +53,8 @@ import {
   RagIpc,
   StoreIpc,
   WindowIpc,
-  WorkspaceIpc
+  WorkspaceIpc,
+  DirectoriesIpc
 } from './ipc'
 
 export interface BootstrapResult {
@@ -65,6 +63,7 @@ export interface BootstrapResult {
   windowFactory: WindowFactory
   appState: AppState
   logger: LoggerService
+  windowContextManager: WindowContextManager
 }
 
 /**
@@ -89,12 +88,9 @@ export function bootstrapServices(): BootstrapResult {
 
   // Register services (order matters for dependencies)
   const storeService = container.register('store', new StoreService())
-  container.register('lifecycle', new LifecycleService({
-    onSecondInstanceFile: (filePath) => {
-      console.log('[Lifecycle] Second instance file:', filePath)
-      // This callback will be wired up after main window creation
-    }
-  }))
+
+  // LifecycleService - callbacks will be set later via setCallbacks()
+  container.register('lifecycle', new LifecycleService())
 
   container.register('mediaPermissions', new MediaPermissionsService())
   container.register('bluetooth', new BluetoothService())
@@ -110,30 +106,13 @@ export function bootstrapServices(): BootstrapResult {
   container.register('dialog', new DialogService())
   container.register('notification', new NotificationService())
   container.register('clipboard', new ClipboardService())
-  const workspaceService = new WorkspaceService(storeService, eventBus)
-  workspaceService.initialize()
-  container.register('workspace', workspaceService)
 
-  // FileWatcherService watches the posts directory for external changes
-  // Must be registered after workspace service but before IPC modules
-  const fileWatcherService = new FileWatcherService(eventBus)
-  // Initialize with current workspace (if any) so it starts watching immediately
-  fileWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
-    console.error('[Bootstrap] Failed to initialize FileWatcherService:', error)
-  })
-  container.register('fileWatcher', fileWatcherService)
+  // REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
+  // These services are now window-scoped and created per-window by WindowContextManager
+  // This ensures complete isolation between different workspace windows
 
-  // DocumentsWatcherService watches the documents directory for external changes
-  // Must be registered after workspace service but before IPC modules
-  const documentsWatcherService = new DocumentsWatcherService(eventBus)
-  // Initialize with current workspace (if any) so it starts watching immediately
-  documentsWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
-    console.error('[Bootstrap] Failed to initialize DocumentsWatcherService:', error)
-  })
-  container.register('documentsWatcher', documentsWatcherService)
-
-  // Initialize logger after workspace service (needs workspace for log directory)
-  const logger = new LoggerService(workspaceService, eventBus)
+  // Initialize logger with event bus for automatic event logging
+  const logger = new LoggerService(eventBus)
   container.register('logger', logger)
 
   container.register('agent', new AgentService(storeService))
@@ -147,9 +126,13 @@ export function bootstrapServices(): BootstrapResult {
   agentRegistry.register(new AlphabetAgent(storeService))
   container.register('pipeline', new PipelineService(agentRegistry, eventBus))
 
-  console.log(`[Bootstrap] Registered ${container.has('store') ? 'all' : 'some'} services`)
+  // Create WindowContextManager for managing per-window service instances
+  const windowContextManager = new WindowContextManager(container, eventBus)
+  container.register('windowContextManager', windowContextManager)
 
-  return { container, eventBus, windowFactory, appState, logger }
+  console.log(`[Bootstrap] Registered ${container.has('store') ? 'all' : 'some'} global services`)
+
+  return { container, eventBus, windowFactory, appState, logger, windowContextManager }
 }
 
 /**
@@ -178,7 +161,8 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new RagIpc(),
     new StoreIpc(),
     new WindowIpc(),
-    new WorkspaceIpc()
+    new WorkspaceIpc(),
+    new DirectoriesIpc()
   ]
 
   for (const module of ipcModules) {

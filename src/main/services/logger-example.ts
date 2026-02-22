@@ -86,7 +86,9 @@ export function setupExampleIpc(container: ServiceContainer): void {
   const logger = container.get<LoggerService>('logger')
 
   // Example IPC handler with logging
-  async function handleExampleRequest(args: { id: string; data: string }): Promise<unknown> {
+  const handleExampleRequest = async (
+    args: { id: string; data: string }
+  ): Promise<unknown> => {
     logger.info('IPC', 'Example request received', {
       id: args.id,
       dataLength: args.data.length
@@ -119,6 +121,8 @@ export function setupExampleIpc(container: ServiceContainer): void {
   }
 
   // You would register this with ipcMain.handle()
+  // Example: ipcMain.handle('example:request', (_, args) => handleExampleRequest(args))
+  void handleExampleRequest // Reference to avoid unused warning
 }
 
 // Example 4: File operation with logging

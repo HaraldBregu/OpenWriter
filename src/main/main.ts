@@ -1,6 +1,7 @@
 import { BrowserWindow } from 'electron'
 import type { AppState } from './core/AppState'
 import type { WindowFactory } from './core/WindowFactory'
+import type { WindowContextManager } from './core/WindowContext'
 
 export class Main {
   private window: BrowserWindow | null = null
@@ -8,7 +9,8 @@ export class Main {
 
   constructor(
     private appState: AppState,
-    private windowFactory: WindowFactory
+    private windowFactory: WindowFactory,
+    private windowContextManager: WindowContextManager
   ) {
     // Constructor is now minimal
     // All services are managed by ServiceContainer in bootstrap
@@ -32,6 +34,10 @@ export class Main {
       }),
       backgroundColor: '#FFFFFF'
     })
+
+    // Create window context for isolated services
+    this.windowContextManager.create(this.window)
+    console.log(`[Main] Created window context for window ${this.window.id}`)
 
     // Registering a handler for update-target-url tells Electron that the app
     // owns the status-bar display. An intentional no-op suppresses the native
@@ -139,6 +145,10 @@ export class Main {
       backgroundColor: '#FFFFFF'
     })
 
+    // Create window context for isolated services
+    this.windowContextManager.create(win)
+    console.log(`[Main] Created window context for file window ${win.id}`)
+
     win.once('ready-to-show', () => {
       win.show()
       win.webContents.send('file-opened', filePath)
@@ -172,6 +182,12 @@ export class Main {
       }),
       backgroundColor: '#FFFFFF'
     })
+
+    // Create window context for isolated services
+    // CRITICAL: This ensures each workspace window has its own WorkspaceService
+    // and WorkspaceMetadataService instances, preventing data leakage
+    this.windowContextManager.create(workspaceWindow)
+    console.log(`[Main] Created window context for workspace window ${workspaceWindow.id}`)
 
     // Registering a handler for update-target-url tells Electron that the app
     // owns the status-bar display. An intentional no-op suppresses the native

@@ -806,6 +806,67 @@ const api = {
         return () => {
             ipcRenderer.removeListener('context-menu:post-action', handler)
         }
+    },
+    // Directories - Indexed directory management
+    directoriesList: (): Promise<Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:list'))
+    },
+    directoriesAdd: (dirPath: string): Promise<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:add', dirPath))
+    },
+    directoriesAddMany: (dirPaths: string[]): Promise<{
+        added: Array<{
+            id: string
+            path: string
+            addedAt: number
+            isIndexed: boolean
+            lastIndexedAt?: number
+        }>
+        errors: Array<{ path: string; error: string }>
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:add-many', dirPaths))
+    },
+    directoriesRemove: (id: string): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:remove', id))
+    },
+    directoriesValidate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:validate', dirPath))
+    },
+    directoriesMarkIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('directories:mark-indexed', id, isIndexed))
+    },
+    onDirectoriesChanged: (callback: (directories: Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }>) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, directories: Array<{
+            id: string
+            path: string
+            addedAt: number
+            isIndexed: boolean
+            lastIndexedAt?: number
+        }>): void => {
+            callback(directories)
+        }
+        ipcRenderer.on('directories:changed', handler)
+        return () => {
+            ipcRenderer.removeListener('directories:changed', handler)
+        }
     }
 }
 

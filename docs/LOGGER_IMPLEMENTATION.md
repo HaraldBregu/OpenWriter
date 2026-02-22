@@ -28,10 +28,7 @@ A production-quality logging system has been implemented for the Electron main p
 ### 1. Log Storage and Rotation
 - ✅ Daily log files with date-based naming (YYYY-MM-DD.log)
 - ✅ Automatic rotation at midnight
-- ✅ Workspace-aware storage:
-  - With workspace: `{workspace}/logs/YYYY-MM-DD.log`
-  - Without workspace: `{appData}/logs/YYYY-MM-DD.log`
-- ✅ Automatic log directory updates when workspace changes
+- ✅ Application data storage: `{appData}/logs/YYYY-MM-DD.log`
 
 ### 2. Log Levels
 - ✅ DEBUG - Detailed debugging information
@@ -43,7 +40,7 @@ A production-quality logging system has been implemented for the Electron main p
 ### 3. Performance Optimization
 - ✅ Buffered writes with configurable buffer size (default: 100 entries)
 - ✅ Periodic flushing (default: every 5 seconds)
-- ✅ Automatic flush on rotation, workspace change, and shutdown
+- ✅ Automatic flush on rotation and shutdown
 - ✅ Synchronous writes during shutdown to prevent data loss
 
 ### 4. Event Capture
@@ -175,7 +172,7 @@ export class MyService implements Disposable {
 The logger accepts optional configuration:
 
 ```typescript
-const logger = new LoggerService(workspaceService, eventBus, {
+const logger = new LoggerService(eventBus, {
   minLevel: LogLevel.DEBUG,      // Minimum log level
   maxRetentionDays: 30,           // Days to keep logs
   flushInterval: 5000,            // Flush every 5 seconds
@@ -208,17 +205,16 @@ The following enhancements could be added in the future:
 
 ## Log File Locations
 
+Logs are stored in the application data directory:
+
 ### macOS
-- With workspace: `{workspace}/logs/`
-- Without workspace: `~/Library/Application Support/Tesseract AI/logs/`
+`~/Library/Application Support/Tesseract AI/logs/`
 
 ### Windows
-- With workspace: `{workspace}\logs\`
-- Without workspace: `%APPDATA%\Tesseract AI\logs\`
+`%APPDATA%\Tesseract AI\logs\`
 
 ### Linux
-- With workspace: `{workspace}/logs/`
-- Without workspace: `~/.config/Tesseract AI/logs/`
+`~/.config/Tesseract AI/logs/`
 
 ## Performance Characteristics
 
@@ -251,7 +247,7 @@ The LoggerService has been successfully implemented with:
 - Performance optimization through buffered writes
 - Full integration with existing service architecture
 - Comprehensive Electron event capture
-- Workspace-aware log storage
+- Application data directory storage
 - Automatic log rotation and retention
 - Type-safe implementation
 - Detailed documentation

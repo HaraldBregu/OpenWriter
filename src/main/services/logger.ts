@@ -2,7 +2,6 @@ import { app } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { Disposable } from '../core/ServiceContainer'
-import type { WorkspaceService } from './workspace'
 import type { EventBus } from '../core/EventBus'
 
 /**
@@ -48,7 +47,7 @@ interface LogEntry {
  *   - Daily log rotation (YYYY-MM-DD.log format)
  *   - Buffered async writes for performance
  *   - Multiple log levels (DEBUG, INFO, WARN, ERROR)
- *   - Workspace-aware log directory (workspace/logs or appData/logs)
+ *   - Logs stored in application data directory
  *   - Automatic log retention management
  *   - EventBus integration for automatic event logging
  *   - Thread-safe buffer flushing
@@ -82,7 +81,6 @@ export class LoggerService implements Disposable {
   }
 
   constructor(
-    private readonly workspaceService: WorkspaceService | null,
     private readonly eventBus: EventBus | null,
     options: LoggerOptions = {}
   ) {
@@ -123,17 +121,10 @@ export class LoggerService implements Disposable {
   }
 
   /**
-   * Determine the log directory based on workspace state.
-   * Falls back to app data directory if no workspace is set.
+   * Set the log directory to the application data folder.
    */
   private updateLogDirectory(): void {
-    const workspacePath = this.workspaceService?.getCurrent()
-
-    if (workspacePath) {
-      this.logDirectory = path.join(workspacePath, 'logs')
-    } else {
-      this.logDirectory = path.join(app.getPath('userData'), 'logs')
-    }
+    this.logDirectory = path.join(app.getPath('userData'), 'logs')
   }
 
   /**
@@ -345,21 +336,10 @@ export class LoggerService implements Disposable {
       return
     }
 
-    // Listen to workspace changes to update log directory
+    // Listen to workspace changes for logging
     this.eventBus.on('workspace:changed', (event) => {
       const payload = event.payload as { currentPath: string | null; previousPath: string | null }
       this.info('WorkspaceService', `Workspace changed: ${payload.previousPath} -> ${payload.currentPath}`)
-
-      // Update log directory and ensure it exists
-      const oldDirectory = this.logDirectory
-      this.updateLogDirectory()
-
-      if (oldDirectory !== this.logDirectory) {
-        this.flushBuffer() // Flush to old location
-        this.ensureLogDirectory() // Create new directory
-        this.rotateIfNeeded() // Update current log file
-        this.info('LoggerService', `Log directory changed: ${oldDirectory} -> ${this.logDirectory}`)
-      }
     })
 
     // Listen to other important events

@@ -1,5 +1,4 @@
-import { app, BrowserWindow } from 'electron'
-import path from 'node:path'
+import { app } from 'electron'
 
 export interface LifecycleEvent {
   type: string
@@ -8,48 +7,31 @@ export interface LifecycleEvent {
 }
 
 export interface LifecycleState {
-  isSingleInstance: boolean
   events: LifecycleEvent[]
   appReadyAt: number | null
   platform: string
 }
 
-export interface LifecycleCallbacks {
-  onSecondInstanceFile?: (filePath: string) => void
-}
-
+/**
+ * LifecycleService manages application lifecycle events.
+ *
+ * NOTE: This service does NOT enforce single instance lock.
+ * Multiple instances of the app can run simultaneously, including:
+ * - Multiple launcher instances
+ * - Multiple workspace instances
+ *
+ * This provides maximum flexibility for users to run the app
+ * as many times as they want.
+ */
 export class LifecycleService {
   private events: LifecycleEvent[] = []
-  private isSingleInstance: boolean
   private appReadyAt: number | null = null
   private eventCallback: ((event: LifecycleEvent) => void) | null = null
 
-  constructor(callbacks?: LifecycleCallbacks) {
-    this.isSingleInstance = app.requestSingleInstanceLock()
-
-    if (!this.isSingleInstance) {
-      app.quit()
-      return
-    }
-
-    app.on('second-instance', (_event, argv) => {
-      this.pushEvent('second-instance-blocked', 'Another instance attempted to launch')
-
-      // Check if argv contains a .tsrct file path (Windows/Linux double-click)
-      const filePath = argv.find(
-        (arg) => path.extname(arg).toLowerCase() === '.tsrct'
-      )
-
-      if (filePath && callbacks?.onSecondInstanceFile) {
-        callbacks.onSecondInstanceFile(filePath)
-      } else {
-        const windows = BrowserWindow.getAllWindows()
-        if (windows.length > 0) {
-          if (windows[0].isMinimized()) windows[0].restore()
-          windows[0].focus()
-        }
-      }
-    })
+  constructor() {
+    // No single instance lock - allow multiple instances of the app
+    console.log('[LifecycleService] Multiple instances allowed - no single instance lock')
+    this.pushEvent('app-initialized', 'LifecycleService initialized')
   }
 
   initialize(): void {
@@ -71,7 +53,6 @@ export class LifecycleService {
 
   getState(): LifecycleState {
     return {
-      isSingleInstance: this.isSingleInstance,
       events: [...this.events],
       appReadyAt: this.appReadyAt,
       platform: process.platform

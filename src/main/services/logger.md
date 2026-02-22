@@ -9,15 +9,14 @@ The `LoggerService` provides centralized logging for the Electron main process w
 - **Daily Log Rotation**: Automatically creates new log files each day (`YYYY-MM-DD.log`)
 - **Buffered Writes**: Batches log entries in memory and flushes periodically for performance
 - **Multiple Log Levels**: DEBUG, INFO, WARN, ERROR
-- **Workspace-Aware**: Stores logs in workspace directory if available, otherwise in app data
+- **Application Data Storage**: Stores logs in application data directory
 - **EventBus Integration**: Automatically logs important application events
 - **Log Retention**: Automatically cleans up old log files based on retention policy
 - **Development-Friendly**: Console output in development, file-only in production
 
-## Log Storage Locations
+## Log Storage Location
 
-- **With Workspace**: `{workspace}/logs/YYYY-MM-DD.log`
-- **Without Workspace**: `{appData}/logs/YYYY-MM-DD.log`
+- `{appData}/logs/YYYY-MM-DD.log`
 
 ## Usage
 
@@ -88,7 +87,7 @@ Format breakdown:
 The logger can be configured with options when instantiated:
 
 ```typescript
-const logger = new LoggerService(workspaceService, eventBus, {
+const logger = new LoggerService(eventBus, {
   minLevel: LogLevel.DEBUG,      // Minimum log level to write
   maxRetentionDays: 30,           // Keep logs for 30 days
   flushInterval: 5000,            // Flush buffer every 5 seconds
@@ -215,8 +214,7 @@ The buffer is automatically flushed in these situations:
 1. Periodically based on `flushInterval`
 2. When buffer size reaches `maxBufferSize`
 3. When log file rotates (new day)
-4. When workspace changes
-5. During service shutdown
+4. During service shutdown
 
 ### Manual Flushing
 
@@ -240,7 +238,7 @@ logger.flush()
 If the log directory cannot be created:
 - Logger falls back to console output only
 - Check file system permissions
-- Verify workspace path is valid
+- Verify application data directory is accessible
 - Check available disk space
 
 ### Performance Issues
@@ -329,10 +327,7 @@ Get-ChildItem "$env:APPDATA\Tesseract AI\logs\*.log" | Where-Object {$_.LastWrit
 
 ### Accessing Logs
 
-Log files are stored in:
+Log files are stored in the application data directory:
 - **macOS**: `~/Library/Application Support/Tesseract AI/logs/`
 - **Windows**: `%APPDATA%\Tesseract AI\logs\`
 - **Linux**: `~/.config/Tesseract AI/logs/`
-
-Or in the workspace directory if one is selected:
-- `{workspace}/logs/`
