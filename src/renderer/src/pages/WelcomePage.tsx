@@ -153,7 +153,7 @@ const WelcomePage: React.FC = () => {
           <img
             src={logoIcon}
             alt="Tesseract AI"
-            className="h-[77px] w-[77px] mb-5 drop-shadow-sm"
+            className="h-[77px] w-[77px] mb-5 drop-shadow-sm rounded-2xl"
           />
           <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
             Tesseract AI
