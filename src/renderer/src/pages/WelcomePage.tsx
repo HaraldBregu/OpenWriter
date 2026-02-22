@@ -157,8 +157,8 @@ const WelcomePage: React.FC = () => {
     <div className="flex flex-col h-screen bg-background">
       <TitleBar title="Tesseract AI" />
 
-      {/* Main content — vertically centered, scrollable if viewport is very small */}
-      <div className="flex flex-col items-center flex-1 overflow-y-auto px-8 py-12">
+      {/* Main content — vertically centered, not scrollable */}
+      <div className="flex flex-col items-center flex-1 px-8 py-12 overflow-hidden">
 
         {/* ── Hero ── */}
         <div className="flex flex-col items-center mb-10">
@@ -225,7 +225,7 @@ const WelcomePage: React.FC = () => {
         </div>
 
         {/* ── Recent projects ── */}
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Recent Projects
@@ -235,7 +235,7 @@ const WelcomePage: React.FC = () => {
             </span>
           </div>
 
-          <div className="rounded-xl border border-border overflow-hidden">
+          <div className="rounded-xl border border-border overflow-y-auto max-h-96">
             {recentProjects.slice(0, 5).map((project, index) => {
               const exists = project.exists !== false // Default to true if not checked yet
 

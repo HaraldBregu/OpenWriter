@@ -45,6 +45,16 @@ describe('usePipeline', () => {
 
   afterEach(() => {
     pipelineEventListeners = []
+    // Make sure the mock functions are restored
+    if (!window.api.pipelineRun) {
+      window.api.pipelineRun = jest.fn()
+    }
+    if (!window.api.pipelineCancel) {
+      window.api.pipelineCancel = jest.fn()
+    }
+    if (!window.api.onPipelineEvent) {
+      window.api.onPipelineEvent = jest.fn()
+    }
     jest.clearAllMocks()
   })
 

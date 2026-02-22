@@ -16,10 +16,11 @@ describe('WorkspaceIpc', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockStore = {
-      setCurrentWorkspace: jest.fn(),
-      getRecentWorkspaces: jest.fn().mockReturnValue([]),
-      clearCurrentWorkspace: jest.fn()
+    const mockWorkspace = {
+      getCurrent: jest.fn().mockReturnValue(null),
+      setCurrent: jest.fn(),
+      getRecent: jest.fn().mockReturnValue([]),
+      clear: jest.fn()
     }
 
     const mockLogger = {
@@ -29,9 +30,14 @@ describe('WorkspaceIpc', () => {
       debug: jest.fn()
     }
 
+    const mockWindowManager = {
+      getWindowService: jest.fn().mockReturnValue(mockWorkspace)
+    }
+
     container = new ServiceContainer()
-    container.register('store', mockStore)
+    container.register('workspace', mockWorkspace)
     container.register('logger', mockLogger)
+    container.register('window-manager', mockWindowManager)
     eventBus = new EventBus()
     module = new WorkspaceIpc()
   })
@@ -87,23 +93,29 @@ describe('WorkspaceIpc', () => {
     expect(result.data).toBeNull()
   })
 
-  it('should set current workspace and persist to store', async () => {
+  it('should set current workspace via workspace service', async () => {
+    const mockWorkspace = container.get('workspace') as Record<string, jest.Mock>
+    const mockEvent = { sender: { id: 1 } }
+
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace-set-current'
     )?.[1]
     expect(handler).toBeDefined()
-    await handler({}, '/new/workspace')
-    expect(mockStore.setCurrentWorkspace).toHaveBeenCalledWith('/new/workspace')
+    await handler(mockEvent, '/new/workspace')
+    expect(mockWorkspace.setCurrent).toHaveBeenCalledWith('/new/workspace')
   })
 
-  it('should clear workspace state', async () => {
+  it('should clear workspace state via workspace service', async () => {
+    const mockWorkspace = container.get('workspace') as Record<string, jest.Mock>
+    const mockEvent = { sender: { id: 1 } }
+
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace-clear'
     )?.[1]
     expect(handler).toBeDefined()
-    await handler({})
-    expect(mockStore.clearCurrentWorkspace).toHaveBeenCalled()
+    await handler(mockEvent)
+    expect(mockWorkspace.clear).toHaveBeenCalled()
   })
 })
