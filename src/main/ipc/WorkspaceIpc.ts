@@ -1,5 +1,6 @@
 import { ipcMain, dialog } from 'electron'
 import type { IpcMainInvokeEvent } from 'electron'
+import fs from 'node:fs'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
@@ -7,7 +8,6 @@ import type { WorkspaceService } from '../services/workspace'
 import type { LoggerService } from '../services/logger'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { WorkspaceProcessManager } from '../workspace-process'
 
 /**
  * IPC handlers for workspace management.
@@ -20,10 +20,9 @@ export class WorkspaceIpc implements IpcModule {
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
     const logger = container.get<LoggerService>('logger')
-    const workspaceProcessManager = new WorkspaceProcessManager(logger)
 
     // Workspace folder selection dialog (global, not window-specific)
-    // When a folder is selected, spawn a new Electron process for that workspace
+    // Shows folder picker and returns the selected path
     ipcMain.handle(
       'workspace:select-folder',
       wrapSimpleHandler(async () => {
@@ -35,17 +34,7 @@ export class WorkspaceIpc implements IpcModule {
 
         if (!result.canceled && result.filePaths.length > 0) {
           const workspacePath = result.filePaths[0]
-
-          // Spawn a separate Electron process for this workspace
-          // This provides complete isolation - separate main process, memory, services
-          logger.info('WorkspaceIpc', `Spawning separate process for workspace: ${workspacePath}`)
-          const pid = workspaceProcessManager.spawnWorkspaceProcess({
-            workspacePath,
-            logger
-          })
-
-          logger.info('WorkspaceIpc', `Workspace process spawned with PID: ${pid}`)
-
+          logger.info('WorkspaceIpc', `Folder selected: ${workspacePath}`)
           return workspacePath
         }
         return null
@@ -62,10 +51,12 @@ export class WorkspaceIpc implements IpcModule {
     )
 
     // Set current workspace (window-scoped)
+    // Sets the workspace in the current window
     ipcMain.handle(
       'workspace-set-current',
       wrapIpcHandler((event: IpcMainInvokeEvent, workspacePath: string) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        logger.info('WorkspaceIpc', `Setting workspace: ${workspacePath}`)
         workspace.setCurrent(workspacePath)
       }, 'workspace-set-current')
     )
@@ -86,6 +77,18 @@ export class WorkspaceIpc implements IpcModule {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         workspace.clear()
       }, 'workspace-clear')
+    )
+
+    // Check if a directory exists (global utility)
+    ipcMain.handle(
+      'workspace-directory-exists',
+      wrapSimpleHandler((directoryPath: string) => {
+        try {
+          return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory()
+        } catch {
+          return false
+        }
+      }, 'workspace-directory-exists')
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

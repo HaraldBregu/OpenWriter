@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock } from 'lucide-react'
 import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
-import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
 import { useAppDispatch } from '../store'
+import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
 import logoIcon from '@resources/icons/icon.png'
 
 interface RecentProject {
   path: string
   lastOpened: number
+  exists?: boolean
 }
 
 // Dummy projects shown when the API returns an empty list.
@@ -36,7 +37,21 @@ const WelcomePage: React.FC = () => {
     try {
       const projects = await window.api.workspaceGetRecent()
       // Fall back to dummy data so the section is never empty on first launch.
-      setRecentProjects(projects.length > 0 ? projects : DUMMY_RECENT_PROJECTS)
+      const projectsToUse = projects.length > 0 ? projects : DUMMY_RECENT_PROJECTS
+
+      // Check if each directory exists
+      const projectsWithExistence = await Promise.all(
+        projectsToUse.map(async (project) => {
+          try {
+            const exists = await window.api.workspaceDirectoryExists(project.path)
+            return { ...project, exists }
+          } catch {
+            return { ...project, exists: false }
+          }
+        })
+      )
+
+      setRecentProjects(projectsWithExistence)
     } catch (error) {
       console.error('Failed to load recent projects:', error)
       setRecentProjects(DUMMY_RECENT_PROJECTS)
@@ -46,19 +61,20 @@ const WelcomePage: React.FC = () => {
   const handleOpenProject = useCallback(async () => {
     try {
       const folderPath = await window.api.workspaceSelectFolder()
+
       if (folderPath) {
-        // Set the workspace
+        // Set workspace in current window
         await window.api.workspaceSetCurrent(folderPath)
 
-        // Load posts from the newly selected workspace
+        // Load posts from workspace (don't block navigation if this fails)
         try {
           await reloadPostsFromWorkspace(dispatch)
         } catch (error) {
-          console.error('[WelcomePage] Failed to load posts after workspace selection:', error)
-          // Don't block navigation if posts fail to load
+          console.error('Failed to load posts after workspace selection:', error)
+          // Continue to navigation even if posts fail to load
         }
 
-        // Navigate to home
+        // Navigate current window to home
         navigate('/home')
       }
     } catch (error) {
@@ -66,20 +82,25 @@ const WelcomePage: React.FC = () => {
     }
   }, [navigate, dispatch])
 
-  const handleOpenRecentProject = useCallback(async (path: string) => {
+  const handleOpenRecentProject = useCallback(async (path: string, exists: boolean) => {
+    // Don't allow opening non-existent directories
+    if (!exists) {
+      return
+    }
+
     try {
-      // Set the workspace
+      // Set workspace in current window
       await window.api.workspaceSetCurrent(path)
 
-      // Load posts from the selected workspace
+      // Load posts from workspace (don't block navigation if this fails)
       try {
         await reloadPostsFromWorkspace(dispatch)
       } catch (error) {
-        console.error('[WelcomePage] Failed to load posts after selecting recent project:', error)
-        // Don't block navigation if posts fail to load
+        console.error('Failed to load posts after workspace selection:', error)
+        // Continue to navigation even if posts fail to load
       }
 
-      // Navigate to home
+      // Navigate current window to home
       navigate('/home')
     } catch (error) {
       console.error('Failed to open recent project:', error)
@@ -202,38 +223,51 @@ const WelcomePage: React.FC = () => {
           </div>
 
           <div className="rounded-xl border border-border overflow-hidden">
-            {recentProjects.slice(0, 5).map((project, index) => (
-              <button
-                key={index}
-                onClick={() => handleOpenRecentProject(project.path)}
-                className={`
-                  w-full flex items-center gap-4 px-4 py-3
-                  hover:bg-accent transition-colors text-left
-                  ${index !== 0 ? 'border-t border-border' : ''}
-                `}
-              >
-                {/* Folder color indicator */}
-                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                  <FolderOpen className="h-4 w-4 text-primary" />
-                </div>
+            {recentProjects.slice(0, 5).map((project, index) => {
+              const exists = project.exists !== false // Default to true if not checked yet
 
-                {/* Name + path */}
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {getProjectName(project.path)}
-                  </span>
-                  <span className="text-xs text-muted-foreground truncate mt-0.5">
-                    {formatPath(project.path)}
-                  </span>
-                </div>
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleOpenRecentProject(project.path, exists)}
+                  disabled={!exists}
+                  className={`
+                    w-full flex items-center gap-4 px-4 py-3
+                    transition-colors text-left
+                    ${index !== 0 ? 'border-t border-border' : ''}
+                    ${exists
+                      ? 'hover:bg-accent cursor-pointer'
+                      : 'cursor-not-allowed opacity-60 bg-destructive/5'
+                    }
+                  `}
+                >
+                  {/* Folder color indicator */}
+                  <div className={`
+                    h-8 w-8 rounded-md flex items-center justify-center shrink-0
+                    ${exists ? 'bg-primary/10' : 'bg-destructive/10'}
+                  `}>
+                    <FolderOpen className={`h-4 w-4 ${exists ? 'text-primary' : 'text-destructive'}`} />
+                  </div>
 
-                {/* Relative time */}
-                <div className="flex items-center gap-1.5 shrink-0 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  <span>{formatRelativeTime(project.lastOpened)}</span>
-                </div>
-              </button>
-            ))}
+                  {/* Name + path */}
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className={`text-sm font-medium truncate ${exists ? 'text-foreground' : 'text-destructive'}`}>
+                      {getProjectName(project.path)}
+                      {!exists && ' (Not Found)'}
+                    </span>
+                    <span className={`text-xs truncate mt-0.5 ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                      {formatPath(project.path)}
+                    </span>
+                  </div>
+
+                  {/* Relative time */}
+                  <div className={`flex items-center gap-1.5 shrink-0 text-xs ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                    <Clock className="h-3 w-3" />
+                    <span>{formatRelativeTime(project.lastOpened)}</span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
 
