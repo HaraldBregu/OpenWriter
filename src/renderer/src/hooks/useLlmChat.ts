@@ -42,7 +42,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
   // Listen for pipeline events (streaming tokens)
   useEffect(() => {
-    const unsubscribe = window.api.onPipelineEvent((event) => {
+    const unsubscribe = window.ai.onPipelineEvent((event) => {
       if (event.type === 'token' && currentRunIdRef.current) {
         const data = event.data as { runId: string; token: string }
 
@@ -146,7 +146,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
         accumulatedContentRef.current = ''
         assistantMessageIdRef.current = null
       } else {
-        throw new Error(result.error.message)
+        throw new Error(result.error?.message || 'Failed to start inference')
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message'
@@ -160,7 +160,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
   const cancel = useCallback(() => {
     if (currentRunIdRef.current) {
-      window.api.pipelineCancel(currentRunIdRef.current)
+      window.ai.cancel(currentRunIdRef.current)
       setIsLoading(false)
       setIsStreaming(false)
       currentRunIdRef.current = null
