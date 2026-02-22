@@ -285,10 +285,10 @@ const WelcomePage: React.FC = () => {
                   {/* Remove button - appears on hover */}
                   <button
                     onClick={(e) => handleRemoveRecentProject(project.path, e)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-md hover:bg-destructive/10 flex items-center justify-center"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-md hover:bg-accent flex items-center justify-center"
                     title="Remove from recent projects"
                   >
-                    <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                    <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </button>
                 </div>
               )

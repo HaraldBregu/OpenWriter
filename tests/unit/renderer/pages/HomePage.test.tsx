@@ -5,6 +5,11 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { HashRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import chatReducer from '../../../../src/renderer/src/store/chatSlice'
+import postsReducer from '../../../../src/renderer/src/store/postsSlice'
+import directoriesReducer from '../../../../src/renderer/src/store/directoriesSlice'
 
 // Mock lucide-react to avoid SVG rendering complexity
 jest.mock('lucide-react', () => {
@@ -22,10 +27,20 @@ jest.mock('lucide-react', () => {
 import HomePage from '../../../../src/renderer/src/pages/HomePage'
 
 function renderHomePage() {
+  const store = configureStore({
+    reducer: {
+      chat: chatReducer,
+      posts: postsReducer,
+      directories: directoriesReducer
+    }
+  })
+
   return render(
-    <HashRouter>
-      <HomePage />
-    </HashRouter>
+    <Provider store={store}>
+      <HashRouter>
+        <HomePage />
+      </HashRouter>
+    </Provider>
   )
 }
 
