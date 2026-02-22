@@ -23,6 +23,7 @@ const PerceptionPage: React.FC = () => {
 
           <BrainChatContainer
             sectionId="perception"
+            providerId="openai"
             systemPrompt="You are an AI assistant specialized in perception, pattern recognition, and sensory processing. Help users understand how perception works, cognitive biases in perception, pattern detection, and multi-sensory integration."
             placeholder="Ask about perception, patterns, or sensory processing..."
             emptyStateMessage="Start a conversation about perception and pattern recognition."

@@ -42,11 +42,16 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
 
   // Listen for pipeline events (streaming tokens)
   useEffect(() => {
+    console.log('[useLlmChat] Setting up pipeline event listener for section:', sectionId)
+
     const unsubscribe = window.api.onPipelineEvent((event) => {
+      console.log('[useLlmChat] Received pipeline event:', event.type, event.data)
+
       if (event.type === 'token' && currentRunIdRef.current) {
         const data = event.data as { runId: string; token: string }
 
         if (data.runId === currentRunIdRef.current) {
+          console.log('[useLlmChat] Token received:', data.token.substring(0, 20))
           setIsStreaming(true)
           accumulatedContentRef.current += data.token
 
@@ -56,6 +61,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
               // Create new assistant message
               const newId = `msg-${Date.now()}`
               assistantMessageIdRef.current = newId
+              console.log('[useLlmChat] Creating new assistant message:', newId)
               return [
                 ...prev,
                 {
@@ -75,9 +81,12 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
             )
           })
         }
+      } else if (event.type === 'thinking') {
+        console.log('[useLlmChat] Thinking event:', event.data)
       } else if (event.type === 'done') {
         const data = event.data as { runId: string }
         if (data.runId === currentRunIdRef.current) {
+          console.log('[useLlmChat] Stream completed')
           setIsLoading(false)
           setIsStreaming(false)
           currentRunIdRef.current = null
@@ -88,6 +97,7 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
         const data = event.data as { runId: string; message: string }
         if (data.runId === currentRunIdRef.current) {
           const errorMessage = data.message || 'An error occurred'
+          console.error('[useLlmChat] Error event:', errorMessage)
           setError(errorMessage)
           setIsLoading(false)
           setIsStreaming(false)
@@ -102,12 +112,15 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
     })
 
     return () => {
+      console.log('[useLlmChat] Cleaning up pipeline event listener')
       unsubscribe()
     }
-  }, [onError])
+  }, [onError, sectionId])
 
   const submit = useCallback(async (prompt: string) => {
     if (!prompt.trim() || isLoading) return
+
+    console.log('[useLlmChat] Submitting message:', { sectionId, providerId, systemPrompt })
 
     setError(null)
     setIsLoading(true)
@@ -120,15 +133,23 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
       timestamp: Date.now()
     }
 
-    setMessages(prev => [...prev, userMessage])
-
-    // Prepare conversation history for the ChatAgent
-    const conversationHistory = messages.map(m => ({
+    // Prepare conversation history INCLUDING the new user message
+    // Build this BEFORE state update to avoid race condition
+    const conversationHistory = [...messages, userMessage].map(m => ({
       role: m.role,
       content: m.content
     }))
 
+    setMessages(prev => [...prev, userMessage])
+
     try {
+      console.log('[useLlmChat] Calling pipelineRun with:', {
+        agent: 'chat',
+        promptLength: prompt.trim().length,
+        historyLength: conversationHistory.length,
+        hasSystemPrompt: !!systemPrompt
+      })
+
       // Use pipeline with ChatAgent for inference
       const result = await window.api.pipelineRun('chat', {
         prompt: prompt.trim(),
@@ -140,14 +161,19 @@ export function useLlmChat(options: UseLlmChatOptions): UseLlmChatReturn {
         }
       })
 
+      console.log('[useLlmChat] Pipeline result:', result)
+
       if (result.success) {
+        console.log('[useLlmChat] Run started with ID:', result.data.runId)
         currentRunIdRef.current = result.data.runId
         accumulatedContentRef.current = ''
         assistantMessageIdRef.current = null
       } else {
+        console.error('[useLlmChat] Pipeline error:', result.error)
         throw new Error(result.error?.message || 'Failed to start inference')
       }
     } catch (err) {
+      console.error('[useLlmChat] Submit error:', err)
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message'
       setError(errorMessage)
       setIsLoading(false)

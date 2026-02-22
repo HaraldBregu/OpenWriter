@@ -23,6 +23,7 @@ const ReasoningPage: React.FC = () => {
 
           <BrainChatContainer
             sectionId="reasoning"
+            providerId="openai"
             systemPrompt="You are an AI assistant specialized in logical and analytical reasoning. Help users solve problems, analyze arguments, understand logical fallacies, and develop structured thinking skills. Use clear, step-by-step explanations."
             placeholder="Ask about logic, problem-solving, or reasoning..."
             emptyStateMessage="Start a conversation about reasoning and logical analysis."

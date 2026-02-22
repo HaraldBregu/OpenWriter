@@ -121,9 +121,17 @@ export class ChatAgent implements Agent {
     const providerId = (input.context?.providerId as string) || 'openai'
     const storeSettings = this.storeService.getModelSettings(providerId)
 
+    console.log(`${LOG_PREFIX} Run ${runId} - StoreSettings:`, storeSettings)
+    console.log(`${LOG_PREFIX} Run ${runId} - ENV API Key exists:`, !!import.meta.env.VITE_OPENAI_API_KEY)
+    console.log(`${LOG_PREFIX} Run ${runId} - ENV API Key prefix:`, import.meta.env.VITE_OPENAI_API_KEY?.substring(0, 10))
+
     const apiKey = storeSettings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
 
+    console.log(`${LOG_PREFIX} Run ${runId} - Final API Key exists:`, !!apiKey)
+    console.log(`${LOG_PREFIX} Run ${runId} - Final API Key prefix:`, apiKey?.substring(0, 10))
+
     if (!apiKey || apiKey === 'your-openai-api-key-here') {
+      console.error(`${LOG_PREFIX} Run ${runId} - API key validation failed`)
       yield {
         type: 'error',
         data: {
@@ -142,7 +150,7 @@ export class ChatAgent implements Agent {
       (input.context?.systemPrompt as string | undefined) || DEFAULT_SYSTEM_PROMPT
 
     console.log(
-      `${LOG_PREFIX} Starting run ${runId} with provider=${providerId} model=${modelName}`
+      `${LOG_PREFIX} Starting run ${runId} with provider=${providerId} model=${modelName} systemPrompt="${systemPrompt.substring(0, 50)}..."`
     )
 
     yield { type: 'thinking', data: { runId, text: 'Connecting to OpenAI...' } }

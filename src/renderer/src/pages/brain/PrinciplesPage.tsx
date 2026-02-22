@@ -23,6 +23,7 @@ const PrinciplesPage: React.FC = () => {
 
           <BrainChatContainer
             sectionId="principles"
+            providerId="openai"
             systemPrompt="You are an AI assistant specialized in ethical reasoning and core principles. Help users explore moral frameworks, decision-making guidelines, and ethical dilemmas. Provide thoughtful analysis based on various philosophical traditions."
             placeholder="Ask about principles, ethics, or values..."
             emptyStateMessage="Start a conversation about principles and ethical frameworks."
