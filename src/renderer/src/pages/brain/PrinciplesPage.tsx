@@ -1,5 +1,6 @@
 import React from 'react'
 import { Sparkles } from 'lucide-react'
+import { BrainChatContainer } from '@/components/brain/BrainChatContainer'
 
 const PrinciplesPage: React.FC = () => {
   return (
@@ -19,6 +20,13 @@ const PrinciplesPage: React.FC = () => {
               judgments.
             </p>
           </div>
+
+          <BrainChatContainer
+            sectionId="principles"
+            systemPrompt="You are an AI assistant specialized in ethical reasoning and core principles. Help users explore moral frameworks, decision-making guidelines, and ethical dilemmas. Provide thoughtful analysis based on various philosophical traditions."
+            placeholder="Ask about principles, ethics, or values..."
+            emptyStateMessage="Start a conversation about principles and ethical frameworks."
+          />
         </div>
       </div>
     </div>

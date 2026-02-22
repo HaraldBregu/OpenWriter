@@ -1,5 +1,6 @@
 import React from 'react'
 import { Lightbulb } from 'lucide-react'
+import { BrainChatContainer } from '@/components/brain/BrainChatContainer'
 
 const ConsciousnessPage: React.FC = () => {
   return (
@@ -19,6 +20,13 @@ const ConsciousnessPage: React.FC = () => {
               reasoning process itself.
             </p>
           </div>
+
+          <BrainChatContainer
+            sectionId="consciousness"
+            systemPrompt="You are an AI assistant specialized in consciousness, metacognition, and self-awareness. Help users explore topics related to awareness, introspection, mental states, and the nature of consciousness. Encourage reflective thinking."
+            placeholder="Ask about consciousness, self-awareness, or metacognition..."
+            emptyStateMessage="Start a conversation about consciousness and metacognitive processes."
+          />
         </div>
       </div>
     </div>

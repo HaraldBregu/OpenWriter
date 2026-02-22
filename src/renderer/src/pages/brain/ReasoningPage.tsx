@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrainCircuit } from 'lucide-react'
+import { BrainChatContainer } from '@/components/brain/BrainChatContainer'
 
 const ReasoningPage: React.FC = () => {
   return (
@@ -19,6 +20,13 @@ const ReasoningPage: React.FC = () => {
               processes.
             </p>
           </div>
+
+          <BrainChatContainer
+            sectionId="reasoning"
+            systemPrompt="You are an AI assistant specialized in logical and analytical reasoning. Help users solve problems, analyze arguments, understand logical fallacies, and develop structured thinking skills. Use clear, step-by-step explanations."
+            placeholder="Ask about logic, problem-solving, or reasoning..."
+            emptyStateMessage="Start a conversation about reasoning and logical analysis."
+          />
         </div>
       </div>
     </div>

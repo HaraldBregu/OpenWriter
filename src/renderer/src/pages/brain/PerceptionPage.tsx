@@ -1,5 +1,6 @@
 import React from 'react'
 import { Eye } from 'lucide-react'
+import { BrainChatContainer } from '@/components/brain/BrainChatContainer'
 
 const PerceptionPage: React.FC = () => {
   return (
@@ -19,6 +20,13 @@ const PerceptionPage: React.FC = () => {
               input integration.
             </p>
           </div>
+
+          <BrainChatContainer
+            sectionId="perception"
+            systemPrompt="You are an AI assistant specialized in perception, pattern recognition, and sensory processing. Help users understand how perception works, cognitive biases in perception, pattern detection, and multi-sensory integration."
+            placeholder="Ask about perception, patterns, or sensory processing..."
+            emptyStateMessage="Start a conversation about perception and pattern recognition."
+          />
         </div>
       </div>
     </div>

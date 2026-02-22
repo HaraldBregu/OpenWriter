@@ -56,7 +56,8 @@ import {
   WindowIpc,
   WorkspaceIpc,
   DirectoriesIpc,
-  TaskIpc
+  TaskIpc,
+  LlmIpc
 } from './ipc'
 
 export interface BootstrapResult {
@@ -168,7 +169,8 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new WindowIpc(),
     new WorkspaceIpc(),
     new DirectoriesIpc(),
-    new TaskIpc()
+    new TaskIpc(),
+    new LlmIpc()
   ]
 
   for (const module of ipcModules) {

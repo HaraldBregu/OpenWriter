@@ -1,5 +1,6 @@
 import React from 'react'
 import { Database } from 'lucide-react'
+import { BrainChatContainer } from '@/components/brain/BrainChatContainer'
 
 const MemoryPage: React.FC = () => {
   return (
@@ -19,6 +20,13 @@ const MemoryPage: React.FC = () => {
               and procedural learning.
             </p>
           </div>
+
+          <BrainChatContainer
+            sectionId="memory"
+            systemPrompt="You are an AI assistant specialized in memory systems, learning, and information retention. Help users understand memory processes, mnemonic techniques, learning strategies, and cognitive psychology related to memory."
+            placeholder="Ask about memory systems, learning, or recall..."
+            emptyStateMessage="Start a conversation about memory and learning processes."
+          />
         </div>
       </div>
     </div>

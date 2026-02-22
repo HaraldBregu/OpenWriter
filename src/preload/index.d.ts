@@ -487,6 +487,28 @@ declare global {
         isIndexed: boolean
         lastIndexedAt?: number
       }>) => void) => () => void
+      // LLM - Chat inference for brain sections
+      llmChat: (request: {
+        messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+        sessionId: string
+        providerId: string
+        temperature?: number
+        maxTokens?: number
+      }) => Promise<{ runId: string; sessionId: string }>
+      llmCancel: (runId: string) => void
+      llmCreateSession: (config: {
+        sessionId: string
+        providerId: string
+        systemPrompt?: string
+        temperature?: number
+        maxTokens?: number
+      }) => Promise<{
+        sessionId: string
+        providerId: string
+        createdAt: number
+        isActive: boolean
+      }>
+      llmDestroySession: (sessionId: string) => Promise<boolean>
     }
   }
 }

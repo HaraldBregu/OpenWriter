@@ -844,6 +844,36 @@ const api = {
         return () => {
             ipcRenderer.removeListener('directories:changed', handler)
         }
+    },
+    // LLM - Chat inference for brain sections
+    llmChat: (request: {
+        messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+        sessionId: string
+        providerId: string
+        temperature?: number
+        maxTokens?: number
+    }): Promise<{ runId: string; sessionId: string }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('llm:chat', request))
+    },
+    llmCancel: (runId: string): void => {
+        ipcRenderer.send('llm:cancel', runId)
+    },
+    llmCreateSession: (config: {
+        sessionId: string
+        providerId: string
+        systemPrompt?: string
+        temperature?: number
+        maxTokens?: number
+    }): Promise<{
+        sessionId: string
+        providerId: string
+        createdAt: number
+        isActive: boolean
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('llm:create-session', config))
+    },
+    llmDestroySession: (sessionId: string): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('llm:destroy-session', sessionId))
     }
 }
 
