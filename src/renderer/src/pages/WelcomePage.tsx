@@ -253,12 +253,12 @@ const WelcomePage: React.FC = () => {
                     </div>
 
                     {/* Name + path */}
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-medium truncate text-foreground">
+                    <div className="flex flex-col items-start min-w-0">
+                      <span className="text-sm font-medium truncate text-foreground text-left">
                         {getProjectName(project.path)}
                         {!exists && ' (Not Found)'}
                       </span>
-                      <span className="text-xs truncate mt-0.5 text-muted-foreground">
+                      <span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
                         {formatPath(project.path)}
                       </span>
                     </div>
