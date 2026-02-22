@@ -61,7 +61,8 @@
       "Bash(~/Library/Application Support/Tesseract:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(yarn:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

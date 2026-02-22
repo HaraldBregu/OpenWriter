@@ -8,54 +8,22 @@ import { LifecycleService } from '../../../../src/main/services/lifecycle'
 describe('LifecycleService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(app.requestSingleInstanceLock as jest.Mock).mockReturnValue(true)
   })
 
   describe('constructor', () => {
-    it('should request single instance lock', () => {
+    it('should initialize without single instance lock', () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation()
       new LifecycleService()
-      expect(app.requestSingleInstanceLock).toHaveBeenCalled()
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Multiple instances allowed')
+      )
+      consoleLogSpy.mockRestore()
     })
 
-    it('should quit app when another instance is already running', () => {
-      ;(app.requestSingleInstanceLock as jest.Mock).mockReturnValue(false)
+    it('should push app-initialized event on construction', () => {
       const service = new LifecycleService()
-      expect(app.quit).toHaveBeenCalled()
-      // isSingleInstance should be false
       const state = service.getState()
-      expect(state.isSingleInstance).toBe(false)
-    })
-
-    it('should register second-instance handler', () => {
-      new LifecycleService()
-      expect(app.on).toHaveBeenCalledWith('second-instance', expect.any(Function))
-    })
-
-    it('should call onSecondInstanceFile callback when argv contains .tsrct file', () => {
-      const onFile = jest.fn()
-      new LifecycleService({ onSecondInstanceFile: onFile })
-
-      // Find and call the second-instance handler
-      const secondInstanceCall = (app.on as jest.Mock).mock.calls.find(
-        (call: unknown[]) => call[0] === 'second-instance'
-      )
-      const handler = secondInstanceCall[1]
-      handler({}, ['electron', '--flag', '/path/to/doc.tsrct'])
-
-      expect(onFile).toHaveBeenCalledWith('/path/to/doc.tsrct')
-    })
-
-    it('should focus existing window on second instance without file', () => {
-      new LifecycleService()
-
-      const secondInstanceCall = (app.on as jest.Mock).mock.calls.find(
-        (call: unknown[]) => call[0] === 'second-instance'
-      )
-      const handler = secondInstanceCall[1]
-      handler({}, ['electron'])
-
-      const mockWin = BrowserWindow.getAllWindows()[0]
-      expect(mockWin.focus).toHaveBeenCalled()
+      expect(state.events.some((e) => e.type === 'app-initialized')).toBe(true)
     })
   })
 
@@ -83,9 +51,8 @@ describe('LifecycleService', () => {
     it('should return current lifecycle state', () => {
       const service = new LifecycleService()
       const state = service.getState()
-      expect(state.isSingleInstance).toBe(true)
       expect(state.platform).toBe(process.platform)
-      expect(state.events).toEqual([])
+      expect(state.events.length).toBeGreaterThan(0) // Should include app-initialized event
       expect(state.appReadyAt).toBeNull()
     })
   })

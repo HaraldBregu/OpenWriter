@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock } from 'lucide-react'
+import { FolderOpen, GitBranch, Terminal, CloudDownload, Clock, X } from 'lucide-react'
 import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
 import { useAppDispatch } from '../store'
@@ -106,6 +106,19 @@ const WelcomePage: React.FC = () => {
       console.error('Failed to open recent project:', error)
     }
   }, [navigate, dispatch])
+
+  const handleRemoveRecentProject = useCallback(async (path: string, event: React.MouseEvent) => {
+    // Prevent opening the project when clicking the remove button
+    event.stopPropagation()
+
+    try {
+      await window.api.workspaceRemoveRecent(path)
+      // Reload the recent projects list
+      loadRecentProjects()
+    } catch (error) {
+      console.error('Failed to remove recent project:', error)
+    }
+  }, [])
 
   const formatPath = (path: string) => {
     if (path.includes('/Users/')) {
@@ -227,45 +240,60 @@ const WelcomePage: React.FC = () => {
               const exists = project.exists !== false // Default to true if not checked yet
 
               return (
-                <button
+                <div
                   key={index}
-                  onClick={() => handleOpenRecentProject(project.path, exists)}
-                  disabled={!exists}
                   className={`
-                    w-full flex items-center gap-4 px-4 py-3
-                    transition-colors text-left
+                    relative group
                     ${index !== 0 ? 'border-t border-border' : ''}
-                    ${exists
-                      ? 'hover:bg-accent cursor-pointer'
-                      : 'cursor-not-allowed opacity-60 bg-destructive/5'
-                    }
                   `}
                 >
-                  {/* Folder color indicator */}
-                  <div className={`
-                    h-8 w-8 rounded-md flex items-center justify-center shrink-0
-                    ${exists ? 'bg-primary/10' : 'bg-destructive/10'}
-                  `}>
-                    <FolderOpen className={`h-4 w-4 ${exists ? 'text-primary' : 'text-destructive'}`} />
-                  </div>
+                  <button
+                    onClick={() => handleOpenRecentProject(project.path, exists)}
+                    disabled={!exists}
+                    className={`
+                      w-full flex items-center gap-4 px-4 py-3
+                      transition-colors text-left
+                      ${exists
+                        ? 'hover:bg-accent cursor-pointer'
+                        : 'cursor-not-allowed opacity-60 bg-destructive/5'
+                      }
+                    `}
+                  >
+                    {/* Folder color indicator */}
+                    <div className={`
+                      h-8 w-8 rounded-md flex items-center justify-center shrink-0
+                      ${exists ? 'bg-primary/10' : 'bg-destructive/10'}
+                    `}>
+                      <FolderOpen className={`h-4 w-4 ${exists ? 'text-primary' : 'text-destructive'}`} />
+                    </div>
 
-                  {/* Name + path */}
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className={`text-sm font-medium truncate ${exists ? 'text-foreground' : 'text-destructive'}`}>
-                      {getProjectName(project.path)}
-                      {!exists && ' (Not Found)'}
-                    </span>
-                    <span className={`text-xs truncate mt-0.5 ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
-                      {formatPath(project.path)}
-                    </span>
-                  </div>
+                    {/* Name + path */}
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className={`text-sm font-medium truncate ${exists ? 'text-foreground' : 'text-destructive'}`}>
+                        {getProjectName(project.path)}
+                        {!exists && ' (Not Found)'}
+                      </span>
+                      <span className={`text-xs truncate mt-0.5 ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                        {formatPath(project.path)}
+                      </span>
+                    </div>
 
-                  {/* Relative time */}
-                  <div className={`flex items-center gap-1.5 shrink-0 text-xs ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
-                    <Clock className="h-3 w-3" />
-                    <span>{formatRelativeTime(project.lastOpened)}</span>
-                  </div>
-                </button>
+                    {/* Relative time */}
+                    <div className={`flex items-center gap-1.5 shrink-0 text-xs ${exists ? 'text-muted-foreground' : 'text-destructive/70'}`}>
+                      <Clock className="h-3 w-3" />
+                      <span>{formatRelativeTime(project.lastOpened)}</span>
+                    </div>
+                  </button>
+
+                  {/* Remove button - appears on hover */}
+                  <button
+                    onClick={(e) => handleRemoveRecentProject(project.path, e)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-md hover:bg-destructive/10 flex items-center justify-center"
+                    title="Remove from recent projects"
+                  >
+                    <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                  </button>
+                </div>
               )
             })}
           </div>

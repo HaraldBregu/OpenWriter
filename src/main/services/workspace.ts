@@ -137,6 +137,14 @@ export class WorkspaceService implements Disposable {
   }
 
   /**
+   * Remove a workspace from the recent workspaces list.
+   */
+  removeRecent(workspacePath: string): void {
+    this.store.removeRecentWorkspace(workspacePath)
+    console.log('[WorkspaceService] Removed from recent workspaces:', workspacePath)
+  }
+
+  /**
    * Check whether a workspace is currently set.
    */
   hasWorkspace(): boolean {

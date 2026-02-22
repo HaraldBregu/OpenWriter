@@ -22,8 +22,16 @@ describe('WorkspaceIpc', () => {
       clearCurrentWorkspace: jest.fn()
     }
 
+    const mockLogger = {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn()
+    }
+
     container = new ServiceContainer()
     container.register('store', mockStore)
+    container.register('logger', mockLogger)
     eventBus = new EventBus()
     module = new WorkspaceIpc()
   })

@@ -91,6 +91,16 @@ export class WorkspaceIpc implements IpcModule {
       }, 'workspace-directory-exists')
     )
 
+    // Remove workspace from recent history (window-scoped)
+    ipcMain.handle(
+      'workspace-remove-recent',
+      wrapIpcHandler((event: IpcMainInvokeEvent, workspacePath: string) => {
+        const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
+        workspace.removeRecent(workspacePath)
+        logger.info('WorkspaceIpc', `Removed from recent: ${workspacePath}`)
+      }, 'workspace-remove-recent')
+    )
+
     console.log(`[IPC] Registered ${this.name} module`)
   }
 }

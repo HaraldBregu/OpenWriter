@@ -483,6 +483,9 @@ const api = {
     workspaceDirectoryExists: (directoryPath: string): Promise<boolean> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-directory-exists', directoryPath))
     },
+    workspaceRemoveRecent: (workspacePath: string): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('workspace-remove-recent', workspacePath))
+    },
     // Posts - Sync posts to workspace filesystem
     postsSyncToWorkspace: (posts: Array<{
         id: string

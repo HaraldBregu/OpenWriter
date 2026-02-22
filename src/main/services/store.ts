@@ -119,4 +119,11 @@ export class StoreService {
     this.data.currentWorkspace = null
     this.save()
   }
+
+  removeRecentWorkspace(workspacePath: string): void {
+    this.data.recentWorkspaces = this.data.recentWorkspaces.filter(
+      (w) => w.path !== workspacePath
+    )
+    this.save()
+  }
 }

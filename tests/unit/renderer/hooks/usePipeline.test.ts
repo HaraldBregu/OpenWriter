@@ -11,6 +11,17 @@ describe('usePipeline', () => {
   beforeEach(() => {
     pipelineEventListeners = []
 
+    // Ensure window.api exists and has the required methods
+    if (!window.api.pipelineRun) {
+      window.api.pipelineRun = jest.fn()
+    }
+    if (!window.api.pipelineCancel) {
+      window.api.pipelineCancel = jest.fn()
+    }
+    if (!window.api.onPipelineEvent) {
+      window.api.onPipelineEvent = jest.fn()
+    }
+
     // Mock window.api.pipelineRun
     ;(window.api.pipelineRun as jest.Mock).mockResolvedValue({
       success: true,

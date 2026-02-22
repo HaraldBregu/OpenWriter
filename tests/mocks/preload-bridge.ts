@@ -64,7 +64,6 @@ export const mockApi = {
 
   // Lifecycle
   lifecycleGetState: jest.fn().mockResolvedValue({
-    isSingleInstance: true,
     events: [],
     appReadyAt: Date.now(),
     platform: 'win32'
@@ -138,6 +137,7 @@ export const mockApi = {
   workspaceSetCurrent: jest.fn().mockResolvedValue(undefined),
   workspaceGetRecent: jest.fn().mockResolvedValue([]),
   workspaceClear: jest.fn().mockResolvedValue(undefined),
+  workspaceDirectoryExists: jest.fn().mockResolvedValue(true),
 
   // Agent
   agentRun: jest.fn().mockResolvedValue(undefined),
@@ -185,8 +185,10 @@ export const mockApi = {
   windowMaximize: jest.fn(),
   windowClose: jest.fn(),
   windowIsMaximized: jest.fn().mockResolvedValue(false),
+  windowIsFullScreen: jest.fn().mockResolvedValue(false),
   getPlatform: jest.fn().mockResolvedValue('win32'),
-  onMaximizeChange: jest.fn().mockReturnValue(jest.fn())
+  onMaximizeChange: jest.fn().mockReturnValue(jest.fn()),
+  onFullScreenChange: jest.fn().mockReturnValue(jest.fn())
 }
 
 /**

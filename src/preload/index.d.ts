@@ -281,6 +281,7 @@ declare global {
       workspaceGetRecent: () => Promise<WorkspaceInfo[]>
       workspaceClear: () => Promise<void>
       workspaceDirectoryExists: (directoryPath: string) => Promise<boolean>
+      workspaceRemoveRecent: (workspacePath: string) => Promise<void>
       // Posts - Sync posts to workspace filesystem
       postsSyncToWorkspace: (posts: Array<{
         id: string

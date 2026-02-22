@@ -6,11 +6,16 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HashRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import chatReducer from '../../../../src/renderer/src/store/chatSlice'
+import postsReducer from '../../../../src/renderer/src/store/postsSlice'
+import directoriesReducer from '../../../../src/renderer/src/store/directoriesSlice'
 
 // Mock lucide-react
 jest.mock('lucide-react', () => {
   const icons = [
-    'FolderOpen', 'GitBranch', 'Terminal', 'Menu', 'PanelLeft', 'Minus', 'X'
+    'FolderOpen', 'GitBranch', 'Terminal', 'Menu', 'PanelLeft', 'Minus', 'X', 'CloudDownload', 'Clock'
   ]
   const mocks: Record<string, (props: Record<string, unknown>) => React.ReactElement> = {}
   for (const name of icons) {
@@ -30,16 +35,27 @@ jest.mock('@resources/icons/icon.png', () => 'test-logo.png')
 import WelcomePage from '../../../../src/renderer/src/pages/WelcomePage'
 
 function renderWelcomePage() {
+  const store = configureStore({
+    reducer: {
+      chat: chatReducer,
+      posts: postsReducer,
+      directories: directoriesReducer
+    }
+  })
+
   return render(
-    <HashRouter>
-      <WelcomePage />
-    </HashRouter>
+    <Provider store={store}>
+      <HashRouter>
+        <WelcomePage />
+      </HashRouter>
+    </Provider>
   )
 }
 
 describe('WelcomePage', () => {
   beforeEach(() => {
     ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([])
+    ;(window.api.workspaceDirectoryExists as jest.Mock) = jest.fn().mockResolvedValue(true)
   })
 
   it('should render the app title', () => {
@@ -56,16 +72,16 @@ describe('WelcomePage', () => {
     expect(screen.getByTestId('title-bar')).toBeInTheDocument()
   })
 
-  it('should render the Open project button', () => {
+  it('should render the Open Folder button', () => {
     renderWelcomePage()
 
-    expect(screen.getByText('Open project')).toBeInTheDocument()
+    expect(screen.getByText('Open Folder')).toBeInTheDocument()
   })
 
-  it('should render disabled Clone repo button', () => {
+  it('should render disabled Clone Repo button', () => {
     renderWelcomePage()
 
-    expect(screen.getByText('Clone repo')).toBeInTheDocument()
+    expect(screen.getByText('Clone Repo')).toBeInTheDocument()
   })
 
   it('should render disabled Connect via SSH button', () => {
@@ -100,22 +116,22 @@ describe('WelcomePage', () => {
     })
 
     expect(screen.getByText('other')).toBeInTheDocument()
-    expect(screen.getByText(/Recent projects/)).toBeInTheDocument()
+    expect(screen.getByText(/Recent Projects/i)).toBeInTheDocument()
   })
 
   it('should not show recent projects section when list is empty', () => {
     renderWelcomePage()
 
-    expect(screen.queryByText('Recent projects')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Recent Projects/i)).not.toBeInTheDocument()
   })
 
-  it('should call workspaceSelectFolder when Open project is clicked', async () => {
+  it('should call workspaceSelectFolder when Open Folder is clicked', async () => {
     ;(window.api.workspaceSelectFolder as jest.Mock).mockResolvedValue(null)
     const user = userEvent.setup()
 
     renderWelcomePage()
 
-    await user.click(screen.getByText('Open project'))
+    await user.click(screen.getByText('Open Folder'))
 
     expect(window.api.workspaceSelectFolder).toHaveBeenCalled()
   })
