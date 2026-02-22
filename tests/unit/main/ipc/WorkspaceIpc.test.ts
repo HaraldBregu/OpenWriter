@@ -32,9 +32,9 @@ describe('WorkspaceIpc', () => {
     expect(module.name).toBe('workspace')
   })
 
-  it('should register 5 ipcMain handlers', () => {
+  it('should register 6 ipcMain handlers', () => {
     module.register(container, eventBus)
-    expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(5)
+    expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(6)
   })
 
   it('should register all workspace channels', () => {
@@ -45,6 +45,7 @@ describe('WorkspaceIpc', () => {
     expect(channels).toContain('workspace-set-current')
     expect(channels).toContain('workspace-get-recent')
     expect(channels).toContain('workspace-clear')
+    expect(channels).toContain('workspace-directory-exists')
   })
 
   it('should return selected folder path from select-folder handler', async () => {
@@ -56,7 +57,8 @@ describe('WorkspaceIpc', () => {
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace:select-folder'
-    )[1]
+    )?.[1]
+    expect(handler).toBeDefined()
     const result = await handler({})
     expect(result.success).toBe(true)
     expect(result.data).toBe('/path/to/workspace')
@@ -71,7 +73,8 @@ describe('WorkspaceIpc', () => {
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace:select-folder'
-    )[1]
+    )?.[1]
+    expect(handler).toBeDefined()
     const result = await handler({})
     expect(result.data).toBeNull()
   })
@@ -80,7 +83,8 @@ describe('WorkspaceIpc', () => {
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace-set-current'
-    )[1]
+    )?.[1]
+    expect(handler).toBeDefined()
     await handler({}, '/new/workspace')
     expect(mockStore.setCurrentWorkspace).toHaveBeenCalledWith('/new/workspace')
   })
@@ -89,7 +93,8 @@ describe('WorkspaceIpc', () => {
     module.register(container, eventBus)
     const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
       (c: unknown[]) => c[0] === 'workspace-clear'
-    )[1]
+    )?.[1]
+    expect(handler).toBeDefined()
     await handler({})
     expect(mockStore.clearCurrentWorkspace).toHaveBeenCalled()
   })

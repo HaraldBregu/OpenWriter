@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Send, StopCircle } from 'lucide-react'
-import { AppButton } from '@/components/AppButton'
+import { AppButton } from '@/components/app/AppButton'
 
 export interface BrainChatInputProps {
   onSubmit: (prompt: string) => void | Promise<void>
