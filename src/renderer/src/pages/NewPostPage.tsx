@@ -24,6 +24,7 @@ import {
   updatePostTitle,
   deletePost
 } from '../store/postsSlice'
+import { saveOutputItem } from '@/store/outputSlice'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -41,6 +42,11 @@ const NewPostPage: React.FC = () => {
   // IMPORTANT: All hooks must be called before any early returns
   // to maintain consistent hook ordering between renders
   const [showSidebar, setShowSidebar] = useState(true)
+
+  // Save state
+  const [isSaving, setIsSaving] = useState(false)
+  const [lastSavedId, setLastSavedId] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   // AI Settings state
   const [ragEnabled, setRagEnabled] = useState(false)
@@ -78,6 +84,29 @@ const NewPostPage: React.FC = () => {
     dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
   }, [post, dispatch])
 
+  const handleSave = useCallback(async () => {
+    if (!post) return
+    setIsSaving(true)
+    setSaveError(null)
+    try {
+      const markdownContent = post.blocks.map((b) => b.content).join('\n\n')
+      const saved = await dispatch(saveOutputItem({
+        type: 'posts',
+        title: post.title || 'Untitled Post',
+        content: markdownContent,
+        visibility: 'private',
+        provider: 'manual',
+        model: ''
+      })).unwrap()
+      setLastSavedId(saved.id)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      setSaveError(message)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [post, dispatch])
+
   // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
   // stale URL or deleted externally), show a fallback rather than crashing.
   if (!post) {
@@ -103,6 +132,15 @@ const NewPostPage: React.FC = () => {
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
         <div className="flex items-center gap-3">
+          <AppButton
+            type="button"
+            variant={lastSavedId ? "default" : "outline"}
+            size="sm"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : lastSavedId ? 'Saved' : 'Save'}
+          </AppButton>
           <AppDropdownMenu>
             <AppDropdownMenuTrigger asChild>
               <AppButton
@@ -155,6 +193,12 @@ const NewPostPage: React.FC = () => {
           </AppButton>
         </div>
       </div>
+
+      {saveError && (
+        <div className="px-8 py-2 text-xs text-destructive bg-destructive/10 border-b border-destructive/20">
+          {saveError}
+        </div>
+      )}
 
       <div className="flex flex-1 overflow-hidden bg-background">
         {/* Main content */}
