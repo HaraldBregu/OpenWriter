@@ -7,10 +7,17 @@ import type { RootState } from './index'
 
 export type OutputType = 'posts' | 'writings' | 'notes' | 'messages'
 
+/**
+ * Flat, Redux-friendly representation of an output item.
+ * The preload bridge returns a nested OutputFile shape (metadata sub-object);
+ * we flatten that on the way into the store for ergonomic selector usage.
+ */
 export interface OutputItem {
   /** Folder name used as the stable identifier (YYYY-MM-DD_HHmmss) */
   id: string
   type: OutputType
+  /** Filesystem path (kept for reference / future deep-linking) */
+  path: string
   title: string
   /** Markdown content stored in DATA.md */
   content: string
@@ -54,18 +61,69 @@ const initialState: OutputState = {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Map the preload bridge's nested OutputFile shape to our flat OutputItem.
+ * Using unknown + type assertion because window.api types live in the preload
+ * declaration file and may not be imported here.
+ */
+function mapOutputFileToItem(file: {
+  id: string
+  type: OutputType
+  path: string
+  metadata: {
+    title: string
+    type: OutputType
+    category: string
+    tags: string[]
+    visibility: string
+    provider: string
+    model: string
+    temperature?: number
+    maxTokens?: number | null
+    reasoning?: boolean
+    createdAt: string
+    updatedAt: string
+  }
+  content: string
+  savedAt: number
+}): OutputItem {
+  return {
+    id: file.id,
+    type: file.type,
+    path: file.path,
+    content: file.content,
+    savedAt: file.savedAt,
+    title: file.metadata.title,
+    category: file.metadata.category,
+    tags: file.metadata.tags,
+    visibility: file.metadata.visibility,
+    provider: file.metadata.provider,
+    model: file.metadata.model,
+    temperature: file.metadata.temperature ?? 0.7,
+    maxTokens: file.metadata.maxTokens ?? null,
+    reasoning: file.metadata.reasoning ?? false,
+    createdAt: file.metadata.createdAt,
+    updatedAt: file.metadata.updatedAt
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Async Thunks
 // ---------------------------------------------------------------------------
 
 /**
  * Load all output items from the workspace via the preload bridge.
+ * Maps the nested OutputFile shape to the flat OutputItem shape.
  */
-export const loadOutputItems = createAsyncThunk(
+export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValue: string }>(
   'output/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const items = await window.api.outputLoadAll()
-      return items as OutputItem[]
+      const files = await window.api.outputLoadAll()
+      return files.map(mapOutputFileToItem)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load output items'
       return rejectWithValue(message)
@@ -74,14 +132,39 @@ export const loadOutputItems = createAsyncThunk(
 )
 
 /**
- * Save a new output item to the workspace and add it to state.
+ * Save a new output item to the workspace.
+ * The bridge's outputSave only returns { id, path, savedAt }, so we
+ * immediately fetch the full record with outputLoadOne to get all fields.
  */
-export const saveOutputItem = createAsyncThunk(
+export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, { rejectValue: string }>(
   'output/save',
-  async (input: SaveOutputItemInput, { rejectWithValue }) => {
+  async (input, { rejectWithValue }) => {
     try {
-      const saved = await window.api.outputSave(input)
-      return saved as OutputItem
+      // Build the bridge-compatible payload: content + metadata record
+      const { content, type, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
+
+      const saved = await window.api.outputSave({
+        type,
+        content,
+        metadata: {
+          title,
+          category: category ?? '',
+          tags: tags ?? [],
+          visibility: visibility ?? 'private',
+          provider: provider ?? 'manual',
+          model: model ?? '',
+          temperature: temperature ?? 0.7,
+          maxTokens: maxTokens ?? null,
+          reasoning: reasoning ?? false
+        }
+      })
+
+      // Reload the full item so we have a complete OutputItem in state
+      const full = await window.api.outputLoadOne({ type, id: saved.id })
+      if (!full) {
+        return rejectWithValue('Saved item could not be retrieved after write')
+      }
+      return mapOutputFileToItem(full)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save output item'
       return rejectWithValue(message)
@@ -90,11 +173,16 @@ export const saveOutputItem = createAsyncThunk(
 )
 
 /**
- * Delete an output item from the workspace and remove it from state.
+ * Delete an output item from the workspace and return the { type, id } pair
+ * so the reducer can remove it from state.
  */
-export const deleteOutputItem = createAsyncThunk(
+export const deleteOutputItem = createAsyncThunk<
+  { type: OutputType; id: string },
+  { type: OutputType; id: string },
+  { rejectValue: string }
+>(
   'output/delete',
-  async (params: { type: OutputType; id: string }, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
       await window.api.outputDelete(params)
       return params
@@ -121,7 +209,7 @@ export const outputSlice = createSlice({
     },
 
     /**
-     * Prepend a single item (optimistic add or external-watcher creation).
+     * Prepend a single item (optimistic add or file-watcher creation).
      */
     addItem(state, action: PayloadAction<OutputItem>) {
       state.items.unshift(action.payload)
@@ -182,7 +270,7 @@ export const outputSlice = createSlice({
       })
       .addCase(loadOutputItems.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload as string
+        state.error = action.payload ?? 'Unknown error loading output items'
       })
 
     // saveOutputItem
@@ -198,7 +286,7 @@ export const outputSlice = createSlice({
       })
       .addCase(saveOutputItem.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload as string
+        state.error = action.payload ?? 'Unknown error saving output item'
       })
 
     // deleteOutputItem
@@ -217,7 +305,7 @@ export const outputSlice = createSlice({
       )
       .addCase(deleteOutputItem.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload as string
+        state.error = action.payload ?? 'Unknown error deleting output item'
       })
   }
 })
