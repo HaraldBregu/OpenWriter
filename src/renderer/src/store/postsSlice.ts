@@ -162,12 +162,42 @@ export const postsSlice = createSlice({
       (action): action is PayloadAction<OutputItem[]> =>
         action.type === 'output/loadAll/fulfilled',
       (state, action) => {
+        const diskPosts = action.payload.filter((item) => item.type === 'posts')
+        const diskOutputIds = new Set(diskPosts.map((item) => item.id))
+
+        // 1. Remove posts whose output folder no longer exists on disk
+        state.posts = state.posts.filter(
+          (p) => !p.outputId || diskOutputIds.has(p.outputId)
+        )
+
+        // 2. Update posts whose disk content/title changed
+        for (const item of diskPosts) {
+          const existing = state.posts.find((p) => p.outputId === item.id)
+          if (existing) {
+            existing.title = item.title
+            existing.category = item.category
+            existing.tags = item.tags
+            existing.visibility = item.visibility
+            existing.updatedAt = new Date(item.updatedAt).getTime()
+            // Rebuild blocks only if content actually changed
+            const currentContent = existing.blocks.map((b) => b.content).join('\n\n')
+            if (currentContent !== item.content) {
+              existing.blocks = item.content
+                ? item.content
+                    .split('\n\n')
+                    .filter(Boolean)
+                    .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
+                : [{ id: crypto.randomUUID(), content: '' }]
+            }
+          }
+        }
+
+        // 3. Add posts that don't exist in Redux yet
         const existingOutputIds = new Set(
           state.posts.map((p) => p.outputId).filter(Boolean) as string[]
         )
-
-        const newPosts: Post[] = action.payload
-          .filter((item) => item.type === 'posts' && !existingOutputIds.has(item.id))
+        const newPosts: Post[] = diskPosts
+          .filter((item) => !existingOutputIds.has(item.id))
           .map((item): Post => ({
             id: crypto.randomUUID(),
             title: item.title,
@@ -186,7 +216,6 @@ export const postsSlice = createSlice({
           }))
 
         if (newPosts.length > 0) {
-          // Append at the end so in-session drafts (newest) remain at the top
           state.posts.push(...newPosts)
         }
       }
