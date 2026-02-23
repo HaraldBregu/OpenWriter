@@ -8,6 +8,7 @@
   "hooks": {
     "PostToolUse": [
       {
+        "matcher": "Write|Edit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
