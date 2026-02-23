@@ -165,6 +165,14 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     }
   }, [sectionId])
 
+  // Auto-load the most recent file on mount
+  useEffect(() => {
+    if (files.length > 0 && !loadedConversation && !activeFileId) {
+      const mostRecent = [...files].sort((a, b) => b.savedAt - a.savedAt)[0]
+      handleFileSelect(mostRecent)
+    }
+  }, [files]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Get the latest assistant message for display
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
