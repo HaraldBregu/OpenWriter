@@ -13,6 +13,9 @@ import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
 import { useAppSelector } from '@/store'
 import { selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
 import type { PersonalityFile } from '@/store/personalityFilesSlice'
+import { PersonalitySettingsSheet, DEFAULT_INFERENCE_SETTINGS } from './PersonalitySettingsSheet'
+import type { InferenceSettings } from './PersonalitySettingsSheet'
+import { getDefaultModelId } from '@/config/aiProviders'
 
 export interface PersonalitySimpleLayoutProps {
   sectionId: string
@@ -36,6 +39,11 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   const [inputValue, setInputValue] = useState('')
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const [loadedConversation, setLoadedConversation] = useState<PersonalityFile | null>(null)
+  const [inferenceSettings, setInferenceSettings] = useState<InferenceSettings>(() => ({
+    ...DEFAULT_INFERENCE_SETTINGS,
+    providerId: providerId || 'openai',
+    modelId: getDefaultModelId(providerId || 'openai')
+  }))
   const contentRef = useRef<HTMLDivElement>(null)
 
   // Get files for this section for the dropdown
@@ -53,7 +61,11 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
     latestResponse,
     isSaving,
     lastSaveError
-  } = usePersonalityTask(sectionId, systemPrompt, providerId)
+  } = usePersonalityTask(sectionId, systemPrompt, inferenceSettings.providerId, {
+    modelId: inferenceSettings.modelId,
+    temperature: inferenceSettings.temperature,
+    maxTokens: inferenceSettings.maxTokens
+  })
 
   // Auto-scroll content to bottom when streaming
   useEffect(() => {
@@ -127,22 +139,13 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       ? latestResponse
       : (latestAssistantMessage?.content || '')
 
-  const isViewingLoadedConversation = loadedConversation !== null
-
   return (
     <div className="flex h-full flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
           <div className="flex items-center gap-3">
             {icon}
-            <div>
-              <h1 className="text-xl font-semibold">{title}</h1>
-              {isViewingLoadedConversation && loadedConversation && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Viewing: {loadedConversation.metadata.title || 'Untitled Conversation'}
-                </p>
-              )}
-            </div>
+            <h1 className="text-xl font-semibold">{title}</h1>
           </div>
 
           <div className="flex items-center gap-3">
@@ -157,7 +160,11 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                   >
                     <span className="truncate">
                       {loadedConversation
-                        ? loadedConversation.metadata.title || 'Untitled Conversation'
+                        ? new Date(loadedConversation.savedAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })
                         : 'Version'}
                     </span>
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
@@ -167,7 +174,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                   <div className="max-h-[400px] overflow-y-auto">
                     {files.map((file) => {
                       const isActive = file.id === activeFileId
-                      const formattedDate = new Date(file.savedAt).toLocaleDateString('en-US', {
+                      const formattedDateTime = new Date(file.savedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
@@ -179,19 +186,14 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                         <AppDropdownMenuItem
                           key={file.id}
                           onClick={() => handleFileSelect(file)}
-                          className="flex flex-col items-start gap-1 py-2"
+                          className="flex items-center justify-between gap-2 py-2"
                         >
-                          <div className="flex w-full items-center justify-between gap-2">
-                            <span className="truncate font-medium">
-                              {file.metadata.title || 'Untitled Conversation'}
-                            </span>
-                            {isActive && (
-                              <Check className="h-4 w-4 shrink-0 text-primary" />
-                            )}
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {formattedDate}
+                          <span className="truncate text-sm">
+                            {formattedDateTime}
                           </span>
+                          {isActive && (
+                            <Check className="h-4 w-4 shrink-0 text-primary" />
+                          )}
                         </AppDropdownMenuItem>
                       )
                     })}
@@ -199,6 +201,12 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                 </AppDropdownMenuContent>
               </AppDropdownMenu>
             )}
+
+            {/* Settings Gear */}
+            <PersonalitySettingsSheet
+              settings={inferenceSettings}
+              onSettingsChange={setInferenceSettings}
+            />
 
             {/* Auto-save status */}
             {isSaving && (

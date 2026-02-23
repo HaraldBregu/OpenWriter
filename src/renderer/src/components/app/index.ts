@@ -78,6 +78,10 @@ export {
   AppDropdownMenuRadioGroup
 } from './AppDropdownMenu'
 
+export { AppSlider } from './AppSlider'
+
+export { AppSwitch } from './AppSwitch'
+
 export {
   AppSidebar,
   AppSidebarContent,

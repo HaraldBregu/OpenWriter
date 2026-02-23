@@ -10,11 +10,9 @@ import type { WorkspaceService } from './workspace'
  * Metadata stored in frontmatter of personality conversation files
  */
 export interface PersonalityFileMetadata {
-  sectionId: string
-  title?: string
-  createdAt: number
-  updatedAt: number
-  tags?: string[]
+  title: string
+  provider: string
+  model: string
   [key: string]: unknown
 }
 
@@ -151,10 +149,9 @@ export class PersonalityFilesService implements Disposable {
 
     // Prepare metadata
     const metadata: PersonalityFileMetadata = {
-      sectionId: input.sectionId,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-      ...input.metadata
+      title: input.metadata?.title || input.sectionId,
+      provider: input.metadata?.provider || 'openai',
+      model: input.metadata?.model || 'unknown',
     }
 
     // Create markdown with frontmatter

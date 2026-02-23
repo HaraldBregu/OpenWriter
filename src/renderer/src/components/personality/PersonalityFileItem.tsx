@@ -45,7 +45,6 @@ export const PersonalityFileItem: React.FC<PersonalityFileItemProps> = React.mem
 
   const title = file.metadata.title || 'Untitled Conversation'
   const timeAgo = formatTimeAgo(file.savedAt)
-  const messageCount = typeof file.metadata.messageCount === 'number' ? file.metadata.messageCount : null
 
   return (
     <button
@@ -68,12 +67,6 @@ export const PersonalityFileItem: React.FC<PersonalityFileItemProps> = React.mem
 
           <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
             <span>{timeAgo}</span>
-            {messageCount && (
-              <>
-                <span>•</span>
-                <span>{messageCount} messages</span>
-              </>
-            )}
           </div>
         </div>
 

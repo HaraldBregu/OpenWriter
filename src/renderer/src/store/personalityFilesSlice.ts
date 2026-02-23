@@ -6,11 +6,9 @@ import type { RootState } from './index'
 // ---------------------------------------------------------------------------
 
 export interface PersonalityFileMetadata {
-  sectionId: string
-  title?: string
-  createdAt: number
-  updatedAt: number
-  tags?: string[]
+  title: string
+  provider: string
+  model: string
   [key: string]: unknown
 }
 

@@ -143,14 +143,24 @@ export class ChatAgent implements Agent {
       return
     }
 
+    // modelId from context overrides the store's selectedModel
+    const contextModelId = input.context?.modelId as string | undefined
     const modelName =
-      storeSettings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || DEFAULT_MODEL
+      contextModelId || storeSettings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || DEFAULT_MODEL
+
+    // temperature from context overrides default 0.7
+    const contextTemperature = input.context?.temperature as number | undefined
+    const temperature = contextTemperature ?? 0.7
+
+    // maxTokens from context (null / 0 = unlimited)
+    const contextMaxTokens = input.context?.maxTokens as number | undefined
+    const maxTokens = contextMaxTokens && contextMaxTokens > 0 ? contextMaxTokens : undefined
 
     const systemPrompt =
       (input.context?.systemPrompt as string | undefined) || DEFAULT_SYSTEM_PROMPT
 
     console.log(
-      `${LOG_PREFIX} Starting run ${runId} with provider=${providerId} model=${modelName} systemPrompt="${systemPrompt.substring(0, 50)}..."`
+      `${LOG_PREFIX} Starting run ${runId} with provider=${providerId} model=${modelName} temperature=${temperature} maxTokens=${maxTokens ?? 'unlimited'} systemPrompt="${systemPrompt.substring(0, 50)}..."`
     )
 
     yield { type: 'thinking', data: { runId, text: 'Connecting to OpenAI...' } }
@@ -161,7 +171,8 @@ export class ChatAgent implements Agent {
       apiKey,
       model: modelName,
       streaming: true,
-      ...(isReasoningModel(modelName) ? {} : { temperature: 0.7 })
+      ...(isReasoningModel(modelName) ? {} : { temperature }),
+      ...(maxTokens ? { maxTokens } : {})
     })
 
     // --- Build message chain -------------------------------------------------

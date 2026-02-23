@@ -17,11 +17,18 @@ interface TaskState {
   isSaving: boolean
   lastSaveError: string | null
   providerId: string
+  modelId: string | null
+}
+
+interface SubmitTaskOptions {
+  modelId?: string | null
+  temperature?: number
+  maxTokens?: number | null
 }
 
 interface PersonalityTaskContextValue {
   getTaskState: (sectionId: string) => TaskState
-  submitTask: (sectionId: string, prompt: string, systemPrompt: string, providerId: string) => Promise<void>
+  submitTask: (sectionId: string, prompt: string, systemPrompt: string, providerId: string, options?: SubmitTaskOptions) => Promise<void>
   cancelTask: (sectionId: string) => void
   /** Internal version counter -- hooks subscribe to this to trigger re-renders */
   version: number
@@ -40,7 +47,8 @@ const DEFAULT_TASK_STATE: TaskState = {
   runId: null,
   isSaving: false,
   lastSaveError: null,
-  providerId: 'openai'
+  providerId: 'openai',
+  modelId: null
 }
 
 // ---------------------------------------------------------------------------
@@ -113,32 +121,29 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
     updateTask(sectionId, { isSaving: true, lastSaveError: null })
 
     try {
-      // Generate title from first user message
-      const firstUserMessage = task.messages.find((m) => m.role === 'user')
-      const autoTitle = firstUserMessage
-        ? firstUserMessage.content.slice(0, 50) +
-          (firstUserMessage.content.length > 50 ? '...' : '')
-        : 'Untitled Conversation'
+      // Resolve model name: prefer explicit modelId from task, then fall back to store
+      let modelName = task.modelId || 'unknown'
+      if (modelName === 'unknown') {
+        try {
+          const settings = await window.api.storeGetModelSettings(task.providerId)
+          modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
+        } catch {
+          modelName = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
+        }
+      }
 
-      // Convert messages to markdown
-      const markdownContent = task.messages
-        .map((msg) => {
-          const role = msg.role === 'user' ? 'User' : 'Assistant'
-          const timestamp = new Date(msg.timestamp).toISOString()
-          return `## ${role} (${timestamp})\n\n${msg.content}\n`
-        })
-        .join('\n---\n\n')
+      // Get the last assistant response as content
+      const lastAssistant = [...task.messages].reverse().find((m) => m.role === 'assistant')
+      const markdownContent = lastAssistant?.content || ''
 
       // Save via IPC directly (not through Redux)
       await window.api.personalitySave({
         sectionId,
         content: markdownContent,
         metadata: {
-          title: autoTitle,
-          providerId: task.providerId,
-          messageCount: task.messages.length,
-          createdAt: task.messages[0]?.timestamp || Date.now(),
-          updatedAt: Date.now()
+          title: sectionId,
+          provider: task.providerId,
+          model: modelName
         }
       })
 
@@ -258,7 +263,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   )
 
   const submitTask = useCallback(
-    async (sectionId: string, prompt: string, systemPrompt: string, providerId: string) => {
+    async (sectionId: string, prompt: string, systemPrompt: string, providerId: string, options?: SubmitTaskOptions) => {
       const trimmed = prompt.trim()
       if (!trimmed) return
 
@@ -285,7 +290,8 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
         isStreaming: false,
         error: null,
         latestResponse: '',
-        providerId
+        providerId,
+        modelId: options?.modelId ?? null
       })
 
       try {
@@ -295,7 +301,10 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
             sessionId: sectionId,
             providerId,
             messages: conversationHistory,
-            systemPrompt
+            systemPrompt,
+            ...(options?.modelId ? { modelId: options.modelId } : {}),
+            ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
+            ...(options?.maxTokens ? { maxTokens: options.maxTokens } : {})
           }
         })
 
@@ -371,10 +380,17 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
  * @param systemPrompt - Optional system prompt passed through to inference
  * @param providerId - Optional AI provider id (defaults to "openai")
  */
+interface UsePersonalityTaskOptions {
+  modelId?: string | null
+  temperature?: number
+  maxTokens?: number | null
+}
+
 function usePersonalityTask(
   sectionId: string,
   systemPrompt?: string,
-  providerId?: string
+  providerId?: string,
+  options?: UsePersonalityTaskOptions
 ): {
   messages: AIMessage[]
   isLoading: boolean
@@ -397,8 +413,12 @@ function usePersonalityTask(
   const task = getTaskState(sectionId)
 
   const submit = useCallback(
-    (prompt: string) => submitTask(sectionId, prompt, systemPrompt || '', providerId || 'openai'),
-    [sectionId, systemPrompt, providerId, submitTask]
+    (prompt: string) => submitTask(sectionId, prompt, systemPrompt || '', providerId || 'openai', {
+      modelId: options?.modelId,
+      temperature: options?.temperature,
+      maxTokens: options?.maxTokens
+    }),
+    [sectionId, systemPrompt, providerId, options?.modelId, options?.temperature, options?.maxTokens, submitTask]
   )
 
   const cancel = useCallback(() => cancelTask(sectionId), [sectionId, cancelTask])

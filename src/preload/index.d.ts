@@ -510,11 +510,9 @@ declare global {
         sectionId: string
         path: string
         metadata: {
-          sectionId: string
-          title?: string
-          createdAt: number
-          updatedAt: number
-          tags?: string[]
+          title: string
+          provider: string
+          model: string
           [key: string]: unknown
         }
         content: string
@@ -528,11 +526,9 @@ declare global {
         sectionId: string
         path: string
         metadata: {
-          sectionId: string
-          title?: string
-          createdAt: number
-          updatedAt: number
-          tags?: string[]
+          title: string
+          provider: string
+          model: string
           [key: string]: unknown
         }
         content: string
