@@ -21,6 +21,7 @@ import { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { FileWatcherService } from '../services/file-watcher'
 import { DocumentsWatcherService } from '../services/documents-watcher'
 import { PersonalityFilesService } from '../services/personality-files'
+import { OutputFilesService } from '../services/output-files'
 
 export interface WindowContextConfig {
   window: BrowserWindow
