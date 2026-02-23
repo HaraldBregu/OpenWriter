@@ -166,7 +166,7 @@ interface PipelineActiveRun {
   startedAt: number
 }
 
-type OutputType = 'posts' | 'writings' | 'notes' | 'messages'
+type OutputType = 'posts' | 'writings'
 
 interface OutputFileMetadata {
   title: string
@@ -631,7 +631,7 @@ declare global {
         } | null
         timestamp: number
       }) => void) => () => void
-      // Output - File management for posts, writings, notes, messages
+      // Output - File management for posts, writings
       outputSave: (input: {
         type: string
         content: string

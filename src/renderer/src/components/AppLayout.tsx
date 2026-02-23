@@ -44,8 +44,6 @@ import {
 import logoIcon from "@resources/icons/icon.png";
 import {
   PenLine,
-  StickyNote,
-  MessageSquare,
   FolderOpen,
   Settings,
   User,
@@ -81,16 +79,9 @@ interface AppLayoutProps {
 const quickCreateItems = [
   { title: "New Post", icon: PlusCircle, url: "/new/post", shortcut: "⌘N" },
   { title: "New Writing", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
-  { title: "New Note", icon: StickyNote, url: "/new/note", shortcut: "⌘⇧N" },
-  {
-    title: "New Message",
-    icon: MessageSquare,
-    url: "/new/message",
-    shortcut: "⌘M",
-  },
 ];
 
-const topNavSections = ["Posts", "Writing", "Notes", "Messages"];
+const topNavSections = ["Posts", "Writing"];
 
 const personalityItems = [
   { title: "Emotional Depth", icon: Heart, slug: "emotional-depth" },
@@ -214,8 +205,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: false,
     Writing: false,
-    Notes: false,
-    Messages: false,
     Knowledge: false,
     Personality: false,
   });
@@ -401,7 +390,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
                   <AppSidebarSeparator className="my-1" />
 
-                  {/* Posts, Writing, Notes, Messages — collapsible section headers */}
+                  {/* Posts, Writing — collapsible section headers */}
                   {topNavSections.map((section) => {
                     const isOpen = sectionsOpen[section];
                     const isPosts = section === "Posts";
@@ -598,7 +587,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   usePostsLoader(); // Load posts from workspace on app startup
   usePostsFileWatcher(); // Listen for external file changes in posts directory
   usePersonalityFiles(); // Load personality files from workspace on app startup
-  useOutputFiles(); // Load output files (posts, writings, notes, messages) from workspace
+  useOutputFiles(); // Load output files (posts, writings) from workspace
 
   return (
     <div className="flex flex-col h-screen">

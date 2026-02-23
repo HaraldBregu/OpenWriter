@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   Newspaper,
   PenLine,
-  StickyNote,
-  MessageSquare,
   FolderOpen,
   Puzzle,
   ArrowRight,
@@ -32,27 +30,11 @@ const categories = [
     requiresPostCreation: true
   },
   {
-    icon: StickyNote,
-    label: 'Notes',
-    description: 'Capture quick thoughts',
-    route: '/new/note',
-    accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-    requiresPostCreation: false
-  },
-  {
     icon: PenLine,
     label: 'Writing',
     description: 'Start a blank document',
     route: '/new/writing',
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-    requiresPostCreation: false
-  },
-  {
-    icon: MessageSquare,
-    label: 'Messages',
-    description: 'View conversations',
-    route: '/new/message',
-    accent: 'bg-green-500/10 text-green-600 dark:text-green-400',
     requiresPostCreation: false
   }
 ]
@@ -63,7 +45,6 @@ const categories = [
 
 const recentItems = [
   { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing', requiresPostCreation: false },
-  { icon: StickyNote, label: 'Product Ideas', meta: 'Yesterday', route: '/new/note', requiresPostCreation: false },
   { icon: Newspaper, label: 'Release Announcement', meta: '3 days ago', route: '/new/post', requiresPostCreation: true },
   { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local', requiresPostCreation: false }
 ]
@@ -282,9 +263,9 @@ const HomePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Categories: Posts, Notes, Writing, Messages */}
+        {/* Categories */}
         <section className="space-y-3">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3">
             {categories.map((cat) => (
               <CategoryCard key={cat.label} {...cat} />
             ))}
@@ -365,7 +346,7 @@ const HomePage: React.FC = () => {
           <div>
             <p className="text-sm font-medium text-foreground">Tip</p>
             <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-              Use the sidebar to navigate between Posts, Writing, Notes, and Messages.
+              Use the sidebar to navigate between Posts and Writing.
               Press the menu icon in the title bar to toggle the sidebar.
             </p>
           </div>

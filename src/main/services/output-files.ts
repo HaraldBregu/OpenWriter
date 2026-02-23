@@ -13,10 +13,10 @@ import type { WorkspaceService } from './workspace'
  * Valid output content types.
  * Each type maps to a subdirectory under <workspace>/output/.
  */
-export type OutputType = 'posts' | 'writings' | 'notes' | 'messages'
+export type OutputType = 'posts' | 'writings'
 
 /** Exhaustive list of valid output types for runtime validation. */
-export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['posts', 'writings', 'notes', 'messages'] as const
+export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['posts', 'writings'] as const
 
 /**
  * Metadata stored in config.json of each output entry folder.

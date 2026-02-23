@@ -5,7 +5,7 @@ import type { RootState } from './index'
 // Types
 // ---------------------------------------------------------------------------
 
-export type OutputType = 'posts' | 'writings' | 'notes' | 'messages'
+export type OutputType = 'posts' | 'writings'
 
 /**
  * Flat, Redux-friendly representation of an output item.
@@ -457,8 +457,6 @@ export const selectOutputItemsCountByType = createSelector(
   (items): Record<OutputType, number> => ({
     posts: 0,
     writings: 0,
-    notes: 0,
-    messages: 0,
     ...items.reduce<Partial<Record<OutputType, number>>>((acc, item) => {
       acc[item.type] = (acc[item.type] ?? 0) + 1
       return acc

@@ -28,8 +28,6 @@ const ClipboardPage = lazy(() => import('./pages/ClipboardPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const NewPostPage = lazy(() => import('./pages/NewPostPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
-const NewNotePage = lazy(() => import('./pages/NewNotePage'))
-const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
 const EmotionalDepthPage = lazy(() => import('./pages/personality/EmotionalDepthPage'))
@@ -89,8 +87,6 @@ const App: React.FC = () => {
                         <Route path="/new/post" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
-                        <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
-                        <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
                         <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
                         <Route path="/directories" element={<RouteWrapper><DirectoriesPage /></RouteWrapper>} />
                         <Route path="/personality/emotional-depth" element={<RouteWrapper><EmotionalDepthPage /></RouteWrapper>} />

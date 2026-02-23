@@ -1023,7 +1023,7 @@ const api = {
             ipcRenderer.removeListener('personality:section-config-changed', handler)
         }
     },
-    // Output - File management for posts, writings, notes, messages
+    // Output - File management for posts, writings
     outputSave: (input: {
         type: string
         content: string
