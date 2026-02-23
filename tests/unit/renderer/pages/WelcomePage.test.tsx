@@ -1,6 +1,14 @@
 /**
- * Smoke test for WelcomePage.
- * Verifies the page renders its main elements: logo, title, action buttons.
+ * Tests for WelcomePage.
+ *
+ * The page shows:
+ *  - A TitleBar with the app title
+ *  - A hero section (logo, app name, plan info)
+ *  - An "Open Workspace" card with a Browse button
+ *  - A Recent Projects section (conditionally shown when projects exist)
+ *
+ * Strategy: render with a minimal Redux store and mock all window.api calls
+ * so tests are pure React/DOM assertions without real IPC.
  */
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -12,25 +20,30 @@ import chatReducer from '../../../../src/renderer/src/store/chatSlice'
 import postsReducer from '../../../../src/renderer/src/store/postsSlice'
 import directoriesReducer from '../../../../src/renderer/src/store/directoriesSlice'
 
-// Mock lucide-react
+// Mock lucide-react icons used in this page
 jest.mock('lucide-react', () => {
-  const icons = [
-    'FolderOpen', 'GitBranch', 'Terminal', 'Menu', 'PanelLeft', 'Minus', 'X', 'CloudDownload', 'Clock'
-  ]
+  const icons = ['FolderOpen', 'Clock', 'X']
   const mocks: Record<string, (props: Record<string, unknown>) => React.ReactElement> = {}
   for (const name of icons) {
-    mocks[name] = (props: Record<string, unknown>) => React.createElement('svg', { ...props, 'data-testid': `icon-${name}` })
+    mocks[name] = (props: Record<string, unknown>) =>
+      React.createElement('svg', { ...props, 'data-testid': `icon-${name}` })
   }
   return mocks
 })
 
-// Mock the TitleBar component since it uses window.api
+// Mock TitleBar — it calls window.api internally
 jest.mock('../../../../src/renderer/src/components/TitleBar', () => ({
-  TitleBar: ({ title }: { title?: string }) => React.createElement('div', { 'data-testid': 'title-bar' }, title || 'TitleBar')
+  TitleBar: ({ title }: { title?: string }) =>
+    React.createElement('div', { 'data-testid': 'title-bar' }, title || 'TitleBar')
 }))
 
-// Mock the logo import
+// Mock logo import (handled as a static asset)
 jest.mock('@resources/icons/icon.png', () => 'test-logo.png')
+
+// Mock usePostsLoader so the page doesn't try to load real posts
+jest.mock('../../../../src/renderer/src/hooks/usePostsLoader', () => ({
+  reloadPostsFromWorkspace: jest.fn().mockResolvedValue(undefined)
+}))
 
 import WelcomePage from '../../../../src/renderer/src/pages/WelcomePage'
 
@@ -54,16 +67,20 @@ function renderWelcomePage() {
 
 describe('WelcomePage', () => {
   beforeEach(() => {
+    // Default: no recent projects, directory exists
     ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([])
-    ;(window.api.workspaceDirectoryExists as jest.Mock) = jest.fn().mockResolvedValue(true)
+    ;(window.api.workspaceDirectoryExists as jest.Mock).mockResolvedValue(true)
+    ;(window.api.workspaceSelectFolder as jest.Mock).mockResolvedValue(null)
+    ;(window.api.workspaceSetCurrent as jest.Mock).mockResolvedValue(undefined)
   })
 
-  it('should render the app title', () => {
+  // ---- Hero section --------------------------------------------------------
+
+  it('should render the app title in the heading', () => {
     renderWelcomePage()
 
-    // "Tesseract AI" appears in both TitleBar and the h1 heading
-    const elements = screen.getAllByText('Tesseract AI')
-    expect(elements.length).toBeGreaterThanOrEqual(1)
+    // h1 heading
+    expect(screen.getByRole('heading', { name: /Tesseract AI/i })).toBeInTheDocument()
   })
 
   it('should render the title bar', () => {
@@ -72,41 +89,53 @@ describe('WelcomePage', () => {
     expect(screen.getByTestId('title-bar')).toBeInTheDocument()
   })
 
-  it('should render the Open Folder button', () => {
+  it('should render the app logo', () => {
     renderWelcomePage()
 
-    expect(screen.getByText('Open Folder')).toBeInTheDocument()
+    const img = screen.getByAltText('Tesseract AI')
+    expect(img).toBeInTheDocument()
+    expect(img).toHaveAttribute('src', 'test-logo.png')
   })
 
-  it('should render disabled Clone Repo button', () => {
-    renderWelcomePage()
-
-    expect(screen.getByText('Clone Repo')).toBeInTheDocument()
-  })
-
-  it('should render disabled Connect via SSH button', () => {
-    renderWelcomePage()
-
-    expect(screen.getByText('Connect via SSH')).toBeInTheDocument()
-  })
-
-  it('should render the plan text', () => {
+  it('should show Free Plan indicator', () => {
     renderWelcomePage()
 
     expect(screen.getByText(/Free Plan/)).toBeInTheDocument()
-    expect(screen.getByText('Upgrade')).toBeInTheDocument()
+    expect(screen.getByText(/Upgrade to Pro/)).toBeInTheDocument()
   })
 
-  it('should load recent projects on mount', () => {
+  // ---- Open Workspace card -------------------------------------------------
+
+  it('should render the Open Workspace heading', () => {
+    renderWelcomePage()
+
+    expect(screen.getByRole('heading', { name: /Open Workspace/i })).toBeInTheDocument()
+  })
+
+  it('should render the Browse button', () => {
+    renderWelcomePage()
+
+    expect(screen.getByText('Browse...')).toBeInTheDocument()
+  })
+
+  it('should call workspaceGetRecent on mount', () => {
     renderWelcomePage()
 
     expect(window.api.workspaceGetRecent).toHaveBeenCalled()
   })
 
+  it('should NOT show Recent Projects section when the list is empty', () => {
+    renderWelcomePage()
+
+    expect(screen.queryByText(/Recent Projects/i)).not.toBeInTheDocument()
+  })
+
+  // ---- Recent projects section (async) ------------------------------------
+
   it('should display recent projects when available', async () => {
     ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
       { path: '/Users/test/projects/my-app', lastOpened: Date.now() },
-      { path: '/Users/test/projects/other', lastOpened: Date.now() - 1000 }
+      { path: '/Users/test/projects/other', lastOpened: Date.now() - 60_000 }
     ])
 
     renderWelcomePage()
@@ -119,19 +148,26 @@ describe('WelcomePage', () => {
     expect(screen.getByText(/Recent Projects/i)).toBeInTheDocument()
   })
 
-  it('should not show recent projects section when list is empty', () => {
+  it('should show (Not Found) for projects whose directory no longer exists', async () => {
+    ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
+      { path: '/Users/test/projects/gone', lastOpened: Date.now() }
+    ])
+    ;(window.api.workspaceDirectoryExists as jest.Mock).mockResolvedValue(false)
+
     renderWelcomePage()
 
-    expect(screen.queryByText(/Recent Projects/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/Not Found/i)).toBeInTheDocument()
+    })
   })
 
-  it('should call workspaceSelectFolder when Open Folder is clicked', async () => {
-    ;(window.api.workspaceSelectFolder as jest.Mock).mockResolvedValue(null)
-    const user = userEvent.setup()
+  // ---- Browse button interaction -------------------------------------------
 
+  it('should call workspaceSelectFolder when Browse button is clicked', async () => {
+    const user = userEvent.setup()
     renderWelcomePage()
 
-    await user.click(screen.getByText('Open Folder'))
+    await user.click(screen.getByText('Browse...'))
 
     expect(window.api.workspaceSelectFolder).toHaveBeenCalled()
   })

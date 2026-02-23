@@ -1,17 +1,33 @@
 /**
- * Tests for BrainFilesService.
- * Handles saving and loading brain conversation files to workspace.
+ * Tests for PersonalityFilesService.
+ *
+ * NOTE: This file was originally generated as brain-files.test.ts referencing
+ * a service that no longer exists. It has been updated to test
+ * PersonalityFilesService, which manages personality conversation files stored
+ * in the workspace using a folder-based format (config.json + DATA.md).
+ *
+ * Covers:
+ *  - save(): creates folders, writes config.json and DATA.md
+ *  - save(): throws when no workspace is selected
+ *  - loadAll(): reads folders and returns PersonalityFile objects
+ *  - loadAll(): handles missing personality directory gracefully
+ *  - loadOne(): loads a single file by sectionId + id
+ *  - loadOne(): returns null when file/folder doesn't exist
+ *  - delete(): removes the personality folder
+ *  - delete(): tolerates ENOENT errors
  */
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import { BrainFilesService } from '../../../../src/main/services/brain-files'
+import { PersonalityFilesService } from '../../../../src/main/services/personality-files'
 import { EventBus } from '../../../../src/main/core/EventBus'
 
-// Mock fs/promises
+// ---------------------------------------------------------------------------
+// Module mocks
+// ---------------------------------------------------------------------------
+
 jest.mock('fs/promises')
 const mockFs = fs as jest.Mocked<typeof fs>
 
-// Mock chokidar
 jest.mock('chokidar', () => ({
   watch: jest.fn().mockReturnValue({
     on: jest.fn().mockReturnThis(),
@@ -19,351 +35,251 @@ jest.mock('chokidar', () => ({
   })
 }))
 
-describe('BrainFilesService', () => {
-  let service: BrainFilesService
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const WORKSPACE = '/test/workspace'
+const SECTION = 'emotional-depth'
+
+function makeWorkspaceService(workspacePath: string | null = WORKSPACE) {
+  return {
+    getCurrent: jest.fn().mockReturnValue(workspacePath),
+    setCurrent: jest.fn(),
+    getRecent: jest.fn().mockReturnValue([]),
+    clear: jest.fn(),
+    removeRecent: jest.fn(),
+    addRecent: jest.fn()
+  }
+}
+
+/**
+ * Build a minimal valid config.json string.
+ */
+function buildConfigJson(overrides?: Partial<{
+  title: string
+  provider: string
+  model: string
+}>) {
+  return JSON.stringify({
+    title: overrides?.title ?? 'Test Conversation',
+    provider: overrides?.provider ?? 'openai',
+    model: overrides?.model ?? 'gpt-4o',
+    temperature: 0.7,
+    maxTokens: 2048,
+    reasoning: false,
+    createdAt: new Date().toISOString()
+  }, null, 2)
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+describe('PersonalityFilesService', () => {
+  let service: PersonalityFilesService
   let eventBus: EventBus
-  const mockWorkspacePath = '/test/workspace'
-  const mockWindowId = 1
+  let mockWorkspace: ReturnType<typeof makeWorkspaceService>
 
   beforeEach(() => {
     jest.clearAllMocks()
     eventBus = new EventBus()
-    service = new BrainFilesService(eventBus, mockWindowId)
-    service.setWorkspace(mockWorkspacePath)
+    mockWorkspace = makeWorkspaceService()
+    service = new PersonalityFilesService(mockWorkspace as any, eventBus)
 
-    // Default mock implementations
-    mockFs.mkdir.mockResolvedValue(undefined)
-    mockFs.writeFile.mockResolvedValue(undefined)
-    mockFs.readFile.mockResolvedValue('')
-    mockFs.readdir.mockResolvedValue([])
-    mockFs.unlink.mockResolvedValue(undefined)
-    mockFs.stat.mockResolvedValue({ isDirectory: () => true } as any)
+    // Default fs mocks — happy path
+    mockFs.mkdir.mockResolvedValue(undefined as any)
+    mockFs.writeFile.mockResolvedValue(undefined as any)
+    mockFs.readFile.mockResolvedValue(buildConfigJson() as any)
+    mockFs.readdir.mockResolvedValue([] as any)
+    mockFs.unlink.mockResolvedValue(undefined as any)
+    mockFs.stat.mockResolvedValue({ isDirectory: () => true, isFile: () => false, mtimeMs: Date.now() } as any)
+    mockFs.rm.mockResolvedValue(undefined as any)
   })
 
   afterEach(async () => {
-    await service.destroy()
+    await service.destroy?.()
   })
+
+  // ---- save ----------------------------------------------------------------
 
   describe('save', () => {
-    it('should save a brain file with metadata', async () => {
-      const input = {
-        sectionId: 'principles',
-        content: 'Test conversation content',
-        metadata: {
-          title: 'Test Conversation',
-          tags: ['ai', 'test']
-        }
-      }
-
-      const result = await service.save(input)
+    it('should create the section directory and write config.json + DATA.md', async () => {
+      const result = await service.save({
+        sectionId: SECTION,
+        content: 'Personality content here',
+        metadata: { title: 'My Conv', provider: 'openai', model: 'gpt-4o' }
+      })
 
       expect(result.id).toBeDefined()
-      expect(result.path).toContain('brain/principles')
-      expect(result.path).toEndWith('.md')
+      expect(result.path).toContain('personality')
+      expect(result.path).toContain(SECTION)
       expect(result.savedAt).toBeDefined()
 
+      // Should have created the folder and written two files
       expect(mockFs.mkdir).toHaveBeenCalled()
-      expect(mockFs.writeFile).toHaveBeenCalled()
+      expect(mockFs.writeFile).toHaveBeenCalledTimes(2)
 
-      // Check the written content includes frontmatter
-      const writeCall = (mockFs.writeFile as jest.Mock).mock.calls[0]
-      const content = writeCall[1] as string
-      expect(content).toContain('---')
-      expect(content).toContain('sectionId: principles')
-      expect(content).toContain('title: Test Conversation')
-      expect(content).toContain('Test conversation content')
-    })
-
-    it('should create brain directory if it does not exist', async () => {
-      mockFs.stat.mockRejectedValueOnce({ code: 'ENOENT' } as any)
-
-      await service.save({
-        sectionId: 'principles',
-        content: 'Test',
-        metadata: {}
-      })
-
-      expect(mockFs.mkdir).toHaveBeenCalledWith(
-        expect.stringContaining('brain/principles'),
-        { recursive: true }
+      // DATA.md should contain the raw content
+      const dataMdCall = (mockFs.writeFile as jest.Mock).mock.calls.find(
+        (c: unknown[]) => (c[0] as string).endsWith('DATA.md')
       )
+      expect(dataMdCall).toBeDefined()
+      expect(dataMdCall![1]).toBe('Personality content here')
+
+      // config.json should contain the metadata
+      const configCall = (mockFs.writeFile as jest.Mock).mock.calls.find(
+        (c: unknown[]) => (c[0] as string).endsWith('config.json')
+      )
+      expect(configCall).toBeDefined()
+      const configData = JSON.parse(configCall![1] as string)
+      expect(configData.title).toBe('My Conv')
+      expect(configData.provider).toBe('openai')
     })
 
-    it('should throw error if workspace is not set', async () => {
-      const serviceWithoutWorkspace = new BrainFilesService(eventBus, mockWindowId)
+    it('should throw when no workspace is selected', async () => {
+      mockWorkspace.getCurrent.mockReturnValue(null)
 
       await expect(
-        serviceWithoutWorkspace.save({
-          sectionId: 'principles',
-          content: 'Test',
-          metadata: {}
-        })
-      ).rejects.toThrow('No workspace path set')
+        service.save({ sectionId: SECTION, content: 'test', metadata: {} })
+      ).rejects.toThrow(/No workspace/)
     })
 
-    it('should include timestamps in metadata', async () => {
-      await service.save({
-        sectionId: 'principles',
-        content: 'Test',
-        metadata: {}
-      })
+    it('should include a createdAt timestamp in the config', async () => {
+      await service.save({ sectionId: SECTION, content: 'test', metadata: { title: 'T', provider: 'x', model: 'y' } })
 
-      const writeCall = (mockFs.writeFile as jest.Mock).mock.calls[0]
-      const content = writeCall[1] as string
+      const configCall = (mockFs.writeFile as jest.Mock).mock.calls.find(
+        (c: unknown[]) => (c[0] as string).endsWith('config.json')
+      )
+      const config = JSON.parse(configCall![1] as string)
+      expect(config.createdAt).toBeDefined()
+      expect(new Date(config.createdAt).getTime()).not.toBeNaN()
+    })
 
-      expect(content).toContain('createdAt:')
-      expect(content).toContain('updatedAt:')
+    it('should generate a unique folder name per save', async () => {
+      const r1 = await service.save({ sectionId: SECTION, content: 'c1', metadata: { title: 'A', provider: 'x', model: 'y' } })
+      await new Promise((r) => setTimeout(r, 5)) // ensure distinct timestamps
+      const r2 = await service.save({ sectionId: SECTION, content: 'c2', metadata: { title: 'B', provider: 'x', model: 'y' } })
+
+      expect(r1.id).not.toBe(r2.id)
     })
   })
 
+  // ---- loadAll -------------------------------------------------------------
+
   describe('loadAll', () => {
-    it('should load all brain files from all sections', async () => {
-      const sections = ['principles', 'consciousness', 'memory', 'reasoning', 'perception']
-
-      // Mock directory structure
-      mockFs.stat.mockResolvedValue({ isDirectory: () => true } as any)
-      mockFs.readdir.mockImplementation((dirPath: any) => {
-        if (dirPath.includes('principles')) {
-          return Promise.resolve(['123.md', '456.md'] as any)
-        }
-        return Promise.resolve([] as any)
-      })
-
-      // Mock file content with frontmatter
-      mockFs.readFile.mockResolvedValue(`---
-sectionId: principles
-title: Test File
-createdAt: 1708709000000
-updatedAt: 1708709000000
----
-
-# Test Content
-
-This is a test conversation.
-`)
-
-      const files = await service.loadAll()
-
-      expect(files).toHaveLength(2)
-      expect(files[0].sectionId).toBe('principles')
-      expect(files[0].metadata.title).toBe('Test File')
-      expect(files[0].content).toContain('Test Content')
-    })
-
-    it('should handle empty brain directory', async () => {
-      mockFs.stat.mockRejectedValue({ code: 'ENOENT' } as any)
+    it('should return an empty array when the personality directory does not exist', async () => {
+      mockFs.stat.mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }))
 
       const files = await service.loadAll()
 
       expect(files).toEqual([])
     })
 
-    it('should skip non-markdown files', async () => {
-      mockFs.readdir.mockResolvedValue(['test.md', 'test.txt', '.DS_Store'] as any)
+    it('should load files from date-based subfolders', async () => {
+      const folderName = '2024-01-15_120000'
+      const folderPath = path.join(WORKSPACE, 'personality', SECTION, folderName)
 
-      mockFs.readFile.mockResolvedValue(`---
-sectionId: principles
----
-Content`)
+      // stat: first call for personality root dir, then for section dir, then for the folder
+      mockFs.stat.mockImplementation((p: unknown) => {
+        const pathStr = String(p)
+        if (pathStr.endsWith(folderName)) {
+          return Promise.resolve({ isDirectory: () => true, isFile: () => false, mtimeMs: Date.now() } as any)
+        }
+        return Promise.resolve({ isDirectory: () => true, isFile: () => false, mtimeMs: Date.now() } as any)
+      })
+
+      // readdir: section listing returns one folder; all others return empty
+      mockFs.readdir.mockImplementation((p: unknown) => {
+        const pathStr = String(p)
+        if (pathStr.includes(SECTION) && !pathStr.includes(folderName)) {
+          return Promise.resolve([folderName] as any)
+        }
+        return Promise.resolve([] as any)
+      })
+
+      // readFile: config.json
+      mockFs.readFile.mockImplementation((p: unknown) => {
+        const pathStr = String(p)
+        if (pathStr.endsWith('config.json')) {
+          return Promise.resolve(buildConfigJson({ title: 'Loaded' }) as any)
+        }
+        return Promise.resolve('Markdown content' as any)
+      })
 
       const files = await service.loadAll()
 
-      expect(files).toHaveLength(1)
-    })
-
-    it('should handle files with invalid frontmatter', async () => {
-      mockFs.readdir.mockResolvedValue(['123.md'] as any)
-      mockFs.readFile.mockResolvedValue('Invalid content without frontmatter')
-
-      const files = await service.loadAll()
-
-      // Should still return the file with default metadata
-      expect(files).toHaveLength(1)
-      expect(files[0].metadata).toBeDefined()
+      // We expect at least one file to be found
+      const found = files.find((f) => f.sectionId === SECTION && f.id === folderName)
+      expect(found).toBeDefined()
+      if (found) {
+        expect(found.metadata.title).toBe('Loaded')
+        expect(found.content).toBe('Markdown content')
+      }
     })
   })
+
+  // ---- loadOne -------------------------------------------------------------
 
   describe('loadOne', () => {
-    it('should load a specific brain file', async () => {
-      mockFs.readFile.mockResolvedValue(`---
-sectionId: principles
-title: Specific File
-createdAt: 1708709000000
-updatedAt: 1708709000000
----
+    it('should return null when the folder does not exist', async () => {
+      mockFs.stat.mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }))
 
-Content here`)
+      const result = await service.loadOne({ sectionId: SECTION, id: 'nonexistent-folder' })
 
-      const file = await service.loadOne({
-        sectionId: 'principles',
-        id: '123'
-      })
-
-      expect(file).not.toBeNull()
-      expect(file!.id).toBe('123')
-      expect(file!.sectionId).toBe('principles')
-      expect(file!.metadata.title).toBe('Specific File')
-      expect(file!.content).toContain('Content here')
+      expect(result).toBeNull()
     })
 
-    it('should return null if file does not exist', async () => {
-      mockFs.readFile.mockRejectedValue({ code: 'ENOENT' } as any)
+    it('should load a single file when folder exists', async () => {
+      const id = '2024-02-20_095500'
 
-      const file = await service.loadOne({
-        sectionId: 'principles',
-        id: 'nonexistent'
+      mockFs.stat.mockResolvedValue({ isDirectory: () => true, isFile: () => false, mtimeMs: Date.now() } as any)
+      mockFs.readFile.mockImplementation((p: unknown) => {
+        const pathStr = String(p)
+        if (pathStr.endsWith('config.json')) {
+          return Promise.resolve(buildConfigJson({ title: 'Specific' }) as any)
+        }
+        return Promise.resolve('Specific content' as any)
       })
 
-      expect(file).toBeNull()
+      const file = await service.loadOne({ sectionId: SECTION, id })
+
+      expect(file).not.toBeNull()
+      if (file) {
+        expect(file.id).toBe(id)
+        expect(file.sectionId).toBe(SECTION)
+        expect(file.metadata.title).toBe('Specific')
+        expect(file.content).toBe('Specific content')
+      }
     })
   })
 
-  describe('delete', () => {
-    it('should delete a brain file', async () => {
-      await service.delete({
-        sectionId: 'principles',
-        id: '123'
-      })
+  // ---- delete --------------------------------------------------------------
 
-      expect(mockFs.unlink).toHaveBeenCalledWith(
-        expect.stringContaining('brain/principles/123.md')
-      )
+  describe('delete', () => {
+    it('should call fs.rm to remove the personality folder', async () => {
+      const id = '2024-01-10_083000'
+      const expectedPath = path.join(WORKSPACE, 'personality', SECTION, id)
+
+      await service.delete({ sectionId: SECTION, id })
+
+      expect(mockFs.rm).toHaveBeenCalledWith(expectedPath, { recursive: true, force: true })
     })
 
-    it('should not throw error if file does not exist', async () => {
-      mockFs.unlink.mockRejectedValue({ code: 'ENOENT' } as any)
+    it('should not throw when the folder does not exist (ENOENT)', async () => {
+      mockFs.rm.mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }))
 
       await expect(
-        service.delete({
-          sectionId: 'principles',
-          id: 'nonexistent'
-        })
+        service.delete({ sectionId: SECTION, id: 'missing-folder' })
       ).resolves.not.toThrow()
     })
 
-    it('should throw error for other file system errors', async () => {
-      mockFs.unlink.mockRejectedValue(new Error('Permission denied'))
+    it('should re-throw errors that are not ENOENT', async () => {
+      mockFs.rm.mockRejectedValue(new Error('Permission denied'))
 
       await expect(
-        service.delete({
-          sectionId: 'principles',
-          id: '123'
-        })
+        service.delete({ sectionId: SECTION, id: 'locked-folder' })
       ).rejects.toThrow('Permission denied')
-    })
-  })
-
-  describe('workspace management', () => {
-    it('should handle workspace change', async () => {
-      const newWorkspace = '/new/workspace'
-
-      await service.setWorkspace(newWorkspace)
-
-      // Save should use new workspace
-      await service.save({
-        sectionId: 'principles',
-        content: 'Test',
-        metadata: {}
-      })
-
-      const writeCall = (mockFs.writeFile as jest.Mock).mock.calls[0]
-      const filePath = writeCall[0] as string
-      expect(filePath).toContain(newWorkspace)
-    })
-
-    it('should clear workspace', async () => {
-      service.setWorkspace('')
-
-      await expect(
-        service.save({
-          sectionId: 'principles',
-          content: 'Test',
-          metadata: {}
-        })
-      ).rejects.toThrow('No workspace path set')
-    })
-  })
-
-  describe('file watching', () => {
-    it('should start watching on setWorkspace', async () => {
-      const chokidar = require('chokidar')
-
-      await service.setWorkspace(mockWorkspacePath)
-
-      expect(chokidar.watch).toHaveBeenCalledWith(
-        expect.stringContaining('brain'),
-        expect.objectContaining({
-          persistent: true,
-          ignoreInitial: true
-        })
-      )
-    })
-  })
-
-  describe('section validation', () => {
-    it('should accept valid section IDs', async () => {
-      const validSections = ['principles', 'consciousness', 'memory', 'reasoning', 'perception']
-
-      for (const sectionId of validSections) {
-        await expect(
-          service.save({
-            sectionId,
-            content: 'Test',
-            metadata: {}
-          })
-        ).resolves.toBeDefined()
-      }
-    })
-  })
-
-  describe('edge cases', () => {
-    it('should handle very long content', async () => {
-      const longContent = 'x'.repeat(100000)
-
-      await service.save({
-        sectionId: 'principles',
-        content: longContent,
-        metadata: {}
-      })
-
-      const writeCall = (mockFs.writeFile as jest.Mock).mock.calls[0]
-      const content = writeCall[1] as string
-      expect(content).toContain(longContent)
-    })
-
-    it('should handle special characters in metadata', async () => {
-      await service.save({
-        sectionId: 'principles',
-        content: 'Test',
-        metadata: {
-          title: 'Test: "quotes" & special <chars>',
-          tags: ['tag-with-dash', 'tag_with_underscore']
-        }
-      })
-
-      const writeCall = (mockFs.writeFile as jest.Mock).mock.calls[0]
-      const content = writeCall[1] as string
-      expect(content).toContain('title:')
-    })
-
-    it('should handle concurrent saves', async () => {
-      const promises = []
-      for (let i = 0; i < 10; i++) {
-        promises.push(
-          service.save({
-            sectionId: 'principles',
-            content: `Test ${i}`,
-            metadata: {}
-          })
-        )
-      }
-
-      const results = await Promise.all(promises)
-
-      // All should succeed with unique IDs
-      const ids = results.map((r) => r.id)
-      const uniqueIds = new Set(ids)
-      expect(uniqueIds.size).toBe(10)
     })
   })
 })

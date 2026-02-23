@@ -1,62 +1,58 @@
 /**
  * Tests for usePipeline hook.
- * Manages pipeline run/cancel lifecycle with streaming event handling.
+ * Manages AI pipeline run/cancel lifecycle with streaming event handling
+ * via the window.ai namespace (inference, cancel, onEvent).
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { usePipeline } from '../../../../src/renderer/src/hooks/usePipeline'
 
+// window.ai mock helpers
+type AiEventListener = (event: { type: string; data: unknown }) => void
+
+function installWindowAiMock() {
+  const eventListeners: AiEventListener[] = []
+
+  const mockAi = {
+    inference: jest.fn().mockResolvedValue({ success: true, data: { runId: 'test-run-id' } }),
+    cancel: jest.fn(),
+    onEvent: jest.fn().mockImplementation((cb: AiEventListener) => {
+      eventListeners.push(cb)
+      return () => {
+        const idx = eventListeners.indexOf(cb)
+        if (idx > -1) eventListeners.splice(idx, 1)
+      }
+    }),
+    listAgents: jest.fn().mockResolvedValue({ success: true, data: ['echo'] }),
+    listRuns: jest.fn().mockResolvedValue({ success: true, data: [] })
+  }
+
+  Object.defineProperty(window, 'ai', {
+    value: mockAi,
+    writable: true,
+    configurable: true
+  })
+
+  return { mockAi, eventListeners }
+}
+
 describe('usePipeline', () => {
-  let pipelineEventListeners: Array<(event: { type: string; data: unknown }) => void> = []
+  let mockAi: ReturnType<typeof installWindowAiMock>['mockAi']
+  let eventListeners: AiEventListener[]
 
   beforeEach(() => {
-    pipelineEventListeners = []
-
-    // Ensure window.api exists and has the required methods
-    if (!window.api.pipelineRun) {
-      window.api.pipelineRun = jest.fn()
-    }
-    if (!window.api.pipelineCancel) {
-      window.api.pipelineCancel = jest.fn()
-    }
-    if (!window.api.onPipelineEvent) {
-      window.api.onPipelineEvent = jest.fn()
-    }
-
-    // Mock window.api.pipelineRun
-    ;(window.api.pipelineRun as jest.Mock).mockResolvedValue({
-      success: true,
-      data: { runId: 'test-run-id' }
-    })
-
-    // Mock window.api.onPipelineEvent
-    ;(window.api.onPipelineEvent as jest.Mock).mockImplementation((callback) => {
-      pipelineEventListeners.push(callback)
-      return () => {
-        const index = pipelineEventListeners.indexOf(callback)
-        if (index > -1) {
-          pipelineEventListeners.splice(index, 1)
-        }
-      }
-    })
-
-    // Mock window.api.pipelineCancel
-    ;(window.api.pipelineCancel as jest.Mock).mockResolvedValue({ success: true })
+    const installed = installWindowAiMock()
+    mockAi = installed.mockAi
+    eventListeners = installed.eventListeners
   })
 
   afterEach(() => {
-    pipelineEventListeners = []
-    // Make sure the mock functions are restored
-    if (!window.api.pipelineRun) {
-      window.api.pipelineRun = jest.fn()
-    }
-    if (!window.api.pipelineCancel) {
-      window.api.pipelineCancel = jest.fn()
-    }
-    if (!window.api.onPipelineEvent) {
-      window.api.onPipelineEvent = jest.fn()
-    }
     jest.clearAllMocks()
   })
+
+  // Helper: fire an event to all registered listeners
+  function emitEvent(event: { type: string; data: unknown }) {
+    eventListeners.forEach((l) => l(event))
+  }
 
   it('should initialize with idle status and empty response', () => {
     const { result } = renderHook(() => usePipeline())
@@ -79,17 +75,15 @@ describe('usePipeline', () => {
       })
 
       expect(runId).toBe('test-run-id')
-      expect(window.api.pipelineRun).toHaveBeenCalledWith('echo', { prompt: 'Hello world' })
+      expect(mockAi.inference).toHaveBeenCalledWith('echo', { prompt: 'Hello world' })
       expect(result.current.status).toBe('running')
       expect(result.current.response).toBe('')
       expect(result.current.error).toBeNull()
     })
 
     it('should prevent concurrent runs (ref guard)', async () => {
-      // Make pipelineRun hang
-      ;(window.api.pipelineRun as jest.Mock).mockImplementation(
-        () => new Promise(() => {}) // never resolves
-      )
+      // Make inference hang so the first run never completes
+      mockAi.inference.mockImplementation(() => new Promise(() => {}))
 
       const { result } = renderHook(() => usePipeline())
 
@@ -98,25 +92,24 @@ describe('usePipeline', () => {
         result.current.run('echo', { prompt: 'First' })
       })
 
-      // Attempt second run immediately
-      const callsBefore = (window.api.pipelineRun as jest.Mock).mock.calls.length
+      const callsBefore = (mockAi.inference as jest.Mock).mock.calls.length
 
+      // Second run should be rejected (returns null)
       await act(async () => {
-        const runId = await result.current.run('echo', { prompt: 'Second' })
-        expect(runId).toBeNull()
+        const secondRunId = await result.current.run('echo', { prompt: 'Second' })
+        expect(secondRunId).toBeNull()
       })
 
-      // Should still have just the one call
-      expect((window.api.pipelineRun as jest.Mock).mock.calls.length).toBe(callsBefore)
+      // Only the first call should have reached inference
+      expect((mockAi.inference as jest.Mock).mock.calls.length).toBe(callsBefore)
     })
 
-    it('should handle missing window.api.pipelineRun gracefully', async () => {
-      const originalPipelineRun = window.api.pipelineRun
-      // @ts-expect-error - intentionally removing function for test
-      delete window.api.pipelineRun
+    it('should handle missing window.ai gracefully', async () => {
+      // Remove the ai namespace to simulate unavailability
+      const originalAi = (window as unknown as { ai: unknown }).ai
+      Object.defineProperty(window, 'ai', { value: undefined, writable: true, configurable: true })
 
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
-
       const { result } = renderHook(() => usePipeline())
 
       await act(async () => {
@@ -125,16 +118,16 @@ describe('usePipeline', () => {
       })
 
       expect(result.current.status).toBe('error')
-      expect(result.current.error).toContain('Pipeline IPC not available')
+      expect(result.current.error).toContain('not available')
       expect(consoleWarnSpy).toHaveBeenCalled()
 
       // Restore
-      window.api.pipelineRun = originalPipelineRun
+      Object.defineProperty(window, 'ai', { value: originalAi, writable: true, configurable: true })
       consoleWarnSpy.mockRestore()
     })
 
     it('should handle IPC error responses', async () => {
-      ;(window.api.pipelineRun as jest.Mock).mockResolvedValue({
+      mockAi.inference.mockResolvedValue({
         success: false,
         error: { message: 'Agent not found', code: 'AGENT_NOT_FOUND' }
       })
@@ -151,9 +144,7 @@ describe('usePipeline', () => {
     })
 
     it('should handle IPC exceptions', async () => {
-      ;(window.api.pipelineRun as jest.Mock).mockRejectedValue(
-        new Error('Network error')
-      )
+      mockAi.inference.mockRejectedValue(new Error('Network error'))
 
       const { result } = renderHook(() => usePipeline())
 
@@ -173,17 +164,12 @@ describe('usePipeline', () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit token events
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'test-run-id', token: 'Hello' } })
-        })
+        emitEvent({ type: 'token', data: { runId: 'test-run-id', token: 'Hello' } })
       })
 
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'test-run-id', token: ' world' } })
-        })
+        emitEvent({ type: 'token', data: { runId: 'test-run-id', token: ' world' } })
       })
 
       expect(result.current.response).toBe('Hello world')
@@ -197,14 +183,8 @@ describe('usePipeline', () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit thinking event
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({
-            type: 'thinking',
-            data: { runId: 'test-run-id', text: 'Processing input...' }
-          })
-        })
+        emitEvent({ type: 'thinking', data: { runId: 'test-run-id', text: 'Processing input...' } })
       })
 
       expect(result.current.response).toBe('[thinking] Processing input...\n')
@@ -218,11 +198,8 @@ describe('usePipeline', () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit done event
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'done', data: { runId: 'test-run-id' } })
-        })
+        emitEvent({ type: 'done', data: { runId: 'test-run-id' } })
       })
 
       await waitFor(() => {
@@ -237,14 +214,8 @@ describe('usePipeline', () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit error event
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({
-            type: 'error',
-            data: { runId: 'test-run-id', message: 'Processing failed' }
-          })
-        })
+        emitEvent({ type: 'error', data: { runId: 'test-run-id', message: 'Processing failed' } })
       })
 
       await waitFor(() => {
@@ -253,37 +224,33 @@ describe('usePipeline', () => {
       })
     })
 
-    it('should filter events by runId', async () => {
+    it('should filter events by runId — ignore events from other runs', async () => {
       const { result } = renderHook(() => usePipeline())
 
       await act(async () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit event with wrong runId
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'different-run-id', token: 'Wrong' } })
-        })
+        // Wrong runId — should be ignored
+        emitEvent({ type: 'token', data: { runId: 'different-run-id', token: 'Wrong' } })
       })
 
-      // Emit event with correct runId
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'test-run-id', token: 'Correct' } })
-        })
+        // Correct runId — should be accepted
+        emitEvent({ type: 'token', data: { runId: 'test-run-id', token: 'Correct' } })
       })
 
       expect(result.current.response).toBe('Correct')
     })
 
     it('should buffer events that arrive before runId is set', async () => {
-      let resolveRun: (value: { success: boolean; data: { runId: string } }) => void
+      let resolveInference!: (value: { success: boolean; data: { runId: string } }) => void
 
-      ;(window.api.pipelineRun as jest.Mock).mockImplementation(
+      mockAi.inference.mockImplementation(
         () =>
           new Promise((resolve) => {
-            resolveRun = resolve
+            resolveInference = resolve
           })
       )
 
@@ -294,41 +261,37 @@ describe('usePipeline', () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit events before runId is resolved
+      // Emit events before runId is known — these should be buffered
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'test-run-id', token: 'Buffered' } })
-        })
+        emitEvent({ type: 'token', data: { runId: 'test-run-id', token: 'Buffered' } })
       })
 
-      // Now resolve the run
+      // Now resolve the inference call
       await act(async () => {
-        resolveRun!({ success: true, data: { runId: 'test-run-id' } })
+        resolveInference({ success: true, data: { runId: 'test-run-id' } })
         await runPromise
       })
 
-      // Buffered event should have been processed
+      // Buffered event should have been processed after runId was set
       expect(result.current.response).toBe('Buffered')
     })
   })
 
   describe('cancel', () => {
-    it('should call pipelineCancel and reset to idle', async () => {
+    it('should call window.ai.cancel and reset to idle', async () => {
       const { result } = renderHook(() => usePipeline())
 
-      // Start a run
       await act(async () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
       expect(result.current.status).toBe('running')
 
-      // Cancel it
       act(() => {
         result.current.cancel()
       })
 
-      expect(window.api.pipelineCancel).toHaveBeenCalledWith('test-run-id')
+      expect(mockAi.cancel).toHaveBeenCalledWith('test-run-id')
       expect(result.current.status).toBe('idle')
       expect(result.current.error).toBeNull()
     })
@@ -340,13 +303,17 @@ describe('usePipeline', () => {
         result.current.cancel()
       })
 
-      expect(window.api.pipelineCancel).not.toHaveBeenCalled()
+      expect(mockAi.cancel).not.toHaveBeenCalled()
     })
 
-    it('should handle missing pipelineCancel gracefully', async () => {
-      const originalPipelineCancel = window.api.pipelineCancel
-      // @ts-expect-error - intentionally removing function for test
-      delete window.api.pipelineCancel
+    it('should still reset to idle even when window.ai.cancel is missing', async () => {
+      // Remove cancel to test graceful fallback
+      const originalCancel = mockAi.cancel
+      Object.defineProperty(window, 'ai', {
+        value: { ...mockAi, cancel: undefined },
+        writable: true,
+        configurable: true
+      })
 
       const { result } = renderHook(() => usePipeline())
 
@@ -362,24 +329,22 @@ describe('usePipeline', () => {
       expect(result.current.status).toBe('idle')
 
       // Restore
-      window.api.pipelineCancel = originalPipelineCancel
+      Object.defineProperty(window, 'ai', { value: mockAi, writable: true, configurable: true })
+      mockAi.cancel = originalCancel
     })
   })
 
   describe('reset', () => {
-    it('should reset status, response, and error when idle', async () => {
+    it('should reset status, response, and error when done', async () => {
       const { result } = renderHook(() => usePipeline())
 
       await act(async () => {
         await result.current.run('echo', { prompt: 'test' })
       })
 
-      // Emit some tokens and complete
       await act(async () => {
-        pipelineEventListeners.forEach((listener) => {
-          listener({ type: 'token', data: { runId: 'test-run-id', token: 'test' } })
-          listener({ type: 'done', data: { runId: 'test-run-id' } })
-        })
+        emitEvent({ type: 'token', data: { runId: 'test-run-id', token: 'test' } })
+        emitEvent({ type: 'done', data: { runId: 'test-run-id' } })
       })
 
       await waitFor(() => {
@@ -388,7 +353,6 @@ describe('usePipeline', () => {
 
       expect(result.current.response).toBe('test')
 
-      // Reset
       act(() => {
         result.current.reset()
       })
@@ -399,38 +363,35 @@ describe('usePipeline', () => {
     })
 
     it('should not reset when currently running', async () => {
-      ;(window.api.pipelineRun as jest.Mock).mockImplementation(
-        () => new Promise(() => {}) // never resolves
-      )
+      mockAi.inference.mockImplementation(() => new Promise(() => {}))
 
       const { result } = renderHook(() => usePipeline())
 
-      // Start a run that won't complete
+      // Start a run that will never complete
       act(() => {
         result.current.run('echo', { prompt: 'test' })
       })
 
-      // Try to reset while running
+      // Try to reset while running — should be a no-op
       act(() => {
         result.current.reset()
       })
 
-      // Should still be running
       expect(result.current.status).toBe('running')
     })
   })
 
-  it('should cleanup subscription on unmount', async () => {
+  it('should cleanup event subscription on unmount', async () => {
     const { result, unmount } = renderHook(() => usePipeline())
 
     await act(async () => {
       await result.current.run('echo', { prompt: 'test' })
     })
 
-    expect(pipelineEventListeners.length).toBeGreaterThan(0)
+    expect(eventListeners.length).toBeGreaterThan(0)
 
     unmount()
 
-    expect(pipelineEventListeners.length).toBe(0)
+    expect(eventListeners.length).toBe(0)
   })
 })
