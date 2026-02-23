@@ -166,6 +166,40 @@ interface PipelineActiveRun {
   startedAt: number
 }
 
+type OutputType = 'posts' | 'writings' | 'notes' | 'messages'
+
+interface OutputFileMetadata {
+  title: string
+  type: OutputType
+  category: string
+  tags: string[]
+  visibility: string
+  provider: string
+  model: string
+  temperature?: number
+  maxTokens?: number | null
+  reasoning?: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+interface OutputFile {
+  id: string
+  type: OutputType
+  path: string
+  metadata: OutputFileMetadata
+  content: string
+  savedAt: number
+}
+
+interface OutputFileChangeEvent {
+  type: 'added' | 'changed' | 'removed'
+  outputType: string
+  fileId: string
+  filePath: string
+  timestamp: number
+}
+
 type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
 
 interface ManagedWindowInfo {
