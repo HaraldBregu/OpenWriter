@@ -209,7 +209,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         const workspacePath = await window.api.workspaceGetCurrent();
         if (workspacePath) {
           // Extract folder name from path
-          const pathParts = workspacePath.split(/[/\\]/);
+          const pathParts = typeof workspacePath === 'string' ? workspacePath.split(/[/\\]/) : [];
           const folderName = pathParts[pathParts.length - 1];
           setWorkspaceName(`${folderName} (workspace)` || "Tesseract AI");
         }

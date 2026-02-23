@@ -27,9 +27,10 @@ const WelcomePage: React.FC = () => {
     try {
       const projects = await window.api.workspaceGetRecent()
 
-      // Check if each directory exists
+      // Filter out entries with missing path, then check if each directory exists
+      const validProjects = projects.filter((p) => typeof p.path === 'string')
       const projectsWithExistence = await Promise.all(
-        projects.map(async (project) => {
+        validProjects.map(async (project) => {
           try {
             const exists = await window.api.workspaceDirectoryExists(project.path)
             return { ...project, exists }
@@ -109,6 +110,7 @@ const WelcomePage: React.FC = () => {
   }, [])
 
   const formatPath = (path: string) => {
+    if (typeof path !== 'string') return ''
     if (path.includes('/Users/')) {
       const parts = path.split('/Users/')
       if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/')
@@ -125,6 +127,7 @@ const WelcomePage: React.FC = () => {
   }
 
   const getProjectName = (path: string) => {
+    if (typeof path !== 'string') return ''
     return path.split(/[/\\]/).pop() || path
   }
 

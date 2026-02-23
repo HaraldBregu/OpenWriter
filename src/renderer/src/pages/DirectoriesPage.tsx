@@ -173,6 +173,7 @@ const DirectoriesPage: React.FC = () => {
   }, [directories, dispatch])
 
   function formatPath(filePath: string): string {
+    if (!filePath) return ''
     const parts = filePath.split(/[/\\]/)
     if (parts.length > 3) {
       return `.../${parts.slice(-3).join('/')}`
@@ -304,7 +305,7 @@ const DirectoriesPage: React.FC = () => {
                         <div className="flex items-center gap-2 mb-1">
                           <FolderOpen className="h-4 w-4 text-muted-foreground shrink-0" />
                           <AppCardTitle className="text-base truncate">
-                            {dir.path.split(/[/\\]/).pop()}
+                            {dir.path?.split(/[/\\]/).pop() ?? ''}
                           </AppCardTitle>
                           {dir.isIndexed ? (
                             <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />

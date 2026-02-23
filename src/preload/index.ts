@@ -933,36 +933,6 @@ const api = {
             ipcRenderer.removeListener('brain:watcher-error', handler)
         }
     },
-    onBrainFileChange: (callback: (event: {
-        type: 'added' | 'changed' | 'removed'
-        fileId: string
-        sectionId: string
-        filePath: string
-        timestamp: number
-    }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, brainEvent: {
-            type: 'added' | 'changed' | 'removed'
-            fileId: string
-            sectionId: string
-            filePath: string
-            timestamp: number
-        }): void => {
-            callback(brainEvent)
-        }
-        ipcRenderer.on('brain:file-change', handler)
-        return () => {
-            ipcRenderer.removeListener('brain:file-change', handler)
-        }
-    },
-    onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
-            callback(errorData)
-        }
-        ipcRenderer.on('brain:watcher-error', handler)
-        return () => {
-            ipcRenderer.removeListener('brain:watcher-error', handler)
-        }
-    }
 }
 
 const task = {
