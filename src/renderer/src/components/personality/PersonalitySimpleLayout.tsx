@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Send, StopCircle, AlertCircle, Loader2, Check, ChevronDown } from 'lucide-react'
+import { Send, StopCircle, AlertCircle, Loader2, Check, ChevronDown, Settings2 } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
 import {
   AppDropdownMenu,
@@ -13,7 +13,7 @@ import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
 import { useAppSelector } from '@/store'
 import { selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
 import type { PersonalityFile } from '@/store/personalityFilesSlice'
-import { PersonalitySettingsSheet, DEFAULT_INFERENCE_SETTINGS } from './PersonalitySettingsSheet'
+import { PersonalitySettingsPanel, DEFAULT_INFERENCE_SETTINGS } from './PersonalitySettingsSheet'
 import type { InferenceSettings } from './PersonalitySettingsSheet'
 import { getDefaultModelId } from '@/config/aiProviders'
 
@@ -39,6 +39,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   const [inputValue, setInputValue] = useState('')
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const [loadedConversation, setLoadedConversation] = useState<PersonalityFile | null>(null)
+  const [showSettings, setShowSettings] = useState(false)
   const [inferenceSettings, setInferenceSettings] = useState<InferenceSettings>(() => ({
     ...DEFAULT_INFERENCE_SETTINGS,
     providerId: providerId || 'openai',
@@ -202,11 +203,15 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
               </AppDropdownMenu>
             )}
 
-            {/* Settings Gear */}
-            <PersonalitySettingsSheet
-              settings={inferenceSettings}
-              onSettingsChange={setInferenceSettings}
-            />
+            {/* Settings Gear Toggle */}
+            <AppButton
+              variant={showSettings ? 'default' : 'outline'}
+              size="icon"
+              className="shrink-0 h-9 w-9"
+              onClick={() => setShowSettings((v) => !v)}
+            >
+              <Settings2 className="h-4 w-4" />
+            </AppButton>
 
             {/* Auto-save status */}
             {isSaving && (
@@ -224,101 +229,115 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
           </div>
         </div>
 
-        {/* Error Banner */}
-        {error && (
-          <div className="border-b border-destructive/20 bg-destructive/10 px-6 py-3">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 shrink-0 text-destructive" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-destructive">Error</p>
-                <p className="mt-1 text-xs text-destructive/80">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Content Display Area */}
-        <div
-          ref={contentRef}
-          className="flex-1 overflow-auto p-6"
-        >
-          <div className="mx-auto max-w-4xl">
-            {displayContent ? (
-              <div className="rounded-lg border border-border bg-card p-6">
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <Markdown remarkPlugins={[remarkGfm]}>{displayContent}</Markdown>
+        {/* Body: main content + optional settings sidebar */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Main content column */}
+          <div className="flex flex-1 flex-col overflow-hidden">
+            {/* Error Banner */}
+            {error && (
+              <div className="border-b border-destructive/20 bg-destructive/10 px-6 py-3">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-destructive" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-destructive">Error</p>
+                    <p className="mt-1 text-xs text-destructive/80">{error}</p>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="flex h-full min-h-[300px] items-center justify-center">
-                {isLoading ? (
-                  <p className="text-sm text-muted-foreground">Processing your request...</p>
-                ) : examplePrompt ? (
-                  <button
-                    type="button"
-                    onClick={() => { setInputValue(examplePrompt) }}
-                    className="max-w-lg rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-accent"
-                  >
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Try this</p>
-                    <p className="text-sm text-foreground">{examplePrompt}</p>
-                  </button>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Ask a question to get started.</p>
-                )}
-              </div>
             )}
 
-            {isStreaming && (
-              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Generating response...</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Input Section */}
-          <div className="border-t border-border bg-background p-6">
-            <div className="mx-auto max-w-4xl">
-              <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={placeholder}
-                  disabled={isLoading}
-                  className="flex-1 rounded-lg border border-input bg-background px-4 py-3 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
-                />
-
-                {isLoading ? (
-                  <AppButton
-                    onClick={handleCancel}
-                    variant="outline"
-                    size="default"
-                    className="shrink-0"
-                  >
-                    <StopCircle className="mr-2 h-4 w-4" />
-                    Stop
-                  </AppButton>
+            {/* Content Display Area */}
+            <div
+              ref={contentRef}
+              className="flex-1 overflow-auto p-6"
+            >
+              <div className="mx-auto max-w-4xl">
+                {displayContent ? (
+                  <div className="rounded-lg border border-border bg-card p-6">
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <Markdown remarkPlugins={[remarkGfm]}>{displayContent}</Markdown>
+                    </div>
+                  </div>
                 ) : (
-                  <AppButton
-                    onClick={handleSubmit}
-                    disabled={!inputValue.trim()}
-                    size="default"
-                    className="shrink-0"
-                  >
-                    <Send className="mr-2 h-4 w-4" />
-                    Submit
-                  </AppButton>
+                  <div className="flex h-full min-h-[300px] items-center justify-center">
+                    {isLoading ? (
+                      <p className="text-sm text-muted-foreground">Processing your request...</p>
+                    ) : examplePrompt ? (
+                      <button
+                        type="button"
+                        onClick={() => { setInputValue(examplePrompt) }}
+                        className="max-w-lg rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-accent"
+                      >
+                        <p className="text-xs font-medium text-muted-foreground mb-1">Try this</p>
+                        <p className="text-sm text-foreground">{examplePrompt}</p>
+                      </button>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Ask a question to get started.</p>
+                    )}
+                  </div>
+                )}
+
+                {isStreaming && (
+                  <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Generating response...</span>
+                  </div>
                 )}
               </div>
+            </div>
 
-              <p className="mt-2 text-xs text-muted-foreground">
-                Press Enter to submit your question
-              </p>
+            {/* Input Section */}
+            <div className="border-t border-border bg-background p-6">
+              <div className="mx-auto max-w-4xl">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={placeholder}
+                    disabled={isLoading}
+                    className="flex-1 rounded-lg border border-input bg-background px-4 py-3 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+
+                  {isLoading ? (
+                    <AppButton
+                      onClick={handleCancel}
+                      variant="outline"
+                      size="default"
+                      className="shrink-0"
+                    >
+                      <StopCircle className="mr-2 h-4 w-4" />
+                      Stop
+                    </AppButton>
+                  ) : (
+                    <AppButton
+                      onClick={handleSubmit}
+                      disabled={!inputValue.trim()}
+                      size="default"
+                      className="shrink-0"
+                    >
+                      <Send className="mr-2 h-4 w-4" />
+                      Submit
+                    </AppButton>
+                  )}
+                </div>
+
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Press Enter to submit your question
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Inline settings sidebar */}
+          {showSettings && (
+            <PersonalitySettingsPanel
+              settings={inferenceSettings}
+              onSettingsChange={setInferenceSettings}
+            />
+          )}
+        </div>
     </div>
   )
 })

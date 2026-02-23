@@ -1,14 +1,4 @@
 import React, { useCallback } from 'react'
-import { Settings2 } from 'lucide-react'
-import { AppButton } from '@/components/app/AppButton'
-import {
-  AppSheet,
-  AppSheetTrigger,
-  AppSheetContent,
-  AppSheetHeader,
-  AppSheetTitle,
-  AppSheetDescription
-} from '@/components/app/AppSheet'
 import {
   AppSelect,
   AppSelectTrigger,
@@ -43,15 +33,15 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
 }
 
 // ---------------------------------------------------------------------------
-// Component
+// Component — inline sidebar panel (no overlay)
 // ---------------------------------------------------------------------------
 
-interface PersonalitySettingsSheetProps {
+interface PersonalitySettingsPanelProps {
   settings: InferenceSettings
   onSettingsChange: (settings: InferenceSettings) => void
 }
 
-export const PersonalitySettingsSheet: React.FC<PersonalitySettingsSheetProps> = React.memo(({
+export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> = React.memo(({
   settings,
   onSettingsChange
 }) => {
@@ -100,100 +90,93 @@ export const PersonalitySettingsSheet: React.FC<PersonalitySettingsSheetProps> =
   }, [settings, onSettingsChange])
 
   return (
-    <AppSheet>
-      <AppSheetTrigger asChild>
-        <AppButton variant="outline" size="icon" className="shrink-0 h-9 w-9">
-          <Settings2 className="h-4 w-4" />
-        </AppButton>
-      </AppSheetTrigger>
+    <div className="flex h-full w-[280px] shrink-0 flex-col border-l border-border bg-background overflow-y-auto">
+      <div className="px-4 py-4 border-b border-border">
+        <h2 className="text-sm font-semibold">Inference Settings</h2>
+        <p className="text-xs text-muted-foreground mt-1">Configure model and parameters.</p>
+      </div>
 
-      <AppSheetContent side="right" className="w-[340px] sm:max-w-[340px] overflow-y-auto">
-        <AppSheetHeader>
-          <AppSheetTitle>Inference Settings</AppSheetTitle>
-          <AppSheetDescription>Configure the AI model and parameters for this page.</AppSheetDescription>
-        </AppSheetHeader>
-
-        <div className="mt-6 space-y-6">
-          {/* Provider */}
-          <div className="space-y-2">
-            <AppLabel>Provider</AppLabel>
-            <AppSelect value={settings.providerId} onValueChange={handleProviderChange}>
-              <AppSelectTrigger className="w-full">
-                <AppSelectValue />
-              </AppSelectTrigger>
-              <AppSelectContent>
-                {aiProviders.map((p) => (
-                  <AppSelectItem key={p.id} value={p.id}>{p.name}</AppSelectItem>
-                ))}
-              </AppSelectContent>
-            </AppSelect>
-          </div>
-
-          {/* Model */}
-          <div className="space-y-2">
-            <AppLabel>Model</AppLabel>
-            <AppSelect value={settings.modelId} onValueChange={handleModelChange}>
-              <AppSelectTrigger className="w-full">
-                <AppSelectValue />
-              </AppSelectTrigger>
-              <AppSelectContent>
-                {models.map((m) => (
-                  <AppSelectItem key={m.id} value={m.id}>{m.name}</AppSelectItem>
-                ))}
-              </AppSelectContent>
-            </AppSelect>
-          </div>
-
-          {/* Temperature */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <AppLabel>Temperature</AppLabel>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {modelIsReasoning ? 'N/A' : settings.temperature.toFixed(1)}
-              </span>
-            </div>
-            <AppSlider
-              min={0}
-              max={2}
-              step={0.1}
-              value={settings.temperature}
-              onValueChange={handleTemperatureChange}
-              disabled={modelIsReasoning}
-            />
-            {modelIsReasoning && (
-              <p className="text-xs text-muted-foreground">Temperature is not supported for reasoning models.</p>
-            )}
-          </div>
-
-          {/* Max Tokens */}
-          <div className="space-y-2">
-            <AppLabel>Max Tokens</AppLabel>
-            <AppInput
-              type="number"
-              min={0}
-              placeholder="Unlimited"
-              value={settings.maxTokens ?? ''}
-              onChange={handleMaxTokensChange}
-            />
-            <p className="text-xs text-muted-foreground">Leave empty for unlimited.</p>
-          </div>
-
-          {/* Reasoning */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <AppLabel>Reasoning</AppLabel>
-              <p className="text-xs text-muted-foreground">Enable extended thinking</p>
-            </div>
-            <AppSwitch
-              checked={settings.reasoning}
-              onCheckedChange={handleReasoningChange}
-              disabled={!modelIsReasoning}
-            />
-          </div>
+      <div className="p-4 space-y-5">
+        {/* Provider */}
+        <div className="space-y-1.5">
+          <AppLabel className="text-xs">Provider</AppLabel>
+          <AppSelect value={settings.providerId} onValueChange={handleProviderChange}>
+            <AppSelectTrigger className="w-full h-8 text-xs">
+              <AppSelectValue />
+            </AppSelectTrigger>
+            <AppSelectContent>
+              {aiProviders.map((p) => (
+                <AppSelectItem key={p.id} value={p.id}>{p.name}</AppSelectItem>
+              ))}
+            </AppSelectContent>
+          </AppSelect>
         </div>
-      </AppSheetContent>
-    </AppSheet>
+
+        {/* Model */}
+        <div className="space-y-1.5">
+          <AppLabel className="text-xs">Model</AppLabel>
+          <AppSelect value={settings.modelId} onValueChange={handleModelChange}>
+            <AppSelectTrigger className="w-full h-8 text-xs">
+              <AppSelectValue />
+            </AppSelectTrigger>
+            <AppSelectContent>
+              {models.map((m) => (
+                <AppSelectItem key={m.id} value={m.id}>{m.name}</AppSelectItem>
+              ))}
+            </AppSelectContent>
+          </AppSelect>
+        </div>
+
+        {/* Temperature */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <AppLabel className="text-xs">Temperature</AppLabel>
+            <span className="text-[11px] text-muted-foreground tabular-nums">
+              {modelIsReasoning ? 'N/A' : settings.temperature.toFixed(1)}
+            </span>
+          </div>
+          <AppSlider
+            min={0}
+            max={2}
+            step={0.1}
+            value={settings.temperature}
+            onValueChange={handleTemperatureChange}
+            disabled={modelIsReasoning}
+          />
+          {modelIsReasoning && (
+            <p className="text-[11px] text-muted-foreground">Not supported for reasoning models.</p>
+          )}
+        </div>
+
+        {/* Max Tokens */}
+        <div className="space-y-1.5">
+          <AppLabel className="text-xs">Max Tokens</AppLabel>
+          <AppInput
+            type="number"
+            min={0}
+            placeholder="Unlimited"
+            value={settings.maxTokens ?? ''}
+            onChange={handleMaxTokensChange}
+            className="h-8 text-xs"
+          />
+          <p className="text-[11px] text-muted-foreground">Leave empty for unlimited.</p>
+        </div>
+
+        {/* Reasoning */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <AppLabel className="text-xs">Reasoning</AppLabel>
+            <p className="text-[11px] text-muted-foreground">Extended thinking</p>
+          </div>
+          <AppSwitch
+            checked={settings.reasoning}
+            onCheckedChange={handleReasoningChange}
+            disabled={!modelIsReasoning}
+          />
+        </div>
+      </div>
+    </div>
   )
 })
 
-PersonalitySettingsSheet.displayName = 'PersonalitySettingsSheet'
+PersonalitySettingsPanel.displayName = 'PersonalitySettingsPanel'
