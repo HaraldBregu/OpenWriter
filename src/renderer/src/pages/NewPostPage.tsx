@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Download, Eye, Settings2, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
@@ -42,10 +42,9 @@ const NewPostPage: React.FC = () => {
   // to maintain consistent hook ordering between renders
   const [showSidebar, setShowSidebar] = useState(true)
 
-  // Save state
-  const [isSaving, setIsSaving] = useState(false)
-  const [lastSavedId, setLastSavedId] = useState<string | null>(null)
-  const [saveError, setSaveError] = useState<string | null>(null)
+  // Auto-save refs
+  const isFirstRender = useRef(true)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // AI Settings state
   const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
@@ -79,32 +78,29 @@ const NewPostPage: React.FC = () => {
     dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
   }, [post, dispatch])
 
-  const handleSave = useCallback(async () => {
+  // Auto-save: debounce saves 1s after the user stops making changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
     if (!post) return
-    setIsSaving(true)
-    setSaveError(null)
-    try {
-      // Verify workspace is set before attempting save
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(async () => {
       const workspace = await window.api.workspaceGetCurrent()
-      if (!workspace) {
-        throw new Error('No workspace selected. Please open a workspace first.')
-      }
-
+      if (!workspace) return
       const markdownContent = post.blocks.map((b) => b.content).join('\n\n')
-      const saved = await dispatch(saveOutputItem({
+      dispatch(saveOutputItem({
         type: 'posts',
         title: post.title || 'Untitled Post',
         content: markdownContent,
         visibility: 'private',
         provider: 'manual',
         model: ''
-      })).unwrap()
-      setLastSavedId(saved.id)
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      setSaveError(message)
-    } finally {
-      setIsSaving(false)
+      }))
+    }, 1000)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [post, dispatch])
 
@@ -133,15 +129,6 @@ const NewPostPage: React.FC = () => {
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
         <div className="flex items-center gap-3">
-          <AppButton
-            type="button"
-            variant={lastSavedId ? "default" : "outline"}
-            size="sm"
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? 'Saving...' : lastSavedId ? 'Saved' : 'Save'}
-          </AppButton>
           <AppDropdownMenu>
             <AppDropdownMenuTrigger asChild>
               <AppButton
@@ -194,12 +181,6 @@ const NewPostPage: React.FC = () => {
           </AppButton>
         </div>
       </div>
-
-      {saveError && (
-        <div className="px-8 py-2 text-xs text-destructive bg-destructive/10 border-b border-destructive/20">
-          {saveError}
-        </div>
-      )}
 
       <div className="flex flex-1 overflow-hidden bg-background">
         {/* Main content */}
