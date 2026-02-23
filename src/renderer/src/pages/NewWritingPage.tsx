@@ -8,7 +8,9 @@ import {
   AppSelectItem,
   AppSelectTrigger,
   AppSelectValue,
-  AppTextarea
+  AppTextarea,
+  AppSlider,
+  AppInput,
 } from '@/components/app'
 import { useAppDispatch, useAppSelector } from '../store'
 import { saveOutputItem, selectOutputLoading, selectOutputError } from '../store/outputSlice'
@@ -31,9 +33,10 @@ const NewWritingPage: React.FC = () => {
 
   // AI settings state
   const [model, setModel] = useState('claude-sonnet-4.5')
-  const [temperature, setTemperature] = useState('0.7')
-  const [maxTokens, setMaxTokens] = useState('4096')
   const [reasoning, setReasoning] = useState(false)
+  const [temperature, setTemperature] = useState('0.7')
+  const [customTemperature, setCustomTemperature] = useState(1.0)
+  const [maxChars, setMaxChars] = useState('')
 
   // Derived
   const canSave = title.trim().length > 0 || content.trim().length > 0
@@ -51,12 +54,12 @@ const NewWritingPage: React.FC = () => {
         visibility: 'private',
         provider: 'manual',
         model,
-        temperature: parseFloat(temperature),
-        maxTokens: maxTokens === 'none' ? null : parseInt(maxTokens, 10),
+        temperature: temperature === 'custom' ? customTemperature : parseFloat(temperature),
+        maxTokens: maxChars ? parseInt(maxChars, 10) : null,
         reasoning
       })
     )
-  }, [canSave, title, content, model, temperature, maxTokens, reasoning, dispatch])
+  }, [canSave, title, content, model, temperature, customTemperature, maxChars, reasoning, dispatch])
 
   return (
     <div className="h-full flex flex-col">
@@ -117,34 +120,29 @@ const NewWritingPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-80 border-l border-border bg-muted/20 overflow-y-auto shrink-0">
-            <div className="p-5 flex flex-col gap-5">
-
-              {/* Header */}
-              <div className="flex justify-between items-center pb-2 border-b border-border">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Settings2 className="h-4 w-4" />
-                  Settings
-                </h3>
-                <AppButton
-                  type="button"
-                  onClick={() => setShowSidebar(false)}
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                >
-                  <X className="h-4 w-4" />
-                </AppButton>
-              </div>
+          <div className="flex h-full w-[280px] shrink-0 flex-col border-l border-border bg-background overflow-y-auto">
+            <div className="px-4 py-4 border-b border-border flex items-center justify-between">
+              <h2 className="text-sm font-semibold">AI Settings</h2>
+              <AppButton
+                type="button"
+                onClick={() => setShowSidebar(false)}
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+              >
+                <X className="h-4 w-4" />
+              </AppButton>
+            </div>
+            <div className="p-4 space-y-5">
 
               {/* AI Assistant */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Cpu className="h-3.5 w-3.5" />
                   AI Assistant
                 </AppLabel>
                 <AppSelect value={model} onValueChange={setModel}>
-                  <AppSelectTrigger>
+                  <AppSelectTrigger className="w-full h-8 text-xs">
                     <AppSelectValue placeholder="Choose your assistant" />
                   </AppSelectTrigger>
                   <AppSelectContent>
@@ -158,20 +156,18 @@ const NewWritingPage: React.FC = () => {
               </div>
 
               {/* Thinking Style */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Brain className="h-3.5 w-3.5" />
                   Reasoning
                 </AppLabel>
-                <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">Extended thinking</span>
-                    <span className="text-xs text-muted-foreground">Deeper analysis before responding</span>
-                  </div>
+                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
+                  <span className="text-xs font-medium">Extended thinking</span>
                   <AppButton
                     type="button"
                     variant={reasoning ? 'default' : 'outline'}
                     size="sm"
+                    className="h-6 text-xs px-2"
                     onClick={() => setReasoning(!reasoning)}
                   >
                     {reasoning ? 'On' : 'Off'}
@@ -180,13 +176,13 @@ const NewWritingPage: React.FC = () => {
               </div>
 
               {/* Creativity Level */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" />
                   Creativity Level
                 </AppLabel>
                 <AppSelect value={temperature} onValueChange={setTemperature}>
-                  <AppSelectTrigger>
+                  <AppSelectTrigger className="w-full h-8 text-xs">
                     <AppSelectValue placeholder="Set creativity" />
                   </AppSelectTrigger>
                   <AppSelectContent>
@@ -195,28 +191,41 @@ const NewWritingPage: React.FC = () => {
                     <AppSelectItem value="0.7">Balanced</AppSelectItem>
                     <AppSelectItem value="1.0">More Creative</AppSelectItem>
                     <AppSelectItem value="1.5">Very Creative</AppSelectItem>
+                    <AppSelectItem value="custom">Custom</AppSelectItem>
                   </AppSelectContent>
                 </AppSelect>
+                {temperature === 'custom' && (
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between">
+                      <AppLabel className="text-xs text-muted-foreground">Value</AppLabel>
+                      <span className="text-[11px] text-muted-foreground tabular-nums">{customTemperature.toFixed(1)}</span>
+                    </div>
+                    <AppSlider
+                      min={0}
+                      max={2}
+                      step={0.1}
+                      value={customTemperature}
+                      onValueChange={setCustomTemperature}
+                    />
+                  </div>
+                )}
               </div>
 
-              {/* Response Length */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              {/* Max Characters */}
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5" />
-                  Response Length
+                  Max Characters
                 </AppLabel>
-                <AppSelect value={maxTokens} onValueChange={setMaxTokens}>
-                  <AppSelectTrigger>
-                    <AppSelectValue placeholder="How long should responses be?" />
-                  </AppSelectTrigger>
-                  <AppSelectContent>
-                    <AppSelectItem value="1024">Brief</AppSelectItem>
-                    <AppSelectItem value="2048">Moderate</AppSelectItem>
-                    <AppSelectItem value="4096">Detailed</AppSelectItem>
-                    <AppSelectItem value="8192">Comprehensive</AppSelectItem>
-                    <AppSelectItem value="none">No limit</AppSelectItem>
-                  </AppSelectContent>
-                </AppSelect>
+                <AppInput
+                  type="number"
+                  min={0}
+                  value={maxChars}
+                  onChange={(e) => setMaxChars(e.target.value)}
+                  placeholder="Max characters"
+                  className="h-8 text-xs"
+                />
+                <p className="text-[11px] text-muted-foreground">Leave empty for unlimited.</p>
               </div>
 
             </div>

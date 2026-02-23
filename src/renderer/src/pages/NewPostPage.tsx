@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Download, Eye, X, Settings2, Share2, MoreHorizontal, Copy, Trash2, Brain, Cpu, Zap, Database, Sparkles } from 'lucide-react'
+import { Download, Eye, X, Settings2, Share2, MoreHorizontal, Copy, Trash2, Brain, Cpu, Zap, Sparkles } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import {
   AppLabel,
@@ -15,6 +15,8 @@ import {
   AppDropdownMenuItem,
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
+  AppSlider,
+  AppInput,
 } from '@/components/app'
 import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock'
 import { useAppDispatch, useAppSelector } from '../store'
@@ -49,11 +51,11 @@ const NewPostPage: React.FC = () => {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   // AI Settings state
-  const [ragEnabled, setRagEnabled] = useState(false)
   const [reasoningModel, setReasoningModel] = useState('gpt-4')
   const [modelName, setModelName] = useState('claude-sonnet-4.5')
   const [temperature, setTemperature] = useState('0.7')
-  const [maxTokens, setMaxTokens] = useState('4096')
+  const [customTemperature, setCustomTemperature] = useState(1.0)
+  const [maxChars, setMaxChars] = useState('')
 
   // Callbacks must also be before early return to maintain hook order
   const handleChange = useCallback((blockId: string, content: string) => {
@@ -229,56 +231,29 @@ const NewPostPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="w-96 border-l border-border bg-muted/20 overflow-y-auto">
-            <div className="p-5 flex flex-col gap-5">
-
-              {/* Close button */}
-              <div className="flex justify-between items-center mb-2 pb-2 border-b border-border">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Settings2 className="h-4 w-4" />
-                  AI Settings
-                </h3>
-                <AppButton
-                  type="button"
-                  onClick={() => setShowSidebar(false)}
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                >
-                  <X className="h-4 w-4" />
-                </AppButton>
-              </div>
-
-              {/* Use Knowledge Base */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Database className="h-3.5 w-3.5" />
-                  Use Your Documents
-                </AppLabel>
-                <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">Search my files</span>
-                    <span className="text-xs text-muted-foreground">Include your documents in responses</span>
-                  </div>
-                  <AppButton
-                    type="button"
-                    variant={ragEnabled ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setRagEnabled(!ragEnabled)}
-                  >
-                    {ragEnabled ? 'On' : 'Off'}
-                  </AppButton>
-                </div>
-              </div>
+          <div className="flex h-full w-[280px] shrink-0 flex-col border-l border-border bg-background overflow-y-auto">
+            <div className="px-4 py-4 border-b border-border flex items-center justify-between">
+              <h2 className="text-sm font-semibold">AI Settings</h2>
+              <AppButton
+                type="button"
+                onClick={() => setShowSidebar(false)}
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+              >
+                <X className="h-4 w-4" />
+              </AppButton>
+            </div>
+            <div className="p-4 space-y-5">
 
               {/* AI Assistant */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Cpu className="h-3.5 w-3.5" />
                   AI Assistant
                 </AppLabel>
                 <AppSelect value={modelName} onValueChange={setModelName}>
-                  <AppSelectTrigger>
+                  <AppSelectTrigger className="w-full h-8 text-xs">
                     <AppSelectValue placeholder="Choose your assistant" />
                   </AppSelectTrigger>
                   <AppSelectContent>
@@ -292,13 +267,13 @@ const NewPostPage: React.FC = () => {
               </div>
 
               {/* Thinking Style */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Brain className="h-3.5 w-3.5" />
                   Thinking Style
                 </AppLabel>
                 <AppSelect value={reasoningModel} onValueChange={setReasoningModel}>
-                  <AppSelectTrigger>
+                  <AppSelectTrigger className="w-full h-8 text-xs">
                     <AppSelectValue placeholder="How should AI think?" />
                   </AppSelectTrigger>
                   <AppSelectContent>
@@ -311,13 +286,13 @@ const NewPostPage: React.FC = () => {
               </div>
 
               {/* Creativity Level */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" />
                   Creativity Level
                 </AppLabel>
                 <AppSelect value={temperature} onValueChange={setTemperature}>
-                  <AppSelectTrigger>
+                  <AppSelectTrigger className="w-full h-8 text-xs">
                     <AppSelectValue placeholder="Set creativity" />
                   </AppSelectTrigger>
                   <AppSelectContent>
@@ -326,35 +301,41 @@ const NewPostPage: React.FC = () => {
                     <AppSelectItem value="0.7">Balanced</AppSelectItem>
                     <AppSelectItem value="1.0">More Creative</AppSelectItem>
                     <AppSelectItem value="1.5">Very Creative</AppSelectItem>
+                    <AppSelectItem value="custom">Custom</AppSelectItem>
                   </AppSelectContent>
                 </AppSelect>
+                {temperature === 'custom' && (
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between">
+                      <AppLabel className="text-xs text-muted-foreground">Value</AppLabel>
+                      <span className="text-[11px] text-muted-foreground tabular-nums">{customTemperature.toFixed(1)}</span>
+                    </div>
+                    <AppSlider
+                      min={0}
+                      max={2}
+                      step={0.1}
+                      value={customTemperature}
+                      onValueChange={setCustomTemperature}
+                    />
+                  </div>
+                )}
               </div>
 
-              {/* Response Length */}
-              <div className="flex flex-col gap-2">
-                <AppLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              {/* Max Characters */}
+              <div className="space-y-1.5">
+                <AppLabel className="text-xs flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5" />
-                  Response Length
+                  Max Characters
                 </AppLabel>
-                <AppSelect value={maxTokens} onValueChange={setMaxTokens}>
-                  <AppSelectTrigger>
-                    <AppSelectValue placeholder="How long should responses be?" />
-                  </AppSelectTrigger>
-                  <AppSelectContent>
-                    <AppSelectItem value="1024">Brief</AppSelectItem>
-                    <AppSelectItem value="2048">Moderate</AppSelectItem>
-                    <AppSelectItem value="4096">Detailed</AppSelectItem>
-                    <AppSelectItem value="8192">Comprehensive</AppSelectItem>
-                    <AppSelectItem value="16384">Very Detailed</AppSelectItem>
-                  </AppSelectContent>
-                </AppSelect>
-              </div>
-
-              {/* Info */}
-              <div className="flex flex-col gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-blue-800 dark:text-blue-300">
-                  <strong>Tip:</strong> These settings help customize how the AI assists you with writing.
-                </p>
+                <AppInput
+                  type="number"
+                  min={0}
+                  value={maxChars}
+                  onChange={(e) => setMaxChars(e.target.value)}
+                  placeholder="Max characters"
+                  className="h-8 text-xs"
+                />
+                <p className="text-[11px] text-muted-foreground">Leave empty for unlimited.</p>
               </div>
 
             </div>
