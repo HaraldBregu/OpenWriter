@@ -1,7 +1,4 @@
 {
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
   "attribution": {
     "commit": "",
     "pr": ""
@@ -70,5 +67,18 @@
       "Bash(git reset --hard:*)"
     ],
     "ask": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "CommitAfterTask",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "commit"
+          }
+        ]
+      }
+    ]
   }
 }
