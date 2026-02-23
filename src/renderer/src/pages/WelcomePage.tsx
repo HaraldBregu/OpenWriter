@@ -5,6 +5,7 @@ import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
 import { useAppDispatch } from '../store'
 import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
+import { loadOutputItems } from '@/store/outputSlice'
 import logoIcon from '@resources/icons/icon.png'
 
 interface RecentProject {
@@ -63,6 +64,14 @@ const WelcomePage: React.FC = () => {
           // Continue to navigation even if posts fail to load
         }
 
+        // Load output items from workspace (don't block navigation if this fails)
+        try {
+          await dispatch(loadOutputItems())
+        } catch (error) {
+          console.error('Failed to load output items after workspace selection:', error)
+          // Continue to navigation even if output items fail to load
+        }
+
         // Navigate current window to home
         navigate('/home')
       }
@@ -87,6 +96,14 @@ const WelcomePage: React.FC = () => {
       } catch (error) {
         console.error('Failed to load posts after workspace selection:', error)
         // Continue to navigation even if posts fail to load
+      }
+
+      // Load output items from workspace (don't block navigation if this fails)
+      try {
+        await dispatch(loadOutputItems())
+      } catch (error) {
+        console.error('Failed to load output items after workspace selection:', error)
+        // Continue to navigation even if output items fail to load
       }
 
       // Navigate current window to home

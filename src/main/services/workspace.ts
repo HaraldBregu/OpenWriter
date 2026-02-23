@@ -104,8 +104,8 @@ export class WorkspaceService implements Disposable {
 
     console.log('[WorkspaceService] Workspace changed:', previousPath, '->', normalized)
 
-    // Notify other services via EventBus
-    this.eventBus.broadcast('workspace:changed', {
+    // Notify other services via EventBus (main-process listeners only)
+    this.eventBus.emit('workspace:changed', {
       currentPath: normalized,
       previousPath
     })
@@ -123,7 +123,7 @@ export class WorkspaceService implements Disposable {
 
     console.log('[WorkspaceService] Workspace cleared, was:', previousPath)
 
-    this.eventBus.broadcast('workspace:changed', {
+    this.eventBus.emit('workspace:changed', {
       currentPath: null,
       previousPath
     })

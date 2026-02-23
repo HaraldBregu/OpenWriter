@@ -55,8 +55,8 @@ export class OutputIpc implements IpcModule {
             )
           }
 
-          if (!input.content || typeof input.content !== 'string') {
-            throw new Error('Invalid content: must be a non-empty string')
+          if (typeof input.content !== 'string') {
+            throw new Error('Invalid content: must be a string')
           }
 
           if (!input.metadata || typeof input.metadata !== 'object' || Array.isArray(input.metadata)) {
