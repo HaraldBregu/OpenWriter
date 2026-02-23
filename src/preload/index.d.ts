@@ -492,6 +492,8 @@ declare global {
       windowIsFullScreen: () => Promise<boolean>
       onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
       // Context Menu
+      showWritingContextMenu: (writingId: string, writingTitle: string) => Promise<void>
+      onWritingContextMenuAction: (callback: (data: { action: string; writingId: string }) => void) => () => void
       showPostContextMenu: (postId: string, postTitle: string) => Promise<void>
       onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void) => () => void
       // Directories - Indexed directory management

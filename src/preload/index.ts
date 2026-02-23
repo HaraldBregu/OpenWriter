@@ -775,6 +775,18 @@ const api = {
         }
     },
     // Context Menu
+    showWritingContextMenu: (writingId: string, writingTitle: string): Promise<void> => {
+        return ipcRenderer.invoke('context-menu:writing', writingId, writingTitle)
+    },
+    onWritingContextMenuAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, data: { action: string; writingId: string }): void => {
+            callback(data)
+        }
+        ipcRenderer.on('context-menu:writing-action', handler)
+        return () => {
+            ipcRenderer.removeListener('context-menu:writing-action', handler)
+        }
+    },
     showPostContextMenu: (postId: string, postTitle: string): Promise<void> => {
         return ipcRenderer.invoke('context-menu:post', postId, postTitle)
     },

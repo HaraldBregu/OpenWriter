@@ -17,7 +17,11 @@ import {
   updatePostTags,
   updatePostVisibility,
 } from "../store/postsSlice";
-import { selectWritings } from "../store/writingsSlice";
+import {
+  selectWritings,
+  addWriting,
+  deleteWriting,
+} from "../store/writingsSlice";
 import { deleteOutputItem } from "../store/outputSlice";
 import { TitleBar } from "./TitleBar";
 import {
@@ -78,8 +82,8 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateItems = [
+  { title: "Write", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
   { title: "New Post", icon: PlusCircle, url: "/new/post", shortcut: "⌘N" },
-  { title: "New Writing", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
 ];
 
 const topNavSections = ["Posts", "Writing"];
@@ -220,7 +224,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         const workspacePath = await window.api.workspaceGetCurrent();
         if (workspacePath) {
           // Extract folder name from path
-          const pathParts = typeof workspacePath === 'string' ? workspacePath.split(/[/\\]/) : [];
+          const pathParts =
+            typeof workspacePath === "string"
+              ? workspacePath.split(/[/\\]/)
+              : [];
           const folderName = pathParts[pathParts.length - 1];
           setWorkspaceName(`${folderName} (workspace)` || "Tesseract AI");
         }
@@ -239,16 +246,23 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   );
 
   const handleNewPost = useCallback(() => {
-    navigate('/new/post', { state: { draftKey: Date.now() } });
+    navigate("/new/post", { state: { draftKey: Date.now() } });
   }, [navigate]);
 
   const handleNewWriting = useCallback(() => {
-    navigate('/new/writing', { state: { draftKey: Date.now() } });
+    navigate("/new/writing", { state: { draftKey: Date.now() } });
   }, [navigate]);
 
   const handlePostContextMenu = useCallback(
     (postId: string, postTitle: string) => {
       window.api.showPostContextMenu(postId, postTitle);
+    },
+    [],
+  );
+
+  const handleWritingContextMenu = useCallback(
+    (writingId: string, writingTitle: string) => {
+      window.api.showWritingContextMenu(writingId, writingTitle);
     },
     [],
   );
@@ -312,7 +326,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         case "delete": {
           const postToDelete = posts.find((p) => p.id === postId);
           if (postToDelete?.outputId) {
-            dispatch(deleteOutputItem({ type: 'posts', id: postToDelete.outputId }));
+            dispatch(
+              deleteOutputItem({ type: "posts", id: postToDelete.outputId }),
+            );
           }
           dispatch(deletePost(postId));
           // If currently viewing this post, navigate to home
@@ -326,6 +342,62 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
     return cleanup;
   }, [dispatch, navigate, location.pathname, posts]);
+
+  // Listen for writing context menu actions
+  useEffect(() => {
+    const cleanup = window.api.onWritingContextMenuAction((data) => {
+      const { action, writingId } = data;
+
+      switch (action) {
+        case "open":
+          navigate(`/new/writing/${writingId}`);
+          break;
+
+        case "duplicate": {
+          const source = writings.find((w) => w.id === writingId);
+          if (!source) break;
+          const newId = crypto.randomUUID();
+          dispatch(
+            addWriting({
+              id: newId,
+              title: `${source.title} (Copy)`,
+              content: source.content,
+              category: source.category,
+              tags: source.tags,
+              visibility: source.visibility,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            }),
+          );
+          navigate(`/new/writing/${newId}`);
+          break;
+        }
+
+        case "rename":
+          navigate(`/new/writing/${writingId}`);
+          break;
+
+        case "delete": {
+          const writingToDelete = writings.find((w) => w.id === writingId);
+          if (writingToDelete?.outputId) {
+            dispatch(
+              deleteOutputItem({
+                type: "writings",
+                id: writingToDelete.outputId,
+              }),
+            );
+          }
+          dispatch(deleteWriting(writingId));
+          if (location.pathname === `/new/writing/${writingId}`) {
+            navigate("/home");
+          }
+          break;
+        }
+      }
+    });
+
+    return cleanup;
+  }, [dispatch, navigate, location.pathname, writings]);
 
   return (
     <>
@@ -355,7 +427,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
-                  
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon;
@@ -469,6 +540,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                       `/new/writing/${writing.id}`
                                     }
                                     className="ml-0"
+                                    onContextMenu={() =>
+                                      handleWritingContextMenu(
+                                        writing.id,
+                                        writing.title,
+                                      )
+                                    }
                                   >
                                     <Link
                                       to={`/new/writing/${writing.id}`}
@@ -500,9 +577,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       onClick={() => toggleSection("Knowledge")}
                       className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <span className="tracking-wider">
-                        Knowledge
-                      </span>
+                      <span className="tracking-wider">Knowledge</span>
                       <ChevronRight
                         className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Knowledge"] ? "rotate-90" : ""}`}
                       />
@@ -529,7 +604,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           >
                             <Link to="/directories" className="ml-0">
                               <FolderOpen className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">Directories</span>
+                              <span className="flex-1 truncate">
+                                Directories
+                              </span>
                             </Link>
                           </AppSidebarMenuSubButton>
                         </AppSidebarMenuSubItem>
@@ -544,9 +621,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       onClick={() => toggleSection("Personality")}
                       className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <span className="tracking-wider">
-                        Personality
-                      </span>
+                      <span className="tracking-wider">Personality</span>
                       <ChevronRight
                         className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Personality"] ? "rotate-90" : ""}`}
                       />
@@ -595,7 +670,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
-
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
