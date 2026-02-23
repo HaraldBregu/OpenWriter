@@ -14,6 +14,8 @@ export interface Post {
   visibility: string
   createdAt: number
   updatedAt: number
+  /** ID of the corresponding output folder on disk (set after first save) */
+  outputId?: string
 }
 
 interface PostsState {
@@ -106,6 +108,11 @@ export const postsSlice = createSlice({
       state.posts.unshift(action.payload)
     },
 
+    setPostOutputId(state, action: PayloadAction<{ postId: string; outputId: string }>) {
+      const post = state.posts.find((p) => p.id === action.payload.postId)
+      if (post) post.outputId = action.payload.outputId
+    },
+
     deletePost(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
     },
@@ -142,6 +149,7 @@ export const postsSlice = createSlice({
 export const {
   createPost,
   addPost,
+  setPostOutputId,
   updatePostBlocks,
   updatePostTitle,
   updatePostCategory,

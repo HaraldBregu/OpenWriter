@@ -17,6 +17,7 @@ import {
   updatePostTags,
   updatePostVisibility,
 } from "../store/postsSlice";
+import { deleteOutputItem } from "../store/outputSlice";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
@@ -313,13 +314,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
           navigate(`/new/post/${postId}`);
           break;
 
-        case "delete":
+        case "delete": {
+          const postToDelete = posts.find((p) => p.id === postId);
+          if (postToDelete?.outputId) {
+            dispatch(deleteOutputItem({ type: 'posts', id: postToDelete.outputId }));
+          }
           dispatch(deletePost(postId));
           // If currently viewing this post, navigate to home
           if (location.pathname === `/new/post/${postId}`) {
             navigate("/home");
           }
           break;
+        }
       }
     });
 

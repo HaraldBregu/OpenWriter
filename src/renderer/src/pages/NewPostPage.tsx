@@ -15,11 +15,12 @@ import { useAppDispatch, useAppSelector } from '../store'
 import {
   selectPostById,
   addPost,
+  setPostOutputId,
   updatePostBlocks,
   updatePostTitle,
   deletePost
 } from '../store/postsSlice'
-import { saveOutputItem, updateOutputItem } from '@/store/outputSlice'
+import { saveOutputItem, updateOutputItem, deleteOutputItem } from '@/store/outputSlice'
 import {
   PersonalitySettingsPanel,
   DEFAULT_INFERENCE_SETTINGS,
@@ -46,8 +47,9 @@ const NewPostPage: React.FC = () => {
   const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
   const committedRef = useRef(false)
 
-  // Tracks the output folder ID of the last successful save (both modes)
-  const savedOutputIdRef = useRef<string | null>(null)
+  // Tracks the output folder ID of the last successful save (both modes).
+  // Seeded from post.outputId so it survives component remounts.
+  const savedOutputIdRef = useRef<string | null>(post?.outputId ?? null)
 
   // Reset draft whenever "New Post" is clicked again (navigation state key changes)
   const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
@@ -105,6 +107,7 @@ const NewPostPage: React.FC = () => {
         model: '',
       })).unwrap()
       savedOutputIdRef.current = saved.id
+      dispatch(setPostOutputId({ postId: draftIdRef.current, outputId: saved.id }))
 
       navigate(`/new/post/${draftIdRef.current}`, { replace: true })
     }, 1000)
@@ -151,6 +154,7 @@ const NewPostPage: React.FC = () => {
           model: '',
         })).unwrap()
         savedOutputIdRef.current = saved.id
+        if (post) dispatch(setPostOutputId({ postId: post.id, outputId: saved.id }))
       }
     }, 1000)
     return () => {
@@ -274,6 +278,8 @@ const NewPostPage: React.FC = () => {
                 <AppDropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={() => {
+                    const outputId = post!.outputId ?? savedOutputIdRef.current
+                    if (outputId) dispatch(deleteOutputItem({ type: 'posts', id: outputId }))
                     dispatch(deletePost(post!.id))
                     navigate('/home')
                   }}
