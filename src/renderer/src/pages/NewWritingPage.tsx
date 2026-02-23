@@ -1,19 +1,16 @@
 import React, { useState, useCallback } from 'react'
-import { Settings2, X, Cpu, Brain, Zap, Sparkles, Save, PenLine } from 'lucide-react'
+import { Settings2, Save, PenLine } from 'lucide-react'
 import {
-  AppLabel,
   AppButton,
-  AppSelect,
-  AppSelectContent,
-  AppSelectItem,
-  AppSelectTrigger,
-  AppSelectValue,
   AppTextarea,
-  AppSlider,
-  AppInput,
 } from '@/components/app'
 import { useAppDispatch, useAppSelector } from '../store'
 import { saveOutputItem, selectOutputLoading, selectOutputError } from '../store/outputSlice'
+import {
+  PersonalitySettingsPanel,
+  DEFAULT_INFERENCE_SETTINGS,
+  type InferenceSettings,
+} from '@/components/personality/PersonalitySettingsSheet'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -32,11 +29,7 @@ const NewWritingPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true)
 
   // AI settings state
-  const [model, setModel] = useState('claude-sonnet-4.5')
-  const [reasoning, setReasoning] = useState(false)
-  const [temperature, setTemperature] = useState('0.7')
-  const [customTemperature, setCustomTemperature] = useState(1.0)
-  const [maxChars, setMaxChars] = useState('')
+  const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
 
   // Derived
   const canSave = title.trim().length > 0 || content.trim().length > 0
@@ -52,14 +45,14 @@ const NewWritingPage: React.FC = () => {
         category: 'writing',
         tags: [],
         visibility: 'private',
-        provider: 'manual',
-        model,
-        temperature: temperature === 'custom' ? customTemperature : parseFloat(temperature),
-        maxTokens: maxChars ? parseInt(maxChars, 10) : null,
-        reasoning
+        provider: aiSettings.providerId,
+        model: aiSettings.modelId,
+        temperature: aiSettings.temperature,
+        maxTokens: aiSettings.maxTokens,
+        reasoning: aiSettings.reasoning
       })
     )
-  }, [canSave, title, content, model, temperature, customTemperature, maxChars, reasoning, dispatch])
+  }, [canSave, title, content, aiSettings, dispatch])
 
   return (
     <div className="h-full flex flex-col">
@@ -120,116 +113,10 @@ const NewWritingPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="flex h-full w-[280px] shrink-0 flex-col border-l border-border bg-background overflow-y-auto">
-            <div className="px-4 py-4 border-b border-border flex items-center justify-between">
-              <h2 className="text-sm font-semibold">AI Settings</h2>
-              <AppButton
-                type="button"
-                onClick={() => setShowSidebar(false)}
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-              >
-                <X className="h-4 w-4" />
-              </AppButton>
-            </div>
-            <div className="p-4 space-y-5">
-
-              {/* AI Assistant */}
-              <div className="space-y-1.5">
-                <AppLabel className="text-xs flex items-center gap-1.5">
-                  <Cpu className="h-3.5 w-3.5" />
-                  AI Assistant
-                </AppLabel>
-                <AppSelect value={model} onValueChange={setModel}>
-                  <AppSelectTrigger className="w-full h-8 text-xs">
-                    <AppSelectValue placeholder="Choose your assistant" />
-                  </AppSelectTrigger>
-                  <AppSelectContent>
-                    <AppSelectItem value="claude-sonnet-4.5">Claude (Fast & Smart)</AppSelectItem>
-                    <AppSelectItem value="claude-opus-4">Claude (Most Capable)</AppSelectItem>
-                    <AppSelectItem value="claude-haiku-4">Claude (Quick Responses)</AppSelectItem>
-                    <AppSelectItem value="gpt-4-turbo">ChatGPT (Latest)</AppSelectItem>
-                    <AppSelectItem value="gpt-4">ChatGPT (Classic)</AppSelectItem>
-                  </AppSelectContent>
-                </AppSelect>
-              </div>
-
-              {/* Thinking Style */}
-              <div className="space-y-1.5">
-                <AppLabel className="text-xs flex items-center gap-1.5">
-                  <Brain className="h-3.5 w-3.5" />
-                  Reasoning
-                </AppLabel>
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
-                  <span className="text-xs font-medium">Extended thinking</span>
-                  <AppButton
-                    type="button"
-                    variant={reasoning ? 'default' : 'outline'}
-                    size="sm"
-                    className="h-6 text-xs px-2"
-                    onClick={() => setReasoning(!reasoning)}
-                  >
-                    {reasoning ? 'On' : 'Off'}
-                  </AppButton>
-                </div>
-              </div>
-
-              {/* Creativity Level */}
-              <div className="space-y-1.5">
-                <AppLabel className="text-xs flex items-center gap-1.5">
-                  <Zap className="h-3.5 w-3.5" />
-                  Creativity Level
-                </AppLabel>
-                <AppSelect value={temperature} onValueChange={setTemperature}>
-                  <AppSelectTrigger className="w-full h-8 text-xs">
-                    <AppSelectValue placeholder="Set creativity" />
-                  </AppSelectTrigger>
-                  <AppSelectContent>
-                    <AppSelectItem value="0.0">Precise & Consistent</AppSelectItem>
-                    <AppSelectItem value="0.3">Mostly Focused</AppSelectItem>
-                    <AppSelectItem value="0.7">Balanced</AppSelectItem>
-                    <AppSelectItem value="1.0">More Creative</AppSelectItem>
-                    <AppSelectItem value="1.5">Very Creative</AppSelectItem>
-                    <AppSelectItem value="custom">Custom</AppSelectItem>
-                  </AppSelectContent>
-                </AppSelect>
-                {temperature === 'custom' && (
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center justify-between">
-                      <AppLabel className="text-xs text-muted-foreground">Value</AppLabel>
-                      <span className="text-[11px] text-muted-foreground tabular-nums">{customTemperature.toFixed(1)}</span>
-                    </div>
-                    <AppSlider
-                      min={0}
-                      max={2}
-                      step={0.1}
-                      value={customTemperature}
-                      onValueChange={setCustomTemperature}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Max Characters */}
-              <div className="space-y-1.5">
-                <AppLabel className="text-xs flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Max Characters
-                </AppLabel>
-                <AppInput
-                  type="number"
-                  min={0}
-                  value={maxChars}
-                  onChange={(e) => setMaxChars(e.target.value)}
-                  placeholder="Max characters"
-                  className="h-8 text-xs"
-                />
-                <p className="text-[11px] text-muted-foreground">Leave empty for unlimited.</p>
-              </div>
-
-            </div>
-          </div>
+          <PersonalitySettingsPanel
+            settings={aiSettings}
+            onSettingsChange={setAiSettings}
+          />
         )}
       </div>
     </div>
