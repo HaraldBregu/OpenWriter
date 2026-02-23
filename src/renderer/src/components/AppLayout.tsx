@@ -337,6 +337,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
+                  
                   {/* Quick-create items */}
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon;
