@@ -94,6 +94,13 @@ export class WindowContext {
     })
     this.container.register('personalityFiles', personalityFilesService)
 
+    // Output files service - scoped to this window's workspace
+    const outputFilesService = new OutputFilesService(workspaceService, this.eventBus)
+    outputFilesService.initialize().catch((error) => {
+      console.error(`[WindowContext] Failed to initialize OutputFilesService for window ${this.windowId}:`, error)
+    })
+    this.container.register('outputFiles', outputFilesService)
+
     console.log(`[WindowContext] Initialized ${this.container.has('workspace') ? 'all' : 'some'} services for window ${this.windowId}`)
   }
 
