@@ -172,6 +172,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new WorkspaceIpc(),
     new DirectoriesIpc(),
     new TaskIpc(),
+    new OutputIpc(),
     new PersonalityIpc()
   ]
 
