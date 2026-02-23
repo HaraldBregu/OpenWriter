@@ -57,6 +57,7 @@ import {
   WorkspaceIpc,
   DirectoriesIpc,
   TaskIpc,
+  OutputIpc,
   PersonalityIpc
 } from './ipc'
 
