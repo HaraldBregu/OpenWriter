@@ -2,10 +2,10 @@ import { createSlice, createAsyncThunk, createSelector, PayloadAction } from '@r
 import type { RootState } from './index'
 
 // ---------------------------------------------------------------------------
-// Types (matching the main process BrainFilesService)
+// Types (matching the main process PersonalityFilesService)
 // ---------------------------------------------------------------------------
 
-export interface BrainFileMetadata {
+export interface PersonalityFileMetadata {
   sectionId: string
   title?: string
   createdAt: number
@@ -14,22 +14,22 @@ export interface BrainFileMetadata {
   [key: string]: unknown
 }
 
-export interface BrainFile {
+export interface PersonalityFile {
   id: string // filename without extension (timestamp)
   sectionId: string
   path: string
-  metadata: BrainFileMetadata
+  metadata: PersonalityFileMetadata
   content: string
   savedAt: number
 }
 
-export interface SaveBrainFileInput {
+export interface SavePersonalityFileInput {
   sectionId: string
   content: string
-  metadata?: Partial<BrainFileMetadata>
+  metadata?: Partial<PersonalityFileMetadata>
 }
 
-export interface SaveBrainFileResult {
+export interface SavePersonalityFileResult {
   id: string
   path: string
   savedAt: number
@@ -37,13 +37,13 @@ export interface SaveBrainFileResult {
 
 type SectionId = 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception'
 
-interface BrainFilesState {
+interface PersonalityFilesState {
   files: {
-    principles: BrainFile[]
-    consciousness: BrainFile[]
-    memory: BrainFile[]
-    reasoning: BrainFile[]
-    perception: BrainFile[]
+    principles: PersonalityFile[]
+    consciousness: PersonalityFile[]
+    memory: PersonalityFile[]
+    reasoning: PersonalityFile[]
+    perception: PersonalityFile[]
   }
   loading: boolean
   error: string | null
@@ -53,7 +53,7 @@ interface BrainFilesState {
   } | null
 }
 
-const initialState: BrainFilesState = {
+const initialState: PersonalityFilesState = {
   files: {
     principles: [],
     consciousness: [],
@@ -71,51 +71,51 @@ const initialState: BrainFilesState = {
 // ---------------------------------------------------------------------------
 
 /**
- * Save a brain conversation file to the workspace.
+ * Save a personality conversation file to the workspace.
  */
-export const saveBrainFile = createAsyncThunk(
-  'brainFiles/save',
-  async (input: SaveBrainFileInput, { rejectWithValue }) => {
+export const savePersonalityFile = createAsyncThunk(
+  'personalityFiles/save',
+  async (input: SavePersonalityFileInput, { rejectWithValue }) => {
     try {
-      const result = await window.api.brainSave(input)
+      const result = await window.api.personalitySave(input)
       return result
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save brain file'
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save personality file'
       return rejectWithValue(errorMessage)
     }
   }
 )
 
 /**
- * Load all brain files from the workspace.
+ * Load all personality files from the workspace.
  */
-export const loadBrainFiles = createAsyncThunk(
-  'brainFiles/loadAll',
+export const loadPersonalityFiles = createAsyncThunk(
+  'personalityFiles/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.api.brainLoadAll()
+      const files = await window.api.personalityLoadAll()
       return files
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load brain files'
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load personality files'
       return rejectWithValue(errorMessage)
     }
   }
 )
 
 /**
- * Delete a brain file from the workspace.
+ * Delete a personality file from the workspace.
  */
-export const deleteBrainFile = createAsyncThunk(
-  'brainFiles/delete',
+export const deletePersonalityFile = createAsyncThunk(
+  'personalityFiles/delete',
   async (
     params: { id: string; sectionId: string },
     { rejectWithValue }
   ) => {
     try {
-      await window.api.brainDelete(params)
+      await window.api.personalityDelete(params)
       return params
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete brain file'
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete personality file'
       return rejectWithValue(errorMessage)
     }
   }
@@ -125,8 +125,8 @@ export const deleteBrainFile = createAsyncThunk(
 // Slice
 // ---------------------------------------------------------------------------
 
-export const brainFilesSlice = createSlice({
-  name: 'brainFiles',
+export const personalityFilesSlice = createSlice({
+  name: 'personalityFiles',
   initialState,
   reducers: {
     /**
@@ -144,13 +144,13 @@ export const brainFilesSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // Save brain file
+    // Save personality file
     builder
-      .addCase(saveBrainFile.pending, (state) => {
+      .addCase(savePersonalityFile.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(saveBrainFile.fulfilled, (state, action: PayloadAction<SaveBrainFileResult>) => {
+      .addCase(savePersonalityFile.fulfilled, (state, action: PayloadAction<SavePersonalityFileResult>) => {
         state.loading = false
 
         // Track last saved for UI feedback
@@ -160,21 +160,21 @@ export const brainFilesSlice = createSlice({
         }
 
         // Note: We don't add the file to state here because we need to load
-        // the full file (with content) from the backend. The loadBrainFiles
+        // the full file (with content) from the backend. The loadPersonalityFiles
         // action should be called after save to refresh the list.
       })
-      .addCase(saveBrainFile.rejected, (state, action) => {
+      .addCase(savePersonalityFile.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
       })
 
-    // Load all brain files
+    // Load all personality files
     builder
-      .addCase(loadBrainFiles.pending, (state) => {
+      .addCase(loadPersonalityFiles.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(loadBrainFiles.fulfilled, (state, action: PayloadAction<BrainFile[]>) => {
+      .addCase(loadPersonalityFiles.fulfilled, (state, action: PayloadAction<PersonalityFile[]>) => {
         state.loading = false
 
         // Reset all sections
@@ -200,19 +200,19 @@ export const brainFilesSlice = createSlice({
           section.sort((a, b) => b.savedAt - a.savedAt)
         })
       })
-      .addCase(loadBrainFiles.rejected, (state, action) => {
+      .addCase(loadPersonalityFiles.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
       })
 
-    // Delete brain file
+    // Delete personality file
     builder
-      .addCase(deleteBrainFile.pending, (state) => {
+      .addCase(deletePersonalityFile.pending, (state) => {
         state.loading = true
         state.error = null
       })
       .addCase(
-        deleteBrainFile.fulfilled,
+        deletePersonalityFile.fulfilled,
         (state, action: PayloadAction<{ id: string; sectionId: string }>) => {
           state.loading = false
           const { id, sectionId } = action.payload
@@ -222,71 +222,71 @@ export const brainFilesSlice = createSlice({
           }
         }
       )
-      .addCase(deleteBrainFile.rejected, (state, action) => {
+      .addCase(deletePersonalityFile.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
       })
   }
 })
 
-export const { clearError, clearLastSaved } = brainFilesSlice.actions
+export const { clearError, clearLastSaved } = personalityFilesSlice.actions
 
 // ---------------------------------------------------------------------------
 // Selectors
 // ---------------------------------------------------------------------------
 
 /**
- * Select all brain files
+ * Select all personality files
  */
-export const selectAllBrainFiles = (state: RootState): BrainFilesState['files'] =>
-  state.brainFiles.files
+export const selectAllPersonalityFiles = (state: RootState): PersonalityFilesState['files'] =>
+  state.personalityFiles.files
 
 /**
  * Select files for a specific section
  */
-export const selectBrainFilesBySection = (
+export const selectPersonalityFilesBySection = (
   sectionId: SectionId
 ) =>
   createSelector(
-    [selectAllBrainFiles],
-    (files): BrainFile[] => files[sectionId]
+    [selectAllPersonalityFiles],
+    (files): PersonalityFile[] => files[sectionId]
   )
 
 /**
- * Select a specific brain file by ID and section
+ * Select a specific personality file by ID and section
  */
-export const selectBrainFileById = (
+export const selectPersonalityFileById = (
   id: string,
   sectionId: SectionId
 ) =>
   createSelector(
-    [selectBrainFilesBySection(sectionId)],
-    (files): BrainFile | null => files.find((f) => f.id === id) ?? null
+    [selectPersonalityFilesBySection(sectionId)],
+    (files): PersonalityFile | null => files.find((f) => f.id === id) ?? null
   )
 
 /**
  * Select loading state
  */
-export const selectBrainFilesLoading = (state: RootState): boolean =>
-  state.brainFiles.loading
+export const selectPersonalityFilesLoading = (state: RootState): boolean =>
+  state.personalityFiles.loading
 
 /**
  * Select error state
  */
-export const selectBrainFilesError = (state: RootState): string | null =>
-  state.brainFiles.error
+export const selectPersonalityFilesError = (state: RootState): string | null =>
+  state.personalityFiles.error
 
 /**
  * Select last saved info (for UI feedback)
  */
-export const selectLastSaved = (state: RootState): BrainFilesState['lastSaved'] =>
-  state.brainFiles.lastSaved
+export const selectLastSaved = (state: RootState): PersonalityFilesState['lastSaved'] =>
+  state.personalityFiles.lastSaved
 
 /**
- * Select total count of brain files across all sections
+ * Select total count of personality files across all sections
  */
-export const selectTotalBrainFilesCount = createSelector(
-  [selectAllBrainFiles],
+export const selectTotalPersonalityFilesCount = createSelector(
+  [selectAllPersonalityFiles],
   (files): number =>
     Object.values(files).reduce((total, section) => total + section.length, 0)
 )
@@ -294,8 +294,8 @@ export const selectTotalBrainFilesCount = createSelector(
 /**
  * Select count of files per section
  */
-export const selectBrainFilesCountBySection = createSelector(
-  [selectAllBrainFiles],
+export const selectPersonalityFilesCountBySection = createSelector(
+  [selectAllPersonalityFiles],
   (files): Record<SectionId, number> => ({
     principles: files.principles.length,
     consciousness: files.consciousness.length,
@@ -305,4 +305,4 @@ export const selectBrainFilesCountBySection = createSelector(
   })
 )
 
-export default brainFilesSlice.reducer
+export default personalityFilesSlice.reducer

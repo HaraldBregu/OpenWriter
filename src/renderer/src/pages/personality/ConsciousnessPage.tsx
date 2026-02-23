@@ -1,10 +1,10 @@
 import React from 'react'
 import { Lightbulb } from 'lucide-react'
-import { BrainSimpleLayout } from '@/components/brain/BrainSimpleLayout'
+import { PersonalitySimpleLayout } from '@/components/personality/PersonalitySimpleLayout'
 
 const ConsciousnessPage: React.FC = () => {
   return (
-    <BrainSimpleLayout
+    <PersonalitySimpleLayout
       sectionId="consciousness"
       providerId="openai"
       systemPrompt="You are an AI assistant specialized in consciousness, metacognition, and self-awareness. Help users explore topics related to awareness, introspection, mental states, and the nature of consciousness. Encourage reflective thinking."

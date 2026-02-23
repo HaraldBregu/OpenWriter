@@ -1,10 +1,10 @@
 import React from 'react'
 import { Eye } from 'lucide-react'
-import { BrainSimpleLayout } from '@/components/brain/BrainSimpleLayout'
+import { PersonalitySimpleLayout } from '@/components/personality/PersonalitySimpleLayout'
 
 const PerceptionPage: React.FC = () => {
   return (
-    <BrainSimpleLayout
+    <PersonalitySimpleLayout
       sectionId="perception"
       providerId="openai"
       systemPrompt="You are an AI assistant specialized in perception, pattern recognition, and sensory processing. Help users understand how perception works, cognitive biases in perception, pattern detection, and multi-sensory integration."

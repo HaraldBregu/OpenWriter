@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Send, StopCircle } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
 
-export interface BrainChatInputProps {
+export interface PersonalityChatInputProps {
   onSubmit: (prompt: string) => void | Promise<void>
   onCancel?: () => void
   isLoading?: boolean
@@ -10,7 +10,7 @@ export interface BrainChatInputProps {
   disabled?: boolean
 }
 
-export const BrainChatInput: React.FC<BrainChatInputProps> = React.memo(({
+export const PersonalityChatInput: React.FC<PersonalityChatInputProps> = React.memo(({
   onSubmit,
   onCancel,
   isLoading = false,
@@ -106,4 +106,4 @@ export const BrainChatInput: React.FC<BrainChatInputProps> = React.memo(({
   )
 })
 
-BrainChatInput.displayName = 'BrainChatInput'
+PersonalityChatInput.displayName = 'PersonalityChatInput'

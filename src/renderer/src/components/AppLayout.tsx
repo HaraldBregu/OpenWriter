@@ -4,7 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
-import { useBrainFiles } from "../hooks/useBrainFiles";
+import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
 import { useAppDispatch, useAppSelector } from "../store";
 import {
   createPost,
@@ -476,10 +476,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  {/* Brain - Label */}
+                  {/* Personality - Label */}
                   <div className="px-3 py-2">
                     <span className="text-xs font-medium text-muted-foreground/50">
-                      Brain
+                      Personality
                     </span>
                   </div>
 
@@ -487,10 +487,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === "/brain/principles"}
+                      isActive={location.pathname === "/personality/principles"}
                       className="h-9 px-3"
                     >
-                      <Link to="/brain/principles">
+                      <Link to="/personality/principles">
                         <Sparkles className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Principles</span>
                       </Link>
@@ -501,10 +501,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === "/brain/consciousness"}
+                      isActive={location.pathname === "/personality/consciousness"}
                       className="h-9 px-3"
                     >
-                      <Link to="/brain/consciousness">
+                      <Link to="/personality/consciousness">
                         <Lightbulb className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Consciousness</span>
                       </Link>
@@ -515,10 +515,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === "/brain/memory"}
+                      isActive={location.pathname === "/personality/memory"}
                       className="h-9 px-3"
                     >
-                      <Link to="/brain/memory">
+                      <Link to="/personality/memory">
                         <Database className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Memory</span>
                       </Link>
@@ -529,10 +529,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === "/brain/reasoning"}
+                      isActive={location.pathname === "/personality/reasoning"}
                       className="h-9 px-3"
                     >
-                      <Link to="/brain/reasoning">
+                      <Link to="/personality/reasoning">
                         <BrainCircuit className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Reasoning</span>
                       </Link>
@@ -543,10 +543,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
-                      isActive={location.pathname === "/brain/perception"}
+                      isActive={location.pathname === "/personality/perception"}
                       className="h-9 px-3"
                     >
-                      <Link to="/brain/perception">
+                      <Link to="/personality/perception">
                         <Eye className="h-3.5 w-3.5 shrink-0" />
                         <span className="flex-1 truncate">Perception</span>
                       </Link>
@@ -635,7 +635,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
   usePostsLoader(); // Load posts from workspace on app startup
   usePostsFileWatcher(); // Listen for external file changes in posts directory
-  useBrainFiles(); // Load brain files from workspace on app startup
+  usePersonalityFiles(); // Load personality files from workspace on app startup
 
   return (
     <div className="flex flex-col h-screen">

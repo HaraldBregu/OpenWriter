@@ -1,10 +1,10 @@
 import React from 'react'
 import { BrainCircuit } from 'lucide-react'
-import { BrainSimpleLayout } from '@/components/brain/BrainSimpleLayout'
+import { PersonalitySimpleLayout } from '@/components/personality/PersonalitySimpleLayout'
 
 const ReasoningPage: React.FC = () => {
   return (
-    <BrainSimpleLayout
+    <PersonalitySimpleLayout
       sectionId="reasoning"
       providerId="openai"
       systemPrompt="You are an AI assistant specialized in logical and analytical reasoning. Help users solve problems, analyze arguments, understand logical fallacies, and develop structured thinking skills. Use clear, step-by-step explanations."

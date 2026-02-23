@@ -57,7 +57,7 @@ import {
   WorkspaceIpc,
   DirectoriesIpc,
   TaskIpc,
-  BrainIpc
+  PersonalityIpc
 } from './ipc'
 
 export interface BootstrapResult {
@@ -170,7 +170,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new WorkspaceIpc(),
     new DirectoriesIpc(),
     new TaskIpc(),
-    new BrainIpc()
+    new PersonalityIpc()
   ]
 
   for (const module of ipcModules) {

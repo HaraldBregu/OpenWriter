@@ -1,4 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Send, StopCircle, AlertCircle, Loader2, Save, Check, ChevronDown } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
 import {
@@ -9,9 +11,9 @@ import {
 } from '@/components/app'
 import { useAI } from '@/hooks/useAI'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { saveBrainFile, selectBrainFilesLoading, selectLastSaved, clearLastSaved, loadBrainFiles, selectBrainFilesBySection } from '@/store/brainFilesSlice'
-import type { SaveBrainFileInput, BrainFile } from '@/store/brainFilesSlice'
-export interface BrainSimpleLayoutProps {
+import { savePersonalityFile, selectPersonalityFilesLoading, selectLastSaved, clearLastSaved, loadPersonalityFiles, selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
+import type { SavePersonalityFileInput, PersonalityFile } from '@/store/personalityFilesSlice'
+export interface PersonalitySimpleLayoutProps {
   sectionId: string
   systemPrompt?: string
   placeholder?: string
@@ -20,7 +22,7 @@ export interface BrainSimpleLayoutProps {
   title: string
 }
 
-export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
+export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = React.memo(({
   sectionId,
   systemPrompt,
   placeholder = 'Ask a question...',
@@ -32,16 +34,16 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   const [showSaveSuccess, setShowSaveSuccess] = useState(false)
   const [lastSavedId, setLastSavedId] = useState<string | null>(null)
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
-  const [loadedConversation, setLoadedConversation] = useState<BrainFile | null>(null)
+  const [loadedConversation, setLoadedConversation] = useState<PersonalityFile | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   const dispatch = useAppDispatch()
-  const isSaving = useAppSelector(selectBrainFilesLoading)
+  const isSaving = useAppSelector(selectPersonalityFilesLoading)
   const lastSaved = useAppSelector(selectLastSaved)
 
   // Get files for this section for the dropdown
   const files = useAppSelector(
-    selectBrainFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
+    selectPersonalityFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
   )
 
   const {
@@ -57,7 +59,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     systemPrompt,
     providerId,
     onError: (error) => {
-      console.error(`[BrainSimpleLayout:${sectionId}] Error:`, error)
+      console.error(`[PersonalitySimpleLayout:${sectionId}] Error:`, error)
     }
   })
 
@@ -118,7 +120,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
       return `## ${role} (${timestamp})\n\n${msg.content}\n`
     }).join('\n---\n\n')
 
-    const saveInput: SaveBrainFileInput = {
+    const saveInput: SavePersonalityFileInput = {
       sectionId,
       content: markdownContent,
       metadata: {
@@ -131,24 +133,24 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     }
 
     try {
-      const result = await dispatch(saveBrainFile(saveInput)).unwrap()
+      const result = await dispatch(savePersonalityFile(saveInput)).unwrap()
       setLastSavedId(result.id)
       setActiveFileId(result.id)
-      console.log(`[BrainSimpleLayout:${sectionId}] Saved conversation:`, result.id)
+      console.log(`[PersonalitySimpleLayout:${sectionId}] Saved conversation:`, result.id)
 
       // Refresh the files list
-      await dispatch(loadBrainFiles())
+      await dispatch(loadPersonalityFiles())
     } catch (error) {
-      console.error(`[BrainSimpleLayout:${sectionId}] Failed to save:`, error)
+      console.error(`[PersonalitySimpleLayout:${sectionId}] Failed to save:`, error)
     }
   }, [messages, sectionId, providerId, dispatch])
 
-  const handleFileSelect = useCallback(async (file: BrainFile) => {
+  const handleFileSelect = useCallback(async (file: PersonalityFile) => {
     try {
-      console.log(`[BrainSimpleLayout:${sectionId}] Loading conversation:`, file.id)
+      console.log(`[PersonalitySimpleLayout:${sectionId}] Loading conversation:`, file.id)
 
       // Load the full file content
-      const loadedFile = await window.api.brainLoadOne({
+      const loadedFile = await window.api.personalityLoadOne({
         sectionId: file.sectionId,
         id: file.id
       })
@@ -160,7 +162,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
       setActiveFileId(file.id)
       setLoadedConversation(loadedFile)
     } catch (error) {
-      console.error(`[BrainSimpleLayout:${sectionId}] Failed to load conversation:`, error)
+      console.error(`[PersonalitySimpleLayout:${sectionId}] Failed to load conversation:`, error)
       alert('Failed to load conversation. Please try again.')
     }
   }, [sectionId])
@@ -307,8 +309,8 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
           <div className="mx-auto max-w-4xl">
             {displayContent ? (
               <div className="rounded-lg border border-border bg-card p-6">
-                <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {displayContent}
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <Markdown remarkPlugins={[remarkGfm]}>{displayContent}</Markdown>
                 </div>
               </div>
             ) : (
@@ -374,4 +376,4 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   )
 })
 
-BrainSimpleLayout.displayName = 'BrainSimpleLayout'
+PersonalitySimpleLayout.displayName = 'PersonalitySimpleLayout'

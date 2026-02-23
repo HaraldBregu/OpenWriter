@@ -9,7 +9,7 @@ export interface Message {
   timestamp: number
 }
 
-export interface BrainChatMessagesProps {
+export interface PersonalityChatMessagesProps {
   messages: Message[]
   isStreaming?: boolean
   emptyStateMessage?: string
@@ -51,7 +51,7 @@ const MessageItem = React.memo<{ message: Message }>(({ message }) => {
 
 MessageItem.displayName = 'MessageItem'
 
-export const BrainChatMessages: React.FC<BrainChatMessagesProps> = React.memo(({
+export const PersonalityChatMessages: React.FC<PersonalityChatMessagesProps> = React.memo(({
   messages,
   isStreaming = false,
   emptyStateMessage = 'Start a conversation by typing a message below.'
@@ -101,4 +101,4 @@ export const BrainChatMessages: React.FC<BrainChatMessagesProps> = React.memo(({
   )
 })
 
-BrainChatMessages.displayName = 'BrainChatMessages'
+PersonalityChatMessages.displayName = 'PersonalityChatMessages'

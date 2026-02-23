@@ -1,21 +1,21 @@
 import React, { useState, useCallback } from 'react'
 import { History, Loader2, PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAppSelector, useAppDispatch } from '@/store'
-import { selectBrainFilesBySection, selectBrainFilesLoading, deleteBrainFile } from '@/store/brainFilesSlice'
-import type { BrainFile } from '@/store/brainFilesSlice'
-import { BrainFileItem } from './BrainFileItem'
+import { selectPersonalityFilesBySection, selectPersonalityFilesLoading, deletePersonalityFile } from '@/store/personalityFilesSlice'
+import type { PersonalityFile } from '@/store/personalityFilesSlice'
+import { PersonalityFileItem } from './PersonalityFileItem'
 import { AppButton } from '@/components/app/AppButton'
 
-export interface BrainFilesListProps {
+export interface PersonalityFilesListProps {
   sectionId: string
   activeFileId: string | null
-  onFileSelect: (file: BrainFile) => void
+  onFileSelect: (file: PersonalityFile) => void
   onNewConversation: () => void
   collapsed: boolean
   onToggleCollapse: () => void
 }
 
-export const BrainFilesList: React.FC<BrainFilesListProps> = React.memo(({
+export const PersonalityFilesList: React.FC<PersonalityFilesListProps> = React.memo(({
   sectionId,
   activeFileId,
   onFileSelect,
@@ -28,24 +28,24 @@ export const BrainFilesList: React.FC<BrainFilesListProps> = React.memo(({
 
   // Get files for this section using memoized selector
   const files = useAppSelector(
-    selectBrainFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
+    selectPersonalityFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
   )
-  const isLoading = useAppSelector(selectBrainFilesLoading)
+  const isLoading = useAppSelector(selectPersonalityFilesLoading)
 
-  const handleDelete = useCallback(async (file: BrainFile) => {
+  const handleDelete = useCallback(async (file: PersonalityFile) => {
     if (!confirm(`Delete "${file.metadata.title || 'Untitled Conversation'}"?`)) {
       return
     }
 
     setDeletingId(file.id)
     try {
-      await dispatch(deleteBrainFile({
+      await dispatch(deletePersonalityFile({
         id: file.id,
         sectionId: file.sectionId
       })).unwrap()
-      console.log(`[BrainFilesList] Deleted file: ${file.id}`)
+      console.log(`[PersonalityFilesList] Deleted file: ${file.id}`)
     } catch (error) {
-      console.error('[BrainFilesList] Failed to delete file:', error)
+      console.error('[PersonalityFilesList] Failed to delete file:', error)
       alert('Failed to delete conversation. Please try again.')
     } finally {
       setDeletingId(null)
@@ -122,7 +122,7 @@ export const BrainFilesList: React.FC<BrainFilesListProps> = React.memo(({
         ) : (
           <div className="space-y-2">
             {files.map((file) => (
-              <BrainFileItem
+              <PersonalityFileItem
                 key={file.id}
                 file={file}
                 isActive={file.id === activeFileId}
@@ -153,4 +153,4 @@ export const BrainFilesList: React.FC<BrainFilesListProps> = React.memo(({
   )
 })
 
-BrainFilesList.displayName = 'BrainFilesList'
+PersonalityFilesList.displayName = 'PersonalityFilesList'

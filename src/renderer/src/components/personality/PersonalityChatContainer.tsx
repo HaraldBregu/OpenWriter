@@ -1,10 +1,10 @@
 import React from 'react'
 import { AlertCircle } from 'lucide-react'
-import { BrainChatMessages } from './BrainChatMessages'
-import { BrainChatInput } from './BrainChatInput'
+import { PersonalityChatMessages } from './PersonalityChatMessages'
+import { PersonalityChatInput } from './PersonalityChatInput'
 import { useLlmChat } from '@/hooks/useLlmChat'
 
-export interface BrainChatContainerProps {
+export interface PersonalityChatContainerProps {
   sectionId: string
   systemPrompt?: string
   placeholder?: string
@@ -12,7 +12,7 @@ export interface BrainChatContainerProps {
   providerId?: string
 }
 
-export const BrainChatContainer: React.FC<BrainChatContainerProps> = React.memo(({
+export const PersonalityChatContainer: React.FC<PersonalityChatContainerProps> = React.memo(({
   sectionId,
   systemPrompt,
   placeholder,
@@ -31,7 +31,7 @@ export const BrainChatContainer: React.FC<BrainChatContainerProps> = React.memo(
     systemPrompt,
     providerId,
     onError: (error) => {
-      console.error(`[BrainChat:${sectionId}] Error:`, error)
+      console.error(`[PersonalityChat:${sectionId}] Error:`, error)
     }
   })
 
@@ -49,13 +49,13 @@ export const BrainChatContainer: React.FC<BrainChatContainerProps> = React.memo(
         </div>
       )}
 
-      <BrainChatMessages
+      <PersonalityChatMessages
         messages={messages}
         isStreaming={isStreaming}
         emptyStateMessage={emptyStateMessage}
       />
 
-      <BrainChatInput
+      <PersonalityChatInput
         onSubmit={submit}
         onCancel={cancel}
         isLoading={isLoading}
@@ -65,4 +65,4 @@ export const BrainChatContainer: React.FC<BrainChatContainerProps> = React.memo(
   )
 })
 
-BrainChatContainer.displayName = 'BrainChatContainer'
+PersonalityChatContainer.displayName = 'PersonalityChatContainer'

@@ -1,12 +1,12 @@
 import React from 'react'
 import { FileText, Trash2 } from 'lucide-react'
-import type { BrainFile } from '@/store/brainFilesSlice'
+import type { PersonalityFile } from '@/store/personalityFilesSlice'
 
-export interface BrainFileItemProps {
-  file: BrainFile
+export interface PersonalityFileItemProps {
+  file: PersonalityFile
   isActive: boolean
-  onClick: (file: BrainFile) => void
-  onDelete: (file: BrainFile) => void
+  onClick: (file: PersonalityFile) => void
+  onDelete: (file: PersonalityFile) => void
 }
 
 /**
@@ -32,7 +32,7 @@ function formatTimeAgo(timestamp: number): string {
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-export const BrainFileItem: React.FC<BrainFileItemProps> = React.memo(({
+export const PersonalityFileItem: React.FC<PersonalityFileItemProps> = React.memo(({
   file,
   isActive,
   onClick,
@@ -89,4 +89,4 @@ export const BrainFileItem: React.FC<BrainFileItemProps> = React.memo(({
   )
 })
 
-BrainFileItem.displayName = 'BrainFileItem'
+PersonalityFileItem.displayName = 'PersonalityFileItem'

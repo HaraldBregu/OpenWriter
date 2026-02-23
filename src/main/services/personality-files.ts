@@ -7,9 +7,9 @@ import type { Disposable } from '../core/ServiceContainer'
 import type { WorkspaceService } from './workspace'
 
 /**
- * Metadata stored in frontmatter of brain conversation files
+ * Metadata stored in frontmatter of personality conversation files
  */
-export interface BrainFileMetadata {
+export interface PersonalityFileMetadata {
   sectionId: string
   title?: string
   createdAt: number
@@ -19,39 +19,39 @@ export interface BrainFileMetadata {
 }
 
 /**
- * Complete brain file structure
+ * Complete personality file structure
  */
-export interface BrainFile {
+export interface PersonalityFile {
   id: string // filename without extension (timestamp)
   sectionId: string
   path: string
-  metadata: BrainFileMetadata
+  metadata: PersonalityFileMetadata
   content: string
   savedAt: number
 }
 
 /**
- * Input for saving a new brain conversation
+ * Input for saving a new personality conversation
  */
-export interface SaveBrainFileInput {
+export interface SavePersonalityFileInput {
   sectionId: string
   content: string
-  metadata?: Partial<BrainFileMetadata>
+  metadata?: Partial<PersonalityFileMetadata>
 }
 
 /**
  * Result of save operation
  */
-export interface SaveBrainFileResult {
+export interface SavePersonalityFileResult {
   id: string
   path: string
   savedAt: number
 }
 
 /**
- * Event payload for brain file changes
+ * Event payload for personality file changes
  */
-export interface BrainFileChangeEvent {
+export interface PersonalityFileChangeEvent {
   type: 'added' | 'changed' | 'removed'
   sectionId: string
   fileId: string
@@ -60,13 +60,13 @@ export interface BrainFileChangeEvent {
 }
 
 /**
- * BrainFilesService manages brain conversation files in the workspace.
+ * PersonalityFilesService manages personality conversation files in the workspace.
  *
  * Responsibilities:
  *   - Save conversation files as markdown with YAML frontmatter
- *   - Load all brain files from workspace
+ *   - Load all personality files from workspace
  *   - Load individual files by section and ID
- *   - Delete brain files
+ *   - Delete personality files
  *   - Watch for external file changes
  *   - Organize files by section (brain/<section>/)
  *   - Prevent infinite loops with file watcher
@@ -85,14 +85,14 @@ export interface BrainFileChangeEvent {
  *   # Conversation content
  *   ...markdown content...
  */
-export class BrainFilesService implements Disposable {
+export class PersonalityFilesService implements Disposable {
   private watcher: FSWatcher | null = null
-  private currentBrainDir: string | null = null
+  private currentPersonalityDir: string | null = null
   private ignoredWrites = new Set<string>()
   private cleanupInterval: NodeJS.Timeout | null = null
   private workspaceEventUnsubscribe: (() => void) | null = null
 
-  private readonly BRAIN_DIR_NAME = 'brain'
+  private readonly PERSONALITY_DIR_NAME = 'brain'
   private readonly IGNORE_WRITE_WINDOW_MS = 2000
   private readonly CLEANUP_INTERVAL_MS = 10000
   private readonly DEBOUNCE_MS = 300
@@ -108,7 +108,7 @@ export class BrainFilesService implements Disposable {
    * Initialize the service by starting to watch the current workspace.
    */
   async initialize(): Promise<void> {
-    console.log('[BrainFilesService] Initializing...')
+    console.log('[PersonalityFilesService] Initializing...')
 
     // Listen for workspace changes
     this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
@@ -127,7 +127,7 @@ export class BrainFilesService implements Disposable {
       await this.startWatching(currentWorkspace)
     }
 
-    console.log('[BrainFilesService] Initialized')
+    console.log('[PersonalityFilesService] Initialized')
   }
 
   /**
@@ -135,13 +135,13 @@ export class BrainFilesService implements Disposable {
    * Creates brain/<section>/ directory if needed.
    * Generates a unique filename based on timestamp.
    */
-  async save(input: SaveBrainFileInput): Promise<SaveBrainFileResult> {
+  async save(input: SavePersonalityFileInput): Promise<SavePersonalityFileResult> {
     const currentWorkspace = this.workspace.getCurrent()
     if (!currentWorkspace) {
       throw new Error('No workspace selected. Please select a workspace first.')
     }
 
-    const sectionDir = path.join(currentWorkspace, this.BRAIN_DIR_NAME, input.sectionId)
+    const sectionDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME, input.sectionId)
     await this.ensureDirectory(sectionDir)
 
     // Generate unique filename
@@ -150,7 +150,7 @@ export class BrainFilesService implements Disposable {
     const filePath = path.join(sectionDir, filename)
 
     // Prepare metadata
-    const metadata: BrainFileMetadata = {
+    const metadata: PersonalityFileMetadata = {
       sectionId: input.sectionId,
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -166,7 +166,7 @@ export class BrainFilesService implements Disposable {
     // Write file
     await fs.writeFile(filePath, fileContent, 'utf-8')
 
-    console.log(`[BrainFilesService] Saved brain file: ${filePath}`)
+    console.log(`[PersonalityFilesService] Saved personality file: ${filePath}`)
 
     return {
       id: timestamp.toString(),
@@ -176,53 +176,53 @@ export class BrainFilesService implements Disposable {
   }
 
   /**
-   * Load all brain files from all sections in the workspace.
+   * Load all personality files from all sections in the workspace.
    */
-  async loadAll(): Promise<BrainFile[]> {
+  async loadAll(): Promise<PersonalityFile[]> {
     const currentWorkspace = this.workspace.getCurrent()
     if (!currentWorkspace) {
-      console.warn('[BrainFilesService] Load attempt with no workspace selected')
+      console.warn('[PersonalityFilesService] Load attempt with no workspace selected')
       return []
     }
 
-    const brainDir = path.join(currentWorkspace, this.BRAIN_DIR_NAME)
+    const personalityDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME)
 
-    // Check if brain directory exists
+    // Check if personality directory exists
     try {
-      await fs.access(brainDir)
+      await fs.access(personalityDir)
     } catch {
-      console.log('[BrainFilesService] Brain directory does not exist, returning empty array')
+      console.log('[PersonalityFilesService] Personality directory does not exist, returning empty array')
       return []
     }
 
     // Read all section directories
-    const entries = await fs.readdir(brainDir, { withFileTypes: true })
+    const entries = await fs.readdir(personalityDir, { withFileTypes: true })
     const sectionDirs = entries.filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
 
-    const allFiles: BrainFile[] = []
+    const allFiles: PersonalityFile[] = []
 
     // Load files from each section
     for (const sectionDir of sectionDirs) {
       const sectionId = sectionDir.name
-      const sectionPath = path.join(brainDir, sectionId)
+      const sectionPath = path.join(personalityDir, sectionId)
 
       try {
         const files = await this.loadFilesFromSection(sectionPath, sectionId)
         allFiles.push(...files)
       } catch (err) {
-        console.warn(`[BrainFilesService] Failed to load files from section ${sectionId}:`, err)
+        console.warn(`[PersonalityFilesService] Failed to load files from section ${sectionId}:`, err)
       }
     }
 
-    console.log(`[BrainFilesService] Loaded ${allFiles.length} brain files from workspace`)
+    console.log(`[PersonalityFilesService] Loaded ${allFiles.length} personality files from workspace`)
 
     return allFiles
   }
 
   /**
-   * Load a specific brain file by section and ID.
+   * Load a specific personality file by section and ID.
    */
-  async loadOne(sectionId: string, fileId: string): Promise<BrainFile | null> {
+  async loadOne(sectionId: string, fileId: string): Promise<PersonalityFile | null> {
     const currentWorkspace = this.workspace.getCurrent()
     if (!currentWorkspace) {
       throw new Error('No workspace selected. Please select a workspace first.')
@@ -230,7 +230,7 @@ export class BrainFilesService implements Disposable {
 
     const filePath = path.join(
       currentWorkspace,
-      this.BRAIN_DIR_NAME,
+      this.PERSONALITY_DIR_NAME,
       sectionId,
       `${fileId}.md`
     )
@@ -240,7 +240,7 @@ export class BrainFilesService implements Disposable {
       return file
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.log(`[BrainFilesService] File not found: ${filePath}`)
+        console.log(`[PersonalityFilesService] File not found: ${filePath}`)
         return null
       }
       throw err
@@ -248,7 +248,7 @@ export class BrainFilesService implements Disposable {
   }
 
   /**
-   * Delete a brain file.
+   * Delete a personality file.
    */
   async delete(sectionId: string, fileId: string): Promise<void> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -258,7 +258,7 @@ export class BrainFilesService implements Disposable {
 
     const filePath = path.join(
       currentWorkspace,
-      this.BRAIN_DIR_NAME,
+      this.PERSONALITY_DIR_NAME,
       sectionId,
       `${fileId}.md`
     )
@@ -268,13 +268,13 @@ export class BrainFilesService implements Disposable {
       this.markFileAsWritten(filePath)
 
       await fs.unlink(filePath)
-      console.log(`[BrainFilesService] Deleted brain file: ${filePath}`)
+      console.log(`[PersonalityFilesService] Deleted personality file: ${filePath}`)
     } catch (err) {
       // Idempotent delete - OK if file doesn't exist
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-        throw new Error(`Failed to delete brain file: ${(err as Error).message}`)
+        throw new Error(`Failed to delete personality file: ${(err as Error).message}`)
       }
-      console.log(`[BrainFilesService] File already deleted: ${filePath}`)
+      console.log(`[PersonalityFilesService] File already deleted: ${filePath}`)
     }
   }
 
@@ -282,7 +282,7 @@ export class BrainFilesService implements Disposable {
    * Cleanup on shutdown.
    */
   destroy(): void {
-    console.log('[BrainFilesService] Destroying...')
+    console.log('[PersonalityFilesService] Destroying...')
 
     // Unsubscribe from workspace events
     if (this.workspaceEventUnsubscribe) {
@@ -298,10 +298,10 @@ export class BrainFilesService implements Disposable {
 
     // Stop watching
     this.stopWatching().catch((error) => {
-      console.error('[BrainFilesService] Error during destroy:', error)
+      console.error('[PersonalityFilesService] Error during destroy:', error)
     })
 
-    console.log('[BrainFilesService] Destroyed')
+    console.log('[PersonalityFilesService] Destroyed')
   }
 
   // ---------------------------------------------------------------------------
@@ -313,45 +313,45 @@ export class BrainFilesService implements Disposable {
    */
   private handleWorkspaceChange(newWorkspacePath: string | null): void {
     if (newWorkspacePath) {
-      console.log('[BrainFilesService] Workspace changed, starting watcher')
+      console.log('[PersonalityFilesService] Workspace changed, starting watcher')
       this.startWatching(newWorkspacePath).catch((error) => {
-        console.error('[BrainFilesService] Failed to start watching new workspace:', error)
+        console.error('[PersonalityFilesService] Failed to start watching new workspace:', error)
       })
     } else {
-      console.log('[BrainFilesService] Workspace cleared, stopping watcher')
+      console.log('[PersonalityFilesService] Workspace cleared, stopping watcher')
       this.stopWatching().catch((error) => {
-        console.error('[BrainFilesService] Failed to stop watcher:', error)
+        console.error('[PersonalityFilesService] Failed to stop watcher:', error)
       })
     }
   }
 
   /**
-   * Start watching the brain directory for file changes.
+   * Start watching the personality directory for file changes.
    */
   private async startWatching(workspacePath: string): Promise<void> {
-    const brainDir = path.join(workspacePath, this.BRAIN_DIR_NAME)
+    const personalityDir = path.join(workspacePath, this.PERSONALITY_DIR_NAME)
 
     // Don't restart if already watching the same directory
-    if (this.currentBrainDir === brainDir && this.watcher !== null) {
-      console.log('[BrainFilesService] Already watching:', brainDir)
+    if (this.currentPersonalityDir === personalityDir && this.watcher !== null) {
+      console.log('[PersonalityFilesService] Already watching:', personalityDir)
       return
     }
 
     // Stop any existing watcher
     await this.stopWatching()
 
-    // Ensure brain directory exists
+    // Ensure personality directory exists
     try {
-      await fs.mkdir(brainDir, { recursive: true })
+      await fs.mkdir(personalityDir, { recursive: true })
     } catch (err) {
-      console.error('[BrainFilesService] Failed to create brain directory:', err)
+      console.error('[PersonalityFilesService] Failed to create personality directory:', err)
       return
     }
 
-    console.log('[BrainFilesService] Starting to watch:', brainDir)
+    console.log('[PersonalityFilesService] Starting to watch:', personalityDir)
 
     try {
-      this.watcher = chokidar.watch(brainDir, {
+      this.watcher = chokidar.watch(personalityDir, {
         ignoreInitial: true,
         persistent: true,
         awaitWriteFinish: {
@@ -360,14 +360,14 @@ export class BrainFilesService implements Disposable {
         },
         usePolling: true,
         interval: 500,
-        depth: 1, // Watch brain directory and section subdirectories
+        depth: 1, // Watch personality directory and section subdirectories
         alwaysStat: false,
         ignored: (filePath: string) => {
           const base = path.basename(filePath)
           // Ignore dotfiles, temp files, and non-markdown files
           if (base.startsWith('.') || base.endsWith('.tmp')) return true
           // Only watch .md files (not directories)
-          if (filePath !== brainDir && !base.endsWith('.md')) return true
+          if (filePath !== personalityDir && !base.endsWith('.md')) return true
           return false
         }
       })
@@ -378,35 +378,35 @@ export class BrainFilesService implements Disposable {
         .on('unlink', (filePath) => this.handleFileRemoved(filePath))
         .on('error', (error) => this.handleWatcherError(error))
         .on('ready', () => {
-          console.log('[BrainFilesService] Watcher ready, monitoring:', brainDir)
+          console.log('[PersonalityFilesService] Watcher ready, monitoring:', personalityDir)
         })
 
-      this.currentBrainDir = brainDir
+      this.currentPersonalityDir = personalityDir
     } catch (error) {
-      console.error('[BrainFilesService] Failed to start watching:', error)
+      console.error('[PersonalityFilesService] Failed to start watching:', error)
       this.watcher = null
-      this.currentBrainDir = null
+      this.currentPersonalityDir = null
       throw error
     }
   }
 
   /**
-   * Stop watching the brain directory.
+   * Stop watching the personality directory.
    */
   private async stopWatching(): Promise<void> {
     if (!this.watcher) {
       return
     }
 
-    console.log('[BrainFilesService] Stopping watcher for:', this.currentBrainDir)
+    console.log('[PersonalityFilesService] Stopping watcher for:', this.currentPersonalityDir)
 
     try {
       await this.watcher.close()
     } catch (error) {
-      console.error('[BrainFilesService] Error closing watcher:', error)
+      console.error('[PersonalityFilesService] Error closing watcher:', error)
     } finally {
       this.watcher = null
-      this.currentBrainDir = null
+      this.currentPersonalityDir = null
       this.clearAllDebounceTimers()
       this.ignoredWrites.clear()
     }
@@ -450,9 +450,9 @@ export class BrainFilesService implements Disposable {
    */
   private handleWatcherError(error: unknown): void {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error('[BrainFilesService] Watcher error:', error)
+    console.error('[PersonalityFilesService] Watcher error:', error)
 
-    this.eventBus.broadcast('brain:watcher-error', {
+    this.eventBus.broadcast('personality:watcher-error', {
       error: errorMessage,
       timestamp: Date.now()
     })
@@ -466,7 +466,7 @@ export class BrainFilesService implements Disposable {
     const shouldIgnore = this.ignoredWrites.has(normalized)
 
     if (shouldIgnore) {
-      console.log('[BrainFilesService] Ignoring app-generated change for:', normalized)
+      console.log('[PersonalityFilesService] Ignoring app-generated change for:', normalized)
     }
 
     return shouldIgnore
@@ -478,7 +478,7 @@ export class BrainFilesService implements Disposable {
   private markFileAsWritten(filePath: string): void {
     const normalized = path.normalize(filePath)
     this.ignoredWrites.add(normalized)
-    console.log('[BrainFilesService] Marked file as written:', normalized)
+    console.log('[PersonalityFilesService] Marked file as written:', normalized)
 
     // Auto-remove after ignore window
     setTimeout(() => {
@@ -489,7 +489,7 @@ export class BrainFilesService implements Disposable {
   /**
    * Emit a file change event with debouncing.
    */
-  private debouncedEmit(filePath: string, type: BrainFileChangeEvent['type']): void {
+  private debouncedEmit(filePath: string, type: PersonalityFileChangeEvent['type']): void {
     // Clear existing timer for this file
     const existingTimer = this.debounceTimers.get(filePath)
     if (existingTimer) {
@@ -508,15 +508,15 @@ export class BrainFilesService implements Disposable {
   /**
    * Emit a file change event to the renderer.
    */
-  private emitChangeEvent(filePath: string, type: BrainFileChangeEvent['type']): void {
+  private emitChangeEvent(filePath: string, type: PersonalityFileChangeEvent['type']): void {
     const { sectionId, fileId } = this.extractIdsFromPath(filePath)
 
     if (!sectionId || !fileId) {
-      console.warn('[BrainFilesService] Could not extract IDs from path:', filePath)
+      console.warn('[PersonalityFilesService] Could not extract IDs from path:', filePath)
       return
     }
 
-    const event: BrainFileChangeEvent = {
+    const event: PersonalityFileChangeEvent = {
       type,
       sectionId,
       fileId,
@@ -524,9 +524,9 @@ export class BrainFilesService implements Disposable {
       timestamp: Date.now()
     }
 
-    console.log(`[BrainFilesService] Brain file ${type}:`, sectionId, fileId)
+    console.log(`[PersonalityFilesService] Personality file ${type}:`, sectionId, fileId)
 
-    this.eventBus.broadcast('brain:file-changed', event)
+    this.eventBus.broadcast('personality:file-changed', event)
   }
 
   /**
@@ -536,14 +536,14 @@ export class BrainFilesService implements Disposable {
   private extractIdsFromPath(filePath: string): { sectionId: string | null; fileId: string | null } {
     const normalized = path.normalize(filePath)
     const parts = normalized.split(path.sep)
-    const brainIndex = parts.lastIndexOf(this.BRAIN_DIR_NAME)
+    const personalityIndex = parts.lastIndexOf(this.PERSONALITY_DIR_NAME)
 
-    if (brainIndex === -1 || brainIndex + 2 >= parts.length) {
+    if (personalityIndex === -1 || personalityIndex + 2 >= parts.length) {
       return { sectionId: null, fileId: null }
     }
 
-    const sectionId = parts[brainIndex + 1]
-    const filename = parts[brainIndex + 2]
+    const sectionId = parts[personalityIndex + 1]
+    const filename = parts[personalityIndex + 2]
     const fileId = path.basename(filename, '.md')
 
     return { sectionId, fileId }
@@ -552,29 +552,29 @@ export class BrainFilesService implements Disposable {
   /**
    * Load all files from a section directory.
    */
-  private async loadFilesFromSection(sectionPath: string, sectionId: string): Promise<BrainFile[]> {
+  private async loadFilesFromSection(sectionPath: string, sectionId: string): Promise<PersonalityFile[]> {
     const files = await fs.readdir(sectionPath)
     const mdFiles = files.filter(file => file.endsWith('.md') && !file.startsWith('.'))
 
-    const brainFiles: BrainFile[] = []
+    const personalityFiles: PersonalityFile[] = []
 
     for (const filename of mdFiles) {
       try {
         const filePath = path.join(sectionPath, filename)
         const file = await this.loadFile(filePath, sectionId)
-        brainFiles.push(file)
+        personalityFiles.push(file)
       } catch (err) {
-        console.warn(`[BrainFilesService] Failed to load file ${filename}:`, err)
+        console.warn(`[PersonalityFilesService] Failed to load file ${filename}:`, err)
       }
     }
 
-    return brainFiles
+    return personalityFiles
   }
 
   /**
    * Load a single file and parse its frontmatter.
    */
-  private async loadFile(filePath: string, sectionId: string): Promise<BrainFile> {
+  private async loadFile(filePath: string, sectionId: string): Promise<PersonalityFile> {
     const fileContent = await fs.readFile(filePath, 'utf-8')
     const { data, content } = matter(fileContent)
 
@@ -585,7 +585,7 @@ export class BrainFilesService implements Disposable {
       id: filename,
       sectionId,
       path: filePath,
-      metadata: data as BrainFileMetadata,
+      metadata: data as PersonalityFileMetadata,
       content,
       savedAt: Math.floor(stats.mtimeMs)
     }
@@ -600,7 +600,7 @@ export class BrainFilesService implements Disposable {
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         await fs.mkdir(dirPath, { recursive: true })
-        console.log(`[BrainFilesService] Created directory: ${dirPath}`)
+        console.log(`[PersonalityFilesService] Created directory: ${dirPath}`)
       } else {
         throw new Error(`Failed to access directory: ${(err as Error).message}`)
       }

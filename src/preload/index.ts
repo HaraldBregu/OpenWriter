@@ -848,8 +848,8 @@ const api = {
             ipcRenderer.removeListener('directories:changed', handler)
         }
     },
-    // Brain - Conversation file management (markdown with YAML frontmatter)
-    brainSave: (input: {
+    // Personality - Conversation file management (markdown with YAML frontmatter)
+    personalitySave: (input: {
         sectionId: string
         content: string
         metadata?: Record<string, unknown>
@@ -858,9 +858,9 @@ const api = {
         path: string
         savedAt: number
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('brain:save', input))
+        return unwrapIpcResult(ipcRenderer.invoke('personality:save', input))
     },
-    brainLoadAll: (): Promise<Array<{
+    personalityLoadAll: (): Promise<Array<{
         id: string
         sectionId: string
         path: string
@@ -875,9 +875,9 @@ const api = {
         content: string
         savedAt: number
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('brain:load-all'))
+        return unwrapIpcResult(ipcRenderer.invoke('personality:load-all'))
     },
-    brainLoadOne: (params: {
+    personalityLoadOne: (params: {
         sectionId: string
         id: string
     }): Promise<{
@@ -895,15 +895,15 @@ const api = {
         content: string
         savedAt: number
     } | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('brain:load-one', params))
+        return unwrapIpcResult(ipcRenderer.invoke('personality:load-one', params))
     },
-    brainDelete: (params: {
+    personalityDelete: (params: {
         sectionId: string
         id: string
     }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('brain:delete', params))
+        return unwrapIpcResult(ipcRenderer.invoke('personality:delete', params))
     },
-    onBrainFileChange: (callback: (event: {
+    onPersonalityFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         sectionId: string
         fileId: string
@@ -919,18 +919,18 @@ const api = {
         }): void => {
             callback(changeEvent)
         }
-        ipcRenderer.on('brain:file-changed', handler)
+        ipcRenderer.on('personality:file-changed', handler)
         return () => {
-            ipcRenderer.removeListener('brain:file-changed', handler)
+            ipcRenderer.removeListener('personality:file-changed', handler)
         }
     },
-    onBrainWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+    onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
             callback(errorData)
         }
-        ipcRenderer.on('brain:watcher-error', handler)
+        ipcRenderer.on('personality:watcher-error', handler)
         return () => {
-            ipcRenderer.removeListener('brain:watcher-error', handler)
+            ipcRenderer.removeListener('personality:watcher-error', handler)
         }
     },
 }
