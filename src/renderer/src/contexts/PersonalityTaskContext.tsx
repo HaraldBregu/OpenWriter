@@ -16,6 +16,7 @@ interface TaskState {
   taskId: string | null
   isSaving: boolean
   lastSaveError: string | null
+  lastSavedFileId: string | null
   providerId: string
   modelId: string | null
   temperature?: number
@@ -34,6 +35,7 @@ interface PersonalityTaskContextValue {
   getTaskState: (sectionId: string) => TaskState
   submitTask: (sectionId: string, prompt: string, systemPrompt: string, providerId: string, options?: SubmitTaskOptions) => Promise<void>
   cancelTask: (sectionId: string) => void
+  clearTask: (sectionId: string) => void
   /** Internal version counter -- hooks subscribe to this to trigger re-renders */
   version: number
 }
@@ -51,6 +53,7 @@ const DEFAULT_TASK_STATE: TaskState = {
   taskId: null,
   isSaving: false,
   lastSaveError: null,
+  lastSavedFileId: null,
   providerId: 'openai',
   modelId: null,
   temperature: undefined,
@@ -152,7 +155,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
       }
 
       // Save via IPC directly (not through Redux)
-      await window.api.personalitySave({
+      const saveResult = await window.api.personalitySave({
         sectionId,
         content: markdownContent,
         metadata: {
@@ -165,7 +168,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
         }
       })
 
-      updateTask(sectionId, { isSaving: false })
+      updateTask(sectionId, { isSaving: false, lastSavedFileId: saveResult.id })
 
       // Refresh Redux file list so the sidebar / dropdowns pick up the new file
       dispatchRef.current(loadPersonalityFiles())
@@ -384,11 +387,19 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
     [updateTask]
   )
 
+  const clearTask = useCallback(
+    (sectionId: string) => {
+      taskMapRef.current.set(sectionId, { ...DEFAULT_TASK_STATE })
+      bumpVersion()
+    },
+    [bumpVersion]
+  )
+
   // Memoize the context value -- only the version counter changes identity
   // when state updates, which is exactly what consuming hooks key off.
   const contextValue: PersonalityTaskContextValue = React.useMemo(
-    () => ({ getTaskState, submitTask, cancelTask, version }),
-    [getTaskState, submitTask, cancelTask, version]
+    () => ({ getTaskState, submitTask, cancelTask, clearTask, version }),
+    [getTaskState, submitTask, cancelTask, clearTask, version]
   )
 
   return (
@@ -434,15 +445,17 @@ function usePersonalityTask(
   latestResponse: string
   submit: (prompt: string) => Promise<void>
   cancel: () => void
+  clear: () => void
   isSaving: boolean
   lastSaveError: string | null
+  lastSavedFileId: string | null
 } {
   const ctx = useContext(PersonalityTaskContext)
   if (ctx === undefined) {
     throw new Error('usePersonalityTask must be used within a PersonalityTaskProvider')
   }
 
-  const { getTaskState, submitTask, cancelTask, version: _version } = ctx
+  const { getTaskState, submitTask, cancelTask, clearTask, version: _version } = ctx
 
   // Read current state for this section (re-evaluated on every version bump)
   const task = getTaskState(sectionId)
@@ -458,6 +471,7 @@ function usePersonalityTask(
   )
 
   const cancel = useCallback(() => cancelTask(sectionId), [sectionId, cancelTask])
+  const clear = useCallback(() => clearTask(sectionId), [sectionId, clearTask])
 
   return {
     messages: task.messages,
@@ -467,8 +481,10 @@ function usePersonalityTask(
     latestResponse: task.latestResponse,
     submit,
     cancel,
+    clear,
     isSaving: task.isSaving,
-    lastSaveError: task.lastSaveError
+    lastSaveError: task.lastSaveError,
+    lastSavedFileId: task.lastSavedFileId
   }
 }
 

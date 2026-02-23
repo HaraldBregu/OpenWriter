@@ -7,7 +7,9 @@ import type {
   PersonalityFilesService,
   PersonalityFile,
   SavePersonalityFileInput,
-  SavePersonalityFileResult
+  SavePersonalityFileResult,
+  SectionConfig,
+  SectionConfigUpdate,
 } from '../services/personality-files'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
@@ -147,6 +149,77 @@ export class PersonalityIpc implements IpcModule {
           console.log(`[PersonalityIpc] Deleted personality file: ${params.sectionId}/${params.id}`)
         },
         'personality:delete'
+      )
+    )
+
+    /**
+     * Load the section-level config for the given section.
+     *
+     * Channel: 'personality:load-section-config'
+     * Input: { sectionId: string }
+     * Output: SectionConfig | null — the config object, or null if not yet created
+     */
+    ipcMain.handle(
+      'personality:load-section-config',
+      wrapIpcHandler(
+        async (
+          event: IpcMainInvokeEvent,
+          params: { sectionId: string }
+        ): Promise<SectionConfig | null> => {
+          const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
+
+          // Validate input
+          if (!params.sectionId || typeof params.sectionId !== 'string') {
+            throw new Error('Invalid sectionId: must be a non-empty string')
+          }
+
+          const config = await personalityFiles.loadSectionConfig(params.sectionId)
+
+          if (config) {
+            console.log(`[PersonalityIpc] Loaded section config for: ${params.sectionId}`)
+          } else {
+            console.log(`[PersonalityIpc] No section config found for: ${params.sectionId}`)
+          }
+
+          return config
+        },
+        'personality:load-section-config'
+      )
+    )
+
+    /**
+     * Create or update the section-level config for the given section.
+     *
+     * Channel: 'personality:save-section-config'
+     * Input: { sectionId: string, update: SectionConfigUpdate }
+     * Output: SectionConfig — the full updated config
+     */
+    ipcMain.handle(
+      'personality:save-section-config',
+      wrapIpcHandler(
+        async (
+          event: IpcMainInvokeEvent,
+          params: { sectionId: string; update: SectionConfigUpdate }
+        ): Promise<SectionConfig> => {
+          const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
+
+          // Validate sectionId
+          if (!params.sectionId || typeof params.sectionId !== 'string') {
+            throw new Error('Invalid sectionId: must be a non-empty string')
+          }
+
+          // Validate update object
+          if (!params.update || typeof params.update !== 'object' || Array.isArray(params.update)) {
+            throw new Error('Invalid update: must be an object')
+          }
+
+          const config = await personalityFiles.saveSectionConfig(params.sectionId, params.update)
+
+          console.log(`[PersonalityIpc] Saved section config for: ${params.sectionId}`)
+
+          return config
+        },
+        'personality:save-section-config'
       )
     )
 

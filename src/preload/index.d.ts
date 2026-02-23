@@ -546,6 +546,57 @@ declare global {
         timestamp: number
       }) => void) => () => void
       onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+      personalityLoadSectionConfig: (params: { sectionId: string }) => Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+      } | null>
+      personalitySaveSectionConfig: (params: {
+        sectionId: string
+        update: {
+          provider?: string
+          model?: string
+          temperature?: number | null
+          maxTokens?: number | null
+          reasoning?: boolean
+          displayName?: string
+          description?: string
+        }
+      }) => Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+      }>
+      onPersonalitySectionConfigChange: (callback: (event: {
+        sectionId: string
+        config: {
+          schemaVersion: number
+          provider: string
+          model: string
+          temperature?: number | null
+          maxTokens?: number | null
+          reasoning?: boolean
+          displayName?: string
+          description?: string
+          createdAt: string
+          updatedAt: string
+        } | null
+        timestamp: number
+      }) => void) => () => void
     }
   }
 }

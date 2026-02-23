@@ -933,6 +933,96 @@ const api = {
             ipcRenderer.removeListener('personality:watcher-error', handler)
         }
     },
+    /**
+     * Load the section-level config for the given section.
+     * Returns null when no section config has been saved yet.
+     */
+    personalityLoadSectionConfig: (params: { sectionId: string }): Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+    } | null> => {
+        return unwrapIpcResult(ipcRenderer.invoke('personality:load-section-config', params))
+    },
+    /**
+     * Create or update the section-level config for the given section.
+     * Returns the full updated config after persisting to disk.
+     */
+    personalitySaveSectionConfig: (params: {
+        sectionId: string
+        update: {
+            provider?: string
+            model?: string
+            temperature?: number | null
+            maxTokens?: number | null
+            reasoning?: boolean
+            displayName?: string
+            description?: string
+        }
+    }): Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+    }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('personality:save-section-config', params))
+    },
+    /**
+     * Subscribe to section config changes (both app-triggered and external file edits).
+     * Returns a cleanup function to remove the listener.
+     */
+    onPersonalitySectionConfigChange: (callback: (event: {
+        sectionId: string
+        config: {
+            schemaVersion: number
+            provider: string
+            model: string
+            temperature?: number | null
+            maxTokens?: number | null
+            reasoning?: boolean
+            displayName?: string
+            description?: string
+            createdAt: string
+            updatedAt: string
+        } | null
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
+            sectionId: string
+            config: {
+                schemaVersion: number
+                provider: string
+                model: string
+                temperature?: number | null
+                maxTokens?: number | null
+                reasoning?: boolean
+                displayName?: string
+                description?: string
+                createdAt: string
+                updatedAt: string
+            } | null
+            timestamp: number
+        }): void => {
+            callback(changeEvent)
+        }
+        ipcRenderer.on('personality:section-config-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('personality:section-config-changed', handler)
+        }
+    },
 }
 
 const task = {
