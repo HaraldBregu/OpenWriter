@@ -631,6 +631,18 @@ declare global {
         } | null
         timestamp: number
       }) => void) => () => void
+      // Output - File management for posts, writings, notes, messages
+      outputSave: (input: {
+        type: string
+        content: string
+        metadata?: Record<string, unknown>
+      }) => Promise<{ id: string; path: string; savedAt: number }>
+      outputLoadAll: () => Promise<OutputFile[]>
+      outputLoadByType: (type: string) => Promise<OutputFile[]>
+      outputLoadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
+      outputDelete: (params: { type: string; id: string }) => Promise<void>
+      onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
+      onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
     }
   }
 }
