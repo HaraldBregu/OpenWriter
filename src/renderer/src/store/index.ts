@@ -5,6 +5,7 @@ import chatReducer from './chatSlice'
 import postsReducer from './postsSlice'
 import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
+import outputReducer from './outputSlice'
 import { postsSyncMiddleware } from './middleware/postsSync.middleware'
 
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
     chat: chatReducer,
     posts: postsReducer,
     directories: directoriesReducer,
-    personalityFiles: personalityFilesReducer
+    personalityFiles: personalityFilesReducer,
+    output: outputReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(postsSyncMiddleware)
