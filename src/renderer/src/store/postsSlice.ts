@@ -1,5 +1,6 @@
 import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
 import type { Block } from '@/components/ContentBlock'
+import type { OutputItem } from './outputSlice'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -143,6 +144,53 @@ export const postsSlice = createSlice({
     handleExternalPostDelete(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
     }
+  },
+
+  extraReducers: (builder) => {
+    /**
+     * When output items finish loading (both initial load and file-watcher
+     * refresh), hydrate any 'posts' OutputItems into postsSlice so they
+     * appear in the sidebar after an app restart or workspace open.
+     *
+     * Deduplication: if a Post with the same outputId already exists, skip it.
+     * This preserves in-session drafts (no outputId yet) unchanged.
+     *
+     * We match by the action type string to avoid a circular import
+     * (postsSlice → outputSlice → store/index → postsSlice).
+     */
+    builder.addMatcher(
+      (action): action is PayloadAction<OutputItem[]> =>
+        action.type === 'output/loadAll/fulfilled',
+      (state, action) => {
+        const existingOutputIds = new Set(
+          state.posts.map((p) => p.outputId).filter(Boolean) as string[]
+        )
+
+        const newPosts: Post[] = action.payload
+          .filter((item) => item.type === 'posts' && !existingOutputIds.has(item.id))
+          .map((item): Post => ({
+            id: crypto.randomUUID(),
+            title: item.title,
+            blocks: item.content
+              ? item.content
+                  .split('\n\n')
+                  .filter(Boolean)
+                  .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
+              : [{ id: crypto.randomUUID(), content: '' }],
+            category: item.category,
+            tags: item.tags,
+            visibility: item.visibility,
+            createdAt: new Date(item.createdAt).getTime(),
+            updatedAt: new Date(item.updatedAt).getTime(),
+            outputId: item.id
+          }))
+
+        if (newPosts.length > 0) {
+          // Append at the end so in-session drafts (newest) remain at the top
+          state.posts.push(...newPosts)
+        }
+      }
+    )
   }
 })
 
