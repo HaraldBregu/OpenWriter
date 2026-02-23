@@ -454,6 +454,12 @@ export class OutputFilesService implements Disposable {
 
     try {
       await fs.mkdir(outputDir, { recursive: true })
+      // Pre-create all type subdirectories so they exist before any save
+      await Promise.all(
+        VALID_OUTPUT_TYPES.map((type) =>
+          fs.mkdir(path.join(outputDir, type), { recursive: true })
+        )
+      )
     } catch (err) {
       console.error('[OutputFilesService] Failed to create output directory:', err)
       return
