@@ -6,7 +6,6 @@ import postsReducer from './postsSlice'
 import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
-import { postsSyncMiddleware } from './middleware/postsSync.middleware'
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +16,7 @@ export const store = configureStore({
     output: outputReducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(postsSyncMiddleware)
+    getDefaultMiddleware()
 })
 
 export type RootState = ReturnType<typeof store.getState>
