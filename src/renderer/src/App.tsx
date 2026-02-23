@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store'
 import { AppProvider } from './contexts'
@@ -30,7 +30,6 @@ const NewPostPage = lazy(() => import('./pages/NewPostPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const NewNotePage = lazy(() => import('./pages/NewNotePage'))
 const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
-const PipelineTestPage = lazy(() => import('./pages/PipelineTestPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
 const EmotionalDepthPage = lazy(() => import('./pages/personality/EmotionalDepthPage'))
@@ -44,7 +43,6 @@ const CreativityPage = lazy(() => import('./pages/personality/CreativityPage'))
 const MortalityPage = lazy(() => import('./pages/personality/MortalityPage'))
 const ContradictionPage = lazy(() => import('./pages/personality/ContradictionPage'))
 const DebugPage = lazy(() => import('./pages/DebugPage'))
-const DownloadsDemoPage = lazy(() => import('./pages/DownloadsDemo').then(m => ({ default: m.DownloadsDemo })))
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -87,7 +85,7 @@ const App: React.FC = () => {
                         <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
                         <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
                         <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
-                        <Route path="/pipeline-test" element={<RouteWrapper><PipelineTestPage /></RouteWrapper>} />
+                        <Route path="/pipeline-test" element={<Navigate to="/debug" replace />} />
                         <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/new/note" element={<RouteWrapper><NewNotePage /></RouteWrapper>} />
@@ -105,7 +103,7 @@ const App: React.FC = () => {
                         <Route path="/personality/mortality" element={<RouteWrapper><MortalityPage /></RouteWrapper>} />
                         <Route path="/personality/contradiction" element={<RouteWrapper><ContradictionPage /></RouteWrapper>} />
                         <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
-                        <Route path="/downloads-demo" element={<RouteWrapper><DownloadsDemoPage /></RouteWrapper>} />
+                        <Route path="/downloads-demo" element={<Navigate to="/debug" replace />} />
                       </Routes>
                     </Suspense>
                   </AppLayout>

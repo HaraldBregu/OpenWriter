@@ -1,10 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import { Bug, Folder, RefreshCw, FileJson, AlertCircle } from 'lucide-react'
+import React, { useEffect, useState, lazy, Suspense } from 'react'
+import { Bug, Folder, RefreshCw, FileJson, AlertCircle, FlaskConical, Download } from 'lucide-react'
 import { useAppSelector, useAppDispatch } from '../store'
 import { selectPosts } from '../store/postsSlice'
 import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
+import { LoadingSkeleton } from '../components/LoadingSkeleton'
 
-const DebugPage: React.FC = () => {
+const PipelineTestPage = lazy(() => import('./PipelineTestPage'))
+const DownloadsDemoPage = lazy(() =>
+  import('./DownloadsDemo').then((m) => ({ default: m.DownloadsDemo }))
+)
+
+// ---------------------------------------------------------------------------
+// Tab definitions
+// ---------------------------------------------------------------------------
+
+type DebugTab = 'debug' | 'pipeline' | 'downloads'
+
+interface TabConfig {
+  id: DebugTab
+  label: string
+  icon: React.ElementType
+}
+
+const tabs: TabConfig[] = [
+  { id: 'debug', label: 'Debug Tools', icon: Bug },
+  { id: 'pipeline', label: 'Pipeline Test', icon: FlaskConical },
+  { id: 'downloads', label: 'Downloads Demo', icon: Download },
+]
+
+// ---------------------------------------------------------------------------
+// DebugToolsPanel — original debug content
+// ---------------------------------------------------------------------------
+
+function DebugToolsPanel(): React.ReactElement {
   const dispatch = useAppDispatch()
   const posts = useAppSelector(selectPosts)
   const [workspacePath, setWorkspacePath] = useState<string | null>(null)
@@ -12,31 +40,31 @@ const DebugPage: React.FC = () => {
   const [loadingPosts, setLoadingPosts] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const loadWorkspace = async () => {
+  const loadWorkspace = async (): Promise<void> => {
     setLoading(true)
     setError(null)
     try {
       const path = await window.api.workspaceGetCurrent()
       setWorkspacePath(path)
-    } catch (error) {
-      console.error('Failed to load workspace:', error)
+    } catch (err) {
+      console.error('Failed to load workspace:', err)
       setWorkspacePath(null)
-      setError(error instanceof Error ? error.message : String(error))
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }
   }
 
-  const handleLoadPosts = async () => {
+  const handleLoadPosts = async (): Promise<void> => {
     setLoadingPosts(true)
     setError(null)
     try {
       console.log('[DebugPage] Manually triggering post load...')
       await reloadPostsFromWorkspace(dispatch)
       console.log('[DebugPage] Posts loaded successfully')
-    } catch (error) {
-      console.error('[DebugPage] Failed to load posts:', error)
-      setError(error instanceof Error ? error.message : String(error))
+    } catch (err) {
+      console.error('[DebugPage] Failed to load posts:', err)
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoadingPosts(false)
     }
@@ -47,18 +75,7 @@ const DebugPage: React.FC = () => {
   }, [])
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          <Bug className="h-8 w-8" />
-          Debug Tools
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Development and debugging information
-        </p>
-      </div>
-
+    <div className="space-y-6">
       {/* Error Display */}
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
@@ -163,6 +180,67 @@ const DebugPage: React.FC = () => {
           <strong>Debug Mode:</strong> This page is for development and debugging purposes only.
         </p>
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// DebugPage
+// ---------------------------------------------------------------------------
+
+const DebugPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<DebugTab>('debug')
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+          <Bug className="h-8 w-8" />
+          Debug Tools
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Development and debugging information
+        </p>
+      </div>
+
+      {/* Tab Bar */}
+      <div className="flex gap-1 border-b border-border">
+        {tabs.map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                isActive
+                  ? 'border-foreground text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5 shrink-0" />
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Tab Panels */}
+      {activeTab === 'debug' && <DebugToolsPanel />}
+
+      {activeTab === 'pipeline' && (
+        <Suspense fallback={<LoadingSkeleton />}>
+          <PipelineTestPage />
+        </Suspense>
+      )}
+
+      {activeTab === 'downloads' && (
+        <Suspense fallback={<LoadingSkeleton />}>
+          <DownloadsDemoPage />
+        </Suspense>
+      )}
     </div>
   )
 }
