@@ -133,21 +133,21 @@ export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValu
 
 /**
  * Save a new output item to the workspace.
- * The bridge's outputSave only returns { id, path, savedAt }, so we
- * immediately fetch the full record with outputLoadOne to get all fields.
+ * The bridge's outputSave returns { id, path, savedAt }; we construct the
+ * full OutputItem directly from that result + the original input, avoiding
+ * a fragile follow-up outputLoadOne call that can race with the file write.
  */
 export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, { rejectValue: string }>(
   'output/save',
   async (input, { rejectWithValue }) => {
     try {
-      // Build the bridge-compatible payload: content + metadata record
       const { content, type, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
 
       const saved = await window.api.outputSave({
         type,
         content,
         metadata: {
-          title,
+          title: title ?? '',
           category: category ?? '',
           tags: tags ?? [],
           visibility: visibility ?? 'private',
@@ -159,12 +159,26 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
         }
       })
 
-      // Reload the full item so we have a complete OutputItem in state
-      const full = await window.api.outputLoadOne({ type, id: saved.id })
-      if (!full) {
-        return rejectWithValue('Saved item could not be retrieved after write')
+      const now = new Date(saved.savedAt).toISOString()
+      const item: OutputItem = {
+        id: saved.id,
+        type,
+        path: saved.path,
+        content,
+        savedAt: saved.savedAt,
+        title: title ?? '',
+        category: category ?? '',
+        tags: tags ?? [],
+        visibility: visibility ?? 'private',
+        provider: provider ?? 'manual',
+        model: model ?? '',
+        temperature: temperature ?? 0.7,
+        maxTokens: maxTokens ?? null,
+        reasoning: reasoning ?? false,
+        createdAt: now,
+        updatedAt: now
       }
-      return mapOutputFileToItem(full)
+      return item
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save output item'
       return rejectWithValue(message)

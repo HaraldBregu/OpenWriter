@@ -84,6 +84,12 @@ const NewPostPage: React.FC = () => {
     setIsSaving(true)
     setSaveError(null)
     try {
+      // Verify workspace is set before attempting save
+      const workspace = await window.api.workspaceGetCurrent()
+      if (!workspace) {
+        throw new Error('No workspace selected. Please open a workspace first.')
+      }
+
       const markdownContent = post.blocks.map((b) => b.content).join('\n\n')
       const saved = await dispatch(saveOutputItem({
         type: 'posts',
