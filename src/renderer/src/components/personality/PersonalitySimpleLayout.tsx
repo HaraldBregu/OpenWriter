@@ -10,8 +10,8 @@ import {
   AppDropdownMenuTrigger
 } from '@/components/app'
 import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
-import { useAppSelector } from '@/store'
-import { selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
+import { useAppSelector, useAppDispatch } from '@/store'
+import { selectPersonalityFilesBySection, loadPersonalityFiles } from '@/store/personalityFilesSlice'
 import type { PersonalityFile } from '@/store/personalityFilesSlice'
 import { PersonalitySettingsPanel, DEFAULT_INFERENCE_SETTINGS } from './PersonalitySettingsSheet'
 import type { InferenceSettings } from './PersonalitySettingsSheet'
@@ -45,6 +45,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
     providerId: providerId || 'openai',
     modelId: getDefaultModelId(providerId || 'openai')
   }))
+  const dispatch = useAppDispatch()
   const contentRef = useRef<HTMLDivElement>(null)
 
   // Get files for this section for the dropdown
@@ -65,7 +66,8 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   } = usePersonalityTask(sectionId, systemPrompt, inferenceSettings.providerId, {
     modelId: inferenceSettings.modelId,
     temperature: inferenceSettings.temperature,
-    maxTokens: inferenceSettings.maxTokens
+    maxTokens: inferenceSettings.maxTokens,
+    reasoning: inferenceSettings.reasoning
   })
 
   // Auto-scroll content to bottom when streaming
@@ -109,35 +111,63 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       })
 
       if (!loadedFile) {
-        throw new Error('Failed to load conversation file')
+        // File was deleted externally — refresh list and clear stale state
+        console.warn(`[PersonalitySimpleLayout:${sectionId}] File not found, refreshing list:`, file.id)
+        setActiveFileId(null)
+        setLoadedConversation(null)
+        dispatch(loadPersonalityFiles())
+        return
       }
 
       setActiveFileId(file.id)
       setLoadedConversation(loadedFile)
-    } catch (error) {
-      console.error(`[PersonalitySimpleLayout:${sectionId}] Failed to load conversation:`, error)
-      alert('Failed to load conversation. Please try again.')
-    }
-  }, [sectionId])
 
-  // Auto-load the most recent file on mount
+      // Restore inference settings from the conversation's saved metadata so
+      // the sidebar reflects the exact config that was used when it was written.
+      const meta = loadedFile.metadata
+      setInferenceSettings({
+        providerId: meta.provider,
+        modelId: meta.model,
+        temperature: typeof meta.temperature === 'number' ? meta.temperature : DEFAULT_INFERENCE_SETTINGS.temperature,
+        maxTokens: meta.maxTokens !== undefined ? (meta.maxTokens as number | null) : DEFAULT_INFERENCE_SETTINGS.maxTokens,
+        reasoning: typeof meta.reasoning === 'boolean' ? meta.reasoning : DEFAULT_INFERENCE_SETTINGS.reasoning
+      })
+    } catch (error) {
+      // Network/IPC error — still recover gracefully
+      console.error(`[PersonalitySimpleLayout:${sectionId}] Failed to load conversation:`, error)
+      setActiveFileId(null)
+      setLoadedConversation(null)
+      dispatch(loadPersonalityFiles())
+    }
+  }, [sectionId, dispatch])
+
+  // Auto-load the most recent file on mount, and re-fire after stale state is cleared.
+  // Blocked while a task is loading/streaming so submit doesn't re-trigger a file load.
   useEffect(() => {
-    if (files.length > 0 && !loadedConversation && !activeFileId) {
+    if (files.length > 0 && !loadedConversation && !activeFileId && !isLoading && !isStreaming) {
       const mostRecent = [...files].sort((a, b) => b.savedAt - a.savedAt)[0]
       handleFileSelect(mostRecent)
     }
-  }, [files]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [files, loadedConversation, activeFileId, isLoading, isStreaming]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clear stale state when the active file is no longer in the files list (was deleted)
+  useEffect(() => {
+    if (activeFileId && !files.find(f => f.id === activeFileId)) {
+      setLoadedConversation(null)
+      setActiveFileId(null)
+    }
+  }, [files, activeFileId])
 
   // Get the latest assistant message for display
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
     .slice(-1)[0]
 
-  // Determine what content to show: streaming content OR completed message OR loaded conversation
-  const displayContent = loadedConversation
-    ? loadedConversation.content
-    : isStreaming
-      ? latestResponse
+  // Determine what content to show: streaming always wins, then loaded file, then last completed message
+  const displayContent = isStreaming
+    ? latestResponse
+    : loadedConversation
+      ? loadedConversation.content
       : (latestAssistantMessage?.content || '')
 
   return (
@@ -157,7 +187,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                   <AppButton
                     variant="outline"
                     size="sm"
-                    className="shrink-0 min-w-[200px] justify-between"
+                    className="shrink-0 min-w-[120px] justify-between"
                   >
                     <span className="truncate">
                       {loadedConversation

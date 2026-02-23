@@ -13,17 +13,21 @@ interface TaskState {
   isStreaming: boolean
   error: string | null
   latestResponse: string
-  runId: string | null
+  taskId: string | null
   isSaving: boolean
   lastSaveError: string | null
   providerId: string
   modelId: string | null
+  temperature?: number
+  maxTokens?: number | null
+  reasoning?: boolean
 }
 
 interface SubmitTaskOptions {
   modelId?: string | null
   temperature?: number
   maxTokens?: number | null
+  reasoning?: boolean
 }
 
 interface PersonalityTaskContextValue {
@@ -44,11 +48,14 @@ const DEFAULT_TASK_STATE: TaskState = {
   isStreaming: false,
   error: null,
   latestResponse: '',
-  runId: null,
+  taskId: null,
   isSaving: false,
   lastSaveError: null,
   providerId: 'openai',
-  modelId: null
+  modelId: null,
+  temperature: undefined,
+  maxTokens: undefined,
+  reasoning: undefined
 }
 
 // ---------------------------------------------------------------------------
@@ -71,9 +78,9 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   // re-subscribe on every state change.
   const taskMapRef = useRef<Map<string, TaskState>>(new Map())
 
-  // Maps runId -> sectionId so streaming events can be routed to the
-  // correct task even though the event payload only carries runId.
-  const runIdToSectionRef = useRef<Map<string, string>>(new Map())
+  // Maps taskId -> sectionId so streaming events can be routed to the
+  // correct task even though the event payload only carries taskId.
+  const taskIdToSectionRef = useRef<Map<string, string>>(new Map())
 
   // Version counter -- bumped whenever task state changes so that consuming
   // hooks re-render. This is intentionally a simple counter rather than
@@ -115,8 +122,20 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   // Auto-save helper (called when a task completes)
   // -----------------------------------------------------------------------
 
-  const autoSave = useCallback(async (sectionId: string, task: TaskState) => {
+  const autoSave = useCallback(async (sectionId: string, task: TaskState, content?: string) => {
     if (task.messages.length === 0) return
+
+    // Use explicit content (from task result) or fall back to last assistant message
+    const markdownContent = content || (() => {
+      const lastAssistant = [...task.messages].reverse().find((m) => m.role === 'assistant')
+      return lastAssistant?.content || ''
+    })()
+
+    // Guard: do not attempt to save empty content (IPC handler rejects it)
+    if (!markdownContent) {
+      console.warn(`[PersonalityTask] Skipping auto-save for ${sectionId}: empty content`)
+      return
+    }
 
     updateTask(sectionId, { isSaving: true, lastSaveError: null })
 
@@ -132,10 +151,6 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
         }
       }
 
-      // Get the last assistant response as content
-      const lastAssistant = [...task.messages].reverse().find((m) => m.role === 'assistant')
-      const markdownContent = lastAssistant?.content || ''
-
       // Save via IPC directly (not through Redux)
       await window.api.personalitySave({
         sectionId,
@@ -143,7 +158,10 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
         metadata: {
           title: sectionId,
           provider: task.providerId,
-          model: modelName
+          model: modelName,
+          temperature: task.temperature,
+          maxTokens: task.maxTokens,
+          reasoning: task.reasoning
         }
       })
 
@@ -161,50 +179,56 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   }, [updateTask])
 
   // -----------------------------------------------------------------------
-  // Global event listener (single listener for all personality sections)
+  // Global event listener -- uses the task system (window.task.onEvent)
   // -----------------------------------------------------------------------
 
   useEffect(() => {
-    const unsubscribe = window.ai.onEvent((event) => {
+    const unsubscribe = window.task.onEvent((event) => {
       const { type, data } = event as {
-        type: 'token' | 'thinking' | 'done' | 'error'
+        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
         data: Record<string, unknown>
       }
 
-      const runId = data?.runId as string | undefined
-      if (!runId) return
+      const taskId = data?.taskId as string | undefined
+      if (!taskId) return
 
-      const sectionId = runIdToSectionRef.current.get(runId)
-      if (!sectionId) return // Event belongs to a different consumer (e.g. useAI)
+      const sectionId = taskIdToSectionRef.current.get(taskId)
+      if (!sectionId) return // Event belongs to a different consumer
 
       const task = taskMapRef.current.get(sectionId)
       if (!task) return
 
-      if (type === 'token') {
-        const token = (data as { token: string }).token
-        const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
+      if (type === 'progress') {
+        const message = data.message as string | undefined
+        const detail = data.detail as Record<string, unknown> | undefined
 
-        if (isFirstToken) {
-          // Create assistant message placeholder on first token
-          const assistantMsg: AIMessage = {
-            id: `msg-${Date.now()}`,
-            role: 'assistant',
-            content: '',
-            timestamp: Date.now()
+        // Token streaming: progress events with message === 'token'
+        if (message === 'token' && detail?.token) {
+          const token = detail.token as string
+          const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
+
+          if (isFirstToken) {
+            // Create assistant message placeholder on first token
+            const assistantMsg: AIMessage = {
+              id: `msg-${Date.now()}`,
+              role: 'assistant',
+              content: '',
+              timestamp: Date.now()
+            }
+            updateTask(sectionId, {
+              messages: [...task.messages, assistantMsg],
+              isStreaming: true,
+              latestResponse: token
+            })
+          } else {
+            updateTask(sectionId, { latestResponse: task.latestResponse + token })
           }
-          const newLatest = token
-          const newMessages = [...task.messages, assistantMsg]
-          updateTask(sectionId, {
-            messages: newMessages,
-            isStreaming: true,
-            latestResponse: newLatest
-          })
-        } else {
-          const newLatest = task.latestResponse + token
-          updateTask(sectionId, { latestResponse: newLatest })
         }
-      } else if (type === 'done') {
-        const finalContent = task.latestResponse
+      } else if (type === 'completed') {
+        // Task completed -- result contains the full content from the handler
+        const result = data.result as { content: string; tokenCount: number } | undefined
+        const finalContent = result?.content || task.latestResponse
+
         // Update the last assistant message with final content
         const updatedMessages = task.messages.map((msg, idx) =>
           idx === task.messages.length - 1 && msg.role === 'assistant'
@@ -217,18 +241,18 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
           messages: updatedMessages,
           isLoading: false,
           isStreaming: false,
-          runId: null
+          taskId: null
         }
         taskMapRef.current.set(sectionId, completedTask)
         bumpVersion()
 
-        // Clean up runId mapping
-        runIdToSectionRef.current.delete(runId)
+        // Clean up taskId mapping
+        taskIdToSectionRef.current.delete(taskId)
 
         console.log(`[PersonalityTask] Task completed for ${sectionId}`)
 
-        // Auto-save the completed conversation
-        autoSave(sectionId, completedTask)
+        // Auto-save with guaranteed content from task result
+        autoSave(sectionId, completedTask, finalContent)
       } else if (type === 'error') {
         const errorMessage = (data as { message?: string }).message || 'An error occurred'
         console.error(`[PersonalityTask] Error for ${sectionId}:`, errorMessage)
@@ -237,13 +261,23 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
           error: errorMessage,
           isLoading: false,
           isStreaming: false,
-          runId: null
+          taskId: null
         })
 
-        // Clean up runId mapping
-        runIdToSectionRef.current.delete(runId)
+        // Clean up taskId mapping
+        taskIdToSectionRef.current.delete(taskId)
+      } else if (type === 'cancelled') {
+        console.log(`[PersonalityTask] Task cancelled for ${sectionId}`)
+
+        updateTask(sectionId, {
+          isLoading: false,
+          isStreaming: false,
+          taskId: null
+        })
+
+        taskIdToSectionRef.current.delete(taskId)
       }
-      // 'thinking' events are intentionally ignored (no UI for them in personality pages)
+      // 'queued' and 'started' events are informational only
     })
 
     return () => {
@@ -291,30 +325,30 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
         error: null,
         latestResponse: '',
         providerId,
-        modelId: options?.modelId ?? null
+        modelId: options?.modelId ?? null,
+        temperature: options?.temperature,
+        maxTokens: options?.maxTokens,
+        reasoning: options?.reasoning
       })
 
       try {
-        const result = await window.ai.inference('chat', {
+        const result = await window.task.submit('ai-chat', {
           prompt: trimmed,
-          context: {
-            sessionId: sectionId,
-            providerId,
-            messages: conversationHistory,
-            systemPrompt,
-            ...(options?.modelId ? { modelId: options.modelId } : {}),
-            ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
-            ...(options?.maxTokens ? { maxTokens: options.maxTokens } : {})
-          }
+          providerId,
+          systemPrompt,
+          messages: conversationHistory,
+          ...(options?.modelId ? { modelId: options.modelId } : {}),
+          ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
+          ...(options?.maxTokens ? { maxTokens: options.maxTokens } : {})
         })
 
         if (result.success) {
-          const runId = result.data.runId
-          runIdToSectionRef.current.set(runId, sectionId)
-          updateTask(sectionId, { runId })
-          console.log(`[PersonalityTask] Started task for ${sectionId}, runId: ${runId}`)
+          const taskId = result.data.taskId
+          taskIdToSectionRef.current.set(taskId, sectionId)
+          updateTask(sectionId, { taskId })
+          console.log(`[PersonalityTask] Started task for ${sectionId}, taskId: ${taskId}`)
         } else {
-          const errorMsg = result.error?.message || 'Failed to start AI inference'
+          const errorMsg = result.error?.message || 'Failed to start AI task'
           updateTask(sectionId, {
             error: errorMsg,
             isLoading: false
@@ -334,17 +368,17 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   const cancelTask = useCallback(
     (sectionId: string) => {
       const task = taskMapRef.current.get(sectionId)
-      if (!task?.runId) return
+      if (!task?.taskId) return
 
-      window.ai.cancel(task.runId)
+      window.task.cancel(task.taskId)
 
-      // Clean up the runId mapping
-      runIdToSectionRef.current.delete(task.runId)
+      // Clean up the taskId mapping
+      taskIdToSectionRef.current.delete(task.taskId)
 
       updateTask(sectionId, {
         isLoading: false,
         isStreaming: false,
-        runId: null
+        taskId: null
       })
     },
     [updateTask]
@@ -384,6 +418,7 @@ interface UsePersonalityTaskOptions {
   modelId?: string | null
   temperature?: number
   maxTokens?: number | null
+  reasoning?: boolean
 }
 
 function usePersonalityTask(
@@ -416,9 +451,10 @@ function usePersonalityTask(
     (prompt: string) => submitTask(sectionId, prompt, systemPrompt || '', providerId || 'openai', {
       modelId: options?.modelId,
       temperature: options?.temperature,
-      maxTokens: options?.maxTokens
+      maxTokens: options?.maxTokens,
+      reasoning: options?.reasoning
     }),
-    [sectionId, systemPrompt, providerId, options?.modelId, options?.temperature, options?.maxTokens, submitTask]
+    [sectionId, systemPrompt, providerId, options?.modelId, options?.temperature, options?.maxTokens, options?.reasoning, submitTask]
   )
 
   const cancel = useCallback(() => cancelTask(sectionId), [sectionId, cancelTask])

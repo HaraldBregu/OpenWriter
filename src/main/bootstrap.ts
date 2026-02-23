@@ -32,7 +32,7 @@ import { AgentService } from './services/agent'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
 import { TaskHandlerRegistry } from './tasks/TaskHandlerRegistry'
 import { TaskExecutorService } from './tasks/TaskExecutorService'
-import { FileDownloadHandler } from './tasks/handlers'
+import { FileDownloadHandler, AIChatHandler } from './tasks/handlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
@@ -131,6 +131,7 @@ export function bootstrapServices(): BootstrapResult {
   // Task system -- handler registry + executor service + built-in handlers
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
   taskHandlerRegistry.register(new FileDownloadHandler())
+  taskHandlerRegistry.register(new AIChatHandler(storeService))
   container.register('taskExecutor', new TaskExecutorService(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
