@@ -1023,6 +1023,116 @@ const api = {
             ipcRenderer.removeListener('personality:section-config-changed', handler)
         }
     },
+    // Output - File management for posts, writings, notes, messages
+    outputSave: (input: {
+        type: string
+        content: string
+        metadata?: Record<string, unknown>
+    }): Promise<{ id: string; path: string; savedAt: number }> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:save', input))
+    },
+    outputLoadAll: (): Promise<Array<{
+        id: string
+        type: string
+        path: string
+        metadata: {
+            title: string
+            type: string
+            category: string
+            tags: string[]
+            visibility: string
+            provider: string
+            model: string
+            temperature?: number
+            maxTokens?: number | null
+            reasoning?: boolean
+            createdAt: string
+            updatedAt: string
+        }
+        content: string
+        savedAt: number
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:load-all'))
+    },
+    outputLoadByType: (type: string): Promise<Array<{
+        id: string
+        type: string
+        path: string
+        metadata: {
+            title: string
+            type: string
+            category: string
+            tags: string[]
+            visibility: string
+            provider: string
+            model: string
+            temperature?: number
+            maxTokens?: number | null
+            reasoning?: boolean
+            createdAt: string
+            updatedAt: string
+        }
+        content: string
+        savedAt: number
+    }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:load-by-type', type))
+    },
+    outputLoadOne: (params: { type: string; id: string }): Promise<{
+        id: string
+        type: string
+        path: string
+        metadata: {
+            title: string
+            type: string
+            category: string
+            tags: string[]
+            visibility: string
+            provider: string
+            model: string
+            temperature?: number
+            maxTokens?: number | null
+            reasoning?: boolean
+            createdAt: string
+            updatedAt: string
+        }
+        content: string
+        savedAt: number
+    } | null> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:load-one', params))
+    },
+    outputDelete: (params: { type: string; id: string }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:delete', params))
+    },
+    onOutputFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        outputType: string
+        fileId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
+            type: 'added' | 'changed' | 'removed'
+            outputType: string
+            fileId: string
+            filePath: string
+            timestamp: number
+        }): void => {
+            callback(changeEvent)
+        }
+        ipcRenderer.on('output:file-changed', handler)
+        return () => {
+            ipcRenderer.removeListener('output:file-changed', handler)
+        }
+    },
+    onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
+            callback(errorData)
+        }
+        ipcRenderer.on('output:watcher-error', handler)
+        return () => {
+            ipcRenderer.removeListener('output:watcher-error', handler)
+        }
+    },
 }
 
 const task = {
