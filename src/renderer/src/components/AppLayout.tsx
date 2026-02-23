@@ -92,6 +92,19 @@ const quickCreateItems = [
 
 const topNavSections = ["Posts", "Writing", "Notes", "Messages"];
 
+const personalityItems = [
+  { title: "Emotional Depth", icon: Heart, slug: "emotional-depth" },
+  { title: "Consciousness", icon: Lightbulb, slug: "consciousness" },
+  { title: "Motivation", icon: Flame, slug: "motivation" },
+  { title: "Moral Intuition", icon: Scale, slug: "moral-intuition" },
+  { title: "Irrationality", icon: Shuffle, slug: "irrationality" },
+  { title: "Growth", icon: Sprout, slug: "growth" },
+  { title: "Social Identity", icon: Users, slug: "social-identity" },
+  { title: "Creativity", icon: Palette, slug: "creativity" },
+  { title: "Mortality", icon: Hourglass, slug: "mortality" },
+  { title: "Contradiction", icon: GitMerge, slug: "contradiction" },
+];
+
 // ---------------------------------------------------------------------------
 // Settings popover menu items
 // ---------------------------------------------------------------------------
@@ -203,6 +216,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Writing: false,
     Notes: false,
     Messages: false,
+    Personality: false,
   });
 
   const [workspaceName, setWorkspaceName] = useState<string>("Tesseract AI");
@@ -481,151 +495,44 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  {/* Personality - Label */}
-                  <div className="px-3 py-2">
-                    <span className="text-xs font-medium text-muted-foreground/50">
-                      Personality
-                    </span>
-                  </div>
-
-                  {/* Emotional Depth */}
+                  {/* Personality — collapsible section */}
                   <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/emotional-depth"}
-                      className="h-9 px-3"
+                    <button
+                      type="button"
+                      onClick={() => toggleSection("Personality")}
+                      className="flex w-full items-center gap-1 h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <Link to="/personality/emotional-depth">
-                        <Heart className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Emotional Depth</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Consciousness */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/consciousness"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/consciousness">
-                        <Lightbulb className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Consciousness</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Motivation */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/motivation"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/motivation">
-                        <Flame className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Motivation</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Moral Intuition */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/moral-intuition"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/moral-intuition">
-                        <Scale className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Moral Intuition</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Irrationality */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/irrationality"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/irrationality">
-                        <Shuffle className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Irrationality</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Growth */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/growth"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/growth">
-                        <Sprout className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Growth</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Social Identity */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/social-identity"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/social-identity">
-                        <Users className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Social Identity</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Creativity */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/creativity"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/creativity">
-                        <Palette className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Creativity</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Mortality */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/mortality"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/mortality">
-                        <Hourglass className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Mortality</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Contradiction */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/personality/contradiction"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/personality/contradiction">
-                        <GitMerge className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Contradiction</span>
-                      </Link>
-                    </AppSidebarMenuButton>
+                      <span className="uppercase tracking-wider">
+                        Personality
+                      </span>
+                      <ChevronRight
+                        className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Personality"] ? "rotate-90" : ""}`}
+                      />
+                    </button>
+                    {sectionsOpen["Personality"] && (
+                      <AppSidebarMenuSub className="border-none ml-0">
+                        {personalityItems.map((item) => {
+                          const Icon = item.icon;
+                          const itemPath = `/personality/${item.slug}`;
+                          return (
+                            <AppSidebarMenuSubItem key={item.slug}>
+                              <AppSidebarMenuSubButton
+                                asChild
+                                isActive={location.pathname === itemPath}
+                                className="ml-0"
+                              >
+                                <Link to={itemPath} className="ml-0">
+                                  <Icon className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="flex-1 truncate">
+                                    {item.title}
+                                  </span>
+                                </Link>
+                              </AppSidebarMenuSubButton>
+                            </AppSidebarMenuSubItem>
+                          );
+                        })}
+                      </AppSidebarMenuSub>
+                    )}
                   </AppSidebarMenuItem>
 
                   <AppSidebarSeparator className="my-1" />
