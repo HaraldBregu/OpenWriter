@@ -19,7 +19,7 @@ import {
   updatePostTitle,
   deletePost
 } from '../store/postsSlice'
-import { saveOutputItem } from '@/store/outputSlice'
+import { saveOutputItem, updateOutputItem } from '@/store/outputSlice'
 import {
   PersonalitySettingsPanel,
   DEFAULT_INFERENCE_SETTINGS,
@@ -46,6 +46,9 @@ const NewPostPage: React.FC = () => {
   const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
   const committedRef = useRef(false)
 
+  // Tracks the output folder ID of the last successful save (both modes)
+  const savedOutputIdRef = useRef<string | null>(null)
+
   // Reset draft whenever "New Post" is clicked again (navigation state key changes)
   const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
   const prevDraftKeyRef = useRef(draftKey)
@@ -57,6 +60,7 @@ const NewPostPage: React.FC = () => {
     setDraftBlocks([createBlock()])
     draftIdRef.current = crypto.randomUUID()
     committedRef.current = false
+    savedOutputIdRef.current = null
   }, [isDraft, draftKey])
 
   const [showSidebar, setShowSidebar] = useState(true)
@@ -92,14 +96,15 @@ const NewPostPage: React.FC = () => {
 
       dispatch(addPost(newPost))
 
-      dispatch(saveOutputItem({
+      const saved = await dispatch(saveOutputItem({
         type: 'posts',
         title: draftTitle || 'Untitled Post',
         content: draftBlocks.map((b) => b.content).join('\n\n'),
         visibility: 'private',
         provider: 'manual',
         model: '',
-      }))
+      })).unwrap()
+      savedOutputIdRef.current = saved.id
 
       navigate(`/new/post/${draftIdRef.current}`, { replace: true })
     }, 1000)
@@ -123,14 +128,30 @@ const NewPostPage: React.FC = () => {
     saveTimerRef.current = setTimeout(async () => {
       const workspace = await window.api.workspaceGetCurrent()
       if (!workspace) return
-      dispatch(saveOutputItem({
-        type: 'posts',
-        title: post.title || 'Untitled Post',
-        content: post.blocks.map((b) => b.content).join('\n\n'),
-        visibility: 'private',
-        provider: 'manual',
-        model: '',
-      }))
+      const content = post.blocks.map((b) => b.content).join('\n\n')
+      const title = post.title || 'Untitled Post'
+      const outputId = savedOutputIdRef.current
+      if (outputId) {
+        dispatch(updateOutputItem({
+          id: outputId,
+          type: 'posts',
+          title,
+          content,
+          visibility: 'private',
+          provider: 'manual',
+          model: '',
+        }))
+      } else {
+        const saved = await dispatch(saveOutputItem({
+          type: 'posts',
+          title,
+          content,
+          visibility: 'private',
+          provider: 'manual',
+          model: '',
+        })).unwrap()
+        savedOutputIdRef.current = saved.id
+      }
     }, 1000)
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)

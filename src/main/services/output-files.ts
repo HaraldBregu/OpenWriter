@@ -341,6 +341,44 @@ export class OutputFilesService implements Disposable {
   }
 
   /**
+   * Update the content and/or metadata of an existing output entry.
+   *
+   * Overwrites DATA.md and updates config.json (updatedAt only; createdAt is preserved).
+   * Throws if the folder does not exist.
+   */
+  async update(outputType: OutputType, id: string, input: { content: string; metadata: Omit<OutputFileMetadata, 'createdAt' | 'updatedAt'> }): Promise<void> {
+    const currentWorkspace = this.workspace.getCurrent()
+    if (!currentWorkspace) {
+      throw new Error('No workspace selected. Please select a workspace first.')
+    }
+
+    this.validateOutputType(outputType)
+
+    const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id)
+    const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const dataPath = path.join(folderPath, this.DATA_FILENAME)
+
+    // Read existing config to preserve createdAt
+    const configRaw = await fs.readFile(configPath, 'utf-8')
+    const existing = JSON.parse(configRaw) as OutputFileMetadata
+
+    const updatedMetadata: OutputFileMetadata = {
+      ...input.metadata,
+      type: outputType,
+      createdAt: existing.createdAt,
+      updatedAt: new Date().toISOString(),
+    }
+
+    this.markFileAsWritten(configPath)
+    this.markFileAsWritten(dataPath)
+
+    await fs.writeFile(configPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8')
+    await fs.writeFile(dataPath, input.content, 'utf-8')
+
+    console.log(`[OutputFilesService] Updated output folder: ${folderPath}`)
+  }
+
+  /**
    * Delete an output entry by type and ID.
    */
   async delete(outputType: OutputType, id: string): Promise<void> {

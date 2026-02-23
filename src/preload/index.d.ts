@@ -640,6 +640,7 @@ declare global {
       outputLoadAll: () => Promise<OutputFile[]>
       outputLoadByType: (type: string) => Promise<OutputFile[]>
       outputLoadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
+      outputUpdate: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }) => Promise<void>
       outputDelete: (params: { type: string; id: string }) => Promise<void>
       onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
       onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void

@@ -186,6 +186,62 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
   }
 )
 
+export interface UpdateOutputItemInput extends SaveOutputItemInput {
+  id: string
+}
+
+/**
+ * Update an existing output item in the workspace.
+ * Overwrites DATA.md and updates config.json (preserving createdAt).
+ */
+export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInput, { rejectValue: string }>(
+  'output/update',
+  async (input, { rejectWithValue }) => {
+    try {
+      const { id, type, content, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
+
+      await window.api.outputUpdate({
+        type,
+        id,
+        content,
+        metadata: {
+          title: title ?? '',
+          category: category ?? '',
+          tags: tags ?? [],
+          visibility: visibility ?? 'private',
+          provider: provider ?? 'manual',
+          model: model ?? '',
+          temperature: temperature ?? 0.7,
+          maxTokens: maxTokens ?? null,
+          reasoning: reasoning ?? false
+        }
+      })
+
+      return {
+        id,
+        type,
+        path: '',
+        content,
+        savedAt: Date.now(),
+        title: title ?? '',
+        category: category ?? '',
+        tags: tags ?? [],
+        visibility: visibility ?? 'private',
+        provider: provider ?? 'manual',
+        model: model ?? '',
+        temperature: temperature ?? 0.7,
+        maxTokens: maxTokens ?? null,
+        reasoning: reasoning ?? false,
+        createdAt: '',   // preserved on disk; not updated in Redux here
+        updatedAt: new Date().toISOString()
+      } satisfies OutputItem
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update output item'
+      return rejectWithValue(message)
+    }
+  }
+)
+
 /**
  * Delete an output item from the workspace and return the { type, id } pair
  * so the reducer can remove it from state.
@@ -301,6 +357,24 @@ export const outputSlice = createSlice({
       .addCase(saveOutputItem.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload ?? 'Unknown error saving output item'
+      })
+
+    // updateOutputItem
+    builder
+      .addCase(updateOutputItem.fulfilled, (state, action: PayloadAction<OutputItem>) => {
+        const { id, type } = action.payload
+        const index = state.items.findIndex((item) => item.id === id && item.type === type)
+        if (index !== -1) {
+          state.items[index] = {
+            ...state.items[index],
+            content: action.payload.content,
+            title: action.payload.title,
+            category: action.payload.category,
+            tags: action.payload.tags,
+            visibility: action.payload.visibility,
+            updatedAt: action.payload.updatedAt,
+          }
+        }
       })
 
     // deleteOutputItem

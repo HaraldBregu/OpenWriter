@@ -1100,6 +1100,9 @@ const api = {
     } | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-one', params))
     },
+    outputUpdate: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('output:update', params))
+    },
     outputDelete: (params: { type: string; id: string }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:delete', params))
     },

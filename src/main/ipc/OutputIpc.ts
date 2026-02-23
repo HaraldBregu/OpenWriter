@@ -74,6 +74,49 @@ export class OutputIpc implements IpcModule {
     )
 
     /**
+     * Update an existing output file (content + metadata).
+     *
+     * Channel: 'output:update'
+     * Input: { type: string, id: string, content: string, metadata: Record<string, unknown> }
+     * Output: void
+     */
+    ipcMain.handle(
+      'output:update',
+      wrapIpcHandler(
+        async (
+          event: IpcMainInvokeEvent,
+          params: { type: string; id: string; content: string; metadata: Record<string, unknown> }
+        ): Promise<void> => {
+          const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
+
+          if (!params.type || typeof params.type !== 'string') {
+            throw new Error('Invalid type: must be a non-empty string')
+          }
+          if (!this.isValidOutputType(params.type)) {
+            throw new Error(`Invalid output type "${params.type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`)
+          }
+          if (!params.id || typeof params.id !== 'string') {
+            throw new Error('Invalid id: must be a non-empty string')
+          }
+          if (typeof params.content !== 'string') {
+            throw new Error('Invalid content: must be a string')
+          }
+          if (!params.metadata || typeof params.metadata !== 'object' || Array.isArray(params.metadata)) {
+            throw new Error('Invalid metadata: must be an object')
+          }
+
+          await outputFiles.update(params.type as OutputType, params.id, {
+            content: params.content,
+            metadata: params.metadata as Parameters<OutputFilesService['update']>[2]['metadata'],
+          })
+
+          console.log(`[OutputIpc] Updated output file: ${params.type}/${params.id}`)
+        },
+        'output:update'
+      )
+    )
+
+    /**
      * Load all output files from workspace (across all types).
      *
      * Channel: 'output:load-all'
