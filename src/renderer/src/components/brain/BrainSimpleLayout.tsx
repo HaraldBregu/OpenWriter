@@ -5,7 +5,6 @@ import {
   AppDropdownMenu,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
-  AppDropdownMenuSeparator,
   AppDropdownMenuTrigger
 } from '@/components/app'
 import { useAI } from '@/hooks/useAI'
@@ -166,13 +165,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     }
   }, [sectionId])
 
-  const handleNewConversation = useCallback(() => {
-    setActiveFileId(null)
-    setLoadedConversation(null)
-    // Clear the current chat by resetting the session
-    // The useAI hook will handle clearing messages
-  }, [])
-
   // Get the latest assistant message for display
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
@@ -204,38 +196,24 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Conversation Selector Dropdown */}
-            <AppDropdownMenu>
-              <AppDropdownMenuTrigger asChild>
-                <AppButton
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 min-w-[200px] justify-between"
-                >
-                  <span className="truncate">
-                    {loadedConversation
-                      ? loadedConversation.metadata.title || 'Untitled Conversation'
-                      : 'Select conversation...'}
-                  </span>
-                  <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
-                </AppButton>
-              </AppDropdownMenuTrigger>
-              <AppDropdownMenuContent align="end" className="w-[300px]">
-                {/* New Conversation Option */}
-                <AppDropdownMenuItem
-                  onClick={handleNewConversation}
-                  className="font-medium"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="text-primary">+</span>
-                    Start New Conversation
-                  </span>
-                </AppDropdownMenuItem>
-
-                {files.length > 0 && <AppDropdownMenuSeparator />}
-
-                {/* Saved Conversations List */}
-                {files.length > 0 ? (
+            {/* Conversation Selector Dropdown - Only show when there are saved conversations */}
+            {files.length > 0 && (
+              <AppDropdownMenu>
+                <AppDropdownMenuTrigger asChild>
+                  <AppButton
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 min-w-[200px] justify-between"
+                  >
+                    <span className="truncate">
+                      {loadedConversation
+                        ? loadedConversation.metadata.title || 'Untitled Conversation'
+                        : 'Select conversation...'}
+                    </span>
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
+                  </AppButton>
+                </AppDropdownMenuTrigger>
+                <AppDropdownMenuContent align="end" className="w-[300px]">
                   <div className="max-h-[400px] overflow-y-auto">
                     {files.map((file) => {
                       const isActive = file.id === activeFileId
@@ -268,18 +246,11 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
                       )
                     })}
                   </div>
-                ) : (
-                  <div className="py-6 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      No saved conversations
-                    </p>
-                  </div>
-                )}
-              </AppDropdownMenuContent>
-            </AppDropdownMenu>
+                </AppDropdownMenuContent>
+              </AppDropdownMenu>
+            )}
 
-            {/* Save Button - Only show for active conversations, not loaded ones */}
-            {!isViewingLoadedConversation && (
+            {/* Save Button */}
               <AppButton
                 onClick={handleSave}
                 disabled={messages.length === 0 || isSaving}
@@ -304,7 +275,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
                   </>
                 )}
               </AppButton>
-            )}
           </div>
         </div>
 
@@ -350,8 +320,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
           </div>
         </div>
 
-        {/* Input Section - Hide when viewing loaded conversation */}
-        {!isViewingLoadedConversation && (
+        {/* Input Section */}
           <div className="border-t border-border bg-background p-6">
             <div className="mx-auto max-w-4xl">
               <div className="flex items-center gap-3">
@@ -393,7 +362,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
               </p>
             </div>
           </div>
-        )}
     </div>
   )
 })
