@@ -216,6 +216,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Writing: false,
     Notes: false,
     Messages: false,
+    Knowledge: false,
     Personality: false,
   });
 
@@ -460,39 +461,48 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
                   <AppSidebarSeparator className="my-1" />
 
-                  {/* Knowledge - Label */}
-                  <div className="px-3 py-2">
-                    <span className="text-xs font-medium text-muted-foreground/50">
-                      Knowledge
-                    </span>
-                  </div>
-
-                  {/* Documents */}
+                  {/* Knowledge — collapsible section */}
                   <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/documents"}
-                      className="h-9 px-3"
+                    <button
+                      type="button"
+                      onClick={() => toggleSection("Knowledge")}
+                      className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <Link to="/documents">
-                        <FolderOpen className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Documents</span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
-
-                  {/* Directories */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/directories"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/directories">
-                        <FolderOpen className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Directories</span>
-                      </Link>
-                    </AppSidebarMenuButton>
+                      <span className="tracking-wider">
+                        Knowledge
+                      </span>
+                      <ChevronRight
+                        className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Knowledge"] ? "rotate-90" : ""}`}
+                      />
+                    </button>
+                    {sectionsOpen["Knowledge"] && (
+                      <AppSidebarMenuSub className="border-none ml-0">
+                        <AppSidebarMenuSubItem>
+                          <AppSidebarMenuSubButton
+                            asChild
+                            isActive={location.pathname === "/documents"}
+                            className="ml-0"
+                          >
+                            <Link to="/documents" className="ml-0">
+                              <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+                              <span className="flex-1 truncate">Documents</span>
+                            </Link>
+                          </AppSidebarMenuSubButton>
+                        </AppSidebarMenuSubItem>
+                        <AppSidebarMenuSubItem>
+                          <AppSidebarMenuSubButton
+                            asChild
+                            isActive={location.pathname === "/directories"}
+                            className="ml-0"
+                          >
+                            <Link to="/directories" className="ml-0">
+                              <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+                              <span className="flex-1 truncate">Directories</span>
+                            </Link>
+                          </AppSidebarMenuSubButton>
+                        </AppSidebarMenuSubItem>
+                      </AppSidebarMenuSub>
+                    )}
                   </AppSidebarMenuItem>
 
                   {/* Personality — collapsible section */}
@@ -500,9 +510,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     <button
                       type="button"
                       onClick={() => toggleSection("Personality")}
-                      className="flex w-full items-center gap-1 h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
+                      className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <span className="uppercase tracking-wider">
+                      <span className="tracking-wider">
                         Personality
                       </span>
                       <ChevronRight
