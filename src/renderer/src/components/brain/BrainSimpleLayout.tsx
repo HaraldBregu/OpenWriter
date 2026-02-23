@@ -216,7 +216,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
                     <span className="truncate">
                       {loadedConversation
                         ? loadedConversation.metadata.title || 'Untitled Conversation'
-                        : 'Select conversation...'}
+                        : 'Version'}
                     </span>
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
                   </AppButton>
