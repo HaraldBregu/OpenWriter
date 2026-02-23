@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Download, Eye, Settings2, Share2, MoreHorizontal, Copy, Trash2 } from 'lucide-react'
 import { Reorder } from 'framer-motion'
 import {
@@ -32,6 +32,7 @@ import {
 const NewPostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useAppDispatch()
 
   const isDraft = id === undefined
@@ -44,6 +45,19 @@ const NewPostPage: React.FC = () => {
   const [draftTitle, setDraftTitle] = useState('')
   const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
   const committedRef = useRef(false)
+
+  // Reset draft whenever "New Post" is clicked again (navigation state key changes)
+  const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
+  const prevDraftKeyRef = useRef(draftKey)
+  useEffect(() => {
+    if (!isDraft) return
+    if (prevDraftKeyRef.current === draftKey) return
+    prevDraftKeyRef.current = draftKey
+    setDraftTitle('')
+    setDraftBlocks([createBlock()])
+    draftIdRef.current = crypto.randomUUID()
+    committedRef.current = false
+  }, [isDraft, draftKey])
 
   const [showSidebar, setShowSidebar] = useState(true)
   const [aiSettings, setAiSettings] = useState(DEFAULT_INFERENCE_SETTINGS)

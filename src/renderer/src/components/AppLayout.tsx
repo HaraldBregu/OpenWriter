@@ -247,7 +247,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   );
 
   const handleNewPost = useCallback(() => {
-    navigate('/new/post');
+    navigate('/new/post', { state: { draftKey: Date.now() } });
   }, [navigate]);
 
   const handlePostContextMenu = useCallback(
