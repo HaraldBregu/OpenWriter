@@ -7,12 +7,17 @@ import type { Disposable } from '../core/ServiceContainer'
 import type { WorkspaceService } from './workspace'
 
 /**
- * Metadata stored in frontmatter of personality conversation files
+ * Metadata stored in config.json of personality conversation folders.
+ * All inference settings are included here.
  */
 export interface PersonalityFileMetadata {
   title: string
   provider: string
   model: string
+  temperature?: number
+  maxTokens?: number | null
+  reasoning?: boolean
+  createdAt?: string // ISO 8601 date string
   [key: string]: unknown
 }
 
@@ -20,9 +25,9 @@ export interface PersonalityFileMetadata {
  * Complete personality file structure
  */
 export interface PersonalityFile {
-  id: string // filename without extension (timestamp)
+  id: string // folder name (date string: YYYY-MM-DD_HHmmss) or legacy timestamp
   sectionId: string
-  path: string
+  path: string // folder path for new format, file path for legacy
   metadata: PersonalityFileMetadata
   content: string
   savedAt: number
@@ -61,27 +66,21 @@ export interface PersonalityFileChangeEvent {
  * PersonalityFilesService manages personality conversation files in the workspace.
  *
  * Responsibilities:
- *   - Save conversation files as markdown with YAML frontmatter
- *   - Load all personality files from workspace
+ *   - Save conversation files as folder-based format (config.json + DATA.md)
+ *   - Load all personality files from workspace (new folder format + legacy .md)
  *   - Load individual files by section and ID
- *   - Delete personality files
+ *   - Delete personality files / folders
  *   - Watch for external file changes
  *   - Organize files by section (personality/<section>/)
  *   - Prevent infinite loops with file watcher
  *
- * File Structure:
- *   <workspace>/personality/<section>/<timestamp>.md
+ * New File Structure:
+ *   <workspace>/personality/<section>/<YYYY-MM-DD_HHmmss>/
+ *     ├── config.json   (model configuration as JSON)
+ *     └── DATA.md       (plain markdown content, no frontmatter)
  *
- * File Format:
- *   ---
- *   sectionId: chat
- *   title: My Conversation
- *   createdAt: 1708709000000
- *   updatedAt: 1708709000000
- *   tags: [ai, conversation]
- *   ---
- *   # Conversation content
- *   ...markdown content...
+ * Legacy File Structure (read-only backward compat):
+ *   <workspace>/personality/<section>/<timestamp>.md  (YAML frontmatter + markdown)
  */
 export class PersonalityFilesService implements Disposable {
   private watcher: FSWatcher | null = null
@@ -91,9 +90,14 @@ export class PersonalityFilesService implements Disposable {
   private workspaceEventUnsubscribe: (() => void) | null = null
 
   private readonly PERSONALITY_DIR_NAME = 'personality'
+  private readonly CONFIG_FILENAME = 'config.json'
+  private readonly DATA_FILENAME = 'DATA.md'
   private readonly IGNORE_WRITE_WINDOW_MS = 2000
   private readonly CLEANUP_INTERVAL_MS = 10000
   private readonly DEBOUNCE_MS = 300
+
+  /** Regex matching the new date-folder naming convention: YYYY-MM-DD_HHmmss */
+  private readonly DATE_FOLDER_RE = /^\d{4}-\d{2}-\d{2}_\d{6}$/
 
   private debounceTimers = new Map<string, NodeJS.Timeout>()
 
@@ -129,9 +133,13 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Save a conversation to a markdown file.
-   * Creates personality/<section>/ directory if needed.
-   * Generates a unique filename based on timestamp.
+   * Save a conversation to the new folder-based format.
+   *
+   * Creates:
+   *   personality/<section>/<YYYY-MM-DD_HHmmss>/config.json
+   *   personality/<section>/<YYYY-MM-DD_HHmmss>/DATA.md
+   *
+   * The folder name is the stable ID for this entry.
    */
   async save(input: SavePersonalityFileInput): Promise<SavePersonalityFileResult> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -142,38 +150,63 @@ export class PersonalityFilesService implements Disposable {
     const sectionDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME, input.sectionId)
     await this.ensureDirectory(sectionDir)
 
-    // Generate unique filename
     const timestamp = Date.now()
-    const filename = `${timestamp}.md`
-    const filePath = path.join(sectionDir, filename)
+    const folderName = this.formatDateFolderName(timestamp)
+    const folderPath = path.join(sectionDir, folderName)
 
-    // Prepare metadata
+    await this.ensureDirectory(folderPath)
+
+    // Build metadata — keep only known keys + any extras from input
     const metadata: PersonalityFileMetadata = {
-      title: input.metadata?.title || input.sectionId,
-      provider: input.metadata?.provider || 'openai',
-      model: input.metadata?.model || 'unknown',
+      title: input.metadata?.title ?? input.sectionId,
+      provider: input.metadata?.provider ?? 'openai',
+      model: input.metadata?.model ?? 'unknown',
+      createdAt: new Date(timestamp).toISOString(),
     }
 
-    // Create markdown with frontmatter
-    const fileContent = matter.stringify(input.content, metadata)
+    if (input.metadata?.temperature !== undefined) {
+      metadata.temperature = input.metadata.temperature
+    }
+    if (input.metadata?.maxTokens !== undefined) {
+      metadata.maxTokens = input.metadata.maxTokens
+    }
+    if (input.metadata?.reasoning !== undefined) {
+      metadata.reasoning = input.metadata.reasoning
+    }
 
-    // Mark as app-written before saving
-    this.markFileAsWritten(filePath)
+    // Copy any extra unknown keys from input metadata
+    if (input.metadata) {
+      const knownKeys = new Set(['title', 'provider', 'model', 'temperature', 'maxTokens', 'reasoning', 'createdAt'])
+      for (const [key, value] of Object.entries(input.metadata)) {
+        if (!knownKeys.has(key)) {
+          metadata[key] = value
+        }
+      }
+    }
 
-    // Write file
-    await fs.writeFile(filePath, fileContent, 'utf-8')
+    const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const dataPath = path.join(folderPath, this.DATA_FILENAME)
 
-    console.log(`[PersonalityFilesService] Saved personality file: ${filePath}`)
+    // Mark both files (and the folder) as written before touching disk
+    this.markFileAsWritten(folderPath)
+    this.markFileAsWritten(configPath)
+    this.markFileAsWritten(dataPath)
+
+    await fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8')
+    await fs.writeFile(dataPath, input.content, 'utf-8')
+
+    console.log(`[PersonalityFilesService] Saved personality folder: ${folderPath}`)
 
     return {
-      id: timestamp.toString(),
-      path: filePath,
-      savedAt: timestamp
+      id: folderName,
+      path: folderPath,
+      savedAt: timestamp,
     }
   }
 
   /**
    * Load all personality files from all sections in the workspace.
+   * Supports both new folder format and legacy .md files.
    */
   async loadAll(): Promise<PersonalityFile[]> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -184,7 +217,6 @@ export class PersonalityFilesService implements Disposable {
 
     const personalityDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME)
 
-    // Check if personality directory exists
     try {
       await fs.access(personalityDir)
     } catch {
@@ -192,13 +224,11 @@ export class PersonalityFilesService implements Disposable {
       return []
     }
 
-    // Read all section directories
     const entries = await fs.readdir(personalityDir, { withFileTypes: true })
     const sectionDirs = entries.filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
 
     const allFiles: PersonalityFile[] = []
 
-    // Load files from each section
     for (const sectionDir of sectionDirs) {
       const sectionId = sectionDir.name
       const sectionPath = path.join(personalityDir, sectionId)
@@ -218,6 +248,7 @@ export class PersonalityFilesService implements Disposable {
 
   /**
    * Load a specific personality file by section and ID.
+   * Tries new folder format first, then falls back to legacy .md file.
    */
   async loadOne(sectionId: string, fileId: string): Promise<PersonalityFile | null> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -225,19 +256,30 @@ export class PersonalityFilesService implements Disposable {
       throw new Error('No workspace selected. Please select a workspace first.')
     }
 
-    const filePath = path.join(
-      currentWorkspace,
-      this.PERSONALITY_DIR_NAME,
-      sectionId,
-      `${fileId}.md`
-    )
+    const sectionDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME, sectionId)
 
+    // Try new folder format first
+    const folderPath = path.join(sectionDir, fileId)
     try {
-      const file = await this.loadFile(filePath, sectionId)
+      const stat = await fs.stat(folderPath)
+      if (stat.isDirectory()) {
+        const file = await this.loadFolder(folderPath, sectionId)
+        return file
+      }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err
+      }
+    }
+
+    // Fall back to legacy .md format
+    const legacyPath = path.join(sectionDir, `${fileId}.md`)
+    try {
+      const file = await this.loadLegacyFile(legacyPath, sectionId)
       return file
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.log(`[PersonalityFilesService] File not found: ${filePath}`)
+        console.log(`[PersonalityFilesService] File not found for id "${fileId}" in section "${sectionId}"`)
         return null
       }
       throw err
@@ -245,7 +287,8 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Delete a personality file.
+   * Delete a personality entry.
+   * Tries new folder format first, then falls back to legacy .md file.
    */
   async delete(sectionId: string, fileId: string): Promise<void> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -253,25 +296,35 @@ export class PersonalityFilesService implements Disposable {
       throw new Error('No workspace selected. Please select a workspace first.')
     }
 
-    const filePath = path.join(
-      currentWorkspace,
-      this.PERSONALITY_DIR_NAME,
-      sectionId,
-      `${fileId}.md`
-    )
+    const sectionDir = path.join(currentWorkspace, this.PERSONALITY_DIR_NAME, sectionId)
+    const folderPath = path.join(sectionDir, fileId)
 
+    // Try to delete as a folder first
     try {
-      // Mark as app-written before deleting
-      this.markFileAsWritten(filePath)
-
-      await fs.unlink(filePath)
-      console.log(`[PersonalityFilesService] Deleted personality file: ${filePath}`)
+      const stat = await fs.stat(folderPath)
+      if (stat.isDirectory()) {
+        this.markFileAsWritten(folderPath)
+        await fs.rm(folderPath, { recursive: true })
+        console.log(`[PersonalityFilesService] Deleted personality folder: ${folderPath}`)
+        return
+      }
     } catch (err) {
-      // Idempotent delete - OK if file doesn't exist
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw new Error(`Failed to delete personality folder: ${(err as Error).message}`)
+      }
+    }
+
+    // Fall back to legacy single-file deletion
+    const legacyPath = path.join(sectionDir, `${fileId}.md`)
+    try {
+      this.markFileAsWritten(legacyPath)
+      await fs.unlink(legacyPath)
+      console.log(`[PersonalityFilesService] Deleted legacy personality file: ${legacyPath}`)
+    } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw new Error(`Failed to delete personality file: ${(err as Error).message}`)
       }
-      console.log(`[PersonalityFilesService] File already deleted: ${filePath}`)
+      console.log(`[PersonalityFilesService] File already deleted: ${legacyPath}`)
     }
   }
 
@@ -281,19 +334,16 @@ export class PersonalityFilesService implements Disposable {
   destroy(): void {
     console.log('[PersonalityFilesService] Destroying...')
 
-    // Unsubscribe from workspace events
     if (this.workspaceEventUnsubscribe) {
       this.workspaceEventUnsubscribe()
       this.workspaceEventUnsubscribe = null
     }
 
-    // Stop cleanup interval
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval)
       this.cleanupInterval = null
     }
 
-    // Stop watching
     this.stopWatching().catch((error) => {
       console.error('[PersonalityFilesService] Error during destroy:', error)
     })
@@ -304,6 +354,20 @@ export class PersonalityFilesService implements Disposable {
   // ---------------------------------------------------------------------------
   // Private methods
   // ---------------------------------------------------------------------------
+
+  /**
+   * Format a Unix timestamp as a date-folder name: YYYY-MM-DD_HHmmss
+   */
+  private formatDateFolderName(timestamp: number): string {
+    const d = new Date(timestamp)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    const hh = String(d.getHours()).padStart(2, '0')
+    const mi = String(d.getMinutes()).padStart(2, '0')
+    const ss = String(d.getSeconds()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}_${hh}${mi}${ss}`
+  }
 
   /**
    * Handle workspace change events.
@@ -324,20 +388,18 @@ export class PersonalityFilesService implements Disposable {
 
   /**
    * Start watching the personality directory for file changes.
+   * Watches depth=2 to capture changes inside date-named folders.
    */
   private async startWatching(workspacePath: string): Promise<void> {
     const personalityDir = path.join(workspacePath, this.PERSONALITY_DIR_NAME)
 
-    // Don't restart if already watching the same directory
     if (this.currentPersonalityDir === personalityDir && this.watcher !== null) {
       console.log('[PersonalityFilesService] Already watching:', personalityDir)
       return
     }
 
-    // Stop any existing watcher
     await this.stopWatching()
 
-    // Ensure personality directory exists
     try {
       await fs.mkdir(personalityDir, { recursive: true })
     } catch (err) {
@@ -353,20 +415,45 @@ export class PersonalityFilesService implements Disposable {
         persistent: true,
         awaitWriteFinish: {
           stabilityThreshold: 200,
-          pollInterval: 50
+          pollInterval: 50,
         },
         usePolling: true,
         interval: 500,
-        depth: 1, // Watch personality directory and section subdirectories
+        depth: 2, // personality/ -> <section>/ -> <date-folder>/
         alwaysStat: false,
         ignored: (filePath: string) => {
           const base = path.basename(filePath)
-          // Ignore dotfiles, temp files, and non-markdown files
+
+          // Always watch the root personality dir itself
+          if (filePath === personalityDir) return false
+
+          // Ignore dotfiles and temp files
           if (base.startsWith('.') || base.endsWith('.tmp')) return true
-          // Only watch .md files (not directories)
-          if (filePath !== personalityDir && !base.endsWith('.md')) return true
-          return false
-        }
+
+          const rel = path.relative(personalityDir, filePath)
+          const parts = rel.split(path.sep)
+
+          // Allow section directories (depth 1)
+          if (parts.length === 1) return false
+
+          // Allow date-named folders inside sections (depth 2)
+          if (parts.length === 2) {
+            // A date folder or a legacy .md file inside the section
+            const name = parts[1]
+            if (this.DATE_FOLDER_RE.test(name)) return false
+            if (name.endsWith('.md')) return false
+            return true
+          }
+
+          // Allow config.json and DATA.md inside date folders (depth 3)
+          if (parts.length === 3) {
+            const name = parts[2]
+            if (name === this.CONFIG_FILENAME || name === this.DATA_FILENAME) return false
+            return true
+          }
+
+          return true
+        },
       })
 
       this.watcher
@@ -416,7 +503,6 @@ export class PersonalityFilesService implements Disposable {
     if (this.shouldIgnoreFile(filePath)) {
       return
     }
-
     this.debouncedEmit(filePath, 'added')
   }
 
@@ -427,7 +513,6 @@ export class PersonalityFilesService implements Disposable {
     if (this.shouldIgnoreFile(filePath)) {
       return
     }
-
     this.debouncedEmit(filePath, 'changed')
   }
 
@@ -438,7 +523,6 @@ export class PersonalityFilesService implements Disposable {
     if (this.shouldIgnoreFile(filePath)) {
       return
     }
-
     this.debouncedEmit(filePath, 'removed')
   }
 
@@ -451,7 +535,7 @@ export class PersonalityFilesService implements Disposable {
 
     this.eventBus.broadcast('personality:watcher-error', {
       error: errorMessage,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 
@@ -470,14 +554,13 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Mark a file as recently written by the app.
+   * Mark a file or directory as recently written by the app.
    */
   private markFileAsWritten(filePath: string): void {
     const normalized = path.normalize(filePath)
     this.ignoredWrites.add(normalized)
-    console.log('[PersonalityFilesService] Marked file as written:', normalized)
+    console.log('[PersonalityFilesService] Marked as written:', normalized)
 
-    // Auto-remove after ignore window
     setTimeout(() => {
       this.ignoredWrites.delete(normalized)
     }, this.IGNORE_WRITE_WINDOW_MS)
@@ -487,13 +570,11 @@ export class PersonalityFilesService implements Disposable {
    * Emit a file change event with debouncing.
    */
   private debouncedEmit(filePath: string, type: PersonalityFileChangeEvent['type']): void {
-    // Clear existing timer for this file
     const existingTimer = this.debounceTimers.get(filePath)
     if (existingTimer) {
       clearTimeout(existingTimer)
     }
 
-    // Set new timer
     const timer = setTimeout(() => {
       this.emitChangeEvent(filePath, type)
       this.debounceTimers.delete(filePath)
@@ -518,7 +599,7 @@ export class PersonalityFilesService implements Disposable {
       sectionId,
       fileId,
       filePath,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
 
     console.log(`[PersonalityFilesService] Personality file ${type}:`, sectionId, fileId)
@@ -527,8 +608,14 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Extract section ID and file ID from file path.
-   * Example: /workspace/personality/chat/1234567890.md -> { sectionId: 'chat', fileId: '1234567890' }
+   * Extract section ID and file ID from a file path.
+   *
+   * New format:
+   *   personality/<section>/<YYYY-MM-DD_HHmmss>/config.json  -> { sectionId, fileId: date-folder }
+   *   personality/<section>/<YYYY-MM-DD_HHmmss>/DATA.md      -> { sectionId, fileId: date-folder }
+   *
+   * Legacy format:
+   *   personality/<section>/<timestamp>.md                   -> { sectionId, fileId: timestamp }
    */
   private extractIdsFromPath(filePath: string): { sectionId: string | null; fileId: string | null } {
     const normalized = path.normalize(filePath)
@@ -540,28 +627,47 @@ export class PersonalityFilesService implements Disposable {
     }
 
     const sectionId = parts[personalityIndex + 1]
-    const filename = parts[personalityIndex + 2]
-    const fileId = path.basename(filename, '.md')
+    const thirdSegment = parts[personalityIndex + 2]
 
+    // New format: the third segment is a date folder, and there may be a fourth segment
+    if (this.DATE_FOLDER_RE.test(thirdSegment)) {
+      return { sectionId, fileId: thirdSegment }
+    }
+
+    // Legacy format: third segment is a .md file
+    const fileId = path.basename(thirdSegment, '.md')
     return { sectionId, fileId }
   }
 
   /**
    * Load all files from a section directory.
+   * Handles both new folder format and legacy .md files.
    */
   private async loadFilesFromSection(sectionPath: string, sectionId: string): Promise<PersonalityFile[]> {
-    const files = await fs.readdir(sectionPath)
-    const mdFiles = files.filter(file => file.endsWith('.md') && !file.startsWith('.'))
-
+    const entries = await fs.readdir(sectionPath, { withFileTypes: true })
     const personalityFiles: PersonalityFile[] = []
 
-    for (const filename of mdFiles) {
-      try {
-        const filePath = path.join(sectionPath, filename)
-        const file = await this.loadFile(filePath, sectionId)
-        personalityFiles.push(file)
-      } catch (err) {
-        console.warn(`[PersonalityFilesService] Failed to load file ${filename}:`, err)
+    for (const entry of entries) {
+      if (entry.name.startsWith('.')) continue
+
+      if (entry.isDirectory() && this.DATE_FOLDER_RE.test(entry.name)) {
+        // New folder-based format
+        const folderPath = path.join(sectionPath, entry.name)
+        try {
+          const file = await this.loadFolder(folderPath, sectionId)
+          personalityFiles.push(file)
+        } catch (err) {
+          console.warn(`[PersonalityFilesService] Failed to load folder ${entry.name}:`, err)
+        }
+      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+        // Legacy flat .md file
+        const filePath = path.join(sectionPath, entry.name)
+        try {
+          const file = await this.loadLegacyFile(filePath, sectionId)
+          personalityFiles.push(file)
+        } catch (err) {
+          console.warn(`[PersonalityFilesService] Failed to load legacy file ${entry.name}:`, err)
+        }
       }
     }
 
@@ -569,9 +675,48 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Load a single file and parse its frontmatter.
+   * Load a personality entry from the new folder format.
+   * Reads config.json for metadata and DATA.md for content.
    */
-  private async loadFile(filePath: string, sectionId: string): Promise<PersonalityFile> {
+  private async loadFolder(folderPath: string, sectionId: string): Promise<PersonalityFile> {
+    const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const dataPath = path.join(folderPath, this.DATA_FILENAME)
+
+    const [configRaw, content, stats] = await Promise.all([
+      fs.readFile(configPath, 'utf-8'),
+      fs.readFile(dataPath, 'utf-8'),
+      fs.stat(folderPath),
+    ])
+
+    let metadata: PersonalityFileMetadata
+    try {
+      metadata = JSON.parse(configRaw) as PersonalityFileMetadata
+    } catch (err) {
+      throw new Error(`Invalid config.json in ${folderPath}: ${(err as Error).message}`)
+    }
+
+    const folderId = path.basename(folderPath)
+
+    // Prefer createdAt from metadata if present; fall back to mtime
+    const savedAt = metadata.createdAt
+      ? new Date(metadata.createdAt).getTime() || Math.floor(stats.mtimeMs)
+      : Math.floor(stats.mtimeMs)
+
+    return {
+      id: folderId,
+      sectionId,
+      path: folderPath,
+      metadata,
+      content,
+      savedAt,
+    }
+  }
+
+  /**
+   * Load a legacy flat .md file (YAML frontmatter + markdown).
+   * Used for backward compatibility only; no new files are written in this format.
+   */
+  private async loadLegacyFile(filePath: string, sectionId: string): Promise<PersonalityFile> {
     const fileContent = await fs.readFile(filePath, 'utf-8')
     const { data, content } = matter(fileContent)
 
@@ -584,7 +729,7 @@ export class PersonalityFilesService implements Disposable {
       path: filePath,
       metadata: data as PersonalityFileMetadata,
       content,
-      savedAt: Math.floor(stats.mtimeMs)
+      savedAt: Math.floor(stats.mtimeMs),
     }
   }
 
@@ -615,10 +760,9 @@ export class PersonalityFilesService implements Disposable {
   }
 
   /**
-   * Clean up old ignored writes.
+   * Placeholder for periodic cleanup — actual cleanup is handled by markFileAsWritten timeouts.
    */
   private cleanupIgnoredWrites(): void {
-    // Set automatically removes items after timeout, so this is just a placeholder
-    // The actual cleanup happens in markFileAsWritten with setTimeout
+    // Cleanup is handled by setTimeout in markFileAsWritten
   }
 }

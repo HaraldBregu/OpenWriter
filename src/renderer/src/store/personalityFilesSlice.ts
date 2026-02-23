@@ -9,6 +9,10 @@ export interface PersonalityFileMetadata {
   title: string
   provider: string
   model: string
+  temperature?: number
+  maxTokens?: number | null
+  reasoning?: boolean
+  createdAt?: string
   [key: string]: unknown
 }
 
