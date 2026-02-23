@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import chatReducer from './chatSlice'
 import postsReducer from './postsSlice'
+import writingsReducer from './writingsSlice'
 import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
@@ -11,6 +12,7 @@ export const store = configureStore({
   reducer: {
     chat: chatReducer,
     posts: postsReducer,
+    writings: writingsReducer,
     directories: directoriesReducer,
     personalityFiles: personalityFilesReducer,
     output: outputReducer

@@ -87,6 +87,7 @@ const App: React.FC = () => {
                         <Route path="/new/post" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/post/:id" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
+                        <Route path="/new/writing/:id" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
                         <Route path="/directories" element={<RouteWrapper><DirectoriesPage /></RouteWrapper>} />
                         <Route path="/personality/emotional-depth" element={<RouteWrapper><EmotionalDepthPage /></RouteWrapper>} />

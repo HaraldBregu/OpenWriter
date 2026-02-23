@@ -17,6 +17,7 @@ import {
   updatePostTags,
   updatePostVisibility,
 } from "../store/postsSlice";
+import { selectWritings } from "../store/writingsSlice";
 import { deleteOutputItem } from "../store/outputSlice";
 import { TitleBar } from "./TitleBar";
 import {
@@ -201,6 +202,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const posts = useAppSelector(selectPosts);
+  const writings = useAppSelector(selectWritings);
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: false,
@@ -238,6 +240,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const handleNewPost = useCallback(() => {
     navigate('/new/post', { state: { draftKey: Date.now() } });
+  }, [navigate]);
+
+  const handleNewWriting = useCallback(() => {
+    navigate('/new/writing', { state: { draftKey: Date.now() } });
   }, [navigate]);
 
   const handlePostContextMenu = useCallback(
@@ -354,15 +360,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {quickCreateItems.map((item) => {
                     const Icon = item.icon;
                     const isNewPost = item.title === "New Post";
+                    const isNewWriting = item.title === "New Writing";
+                    const hasClickHandler = isNewPost || isNewWriting;
+                    const clickHandler = isNewPost
+                      ? handleNewPost
+                      : isNewWriting
+                        ? handleNewWriting
+                        : undefined;
                     return (
                       <AppSidebarMenuItem key={item.title}>
                         <AppSidebarMenuButton
-                          asChild={!isNewPost}
+                          asChild={!hasClickHandler}
                           // isActive={location.pathname === item.url}
                           className="h-9 px-3 group/item"
-                          onClick={isNewPost ? handleNewPost : undefined}
+                          onClick={clickHandler}
                         >
-                          {isNewPost ? (
+                          {hasClickHandler ? (
                             <>
                               <Icon className="h-3.5 w-3.5 shrink-0" />
                               <span className="flex-1 truncate">
@@ -394,6 +407,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {topNavSections.map((section) => {
                     const isOpen = sectionsOpen[section];
                     const isPosts = section === "Posts";
+                    const isWriting = section === "Writing";
                     return (
                       <AppSidebarMenuItem key={section}>
                         <button
@@ -440,6 +454,32 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                       </span>
                                       <span className="text-xs text-muted-foreground/40 shrink-0">
                                         {formatRelativeTime(post.updatedAt)}
+                                      </span>
+                                    </Link>
+                                  </AppSidebarMenuSubButton>
+                                </AppSidebarMenuSubItem>
+                              ))}
+                            {isWriting &&
+                              writings.map((writing) => (
+                                <AppSidebarMenuSubItem key={writing.id}>
+                                  <AppSidebarMenuSubButton
+                                    asChild
+                                    isActive={
+                                      location.pathname ===
+                                      `/new/writing/${writing.id}`
+                                    }
+                                    className="ml-0"
+                                  >
+                                    <Link
+                                      to={`/new/writing/${writing.id}`}
+                                      className="ml-0"
+                                    >
+                                      <PenLine className="h-3.5 w-3.5 shrink-0" />
+                                      <span className="flex-1 truncate">
+                                        {writing.title || "Untitled Writing"}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground/40 shrink-0">
+                                        {formatRelativeTime(writing.updatedAt)}
                                       </span>
                                     </Link>
                                   </AppSidebarMenuSubButton>
