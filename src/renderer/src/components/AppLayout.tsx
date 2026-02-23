@@ -247,10 +247,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   );
 
   const handleNewPost = useCallback(() => {
-    const action = createPost();
-    dispatch(action);
-    navigate(`/new/post/${action.payload.id}`);
-  }, [dispatch, navigate]);
+    navigate('/new/post');
+  }, [navigate]);
 
   const handlePostContextMenu = useCallback(
     (postId: string, postTitle: string) => {

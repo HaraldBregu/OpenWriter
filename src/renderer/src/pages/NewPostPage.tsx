@@ -14,6 +14,7 @@ import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock
 import { useAppDispatch, useAppSelector } from '../store'
 import {
   selectPostById,
+  addPost,
   updatePostBlocks,
   updatePostTitle,
   deletePost
@@ -22,7 +23,6 @@ import { saveOutputItem } from '@/store/outputSlice'
 import {
   PersonalitySettingsPanel,
   DEFAULT_INFERENCE_SETTINGS,
-  type InferenceSettings,
 } from '@/components/personality/PersonalitySettingsSheet'
 
 // ---------------------------------------------------------------------------
@@ -34,42 +34,115 @@ const NewPostPage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  // Stable selector instance — created once per render cycle; safe because id
-  // is stable for the lifetime of this mounted page.
+  const isDraft = id === undefined
+
+  // Redux post (edit mode only)
   const post = useAppSelector(selectPostById(id ?? ''))
 
-  // IMPORTANT: All hooks must be called before any early returns
-  // to maintain consistent hook ordering between renders
-  const [showSidebar, setShowSidebar] = useState(true)
+  // Draft state (used only when no id yet)
+  const draftIdRef = useRef(crypto.randomUUID())
+  const [draftTitle, setDraftTitle] = useState('')
+  const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
+  const committedRef = useRef(false)
 
-  // Auto-save refs
-  const isFirstRender = useRef(true)
+  const [showSidebar, setShowSidebar] = useState(true)
+  const [aiSettings, setAiSettings] = useState(DEFAULT_INFERENCE_SETTINGS)
+
+  // ---------------------------------------------------------------------------
+  // Draft mode: commit to Redux + save to output on first real content
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!isDraft || committedRef.current) return
+
+    const hasContent = draftTitle.trim() || draftBlocks.some((b) => b.content.trim())
+    if (!hasContent) return
+
+    const timer = setTimeout(async () => {
+      if (committedRef.current) return
+      committedRef.current = true
+
+      const workspace = await window.api.workspaceGetCurrent()
+      if (!workspace) return
+
+      const now = Date.now()
+      const newPost = {
+        id: draftIdRef.current,
+        title: draftTitle,
+        blocks: draftBlocks,
+        category: 'technology',
+        tags: [],
+        visibility: 'public',
+        createdAt: now,
+        updatedAt: now,
+      }
+
+      dispatch(addPost(newPost))
+
+      dispatch(saveOutputItem({
+        type: 'posts',
+        title: draftTitle || 'Untitled Post',
+        content: draftBlocks.map((b) => b.content).join('\n\n'),
+        visibility: 'private',
+        provider: 'manual',
+        model: '',
+      }))
+
+      navigate(`/new/post/${draftIdRef.current}`, { replace: true })
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [isDraft, draftTitle, draftBlocks, dispatch, navigate])
+
+  // ---------------------------------------------------------------------------
+  // Edit mode: auto-save to output 1s after changes
+  // ---------------------------------------------------------------------------
+  const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // AI Settings state
-  const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
+  useEffect(() => {
+    if (isDraft || !post) return
+    if (isFirstEditRender.current) {
+      isFirstEditRender.current = false
+      return
+    }
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(async () => {
+      const workspace = await window.api.workspaceGetCurrent()
+      if (!workspace) return
+      dispatch(saveOutputItem({
+        type: 'posts',
+        title: post.title || 'Untitled Post',
+        content: post.blocks.map((b) => b.content).join('\n\n'),
+        visibility: 'private',
+        provider: 'manual',
+        model: '',
+      }))
+    }, 1000)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [isDraft, post, dispatch])
 
-  // Callbacks must also be before early return to maintain hook order
+  // ---------------------------------------------------------------------------
+  // Edit mode callbacks
+  // ---------------------------------------------------------------------------
   const handleChange = useCallback((blockId: string, content: string) => {
     if (!post) return
-    const blocks = post.blocks
-    const updated = blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    const updated = post.blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
   }, [post, dispatch])
 
   const handleDelete = useCallback((blockId: string) => {
     if (!post) return
-    const blocks = post.blocks
-    const updated = blocks.filter((b) => b.id !== blockId)
+    const updated = post.blocks.filter((b) => b.id !== blockId)
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
   }, [post, dispatch])
 
   const handleAddBlockAfter = useCallback((afterId: string) => {
     if (!post) return
-    const blocks = post.blocks
-    const index = blocks.findIndex((b) => b.id === afterId)
+    const index = post.blocks.findIndex((b) => b.id === afterId)
     const newBlock: Block = createBlock()
-    const updated = [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)]
+    const updated = [...post.blocks.slice(0, index + 1), newBlock, ...post.blocks.slice(index + 1)]
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
   }, [post, dispatch])
 
@@ -78,35 +151,33 @@ const NewPostPage: React.FC = () => {
     dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
   }, [post, dispatch])
 
-  // Auto-save: debounce saves 1s after the user stops making changes
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    if (!post) return
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-    saveTimerRef.current = setTimeout(async () => {
-      const workspace = await window.api.workspaceGetCurrent()
-      if (!workspace) return
-      const markdownContent = post.blocks.map((b) => b.content).join('\n\n')
-      dispatch(saveOutputItem({
-        type: 'posts',
-        title: post.title || 'Untitled Post',
-        content: markdownContent,
-        visibility: 'private',
-        provider: 'manual',
-        model: ''
-      }))
-    }, 1000)
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-    }
-  }, [post, dispatch])
+  // ---------------------------------------------------------------------------
+  // Draft mode callbacks
+  // ---------------------------------------------------------------------------
+  const handleDraftChange = useCallback((blockId: string, content: string) => {
+    setDraftBlocks((prev) => prev.map((b) => (b.id === blockId ? { ...b, content } : b)))
+  }, [])
 
-  // Guard: if the post doesn't exist in Redux (e.g. navigated directly to a
-  // stale URL or deleted externally), show a fallback rather than crashing.
-  if (!post) {
+  const handleDraftDelete = useCallback((blockId: string) => {
+    setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
+  }, [])
+
+  const handleDraftAddBlockAfter = useCallback((afterId: string) => {
+    setDraftBlocks((prev) => {
+      const index = prev.findIndex((b) => b.id === afterId)
+      const newBlock: Block = createBlock()
+      return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
+    })
+  }, [])
+
+  const handleDraftReorder = useCallback((reordered: Block[]) => {
+    setDraftBlocks(reordered)
+  }, [])
+
+  // ---------------------------------------------------------------------------
+  // Guard: existing post not found in Redux
+  // ---------------------------------------------------------------------------
+  if (!isDraft && !post) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
         <p>Post not found.</p>
@@ -114,7 +185,9 @@ const NewPostPage: React.FC = () => {
     )
   }
 
-  const { blocks } = post
+  // Resolve display values for both modes
+  const title = isDraft ? draftTitle : post!.title
+  const blocks = isDraft ? draftBlocks : post!.blocks
 
   return (
     <div className="h-full flex flex-col">
@@ -123,8 +196,12 @@ const NewPostPage: React.FC = () => {
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
         <input
           type="text"
-          value={post.title}
-          onChange={(e) => dispatch(updatePostTitle({ postId: post.id, title: e.target.value }))}
+          value={title}
+          onChange={(e) =>
+            isDraft
+              ? setDraftTitle(e.target.value)
+              : dispatch(updatePostTitle({ postId: post!.id, title: e.target.value }))
+          }
           placeholder="New post"
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
@@ -158,16 +235,18 @@ const NewPostPage: React.FC = () => {
                 <Copy className="h-4 w-4" />
                 Duplicate
               </AppDropdownMenuItem>
-              <AppDropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => {
-                  dispatch(deletePost(post.id))
-                  navigate('/home')
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-                Move to Trash
-              </AppDropdownMenuItem>
+              {!isDraft && (
+                <AppDropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => {
+                    dispatch(deletePost(post!.id))
+                    navigate('/home')
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Move to Trash
+                </AppDropdownMenuItem>
+              )}
             </AppDropdownMenuContent>
           </AppDropdownMenu>
           <AppButton
@@ -186,11 +265,10 @@ const NewPostPage: React.FC = () => {
         {/* Main content */}
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
-
             <Reorder.Group
               axis="y"
               values={blocks}
-              onReorder={handleReorder}
+              onReorder={isDraft ? handleDraftReorder : handleReorder}
               className="flex flex-col gap-0"
             >
               {blocks.map((block) => (
@@ -198,14 +276,13 @@ const NewPostPage: React.FC = () => {
                   key={block.id}
                   block={block}
                   isOnly={blocks.length === 1}
-                  onChange={handleChange}
-                  onDelete={handleDelete}
-                  onAdd={handleAddBlockAfter}
-                  placeholder={`Write something...`}
+                  onChange={isDraft ? handleDraftChange : handleChange}
+                  onDelete={isDraft ? handleDraftDelete : handleDelete}
+                  onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
+                  placeholder="Write something..."
                 />
               ))}
             </Reorder.Group>
-
           </div>
         </div>
 

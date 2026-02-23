@@ -102,6 +102,10 @@ export const postsSlice = createSlice({
       post.updatedAt = Date.now()
     },
 
+    addPost(state, action: PayloadAction<Post>) {
+      state.posts.unshift(action.payload)
+    },
+
     deletePost(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
     },
@@ -137,6 +141,7 @@ export const postsSlice = createSlice({
 
 export const {
   createPost,
+  addPost,
   updatePostBlocks,
   updatePostTitle,
   updatePostCategory,
