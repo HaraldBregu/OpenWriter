@@ -5,6 +5,7 @@ import { useLanguage } from "../hooks/useLanguage";
 import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
 import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
+import { useOutputFiles } from "../hooks/useOutputFiles";
 import { useAppDispatch, useAppSelector } from "../store";
 import {
   createPost,
@@ -593,6 +594,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   usePostsLoader(); // Load posts from workspace on app startup
   usePostsFileWatcher(); // Listen for external file changes in posts directory
   usePersonalityFiles(); // Load personality files from workspace on app startup
+  useOutputFiles(); // Load output files (posts, writings, notes, messages) from workspace
 
   return (
     <div className="flex flex-col h-screen">
