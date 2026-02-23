@@ -28,7 +28,7 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
   providerId: 'openai',
   modelId: 'gpt-4o',
   temperature: 0.7,
-  maxTokens: null,
+  maxTokens: 2048,
   reasoning: false
 }
 
