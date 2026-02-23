@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store'
 import { AppProvider } from './contexts'
+import { PersonalityTaskProvider } from '@/contexts/PersonalityTaskContext'
 import { AppLayout } from './components/AppLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingSkeleton } from './components/LoadingSkeleton'
@@ -60,6 +61,7 @@ const App: React.FC = () => {
     <ErrorBoundary level="root">
       <Provider store={store}>
         <AppProvider>
+          <PersonalityTaskProvider>
           <Router>
               <Routes>
                 {/* Welcome page - standalone, shown first */}
@@ -110,6 +112,7 @@ const App: React.FC = () => {
                 } />
               </Routes>
           </Router>
+          </PersonalityTaskProvider>
         </AppProvider>
       </Provider>
     </ErrorBoundary>

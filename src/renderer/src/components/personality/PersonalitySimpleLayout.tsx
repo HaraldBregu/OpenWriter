@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Send, StopCircle, AlertCircle, Loader2, Save, Check, ChevronDown } from 'lucide-react'
+import { Send, StopCircle, AlertCircle, Loader2, Check, ChevronDown } from 'lucide-react'
 import { AppButton } from '@/components/app/AppButton'
 import {
   AppDropdownMenu,
@@ -9,10 +9,11 @@ import {
   AppDropdownMenuItem,
   AppDropdownMenuTrigger
 } from '@/components/app'
-import { useAI } from '@/hooks/useAI'
-import { useAppDispatch, useAppSelector } from '@/store'
-import { savePersonalityFile, selectPersonalityFilesLoading, selectLastSaved, clearLastSaved, loadPersonalityFiles, selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
-import type { SavePersonalityFileInput, PersonalityFile } from '@/store/personalityFilesSlice'
+import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
+import { useAppSelector } from '@/store'
+import { selectPersonalityFilesBySection } from '@/store/personalityFilesSlice'
+import type { PersonalityFile } from '@/store/personalityFilesSlice'
+
 export interface PersonalitySimpleLayoutProps {
   sectionId: string
   systemPrompt?: string
@@ -33,15 +34,9 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   examplePrompt
 }) => {
   const [inputValue, setInputValue] = useState('')
-  const [showSaveSuccess, setShowSaveSuccess] = useState(false)
-  const [lastSavedId, setLastSavedId] = useState<string | null>(null)
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const [loadedConversation, setLoadedConversation] = useState<PersonalityFile | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-
-  const dispatch = useAppDispatch()
-  const isSaving = useAppSelector(selectPersonalityFilesLoading)
-  const lastSaved = useAppSelector(selectLastSaved)
 
   // Get files for this section for the dropdown
   const files = useAppSelector(
@@ -55,29 +50,10 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
     error,
     submit,
     cancel,
-    latestResponse
-  } = useAI({
-    sessionId: sectionId,
-    systemPrompt,
-    providerId,
-    onError: (error) => {
-      console.error(`[PersonalitySimpleLayout:${sectionId}] Error:`, error)
-    }
-  })
-
-  // Show save success feedback
-  useEffect(() => {
-    if (lastSaved && lastSaved.fileId === lastSavedId) {
-      setShowSaveSuccess(true)
-      const timer = setTimeout(() => {
-        setShowSaveSuccess(false)
-        dispatch(clearLastSaved())
-        setLastSavedId(null)
-      }, 2000)
-      return () => clearTimeout(timer)
-    }
-    return undefined
-  }, [lastSaved, lastSavedId, dispatch])
+    latestResponse,
+    isSaving,
+    lastSaveError
+  } = usePersonalityTask(sectionId, systemPrompt, providerId)
 
   // Auto-scroll content to bottom when streaming
   useEffect(() => {
@@ -89,6 +65,10 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   const handleSubmit = useCallback(async () => {
     const trimmed = inputValue.trim()
     if (!trimmed || isLoading) return
+
+    // Clear loaded conversation to show live task
+    setLoadedConversation(null)
+    setActiveFileId(null)
 
     await submit(trimmed)
     setInputValue('')
@@ -104,48 +84,6 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   const handleCancel = useCallback(() => {
     cancel()
   }, [cancel])
-
-  const handleSave = useCallback(async () => {
-    // Only save if there are messages
-    if (messages.length === 0) return
-
-    // Generate title from first user message or use default
-    const firstUserMessage = messages.find(m => m.role === 'user')
-    const autoTitle = firstUserMessage
-      ? firstUserMessage.content.slice(0, 50) + (firstUserMessage.content.length > 50 ? '...' : '')
-      : 'Untitled Conversation'
-
-    // Convert messages to markdown format
-    const markdownContent = messages.map((msg) => {
-      const role = msg.role === 'user' ? 'User' : 'Assistant'
-      const timestamp = new Date(msg.timestamp).toISOString()
-      return `## ${role} (${timestamp})\n\n${msg.content}\n`
-    }).join('\n---\n\n')
-
-    const saveInput: SavePersonalityFileInput = {
-      sectionId,
-      content: markdownContent,
-      metadata: {
-        title: autoTitle,
-        providerId,
-        messageCount: messages.length,
-        createdAt: messages[0]?.timestamp || Date.now(),
-        updatedAt: Date.now()
-      }
-    }
-
-    try {
-      const result = await dispatch(savePersonalityFile(saveInput)).unwrap()
-      setLastSavedId(result.id)
-      setActiveFileId(result.id)
-      console.log(`[PersonalitySimpleLayout:${sectionId}] Saved conversation:`, result.id)
-
-      // Refresh the files list
-      await dispatch(loadPersonalityFiles())
-    } catch (error) {
-      console.error(`[PersonalitySimpleLayout:${sectionId}] Failed to save:`, error)
-    }
-  }, [messages, sectionId, providerId, dispatch])
 
   const handleFileSelect = useCallback(async (file: PersonalityFile) => {
     try {
@@ -262,31 +200,19 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
               </AppDropdownMenu>
             )}
 
-            {/* Save Button */}
-              <AppButton
-                onClick={handleSave}
-                disabled={messages.length === 0 || isSaving}
-                variant="outline"
-                size="sm"
-                className="shrink-0"
-              >
-                {showSaveSuccess ? (
-                  <>
-                    <Check className="mr-2 h-4 w-4 text-green-600" />
-                    Saved
-                  </>
-                ) : isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Save
-                  </>
-                )}
-              </AppButton>
+            {/* Auto-save status */}
+            {isSaving && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                <span>Saving...</span>
+              </div>
+            )}
+            {lastSaveError && (
+              <div className="flex items-center gap-2 text-xs text-destructive">
+                <AlertCircle className="h-3 w-3" />
+                <span>Save failed</span>
+              </div>
+            )}
           </div>
         </div>
 

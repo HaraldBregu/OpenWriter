@@ -68,11 +68,11 @@ export interface PersonalityFileChangeEvent {
  *   - Load individual files by section and ID
  *   - Delete personality files
  *   - Watch for external file changes
- *   - Organize files by section (brain/<section>/)
+ *   - Organize files by section (personality/<section>/)
  *   - Prevent infinite loops with file watcher
  *
  * File Structure:
- *   <workspace>/brain/<section>/<timestamp>.md
+ *   <workspace>/personality/<section>/<timestamp>.md
  *
  * File Format:
  *   ---
@@ -92,7 +92,7 @@ export class PersonalityFilesService implements Disposable {
   private cleanupInterval: NodeJS.Timeout | null = null
   private workspaceEventUnsubscribe: (() => void) | null = null
 
-  private readonly PERSONALITY_DIR_NAME = 'brain'
+  private readonly PERSONALITY_DIR_NAME = 'personality'
   private readonly IGNORE_WRITE_WINDOW_MS = 2000
   private readonly CLEANUP_INTERVAL_MS = 10000
   private readonly DEBOUNCE_MS = 300
@@ -132,7 +132,7 @@ export class PersonalityFilesService implements Disposable {
 
   /**
    * Save a conversation to a markdown file.
-   * Creates brain/<section>/ directory if needed.
+   * Creates personality/<section>/ directory if needed.
    * Generates a unique filename based on timestamp.
    */
   async save(input: SavePersonalityFileInput): Promise<SavePersonalityFileResult> {
@@ -531,7 +531,7 @@ export class PersonalityFilesService implements Disposable {
 
   /**
    * Extract section ID and file ID from file path.
-   * Example: /workspace/brain/chat/1234567890.md -> { sectionId: 'chat', fileId: '1234567890' }
+   * Example: /workspace/personality/chat/1234567890.md -> { sectionId: 'chat', fileId: '1234567890' }
    */
   private extractIdsFromPath(filePath: string): { sectionId: string | null; fileId: string | null } {
     const normalized = path.normalize(filePath)

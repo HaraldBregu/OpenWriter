@@ -22,7 +22,7 @@ import { getWindowService } from './IpcHelpers'
  *   - Delete personality files
  *   - Provide file watching events to renderer
  *
- * File organization: <workspace>/brain/<section>/<timestamp>.md
+ * File organization: <workspace>/personality/<section>/<timestamp>.md
  * File format: Markdown with YAML frontmatter
  */
 export class PersonalityIpc implements IpcModule {
