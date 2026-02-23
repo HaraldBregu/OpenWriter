@@ -20,6 +20,7 @@ export interface PersonalitySimpleLayoutProps {
   providerId?: string
   icon: React.ReactNode
   title: string
+  examplePrompt?: string
 }
 
 export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = React.memo(({
@@ -28,7 +29,8 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   placeholder = 'Ask a question...',
   providerId = 'openai',
   icon,
-  title
+  title,
+  examplePrompt
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [showSaveSuccess, setShowSaveSuccess] = useState(false)
@@ -43,7 +45,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
 
   // Get files for this section for the dropdown
   const files = useAppSelector(
-    selectPersonalityFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
+    selectPersonalityFilesBySection(sectionId as 'emotional-depth' | 'consciousness' | 'motivation' | 'moral-intuition' | 'irrationality' | 'growth' | 'social-identity' | 'creativity' | 'mortality' | 'contradiction')
   )
 
   const {
@@ -315,9 +317,20 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
               </div>
             ) : (
               <div className="flex h-full min-h-[300px] items-center justify-center">
-                <p className="text-sm text-muted-foreground">
-                  {isLoading ? 'Processing your request...' : 'Ask a question to get started.'}
-                </p>
+                {isLoading ? (
+                  <p className="text-sm text-muted-foreground">Processing your request...</p>
+                ) : examplePrompt ? (
+                  <button
+                    type="button"
+                    onClick={() => { setInputValue(examplePrompt) }}
+                    className="max-w-lg rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-accent"
+                  >
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Try this</p>
+                    <p className="text-sm text-foreground">{examplePrompt}</p>
+                  </button>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Ask a question to get started.</p>
+                )}
               </div>
             )}
 

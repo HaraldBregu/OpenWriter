@@ -28,7 +28,7 @@ export const PersonalityFilesList: React.FC<PersonalityFilesListProps> = React.m
 
   // Get files for this section using memoized selector
   const files = useAppSelector(
-    selectPersonalityFilesBySection(sectionId as 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception')
+    selectPersonalityFilesBySection(sectionId as 'emotional-depth' | 'consciousness' | 'motivation' | 'moral-intuition' | 'irrationality' | 'growth' | 'social-identity' | 'creativity' | 'mortality' | 'contradiction')
   )
   const isLoading = useAppSelector(selectPersonalityFilesLoading)
 

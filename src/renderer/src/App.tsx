@@ -32,11 +32,16 @@ const NewMessagePage = lazy(() => import('./pages/NewMessagePage'))
 const PipelineTestPage = lazy(() => import('./pages/PipelineTestPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
-const PrinciplesPage = lazy(() => import('./pages/personality/PrinciplesPage'))
+const EmotionalDepthPage = lazy(() => import('./pages/personality/EmotionalDepthPage'))
 const ConsciousnessPage = lazy(() => import('./pages/personality/ConsciousnessPage'))
-const MemoryPage = lazy(() => import('./pages/personality/MemoryPage'))
-const ReasoningPage = lazy(() => import('./pages/personality/ReasoningPage'))
-const PerceptionPage = lazy(() => import('./pages/personality/PerceptionPage'))
+const MotivationPage = lazy(() => import('./pages/personality/MotivationPage'))
+const MoralIntuitionPage = lazy(() => import('./pages/personality/MoralIntuitionPage'))
+const IrrationalityPage = lazy(() => import('./pages/personality/IrrationalityPage'))
+const GrowthPage = lazy(() => import('./pages/personality/GrowthPage'))
+const SocialIdentityPage = lazy(() => import('./pages/personality/SocialIdentityPage'))
+const CreativityPage = lazy(() => import('./pages/personality/CreativityPage'))
+const MortalityPage = lazy(() => import('./pages/personality/MortalityPage'))
+const ContradictionPage = lazy(() => import('./pages/personality/ContradictionPage'))
 const DebugPage = lazy(() => import('./pages/DebugPage'))
 const DownloadsDemoPage = lazy(() => import('./pages/DownloadsDemo').then(m => ({ default: m.DownloadsDemo })))
 
@@ -87,11 +92,16 @@ const App: React.FC = () => {
                         <Route path="/new/message" element={<RouteWrapper><NewMessagePage /></RouteWrapper>} />
                         <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
                         <Route path="/directories" element={<RouteWrapper><DirectoriesPage /></RouteWrapper>} />
-                        <Route path="/personality/principles" element={<RouteWrapper><PrinciplesPage /></RouteWrapper>} />
+                        <Route path="/personality/emotional-depth" element={<RouteWrapper><EmotionalDepthPage /></RouteWrapper>} />
                         <Route path="/personality/consciousness" element={<RouteWrapper><ConsciousnessPage /></RouteWrapper>} />
-                        <Route path="/personality/memory" element={<RouteWrapper><MemoryPage /></RouteWrapper>} />
-                        <Route path="/personality/reasoning" element={<RouteWrapper><ReasoningPage /></RouteWrapper>} />
-                        <Route path="/personality/perception" element={<RouteWrapper><PerceptionPage /></RouteWrapper>} />
+                        <Route path="/personality/motivation" element={<RouteWrapper><MotivationPage /></RouteWrapper>} />
+                        <Route path="/personality/moral-intuition" element={<RouteWrapper><MoralIntuitionPage /></RouteWrapper>} />
+                        <Route path="/personality/irrationality" element={<RouteWrapper><IrrationalityPage /></RouteWrapper>} />
+                        <Route path="/personality/growth" element={<RouteWrapper><GrowthPage /></RouteWrapper>} />
+                        <Route path="/personality/social-identity" element={<RouteWrapper><SocialIdentityPage /></RouteWrapper>} />
+                        <Route path="/personality/creativity" element={<RouteWrapper><CreativityPage /></RouteWrapper>} />
+                        <Route path="/personality/mortality" element={<RouteWrapper><MortalityPage /></RouteWrapper>} />
+                        <Route path="/personality/contradiction" element={<RouteWrapper><ContradictionPage /></RouteWrapper>} />
                         <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
                         <Route path="/downloads-demo" element={<RouteWrapper><DownloadsDemoPage /></RouteWrapper>} />
                       </Routes>

@@ -35,15 +35,30 @@ export interface SavePersonalityFileResult {
   savedAt: number
 }
 
-type SectionId = 'principles' | 'consciousness' | 'memory' | 'reasoning' | 'perception'
+type SectionId =
+  | 'emotional-depth'
+  | 'consciousness'
+  | 'motivation'
+  | 'moral-intuition'
+  | 'irrationality'
+  | 'growth'
+  | 'social-identity'
+  | 'creativity'
+  | 'mortality'
+  | 'contradiction'
 
 interface PersonalityFilesState {
   files: {
-    principles: PersonalityFile[]
+    'emotional-depth': PersonalityFile[]
     consciousness: PersonalityFile[]
-    memory: PersonalityFile[]
-    reasoning: PersonalityFile[]
-    perception: PersonalityFile[]
+    motivation: PersonalityFile[]
+    'moral-intuition': PersonalityFile[]
+    irrationality: PersonalityFile[]
+    growth: PersonalityFile[]
+    'social-identity': PersonalityFile[]
+    creativity: PersonalityFile[]
+    mortality: PersonalityFile[]
+    contradiction: PersonalityFile[]
   }
   loading: boolean
   error: string | null
@@ -55,11 +70,16 @@ interface PersonalityFilesState {
 
 const initialState: PersonalityFilesState = {
   files: {
-    principles: [],
+    'emotional-depth': [],
     consciousness: [],
-    memory: [],
-    reasoning: [],
-    perception: []
+    motivation: [],
+    'moral-intuition': [],
+    irrationality: [],
+    growth: [],
+    'social-identity': [],
+    creativity: [],
+    mortality: [],
+    contradiction: []
   },
   loading: false,
   error: null,
@@ -179,11 +199,16 @@ export const personalityFilesSlice = createSlice({
 
         // Reset all sections
         state.files = {
-          principles: [],
+          'emotional-depth': [],
           consciousness: [],
-          memory: [],
-          reasoning: [],
-          perception: []
+          motivation: [],
+          'moral-intuition': [],
+          irrationality: [],
+          growth: [],
+          'social-identity': [],
+          creativity: [],
+          mortality: [],
+          contradiction: []
         }
 
         // Distribute files into their sections
@@ -297,11 +322,16 @@ export const selectTotalPersonalityFilesCount = createSelector(
 export const selectPersonalityFilesCountBySection = createSelector(
   [selectAllPersonalityFiles],
   (files): Record<SectionId, number> => ({
-    principles: files.principles.length,
+    'emotional-depth': files['emotional-depth'].length,
     consciousness: files.consciousness.length,
-    memory: files.memory.length,
-    reasoning: files.reasoning.length,
-    perception: files.perception.length
+    motivation: files.motivation.length,
+    'moral-intuition': files['moral-intuition'].length,
+    irrationality: files.irrationality.length,
+    growth: files.growth.length,
+    'social-identity': files['social-identity'].length,
+    creativity: files.creativity.length,
+    mortality: files.mortality.length,
+    contradiction: files.contradiction.length
   })
 )
 
