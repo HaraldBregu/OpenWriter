@@ -12,8 +12,6 @@ import { useAI } from '@/hooks/useAI'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { saveBrainFile, selectBrainFilesLoading, selectLastSaved, clearLastSaved, loadBrainFiles, selectBrainFilesBySection } from '@/store/brainFilesSlice'
 import type { SaveBrainFileInput, BrainFile } from '@/store/brainFilesSlice'
-import { BrainFilesList } from './BrainFilesList'
-
 export interface BrainSimpleLayoutProps {
   sectionId: string
   systemPrompt?: string
@@ -34,7 +32,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   const [inputValue, setInputValue] = useState('')
   const [showSaveSuccess, setShowSaveSuccess] = useState(false)
   const [lastSavedId, setLastSavedId] = useState<string | null>(null)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const [loadedConversation, setLoadedConversation] = useState<BrainFile | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -176,10 +173,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
     // The useAI hook will handle clearing messages
   }, [])
 
-  const toggleSidebar = useCallback(() => {
-    setSidebarCollapsed(prev => !prev)
-  }, [])
-
   // Get the latest assistant message for display
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant')
@@ -195,19 +188,7 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
   const isViewingLoadedConversation = loadedConversation !== null
 
   return (
-    <div className="flex h-full flex-row overflow-hidden">
-      {/* Sidebar - Saved Conversations */}
-      <BrainFilesList
-        sectionId={sectionId}
-        activeFileId={activeFileId}
-        onFileSelect={handleFileSelect}
-        onNewConversation={handleNewConversation}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={toggleSidebar}
-      />
-
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
           <div className="flex items-center gap-3">
@@ -413,7 +394,6 @@ export const BrainSimpleLayout: React.FC<BrainSimpleLayoutProps> = React.memo(({
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 })
