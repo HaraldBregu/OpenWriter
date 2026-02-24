@@ -155,7 +155,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
       }
 
       // Save via IPC directly (not through Redux)
-      const saveResult = await window.api.personalitySave({
+      const saveResult = await window.personality.save({
         sectionId,
         content: markdownContent,
         metadata: {

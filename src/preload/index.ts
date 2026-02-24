@@ -38,7 +38,10 @@ async function unwrapIpcResult<T>(promise: Promise<IpcResult<T>>): Promise<T> {
     }
 }
 
-const api = {
+// ---------------------------------------------------------------------------
+// window.app — General application utilities
+// ---------------------------------------------------------------------------
+const app = {
     playSound: (): void => {
         ipcRenderer.send('play-sound')
     },
@@ -78,7 +81,57 @@ const api = {
             ipcRenderer.removeListener('file-opened', handler)
         }
     },
-    // Media permissions
+    popupMenu: (): Promise<void> => {
+        return ipcRenderer.invoke('window:popup-menu')
+    },
+    getPlatform: (): Promise<string> => {
+        return ipcRenderer.invoke('window:get-platform')
+    },
+}
+
+// ---------------------------------------------------------------------------
+// window.win — Window controls
+// ---------------------------------------------------------------------------
+const win = {
+    minimize: (): void => {
+        ipcRenderer.send('window:minimize')
+    },
+    maximize: (): void => {
+        ipcRenderer.send('window:maximize')
+    },
+    close: (): void => {
+        ipcRenderer.send('window:close')
+    },
+    isMaximized: (): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('window:is-maximized'))
+    },
+    isFullScreen: (): Promise<boolean> => {
+        return unwrapIpcResult(ipcRenderer.invoke('window:is-fullscreen'))
+    },
+    onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, isMaximized: boolean): void => {
+            callback(isMaximized)
+        }
+        ipcRenderer.on('window:maximize-change', handler)
+        return () => {
+            ipcRenderer.removeListener('window:maximize-change', handler)
+        }
+    },
+    onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
+        const handler = (_event: Electron.IpcRendererEvent, isFullScreen: boolean): void => {
+            callback(isFullScreen)
+        }
+        ipcRenderer.on('window:fullscreen-change', handler)
+        return () => {
+            ipcRenderer.removeListener('window:fullscreen-change', handler)
+        }
+    },
+}
+
+// ---------------------------------------------------------------------------
+// window.media — Microphone / camera permissions and device enumeration
+// ---------------------------------------------------------------------------
+const media = {
     requestMicrophonePermission: (): Promise<string> => {
         return ipcRenderer.invoke('request-microphone-permission')
     },
@@ -91,27 +144,37 @@ const api = {
     getCameraPermissionStatus: (): Promise<string> => {
         return ipcRenderer.invoke('get-camera-status')
     },
-    getMediaDevices: (type: 'audioinput' | 'videoinput'): Promise<MediaDeviceInfo[]> => {
+    getDevices: (type: 'audioinput' | 'videoinput'): Promise<MediaDeviceInfo[]> => {
         return ipcRenderer.invoke('get-media-devices', type)
     },
-    // Bluetooth
-    bluetoothIsSupported: (): Promise<boolean> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.bluetooth — Bluetooth capability queries
+// ---------------------------------------------------------------------------
+const bluetooth = {
+    isSupported: (): Promise<boolean> => {
         return ipcRenderer.invoke('bluetooth-is-supported')
     },
-    bluetoothGetPermissionStatus: (): Promise<string> => {
+    getPermissionStatus: (): Promise<string> => {
         return ipcRenderer.invoke('bluetooth-get-permission-status')
     },
-    bluetoothGetInfo: (): Promise<{ platform: string; supported: boolean; apiAvailable: boolean }> => {
+    getInfo: (): Promise<{ platform: string; supported: boolean; apiAvailable: boolean }> => {
         return ipcRenderer.invoke('bluetooth-get-info')
     },
-    // Network
-    networkIsSupported: (): Promise<boolean> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.network — Network connectivity and interface information
+// ---------------------------------------------------------------------------
+const network = {
+    isSupported: (): Promise<boolean> => {
         return ipcRenderer.invoke('network-is-supported')
     },
-    networkGetConnectionStatus: (): Promise<string> => {
+    getConnectionStatus: (): Promise<string> => {
         return ipcRenderer.invoke('network-get-connection-status')
     },
-    networkGetInterfaces: (): Promise<Array<{
+    getInterfaces: (): Promise<Array<{
         name: string
         family: 'IPv4' | 'IPv6'
         address: string
@@ -122,7 +185,7 @@ const api = {
     }>> => {
         return ipcRenderer.invoke('network-get-interfaces')
     },
-    networkGetInfo: (): Promise<{
+    getInfo: (): Promise<{
         platform: string
         supported: boolean
         isOnline: boolean
@@ -130,7 +193,7 @@ const api = {
     }> => {
         return ipcRenderer.invoke('network-get-info')
     },
-    onNetworkStatusChange: (callback: (status: string) => void): (() => void) => {
+    onStatusChange: (callback: (status: string) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, status: string): void => {
             callback(status)
         }
@@ -139,8 +202,13 @@ const api = {
             ipcRenderer.removeListener('network-status-changed', handler)
         }
     },
-    // Cron
-    cronGetAllJobs: (): Promise<Array<{
+}
+
+// ---------------------------------------------------------------------------
+// window.cron — Scheduled job management
+// ---------------------------------------------------------------------------
+const cron = {
+    getAll: (): Promise<Array<{
         id: string
         name: string
         schedule: string
@@ -154,7 +222,7 @@ const api = {
     }>> => {
         return ipcRenderer.invoke('cron-get-all-jobs')
     },
-    cronGetJob: (id: string): Promise<{
+    getJob: (id: string): Promise<{
         id: string
         name: string
         schedule: string
@@ -168,16 +236,16 @@ const api = {
     } | null> => {
         return ipcRenderer.invoke('cron-get-job', id)
     },
-    cronStartJob: (id: string): Promise<boolean> => {
+    start: (id: string): Promise<boolean> => {
         return ipcRenderer.invoke('cron-start-job', id)
     },
-    cronStopJob: (id: string): Promise<boolean> => {
+    stop: (id: string): Promise<boolean> => {
         return ipcRenderer.invoke('cron-stop-job', id)
     },
-    cronDeleteJob: (id: string): Promise<boolean> => {
+    delete: (id: string): Promise<boolean> => {
         return ipcRenderer.invoke('cron-delete-job', id)
     },
-    cronCreateJob: (config: {
+    create: (config: {
         id: string
         name: string
         schedule: string
@@ -187,13 +255,13 @@ const api = {
     }): Promise<boolean> => {
         return ipcRenderer.invoke('cron-create-job', config)
     },
-    cronUpdateSchedule: (id: string, schedule: string): Promise<boolean> => {
+    updateSchedule: (id: string, schedule: string): Promise<boolean> => {
         return ipcRenderer.invoke('cron-update-schedule', id, schedule)
     },
-    cronValidateExpression: (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
+    validateExpression: (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
         return ipcRenderer.invoke('cron-validate-expression', expression)
     },
-    onCronJobResult: (callback: (result: {
+    onJobResult: (callback: (result: {
         id: string
         timestamp: Date
         success: boolean
@@ -214,8 +282,13 @@ const api = {
             ipcRenderer.removeListener('cron-job-result', handler)
         }
     },
-    // Lifecycle
-    lifecycleGetState: (): Promise<{
+}
+
+// ---------------------------------------------------------------------------
+// window.lifecycle — App lifecycle state and events
+// ---------------------------------------------------------------------------
+const lifecycle = {
+    getState: (): Promise<{
         isSingleInstance: boolean
         events: Array<{ type: string; timestamp: number; detail?: string }>
         appReadyAt: number | null
@@ -223,13 +296,13 @@ const api = {
     }> => {
         return ipcRenderer.invoke('lifecycle-get-state')
     },
-    lifecycleGetEvents: (): Promise<Array<{ type: string; timestamp: number; detail?: string }>> => {
+    getEvents: (): Promise<Array<{ type: string; timestamp: number; detail?: string }>> => {
         return ipcRenderer.invoke('lifecycle-get-events')
     },
-    lifecycleRestart: (): Promise<void> => {
+    restart: (): Promise<void> => {
         return ipcRenderer.invoke('lifecycle-restart')
     },
-    onLifecycleEvent: (callback: (event: { type: string; timestamp: number; detail?: string }) => void): (() => void) => {
+    onEvent: (callback: (event: { type: string; timestamp: number; detail?: string }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, lifecycleEvent: { type: string; timestamp: number; detail?: string }): void => {
             callback(lifecycleEvent)
         }
@@ -238,31 +311,36 @@ const api = {
             ipcRenderer.removeListener('lifecycle-event', handler)
         }
     },
-    // Window Manager
-    wmGetState: (): Promise<{
+}
+
+// ---------------------------------------------------------------------------
+// window.wm — Window manager (child / modal / frameless / widget windows)
+// ---------------------------------------------------------------------------
+const wm = {
+    getState: (): Promise<{
         windows: Array<{ id: number; type: string; title: string; createdAt: number }>
     }> => {
         return ipcRenderer.invoke('wm-get-state')
     },
-    wmCreateChild: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createChild: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
         return ipcRenderer.invoke('wm-create-child')
     },
-    wmCreateModal: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createModal: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
         return ipcRenderer.invoke('wm-create-modal')
     },
-    wmCreateFrameless: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createFrameless: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
         return ipcRenderer.invoke('wm-create-frameless')
     },
-    wmCreateWidget: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createWidget: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
         return ipcRenderer.invoke('wm-create-widget')
     },
-    wmCloseWindow: (id: number): Promise<boolean> => {
+    closeWindow: (id: number): Promise<boolean> => {
         return ipcRenderer.invoke('wm-close-window', id)
     },
-    wmCloseAll: (): Promise<void> => {
+    closeAll: (): Promise<void> => {
         return ipcRenderer.invoke('wm-close-all')
     },
-    onWmStateChange: (callback: (state: {
+    onStateChange: (callback: (state: {
         windows: Array<{ id: number; type: string; title: string; createdAt: number }>
     }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, state: {
@@ -275,8 +353,13 @@ const api = {
             ipcRenderer.removeListener('wm-state-changed', handler)
         }
     },
-    // Filesystem
-    fsOpenFile: (): Promise<{
+}
+
+// ---------------------------------------------------------------------------
+// window.fs — Filesystem operations and directory watching
+// ---------------------------------------------------------------------------
+const fs = {
+    openFile: (): Promise<{
         filePath: string
         fileName: string
         content: string
@@ -285,7 +368,7 @@ const api = {
     } | null> => {
         return ipcRenderer.invoke('fs-open-file')
     },
-    fsReadFile: (filePath: string): Promise<{
+    readFile: (filePath: string): Promise<{
         filePath: string
         fileName: string
         content: string
@@ -294,31 +377,31 @@ const api = {
     }> => {
         return ipcRenderer.invoke('fs-read-file', filePath)
     },
-    fsSaveFile: (defaultName: string, content: string): Promise<{
+    saveFile: (defaultName: string, content: string): Promise<{
         success: boolean
         filePath: string | null
     }> => {
         return ipcRenderer.invoke('fs-save-file', defaultName, content)
     },
-    fsWriteFile: (filePath: string, content: string): Promise<{
+    writeFile: (filePath: string, content: string): Promise<{
         success: boolean
         filePath: string
     }> => {
         return ipcRenderer.invoke('fs-write-file', filePath, content)
     },
-    fsSelectDirectory: (): Promise<string | null> => {
+    selectDirectory: (): Promise<string | null> => {
         return ipcRenderer.invoke('fs-select-directory')
     },
-    fsWatchDirectory: (dirPath: string): Promise<boolean> => {
+    watchDirectory: (dirPath: string): Promise<boolean> => {
         return ipcRenderer.invoke('fs-watch-directory', dirPath)
     },
-    fsUnwatchDirectory: (dirPath: string): Promise<boolean> => {
+    unwatchDirectory: (dirPath: string): Promise<boolean> => {
         return ipcRenderer.invoke('fs-unwatch-directory', dirPath)
     },
-    fsGetWatched: (): Promise<string[]> => {
+    getWatched: (): Promise<string[]> => {
         return ipcRenderer.invoke('fs-get-watched')
     },
-    onFsWatchEvent: (callback: (event: {
+    onWatchEvent: (callback: (event: {
         eventType: string
         filename: string | null
         directory: string
@@ -337,47 +420,57 @@ const api = {
             ipcRenderer.removeListener('fs-watch-event', handler)
         }
     },
-    // Dialogs
-    dialogOpen: (): Promise<{
+}
+
+// ---------------------------------------------------------------------------
+// window.dialog — Native OS dialog boxes
+// ---------------------------------------------------------------------------
+const dialog = {
+    open: (): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('dialog-open'))
     },
-    dialogOpenDirectory: (multiSelections = false): Promise<{
+    openDirectory: (multiSelections = false): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('dialog-open-directory', multiSelections))
     },
-    dialogSave: (): Promise<{
+    save: (): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('dialog-save'))
     },
-    dialogMessage: (message: string, detail: string, buttons: string[]): Promise<{
+    message: (message: string, detail: string, buttons: string[]): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('dialog-message', message, detail, buttons))
     },
-    dialogError: (title: string, content: string): Promise<{
+    error: (title: string, content: string): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('dialog-error', title, content))
     },
-    // Notifications
-    notificationIsSupported: (): Promise<boolean> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.notification — Desktop notifications
+// ---------------------------------------------------------------------------
+const notification = {
+    isSupported: (): Promise<boolean> => {
         return ipcRenderer.invoke('notification-is-supported')
     },
-    notificationShow: (options: {
+    show: (options: {
         title: string
         body: string
         silent?: boolean
@@ -385,7 +478,7 @@ const api = {
     }): Promise<string> => {
         return ipcRenderer.invoke('notification-show', options)
     },
-    onNotificationEvent: (callback: (result: {
+    onEvent: (callback: (result: {
         id: string
         title: string
         body: string
@@ -406,29 +499,34 @@ const api = {
             ipcRenderer.removeListener('notification-event', handler)
         }
     },
-    // Clipboard
-    clipboardWriteText: (text: string): Promise<boolean> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.clipboard — Clipboard read / write operations
+// ---------------------------------------------------------------------------
+const clipboard = {
+    writeText: (text: string): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-write-text', text)
     },
-    clipboardReadText: (): Promise<string> => {
+    readText: (): Promise<string> => {
         return ipcRenderer.invoke('clipboard-read-text')
     },
-    clipboardWriteHTML: (html: string): Promise<boolean> => {
+    writeHTML: (html: string): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-write-html', html)
     },
-    clipboardReadHTML: (): Promise<string> => {
+    readHTML: (): Promise<string> => {
         return ipcRenderer.invoke('clipboard-read-html')
     },
-    clipboardWriteImage: (dataURL: string): Promise<boolean> => {
+    writeImage: (dataURL: string): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-write-image', dataURL)
     },
-    clipboardReadImage: (): Promise<{ dataURL: string; width: number; height: number } | null> => {
+    readImage: (): Promise<{ dataURL: string; width: number; height: number } | null> => {
         return ipcRenderer.invoke('clipboard-read-image')
     },
-    clipboardClear: (): Promise<boolean> => {
+    clear: (): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-clear')
     },
-    clipboardGetContent: (): Promise<{
+    getContent: (): Promise<{
         type: 'text' | 'image' | 'html'
         text?: string
         html?: string
@@ -439,58 +537,73 @@ const api = {
     } | null> => {
         return ipcRenderer.invoke('clipboard-get-content')
     },
-    clipboardGetFormats: (): Promise<string[]> => {
+    getFormats: (): Promise<string[]> => {
         return ipcRenderer.invoke('clipboard-get-formats')
     },
-    clipboardHasText: (): Promise<boolean> => {
+    hasText: (): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-has-text')
     },
-    clipboardHasImage: (): Promise<boolean> => {
+    hasImage: (): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-has-image')
     },
-    clipboardHasHTML: (): Promise<boolean> => {
+    hasHTML: (): Promise<boolean> => {
         return ipcRenderer.invoke('clipboard-has-html')
     },
-    // Store
-    storeGetAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.store — Persisted AI model settings
+// ---------------------------------------------------------------------------
+const store = {
+    getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-get-all-model-settings'))
     },
-    storeGetModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
+    getModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-get-model-settings', providerId))
     },
-    storeSetSelectedModel: (providerId: string, modelId: string): Promise<void> => {
+    setSelectedModel: (providerId: string, modelId: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-set-selected-model', providerId, modelId))
     },
-    storeSetApiToken: (providerId: string, token: string): Promise<void> => {
+    setApiToken: (providerId: string, token: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-set-api-token', providerId, token))
     },
-    storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
+    setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-set-model-settings', providerId, settings))
     },
-    // Workspace
-    workspaceSelectFolder: (): Promise<string | null> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.workspace — Workspace folder selection and recent workspaces
+// ---------------------------------------------------------------------------
+const workspace = {
+    selectFolder: (): Promise<string | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace:select-folder'))
     },
-    workspaceGetCurrent: (): Promise<string | null> => {
+    getCurrent: (): Promise<string | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-get-current'))
     },
-    workspaceSetCurrent: (workspacePath: string): Promise<void> => {
+    setCurrent: (workspacePath: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-set-current', workspacePath))
     },
-    workspaceGetRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
+    getRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-get-recent'))
     },
-    workspaceClear: (): Promise<void> => {
+    clear: (): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-clear'))
     },
-    workspaceDirectoryExists: (directoryPath: string): Promise<boolean> => {
+    directoryExists: (directoryPath: string): Promise<boolean> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-directory-exists', directoryPath))
     },
-    workspaceRemoveRecent: (workspacePath: string): Promise<void> => {
+    removeRecent: (workspacePath: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('workspace-remove-recent', workspacePath))
     },
-    // Posts - Sync posts to workspace filesystem
-    postsSyncToWorkspace: (posts: Array<{
+}
+
+// ---------------------------------------------------------------------------
+// window.posts — Post sync and file-watch events
+// ---------------------------------------------------------------------------
+const posts = {
+    syncToWorkspace: (postsData: Array<{
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -505,9 +618,9 @@ const api = {
         failedCount: number
         errors?: Array<{ postId: string; error: string }>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('posts:sync-to-workspace', posts))
+        return unwrapIpcResult(ipcRenderer.invoke('posts:sync-to-workspace', postsData))
     },
-    postsUpdatePost: (post: {
+    update: (post: {
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -519,10 +632,10 @@ const api = {
     }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('posts:update-post', post))
     },
-    postsDeletePost: (postId: string): Promise<void> => {
+    delete: (postId: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('posts:delete-post', postId))
     },
-    postsLoadFromWorkspace: (): Promise<Array<{
+    loadFromWorkspace: (): Promise<Array<{
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -534,7 +647,7 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('posts:load-from-workspace'))
     },
-    onPostsFileChange: (callback: (event: {
+    onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         postId: string
         filePath: string
@@ -553,7 +666,7 @@ const api = {
             ipcRenderer.removeListener('posts:file-changed', handler)
         }
     },
-    onPostsWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
             callback(errorData)
         }
@@ -562,35 +675,40 @@ const api = {
             ipcRenderer.removeListener('posts:watcher-error', handler)
         }
     },
-    // Documents
-    documentsImportFiles: (): Promise<Array<{
+}
+
+// ---------------------------------------------------------------------------
+// window.documents — Document import, download, and file-watch events
+// ---------------------------------------------------------------------------
+const documents = {
+    importFiles: (): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('documents:import-files'))
     },
-    documentsImportByPaths: (paths: string[]): Promise<Array<{
+    importByPaths: (paths: string[]): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('documents:import-by-paths', paths))
     },
-    documentsDownloadFromUrl: (url: string): Promise<{
+    downloadFromUrl: (url: string): Promise<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('documents:download-from-url', url))
     },
-    documentsLoadAll: (): Promise<Array<{
+    loadAll: (): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('documents:load-all'))
     },
-    documentsDeleteFile: (id: string): Promise<void> => {
+    delete: (id: string): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('documents:delete-file', id))
     },
-    onDocumentsFileChange: (callback: (event: {
+    onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed';
         fileId: string;
         filePath: string;
@@ -609,7 +727,7 @@ const api = {
             ipcRenderer.removeListener('documents:file-changed', handler)
         }
     },
-    onDocumentsWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
             callback(errorData)
         }
@@ -618,15 +736,32 @@ const api = {
             ipcRenderer.removeListener('documents:watcher-error', handler)
         }
     },
-    // Agent
-    agentRun: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.agent — AI agent execution and session management
+// ---------------------------------------------------------------------------
+const agent = {
+    run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
         return ipcRenderer.invoke('agent:run', messages, runId, providerId)
     },
-    agentCancel: (runId: string): void => {
+    cancel: (runId: string): void => {
         ipcRenderer.send('agent:cancel', runId)
     },
-    // Agent - Session Management
-    agentCreateSession: (config: {
+    onEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
+        const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
+        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
+            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
+                callback(channel, data)
+            }
+            ipcRenderer.on(channel, handler)
+            return [channel, handler]
+        })
+        return (): void => {
+            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
+        }
+    },
+    createSession: (config: {
         sessionId: string
         providerId: string
         modelId?: string
@@ -646,10 +781,10 @@ const api = {
     }> => {
         return ipcRenderer.invoke('agent:create-session', config)
     },
-    agentDestroySession: (sessionId: string): Promise<boolean> => {
+    destroySession: (sessionId: string): Promise<boolean> => {
         return ipcRenderer.invoke('agent:destroy-session', sessionId)
     },
-    agentGetSession: (sessionId: string): Promise<{
+    getSession: (sessionId: string): Promise<{
         sessionId: string
         providerId: string
         modelId: string
@@ -661,7 +796,7 @@ const api = {
     } | null> => {
         return ipcRenderer.invoke('agent:get-session', sessionId)
     },
-    agentListSessions: (): Promise<Array<{
+    listSessions: (): Promise<Array<{
         sessionId: string
         providerId: string
         modelId: string
@@ -673,11 +808,10 @@ const api = {
     }>> => {
         return ipcRenderer.invoke('agent:list-sessions')
     },
-    agentClearSessions: (): Promise<number> => {
+    clearSessions: (): Promise<number> => {
         return ipcRenderer.invoke('agent:clear-sessions')
     },
-    // Agent - Enhanced Execution
-    agentRunSession: (options: {
+    runSession: (options: {
         sessionId: string
         runId: string
         messages: Array<{ role: 'user' | 'assistant'; content: string }>
@@ -688,100 +822,29 @@ const api = {
     }): Promise<void> => {
         return ipcRenderer.invoke('agent:run-session', options)
     },
-    agentCancelSession: (sessionId: string): Promise<boolean> => {
+    cancelSession: (sessionId: string): Promise<boolean> => {
         return ipcRenderer.invoke('agent:cancel-session', sessionId)
     },
-    // Agent - Status
-    agentGetStatus: (): Promise<{
+    getStatus: (): Promise<{
         totalSessions: number
         activeSessions: number
         totalMessages: number
     }> => {
         return ipcRenderer.invoke('agent:get-status')
     },
-    agentIsRunning: (runId: string): Promise<boolean> => {
+    isRunning: (runId: string): Promise<boolean> => {
         return ipcRenderer.invoke('agent:is-running', runId)
     },
-    onAgentEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
-        const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
-        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
-            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
-                callback(channel, data)
-            }
-            ipcRenderer.on(channel, handler)
-            return [channel, handler]
-        })
-        return (): void => {
-            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
-        }
-    },
-    // Pipeline
-    pipelineRun: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:run', agentName, input)
-    },
-    pipelineCancel: (runId: string): void => {
-        ipcRenderer.send('pipeline:cancel', runId)
-    },
-    pipelineListAgents: (): Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:list-agents')
-    },
-    pipelineListRuns: (): Promise<{ success: true; data: Array<{ runId: string; agentName: string; startedAt: number }> } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:list-runs')
-    },
-    onPipelineEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, pipelineEvent: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }): void => {
-            callback(pipelineEvent)
-        }
-        ipcRenderer.on('pipeline:event', handler)
-        return () => {
-            ipcRenderer.removeListener('pipeline:event', handler)
-        }
-    },
-    // Window controls
-    popupMenu: (): Promise<void> => {
-        return ipcRenderer.invoke('window:popup-menu')
-    },
-    windowMinimize: (): void => {
-        ipcRenderer.send('window:minimize')
-    },
-    windowMaximize: (): void => {
-        ipcRenderer.send('window:maximize')
-    },
-    windowClose: (): void => {
-        ipcRenderer.send('window:close')
-    },
-    windowIsMaximized: (): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('window:is-maximized'))
-    },
-    getPlatform: (): Promise<string> => {
-        return ipcRenderer.invoke('window:get-platform')
-    },
-    onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, isMaximized: boolean): void => {
-            callback(isMaximized)
-        }
-        ipcRenderer.on('window:maximize-change', handler)
-        return () => {
-            ipcRenderer.removeListener('window:maximize-change', handler)
-        }
-    },
-    windowIsFullScreen: (): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('window:is-fullscreen'))
-    },
-    onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, isFullScreen: boolean): void => {
-            callback(isFullScreen)
-        }
-        ipcRenderer.on('window:fullscreen-change', handler)
-        return () => {
-            ipcRenderer.removeListener('window:fullscreen-change', handler)
-        }
-    },
-    // Context Menu
-    showWritingContextMenu: (writingId: string, writingTitle: string): Promise<void> => {
+}
+
+// ---------------------------------------------------------------------------
+// window.contextMenu — Application-specific context menus
+// ---------------------------------------------------------------------------
+const contextMenu = {
+    showWriting: (writingId: string, writingTitle: string): Promise<void> => {
         return ipcRenderer.invoke('context-menu:writing', writingId, writingTitle)
     },
-    onWritingContextMenuAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
+    onWritingAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, data: { action: string; writingId: string }): void => {
             callback(data)
         }
@@ -790,10 +853,10 @@ const api = {
             ipcRenderer.removeListener('context-menu:writing-action', handler)
         }
     },
-    showPostContextMenu: (postId: string, postTitle: string): Promise<void> => {
+    showPost: (postId: string, postTitle: string): Promise<void> => {
         return ipcRenderer.invoke('context-menu:post', postId, postTitle)
     },
-    onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void): (() => void) => {
+    onPostAction: (callback: (data: { action: string; postId: string }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, data: { action: string; postId: string }): void => {
             callback(data)
         }
@@ -802,8 +865,13 @@ const api = {
             ipcRenderer.removeListener('context-menu:post-action', handler)
         }
     },
-    // Directories - Indexed directory management
-    directoriesList: (): Promise<Array<{
+}
+
+// ---------------------------------------------------------------------------
+// window.directories — Indexed directory management
+// ---------------------------------------------------------------------------
+const directories = {
+    list: (): Promise<Array<{
         id: string
         path: string
         addedAt: number
@@ -812,7 +880,7 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:list'))
     },
-    directoriesAdd: (dirPath: string): Promise<{
+    add: (dirPath: string): Promise<{
         id: string
         path: string
         addedAt: number
@@ -821,7 +889,7 @@ const api = {
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:add', dirPath))
     },
-    directoriesAddMany: (dirPaths: string[]): Promise<{
+    addMany: (dirPaths: string[]): Promise<{
         added: Array<{
             id: string
             path: string
@@ -833,38 +901,43 @@ const api = {
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:add-many', dirPaths))
     },
-    directoriesRemove: (id: string): Promise<boolean> => {
+    remove: (id: string): Promise<boolean> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:remove', id))
     },
-    directoriesValidate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
+    validate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:validate', dirPath))
     },
-    directoriesMarkIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
+    markIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
         return unwrapIpcResult(ipcRenderer.invoke('directories:mark-indexed', id, isIndexed))
     },
-    onDirectoriesChanged: (callback: (directories: Array<{
+    onChanged: (callback: (directories: Array<{
         id: string
         path: string
         addedAt: number
         isIndexed: boolean
         lastIndexedAt?: number
     }>) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, directories: Array<{
+        const handler = (_event: Electron.IpcRendererEvent, dirs: Array<{
             id: string
             path: string
             addedAt: number
             isIndexed: boolean
             lastIndexedAt?: number
         }>): void => {
-            callback(directories)
+            callback(dirs)
         }
         ipcRenderer.on('directories:changed', handler)
         return () => {
             ipcRenderer.removeListener('directories:changed', handler)
         }
     },
-    // Personality - Conversation file management (markdown with YAML frontmatter)
-    personalitySave: (input: {
+}
+
+// ---------------------------------------------------------------------------
+// window.personality — Personality/conversation file management
+// ---------------------------------------------------------------------------
+const personality = {
+    save: (input: {
         sectionId: string
         content: string
         metadata?: Record<string, unknown>
@@ -875,7 +948,7 @@ const api = {
     }> => {
         return unwrapIpcResult(ipcRenderer.invoke('personality:save', input))
     },
-    personalityLoadAll: (): Promise<Array<{
+    loadAll: (): Promise<Array<{
         id: string
         sectionId: string
         path: string
@@ -892,7 +965,7 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('personality:load-all'))
     },
-    personalityLoadOne: (params: {
+    loadOne: (params: {
         sectionId: string
         id: string
     }): Promise<{
@@ -912,13 +985,13 @@ const api = {
     } | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('personality:load-one', params))
     },
-    personalityDelete: (params: {
+    delete: (params: {
         sectionId: string
         id: string
     }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('personality:delete', params))
     },
-    onPersonalityFileChange: (callback: (event: {
+    onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         sectionId: string
         fileId: string
@@ -939,7 +1012,7 @@ const api = {
             ipcRenderer.removeListener('personality:file-changed', handler)
         }
     },
-    onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
             callback(errorData)
         }
@@ -952,7 +1025,7 @@ const api = {
      * Load the section-level config for the given section.
      * Returns null when no section config has been saved yet.
      */
-    personalityLoadSectionConfig: (params: { sectionId: string }): Promise<{
+    loadSectionConfig: (params: { sectionId: string }): Promise<{
         schemaVersion: number
         provider: string
         model: string
@@ -970,7 +1043,7 @@ const api = {
      * Create or update the section-level config for the given section.
      * Returns the full updated config after persisting to disk.
      */
-    personalitySaveSectionConfig: (params: {
+    saveSectionConfig: (params: {
         sectionId: string
         update: {
             provider?: string
@@ -999,7 +1072,7 @@ const api = {
      * Subscribe to section config changes (both app-triggered and external file edits).
      * Returns a cleanup function to remove the listener.
      */
-    onPersonalitySectionConfigChange: (callback: (event: {
+    onSectionConfigChange: (callback: (event: {
         sectionId: string
         config: {
             schemaVersion: number
@@ -1038,15 +1111,20 @@ const api = {
             ipcRenderer.removeListener('personality:section-config-changed', handler)
         }
     },
-    // Output - File management for posts, writings
-    outputSave: (input: {
+}
+
+// ---------------------------------------------------------------------------
+// window.output — Output file management for posts and writings
+// ---------------------------------------------------------------------------
+const output = {
+    save: (input: {
         type: string
         content: string
         metadata?: Record<string, unknown>
     }): Promise<{ id: string; path: string; savedAt: number }> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:save', input))
     },
-    outputLoadAll: (): Promise<Array<{
+    loadAll: (): Promise<Array<{
         id: string
         type: string
         path: string
@@ -1069,7 +1147,7 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-all'))
     },
-    outputLoadByType: (type: string): Promise<Array<{
+    loadByType: (type: string): Promise<Array<{
         id: string
         type: string
         path: string
@@ -1092,7 +1170,7 @@ const api = {
     }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-by-type', type))
     },
-    outputLoadOne: (params: { type: string; id: string }): Promise<{
+    loadOne: (params: { type: string; id: string }): Promise<{
         id: string
         type: string
         path: string
@@ -1115,13 +1193,13 @@ const api = {
     } | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-one', params))
     },
-    outputUpdate: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }): Promise<void> => {
+    update: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:update', params))
     },
-    outputDelete: (params: { type: string; id: string }): Promise<void> => {
+    delete: (params: { type: string; id: string }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:delete', params))
     },
-    onOutputFileChange: (callback: (event: {
+    onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         outputType: string
         fileId: string
@@ -1142,7 +1220,7 @@ const api = {
             ipcRenderer.removeListener('output:file-changed', handler)
         }
     },
-    onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
             callback(errorData)
         }
@@ -1153,6 +1231,9 @@ const api = {
     },
 }
 
+// ---------------------------------------------------------------------------
+// window.task — Background task queue
+// ---------------------------------------------------------------------------
 const task = {
     submit: (type: string, input: unknown, options?: {
         priority?: 'low' | 'normal' | 'high'
@@ -1195,7 +1276,9 @@ const task = {
     }
 }
 
-// AI inference API - dedicated namespace for AI operations
+// ---------------------------------------------------------------------------
+// window.ai — AI inference API (pipeline-based)
+// ---------------------------------------------------------------------------
 const ai = {
     // Run AI inference using the pipeline
     inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
@@ -1225,11 +1308,33 @@ const ai = {
     }
 }
 
-// Minimal preload for simplified app
+// ---------------------------------------------------------------------------
+// Registration — expose all namespaces via contextBridge
+// ---------------------------------------------------------------------------
 if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('electron', electronAPI)
-        contextBridge.exposeInMainWorld('api', api)
+        contextBridge.exposeInMainWorld('app', app)
+        contextBridge.exposeInMainWorld('win', win)
+        contextBridge.exposeInMainWorld('media', media)
+        contextBridge.exposeInMainWorld('bluetooth', bluetooth)
+        contextBridge.exposeInMainWorld('network', network)
+        contextBridge.exposeInMainWorld('cron', cron)
+        contextBridge.exposeInMainWorld('lifecycle', lifecycle)
+        contextBridge.exposeInMainWorld('wm', wm)
+        contextBridge.exposeInMainWorld('fs', fs)
+        contextBridge.exposeInMainWorld('dialog', dialog)
+        contextBridge.exposeInMainWorld('notification', notification)
+        contextBridge.exposeInMainWorld('clipboard', clipboard)
+        contextBridge.exposeInMainWorld('store', store)
+        contextBridge.exposeInMainWorld('workspace', workspace)
+        contextBridge.exposeInMainWorld('posts', posts)
+        contextBridge.exposeInMainWorld('documents', documents)
+        contextBridge.exposeInMainWorld('agent', agent)
+        contextBridge.exposeInMainWorld('contextMenu', contextMenu)
+        contextBridge.exposeInMainWorld('directories', directories)
+        contextBridge.exposeInMainWorld('personality', personality)
+        contextBridge.exposeInMainWorld('output', output)
         contextBridge.exposeInMainWorld('task', task)
         contextBridge.exposeInMainWorld('ai', ai)
     } catch (error) {
@@ -1239,7 +1344,47 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.electron = electronAPI
     // @ts-ignore (define in dts)
-    globalThis.api = api
+    globalThis.app = app
+    // @ts-ignore (define in dts)
+    globalThis.win = win
+    // @ts-ignore (define in dts)
+    globalThis.media = media
+    // @ts-ignore (define in dts)
+    globalThis.bluetooth = bluetooth
+    // @ts-ignore (define in dts)
+    globalThis.network = network
+    // @ts-ignore (define in dts)
+    globalThis.cron = cron
+    // @ts-ignore (define in dts)
+    globalThis.lifecycle = lifecycle
+    // @ts-ignore (define in dts)
+    globalThis.wm = wm
+    // @ts-ignore (define in dts)
+    globalThis.fs = fs
+    // @ts-ignore (define in dts)
+    globalThis.dialog = dialog
+    // @ts-ignore (define in dts)
+    globalThis.notification = notification
+    // @ts-ignore (define in dts)
+    globalThis.clipboard = clipboard
+    // @ts-ignore (define in dts)
+    globalThis.store = store
+    // @ts-ignore (define in dts)
+    globalThis.workspace = workspace
+    // @ts-ignore (define in dts)
+    globalThis.posts = posts
+    // @ts-ignore (define in dts)
+    globalThis.documents = documents
+    // @ts-ignore (define in dts)
+    globalThis.agent = agent
+    // @ts-ignore (define in dts)
+    globalThis.contextMenu = contextMenu
+    // @ts-ignore (define in dts)
+    globalThis.directories = directories
+    // @ts-ignore (define in dts)
+    globalThis.personality = personality
+    // @ts-ignore (define in dts)
+    globalThis.output = output
     // @ts-ignore (define in dts)
     globalThis.task = task
     // @ts-ignore (define in dts)
