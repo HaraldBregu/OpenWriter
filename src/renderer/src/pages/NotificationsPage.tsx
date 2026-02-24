@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useNotifications } from '../hooks/useNotifications'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import {
   Bell,
