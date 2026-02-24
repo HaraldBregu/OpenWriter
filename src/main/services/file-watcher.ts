@@ -152,12 +152,15 @@ export class FileWatcherService implements Disposable {
         alwaysStat: false, // Don't stat files unless needed
         // Ignore hidden files and temporary files - only watch .json files
         ignored: (filePath: string) => {
+          // Chokidar v5 normalizes paths to forward slashes; normalize
+          // here so the comparison works on Windows (backslashes).
+          const normalized = path.normalize(filePath)
           // Ignore if it's a directory
-          if (filePath === postsDir) return false
+          if (normalized === postsDir) return false
           // Ignore dotfiles
-          if (/(^|[\/\\])\./.test(filePath)) return true
+          if (/(^|[\/\\])\./.test(normalized)) return true
           // Only watch .json files
-          return !filePath.endsWith('.json')
+          return !normalized.endsWith('.json')
         }
       })
 
