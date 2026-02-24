@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 import { AppButton } from '@/components/app'
-import { AppTextarea } from '@/components/app'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -56,22 +57,55 @@ ActionButton.displayName = 'ActionButton'
 // ---------------------------------------------------------------------------
 
 export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Type here...' }: ContentBlockProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dragControls = useDragControls()
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      const textarea = textareaRef.current
-      textarea.style.height = 'auto'
-      textarea.style.height = `${textarea.scrollHeight}px`
-    }
-  }, [block.content])
+  // Track whether the editor is empty to show/hide the placeholder.
+  // Stored as local state so React re-renders only this component when it changes.
+  const [isEmpty, setIsEmpty] = useState(() => !block.content || block.content === '<p></p>')
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(block.id, e.target.value)
-    e.target.style.height = 'auto'
-    e.target.style.height = `${e.target.scrollHeight}px`
-  }
+  const handleUpdate = useCallback(({ editor }: { editor: ReturnType<typeof useEditor> & { isEmpty: boolean; getHTML: () => string } }) => {
+    onChange(block.id, editor.getHTML())
+    setIsEmpty(editor.isEmpty)
+  }, [block.id, onChange])
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: block.content || '',
+    immediatelyRender: false,
+    onUpdate: handleUpdate,
+    onCreate: ({ editor }) => {
+      setIsEmpty(editor.isEmpty)
+    },
+    editorProps: {
+      attributes: {
+        class: 'prose-editor focus:outline-none min-h-[1em] text-base leading-tight text-foreground',
+      },
+    },
+  })
+
+  // Sync external content changes into the editor (e.g., block reorder or external reset).
+  // Compare against current HTML to avoid resetting cursor position on every keystroke.
+  useEffect(() => {
+    if (!editor) return
+    const current = editor.getHTML()
+    if (current !== block.content) {
+      // Preserve cursor position by using setContent with keepSelection
+      editor.commands.setContent(block.content || '', false)
+      setIsEmpty(editor.isEmpty)
+    }
+  }, [block.content, editor])
+
+  // Cleanup: destroy editor on unmount
+  useEffect(() => {
+    return () => {
+      editor?.destroy()
+    }
+  }, [editor])
+
+  const handleCopy = useCallback(() => {
+    if (!editor) return
+    navigator.clipboard.writeText(editor.getText())
+  }, [editor])
 
   return (
     <Reorder.Item
@@ -110,14 +144,17 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <AppTextarea
-            ref={textareaRef}
-            value={block.content}
-            onChange={handleInput}
-            placeholder={placeholder}
-            className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-tight !border-0 !py-2 !px-0 !rounded-none !m-0 overflow-hidden !min-h-0 !outline-none !shadow-none !ring-0 !ring-offset-0 focus:!outline-none focus:!ring-0 focus:!border-0 focus:!shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!border-0 focus-visible:!outline-none"
-          />
+        <div className="flex-1 min-w-0 relative py-2">
+          {/* CSS placeholder shown when editor is empty */}
+          {isEmpty && (
+            <span
+              className="absolute inset-0 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
+              aria-hidden="true"
+            >
+              {placeholder}
+            </span>
+          )}
+          <EditorContent editor={editor} />
         </div>
 
         {/* Action bar */}
@@ -132,7 +169,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
           </ActionButton>
           <ActionButton
             title="Copy"
-            onClick={() => navigator.clipboard.writeText(block.content)}
+            onClick={handleCopy}
           >
             <Copy className="h-3.5 w-3.5" />
           </ActionButton>
