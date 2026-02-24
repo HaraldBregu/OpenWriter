@@ -8,5 +8,5 @@ fi
 
 git add -A
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "Auto-commit from Claude Code [$TIMESTAMP]" 2>/dev/null || true
+git commit -m "Auto-commit from Claude Code [$TIMESTAMP]" || true
 exit 0
