@@ -27,7 +27,7 @@ export function useDialogs(): UseDialogsReturn {
   const showOpenDialog = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      const result = await window.api.dialogOpen()
+      const result = await window.dialog.open()
       pushResult(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to show open dialog')
