@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CameraRecorder } from '../components/CameraRecorder'
 import { useMediaPermissions } from '../hooks/useMediaPermissions'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 
 const CameraPage: React.FC = () => {
