@@ -132,8 +132,8 @@ export function usePostsFileWatcher(): void {
     }
 
     // Register event listeners
-    const unsubscribeFileChange = window.api.onPostsFileChange(handleFileChange)
-    const unsubscribeWatcherError = window.api.onPostsWatcherError(handleWatcherError)
+    const unsubscribeFileChange = window.posts.onFileChange(handleFileChange)
+    const unsubscribeWatcherError = window.posts.onWatcherError(handleWatcherError)
 
     isListeningRef.current = true
 
