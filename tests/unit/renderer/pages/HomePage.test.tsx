@@ -3,18 +3,18 @@
  *
  * The page shows:
  *  - A time-based greeting heading
+ *  - Subtitle text
  *  - Category cards (Posts, Writing)
- *  - A Recent section with placeholder items
+ *  - A Recent section with placeholder items (Q1 Strategy Brief, Release Announcement, Design Assets)
+ *  - A "View all" link
  *  - Documents and Integrations navigation cards
- *  - A PipelineTestSection (requires window.ai)
- *  - A tip section
+ *  - A Tip section
  *
  * Strategy: render with a minimal Redux store and assert on visible text/roles.
- * We mock lucide-react and window.ai to avoid real IPC calls.
+ * The component does not call any window.* APIs directly.
  */
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
@@ -34,21 +34,6 @@ jest.mock('lucide-react', () => {
       React.createElement('svg', { ...props, 'data-testid': `icon-${name}` })
   }
   return mocks
-})
-
-// Install a minimal window.ai mock so PipelineTestSection initialises cleanly
-beforeEach(() => {
-  Object.defineProperty(window, 'ai', {
-    value: {
-      inference: jest.fn().mockResolvedValue({ success: true, data: { runId: 'r1' } }),
-      cancel: jest.fn(),
-      onEvent: jest.fn().mockReturnValue(jest.fn()),
-      listAgents: jest.fn().mockResolvedValue({ success: true, data: [] }),
-      listRuns: jest.fn().mockResolvedValue({ success: true, data: [] })
-    },
-    writable: true,
-    configurable: true
-  })
 })
 
 import HomePage from '../../../../src/renderer/src/pages/HomePage'
@@ -141,24 +126,6 @@ describe('HomePage', () => {
 
     expect(screen.getByText('Integrations')).toBeInTheDocument()
     expect(screen.getByText('Connect your tools')).toBeInTheDocument()
-  })
-
-  // ---- Pipeline test section ----------------------------------------------
-
-  it('should render the Pipeline test section', () => {
-    renderHomePage()
-
-    expect(screen.getByText('Pipeline test')).toBeInTheDocument()
-    expect(screen.getByText('Run')).toBeInTheDocument()
-  })
-
-  it('should render the agent selector with Echo and Chat options', () => {
-    renderHomePage()
-
-    const select = screen.getByRole('combobox')
-    expect(select).toBeInTheDocument()
-    expect(screen.getByText('Echo (test)')).toBeInTheDocument()
-    expect(screen.getByText('Chat (OpenAI)')).toBeInTheDocument()
   })
 
   // ---- Tip section --------------------------------------------------------
