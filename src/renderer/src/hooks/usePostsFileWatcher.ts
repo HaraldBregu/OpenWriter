@@ -121,7 +121,7 @@ export function usePostsFileWatcher(): void {
       console.error('[PostsFileWatcher] Watcher error:', errorData)
 
       try {
-        await window.api.notificationShow({
+        await window.notification.show({
           title: 'File Watcher Error',
           body: `Error monitoring posts directory: ${errorData.error}`,
           urgency: 'critical'
