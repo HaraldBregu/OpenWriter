@@ -1,6 +1,7 @@
 /**
  * Tests for useCron hook.
  * Manages cron job CRUD, scheduling, and result event subscription.
+ * The hook uses window.cron.* namespace.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useCron } from '../../../../src/renderer/src/hooks/useCron'
@@ -10,7 +11,7 @@ describe('useCron', () => {
     const jobs = [
       { id: '1', name: 'Backup', schedule: '0 * * * *', enabled: true, running: false, runCount: 3 }
     ]
-    ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue(jobs)
+    ;(window.cron.getAll as jest.Mock).mockResolvedValue(jobs)
 
     const { result } = renderHook(() => useCron())
 
@@ -24,7 +25,7 @@ describe('useCron', () => {
   })
 
   it('should set error when initial fetch fails', async () => {
-    ;(window.api.cronGetAllJobs as jest.Mock).mockRejectedValue(new Error('fetch fail'))
+    ;(window.cron.getAll as jest.Mock).mockRejectedValue(new Error('fetch fail'))
 
     const { result } = renderHook(() => useCron())
 
@@ -37,8 +38,8 @@ describe('useCron', () => {
 
   describe('startJob', () => {
     it('should start a job and refresh', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronStartJob as jest.Mock).mockResolvedValue(true)
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.start as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useCron())
 
@@ -52,12 +53,12 @@ describe('useCron', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.cronStartJob).toHaveBeenCalledWith('job-1')
+      expect(window.cron.start).toHaveBeenCalledWith('job-1')
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronStartJob as jest.Mock).mockRejectedValue(new Error('start fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.start as jest.Mock).mockRejectedValue(new Error('start fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -77,8 +78,8 @@ describe('useCron', () => {
 
   describe('stopJob', () => {
     it('should stop a job and refresh', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronStopJob as jest.Mock).mockResolvedValue(true)
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.stop as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useCron())
 
@@ -92,12 +93,12 @@ describe('useCron', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.cronStopJob).toHaveBeenCalledWith('job-1')
+      expect(window.cron.stop).toHaveBeenCalledWith('job-1')
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronStopJob as jest.Mock).mockRejectedValue(new Error('stop fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.stop as jest.Mock).mockRejectedValue(new Error('stop fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -117,8 +118,8 @@ describe('useCron', () => {
 
   describe('deleteJob', () => {
     it('should delete a job and refresh', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronDeleteJob as jest.Mock).mockResolvedValue(true)
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.delete as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useCron())
 
@@ -132,12 +133,12 @@ describe('useCron', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.cronDeleteJob).toHaveBeenCalledWith('job-1')
+      expect(window.cron.delete).toHaveBeenCalledWith('job-1')
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronDeleteJob as jest.Mock).mockRejectedValue(new Error('delete fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.delete as jest.Mock).mockRejectedValue(new Error('delete fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -157,8 +158,8 @@ describe('useCron', () => {
 
   describe('createJob', () => {
     it('should create a job and refresh', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronCreateJob as jest.Mock).mockResolvedValue(true)
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.create as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useCron())
 
@@ -174,12 +175,12 @@ describe('useCron', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.cronCreateJob).toHaveBeenCalledWith(config)
+      expect(window.cron.create).toHaveBeenCalledWith(config)
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronCreateJob as jest.Mock).mockRejectedValue(new Error('create fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.create as jest.Mock).mockRejectedValue(new Error('create fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -199,8 +200,8 @@ describe('useCron', () => {
 
   describe('updateSchedule', () => {
     it('should update schedule and refresh', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronUpdateSchedule as jest.Mock).mockResolvedValue(true)
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.updateSchedule as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useCron())
 
@@ -214,12 +215,12 @@ describe('useCron', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.cronUpdateSchedule).toHaveBeenCalledWith('job-1', '0 0 * * *')
+      expect(window.cron.updateSchedule).toHaveBeenCalledWith('job-1', '0 0 * * *')
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronUpdateSchedule as jest.Mock).mockRejectedValue(new Error('update fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.updateSchedule as jest.Mock).mockRejectedValue(new Error('update fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -239,8 +240,8 @@ describe('useCron', () => {
 
   describe('validateExpression', () => {
     it('should validate a cron expression', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronValidateExpression as jest.Mock).mockResolvedValue({
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.validateExpression as jest.Mock).mockResolvedValue({
         valid: true,
         description: 'Every minute'
       })
@@ -257,8 +258,8 @@ describe('useCron', () => {
     })
 
     it('should return invalid on failure', async () => {
-      ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-      ;(window.api.cronValidateExpression as jest.Mock).mockRejectedValue(new Error('validate fail'))
+      ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+      ;(window.cron.validateExpression as jest.Mock).mockRejectedValue(new Error('validate fail'))
 
       const { result } = renderHook(() => useCron())
 
@@ -274,13 +275,13 @@ describe('useCron', () => {
 
   it('should clean up job result listener on unmount', async () => {
     const unsubscribe = jest.fn()
-    ;(window.api.cronGetAllJobs as jest.Mock).mockResolvedValue([])
-    ;(window.api.onCronJobResult as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.cron.getAll as jest.Mock).mockResolvedValue([])
+    ;(window.cron.onJobResult as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useCron())
 
     await waitFor(() => {
-      expect(window.api.onCronJobResult).toHaveBeenCalled()
+      expect(window.cron.onJobResult).toHaveBeenCalled()
     })
 
     unmount()
