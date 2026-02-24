@@ -137,7 +137,7 @@ describe('useOutputFiles — initial load', () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const NOW_ISO = new Date().toISOString()
-    ;(window.api.outputLoadAll as jest.Mock).mockResolvedValue([
+    mockOutputLoadAll.mockResolvedValue([
       {
         id: 'item-001',
         type: 'posts',
