@@ -127,14 +127,20 @@ export const ContentBlock = React.memo(function ContentBlock({
     }
   }, [block.content, editor, isEnhancing])
 
-  // Stream tokens into the accumulator ref (no re-render per token).
+  // Stream tokens directly into the TipTap editor so the user sees them appear word by word.
   useEffect(() => {
     if (!enhanceTaskId) return
     const unsub = window.task.onEvent((event) => {
       if (event.type !== 'progress') return
       const data = event.data as { taskId: string; message?: string; detail?: { token?: string } }
       if (data.taskId !== enhanceTaskId || data.message !== 'token') return
-      enhanceAccumulatedRef.current += data.detail?.token ?? ''
+      const token = data.detail?.token
+      if (!token) return
+      const ed = editorRef.current
+      if (!ed || ed.isDestroyed) return
+      // insertContent appends at the current cursor position (end of doc after the
+      // separator we inserted in handleEnhance).
+      ed.commands.insertContent(token)
     })
     return () => unsub()
   }, [enhanceTaskId])
