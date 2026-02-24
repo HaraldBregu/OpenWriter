@@ -115,4 +115,34 @@ Reset with `resetMockApi()` in `beforeEach` (done automatically by renderer.ts s
 - Mocks: `tests/mocks/`
 - Setup: `tests/setup/renderer.ts` (installed globally for renderer tests)
 
+## Redux Slice Testing Conventions
+
+**Canonical pattern**: `chatSlice.test.ts` (read this first before writing any slice test).
+
+**State helper**: `createInitialState()` function mirrors slice's `initialState` exactly.
+
+**Selector root state**: Construct an object shaped like the Redux root — e.g.
+`{ directories: createInitialState() }` for directoriesSlice. For slices that use `RootState`
+(e.g. outputSlice — `state.output.*`), cast via `as unknown as Parameters<typeof selector>[0]`.
+
+**Async thunk extra-reducers**: Test pending/fulfilled/rejected using inline action objects:
+```typescript
+function pending(thunk) { return { type: thunk.pending.type } }
+function fulfilled(thunk, payload) { return { type: thunk.fulfilled.type, payload } }
+function rejected(thunk, payload) { return { type: thunk.rejected.type, payload, error: {} } }
+```
+
+**addMatcher (cross-slice) testing**: Pass the triggering action type as a plain object:
+```typescript
+// writingsSlice listens to 'output/loadAll/fulfilled'
+writingsReducer(state, { type: 'output/loadAll/fulfilled', payload: items })
+```
+
+**`import type` in slice source**: When a slice uses `import type { X }` from a heavy module
+(e.g. Block from ContentBlock.tsx), that import is erased at runtime — Jest will NOT load
+the module. Tests import the slice directly with no extra mocking needed.
+
+**Slices with tests as of 2026-02-24**:
+`chatSlice`, `postsSlice`, `brainFilesSlice`, `directoriesSlice`, `outputSlice`, `writingsSlice`
+
 See `patterns.md` for detailed testing patterns and examples.

@@ -36,7 +36,7 @@ export function useBluetooth(): UseBluetoothReturn {
   useEffect(() => {
     const checkSupport = async () => {
       try {
-        const supported = await window.api.bluetoothIsSupported()
+        const supported = await window.bluetooth.isSupported()
         setIsSupported(supported && 'bluetooth' in navigator)
       } catch (err) {
         console.error('Error checking Bluetooth support:', err)
