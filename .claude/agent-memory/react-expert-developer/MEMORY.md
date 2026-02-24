@@ -22,7 +22,7 @@
 - Bridge API: `outputSave`, `outputLoadAll`, `outputLoadByType`, `outputLoadOne`, `outputDelete`
 
 ## Component Library
-- App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, etc.
+- App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
 - Pattern: import named exports from `@/components/app`
 
 ## Page Patterns
@@ -30,3 +30,24 @@
 - Simple content pages (Notes, Messages) skip the sidebar; Writing page includes a stripped-down AI settings sidebar
 - All content pages use `useAppDispatch`/`useAppSelector` from `../store`
 - `canSave` guard pattern: derive boolean from local state, pass to `disabled` prop on save button
+
+## AppContext (UI State)
+- Location: `src/renderer/src/contexts/AppContext.tsx`, exported via `src/renderer/src/contexts/index.ts`
+- `ThemeMode` = `'light' | 'dark' | 'system'` — already defined, do NOT redefine
+- Convenience hooks: `useThemeMode()`, `useAppActions()` (returns `{ setTheme, ... }`), `useAppSelector(selector)`
+- Theme is persisted to `localStorage` under key `'app-theme-mode'`; read eagerly at module level via `readPersistedTheme()` so initial render never flickers
+- UI preferences are persisted separately under `'app-ui-preferences'`
+
+## Theme System
+- `useTheme()` hook at `src/renderer/src/hooks/useTheme.ts` — call once in `AppLayout` (already wired)
+- Applies `dark` class to `<html>` based on `ThemeMode` from AppContext
+- In `system` mode: tracks `(prefers-color-scheme: dark)` MediaQuery + IPC `change-theme` events from Electron menu
+- In `light`/`dark` modes: ignores OS/IPC changes (user preference wins)
+- `useIsDark()` at `src/renderer/src/hooks/useIsDark.ts` — MutationObserver on `<html>.classList` for components that need a boolean
+
+## Settings Page Patterns
+- Settings page at `src/renderer/src/pages/SettingsPage.tsx` — tab-based layout (`general|models|media|devices|tools|system`)
+- `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx` — toggle with chevron, content revealed below a `border-t`
+- SystemSettings uses `CollapsibleSection` for each feature group
+- Inner content rows follow: `flex items-center justify-between px-4 py-3` with `text-sm font-normal` labels and `text-xs text-muted-foreground` descriptions
+- Grouped rows wrapped in `rounded-md border divide-y`
