@@ -1,13 +1,14 @@
 /**
  * Tests for useFilesystem hook.
  * File open/save/watch operations with loading/error state.
+ * The hook delegates to window.fs.* namespace.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useFilesystem } from '../../../../src/renderer/src/hooks/useFilesystem'
 
 describe('useFilesystem', () => {
   it('should initialize and load watched directories', async () => {
-    ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue(['/watched/dir'])
+    ;(window.fs.getWatched as jest.Mock).mockResolvedValue(['/watched/dir'])
 
     const { result } = renderHook(() => useFilesystem())
 
@@ -22,7 +23,7 @@ describe('useFilesystem', () => {
 
   describe('openFile', () => {
     it('should open a file and set currentFile', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
       const mockFile = {
         filePath: '/test/doc.txt',
         fileName: 'doc.txt',
@@ -30,7 +31,7 @@ describe('useFilesystem', () => {
         size: 11,
         lastModified: Date.now()
       }
-      ;(window.api.fsOpenFile as jest.Mock).mockResolvedValue(mockFile)
+      ;(window.fs.openFile as jest.Mock).mockResolvedValue(mockFile)
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -43,8 +44,8 @@ describe('useFilesystem', () => {
     })
 
     it('should not set currentFile when dialog is cancelled', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsOpenFile as jest.Mock).mockResolvedValue(null)
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.openFile as jest.Mock).mockResolvedValue(null)
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -56,8 +57,8 @@ describe('useFilesystem', () => {
     })
 
     it('should set error on failure', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsOpenFile as jest.Mock).mockRejectedValue(new Error('open failed'))
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.openFile as jest.Mock).mockRejectedValue(new Error('open failed'))
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -72,8 +73,8 @@ describe('useFilesystem', () => {
 
   describe('saveFile', () => {
     it('should save a file and return true on success', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsSaveFile as jest.Mock).mockResolvedValue({ success: true, filePath: '/save/path.txt' })
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.saveFile as jest.Mock).mockResolvedValue({ success: true, filePath: '/save/path.txt' })
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -83,12 +84,12 @@ describe('useFilesystem', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.fsSaveFile).toHaveBeenCalledWith('file.txt', 'content')
+      expect(window.fs.saveFile).toHaveBeenCalledWith('file.txt', 'content')
     })
 
     it('should return false on failure', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsSaveFile as jest.Mock).mockRejectedValue(new Error('save failed'))
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.saveFile as jest.Mock).mockRejectedValue(new Error('save failed'))
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -104,8 +105,8 @@ describe('useFilesystem', () => {
 
   describe('writeFile', () => {
     it('should write to a specific path', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsWriteFile as jest.Mock).mockResolvedValue({ success: true, filePath: '/a.txt' })
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.writeFile as jest.Mock).mockResolvedValue({ success: true, filePath: '/a.txt' })
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -115,14 +116,14 @@ describe('useFilesystem', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.fsWriteFile).toHaveBeenCalledWith('/a.txt', 'data')
+      expect(window.fs.writeFile).toHaveBeenCalledWith('/a.txt', 'data')
     })
   })
 
   describe('clearFile', () => {
     it('should reset currentFile to null', async () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-      ;(window.api.fsOpenFile as jest.Mock).mockResolvedValue({
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.openFile as jest.Mock).mockResolvedValue({
         filePath: '/x', fileName: 'x', content: 'x', size: 1, lastModified: 0
       })
 
@@ -142,7 +143,7 @@ describe('useFilesystem', () => {
 
   describe('clearEvents', () => {
     it('should reset watch events to empty array', () => {
-      ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
+      ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
 
       const { result } = renderHook(() => useFilesystem())
 
@@ -155,13 +156,13 @@ describe('useFilesystem', () => {
 
   it('should clean up fs event listener on unmount', async () => {
     const unsubscribe = jest.fn()
-    ;(window.api.fsGetWatched as jest.Mock).mockResolvedValue([])
-    ;(window.api.onFsWatchEvent as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.fs.getWatched as jest.Mock).mockResolvedValue([])
+    ;(window.fs.onWatchEvent as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useFilesystem())
 
     await waitFor(() => {
-      expect(window.api.onFsWatchEvent).toHaveBeenCalled()
+      expect(window.fs.onWatchEvent).toHaveBeenCalled()
     })
 
     unmount()
