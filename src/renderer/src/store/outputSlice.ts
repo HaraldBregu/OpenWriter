@@ -143,7 +143,7 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
     try {
       const { content, type, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
 
-      const saved = await window.api.outputSave({
+      const saved = await window.output.save({
         type,
         content,
         metadata: {
@@ -200,7 +200,7 @@ export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInp
     try {
       const { id, type, content, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
 
-      await window.api.outputUpdate({
+      await window.output.update({
         type,
         id,
         content,
