@@ -16,12 +16,12 @@ describe('useBluetooth', () => {
   })
 
   it('should check bluetooth support on mount', async () => {
-    ;(window.api.bluetoothIsSupported as jest.Mock).mockResolvedValue(true)
+    ;(window.bluetooth.isSupported as jest.Mock).mockResolvedValue(true)
     // Without navigator.bluetooth, isSupported will be false (supported && 'bluetooth' in navigator)
     const { result } = renderHook(() => useBluetooth())
 
     await waitFor(() => {
-      expect(window.api.bluetoothIsSupported).toHaveBeenCalled()
+      expect(window.bluetooth.isSupported).toHaveBeenCalled()
     })
 
     // Since navigator.bluetooth is undefined, isSupported = true && false = false
@@ -33,12 +33,12 @@ describe('useBluetooth', () => {
   })
 
   it('should set isSupported to false when API check fails', async () => {
-    ;(window.api.bluetoothIsSupported as jest.Mock).mockRejectedValue(new Error('bt fail'))
+    ;(window.bluetooth.isSupported as jest.Mock).mockRejectedValue(new Error('bt fail'))
 
     const { result } = renderHook(() => useBluetooth())
 
     await waitFor(() => {
-      expect(window.api.bluetoothIsSupported).toHaveBeenCalled()
+      expect(window.bluetooth.isSupported).toHaveBeenCalled()
     })
 
     expect(result.current.isSupported).toBe(false)
@@ -46,7 +46,7 @@ describe('useBluetooth', () => {
 
   describe('requestDevice', () => {
     it('should set error when navigator.bluetooth is not available', async () => {
-      ;(window.api.bluetoothIsSupported as jest.Mock).mockResolvedValue(false)
+      ;(window.bluetooth.isSupported as jest.Mock).mockResolvedValue(false)
 
       const { result } = renderHook(() => useBluetooth())
 
@@ -60,7 +60,7 @@ describe('useBluetooth', () => {
 
   describe('stopScan', () => {
     it('should set isScanning to false', async () => {
-      ;(window.api.bluetoothIsSupported as jest.Mock).mockResolvedValue(false)
+      ;(window.bluetooth.isSupported as jest.Mock).mockResolvedValue(false)
 
       const { result } = renderHook(() => useBluetooth())
 
@@ -74,7 +74,7 @@ describe('useBluetooth', () => {
 
   describe('connectDevice', () => {
     it('should set connected device', async () => {
-      ;(window.api.bluetoothIsSupported as jest.Mock).mockResolvedValue(false)
+      ;(window.bluetooth.isSupported as jest.Mock).mockResolvedValue(false)
 
       const device = { id: 'dev-1', name: 'Test Device', connected: false }
       const { result } = renderHook(() => useBluetooth())
@@ -90,7 +90,7 @@ describe('useBluetooth', () => {
 
   describe('disconnectDevice', () => {
     it('should clear connected device when a device is connected', async () => {
-      ;(window.api.bluetoothIsSupported as jest.Mock).mockResolvedValue(false)
+      ;(window.bluetooth.isSupported as jest.Mock).mockResolvedValue(false)
 
       const device = { id: 'dev-1', name: 'Test Device', connected: false }
       const { result } = renderHook(() => useBluetooth())
