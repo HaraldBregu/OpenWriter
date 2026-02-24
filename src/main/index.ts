@@ -155,6 +155,12 @@ app.whenReady().then(async () => {
   menuManager.create()
   trayManager.create()
 
+  // Sync menu radio buttons when theme changes from renderer
+  eventBus.on('theme:changed', (event) => {
+    const { theme } = event.payload as { theme: string }
+    menuManager.updateTheme(theme)
+  })
+
   // Create main window
   mainWindow.create()
 
