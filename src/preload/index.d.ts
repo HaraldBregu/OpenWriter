@@ -231,6 +231,7 @@ declare global {
     }
     api: {
       playSound: () => void
+      setTheme: (theme: string) => void
       showContextMenu: () => void
       showContextMenuEditable: () => void
       onLanguageChange: (callback: (lng: string) => void) => () => void
