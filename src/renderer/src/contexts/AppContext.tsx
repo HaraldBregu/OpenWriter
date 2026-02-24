@@ -73,6 +73,7 @@ const defaultModalState: ModalState = {
 }
 
 const THEME_STORAGE_KEY = 'app-theme-mode'
+const DARK_CLASS = 'dark'
 
 function readPersistedTheme(): ThemeMode {
   try {
@@ -86,6 +87,19 @@ function readPersistedTheme(): ThemeMode {
   return 'system'
 }
 
+function applyThemeClass(theme: ThemeMode): void {
+  const root = document.documentElement
+  if (theme === 'dark') {
+    root.classList.add(DARK_CLASS)
+  } else if (theme === 'light') {
+    root.classList.remove(DARK_CLASS)
+  } else {
+    // system — honour the OS preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    root.classList.toggle(DARK_CLASS, prefersDark)
+  }
+}
+
 const initialState: AppState = {
   theme: readPersistedTheme(),
   user: null,
@@ -94,6 +108,11 @@ const initialState: AppState = {
   isOnline: navigator.onLine,
   lastSyncedAt: null
 }
+
+// Apply theme class eagerly at module load time — before React mounts —
+// so the correct CSS variables are active on the very first paint.
+// This prevents a flash of the wrong theme on startup.
+applyThemeClass(initialState.theme)
 
 // ---------------------------------------------------------------------------
 // Reducer
