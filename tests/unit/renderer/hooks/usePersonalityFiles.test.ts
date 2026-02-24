@@ -144,7 +144,7 @@ describe('usePersonalityFiles — initial load', () => {
 
   it('distributes loaded files into the correct store sections', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
-    ;(window.api.personalityLoadAll as jest.Mock).mockResolvedValue([
+    mockPersonalityLoadAll.mockResolvedValue([
       {
         id: 'file-001',
         sectionId: 'emotional-depth',

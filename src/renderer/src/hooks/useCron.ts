@@ -54,7 +54,7 @@ export function useCron(): UseCronReturn {
     try {
       setLoading(true)
       setError(null)
-      const data = await window.api.cronGetAllJobs()
+      const data = await window.cron.getAll()
       setJobs(data)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch cron jobs'
