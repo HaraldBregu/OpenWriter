@@ -148,7 +148,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
 
           <button
             type="button"
-            onClick={() => window.api.windowClose()}
+            onClick={() => window.win.close()}
             className={`
               flex items-center justify-center h-full w-[46px]
               text-neutral-600 dark:text-neutral-300
