@@ -228,11 +228,6 @@ const HomePage: React.FC = () => {
 
         <AppSeparator />
 
-        {/* Pipeline test */}
-        <PipelineTestSection />
-
-        <AppSeparator />
-
         {/* Tips */}
         <section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">
           <Star className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
