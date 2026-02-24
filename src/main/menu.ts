@@ -150,6 +150,12 @@ export class Menu {
                 type: 'radio' as const,
                 checked: this.currentTheme === 'dark',
                 click: (): void => switchTheme('dark')
+              },
+              {
+                label: m.system,
+                type: 'radio' as const,
+                checked: this.currentTheme === 'system',
+                click: (): void => switchTheme('system')
               }
             ]
           },
