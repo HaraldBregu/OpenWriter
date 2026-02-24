@@ -312,6 +312,8 @@ describe('FileWatcherService', () => {
   describe('workspace:changed event integration', () => {
     it('should start watching when workspace:changed fires with a new path', async () => {
       eventBus.emit('workspace:changed', { currentPath: WORKSPACE, previousPath: null })
+      // Allow the async startWatching chain to settle through all microtask queues
+      await new Promise((resolve) => setImmediate(resolve))
       await Promise.resolve()
 
       expect(mockChokidarWatch).toHaveBeenCalled()

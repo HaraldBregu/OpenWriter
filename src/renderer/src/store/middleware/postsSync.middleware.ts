@@ -148,7 +148,7 @@ async function deletePostFile(postId: string): Promise<void> {
     console.debug('[PostsSync] Deleting post file:', postId)
 
     // Call IPC method to delete the post file
-    await window.api.postsDeletePost(postId)
+    await window.posts.delete(postId)
 
     console.debug('[PostsSync] Successfully deleted post file:', postId)
   } catch (error) {
