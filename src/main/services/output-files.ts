@@ -616,6 +616,19 @@ export class OutputFilesService implements Disposable {
   }
 
   /**
+   * Handle directory removed event.
+   * On Windows, recursive folder deletion fires `unlinkDir` instead of
+   * individual `unlink` events for child files, so we must handle it
+   * explicitly to keep the renderer in sync.
+   */
+  private handleDirRemoved(dirPath: string): void {
+    if (this.shouldIgnoreFile(dirPath)) {
+      return
+    }
+    this.debouncedEmit(dirPath, 'removed')
+  }
+
+  /**
    * Handle watcher errors.
    */
   private handleWatcherError(error: unknown): void {
