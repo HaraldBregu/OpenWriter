@@ -5,7 +5,7 @@ import { Copy, Check } from 'lucide-react'
 export const CopyButton = React.memo(function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
   const copy = () => {
-    window.api.clipboardWriteText(text)
+    window.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
