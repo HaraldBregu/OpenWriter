@@ -64,8 +64,7 @@
       "WebFetch(domain:tiptap.dev)",
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:deepwiki.com)",
-      "Bash(chmod +x /Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/.claude/hooks/auto-commit.sh && ls -la /Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/.claude/hooks/auto-commit.sh)"
+      "WebFetch(domain:deepwiki.com)"
     ],
     "deny": [
       "Bash(git push --force:*)",
