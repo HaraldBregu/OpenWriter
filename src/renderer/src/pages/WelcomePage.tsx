@@ -26,7 +26,7 @@ const WelcomePage: React.FC = () => {
 
   const loadRecentProjects = async () => {
     try {
-      const projects = await window.api.workspaceGetRecent()
+      const projects = await window.workspace.getRecent()
 
       // Filter out entries with missing path, then check if each directory exists
       const validProjects = projects.filter((p) => typeof p.path === 'string')
