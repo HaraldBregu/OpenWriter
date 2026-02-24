@@ -7,11 +7,11 @@ interface UseContextMenuReturn {
 
 export function useContextMenu(): UseContextMenuReturn {
   const showContextMenu = useCallback(() => {
-    window.api.showContextMenu()
+    window.app.showContextMenu()
   }, [])
 
   const showContextMenuEditable = useCallback(() => {
-    window.api.showContextMenuEditable()
+    window.app.showContextMenuEditable()
   }, [])
 
   return {
