@@ -115,16 +115,17 @@ export const ContentBlock = React.memo(function ContentBlock({
   }, [editor])
 
   // Sync external content changes (e.g., when the block resets or is edited elsewhere).
-  // Guard against our own onChange echoes by comparing current HTML first.
+  // Guard: skip while enhancing so streamed tokens are not overwritten by echoed onChange calls.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
+    if (isEnhancing) return
     const current = editor.getMarkdown()
     const incoming = block.content || ''
     if (current !== incoming) {
       editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
       setIsEmpty(editor.isEmpty)
     }
-  }, [block.content, editor])
+  }, [block.content, editor, isEnhancing])
 
   // Stream tokens into the accumulator ref (no re-render per token).
   useEffect(() => {
