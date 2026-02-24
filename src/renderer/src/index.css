@@ -78,6 +78,20 @@
   }
 }
 
+/* TipTap / ProseMirror editor reset */
+.ProseMirror {
+  outline: none;
+  min-height: 1em;
+}
+
+.ProseMirror > * + * {
+  margin-top: 0.5em;
+}
+
+.ProseMirror p {
+  margin: 0;
+}
+
 @layer base {
   html {
     font-size: 15px;
