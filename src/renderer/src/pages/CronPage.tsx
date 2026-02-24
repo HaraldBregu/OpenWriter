@@ -18,7 +18,6 @@ const CronPage: React.FC = () => {
     createJob,
     validateExpression
   } = useCron()
-  useTheme()
   useLanguage()
 
   const [showCreateForm, setShowCreateForm] = useState(false)
