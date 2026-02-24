@@ -79,7 +79,7 @@ async function syncPostsToElectron(posts: Post[]): Promise<void> {
     })
 
     // Call IPC method to sync posts
-    const result = await window.api.postsSyncToWorkspace(posts)
+    const result = await window.posts.syncToWorkspace(posts)
 
     // Update last synced state
     lastSyncedPosts = [...posts]

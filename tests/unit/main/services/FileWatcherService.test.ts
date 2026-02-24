@@ -170,7 +170,7 @@ describe('FileWatcherService', () => {
       const filePath = `${POSTS_DIR}/post-123.json`
 
       triggerWatcherEvent('add', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('posts:file-changed', expect.objectContaining({
         type: 'added',
@@ -184,7 +184,7 @@ describe('FileWatcherService', () => {
       const filePath = `${POSTS_DIR}/post-xyz.json`
 
       triggerWatcherEvent('change', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('posts:file-changed', expect.objectContaining({
         type: 'changed',
@@ -197,7 +197,7 @@ describe('FileWatcherService', () => {
       const filePath = `${POSTS_DIR}/post-del.json`
 
       triggerWatcherEvent('unlink', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('posts:file-changed', expect.objectContaining({
         type: 'removed',
@@ -208,7 +208,7 @@ describe('FileWatcherService', () => {
     it('should strip the .json extension to extract the postId', () => {
       const broadcastSpy = jest.spyOn(eventBus, 'broadcast')
       triggerWatcherEvent('add', `${POSTS_DIR}/my-unique-post-id.json`)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const call = broadcastSpy.mock.calls.find((c) => c[0] === 'posts:file-changed')
       expect((call?.[1] as { postId: string }).postId).toBe('my-unique-post-id')
@@ -217,7 +217,7 @@ describe('FileWatcherService', () => {
     it('should include a timestamp in the broadcast payload', () => {
       const broadcastSpy = jest.spyOn(eventBus, 'broadcast')
       triggerWatcherEvent('add', `${POSTS_DIR}/ts-post.json`)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const payload = broadcastSpy.mock.calls[0]?.[1] as { timestamp: number }
       expect(typeof payload.timestamp).toBe('number')
@@ -265,7 +265,7 @@ describe('FileWatcherService', () => {
       service.markFileAsWritten(filePath)
 
       triggerWatcherEvent('change', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).not.toHaveBeenCalledWith('posts:file-changed', expect.anything())
     })
@@ -276,7 +276,7 @@ describe('FileWatcherService', () => {
 
       const filePath = `${POSTS_DIR}/external.json`
       triggerWatcherEvent('change', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('posts:file-changed', expect.anything())
     })
@@ -296,7 +296,7 @@ describe('FileWatcherService', () => {
       triggerWatcherEvent('change', filePath)
       triggerWatcherEvent('change', filePath)
 
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const fileChangedCalls = broadcastSpy.mock.calls.filter(
         (c: unknown[]) => c[0] === 'posts:file-changed'
