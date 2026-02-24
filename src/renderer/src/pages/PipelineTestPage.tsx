@@ -108,7 +108,7 @@ const PipelineTestPage: React.FC = () => {
 
   const runAgent = useCallback(async (agentName: string, prompt: string) => {
     try {
-      const result = await window.api.pipelineRun(agentName, { prompt })
+      const result = await window.ai.inference(agentName, { prompt })
       if (result.success) {
         const runId = result.data.runId
         setRuns((prev) => {
