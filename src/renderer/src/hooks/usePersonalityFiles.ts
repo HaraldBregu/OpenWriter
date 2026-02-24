@@ -27,7 +27,7 @@ export function usePersonalityFiles(): void {
     loadFiles()
 
     // Listen for file changes from the watcher and refresh the list
-    const unsubscribe = window.api.onPersonalityFileChange((event) => {
+    const unsubscribe = window.personality.onFileChange((event) => {
       console.log(`[usePersonalityFiles] File ${event.type}: ${event.sectionId}/${event.fileId}`)
 
       // Debounce to avoid multiple rapid refreshes (e.g., folder deletion fires
