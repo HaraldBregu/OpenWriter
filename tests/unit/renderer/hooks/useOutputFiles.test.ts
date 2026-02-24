@@ -3,7 +3,7 @@
  *
  * The hook:
  *  1. On mount, checks window.workspace.getCurrent() — if a workspace exists,
- *     dispatches loadOutputItems() (async thunk that calls window.api.outputLoadAll).
+ *     dispatches loadOutputItems() (async thunk that calls window.output.loadAll).
  *  2. Subscribes to window.output.onFileChange() and re-dispatches loadOutputItems
  *     after a 500 ms debounce on each event.
  *  3. On unmount, calls the unsubscribe function and cancels any pending debounce.
@@ -25,7 +25,6 @@ import outputReducer from '../../../../src/renderer/src/store/outputSlice'
 
 // ---------------------------------------------------------------------------
 // Mock window.workspace and window.output namespaces.
-// These are separate from window.api (the preload-bridge mock).
 // ---------------------------------------------------------------------------
 
 const mockWorkspaceGetCurrent = jest.fn()
@@ -51,6 +50,7 @@ function installWindowMocks(): void {
 
   Object.defineProperty(window, 'output', {
     value: {
+      loadAll: mockOutputLoadAll,
       onFileChange: jest.fn().mockImplementation((cb: FileChangeCallback) => {
         capturedFileChangeCallback = cb
         return mockUnsubscribeFileChange
@@ -85,18 +85,6 @@ beforeEach(() => {
   mockUnsubscribeFileChange.mockClear()
 
   installWindowMocks()
-
-  // The loadOutputItems thunk calls window.api.outputLoadAll.
-  // The preload-bridge mock does not include outputLoadAll, so we add it here
-  // by extending the existing window.api object.
-  Object.defineProperty(window, 'api', {
-    value: {
-      ...window.api,
-      outputLoadAll: mockOutputLoadAll
-    },
-    writable: true,
-    configurable: true
-  })
 })
 
 afterEach(() => {
@@ -109,7 +97,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('useOutputFiles — initial load', () => {
-  it('calls outputLoadAll when a workspace is present', async () => {
+  it('calls window.output.loadAll when a workspace is present', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
@@ -120,7 +108,7 @@ describe('useOutputFiles — initial load', () => {
     })
   })
 
-  it('does not call outputLoadAll when no workspace is set', async () => {
+  it('does not call window.output.loadAll when no workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
@@ -170,7 +158,7 @@ describe('useOutputFiles — initial load', () => {
     })
   })
 
-  it('logs an error and does not throw when outputLoadAll rejects', async () => {
+  it('logs an error and does not throw when window.output.loadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
     mockOutputLoadAll.mockRejectedValue(new Error('Load failed'))
 
@@ -188,7 +176,7 @@ describe('useOutputFiles — initial load', () => {
 })
 
 describe('useOutputFiles — file-change subscription', () => {
-  it('subscribes to output.onFileChange on mount', async () => {
+  it('subscribes to window.output.onFileChange on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
