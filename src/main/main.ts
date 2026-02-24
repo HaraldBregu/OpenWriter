@@ -36,7 +36,7 @@ export class Main {
         titleBarStyle: 'hidden' as const,
         trafficLightPosition: { x: 16, y: 16 }
       }),
-      backgroundColor: '#FFFFFF'
+      backgroundColor: getBackgroundColor()
     })
 
     // Create window context for isolated services
@@ -146,7 +146,7 @@ export class Main {
         titleBarStyle: 'hidden' as const,
         trafficLightPosition: { x: 9, y: 9 }
       }),
-      backgroundColor: '#FFFFFF'
+      backgroundColor: getBackgroundColor()
     })
 
     // Create window context for isolated services
@@ -184,7 +184,7 @@ export class Main {
         titleBarStyle: 'hidden' as const,
         trafficLightPosition: { x: 16, y: 16 }
       }),
-      backgroundColor: '#FFFFFF'
+      backgroundColor: getBackgroundColor()
     })
 
     // Create window context for isolated services
