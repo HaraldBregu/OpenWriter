@@ -32,7 +32,7 @@ import { AgentService } from './services/agent'
 import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent, EnhanceAgent } from './pipeline'
 import { TaskHandlerRegistry } from './tasks/TaskHandlerRegistry'
 import { TaskExecutorService } from './tasks/TaskExecutorService'
-import { FileDownloadHandler, AIChatHandler } from './tasks/handlers'
+import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/handlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
