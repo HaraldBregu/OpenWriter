@@ -56,7 +56,7 @@ export function useLifecycle(): UseLifecycleReturn {
 
     const initialize = async (): Promise<void> => {
       try {
-        const state: LifecycleState = await window.api.lifecycleGetState()
+        const state: LifecycleState = await window.lifecycle.getState()
         if (isMounted) {
           setIsSingleInstance(state.isSingleInstance)
           setEvents(state.events)
