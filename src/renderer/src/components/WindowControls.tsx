@@ -17,7 +17,7 @@ export function WindowControls() {
   }
 
   const handleClose = () => {
-    window.api.windowClose()
+    window.win.close()
   }
 
   return (
