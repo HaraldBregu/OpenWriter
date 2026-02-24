@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Newspaper,
@@ -7,12 +7,9 @@ import {
   Puzzle,
   ArrowRight,
   Clock,
-  Star,
-  Loader2,
-  Square
+  Star
 } from 'lucide-react'
-import { AppButton, AppInput, AppSeparator } from '@/components/app'
-import { usePipeline } from '../hooks/usePipeline'
+import { AppSeparator } from '@/components/app'
 import { useAppDispatch } from '../store'
 import { createPost } from '../store/postsSlice'
 
