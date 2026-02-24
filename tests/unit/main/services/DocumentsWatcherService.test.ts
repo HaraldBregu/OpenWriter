@@ -282,14 +282,12 @@ describe('DocumentsWatcherService', () => {
 
   describe('workspace:changed event integration', () => {
     it('should start watching when workspace:changed fires with a new path', async () => {
-      // Switch to real timers just for this async-heavy test so that Promise
-      // resolution chains in startWatching() can settle naturally.
-      jest.useRealTimers()
-
       eventBus.emit('workspace:changed', { currentPath: WORKSPACE, previousPath: null })
 
-      // Give the fire-and-forget promise chain time to settle
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      // Flush the async chain: event handler → startWatching → fs.mkdir → chokidar.watch
+      await Promise.resolve()
+      await Promise.resolve()
+      await Promise.resolve()
 
       expect(mockChokidarWatch).toHaveBeenCalled()
     })
