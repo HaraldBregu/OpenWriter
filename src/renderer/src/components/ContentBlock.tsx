@@ -81,8 +81,11 @@ export const ContentBlock = React.memo(function ContentBlock({
   const blockIdRef = React.useRef(block.id)
   blockIdRef.current = block.id
 
-  // Accumulates streamed tokens without triggering re-renders per token.
-  const enhanceAccumulatedRef = useRef<string>('')
+  // Holds the original text before enhance started so we can revert on error/cancel.
+  const originalTextRef = useRef<string>('')
+  // Stable ref to the editor so the token event handler can access it without
+  // being recreated on every render.
+  const editorRef = useRef<Editor | null>(null)
 
   const { submitTask, cancelTask, tasks } = useTask()
 
