@@ -606,7 +606,7 @@ const DocumentsPage: React.FC = () => {
     try {
       setIsImporting(true)
       setImportError(null)
-      await window.api.documentsImportFiles()
+      await window.documents.importFiles()
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)

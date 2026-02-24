@@ -142,7 +142,10 @@ describe('FileDownloadHandler', () => {
     })
 
     it('should throw for a completely invalid URL string', () => {
-      expect(() => handler.validate({ url: 'not-a-url' })).toThrow('Invalid URL: not-a-url')
+      // The error message may be "Invalid URL: not-a-url" (from the handler's custom
+      // rethrow) or "Invalid URL" (if the TypeError propagates directly in Node 24+).
+      // Either way, the string "Invalid URL" must appear in the message.
+      expect(() => handler.validate({ url: 'not-a-url' })).toThrow(/Invalid URL/)
     })
 
     it('should throw for a file:// URL (non-HTTP protocol)', () => {

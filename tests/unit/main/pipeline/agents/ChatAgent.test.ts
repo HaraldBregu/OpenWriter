@@ -346,7 +346,11 @@ describe('ChatAgent — cancellation', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    const abortError = new DOMException('AbortError', 'AbortError')
+    // Use a plain Error with name 'AbortError' — matches the classifyError
+    // pattern: name.toLowerCase() === 'aborterror'. DOMException may not have
+    // the same name property shape in the Node.js test environment.
+    const abortError = new Error('AbortError')
+    abortError.name = 'AbortError'
     mockStream.mockRejectedValue(abortError)
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
