@@ -26,7 +26,7 @@ const BluetoothPage: React.FC = () => {
   useEffect(() => {
     const loadInfo = async () => {
       try {
-        const info = await window.api.bluetoothGetInfo()
+        const info = await window.bluetooth.getInfo()
         setPlatformInfo(info)
       } catch (err) {
         console.error('Error loading Bluetooth info:', err)

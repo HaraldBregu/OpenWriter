@@ -243,16 +243,27 @@ describe('LoggerService', () => {
 
   describe('buffer auto-flush', () => {
     it('should auto-flush when the buffer reaches maxBufferSize', () => {
-      service = makeLogger(null, { maxBufferSize: 3 })
+      // Use a large maxBufferSize so the constructor's own initialization
+      // messages don't trigger a flush. Then clear the spy and test with
+      // a small buffer-cap override via the internal flushing logic.
+      //
+      // The simplest reliable approach: use a large buffer for construction
+      // so the internal init messages don't flush, clear the spy, then log
+      // enough messages to cross the maxBufferSize threshold we set.
+      service = makeLogger(null, { maxBufferSize: 50 })
       mockAppendFileSync.mockClear()
 
-      // First two entries fit in the buffer without flushing
-      service.info('S', 'msg 1')
-      service.info('S', 'msg 2')
+      // Force the buffer to exactly maxBufferSize - 1 entries by logging many,
+      // then check that adding one more triggers a flush. We do this by
+      // checking that a batch of messages eventually causes appendFileSync to
+      // be called (i.e. the auto-flush path is reachable).
+      for (let i = 0; i < 49; i++) {
+        service.info('S', `msg ${i}`)
+      }
       expect(mockAppendFileSync).not.toHaveBeenCalled()
 
-      // Third entry tips the buffer over threshold and triggers flush
-      service.info('S', 'msg 3')
+      // 50th entry crosses the threshold
+      service.info('S', 'msg 50')
       expect(mockAppendFileSync).toHaveBeenCalled()
     })
   })
