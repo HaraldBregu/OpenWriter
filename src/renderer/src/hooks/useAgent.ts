@@ -67,7 +67,7 @@ export function useAgent(): UseAgentReturn {
         if (err) setError(err)
       }
 
-      const unsub = window.api.onAgentEvent((eventType, data) => {
+      const unsub = window.agent.onEvent((eventType, data) => {
         const d = data as Record<string, unknown>
         if (d.runId !== runId) return
 
