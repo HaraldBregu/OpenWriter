@@ -1,6 +1,7 @@
 /**
  * Tests for useAgent hook.
  * Manages AI agent run/cancel lifecycle with Redux integration.
+ * The hook delegates to window.agent.* namespace.
  */
 import React from 'react'
 import { renderHook, act } from '@testing-library/react'
@@ -37,7 +38,7 @@ describe('useAgent', () => {
   })
 
   describe('run', () => {
-    it('should dispatch messages and call agentRun', async () => {
+    it('should dispatch messages and call window.agent.run', async () => {
       const { Wrapper, store } = createWrapper()
       const activeThread = store.getState().chat.threads[0]
 
@@ -52,8 +53,8 @@ describe('useAgent', () => {
         )
       })
 
-      expect(window.api.agentRun).toHaveBeenCalled()
-      expect(window.api.onAgentEvent).toHaveBeenCalled()
+      expect(window.agent.run).toHaveBeenCalled()
+      expect(window.agent.onEvent).toHaveBeenCalled()
 
       // Should have dispatched addUserMessage and addAssistantMessage
       const state = store.getState().chat
@@ -67,8 +68,8 @@ describe('useAgent', () => {
       const { Wrapper, store } = createWrapper()
       const activeThread = store.getState().chat.threads[0]
 
-      // Make agentRun hang so the first call doesn't complete
-      ;(window.api.agentRun as jest.Mock).mockImplementation(
+      // Make agent.run hang so the first call doesn't complete
+      ;(window.agent.run as jest.Mock).mockImplementation(
         () => new Promise(() => {}) // never resolves
       )
 
@@ -80,24 +81,24 @@ describe('useAgent', () => {
       })
 
       // Attempt second run immediately - should be blocked by ref guard
-      const callsBefore = (window.api.agentRun as jest.Mock).mock.calls.length
+      const callsBefore = (window.agent.run as jest.Mock).mock.calls.length
 
       await act(async () => {
         await result.current.run('Second', activeThread.id, [], 'openai')
       })
 
       // Should still have just the one call
-      expect((window.api.agentRun as jest.Mock).mock.calls.length).toBe(callsBefore)
+      expect((window.agent.run as jest.Mock).mock.calls.length).toBe(callsBefore)
     })
   })
 
   describe('cancel', () => {
-    it('should call agentCancel and reset running state', async () => {
+    it('should call window.agent.cancel and reset running state', async () => {
       const { Wrapper, store } = createWrapper()
       const activeThread = store.getState().chat.threads[0]
 
-      // Make agentRun hang
-      ;(window.api.agentRun as jest.Mock).mockImplementation(
+      // Make agent.run hang
+      ;(window.agent.run as jest.Mock).mockImplementation(
         () => new Promise(() => {})
       )
 
@@ -113,7 +114,7 @@ describe('useAgent', () => {
         result.current.cancel()
       })
 
-      expect(window.api.agentCancel).toHaveBeenCalled()
+      expect(window.agent.cancel).toHaveBeenCalled()
       // After cancel, isRunning should be false
       expect(result.current.isRunning).toBe(false)
     })
