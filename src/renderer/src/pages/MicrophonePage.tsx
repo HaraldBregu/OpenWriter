@@ -7,7 +7,6 @@ import { useLanguage } from '../hooks/useLanguage'
 const MicrophonePage: React.FC = () => {
   const { t } = useTranslation()
   const { microphoneStatus, requestMicrophone } = useMediaPermissions()
-  useTheme()
   useLanguage()
 
   return (
