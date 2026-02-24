@@ -1,6 +1,7 @@
 /**
  * Tests for CopyButton component.
  * One-shot copy-to-clipboard button with visual feedback.
+ * The component calls window.clipboard.writeText.
  */
 import React from 'react'
 import { render, screen, act } from '@testing-library/react'
@@ -29,14 +30,14 @@ describe('CopyButton', () => {
     expect(screen.getByTitle('Copy code')).toBeInTheDocument()
   })
 
-  it('should call clipboardWriteText when clicked', async () => {
+  it('should call window.clipboard.writeText when clicked', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
     render(<CopyButton text="hello world" />)
 
     await user.click(screen.getByTitle('Copy code'))
 
-    expect(window.api.clipboardWriteText).toHaveBeenCalledWith('hello world')
+    expect(window.clipboard.writeText).toHaveBeenCalledWith('hello world')
   })
 
   it('should show Copied text after click', async () => {
