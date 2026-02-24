@@ -1,6 +1,7 @@
 /**
  * Tests for TitleBar component.
  * Renders the application title bar with window controls and sidebar toggle.
+ * The component uses window.win.* for window controls and window.app.popupMenu.
  */
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -17,8 +18,10 @@ jest.mock('lucide-react', () => ({
 
 describe('TitleBar', () => {
   beforeEach(() => {
-    ;(window.api.windowIsMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.api.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
+    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
+    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
+    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
+    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
   })
 
   it('should render with default title', () => {
@@ -36,18 +39,18 @@ describe('TitleBar', () => {
   it('should check maximized state on mount', () => {
     render(<TitleBar />)
 
-    expect(window.api.windowIsMaximized).toHaveBeenCalled()
+    expect(window.win.isMaximized).toHaveBeenCalled()
   })
 
   it('should subscribe to maximize changes', () => {
     render(<TitleBar />)
 
-    expect(window.api.onMaximizeChange).toHaveBeenCalled()
+    expect(window.win.onMaximizeChange).toHaveBeenCalled()
   })
 
   it('should clean up maximize change listener on unmount', () => {
     const unsubscribe = jest.fn()
-    ;(window.api.onMaximizeChange as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = render(<TitleBar />)
 
@@ -66,27 +69,27 @@ describe('TitleBar', () => {
     expect(onToggle).toHaveBeenCalledTimes(1)
   })
 
-  it('should call windowMinimize when minimize button is clicked', async () => {
+  it('should call window.win.minimize when minimize button is clicked', async () => {
     const user = userEvent.setup()
 
     render(<TitleBar />)
 
     await user.click(screen.getByTitle('Minimize'))
 
-    expect(window.api.windowMinimize).toHaveBeenCalled()
+    expect(window.win.minimize).toHaveBeenCalled()
   })
 
-  it('should call windowClose when close button is clicked', async () => {
+  it('should call window.win.close when close button is clicked', async () => {
     const user = userEvent.setup()
 
     render(<TitleBar />)
 
     await user.click(screen.getByTitle('Close'))
 
-    expect(window.api.windowClose).toHaveBeenCalled()
+    expect(window.win.close).toHaveBeenCalled()
   })
 
-  it('should call windowMaximize when maximize button is clicked', async () => {
+  it('should call window.win.maximize when maximize button is clicked', async () => {
     const user = userEvent.setup()
 
     render(<TitleBar />)
@@ -94,11 +97,11 @@ describe('TitleBar', () => {
     // Default state: not maximized, so title should be "Maximize"
     await user.click(screen.getByTitle('Maximize'))
 
-    expect(window.api.windowMaximize).toHaveBeenCalled()
+    expect(window.win.maximize).toHaveBeenCalled()
   })
 
   it('should show Restore title when window is maximized', async () => {
-    ;(window.api.windowIsMaximized as jest.Mock).mockResolvedValue(true)
+    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(true)
 
     render(<TitleBar />)
 
@@ -107,14 +110,14 @@ describe('TitleBar', () => {
     })
   })
 
-  it('should call popupMenu when menu button is clicked', async () => {
+  it('should call window.app.popupMenu when menu button is clicked', async () => {
     const user = userEvent.setup()
 
     render(<TitleBar />)
 
     await user.click(screen.getByTitle('Application menu'))
 
-    expect(window.api.popupMenu).toHaveBeenCalled()
+    expect(window.app.popupMenu).toHaveBeenCalled()
   })
 
   it('should apply custom className', () => {
