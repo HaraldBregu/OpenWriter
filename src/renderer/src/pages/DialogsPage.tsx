@@ -1,7 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDialogs } from '../hooks/useDialogs'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import {
   MessageSquare,
