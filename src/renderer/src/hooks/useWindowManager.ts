@@ -67,7 +67,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const createWidget = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCreateWidget()
+      await window.wm.createWidget()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create widget window'
       setError(message)
