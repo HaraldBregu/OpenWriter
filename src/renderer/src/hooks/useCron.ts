@@ -162,7 +162,7 @@ export function useCron(): UseCronReturn {
     refreshJobs()
 
     // Set up event listener for job results
-    const cleanup = window.api.onCronJobResult((result) => {
+    const cleanup = window.cron.onJobResult((result) => {
       if (isMounted) {
         setLastResult(result)
         // Refresh jobs to get updated stats
