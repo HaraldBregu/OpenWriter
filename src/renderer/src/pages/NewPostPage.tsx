@@ -320,7 +320,7 @@ const NewPostPage: React.FC = () => {
                   onChange={isDraft ? handleDraftChange : handleChange}
                   onDelete={isDraft ? handleDraftDelete : handleDelete}
                   onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
-                  placeholder="Write something..."
+                  placeholder="Type here..."
                 />
               ))}
             </Reorder.Group>
