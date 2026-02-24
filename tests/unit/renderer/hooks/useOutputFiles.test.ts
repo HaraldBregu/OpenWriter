@@ -264,7 +264,7 @@ describe('useOutputFiles — file-change subscription', () => {
     await act(async () => { await Promise.resolve() })
 
     // Exactly one additional reload should have been triggered
-    expect((window.api.outputLoadAll as jest.Mock).mock.calls.length).toBe(callsBefore + 1)
+    expect(mockOutputLoadAll.mock.calls.length).toBe(callsBefore + 1)
   })
 })
 

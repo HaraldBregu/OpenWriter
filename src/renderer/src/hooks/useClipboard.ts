@@ -141,7 +141,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      return await window.api.clipboardReadImage()
+      return await window.clipboard.readImage()
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to read image from clipboard'
       setError(errorMsg)
@@ -155,7 +155,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      const success = await window.api.clipboardClear()
+      const success = await window.clipboard.clear()
       if (success) {
         setContent(null)
       }
