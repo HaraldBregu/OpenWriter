@@ -56,7 +56,7 @@ export function useFilesystem(): UseFilesystemReturn {
   const saveFile = useCallback(async (defaultName: string, content: string): Promise<boolean> => {
     try {
       setError(null)
-      const result = await window.api.fsSaveFile(defaultName, content)
+      const result = await window.fs.saveFile(defaultName, content)
       return result.success
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to save file'
