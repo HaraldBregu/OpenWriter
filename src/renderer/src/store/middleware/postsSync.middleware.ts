@@ -92,7 +92,7 @@ async function syncPostsToElectron(posts: Post[]): Promise<void> {
 
     // Show warning if some posts failed to sync
     if (result.failedCount > 0) {
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Partial Sync',
         body: `${result.failedCount} post(s) failed to sync. Check console for details.`,
         urgency: 'normal'
@@ -103,7 +103,7 @@ async function syncPostsToElectron(posts: Post[]): Promise<void> {
 
     // Show user-facing error notification
     try {
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Sync Failed',
         body: 'Failed to save posts to workspace. Your changes may not be persisted.',
         urgency: 'critical'
@@ -156,7 +156,7 @@ async function deletePostFile(postId: string): Promise<void> {
 
     // Show user-facing error notification
     try {
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Delete Failed',
         body: `Failed to delete post file. The file may still exist in the workspace.`,
         urgency: 'normal'
