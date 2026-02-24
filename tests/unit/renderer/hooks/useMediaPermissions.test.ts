@@ -1,14 +1,15 @@
 /**
  * Tests for useMediaPermissions hook.
  * Manages microphone/camera permission status and request flows.
+ * The hook delegates to window.media.* namespace.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useMediaPermissions } from '../../../../src/renderer/src/hooks/useMediaPermissions'
 
 describe('useMediaPermissions', () => {
   it('should check permission status on mount', async () => {
-    ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('granted')
-    ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('denied')
+    ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('granted')
+    ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('denied')
 
     const { result } = renderHook(() => useMediaPermissions())
 
@@ -22,7 +23,7 @@ describe('useMediaPermissions', () => {
   })
 
   it('should set error when status check fails', async () => {
-    ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockRejectedValue(new Error('check fail'))
+    ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockRejectedValue(new Error('check fail'))
 
     const { result } = renderHook(() => useMediaPermissions())
 
@@ -35,9 +36,9 @@ describe('useMediaPermissions', () => {
 
   describe('requestMicrophone', () => {
     it('should request and update microphone status', async () => {
-      ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.requestMicrophonePermission as jest.Mock).mockResolvedValue('granted')
+      ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.requestMicrophonePermission as jest.Mock).mockResolvedValue('granted')
 
       const { result } = renderHook(() => useMediaPermissions())
 
@@ -54,9 +55,9 @@ describe('useMediaPermissions', () => {
     })
 
     it('should set error on request failure', async () => {
-      ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.requestMicrophonePermission as jest.Mock).mockRejectedValue(new Error('mic fail'))
+      ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.requestMicrophonePermission as jest.Mock).mockRejectedValue(new Error('mic fail'))
 
       const { result } = renderHook(() => useMediaPermissions())
 
@@ -74,9 +75,9 @@ describe('useMediaPermissions', () => {
 
   describe('requestCamera', () => {
     it('should request and update camera status', async () => {
-      ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.requestCameraPermission as jest.Mock).mockResolvedValue('denied')
+      ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.requestCameraPermission as jest.Mock).mockResolvedValue('denied')
 
       const { result } = renderHook(() => useMediaPermissions())
 
@@ -94,8 +95,8 @@ describe('useMediaPermissions', () => {
 
   describe('checkPermissionStatus', () => {
     it('should re-fetch both permission statuses', async () => {
-      ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
-      ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('not-determined')
+      ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('not-determined')
 
       const { result } = renderHook(() => useMediaPermissions())
 
@@ -103,8 +104,8 @@ describe('useMediaPermissions', () => {
         expect(result.current.isLoading).toBe(false)
       })
 
-      ;(window.api.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('granted')
-      ;(window.api.getCameraPermissionStatus as jest.Mock).mockResolvedValue('granted')
+      ;(window.media.getMicrophonePermissionStatus as jest.Mock).mockResolvedValue('granted')
+      ;(window.media.getCameraPermissionStatus as jest.Mock).mockResolvedValue('granted')
 
       await act(async () => {
         await result.current.checkPermissionStatus()
