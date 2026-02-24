@@ -695,7 +695,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 // ---------------------------------------------------------------------------
 
 export function AppLayout({ children }: AppLayoutProps) {
-  useTheme();
   useLanguage();
   usePostsLoader(); // Load posts from workspace on app startup
   usePostsFileWatcher(); // Listen for external file changes in posts directory
