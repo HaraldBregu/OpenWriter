@@ -32,7 +32,7 @@ export function useNotifications(): UseNotificationsReturn {
   useEffect(() => {
     const checkSupport = async (): Promise<void> => {
       try {
-        const supported = await window.api.notificationIsSupported()
+        const supported = await window.notification.isSupported()
         setIsSupported(supported)
       } catch (err) {
         console.error('Failed to check notification support:', err)
