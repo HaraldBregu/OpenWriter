@@ -31,7 +31,6 @@ const NotificationsPage: React.FC = () => {
   const [customBody, setCustomBody] = useState('This is a test notification message')
   const [urgency, setUrgency] = useState<'normal' | 'critical' | 'low'>('normal')
   const [silent, setSilent] = useState(false)
-  useTheme()
   useLanguage()
 
   const presetNotifications = [
