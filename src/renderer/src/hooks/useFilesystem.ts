@@ -119,7 +119,7 @@ export function useFilesystem(): UseFilesystemReturn {
 
     const initialize = async (): Promise<void> => {
       try {
-        const dirs = await window.api.fsGetWatched()
+        const dirs = await window.fs.getWatched()
         if (isMounted) {
           setWatchedDirs(dirs)
         }
