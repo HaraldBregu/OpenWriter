@@ -132,7 +132,7 @@ export function useCron(): UseCronReturn {
   const updateSchedule = useCallback(async (id: string, schedule: string): Promise<boolean> => {
     try {
       setError(null)
-      const success = await window.api.cronUpdateSchedule(id, schedule)
+      const success = await window.cron.updateSchedule(id, schedule)
       if (success) {
         await refreshJobs()
       }

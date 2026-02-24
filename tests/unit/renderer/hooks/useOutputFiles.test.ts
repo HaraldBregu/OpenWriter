@@ -116,7 +116,7 @@ describe('useOutputFiles — initial load', () => {
     renderHook(() => useOutputFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.outputLoadAll).toHaveBeenCalledTimes(1)
+      expect(mockOutputLoadAll).toHaveBeenCalledTimes(1)
     })
   })
 
