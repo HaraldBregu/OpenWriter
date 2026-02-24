@@ -118,7 +118,7 @@ const WelcomePage: React.FC = () => {
     event.stopPropagation()
 
     try {
-      await window.api.workspaceRemoveRecent(path)
+      await window.workspace.removeRecent(path)
       // Reload the recent projects list
       loadRecentProjects()
     } catch (error) {

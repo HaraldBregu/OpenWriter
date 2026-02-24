@@ -178,7 +178,7 @@ describe('DocumentsWatcherService', () => {
 
       // Trigger a 'change' event immediately (within the ignore window)
       triggerWatcherEvent('change', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).not.toHaveBeenCalledWith('documents:file-changed', expect.anything())
     })
