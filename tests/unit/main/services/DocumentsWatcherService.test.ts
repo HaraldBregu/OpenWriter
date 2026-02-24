@@ -284,7 +284,8 @@ describe('DocumentsWatcherService', () => {
     it('should start watching when workspace:changed fires with a new path', async () => {
       eventBus.emit('workspace:changed', { currentPath: WORKSPACE, previousPath: null })
 
-      // Allow the async startWatching to run
+      // Allow the async startWatching chain (mkdir + watch) to settle
+      await new Promise((resolve) => setImmediate(resolve))
       await Promise.resolve()
 
       expect(mockChokidarWatch).toHaveBeenCalled()
