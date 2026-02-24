@@ -72,17 +72,5 @@
     ],
     "ask": []
   },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "CommitAfterTask",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "commit"
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": {}
 }
