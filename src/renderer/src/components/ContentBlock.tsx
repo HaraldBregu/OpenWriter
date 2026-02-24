@@ -82,7 +82,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     content: block.content || '',
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
-      onChangeRef.current(blockIdRef.current, ed.getHTML())
+      onChangeRef.current(blockIdRef.current, ed.getMarkdown())
       setIsEmpty(ed.isEmpty)
     },
     onCreate: ({ editor: ed }: { editor: Editor }) => {
