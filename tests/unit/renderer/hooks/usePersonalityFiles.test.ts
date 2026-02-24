@@ -3,7 +3,7 @@
  *
  * The hook:
  *  1. On mount, calls window.workspace.getCurrent(). If a workspace exists,
- *     dispatches loadPersonalityFiles() (thunk that calls window.api.personalityLoadAll).
+ *     dispatches loadPersonalityFiles() (thunk that calls window.personality.loadAll).
  *  2. Subscribes to window.personality.onFileChange() and re-dispatches
  *     loadPersonalityFiles after a 500 ms debounce on each event.
  *  3. On unmount, calls the unsubscribe function and cancels any pending debounce.
@@ -16,10 +16,6 @@
  *  - File-change event triggers a debounced reload
  *  - Multiple rapid events are coalesced into a single reload (debounce)
  *  - Cleanup: unsubscribe and debounce cancellation on unmount
- *
- * Note: The existing useBrainFiles.test.ts was generated against an older API
- * shape (window.api.onPersonalityFileChange). This file tests the CURRENT
- * hook which uses window.workspace.getCurrent() and window.personality.onFileChange().
  */
 import React from 'react'
 import { renderHook, act, waitFor } from '@testing-library/react'
@@ -33,6 +29,7 @@ import personalityFilesReducer from '../../../../src/renderer/src/store/personal
 // ---------------------------------------------------------------------------
 
 const mockWorkspaceGetCurrent = jest.fn()
+const mockPersonalityLoadAll = jest.fn()
 const mockUnsubscribeFileChange = jest.fn()
 
 type PersonalityFileChangeCallback = (event: {
@@ -54,6 +51,7 @@ function installWindowMocks(): void {
 
   Object.defineProperty(window, 'personality', {
     value: {
+      loadAll: mockPersonalityLoadAll,
       onFileChange: jest.fn().mockImplementation((cb: PersonalityFileChangeCallback) => {
         capturedFileChangeCallback = cb
         return mockUnsubscribeFileChange
@@ -78,34 +76,16 @@ function createWrapper() {
 }
 
 // ---------------------------------------------------------------------------
-// Mock for window.api.personalityLoadAll
-// (not included in the preload-bridge stub — patched here per-test)
-// ---------------------------------------------------------------------------
-
-const mockPersonalityLoadAll = jest.fn().mockResolvedValue([])
-
-// ---------------------------------------------------------------------------
 // Setup / Teardown
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
   capturedFileChangeCallback = null
   mockWorkspaceGetCurrent.mockResolvedValue(null)
-  mockUnsubscribeFileChange.mockClear()
   mockPersonalityLoadAll.mockResolvedValue([])
+  mockUnsubscribeFileChange.mockClear()
 
   installWindowMocks()
-
-  // Extend the preload-bridge window.api mock with personalityLoadAll,
-  // which is the method the loadPersonalityFiles thunk calls.
-  Object.defineProperty(window, 'api', {
-    value: {
-      ...window.api,
-      personalityLoadAll: mockPersonalityLoadAll
-    },
-    writable: true,
-    configurable: true
-  })
 })
 
 afterEach(() => {
@@ -118,7 +98,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('usePersonalityFiles — initial load', () => {
-  it('calls personalityLoadAll when a workspace is present', async () => {
+  it('calls window.personality.loadAll when a workspace is present', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
@@ -129,7 +109,7 @@ describe('usePersonalityFiles — initial load', () => {
     })
   })
 
-  it('does not call personalityLoadAll when no workspace is set', async () => {
+  it('does not call window.personality.loadAll when no workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
@@ -175,7 +155,7 @@ describe('usePersonalityFiles — initial load', () => {
     })
   })
 
-  it('logs an error and does not throw when personalityLoadAll rejects', async () => {
+  it('logs an error and does not throw when window.personality.loadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
     mockPersonalityLoadAll.mockRejectedValue(new Error('Network error'))
 
@@ -193,7 +173,7 @@ describe('usePersonalityFiles — initial load', () => {
 })
 
 describe('usePersonalityFiles — file-change subscription', () => {
-  it('subscribes to personality.onFileChange on mount', async () => {
+  it('subscribes to window.personality.onFileChange on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
