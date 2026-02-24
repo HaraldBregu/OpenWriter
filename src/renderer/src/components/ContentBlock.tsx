@@ -6,6 +6,7 @@ import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
+import { useTask } from '@/hooks/useTask'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -167,6 +168,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     enhanceUnsubscribeRef.current = unsubscribe
 
     try {
+      console.log('[ContentBlock] Submitting enhance task with text:', currentText)
       const result = await window.task.submit('ai-enhance', { text: currentText })
       if (result.success) {
         enhanceTaskIdRef.current = result.data.taskId
