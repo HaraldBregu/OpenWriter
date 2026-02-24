@@ -41,7 +41,7 @@ const ModelsSettings: React.FC = () => {
     if (!loadedFromStore.current) return
     for (const [providerId, modelId] of Object.entries(selectedModels)) {
       if (prevSelectedModels.current[providerId] !== modelId) {
-        window.api.storeSetSelectedModel(providerId, modelId).catch(console.error)
+        window.store.setSelectedModel(providerId, modelId).catch(console.error)
       }
     }
     prevSelectedModels.current = selectedModels
