@@ -331,7 +331,7 @@ describe('DocumentsWatcherService', () => {
 
       triggerWatcherEvent('add', `${DOCS_DIR}/file-a.pdf`)
       triggerWatcherEvent('add', `${DOCS_DIR}/file-b.pdf`)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const fileChangedCalls = broadcastSpy.mock.calls.filter(
         (c: unknown[]) => c[0] === 'documents:file-changed'

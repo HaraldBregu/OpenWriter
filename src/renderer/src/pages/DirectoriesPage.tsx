@@ -90,7 +90,7 @@ const DirectoriesPage: React.FC = () => {
           .join('\n')
         console.warn('[DirectoriesPage] Some directories could not be added:', errorMessages)
 
-        await window.api.notificationShow({
+        await window.notification.show({
           title: 'Some Directories Skipped',
           body: `${response.errors.length} director${response.errors.length === 1 ? 'y' : 'ies'} could not be added. Check console for details.`,
           urgency: 'normal'
@@ -98,7 +98,7 @@ const DirectoriesPage: React.FC = () => {
       }
     } catch (err) {
       console.error('[DirectoriesPage] Failed to add directories:', err)
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Error',
         body: 'Failed to add directories. Please try again.',
         urgency: 'normal'
@@ -109,13 +109,13 @@ const DirectoriesPage: React.FC = () => {
   const handleRemoveDirectory = useCallback(
     async (id: string) => {
       try {
-        const removed = await window.api.directoriesRemove(id)
+        const removed = await window.directories.remove(id)
         if (removed) {
           dispatch(removeDirectory(id))
         }
       } catch (err) {
         console.error('[DirectoriesPage] Failed to remove directory:', err)
-        await window.api.notificationShow({
+        await window.notification.show({
           title: 'Error',
           body: 'Failed to remove directory. Please try again.',
           urgency: 'normal'
@@ -127,7 +127,7 @@ const DirectoriesPage: React.FC = () => {
 
   const handleIndexDirectories = useCallback(async () => {
     if (directories.length === 0) {
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'No Directories',
         body: 'Please add directories to index first.',
         urgency: 'normal'
@@ -155,14 +155,14 @@ const DirectoriesPage: React.FC = () => {
         }
       }
 
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Indexing Complete',
         body: `Successfully indexed ${directories.length} ${directories.length === 1 ? 'directory' : 'directories'}.`,
         urgency: 'normal'
       })
     } catch (err) {
       console.error('[DirectoriesPage] Failed to index directories:', err)
-      await window.api.notificationShow({
+      await window.notification.show({
         title: 'Indexing Failed',
         body: 'Failed to index directories. Please try again.',
         urgency: 'critical'
