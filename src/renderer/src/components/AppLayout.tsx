@@ -254,7 +254,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const handlePostContextMenu = useCallback(
     (postId: string, postTitle: string) => {
-      window.api.showPostContextMenu(postId, postTitle);
+      window.contextMenu.showPost(postId, postTitle);
     },
     [],
   );
