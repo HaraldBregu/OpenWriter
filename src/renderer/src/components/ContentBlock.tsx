@@ -114,11 +114,11 @@ export const ContentBlock = React.memo(function ContentBlock({
     }
   }, [block.content, editor])
 
-  // Cancel any in-flight enhance request on unmount.
+  // Cancel any in-flight enhance task on unmount.
   useEffect(() => {
     return () => {
-      if (enhanceRunIdRef.current) {
-        window.ai.cancel(enhanceRunIdRef.current)
+      if (enhanceTaskIdRef.current) {
+        window.task.cancel(enhanceTaskIdRef.current)
       }
       enhanceUnsubscribeRef.current?.()
     }
