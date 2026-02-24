@@ -37,7 +37,7 @@ export function useDialogs(): UseDialogsReturn {
   const showSaveDialog = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      const result = await window.api.dialogSave()
+      const result = await window.dialog.save()
       pushResult(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to show save dialog')
