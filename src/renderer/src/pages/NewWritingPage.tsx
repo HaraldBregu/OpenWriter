@@ -81,7 +81,7 @@ const NewWritingPage: React.FC = () => {
       if (committedRef.current) return
       committedRef.current = true
 
-      const workspace = await window.api.workspaceGetCurrent()
+      const workspace = await window.workspace.getCurrent()
       if (!workspace) return
 
       const now = Date.now()
@@ -130,7 +130,7 @@ const NewWritingPage: React.FC = () => {
     }
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(async () => {
-      const workspace = await window.api.workspaceGetCurrent()
+      const workspace = await window.workspace.getCurrent()
       if (!workspace) return
       const content = writing.blocks.map((b) => b.content).join('\n\n')
       const title = writing.title || 'Untitled Writing'
