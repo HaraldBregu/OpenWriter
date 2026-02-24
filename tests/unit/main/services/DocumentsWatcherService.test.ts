@@ -212,7 +212,7 @@ describe('DocumentsWatcherService', () => {
       const filePath = `${DOCS_DIR}/doc.pdf`
 
       triggerWatcherEvent('add', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('documents:file-changed', expect.objectContaining({
         type: 'added',
@@ -226,7 +226,7 @@ describe('DocumentsWatcherService', () => {
       const filePath = `${DOCS_DIR}/updated.pdf`
 
       triggerWatcherEvent('change', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('documents:file-changed', expect.objectContaining({
         type: 'changed',
@@ -239,7 +239,7 @@ describe('DocumentsWatcherService', () => {
       const filePath = `${DOCS_DIR}/deleted.pdf`
 
       triggerWatcherEvent('unlink', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('documents:file-changed', expect.objectContaining({
         type: 'removed',
@@ -252,7 +252,7 @@ describe('DocumentsWatcherService', () => {
       const filePath = `${DOCS_DIR}/timestamped.pdf`
 
       triggerWatcherEvent('add', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const payload = (broadcastSpy.mock.calls[0] as unknown[])[1] as { timestamp: number }
       expect(typeof payload.timestamp).toBe('number')

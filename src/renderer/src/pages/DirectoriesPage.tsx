@@ -59,7 +59,7 @@ const DirectoriesPage: React.FC = () => {
 
   // Listen for external directory changes from main process
   useEffect(() => {
-    const unsubscribe = window.api.onDirectoriesChanged((dirs) => {
+    const unsubscribe = window.directories.onChanged((dirs) => {
       console.log('[DirectoriesPage] Received directories:changed event with', dirs.length, 'directories')
       dispatch(handleExternalDirectoriesChange(dirs))
     })
