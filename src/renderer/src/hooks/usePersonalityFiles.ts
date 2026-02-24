@@ -14,7 +14,7 @@ export function usePersonalityFiles(): void {
     // Load personality files initially
     const loadFiles = async (): Promise<void> => {
       try {
-        const workspace = await window.api.workspaceGetCurrent()
+        const workspace = await window.workspace.getCurrent()
         if (workspace) {
           console.log('[usePersonalityFiles] Loading personality files for workspace:', workspace)
           await dispatch(loadPersonalityFiles()).unwrap()
