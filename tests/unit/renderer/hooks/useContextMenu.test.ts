@@ -1,29 +1,30 @@
 /**
  * Tests for useContextMenu hook.
  * Exposes context menu triggers for normal and editable contexts.
+ * The hook delegates to window.app.showContextMenu / window.app.showContextMenuEditable.
  */
 import { renderHook, act } from '@testing-library/react'
 import { useContextMenu } from '../../../../src/renderer/src/hooks/useContextMenu'
 
 describe('useContextMenu', () => {
-  it('should call showContextMenu on window.api', () => {
+  it('should call showContextMenu on window.app', () => {
     const { result } = renderHook(() => useContextMenu())
 
     act(() => {
       result.current.showContextMenu()
     })
 
-    expect(window.api.showContextMenu).toHaveBeenCalled()
+    expect(window.app.showContextMenu).toHaveBeenCalled()
   })
 
-  it('should call showContextMenuEditable on window.api', () => {
+  it('should call showContextMenuEditable on window.app', () => {
     const { result } = renderHook(() => useContextMenu())
 
     act(() => {
       result.current.showContextMenuEditable()
     })
 
-    expect(window.api.showContextMenuEditable).toHaveBeenCalled()
+    expect(window.app.showContextMenuEditable).toHaveBeenCalled()
   })
 
   it('should return stable function references', () => {
