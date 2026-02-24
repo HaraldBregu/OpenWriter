@@ -7,8 +7,9 @@
  *  - An "Open Workspace" card with a Browse button
  *  - A Recent Projects section (conditionally shown when projects exist)
  *
- * Strategy: render with a minimal Redux store and mock all window.api calls
+ * Strategy: render with a minimal Redux store and mock all window.workspace calls
  * so tests are pure React/DOM assertions without real IPC.
+ * The component uses window.workspace.* namespace.
  */
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -31,7 +32,7 @@ jest.mock('lucide-react', () => {
   return mocks
 })
 
-// Mock TitleBar — it calls window.api internally
+// Mock TitleBar — it calls window.win internally
 jest.mock('../../../../src/renderer/src/components/TitleBar', () => ({
   TitleBar: ({ title }: { title?: string }) =>
     React.createElement('div', { 'data-testid': 'title-bar' }, title || 'TitleBar')
@@ -68,10 +69,10 @@ function renderWelcomePage() {
 describe('WelcomePage', () => {
   beforeEach(() => {
     // Default: no recent projects, directory exists
-    ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([])
-    ;(window.api.workspaceDirectoryExists as jest.Mock).mockResolvedValue(true)
-    ;(window.api.workspaceSelectFolder as jest.Mock).mockResolvedValue(null)
-    ;(window.api.workspaceSetCurrent as jest.Mock).mockResolvedValue(undefined)
+    ;(window.workspace.getRecent as jest.Mock).mockResolvedValue([])
+    ;(window.workspace.directoryExists as jest.Mock).mockResolvedValue(true)
+    ;(window.workspace.selectFolder as jest.Mock).mockResolvedValue(null)
+    ;(window.workspace.setCurrent as jest.Mock).mockResolvedValue(undefined)
   })
 
   // ---- Hero section --------------------------------------------------------
@@ -118,10 +119,10 @@ describe('WelcomePage', () => {
     expect(screen.getByText('Browse...')).toBeInTheDocument()
   })
 
-  it('should call workspaceGetRecent on mount', () => {
+  it('should call window.workspace.getRecent on mount', () => {
     renderWelcomePage()
 
-    expect(window.api.workspaceGetRecent).toHaveBeenCalled()
+    expect(window.workspace.getRecent).toHaveBeenCalled()
   })
 
   it('should NOT show Recent Projects section when the list is empty', () => {
@@ -133,7 +134,7 @@ describe('WelcomePage', () => {
   // ---- Recent projects section (async) ------------------------------------
 
   it('should display recent projects when available', async () => {
-    ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
+    ;(window.workspace.getRecent as jest.Mock).mockResolvedValue([
       { path: '/Users/test/projects/my-app', lastOpened: Date.now() },
       { path: '/Users/test/projects/other', lastOpened: Date.now() - 60_000 }
     ])
@@ -149,10 +150,10 @@ describe('WelcomePage', () => {
   })
 
   it('should show (Not Found) for projects whose directory no longer exists', async () => {
-    ;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
+    ;(window.workspace.getRecent as jest.Mock).mockResolvedValue([
       { path: '/Users/test/projects/gone', lastOpened: Date.now() }
     ])
-    ;(window.api.workspaceDirectoryExists as jest.Mock).mockResolvedValue(false)
+    ;(window.workspace.directoryExists as jest.Mock).mockResolvedValue(false)
 
     renderWelcomePage()
 
@@ -163,12 +164,12 @@ describe('WelcomePage', () => {
 
   // ---- Browse button interaction -------------------------------------------
 
-  it('should call workspaceSelectFolder when Browse button is clicked', async () => {
+  it('should call window.workspace.selectFolder when Browse button is clicked', async () => {
     const user = userEvent.setup()
     renderWelcomePage()
 
     await user.click(screen.getByText('Browse...'))
 
-    expect(window.api.workspaceSelectFolder).toHaveBeenCalled()
+    expect(window.workspace.selectFolder).toHaveBeenCalled()
   })
 })
