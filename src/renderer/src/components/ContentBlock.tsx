@@ -4,6 +4,7 @@ import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
+import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
 
 // ---------------------------------------------------------------------------
