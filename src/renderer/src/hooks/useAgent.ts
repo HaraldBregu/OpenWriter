@@ -86,7 +86,7 @@ export function useAgent(): UseAgentReturn {
 
       unsubRef.current = unsub
 
-      await window.api.agentRun(fullHistory, runId, providerId)
+      await window.agent.run(fullHistory, runId, providerId)
     },
     [dispatch] // no isRunning in deps — we use the ref for the guard
   )
