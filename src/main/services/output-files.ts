@@ -394,9 +394,18 @@ export class OutputFilesService implements Disposable {
     try {
       const stat = await fs.stat(folderPath)
       if (stat.isDirectory()) {
+        // Mark the folder AND child files as written to prevent the watcher
+        // from re-emitting events for this app-initiated deletion.
         this.markFileAsWritten(folderPath)
+        this.markFileAsWritten(path.join(folderPath, this.CONFIG_FILENAME))
+        this.markFileAsWritten(path.join(folderPath, this.DATA_FILENAME))
         await fs.rm(folderPath, { recursive: true })
         console.log(`[OutputFilesService] Deleted output folder: ${folderPath}`)
+
+        // Emit removal event directly to guarantee renderer notification.
+        // On Windows, chokidar polling may not fire unlink/unlinkDir reliably
+        // for recursive deletions, so we emit explicitly as a safety net.
+        this.emitChangeEvent(folderPath, 'removed')
         return
       }
     } catch (err) {
