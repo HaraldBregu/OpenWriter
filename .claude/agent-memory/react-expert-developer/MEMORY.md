@@ -82,6 +82,14 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - ProseMirror global styles in `src/renderer/src/index.css` (outside `@layer`): reset `outline`, `margin-top` between children, `margin: 0` on `p`
 - Component at: `src/renderer/src/components/ContentBlock.tsx`
 
+## PersonalitySettingsPanel (Inference Settings Sidebar)
+- Location: `src/renderer/src/components/personality/PersonalitySettingsSheet.tsx`
+- Used by both `NewWritingPage` and `NewPostPage` as the right-side AI settings panel
+- `InferenceSettings` shape: `{ providerId, modelId, temperature, maxTokens, reasoning }`
+- Temperature exposed as "Creativity Level" dropdown (Precise/Balanced/Creative/Very Creative/Imaginative/Custom); slider shown only when Custom is selected
+- maxTokens exposed as "Text Length" dropdown (Short 500/Medium 1000/Long 2000/Very Long 4000/Unlimited/Custom); number input shown only when Custom is selected
+- Local `useState` tracks dropdown selection; helper functions `temperatureToPreset` and `maxTokensToPreset` map numeric values back to preset keys on init or slider change
+
 ## Settings Page Patterns
 - Settings page at `src/renderer/src/pages/SettingsPage.tsx` — tab-based layout (`general|models|media|devices|tools|system`)
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx` — toggle with chevron, content revealed below a `border-t`
