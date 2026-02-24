@@ -63,7 +63,7 @@ export function usePostsFileWatcher(): void {
           dispatch(handleExternalPostDelete(event.postId))
 
           // Show user notification
-          await window.api.notificationShow({
+          await window.notification.show({
             title: 'Post Deleted',
             body: `Post was deleted externally: ${event.postId}`,
             urgency: 'normal'
