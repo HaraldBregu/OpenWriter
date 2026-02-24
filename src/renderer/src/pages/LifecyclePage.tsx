@@ -17,7 +17,6 @@ const LifecyclePage: React.FC = () => {
   const { t } = useTranslation()
   const { isSingleInstance, events, appReadyAt, platform, error, restart, refreshEvents } =
     useLifecycle()
-  useTheme()
   useLanguage()
 
   const [confirmRestart, setConfirmRestart] = useState(false)
