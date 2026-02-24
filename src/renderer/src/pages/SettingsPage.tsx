@@ -31,7 +31,6 @@ const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
 
 const SettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('general')
-  useTheme()
   useLanguage()
 
   const ActiveComponent = tabComponents[activeTab]
