@@ -75,7 +75,7 @@ export function usePostsFileWatcher(): void {
           // Reload all posts from workspace to get the latest data
           // Note: We reload all posts rather than trying to parse a single file
           // because the IPC layer already has this functionality and caching
-          const posts = await window.api.postsLoadFromWorkspace()
+          const posts = await window.posts.loadFromWorkspace()
 
           // Find the changed post in the loaded data
           const updatedPost = posts.find((p) => p.id === event.postId)
