@@ -133,7 +133,7 @@ export function useFilesystem(): UseFilesystemReturn {
 
     initialize()
 
-    const cleanup = window.api.onFsWatchEvent((event) => {
+    const cleanup = window.fs.onWatchEvent((event) => {
       if (isMounted) {
         setWatchEvents((prev) => [event, ...prev].slice(0, 100))
       }
