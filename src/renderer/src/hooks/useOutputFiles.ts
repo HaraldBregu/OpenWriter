@@ -27,7 +27,7 @@ export function useOutputFiles(): void {
     loadFiles()
 
     // Listen for file changes from the watcher and refresh the list
-    const unsubscribe = window.api.onOutputFileChange((event) => {
+    const unsubscribe = window.output.onFileChange((event) => {
       console.log(`[useOutputFiles] File ${event.type}: ${event.outputType}/${event.fileId}`)
 
       // Debounce to avoid multiple rapid refreshes (e.g., folder deletion fires
