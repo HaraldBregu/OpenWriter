@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
