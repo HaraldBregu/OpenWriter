@@ -58,6 +58,7 @@ const App: React.FC = () => {
     <ErrorBoundary level="root">
       <Provider store={store}>
         <AppProvider>
+          <ThemeApplicator />
           <PersonalityTaskProvider>
           <Router>
               <Routes>
