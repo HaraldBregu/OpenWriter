@@ -344,7 +344,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   // Listen for writing context menu actions
   useEffect(() => {
-    const cleanup = window.api.onWritingContextMenuAction((data) => {
+    const cleanup = window.contextMenu.onWritingAction((data) => {
       const { action, writingId } = data;
 
       switch (action) {
