@@ -1,7 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScreenRecorder } from '../components/ScreenRecorder'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 
 const ScreenPage: React.FC = () => {
