@@ -189,7 +189,7 @@ describe('DocumentsWatcherService', () => {
 
       const filePath = `${DOCS_DIR}/external-edit.pdf`
       triggerWatcherEvent('add', filePath)
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       expect(broadcastSpy).toHaveBeenCalledWith('documents:file-changed', expect.objectContaining({
         type: 'added',
