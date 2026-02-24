@@ -73,7 +73,7 @@ export function useLifecycle(): UseLifecycleReturn {
 
     initialize()
 
-    const cleanup = window.api.onLifecycleEvent((event) => {
+    const cleanup = window.lifecycle.onEvent((event) => {
       if (isMounted) {
         setEvents((prev) => [...prev, event])
       }
