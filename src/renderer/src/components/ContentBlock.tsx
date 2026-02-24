@@ -80,6 +80,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   const editor = useEditor({
     extensions: [StarterKit, Markdown],
     content: block.content || '',
+    contentType: 'markdown',
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
       onChangeRef.current(blockIdRef.current, ed.getMarkdown())
