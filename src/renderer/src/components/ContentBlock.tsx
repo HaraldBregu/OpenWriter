@@ -164,14 +164,16 @@ interface InsertBlockPlaceholderProps {
 
 export const InsertBlockPlaceholder = React.memo(function InsertBlockPlaceholder({ onClick }: InsertBlockPlaceholderProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full px-5 py-4 flex items-center justify-center gap-2 border border-dashed border-border/50 rounded-lg opacity-40 hover:opacity-80 transition-opacity cursor-pointer text-muted-foreground"
-    >
-      <Plus className="h-4 w-4" />
-      <span className="text-sm">Insert block</span>
-    </button>
+    <div className="px-5 py-4">
+      <button
+        type="button"
+        onClick={onClick}
+        className="w-full py-3 flex items-center justify-center gap-2 border border-dashed border-border/50 rounded-lg opacity-40 hover:opacity-80 transition-opacity cursor-pointer text-muted-foreground"
+      >
+        <Plus className="h-4 w-4" />
+        <span className="text-sm">Insert block</span>
+      </button>
+    </div>
   )
 })
 InsertBlockPlaceholder.displayName = 'InsertBlockPlaceholder'
