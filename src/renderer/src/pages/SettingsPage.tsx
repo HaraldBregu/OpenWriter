@@ -1,5 +1,4 @@
 import React, { useState, lazy, Suspense } from 'react'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { LoadingSkeleton } from '../components/LoadingSkeleton'
 
