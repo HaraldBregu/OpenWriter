@@ -53,7 +53,7 @@ function hasPostsChanged(prevPosts: Post[] | null, currentPosts: Post[]): boolea
 async function syncPostsToElectron(posts: Post[]): Promise<void> {
   try {
     // Check if there's an active workspace
-    const workspacePath = await window.api.workspaceGetCurrent()
+    const workspacePath = await window.workspace.getCurrent()
 
     if (!workspacePath) {
       // No workspace selected, skip sync
@@ -138,7 +138,7 @@ function debouncedSync(posts: Post[]): void {
 async function deletePostFile(postId: string): Promise<void> {
   try {
     // Check if there's an active workspace
-    const workspacePath = await window.api.workspaceGetCurrent()
+    const workspacePath = await window.workspace.getCurrent()
 
     if (!workspacePath) {
       console.debug('[PostsSync] No workspace selected, skipping file deletion')
