@@ -254,7 +254,7 @@ export const deleteOutputItem = createAsyncThunk<
   'output/delete',
   async (params, { rejectWithValue }) => {
     try {
-      await window.api.outputDelete(params)
+      await window.output.delete(params)
       return params
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete output item'
