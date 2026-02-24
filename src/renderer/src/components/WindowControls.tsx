@@ -8,7 +8,7 @@ export function WindowControls() {
   }, [])
 
   const handleMinimize = () => {
-    window.api.windowMinimize()
+    window.win.minimize()
   }
 
   const handleMaximize = () => {
