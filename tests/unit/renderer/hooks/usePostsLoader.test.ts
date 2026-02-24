@@ -123,7 +123,7 @@ afterEach(() => {
 describe('usePostsLoader — initial state', () => {
   it('returns isLoading false and error null synchronously on mount', () => {
     // workspaceGetCurrent is pending (never resolves here — we check synchronous snapshot)
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockReturnValue(new Promise(() => {}))
+    mockWorkspaceGetCurrent.mockReturnValue(new Promise(() => {}))
 
     const { wrapper } = createWrapper()
     const { result } = renderHook(() => usePostsLoader(), { wrapper })
@@ -136,26 +136,26 @@ describe('usePostsLoader — initial state', () => {
 
 describe('usePostsLoader — workspace absent', () => {
   it('skips postsLoadFromWorkspace when no workspace is set', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue(null)
+    mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
     renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.workspaceGetCurrent).toHaveBeenCalled()
+      expect(mockWorkspaceGetCurrent).toHaveBeenCalled()
     })
 
-    expect(window.api.postsLoadFromWorkspace).not.toHaveBeenCalled()
+    expect(mockPostsLoadFromWorkspace).not.toHaveBeenCalled()
   })
 
   it('does not populate the store when workspace is absent', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue(null)
+    mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { store, wrapper } = createWrapper()
     renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.workspaceGetCurrent).toHaveBeenCalled()
+      expect(mockWorkspaceGetCurrent).toHaveBeenCalled()
     })
 
     const state = store.getState() as { posts: { posts: Post[] } }
@@ -165,20 +165,20 @@ describe('usePostsLoader — workspace absent', () => {
 
 describe('usePostsLoader — workspace present', () => {
   it('calls postsLoadFromWorkspace when a workspace is set', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue(SAMPLE_POSTS)
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockResolvedValue(SAMPLE_POSTS)
 
     const { wrapper } = createWrapper()
     renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.postsLoadFromWorkspace).toHaveBeenCalledTimes(1)
+      expect(mockPostsLoadFromWorkspace).toHaveBeenCalledTimes(1)
     })
   })
 
   it('populates the Redux store with loaded posts', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue(SAMPLE_POSTS)
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockResolvedValue(SAMPLE_POSTS)
 
     const { store, wrapper } = createWrapper()
     renderHook(() => usePostsLoader(), { wrapper })
@@ -190,8 +190,8 @@ describe('usePostsLoader — workspace present', () => {
   })
 
   it('correctly stores the post titles in the Redux store', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue(SAMPLE_POSTS)
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockResolvedValue(SAMPLE_POSTS)
 
     const { store, wrapper } = createWrapper()
     renderHook(() => usePostsLoader(), { wrapper })
@@ -207,14 +207,14 @@ describe('usePostsLoader — workspace present', () => {
 
 describe('usePostsLoader — duplicate-load prevention', () => {
   it('does not call postsLoadFromWorkspace more than once across re-renders', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue(SAMPLE_POSTS)
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockResolvedValue(SAMPLE_POSTS)
 
     const { wrapper } = createWrapper()
     const { rerender } = renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.postsLoadFromWorkspace).toHaveBeenCalledTimes(1)
+      expect(mockPostsLoadFromWorkspace).toHaveBeenCalledTimes(1)
     })
 
     // Force multiple re-renders
@@ -222,14 +222,14 @@ describe('usePostsLoader — duplicate-load prevention', () => {
     rerender()
 
     // Still only called once — hasLoadedRef guard prevents duplicate loads
-    expect(window.api.postsLoadFromWorkspace).toHaveBeenCalledTimes(1)
+    expect(mockPostsLoadFromWorkspace).toHaveBeenCalledTimes(1)
   })
 })
 
 describe('usePostsLoader — error handling', () => {
   it('does not show a notification for ENOENT errors', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockRejectedValue(
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockRejectedValue(
       new Error('ENOENT: no such file or directory')
     )
 
@@ -239,21 +239,19 @@ describe('usePostsLoader — error handling', () => {
     renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.postsLoadFromWorkspace).toHaveBeenCalled()
+      expect(mockPostsLoadFromWorkspace).toHaveBeenCalled()
     })
 
     // Small delay to allow async catch block to complete
     await act(async () => { await Promise.resolve() })
 
-    expect(window.api.notificationShow).not.toHaveBeenCalled()
+    expect(mockNotificationShow).not.toHaveBeenCalled()
     consoleError.mockRestore()
   })
 
   it('shows a notification for non-ENOENT errors', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockRejectedValue(
-      new Error('Permission denied')
-    )
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockRejectedValue(new Error('Permission denied'))
 
     const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
@@ -261,7 +259,7 @@ describe('usePostsLoader — error handling', () => {
     renderHook(() => usePostsLoader(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.notificationShow).toHaveBeenCalledWith(
+      expect(mockNotificationShow).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Load Failed' })
       )
     })
@@ -270,8 +268,8 @@ describe('usePostsLoader — error handling', () => {
   })
 
   it('logs the error regardless of type', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockRejectedValue(new Error('Crash'))
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockRejectedValue(new Error('Crash'))
 
     const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
@@ -292,21 +290,11 @@ describe('usePostsLoader — error handling', () => {
 
 describe('reloadPostsFromWorkspace', () => {
   it('dispatches loadPosts when workspace is set', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue(SAMPLE_POSTS)
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockResolvedValue(SAMPLE_POSTS)
 
     const { store, wrapper } = createWrapper()
-
-    // Render a temporary hook to access the real store dispatch
-    let storeDispatch: ReturnType<typeof store.dispatch> | undefined
-
-    renderHook(
-      () => {
-        storeDispatch = store.dispatch
-        return null
-      },
-      { wrapper }
-    )
+    renderHook(() => null, { wrapper })
 
     await act(async () => {
       await reloadPostsFromWorkspace(store.dispatch)
@@ -317,7 +305,7 @@ describe('reloadPostsFromWorkspace', () => {
   })
 
   it('does nothing when no workspace is set', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue(null)
+    mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { store, wrapper } = createWrapper()
     renderHook(() => null, { wrapper })
@@ -326,12 +314,12 @@ describe('reloadPostsFromWorkspace', () => {
       await reloadPostsFromWorkspace(store.dispatch)
     })
 
-    expect(window.api.postsLoadFromWorkspace).not.toHaveBeenCalled()
+    expect(mockPostsLoadFromWorkspace).not.toHaveBeenCalled()
   })
 
   it('re-throws non-ENOENT errors and shows notification', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockRejectedValue(new Error('Disk full'))
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockRejectedValue(new Error('Disk full'))
 
     const consoleError = jest.spyOn(console, 'error').mockImplementation()
     const { store, wrapper } = createWrapper()
@@ -343,15 +331,15 @@ describe('reloadPostsFromWorkspace', () => {
       })
     ).rejects.toThrow('Disk full')
 
-    expect(window.api.notificationShow).toHaveBeenCalledWith(
+    expect(mockNotificationShow).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Reload Failed' })
     )
     consoleError.mockRestore()
   })
 
   it('re-throws ENOENT errors WITHOUT showing a notification', async () => {
-    ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue('/workspace/path')
-    ;(window.api.postsLoadFromWorkspace as jest.Mock).mockRejectedValue(
+    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
+    mockPostsLoadFromWorkspace.mockRejectedValue(
       new Error('ENOENT: no such file or directory')
     )
 
@@ -365,7 +353,7 @@ describe('reloadPostsFromWorkspace', () => {
       })
     ).rejects.toThrow('ENOENT')
 
-    expect(window.api.notificationShow).not.toHaveBeenCalled()
+    expect(mockNotificationShow).not.toHaveBeenCalled()
     consoleError.mockRestore()
   })
 })

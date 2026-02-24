@@ -143,7 +143,7 @@ export function usePosts(): UsePostsReturn {
         setError(null)
 
         console.log(`[usePosts] Deleting post: ${postId}`)
-        await window.api.postsDeletePost(postId)
+        await window.posts.delete(postId)
 
         // Reload posts (cache is automatically invalidated by delete)
         await loadPosts()
