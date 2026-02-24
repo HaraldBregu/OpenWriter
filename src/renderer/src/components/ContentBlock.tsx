@@ -103,7 +103,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     const current = editor.getMarkdown()
     const incoming = block.content || ''
     if (current !== incoming) {
-      editor.commands.setContent(incoming, { emitUpdate: false })
+      editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
       setIsEmpty(editor.isEmpty)
     }
   }, [block.content, editor])
