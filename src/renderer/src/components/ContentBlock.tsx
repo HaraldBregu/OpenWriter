@@ -152,17 +152,30 @@ export const ContentBlock = React.memo(function ContentBlock({
     if (!taskState) return
 
     if (taskState.status === 'completed') {
-      onChangeRef.current(blockIdRef.current, enhanceAccumulatedRef.current)
-      enhanceAccumulatedRef.current = ''
+      // The editor already contains the full streamed content — just sync parent state.
+      const ed = editorRef.current
+      if (ed && !ed.isDestroyed) {
+        onChangeRef.current(blockIdRef.current, ed.getMarkdown())
+      }
       setIsEnhancing(false)
       setEnhanceTaskId(null)
     } else if (taskState.status === 'error') {
       console.error('[ContentBlock] Enhance error:', taskState.error)
-      enhanceAccumulatedRef.current = ''
+      // Revert editor to the text that existed before enhance started.
+      const ed = editorRef.current
+      if (ed && !ed.isDestroyed) {
+        ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
+        onChangeRef.current(blockIdRef.current, originalTextRef.current)
+      }
       setIsEnhancing(false)
       setEnhanceTaskId(null)
     } else if (taskState.status === 'cancelled') {
-      enhanceAccumulatedRef.current = ''
+      // Revert editor to the text that existed before enhance started.
+      const ed = editorRef.current
+      if (ed && !ed.isDestroyed) {
+        ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
+        onChangeRef.current(blockIdRef.current, originalTextRef.current)
+      }
       setIsEnhancing(false)
       setEnhanceTaskId(null)
     }
