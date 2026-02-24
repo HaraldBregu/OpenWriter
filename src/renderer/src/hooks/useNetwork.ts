@@ -53,7 +53,7 @@ export function useNetwork(): UseNetworkReturn {
   const refreshStatus = async (): Promise<void> => {
     try {
       setError(null)
-      const status = await window.api.networkGetConnectionStatus()
+      const status = await window.network.getConnectionStatus()
       setConnectionStatus(status)
       setIsOnline(status === 'online')
     } catch (err) {
