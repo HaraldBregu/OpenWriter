@@ -122,7 +122,7 @@ export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValu
   'output/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.api.outputLoadAll()
+      const files = await window.output.loadAll()
       return files.map(mapOutputFileToItem)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load output items'
