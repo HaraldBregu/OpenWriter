@@ -24,7 +24,7 @@ export function usePlatform(): string {
       return
     }
     if (!platformPromise) {
-      platformPromise = window.api.getPlatform()
+      platformPromise = window.app.getPlatform()
     }
     platformPromise.then((p) => {
       cachedPlatform = p
