@@ -59,7 +59,7 @@ const ModelsSettings: React.FC = () => {
 
   const handleTokenBlur = useCallback((providerId: string, token: string) => {
     console.log(`[Models] Token saved: provider=${providerId} token=${token ? '(set)' : '(cleared)'}`)
-    window.api.storeSetApiToken(providerId, token).catch(console.error)
+    window.store.setApiToken(providerId, token).catch(console.error)
   }, [])
 
   return (
