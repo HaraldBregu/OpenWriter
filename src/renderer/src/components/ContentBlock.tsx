@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent } from '@tiptap/react'
@@ -70,12 +70,18 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   // Track whether the editor is empty to conditionally show the placeholder span.
   const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
+  const [isEnhancing, setIsEnhancing] = useState(false)
 
   // Stable callback ref for onChange so useEditor options don't need to re-create the editor.
   const onChangeRef = React.useRef(onChange)
   onChangeRef.current = onChange
   const blockIdRef = React.useRef(block.id)
   blockIdRef.current = block.id
+
+  // Refs for enhance-with-AI stream management — avoids stale closures.
+  const enhanceRunIdRef = useRef<string | null>(null)
+  const enhanceUnsubscribeRef = useRef<(() => void) | null>(null)
+  const enhanceAccumulatedRef = useRef<string>('')
 
   const editor = useEditor({
     extensions: [StarterKit, Markdown],
@@ -107,6 +113,72 @@ export const ContentBlock = React.memo(function ContentBlock({
       setIsEmpty(editor.isEmpty)
     }
   }, [block.content, editor])
+
+  // Cancel any in-flight enhance request on unmount.
+  useEffect(() => {
+    return () => {
+      if (enhanceRunIdRef.current) {
+        window.ai.cancel(enhanceRunIdRef.current)
+      }
+      enhanceUnsubscribeRef.current?.()
+    }
+  }, [])
+
+  const handleEnhance = useCallback(async () => {
+    if (!editor || isEnhancing) return
+
+    const currentText = editor.getMarkdown()
+
+    if (!currentText.trim()) return
+
+    setIsEnhancing(true)
+    enhanceAccumulatedRef.current = ''
+
+    // Register streaming event listener before starting inference.
+    const unsubscribe = window.ai.onEvent((event) => {
+      const data = event.data as { runId: string; token?: string; message?: string }
+
+      if (data.runId !== enhanceRunIdRef.current) return
+
+      if (event.type === 'token') {
+        enhanceAccumulatedRef.current += data.token ?? ''
+      } else if (event.type === 'done') {
+        const enhanced = enhanceAccumulatedRef.current
+        onChangeRef.current(blockIdRef.current, enhanced)
+        setIsEnhancing(false)
+        enhanceRunIdRef.current = null
+        enhanceAccumulatedRef.current = ''
+        enhanceUnsubscribeRef.current?.()
+        enhanceUnsubscribeRef.current = null
+      } else if (event.type === 'error') {
+        console.error('[ContentBlock] Enhance error:', data.message)
+        setIsEnhancing(false)
+        enhanceRunIdRef.current = null
+        enhanceAccumulatedRef.current = ''
+        enhanceUnsubscribeRef.current?.()
+        enhanceUnsubscribeRef.current = null
+      }
+    })
+
+    enhanceUnsubscribeRef.current = unsubscribe
+
+    try {
+      const result = await window.ai.inference('enhance', { prompt: currentText })
+      if (result.success) {
+        enhanceRunIdRef.current = result.data.runId
+      } else {
+        console.error('[ContentBlock] Enhance inference failed:', result.error)
+        setIsEnhancing(false)
+        unsubscribe()
+        enhanceUnsubscribeRef.current = null
+      }
+    } catch (err) {
+      console.error('[ContentBlock] Enhance request threw:', err)
+      setIsEnhancing(false)
+      unsubscribe()
+      enhanceUnsubscribeRef.current = null
+    }
+  }, [editor, isEnhancing])
 
   const handleCopy = useCallback(() => {
     if (!editor) return
@@ -166,12 +238,11 @@ export const ContentBlock = React.memo(function ContentBlock({
         {/* Action bar */}
         <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0">
           <ActionButton
-            title="Enhance with AI"
-            onClick={() => {
-              /* TODO */
-            }}
+            title={isEnhancing ? 'Enhancing…' : 'Enhance with AI'}
+            onClick={handleEnhance}
+            disabled={isEnhancing || isEmpty}
           >
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
           </ActionButton>
           <ActionButton
             title="Copy"

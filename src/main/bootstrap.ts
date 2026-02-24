@@ -29,7 +29,7 @@ import { DialogService } from './services/dialogs'
 import { NotificationService } from './services/notification'
 import { ClipboardService } from './services/clipboard'
 import { AgentService } from './services/agent'
-import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent } from './pipeline'
+import { AgentRegistry, PipelineService, EchoAgent, ChatAgent, CounterAgent, AlphabetAgent, EnhanceAgent } from './pipeline'
 import { TaskHandlerRegistry } from './tasks/TaskHandlerRegistry'
 import { TaskExecutorService } from './tasks/TaskExecutorService'
 import { FileDownloadHandler, AIChatHandler } from './tasks/handlers'
@@ -128,6 +128,7 @@ export function bootstrapServices(): BootstrapResult {
   agentRegistry.register(new ChatAgent(storeService))
   agentRegistry.register(new CounterAgent(storeService))
   agentRegistry.register(new AlphabetAgent(storeService))
+  agentRegistry.register(new EnhanceAgent(storeService))
   container.register('pipeline', new PipelineService(agentRegistry, eventBus))
 
   // Task system -- handler registry + executor service + built-in handlers
