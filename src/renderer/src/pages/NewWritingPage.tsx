@@ -231,6 +231,13 @@ const NewWritingPage: React.FC = () => {
   const title = isDraft ? draftTitle : writing!.title
   const blocks = isDraft ? draftBlocks : writing!.blocks
 
+  const { charCount, wordCount } = useMemo(() => {
+    const joined = blocks.map((b) => b.content).join(' ').trim()
+    const chars = joined.length
+    const words = joined.length === 0 ? 0 : joined.split(/\s+/).filter(Boolean).length
+    return { charCount: chars, wordCount: words }
+  }, [blocks])
+
   return (
     <div className="h-full flex flex-col">
 
