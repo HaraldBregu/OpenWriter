@@ -256,7 +256,7 @@ export function AppProvider({ children, initialState: customInitialState }: AppP
       console.error('Failed to save theme mode:', error)
     }
 
-    window.api.setTheme(state.theme)
+    window.app.setTheme(state.theme)
   }, [state.theme])
 
   // When in "system" mode, track OS preference changes in real-time
@@ -276,7 +276,7 @@ export function AppProvider({ children, initialState: customInitialState }: AppP
   // Keeps sibling windows in sync when theme is changed from another
   // window or from the macOS Developer menu.
   useEffect(() => {
-    const cleanup = window.api.onThemeChange((theme: string) => {
+    const cleanup = window.app.onThemeChange((theme: string) => {
       if (theme === 'light' || theme === 'dark' || theme === 'system') {
         dispatch({ type: 'SET_THEME', payload: theme as ThemeMode })
       }
