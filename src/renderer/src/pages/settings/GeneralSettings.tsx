@@ -27,7 +27,7 @@ const GeneralSettings: React.FC = () => {
   } = useMediaPermissions()
 
   useEffect(() => {
-    window.api.workspaceGetCurrent().then((workspace) => {
+    window.workspace.getCurrent().then((workspace) => {
       setCurrentWorkspace(workspace)
     }).catch(console.error)
   }, [])
