@@ -630,7 +630,7 @@ const DocumentsPage: React.FC = () => {
   // Delete document handler
   const handleDeleteDocument = useCallback(async (id: string) => {
     try {
-      await window.api.documentsDeleteFile(id)
+      await window.documents.delete(id)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to delete document:', error)
