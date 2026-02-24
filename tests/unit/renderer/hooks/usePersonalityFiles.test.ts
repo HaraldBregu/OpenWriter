@@ -78,6 +78,13 @@ function createWrapper() {
 }
 
 // ---------------------------------------------------------------------------
+// Mock for window.api.personalityLoadAll
+// (not included in the preload-bridge stub — patched here per-test)
+// ---------------------------------------------------------------------------
+
+const mockPersonalityLoadAll = jest.fn().mockResolvedValue([])
+
+// ---------------------------------------------------------------------------
 // Setup / Teardown
 // ---------------------------------------------------------------------------
 
@@ -85,12 +92,20 @@ beforeEach(() => {
   capturedFileChangeCallback = null
   mockWorkspaceGetCurrent.mockResolvedValue(null)
   mockUnsubscribeFileChange.mockClear()
+  mockPersonalityLoadAll.mockResolvedValue([])
 
   installWindowMocks()
 
-  // The loadPersonalityFiles thunk calls window.api.personalityLoadAll
-  // which is provided by the preload-bridge global mock (renderer.ts setup).
-  ;(window.api.personalityLoadAll as jest.Mock).mockResolvedValue([])
+  // Extend the preload-bridge window.api mock with personalityLoadAll,
+  // which is the method the loadPersonalityFiles thunk calls.
+  Object.defineProperty(window, 'api', {
+    value: {
+      ...window.api,
+      personalityLoadAll: mockPersonalityLoadAll
+    },
+    writable: true,
+    configurable: true
+  })
 })
 
 afterEach(() => {

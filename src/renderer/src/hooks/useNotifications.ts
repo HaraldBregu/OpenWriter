@@ -44,7 +44,7 @@ export function useNotifications(): UseNotificationsReturn {
 
   // Listen for notification events
   useEffect(() => {
-    const unsubscribe = window.api.onNotificationEvent((result) => {
+    const unsubscribe = window.notification.onEvent((result) => {
       setLog((prev) => [result, ...prev].slice(0, 100))
     })
 
