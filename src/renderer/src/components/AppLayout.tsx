@@ -360,7 +360,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             addWriting({
               id: newId,
               title: `${source.title} (Copy)`,
-              content: source.content,
+              blocks: source.blocks.map((b) => ({ id: crypto.randomUUID(), content: b.content })),
               category: source.category,
               tags: source.tags,
               visibility: source.visibility,
