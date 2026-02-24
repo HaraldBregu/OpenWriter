@@ -76,6 +76,9 @@ The application handles `.tsx` files (Tesseract AI documents) with proper file a
 - Node.js >= 22.0.0
 - Yarn package manager (configured with .yarnrc.yml)
 
+## Code Style
+- Do NOT create documentation markdown files (README.md, IMPLEMENTATION_SUMMARY.md, MIGRATION_GUIDE.md, etc.) unless explicitly requested.
+
 ## Special Considerations
 - Multi-platform Electron app with platform-specific build configurations
 - Uses hash-based routing for Electron compatibility

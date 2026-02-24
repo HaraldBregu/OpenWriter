@@ -68,7 +68,7 @@ export function useFilesystem(): UseFilesystemReturn {
   const writeFile = useCallback(async (filePath: string, content: string): Promise<boolean> => {
     try {
       setError(null)
-      const result = await window.api.fsWriteFile(filePath, content)
+      const result = await window.fs.writeFile(filePath, content)
       return result.success
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to write file'
