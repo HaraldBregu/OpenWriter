@@ -86,13 +86,13 @@ export function useNetwork(): UseNetworkReturn {
         }
 
         // Get connection status
-        const status = await window.api.networkGetConnectionStatus()
+        const status = await window.network.getConnectionStatus()
         if (isMounted) {
           setConnectionStatus(status)
         }
 
         // Get network interfaces
-        const interfaceData = await window.api.networkGetInterfaces()
+        const interfaceData = await window.network.getInterfaces()
         if (isMounted) {
           setInterfaces(interfaceData)
         }
