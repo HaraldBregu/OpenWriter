@@ -56,7 +56,7 @@ export function usePosts(): UsePostsReturn {
       setError(null)
 
       console.log('[usePosts] Loading posts from workspace...')
-      const loadedPosts = await window.api.postsLoadFromWorkspace()
+      const loadedPosts = await window.posts.loadFromWorkspace()
 
       setPosts(loadedPosts)
       console.log(`[usePosts] Loaded ${loadedPosts.length} posts`)
