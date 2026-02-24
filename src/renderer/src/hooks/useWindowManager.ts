@@ -26,7 +26,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const refresh = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      const state = await window.api.wmGetState()
+      const state = await window.wm.getState()
       setWindows(state.windows)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch window state'
