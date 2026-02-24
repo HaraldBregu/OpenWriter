@@ -73,7 +73,7 @@ export function useMediaPermissions(): UseMediaPermissionsReturn {
     setError(null)
 
     try {
-      const status = await window.api.requestCameraPermission()
+      const status = await window.media.requestCameraPermission()
       setCameraStatus(status)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to request camera permission'
