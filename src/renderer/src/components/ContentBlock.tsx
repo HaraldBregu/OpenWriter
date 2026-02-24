@@ -135,12 +135,12 @@ export const ContentBlock = React.memo(function ContentBlock({
 
     // Subscribe to task events before submitting so no tokens are missed.
     const unsubscribe = window.task.onEvent((event) => {
-      const data = event.data as { taskId: string; token?: string; message?: string; result?: { content: string } }
+      const data = event.data as { taskId: string; message?: string; detail?: { token?: string }; result?: { content: string } }
 
       if (data.taskId !== enhanceTaskIdRef.current) return
 
-      if (event.type === 'progress' && (event.data as { message?: string }).message === 'token') {
-        enhanceAccumulatedRef.current += data.token ?? ''
+      if (event.type === 'progress' && data.message === 'token') {
+        enhanceAccumulatedRef.current += data.detail?.token ?? ''
       } else if (event.type === 'completed') {
         onChangeRef.current(blockIdRef.current, enhanceAccumulatedRef.current)
         setIsEnhancing(false)
