@@ -1,21 +1,21 @@
 /**
  * Tests for useNetwork hook.
- * Initializes network state from window.api and subscribes to status changes.
+ * Initializes network state from window.network and subscribes to status changes.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useNetwork } from '../../../../src/renderer/src/hooks/useNetwork'
 
 describe('useNetwork', () => {
   it('should initialize and fetch network state on mount', async () => {
-    ;(window.api.networkIsSupported as jest.Mock).mockResolvedValue(true)
-    ;(window.api.networkGetInfo as jest.Mock).mockResolvedValue({
+    ;(window.network.isSupported as jest.Mock).mockResolvedValue(true)
+    ;(window.network.getInfo as jest.Mock).mockResolvedValue({
       platform: 'win32',
       supported: true,
       isOnline: true,
       interfaceCount: 3
     })
-    ;(window.api.networkGetConnectionStatus as jest.Mock).mockResolvedValue('online')
-    ;(window.api.networkGetInterfaces as jest.Mock).mockResolvedValue([
+    ;(window.network.getConnectionStatus as jest.Mock).mockResolvedValue('online')
+    ;(window.network.getInterfaces as jest.Mock).mockResolvedValue([
       { name: 'eth0', family: 'IPv4', address: '192.168.1.1', netmask: '255.255.255.0', mac: '00:00:00:00:00:00', internal: false, cidr: '192.168.1.1/24' }
     ])
 
@@ -33,12 +33,12 @@ describe('useNetwork', () => {
   })
 
   it('should handle unsupported networks', async () => {
-    ;(window.api.networkIsSupported as jest.Mock).mockResolvedValue(false)
+    ;(window.network.isSupported as jest.Mock).mockResolvedValue(false)
 
     const { result } = renderHook(() => useNetwork())
 
     await waitFor(() => {
-      expect(window.api.networkIsSupported).toHaveBeenCalled()
+      expect(window.network.isSupported).toHaveBeenCalled()
     })
 
     expect(result.current.isSupported).toBe(false)
@@ -46,18 +46,18 @@ describe('useNetwork', () => {
 
   it('should subscribe to status changes and clean up', async () => {
     const unsubscribe = jest.fn()
-    ;(window.api.networkIsSupported as jest.Mock).mockResolvedValue(true)
-    ;(window.api.networkGetInfo as jest.Mock).mockResolvedValue({
+    ;(window.network.isSupported as jest.Mock).mockResolvedValue(true)
+    ;(window.network.getInfo as jest.Mock).mockResolvedValue({
       platform: 'win32', supported: true, isOnline: true, interfaceCount: 1
     })
-    ;(window.api.networkGetConnectionStatus as jest.Mock).mockResolvedValue('online')
-    ;(window.api.networkGetInterfaces as jest.Mock).mockResolvedValue([])
-    ;(window.api.onNetworkStatusChange as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.network.getConnectionStatus as jest.Mock).mockResolvedValue('online')
+    ;(window.network.getInterfaces as jest.Mock).mockResolvedValue([])
+    ;(window.network.onStatusChange as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useNetwork())
 
     await waitFor(() => {
-      expect(window.api.onNetworkStatusChange).toHaveBeenCalled()
+      expect(window.network.onStatusChange).toHaveBeenCalled()
     })
 
     unmount()
@@ -65,7 +65,7 @@ describe('useNetwork', () => {
   })
 
   it('should set error when initialization fails', async () => {
-    ;(window.api.networkIsSupported as jest.Mock).mockRejectedValue(new Error('network fail'))
+    ;(window.network.isSupported as jest.Mock).mockRejectedValue(new Error('network fail'))
 
     const { result } = renderHook(() => useNetwork())
 
@@ -76,12 +76,12 @@ describe('useNetwork', () => {
 
   describe('refreshInterfaces', () => {
     it('should update interfaces list', async () => {
-      ;(window.api.networkIsSupported as jest.Mock).mockResolvedValue(true)
-      ;(window.api.networkGetInfo as jest.Mock).mockResolvedValue({
+      ;(window.network.isSupported as jest.Mock).mockResolvedValue(true)
+      ;(window.network.getInfo as jest.Mock).mockResolvedValue({
         platform: 'win32', supported: true, isOnline: true, interfaceCount: 0
       })
-      ;(window.api.networkGetConnectionStatus as jest.Mock).mockResolvedValue('online')
-      ;(window.api.networkGetInterfaces as jest.Mock).mockResolvedValue([])
+      ;(window.network.getConnectionStatus as jest.Mock).mockResolvedValue('online')
+      ;(window.network.getInterfaces as jest.Mock).mockResolvedValue([])
 
       const { result } = renderHook(() => useNetwork())
 
@@ -89,7 +89,7 @@ describe('useNetwork', () => {
         expect(result.current.isSupported).toBe(true)
       })
 
-      ;(window.api.networkGetInterfaces as jest.Mock).mockResolvedValue([
+      ;(window.network.getInterfaces as jest.Mock).mockResolvedValue([
         { name: 'wlan0', family: 'IPv4', address: '10.0.0.1', netmask: '255.0.0.0', mac: 'aa:bb:cc:dd:ee:ff', internal: false, cidr: null }
       ])
 
@@ -104,12 +104,12 @@ describe('useNetwork', () => {
 
   describe('refreshStatus', () => {
     it('should update connection status', async () => {
-      ;(window.api.networkIsSupported as jest.Mock).mockResolvedValue(true)
-      ;(window.api.networkGetInfo as jest.Mock).mockResolvedValue({
+      ;(window.network.isSupported as jest.Mock).mockResolvedValue(true)
+      ;(window.network.getInfo as jest.Mock).mockResolvedValue({
         platform: 'win32', supported: true, isOnline: true, interfaceCount: 0
       })
-      ;(window.api.networkGetConnectionStatus as jest.Mock).mockResolvedValue('online')
-      ;(window.api.networkGetInterfaces as jest.Mock).mockResolvedValue([])
+      ;(window.network.getConnectionStatus as jest.Mock).mockResolvedValue('online')
+      ;(window.network.getInterfaces as jest.Mock).mockResolvedValue([])
 
       const { result } = renderHook(() => useNetwork())
 
@@ -117,7 +117,7 @@ describe('useNetwork', () => {
         expect(result.current.connectionStatus).toBe('online')
       })
 
-      ;(window.api.networkGetConnectionStatus as jest.Mock).mockResolvedValue('offline')
+      ;(window.network.getConnectionStatus as jest.Mock).mockResolvedValue('offline')
 
       await act(async () => {
         await result.current.refreshStatus()
