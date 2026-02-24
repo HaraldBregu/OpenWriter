@@ -31,8 +31,8 @@ export function useMediaPermissions(): UseMediaPermissionsReturn {
 
     try {
       const [micStatus, camStatus] = await Promise.all([
-        window.api.getMicrophonePermissionStatus(),
-        window.api.getCameraPermissionStatus()
+        window.media.getMicrophonePermissionStatus(),
+        window.media.getCameraPermissionStatus()
       ])
 
       setMicrophoneStatus(micStatus)
