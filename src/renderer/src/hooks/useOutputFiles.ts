@@ -14,7 +14,7 @@ export function useOutputFiles(): void {
     // Load output items initially
     const loadFiles = async (): Promise<void> => {
       try {
-        const workspace = await window.api.workspaceGetCurrent()
+        const workspace = await window.workspace.getCurrent()
         if (workspace) {
           console.log('[useOutputFiles] Loading output items for workspace:', workspace)
           await dispatch(loadOutputItems()).unwrap()
