@@ -260,82 +260,66 @@ describe('FileDownloadHandler', () => {
 
   describe('execute — retry logic', () => {
     it('should retry the specified number of times then throw with retry count', async () => {
-      jest.useFakeTimers()
-
-      // Make net.request always fail with a network error
+      // Arrange: net.request fires the 'error' event synchronously via on() so
+      // there is no actual async delay to manage with fake timers.
       const { net } = await import('electron')
       ;(net.request as jest.Mock).mockImplementation(() => {
+        const errorCallbacks: Array<(err: Error) => void> = []
         const req = {
-          on: jest.fn().mockImplementation((event: string, cb: (...args: unknown[]) => void) => {
-            if (event === 'error') {
-              // Fire the error asynchronously
-              setTimeout(() => cb(new Error('ECONNRESET')), 0)
-            }
+          on: jest.fn().mockImplementation((event: string, cb: (err: Error) => void) => {
+            if (event === 'error') errorCallbacks.push(cb)
             return req
           }),
-          end: jest.fn(),
+          end: jest.fn().mockImplementation(() => {
+            // Fire error synchronously when end() is called
+            errorCallbacks.forEach((cb) => cb(new Error('ECONNRESET')))
+          }),
           abort: jest.fn()
         }
         return req
       })
 
-      const executePromise = handler.execute(
-        { url: 'https://example.com/file.zip', maxRetries: 2, retryDelay: 100 },
-        new AbortController().signal,
-        makeReporter()
-      )
+      // Use maxRetries=1 and retryDelay=0 to keep the test fast
+      await expect(
+        handler.execute(
+          { url: 'https://example.com/file.zip', maxRetries: 1, retryDelay: 0 },
+          new AbortController().signal,
+          makeReporter()
+        )
+      ).rejects.toThrow(/Download failed after 1 retr/)
 
-      // Advance timers to allow all retry sleeps and request errors to fire
-      await Promise.resolve()
-      jest.runAllTimers()
-      await Promise.resolve()
-      jest.runAllTimers()
-      await Promise.resolve()
-      jest.runAllTimers()
-      await Promise.resolve()
-      jest.runAllTimers()
-      await Promise.resolve()
-
-      await expect(executePromise).rejects.toThrow(/Download failed after 2 retries/)
-
-      jest.useRealTimers()
-    })
+      // net.request should have been called twice: first attempt + 1 retry
+      expect(net.request as jest.Mock).toHaveBeenCalledTimes(2)
+    }, 15000)
 
     it('should not retry when the error message contains "cancelled"', async () => {
-      jest.useFakeTimers()
-
       const { net } = await import('electron')
       ;(net.request as jest.Mock).mockImplementation(() => {
+        const errorCallbacks: Array<(err: Error) => void> = []
         const req = {
-          on: jest.fn().mockImplementation((event: string, cb: (...args: unknown[]) => void) => {
-            if (event === 'error') {
-              setTimeout(() => cb(new Error('Download was cancelled')), 0)
-            }
+          on: jest.fn().mockImplementation((event: string, cb: (err: Error) => void) => {
+            if (event === 'error') errorCallbacks.push(cb)
             return req
           }),
-          end: jest.fn(),
+          end: jest.fn().mockImplementation(() => {
+            errorCallbacks.forEach((cb) => cb(new Error('Download was cancelled')))
+          }),
           abort: jest.fn()
         }
         return req
       })
 
-      const executePromise = handler.execute(
-        { url: 'https://example.com/file.zip', maxRetries: 3 },
-        new AbortController().signal,
-        makeReporter()
-      )
+      await expect(
+        handler.execute(
+          { url: 'https://example.com/file.zip', maxRetries: 3, retryDelay: 0 },
+          new AbortController().signal,
+          makeReporter()
+        )
+      ).rejects.toThrow('Download was cancelled')
 
-      await Promise.resolve()
-      jest.runAllTimers()
-      await Promise.resolve()
-
-      await expect(executePromise).rejects.toThrow('Download was cancelled')
-
-      // net.request should have been called only once (no retries)
+      // Should have been called exactly once — no retries on cancellation errors
       expect(net.request as jest.Mock).toHaveBeenCalledTimes(1)
-
-      jest.useRealTimers()
-    })
+    }, 10000)
   })
 
   // ---- private helper method coverage via validate edge cases --------------
