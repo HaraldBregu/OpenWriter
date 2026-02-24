@@ -47,7 +47,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const createModal = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCreateModal()
+      await window.wm.createModal()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create modal window'
       setError(message)
