@@ -5,7 +5,6 @@ import { useLanguage } from '../hooks/useLanguage'
 
 const ScreenPage: React.FC = () => {
   const { t } = useTranslation()
-  useTheme()
   useLanguage()
 
   return (
