@@ -268,7 +268,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   // Listen for context menu actions
   useEffect(() => {
-    const cleanup = window.api.onPostContextMenuAction((data) => {
+    const cleanup = window.contextMenu.onPostAction((data) => {
       const { action, postId } = data;
 
       switch (action) {
