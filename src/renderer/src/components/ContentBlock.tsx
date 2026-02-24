@@ -164,7 +164,7 @@ interface InsertBlockPlaceholderProps {
 
 export const InsertBlockPlaceholder = React.memo(function InsertBlockPlaceholder({ onClick }: InsertBlockPlaceholderProps) {
   return (
-    <div className="px-5 py-4">
+    <div className="px-5 py-2">
       <button
         type="button"
         onClick={onClick}
