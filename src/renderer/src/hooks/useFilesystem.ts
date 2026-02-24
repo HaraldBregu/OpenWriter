@@ -41,7 +41,7 @@ export function useFilesystem(): UseFilesystemReturn {
     try {
       setError(null)
       setLoading(true)
-      const file = await window.api.fsOpenFile()
+      const file = await window.fs.openFile()
       if (file) {
         setCurrentFile(file)
       }
