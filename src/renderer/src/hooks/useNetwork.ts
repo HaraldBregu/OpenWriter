@@ -69,7 +69,7 @@ export function useNetwork(): UseNetworkReturn {
     const initialize = async (): Promise<void> => {
       try {
         // Check if network is supported
-        const supported = await window.api.networkIsSupported()
+        const supported = await window.network.isSupported()
         if (isMounted) {
           setIsSupported(supported)
         }
