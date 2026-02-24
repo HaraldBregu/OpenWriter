@@ -194,6 +194,20 @@ const Notification = jest.fn(() => ({
 Notification.isSupported = jest.fn().mockReturnValue(true)
 
 // ---------------------------------------------------------------------------
+// nativeTheme
+// ---------------------------------------------------------------------------
+
+const nativeTheme = {
+  themeSource: 'system' as 'light' | 'dark' | 'system',
+  shouldUseDarkColors: false,
+  shouldUseHighContrastColors: false,
+  shouldUseInvertedColorScheme: false,
+  on: jest.fn(),
+  once: jest.fn(),
+  removeListener: jest.fn()
+}
+
+// ---------------------------------------------------------------------------
 // contextBridge
 // ---------------------------------------------------------------------------
 
