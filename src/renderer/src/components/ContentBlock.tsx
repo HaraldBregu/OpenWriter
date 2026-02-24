@@ -83,7 +83,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
     >
       <div className="flex items-start gap-3">
         {/* Left buttons group */}
-        <div className="flex items-center gap-0.5 mt-0.5 group/buttons">
+        <div className="flex items-center gap-0.5 mt-2 group/buttons">
           {/* Plus button */}
           {onAdd && (
             <AppButton
