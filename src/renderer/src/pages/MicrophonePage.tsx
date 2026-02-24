@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { MicrophoneRecorder } from '../components/MicrophoneRecorder'
 import { useMediaPermissions } from '../hooks/useMediaPermissions'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 
 const MicrophonePage: React.FC = () => {
