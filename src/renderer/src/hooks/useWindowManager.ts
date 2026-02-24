@@ -57,7 +57,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const createFrameless = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCreateFrameless()
+      await window.wm.createFrameless()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create frameless window'
       setError(message)
