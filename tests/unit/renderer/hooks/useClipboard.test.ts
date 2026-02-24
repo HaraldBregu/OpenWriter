@@ -1,11 +1,11 @@
 /**
  * Tests for useClipboard hook.
- * Wraps window.api clipboard operations with loading/error state management.
+ * Wraps window.clipboard operations with loading/error state management.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useClipboard } from '../../../../src/renderer/src/hooks/useClipboard'
 
-// window.api is mocked globally via tests/setup/renderer.ts
+// window.clipboard is mocked globally via tests/setup/renderer.ts
 
 describe('useClipboard', () => {
   it('should initialize with null content, no error, and not loading', () => {
@@ -17,7 +17,7 @@ describe('useClipboard', () => {
 
   describe('writeText', () => {
     it('should write text and update content on success', async () => {
-      ;(window.api.clipboardWriteText as jest.Mock).mockResolvedValue(true)
+      ;(window.clipboard.writeText as jest.Mock).mockResolvedValue(true)
       const { result } = renderHook(() => useClipboard())
 
       let success: boolean = false
@@ -26,14 +26,14 @@ describe('useClipboard', () => {
       })
 
       expect(success).toBe(true)
-      expect(window.api.clipboardWriteText).toHaveBeenCalledWith('hello')
+      expect(window.clipboard.writeText).toHaveBeenCalledWith('hello')
       expect(result.current.content?.type).toBe('text')
       expect(result.current.content?.text).toBe('hello')
       expect(result.current.loading).toBe(false)
     })
 
     it('should set error on failure', async () => {
-      ;(window.api.clipboardWriteText as jest.Mock).mockRejectedValue(new Error('denied'))
+      ;(window.clipboard.writeText as jest.Mock).mockRejectedValue(new Error('denied'))
       const { result } = renderHook(() => useClipboard())
 
       let success: boolean = true
@@ -49,7 +49,7 @@ describe('useClipboard', () => {
 
   describe('readText', () => {
     it('should return text from clipboard', async () => {
-      ;(window.api.clipboardReadText as jest.Mock).mockResolvedValue('clipboard text')
+      ;(window.clipboard.readText as jest.Mock).mockResolvedValue('clipboard text')
       const { result } = renderHook(() => useClipboard())
 
       let text = ''
@@ -62,7 +62,7 @@ describe('useClipboard', () => {
     })
 
     it('should return empty string and set error on failure', async () => {
-      ;(window.api.clipboardReadText as jest.Mock).mockRejectedValue(new Error('read fail'))
+      ;(window.clipboard.readText as jest.Mock).mockRejectedValue(new Error('read fail'))
       const { result } = renderHook(() => useClipboard())
 
       let text = 'not-empty'
@@ -77,7 +77,7 @@ describe('useClipboard', () => {
 
   describe('writeHTML', () => {
     it('should write HTML and update content on success', async () => {
-      ;(window.api.clipboardWriteHTML as jest.Mock).mockResolvedValue(true)
+      ;(window.clipboard.writeHTML as jest.Mock).mockResolvedValue(true)
       const { result } = renderHook(() => useClipboard())
 
       await act(async () => {
@@ -91,7 +91,7 @@ describe('useClipboard', () => {
 
   describe('readHTML', () => {
     it('should return HTML from clipboard', async () => {
-      ;(window.api.clipboardReadHTML as jest.Mock).mockResolvedValue('<p>test</p>')
+      ;(window.clipboard.readHTML as jest.Mock).mockResolvedValue('<p>test</p>')
       const { result } = renderHook(() => useClipboard())
 
       let html = ''
@@ -105,8 +105,8 @@ describe('useClipboard', () => {
 
   describe('clear', () => {
     it('should clear clipboard and reset content', async () => {
-      ;(window.api.clipboardWriteText as jest.Mock).mockResolvedValue(true)
-      ;(window.api.clipboardClear as jest.Mock).mockResolvedValue(true)
+      ;(window.clipboard.writeText as jest.Mock).mockResolvedValue(true)
+      ;(window.clipboard.clear as jest.Mock).mockResolvedValue(true)
       const { result } = renderHook(() => useClipboard())
 
       await act(async () => {
@@ -124,7 +124,7 @@ describe('useClipboard', () => {
   describe('getContent', () => {
     it('should fetch and set clipboard content', async () => {
       const mockContent = { type: 'text' as const, text: 'fetched', timestamp: Date.now() }
-      ;(window.api.clipboardGetContent as jest.Mock).mockResolvedValue(mockContent)
+      ;(window.clipboard.getContent as jest.Mock).mockResolvedValue(mockContent)
       const { result } = renderHook(() => useClipboard())
 
       await act(async () => {
@@ -136,10 +136,10 @@ describe('useClipboard', () => {
   })
 
   describe('hasText / hasImage / hasHTML', () => {
-    it('should delegate to window.api', async () => {
-      ;(window.api.clipboardHasText as jest.Mock).mockResolvedValue(true)
-      ;(window.api.clipboardHasImage as jest.Mock).mockResolvedValue(false)
-      ;(window.api.clipboardHasHTML as jest.Mock).mockResolvedValue(true)
+    it('should delegate to window.clipboard', async () => {
+      ;(window.clipboard.hasText as jest.Mock).mockResolvedValue(true)
+      ;(window.clipboard.hasImage as jest.Mock).mockResolvedValue(false)
+      ;(window.clipboard.hasHTML as jest.Mock).mockResolvedValue(true)
 
       const { result } = renderHook(() => useClipboard())
 
