@@ -209,7 +209,7 @@ export function useClipboard(): UseClipboardReturn {
 
   const hasHTML = useCallback(async (): Promise<boolean> => {
     try {
-      return await window.api.clipboardHasHTML()
+      return await window.clipboard.hasHTML()
     } catch (err) {
       console.error('Failed to check if clipboard has HTML:', err)
       return false
