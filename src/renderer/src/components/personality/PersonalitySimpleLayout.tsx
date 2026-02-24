@@ -111,7 +111,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       clearTimeout(saveSectionConfigTimer.current)
     }
     saveSectionConfigTimer.current = setTimeout(() => {
-      window.api.personalitySaveSectionConfig({
+      window.personality.saveSectionConfig({
         sectionId,
         update: {
           provider: next.providerId,
