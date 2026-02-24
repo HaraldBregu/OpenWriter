@@ -117,7 +117,7 @@ export function usePosts(): UsePostsReturn {
         }
 
         console.log(`[usePosts] Updating post: ${post.id}`)
-        await window.api.postsUpdatePost(updatedPost)
+        await window.posts.update(updatedPost)
 
         // Reload posts (cache is automatically invalidated by update)
         await loadPosts()
