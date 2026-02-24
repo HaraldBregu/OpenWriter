@@ -55,7 +55,7 @@ ActionButton.displayName = 'ActionButton'
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
-export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Write something...' }: ContentBlockProps) {
+export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Type here...' }: ContentBlockProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dragControls = useDragControls()
 
