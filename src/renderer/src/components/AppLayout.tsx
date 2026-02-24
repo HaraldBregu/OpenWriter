@@ -86,7 +86,7 @@ const quickCreateItems = [
   { title: "New Post", icon: PlusCircle, url: "/new/post", shortcut: "⌘N" },
 ];
 
-const topNavSections = ["Posts", "Writing"];
+const topNavSections = ["Writing", "Posts"];
 
 const personalityItems = [
   { title: "Emotional Depth", icon: Heart, slug: "emotional-depth" },
