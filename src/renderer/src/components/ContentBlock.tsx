@@ -128,32 +128,36 @@ export const ContentBlock = React.memo(function ContentBlock({
     if (!editor || isEnhancing) return
 
     const currentText = editor.getMarkdown()
-
     if (!currentText.trim()) return
 
     setIsEnhancing(true)
     enhanceAccumulatedRef.current = ''
 
-    // Register streaming event listener before starting inference.
-    const unsubscribe = window.ai.onEvent((event) => {
-      const data = event.data as { runId: string; token?: string; message?: string }
+    // Subscribe to task events before submitting so no tokens are missed.
+    const unsubscribe = window.task.onEvent((event) => {
+      const data = event.data as { taskId: string; token?: string; message?: string; result?: { content: string } }
 
-      if (data.runId !== enhanceRunIdRef.current) return
+      if (data.taskId !== enhanceTaskIdRef.current) return
 
-      if (event.type === 'token') {
+      if (event.type === 'progress' && (event.data as { message?: string }).message === 'token') {
         enhanceAccumulatedRef.current += data.token ?? ''
-      } else if (event.type === 'done') {
-        const enhanced = enhanceAccumulatedRef.current
-        onChangeRef.current(blockIdRef.current, enhanced)
+      } else if (event.type === 'completed') {
+        onChangeRef.current(blockIdRef.current, enhanceAccumulatedRef.current)
         setIsEnhancing(false)
-        enhanceRunIdRef.current = null
+        enhanceTaskIdRef.current = null
         enhanceAccumulatedRef.current = ''
         enhanceUnsubscribeRef.current?.()
         enhanceUnsubscribeRef.current = null
       } else if (event.type === 'error') {
         console.error('[ContentBlock] Enhance error:', data.message)
         setIsEnhancing(false)
-        enhanceRunIdRef.current = null
+        enhanceTaskIdRef.current = null
+        enhanceAccumulatedRef.current = ''
+        enhanceUnsubscribeRef.current?.()
+        enhanceUnsubscribeRef.current = null
+      } else if (event.type === 'cancelled') {
+        setIsEnhancing(false)
+        enhanceTaskIdRef.current = null
         enhanceAccumulatedRef.current = ''
         enhanceUnsubscribeRef.current?.()
         enhanceUnsubscribeRef.current = null
@@ -163,17 +167,17 @@ export const ContentBlock = React.memo(function ContentBlock({
     enhanceUnsubscribeRef.current = unsubscribe
 
     try {
-      const result = await window.ai.inference('enhance', { prompt: currentText })
+      const result = await window.task.submit('ai-enhance', { text: currentText })
       if (result.success) {
-        enhanceRunIdRef.current = result.data.runId
+        enhanceTaskIdRef.current = result.data.taskId
       } else {
-        console.error('[ContentBlock] Enhance inference failed:', result.error)
+        console.error('[ContentBlock] Enhance task submit failed:', result.error)
         setIsEnhancing(false)
         unsubscribe()
         enhanceUnsubscribeRef.current = null
       }
     } catch (err) {
-      console.error('[ContentBlock] Enhance request threw:', err)
+      console.error('[ContentBlock] Enhance task threw:', err)
       setIsEnhancing(false)
       unsubscribe()
       enhanceUnsubscribeRef.current = null
