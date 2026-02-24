@@ -521,15 +521,19 @@ export class OutputFilesService implements Disposable {
         depth: 2, // output/ -> <type>/ -> <date-folder>/
         alwaysStat: false,
         ignored: (filePath: string) => {
-          const base = path.basename(filePath)
+          // Chokidar v5 normalizes all paths to forward slashes internally,
+          // but path.join/path.sep use backslashes on Windows. Normalize here
+          // so all comparisons are consistent.
+          const normalized = path.normalize(filePath)
+          const base = path.basename(normalized)
 
           // Always watch the root output dir itself
-          if (filePath === outputDir) return false
+          if (normalized === outputDir) return false
 
           // Ignore dotfiles and temp files
           if (base.startsWith('.') || base.endsWith('.tmp')) return true
 
-          const rel = path.relative(outputDir, filePath)
+          const rel = path.relative(outputDir, normalized)
           const parts = rel.split(path.sep)
 
           // Allow type directories (depth 1): posts, writings, notes, messages
