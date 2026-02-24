@@ -64,8 +64,7 @@
       "WebFetch(domain:tiptap.dev)",
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:deepwiki.com)",
-      "Bash(CLAUDE_PROJECT_DIR=/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai /Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/.claude/hooks/auto-commit.sh; echo \"Exit code: $?\")"
+      "WebFetch(domain:deepwiki.com)"
     ],
     "deny": [
       "Bash(git push --force:*)",
