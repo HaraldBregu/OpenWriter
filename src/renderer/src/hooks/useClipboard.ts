@@ -191,7 +191,7 @@ export function useClipboard(): UseClipboardReturn {
 
   const hasText = useCallback(async (): Promise<boolean> => {
     try {
-      return await window.api.clipboardHasText()
+      return await window.clipboard.hasText()
     } catch (err) {
       console.error('Failed to check if clipboard has text:', err)
       return false

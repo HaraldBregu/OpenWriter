@@ -82,15 +82,34 @@ function createWrapper(initialPosts: Post[] = []) {
 }
 
 // ---------------------------------------------------------------------------
+// Mock api methods not included in the preload-bridge stub
+// ---------------------------------------------------------------------------
+
+const mockWorkspaceGetCurrent = jest.fn().mockResolvedValue(null)
+const mockPostsLoadFromWorkspace = jest.fn().mockResolvedValue([])
+const mockNotificationShow = jest.fn().mockResolvedValue('notif-id')
+
+// ---------------------------------------------------------------------------
 // Setup / Teardown
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  // workspaceGetCurrent and postsLoadFromWorkspace are on window.api
-  // (preload-bridge global mock, reset in renderer.ts beforeEach)
-  ;(window.api.workspaceGetCurrent as jest.Mock).mockResolvedValue(null)
-  ;(window.api.postsLoadFromWorkspace as jest.Mock).mockResolvedValue([])
-  ;(window.api.notificationShow as jest.Mock).mockResolvedValue('notif-id')
+  mockWorkspaceGetCurrent.mockResolvedValue(null)
+  mockPostsLoadFromWorkspace.mockResolvedValue([])
+  mockNotificationShow.mockResolvedValue('notif-id')
+
+  // Extend window.api with methods not present in the preload-bridge stub.
+  // workspaceGetCurrent IS in the preload-bridge but postsLoadFromWorkspace is not.
+  Object.defineProperty(window, 'api', {
+    value: {
+      ...window.api,
+      workspaceGetCurrent: mockWorkspaceGetCurrent,
+      postsLoadFromWorkspace: mockPostsLoadFromWorkspace,
+      notificationShow: mockNotificationShow
+    },
+    writable: true,
+    configurable: true
+  })
 })
 
 afterEach(() => {
