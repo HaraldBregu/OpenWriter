@@ -101,7 +101,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     const current = editor.getHTML()
     const incoming = block.content || ''
     if (current !== incoming) {
-      editor.commands.setContent(incoming, { emitUpdate: false })
+      editor.commands.setContent(incoming, false)
       setIsEmpty(editor.isEmpty)
     }
   }, [block.content, editor])
