@@ -48,7 +48,6 @@ const DialogsPage: React.FC = () => {
     showErrorDialog,
     clearLog
   } = useDialogs()
-  useTheme()
   useLanguage()
 
   const dialogButtons = [
