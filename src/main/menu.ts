@@ -25,6 +25,11 @@ export class Menu {
     this.buildMenu()
   }
 
+  updateTheme(theme: string): void {
+    this.currentTheme = theme
+    this.buildMenu()
+  }
+
   private buildMenu(): void {
     const isMac = process.platform === 'darwin'
     const m = loadTranslations(this.currentLanguage, 'menu')
