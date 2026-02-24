@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   AppSelect,
   AppSelectTrigger,
@@ -33,6 +33,69 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
 }
 
 // ---------------------------------------------------------------------------
+// Creativity level presets
+// ---------------------------------------------------------------------------
+
+type CreativityLevel = 'precise' | 'balanced' | 'creative' | 'very-creative' | 'imaginative' | 'custom'
+
+interface CreativityPreset {
+  value: CreativityLevel
+  label: string
+  temperature: number | null // null means custom
+}
+
+const CREATIVITY_PRESETS: CreativityPreset[] = [
+  { value: 'precise',       label: 'Precise',       temperature: 0.2 },
+  { value: 'balanced',      label: 'Balanced',       temperature: 0.5 },
+  { value: 'creative',      label: 'Creative',       temperature: 0.8 },
+  { value: 'very-creative', label: 'Very Creative',  temperature: 1.2 },
+  { value: 'imaginative',   label: 'Imaginative',    temperature: 1.8 },
+  { value: 'custom',        label: 'Custom',         temperature: null },
+]
+
+/** Map a numeric temperature to its closest preset label, or 'custom'. */
+function temperatureToPreset(temp: number): CreativityLevel {
+  for (const preset of CREATIVITY_PRESETS) {
+    if (preset.temperature !== null && Math.abs(preset.temperature - temp) < 0.05) {
+      return preset.value
+    }
+  }
+  return 'custom'
+}
+
+// ---------------------------------------------------------------------------
+// Text length presets
+// ---------------------------------------------------------------------------
+
+type TextLengthLevel = 'short' | 'medium' | 'long' | 'very-long' | 'unlimited' | 'custom'
+
+interface TextLengthPreset {
+  value: TextLengthLevel
+  label: string
+  maxTokens: number | null // null means unlimited; -1 means custom
+}
+
+const TEXT_LENGTH_PRESETS: TextLengthPreset[] = [
+  { value: 'short',     label: 'Short (500 chars)',      maxTokens: 500 },
+  { value: 'medium',    label: 'Medium (1000 chars)',    maxTokens: 1000 },
+  { value: 'long',      label: 'Long (2000 chars)',      maxTokens: 2000 },
+  { value: 'very-long', label: 'Very Long (4000 chars)', maxTokens: 4000 },
+  { value: 'unlimited', label: 'Unlimited',              maxTokens: null },
+  { value: 'custom',    label: 'Custom',                 maxTokens: -1 },
+]
+
+/** Map a maxTokens value to its closest preset label, or 'custom'. */
+function maxTokensToPreset(maxTokens: number | null): TextLengthLevel {
+  if (maxTokens === null) return 'unlimited'
+  for (const preset of TEXT_LENGTH_PRESETS) {
+    if (preset.maxTokens !== null && preset.maxTokens !== -1 && preset.maxTokens === maxTokens) {
+      return preset.value
+    }
+  }
+  return 'custom'
+}
+
+// ---------------------------------------------------------------------------
 // Component — inline sidebar panel (no overlay)
 // ---------------------------------------------------------------------------
 
@@ -48,6 +111,16 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
   const currentProvider = aiProviders.find((p) => p.id === settings.providerId)
   const models = currentProvider?.models ?? []
   const modelIsReasoning = isReasoningModel(settings.modelId)
+
+  // Local UI state for the creativity level dropdown
+  const [creativityLevel, setCreativityLevel] = useState<CreativityLevel>(
+    () => temperatureToPreset(settings.temperature)
+  )
+
+  // Local UI state for the text length dropdown
+  const [textLengthLevel, setTextLengthLevel] = useState<TextLengthLevel>(
+    () => maxTokensToPreset(settings.maxTokens)
+  )
 
   const handleProviderChange = useCallback((providerId: string) => {
     const defaultModel = getDefaultModelId(providerId)
@@ -69,11 +142,34 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
     })
   }, [settings, onSettingsChange])
 
-  const handleTemperatureChange = useCallback((value: number) => {
-    onSettingsChange({ ...settings, temperature: Math.round(value * 10) / 10 })
+  const handleCreativityLevelChange = useCallback((level: string) => {
+    const typed = level as CreativityLevel
+    setCreativityLevel(typed)
+    const preset = CREATIVITY_PRESETS.find((p) => p.value === typed)
+    if (preset && preset.temperature !== null) {
+      onSettingsChange({ ...settings, temperature: preset.temperature })
+    }
+    // 'custom' keeps the current temperature value; user adjusts via slider
   }, [settings, onSettingsChange])
 
-  const handleMaxTokensChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTemperatureChange = useCallback((value: number) => {
+    const rounded = Math.round(value * 10) / 10
+    onSettingsChange({ ...settings, temperature: rounded })
+    setCreativityLevel(temperatureToPreset(rounded))
+  }, [settings, onSettingsChange])
+
+  const handleTextLengthLevelChange = useCallback((level: string) => {
+    const typed = level as TextLengthLevel
+    setTextLengthLevel(typed)
+    const preset = TEXT_LENGTH_PRESETS.find((p) => p.value === typed)
+    if (preset && preset.maxTokens !== -1) {
+      // null means unlimited, a real number means capped
+      onSettingsChange({ ...settings, maxTokens: preset.maxTokens })
+    }
+    // 'custom' keeps the current maxTokens value; user adjusts via number input
+  }, [settings, onSettingsChange])
+
+  const handleCustomMaxTokensChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.trim()
     if (raw === '') {
       onSettingsChange({ ...settings, maxTokens: null })
@@ -127,39 +223,74 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
           </AppSelect>
         </div>
 
-        {/* Temperature */}
+        {/* Creativity Level (replaces Temperature) */}
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <AppLabel className="text-xs">Temperature</AppLabel>
-            <span className="text-[11px] text-muted-foreground tabular-nums">
-              {modelIsReasoning ? 'N/A' : settings.temperature.toFixed(1)}
-            </span>
-          </div>
-          <AppSlider
-            min={0}
-            max={2}
-            step={0.1}
-            value={settings.temperature}
-            onValueChange={handleTemperatureChange}
+          <AppLabel className="text-xs">Creativity Level</AppLabel>
+          <AppSelect
+            value={creativityLevel}
+            onValueChange={handleCreativityLevelChange}
             disabled={modelIsReasoning}
-          />
+          >
+            <AppSelectTrigger className="w-full h-8 text-xs">
+              <AppSelectValue />
+            </AppSelectTrigger>
+            <AppSelectContent>
+              {CREATIVITY_PRESETS.map((preset) => (
+                <AppSelectItem key={preset.value} value={preset.value}>
+                  {preset.label}
+                </AppSelectItem>
+              ))}
+            </AppSelectContent>
+          </AppSelect>
           {modelIsReasoning && (
             <p className="text-[11px] text-muted-foreground">Not supported for reasoning models.</p>
           )}
+          {creativityLevel === 'custom' && !modelIsReasoning && (
+            <div className="pt-1 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] text-muted-foreground">Custom value</span>
+                <span className="text-[11px] text-muted-foreground tabular-nums">
+                  {settings.temperature.toFixed(1)}
+                </span>
+              </div>
+              <AppSlider
+                min={0}
+                max={2}
+                step={0.1}
+                value={settings.temperature}
+                onValueChange={handleTemperatureChange}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Max Tokens */}
+        {/* Text Length (replaces Max Tokens) */}
         <div className="space-y-1.5">
-          <AppLabel className="text-xs">Max Tokens</AppLabel>
-          <AppInput
-            type="number"
-            min={0}
-            placeholder="Unlimited"
-            value={settings.maxTokens ?? ''}
-            onChange={handleMaxTokensChange}
-            className="h-8 text-xs"
-          />
-          <p className="text-[11px] text-muted-foreground">Leave empty for unlimited.</p>
+          <AppLabel className="text-xs">Text Length</AppLabel>
+          <AppSelect value={textLengthLevel} onValueChange={handleTextLengthLevelChange}>
+            <AppSelectTrigger className="w-full h-8 text-xs">
+              <AppSelectValue />
+            </AppSelectTrigger>
+            <AppSelectContent>
+              {TEXT_LENGTH_PRESETS.map((preset) => (
+                <AppSelectItem key={preset.value} value={preset.value}>
+                  {preset.label}
+                </AppSelectItem>
+              ))}
+            </AppSelectContent>
+          </AppSelect>
+          {textLengthLevel === 'custom' && (
+            <div className="pt-1">
+              <AppInput
+                type="number"
+                min={0}
+                placeholder="Enter character limit"
+                value={settings.maxTokens ?? ''}
+                onChange={handleCustomMaxTokensChange}
+                className="h-8 text-xs"
+              />
+            </div>
+          )}
         </div>
 
         {/* Reasoning */}

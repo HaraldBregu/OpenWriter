@@ -360,7 +360,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             addWriting({
               id: newId,
               title: `${source.title} (Copy)`,
-              blocks: source.blocks.map((b) => ({ id: crypto.randomUUID(), content: b.content })),
+              blocks: source.blocks.map((b) => ({
+                id: crypto.randomUUID(),
+                content: b.content,
+              })),
               category: source.category,
               tags: source.tags,
               visibility: source.visibility,
@@ -483,13 +486,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                         <button
                           type="button"
                           onClick={() => toggleSection(section)}
-                          className="flex w-full items-center gap-1 h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
+                          className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                         >
-                          <span className="uppercase tracking-wider">
-                            {section}
-                          </span>
+                          <span className="tracking-wider">{section}</span>
                           <ChevronRight
-                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Knowledge"] ? "rotate-90" : ""}`}
                           />
                         </button>
                         {isOpen && (
@@ -566,8 +567,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       </AppSidebarMenuItem>
                     );
                   })}
-
-                  <AppSidebarSeparator className="my-1" />
 
                   {/* Knowledge — collapsible section */}
                   <AppSidebarMenuItem>
