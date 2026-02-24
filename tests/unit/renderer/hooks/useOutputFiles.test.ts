@@ -209,7 +209,7 @@ describe('useOutputFiles — file-change subscription', () => {
     // Wait for the initial async setup to complete
     await act(async () => { await Promise.resolve() })
 
-    const callsBefore = (window.api.outputLoadAll as jest.Mock).mock.calls.length
+    const callsBefore = mockOutputLoadAll.mock.calls.length
 
     // Emit one file-change event
     act(() => {

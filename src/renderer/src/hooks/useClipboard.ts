@@ -60,7 +60,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      return await window.api.clipboardReadText()
+      return await window.clipboard.readText()
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to read text from clipboard'
       setError(errorMsg)

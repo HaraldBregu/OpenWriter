@@ -18,6 +18,13 @@ module.exports = {
       testEnvironment: 'node',
       roots: ['<rootDir>/tests/unit/main', '<rootDir>/tests/integration'],
       transform: {
+        // Use the custom vite-env-transform for source files under src/main/
+        // so that `import.meta.env.*` references (Vite-only syntax) are
+        // rewritten to safe globalThis.__VITE_ENV__.* accesses before ts-jest
+        // compiles them. Without this, ts-jest in CJS mode throws a SyntaxError.
+        '^.+/src/main/.+\\.tsx?$': '<rootDir>/tests/transforms/vite-env-transform.cjs',
+        // All other TypeScript files (tests themselves, shared utilities) use
+        // vanilla ts-jest.
         '^.+\\.tsx?$': [
           'ts-jest',
           {
@@ -30,6 +37,9 @@ module.exports = {
       moduleNameMapper: {
         '^electron$': '<rootDir>/tests/mocks/electron.ts'
       },
+      // Seed globalThis.__VITE_ENV__ before modules are loaded so that the
+      // rewritten import.meta.env accesses resolve to defined (not undefined) objects.
+      setupFiles: ['<rootDir>/tests/setup/main.ts'],
       testMatch: ['**/*.test.ts']
     },
 

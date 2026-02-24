@@ -100,7 +100,7 @@ export async function reloadPostsFromWorkspace(
 ): Promise<void> {
   try {
     // Check if there's an active workspace
-    const workspacePath = await window.api.workspaceGetCurrent()
+    const workspacePath = await window.workspace.getCurrent()
 
     if (!workspacePath) {
       console.debug('[PostsReload] No workspace selected')
@@ -110,7 +110,7 @@ export async function reloadPostsFromWorkspace(
     console.debug('[PostsReload] Reloading posts from workspace:', workspacePath)
 
     // Load posts from workspace
-    const posts = await window.api.postsLoadFromWorkspace()
+    const posts = await window.posts.loadFromWorkspace()
 
     console.debug('[PostsReload] Loaded posts:', { postCount: posts.length })
 
