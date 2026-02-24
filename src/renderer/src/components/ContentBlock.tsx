@@ -116,7 +116,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
             value={block.content}
             onChange={handleInput}
             placeholder={placeholder}
-            className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-tight !border-0 !py-1 !px-0 !rounded-none !m-0 overflow-hidden !min-h-0 !outline-none !shadow-none !ring-0 !ring-offset-0 focus:!outline-none focus:!ring-0 focus:!border-0 focus:!shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!border-0 focus-visible:!outline-none"
+            className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-muted-foreground/50 leading-tight !border-0 !py-2 !px-0 !rounded-none !m-0 overflow-hidden !min-h-0 !outline-none !shadow-none !ring-0 !ring-offset-0 focus:!outline-none focus:!ring-0 focus:!border-0 focus:!shadow-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!border-0 focus-visible:!outline-none"
           />
         </div>
 
