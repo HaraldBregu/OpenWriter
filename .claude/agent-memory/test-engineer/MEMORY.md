@@ -240,4 +240,92 @@ useMediaPermissions, useMediaRecorder, useMediaStream, useNetwork, useNotificati
 usePipeline, usePlatform, useTheme, useWindowManager, usePersonalityFiles (x2: old +
 new), useOutputFiles, usePostsFileWatcher, usePostsLoader.
 
+## Chokidar v5 — ESM Incompatibility with ts-jest
+
+chokidar v5 is pure ESM. ts-jest runs in CJS mode and CANNOT parse it when imported transitively.
+
+**Fix**: Register a CJS-compatible stub in `jest.config.cjs` for the "main" project:
+```javascript
+moduleNameMapper: {
+  '^electron$': '<rootDir>/tests/mocks/electron.ts',
+  '^chokidar$': '<rootDir>/tests/mocks/chokidar.ts',
+}
+```
+The stub is at `tests/mocks/chokidar.ts`. Tests that need to control watcher behavior can
+override it with a local `jest.mock('chokidar', () => ...)` factory placed BEFORE any imports.
+
+## setInterval Infinite Loop With Fake Timers
+
+DocumentsWatcherService and FileWatcherService call `setInterval(cleanupIgnoredWrites, 10000)`
+in their constructors. Using `jest.runAllTimers()` fires this interval infinitely:
+`"Aborting after running 100000 timers, assuming an infinite loop!"`
+
+**Fix**: Use `jest.advanceTimersByTime(500)` instead — advances past the 300ms debounce
+timer without cycling the 10-second cleanup interval.
+
+## workspace:changed Async Settlement (Fire-and-Forget)
+
+Watcher services call `this.startWatching(path).catch(...)` as fire-and-forget inside their
+`workspace:changed` event handler. The promise chain (stop watcher → mkdir → chokidar.watch)
+needs multiple microtask ticks to settle. `await Promise.resolve()` alone is NOT enough.
+
+**Fix**: Use triple `await Promise.resolve()` after emitting the event:
+```typescript
+eventBus.emit('workspace:changed', { currentPath: '/new/path', previousPath: null })
+await Promise.resolve()
+await Promise.resolve()
+await Promise.resolve()
+expect(mockChokidarWatch).toHaveBeenCalled()
+```
+Alternatively, use `jest.useRealTimers()` + `await new Promise(r => setTimeout(r, 50))` for
+tests where fake timers aren't needed.
+
+## LoggerService — Init Buffer Drain Pattern
+
+LoggerService buffers an "Logger initialized" INFO message during construction. When tests
+call `service.flush()` this message is written, causing `expect(mockAppendFileSync).not.toHaveBeenCalled()`
+to fail even when the log level correctly suppressed the test's own message.
+
+**Fix**: Drain the init buffer THEN clear the spy before asserting:
+```typescript
+service = makeLogger(null, { minLevel: LogLevel.INFO })
+service.flush()            // drain the constructor's buffered init messages
+mockAppendFileSync.mockClear()  // now only test-controlled messages are tracked
+service.debug('Src', 'Should be suppressed')
+service.flush()
+expect(mockAppendFileSync).not.toHaveBeenCalled()
+```
+Same rule applies to any test that asserts on exact call counts after construction.
+
+## ThemeIpc — Uses ipcMain.on Not ipcMain.handle
+
+ThemeIpc registers a single `ipcMain.on('theme:set', handler)` listener (NOT `ipcMain.handle`).
+Verify registration with `(ipcMain.on as jest.Mock).mock.calls` not `ipcMain.handle` calls.
+The handler reads `nativeTheme.themeSource` — add `nativeTheme` to `tests/mocks/electron.ts`:
+```typescript
+const nativeTheme = {
+  themeSource: 'system' as 'light' | 'dark' | 'system',
+  shouldUseDarkColors: false,
+  on: jest.fn(), once: jest.fn(), removeListener: jest.fn()
+}
+```
+
+## IPC Handler Counts (Batch 2 — confirmed passing 2026-02-24)
+
+| Module | Pattern | Handlers | Channels |
+|---|---|---|---|
+| OutputIpc | window-scoped service | 6 | output:save/update/load-all/load-by-type/load-one/delete |
+| PersonalityIpc | window-scoped service | 6 | personality:save/load-all/load-one/delete/load-section-config/save-section-config |
+| PostsIpc | direct fs access | 4 | posts:sync/update/delete/load-from-workspace |
+| TaskIpc | global service | 3 | task:submit/cancel/list |
+| ThemeIpc | ipcMain.on (not handle) | 1 | theme:set |
+
+## Pre-Existing Renderer Test Failures (as of 2026-02-24)
+
+25 renderer test suites fail. These are NOT caused by main-process test work. Failing suites:
+useMediaPermissions, HomePage, useDialogs, useWindowManager, useFilesystem, useBluetooth,
+WelcomePage, useNetwork, useNotifications, useClipboard, useCron, useLanguage, useBrainFiles,
+usePlatform, TitleBar, useLifecycle, useContextMenu, CopyButton, WindowControls,
+brainFilesSlice, usePersonalityFiles, useOutputFiles, useTheme, useAgent, usePostsLoader.
+
 See `patterns.md` for detailed testing patterns and examples.
