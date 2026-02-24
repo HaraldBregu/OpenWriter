@@ -54,7 +54,7 @@ export function useMediaPermissions(): UseMediaPermissionsReturn {
     setError(null)
 
     try {
-      const status = await window.api.requestMicrophonePermission()
+      const status = await window.media.requestMicrophonePermission()
       setMicrophoneStatus(status)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to request microphone permission'
