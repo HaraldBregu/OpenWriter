@@ -553,7 +553,7 @@ const DocumentsPage: React.FC = () => {
   // Shared reload function — always fetches from disk for consistency
   const reloadDocuments = useCallback(async () => {
     try {
-      const docs = await window.api.documentsLoadAll()
+      const docs = await window.documents.loadAll()
       setDocuments(docs)
       return docs
     } catch (error) {
