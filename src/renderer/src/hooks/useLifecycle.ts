@@ -33,7 +33,7 @@ export function useLifecycle(): UseLifecycleReturn {
   const refreshEvents = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      const evts = await window.api.lifecycleGetEvents()
+      const evts = await window.lifecycle.getEvents()
       setEvents(evts)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch lifecycle events'
@@ -44,7 +44,7 @@ export function useLifecycle(): UseLifecycleReturn {
   const restart = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.lifecycleRestart()
+      await window.lifecycle.restart()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to restart application'
       setError(message)
