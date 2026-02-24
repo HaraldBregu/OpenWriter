@@ -100,7 +100,7 @@ export function useCron(): UseCronReturn {
   const deleteJob = useCallback(async (id: string): Promise<boolean> => {
     try {
       setError(null)
-      const success = await window.api.cronDeleteJob(id)
+      const success = await window.cron.delete(id)
       if (success) {
         await refreshJobs()
       }

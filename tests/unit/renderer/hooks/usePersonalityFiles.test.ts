@@ -245,7 +245,7 @@ describe('usePersonalityFiles — file-change subscription', () => {
 
     await act(async () => { await Promise.resolve() })
 
-    const callsBefore = (window.api.personalityLoadAll as jest.Mock).mock.calls.length
+    const callsBefore = mockPersonalityLoadAll.mock.calls.length
 
     // Fire 4 events within the debounce window (100 ms apart)
     for (let i = 0; i < 4; i++) {
