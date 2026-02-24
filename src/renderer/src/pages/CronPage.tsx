@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCron } from '../hooks/useCron'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { Clock, Play, Square, Trash2, Plus, RefreshCw, Calendar, CheckCircle, XCircle } from 'lucide-react'
 
