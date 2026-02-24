@@ -87,7 +87,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const closeAll = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCloseAll()
+      await window.wm.closeAll()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to close all windows'
       setError(message)
@@ -99,7 +99,7 @@ export function useWindowManager(): UseWindowManagerReturn {
 
     const initialize = async (): Promise<void> => {
       try {
-        const state = await window.api.wmGetState()
+        const state = await window.wm.getState()
         if (isMounted) {
           setWindows(state.windows)
         }
@@ -113,7 +113,7 @@ export function useWindowManager(): UseWindowManagerReturn {
 
     initialize()
 
-    const cleanup = window.api.onWmStateChange((state) => {
+    const cleanup = window.wm.onStateChange((state) => {
       if (isMounted) {
         setWindows(state.windows)
       }
