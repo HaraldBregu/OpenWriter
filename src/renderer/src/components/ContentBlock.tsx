@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent } from '@tiptap/react'
+import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { AppButton } from '@/components/app'
 
@@ -56,51 +57,54 @@ ActionButton.displayName = 'ActionButton'
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
-export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, onChange, onDelete, onAdd, placeholder = 'Type here...' }: ContentBlockProps) {
+export const ContentBlock = React.memo(function ContentBlock({
+  block,
+  isOnly,
+  onChange,
+  onDelete,
+  onAdd,
+  placeholder = 'Type here...',
+}: ContentBlockProps): React.JSX.Element {
   const dragControls = useDragControls()
 
-  // Track whether the editor is empty to show/hide the placeholder.
-  // Stored as local state so React re-renders only this component when it changes.
-  const [isEmpty, setIsEmpty] = useState(() => !block.content || block.content === '<p></p>')
+  // Track whether the editor is empty to conditionally show the placeholder span.
+  const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
 
-  const handleUpdate = useCallback(({ editor }: { editor: ReturnType<typeof useEditor> & { isEmpty: boolean; getHTML: () => string } }) => {
-    onChange(block.id, editor.getHTML())
-    setIsEmpty(editor.isEmpty)
-  }, [block.id, onChange])
+  // Stable callback ref for onChange so useEditor options don't need to re-create the editor.
+  const onChangeRef = React.useRef(onChange)
+  onChangeRef.current = onChange
+  const blockIdRef = React.useRef(block.id)
+  blockIdRef.current = block.id
 
   const editor = useEditor({
     extensions: [StarterKit],
     content: block.content || '',
     immediatelyRender: false,
-    onUpdate: handleUpdate,
-    onCreate: ({ editor }) => {
-      setIsEmpty(editor.isEmpty)
+    onUpdate: ({ editor: ed }: { editor: Editor }) => {
+      onChangeRef.current(blockIdRef.current, ed.getHTML())
+      setIsEmpty(ed.isEmpty)
+    },
+    onCreate: ({ editor: ed }: { editor: Editor }) => {
+      setIsEmpty(ed.isEmpty)
     },
     editorProps: {
       attributes: {
-        class: 'prose-editor focus:outline-none min-h-[1em] text-base leading-tight text-foreground',
+        class: 'focus:outline-none min-h-[1em] text-base leading-tight text-foreground',
       },
     },
   })
 
-  // Sync external content changes into the editor (e.g., block reorder or external reset).
-  // Compare against current HTML to avoid resetting cursor position on every keystroke.
+  // Sync external content changes (e.g., when the block resets or is edited elsewhere).
+  // Guard against our own onChange echoes by comparing current HTML first.
   useEffect(() => {
-    if (!editor) return
+    if (!editor || editor.isDestroyed) return
     const current = editor.getHTML()
-    if (current !== block.content) {
-      // Preserve cursor position by using setContent with keepSelection
-      editor.commands.setContent(block.content || '', false)
+    const incoming = block.content || ''
+    if (current !== incoming) {
+      editor.commands.setContent(incoming, { emitUpdate: false })
       setIsEmpty(editor.isEmpty)
     }
   }, [block.content, editor])
-
-  // Cleanup: destroy editor on unmount
-  useEffect(() => {
-    return () => {
-      editor?.destroy()
-    }
-  }, [editor])
 
   const handleCopy = useCallback(() => {
     if (!editor) return
@@ -145,7 +149,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
 
         {/* Content */}
         <div className="flex-1 min-w-0 relative py-2">
-          {/* CSS placeholder shown when editor is empty */}
+          {/* Placeholder shown when editor is empty */}
           {isEmpty && (
             <span
               className="absolute inset-0 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
@@ -183,7 +187,7 @@ export const ContentBlock = React.memo(function ContentBlock({ block, isOnly, on
         </div>
       </div>
     </Reorder.Item>
-  );
+  )
 })
 ContentBlock.displayName = 'ContentBlock'
 
