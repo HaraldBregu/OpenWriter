@@ -154,9 +154,12 @@ export class DocumentsWatcherService implements Disposable {
         depth: 0,
         alwaysStat: false,
         ignored: (filePath: string) => {
-          if (filePath === docsDir) return false
+          // Chokidar v5 normalizes paths to forward slashes; normalize
+          // here so the comparison works on Windows (backslashes).
+          const normalized = path.normalize(filePath)
+          if (normalized === docsDir) return false
           // Ignore dotfiles and temp files
-          const base = path.basename(filePath)
+          const base = path.basename(normalized)
           if (base.startsWith('.') || base.endsWith('.tmp')) return true
           return false
         }
