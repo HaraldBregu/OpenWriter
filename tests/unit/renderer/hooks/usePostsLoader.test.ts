@@ -2,9 +2,9 @@
  * Tests for usePostsLoader hook and the reloadPostsFromWorkspace utility.
  *
  * usePostsLoader:
- *  1. On mount, calls window.api.workspaceGetCurrent().
+ *  1. On mount, calls window.workspace.getCurrent().
  *     - If no workspace: skips load, marks hasLoaded = true.
- *     - If workspace exists: calls window.api.postsLoadFromWorkspace, dispatches
+ *     - If workspace exists: calls window.posts.loadFromWorkspace, dispatches
  *       loadPosts() to populate the Redux store.
  *  2. Uses hasLoadedRef to prevent duplicate loads across re-renders.
  *  3. On error: records error in errorRef, shows notification unless ENOENT.
@@ -82,7 +82,7 @@ function createWrapper(initialPosts: Post[] = []) {
 }
 
 // ---------------------------------------------------------------------------
-// Mock api methods not included in the preload-bridge stub
+// Mock setup — use the actual preload namespaces the hook calls
 // ---------------------------------------------------------------------------
 
 const mockWorkspaceGetCurrent = jest.fn().mockResolvedValue(null)
@@ -98,14 +98,29 @@ beforeEach(() => {
   mockPostsLoadFromWorkspace.mockResolvedValue([])
   mockNotificationShow.mockResolvedValue('notif-id')
 
-  // Extend window.api with methods not present in the preload-bridge stub.
-  // workspaceGetCurrent IS in the preload-bridge but postsLoadFromWorkspace is not.
-  Object.defineProperty(window, 'api', {
+  // Install the namespaced mocks the hook actually calls
+  Object.defineProperty(window, 'workspace', {
     value: {
-      ...window.api,
-      workspaceGetCurrent: mockWorkspaceGetCurrent,
-      postsLoadFromWorkspace: mockPostsLoadFromWorkspace,
-      notificationShow: mockNotificationShow
+      ...(window.workspace ?? {}),
+      getCurrent: mockWorkspaceGetCurrent
+    },
+    writable: true,
+    configurable: true
+  })
+
+  Object.defineProperty(window, 'posts', {
+    value: {
+      ...(window.posts ?? {}),
+      loadFromWorkspace: mockPostsLoadFromWorkspace
+    },
+    writable: true,
+    configurable: true
+  })
+
+  Object.defineProperty(window, 'notification', {
+    value: {
+      ...(window.notification ?? {}),
+      show: mockNotificationShow
     },
     writable: true,
     configurable: true
