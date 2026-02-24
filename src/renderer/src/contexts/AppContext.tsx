@@ -72,8 +72,22 @@ const defaultModalState: ModalState = {
   shareDialogOpen: false
 }
 
+const THEME_STORAGE_KEY = 'app-theme-mode'
+
+function readPersistedTheme(): ThemeMode {
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY)
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      return stored
+    }
+  } catch {
+    // localStorage may be unavailable in some contexts
+  }
+  return 'system'
+}
+
 const initialState: AppState = {
-  theme: 'system',
+  theme: readPersistedTheme(),
   user: null,
   uiPreferences: defaultUIPreferences,
   modals: defaultModalState,
