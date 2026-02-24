@@ -80,10 +80,10 @@ export function useFilesystem(): UseFilesystemReturn {
   const selectAndWatchDir = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      const dirPath = await window.api.fsSelectDirectory()
+      const dirPath = await window.fs.selectDirectory()
       if (!dirPath) return
 
-      const success = await window.api.fsWatchDirectory(dirPath)
+      const success = await window.fs.watchDirectory(dirPath)
       if (success) {
         setWatchedDirs((prev) => [...prev, dirPath])
       } else {
