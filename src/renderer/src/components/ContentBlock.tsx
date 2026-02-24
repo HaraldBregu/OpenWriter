@@ -72,6 +72,8 @@ export const ContentBlock = React.memo(function ContentBlock({
   // Track whether the editor is empty to conditionally show the placeholder span.
   const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
   const [isEnhancing, setIsEnhancing] = useState(false)
+  // taskId tracked in state so useEffect dependencies stay reactive.
+  const [enhanceTaskId, setEnhanceTaskId] = useState<string | null>(null)
 
   // Stable callback ref for onChange so useEditor options don't need to re-create the editor.
   const onChangeRef = React.useRef(onChange)
@@ -79,10 +81,10 @@ export const ContentBlock = React.memo(function ContentBlock({
   const blockIdRef = React.useRef(block.id)
   blockIdRef.current = block.id
 
-  // Refs for enhance-with-AI task management — avoids stale closures.
-  const enhanceTaskIdRef = useRef<string | null>(null)
-  const enhanceUnsubscribeRef = useRef<(() => void) | null>(null)
+  // Accumulates streamed tokens without triggering re-renders per token.
   const enhanceAccumulatedRef = useRef<string>('')
+
+  const { submitTask, cancelTask, tasks } = useTask()
 
   const editor = useEditor({
     extensions: [StarterKit, Markdown],
