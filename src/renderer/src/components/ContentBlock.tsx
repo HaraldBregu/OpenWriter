@@ -153,3 +153,25 @@ ContentBlock.displayName = 'ContentBlock'
 export function createBlock(): Block {
   return { id: crypto.randomUUID(), content: '' }
 }
+
+// ---------------------------------------------------------------------------
+// InsertBlockPlaceholder
+// ---------------------------------------------------------------------------
+
+interface InsertBlockPlaceholderProps {
+  onClick: () => void
+}
+
+export const InsertBlockPlaceholder = React.memo(function InsertBlockPlaceholder({ onClick }: InsertBlockPlaceholderProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full px-5 py-4 flex items-center justify-center gap-2 border border-dashed border-border/50 rounded-lg opacity-40 hover:opacity-80 transition-opacity cursor-pointer text-muted-foreground"
+    >
+      <Plus className="h-4 w-4" />
+      <span className="text-sm">Insert block</span>
+    </button>
+  )
+})
+InsertBlockPlaceholder.displayName = 'InsertBlockPlaceholder'
