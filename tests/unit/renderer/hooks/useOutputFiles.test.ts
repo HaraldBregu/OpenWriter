@@ -130,7 +130,7 @@ describe('useOutputFiles — initial load', () => {
       expect(mockWorkspaceGetCurrent).toHaveBeenCalled()
     })
 
-    expect(window.api.outputLoadAll).not.toHaveBeenCalled()
+    expect(mockOutputLoadAll).not.toHaveBeenCalled()
   })
 
   it('populates store items after a successful load', async () => {
