@@ -173,7 +173,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      const clipboardContent = await window.api.clipboardGetContent()
+      const clipboardContent = await window.clipboard.getContent()
       setContent(clipboardContent)
       return clipboardContent
     } catch (err) {
