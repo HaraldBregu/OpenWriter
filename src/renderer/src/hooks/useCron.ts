@@ -147,7 +147,7 @@ export function useCron(): UseCronReturn {
 
   const validateExpression = useCallback(async (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
     try {
-      return await window.api.cronValidateExpression(expression)
+      return await window.cron.validateExpression(expression)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to validate expression'
       console.error('Error validating expression:', err)

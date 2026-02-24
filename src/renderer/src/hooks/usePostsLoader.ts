@@ -35,7 +35,7 @@ export function usePostsLoader(): {
         isLoadingRef.current = true
 
         // Check if there's an active workspace
-        const workspacePath = await window.api.workspaceGetCurrent()
+        const workspacePath = await window.workspace.getCurrent()
 
         if (!workspacePath) {
           console.debug('[PostsLoader] No workspace selected, skipping load')
@@ -47,7 +47,7 @@ export function usePostsLoader(): {
         console.debug('[PostsLoader] Loading posts from workspace:', workspacePath)
 
         // Load posts from Electron
-        const posts = await window.api.postsLoadFromWorkspace()
+        const posts = await window.posts.loadFromWorkspace()
 
         console.debug('[PostsLoader] Loaded posts:', { postCount: posts.length })
 
