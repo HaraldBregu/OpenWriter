@@ -1,4 +1,5 @@
 import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import type { Block } from '@/components/ContentBlock'
 import type { OutputItem } from './outputSlice'
 
 // ---------------------------------------------------------------------------
@@ -8,7 +9,7 @@ import type { OutputItem } from './outputSlice'
 export interface Writing {
   id: string
   title: string
-  content: string       // plain text/markdown (NOT blocks)
+  blocks: Block[]
   category: string
   tags: string[]
   visibility: string
@@ -43,7 +44,7 @@ export const writingsSlice = createSlice({
           payload: {
             id: nanoid(),
             title: '',
-            content: '',
+            blocks: [{ id: nanoid(), content: '' }],
             category: 'writing',
             tags: [],
             visibility: 'private',
@@ -63,13 +64,13 @@ export const writingsSlice = createSlice({
       if (writing) writing.outputId = action.payload.outputId
     },
 
-    updateWritingContent(
+    updateWritingBlocks(
       state,
-      action: PayloadAction<{ writingId: string; content: string }>
+      action: PayloadAction<{ writingId: string; blocks: Block[] }>
     ) {
       const writing = state.writings.find((w) => w.id === action.payload.writingId)
       if (!writing) return
-      writing.content = action.payload.content
+      writing.blocks = action.payload.blocks
       writing.updatedAt = Date.now()
     },
 
@@ -121,8 +122,15 @@ export const writingsSlice = createSlice({
             existing.tags = item.tags
             existing.visibility = item.visibility
             existing.updatedAt = new Date(item.updatedAt).getTime()
-            if (existing.content !== item.content) {
-              existing.content = item.content
+            // Rebuild blocks only if content actually changed
+            const currentContent = existing.blocks.map((b) => b.content).join('\n\n')
+            if (currentContent !== item.content) {
+              existing.blocks = item.content
+                ? item.content
+                    .split('\n\n')
+                    .filter(Boolean)
+                    .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
+                : [{ id: crypto.randomUUID(), content: '' }]
             }
           }
         }
@@ -136,7 +144,12 @@ export const writingsSlice = createSlice({
           .map((item): Writing => ({
             id: crypto.randomUUID(),
             title: item.title,
-            content: item.content,
+            blocks: item.content
+              ? item.content
+                  .split('\n\n')
+                  .filter(Boolean)
+                  .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
+              : [{ id: crypto.randomUUID(), content: '' }],
             category: item.category,
             tags: item.tags,
             visibility: item.visibility,
@@ -157,7 +170,7 @@ export const {
   createWriting,
   addWriting,
   setWritingOutputId,
-  updateWritingContent,
+  updateWritingBlocks,
   updateWritingTitle,
   deleteWriting,
   loadWritings
