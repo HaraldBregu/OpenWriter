@@ -193,13 +193,23 @@ export const ContentBlock = React.memo(function ContentBlock({
     const currentText = editor.getMarkdown()
     if (!currentText.trim()) return
 
+    // Snapshot the current text so we can revert on error or cancellation.
+    originalTextRef.current = currentText
+
     setIsEnhancing(true)
-    enhanceAccumulatedRef.current = ''
+
+    // Move cursor to the very end of the document and insert a paragraph break
+    // so streamed tokens appear after the existing content on a new line.
+    editor.commands.focus('end')
+    editor.commands.insertContent('\n\n')
 
     const taskId = await submitTask('ai-enhance', { text: currentText })
     if (taskId) {
       setEnhanceTaskId(taskId)
     } else {
+      // Submit failed — revert the separator we just inserted.
+      editor.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
+      onChangeRef.current(blockIdRef.current, originalTextRef.current)
       setIsEnhancing(false)
     }
   }, [editor, isEnhancing, submitTask])
