@@ -1,10 +1,14 @@
 /**
- * Tests for usePersonalityFiles hook.
+ * Tests for usePersonalityFiles hook (legacy file: useBrainFiles.test.ts).
  *
- * NOTE: This file was originally generated as useBrainFiles.test.ts referencing
- * a hook that no longer exists. It has been updated to test usePersonalityFiles,
- * which loads personality conversation files from the workspace and subscribes
- * to external file-change events.
+ * NOTE: The useBrainFiles hook no longer exists — it has been renamed to
+ * usePersonalityFiles. This test file exercises usePersonalityFiles with a
+ * focus on the window.personality.onFileChange subscription pattern.
+ *
+ * The hook:
+ *  - Uses window.workspace.getCurrent() to check for an active workspace
+ *  - Calls window.personality.loadAll() via the loadPersonalityFiles thunk
+ *  - Subscribes to window.personality.onFileChange() with a 500ms debounce
  *
  * Covers:
  *  - Initial load when workspace is set
@@ -21,19 +25,21 @@ import { usePersonalityFiles } from '../../../../src/renderer/src/hooks/usePerso
 import personalityFilesReducer from '../../../../src/renderer/src/store/personalityFilesSlice'
 
 // ---------------------------------------------------------------------------
-// Mock window.api helpers
+// Mock setup — window.workspace and window.personality namespaces
 // ---------------------------------------------------------------------------
 
 const mockPersonalityLoadAll = jest.fn()
 const mockWorkspaceGetCurrent = jest.fn()
-let fileChangeCallback: ((event: {
+
+type FileChangeCallback = (event: {
   type: 'added' | 'changed' | 'removed'
   sectionId: string
   fileId: string
   filePath: string
   timestamp: number
-}) => void) | null = null
+}) => void
 
+let fileChangeCallback: FileChangeCallback | null = null
 const mockUnsubscribe = jest.fn()
 
 beforeEach(() => {
@@ -42,13 +48,16 @@ beforeEach(() => {
   mockWorkspaceGetCurrent.mockResolvedValue(null)
   mockUnsubscribe.mockClear()
 
-  Object.defineProperty(global.window, 'api', {
+  Object.defineProperty(window, 'workspace', {
+    value: { getCurrent: mockWorkspaceGetCurrent },
+    writable: true,
+    configurable: true
+  })
+
+  Object.defineProperty(window, 'personality', {
     value: {
-      ...(global.window.api ?? {}),
-      personalityLoadAll: mockPersonalityLoadAll,
-      personalityLoadOne: jest.fn().mockResolvedValue(null),
-      workspaceGetCurrent: mockWorkspaceGetCurrent,
-      onPersonalityFileChange: jest.fn().mockImplementation((cb) => {
+      loadAll: mockPersonalityLoadAll,
+      onFileChange: jest.fn().mockImplementation((cb: FileChangeCallback) => {
         fileChangeCallback = cb
         return mockUnsubscribe
       })
@@ -80,8 +89,8 @@ function createWrapper() {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('usePersonalityFiles', () => {
-  it('should call personalityLoadAll when a workspace is set', async () => {
+describe('usePersonalityFiles (useBrainFiles)', () => {
+  it('should call personality.loadAll when a workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace')
 
     const { wrapper } = createWrapper()
@@ -92,7 +101,7 @@ describe('usePersonalityFiles', () => {
     })
   })
 
-  it('should not call personalityLoadAll when no workspace is set', async () => {
+  it('should not call personality.loadAll when no workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
@@ -127,7 +136,7 @@ describe('usePersonalityFiles', () => {
     })
   })
 
-  it('should log and tolerate errors from personalityLoadAll', async () => {
+  it('should log and tolerate errors from personality.loadAll', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace')
     mockPersonalityLoadAll.mockRejectedValue(new Error('Load error'))
 
@@ -143,14 +152,14 @@ describe('usePersonalityFiles', () => {
     consoleError.mockRestore()
   })
 
-  it('should subscribe to personality file-change events on mount', async () => {
+  it('should subscribe to window.personality.onFileChange events on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace')
 
     const { wrapper } = createWrapper()
     renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.onPersonalityFileChange).toHaveBeenCalled()
+      expect(window.personality.onFileChange).toHaveBeenCalled()
     })
   })
 
@@ -201,7 +210,7 @@ describe('usePersonalityFiles', () => {
     const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.onPersonalityFileChange).toHaveBeenCalled()
+      expect(window.personality.onFileChange).toHaveBeenCalled()
     })
 
     unmount()
