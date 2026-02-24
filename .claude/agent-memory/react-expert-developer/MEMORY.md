@@ -45,6 +45,16 @@
 - In `light`/`dark` modes: ignores OS/IPC changes (user preference wins)
 - `useIsDark()` at `src/renderer/src/hooks/useIsDark.ts` — MutationObserver on `<html>.classList` for components that need a boolean
 
+## TipTap Editor (v3)
+- Installed: `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/pm` (v3.20.0)
+- v3 API differences from v2: `setContent(content, options)` — second arg is `SetContentOptions` object, NOT a boolean. Use `{ emitUpdate: false }` to suppress onChange on programmatic updates.
+- v3 does NOT auto-add `is-editor-empty` class — handle placeholder via React state (`editor.isEmpty`) + an absolutely-positioned span overlay
+- `immediatelyRender: false` required to avoid SSR hydration warnings in Electron/Vite
+- Use ref pattern for `onChange`/`blockId` callbacks in `useEditor` options to avoid editor re-creation on prop changes
+- External content sync: compare `editor.getHTML()` vs `block.content` in `useEffect` before calling `setContent` — avoids cursor-reset on every keystroke
+- ProseMirror global styles in `src/renderer/src/index.css` (outside `@layer`): reset `outline`, `margin-top` between children, `margin: 0` on `p`
+- Component at: `src/renderer/src/components/ContentBlock.tsx`
+
 ## Settings Page Patterns
 - Settings page at `src/renderer/src/pages/SettingsPage.tsx` — tab-based layout (`general|models|media|devices|tools|system`)
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx` — toggle with chevron, content revealed below a `border-t`
