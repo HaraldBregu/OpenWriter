@@ -1,13 +1,14 @@
 /**
  * Tests for useWindowManager hook.
  * Manages child/modal/frameless/widget windows and subscribes to state changes.
+ * The hook delegates to window.wm.* namespace.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useWindowManager } from '../../../../src/renderer/src/hooks/useWindowManager'
 
 describe('useWindowManager', () => {
   it('should initialize and fetch window state', async () => {
-    ;(window.api.wmGetState as jest.Mock).mockResolvedValue({
+    ;(window.wm.getState as jest.Mock).mockResolvedValue({
       windows: [{ id: 1, type: 'main', title: 'Main', createdAt: 1000 }]
     })
 
@@ -22,7 +23,7 @@ describe('useWindowManager', () => {
   })
 
   it('should set error on init failure', async () => {
-    ;(window.api.wmGetState as jest.Mock).mockRejectedValue(new Error('wm init fail'))
+    ;(window.wm.getState as jest.Mock).mockRejectedValue(new Error('wm init fail'))
 
     const { result } = renderHook(() => useWindowManager())
 
@@ -32,9 +33,9 @@ describe('useWindowManager', () => {
   })
 
   describe('createChild', () => {
-    it('should call wmCreateChild', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
-      ;(window.api.wmCreateChild as jest.Mock).mockResolvedValue({ id: 2, type: 'child', title: 'Child', createdAt: 2000 })
+    it('should call wm.createChild', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
+      ;(window.wm.createChild as jest.Mock).mockResolvedValue({ id: 2, type: 'child', title: 'Child', createdAt: 2000 })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -42,13 +43,13 @@ describe('useWindowManager', () => {
         await result.current.createChild()
       })
 
-      expect(window.api.wmCreateChild).toHaveBeenCalled()
+      expect(window.wm.createChild).toHaveBeenCalled()
       expect(result.current.error).toBeNull()
     })
 
     it('should set error on failure', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
-      ;(window.api.wmCreateChild as jest.Mock).mockRejectedValue(new Error('child fail'))
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
+      ;(window.wm.createChild as jest.Mock).mockRejectedValue(new Error('child fail'))
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -61,8 +62,8 @@ describe('useWindowManager', () => {
   })
 
   describe('createModal', () => {
-    it('should call wmCreateModal', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
+    it('should call wm.createModal', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -70,13 +71,13 @@ describe('useWindowManager', () => {
         await result.current.createModal()
       })
 
-      expect(window.api.wmCreateModal).toHaveBeenCalled()
+      expect(window.wm.createModal).toHaveBeenCalled()
     })
   })
 
   describe('createFrameless', () => {
-    it('should call wmCreateFrameless', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
+    it('should call wm.createFrameless', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -84,13 +85,13 @@ describe('useWindowManager', () => {
         await result.current.createFrameless()
       })
 
-      expect(window.api.wmCreateFrameless).toHaveBeenCalled()
+      expect(window.wm.createFrameless).toHaveBeenCalled()
     })
   })
 
   describe('createWidget', () => {
-    it('should call wmCreateWidget', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
+    it('should call wm.createWidget', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -98,13 +99,13 @@ describe('useWindowManager', () => {
         await result.current.createWidget()
       })
 
-      expect(window.api.wmCreateWidget).toHaveBeenCalled()
+      expect(window.wm.createWidget).toHaveBeenCalled()
     })
   })
 
   describe('closeWindow', () => {
-    it('should call wmCloseWindow with the window ID', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
+    it('should call wm.closeWindow with the window ID', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -112,13 +113,13 @@ describe('useWindowManager', () => {
         await result.current.closeWindow(5)
       })
 
-      expect(window.api.wmCloseWindow).toHaveBeenCalledWith(5)
+      expect(window.wm.closeWindow).toHaveBeenCalledWith(5)
     })
   })
 
   describe('closeAll', () => {
-    it('should call wmCloseAll', async () => {
-      ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
+    it('should call wm.closeAll', async () => {
+      ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
 
       const { result } = renderHook(() => useWindowManager())
 
@@ -126,13 +127,13 @@ describe('useWindowManager', () => {
         await result.current.closeAll()
       })
 
-      expect(window.api.wmCloseAll).toHaveBeenCalled()
+      expect(window.wm.closeAll).toHaveBeenCalled()
     })
   })
 
   describe('refresh', () => {
     it('should re-fetch window state', async () => {
-      ;(window.api.wmGetState as jest.Mock)
+      ;(window.wm.getState as jest.Mock)
         .mockResolvedValueOnce({ windows: [] })
         .mockResolvedValueOnce({ windows: [{ id: 10, type: 'child', title: 'New', createdAt: 5000 }] })
 
@@ -152,13 +153,13 @@ describe('useWindowManager', () => {
 
   it('should clean up state change listener on unmount', async () => {
     const unsubscribe = jest.fn()
-    ;(window.api.wmGetState as jest.Mock).mockResolvedValue({ windows: [] })
-    ;(window.api.onWmStateChange as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.wm.getState as jest.Mock).mockResolvedValue({ windows: [] })
+    ;(window.wm.onStateChange as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useWindowManager())
 
     await waitFor(() => {
-      expect(window.api.onWmStateChange).toHaveBeenCalled()
+      expect(window.wm.onStateChange).toHaveBeenCalled()
     })
 
     unmount()
