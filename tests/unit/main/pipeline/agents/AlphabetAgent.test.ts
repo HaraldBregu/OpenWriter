@@ -42,6 +42,9 @@ jest.mock('@langchain/core/messages', () => ({
 
 // ---------------------------------------------------------------------------
 // import.meta.env shim for the Node/ts-jest environment
+//
+// ts-jest compiles import.meta.env references into property accesses on the
+// global `import` object. We define it here so the agent source can read it.
 // ---------------------------------------------------------------------------
 
 const metaEnv: Record<string, string | undefined> = {
@@ -49,13 +52,11 @@ const metaEnv: Record<string, string | undefined> = {
   VITE_OPENAI_MODEL: undefined
 }
 
-// ts-jest compiles import.meta.env references; we patch globalThis so that
-// any module that reads import.meta.env.VITE_* gets our controlled values.
-Object.defineProperty(globalThis, 'importMeta', { value: { env: metaEnv }, writable: true })
-
-// Patch the compiled reference that ts-jest produces for import.meta
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(globalThis as any).__importMetaEnv = metaEnv
+Object.defineProperty(global, 'import', {
+  value: { meta: { env: metaEnv } },
+  writable: true,
+  configurable: true
+})
 
 import { AlphabetAgent } from '../../../../../src/main/pipeline/agents/AlphabetAgent'
 import { ChatOpenAI } from '@langchain/openai'

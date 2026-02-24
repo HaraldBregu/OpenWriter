@@ -86,9 +86,17 @@ beforeEach(() => {
 
   installWindowMocks()
 
-  // The loadOutputItems thunk calls window.api.outputLoadAll (set up in
-  // renderer.ts global setup via preload-bridge mock). Configure it here.
-  ;(window.api.outputLoadAll as jest.Mock).mockResolvedValue([])
+  // The loadOutputItems thunk calls window.api.outputLoadAll.
+  // The preload-bridge mock does not include outputLoadAll, so we add it here
+  // by extending the existing window.api object.
+  Object.defineProperty(window, 'api', {
+    value: {
+      ...window.api,
+      outputLoadAll: mockOutputLoadAll
+    },
+    writable: true,
+    configurable: true
+  })
 })
 
 afterEach(() => {
