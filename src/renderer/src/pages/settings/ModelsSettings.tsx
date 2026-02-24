@@ -16,7 +16,7 @@ const ModelsSettings: React.FC = () => {
   const prevSelectedModels = useRef<Record<string, string>>({})
 
   useEffect(() => {
-    window.api.storeGetAllModelSettings().then((stored) => {
+    window.store.getAllModelSettings().then((stored) => {
       if (!stored) return
       setSelectedModels((prev) => {
         const next = { ...prev }
