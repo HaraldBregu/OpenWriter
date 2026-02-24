@@ -36,7 +36,6 @@ const FilesystemPage: React.FC = () => {
     unwatchDir,
     clearEvents
   } = useFilesystem()
-  useTheme()
   useLanguage()
 
   const [newFileName, setNewFileName] = useState('')
