@@ -415,8 +415,9 @@ describe('OutputFilesService', () => {
       await service.initialize()
       mockChokidarWatch.mockClear()
 
+      jest.useRealTimers()
       eventBus.emit('workspace:changed', { currentPath: '/new/workspace', previousPath: null })
-      await Promise.resolve()
+      await new Promise((resolve) => setTimeout(resolve, 50))
 
       expect(mockChokidarWatch).toHaveBeenCalled()
     })
