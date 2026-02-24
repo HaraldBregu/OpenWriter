@@ -58,7 +58,8 @@ import {
   DirectoriesIpc,
   TaskIpc,
   OutputIpc,
-  PersonalityIpc
+  PersonalityIpc,
+  ThemeIpc
 } from './ipc'
 
 export interface BootstrapResult {
