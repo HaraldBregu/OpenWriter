@@ -69,7 +69,7 @@ const DirectoriesPage: React.FC = () => {
   const handleAddDirectories = useCallback(async () => {
     try {
       // Use Electron dialog to select multiple directories
-      const result = await window.api.dialogOpenDirectory(true)
+      const result = await window.dialog.openDirectory(true)
       const resultData = result.data as { canceled: boolean; filePaths: string[] }
 
       if (resultData.canceled || !resultData.filePaths || resultData.filePaths.length === 0) {
