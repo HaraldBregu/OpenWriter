@@ -177,7 +177,7 @@ describe('usePersonalityFiles — initial load', () => {
 
   it('logs an error and does not throw when personalityLoadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
-    ;(window.api.personalityLoadAll as jest.Mock).mockRejectedValue(new Error('Network error'))
+    mockPersonalityLoadAll.mockRejectedValue(new Error('Network error'))
 
     const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
