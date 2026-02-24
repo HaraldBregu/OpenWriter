@@ -117,76 +117,63 @@ export const ContentBlock = React.memo(function ContentBlock({
     }
   }, [block.content, editor])
 
+  // Stream tokens into the accumulator ref (no re-render per token).
+  useEffect(() => {
+    if (!enhanceTaskId) return
+    const unsub = window.task.onEvent((event) => {
+      if (event.type !== 'progress') return
+      const data = event.data as { taskId: string; message?: string; detail?: { token?: string } }
+      if (data.taskId !== enhanceTaskId || data.message !== 'token') return
+      enhanceAccumulatedRef.current += data.detail?.token ?? ''
+    })
+    return () => unsub()
+  }, [enhanceTaskId])
+
+  // React to task lifecycle changes tracked by useTask.
+  useEffect(() => {
+    if (!enhanceTaskId) return
+    const taskState = tasks.get(enhanceTaskId)
+    if (!taskState) return
+
+    if (taskState.status === 'completed') {
+      onChangeRef.current(blockIdRef.current, enhanceAccumulatedRef.current)
+      enhanceAccumulatedRef.current = ''
+      setIsEnhancing(false)
+      setEnhanceTaskId(null)
+    } else if (taskState.status === 'error') {
+      console.error('[ContentBlock] Enhance error:', taskState.error)
+      enhanceAccumulatedRef.current = ''
+      setIsEnhancing(false)
+      setEnhanceTaskId(null)
+    } else if (taskState.status === 'cancelled') {
+      enhanceAccumulatedRef.current = ''
+      setIsEnhancing(false)
+      setEnhanceTaskId(null)
+    }
+  }, [enhanceTaskId, tasks])
+
   // Cancel any in-flight enhance task on unmount.
   useEffect(() => {
     return () => {
-      if (enhanceTaskIdRef.current) {
-        window.task.cancel(enhanceTaskIdRef.current)
-      }
-      enhanceUnsubscribeRef.current?.()
+      if (enhanceTaskId) cancelTask(enhanceTaskId)
     }
-  }, [])
+  }, [enhanceTaskId, cancelTask])
 
   const handleEnhance = useCallback(async () => {
     if (!editor || isEnhancing) return
-
     const currentText = editor.getMarkdown()
     if (!currentText.trim()) return
 
     setIsEnhancing(true)
     enhanceAccumulatedRef.current = ''
 
-    // Subscribe to task events before submitting so no tokens are missed.
-    const unsubscribe = window.task.onEvent((event) => {
-      const data = event.data as { taskId: string; message?: string; detail?: { token?: string }; result?: { content: string } }
-
-      if (data.taskId !== enhanceTaskIdRef.current) return
-
-      if (event.type === 'progress' && data.message === 'token') {
-        enhanceAccumulatedRef.current += data.detail?.token ?? ''
-      } else if (event.type === 'completed') {
-        onChangeRef.current(blockIdRef.current, enhanceAccumulatedRef.current)
-        setIsEnhancing(false)
-        enhanceTaskIdRef.current = null
-        enhanceAccumulatedRef.current = ''
-        enhanceUnsubscribeRef.current?.()
-        enhanceUnsubscribeRef.current = null
-      } else if (event.type === 'error') {
-        console.error('[ContentBlock] Enhance error:', (event.data as { message?: string }).message)
-        setIsEnhancing(false)
-        enhanceTaskIdRef.current = null
-        enhanceAccumulatedRef.current = ''
-        enhanceUnsubscribeRef.current?.()
-        enhanceUnsubscribeRef.current = null
-      } else if (event.type === 'cancelled') {
-        setIsEnhancing(false)
-        enhanceTaskIdRef.current = null
-        enhanceAccumulatedRef.current = ''
-        enhanceUnsubscribeRef.current?.()
-        enhanceUnsubscribeRef.current = null
-      }
-    })
-
-    enhanceUnsubscribeRef.current = unsubscribe
-
-    try {
-      console.log('[ContentBlock] Submitting enhance task with text:', currentText)
-      const result = await window.task.submit('ai-enhance', { text: currentText })
-      if (result.success) {
-        enhanceTaskIdRef.current = result.data.taskId
-      } else {
-        console.error('[ContentBlock] Enhance task submit failed:', result.error)
-        setIsEnhancing(false)
-        unsubscribe()
-        enhanceUnsubscribeRef.current = null
-      }
-    } catch (err) {
-      console.error('[ContentBlock] Enhance task threw:', err)
+    const taskId = await submitTask('ai-enhance', { text: currentText })
+    if (taskId) {
+      setEnhanceTaskId(taskId)
+    } else {
       setIsEnhancing(false)
-      unsubscribe()
-      enhanceUnsubscribeRef.current = null
     }
-  }, [editor, isEnhancing])
+  }, [editor, isEnhancing, submitTask])
 
   const handleCopy = useCallback(() => {
     if (!editor) return
