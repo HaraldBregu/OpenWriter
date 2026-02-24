@@ -99,7 +99,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   // Guard against our own onChange echoes by comparing current HTML first.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
-    const current = editor.getHTML()
+    const current = editor.getMarkdown()
     const incoming = block.content || ''
     if (current !== incoming) {
       editor.commands.setContent(incoming, { emitUpdate: false })
