@@ -4,9 +4,36 @@
 - Always use Vite's `import.meta.env.VITE_*` pattern for accessing environment variables. Never use `process.env` in renderer code.
 
 ## Preload Bridge Pattern
-- Bridge types live in `src/preload/index.d.ts` — always read this file before writing async thunks that call `window.api.*`
+- Bridge types live in `src/preload/index.d.ts` — always read this file before writing async thunks that call any `window.*` bridge.
 - Bridge shapes often differ from Redux shapes (e.g. nested `metadata` object vs flat item). Always map at the thunk boundary.
-- `outputSave` returns only `{ id, path, savedAt }` — must call `outputLoadOne` afterward to get the full `OutputFile` for Redux state.
+- `window.api` NO LONGER EXISTS — fully split into domain namespaces. See Namespace Map below.
+- `window.output.save` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
+
+## Namespace Map (window.api is gone — use these namespaces)
+All methods drop the domain prefix: `window.output.save`, `window.workspace.getCurrent`, etc.
+- bluetooth → `window.bluetooth.*`
+- clipboard → `window.clipboard.*`
+- cron / onCronJobResult → `window.cron.*`
+- lifecycle / onLifecycleEvent → `window.lifecycle.*`
+- notification / onNotificationEvent → `window.notification.*`
+- wm / onWmStateChange → `window.wm.*`
+- output / onOutputFileChange / onOutputWatcherError → `window.output.*`
+- personality / onPersonality* → `window.personality.*`
+- posts / onPosts* → `window.posts.*`
+- documents / onDocuments* → `window.documents.*`
+- store → `window.store.*`
+- workspace → `window.workspace.*`
+- directories / onDirectoriesChanged → `window.directories.*`
+- agent / onAgentEvent → `window.agent.*`
+- fs / onFsWatchEvent → `window.fs.*`
+- dialog → `window.dialog.*`
+- network / onNetworkStatusChange → `window.network.*`
+- getPlatform / showContextMenu / setTheme / onThemeChange / onLanguageChange / popupMenu / playSound / onFileOpened → `window.app.*`
+- windowMinimize/Maximize/Close/isMaximized/isFullScreen/onMaximizeChange/onFullScreenChange → `window.win.*`
+- showWritingContextMenu/onWritingContextMenuAction → `window.contextMenu.showWriting` / `window.contextMenu.onWritingAction`
+- showPostContextMenu/onPostContextMenuAction → `window.contextMenu.showPost` / `window.contextMenu.onPostAction`
+- media* → `window.media.*`
+- pipelineRun → `window.ai.inference`, pipelineCancel → `window.ai.cancel`, pipelineListAgents → `window.ai.listAgents`, onPipelineEvent → `window.ai.onEvent`
 
 ## Redux Slice Conventions
 - Two reference slices: `postsSlice.ts` (sync, prepare pattern) and `personalityFilesSlice.ts` (async thunks with extraReducers)
@@ -19,7 +46,7 @@
 - Storage: `workspace/output/{type}/{YYYY-MM-DD_HHmmss}/config.json + DATA.md`
 - Types: `'posts' | 'writings' | 'notes' | 'messages'`
 - Slice: `src/renderer/src/store/outputSlice.ts`
-- Bridge API: `outputSave`, `outputLoadAll`, `outputLoadByType`, `outputLoadOne`, `outputDelete`
+- Bridge API: `window.output.save`, `window.output.loadAll`, `window.output.update`, `window.output.delete`
 
 ## Component Library
 - App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
