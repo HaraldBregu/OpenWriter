@@ -1,6 +1,7 @@
 /**
  * Tests for WindowControls component.
  * Renders macOS-style traffic-light window control buttons.
+ * The component uses window.win.* namespace.
  */
 import React from 'react'
 import { render, screen } from '@testing-library/react'
@@ -9,7 +10,7 @@ import { WindowControls } from '../../../../src/renderer/src/components/WindowCo
 
 describe('WindowControls', () => {
   beforeEach(() => {
-    ;(window.api.windowIsMaximized as jest.Mock).mockResolvedValue(false)
+    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
   })
 
   it('should render three buttons (close, minimize, maximize)', () => {
@@ -23,38 +24,38 @@ describe('WindowControls', () => {
   it('should check maximized state on mount', () => {
     render(<WindowControls />)
 
-    expect(window.api.windowIsMaximized).toHaveBeenCalled()
+    expect(window.win.isMaximized).toHaveBeenCalled()
   })
 
-  it('should call windowClose when close button is clicked', async () => {
+  it('should call window.win.close when close button is clicked', async () => {
     const user = userEvent.setup()
     render(<WindowControls />)
 
     await user.click(screen.getByTitle('Close'))
 
-    expect(window.api.windowClose).toHaveBeenCalled()
+    expect(window.win.close).toHaveBeenCalled()
   })
 
-  it('should call windowMinimize when minimize button is clicked', async () => {
+  it('should call window.win.minimize when minimize button is clicked', async () => {
     const user = userEvent.setup()
     render(<WindowControls />)
 
     await user.click(screen.getByTitle('Minimize'))
 
-    expect(window.api.windowMinimize).toHaveBeenCalled()
+    expect(window.win.minimize).toHaveBeenCalled()
   })
 
-  it('should call windowMaximize when maximize button is clicked', async () => {
+  it('should call window.win.maximize when maximize button is clicked', async () => {
     const user = userEvent.setup()
     render(<WindowControls />)
 
     await user.click(screen.getByTitle('Maximize'))
 
-    expect(window.api.windowMaximize).toHaveBeenCalled()
+    expect(window.win.maximize).toHaveBeenCalled()
   })
 
   it('should show Restore title when window is maximized', async () => {
-    ;(window.api.windowIsMaximized as jest.Mock).mockResolvedValue(true)
+    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(true)
 
     render(<WindowControls />)
 
