@@ -41,7 +41,6 @@ const WindowManagerPage: React.FC = () => {
     closeAll,
     refresh
   } = useWindowManager()
-  useTheme()
   useLanguage()
 
   const windowTypes = [
