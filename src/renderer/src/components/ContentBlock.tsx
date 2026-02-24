@@ -149,7 +149,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         enhanceUnsubscribeRef.current?.()
         enhanceUnsubscribeRef.current = null
       } else if (event.type === 'error') {
-        console.error('[ContentBlock] Enhance error:', data.message)
+        console.error('[ContentBlock] Enhance error:', (event.data as { message?: string }).message)
         setIsEnhancing(false)
         enhanceTaskIdRef.current = null
         enhanceAccumulatedRef.current = ''
