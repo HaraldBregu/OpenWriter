@@ -79,7 +79,7 @@ export function useNetwork(): UseNetworkReturn {
         }
 
         // Get network info
-        const info = await window.api.networkGetInfo()
+        const info = await window.network.getInfo()
         if (isMounted) {
           setNetworkInfo(info)
           setIsOnline(info.isOnline)
