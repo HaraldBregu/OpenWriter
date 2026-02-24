@@ -213,7 +213,7 @@ describe('usePersonalityFiles — file-change subscription', () => {
 
     await act(async () => { await Promise.resolve() })
 
-    const callsBefore = (window.api.personalityLoadAll as jest.Mock).mock.calls.length
+    const callsBefore = mockPersonalityLoadAll.mock.calls.length
 
     // Emit a file-change event
     act(() => {
