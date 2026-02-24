@@ -145,4 +145,32 @@ the module. Tests import the slice directly with no extra mocking needed.
 **Slices with tests as of 2026-02-24**:
 `chatSlice`, `postsSlice`, `brainFilesSlice`, `directoriesSlice`, `outputSlice`, `writingsSlice`
 
+## IPC Module Test Notes (Batch 1 — confirmed passing)
+
+### AgentIpc — no ipcMain.handle calls
+Delegates entirely to `agent.registerHandlers()`. Test: verify that method is called once.
+No channel count/name tests apply here.
+
+### ContextMenuIpc — Menu.buildFromTemplate popup override required
+The electron mock's `Menu.buildFromTemplate` returns `{}` by default. Must override in `beforeEach`:
+```typescript
+(Menu.buildFromTemplate as jest.Mock).mockReturnValue({ popup: mockMenuPopup })
+```
+Menu item `click` callbacks call `event.sender.send(...)` — extract items from template arg[0].
+
+### DirectoriesIpc — 6 window-scoped handlers
+Channels: `directories:list/add/add-many/remove/validate/mark-indexed`
+Service key: `workspaceMetadata`. All wrapped with `wrapIpcHandler` → `{ success, data }` envelope.
+
+### DocumentsIpc — 5 handlers, must mock fs and file-type-validator
+Channels: `documents:import-files/import-by-paths/download-from-url/load-all/delete-file`
+Mock `node:fs/promises` and `../../../../src/main/utils/file-type-validator`.
+`tryGetWindowService('documentsWatcher')` → mock `getService` to throw for that key (returns null).
+`fs.access` called in sequence: first for docsDir check, then inside `getUniqueFilePath` loop.
+ENOENT on `fs.unlink` is idempotent (still `success: true`). Non-ENOENT → `success: false`.
+
+### console.error lines in test output are expected
+`IpcErrorHandler.ts` logs every caught error. Tests exercising "no workspace" or
+service-throws paths will emit `[IPC Error] channel: Error:` — these are NOT test failures.
+
 See `patterns.md` for detailed testing patterns and examples.
