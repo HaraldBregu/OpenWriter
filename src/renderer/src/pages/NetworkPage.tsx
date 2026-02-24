@@ -1,7 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNetwork } from '../hooks/useNetwork'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { Wifi, Globe, RefreshCw, Check, X, Signal } from 'lucide-react'
 
