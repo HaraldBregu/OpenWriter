@@ -12,7 +12,7 @@ export function WindowControls() {
   }
 
   const handleMaximize = () => {
-    window.api.windowMaximize()
+    window.win.maximize()
     setIsMaximized(!isMaximized)
   }
 

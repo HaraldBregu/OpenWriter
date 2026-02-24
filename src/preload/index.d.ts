@@ -216,20 +216,9 @@ interface WindowManagerState {
 declare global {
   interface Window {
     electron: ElectronAPI
-    task: {
-      submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }>
-      cancel: (taskId: string) => Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }>
-      list: () => Promise<{ success: true; data: TaskInfo[] } | { success: false; error: { code: string; message: string } }>
-      onEvent: (callback: (event: TaskEvent) => void) => () => void
-    }
-    ai: {
-      inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
-      cancel: (runId: string) => void
-      onEvent: (callback: (event: PipelineEvent) => void) => () => void
-      listAgents: () => Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }>
-      listRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
-    }
-    api: {
+
+    /** General application utilities */
+    app: {
       playSound: () => void
       setTheme: (theme: string) => void
       showContextMenu: () => void
@@ -237,95 +226,147 @@ declare global {
       onLanguageChange: (callback: (lng: string) => void) => () => void
       onThemeChange: (callback: (theme: string) => void) => () => void
       onFileOpened: (callback: (filePath: string) => void) => () => void
-      // Media permissions
+      popupMenu: () => Promise<void>
+      getPlatform: () => Promise<string>
+    }
+
+    /** Window controls (minimize / maximize / close / fullscreen) */
+    win: {
+      minimize: () => void
+      maximize: () => void
+      close: () => void
+      isMaximized: () => Promise<boolean>
+      isFullScreen: () => Promise<boolean>
+      onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void
+      onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
+    }
+
+    /** Microphone / camera permissions and device enumeration */
+    media: {
       requestMicrophonePermission: () => Promise<MediaPermissionStatus>
       requestCameraPermission: () => Promise<MediaPermissionStatus>
       getMicrophonePermissionStatus: () => Promise<MediaPermissionStatus>
       getCameraPermissionStatus: () => Promise<MediaPermissionStatus>
-      getMediaDevices: (type: 'audioinput' | 'videoinput') => Promise<MediaDeviceInfo[]>
-      // Bluetooth
-      bluetoothIsSupported: () => Promise<boolean>
-      bluetoothGetPermissionStatus: () => Promise<string>
-      bluetoothGetInfo: () => Promise<{ platform: string; supported: boolean; apiAvailable: boolean }>
-      // Network
-      networkIsSupported: () => Promise<boolean>
-      networkGetConnectionStatus: () => Promise<NetworkConnectionStatus>
-      networkGetInterfaces: () => Promise<NetworkInterfaceInfo[]>
-      networkGetInfo: () => Promise<NetworkInfo>
-      onNetworkStatusChange: (callback: (status: NetworkConnectionStatus) => void) => () => void
-      // Cron
-      cronGetAllJobs: () => Promise<CronJobStatus[]>
-      cronGetJob: (id: string) => Promise<CronJobStatus | null>
-      cronStartJob: (id: string) => Promise<boolean>
-      cronStopJob: (id: string) => Promise<boolean>
-      cronDeleteJob: (id: string) => Promise<boolean>
-      cronCreateJob: (config: CronJobConfig) => Promise<boolean>
-      cronUpdateSchedule: (id: string, schedule: string) => Promise<boolean>
-      cronValidateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
-      onCronJobResult: (callback: (result: CronJobResult) => void) => () => void
-      // Lifecycle
-      lifecycleGetState: () => Promise<LifecycleState>
-      lifecycleGetEvents: () => Promise<LifecycleEvent[]>
-      lifecycleRestart: () => Promise<void>
-      onLifecycleEvent: (callback: (event: LifecycleEvent) => void) => () => void
-      // Window Manager
-      wmGetState: () => Promise<WindowManagerState>
-      wmCreateChild: () => Promise<ManagedWindowInfo>
-      wmCreateModal: () => Promise<ManagedWindowInfo>
-      wmCreateFrameless: () => Promise<ManagedWindowInfo>
-      wmCreateWidget: () => Promise<ManagedWindowInfo>
-      wmCloseWindow: (id: number) => Promise<boolean>
-      wmCloseAll: () => Promise<void>
-      onWmStateChange: (callback: (state: WindowManagerState) => void) => () => void
-      // Filesystem
-      fsOpenFile: () => Promise<FileInfo | null>
-      fsReadFile: (filePath: string) => Promise<FileInfo>
-      fsSaveFile: (defaultName: string, content: string) => Promise<{ success: boolean; filePath: string | null }>
-      fsWriteFile: (filePath: string, content: string) => Promise<{ success: boolean; filePath: string }>
-      fsSelectDirectory: () => Promise<string | null>
-      fsWatchDirectory: (dirPath: string) => Promise<boolean>
-      fsUnwatchDirectory: (dirPath: string) => Promise<boolean>
-      fsGetWatched: () => Promise<string[]>
-      onFsWatchEvent: (callback: (event: FsWatchEvent) => void) => () => void
-      // Dialogs
-      dialogOpen: () => Promise<DialogResult>
-      dialogOpenDirectory: (multiSelections?: boolean) => Promise<DialogResult>
-      dialogSave: () => Promise<DialogResult>
-      dialogMessage: (message: string, detail: string, buttons: string[]) => Promise<DialogResult>
-      dialogError: (title: string, content: string) => Promise<DialogResult>
-      // Notifications
-      notificationIsSupported: () => Promise<boolean>
-      notificationShow: (options: NotificationOptions) => Promise<string>
-      onNotificationEvent: (callback: (result: NotificationResult) => void) => () => void
-      // Clipboard
-      clipboardWriteText: (text: string) => Promise<boolean>
-      clipboardReadText: () => Promise<string>
-      clipboardWriteHTML: (html: string) => Promise<boolean>
-      clipboardReadHTML: () => Promise<string>
-      clipboardWriteImage: (dataURL: string) => Promise<boolean>
-      clipboardReadImage: () => Promise<ClipboardImageData | null>
-      clipboardClear: () => Promise<boolean>
-      clipboardGetContent: () => Promise<ClipboardContent | null>
-      clipboardGetFormats: () => Promise<string[]>
-      clipboardHasText: () => Promise<boolean>
-      clipboardHasImage: () => Promise<boolean>
-      clipboardHasHTML: () => Promise<boolean>
-      // Store
-      storeGetAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
-      storeGetModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
-      storeSetSelectedModel: (providerId: string, modelId: string) => Promise<void>
-      storeSetApiToken: (providerId: string, token: string) => Promise<void>
-      storeSetModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
-      // Workspace
-      workspaceSelectFolder: () => Promise<string | null>
-      workspaceGetCurrent: () => Promise<string | null>
-      workspaceSetCurrent: (workspacePath: string) => Promise<void>
-      workspaceGetRecent: () => Promise<WorkspaceInfo[]>
-      workspaceClear: () => Promise<void>
-      workspaceDirectoryExists: (directoryPath: string) => Promise<boolean>
-      workspaceRemoveRecent: (workspacePath: string) => Promise<void>
-      // Posts - Sync posts to workspace filesystem
-      postsSyncToWorkspace: (posts: Array<{
+      getDevices: (type: 'audioinput' | 'videoinput') => Promise<MediaDeviceInfo[]>
+    }
+
+    /** Bluetooth capability queries */
+    bluetooth: {
+      isSupported: () => Promise<boolean>
+      getPermissionStatus: () => Promise<string>
+      getInfo: () => Promise<{ platform: string; supported: boolean; apiAvailable: boolean }>
+    }
+
+    /** Network connectivity and interface information */
+    network: {
+      isSupported: () => Promise<boolean>
+      getConnectionStatus: () => Promise<NetworkConnectionStatus>
+      getInterfaces: () => Promise<NetworkInterfaceInfo[]>
+      getInfo: () => Promise<NetworkInfo>
+      onStatusChange: (callback: (status: NetworkConnectionStatus) => void) => () => void
+    }
+
+    /** Scheduled job management */
+    cron: {
+      getAll: () => Promise<CronJobStatus[]>
+      getJob: (id: string) => Promise<CronJobStatus | null>
+      start: (id: string) => Promise<boolean>
+      stop: (id: string) => Promise<boolean>
+      delete: (id: string) => Promise<boolean>
+      create: (config: CronJobConfig) => Promise<boolean>
+      updateSchedule: (id: string, schedule: string) => Promise<boolean>
+      validateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
+      onJobResult: (callback: (result: CronJobResult) => void) => () => void
+    }
+
+    /** App lifecycle state and events */
+    lifecycle: {
+      getState: () => Promise<LifecycleState>
+      getEvents: () => Promise<LifecycleEvent[]>
+      restart: () => Promise<void>
+      onEvent: (callback: (event: LifecycleEvent) => void) => () => void
+    }
+
+    /** Window manager — child / modal / frameless / widget windows */
+    wm: {
+      getState: () => Promise<WindowManagerState>
+      createChild: () => Promise<ManagedWindowInfo>
+      createModal: () => Promise<ManagedWindowInfo>
+      createFrameless: () => Promise<ManagedWindowInfo>
+      createWidget: () => Promise<ManagedWindowInfo>
+      closeWindow: (id: number) => Promise<boolean>
+      closeAll: () => Promise<void>
+      onStateChange: (callback: (state: WindowManagerState) => void) => () => void
+    }
+
+    /** Filesystem operations and directory watching */
+    fs: {
+      openFile: () => Promise<FileInfo | null>
+      readFile: (filePath: string) => Promise<FileInfo>
+      saveFile: (defaultName: string, content: string) => Promise<{ success: boolean; filePath: string | null }>
+      writeFile: (filePath: string, content: string) => Promise<{ success: boolean; filePath: string }>
+      selectDirectory: () => Promise<string | null>
+      watchDirectory: (dirPath: string) => Promise<boolean>
+      unwatchDirectory: (dirPath: string) => Promise<boolean>
+      getWatched: () => Promise<string[]>
+      onWatchEvent: (callback: (event: FsWatchEvent) => void) => () => void
+    }
+
+    /** Native OS dialog boxes */
+    dialog: {
+      open: () => Promise<DialogResult>
+      openDirectory: (multiSelections?: boolean) => Promise<DialogResult>
+      save: () => Promise<DialogResult>
+      message: (message: string, detail: string, buttons: string[]) => Promise<DialogResult>
+      error: (title: string, content: string) => Promise<DialogResult>
+    }
+
+    /** Desktop notifications */
+    notification: {
+      isSupported: () => Promise<boolean>
+      show: (options: NotificationOptions) => Promise<string>
+      onEvent: (callback: (result: NotificationResult) => void) => () => void
+    }
+
+    /** Clipboard read / write operations */
+    clipboard: {
+      writeText: (text: string) => Promise<boolean>
+      readText: () => Promise<string>
+      writeHTML: (html: string) => Promise<boolean>
+      readHTML: () => Promise<string>
+      writeImage: (dataURL: string) => Promise<boolean>
+      readImage: () => Promise<ClipboardImageData | null>
+      clear: () => Promise<boolean>
+      getContent: () => Promise<ClipboardContent | null>
+      getFormats: () => Promise<string[]>
+      hasText: () => Promise<boolean>
+      hasImage: () => Promise<boolean>
+      hasHTML: () => Promise<boolean>
+    }
+
+    /** Persisted AI model settings */
+    store: {
+      getAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
+      getModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
+      setSelectedModel: (providerId: string, modelId: string) => Promise<void>
+      setApiToken: (providerId: string, token: string) => Promise<void>
+      setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
+    }
+
+    /** Workspace folder selection and recent workspaces */
+    workspace: {
+      selectFolder: () => Promise<string | null>
+      getCurrent: () => Promise<string | null>
+      setCurrent: (workspacePath: string) => Promise<void>
+      getRecent: () => Promise<WorkspaceInfo[]>
+      clear: () => Promise<void>
+      directoryExists: (directoryPath: string) => Promise<boolean>
+      removeRecent: (workspacePath: string) => Promise<void>
+    }
+
+    /** Post sync and file-watch events */
+    posts: {
+      syncToWorkspace: (posts: Array<{
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -340,7 +381,7 @@ declare global {
         failedCount: number
         errors?: Array<{ postId: string; error: string }>
       }>
-      postsUpdatePost: (post: {
+      update: (post: {
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -350,8 +391,8 @@ declare global {
         createdAt: number
         updatedAt: number
       }) => Promise<void>
-      postsDeletePost: (postId: string) => Promise<void>
-      postsLoadFromWorkspace: () => Promise<Array<{
+      delete: (postId: string) => Promise<void>
+      loadFromWorkspace: () => Promise<Array<{
         id: string
         title: string
         blocks: Array<{ id: string; content: string }>
@@ -361,15 +402,18 @@ declare global {
         createdAt: number
         updatedAt: number
       }>>
-      onPostsFileChange: (callback: (event: {
+      onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         postId: string
         filePath: string
         timestamp: number
       }) => void) => () => void
-      onPostsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-      // Documents
-      documentsImportFiles: () => Promise<Array<{
+      onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+    }
+
+    /** Document import, download, and file-watch events */
+    documents: {
+      importFiles: () => Promise<Array<{
         id: string
         name: string
         path: string
@@ -378,7 +422,7 @@ declare global {
         importedAt: number
         lastModified: number
       }>>
-      documentsImportByPaths: (paths: string[]) => Promise<Array<{
+      importByPaths: (paths: string[]) => Promise<Array<{
         id: string
         name: string
         path: string
@@ -387,7 +431,7 @@ declare global {
         importedAt: number
         lastModified: number
       }>>
-      documentsDownloadFromUrl: (url: string) => Promise<{
+      downloadFromUrl: (url: string) => Promise<{
         id: string
         name: string
         path: string
@@ -396,7 +440,7 @@ declare global {
         importedAt: number
         lastModified: number
       }>
-      documentsLoadAll: () => Promise<Array<{
+      loadAll: () => Promise<Array<{
         id: string
         name: string
         path: string
@@ -405,26 +449,22 @@ declare global {
         importedAt: number
         lastModified: number
       }>>
-      documentsDeleteFile: (id: string) => Promise<void>
-      onDocumentsFileChange: (callback: (event: {
+      delete: (id: string) => Promise<void>
+      onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         fileId: string
         filePath: string
         timestamp: number
       }) => void) => () => void
-      onDocumentsWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-      // Pipeline
-      pipelineRun: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
-      pipelineCancel: (runId: string) => void
-      pipelineListAgents: () => Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }>
-      pipelineListRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
-      onPipelineEvent: (callback: (event: PipelineEvent) => void) => () => void
-      // Agent
-      agentRun: (messages: Array<{role: 'user' | 'assistant'; content: string}>, runId: string, providerId: string) => Promise<void>
-      agentCancel: (runId: string) => void
-      onAgentEvent: (callback: (eventType: string, data: unknown) => void) => () => void
-      // Agent - Session Management
-      agentCreateSession: (config: {
+      onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+    }
+
+    /** AI agent execution and session management */
+    agent: {
+      run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string) => Promise<void>
+      cancel: (runId: string) => void
+      onEvent: (callback: (eventType: string, data: unknown) => void) => () => void
+      createSession: (config: {
         sessionId: string
         providerId: string
         modelId?: string
@@ -442,8 +482,8 @@ declare global {
         messageCount: number
         metadata?: Record<string, unknown>
       }>
-      agentDestroySession: (sessionId: string) => Promise<boolean>
-      agentGetSession: (sessionId: string) => Promise<{
+      destroySession: (sessionId: string) => Promise<boolean>
+      getSession: (sessionId: string) => Promise<{
         sessionId: string
         providerId: string
         modelId: string
@@ -453,7 +493,7 @@ declare global {
         messageCount: number
         metadata?: Record<string, unknown>
       } | null>
-      agentListSessions: () => Promise<Array<{
+      listSessions: () => Promise<Array<{
         sessionId: string
         providerId: string
         modelId: string
@@ -463,9 +503,8 @@ declare global {
         messageCount: number
         metadata?: Record<string, unknown>
       }>>
-      agentClearSessions: () => Promise<number>
-      // Agent - Enhanced Execution
-      agentRunSession: (options: {
+      clearSessions: () => Promise<number>
+      runSession: (options: {
         sessionId: string
         runId: string
         messages: Array<{ role: 'user' | 'assistant'; content: string }>
@@ -474,45 +513,40 @@ declare global {
         maxTokens?: number
         stream?: boolean
       }) => Promise<void>
-      agentCancelSession: (sessionId: string) => Promise<boolean>
-      // Agent - Status
-      agentGetStatus: () => Promise<{
+      cancelSession: (sessionId: string) => Promise<boolean>
+      getStatus: () => Promise<{
         totalSessions: number
         activeSessions: number
         totalMessages: number
       }>
-      agentIsRunning: (runId: string) => Promise<boolean>
-      // Window controls
-      popupMenu: () => Promise<void>
-      windowMinimize: () => void
-      windowMaximize: () => void
-      windowClose: () => void
-      windowIsMaximized: () => Promise<boolean>
-      getPlatform: () => Promise<string>
-      onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void
-      windowIsFullScreen: () => Promise<boolean>
-      onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
-      // Context Menu
-      showWritingContextMenu: (writingId: string, writingTitle: string) => Promise<void>
-      onWritingContextMenuAction: (callback: (data: { action: string; writingId: string }) => void) => () => void
-      showPostContextMenu: (postId: string, postTitle: string) => Promise<void>
-      onPostContextMenuAction: (callback: (data: { action: string; postId: string }) => void) => () => void
-      // Directories - Indexed directory management
-      directoriesList: () => Promise<Array<{
+      isRunning: (runId: string) => Promise<boolean>
+    }
+
+    /** Application-specific context menus */
+    contextMenu: {
+      showWriting: (writingId: string, writingTitle: string) => Promise<void>
+      onWritingAction: (callback: (data: { action: string; writingId: string }) => void) => () => void
+      showPost: (postId: string, postTitle: string) => Promise<void>
+      onPostAction: (callback: (data: { action: string; postId: string }) => void) => () => void
+    }
+
+    /** Indexed directory management */
+    directories: {
+      list: () => Promise<Array<{
         id: string
         path: string
         addedAt: number
         isIndexed: boolean
         lastIndexedAt?: number
       }>>
-      directoriesAdd: (dirPath: string) => Promise<{
+      add: (dirPath: string) => Promise<{
         id: string
         path: string
         addedAt: number
         isIndexed: boolean
         lastIndexedAt?: number
       }>
-      directoriesAddMany: (dirPaths: string[]) => Promise<{
+      addMany: (dirPaths: string[]) => Promise<{
         added: Array<{
           id: string
           path: string
@@ -522,18 +556,21 @@ declare global {
         }>
         errors: Array<{ path: string; error: string }>
       }>
-      directoriesRemove: (id: string) => Promise<boolean>
-      directoriesValidate: (dirPath: string) => Promise<{ valid: boolean; error?: string }>
-      directoriesMarkIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
-      onDirectoriesChanged: (callback: (directories: Array<{
+      remove: (id: string) => Promise<boolean>
+      validate: (dirPath: string) => Promise<{ valid: boolean; error?: string }>
+      markIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
+      onChanged: (callback: (directories: Array<{
         id: string
         path: string
         addedAt: number
         isIndexed: boolean
         lastIndexedAt?: number
       }>) => void) => () => void
-      // Personality - Conversation file management (markdown with YAML frontmatter)
-      personalitySave: (input: {
+    }
+
+    /** Personality / conversation file management */
+    personality: {
+      save: (input: {
         sectionId: string
         content: string
         metadata?: Record<string, unknown>
@@ -542,7 +579,7 @@ declare global {
         path: string
         savedAt: number
       }>
-      personalityLoadAll: () => Promise<Array<{
+      loadAll: () => Promise<Array<{
         id: string
         sectionId: string
         path: string
@@ -555,7 +592,7 @@ declare global {
         content: string
         savedAt: number
       }>>
-      personalityLoadOne: (params: {
+      loadOne: (params: {
         sectionId: string
         id: string
       }) => Promise<{
@@ -571,19 +608,19 @@ declare global {
         content: string
         savedAt: number
       } | null>
-      personalityDelete: (params: {
+      delete: (params: {
         sectionId: string
         id: string
       }) => Promise<void>
-      onPersonalityFileChange: (callback: (event: {
+      onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         sectionId: string
         fileId: string
         filePath: string
         timestamp: number
       }) => void) => () => void
-      onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-      personalityLoadSectionConfig: (params: { sectionId: string }) => Promise<{
+      onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+      loadSectionConfig: (params: { sectionId: string }) => Promise<{
         schemaVersion: number
         provider: string
         model: string
@@ -595,7 +632,7 @@ declare global {
         createdAt: string
         updatedAt: string
       } | null>
-      personalitySaveSectionConfig: (params: {
+      saveSectionConfig: (params: {
         sectionId: string
         update: {
           provider?: string
@@ -618,7 +655,7 @@ declare global {
         createdAt: string
         updatedAt: string
       }>
-      onPersonalitySectionConfigChange: (callback: (event: {
+      onSectionConfigChange: (callback: (event: {
         sectionId: string
         config: {
           schemaVersion: number
@@ -634,19 +671,39 @@ declare global {
         } | null
         timestamp: number
       }) => void) => () => void
-      // Output - File management for posts, writings
-      outputSave: (input: {
+    }
+
+    /** Output file management for posts and writings */
+    output: {
+      save: (input: {
         type: string
         content: string
         metadata?: Record<string, unknown>
       }) => Promise<{ id: string; path: string; savedAt: number }>
-      outputLoadAll: () => Promise<OutputFile[]>
-      outputLoadByType: (type: string) => Promise<OutputFile[]>
-      outputLoadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
-      outputUpdate: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }) => Promise<void>
-      outputDelete: (params: { type: string; id: string }) => Promise<void>
-      onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
-      onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+      loadAll: () => Promise<OutputFile[]>
+      loadByType: (type: string) => Promise<OutputFile[]>
+      loadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
+      update: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }) => Promise<void>
+      delete: (params: { type: string; id: string }) => Promise<void>
+      onFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
+      onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
+    }
+
+    /** Background task queue */
+    task: {
+      submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }>
+      cancel: (taskId: string) => Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }>
+      list: () => Promise<{ success: true; data: TaskInfo[] } | { success: false; error: { code: string; message: string } }>
+      onEvent: (callback: (event: TaskEvent) => void) => () => void
+    }
+
+    /** AI inference API (pipeline-based) */
+    ai: {
+      inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }>
+      cancel: (runId: string) => void
+      onEvent: (callback: (event: PipelineEvent) => void) => () => void
+      listAgents: () => Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }>
+      listRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
     }
   }
 }
