@@ -57,7 +57,7 @@ export function useDialogs(): UseDialogsReturn {
   const showErrorDialog = useCallback(async (title: string, content: string): Promise<void> => {
     try {
       setError(null)
-      const result = await window.api.dialogError(title, content)
+      const result = await window.dialog.error(title, content)
       pushResult(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to show error dialog')
