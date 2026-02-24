@@ -10,7 +10,7 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
 } from '@/components/app'
-import { ContentBlock, createBlock, type Block } from '@/components/ContentBlock'
+import { ContentBlock, InsertBlockPlaceholder, createBlock, type Block } from '@/components/ContentBlock'
 import { useAppDispatch, useAppSelector } from '../store'
 import {
   selectPostById,
