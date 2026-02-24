@@ -99,7 +99,7 @@ export function usePostsFileWatcher(): void {
 
         // Show error notification
         try {
-          await window.api.notificationShow({
+          await window.notification.show({
             title: 'Sync Error',
             body: 'Failed to sync external file changes. Please refresh manually.',
             urgency: 'normal'
