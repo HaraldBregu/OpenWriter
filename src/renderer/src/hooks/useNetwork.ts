@@ -41,7 +41,7 @@ export function useNetwork(): UseNetworkReturn {
   const refreshInterfaces = async (): Promise<void> => {
     try {
       setError(null)
-      const data = await window.api.networkGetInterfaces()
+      const data = await window.network.getInterfaces()
       setInterfaces(data)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch network interfaces'
