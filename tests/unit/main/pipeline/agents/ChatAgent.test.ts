@@ -61,15 +61,23 @@ jest.mock('@langchain/core/messages', () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// import.meta.env shim
+// import.meta.env shim for the Node/ts-jest environment.
+//
+// ts-jest compiles import.meta.env references into property accesses on the
+// global `import` object. Defining it here allows the agent source to read
+// controlled values in tests without hitting a SyntaxError.
 // ---------------------------------------------------------------------------
 
 const metaEnv: Record<string, string | undefined> = {
   VITE_OPENAI_API_KEY: undefined,
   VITE_OPENAI_MODEL: undefined
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(globalThis as any).__importMetaEnv = metaEnv
+
+Object.defineProperty(global, 'import', {
+  value: { meta: { env: metaEnv } },
+  writable: true,
+  configurable: true
+})
 
 import { ChatAgent } from '../../../../../src/main/pipeline/agents/ChatAgent'
 import { ChatOpenAI } from '@langchain/openai'
@@ -180,7 +188,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const events = await collectEvents(agent, 'hello', 'run-1', controller.signal)
 
@@ -196,7 +204,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: 'Hello' },
       { content: ', ' },
       { content: 'world!' }
@@ -216,7 +224,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'hi' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'hi' }]))
 
     const events = await collectEvents(agent, 'hello', 'run-1', controller.signal)
 
@@ -230,7 +238,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: '' },
       { content: 'hi' },
       { content: '' }
@@ -250,7 +258,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ text: 'part1' }, { text: ' part2' }] }
     ]))
 
@@ -268,7 +276,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ image_url: 'http://example.com' }] }
     ]))
 
@@ -283,7 +291,7 @@ describe('ChatAgent — successful streaming run', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const events = await collectEvents(agent, 'hello', 'run-1', controller.signal)
 
@@ -305,7 +313,7 @@ describe('ChatAgent — cancellation', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(
+    mockStream.mockResolvedValue(
       makeChunkStream([{ content: 'A' }, { content: 'B' }, { content: 'C' }], controller.signal)
     )
 
@@ -326,7 +334,7 @@ describe('ChatAgent — cancellation', () => {
     const controller = new AbortController()
     controller.abort()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'hello' }], controller.signal))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'hello' }], controller.signal))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -343,7 +351,6 @@ describe('ChatAgent — cancellation', () => {
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
-    // Abort errors should be handled silently — no error event
     expect(events.some((e) => e.type === 'error')).toBe(false)
   })
 })
@@ -371,7 +378,7 @@ describe('ChatAgent — error classification', () => {
     }
   })
 
-  it('should emit auth error for "invalid api key" errors', async () => {
+  it('should emit auth error for "invalid api key" messages', async () => {
     const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'gpt-4o-mini' })
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
@@ -463,7 +470,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { modelId: 'gpt-4-turbo' })
 
@@ -476,7 +483,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -489,7 +496,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -502,7 +509,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { temperature: 0.2 })
 
@@ -515,7 +522,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -528,7 +535,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -541,7 +548,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -554,7 +561,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -563,12 +570,12 @@ describe('ChatAgent — configuration resolution', () => {
   })
 
   it('should NOT treat "o1x-custom" as a reasoning model (false-positive guard)', async () => {
-    // "o1x" does not match any exact prefix — should get temperature
+    // "o1x" does not start with any known reasoning prefix — should get temperature
     const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'o1x-custom' })
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -581,7 +588,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { maxTokens: 500 })
 
@@ -594,7 +601,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { maxTokens: 0 })
 
@@ -607,7 +614,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -620,7 +627,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -632,7 +639,7 @@ describe('ChatAgent — configuration resolution', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'azure' })
 
@@ -652,7 +659,7 @@ describe('ChatAgent — conversation history and system prompt', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'What is TypeScript?', 'run-1', controller.signal, {
       systemPrompt: 'You are a TypeScript expert.',
@@ -662,14 +669,9 @@ describe('ChatAgent — conversation history and system prompt', () => {
       ]
     })
 
-    // SystemMessage should have been called with the custom system prompt
     expect(mockSystemMessage).toHaveBeenCalledWith('You are a TypeScript expert.')
-
-    // History messages should map user → HumanMessage, assistant → AIMessage
     expect(mockHumanMessage).toHaveBeenCalledWith('Hi')
     expect(mockAIMessage).toHaveBeenCalledWith('Hello!')
-
-    // The current user prompt should also produce a HumanMessage
     expect(mockHumanMessage).toHaveBeenCalledWith('What is TypeScript?')
   })
 
@@ -678,11 +680,10 @@ describe('ChatAgent — conversation history and system prompt', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'hello', 'run-1', controller.signal)
 
-    // The default system prompt matches the constant in the source
     expect(mockSystemMessage).toHaveBeenCalledWith('You are a helpful AI assistant.')
   })
 
@@ -691,24 +692,24 @@ describe('ChatAgent — conversation history and system prompt', () => {
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'answer' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'answer' }]))
 
     const events = await collectEvents(agent, 'hello', 'run-1', controller.signal, {
       messages: []
     })
 
     expect(events[events.length - 1].type).toBe('done')
-    // Only the current user prompt should generate a HumanMessage (system + user = 2 calls)
+    // Only the current user prompt produces a HumanMessage
     expect(mockHumanMessage).toHaveBeenCalledTimes(1)
     expect(mockHumanMessage).toHaveBeenCalledWith('hello')
   })
 
-  it('should map only user messages to HumanMessage in history', async () => {
+  it('should map user history entries to HumanMessage', async () => {
     const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'gpt-4o-mini' })
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'follow-up', 'run-1', controller.signal, {
       messages: [{ role: 'user', content: 'first question' }]
@@ -718,12 +719,12 @@ describe('ChatAgent — conversation history and system prompt', () => {
     expect(mockAIMessage).not.toHaveBeenCalledWith('first question')
   })
 
-  it('should map assistant messages to AIMessage in history', async () => {
+  it('should map assistant history entries to AIMessage', async () => {
     const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'gpt-4o-mini' })
     const agent = new ChatAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'follow-up', 'run-1', controller.signal, {
       messages: [{ role: 'assistant', content: 'previous answer' }]
@@ -733,3 +734,8 @@ describe('ChatAgent — conversation history and system prompt', () => {
     expect(mockHumanMessage).not.toHaveBeenCalledWith('previous answer')
   })
 })
+
+// Silence unused import warnings — HumanMessage and AIMessage are referenced
+// via the mocks above and their call tracking assertions.
+void HumanMessage
+void AIMessage

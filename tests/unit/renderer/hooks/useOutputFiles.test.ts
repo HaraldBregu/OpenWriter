@@ -172,7 +172,7 @@ describe('useOutputFiles — initial load', () => {
 
   it('logs an error and does not throw when outputLoadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
-    ;(window.api.outputLoadAll as jest.Mock).mockRejectedValue(new Error('Load failed'))
+    mockOutputLoadAll.mockRejectedValue(new Error('Load failed'))
 
     const consoleError = jest.spyOn(console, 'error').mockImplementation()
 
