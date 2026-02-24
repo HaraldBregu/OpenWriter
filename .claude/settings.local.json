@@ -61,7 +61,10 @@
       "Bash(git status:*)",
       "Bash(git mv:*)",
       "Bash(tee:*)",
-      "WebFetch(domain:tiptap.dev)"
+      "WebFetch(domain:tiptap.dev)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:deepwiki.com)"
     ],
     "deny": [
       "Bash(git push --force:*)",
