@@ -1,13 +1,14 @@
 /**
  * Tests for useLifecycle hook.
  * Manages app lifecycle state, events, and restart functionality.
+ * The hook delegates to window.lifecycle.* namespace.
  */
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useLifecycle } from '../../../../src/renderer/src/hooks/useLifecycle'
 
 describe('useLifecycle', () => {
   it('should initialize and fetch lifecycle state', async () => {
-    ;(window.api.lifecycleGetState as jest.Mock).mockResolvedValue({
+    ;(window.lifecycle.getState as jest.Mock).mockResolvedValue({
       isSingleInstance: true,
       events: [{ type: 'app-ready', timestamp: 1000 }],
       appReadyAt: 1000,
@@ -27,7 +28,7 @@ describe('useLifecycle', () => {
   })
 
   it('should set error when initialization fails', async () => {
-    ;(window.api.lifecycleGetState as jest.Mock).mockRejectedValue(new Error('init fail'))
+    ;(window.lifecycle.getState as jest.Mock).mockRejectedValue(new Error('init fail'))
 
     const { result } = renderHook(() => useLifecycle())
 
@@ -37,11 +38,11 @@ describe('useLifecycle', () => {
   })
 
   describe('restart', () => {
-    it('should call lifecycleRestart', async () => {
-      ;(window.api.lifecycleGetState as jest.Mock).mockResolvedValue({
+    it('should call lifecycle.restart', async () => {
+      ;(window.lifecycle.getState as jest.Mock).mockResolvedValue({
         isSingleInstance: true, events: [], appReadyAt: null, platform: 'win32'
       })
-      ;(window.api.lifecycleRestart as jest.Mock).mockResolvedValue(undefined)
+      ;(window.lifecycle.restart as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLifecycle())
 
@@ -49,15 +50,15 @@ describe('useLifecycle', () => {
         await result.current.restart()
       })
 
-      expect(window.api.lifecycleRestart).toHaveBeenCalled()
+      expect(window.lifecycle.restart).toHaveBeenCalled()
       expect(result.current.error).toBeNull()
     })
 
     it('should set error when restart fails', async () => {
-      ;(window.api.lifecycleGetState as jest.Mock).mockResolvedValue({
+      ;(window.lifecycle.getState as jest.Mock).mockResolvedValue({
         isSingleInstance: true, events: [], appReadyAt: null, platform: 'win32'
       })
-      ;(window.api.lifecycleRestart as jest.Mock).mockRejectedValue(new Error('restart fail'))
+      ;(window.lifecycle.restart as jest.Mock).mockRejectedValue(new Error('restart fail'))
 
       const { result } = renderHook(() => useLifecycle())
 
@@ -71,10 +72,10 @@ describe('useLifecycle', () => {
 
   describe('refreshEvents', () => {
     it('should fetch and update events', async () => {
-      ;(window.api.lifecycleGetState as jest.Mock).mockResolvedValue({
+      ;(window.lifecycle.getState as jest.Mock).mockResolvedValue({
         isSingleInstance: true, events: [], appReadyAt: null, platform: 'win32'
       })
-      ;(window.api.lifecycleGetEvents as jest.Mock).mockResolvedValue([
+      ;(window.lifecycle.getEvents as jest.Mock).mockResolvedValue([
         { type: 'ready', timestamp: 100 },
         { type: 'focus', timestamp: 200 }
       ])
@@ -91,15 +92,15 @@ describe('useLifecycle', () => {
 
   it('should clean up lifecycle event listener on unmount', async () => {
     const unsubscribe = jest.fn()
-    ;(window.api.lifecycleGetState as jest.Mock).mockResolvedValue({
+    ;(window.lifecycle.getState as jest.Mock).mockResolvedValue({
       isSingleInstance: true, events: [], appReadyAt: null, platform: 'win32'
     })
-    ;(window.api.onLifecycleEvent as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.lifecycle.onEvent as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useLifecycle())
 
     await waitFor(() => {
-      expect(window.api.onLifecycleEvent).toHaveBeenCalled()
+      expect(window.lifecycle.onEvent).toHaveBeenCalled()
     })
 
     unmount()
