@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBluetooth } from '../hooks/useBluetooth'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { Bluetooth, BluetoothConnected, BluetoothSearching, Wifi } from 'lucide-react'
 
