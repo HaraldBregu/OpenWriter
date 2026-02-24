@@ -65,7 +65,8 @@
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:deepwiki.com)",
-      "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full.txt 2>&1; echo \"Exit: $?\")"
+      "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full.txt 2>&1; echo \"Exit: $?\")",
+      "Bash(npx jest \"tests/unit/main/pipeline/agents/CounterAgent\" --forceExit --no-coverage --clearCache > /tmp/clear-cache.txt 2>&1; echo \"Exit: $?\")"
     ],
     "deny": [
       "Bash(git push --force:*)",

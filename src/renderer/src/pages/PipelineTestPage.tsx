@@ -26,7 +26,7 @@ const PipelineTestPage: React.FC = () => {
 
   useEffect(() => {
     // Load available agents
-    window.api.pipelineListAgents().then((result) => {
+    window.ai.listAgents().then((result) => {
       if (result.success) {
         setAvailableAgents(result.data)
         console.log('[PipelineTest] Available agents:', result.data)
@@ -34,7 +34,7 @@ const PipelineTestPage: React.FC = () => {
     })
 
     // Listen for pipeline events
-    const cleanup = window.api.onPipelineEvent((event) => {
+    const cleanup = window.ai.onEvent((event) => {
       console.log('[PipelineTest] Event:', event)
 
       if (event.type === 'thinking') {
