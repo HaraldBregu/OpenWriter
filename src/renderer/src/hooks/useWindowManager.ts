@@ -77,7 +77,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const closeWindow = useCallback(async (id: number): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCloseWindow(id)
+      await window.wm.closeWindow(id)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to close window'
       setError(message)
