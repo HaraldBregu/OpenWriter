@@ -99,6 +99,7 @@ export const ContentBlock = React.memo(function ContentBlock({
       setIsEmpty(ed.isEmpty)
     },
     onCreate: ({ editor: ed }: { editor: Editor }) => {
+      editorRef.current = ed
       setIsEmpty(ed.isEmpty)
     },
     editorProps: {
@@ -107,6 +108,11 @@ export const ContentBlock = React.memo(function ContentBlock({
       },
     },
   })
+
+  // Keep editorRef in sync whenever useEditor returns a new instance.
+  useEffect(() => {
+    editorRef.current = editor
+  }, [editor])
 
   // Sync external content changes (e.g., when the block resets or is edited elsewhere).
   // Guard against our own onChange echoes by comparing current HTML first.
