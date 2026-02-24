@@ -477,6 +477,8 @@ describe('PersonalityFilesService', () => {
       mockChokidarWatch.mockClear()
 
       eventBus.emit('workspace:changed', { currentPath: '/new/workspace', previousPath: null })
+      // Allow the async startWatching chain (stopWatching + mkdir + watch) to settle
+      await new Promise((resolve) => setImmediate(resolve))
       await Promise.resolve()
 
       expect(mockChokidarWatch).toHaveBeenCalled()

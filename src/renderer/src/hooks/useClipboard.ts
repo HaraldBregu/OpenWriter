@@ -74,7 +74,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      const success = await window.api.clipboardWriteHTML(html)
+      const success = await window.clipboard.writeHTML(html)
       if (success) {
         setContent({
           type: 'html',

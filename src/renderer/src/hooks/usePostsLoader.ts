@@ -123,7 +123,7 @@ export async function reloadPostsFromWorkspace(
     // Don't show notification for "file not found" errors
     if (error instanceof Error && !error.message.includes('ENOENT')) {
       try {
-        await window.api.notificationShow({
+        await window.notification.show({
           title: 'Reload Failed',
           body: 'Failed to reload posts from workspace.',
           urgency: 'normal'

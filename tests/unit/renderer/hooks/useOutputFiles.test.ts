@@ -223,14 +223,14 @@ describe('useOutputFiles — file-change subscription', () => {
     })
 
     // Debounce has not fired yet — count should be unchanged
-    expect((window.api.outputLoadAll as jest.Mock).mock.calls.length).toBe(callsBefore)
+    expect(mockOutputLoadAll.mock.calls.length).toBe(callsBefore)
 
     // Advance past the 500 ms debounce window
     act(() => { jest.advanceTimersByTime(600) })
 
     await act(async () => { await Promise.resolve() })
 
-    expect((window.api.outputLoadAll as jest.Mock).mock.calls.length).toBeGreaterThan(callsBefore)
+    expect(mockOutputLoadAll.mock.calls.length).toBeGreaterThan(callsBefore)
   })
 
   it('coalesces multiple rapid file-change events into a single reload', async () => {

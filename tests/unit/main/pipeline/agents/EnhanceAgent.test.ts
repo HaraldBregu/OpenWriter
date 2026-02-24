@@ -60,15 +60,23 @@ jest.mock('@langchain/core/messages', () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// import.meta.env shim
+// import.meta.env shim for the Node/ts-jest environment.
+//
+// ts-jest compiles import.meta.env references into property accesses on the
+// global `import` object. Defining it here allows the agent source to read
+// controlled values in tests without hitting a SyntaxError.
 // ---------------------------------------------------------------------------
 
 const metaEnv: Record<string, string | undefined> = {
   VITE_OPENAI_API_KEY: undefined,
   VITE_OPENAI_MODEL: undefined
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(globalThis as any).__importMetaEnv = metaEnv
+
+Object.defineProperty(global, 'import', {
+  value: { meta: { env: metaEnv } },
+  writable: true,
+  configurable: true
+})
 
 import { EnhanceAgent } from '../../../../../src/main/pipeline/agents/EnhanceAgent'
 import { ChatOpenAI } from '@langchain/openai'
@@ -178,7 +186,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const events = await collectEvents(agent, 'Some text.', 'run-1', controller.signal)
 
@@ -194,7 +202,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: 'Better' },
       { content: ' text' },
       { content: ' here.' }
@@ -214,7 +222,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'Improved.' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'Improved.' }]))
 
     const events = await collectEvents(agent, 'Imroved.', 'run-1', controller.signal)
 
@@ -228,7 +236,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: '' },
       { content: 'Fixed.' },
       { content: '' }
@@ -248,7 +256,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ text: 'Well' }, { text: ' written.' }] }
     ]))
 
@@ -266,7 +274,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ image_url: 'http://example.com' }] }
     ]))
 
@@ -281,7 +289,7 @@ describe('EnhanceAgent — successful streaming run', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -303,7 +311,7 @@ describe('EnhanceAgent — cancellation', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(
+    mockStream.mockResolvedValue(
       makeChunkStream([{ content: 'A' }, { content: 'B' }], controller.signal)
     )
 
@@ -324,7 +332,7 @@ describe('EnhanceAgent — cancellation', () => {
     const controller = new AbortController()
     controller.abort()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'A' }], controller.signal))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'A' }], controller.signal))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -460,7 +468,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { modelId: 'gpt-4-turbo' })
 
@@ -473,7 +481,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -486,7 +494,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -499,7 +507,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -512,7 +520,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -525,7 +533,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -538,7 +546,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -551,7 +559,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -564,7 +572,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -576,7 +584,7 @@ describe('EnhanceAgent — configuration resolution', () => {
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'azure-openai' })
 
@@ -596,11 +604,10 @@ describe('EnhanceAgent — single-shot behaviour (no conversation history)', () 
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'Fix this sentence.', 'run-1', controller.signal)
 
-    // One SystemMessage + one HumanMessage
     expect(mockSystemMessage).toHaveBeenCalledTimes(1)
     expect(mockHumanMessage).toHaveBeenCalledTimes(1)
     expect(mockHumanMessage).toHaveBeenCalledWith('Fix this sentence.')
@@ -611,12 +618,11 @@ describe('EnhanceAgent — single-shot behaviour (no conversation history)', () 
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
     const systemPromptArg: string = mockSystemMessage.mock.calls[0][0]
-    // The system prompt is a writing editor prompt — verify key characteristics
     expect(systemPromptArg).toMatch(/grammar/i)
     expect(systemPromptArg).toMatch(/improve/i)
   })
@@ -626,7 +632,7 @@ describe('EnhanceAgent — single-shot behaviour (no conversation history)', () 
     const agent = new EnhanceAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const userText = 'This is a paragraph that needs to be enhanced for clarity and grammar.'
     await collectEvents(agent, userText, 'run-1', controller.signal)
