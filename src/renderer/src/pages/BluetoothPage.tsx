@@ -15,7 +15,6 @@ const BluetoothPage: React.FC = () => {
     requestDevice,
     disconnectDevice
   } = useBluetooth()
-  useTheme()
   useLanguage()
 
   const [platformInfo, setPlatformInfo] = useState<{
