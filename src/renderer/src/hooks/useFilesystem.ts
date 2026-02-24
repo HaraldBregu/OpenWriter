@@ -98,7 +98,7 @@ export function useFilesystem(): UseFilesystemReturn {
   const unwatchDir = useCallback(async (dirPath: string): Promise<void> => {
     try {
       setError(null)
-      await window.api.fsUnwatchDirectory(dirPath)
+      await window.fs.unwatchDirectory(dirPath)
       setWatchedDirs((prev) => prev.filter((d) => d !== dirPath))
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to unwatch directory'
