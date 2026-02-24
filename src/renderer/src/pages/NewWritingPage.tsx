@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Download, Eye, Settings2, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
+import { Reorder } from 'framer-motion'
 import {
   AppButton,
   AppDropdownMenu,
@@ -8,16 +9,16 @@ import {
   AppDropdownMenuItem,
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
-  AppTextarea,
 } from '@/components/app'
+import { ContentBlock, InsertBlockPlaceholder, createBlock, type Block } from '@/components/ContentBlock'
 import { useAppDispatch, useAppSelector } from '../store'
 import {
   selectWritingById,
   addWriting,
   setWritingOutputId,
-  updateWritingContent,
+  updateWritingBlocks,
   updateWritingTitle,
-  deleteWriting
+  deleteWriting,
 } from '../store/writingsSlice'
 import { saveOutputItem, updateOutputItem, deleteOutputItem } from '@/store/outputSlice'
 import {
@@ -43,7 +44,7 @@ const NewWritingPage: React.FC = () => {
   // Draft state (used only when no id yet)
   const draftIdRef = useRef(crypto.randomUUID())
   const [draftTitle, setDraftTitle] = useState('')
-  const [draftContent, setDraftContent] = useState('')
+  const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
   const committedRef = useRef(false)
 
   // Tracks the output folder ID of the last successful save (both modes).
@@ -58,7 +59,7 @@ const NewWritingPage: React.FC = () => {
     if (prevDraftKeyRef.current === draftKey) return
     prevDraftKeyRef.current = draftKey
     setDraftTitle('')
-    setDraftContent('')
+    setDraftBlocks([createBlock()])
     draftIdRef.current = crypto.randomUUID()
     committedRef.current = false
     savedOutputIdRef.current = null
@@ -73,7 +74,7 @@ const NewWritingPage: React.FC = () => {
   useEffect(() => {
     if (!isDraft || committedRef.current) return
 
-    const hasContent = draftTitle.trim() || draftContent.trim()
+    const hasContent = draftTitle.trim() || draftBlocks.some((b) => b.content.trim())
     if (!hasContent) return
 
     const timer = setTimeout(async () => {
@@ -87,7 +88,7 @@ const NewWritingPage: React.FC = () => {
       const newWriting = {
         id: draftIdRef.current,
         title: draftTitle,
-        content: draftContent,
+        blocks: draftBlocks,
         category: 'writing',
         tags: [],
         visibility: 'private',
@@ -100,7 +101,7 @@ const NewWritingPage: React.FC = () => {
       const saved = await dispatch(saveOutputItem({
         type: 'writings',
         title: draftTitle || 'Untitled Writing',
-        content: draftContent,
+        content: draftBlocks.map((b) => b.content).join('\n\n'),
         category: 'writing',
         visibility: 'private',
         provider: 'manual',
@@ -113,7 +114,7 @@ const NewWritingPage: React.FC = () => {
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [isDraft, draftTitle, draftContent, dispatch, navigate])
+  }, [isDraft, draftTitle, draftBlocks, dispatch, navigate])
 
   // ---------------------------------------------------------------------------
   // Edit mode: auto-save to output 1s after changes
@@ -131,7 +132,7 @@ const NewWritingPage: React.FC = () => {
     saveTimerRef.current = setTimeout(async () => {
       const workspace = await window.api.workspaceGetCurrent()
       if (!workspace) return
-      const content = writing.content
+      const content = writing.blocks.map((b) => b.content).join('\n\n')
       const title = writing.title || 'Untitled Writing'
       const outputId = savedOutputIdRef.current
       if (outputId) {
@@ -165,23 +166,55 @@ const NewWritingPage: React.FC = () => {
   }, [isDraft, writing, dispatch])
 
   // ---------------------------------------------------------------------------
-  // Callbacks
+  // Edit mode callbacks
   // ---------------------------------------------------------------------------
-  const handleContentChange = useCallback((value: string) => {
-    if (isDraft) {
-      setDraftContent(value)
-    } else if (writing) {
-      dispatch(updateWritingContent({ writingId: writing.id, content: value }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleChange = useCallback((blockId: string, content: string) => {
+    if (!writing) return
+    const updated = writing.blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    dispatch(updateWritingBlocks({ writingId: writing.id, blocks: updated }))
+  }, [writing, dispatch])
 
-  const handleTitleChange = useCallback((value: string) => {
-    if (isDraft) {
-      setDraftTitle(value)
-    } else if (writing) {
-      dispatch(updateWritingTitle({ writingId: writing.id, title: value }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleDelete = useCallback((blockId: string) => {
+    if (!writing) return
+    const updated = writing.blocks.filter((b) => b.id !== blockId)
+    dispatch(updateWritingBlocks({ writingId: writing.id, blocks: updated }))
+  }, [writing, dispatch])
+
+  const handleAddBlockAfter = useCallback((afterId: string) => {
+    if (!writing) return
+    const index = writing.blocks.findIndex((b) => b.id === afterId)
+    const newBlock: Block = createBlock()
+    const updated = [...writing.blocks.slice(0, index + 1), newBlock, ...writing.blocks.slice(index + 1)]
+    dispatch(updateWritingBlocks({ writingId: writing.id, blocks: updated }))
+  }, [writing, dispatch])
+
+  const handleReorder = useCallback((reordered: Block[]) => {
+    if (!writing) return
+    dispatch(updateWritingBlocks({ writingId: writing.id, blocks: reordered }))
+  }, [writing, dispatch])
+
+  // ---------------------------------------------------------------------------
+  // Draft mode callbacks
+  // ---------------------------------------------------------------------------
+  const handleDraftChange = useCallback((blockId: string, content: string) => {
+    setDraftBlocks((prev) => prev.map((b) => (b.id === blockId ? { ...b, content } : b)))
+  }, [])
+
+  const handleDraftDelete = useCallback((blockId: string) => {
+    setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
+  }, [])
+
+  const handleDraftAddBlockAfter = useCallback((afterId: string) => {
+    setDraftBlocks((prev) => {
+      const index = prev.findIndex((b) => b.id === afterId)
+      const newBlock: Block = createBlock()
+      return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
+    })
+  }, [])
+
+  const handleDraftReorder = useCallback((reordered: Block[]) => {
+    setDraftBlocks(reordered)
+  }, [])
 
   // ---------------------------------------------------------------------------
   // Guard: existing writing not found in Redux
@@ -196,7 +229,7 @@ const NewWritingPage: React.FC = () => {
 
   // Resolve display values for both modes
   const title = isDraft ? draftTitle : writing!.title
-  const content = isDraft ? draftContent : writing!.content
+  const blocks = isDraft ? draftBlocks : writing!.blocks
 
   return (
     <div className="h-full flex flex-col">
@@ -208,7 +241,13 @@ const NewWritingPage: React.FC = () => {
           <input
             type="text"
             value={title}
-            onChange={(e) => handleTitleChange(e.target.value)}
+            onChange={(e) => {
+              if (isDraft) {
+                setDraftTitle(e.target.value)
+              } else {
+                dispatch(updateWritingTitle({ writingId: writing!.id, title: e.target.value }))
+              }
+            }}
             placeholder="Untitled Writing"
             className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
           />
@@ -274,12 +313,33 @@ const NewWritingPage: React.FC = () => {
       <div className="flex flex-1 overflow-hidden bg-background">
         {/* Main content area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-6 py-10">
-            <AppTextarea
-              value={content}
-              onChange={(e) => handleContentChange(e.target.value)}
-              placeholder="Start writing..."
-              className="w-full min-h-[60vh] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 text-base leading-relaxed p-0"
+          <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
+            <Reorder.Group
+              axis="y"
+              values={blocks}
+              onReorder={isDraft ? handleDraftReorder : handleReorder}
+              className="flex flex-col gap-0"
+            >
+              {blocks.map((block) => (
+                <ContentBlock
+                  key={block.id}
+                  block={block}
+                  isOnly={blocks.length === 1}
+                  onChange={isDraft ? handleDraftChange : handleChange}
+                  onDelete={isDraft ? handleDraftDelete : handleDelete}
+                  onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
+                  placeholder="Start writing..."
+                />
+              ))}
+            </Reorder.Group>
+            <InsertBlockPlaceholder
+              onClick={() => {
+                if (isDraft) {
+                  setDraftBlocks((prev) => [...prev, createBlock()])
+                } else if (writing) {
+                  dispatch(updateWritingBlocks({ writingId: writing.id, blocks: [...writing.blocks, createBlock()] }))
+                }
+              }}
             />
           </div>
         </div>
