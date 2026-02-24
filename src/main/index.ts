@@ -112,8 +112,6 @@ app.on('open-file', (event, filePath) => {
 })
 
 app.whenReady().then(async () => {
-  nativeTheme.themeSource = 'dark'
-
   // Get services from container
   const lifecycleService = container.get<LifecycleService>('lifecycle')
 
