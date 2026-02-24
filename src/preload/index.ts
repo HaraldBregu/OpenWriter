@@ -42,6 +42,9 @@ const api = {
     playSound: (): void => {
         ipcRenderer.send('play-sound')
     },
+    setTheme: (theme: string): void => {
+        ipcRenderer.send('set-theme', theme)
+    },
     showContextMenu: (): void => {
         ipcRenderer.send('context-menu')
     },
