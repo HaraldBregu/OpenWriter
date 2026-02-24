@@ -266,7 +266,7 @@ describe('usePersonalityFiles — file-change subscription', () => {
     await act(async () => { await Promise.resolve() })
 
     // Only one reload despite four events
-    expect((window.api.personalityLoadAll as jest.Mock).mock.calls.length).toBe(callsBefore + 1)
+    expect(mockPersonalityLoadAll.mock.calls.length).toBe(callsBefore + 1)
   })
 })
 
