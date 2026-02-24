@@ -78,8 +78,8 @@ export const ContentBlock = React.memo(function ContentBlock({
   const blockIdRef = React.useRef(block.id)
   blockIdRef.current = block.id
 
-  // Refs for enhance-with-AI stream management — avoids stale closures.
-  const enhanceRunIdRef = useRef<string | null>(null)
+  // Refs for enhance-with-AI task management — avoids stale closures.
+  const enhanceTaskIdRef = useRef<string | null>(null)
   const enhanceUnsubscribeRef = useRef<(() => void) | null>(null)
   const enhanceAccumulatedRef = useRef<string>('')
 
