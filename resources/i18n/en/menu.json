@@ -30,5 +30,6 @@
   "front": "Bring All to Front",
   "theme": "Theme",
   "light": "Light",
-  "dark": "Dark"
+  "dark": "Dark",
+  "system": "System"
 }
