@@ -615,15 +615,18 @@ export class PersonalityFilesService implements Disposable {
         depth: 2, // personality/ -> <section>/ -> <date-folder>/
         alwaysStat: false,
         ignored: (filePath: string) => {
-          const base = path.basename(filePath)
+          // Chokidar v5 normalizes paths to forward slashes; normalize
+          // here so the comparison works on Windows (backslashes).
+          const normalized = path.normalize(filePath)
+          const base = path.basename(normalized)
 
           // Always watch the root personality dir itself
-          if (filePath === personalityDir) return false
+          if (normalized === personalityDir) return false
 
           // Ignore dotfiles and temp files
           if (base.startsWith('.') || base.endsWith('.tmp')) return true
 
-          const rel = path.relative(personalityDir, filePath)
+          const rel = path.relative(personalityDir, normalized)
           const parts = rel.split(path.sep)
 
           // Allow section directories (depth 1)
