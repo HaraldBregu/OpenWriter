@@ -40,15 +40,23 @@ jest.mock('@langchain/core/messages', () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// import.meta.env shim
+// import.meta.env shim for the Node/ts-jest environment.
+//
+// ts-jest compiles import.meta.env references into property accesses on the
+// global `import` object. Defining it here allows the agent source to read
+// controlled values in tests without hitting a SyntaxError.
 // ---------------------------------------------------------------------------
 
 const metaEnv: Record<string, string | undefined> = {
   VITE_OPENAI_API_KEY: undefined,
   VITE_OPENAI_MODEL: undefined
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(globalThis as any).__importMetaEnv = metaEnv
+
+Object.defineProperty(global, 'import', {
+  value: { meta: { env: metaEnv } },
+  writable: true,
+  configurable: true
+})
 
 import { CounterAgent } from '../../../../../src/main/pipeline/agents/CounterAgent'
 import { ChatOpenAI } from '@langchain/openai'
@@ -158,7 +166,7 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: '1' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: '1' }]))
 
     const events = await collectEvents(agent, '3', 'run-1', controller.signal)
 
@@ -174,7 +182,7 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: '1' },
       { content: ' 2' },
       { content: ' 3' }
@@ -194,7 +202,7 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: '1 2 3' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: '1 2 3' }]))
 
     const events = await collectEvents(agent, '3', 'run-1', controller.signal)
 
@@ -208,7 +216,7 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: '' },
       { content: '1' },
       { content: '' },
@@ -226,7 +234,7 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ text: '1' }, { text: ' 2' }] }
     ]))
 
@@ -244,13 +252,12 @@ describe('CounterAgent — successful streaming run', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
     const tokenEvents = events.filter((e) => e.type === 'token')
     expect(tokenEvents).toHaveLength(0)
-    // Should still emit thinking and done
     expect(events[0].type).toBe('thinking')
     expect(events[events.length - 1].type).toBe('done')
   })
@@ -268,7 +275,7 @@ describe('CounterAgent — cancellation', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(
+    mockStream.mockResolvedValue(
       makeChunkStream([{ content: '1' }, { content: '2' }, { content: '3' }], controller.signal)
     )
 
@@ -289,7 +296,7 @@ describe('CounterAgent — cancellation', () => {
     const controller = new AbortController()
     controller.abort()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: '1' }], controller.signal))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: '1' }], controller.signal))
 
     const events = await collectEvents(agent, '10', 'run-1', controller.signal)
 
@@ -309,7 +316,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -322,7 +329,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -335,7 +342,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -348,7 +355,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -361,7 +368,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -374,7 +381,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -387,7 +394,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -399,7 +406,7 @@ describe('CounterAgent — configuration resolution', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'custom-llm' })
 
@@ -419,7 +426,7 @@ describe('CounterAgent — prompt handling', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: '1 2 3' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: '1 2 3' }]))
 
     const events = await collectEvents(agent, '', 'run-1', controller.signal)
 
@@ -432,7 +439,7 @@ describe('CounterAgent — prompt handling', () => {
     const agent = new CounterAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'counting...' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'counting...' }]))
 
     const events = await collectEvents(agent, '20', 'run-1', controller.signal)
 

@@ -84,7 +84,7 @@ export function useCron(): UseCronReturn {
   const stopJob = useCallback(async (id: string): Promise<boolean> => {
     try {
       setError(null)
-      const success = await window.api.cronStopJob(id)
+      const success = await window.cron.stop(id)
       if (success) {
         await refreshJobs()
       }
