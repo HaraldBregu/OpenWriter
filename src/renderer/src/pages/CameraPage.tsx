@@ -7,7 +7,6 @@ import { useLanguage } from '../hooks/useLanguage'
 const CameraPage: React.FC = () => {
   const { t } = useTranslation()
   const { cameraStatus, requestCamera } = useMediaPermissions()
-  useTheme()
   useLanguage()
 
   return (
