@@ -54,7 +54,7 @@ export function useNotifications(): UseNotificationsReturn {
   const showNotification = useCallback(async (options: NotificationOptions): Promise<void> => {
     try {
       setError(null)
-      await window.api.notificationShow(options)
+      await window.notification.show(options)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to show notification'
       setError(errorMsg)

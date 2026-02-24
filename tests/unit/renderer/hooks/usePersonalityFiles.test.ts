@@ -125,7 +125,7 @@ describe('usePersonalityFiles — initial load', () => {
     renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.api.personalityLoadAll).toHaveBeenCalledTimes(1)
+      expect(mockPersonalityLoadAll).toHaveBeenCalledTimes(1)
     })
   })
 
