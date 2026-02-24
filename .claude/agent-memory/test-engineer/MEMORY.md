@@ -3,10 +3,39 @@
 ## Project Setup
 - **Test command**: `npm test` (uses `npx jest --config jest.config.cjs`)
 - **Run single file**: `npx jest --config jest.config.cjs --testPathPatterns=<filename>`
+- **Capture test output**: jest writes to STDERR — use `2>/tmp/out.txt; cat /tmp/out.txt`
 - **Jest**: v30, **React**: v19, **RTL**: v16, **jsdom** environment for renderer tests
 - **Coverage thresholds**: 50% minimum (branches/functions/lines/statements)
 - **Multi-project setup**: "main" (node env) + "renderer" (jsdom env)
 - **Path aliases**: `@/` → src/renderer/src/, `@store/` → src/renderer/src/store/, etc.
+
+## Critical: import.meta.env in Main-Process Tests
+
+Main-process files using `import.meta.env.VITE_*` require this shim (before imports):
+
+```typescript
+const metaEnv: Record<string, string | undefined> = { VITE_OPENAI_API_KEY: undefined, VITE_OPENAI_MODEL: undefined }
+Object.defineProperty(global, 'import', { value: { meta: { env: metaEnv } }, writable: true, configurable: true })
+```
+
+Mutate `metaEnv` values in `beforeEach` to control what the module reads.
+Confirmed pattern from `tests/unit/main/tasks/handlers/AIChatHandler.test.ts`.
+Do NOT use `globalThis.__importMetaEnv` — does not work.
+
+## LangChain Mock Pattern (ChatOpenAI agents)
+
+- Mock `@langchain/openai` and `@langchain/core/messages` BEFORE importing the agent
+- `const stream = await model.stream(...)` is always awaited → use `mockStream.mockResolvedValue()`
+  NOT `mockReturnValue()`
+- Inspect `ChatOpenAI` constructor args with `(ChatOpenAI as jest.Mock).mock.calls[0][0]`
+
+## AbortError in Node.js Tests
+
+`classifyError` checks `name.toLowerCase() === 'aborterror'`. Use:
+```typescript
+const err = new Error('AbortError'); err.name = 'AbortError'
+```
+Do NOT use `new DOMException(...)` — its `name` property does not match reliably in Node.
 
 ## Critical: React 19 + RTL 16 Test Isolation
 

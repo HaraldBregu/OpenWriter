@@ -44,7 +44,7 @@ function DebugToolsPanel(): React.ReactElement {
     setLoading(true)
     setError(null)
     try {
-      const path = await window.api.workspaceGetCurrent()
+      const path = await window.workspace.getCurrent()
       setWorkspacePath(path)
     } catch (err) {
       console.error('Failed to load workspace:', err)
