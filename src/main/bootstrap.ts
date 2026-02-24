@@ -174,7 +174,8 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new DirectoriesIpc(),
     new TaskIpc(),
     new OutputIpc(),
-    new PersonalityIpc()
+    new PersonalityIpc(),
+    new ThemeIpc()
   ]
 
   for (const module of ipcModules) {
