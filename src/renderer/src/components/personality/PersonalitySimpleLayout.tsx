@@ -81,7 +81,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   // Load section config on mount — use it as initial inference settings
   useEffect(() => {
     let cancelled = false
-    window.api.personalityLoadSectionConfig({ sectionId }).then((config) => {
+    window.personality.loadSectionConfig({ sectionId }).then((config) => {
       if (cancelled || !config) return
       const defaults: InferenceSettings = {
         providerId: config.provider,
