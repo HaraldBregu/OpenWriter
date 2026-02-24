@@ -1,7 +1,11 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, nativeTheme } from 'electron'
 import type { AppState } from './core/AppState'
 import type { WindowFactory } from './core/WindowFactory'
 import type { WindowContextManager } from './core/WindowContext'
+
+function getBackgroundColor(): string {
+  return nativeTheme.shouldUseDarkColors ? '#1A1A1A' : '#F7F7F7'
+}
 
 export class Main {
   private window: BrowserWindow | null = null
