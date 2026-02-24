@@ -47,7 +47,7 @@ export function useDialogs(): UseDialogsReturn {
   const showMessageBox = useCallback(async (message: string, detail: string, buttons: string[]): Promise<void> => {
     try {
       setError(null)
-      const result = await window.api.dialogMessage(message, detail, buttons)
+      const result = await window.dialog.message(message, detail, buttons)
       pushResult(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to show message box')
