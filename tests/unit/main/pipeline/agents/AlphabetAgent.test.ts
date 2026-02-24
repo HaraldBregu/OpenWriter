@@ -41,10 +41,11 @@ jest.mock('@langchain/core/messages', () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// import.meta.env shim for the Node/ts-jest environment
+// import.meta.env shim for the Node/ts-jest environment.
 //
 // ts-jest compiles import.meta.env references into property accesses on the
-// global `import` object. We define it here so the agent source can read it.
+// global `import` object. Defining it here allows the agent source to read
+// controlled values in tests without hitting a SyntaxError.
 // ---------------------------------------------------------------------------
 
 const metaEnv: Record<string, string | undefined> = {
@@ -154,6 +155,15 @@ describe('AlphabetAgent — API key validation', () => {
 
     expect(events[0].type).toBe('error')
   })
+
+  it('should not instantiate ChatOpenAI when key check fails', async () => {
+    const agent = new AlphabetAgent(makeStoreService(null))
+    const controller = new AbortController()
+
+    await collectEvents(agent, 'test', 'run-1', controller.signal)
+
+    expect(ChatOpenAI).not.toHaveBeenCalled()
+  })
 })
 
 describe('AlphabetAgent — successful streaming run', () => {
@@ -185,7 +195,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: 'A' },
       { content: ' B' },
       { content: ' C' }
@@ -206,7 +216,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'hello' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'hello' }]))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -220,7 +230,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: '' },
       { content: 'A' },
       { content: '' }
@@ -240,8 +250,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    // Array content format: blocks with 'text' key
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ text: 'Alpha' }, { text: ' Beta' }] }
     ]))
 
@@ -259,7 +268,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([
+    mockStream.mockResolvedValue(makeChunkStream([
       { content: [{ image_url: 'http://example.com' }] }
     ]))
 
@@ -282,11 +291,9 @@ describe('AlphabetAgent — cancellation', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    // Stream yields tokens and we abort after the first one
-    mockStream.mockReturnValue(makeChunkStream(
-      [{ content: 'A' }, { content: 'B' }, { content: 'C' }],
-      controller.signal
-    ))
+    mockStream.mockResolvedValue(
+      makeChunkStream([{ content: 'A' }, { content: 'B' }, { content: 'C' }], controller.signal)
+    )
 
     const events: AgentEvent[] = []
     for await (const event of agent.run({ prompt: 'test' }, 'run-1', controller.signal)) {
@@ -305,8 +312,7 @@ describe('AlphabetAgent — cancellation', () => {
     const controller = new AbortController()
     controller.abort()
 
-    // The stream mock won't be called but set it up just in case
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'A' }], controller.signal))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'A' }], controller.signal))
 
     const events = await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -322,14 +328,11 @@ describe('AlphabetAgent — configuration resolution', () => {
   })
 
   it('should use the selectedModel from StoreService when available', async () => {
-    const storeService = makeStoreService({
-      apiToken: 'sk-test',
-      selectedModel: 'gpt-4o'
-    })
+    const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'gpt-4o' })
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -342,7 +345,7 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -355,7 +358,7 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -368,7 +371,7 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -381,7 +384,7 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
@@ -394,9 +397,8 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
-    // No context — defaults should apply
     await collectEvents(agent, 'test', 'run-1', controller.signal)
 
     expect(storeService.getModelSettings).toHaveBeenCalledWith('openai')
@@ -407,7 +409,7 @@ describe('AlphabetAgent — configuration resolution', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([]))
+    mockStream.mockResolvedValue(makeChunkStream([]))
 
     await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'anthropic' })
 
@@ -422,15 +424,14 @@ describe('AlphabetAgent — prompt fallback', () => {
     metaEnv.VITE_OPENAI_MODEL = undefined
   })
 
-  it('should use default alphabet prompt when the prompt is empty or whitespace', async () => {
-    // We cannot inspect the HumanMessage content directly without hooking the
-    // constructor. The important thing is that the agent doesn't error out on
-    // an empty prompt and still emits a thinking + done sequence.
+  it('should still run and complete when prompt is empty or whitespace', async () => {
+    // When prompt is empty/whitespace, the agent uses a default alphabet listing prompt.
+    // We verify the run still emits thinking + done (no error from an empty HumanMessage).
     const storeService = makeStoreService({ apiToken: 'sk-test', selectedModel: 'gpt-4o-mini' })
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'A B C' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'A B C' }]))
 
     const events = await collectEvents(agent, '   ', 'run-1', controller.signal)
 
@@ -443,7 +444,7 @@ describe('AlphabetAgent — prompt fallback', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'response' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'response' }]))
 
     const events = await collectEvents(
       agent,
@@ -452,7 +453,6 @@ describe('AlphabetAgent — prompt fallback', () => {
       controller.signal
     )
 
-    // Verify run still produces the full expected sequence
     expect(events[0].type).toBe('thinking')
     expect(events.some((e) => e.type === 'token')).toBe(true)
     expect(events[events.length - 1].type).toBe('done')

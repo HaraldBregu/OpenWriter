@@ -9,7 +9,7 @@ export function useLanguage(): void {
   const { i18n } = useTranslation()
 
   useEffect(() => {
-    const cleanup = window.api.onLanguageChange((lng: string) => {
+    const cleanup = window.app.onLanguageChange((lng: string) => {
       i18n.changeLanguage(lng)
     })
     return cleanup
