@@ -476,9 +476,11 @@ describe('PersonalityFilesService', () => {
       await service.initialize()
       mockChokidarWatch.mockClear()
 
-      jest.useRealTimers()
       eventBus.emit('workspace:changed', { currentPath: '/new/workspace', previousPath: null })
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      // Flush the async chain: event handler → startWatching → fs.mkdir → chokidar.watch
+      await Promise.resolve()
+      await Promise.resolve()
+      await Promise.resolve()
 
       expect(mockChokidarWatch).toHaveBeenCalled()
     })
