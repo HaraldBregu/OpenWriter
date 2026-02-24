@@ -168,7 +168,7 @@ describe('AlphabetAgent — successful streaming run', () => {
     const agent = new AlphabetAgent(storeService)
     const controller = new AbortController()
 
-    mockStream.mockReturnValue(makeChunkStream([{ content: 'A' }, { content: 'B' }]))
+    mockStream.mockResolvedValue(makeChunkStream([{ content: 'A' }, { content: 'B' }]))
 
     const events = await collectEvents(agent, 'list the alphabet', 'run-1', controller.signal)
 
