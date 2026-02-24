@@ -220,7 +220,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   useEffect(() => {
     async function loadWorkspaceName() {
       try {
-        const workspacePath = await window.api.workspaceGetCurrent();
+        const workspacePath = await window.workspace.getCurrent();
         if (workspacePath) {
           // Extract folder name from path
           const pathParts =
