@@ -35,7 +35,6 @@ const ClipboardPage: React.FC = () => {
   const [copySuccess, setCopySuccess] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  useTheme()
   useLanguage()
 
   // Auto-refresh clipboard content on mount
