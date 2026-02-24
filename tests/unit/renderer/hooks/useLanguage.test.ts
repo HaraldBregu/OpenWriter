@@ -1,6 +1,7 @@
 /**
  * Tests for useLanguage hook.
  * Syncs language changes from the main process with i18n.
+ * The hook calls window.app.onLanguageChange.
  */
 import { renderHook } from '@testing-library/react'
 
@@ -26,11 +27,11 @@ describe('useLanguage', () => {
   it('should subscribe to language changes on mount', () => {
     renderHook(() => useLanguage())
 
-    expect(window.api.onLanguageChange).toHaveBeenCalledWith(expect.any(Function))
+    expect(window.app.onLanguageChange).toHaveBeenCalledWith(expect.any(Function))
   })
 
   it('should call i18n.changeLanguage when language changes', () => {
-    ;(window.api.onLanguageChange as jest.Mock).mockImplementation((callback: (lng: string) => void) => {
+    ;(window.app.onLanguageChange as jest.Mock).mockImplementation((callback: (lng: string) => void) => {
       callback('fr')
       return jest.fn()
     })
@@ -42,7 +43,7 @@ describe('useLanguage', () => {
 
   it('should clean up listener on unmount', () => {
     const unsubscribe = jest.fn()
-    ;(window.api.onLanguageChange as jest.Mock).mockReturnValue(unsubscribe)
+    ;(window.app.onLanguageChange as jest.Mock).mockReturnValue(unsubscribe)
 
     const { unmount } = renderHook(() => useLanguage())
 
