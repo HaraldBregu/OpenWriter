@@ -324,6 +324,15 @@ const NewPostPage: React.FC = () => {
                 />
               ))}
             </Reorder.Group>
+            <InsertBlockPlaceholder
+              onClick={() => {
+                if (isDraft) {
+                  setDraftBlocks((prev) => [...prev, createBlock()])
+                } else if (post) {
+                  dispatch(updatePostBlocks({ postId: post.id, blocks: [...post.blocks, createBlock()] }))
+                }
+              }}
+            />
           </div>
         </div>
 
