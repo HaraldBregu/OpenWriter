@@ -37,7 +37,7 @@ export function useWindowManager(): UseWindowManagerReturn {
   const createChild = useCallback(async (): Promise<void> => {
     try {
       setError(null)
-      await window.api.wmCreateChild()
+      await window.wm.createChild()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create child window'
       setError(message)

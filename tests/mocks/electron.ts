@@ -242,6 +242,7 @@ export {
   dialog,
   clipboard,
   nativeImage,
+  nativeTheme,
   Menu,
   Tray,
   Notification,
