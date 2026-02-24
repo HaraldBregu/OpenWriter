@@ -97,7 +97,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      return await window.api.clipboardReadHTML()
+      return await window.clipboard.readHTML()
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to read HTML from clipboard'
       setError(errorMsg)
@@ -111,7 +111,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      const success = await window.api.clipboardWriteImage(dataURL)
+      const success = await window.clipboard.writeImage(dataURL)
       if (success) {
         // Create image to get dimensions
         const img = new Image()

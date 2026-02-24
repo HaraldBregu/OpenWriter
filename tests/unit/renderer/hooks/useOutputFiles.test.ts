@@ -242,7 +242,7 @@ describe('useOutputFiles — file-change subscription', () => {
 
     await act(async () => { await Promise.resolve() })
 
-    const callsBefore = (window.api.outputLoadAll as jest.Mock).mock.calls.length
+    const callsBefore = mockOutputLoadAll.mock.calls.length
 
     // Fire 5 events within the debounce window
     for (let i = 0; i < 5; i++) {
