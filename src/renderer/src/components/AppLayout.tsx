@@ -209,8 +209,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const writings = useAppSelector(selectWritings);
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
-    Posts: false,
-    Writing: false,
+    Posts: true,
+    Writing: true,
     Knowledge: false,
     Personality: false,
   });
