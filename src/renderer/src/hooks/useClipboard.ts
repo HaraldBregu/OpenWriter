@@ -37,7 +37,7 @@ export function useClipboard(): UseClipboardReturn {
     try {
       setError(null)
       setLoading(true)
-      const success = await window.api.clipboardWriteText(text)
+      const success = await window.clipboard.writeText(text)
       if (success) {
         // Update content preview
         setContent({

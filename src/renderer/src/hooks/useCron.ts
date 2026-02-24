@@ -116,7 +116,7 @@ export function useCron(): UseCronReturn {
   const createJob = useCallback(async (config: CronJobConfig): Promise<boolean> => {
     try {
       setError(null)
-      const success = await window.api.cronCreateJob(config)
+      const success = await window.cron.create(config)
       if (success) {
         await refreshJobs()
       }
