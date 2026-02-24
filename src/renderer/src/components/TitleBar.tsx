@@ -130,7 +130,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
         >
           <button
             type="button"
-            onClick={() => window.api.windowMinimize()}
+            onClick={() => window.win.minimize()}
             className={btnBase}
             title="Minimize"
           >
