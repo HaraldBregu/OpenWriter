@@ -225,6 +225,15 @@ export function AppProvider({ children, initialState: customInitialState }: AppP
     }
   }, [])
 
+  // Persist theme mode to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, state.theme)
+    } catch (error) {
+      console.error('Failed to save theme mode:', error)
+    }
+  }, [state.theme])
+
   // Persist UI preferences to localStorage
   useEffect(() => {
     try {
