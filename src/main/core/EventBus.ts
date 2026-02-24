@@ -27,6 +27,7 @@ export interface AppEvents {
   'posts:watcher-error': { error: string; timestamp: number }
   'documents:file-changed': { type: 'added' | 'changed' | 'removed'; fileId: string; filePath: string; timestamp: number }
   'documents:watcher-error': { error: string; timestamp: number }
+  'theme:changed': { theme: 'light' | 'dark' | 'system' }
 }
 
 /**
