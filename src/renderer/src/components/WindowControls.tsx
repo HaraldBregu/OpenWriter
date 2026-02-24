@@ -4,7 +4,7 @@ export function WindowControls() {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
-    window.api.windowIsMaximized().then(setIsMaximized)
+    window.win.isMaximized().then(setIsMaximized)
   }, [])
 
   const handleMinimize = () => {
