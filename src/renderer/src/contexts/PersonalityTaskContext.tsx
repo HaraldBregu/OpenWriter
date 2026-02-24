@@ -147,7 +147,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
       let modelName = task.modelId || 'unknown'
       if (modelName === 'unknown') {
         try {
-          const settings = await window.api.storeGetModelSettings(task.providerId)
+          const settings = await window.store.getModelSettings(task.providerId)
           modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
         } catch {
           modelName = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
