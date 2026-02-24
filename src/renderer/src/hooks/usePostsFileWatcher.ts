@@ -85,7 +85,7 @@ export function usePostsFileWatcher(): void {
 
             // Show user notification
             const actionText = event.type === 'added' ? 'created' : 'modified'
-            await window.api.notificationShow({
+            await window.notification.show({
               title: 'Post Updated',
               body: `Post was ${actionText} externally: ${updatedPost.title || event.postId}`,
               urgency: 'low'
