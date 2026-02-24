@@ -108,7 +108,7 @@ export function useNetwork(): UseNetworkReturn {
     initialize()
 
     // Set up event listener for status changes
-    const cleanup = window.api.onNetworkStatusChange((status) => {
+    const cleanup = window.network.onStatusChange((status) => {
       if (isMounted) {
         setConnectionStatus(status)
         setIsOnline(status === 'online')
