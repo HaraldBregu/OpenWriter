@@ -33,7 +33,7 @@ const WelcomePage: React.FC = () => {
       const projectsWithExistence = await Promise.all(
         validProjects.map(async (project) => {
           try {
-            const exists = await window.api.workspaceDirectoryExists(project.path)
+            const exists = await window.workspace.directoryExists(project.path)
             return { ...project, exists }
           } catch {
             return { ...project, exists: false }
