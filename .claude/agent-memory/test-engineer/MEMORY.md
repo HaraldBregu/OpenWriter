@@ -173,4 +173,42 @@ ENOENT on `fs.unlink` is idempotent (still `success: true`). Non-ENOENT → `suc
 `IpcErrorHandler.ts` logs every caught error. Tests exercising "no workspace" or
 service-throws paths will emit `[IPC Error] channel: Error:` — these are NOT test failures.
 
+## Preload-Bridge Gaps — window.api vs Namespaced APIs
+
+The preload-bridge stub (`tests/mocks/preload-bridge.ts`) only covers the FLAT `window.api` methods.
+The app ALSO exposes namespaced window properties: `window.workspace`, `window.output`,
+`window.personality`, `window.posts`, `window.notification`, `window.ai`, etc.
+
+**These window namespaces are NOT in the preload-bridge mock** — always install them manually:
+```typescript
+Object.defineProperty(window, 'workspace', { value: { getCurrent: mockFn }, writable: true, configurable: true })
+Object.defineProperty(window, 'output', { value: { onFileChange: mockFn }, writable: true, configurable: true })
+```
+
+**window.api methods also missing from preload-bridge** (extend via Object.defineProperty in beforeEach):
+- `outputLoadAll` — used by `loadOutputItems` thunk (outputSlice)
+- `personalityLoadAll` — used by `loadPersonalityFiles` thunk (personalityFilesSlice)
+- `postsLoadFromWorkspace` — used by `usePostsLoader` and `reloadPostsFromWorkspace`
+- `notificationShow` IS in preload-bridge (line 110); workspaceGetCurrent IS in bridge (line 136)
+
+**Pattern to extend window.api in test beforeEach**:
+```typescript
+const mockOutputLoadAll = jest.fn().mockResolvedValue([])
+beforeEach(() => {
+  Object.defineProperty(window, 'api', {
+    value: { ...window.api, outputLoadAll: mockOutputLoadAll },
+    writable: true, configurable: true
+  })
+})
+```
+
+## Hooks With Tests (as of 2026-02-24)
+All hooks in `src/renderer/src/hooks/` now have test files **except**:
+`useTask`, `useLlmChat` — no test yet written.
+Already tested: useAI, useAgent, useBluetooth, useClipboard, useContextMenu, useCron,
+useDialogs, useFilesystem, useIsDark, useLanguage, useLifecycle, useMediaDevices,
+useMediaPermissions, useMediaRecorder, useMediaStream, useNetwork, useNotifications,
+usePipeline, usePlatform, useTheme, useWindowManager, usePersonalityFiles (x2: old +
+new), useOutputFiles, usePostsFileWatcher, usePostsLoader.
+
 See `patterns.md` for detailed testing patterns and examples.

@@ -193,17 +193,21 @@ describe('LoggerService', () => {
   describe('level filtering', () => {
     it('should suppress DEBUG messages when minLevel is INFO', () => {
       service = makeLogger(null, { minLevel: LogLevel.INFO })
-      service.debug('Src', 'Should be suppressed')
+      // The logger may flush internal initialization messages during construction.
+      // Clear the spy so we only assert on the debug() call below.
+      mockAppendFileSync.mockClear()
 
+      service.debug('Src', 'Should be suppressed')
       service.flush()
       expect(mockAppendFileSync).not.toHaveBeenCalled()
     })
 
     it('should suppress DEBUG and INFO when minLevel is WARN', () => {
       service = makeLogger(null, { minLevel: LogLevel.WARN })
+      mockAppendFileSync.mockClear()
+
       service.debug('Src', 'debug msg')
       service.info('Src', 'info msg')
-
       service.flush()
       expect(mockAppendFileSync).not.toHaveBeenCalled()
     })
