@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useClipboard } from '../hooks/useClipboard'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import {
   Clipboard,
