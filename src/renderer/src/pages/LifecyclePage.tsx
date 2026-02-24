@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLifecycle } from '../hooks/useLifecycle'
-import { useTheme } from '../hooks/useTheme'
 import { useLanguage } from '../hooks/useLanguage'
 import { Activity, RefreshCw, RotateCcw, Check, X, Clock } from 'lucide-react'
 
