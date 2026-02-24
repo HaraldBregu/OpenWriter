@@ -93,7 +93,7 @@ export function useAgent(): UseAgentReturn {
 
   const cancel = useCallback(() => {
     if (currentRunId.current) {
-      window.api.agentCancel(currentRunId.current)
+      window.agent.cancel(currentRunId.current)
     }
     runningRef.current = false
     dispatch(setAgentRunning({ running: false }))
