@@ -50,11 +50,11 @@ const WelcomePage: React.FC = () => {
 
   const handleOpenProject = useCallback(async () => {
     try {
-      const folderPath = await window.api.workspaceSelectFolder()
+      const folderPath = await window.workspace.selectFolder()
 
       if (folderPath) {
         // Set workspace in current window
-        await window.api.workspaceSetCurrent(folderPath)
+        await window.workspace.setCurrent(folderPath)
 
         // Load posts from workspace (don't block navigation if this fails)
         try {
@@ -88,7 +88,7 @@ const WelcomePage: React.FC = () => {
 
     try {
       // Set workspace in current window
-      await window.api.workspaceSetCurrent(path)
+      await window.workspace.setCurrent(path)
 
       // Load posts from workspace (don't block navigation if this fails)
       try {
