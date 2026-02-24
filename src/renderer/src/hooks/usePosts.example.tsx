@@ -168,7 +168,7 @@ export function usePosts(): UsePostsReturn {
       setError(null)
 
       console.log(`[usePosts] Syncing ${posts.length} posts to workspace...`)
-      const result = await window.api.postsSyncToWorkspace(posts)
+      const result = await window.posts.syncToWorkspace(posts)
 
       if (result.success) {
         console.log(`[usePosts] Synced ${result.syncedCount} posts successfully`)
