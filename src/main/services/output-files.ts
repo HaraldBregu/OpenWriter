@@ -548,6 +548,7 @@ export class OutputFilesService implements Disposable {
         .on('add', (filePath) => this.handleFileAdded(filePath))
         .on('change', (filePath) => this.handleFileChanged(filePath))
         .on('unlink', (filePath) => this.handleFileRemoved(filePath))
+        .on('unlinkDir', (dirPath) => this.handleDirRemoved(dirPath))
         .on('error', (error) => this.handleWatcherError(error))
         .on('ready', () => {
           console.log('[OutputFilesService] Watcher ready, monitoring:', outputDir)
