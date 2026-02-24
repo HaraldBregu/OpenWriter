@@ -200,7 +200,7 @@ export function useClipboard(): UseClipboardReturn {
 
   const hasImage = useCallback(async (): Promise<boolean> => {
     try {
-      return await window.api.clipboardHasImage()
+      return await window.clipboard.hasImage()
     } catch (err) {
       console.error('Failed to check if clipboard has image:', err)
       return false
