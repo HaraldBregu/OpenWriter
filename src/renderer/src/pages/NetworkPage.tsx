@@ -16,7 +16,6 @@ const NetworkPage: React.FC = () => {
     refreshInterfaces,
     refreshStatus
   } = useNetwork()
-  useTheme()
   useLanguage()
 
   const handleRefresh = async () => {
