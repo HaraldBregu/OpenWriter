@@ -244,15 +244,45 @@ export function AppProvider({ children, initialState: customInitialState }: AppP
     }
   }, [])
 
-  // Persist theme mode to localStorage and notify main process whenever it changes
+  // Apply DOM class, persist to localStorage, and notify main process whenever
+  // theme changes. This runs for every route (including WelcomePage) because
+  // AppProvider wraps the entire component tree.
   useEffect(() => {
+    applyThemeClass(state.theme)
+
     try {
       localStorage.setItem(THEME_STORAGE_KEY, state.theme)
     } catch (error) {
       console.error('Failed to save theme mode:', error)
     }
+
     window.api.setTheme(state.theme)
   }, [state.theme])
+
+  // When in "system" mode, track OS preference changes in real-time
+  useEffect(() => {
+    if (state.theme !== 'system') return
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleOsChange = (e: MediaQueryListEvent): void => {
+      document.documentElement.classList.toggle(DARK_CLASS, e.matches)
+    }
+
+    mq.addEventListener('change', handleOsChange)
+    return () => mq.removeEventListener('change', handleOsChange)
+  }, [state.theme])
+
+  // Listen for IPC theme-change events from the Electron main process.
+  // Keeps sibling windows in sync when theme is changed from another
+  // window or from the macOS Developer menu.
+  useEffect(() => {
+    const cleanup = window.api.onThemeChange((theme: string) => {
+      if (theme === 'light' || theme === 'dark' || theme === 'system') {
+        dispatch({ type: 'SET_THEME', payload: theme as ThemeMode })
+      }
+    })
+    return cleanup
+  }, [])
 
   // Persist UI preferences to localStorage
   useEffect(() => {
