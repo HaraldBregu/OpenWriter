@@ -139,7 +139,7 @@ describe('usePersonalityFiles — initial load', () => {
       expect(mockWorkspaceGetCurrent).toHaveBeenCalled()
     })
 
-    expect(window.api.personalityLoadAll).not.toHaveBeenCalled()
+    expect(mockPersonalityLoadAll).not.toHaveBeenCalled()
   })
 
   it('distributes loaded files into the correct store sections', async () => {
