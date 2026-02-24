@@ -317,7 +317,7 @@ describe('DocumentsWatcherService', () => {
       triggerWatcherEvent('change', filePath)
 
       // Only after the debounce timer fires should we see ONE broadcast
-      jest.runAllTimers()
+      jest.advanceTimersByTime(500)
 
       const fileChangedCalls = broadcastSpy.mock.calls.filter(
         (c: unknown[]) => c[0] === 'documents:file-changed'

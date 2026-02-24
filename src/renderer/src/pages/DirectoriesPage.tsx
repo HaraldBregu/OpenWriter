@@ -77,7 +77,7 @@ const DirectoriesPage: React.FC = () => {
       }
 
       // Send paths to main process for validation and persistence
-      const response = await window.api.directoriesAddMany(resultData.filePaths)
+      const response = await window.directories.addMany(resultData.filePaths)
 
       if (response.added.length > 0) {
         dispatch(addDirectories(response.added))
