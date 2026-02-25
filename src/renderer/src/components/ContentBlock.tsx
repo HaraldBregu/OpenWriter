@@ -295,7 +295,7 @@ export const ContentBlock = React.memo(function ContentBlock({
           </ActionButton>
         </div>
       </div>
-      {onAdd && (
+      {onAdd && !isLast && (
         <div
           className="group/add ml-[3.4rem] h-3 hover:h-8 transition-all duration-200 flex items-center justify-center rounded cursor-pointer bg-muted/2 hover:bg-muted/30"
           onClick={() => onAdd(block.id)}
