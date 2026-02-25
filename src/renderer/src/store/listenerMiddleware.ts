@@ -1,5 +1,5 @@
-import { createListenerMiddleware } from '@reduxjs/toolkit'
-import type { RootState, AppDispatch } from './index'
+import { createListenerMiddleware, addListener } from '@reduxjs/toolkit'
+import type { TypedAddListener, TypedStartListening } from '@reduxjs/toolkit'
 
 /**
  * Shared RTK listener middleware instance.
@@ -11,8 +11,21 @@ import type { RootState, AppDispatch } from './index'
  *   postsSlice → outputSlice → store/index → postsSlice
  *
  * The listener files import from both slices independently — store/index
- * imports those files after all slices are defined, keeping the graph acyclic.
+ * imports those listener files after all slices are defined, keeping the
+ * module graph acyclic.
+ *
+ * Types are inferred from the registered listeners; consumers that need
+ * RootState/AppDispatch generics can cast via the typed helpers exported
+ * from store/index.ts.
  */
 export const listenerMiddleware = createListenerMiddleware()
 
-export type AppStartListening = typeof listenerMiddleware.startListening<RootState, AppDispatch>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AppStartListening = TypedStartListening<any, any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AppAddListener = TypedAddListener<any, any>
+
+export const startAppListening =
+  listenerMiddleware.startListening as AppStartListening
+
+export const addAppListener = addListener as AppAddListener
