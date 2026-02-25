@@ -101,6 +101,12 @@ function OnlineStatusComponent() {
 
 // Tests
 describe('AppContext', () => {
+  beforeEach(() => {
+    // Clear localStorage between tests so readPersistedTheme() always starts
+    // from a clean slate and doesn't leak state across test cases.
+    localStorage.clear()
+  })
+
   describe('Theme Management', () => {
     test('renders with default theme', () => {
       render(
