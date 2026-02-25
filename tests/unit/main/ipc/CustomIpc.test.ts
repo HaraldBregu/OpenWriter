@@ -13,7 +13,7 @@ jest.mock('node:child_process', () => ({
 }))
 
 jest.mock('node:util', () => ({
-  promisify: jest.fn((fn) => {
+  promisify: jest.fn((_fn) => {
     return jest.fn().mockResolvedValue('')
   })
 }))
