@@ -134,7 +134,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
             type="button"
             onClick={() => window.win.minimize()}
             className={btnBase}
-            title="Minimize"
+            title={t('titleBar.minimize')}
           >
             <Minus className="h-[17px] w-[17px]" strokeWidth={1.5} />
           </button>
@@ -143,7 +143,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
             type="button"
             onClick={() => window.win.maximize()}
             className={btnBase}
-            title={isMaximized ? 'Restore' : 'Maximize'}
+            title={isMaximized ? t('titleBar.restore') : t('titleBar.maximize')}
           >
             {isMaximized ? <RestoreIcon /> : <MaximizeIcon />}
           </button>
@@ -158,7 +158,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
               active:bg-[#c42b1c] active:text-white
               transition-colors duration-100
             `}
-            title="Close"
+            title={t('titleBar.close')}
           >
             <X className="h-[17px] w-[17px]" strokeWidth={1.5} />
           </button>

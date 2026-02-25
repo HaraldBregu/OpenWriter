@@ -1,6 +1,7 @@
 import type { ServiceContainer, EventBus } from './index'
 import type { StoreService } from '../services/store'
 import type { WorkspaceService } from '../services/workspace'
+import path from 'node:path'
 
 /**
  * Interface for window-scoped service definitions.
