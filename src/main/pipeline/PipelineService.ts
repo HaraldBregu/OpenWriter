@@ -105,7 +105,7 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
     try {
       for await (const event of generator) {
         // If the run was cancelled while we were iterating, stop.
-        if (!this.activeRuns.has(runId)) break
+        if (!this.isRunning(runId)) break
 
         this.send(windowId, 'pipeline:event', event)
       }
@@ -122,22 +122,11 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
         })
       }
     } finally {
-      this.activeRuns.delete(runId)
+      this.unregisterExecution(runId)
       console.log(
         `[PipelineService] Run ${runId} (${agentName}) finished. ` +
-          `Active runs: ${this.activeRuns.size}`
+          `Active runs: ${this.getActiveCount()}`
       )
-    }
-  }
-
-  /**
-   * Send an event to a specific window or broadcast to all windows.
-   */
-  private send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
-    if (windowId !== undefined) {
-      this.eventBus.sendTo(windowId, channel, ...args)
-    } else {
-      this.eventBus.broadcast(channel, ...args)
     }
   }
 }
