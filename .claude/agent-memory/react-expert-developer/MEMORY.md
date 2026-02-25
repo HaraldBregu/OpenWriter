@@ -98,3 +98,12 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - Settings page: `src/renderer/src/pages/SettingsPage.tsx` — tabs: `general|models|media|devices|tools|system`
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx`
 - Row pattern: `flex items-center justify-between px-4 py-3`, grouped in `rounded-md border divide-y`
+
+## i18n System
+- Translation files: `resources/i18n/en/main.json` and `resources/i18n/it/main.json`
+- Always use `useTranslation` from `react-i18next` — never hardcode user-visible strings
+- Key namespaces: `common`, `sidebar`, `settings.*`, `writing`, `post`, `contentBlock`, `inferenceSettings`, `welcome`, `documents`, `directories`, `personality`, `home`, `errorBoundary`, `titleBar`
+- Interpolation: `t('key', { variable: value })` — e.g. `t('post.charactersAndWords', { chars, words })`
+- Both EN and IT files must be kept in sync whenever new keys are added
+- Helper functions that format labels must accept `t` as a parameter (e.g. `statusLabel(s, t)`)
+- Sub-components inside pages each call `useTranslation()` independently (React memo boundary is fine)
