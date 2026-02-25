@@ -522,7 +522,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
             onClick={handleClose}
             disabled={status === 'downloading'}
           >
-            Cancel
+            {t('common.cancel')}
           </AppButton>
           <AppButton
             onClick={handleDownload}
@@ -530,7 +530,11 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
           >
             {status === 'downloading' && <Loader2 className="h-4 w-4 animate-spin" />}
             {status === 'success' && <CheckCircle2 className="h-4 w-4" />}
-            {status === 'idle' || status === 'error' ? 'Download' : status === 'downloading' ? 'Downloading' : 'Downloaded'}
+            {status === 'idle' || status === 'error'
+              ? t('common.download')
+              : status === 'downloading'
+                ? t('documents.downloading', { progress }).split('...')[0]
+                : t('documents.downloaded')}
           </AppButton>
         </div>
       </div>
