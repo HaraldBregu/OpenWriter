@@ -15,7 +15,6 @@ import { useAppSelector, useAppDispatch } from '@/store'
 import { selectPersonalityFilesBySection, loadPersonalityFiles } from '@/store/personalityFilesSlice'
 import type { PersonalityFile } from '@/store/personalityFilesSlice'
 import { PersonalitySettingsPanel } from './PersonalitySettingsSheet'
-import type { InferenceSettings } from '../../../../shared/types/aiSettings'
 import { DEFAULT_INFERENCE_SETTINGS } from '../../../../shared/types/aiSettings'
 import { useInferenceSettings } from '@/hooks/useInferenceSettings'
 
