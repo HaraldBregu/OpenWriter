@@ -17,11 +17,7 @@ import { BrowserWindow } from 'electron'
 import { ServiceContainer, type EventBus } from './index'
 import { StoreService } from '../services/store'
 import { WorkspaceService } from '../services/workspace'
-import { WorkspaceMetadataService } from '../services/workspace-metadata'
-import { FileWatcherService } from '../services/file-watcher'
-import { DocumentsWatcherService } from '../services/documents-watcher'
-import { PersonalityFilesService } from '../services/personality-files'
-import { OutputFilesService } from '../services/output-files'
+import { createDefaultWindowScopedServiceFactory, type WindowScopedServiceFactory } from './WindowScopedServiceFactory'
 
 export interface WindowContextConfig {
   window: BrowserWindow
