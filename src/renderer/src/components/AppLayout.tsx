@@ -94,7 +94,7 @@ const personalitySlugs = [
 // ---------------------------------------------------------------------------
 
 interface SettingsMenuItem {
-  title: string;
+  titleKey: string;
   icon: React.ElementType;
   url?: string;
   danger?: boolean;
@@ -102,12 +102,12 @@ interface SettingsMenuItem {
 }
 
 const settingsMenuItems: SettingsMenuItem[] = [
-  { title: "Account", icon: User },
-  { title: "Settings", icon: Settings, url: "/settings" },
-  { title: "Notifications", icon: Bell },
-  { title: "Privacy", icon: Shield },
-  { title: "Billing", icon: CreditCard },
-  { title: "Help & Support", icon: HelpCircle },
+  { titleKey: "menu.account",       icon: User },
+  { titleKey: "menu.settings",      icon: Settings, url: "/settings" },
+  { titleKey: "menu.notifications", icon: Bell },
+  { titleKey: "menu.privacy",       icon: Shield },
+  { titleKey: "menu.billing",       icon: CreditCard },
+  { titleKey: "menu.helpAndSupport", icon: HelpCircle },
 ];
 
 // ---------------------------------------------------------------------------
