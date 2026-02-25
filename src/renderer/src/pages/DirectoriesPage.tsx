@@ -121,13 +121,13 @@ const DirectoriesPage: React.FC = () => {
       } catch (err) {
         console.error('[DirectoriesPage] Failed to remove directory:', err)
         await window.notification.show({
-          title: 'Error',
-          body: 'Failed to remove directory. Please try again.',
+          title: t('directoryNotifications.removeErrorTitle'),
+          body: t('directoryNotifications.removeErrorBody'),
           urgency: 'normal'
         })
       }
     },
-    [dispatch]
+    [dispatch, t]
   )
 
   const handleIndexDirectories = useCallback(async () => {
