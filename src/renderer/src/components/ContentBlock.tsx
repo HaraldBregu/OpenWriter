@@ -137,20 +137,20 @@ export const ContentBlock = React.memo(function ContentBlock({
     editorRef.current = editor
   }, [editor])
 
-  // Auto-focus this block's editor when the parent signals it was just inserted
-  // (e.g., the user pressed Enter in the previous block). We run this once when
-  // the editor becomes available and autoFocus is true. Using a ref to ensure
-  // we only fire once even if `editor` identity changes during init.
-  const didAutoFocusRef = useRef(false)
+  // Capture the initial autoFocus value at mount time. The parent clears
+  // focusBlockId after one render, so the prop may flip to false before
+  // TipTap finishes initialising the editor. Storing the initial value in a
+  // ref lets us honour the intent even when the prop is already gone.
+  const shouldAutoFocusRef = useRef(autoFocus)
   useEffect(() => {
-    if (!autoFocus || didAutoFocusRef.current) return
+    if (!shouldAutoFocusRef.current) return
     if (!editor || editor.isDestroyed) return
-    didAutoFocusRef.current = true
+    shouldAutoFocusRef.current = false
     // Defer to the next microtask so the DOM is fully committed before focusing.
     Promise.resolve().then(() => {
       if (!editor.isDestroyed) editor.commands.focus('start')
     })
-  }, [autoFocus, editor])
+  }, [editor])
 
   // Sync external content changes (e.g., when the block resets or is edited elsewhere).
   // Guard: skip while enhancing so streamed tokens are not overwritten by echoed onChange calls.
