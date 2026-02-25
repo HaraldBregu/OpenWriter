@@ -106,7 +106,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
               type="button"
               onClick={onToggleSidebar}
               className="flex items-center justify-center h-full px-3 text-neutral-600 dark:text-neutral-300"
-              title="Toggle sidebar"
+              title={t('titleBar.toggleSidebar')}
             >
               <PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
             </button>
