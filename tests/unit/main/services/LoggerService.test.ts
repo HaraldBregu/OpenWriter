@@ -252,7 +252,7 @@ describe('LoggerService', () => {
       // message would never flush, but a full batch will.
       service = makeLogger(null, { maxBufferSize: 10 })
       // Drain anything written during construction (init messages)
-      const callsAfterConstruction = (mockAppendFileSync as jest.Mock).mock.calls.length
+      const _callsAfterConstruction = (mockAppendFileSync as jest.Mock).mock.calls.length
       // Now clear the spy so we can do a fresh assertion
       mockAppendFileSync.mockClear()
 
