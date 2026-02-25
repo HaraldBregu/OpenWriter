@@ -2,7 +2,7 @@
  * Tests for LifecycleService.
  * Validates app lifecycle management, events, and single instance locking.
  */
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
 import { LifecycleService } from '../../../../src/main/services/lifecycle'
 
 describe('LifecycleService', () => {
