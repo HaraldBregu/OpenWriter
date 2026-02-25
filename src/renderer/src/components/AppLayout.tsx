@@ -5,23 +5,11 @@ import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
 import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
 import { useOutputFiles } from "../hooks/useOutputFiles";
+import { usePostContextMenu } from "../hooks/usePostContextMenu";
+import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
 import { useAppDispatch, useAppSelector } from "../store";
-import {
-  createPost,
-  selectPosts,
-  deletePost,
-  updatePostTitle,
-  updatePostBlocks,
-  updatePostCategory,
-  updatePostTags,
-  updatePostVisibility,
-} from "../store/postsSlice";
-import {
-  selectWritings,
-  addWriting,
-  deleteWriting,
-} from "../store/writingsSlice";
-import { deleteOutputItem } from "../store/outputSlice";
+import { selectPosts } from "../store/postsSlice";
+import { selectWritings } from "../store/writingsSlice";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
