@@ -258,8 +258,9 @@ declare global {
       getPlatform: () => Promise<string>
     }
 
-    /** Window controls (minimize / maximize / close / fullscreen) */
-    win: {
+    /** Window controls (minimize / maximize / close / fullscreen).
+     *  Declared optional so renderer code can guard against non-Electron environments. */
+    win?: {
       minimize: () => void
       maximize: () => void
       close: () => void
