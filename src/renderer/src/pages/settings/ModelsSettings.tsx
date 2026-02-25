@@ -67,8 +67,8 @@ const ModelsSettings: React.FC = () => {
   return (
     <div className="mx-auto w-full p-6 space-y-8">
       <div>
-        <h1 className="text-lg font-normal">Models</h1>
-        <p className="text-sm text-muted-foreground">Select the active model for each AI provider.</p>
+        <h1 className="text-lg font-normal">{t('settings.models.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('settings.models.description')}</p>
       </div>
 
       {aiProviders.map((provider) => (
@@ -100,13 +100,13 @@ const ModelsSettings: React.FC = () => {
 
           <div className="rounded-md border px-4 py-3 flex items-center gap-3">
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground mb-1.5">API Key</p>
+              <p className="text-xs text-muted-foreground mb-1.5">{t('settings.models.apiKey')}</p>
               <input
                 type={showTokens[provider.id] ? 'text' : 'password'}
                 value={apiTokens[provider.id]}
                 onChange={(e) => handleTokenChange(provider.id, e.target.value)}
                 onBlur={(e) => handleTokenBlur(provider.id, e.target.value)}
-                placeholder={`Enter ${provider.name} API key…`}
+                placeholder={t('settings.models.enterApiKey', { provider: provider.name })}
                 className="w-full bg-transparent text-sm font-mono outline-none placeholder:text-muted-foreground/40"
               />
             </div>
@@ -117,7 +117,7 @@ const ModelsSettings: React.FC = () => {
               }
               className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors shrink-0 select-none"
             >
-              {showTokens[provider.id] ? 'Hide' : 'Show'}
+              {showTokens[provider.id] ? t('settings.models.hide') : t('settings.models.show')}
             </button>
           </div>
         </section>

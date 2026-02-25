@@ -346,6 +346,12 @@ declare global {
 
     /** Persisted AI model settings */
     store: {
+      // New provider settings methods
+      getAllProviderSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>>
+      getProviderSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null>
+      setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }) => Promise<void>
+      setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }) => Promise<void>
+      // Legacy methods
       getAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
       getModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
       setSelectedModel: (providerId: string, modelId: string) => Promise<void>
