@@ -2,7 +2,7 @@
  * Tests for useClipboard hook.
  * Wraps window.clipboard operations with loading/error state management.
  */
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { useClipboard } from '../../../../src/renderer/src/hooks/useClipboard'
 
 // window.clipboard is mocked globally via tests/setup/renderer.ts
