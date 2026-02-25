@@ -1,5 +1,5 @@
 {
-  "showTesseractAI": "Mostra Tesseract AI",
-  "hideTesseractAI": "Nascondi Tesseract AI",
+  "showOpenWriter": "Mostra OpenWriter",
+  "hideOpenWriter": "Nascondi OpenWriter",
   "quit": "Esci"
 }
