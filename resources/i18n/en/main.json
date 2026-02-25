@@ -596,5 +596,42 @@
     "noteFeature2": "Clicking a notification brings the app to focus",
     "noteFeature3": "All notification events (shown, clicked, closed) are tracked",
     "noteFeature4": "Supports different urgency levels and silent mode"
+  },
+
+  "relativeTime": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+
+  "personalityItems": {
+    "emotionalDepth": "Emotional Depth",
+    "consciousness": "Consciousness",
+    "motivation": "Motivation",
+    "moralIntuition": "Moral Intuition",
+    "irrationality": "Irrationality",
+    "growth": "Growth",
+    "socialIdentity": "Social Identity",
+    "creativity": "Creativity",
+    "mortality": "Mortality",
+    "contradiction": "Contradiction"
+  },
+
+  "directoryNotifications": {
+    "someSkippedTitle": "Some Directories Skipped",
+    "someSkippedBody_one": "{{count}} directory could not be added. Check the console for details.",
+    "someSkippedBody_other": "{{count}} directories could not be added. Check the console for details.",
+    "addErrorTitle": "Error",
+    "addErrorBody": "Failed to add directories. Please try again.",
+    "removeErrorTitle": "Error",
+    "removeErrorBody": "Failed to remove directory. Please try again.",
+    "noDirectoriesTitle": "No Directories",
+    "noDirectoriesBody": "Add at least one directory before indexing.",
+    "indexingCompleteTitle": "Indexing Complete",
+    "indexingCompleteBody_one": "Successfully indexed {{count}} directory.",
+    "indexingCompleteBody_other": "Successfully indexed {{count}} directories.",
+    "indexingFailedTitle": "Indexing Failed",
+    "indexingFailedBody": "Failed to index directories. Please try again."
   }
 }
