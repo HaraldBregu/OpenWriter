@@ -138,6 +138,8 @@ function ThemeProvider({
 
   // Sync theme changes broadcast from the Electron main process (e.g. sibling windows).
   useEffect(() => {
+    // Guard: window.app is only available inside the Electron preload context.
+    if (!window.app?.onThemeChange) return
     return window.app.onThemeChange((incoming: string) => {
       if (incoming === 'light' || incoming === 'dark' || incoming === 'system') {
         setThemeState(incoming as ThemeMode)

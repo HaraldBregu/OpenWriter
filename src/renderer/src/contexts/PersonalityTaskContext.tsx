@@ -296,8 +296,11 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
         taskIdToSectionRef.current.delete(taskId)
       }
     })
+    } catch (err) {
+      console.error('[PersonalityTaskProvider] Failed to register task event listener:', err)
+    }
 
-    return () => unsubscribe()
+    return () => unsubscribe?.()
   }, [store, autoSave, service])
 
   // -----------------------------------------------------------------------
