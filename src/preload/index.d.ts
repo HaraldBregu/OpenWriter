@@ -156,7 +156,7 @@ interface TaskInfo {
 }
 
 interface TaskEvent {
-  type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+  type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
   data: unknown
 }
 

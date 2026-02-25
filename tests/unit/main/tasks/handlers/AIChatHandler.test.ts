@@ -11,7 +11,7 @@
  *  - validate(): passes for a valid prompt string
  *  - execute(): throws when no API key is available
  *  - execute(): throws the placeholder key guard
- *  - execute(): streams tokens via reporter.progress('token')
+ *  - execute(): streams tokens via streamReporter.stream()
  *  - execute(): returns the accumulated content and tokenCount
  *  - execute(): propagates auth error with user-friendly message
  *  - execute(): propagates rate-limit error with user-friendly message
@@ -60,7 +60,7 @@ Object.defineProperty(global, 'import', {
 
 import { AIChatHandler } from '../../../../../src/main/tasks/handlers/AIChatHandler'
 import type { AIChatInput } from '../../../../../src/main/tasks/handlers/AIChatHandler'
-import type { ProgressReporter } from '../../../../../src/main/tasks/TaskHandler'
+import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/TaskHandler'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -79,6 +79,10 @@ function makeStoreService(
 
 function makeReporter(): jest.Mocked<ProgressReporter> {
   return { progress: jest.fn() }
+}
+
+function makeStreamReporter(): jest.Mocked<StreamReporter> {
+  return { stream: jest.fn() }
 }
 
 function makeAbortSignal(alreadyAborted = false): AbortSignal {
@@ -204,19 +208,17 @@ describe('AIChatHandler', () => {
       expect(reporter.progress).toHaveBeenCalledWith(0, 'connecting')
     })
 
-    it('should call reporter.progress with "token" for each streamed chunk', async () => {
+    it('should call streamReporter.stream for each streamed chunk', async () => {
       const reporter = makeReporter()
+      const streamReporter = makeStreamReporter()
       mockStream.mockResolvedValue(makeChunkStream(['A', 'B', 'C']))
 
-      await handler.execute({ prompt: 'hi' }, makeAbortSignal(), reporter)
+      await handler.execute({ prompt: 'hi' }, makeAbortSignal(), reporter, streamReporter)
 
-      const tokenCalls = reporter.progress.mock.calls.filter(
-        (c: unknown[]) => c[1] === 'token'
-      )
-      expect(tokenCalls).toHaveLength(3)
-      expect(tokenCalls[0][2]).toEqual({ token: 'A' })
-      expect(tokenCalls[1][2]).toEqual({ token: 'B' })
-      expect(tokenCalls[2][2]).toEqual({ token: 'C' })
+      expect(streamReporter.stream).toHaveBeenCalledTimes(3)
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(1, 'A')
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(2, 'B')
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(3, 'C')
     })
 
     it('should pass the AbortSignal to model.stream()', async () => {
@@ -339,9 +341,9 @@ describe('AIChatHandler', () => {
       }
 
       mockStream.mockResolvedValue(abortingStream())
-      const reporter = makeReporter()
+      const streamReporter = makeStreamReporter()
 
-      const result = await handler.execute({ prompt: 'hi' }, controller.signal, reporter)
+      const result = await handler.execute({ prompt: 'hi' }, controller.signal, makeReporter(), streamReporter)
 
       // Only Token1 should have been processed before abort
       expect(result.content).toBe('Token1')

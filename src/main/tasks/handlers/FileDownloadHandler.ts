@@ -36,6 +36,15 @@ export interface DownloadDiagnostics {
   resolvedFileName: string
 }
 
+/** Per-download timing context -- local to each execute() call. */
+interface DownloadTiming {
+  startTime: number
+  downloadStartTime: number
+  lastProgressTime: number
+}
+
+const PROGRESS_THROTTLE_MS = 100 // Update every 100ms max
+
 /**
  * Production-grade file download handler with:
  * - Electron's net module (respects proxy settings, uses Chromium network stack)
@@ -51,11 +60,6 @@ export class FileDownloadHandler
   implements TaskHandler<FileDownloadInput, FileDownloadOutput>
 {
   readonly type = 'file-download'
-
-  private startTime = 0
-  private downloadStartTime = 0
-  private lastProgressTime = 0
-  private readonly PROGRESS_THROTTLE_MS = 100 // Update every 100ms max
 
   validate(input: FileDownloadInput): void {
     if (!input.url) {
@@ -110,7 +114,11 @@ export class FileDownloadHandler
     signal: AbortSignal,
     reporter: ProgressReporter
   ): Promise<FileDownloadOutput> {
-    this.startTime = Date.now()
+    const timing: DownloadTiming = {
+      startTime: Date.now(),
+      downloadStartTime: 0,
+      lastProgressTime: 0
+    }
 
     const maxRetries = input.maxRetries ?? 3
     const baseDelay = input.retryDelay ?? 1000
@@ -132,7 +140,7 @@ export class FileDownloadHandler
           await this.sleep(delay)
         }
 
-        return await this.downloadFile(input, signal, reporter)
+        return await this.downloadFile(input, signal, reporter, timing)
       } catch (err) {
         lastError = err as Error
 
@@ -164,7 +172,8 @@ export class FileDownloadHandler
   private async downloadFile(
     input: FileDownloadInput,
     signal: AbortSignal,
-    reporter: ProgressReporter
+    reporter: ProgressReporter,
+    timing: DownloadTiming
   ): Promise<FileDownloadOutput> {
     const urlObj = new URL(input.url)
     const originalFileName = this.sanitizeFileName(
@@ -185,8 +194,8 @@ export class FileDownloadHandler
     console.log(`[FileDownloadHandler] Starting download: ${input.url}`)
     console.log(`[FileDownloadHandler] Destination: ${destFilePath}`)
 
-    this.downloadStartTime = Date.now()
-    this.lastProgressTime = this.downloadStartTime
+    timing.downloadStartTime = Date.now()
+    timing.lastProgressTime = timing.downloadStartTime
 
     reporter.progress(0, 'Starting download')
 
@@ -260,15 +269,16 @@ export class FileDownloadHandler
 
           // Throttle progress updates (100ms)
           const now = Date.now()
-          if (now - this.lastProgressTime >= this.PROGRESS_THROTTLE_MS) {
+          if (now - timing.lastProgressTime >= PROGRESS_THROTTLE_MS) {
             this.reportProgress(
               downloadedBytes,
               contentLength,
               resolvedFileName,
               now,
-              reporter
+              reporter,
+              timing
             )
-            this.lastProgressTime = now
+            timing.lastProgressTime = now
           }
         })
 
@@ -286,8 +296,8 @@ export class FileDownloadHandler
         writeStream.on('finish', async () => {
           try {
             const stats = await fs.stat(destFilePath)
-            const totalDuration = Date.now() - this.startTime
-            const downloadDuration = Date.now() - this.downloadStartTime
+            const totalDuration = Date.now() - timing.startTime
+            const downloadDuration = Date.now() - timing.downloadStartTime
             const avgSpeed =
               downloadDuration > 0
                 ? (stats.size / downloadDuration) * 1000
@@ -371,11 +381,12 @@ export class FileDownloadHandler
     totalBytes: number,
     fileName: string,
     now: number,
-    reporter: ProgressReporter
+    reporter: ProgressReporter,
+    timing: DownloadTiming
   ): void {
     const percent = totalBytes > 0 ? Math.round((downloadedBytes / totalBytes) * 100) : 0
 
-    const elapsed = (now - this.downloadStartTime) / 1000
+    const elapsed = (now - timing.downloadStartTime) / 1000
     const speed = elapsed > 0 ? downloadedBytes / elapsed : 0
     const remaining = totalBytes - downloadedBytes
     const eta = speed > 0 ? remaining / speed : 0

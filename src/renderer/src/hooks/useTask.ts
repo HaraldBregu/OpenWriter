@@ -12,6 +12,7 @@ export interface TaskState {
   message?: string
   result?: unknown
   error?: string
+  streamedContent?: string
 }
 
 export interface TaskOptions {
@@ -64,6 +65,36 @@ export function useTask(): UseTaskReturn {
   // Pending taskIds that haven't resolved yet -- events for these get buffered.
   const pendingTaskIdsRef = useRef<Set<string>>(new Set())
 
+  // Cleanup timeouts for terminal-state tasks (auto-removed after TTL).
+  const cleanupTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+
+  // Schedule auto-removal of a terminal-state task after TTL.
+  const scheduleCleanup = useCallback((taskId: string) => {
+    // Clear any existing timer for this task
+    const existing = cleanupTimersRef.current.get(taskId)
+    if (existing) clearTimeout(existing)
+
+    const timer = setTimeout(() => {
+      cleanupTimersRef.current.delete(taskId)
+      ownedTaskIdsRef.current.delete(taskId)
+      setTasks((prev) => {
+        const next = new Map(prev)
+        next.delete(taskId)
+        return next
+      })
+    }, 60_000) // 60 seconds
+
+    cleanupTimersRef.current.set(taskId, timer)
+  }, [])
+
+  // Clear all cleanup timers on unmount.
+  useEffect(() => {
+    return () => {
+      cleanupTimersRef.current.forEach((timer) => clearTimeout(timer))
+      cleanupTimersRef.current.clear()
+    }
+  }, [])
+
   // Helper: update a single task entry in the Map.
   const updateTask = useCallback((taskId: string, patch: Partial<TaskState>) => {
     setTasks((prev) => {
@@ -103,19 +134,36 @@ export function useTask(): UseTaskReturn {
             result: event.data.result,
             progress: 100
           })
+          scheduleCleanup(taskId)
           break
         case 'error':
           updateTask(taskId, {
             status: 'error',
             error: event.data.message as string
           })
+          scheduleCleanup(taskId)
           break
         case 'cancelled':
           updateTask(taskId, { status: 'cancelled' })
+          scheduleCleanup(taskId)
           break
+        case 'stream': {
+          const token = (event.data as Record<string, unknown>).token as string ?? ''
+          setTasks((prev) => {
+            const next = new Map(prev)
+            const current = next.get(taskId) ?? { status: 'running' as TaskStatus }
+            next.set(taskId, {
+              ...current,
+              status: 'running',
+              streamedContent: (current.streamedContent ?? '') + token
+            })
+            return next
+          })
+          break
+        }
       }
     },
-    [updateTask]
+    [updateTask, scheduleCleanup]
   )
 
   // Subscribe to task events on mount, unsubscribe on unmount.

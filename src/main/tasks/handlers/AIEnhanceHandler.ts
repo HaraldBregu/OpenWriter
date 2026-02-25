@@ -2,16 +2,14 @@
  * AIEnhanceHandler -- Task handler for content block enhancement via LangChain.
  *
  * Accepts a text prompt and optional style parameters, builds a continuation
- * prompt, and streams tokens back via ProgressReporter.
- *
- * Token streaming uses: reporter.progress(0, 'token', { token })
- * The renderer listens for task:event with type 'progress' and message 'token'.
+ * prompt, and streams tokens back via StreamReporter.
  */
 
 import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
-import type { TaskHandler, ProgressReporter } from '../TaskHandler'
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
 import type { StoreService } from '../../services/store'
+import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from './aiHandlerUtils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,42 +43,6 @@ const SYSTEM_PROMPT =
   'seamlessly and naturally, maintaining the author\'s voice, style, and intent. ' +
   'Never repeat content that already exists. Output only the continuation text.'
 
-const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview']
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function isReasoningModel(modelName: string): boolean {
-  const normalized = modelName.toLowerCase()
-  return REASONING_MODEL_PREFIXES.some(
-    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-  )
-}
-
-function extractTokenFromChunk(content: unknown): string {
-  if (typeof content === 'string') return content
-  if (Array.isArray(content)) {
-    return content
-      .filter((c): c is { text: string } => typeof c === 'object' && c !== null && 'text' in c)
-      .map((c) => c.text)
-      .join('')
-  }
-  return ''
-}
-
-function classifyError(error: unknown): 'abort' | 'auth' | 'rate_limit' | 'unknown' {
-  if (error instanceof Error) {
-    const msg = error.message.toLowerCase()
-    const name = error.name.toLowerCase()
-    if (name === 'aborterror' || msg.includes('abort') || msg.includes('cancel')) return 'abort'
-    if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid api key'))
-      return 'auth'
-    if (msg.includes('429') || msg.includes('rate limit')) return 'rate_limit'
-  }
-  return 'unknown'
-}
-
 function buildContinuationPrompt(input: AIEnhanceInput): string {
   const { text, genre, tone, pov, wordCount, direction } = input
   return (
@@ -112,7 +74,8 @@ export class AIEnhanceHandler implements TaskHandler<AIEnhanceInput, AIEnhanceOu
   async execute(
     input: AIEnhanceInput,
     signal: AbortSignal,
-    reporter: ProgressReporter
+    reporter: ProgressReporter,
+    streamReporter?: StreamReporter
   ): Promise<AIEnhanceOutput> {
     const providerId = input.providerId || 'openai'
     const storeSettings = this.storeService.getModelSettings(providerId)
@@ -154,7 +117,7 @@ export class AIEnhanceHandler implements TaskHandler<AIEnhanceInput, AIEnhanceOu
         if (token) {
           fullContent += token
           tokenCount++
-          reporter.progress(0, 'token', { token })
+          streamReporter?.stream(token)
         }
       }
 
@@ -171,14 +134,7 @@ export class AIEnhanceHandler implements TaskHandler<AIEnhanceInput, AIEnhanceOu
       const rawMessage = error instanceof Error ? error.message : String(error)
       console.error(`${LOG_PREFIX} Error (${kind}):`, rawMessage)
 
-      const userMessage =
-        kind === 'auth'
-          ? 'Authentication failed. Please check your API key in Settings.'
-          : kind === 'rate_limit'
-            ? 'Rate limit exceeded. Please wait a moment and try again.'
-            : `OpenAI request failed: ${rawMessage}`
-
-      throw new Error(userMessage)
+      throw new Error(toUserMessage(kind, rawMessage))
     }
   }
 }

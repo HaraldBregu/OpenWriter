@@ -188,7 +188,7 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
   useEffect(() => {
     const unsubscribe = window.task.onEvent((event) => {
       const { type, data } = event as {
-        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
         data: Record<string, unknown>
       }
 
@@ -201,31 +201,27 @@ function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): Re
       const task = taskMapRef.current.get(sectionId)
       if (!task) return
 
-      if (type === 'progress') {
-        const message = data.message as string | undefined
-        const detail = data.detail as Record<string, unknown> | undefined
+      if (type === 'stream') {
+        const token = data.token as string
+        if (!token) return
 
-        // Token streaming: progress events with message === 'token'
-        if (message === 'token' && detail?.token) {
-          const token = detail.token as string
-          const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
+        const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
 
-          if (isFirstToken) {
-            // Create assistant message placeholder on first token
-            const assistantMsg: AIMessage = {
-              id: `msg-${Date.now()}`,
-              role: 'assistant',
-              content: '',
-              timestamp: Date.now()
-            }
-            updateTask(sectionId, {
-              messages: [...task.messages, assistantMsg],
-              isStreaming: true,
-              latestResponse: token
-            })
-          } else {
-            updateTask(sectionId, { latestResponse: task.latestResponse + token })
+        if (isFirstToken) {
+          // Create assistant message placeholder on first token
+          const assistantMsg: AIMessage = {
+            id: `msg-${Date.now()}`,
+            role: 'assistant',
+            content: '',
+            timestamp: Date.now()
           }
+          updateTask(sectionId, {
+            messages: [...task.messages, assistantMsg],
+            isStreaming: true,
+            latestResponse: token
+          })
+        } else {
+          updateTask(sectionId, { latestResponse: task.latestResponse + token })
         }
       } else if (type === 'completed') {
         // Task completed -- result contains the full content from the handler

@@ -48,3 +48,10 @@ export type TaskEvent =
         taskId: string
       }
     }
+  | {
+      type: 'stream'
+      data: {
+        taskId: string
+        token: string
+      }
+    }

@@ -10,7 +10,7 @@
  *  - validate(): passes for a valid non-empty string
  *  - execute(): throws when no API key is configured
  *  - execute(): throws for the placeholder key
- *  - execute(): streams tokens via reporter.progress('token')
+ *  - execute(): streams tokens via streamReporter.stream()
  *  - execute(): accumulates content and returns tokenCount
  *  - execute(): reports 'connecting' before streaming starts
  *  - execute(): uses storeService.getModelSettings for provider config
@@ -41,7 +41,7 @@ jest.mock('@langchain/core/messages', () => ({
 
 import { AIEnhanceHandler } from '../../../../../src/main/tasks/handlers/AIEnhanceHandler'
 import type { AIEnhanceInput } from '../../../../../src/main/tasks/handlers/AIEnhanceHandler'
-import type { ProgressReporter } from '../../../../../src/main/tasks/TaskHandler'
+import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/TaskHandler'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -60,6 +60,10 @@ function makeStoreService(
 
 function makeReporter(): jest.Mocked<ProgressReporter> {
   return { progress: jest.fn() }
+}
+
+function makeStreamReporter(): jest.Mocked<StreamReporter> {
+  return { stream: jest.fn() }
 }
 
 function makeAbortSignal(alreadyAborted = false): AbortSignal {
@@ -189,17 +193,17 @@ describe('AIEnhanceHandler', () => {
       expect(reporter.progress).toHaveBeenCalledWith(0, 'connecting')
     })
 
-    it('should emit reporter.progress("token") for each streamed chunk', async () => {
+    it('should call streamReporter.stream for each streamed chunk', async () => {
       const reporter = makeReporter()
+      const streamReporter = makeStreamReporter()
       mockStream.mockResolvedValue(makeChunkStream(['One', 'Two', 'Three']))
 
-      await handler.execute({ text: 'Start' }, makeAbortSignal(), reporter)
+      await handler.execute({ text: 'Start' }, makeAbortSignal(), reporter, streamReporter)
 
-      const tokenCalls = reporter.progress.mock.calls.filter(
-        (c: unknown[]) => c[1] === 'token'
-      )
-      expect(tokenCalls).toHaveLength(3)
-      expect(tokenCalls[0][2]).toEqual({ token: 'One' })
+      expect(streamReporter.stream).toHaveBeenCalledTimes(3)
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(1, 'One')
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(2, 'Two')
+      expect(streamReporter.stream).toHaveBeenNthCalledWith(3, 'Three')
     })
 
     it('should pass the AbortSignal to model.stream()', async () => {
@@ -393,7 +397,7 @@ describe('AIEnhanceHandler', () => {
 
       mockStream.mockResolvedValue(abortingStream())
 
-      const result = await handler.execute({ text: 'text' }, controller.signal, makeReporter())
+      const result = await handler.execute({ text: 'text' }, controller.signal, makeReporter(), makeStreamReporter())
 
       expect(result.content).toBe('First')
     })

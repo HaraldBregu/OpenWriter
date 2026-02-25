@@ -1,21 +1,19 @@
 /**
  * AIChatHandler -- Task handler for AI chat inference via LangChain.
  *
- * Streams tokens to the renderer through ProgressReporter (progress events),
+ * Streams tokens to the renderer through StreamReporter (stream events),
  * and returns the full response content as the task result on completion.
  *
  * This replaces the PipelineService/ChatAgent flow for personality pages,
  * giving the task system full control over queueing, cancellation, and
  * lifecycle events.
- *
- * Token streaming uses: reporter.progress(0, 'token', { token })
- * The renderer listens for task:event with type 'progress' and message 'token'.
  */
 
 import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
-import type { TaskHandler, ProgressReporter } from '../TaskHandler'
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
 import type { StoreService } from '../../services/store'
+import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from './aiHandlerUtils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,50 +42,6 @@ const LOG_PREFIX = '[AIChatHandler]'
 const DEFAULT_MODEL = 'gpt-4o-mini'
 const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant.'
 
-const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview']
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function isReasoningModel(modelName: string): boolean {
-  const normalized = modelName.toLowerCase()
-  return REASONING_MODEL_PREFIXES.some(
-    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-  )
-}
-
-function extractTokenFromChunk(content: unknown): string {
-  if (typeof content === 'string') return content
-
-  if (Array.isArray(content)) {
-    return content
-      .filter((c): c is { text: string } => typeof c === 'object' && c !== null && 'text' in c)
-      .map((c) => c.text)
-      .join('')
-  }
-
-  return ''
-}
-
-function classifyError(error: unknown): 'abort' | 'auth' | 'rate_limit' | 'unknown' {
-  if (error instanceof Error) {
-    const msg = error.message.toLowerCase()
-    const name = error.name.toLowerCase()
-
-    if (name === 'aborterror' || msg.includes('abort') || msg.includes('cancel')) {
-      return 'abort'
-    }
-    if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid api key')) {
-      return 'auth'
-    }
-    if (msg.includes('429') || msg.includes('rate limit')) {
-      return 'rate_limit'
-    }
-  }
-  return 'unknown'
-}
-
 // ---------------------------------------------------------------------------
 // Handler
 // ---------------------------------------------------------------------------
@@ -106,7 +60,8 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
   async execute(
     input: AIChatInput,
     signal: AbortSignal,
-    reporter: ProgressReporter
+    reporter: ProgressReporter,
+    streamReporter?: StreamReporter
   ): Promise<AIChatOutput> {
     // --- Resolve configuration -----------------------------------------------
 
@@ -170,7 +125,7 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
         if (token) {
           fullContent += token
           tokenCount++
-          reporter.progress(0, 'token', { token })
+          streamReporter?.stream(token)
         }
       }
 
@@ -187,14 +142,7 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
       const rawMessage = error instanceof Error ? error.message : String(error)
       console.error(`${LOG_PREFIX} Error (${kind}):`, rawMessage)
 
-      const userMessage =
-        kind === 'auth'
-          ? 'Authentication failed. Please check your API key in Settings.'
-          : kind === 'rate_limit'
-            ? 'Rate limit exceeded. Please wait a moment and try again.'
-            : `OpenAI request failed: ${rawMessage}`
-
-      throw new Error(userMessage)
+      throw new Error(toUserMessage(kind, rawMessage))
     }
   }
 }

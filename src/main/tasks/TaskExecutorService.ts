@@ -18,7 +18,7 @@ import type { Disposable } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
 import type { TaskEvent } from './TaskEvents'
-import type { ProgressReporter } from './TaskHandler'
+import type { ProgressReporter, StreamReporter } from './TaskHandler'
 import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor'
 
 /** Priority ordering for queue sorting (higher number = higher priority). */
@@ -168,6 +168,21 @@ export class TaskExecutorService implements Disposable {
   }
 
   /**
+   * Cancel all tasks owned by a specific window.
+   * Returns the number of tasks that were cancelled.
+   */
+  cancelByWindow(windowId: number): number {
+    let count = 0
+    for (const task of this.activeTasks.values()) {
+      if (task.windowId === windowId) {
+        this.cancel(task.taskId)
+        count++
+      }
+    }
+    return count
+  }
+
+  /**
    * Disposable -- abort every active task on shutdown.
    */
   destroy(): void {
@@ -255,7 +270,18 @@ export class TaskExecutorService implements Disposable {
         }
       }
 
-      const result = await handler.execute(input, controller.signal, reporter)
+      const streamReporter: StreamReporter = {
+        stream: (token: string) => {
+          if (!this.activeTasks.has(taskId)) return
+
+          this.send(windowId, 'task:event', {
+            type: 'stream',
+            data: { taskId, token }
+          } satisfies TaskEvent)
+        }
+      }
+
+      const result = await handler.execute(input, controller.signal, reporter, streamReporter)
 
       // Task may have been cancelled during execution
       if (!this.activeTasks.has(taskId)) return
