@@ -403,7 +403,7 @@ declare global {
       syncToWorkspace: (posts: Array<{
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
@@ -418,7 +418,7 @@ declare global {
       update: (post: {
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
@@ -429,7 +429,7 @@ declare global {
       loadFromWorkspace: () => Promise<Array<{
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
