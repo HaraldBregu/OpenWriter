@@ -67,7 +67,7 @@
           "UTTypeConformsTo": ["public.data"],
           "UTTypeTagSpecification": {
             "public.filename-extension": ["tsrct"],
-            "public.mime-type": ["application/x-tesseract-ai-document"]
+            "public.mime-type": ["application/x-openwriter-document"]
           }
         }
       ]
