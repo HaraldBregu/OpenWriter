@@ -296,7 +296,7 @@ const NewWritingPage: React.FC = () => {
                 dispatch(updateWritingTitle({ writingId: writing!.id, title: e.target.value }))
               }
             }}
-            placeholder="Untitled Writing"
+            placeholder={t('writing.titlePlaceholder')}
             className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
           />
         </div>

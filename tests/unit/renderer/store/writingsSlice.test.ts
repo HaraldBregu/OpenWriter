@@ -4,9 +4,12 @@
  * Tests cover:
  *   - All reducers: createWriting, addWriting, setWritingOutputId, updateWritingBlocks,
  *     updateWritingTitle, deleteWriting, loadWritings
+ *   - updateWritingInferenceSettings: all five fields, updatedAt bump, no-op on missing ID
  *   - Extra reducer: output/loadAll/fulfilled matcher (hydration from disk)
  *     - Removes writings whose outputId is no longer on disk
  *     - Updates writings when disk content/title changed
+ *     - Maps inference fields (provider, model, temperature, maxTokens, reasoning) into new Writings
+ *     - Updates inference fields on existing Writings when disk data changes
  *     - Adds new writings found on disk but not in Redux
  *     - Skips writings with no outputId (in-progress / unsaved)
  *   - Selectors: selectWritings, selectWritingById, selectWritingCount
@@ -19,6 +22,7 @@ import writingsReducer, {
   setWritingOutputId,
   updateWritingBlocks,
   updateWritingTitle,
+  updateWritingInferenceSettings,
   deleteWriting,
   loadWritings,
   selectWritings,
@@ -353,6 +357,110 @@ describe('writingsSlice', () => {
       })
     })
 
+    describe('updateWritingInferenceSettings', () => {
+      const INFERENCE_PAYLOAD = {
+        writingId: 'writing-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 1.2,
+        maxTokens: 4096,
+        reasoning: true
+      }
+
+      it('should update all five inference fields on the matching writing', () => {
+        // Arrange
+        const state = { writings: [makeWriting({ id: 'writing-1' })] }
+
+        // Act
+        const result = writingsReducer(state, updateWritingInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert
+        const writing = result.writings[0]
+        expect(writing.provider).toBe('anthropic')
+        expect(writing.model).toBe('claude-opus-4-6')
+        expect(writing.temperature).toBe(1.2)
+        expect(writing.maxTokens).toBe(4096)
+        expect(writing.reasoning).toBe(true)
+      })
+
+      it('should accept null for maxTokens (unlimited)', () => {
+        // Arrange
+        const state = { writings: [makeWriting({ id: 'writing-1' })] }
+
+        // Act
+        const result = writingsReducer(
+          state,
+          updateWritingInferenceSettings({ ...INFERENCE_PAYLOAD, maxTokens: null })
+        )
+
+        // Assert
+        expect(result.writings[0].maxTokens).toBeNull()
+      })
+
+      it('should bump updatedAt after updating inference settings', () => {
+        // Arrange
+        const state = { writings: [makeWriting({ id: 'writing-1', updatedAt: 1000 })] }
+        jest.spyOn(Date, 'now').mockReturnValue(9999)
+
+        // Act
+        const result = writingsReducer(state, updateWritingInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert
+        expect(result.writings[0].updatedAt).toBe(9999)
+
+        // Cleanup
+        jest.restoreAllMocks()
+      })
+
+      it('should not modify other writings when writingId matches only one', () => {
+        // Arrange
+        const state = {
+          writings: [
+            makeWriting({ id: 'writing-1', provider: 'openai' }),
+            makeWriting({ id: 'writing-2', provider: 'openai' })
+          ]
+        }
+
+        // Act
+        const result = writingsReducer(state, updateWritingInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert: writing-2 remains unchanged
+        expect(result.writings[1].provider).toBe('openai')
+        expect(result.writings[1].model).toBeUndefined()
+      })
+
+      it('should be a no-op when writingId does not exist', () => {
+        // Arrange
+        const state = { writings: [makeWriting({ id: 'writing-1', provider: 'openai' })] }
+
+        // Act
+        const result = writingsReducer(
+          state,
+          updateWritingInferenceSettings({ ...INFERENCE_PAYLOAD, writingId: 'nonexistent' })
+        )
+
+        // Assert: state unchanged
+        expect(result.writings[0].provider).toBe('openai')
+        expect(result.writings[0].model).toBeUndefined()
+      })
+
+      it('should allow switching reasoning from true to false', () => {
+        // Arrange: writing currently has reasoning: true
+        const state = {
+          writings: [makeWriting({ id: 'writing-1', reasoning: true })]
+        }
+
+        // Act
+        const result = writingsReducer(
+          state,
+          updateWritingInferenceSettings({ ...INFERENCE_PAYLOAD, reasoning: false })
+        )
+
+        // Assert
+        expect(result.writings[0].reasoning).toBe(false)
+      })
+    })
+
     describe('deleteWriting', () => {
       it('should remove the writing with the given ID', () => {
         // Arrange
@@ -431,6 +539,105 @@ describe('writingsSlice', () => {
       expect(result.writings).toHaveLength(1)
       expect(result.writings[0].title).toBe('From Disk')
       expect(result.writings[0].outputId).toBe('output-1')
+    })
+
+    it('should map all inference fields when adding a new writing from disk', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 1.8,
+        maxTokens: 4000,
+        reasoning: true
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const writing = result.writings[0]
+      expect(writing.provider).toBe('anthropic')
+      expect(writing.model).toBe('claude-opus-4-6')
+      expect(writing.temperature).toBe(1.8)
+      expect(writing.maxTokens).toBe(4000)
+      expect(writing.reasoning).toBe(true)
+    })
+
+    it('should map null maxTokens from disk (unlimited)', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', maxTokens: null })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.writings[0].maxTokens).toBeNull()
+    })
+
+    it('should update inference fields on an existing writing when disk data changed', () => {
+      // Arrange
+      const existingWriting = makeWriting({
+        id: 'writing-1',
+        outputId: 'output-1',
+        provider: 'openai',
+        model: 'gpt-4o',
+        temperature: 0.7,
+        maxTokens: null,
+        reasoning: false
+      })
+      const state = { writings: [existingWriting] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-sonnet-4-5-20250929',
+        temperature: 0.5,
+        maxTokens: 2000,
+        reasoning: false,
+        updatedAt: '2025-01-01T00:00:00.000Z'
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const writing = result.writings[0]
+      expect(writing.id).toBe('writing-1') // Redux ID preserved
+      expect(writing.provider).toBe('anthropic')
+      expect(writing.model).toBe('claude-sonnet-4-5-20250929')
+      expect(writing.temperature).toBe(0.5)
+      expect(writing.maxTokens).toBe(2000)
+      expect(writing.reasoning).toBe(false)
+    })
+
+    it('should update reasoning to true on an existing writing when disk sets reasoning=true', () => {
+      // Arrange — writing currently has reasoning: false
+      const existingWriting = makeWriting({
+        id: 'writing-1',
+        outputId: 'output-1',
+        provider: 'openai',
+        model: 'o1',
+        reasoning: false
+      })
+      const state = { writings: [existingWriting] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'openai',
+        model: 'o1',
+        temperature: 0.7,
+        maxTokens: null,
+        reasoning: true
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.writings[0].reasoning).toBe(true)
     })
 
     it('should split multi-paragraph content into one block per paragraph', () => {
@@ -527,6 +734,42 @@ describe('writingsSlice', () => {
       expect(resultBlockIds).toEqual(originalBlockIds)
     })
 
+    it('should preserve inference fields already on an existing writing when inference fields survive refresh', () => {
+      // Arrange — existing writing has inference settings; disk content is identical
+      const existingWriting = makeWriting({
+        id: 'writing-1',
+        blocks: [makeBlock('block-1', 'Same content')],
+        outputId: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 0.8,
+        maxTokens: 2000,
+        reasoning: false
+      })
+      const state = { writings: [existingWriting] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        content: 'Same content',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 0.8,
+        maxTokens: 2000,
+        reasoning: false
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert — inference fields preserved intact
+      const writing = result.writings[0]
+      expect(writing.provider).toBe('anthropic')
+      expect(writing.model).toBe('claude-opus-4-6')
+      expect(writing.temperature).toBe(0.8)
+      expect(writing.maxTokens).toBe(2000)
+      expect(writing.reasoning).toBe(false)
+    })
+
     it('should remove writings whose outputId no longer exists on disk', () => {
       // Arrange — one writing with an outputId, but disk is empty
       const savedWriting = makeWriting({ id: 'writing-1', outputId: 'output-1' })
@@ -616,6 +859,27 @@ describe('writingsSlice', () => {
       const state = makeRootState()
       const selector = selectWritingById('any-id')
       expect(selector(state)).toBeNull()
+    })
+
+    it('selectWritingById should return a writing that includes inference fields', () => {
+      // Ensure inference fields are accessible via selector (not stripped)
+      const writing = makeWriting({
+        id: 'writing-1',
+        provider: 'openai',
+        model: 'gpt-4o',
+        temperature: 0.7,
+        maxTokens: 2048,
+        reasoning: false
+      })
+      const state = makeRootState({ writings: [writing] })
+      const selector = selectWritingById('writing-1')
+      const selected = selector(state)
+
+      expect(selected?.provider).toBe('openai')
+      expect(selected?.model).toBe('gpt-4o')
+      expect(selected?.temperature).toBe(0.7)
+      expect(selected?.maxTokens).toBe(2048)
+      expect(selected?.reasoning).toBe(false)
     })
 
     it('selectWritingCount should return 0 in initial state', () => {
