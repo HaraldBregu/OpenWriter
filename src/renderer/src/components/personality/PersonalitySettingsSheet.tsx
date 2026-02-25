@@ -269,7 +269,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
         {/* Text Length (replaces Max Tokens) */}
         <div className="space-y-1.5">
           <AppLabel className="text-xs">Text Length</AppLabel>
-          <AppSelect value={textLengthLevel} onValueChange={handleTextLengthLevelChange}>
+          <AppSelect value={textLengthLevel} onValueChange={handleTextLengthLevelChange} disabled={!hasModel}>
             <AppSelectTrigger className="w-full h-8 text-xs">
               <AppSelectValue />
             </AppSelectTrigger>
