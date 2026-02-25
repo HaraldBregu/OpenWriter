@@ -186,100 +186,91 @@ export const postsSlice = createSlice({
      */
     handleExternalPostDelete(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
-    }
-  },
+    },
 
-  extraReducers: (builder) => {
     /**
-     * When output items finish loading (both initial load and file-watcher
-     * refresh), hydrate any 'posts' OutputItems into postsSlice so they
-     * appear in the sidebar after an app restart or workspace open.
+     * Hydrate posts from disk after outputSlice finishes loading.
      *
-     * Deduplication: if a Post with the same outputId already exists, skip it.
-     * This preserves in-session drafts (no outputId yet) unchanged.
-     *
-     * We match by the action type string to avoid a circular import
-     * (postsSlice → outputSlice → store/index → postsSlice).
+     * Previously this lived in extraReducers matching 'output/loadAll/fulfilled'
+     * by string — that pattern required importing OutputItem from outputSlice
+     * which created a circular dependency. Now postsHydration.ts registers an
+     * RTK listener for loadOutputItems.fulfilled and dispatches this action,
+     * keeping the import graph acyclic while preserving type safety.
      */
-    builder.addMatcher(
-      (action): action is PayloadAction<OutputItem[]> =>
-        action.type === 'output/loadAll/fulfilled',
-      (state, action) => {
-        const diskPosts = action.payload.filter((item) => item.type === 'posts')
-        const diskOutputIds = new Set(diskPosts.map((item) => item.id))
+    hydratePostsFromDisk(state, action: PayloadAction<OutputItem[]>) {
+      const diskPosts = action.payload.filter((item) => item.type === 'posts')
+      const diskOutputIds = new Set(diskPosts.map((item) => item.id))
 
-        // 1. Remove posts whose output folder no longer exists on disk
-        state.posts = state.posts.filter(
-          (p) => !p.outputId || diskOutputIds.has(p.outputId)
-        )
+      // 1. Remove posts whose output folder no longer exists on disk
+      state.posts = state.posts.filter(
+        (p) => !p.outputId || diskOutputIds.has(p.outputId)
+      )
 
-        // 2. Update posts whose disk content/title changed
-        for (const item of diskPosts) {
-          const existing = state.posts.find((p) => p.outputId === item.id)
-          if (existing) {
-            existing.title = item.title
-            existing.category = item.category
-            existing.tags = item.tags
-            existing.visibility = item.visibility
-            existing.provider = item.provider
-            existing.model = item.model
-            existing.temperature = item.temperature
-            existing.maxTokens = item.maxTokens
-            existing.reasoning = item.reasoning
-            existing.updatedAt = new Date(item.updatedAt).getTime()
+      // 2. Update posts whose disk content/title changed
+      for (const item of diskPosts) {
+        const existing = state.posts.find((p) => p.outputId === item.id)
+        if (existing) {
+          existing.title = item.title
+          existing.category = item.category
+          existing.tags = item.tags
+          existing.visibility = item.visibility
+          existing.provider = item.provider
+          existing.model = item.model
+          existing.temperature = item.temperature
+          existing.maxTokens = item.maxTokens
+          existing.reasoning = item.reasoning
+          existing.updatedAt = new Date(item.updatedAt).getTime()
 
-            // Rebuild blocks only if content actually changed.
-            // Compare by joining block names + content as a quick fingerprint.
-            const diskFingerprint = item.blocks.map((b) => `${b.name}:${b.content}`).join('|')
-            const currentFingerprint = existing.blocks.map((b) => `${b.id}:${b.content}`).join('|')
-            if (diskFingerprint !== currentFingerprint) {
-              existing.blocks = item.blocks.length > 0
-                ? item.blocks.map((b): Block => ({
-                    id: b.name,
-                    content: b.content,
-                    createdAt: b.createdAt,
-                    updatedAt: b.updatedAt,
-                  }))
-                : [makeBlock()]
-            }
-          }
-        }
-
-        // 3. Add posts that don't exist in Redux yet
-        const existingOutputIds = new Set(
-          state.posts.map((p) => p.outputId).filter(Boolean) as string[]
-        )
-        const newPosts: Post[] = diskPosts
-          .filter((item) => !existingOutputIds.has(item.id))
-          .map((item): Post => ({
-            id: crypto.randomUUID(),
-            title: item.title,
-            blocks: item.blocks.length > 0
+          // Rebuild blocks only if content actually changed.
+          const diskFingerprint = item.blocks.map((b) => `${b.name}:${b.content}`).join('|')
+          const currentFingerprint = existing.blocks.map((b) => `${b.id}:${b.content}`).join('|')
+          if (diskFingerprint !== currentFingerprint) {
+            existing.blocks = item.blocks.length > 0
               ? item.blocks.map((b): Block => ({
                   id: b.name,
                   content: b.content,
                   createdAt: b.createdAt,
                   updatedAt: b.updatedAt,
                 }))
-              : [makeBlock()],
-            category: item.category,
-            tags: item.tags,
-            visibility: item.visibility,
-            provider: item.provider,
-            model: item.model,
-            temperature: item.temperature,
-            maxTokens: item.maxTokens,
-            reasoning: item.reasoning,
-            createdAt: new Date(item.createdAt).getTime(),
-            updatedAt: new Date(item.updatedAt).getTime(),
-            outputId: item.id
-          }))
-
-        if (newPosts.length > 0) {
-          state.posts.push(...newPosts)
+              : [makeBlock()]
+          }
         }
       }
-    )
+
+      // 3. Add posts that don't exist in Redux yet
+      const existingOutputIds = new Set(
+        state.posts.map((p) => p.outputId).filter(Boolean) as string[]
+      )
+      const newPosts: Post[] = diskPosts
+        .filter((item) => !existingOutputIds.has(item.id))
+        .map((item): Post => ({
+          id: crypto.randomUUID(),
+          title: item.title,
+          blocks: item.blocks.length > 0
+            ? item.blocks.map((b): Block => ({
+                id: b.name,
+                content: b.content,
+                createdAt: b.createdAt,
+                updatedAt: b.updatedAt,
+              }))
+            : [makeBlock()],
+          category: item.category,
+          tags: item.tags,
+          visibility: item.visibility,
+          provider: item.provider,
+          model: item.model,
+          temperature: item.temperature,
+          maxTokens: item.maxTokens,
+          reasoning: item.reasoning,
+          createdAt: new Date(item.createdAt).getTime(),
+          updatedAt: new Date(item.updatedAt).getTime(),
+          outputId: item.id
+        }))
+
+      if (newPosts.length > 0) {
+        state.posts.push(...newPosts)
+      }
+    }
   }
 })
 
