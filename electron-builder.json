@@ -20,9 +20,9 @@
   "fileAssociations": [
     {
       "ext": "tsrct",
-      "name": "Tesseract AI Document",
-      "description": "Tesseract AI Document File",
-      "mimeType": "application/x-tesseract-ai-document",
+      "name": "OpenWriter Document",
+      "description": "OpenWriter Document File",
+      "mimeType": "application/x-openwriter-document",
       "role": "Manager",
       "icon": "./resources/icons/icon.png"
     }
