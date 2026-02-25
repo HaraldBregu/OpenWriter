@@ -304,7 +304,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
           <AppSwitch
             checked={settings.reasoning}
             onCheckedChange={handleReasoningChange}
-            disabled={!modelIsReasoning}
+            disabled={!hasModel || !modelIsReasoning}
           />
         </div>
       </div>
