@@ -70,7 +70,7 @@ function formatFileSize(bytes: number): string {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
-function formatDate(timestamp: number): string {
+function formatDate(timestamp: number, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const date = new Date(timestamp)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
@@ -78,12 +78,12 @@ function formatDate(timestamp: number): string {
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
 
-  if (diffMins < 1) return 'Just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
+  if (diffMins < 1) return t('relativeTime.justNow')
+  if (diffMins < 60) return t('relativeTime.minutesAgo', { count: diffMins })
+  if (diffHours < 24) return t('relativeTime.hoursAgo', { count: diffHours })
+  if (diffDays < 7) return t('relativeTime.daysAgo', { count: diffDays })
 
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function getFileIcon(doc: Document): React.ComponentType<{ className?: string }> {
