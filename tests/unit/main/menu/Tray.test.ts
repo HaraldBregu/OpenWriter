@@ -65,9 +65,9 @@ describe('Tray', () => {
       expect(ElectronTray).toHaveBeenCalled()
     })
 
-    it('should set tooltip to Tesseract AI', () => {
+    it('should set tooltip to OpenWriter', () => {
       tray.create()
-      expect(mockTrayInstance.setToolTip).toHaveBeenCalledWith('Tesseract AI')
+      expect(mockTrayInstance.setToolTip).toHaveBeenCalledWith('OpenWriter')
     })
 
     it('should register double-click handler', () => {
