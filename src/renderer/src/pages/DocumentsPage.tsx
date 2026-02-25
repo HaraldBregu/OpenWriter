@@ -840,10 +840,10 @@ const DocumentsPage: React.FC = () => {
               <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                 <Search className="h-12 w-12 text-muted-foreground/40 mb-4" />
                 <h3 className="text-lg font-medium text-foreground mb-2">
-                  No documents found
+                  {t('documents.noDocumentsFound')}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Try adjusting your search query
+                  {t('documents.adjustSearchQuery')}
                 </p>
               </div>
             ) : viewMode === 'grid' ? (
