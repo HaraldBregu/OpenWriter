@@ -2,7 +2,7 @@
  * Tests for DialogService.
  * Validates dialog show methods using mocked Electron dialog API.
  */
-import { dialog, BrowserWindow } from 'electron'
+import { dialog } from 'electron'
 import { DialogService } from '../../../../src/main/services/dialogs'
 
 describe('DialogService', () => {
