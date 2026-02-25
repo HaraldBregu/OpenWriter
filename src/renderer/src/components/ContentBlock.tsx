@@ -141,7 +141,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         return false
       },
     },
-  }), [block.content])
+  }), [])
 
   const editor = useEditor(editorOptions as any)
 
