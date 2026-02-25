@@ -20,6 +20,7 @@ export interface Block {
 export interface ContentBlockProps {
   block: Block
   isOnly: boolean
+  isLast?: boolean
   onChange: (id: string, content: string) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
@@ -295,7 +296,7 @@ export const ContentBlock = React.memo(function ContentBlock({
       </div>
       {onAdd && (
         <div
-          className="group/add ml-[4.6rem] mr-5 h-3 hover:h-8 transition-all duration-200 flex items-center justify-center rounded cursor-pointer bg-muted/10 hover:bg-muted/30"
+          className="group/add ml-[3.4rem] h-3 hover:h-8 transition-all duration-200 flex items-center justify-center rounded cursor-pointer bg-muted/2 hover:bg-muted/30"
           onClick={() => onAdd(block.id)}
         >
           <Plus className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/add:opacity-100 transition-opacity duration-150" />
