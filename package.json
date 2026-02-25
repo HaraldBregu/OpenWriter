@@ -73,7 +73,7 @@
     "framer-motion": "^11.0.0",
     "gray-matter": "^4.0.3",
     "i18next": "^25.8.7",
-    "langchain": "latest",
+    "langchain": "^1.2.25",
     "lucide-react": "^0.575.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
