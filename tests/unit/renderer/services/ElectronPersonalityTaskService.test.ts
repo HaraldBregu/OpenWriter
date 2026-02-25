@@ -224,6 +224,12 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   })
 
   it('includes modelId in the payload when provided', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    Object.defineProperty(window, 'task', {
+      value: { ...window.task, submit: submitMock },
+      writable: true, configurable: true
+    })
+
     const service = createService()
 
     await service.submitTask({
@@ -234,11 +240,19 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       modelId: 'gpt-4o'
     })
 
-    const payload = (window.task.submit as jest.Mock).mock.calls[0][1]
-    expect(payload).toHaveProperty('modelId', 'gpt-4o')
+    expect(submitMock).toHaveBeenCalledWith(
+      'ai-chat',
+      expect.objectContaining({ modelId: 'gpt-4o' })
+    )
   })
 
   it('omits modelId from the payload when not provided', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    Object.defineProperty(window, 'task', {
+      value: { ...window.task, submit: submitMock },
+      writable: true, configurable: true
+    })
+
     const service = createService()
 
     await service.submitTask({
@@ -248,11 +262,17 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       messages: []
     })
 
-    const payload = (window.task.submit as jest.Mock).mock.calls[0][1]
+    const payload = submitMock.mock.calls[0][1]
     expect(payload).not.toHaveProperty('modelId')
   })
 
   it('includes temperature in the payload when provided', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    Object.defineProperty(window, 'task', {
+      value: { ...window.task, submit: submitMock },
+      writable: true, configurable: true
+    })
+
     const service = createService()
 
     await service.submitTask({
@@ -263,11 +283,19 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       temperature: 0.7
     })
 
-    const payload = (window.task.submit as jest.Mock).mock.calls[0][1]
-    expect(payload).toHaveProperty('temperature', 0.7)
+    expect(submitMock).toHaveBeenCalledWith(
+      'ai-chat',
+      expect.objectContaining({ temperature: 0.7 })
+    )
   })
 
   it('omits temperature from the payload when undefined', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    Object.defineProperty(window, 'task', {
+      value: { ...window.task, submit: submitMock },
+      writable: true, configurable: true
+    })
+
     const service = createService()
 
     await service.submitTask({
@@ -278,11 +306,17 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       temperature: undefined
     })
 
-    const payload = (window.task.submit as jest.Mock).mock.calls[0][1]
+    const payload = submitMock.mock.calls[0][1]
     expect(payload).not.toHaveProperty('temperature')
   })
 
   it('includes maxTokens in the payload when provided', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    Object.defineProperty(window, 'task', {
+      value: { ...window.task, submit: submitMock },
+      writable: true, configurable: true
+    })
+
     const service = createService()
 
     await service.submitTask({
@@ -293,11 +327,18 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       maxTokens: 2048
     })
 
-    const payload = (window.task.submit as jest.Mock).mock.calls[0][1]
-    expect(payload).toHaveProperty('maxTokens', 2048)
+    expect(submitMock).toHaveBeenCalledWith(
+      'ai-chat',
+      expect.objectContaining({ maxTokens: 2048 })
+    )
   })
 
   it('returns the result envelope from window.task.submit', async () => {
+    ;(window.task.submit as jest.Mock).mockResolvedValue({
+      success: true,
+      data: { taskId: 'new-task' }
+    })
+
     const service = createService()
 
     const result = await service.submitTask({
