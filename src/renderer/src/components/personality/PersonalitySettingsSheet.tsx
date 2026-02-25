@@ -231,7 +231,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
           <AppSelect
             value={creativityLevel}
             onValueChange={handleCreativityLevelChange}
-            disabled={modelIsReasoning}
+            disabled={!hasModel || modelIsReasoning}
           >
             <AppSelectTrigger className="w-full h-8 text-xs">
               <AppSelectValue />
@@ -244,10 +244,10 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
               ))}
             </AppSelectContent>
           </AppSelect>
-          {modelIsReasoning && (
+          {hasModel && modelIsReasoning && (
             <p className="text-[11px] text-muted-foreground">Not supported for reasoning models.</p>
           )}
-          {creativityLevel === 'custom' && !modelIsReasoning && (
+          {creativityLevel === 'custom' && hasModel && !modelIsReasoning && (
             <div className="pt-1 space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] text-muted-foreground">Custom value</span>
