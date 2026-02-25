@@ -171,32 +171,23 @@ writingsReducer(state, { type: 'output/loadAll/fulfilled', payload: items })
 (e.g. Block from ContentBlock.tsx), that import is erased at runtime — Jest will NOT load
 the module. Tests import the slice directly with no extra mocking needed.
 
-**Slices with tests as of 2026-02-24**:
+**Slices with tests as of 2026-02-25**:
 `chatSlice`, `postsSlice`, `brainFilesSlice`, `directoriesSlice`, `outputSlice`, `writingsSlice`
 
-## IPC Module Test Notes (Batch 1 — confirmed passing)
+Inference fields (provider, model, temperature, maxTokens, reasoning) are present on:
+- `Post` / `Writing` interfaces (optional, set after first save or inference run)
+- `OutputItem` interface (required fields with defaults)
+The `output/loadAll/fulfilled` addMatcher in both postsSlice and writingsSlice maps ALL
+inference fields from OutputItem → Post/Writing on both add (new) and update (existing).
+The `updateOutputItem.fulfilled` reducer explicitly spreads all five inference fields.
 
-### AgentIpc — no ipcMain.handle calls
-Delegates entirely to `agent.registerHandlers()`. Test: verify that method is called once.
-No channel count/name tests apply here.
-
-### ContextMenuIpc — Menu.buildFromTemplate popup override required
-The electron mock's `Menu.buildFromTemplate` returns `{}` by default. Must override in `beforeEach`:
-```typescript
-(Menu.buildFromTemplate as jest.Mock).mockReturnValue({ popup: mockMenuPopup })
-```
-Menu item `click` callbacks call `event.sender.send(...)` — extract items from template arg[0].
-
-### DirectoriesIpc — 6 window-scoped handlers
-Channels: `directories:list/add/add-many/remove/validate/mark-indexed`
-Service key: `workspaceMetadata`. All wrapped with `wrapIpcHandler` → `{ success, data }` envelope.
-
-### DocumentsIpc — 5 handlers, must mock fs and file-type-validator
-Channels: `documents:import-files/import-by-paths/download-from-url/load-all/delete-file`
-Mock `node:fs/promises` and `../../../../src/main/utils/file-type-validator`.
-`tryGetWindowService('documentsWatcher')` → mock `getService` to throw for that key (returns null).
-`fs.access` called in sequence: first for docsDir check, then inside `getUniqueFilePath` loop.
-ENOENT on `fs.unlink` is idempotent (still `success: true`). Non-ENOENT → `success: false`.
+## Component Testing: react-i18next + Radix UI
+See `component-testing.md` for:
+- How to mock react-i18next (t(key) → key)
+- How to mock AppSelect/AppSwitch as native HTML elements
+- getSelectByLabelKey() helper pattern
+- PersonalitySettingsPanel disabled state logic
+- Pre-existing test failures (do not investigate)
 
 ### console.error lines in test output are expected
 `IpcErrorHandler.ts` logs every caught error. Tests exercising "no workspace" or
