@@ -269,10 +269,8 @@ describe('TitleBar — sidebar toggle', () => {
 })
 
 describe('TitleBar — window.win unavailable (graceful degradation)', () => {
-  const originalWin = window.win
-
   beforeEach(() => {
-    // Remove window.win to simulate missing preload
+    // Remove window.win to simulate missing preload script
     Object.defineProperty(window, 'win', {
       value: undefined,
       writable: true,
@@ -281,24 +279,32 @@ describe('TitleBar — window.win unavailable (graceful degradation)', () => {
   })
 
   afterEach(() => {
+    // Restore the mock installed by tests/setup/renderer.ts
     Object.defineProperty(window, 'win', {
-      value: originalWin,
+      value: {
+        minimize: jest.fn(),
+        maximize: jest.fn(),
+        close: jest.fn(),
+        isMaximized: jest.fn().mockResolvedValue(false),
+        isFullScreen: jest.fn().mockResolvedValue(false),
+        onMaximizeChange: jest.fn().mockReturnValue(jest.fn()),
+        onFullScreenChange: jest.fn().mockReturnValue(jest.fn())
+      },
       writable: true,
       configurable: true
     })
   })
 
-  it('does not crash when window.win is undefined and renders the title', () => {
-    // TitleBar calls window.win.isMaximized() etc. in useEffect.
-    // If window.win is undefined the component throws at runtime.
-    // This test documents the current crash behaviour so the team
-    // can decide whether to add defensive guards in the component.
-    //
-    // NOTE: An ErrorBoundary is the recommended guard if this path
-    // should be handled gracefully in production.
+  it('crashes with a TypeError when window.win is undefined', () => {
+    // TitleBar calls window.win.isMaximized() synchronously in useEffect.
+    // When window.win is undefined this throws a TypeError at the call site.
+    // React re-throws it during the commit phase so render() itself throws.
+    // This test documents the current behaviour — the component does not
+    // guard against a missing bridge. An ErrorBoundary in the tree is the
+    // recommended production safeguard.
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-    expect(() => render(<TitleBar />)).toThrow()
+    expect(() => render(<TitleBar />)).toThrow(TypeError)
 
     consoleSpy.mockRestore()
   })
