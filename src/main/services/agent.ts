@@ -96,7 +96,7 @@ export class AgentService {
   /**
    * Destroy an agent session
    */
-  private destroySession(sessionId: string): boolean {
+  destroySession(sessionId: string): boolean {
     const controller = this.controllers.get(sessionId)
     if (controller) {
       // Cancel any active runs in this session
