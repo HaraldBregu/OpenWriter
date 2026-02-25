@@ -212,7 +212,7 @@ const DirectoriesPage: React.FC = () => {
                 className="gap-2"
               >
                 <FolderPlus className="h-4 w-4" />
-                Add Directories
+                {t('directories.addDirectories')}
               </AppButton>
               <AppButton
                 onClick={handleIndexDirectories}
@@ -222,12 +222,12 @@ const DirectoriesPage: React.FC = () => {
                 {isIndexing ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    Indexing...
+                    {t('directories.indexing')}
                   </>
                 ) : (
                   <>
                     <Database className="h-4 w-4" />
-                    Index All
+                    {t('directories.indexAll')}
                   </>
                 )}
               </AppButton>
