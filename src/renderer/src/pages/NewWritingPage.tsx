@@ -307,7 +307,7 @@ const NewWritingPage: React.FC = () => {
                 type="button"
                 variant="outline"
                 size="icon"
-                title="More options"
+                title={t('common.moreOptions')}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </AppButton>
