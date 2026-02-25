@@ -389,18 +389,22 @@ describe('postsSlice', () => {
       })
 
       it('should be a no-op when postId does not exist', () => {
-        // Arrange
+        // Arrange — post starts with no inference fields
         const state = createInitialState()
-        state.posts.push(createTestPost({ id: 'post-1', provider: 'openai' }))
+        state.posts.push(createTestPost({ id: 'post-1' }))
 
-        // Act
+        // Act — target a postId that does not exist
         const result = postsReducer(
           state,
           updatePostInferenceSettings({ ...INFERENCE_PAYLOAD, postId: 'nonexistent' })
         )
 
-        // Assert: state unchanged
+        // Assert: post-1 is completely untouched (inference fields were never set)
         expect(result.posts[0].provider).toBeUndefined()
+        expect(result.posts[0].model).toBeUndefined()
+        expect(result.posts[0].temperature).toBeUndefined()
+        expect(result.posts[0].maxTokens).toBeUndefined()
+        expect(result.posts[0].reasoning).toBeUndefined()
       })
     })
 
