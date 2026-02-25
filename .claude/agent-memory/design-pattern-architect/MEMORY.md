@@ -50,5 +50,37 @@
 - `src/renderer/src/components/personality/PersonalitySimpleLayout.tsx` — personality chat UI with inference settings
 - `src/renderer/src/components/personality/PersonalitySettingsSheet.tsx` — inference settings panel component
 
+## Main Process Architecture (confirmed)
+- ServiceContainer: typed registry with Disposable lifecycle, NOT a full IoC container (intentional)
+- EventBus: dual-mode — broadcast/sendTo for renderer IPC; emit/on for typed main-process events
+- WindowFactory: Factory pattern for BrowserWindow creation with security defaults
+- WindowContext/WindowContextManager: per-window service isolation (workspace, fileWatcher, etc.)
+- IpcModule interface: self-registering modules, each calls ipcMain.handle internally
+- IpcGateway: CQS (registerQuery/registerCommand) wrappers — same runtime behaviour, semantic signal only
+- IpcErrorHandler: wrapIpcHandler/wrapSimpleHandler — uniform IpcResult<T> envelope for all IPC responses
+- IpcHelpers: getWindowService() — routes IPC events to correct per-window ServiceContainer
+- PipelineService: runs agent AsyncGenerators, broadcasts via EventBus; Chain of Responsibility for events
+- TaskExecutorService: priority queue with concurrency limit + AbortController per task
+- TaskHandlerRegistry / AgentRegistry: Registry pattern for pluggable handlers/agents
+- bootstrap.ts: Composition Root — all service wiring in one place
+- LifecycleService: single-callback design (onEvent) — can only have one listener; use EventBus instead
+
+## Main Process Anti-Patterns / Issues Found
+- **Critical DRY violation**: isReasoningModel, extractTokenFromChunk, classifyError defined 3x
+  - In: ChatAgent.ts, EnhanceAgent.ts (pipeline/agents/), and aiHandlerUtils.ts (tasks/handlers/)
+  - aiHandlerUtils.ts already contains the canonical versions; ChatAgent/EnhanceAgent don't import them
+- **Duplicate window setup logic**: Main.create() vs Main.createWorkspaceWindow() repeat identical
+  - event handler blocks: maximize, unmaximize, enter-full-screen, leave-full-screen, update-target-url
+  - Should be extracted to a private `attachWindowEventHandlers(win)` method in Main
+- **index.ts has business logic**: onNewWorkspace callback in menu construction (dialog + WorkspaceProcessManager spawn)
+  - belongs in a WorkspaceProcessService or dedicated IPC handler
+- **IpcGateway is a no-op abstraction**: registerQuery and registerCommand call identical code; the semantic
+  distinction provides no enforcement — a command can be registered as a query without type error
+- **LifecycleService.onEvent is a scalar**: only one listener supported; replace with EventBus subscription
+- **StoreIpc exposes workspace channels that duplicate WorkspaceIpc**: store-get-current-workspace and
+  workspace-get-current both exist; subtle semantic difference (global store vs window-scoped service)
+  but confusing at the call site
+
 ## Links to Detail Files
 - `theme-pattern.md` — full analysis of theme system pattern decision
+- `main-process-patterns.md` — detailed pattern analysis of src/main/ (see analysis in conversation)
