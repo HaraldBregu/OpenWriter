@@ -212,7 +212,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
         {/* Model */}
         <div className="space-y-1.5">
           <AppLabel className="text-xs">Model</AppLabel>
-          <AppSelect value={settings.modelId} onValueChange={handleModelChange}>
+          <AppSelect value={settings.modelId} onValueChange={handleModelChange} disabled={!hasProvider}>
             <AppSelectTrigger className="w-full h-8 text-xs">
               <AppSelectValue />
             </AppSelectTrigger>

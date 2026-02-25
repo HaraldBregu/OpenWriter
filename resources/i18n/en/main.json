@@ -105,7 +105,70 @@
 
   "settings": {
     "title": "Settings",
-    "description": "Configure your application preferences"
+    "description": "Configure your application preferences",
+    "tabs": {
+      "general": "General",
+      "models": "Models",
+      "media": "Media",
+      "devices": "Devices",
+      "tools": "Tools",
+      "system": "System"
+    },
+    "sections": {
+      "permissions": "Permissions",
+      "workspace": "Workspace",
+      "system": "System",
+      "layout": "Layout",
+      "notifications": "Notifications",
+      "microphone": "Microphone",
+      "camera": "Camera",
+      "screen": "Screen",
+      "bluetooth": "Bluetooth",
+      "network": "Network",
+      "cronJobs": "Cron Jobs",
+      "lifecycle": "Lifecycle",
+      "windows": "Windows",
+      "filesystem": "Filesystem",
+      "dialogs": "Dialogs",
+      "clipboard": "Clipboard"
+    },
+    "permissions": {
+      "microphone": "Microphone",
+      "camera": "Camera",
+      "request": "Request",
+      "refreshStatus": "Refresh status",
+      "granted": "Granted",
+      "denied": "Denied",
+      "restricted": "Restricted",
+      "notDetermined": "Not determined"
+    },
+    "workspace": {
+      "currentWorkspace": "Current Workspace",
+      "notSet": "Not set"
+    },
+    "systemInfo": {
+      "platform": "Platform",
+      "language": "Language"
+    },
+    "theme": {
+      "title": "Theme",
+      "description": "Choose how the application appearance is determined.",
+      "light": "Light",
+      "lightDescription": "Always use the light colour scheme",
+      "dark": "Dark",
+      "darkDescription": "Always use the dark colour scheme",
+      "system": "System",
+      "systemDescription": "Follow the operating system preference"
+    },
+    "models": {
+      "title": "Models",
+      "description": "Select the active model for each AI provider.",
+      "apiKey": "API Key",
+      "enterApiKey": "Enter {{provider}} API key…",
+      "show": "Show",
+      "hide": "Hide",
+      "context": "{{window}} ctx"
+    }
   },
 
   "cron": {
@@ -261,6 +324,268 @@
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
-    "ok": "OK"
+    "ok": "OK",
+    "copy": "Copy",
+    "view": "View",
+    "download": "Download",
+    "share": "Share",
+    "duplicate": "Duplicate",
+    "preview": "Preview",
+    "moveToTrash": "Move to Trash",
+    "moreOptions": "More options",
+    "hideSettings": "Hide settings",
+    "showSettings": "Show settings",
+    "signIn": "Sign in",
+    "logOut": "Log out",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home",
+    "restartApp": "Restart App"
+  },
+
+  "sidebar": {
+    "write": "Write",
+    "newPost": "New Post",
+    "posts": "POSTS",
+    "writing": "WRITING",
+    "knowledge": "KNOWLEDGE",
+    "personality": "PERSONALITY",
+    "documents": "Documents",
+    "directories": "Directories",
+    "debugTools": "Debug Tools",
+    "untitledPost": "Untitled Post",
+    "untitledWriting": "Untitled Writing"
+  },
+
+  "menu": {
+    "account": "Account",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "billing": "Billing",
+    "helpAndSupport": "Help & Support"
+  },
+
+  "home": {
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "workOnToday": "What would you like to work on today?",
+    "posts": "Posts",
+    "postsDescription": "Publish to your audience",
+    "writing": "Writing",
+    "writingDescription": "Start a blank document",
+    "recent": "Recent",
+    "viewAll": "View all",
+    "documents": "Documents",
+    "documentsDescription": "Browse your files",
+    "integrations": "Integrations",
+    "integrationsDescription": "Connect your tools",
+    "tip": "Tip",
+    "tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to toggle the sidebar."
+  },
+
+  "post": {
+    "titlePlaceholder": "New post",
+    "notFound": "Post not found.",
+    "untitled": "Untitled Post",
+    "charactersAndWords": "{{chars}} characters · {{words}} words"
+  },
+
+  "writing": {
+    "titlePlaceholder": "Untitled Writing",
+    "notFound": "Writing not found.",
+    "untitled": "Untitled Writing",
+    "startWriting": "Start writing...",
+    "typeHere": "Type here...",
+    "insertContent": "Insert content",
+    "charactersAndWords": "{{chars}} characters · {{words}} words"
+  },
+
+  "contentBlock": {
+    "enhanceWithAI": "Enhance with AI",
+    "enhancing": "Enhancing…",
+    "copy": "Copy",
+    "delete": "Delete"
+  },
+
+  "inferenceSettings": {
+    "title": "Inference Settings",
+    "description": "Configure model and parameters.",
+    "provider": "Provider",
+    "model": "Model",
+    "creativityLevel": "Creativity Level",
+    "notSupportedReasoning": "Not supported for reasoning models.",
+    "customValue": "Custom value",
+    "textLength": "Text Length",
+    "enterCharacterLimit": "Enter character limit",
+    "reasoning": "Reasoning",
+    "extendedThinking": "Extended thinking"
+  },
+
+  "errorBoundary": {
+    "rootTitle": "Something went wrong",
+    "rootMessage": "The application encountered an unexpected error. Please restart.",
+    "routeTitle": "This page crashed",
+    "routeMessage": "An error occurred while rendering this page.",
+    "featureTitle": "Something went wrong",
+    "tryAgain": "Try again",
+    "tryAgainButton": "Try Again",
+    "goHome": "Go Home",
+    "restartApp": "Restart App"
+  },
+
+  "titleBar": {
+    "applicationMenu": "Application menu",
+    "toggleSidebar": "Toggle sidebar",
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "close": "Close"
+  },
+
+  "welcome": {
+    "tagline": "An intelligent text editor for developers and writers. Open a project to get started.",
+    "freePlan": "Free Plan",
+    "upgradeToPro": "Upgrade to Pro",
+    "openWorkspace": "Open Workspace",
+    "openWorkspaceDescription": "Select a folder to begin working on your project",
+    "browse": "Browse...",
+    "recentProjects": "Recent Projects",
+    "viewAll": "View all",
+    "notFound": "(Not Found)",
+    "removeFromRecent": "Remove from recent projects"
+  },
+
+  "documents": {
+    "title": "Documents",
+    "noDocumentsTitle": "No documents yet",
+    "noDocumentsDescription": "Import text-based files from your computer or download documents from a remote source to get started.",
+    "importFiles": "Import Files",
+    "importing": "Importing...",
+    "downloadFromURL": "Download from URL/Remote",
+    "searchPlaceholder": "Search documents...",
+    "sortBy": "Sort: {{field}}",
+    "sortByName": "Sort by Name",
+    "sortByDate": "Sort by Date",
+    "sortBySize": "Sort by Size",
+    "sortByType": "Sort by Type",
+    "noDocumentsFound": "No documents found",
+    "adjustSearchQuery": "Try adjusting your search query",
+    "importFailed": "Import Failed",
+    "copyPath": "Copy Path",
+    "dropFilesHere": "Drop text files here to import",
+    "dropFilesDescription": "Files will be copied to your workspace",
+    "dropFilesRestriction": "Only text-based files are accepted. Images, videos, and binary files will be rejected.",
+    "items": "{{count}} items",
+    "item": "{{count}} item",
+    "textFilesOnly": "Text files only",
+    "lastUpdated": "Last updated: {{date}}",
+    "totalSize": "Total size: {{size}}",
+    "supportedFileTypes": "Supported file types:",
+    "supportedNote": "Images, videos, and binary documents are not supported.",
+    "supportedTypes": "Supported: Text files (.txt, .md), code files (.js, .ts, .py, .html, .css, .json, etc.)",
+    "notSupportedTypes": "Not supported: Images, videos, audio, binary documents",
+    "downloadFromURLTitle": "Download from URL",
+    "documentURL": "Document URL",
+    "documentURLPlaceholder": "https://example.com/document.pdf",
+    "documentURLHint": "Enter the URL of the document you want to download",
+    "downloading": "Downloading... {{progress}}%",
+    "downloadCompleted": "Download completed successfully",
+    "downloadFailed": "Download failed",
+    "downloaded": "Downloaded"
+  },
+
+  "directories": {
+    "title": "Indexed Directories",
+    "description": "Manage directories for AI-powered document search and retrieval.",
+    "addDirectories": "Add Directories",
+    "indexAll": "Index All",
+    "indexing": "Indexing...",
+    "totalDirectories": "Total Directories",
+    "indexed": "Indexed",
+    "pending": "Pending",
+    "loading": "Loading directories...",
+    "noneYetTitle": "No directories added yet",
+    "noneYetDescription": "Add directories to enable AI-powered document search. The system will index all files in the selected directories for quick retrieval.",
+    "addFirstDirectory": "Add Your First Directory",
+    "added": "Added: {{date}}",
+    "indexedAt": "Indexed: {{date}}",
+    "removeDirectory": "Remove directory"
+  },
+
+  "personality": {
+    "saving": "Saving...",
+    "saveFailed": "Save failed",
+    "version": "Version",
+    "newConversation": "New conversation",
+    "error": "Error",
+    "processingRequest": "Processing your request...",
+    "tryThis": "Try this",
+    "askToGetStarted": "Ask a question to get started.",
+    "generatingResponse": "Generating response...",
+    "pressEnterToSubmit": "Press Enter to submit your question",
+    "stop": "Stop",
+    "submit": "Submit"
+  },
+
+  "clipboard": {
+    "title": "Clipboard Manager",
+    "description": "Copy and paste text, HTML, and images using the system clipboard",
+    "copiedSuccess": "Copied to clipboard successfully!",
+    "error": "Error",
+    "copyText": "Copy Text",
+    "copyTextPlaceholder": "Enter text to copy",
+    "copyHTML": "Copy HTML",
+    "copyHTMLPlaceholder": "Enter HTML to copy",
+    "copyImage": "Copy Image",
+    "generateAndCopyImage": "Generate & Copy Image",
+    "generateImageDescription": "Generates a sample image with gradient background and copies it to clipboard",
+    "pasteText": "Paste Text",
+    "pasteFromClipboard": "Paste from Clipboard",
+    "pastedContent": "Pasted Content:",
+    "currentContent": "Current Clipboard Content",
+    "refresh": "Refresh",
+    "clear": "Clear",
+    "empty": "Clipboard is empty",
+    "emptyCopy": "Copy something to see it appear here",
+    "textContent": "Text Content:",
+    "htmlSource": "HTML Source:",
+    "plainText": "Plain Text:",
+    "imagePreview": "Image Preview",
+    "length": "Length: {{count}} characters",
+    "noteText": "The clipboard module provides full access to system clipboard operations.",
+    "feature1": "Copy and paste plain text, HTML, and images",
+    "feature2": "Real-time preview of clipboard content",
+    "feature3": "Supports multiple clipboard formats simultaneously",
+    "feature4": "Canvas-based image generation example included"
+  },
+
+  "notifications": {
+    "title": "System Notifications",
+    "description": "Test native system notifications with custom content and click handlers",
+    "supported": "Notifications are supported on this platform",
+    "notSupported": "Notifications are not supported on this platform",
+    "presetNotifications": "Preset Notifications",
+    "customNotification": "Custom Notification",
+    "send": "Send",
+    "sendCustom": "Send Custom Notification",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Notification title",
+    "bodyLabel": "Body",
+    "bodyPlaceholder": "Notification message",
+    "urgencyLabel": "Urgency",
+    "urgencyLow": "Low",
+    "urgencyNormal": "Normal",
+    "urgencyCritical": "Critical",
+    "silentLabel": "Silent notification",
+    "eventsTitle": "Notification Events",
+    "noEventsTitle": "No notification events yet",
+    "noEventsDescription": "Send a notification to see events appear here",
+    "clearLog": "Clear",
+    "noteText": "System notifications demonstrate Electron's native notification API.",
+    "noteFeature1": "Notifications include the app icon automatically",
+    "noteFeature2": "Clicking a notification brings the app to focus",
+    "noteFeature3": "All notification events (shown, clicked, closed) are tracked",
+    "noteFeature4": "Supports different urgency levels and silent mode"
   }
 }
