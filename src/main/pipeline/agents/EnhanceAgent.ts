@@ -18,6 +18,8 @@ import type { StoreService } from '../../services/store'
 import { isReasoningModel, extractTokenFromChunk, classifyError } from '../../shared/aiUtils'
 import { ProviderResolver } from '../../shared/ProviderResolver'
 
+const DEFAULT_MODEL = 'gpt-4o-mini'
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
