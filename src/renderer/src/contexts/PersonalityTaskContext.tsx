@@ -136,9 +136,14 @@ const PersonalityTaskContext = createContext<PersonalityTaskContextValue | undef
 
 interface PersonalityTaskProviderProps {
   children: React.ReactNode
+  /**
+   * Injectable service for IPC communication. Defaults to the production
+   * Electron implementation. Pass a MockPersonalityTaskService in tests.
+   */
+  service?: IPersonalityTaskService
 }
 
-function PersonalityTaskProvider({ children }: PersonalityTaskProviderProps): React.JSX.Element {
+function PersonalityTaskProvider({ children, service = electronPersonalityTaskService }: PersonalityTaskProviderProps): React.JSX.Element {
   // The store is created once per provider mount and never changes.
   const storeRef = useRef<PersonalityTaskStore | null>(null)
   if (!storeRef.current) {
