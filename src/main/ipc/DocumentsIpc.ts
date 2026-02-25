@@ -526,6 +526,44 @@ export class DocumentsIpc implements IpcModule {
   }
 
   /**
+   * Validate that a download URL is safe to download from.
+   * Only allows HTTPS URLs to prevent man-in-the-middle attacks.
+   * @throws Error if URL is invalid or uses an insecure protocol
+   */
+  private validateDownloadUrl(url: string): void {
+    try {
+      const urlObj = new URL(url)
+
+      // Only allow HTTPS to prevent downloading over insecure channels
+      if (urlObj.protocol !== 'https:') {
+        throw new Error(`Invalid protocol "${urlObj.protocol}". Only HTTPS downloads are allowed.`)
+      }
+
+      // Basic hostname validation - reject localhost and private IPs
+      const hostname = urlObj.hostname
+      const privatePatterns = [
+        /^localhost$/i,
+        /^127\./,
+        /^192\.168\./,
+        /^10\./,
+        /^172\.(1[6-9]|2\d|3[01])\./,
+        /^::1$/,
+        /^fc00:/,
+        /^fd00:/
+      ]
+
+      if (privatePatterns.some(pattern => pattern.test(hostname))) {
+        throw new Error(`Downloads from private networks are not allowed: ${hostname}`)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+      throw new Error(`Invalid URL format: ${url}`)
+    }
+  }
+
+  /**
    * Get MIME type from file extension.
    * Basic implementation - can be enhanced with mime-types package if needed.
    */
