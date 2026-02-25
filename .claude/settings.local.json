@@ -75,7 +75,8 @@
       "Bash(cd:*)",
       "Bash(grep worktree:*)",
       "Bash(git rm:*)",
-      "Bash(yarn lint:*)"
+      "Bash(yarn lint:*)",
+      "Bash(yarn typecheck:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
