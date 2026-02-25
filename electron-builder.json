@@ -62,8 +62,8 @@
       ],
       "UTExportedTypeDeclarations": [
         {
-          "UTTypeIdentifier": "com.tesseract-ai.tesseract-ai.document",
-          "UTTypeDescription": "Tesseract AI File",
+          "UTTypeIdentifier": "com.openwriter.openwriter.document",
+          "UTTypeDescription": "OpenWriter File",
           "UTTypeConformsTo": ["public.data"],
           "UTTypeTagSpecification": {
             "public.filename-extension": ["tsrct"],
