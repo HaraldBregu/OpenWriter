@@ -1,7 +1,7 @@
 {
-  "productName": "Tesseract AI",
-  "appId": "com.tesseract-ai.tesseract-ai",
-  "copyright": "Tesseract AI Project © 2025",
+  "productName": "OpenWriter",
+  "appId": "com.openwriter.openwriter",
+  "copyright": "OpenWriter Project © 2025",
   "files": [
     "out/**",
     "resources/**"
