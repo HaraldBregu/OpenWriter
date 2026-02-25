@@ -176,7 +176,7 @@ describe('outputSlice', () => {
 
         // Assert
         expect(result.items[0].title).toBe('New Title')
-        expect(result.items[0].content).toBe(item.content) // unchanged fields preserved
+        expect(result.items[0].blocks).toEqual(item.blocks) // unchanged fields preserved
       })
 
       it('should update updatedAt when merging changes', () => {
