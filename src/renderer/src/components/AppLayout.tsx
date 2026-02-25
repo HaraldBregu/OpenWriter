@@ -175,15 +175,17 @@ SettingsPopover.displayName = "SettingsPopover";
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatRelativeTime(timestamp: number): string {
+type TFunction = (key: string, options?: Record<string, unknown>) => string;
+
+function formatRelativeTime(timestamp: number, t: TFunction): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  if (seconds < 60) return "just now";
+  if (seconds < 60) return t("relativeTime.justNow");
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return t("relativeTime.minutesAgo", { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("relativeTime.hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return t("relativeTime.daysAgo", { count: days });
 }
 
 // ---------------------------------------------------------------------------
