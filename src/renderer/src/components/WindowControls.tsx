@@ -8,6 +8,7 @@ export function WindowControls() {
   const [platform] = useState<Platform>('darwin')
 
   useEffect(() => {
+    if (!window.win) return
     window.win.isMaximized().then(setIsMaximized)
   }, [])
 
