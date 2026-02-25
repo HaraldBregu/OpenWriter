@@ -70,7 +70,8 @@
       "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full2.txt 2>&1; echo \"Exit: $?\")",
       "Bash(npx jest \"tests/unit/renderer/hooks/useOutputFiles|tests/unit/renderer/hooks/usePersonalityFiles|tests/unit/renderer/hooks/usePostsFileWatcher|tests/unit/renderer/hooks/usePostsLoader\" --forceExit --no-coverage > /tmp/hooks-new2.txt 2>&1; echo \"Exit: $?\" && grep -E \"PASS|FAIL|Tests:\" /tmp/hooks-new2.txt)",
       "Bash(cat:*)",
-      "Bash(cd:*)"
+      "Bash(grep TS4023:*)",
+      "Bash(cd /c/Users/BRGHLD87H/Documents/tesseract-ai && git check-ignore -v src/shared/types/aiSettings.ts src/renderer/src/hooks/useAISettings.ts src/renderer/src/hooks/useInferenceSettings.ts src/renderer/src/store/aiSettingsSlice.ts 2>&1)"
     ],
     "deny": [
       "Bash(git push --force:*)",
