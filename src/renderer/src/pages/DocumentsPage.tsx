@@ -323,6 +323,7 @@ const DocumentListItem = React.memo(function DocumentListItem({
   onDelete,
   onView
 }: DocumentListItemProps) {
+  const { t } = useTranslation()
   const Icon = getFileIcon(document)
 
   return (
@@ -355,11 +356,11 @@ const DocumentListItem = React.memo(function DocumentListItem({
         <AppDropdownMenuContent align="end">
           <AppDropdownMenuItem onClick={() => onView(document)}>
             <Eye className="h-4 w-4" />
-            View
+            {t('common.view')}
           </AppDropdownMenuItem>
           <AppDropdownMenuItem>
             <Copy className="h-4 w-4" />
-            Copy Path
+            {t('documents.copyPath')}
           </AppDropdownMenuItem>
           <AppDropdownMenuSeparator />
           <AppDropdownMenuItem
@@ -367,7 +368,7 @@ const DocumentListItem = React.memo(function DocumentListItem({
             onClick={() => onDelete(document.id)}
           >
             <Trash2 className="h-4 w-4" />
-            Delete
+            {t('common.delete')}
           </AppDropdownMenuItem>
         </AppDropdownMenuContent>
       </AppDropdownMenu>
