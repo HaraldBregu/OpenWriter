@@ -158,7 +158,7 @@ export class FileWatcherService implements Disposable {
           // Ignore if it's a directory
           if (normalized === postsDir) return false
           // Ignore dotfiles
-          if (/(^|[\/\\])\./.test(normalized)) return true
+          if (/(^|[/\\])\./.test(normalized)) return true
           // Only watch .json files
           return !normalized.endsWith('.json')
         }
