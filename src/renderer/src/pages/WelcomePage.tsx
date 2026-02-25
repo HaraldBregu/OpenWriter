@@ -266,7 +266,7 @@ const WelcomePage: React.FC = () => {
                     <div className="flex flex-col items-start min-w-0">
                       <span className="text-sm font-medium truncate text-foreground text-left">
                         {getProjectName(project.path)}
-                        {!exists && ' (Not Found)'}
+                        {!exists && ` ${t('welcome.notFound')}`}
                       </span>
                       <span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
                         {formatPath(project.path)}
