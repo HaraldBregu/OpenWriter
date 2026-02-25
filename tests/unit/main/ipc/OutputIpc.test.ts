@@ -7,7 +7,7 @@
  *     handler directly and asserting on both the return value and the
  *     service method that was invoked.
  *   - Validates input validation branches (missing type, invalid type,
- *     missing content, bad metadata, missing id) that all produce
+ *     missing/empty blocks, bad metadata, missing id) that all produce
  *     success:false responses via wrapIpcHandler.
  *   - Uses a realistic mock event that satisfies the windowContextManager
  *     lookup chain used by getWindowService.
@@ -59,6 +59,8 @@ describe('OutputIpc', () => {
   let mockOutputFiles: Record<string, jest.Mock>
 
   const SAMPLE_SAVE_RESULT = { id: '2024-01-15_120000', path: '/ws/output/posts/2024-01-15_120000', savedAt: 1705320000000 }
+
+  /** New-format OutputFile returned by the service. */
   const SAMPLE_OUTPUT_FILE = {
     id: '2024-01-15_120000',
     type: 'posts' as const,
@@ -73,8 +75,26 @@ describe('OutputIpc', () => {
       model: 'gpt-4o',
       createdAt: '2024-01-15T12:00:00.000Z',
       updatedAt: '2024-01-15T12:00:00.000Z',
+      content: [
+        {
+          type: 'content',
+          filetype: 'markdown',
+          name: 'block-uuid-0001',
+          createdAt: '2024-01-15T12:00:00.000Z',
+          updatedAt: '2024-01-15T12:00:00.000Z',
+        },
+      ],
     },
-    content: '# Hello',
+    blocks: [
+      {
+        name: 'block-uuid-0001',
+        content: '# Hello',
+        filetype: 'markdown',
+        type: 'content',
+        createdAt: '2024-01-15T12:00:00.000Z',
+        updatedAt: '2024-01-15T12:00:00.000Z',
+      },
+    ],
     savedAt: 1705320000000,
   }
 
@@ -125,7 +145,9 @@ describe('OutputIpc', () => {
   describe('output:save handler', () => {
     const VALID_INPUT = {
       type: 'posts' as const,
-      content: '# Hello world',
+      blocks: [
+        { name: 'block-uuid-0001', content: '# Hello world' },
+      ],
       metadata: {
         title: 'Hello',
         category: 'tech',
@@ -161,10 +183,27 @@ describe('OutputIpc', () => {
       expect(result.error.message).toContain('Invalid output type')
     })
 
-    it('should return error when content is not a string', async () => {
+    it('should return error when blocks is an empty array', async () => {
       const handler = getHandler('output:save')
       const { event } = makeMockEvent(mockOutputFiles)
-      const result = await handler(event, { ...VALID_INPUT, content: 42 }) as { success: boolean }
+      const result = await handler(event, { ...VALID_INPUT, blocks: [] }) as { success: boolean }
+      expect(result.success).toBe(false)
+    })
+
+    it('should return error when blocks is not an array', async () => {
+      const handler = getHandler('output:save')
+      const { event } = makeMockEvent(mockOutputFiles)
+      const result = await handler(event, { ...VALID_INPUT, blocks: '# not an array' }) as { success: boolean }
+      expect(result.success).toBe(false)
+    })
+
+    it('should return error when a block has no name', async () => {
+      const handler = getHandler('output:save')
+      const { event } = makeMockEvent(mockOutputFiles)
+      const result = await handler(event, {
+        ...VALID_INPUT,
+        blocks: [{ name: '', content: '# content' }]
+      }) as { success: boolean }
       expect(result.success).toBe(false)
     })
 
@@ -198,7 +237,9 @@ describe('OutputIpc', () => {
     const VALID_PARAMS = {
       type: 'posts' as const,
       id: '2024-01-15_120000',
-      content: 'Updated content',
+      blocks: [
+        { name: 'block-uuid-0001', content: 'Updated content' },
+      ],
       metadata: { title: 'Updated', category: 'tech', tags: [], visibility: 'public', provider: 'openai', model: 'gpt-4o' },
     }
 
@@ -211,7 +252,7 @@ describe('OutputIpc', () => {
       expect(mockOutputFiles.update).toHaveBeenCalledWith(
         VALID_PARAMS.type,
         VALID_PARAMS.id,
-        { content: VALID_PARAMS.content, metadata: VALID_PARAMS.metadata }
+        { blocks: VALID_PARAMS.blocks, metadata: VALID_PARAMS.metadata }
       )
     })
 
@@ -229,10 +270,17 @@ describe('OutputIpc', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should return error when content is not a string', async () => {
+    it('should return error when blocks is an empty array', async () => {
       const handler = getHandler('output:update')
       const { event } = makeMockEvent(mockOutputFiles)
-      const result = await handler(event, { ...VALID_PARAMS, content: 123 }) as { success: boolean }
+      const result = await handler(event, { ...VALID_PARAMS, blocks: [] }) as { success: boolean }
+      expect(result.success).toBe(false)
+    })
+
+    it('should return error when blocks is not an array', async () => {
+      const handler = getHandler('output:update')
+      const { event } = makeMockEvent(mockOutputFiles)
+      const result = await handler(event, { ...VALID_PARAMS, blocks: 'not-array' }) as { success: boolean }
       expect(result.success).toBe(false)
     })
 
