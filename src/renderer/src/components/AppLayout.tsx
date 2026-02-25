@@ -193,6 +193,7 @@ function formatRelativeTime(timestamp: number, t: TFunction): string {
 // ---------------------------------------------------------------------------
 
 function AppLayoutInner({ children }: AppLayoutProps) {
+  const { t } = useTranslation();
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
