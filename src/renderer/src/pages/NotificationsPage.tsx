@@ -42,7 +42,7 @@ const NotificationsPage: React.FC = () => {
       color: 'bg-blue-500 hover:bg-blue-600',
       options: {
         title: 'Information',
-        body: 'This is an informational notification from Tesseract AI.',
+        body: 'This is an informational notification from OpenWriter.',
         urgency: 'normal' as const
       }
     },
