@@ -1,5 +1,5 @@
 {
-  "showTesseractAI": "Show Tesseract AI",
-  "hideTesseractAI": "Hide Tesseract AI",
+  "showOpenWriter": "Show OpenWriter",
+  "hideOpenWriter": "Hide OpenWriter",
   "quit": "Quit"
 }
