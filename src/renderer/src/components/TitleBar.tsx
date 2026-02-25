@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, PanelLeft, Minus, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
