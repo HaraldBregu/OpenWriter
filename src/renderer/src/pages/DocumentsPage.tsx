@@ -781,7 +781,7 @@ const DocumentsPage: React.FC = () => {
                   <AppDropdownMenuTrigger asChild>
                     <AppButton variant="outline" size="sm">
                       <Filter className="h-4 w-4" />
-                      Sort: {sortBy === 'name' ? 'Name' : sortBy === 'date' ? 'Date' : sortBy === 'size' ? 'Size' : 'Type'}
+                      {t('documents.sortBy', { field: sortBy === 'name' ? 'Name' : sortBy === 'date' ? 'Date' : sortBy === 'size' ? 'Size' : 'Type' })}
                     </AppButton>
                   </AppDropdownMenuTrigger>
                   <AppDropdownMenuContent align="end">
