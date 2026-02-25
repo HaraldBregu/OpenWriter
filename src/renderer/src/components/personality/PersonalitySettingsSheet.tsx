@@ -300,8 +300,8 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
         {/* Reasoning */}
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <AppLabel className="text-xs">Reasoning</AppLabel>
-            <p className="text-[11px] text-muted-foreground">Extended thinking</p>
+            <AppLabel className="text-xs">{t('inferenceSettings.reasoning')}</AppLabel>
+            <p className="text-[11px] text-muted-foreground">{t('inferenceSettings.extendedThinking')}</p>
           </div>
           <AppSwitch
             checked={settings.reasoning}
