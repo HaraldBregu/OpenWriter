@@ -74,17 +74,7 @@ export class AgentIpc implements IpcModule {
         const win = BrowserWindow.fromWebContents(event.sender)
         if (!win) throw new Error('No window found')
 
-        // Use default session if not specified
-        const sessionId = 'default'
-        let controller = (agent as any).controllers.get(sessionId)
-
-        if (!controller) {
-          agent.createSession({ sessionId, providerId })
-          controller = (agent as any).controllers.get(sessionId)
-        }
-
-        await controller.runAgent(messages, runId, providerId, win)
-        agent.updateSessionActivity(sessionId, messages.length)
+        return await agent.runAgentWithDefaultSession(messages, runId, providerId, win)
       }, 'agent:run')
     )
 
