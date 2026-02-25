@@ -1,5 +1,5 @@
 /**
- * Jest configuration for Tesseract AI.
+ * Jest configuration for OpenWriter.
  *
  * Uses a multi-project setup:
  *   - "main"     : tests for the Electron main process (Node environment)
