@@ -384,7 +384,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 shrink-0 text-destructive" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-destructive">Error</p>
+                    <p className="text-sm font-medium text-destructive">{t('personality.error')}</p>
                     <p className="mt-1 text-xs text-destructive/80">{error}</p>
                   </div>
                 </div>
