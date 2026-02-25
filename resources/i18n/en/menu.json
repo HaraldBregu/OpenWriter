@@ -31,5 +31,7 @@
   "theme": "Theme",
   "light": "Light",
   "dark": "Dark",
-  "system": "System"
+  "system": "System",
+  "showConsole": "Show Console",
+  "refresh": "Reload"
 }
