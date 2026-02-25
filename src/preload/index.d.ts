@@ -168,6 +168,19 @@ interface PipelineActiveRun {
 
 type OutputType = 'posts' | 'writings'
 
+/**
+ * Describes a single content block entry stored in config.json's `content` array.
+ * Each block has its own .md file whose name matches the `name` field.
+ */
+interface BlockContentItem {
+  /** Must match the .md filename (without extension) stored in the output folder */
+  name: string
+  type: 'content'
+  filetype: 'markdown'
+  createdAt: string  // ISO 8601
+  updatedAt: string  // ISO 8601
+}
+
 interface OutputFileMetadata {
   title: string
   type: OutputType
@@ -181,6 +194,20 @@ interface OutputFileMetadata {
   reasoning?: boolean
   createdAt: string
   updatedAt: string
+  /** Ordered list of content blocks; position = display order */
+  content: BlockContentItem[]
+}
+
+/**
+ * Represents a fully-loaded output folder.
+ * `blocks` is the ordered array of { name, markdownContent } pairs
+ * read from the individual .md files listed in config.json's `content` array.
+ */
+interface OutputFileBlock {
+  name: string
+  content: string  // raw markdown from <name>.md
+  createdAt: string
+  updatedAt: string
 }
 
 interface OutputFile {
@@ -188,7 +215,8 @@ interface OutputFile {
   type: OutputType
   path: string
   metadata: OutputFileMetadata
-  content: string
+  /** Ordered content blocks (replaces the old flat `content: string`) */
+  blocks: OutputFileBlock[]
   savedAt: number
 }
 
