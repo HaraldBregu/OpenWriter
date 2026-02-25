@@ -754,11 +754,11 @@ const DocumentsPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <AppButton onClick={handleImportFiles} size="sm" disabled={isImporting}>
                   {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                  {isImporting ? 'Importing...' : 'Import Files'}
+                  {isImporting ? t('documents.importing') : t('documents.importFiles')}
                 </AppButton>
                 <AppButton onClick={() => setIsRemoteModalOpen(true)} variant="outline" size="sm">
                   <Download className="h-4 w-4" />
-                  Download from URL/Remote
+                  {t('documents.downloadFromURL')}
                 </AppButton>
               </div>
             </div>
