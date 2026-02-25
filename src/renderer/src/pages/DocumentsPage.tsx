@@ -786,16 +786,16 @@ const DocumentsPage: React.FC = () => {
                   </AppDropdownMenuTrigger>
                   <AppDropdownMenuContent align="end">
                     <AppDropdownMenuItem onClick={() => setSortBy('name')}>
-                      Sort by Name
+                      {t('documents.sortByName')}
                     </AppDropdownMenuItem>
                     <AppDropdownMenuItem onClick={() => setSortBy('date')}>
-                      Sort by Date
+                      {t('documents.sortByDate')}
                     </AppDropdownMenuItem>
                     <AppDropdownMenuItem onClick={() => setSortBy('size')}>
-                      Sort by Size
+                      {t('documents.sortBySize')}
                     </AppDropdownMenuItem>
                     <AppDropdownMenuItem onClick={() => setSortBy('type')}>
-                      Sort by Type
+                      {t('documents.sortByType')}
                     </AppDropdownMenuItem>
                   </AppDropdownMenuContent>
                 </AppDropdownMenu>
