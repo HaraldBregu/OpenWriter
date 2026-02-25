@@ -296,7 +296,6 @@ const DocumentListItem = React.memo(function DocumentListItem({
   onDelete,
   onView
 }: DocumentListItemProps) {
-  const { t } = useTranslation()
   const Icon = getFileIcon(document)
 
   return (
@@ -316,35 +315,12 @@ const DocumentListItem = React.memo(function DocumentListItem({
         <span className="w-24 text-right">{formatDate(document.importedAt)}</span>
       </div>
 
-      <AppDropdownMenu>
-        <AppDropdownMenuTrigger asChild>
-          <AppButton
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </AppButton>
-        </AppDropdownMenuTrigger>
-        <AppDropdownMenuContent align="end">
-          <AppDropdownMenuItem onClick={() => onView(document)}>
-            <Eye className="h-4 w-4" />
-            {t('common.view')}
-          </AppDropdownMenuItem>
-          <AppDropdownMenuItem>
-            <Copy className="h-4 w-4" />
-            {t('documents.copyPath')}
-          </AppDropdownMenuItem>
-          <AppDropdownMenuSeparator />
-          <AppDropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onClick={() => onDelete(document.id)}
-          >
-            <Trash2 className="h-4 w-4" />
-            {t('common.delete')}
-          </AppDropdownMenuItem>
-        </AppDropdownMenuContent>
-      </AppDropdownMenu>
+      <DocumentActionMenu
+        onView={() => onView(document)}
+        onCopyPath={() => navigator.clipboard.writeText(document.path)}
+        onDelete={() => onDelete(document.id)}
+        triggerClassName="opacity-0 group-hover:opacity-100"
+      />
     </div>
   )
 })
