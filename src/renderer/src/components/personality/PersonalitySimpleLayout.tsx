@@ -362,13 +362,13 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
             {isSaving && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin" />
-                <span>Saving...</span>
+                <span>{t('personality.saving')}</span>
               </div>
             )}
             {lastSaveError && (
               <div className="flex items-center gap-2 text-xs text-destructive">
                 <AlertCircle className="h-3 w-3" />
-                <span>Save failed</span>
+                <span>{t('personality.saveFailed')}</span>
               </div>
             )}
           </div>
