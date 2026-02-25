@@ -23,17 +23,13 @@
  *   - Multiple sections are isolated (stream for A does not affect B)
  *   - Cleanup: unsubscribes from task events on unmount
  *
- * import.meta.env shim:
- *   PersonalityTaskContext.tsx references `import.meta.env.VITE_OPENAI_MODEL`
- *   inside the autoSave helper. ts-jest (CJS mode) cannot parse import.meta
- *   natively, so we patch globalThis.import before loading any modules.
+ * import.meta.env handling:
+ *   PersonalityTaskContext.tsx references `import.meta.env.VITE_OPENAI_MODEL`.
+ *   The jest.config.cjs renderer project applies tests/transforms/vite-env-transform.cjs
+ *   to all renderer source files, which rewrites import.meta.env.* to
+ *   globalThis.__VITE_ENV__.*. The global is seeded as undefined so the fallback
+ *   value ('gpt-4o-mini') is used in tests.
  */
-
-// Shim import.meta.env BEFORE any module import so ts-jest CJS compilation
-// resolves the reference at runtime without a SyntaxError.
-;(globalThis as unknown as Record<string, unknown>)['import'] = {
-  meta: { env: { VITE_OPENAI_MODEL: undefined, VITE_OPENAI_API_KEY: undefined } }
-}
 
 import React, { act } from 'react'
 import { renderHook, render, screen } from '@testing-library/react'
