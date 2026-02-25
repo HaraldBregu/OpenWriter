@@ -37,7 +37,7 @@ export interface SavePersonalityFileResult {
   savedAt: number
 }
 
-type SectionId =
+export type PersonalitySectionId =
   | 'emotional-depth'
   | 'consciousness'
   | 'motivation'
