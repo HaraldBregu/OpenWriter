@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, StopCircle, AlertCircle, Loader2, Check, ChevronDown, Settings2, Plus } from 'lucide-react'
