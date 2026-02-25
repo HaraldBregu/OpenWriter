@@ -284,15 +284,14 @@ const DirectoriesPage: React.FC = () => {
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <FolderOpen className="h-16 w-16 text-muted-foreground/40 mb-4" />
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    No directories added yet
+                    {t('directories.noneYetTitle')}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6 max-w-md">
-                    Add directories to enable AI-powered document search. The system will index
-                    all files in the selected directories for quick retrieval.
+                    {t('directories.noneYetDescription')}
                   </p>
                   <AppButton onClick={handleAddDirectories} className="gap-2">
                     <FolderPlus className="h-4 w-4" />
-                    Add Your First Directory
+                    {t('directories.addFirstDirectory')}
                   </AppButton>
                 </div>
               </AppCardContent>
