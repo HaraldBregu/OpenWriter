@@ -323,6 +323,7 @@ interface InsertBlockPlaceholderProps {
 }
 
 export const InsertBlockPlaceholder = React.memo(function InsertBlockPlaceholder({ onClick }: InsertBlockPlaceholderProps) {
+  const { t } = useTranslation()
   return (
     <div className="px-5 py-2">
       <button
@@ -331,7 +332,7 @@ export const InsertBlockPlaceholder = React.memo(function InsertBlockPlaceholder
         className="w-full py-3 flex items-center justify-center gap-2 border border-dashed border-border/70 rounded-lg opacity-70 hover:opacity-80 transition-opacity cursor-pointer text-muted-foreground"
       >
         <Plus className="h-4 w-4" />
-        <span className="text-sm">Insert content</span>
+        <span className="text-sm">{t('writing.insertContent')}</span>
       </button>
     </div>
   )
