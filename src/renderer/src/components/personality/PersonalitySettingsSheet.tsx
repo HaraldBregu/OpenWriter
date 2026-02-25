@@ -62,17 +62,17 @@ type TextLengthLevel = 'short' | 'medium' | 'long' | 'very-long' | 'unlimited' |
 
 interface TextLengthPreset {
   value: TextLengthLevel
-  label: string
+  labelKey: string
   maxTokens: number | null // null means unlimited; -1 means custom
 }
 
 const TEXT_LENGTH_PRESETS: TextLengthPreset[] = [
-  { value: 'short',     label: 'Short (500 chars)',      maxTokens: 500 },
-  { value: 'medium',    label: 'Medium (1000 chars)',    maxTokens: 1000 },
-  { value: 'long',      label: 'Long (2000 chars)',      maxTokens: 2000 },
-  { value: 'very-long', label: 'Very Long (4000 chars)', maxTokens: 4000 },
-  { value: 'unlimited', label: 'Unlimited',              maxTokens: null },
-  { value: 'custom',    label: 'Custom',                 maxTokens: -1 },
+  { value: 'short',     labelKey: 'textLengthPresets.short',     maxTokens: 500 },
+  { value: 'medium',    labelKey: 'textLengthPresets.medium',    maxTokens: 1000 },
+  { value: 'long',      labelKey: 'textLengthPresets.long',      maxTokens: 2000 },
+  { value: 'very-long', labelKey: 'textLengthPresets.very-long', maxTokens: 4000 },
+  { value: 'unlimited', labelKey: 'textLengthPresets.unlimited', maxTokens: null },
+  { value: 'custom',    labelKey: 'textLengthPresets.custom',    maxTokens: -1 },
 ]
 
 /** Map a maxTokens value to its closest preset label, or 'custom'. */
