@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CollapsibleSection } from './CollapsibleSection'
 import { LoadingSkeleton } from '../../components/LoadingSkeleton'
 
@@ -10,34 +11,36 @@ const DialogsPage = lazy(() => import('../DialogsPage'))
 const ClipboardPage = lazy(() => import('../ClipboardPage'))
 
 const ToolsSettings: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
     <div className="divide-y">
-      <CollapsibleSection title="Cron Jobs">
+      <CollapsibleSection title={t('settings.sections.cronJobs')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <CronPage />
         </Suspense>
       </CollapsibleSection>
-      <CollapsibleSection title="Lifecycle">
+      <CollapsibleSection title={t('settings.sections.lifecycle')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <LifecyclePage />
         </Suspense>
       </CollapsibleSection>
-      <CollapsibleSection title="Windows">
+      <CollapsibleSection title={t('settings.sections.windows')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <WindowManagerPage />
         </Suspense>
       </CollapsibleSection>
-      <CollapsibleSection title="Filesystem">
+      <CollapsibleSection title={t('settings.sections.filesystem')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <FilesystemPage />
         </Suspense>
       </CollapsibleSection>
-      <CollapsibleSection title="Dialogs">
+      <CollapsibleSection title={t('settings.sections.dialogs')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <DialogsPage />
         </Suspense>
       </CollapsibleSection>
-      <CollapsibleSection title="Clipboard">
+      <CollapsibleSection title={t('settings.sections.clipboard')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <ClipboardPage />
         </Suspense>
