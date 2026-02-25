@@ -405,12 +405,16 @@ export class DocumentsIpc implements IpcModule {
 
   /**
    * Download a file from a URL to the documents directory.
+   * Enforces maximum file size limit to prevent disk space exhaustion.
    */
   private async downloadFile(
     url: string,
     docsDir: string,
     documentsWatcher: DocumentsWatcherService | null
   ): Promise<DocumentMetadata> {
+    // Maximum download size: 500 MB
+    const MAX_DOWNLOAD_SIZE = 500 * 1024 * 1024
+
     return new Promise((resolve, reject) => {
       // Extract filename from URL or generate one
       const urlObj = new URL(url)
@@ -424,11 +428,18 @@ export class DocumentsIpc implements IpcModule {
       this.getUniqueFilePath(docsDir, fileName).then((destFilePath) => {
         const file = fs.open(destFilePath, 'w')
 
-        const protocol = urlObj.protocol === 'https:' ? https : http
-
-        const request = protocol.get(url, (response) => {
+        // Only HTTPS is allowed (validated before this method is called)
+        const request = https.get(url, (response) => {
           if (response.statusCode !== 200) {
             reject(new Error(`Failed to download file: HTTP ${response.statusCode}`))
+            return
+          }
+
+          // Check Content-Length header
+          const contentLength = response.headers['content-length']
+          if (contentLength && parseInt(contentLength, 10) > MAX_DOWNLOAD_SIZE) {
+            reject(new Error(`File size (${contentLength} bytes) exceeds maximum allowed (${MAX_DOWNLOAD_SIZE} bytes)`))
+            response.destroy()
             return
           }
 
@@ -439,6 +450,17 @@ export class DocumentsIpc implements IpcModule {
             }
 
             const writeStream = fileHandle.createWriteStream()
+            let downloadedSize = 0
+
+            // Monitor download progress to enforce size limit
+            response.on('data', (chunk: Buffer) => {
+              downloadedSize += chunk.length
+              if (downloadedSize > MAX_DOWNLOAD_SIZE) {
+                response.destroy()
+                writeStream.destroy()
+                reject(new Error(`Download exceeded maximum allowed size of ${MAX_DOWNLOAD_SIZE} bytes`))
+              }
+            })
 
             response.pipe(writeStream)
 
@@ -472,6 +494,11 @@ export class DocumentsIpc implements IpcModule {
 
         request.on('error', (err) => {
           reject(new Error(`Failed to download file: ${err.message}`))
+        })
+
+        request.setTimeout(30000, () => {
+          request.destroy()
+          reject(new Error('Download timeout: request took longer than 30 seconds'))
         })
 
         request.end()
