@@ -2,7 +2,7 @@
  * Tests for Menu class.
  * Validates menu creation, language switching, and platform behavior.
  */
-import { Menu as ElectronMenu, BrowserWindow, app } from 'electron'
+import { Menu as ElectronMenu } from 'electron'
 import { Menu } from '../../../../src/main/menu'
 
 // Mock i18n module
