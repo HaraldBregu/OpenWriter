@@ -831,11 +831,13 @@ const DocumentsPage: React.FC = () => {
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1.5">
                   <HardDrive className="h-3.5 w-3.5" />
-                  {filteredDocuments.length} items
+                  {filteredDocuments.length === 1
+                    ? t('documents.item', { count: filteredDocuments.length })
+                    : t('documents.items', { count: filteredDocuments.length })}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
-                  {t('documents.lastUpdated', { date: formatDate(Math.max(...documents.map(d => d.importedAt))) })}
+                  {t('documents.lastUpdated', { date: formatDate(Math.max(...documents.map(d => d.importedAt)), t) })}
                 </span>
               </div>
               <span>
