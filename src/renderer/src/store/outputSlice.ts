@@ -8,9 +8,25 @@ import type { RootState } from './index'
 export type OutputType = 'posts' | 'writings'
 
 /**
+ * A single content block as stored in Redux.
+ * Mirrors the per-block .md file on disk; `name` matches the filename.
+ */
+export interface OutputBlockItem {
+  /** Stable UUID — matches the .md filename (without extension) */
+  name: string
+  /** Raw markdown content of this block */
+  content: string
+  createdAt: string  // ISO 8601
+  updatedAt: string  // ISO 8601
+}
+
+/**
  * Flat, Redux-friendly representation of an output item.
  * The preload bridge returns a nested OutputFile shape (metadata sub-object);
  * we flatten that on the way into the store for ergonomic selector usage.
+ *
+ * `blocks` is the ordered list of content blocks that replace the old
+ * flat `content: string` field.
  */
 export interface OutputItem {
   /** Folder name used as the stable identifier (YYYY-MM-DD_HHmmss) */
@@ -19,8 +35,8 @@ export interface OutputItem {
   /** Filesystem path (kept for reference / future deep-linking) */
   path: string
   title: string
-  /** Markdown content stored in DATA.md */
-  content: string
+  /** Ordered list of content blocks (one .md file per block on disk) */
+  blocks: OutputBlockItem[]
   category: string
   tags: string[]
   visibility: string
@@ -29,15 +45,15 @@ export interface OutputItem {
   temperature: number
   maxTokens: number | null
   reasoning: boolean
-  createdAt: string // ISO 8601
-  updatedAt: string // ISO 8601
-  savedAt: number   // unix timestamp (ms)
+  createdAt: string  // ISO 8601
+  updatedAt: string  // ISO 8601
+  savedAt: number    // unix timestamp (ms)
 }
 
 export interface SaveOutputItemInput {
   type: OutputType
   title: string
-  content: string
+  blocks: OutputBlockItem[]
   category?: string
   tags?: string[]
   visibility?: string
@@ -66,8 +82,8 @@ const initialState: OutputState = {
 
 /**
  * Map the preload bridge's nested OutputFile shape to our flat OutputItem.
- * Using unknown + type assertion because window.api types live in the preload
- * declaration file and may not be imported here.
+ * The bridge now returns `blocks` (ordered array of { name, content, createdAt, updatedAt })
+ * instead of the old flat `content: string`.
  */
 function mapOutputFileToItem(file: {
   id: string
@@ -87,14 +103,19 @@ function mapOutputFileToItem(file: {
     createdAt: string
     updatedAt: string
   }
-  content: string
+  blocks: Array<{ name: string; content: string; createdAt: string; updatedAt: string }>
   savedAt: number
 }): OutputItem {
   return {
     id: file.id,
     type: file.type,
     path: file.path,
-    content: file.content,
+    blocks: file.blocks.map((b) => ({
+      name: b.name,
+      content: b.content,
+      createdAt: b.createdAt,
+      updatedAt: b.updatedAt,
+    })),
     savedAt: file.savedAt,
     title: file.metadata.title,
     category: file.metadata.category,
@@ -133,19 +154,36 @@ export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValu
 
 /**
  * Save a new output item to the workspace.
+ * Each block is written to its own .md file; ordering is preserved in config.json.
  * The bridge's outputSave returns { id, path, savedAt }; we construct the
- * full OutputItem directly from that result + the original input, avoiding
- * a fragile follow-up outputLoadOne call that can race with the file write.
+ * full OutputItem directly from that result + the original input.
  */
 export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, { rejectValue: string }>(
   'output/save',
   async (input, { rejectWithValue }) => {
     try {
-      const { content, type, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
+      const {
+        blocks,
+        type,
+        title,
+        category,
+        tags,
+        visibility,
+        provider,
+        model,
+        temperature,
+        maxTokens,
+        reasoning,
+      } = input
 
       const saved = await window.output.save({
         type,
-        content,
+        blocks: blocks.map((b) => ({
+          name: b.name,
+          content: b.content,
+          createdAt: b.createdAt,
+          updatedAt: b.updatedAt,
+        })),
         metadata: {
           title: title ?? '',
           category: category ?? '',
@@ -164,7 +202,7 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
         id: saved.id,
         type,
         path: saved.path,
-        content,
+        blocks,
         savedAt: saved.savedAt,
         title: title ?? '',
         category: category ?? '',
@@ -192,18 +230,36 @@ export interface UpdateOutputItemInput extends SaveOutputItemInput {
 
 /**
  * Update an existing output item in the workspace.
- * Overwrites DATA.md and updates config.json (preserving createdAt).
+ * Rewrites each block's .md file and updates config.json (preserving createdAt).
  */
 export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInput, { rejectValue: string }>(
   'output/update',
   async (input, { rejectWithValue }) => {
     try {
-      const { id, type, content, title, category, tags, visibility, provider, model, temperature, maxTokens, reasoning } = input
+      const {
+        id,
+        type,
+        blocks,
+        title,
+        category,
+        tags,
+        visibility,
+        provider,
+        model,
+        temperature,
+        maxTokens,
+        reasoning,
+      } = input
 
       await window.output.update({
         type,
         id,
-        content,
+        blocks: blocks.map((b) => ({
+          name: b.name,
+          content: b.content,
+          createdAt: b.createdAt,
+          updatedAt: b.updatedAt,
+        })),
         metadata: {
           title: title ?? '',
           category: category ?? '',
@@ -221,7 +277,7 @@ export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInp
         id,
         type,
         path: '',
-        content,
+        blocks,
         savedAt: Date.now(),
         title: title ?? '',
         category: category ?? '',
@@ -367,7 +423,7 @@ export const outputSlice = createSlice({
         if (index !== -1) {
           state.items[index] = {
             ...state.items[index],
-            content: action.payload.content,
+            blocks: action.payload.blocks,
             title: action.payload.title,
             category: action.payload.category,
             tags: action.payload.tags,
