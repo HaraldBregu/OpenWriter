@@ -53,35 +53,26 @@ export class ChatAgent implements Agent {
   async *run(input: AgentInput, runId: string, signal: AbortSignal): AsyncGenerator<AgentEvent> {
     // --- Resolve configuration -----------------------------------------------
 
-    const providerId = (input.context?.providerId as string) || 'openai'
-    const storeSettings = this.storeService.getModelSettings(providerId)
-
-    console.log(`${LOG_PREFIX} Run ${runId} - StoreSettings:`, storeSettings)
-    console.log(`${LOG_PREFIX} Run ${runId} - ENV API Key exists:`, !!import.meta.env.VITE_OPENAI_API_KEY)
-    console.log(`${LOG_PREFIX} Run ${runId} - ENV API Key prefix:`, import.meta.env.VITE_OPENAI_API_KEY?.substring(0, 10))
-
-    const apiKey = storeSettings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
-
-    console.log(`${LOG_PREFIX} Run ${runId} - Final API Key exists:`, !!apiKey)
-    console.log(`${LOG_PREFIX} Run ${runId} - Final API Key prefix:`, apiKey?.substring(0, 10))
-
-    if (!apiKey || apiKey === 'your-openai-api-key-here') {
-      console.error(`${LOG_PREFIX} Run ${runId} - API key validation failed`)
+    const resolver = new ProviderResolver(this.storeService)
+    let provider
+    try {
+      provider = resolver.resolve({
+        providerId: input.context?.providerId as string | undefined,
+        modelId: input.context?.modelId as string | undefined
+      })
+    } catch (err) {
+      console.error(`${LOG_PREFIX} Run ${runId} - Provider resolution failed:`, err)
       yield {
         type: 'error',
         data: {
           runId,
-          message:
-            'No API key configured. Set it in Settings for the OpenAI provider, or add VITE_OPENAI_API_KEY to your .env file.'
+          message: err instanceof Error ? err.message : 'Failed to resolve provider configuration'
         }
       }
       return
     }
 
-    // modelId from context overrides the store's selectedModel
-    const contextModelId = input.context?.modelId as string | undefined
-    const modelName =
-      contextModelId || storeSettings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || DEFAULT_MODEL
+    const { apiKey, modelName, providerId } = provider
 
     // temperature from context overrides default 0.7
     const contextTemperature = input.context?.temperature as number | undefined
