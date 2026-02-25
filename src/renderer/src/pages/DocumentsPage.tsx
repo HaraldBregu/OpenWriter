@@ -227,16 +227,17 @@ interface DropZoneOverlayProps {
 }
 
 const DropZoneOverlay = React.memo(function DropZoneOverlay({ isDragging }: DropZoneOverlayProps) {
+  const { t } = useTranslation()
   if (!isDragging) return null
 
   return (
     <div className="absolute inset-0 z-50 bg-background/95 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center backdrop-blur-sm">
       <div className="text-center max-w-md">
         <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
-        <p className="text-lg font-medium text-foreground">Drop text files here to import</p>
-        <p className="text-sm text-muted-foreground mt-2">Files will be copied to your workspace</p>
+        <p className="text-lg font-medium text-foreground">{t('documents.dropFilesHere')}</p>
+        <p className="text-sm text-muted-foreground mt-2">{t('documents.dropFilesDescription')}</p>
         <p className="text-xs text-muted-foreground mt-3 px-4">
-          Only text-based files are accepted. Images, videos, and binary files will be rejected.
+          {t('documents.dropFilesRestriction')}
         </p>
       </div>
     </div>
