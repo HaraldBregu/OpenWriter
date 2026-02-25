@@ -31,17 +31,17 @@ type CreativityLevel = 'precise' | 'balanced' | 'creative' | 'very-creative' | '
 
 interface CreativityPreset {
   value: CreativityLevel
-  label: string
+  labelKey: string
   temperature: number | null // null means custom
 }
 
 const CREATIVITY_PRESETS: CreativityPreset[] = [
-  { value: 'precise',       label: 'Precise',       temperature: 0.2 },
-  { value: 'balanced',      label: 'Balanced',       temperature: 0.5 },
-  { value: 'creative',      label: 'Creative',       temperature: 0.8 },
-  { value: 'very-creative', label: 'Very Creative',  temperature: 1.2 },
-  { value: 'imaginative',   label: 'Imaginative',    temperature: 1.8 },
-  { value: 'custom',        label: 'Custom',         temperature: null },
+  { value: 'precise',       labelKey: 'creativityPresets.precise',       temperature: 0.2 },
+  { value: 'balanced',      labelKey: 'creativityPresets.balanced',      temperature: 0.5 },
+  { value: 'creative',      labelKey: 'creativityPresets.creative',      temperature: 0.8 },
+  { value: 'very-creative', labelKey: 'creativityPresets.very-creative', temperature: 1.2 },
+  { value: 'imaginative',   labelKey: 'creativityPresets.imaginative',   temperature: 1.8 },
+  { value: 'custom',        labelKey: 'creativityPresets.custom',        temperature: null },
 ]
 
 /** Map a numeric temperature to its closest preset label, or 'custom'. */
