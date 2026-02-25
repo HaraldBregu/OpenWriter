@@ -28,7 +28,7 @@ export class Tray {
     )
 
     this.tray = new ElectronTray(icon.resize({ width: 16, height: 16 }))
-    this.tray.setToolTip('Tesseract AI')
+    this.tray.setToolTip('OpenWriter')
 
     // Double-click to show/hide app
     this.tray.on('double-click', () => {
