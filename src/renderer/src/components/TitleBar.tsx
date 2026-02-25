@@ -143,7 +143,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
 
           <button
             type="button"
-            onClick={() => window.win.maximize()}
+            onClick={() => window.win?.maximize()}
             className={btnBase}
             title={isMaximized ? t('titleBar.restore') : t('titleBar.maximize')}
           >
