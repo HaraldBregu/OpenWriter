@@ -231,7 +231,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
             <AppSelectContent>
               {CREATIVITY_PRESETS.map((preset) => (
                 <AppSelectItem key={preset.value} value={preset.value}>
-                  {preset.label}
+                  {t(preset.labelKey)}
                 </AppSelectItem>
               ))}
             </AppSelectContent>
