@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+<<<<<<< Updated upstream
 /**
  * IPC Result types matching the main process wrappers
  */
@@ -41,6 +42,12 @@ async function unwrapIpcResult<T>(promise: Promise<IpcResult<T>>): Promise<T> {
 // window.app — General application utilities
 // ---------------------------------------------------------------------------
 const app = {
+=======
+const api = {
+    getPlatform: (): string => {
+        return process.platform
+    },
+>>>>>>> Stashed changes
     playSound: (): void => {
         ipcRenderer.send('play-sound')
     },
@@ -52,6 +59,18 @@ const app = {
     },
     showContextMenuEditable: (): void => {
         ipcRenderer.send('context-menu-editable')
+    },
+    windowMinimize: (): void => {
+        ipcRenderer.send('window-minimize')
+    },
+    windowMaximize: (): void => {
+        ipcRenderer.send('window-maximize')
+    },
+    windowClose: (): void => {
+        ipcRenderer.send('window-close')
+    },
+    windowIsMaximized: (): Promise<boolean> => {
+        return ipcRenderer.invoke('window-is-maximized')
     },
     onLanguageChange: (callback: (lng: string) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, lng: string): void => {

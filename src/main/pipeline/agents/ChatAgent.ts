@@ -22,6 +22,7 @@ import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
 import type { Agent, AgentInput, AgentEvent } from '../AgentBase'
 import type { StoreService } from '../../services/store'
+import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -31,13 +32,6 @@ const LOG_PREFIX = '[ChatAgent]'
 const DEFAULT_MODEL = 'gpt-4o-mini'
 const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant.'
 
-/**
- * Known reasoning model prefixes that do not support the temperature parameter.
- * Kept as an explicit set rather than substring matching to avoid false positives
- * on custom model names that happen to contain 'o1' or 'o3'.
- */
-const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview']
-
 // ---------------------------------------------------------------------------
 // Supporting types
 // ---------------------------------------------------------------------------
@@ -45,65 +39,6 @@ const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview'
 interface HistoryMessage {
   role: 'user' | 'assistant'
   content: string
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Determine whether a model name refers to a reasoning model that does not
- * accept the `temperature` parameter.
- */
-function isReasoningModel(modelName: string): boolean {
-  const normalized = modelName.toLowerCase()
-  return REASONING_MODEL_PREFIXES.some(
-    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-  )
-}
-
-/**
- * Extract text content from a LangChain chunk.
- *
- * Chunk content can be a plain string or an array of content blocks.
- * This helper normalises both representations into a single string.
- */
-function extractTokenFromChunk(content: unknown): string {
-  if (typeof content === 'string') return content
-
-  if (Array.isArray(content)) {
-    return content
-      .filter((c): c is { text: string } => typeof c === 'object' && c !== null && 'text' in c)
-      .map((c) => c.text)
-      .join('')
-  }
-
-  return ''
-}
-
-/**
- * Classify an error thrown during an LLM streaming call.
- *
- * Returns `'abort'` for cancellation signals, `'auth'` for authentication
- * failures, `'rate_limit'` for 429 responses, and `'unknown'` for everything
- * else. The caller uses this to decide what message to surface to the user.
- */
-function classifyError(error: unknown): 'abort' | 'auth' | 'rate_limit' | 'unknown' {
-  if (error instanceof Error) {
-    const msg = error.message.toLowerCase()
-    const name = error.name.toLowerCase()
-
-    if (name === 'aborterror' || msg.includes('abort') || msg.includes('cancel')) {
-      return 'abort'
-    }
-    if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid api key')) {
-      return 'auth'
-    }
-    if (msg.includes('429') || msg.includes('rate limit')) {
-      return 'rate_limit'
-    }
-  }
-  return 'unknown'
 }
 
 // ---------------------------------------------------------------------------
