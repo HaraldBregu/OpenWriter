@@ -11,7 +11,7 @@ import { DEFAULT_INFERENCE_SETTINGS } from '../../../shared/types/aiSettings'
 // State
 // ---------------------------------------------------------------------------
 
-interface AISettingsState {
+export interface AISettingsState {
   providerSettings: Record<string, ProviderSettings>
   status: 'idle' | 'loading' | 'ready' | 'error'
   error: string | null
