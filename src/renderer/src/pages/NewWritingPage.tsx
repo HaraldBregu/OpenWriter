@@ -207,7 +207,10 @@ const NewWritingPage: React.FC = () => {
   // ---------------------------------------------------------------------------
   const handleChange = useCallback((blockId: string, content: string) => {
     if (!writing) return
-    const updated = writing.blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    const now = new Date().toISOString()
+    const updated = writing.blocks.map((b) =>
+      b.id === blockId ? { ...b, content, updatedAt: now } : b
+    )
     dispatch(updateWritingBlocks({ writingId: writing.id, blocks: updated }))
   }, [writing, dispatch])
 
