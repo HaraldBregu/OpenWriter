@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { BrowserWindow } from 'electron'
 import { AgentController } from '../agent/AgentController'
 import type { StoreService } from './store'
 import { AgentValidators, StoreValidators } from '../shared/validators'
