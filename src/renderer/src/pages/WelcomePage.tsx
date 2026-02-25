@@ -174,23 +174,22 @@ const WelcomePage: React.FC = () => {
         <div className="flex flex-col items-center mb-10">
           <img
             src={logoIcon}
-            alt="Tesseract AI"
+            alt={t('appTitle')}
             className="h-[77px] w-[77px] mb-5 drop-shadow-sm rounded-2xl"
           />
           <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
-            Tesseract AI
+            {t('appTitle')}
           </h1>
           <p className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
-            An intelligent text editor for developers and writers.
-            Open a project to get started.
+            {t('welcome.tagline')}
           </p>
           <p className="mt-3 text-xs text-muted-foreground">
-            Free Plan
+            {t('welcome.freePlan')}
             {' '}
             &bull;
             {' '}
             <span className="text-primary cursor-pointer hover:underline">
-              Upgrade to Pro
+              {t('welcome.upgradeToPro')}
             </span>
           </p>
         </div>
@@ -201,10 +200,10 @@ const WelcomePage: React.FC = () => {
             {/* Left: Title and description */}
             <div className="flex flex-col gap-2">
               <h2 className="text-lg font-semibold text-foreground">
-                Open Workspace
+                {t('welcome.openWorkspace')}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Select a folder to begin working on your project
+                {t('welcome.openWorkspaceDescription')}
               </p>
             </div>
 
@@ -215,7 +214,7 @@ const WelcomePage: React.FC = () => {
               onClick={handleOpenProject}
             >
               <FolderOpen className="h-5 w-5 text-foreground/70" />
-              <span className="text-sm font-medium">Browse...</span>
+              <span className="text-sm font-medium">{t('welcome.browse')}</span>
             </AppButton>
           </div>
         </div>
@@ -225,10 +224,10 @@ const WelcomePage: React.FC = () => {
           <div className="w-full max-w-2xl flex flex-col min-h-0">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Recent Projects
+                {t('welcome.recentProjects')}
               </h2>
               <span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                View all
+                {t('welcome.viewAll')}
               </span>
             </div>
 
