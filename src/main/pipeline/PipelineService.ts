@@ -80,32 +80,10 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
   }
 
   /**
-   * Return a snapshot of all active runs.
-   */
-  listActiveRuns(): Array<{ runId: string; agentName: string; startedAt: number }> {
-    return Array.from(this.activeRuns.values()).map(({ runId, agentName, startedAt }) => ({
-      runId,
-      agentName,
-      startedAt
-    }))
-  }
-
-  /**
    * Return the names of all agents available in the registry.
    */
   listAgents(): string[] {
     return this.registry.listNames()
-  }
-
-  /**
-   * Disposable -- abort every active run on shutdown.
-   */
-  destroy(): void {
-    console.log(`[PipelineService] Destroying, aborting ${this.activeRuns.size} active run(s)`)
-    for (const run of this.activeRuns.values()) {
-      run.controller.abort()
-    }
-    this.activeRuns.clear()
   }
 
   // -------------------------------------------------------------------------
