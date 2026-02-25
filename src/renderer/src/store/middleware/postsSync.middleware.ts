@@ -219,45 +219,31 @@ export const postsSyncMiddleware: Middleware<object, PostsState> = (store) => (n
   // Let the action pass through first
   const result = next(action)
 
-  // Check if the action affects posts
-  // All post actions start with 'posts/' prefix (Redux Toolkit convention)
-  if (typeof action === 'object' && action !== null && 'type' in action) {
-    const actionType = (action as { type: string }).type
-
-    if (actionType.startsWith('posts/')) {
-      // Skip external change actions - these come from the file watcher
-      // and are already synced with the file system
-      if (
-        actionType === 'posts/handleExternalPostChange' ||
-        actionType === 'posts/handleExternalPostDelete' ||
-        actionType === 'posts/loadPosts' // loadPosts also comes from file system
-      ) {
-        console.debug('[PostsSync] Skipping sync for external action:', actionType)
-        return result
-      }
-
-      // Get current posts state after the action
-      const state = store.getState()
-      const posts = state.posts.posts
-
-      console.debug('[PostsSync] Post action detected:', actionType, {
-        postCount: posts.length
-      })
-
-      // Handle post deletion specially - delete file immediately
-      if (actionType === 'posts/deletePost' && 'payload' in action) {
-        const postId = action.payload as string
-
-        // Delete the post file immediately (don't wait for debounce)
-        deletePostFile(postId).catch((error) => {
-          console.error('[PostsSync] Failed to delete post file:', error)
-        })
-      }
-
-      // Trigger debounced sync for all post changes
-      debouncedSync(posts)
-    }
+  // Only process actions that are explicitly opted in to workspace sync.
+  // External file-watcher actions (handleExternalPostChange, handleExternalPostDelete,
+  // loadPosts) are intentionally excluded — they originate from the file system and
+  // don't need to be written back.
+  if (!isSyncablePostAction(action)) {
+    return result
   }
+
+  // Get current posts state after the action
+  const state = store.getState()
+  const posts = state.posts.posts
+
+  console.debug('[PostsSync] Post action detected:', (action as { type: string }).type, {
+    postCount: posts.length
+  })
+
+  // Handle post deletion specially — delete the file immediately (no debounce)
+  if (deletePost.match(action)) {
+    deletePostFile(action.payload).catch((error) => {
+      console.error('[PostsSync] Failed to delete post file:', error)
+    })
+  }
+
+  // Trigger debounced sync for all post changes
+  debouncedSync(posts)
 
   return result
 }
