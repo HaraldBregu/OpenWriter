@@ -406,18 +406,18 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                 ) : (
                   <div className="flex h-full min-h-[300px] items-center justify-center">
                     {isLoading ? (
-                      <p className="text-sm text-muted-foreground">Processing your request...</p>
+                      <p className="text-sm text-muted-foreground">{t('personality.processingRequest')}</p>
                     ) : examplePrompt ? (
                       <button
                         type="button"
                         onClick={() => { setInputValue(examplePrompt) }}
                         className="max-w-lg rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-accent"
                       >
-                        <p className="text-xs font-medium text-muted-foreground mb-1">Try this</p>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">{t('personality.tryThis')}</p>
                         <p className="text-sm text-foreground">{examplePrompt}</p>
                       </button>
                     ) : (
-                      <p className="text-sm text-muted-foreground">Ask a question to get started.</p>
+                      <p className="text-sm text-muted-foreground">{t('personality.askToGetStarted')}</p>
                     )}
                   </div>
                 )}
