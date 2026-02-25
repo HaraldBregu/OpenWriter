@@ -263,7 +263,7 @@ const NewWritingPage: React.FC = () => {
   if (!isDraft && !writing) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
-        <p>Writing not found.</p>
+        <p>{t('writing.notFound')}</p>
       </div>
     )
   }
