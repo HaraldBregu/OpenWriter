@@ -70,7 +70,7 @@ OpenWriter is an Electron-based advanced text editor application. It's built wit
 - Environment-specific configurations (.env.development, .env.staging, .env.production)
 
 ### Custom File Format
-The application handles `.tsx` files (Tesseract AI documents) with proper file associations configured for all target platforms.
+The application handles `.tsx` files (OpenWriter documents) with proper file associations configured for all target platforms.
 
 ## Environment Requirements
 - Node.js >= 22.0.0
