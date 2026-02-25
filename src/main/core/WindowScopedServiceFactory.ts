@@ -1,7 +1,6 @@
 import type { ServiceContainer, EventBus } from './index'
 import type { StoreService } from '../services/store'
 import type { WorkspaceService } from '../services/workspace'
-import { WorkspaceService as WorkspaceServiceImpl } from '../services/workspace'
 import { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { FileWatcherService } from '../services/file-watcher'
 import { DocumentsWatcherService } from '../services/documents-watcher'
