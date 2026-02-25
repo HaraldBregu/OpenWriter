@@ -177,7 +177,7 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
-    "shortcutName": "Tesseract AI",
+    "shortcutName": "OpenWriter",
     "multiLanguageInstaller": true,
     "warningsAsErrors": false,
     "deleteAppDataOnUninstall": false,
