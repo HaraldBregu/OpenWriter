@@ -244,14 +244,9 @@ interface WindowManagerState {
 declare global {
   interface Window {
     electron: ElectronAPI
-<<<<<<< Updated upstream
 
     /** General application utilities */
     app: {
-=======
-    api: {
-      getPlatform: () => string
->>>>>>> Stashed changes
       playSound: () => void
       setTheme: (theme: string) => void
       showContextMenu: () => void

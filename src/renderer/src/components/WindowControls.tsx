@@ -5,15 +5,10 @@ type Platform = 'darwin' | 'win32' | 'linux' | 'freebsd' | 'openbsd'
 
 export function WindowControls() {
   const [isMaximized, setIsMaximized] = useState(false)
-  const [platform, setPlatform] = useState<Platform>('darwin')
+  const [platform] = useState<Platform>('darwin')
 
   useEffect(() => {
-<<<<<<< Updated upstream
     window.win.isMaximized().then(setIsMaximized)
-=======
-    window.api.windowIsMaximized().then(setIsMaximized)
-    setPlatform(window.api.getPlatform() as Platform)
->>>>>>> Stashed changes
   }, [])
 
   const handleMinimize = () => {
