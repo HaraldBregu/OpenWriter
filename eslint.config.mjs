@@ -28,6 +28,8 @@ export default tseslint.config(
       ...eslintPluginReactRefresh.configs.vite.rules,
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'react-refresh/only-export-components': 'warn',
     }
   }
 )
