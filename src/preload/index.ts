@@ -1323,7 +1323,6 @@ const ai = {
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
     try {
-        contextBridge.exposeInMainWorld('electron', electronAPI)
         contextBridge.exposeInMainWorld('app', app)
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('media', media)
