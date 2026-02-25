@@ -119,7 +119,12 @@ const NewWritingPage: React.FC = () => {
       const saved = await dispatch(saveOutputItem({
         type: 'writings',
         title: draftTitle || 'Untitled Writing',
-        content: draftBlocks.map((b) => b.content).join('\n\n'),
+        blocks: draftBlocks.map((b) => ({
+          name: b.id,
+          content: b.content,
+          createdAt: b.createdAt,
+          updatedAt: b.updatedAt,
+        })),
         category: 'writing',
         visibility: 'private',
         provider: aiSettings.providerId,
