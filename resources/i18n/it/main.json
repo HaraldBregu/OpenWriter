@@ -105,7 +105,70 @@
 
   "settings": {
     "title": "Impostazioni",
-    "description": "Configura le preferenze dell'applicazione"
+    "description": "Configura le preferenze dell'applicazione",
+    "tabs": {
+      "general": "Generale",
+      "models": "Modelli",
+      "media": "Media",
+      "devices": "Dispositivi",
+      "tools": "Strumenti",
+      "system": "Sistema"
+    },
+    "sections": {
+      "permissions": "Autorizzazioni",
+      "workspace": "Area di Lavoro",
+      "system": "Sistema",
+      "layout": "Layout",
+      "notifications": "Notifiche",
+      "microphone": "Microfono",
+      "camera": "Fotocamera",
+      "screen": "Schermo",
+      "bluetooth": "Bluetooth",
+      "network": "Rete",
+      "cronJobs": "Lavori Cron",
+      "lifecycle": "Ciclo di Vita",
+      "windows": "Finestre",
+      "filesystem": "File System",
+      "dialogs": "Dialoghi",
+      "clipboard": "Appunti"
+    },
+    "permissions": {
+      "microphone": "Microfono",
+      "camera": "Fotocamera",
+      "request": "Richiedi",
+      "refreshStatus": "Aggiorna stato",
+      "granted": "Concessa",
+      "denied": "Negata",
+      "restricted": "Limitata",
+      "notDetermined": "Non determinata"
+    },
+    "workspace": {
+      "currentWorkspace": "Area di Lavoro Corrente",
+      "notSet": "Non impostata"
+    },
+    "systemInfo": {
+      "platform": "Piattaforma",
+      "language": "Lingua"
+    },
+    "theme": {
+      "title": "Tema",
+      "description": "Scegli come viene determinato l'aspetto dell'applicazione.",
+      "light": "Chiaro",
+      "lightDescription": "Usa sempre la combinazione di colori chiara",
+      "dark": "Scuro",
+      "darkDescription": "Usa sempre la combinazione di colori scura",
+      "system": "Sistema",
+      "systemDescription": "Segui la preferenza del sistema operativo"
+    },
+    "models": {
+      "title": "Modelli",
+      "description": "Seleziona il modello attivo per ogni provider AI.",
+      "apiKey": "Chiave API",
+      "enterApiKey": "Inserisci la chiave API di {{provider}}…",
+      "show": "Mostra",
+      "hide": "Nascondi",
+      "context": "{{window}} ctx"
+    }
   },
 
   "cron": {
@@ -261,6 +324,268 @@
     "save": "Salva",
     "delete": "Elimina",
     "edit": "Modifica",
-    "ok": "OK"
+    "ok": "OK",
+    "copy": "Copia",
+    "view": "Visualizza",
+    "download": "Scarica",
+    "share": "Condividi",
+    "duplicate": "Duplica",
+    "preview": "Anteprima",
+    "moveToTrash": "Sposta nel Cestino",
+    "moreOptions": "Altre opzioni",
+    "hideSettings": "Nascondi impostazioni",
+    "showSettings": "Mostra impostazioni",
+    "signIn": "Accedi",
+    "logOut": "Esci",
+    "tryAgain": "Riprova",
+    "goHome": "Vai alla Home",
+    "restartApp": "Riavvia App"
+  },
+
+  "sidebar": {
+    "write": "Scrivi",
+    "newPost": "Nuovo Post",
+    "posts": "POST",
+    "writing": "SCRITTURA",
+    "knowledge": "CONOSCENZA",
+    "personality": "PERSONALITÀ",
+    "documents": "Documenti",
+    "directories": "Cartelle",
+    "debugTools": "Strumenti di Debug",
+    "untitledPost": "Post Senza Titolo",
+    "untitledWriting": "Scrittura Senza Titolo"
+  },
+
+  "menu": {
+    "account": "Account",
+    "settings": "Impostazioni",
+    "notifications": "Notifiche",
+    "privacy": "Privacy",
+    "billing": "Fatturazione",
+    "helpAndSupport": "Aiuto e Supporto"
+  },
+
+  "home": {
+    "goodMorning": "Buongiorno",
+    "goodAfternoon": "Buon pomeriggio",
+    "goodEvening": "Buona sera",
+    "workOnToday": "Su cosa vorresti lavorare oggi?",
+    "posts": "Post",
+    "postsDescription": "Pubblica per il tuo pubblico",
+    "writing": "Scrittura",
+    "writingDescription": "Inizia un documento vuoto",
+    "recent": "Recenti",
+    "viewAll": "Vedi tutti",
+    "documents": "Documenti",
+    "documentsDescription": "Sfoglia i tuoi file",
+    "integrations": "Integrazioni",
+    "integrationsDescription": "Connetti i tuoi strumenti",
+    "tip": "Suggerimento",
+    "tipContent": "Usa la barra laterale per navigare tra Post e Scrittura. Premi l'icona del menu nella barra del titolo per mostrare/nascondere la barra laterale."
+  },
+
+  "post": {
+    "titlePlaceholder": "Nuovo post",
+    "notFound": "Post non trovato.",
+    "untitled": "Post Senza Titolo",
+    "charactersAndWords": "{{chars}} caratteri · {{words}} parole"
+  },
+
+  "writing": {
+    "titlePlaceholder": "Scrittura Senza Titolo",
+    "notFound": "Scrittura non trovata.",
+    "untitled": "Scrittura Senza Titolo",
+    "startWriting": "Inizia a scrivere...",
+    "typeHere": "Scrivi qui...",
+    "insertContent": "Inserisci contenuto",
+    "charactersAndWords": "{{chars}} caratteri · {{words}} parole"
+  },
+
+  "contentBlock": {
+    "enhanceWithAI": "Migliora con AI",
+    "enhancing": "Miglioramento in corso…",
+    "copy": "Copia",
+    "delete": "Elimina"
+  },
+
+  "inferenceSettings": {
+    "title": "Impostazioni Inferenza",
+    "description": "Configura modello e parametri.",
+    "provider": "Provider",
+    "model": "Modello",
+    "creativityLevel": "Livello di Creatività",
+    "notSupportedReasoning": "Non supportato per i modelli di ragionamento.",
+    "customValue": "Valore personalizzato",
+    "textLength": "Lunghezza Testo",
+    "enterCharacterLimit": "Inserisci limite caratteri",
+    "reasoning": "Ragionamento",
+    "extendedThinking": "Pensiero esteso"
+  },
+
+  "errorBoundary": {
+    "rootTitle": "Qualcosa è andato storto",
+    "rootMessage": "L'applicazione ha incontrato un errore imprevisto. Per favore riavvia.",
+    "routeTitle": "Questa pagina si è bloccata",
+    "routeMessage": "Si è verificato un errore durante il rendering di questa pagina.",
+    "featureTitle": "Qualcosa è andato storto",
+    "tryAgain": "Riprova",
+    "tryAgainButton": "Riprova",
+    "goHome": "Vai alla Home",
+    "restartApp": "Riavvia App"
+  },
+
+  "titleBar": {
+    "applicationMenu": "Menu applicazione",
+    "toggleSidebar": "Mostra/nascondi barra laterale",
+    "minimize": "Riduci a icona",
+    "maximize": "Ingrandisci",
+    "restore": "Ripristina",
+    "close": "Chiudi"
+  },
+
+  "welcome": {
+    "tagline": "Un editor di testo intelligente per sviluppatori e scrittori. Apri un progetto per iniziare.",
+    "freePlan": "Piano Gratuito",
+    "upgradeToPro": "Passa a Pro",
+    "openWorkspace": "Apri Area di Lavoro",
+    "openWorkspaceDescription": "Seleziona una cartella per iniziare a lavorare sul tuo progetto",
+    "browse": "Sfoglia...",
+    "recentProjects": "Progetti Recenti",
+    "viewAll": "Vedi tutti",
+    "notFound": "(Non Trovato)",
+    "removeFromRecent": "Rimuovi dai progetti recenti"
+  },
+
+  "documents": {
+    "title": "Documenti",
+    "noDocumentsTitle": "Nessun documento ancora",
+    "noDocumentsDescription": "Importa file di testo dal tuo computer o scarica documenti da una fonte remota per iniziare.",
+    "importFiles": "Importa File",
+    "importing": "Importazione in corso...",
+    "downloadFromURL": "Scarica da URL/Remoto",
+    "searchPlaceholder": "Cerca documenti...",
+    "sortBy": "Ordina: {{field}}",
+    "sortByName": "Ordina per Nome",
+    "sortByDate": "Ordina per Data",
+    "sortBySize": "Ordina per Dimensione",
+    "sortByType": "Ordina per Tipo",
+    "noDocumentsFound": "Nessun documento trovato",
+    "adjustSearchQuery": "Prova a modificare la ricerca",
+    "importFailed": "Importazione Fallita",
+    "copyPath": "Copia Percorso",
+    "dropFilesHere": "Trascina qui i file di testo per importarli",
+    "dropFilesDescription": "I file verranno copiati nella tua area di lavoro",
+    "dropFilesRestriction": "Sono accettati solo file di testo. Immagini, video e file binari verranno rifiutati.",
+    "items": "{{count}} elementi",
+    "item": "{{count}} elemento",
+    "textFilesOnly": "Solo file di testo",
+    "lastUpdated": "Ultimo aggiornamento: {{date}}",
+    "totalSize": "Dimensione totale: {{size}}",
+    "supportedFileTypes": "Tipi di file supportati:",
+    "supportedNote": "Immagini, video e documenti binari non sono supportati.",
+    "supportedTypes": "Supportati: File di testo (.txt, .md), file di codice (.js, .ts, .py, .html, .css, .json, ecc.)",
+    "notSupportedTypes": "Non supportati: Immagini, video, audio, documenti binari",
+    "downloadFromURLTitle": "Scarica da URL",
+    "documentURL": "URL Documento",
+    "documentURLPlaceholder": "https://esempio.com/documento.pdf",
+    "documentURLHint": "Inserisci l'URL del documento che vuoi scaricare",
+    "downloading": "Download in corso... {{progress}}%",
+    "downloadCompleted": "Download completato con successo",
+    "downloadFailed": "Download fallito",
+    "downloaded": "Scaricato"
+  },
+
+  "directories": {
+    "title": "Cartelle Indicizzate",
+    "description": "Gestisci le cartelle per la ricerca e il recupero di documenti basati su AI.",
+    "addDirectories": "Aggiungi Cartelle",
+    "indexAll": "Indicizza Tutto",
+    "indexing": "Indicizzazione...",
+    "totalDirectories": "Cartelle Totali",
+    "indexed": "Indicizzate",
+    "pending": "In Attesa",
+    "loading": "Caricamento cartelle...",
+    "noneYetTitle": "Nessuna cartella aggiunta ancora",
+    "noneYetDescription": "Aggiungi cartelle per abilitare la ricerca di documenti basata su AI. Il sistema indicizzerà tutti i file nelle cartelle selezionate per un recupero rapido.",
+    "addFirstDirectory": "Aggiungi la Tua Prima Cartella",
+    "added": "Aggiunta: {{date}}",
+    "indexedAt": "Indicizzata: {{date}}",
+    "removeDirectory": "Rimuovi cartella"
+  },
+
+  "personality": {
+    "saving": "Salvataggio...",
+    "saveFailed": "Salvataggio fallito",
+    "version": "Versione",
+    "newConversation": "Nuova conversazione",
+    "error": "Errore",
+    "processingRequest": "Elaborazione della tua richiesta...",
+    "tryThis": "Prova questo",
+    "askToGetStarted": "Fai una domanda per iniziare.",
+    "generatingResponse": "Generazione risposta...",
+    "pressEnterToSubmit": "Premi Invio per inviare la tua domanda",
+    "stop": "Ferma",
+    "submit": "Invia"
+  },
+
+  "clipboard": {
+    "title": "Gestore Appunti",
+    "description": "Copia e incolla testo, HTML e immagini usando gli appunti di sistema",
+    "copiedSuccess": "Copiato negli appunti con successo!",
+    "error": "Errore",
+    "copyText": "Copia Testo",
+    "copyTextPlaceholder": "Inserisci testo da copiare",
+    "copyHTML": "Copia HTML",
+    "copyHTMLPlaceholder": "Inserisci HTML da copiare",
+    "copyImage": "Copia Immagine",
+    "generateAndCopyImage": "Genera e Copia Immagine",
+    "generateImageDescription": "Genera un'immagine di esempio con sfondo gradiente e la copia negli appunti",
+    "pasteText": "Incolla Testo",
+    "pasteFromClipboard": "Incolla dagli Appunti",
+    "pastedContent": "Contenuto Incollato:",
+    "currentContent": "Contenuto Appunti Attuale",
+    "refresh": "Aggiorna",
+    "clear": "Cancella",
+    "empty": "Gli appunti sono vuoti",
+    "emptyCopy": "Copia qualcosa per vederlo apparire qui",
+    "textContent": "Contenuto Testo:",
+    "htmlSource": "Sorgente HTML:",
+    "plainText": "Testo Semplice:",
+    "imagePreview": "Anteprima Immagine",
+    "length": "Lunghezza: {{count}} caratteri",
+    "noteText": "Il modulo appunti fornisce accesso completo alle operazioni degli appunti di sistema.",
+    "feature1": "Copia e incolla testo semplice, HTML e immagini",
+    "feature2": "Anteprima in tempo reale del contenuto degli appunti",
+    "feature3": "Supporta più formati degli appunti simultaneamente",
+    "feature4": "Esempio di generazione di immagini tramite canvas incluso"
+  },
+
+  "notifications": {
+    "title": "Notifiche di Sistema",
+    "description": "Testa le notifiche di sistema native con contenuto personalizzato e gestori di clic",
+    "supported": "Le notifiche sono supportate su questa piattaforma",
+    "notSupported": "Le notifiche non sono supportate su questa piattaforma",
+    "presetNotifications": "Notifiche Predefinite",
+    "customNotification": "Notifica Personalizzata",
+    "send": "Invia",
+    "sendCustom": "Invia Notifica Personalizzata",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Titolo notifica",
+    "bodyLabel": "Corpo",
+    "bodyPlaceholder": "Messaggio notifica",
+    "urgencyLabel": "Urgenza",
+    "urgencyLow": "Bassa",
+    "urgencyNormal": "Normale",
+    "urgencyCritical": "Critica",
+    "silentLabel": "Notifica silenziosa",
+    "eventsTitle": "Eventi Notifica",
+    "noEventsTitle": "Nessun evento notifica ancora",
+    "noEventsDescription": "Invia una notifica per vedere gli eventi apparire qui",
+    "clearLog": "Cancella",
+    "noteText": "Le notifiche di sistema dimostrano l'API nativa di Electron.",
+    "noteFeature1": "Le notifiche includono automaticamente l'icona dell'app",
+    "noteFeature2": "Facendo clic su una notifica si porta l'app in primo piano",
+    "noteFeature3": "Tutti gli eventi notifica (mostrata, cliccata, chiusa) vengono tracciati",
+    "noteFeature4": "Supporta diversi livelli di urgenza e modalità silenziosa"
   }
 }
