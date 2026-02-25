@@ -184,6 +184,11 @@ export const writingsSlice = createSlice({
             category: item.category,
             tags: item.tags,
             visibility: item.visibility,
+            provider: item.provider,
+            model: item.model,
+            temperature: item.temperature,
+            maxTokens: item.maxTokens,
+            reasoning: item.reasoning,
             createdAt: new Date(item.createdAt).getTime(),
             updatedAt: new Date(item.updatedAt).getTime(),
             outputId: item.id

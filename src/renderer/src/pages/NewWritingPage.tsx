@@ -70,6 +70,20 @@ const NewWritingPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true)
   const [aiSettings, setAiSettings] = useState(DEFAULT_INFERENCE_SETTINGS)
 
+  // Restore inference settings from the saved output config when editing an existing writing
+  const outputItem = useAppSelector(selectOutputItemById('writings', writing?.outputId ?? ''))
+  useEffect(() => {
+    if (!isDraft && outputItem) {
+      setAiSettings({
+        providerId: outputItem.provider || DEFAULT_INFERENCE_SETTINGS.providerId,
+        modelId: outputItem.model || DEFAULT_INFERENCE_SETTINGS.modelId,
+        temperature: outputItem.temperature ?? DEFAULT_INFERENCE_SETTINGS.temperature,
+        maxTokens: outputItem.maxTokens !== undefined ? outputItem.maxTokens : DEFAULT_INFERENCE_SETTINGS.maxTokens,
+        reasoning: outputItem.reasoning ?? DEFAULT_INFERENCE_SETTINGS.reasoning,
+      })
+    }
+  }, [isDraft, outputItem?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ---------------------------------------------------------------------------
   // Draft mode: commit to Redux + save to output on first real content
   // ---------------------------------------------------------------------------
