@@ -13,7 +13,7 @@ import {
 import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
 import { useAppSelector, useAppDispatch } from '@/store'
 import { selectPersonalityFilesBySection, loadPersonalityFiles } from '@/store/personalityFilesSlice'
-import type { PersonalityFile } from '@/store/personalityFilesSlice'
+import type { PersonalityFile, PersonalitySectionId } from '@/store/personalityFilesSlice'
 import { PersonalitySettingsPanel } from './PersonalitySettingsSheet'
 import { DEFAULT_INFERENCE_SETTINGS } from '../../../../shared/types/aiSettings'
 import { useInferenceSettings } from '@/hooks/useInferenceSettings'

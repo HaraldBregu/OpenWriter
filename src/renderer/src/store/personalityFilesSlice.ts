@@ -215,7 +215,7 @@ export const personalityFilesSlice = createSlice({
 
         // Distribute files into their sections
         action.payload.forEach((file) => {
-          const sectionId = file.sectionId as SectionId
+          const sectionId = file.sectionId as PersonalitySectionId
           if (state.files[sectionId]) {
             state.files[sectionId].push(file)
           }
@@ -223,7 +223,7 @@ export const personalityFilesSlice = createSlice({
 
         // Sort files by savedAt (most recent first) in each section
         Object.keys(state.files).forEach((sectionId) => {
-          const section = state.files[sectionId as SectionId]
+          const section = state.files[sectionId as PersonalitySectionId]
           section.sort((a, b) => b.savedAt - a.savedAt)
         })
       })
@@ -243,9 +243,9 @@ export const personalityFilesSlice = createSlice({
         (state, action: PayloadAction<{ id: string; sectionId: string }>) => {
           state.loading = false
           const { id, sectionId } = action.payload
-          const section = state.files[sectionId as SectionId]
+          const section = state.files[sectionId as PersonalitySectionId]
           if (section) {
-            state.files[sectionId as SectionId] = section.filter((f) => f.id !== id)
+            state.files[sectionId as PersonalitySectionId] = section.filter((f) => f.id !== id)
           }
         }
       )
@@ -272,7 +272,7 @@ export const selectAllPersonalityFiles = (state: RootState): PersonalityFilesSta
  * Select files for a specific section
  */
 export const selectPersonalityFilesBySection = (
-  sectionId: SectionId
+  sectionId: PersonalitySectionId
 ) =>
   createSelector(
     [selectAllPersonalityFiles],
@@ -284,7 +284,7 @@ export const selectPersonalityFilesBySection = (
  */
 export const selectPersonalityFileById = (
   id: string,
-  sectionId: SectionId
+  sectionId: PersonalitySectionId
 ) =>
   createSelector(
     [selectPersonalityFilesBySection(sectionId)],
@@ -323,7 +323,7 @@ export const selectTotalPersonalityFilesCount = createSelector(
  */
 export const selectPersonalityFilesCountBySection = createSelector(
   [selectAllPersonalityFiles],
-  (files): Record<SectionId, number> => ({
+  (files): Record<PersonalitySectionId, number> => ({
     'emotional-depth': files['emotional-depth'].length,
     consciousness: files.consciousness.length,
     motivation: files.motivation.length,
