@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   Newspaper,
   PenLine,
@@ -14,22 +15,22 @@ import { useAppDispatch } from '../store'
 import { createPost } from '../store/postsSlice'
 
 // ---------------------------------------------------------------------------
-// Categories
+// Category definitions — labels resolved via i18n at render time
 // ---------------------------------------------------------------------------
 
-const categories = [
+const categoryDefs = [
   {
     icon: Newspaper,
-    label: 'Posts',
-    description: 'Publish to your audience',
+    labelKey: 'home.posts',
+    descriptionKey: 'home.postsDescription',
     route: '/new/post',
     accent: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
     requiresPostCreation: true
   },
   {
     icon: PenLine,
-    label: 'Writing',
-    description: 'Start a blank document',
+    labelKey: 'home.writing',
+    descriptionKey: 'home.writingDescription',
     route: '/new/writing',
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
     requiresPostCreation: false
@@ -37,10 +38,10 @@ const categories = [
 ]
 
 // ---------------------------------------------------------------------------
-// Placeholder recent items
+// Placeholder recent items — labels are content placeholders, not UI strings
 // ---------------------------------------------------------------------------
 
-const recentItems = [
+const recentItemDefs = [
   { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing', requiresPostCreation: false },
   { icon: Newspaper, label: 'Release Announcement', meta: '3 days ago', route: '/new/post', requiresPostCreation: true },
   { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local', requiresPostCreation: false }
