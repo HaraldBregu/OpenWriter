@@ -15,9 +15,11 @@ export const PersonalityChatInput: React.FC<PersonalityChatInputProps> = React.m
   onSubmit,
   onCancel,
   isLoading = false,
-  placeholder = 'Ask a question...',
+  placeholder,
   disabled = false
 }) => {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('personality.askToGetStarted')
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
