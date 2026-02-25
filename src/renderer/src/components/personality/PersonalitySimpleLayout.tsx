@@ -59,7 +59,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   // reused across renders — without this, a new instance is created every render
   // and reselect's cache is never hit, causing recomputation on every Redux dispatch.
   const selectFilesForSection = useMemo(
-    () => selectPersonalityFilesBySection(sectionId as 'emotional-depth' | 'consciousness' | 'motivation' | 'moral-intuition' | 'irrationality' | 'growth' | 'social-identity' | 'creativity' | 'mortality' | 'contradiction'),
+    () => selectPersonalityFilesBySection(sectionId as PersonalitySectionId),
     [sectionId]
   )
   const files = useAppSelector(selectFilesForSection)
