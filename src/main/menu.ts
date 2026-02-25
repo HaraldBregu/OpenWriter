@@ -161,7 +161,7 @@ export class Menu {
           },
           { type: 'separator' as const },
           {
-            label: 'Show Console',
+            label: m.showConsole,
             accelerator: 'CmdOrCtrl+Shift+I',
             click: (): void => {
               const win = BrowserWindow.getFocusedWindow()
@@ -169,7 +169,7 @@ export class Menu {
             }
           },
           {
-            label: 'Refresh',
+            label: m.refresh,
             accelerator: 'CmdOrCtrl+R',
             click: (): void => {
               const win = BrowserWindow.getFocusedWindow()
