@@ -3,7 +3,6 @@
  * Renders macOS-style traffic-light window control buttons.
  * The component uses window.win.* namespace.
  */
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { WindowControls } from '../../../../src/renderer/src/components/WindowControls'
