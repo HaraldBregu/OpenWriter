@@ -15,13 +15,14 @@ import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
 
 /**
- * IPC handlers for output content files (posts, writings, notes, messages).
+ * IPC handlers for output content files (posts, writings).
  *
  * Responsibilities:
- *   - Save output files as folder-based format (config.json + DATA.md)
+ *   - Save output files as folder-based format (config.json + per-block .md files)
  *   - Load all output files from workspace
  *   - Load output files by type
  *   - Load specific files by type and ID
+ *   - Update output files (blocks + metadata)
  *   - Delete output files
  *   - Provide file watching events to renderer
  *
@@ -35,7 +36,7 @@ export class OutputIpc implements IpcModule {
      * Save an output file.
      *
      * Channel: 'output:save'
-     * Input: SaveOutputFileInput - { type, content, metadata }
+     * Input: SaveOutputFileInput - { type, blocks, metadata }
      * Output: SaveOutputFileResult - { id, path, savedAt }
      */
     ipcMain.handle(
@@ -44,7 +45,7 @@ export class OutputIpc implements IpcModule {
         async (event: IpcMainInvokeEvent, input: SaveOutputFileInput): Promise<SaveOutputFileResult> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
 
-          // Validate input
+          // Validate type
           if (!input.type || typeof input.type !== 'string') {
             throw new Error('Invalid type: must be a non-empty string')
           }
@@ -55,8 +56,18 @@ export class OutputIpc implements IpcModule {
             )
           }
 
-          if (typeof input.content !== 'string') {
-            throw new Error('Invalid content: must be a string')
+          // Validate blocks
+          if (!Array.isArray(input.blocks) || input.blocks.length === 0) {
+            throw new Error('Invalid blocks: must be a non-empty array')
+          }
+
+          for (const block of input.blocks) {
+            if (!block.name || typeof block.name !== 'string') {
+              throw new Error('Each block must have a non-empty string `name` field')
+            }
+            if (typeof block.content !== 'string') {
+              throw new Error(`Block "${block.name}": content must be a string`)
+            }
           }
 
           if (!input.metadata || typeof input.metadata !== 'object' || Array.isArray(input.metadata)) {
@@ -74,10 +85,10 @@ export class OutputIpc implements IpcModule {
     )
 
     /**
-     * Update an existing output file (content + metadata).
+     * Update an existing output file (blocks + metadata).
      *
      * Channel: 'output:update'
-     * Input: { type: string, id: string, content: string, metadata: Record<string, unknown> }
+     * Input: { type: string, id: string, blocks: ContentBlockInput[], metadata: Record<string, unknown> }
      * Output: void
      */
     ipcMain.handle(
@@ -85,7 +96,12 @@ export class OutputIpc implements IpcModule {
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
-          params: { type: string; id: string; content: string; metadata: Record<string, unknown> }
+          params: {
+            type: string
+            id: string
+            blocks: Array<{ name: string; content: string; createdAt?: string; filetype?: 'markdown'; type?: 'content' }>
+            metadata: Record<string, unknown>
+          }
         ): Promise<void> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
 
@@ -98,15 +114,23 @@ export class OutputIpc implements IpcModule {
           if (!params.id || typeof params.id !== 'string') {
             throw new Error('Invalid id: must be a non-empty string')
           }
-          if (typeof params.content !== 'string') {
-            throw new Error('Invalid content: must be a string')
+          if (!Array.isArray(params.blocks) || params.blocks.length === 0) {
+            throw new Error('Invalid blocks: must be a non-empty array')
+          }
+          for (const block of params.blocks) {
+            if (!block.name || typeof block.name !== 'string') {
+              throw new Error('Each block must have a non-empty string `name` field')
+            }
+            if (typeof block.content !== 'string') {
+              throw new Error(`Block "${block.name}": content must be a string`)
+            }
           }
           if (!params.metadata || typeof params.metadata !== 'object' || Array.isArray(params.metadata)) {
             throw new Error('Invalid metadata: must be an object')
           }
 
           await outputFiles.update(params.type as OutputType, params.id, {
-            content: params.content,
+            blocks: params.blocks,
             metadata: params.metadata as Parameters<OutputFilesService['update']>[2]['metadata'],
           })
 
@@ -140,7 +164,7 @@ export class OutputIpc implements IpcModule {
      * Load all output files for a specific type.
      *
      * Channel: 'output:load-by-type'
-     * Input: string - The output type (posts, writings, notes, messages)
+     * Input: string - The output type (posts, writings)
      * Output: OutputFile[] - Array of output files for that type
      */
     ipcMain.handle(
