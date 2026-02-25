@@ -120,8 +120,11 @@ const NewWritingPage: React.FC = () => {
         content: draftBlocks.map((b) => b.content).join('\n\n'),
         category: 'writing',
         visibility: 'private',
-        provider: 'manual',
-        model: '',
+        provider: aiSettings.providerId,
+        model: aiSettings.modelId,
+        temperature: aiSettings.temperature,
+        maxTokens: aiSettings.maxTokens,
+        reasoning: aiSettings.reasoning,
       })).unwrap()
       savedOutputIdRef.current = saved.id
       dispatch(setWritingOutputId({ writingId: draftIdRef.current, outputId: saved.id }))

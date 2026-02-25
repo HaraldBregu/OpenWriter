@@ -208,6 +208,7 @@ export const {
   setWritingOutputId,
   updateWritingBlocks,
   updateWritingTitle,
+  updateWritingInferenceSettings,
   deleteWriting,
   loadWritings
 } = writingsSlice.actions
