@@ -18,6 +18,7 @@ interface RecentProject {
 const WelcomePage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
 
   useEffect(() => {
