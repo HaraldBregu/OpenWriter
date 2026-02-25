@@ -23,6 +23,7 @@ export interface WindowContextConfig {
   window: BrowserWindow
   globalContainer: ServiceContainer
   eventBus: EventBus
+  serviceFactory?: WindowScopedServiceFactory
 }
 
 /**
@@ -43,8 +44,9 @@ export class WindowContext {
 
     console.log(`[WindowContext] Creating context for window ${this.windowId}`)
 
-    // Initialize window-scoped services
-    this.initializeServices(config.globalContainer)
+    // Initialize window-scoped services using the factory
+    const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory()
+    this.initializeServices(config.globalContainer, factory)
 
     // Cleanup when window is closed
     this.window.on('closed', () => {
@@ -53,51 +55,37 @@ export class WindowContext {
   }
 
   /**
-   * Initialize window-scoped services.
+   * Initialize window-scoped services using the service factory.
    * These services are isolated per window and don't affect other windows.
+   *
+   * The factory pattern allows new services to be added without modifying this method.
    */
-  private initializeServices(globalContainer: ServiceContainer): void {
-    const storeService = globalContainer.get<StoreService>('store')
+  private async initializeServices(
+    globalContainer: ServiceContainer,
+    serviceFactory: WindowScopedServiceFactory
+  ): Promise<void> {
+    try {
+      const storeService = globalContainer.get<StoreService>('store')
+      const workspaceService = new WorkspaceService(storeService, this.eventBus)
+      workspaceService.initialize()
+      this.container.register('workspace', workspaceService)
 
-    // Workspace service - scoped to this window
-    const workspaceService = new WorkspaceService(storeService, this.eventBus)
-    workspaceService.initialize()
-    this.container.register('workspace', workspaceService)
+      // Use factory to create and register remaining services
+      await serviceFactory.createAndRegisterAll(this.container, {
+        globalContainer,
+        eventBus: this.eventBus,
+        storeService,
+        workspaceService
+      })
 
-    // Workspace metadata service - scoped to this window
-    const workspaceMetadataService = new WorkspaceMetadataService(workspaceService, this.eventBus)
-    workspaceMetadataService.initialize()
-    this.container.register('workspaceMetadata', workspaceMetadataService)
-
-    // File watcher service - scoped to this window's workspace
-    const fileWatcherService = new FileWatcherService(this.eventBus)
-    fileWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
-      console.error(`[WindowContext] Failed to initialize FileWatcherService for window ${this.windowId}:`, error)
-    })
-    this.container.register('fileWatcher', fileWatcherService)
-
-    // Documents watcher service - scoped to this window's workspace
-    const documentsWatcherService = new DocumentsWatcherService(this.eventBus)
-    documentsWatcherService.initialize(workspaceService.getCurrent()).catch((error) => {
-      console.error(`[WindowContext] Failed to initialize DocumentsWatcherService for window ${this.windowId}:`, error)
-    })
-    this.container.register('documentsWatcher', documentsWatcherService)
-
-    // Personality files service - scoped to this window's workspace
-    const personalityFilesService = new PersonalityFilesService(workspaceService, this.eventBus)
-    personalityFilesService.initialize().catch((error) => {
-      console.error(`[WindowContext] Failed to initialize PersonalityFilesService for window ${this.windowId}:`, error)
-    })
-    this.container.register('personalityFiles', personalityFilesService)
-
-    // Output files service - scoped to this window's workspace
-    const outputFilesService = new OutputFilesService(workspaceService, this.eventBus)
-    outputFilesService.initialize().catch((error) => {
-      console.error(`[WindowContext] Failed to initialize OutputFilesService for window ${this.windowId}:`, error)
-    })
-    this.container.register('outputFiles', outputFilesService)
-
-    console.log(`[WindowContext] Initialized ${this.container.has('workspace') ? 'all' : 'some'} services for window ${this.windowId}`)
+      console.log(`[WindowContext] Initialized all services for window ${this.windowId}`)
+    } catch (error) {
+      console.error(
+        `[WindowContext] Failed to initialize services for window ${this.windowId}:`,
+        error instanceof Error ? error.message : String(error)
+      )
+      throw error
+    }
   }
 
   /**
