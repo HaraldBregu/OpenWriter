@@ -709,15 +709,28 @@ declare global {
 
     /** Output file management for posts and writings */
     output: {
+      /**
+       * Create a new output folder with individual .md files per block.
+       * `blocks` is an ordered array; each entry produces a <name>.md file.
+       */
       save: (input: {
         type: string
-        content: string
+        blocks: Array<{ name: string; content: string; createdAt: string; updatedAt: string }>
         metadata?: Record<string, unknown>
       }) => Promise<{ id: string; path: string; savedAt: number }>
       loadAll: () => Promise<OutputFile[]>
       loadByType: (type: string) => Promise<OutputFile[]>
       loadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
-      update: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }) => Promise<void>
+      /**
+       * Update an existing output folder: rewrites changed block files and
+       * updates config.json (preserving createdAt, managing per-block timestamps).
+       */
+      update: (params: {
+        type: string
+        id: string
+        blocks: Array<{ name: string; content: string; createdAt: string; updatedAt: string }>
+        metadata: Record<string, unknown>
+      }) => Promise<void>
       delete: (params: { type: string; id: string }) => Promise<void>
       onFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
       onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
