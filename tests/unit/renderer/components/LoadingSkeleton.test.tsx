@@ -4,7 +4,6 @@
  * A simple loading indicator used as Suspense fallback throughout the app.
  */
 
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { LoadingSkeleton } from '../../../../src/renderer/src/components/LoadingSkeleton'
 
