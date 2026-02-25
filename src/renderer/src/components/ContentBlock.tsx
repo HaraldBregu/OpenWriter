@@ -4,8 +4,19 @@ import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { type Editor } from '@tiptap/core'
+import Document from '@tiptap/extension-document'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
+
+// ---------------------------------------------------------------------------
+// Custom Document extension: restricts the schema to exactly one paragraph.
+// StarterKit's default Document allows `content: 'block+'` (multiple blocks).
+// By replacing it with `content: 'paragraph'` (singular, no `+`), TipTap's
+// ProseMirror schema enforces the constraint at the document model level —
+// pasted multi-paragraph content is automatically flattened into one paragraph,
+// and no other insertion path can create a second paragraph node.
+// ---------------------------------------------------------------------------
+const SingleParagraphDocument = Document.extend({ content: 'paragraph' })
 import { AppButton } from '@/components/app'
 import { useTask } from '@/hooks/useTask'
 
