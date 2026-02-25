@@ -1351,8 +1351,6 @@ if (process.contextIsolated) {
     }
 } else {
     // @ts-ignore (define in dts)
-    globalThis.electron = electronAPI
-    // @ts-ignore (define in dts)
     globalThis.app = app
     // @ts-ignore (define in dts)
     globalThis.win = win
