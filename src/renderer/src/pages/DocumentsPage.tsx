@@ -12,10 +12,6 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  MoreVertical,
-  Trash2,
-  Eye,
-  Copy,
   Filter,
   Calendar,
   HardDrive,
@@ -33,6 +29,7 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger
 } from '@/components/app'
+import { DocumentActionMenu } from '@/components/DocumentActionMenu'
 
 // ---------------------------------------------------------------------------
 // Types
