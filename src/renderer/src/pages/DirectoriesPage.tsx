@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FolderPlus, FolderOpen, Trash2, RefreshCw, Database, CheckCircle2, XCircle } from 'lucide-react'
 import {
   AppButton,

@@ -14,24 +14,14 @@ import { AppSwitch } from '@/components/app/AppSwitch'
 import { aiProviders, isReasoningModel, getDefaultModelId } from '@/config/aiProviders'
 
 // ---------------------------------------------------------------------------
-// Types
+// Types — single source of truth lives in the shared types package.
+// Re-export here so existing imports from this file continue working.
 // ---------------------------------------------------------------------------
 
-export interface InferenceSettings {
-  providerId: string
-  modelId: string
-  temperature: number
-  maxTokens: number | null
-  reasoning: boolean
-}
+export type { InferenceSettings } from '../../../../shared/types/aiSettings'
+export { DEFAULT_INFERENCE_SETTINGS } from '../../../../shared/types/aiSettings'
 
-export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
-  providerId: 'openai',
-  modelId: 'gpt-4o',
-  temperature: 0.7,
-  maxTokens: 2048,
-  reasoning: false
-}
+import type { InferenceSettings } from '../../../../shared/types/aiSettings'
 
 // ---------------------------------------------------------------------------
 // Creativity level presets
