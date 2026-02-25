@@ -112,6 +112,7 @@ export function bootstrapServices(): BootstrapResult {
   container.register('dialog', new DialogService())
   container.register('notification', new NotificationService())
   container.register('clipboard', new ClipboardService())
+  container.register('fileManagement', new FileManagementService())
 
   // REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
   // These services are now window-scoped and created per-window by WindowContextManager
