@@ -315,7 +315,8 @@ export const ContentBlock = React.memo(function ContentBlock({
 ContentBlock.displayName = 'ContentBlock'
 
 export function createBlock(): Block {
-  return { id: crypto.randomUUID(), content: '' }
+  const now = new Date().toISOString()
+  return { id: crypto.randomUUID(), content: '', createdAt: now, updatedAt: now }
 }
 
 // ---------------------------------------------------------------------------
