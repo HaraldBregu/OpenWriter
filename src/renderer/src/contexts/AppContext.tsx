@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useCallback, useMemo, useReducer, useEffect } from 'react'
+import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react'
 
 // ---------------------------------------------------------------------------
-// Types
+// Shared types
 // ---------------------------------------------------------------------------
 
 export type ThemeMode = 'light' | 'dark' | 'system'
@@ -30,6 +30,7 @@ export interface ModalState {
   shareDialogOpen: boolean
 }
 
+// Kept for backward-compatibility with the test file and any external consumers.
 export interface AppState {
   theme: ThemeMode
   user: User | null
@@ -40,47 +41,17 @@ export interface AppState {
 }
 
 // ---------------------------------------------------------------------------
-// Action Types
+// Constants / helpers
 // ---------------------------------------------------------------------------
-
-type AppAction =
-  | { type: 'SET_THEME'; payload: ThemeMode }
-  | { type: 'SET_USER'; payload: User | null }
-  | { type: 'UPDATE_UI_PREFERENCES'; payload: Partial<UIPreferences> }
-  | { type: 'TOGGLE_MODAL'; payload: { modal: keyof ModalState; open?: boolean } }
-  | { type: 'SET_ONLINE_STATUS'; payload: boolean }
-  | { type: 'UPDATE_SYNC_TIME'; payload: number }
-  | { type: 'RESET_STATE' }
-
-// ---------------------------------------------------------------------------
-// Initial State
-// ---------------------------------------------------------------------------
-
-const defaultUIPreferences: UIPreferences = {
-  sidebarState: 'expanded',
-  compactMode: false,
-  editorFontSize: 14,
-  editorLineHeight: 1.6,
-  showLineNumbers: true,
-  enableSpellCheck: true
-}
-
-const defaultModalState: ModalState = {
-  settingsOpen: false,
-  commandPaletteOpen: false,
-  searchOpen: false,
-  shareDialogOpen: false
-}
 
 const THEME_STORAGE_KEY = 'app-theme-mode'
+const UI_PREFS_STORAGE_KEY = 'app-ui-preferences'
 const DARK_CLASS = 'dark'
 
 function readPersistedTheme(): ThemeMode {
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored === 'light' || stored === 'dark' || stored === 'system') {
-      return stored
-    }
+    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
   } catch {
     // localStorage may be unavailable in some contexts
   }
@@ -94,79 +65,339 @@ function applyThemeClass(theme: ThemeMode): void {
   } else if (theme === 'light') {
     root.classList.remove(DARK_CLASS)
   } else {
-    // system — honour the OS preference
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    root.classList.toggle(DARK_CLASS, prefersDark)
+    root.classList.toggle(DARK_CLASS, window.matchMedia('(prefers-color-scheme: dark)').matches)
   }
 }
 
-const initialState: AppState = {
-  theme: readPersistedTheme(),
-  user: null,
-  uiPreferences: defaultUIPreferences,
-  modals: defaultModalState,
-  isOnline: navigator.onLine,
-  lastSyncedAt: null
+const defaultUIPreferences: UIPreferences = {
+  sidebarState: 'expanded',
+  compactMode: false,
+  editorFontSize: 14,
+  editorLineHeight: 1.6,
+  showLineNumbers: true,
+  enableSpellCheck: true,
 }
 
-// Apply theme class eagerly at module load time — before React mounts —
-// so the correct CSS variables are active on the very first paint.
-// This prevents a flash of the wrong theme on startup.
-applyThemeClass(initialState.theme)
+const defaultModalState: ModalState = {
+  settingsOpen: false,
+  commandPaletteOpen: false,
+  searchOpen: false,
+  shareDialogOpen: false,
+}
+
+// Apply theme class eagerly at module load time so the first paint uses the
+// correct CSS variables and avoids a flash of the wrong theme.
+applyThemeClass(readPersistedTheme())
 
 // ---------------------------------------------------------------------------
-// Reducer
+// 1. ThemeContext
 // ---------------------------------------------------------------------------
 
-function appReducer(state: AppState, action: AppAction): AppState {
-  switch (action.type) {
-    case 'SET_THEME':
-      return { ...state, theme: action.payload }
+interface ThemeContextValue {
+  theme: ThemeMode
+  setTheme: (theme: ThemeMode) => void
+}
 
-    case 'SET_USER':
-      return { ...state, user: action.payload }
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
-    case 'UPDATE_UI_PREFERENCES':
-      return {
-        ...state,
-        uiPreferences: { ...state.uiPreferences, ...action.payload }
-      }
+function ThemeProvider({
+  children,
+  initialTheme,
+}: {
+  children: React.ReactNode
+  initialTheme?: ThemeMode
+}) {
+  const [theme, setThemeState] = useState<ThemeMode>(initialTheme ?? readPersistedTheme())
 
-    case 'TOGGLE_MODAL': {
-      const { modal, open } = action.payload
-      return {
-        ...state,
-        modals: {
-          ...state.modals,
-          [modal]: open !== undefined ? open : !state.modals[modal]
-        }
-      }
+  const setTheme = useCallback((next: ThemeMode) => setThemeState(next), [])
+
+  // Apply DOM class, persist, and notify main process on theme change.
+  useEffect(() => {
+    applyThemeClass(theme)
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
+    } catch (error) {
+      console.error('Failed to save theme mode:', error)
     }
+    window.app.setTheme(theme)
+  }, [theme])
 
-    case 'SET_ONLINE_STATUS':
-      return { ...state, isOnline: action.payload }
+  // Track OS preference changes in real-time when mode is 'system'.
+  useEffect(() => {
+    if (theme !== 'system') return
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleOsChange = (e: MediaQueryListEvent): void => {
+      document.documentElement.classList.toggle(DARK_CLASS, e.matches)
+    }
+    mq.addEventListener('change', handleOsChange)
+    return () => mq.removeEventListener('change', handleOsChange)
+  }, [theme])
 
-    case 'UPDATE_SYNC_TIME':
-      return { ...state, lastSyncedAt: action.payload }
+  // Sync theme changes broadcast from the Electron main process (e.g. sibling windows).
+  useEffect(() => {
+    return window.app.onThemeChange((incoming: string) => {
+      if (incoming === 'light' || incoming === 'dark' || incoming === 'system') {
+        setThemeState(incoming as ThemeMode)
+      }
+    })
+  }, [])
 
-    case 'RESET_STATE':
-      return initialState
+  const value = useMemo<ThemeContextValue>(() => ({ theme, setTheme }), [theme, setTheme])
 
-    default:
-      return state
-  }
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+}
+
+export function useTheme(): ThemeContextValue {
+  const ctx = useContext(ThemeContext)
+  if (ctx === undefined) throw new Error('useTheme must be used within an AppProvider')
+  return ctx
 }
 
 // ---------------------------------------------------------------------------
-// Context Definition (Split for Performance)
+// 2. UserContext
 // ---------------------------------------------------------------------------
 
-interface AppContextValue {
-  state: AppState
-  dispatch: React.Dispatch<AppAction>
+interface UserContextValue {
+  user: User | null
+  setUser: (user: User | null) => void
 }
 
-interface AppActionsContextValue {
+const UserContext = createContext<UserContextValue | undefined>(undefined)
+
+function UserProvider({
+  children,
+  initialUser,
+}: {
+  children: React.ReactNode
+  initialUser?: User | null
+}) {
+  const [user, setUser] = useState<User | null>(initialUser ?? null)
+  const setUserStable = useCallback((next: User | null) => setUser(next), [])
+  const value = useMemo<UserContextValue>(
+    () => ({ user, setUser: setUserStable }),
+    [user, setUserStable],
+  )
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>
+}
+
+export function useUser(): UserContextValue {
+  const ctx = useContext(UserContext)
+  if (ctx === undefined) throw new Error('useUser must be used within an AppProvider')
+  return ctx
+}
+
+// ---------------------------------------------------------------------------
+// 3. UIPreferencesContext
+// ---------------------------------------------------------------------------
+
+interface UIPreferencesContextValue {
+  uiPreferences: UIPreferences
+  updateUIPreferences: (patch: Partial<UIPreferences>) => void
+}
+
+const UIPreferencesContext = createContext<UIPreferencesContextValue | undefined>(undefined)
+
+function UIPreferencesProvider({
+  children,
+  initialPreferences,
+}: {
+  children: React.ReactNode
+  initialPreferences?: Partial<UIPreferences>
+}) {
+  const [uiPreferences, setPreferences] = useState<UIPreferences>({
+    ...defaultUIPreferences,
+    ...(initialPreferences ?? {}),
+  })
+
+  const updateUIPreferences = useCallback((patch: Partial<UIPreferences>) => {
+    setPreferences((prev) => ({ ...prev, ...patch }))
+  }, [])
+
+  // Persist on change.
+  useEffect(() => {
+    try {
+      localStorage.setItem(UI_PREFS_STORAGE_KEY, JSON.stringify(uiPreferences))
+    } catch (error) {
+      console.error('Failed to save UI preferences:', error)
+    }
+  }, [uiPreferences])
+
+  // Load from localStorage on mount.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(UI_PREFS_STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved) as UIPreferences
+        setPreferences((prev) => ({ ...prev, ...parsed }))
+      }
+    } catch (error) {
+      console.error('Failed to load UI preferences:', error)
+    }
+  }, [])
+
+  const value = useMemo<UIPreferencesContextValue>(
+    () => ({ uiPreferences, updateUIPreferences }),
+    [uiPreferences, updateUIPreferences],
+  )
+
+  return <UIPreferencesContext.Provider value={value}>{children}</UIPreferencesContext.Provider>
+}
+
+export function useUIPreferencesContext(): UIPreferencesContextValue {
+  const ctx = useContext(UIPreferencesContext)
+  if (ctx === undefined)
+    throw new Error('useUIPreferencesContext must be used within an AppProvider')
+  return ctx
+}
+
+// ---------------------------------------------------------------------------
+// 4. ModalContext
+// ---------------------------------------------------------------------------
+
+interface ModalContextValue {
+  modals: ModalState
+  toggleModal: (modal: keyof ModalState, open?: boolean) => void
+}
+
+const ModalContext = createContext<ModalContextValue | undefined>(undefined)
+
+function ModalProvider({
+  children,
+  initialModals,
+}: {
+  children: React.ReactNode
+  initialModals?: Partial<ModalState>
+}) {
+  const [modals, setModals] = useState<ModalState>({
+    ...defaultModalState,
+    ...(initialModals ?? {}),
+  })
+
+  const toggleModal = useCallback((modal: keyof ModalState, open?: boolean) => {
+    setModals((prev) => ({
+      ...prev,
+      [modal]: open !== undefined ? open : !prev[modal],
+    }))
+  }, [])
+
+  const value = useMemo<ModalContextValue>(() => ({ modals, toggleModal }), [modals, toggleModal])
+
+  return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>
+}
+
+export function useModalContext(): ModalContextValue {
+  const ctx = useContext(ModalContext)
+  if (ctx === undefined) throw new Error('useModalContext must be used within an AppProvider')
+  return ctx
+}
+
+// ---------------------------------------------------------------------------
+// 5. NetworkContext
+// ---------------------------------------------------------------------------
+
+interface NetworkContextValue {
+  isOnline: boolean
+  lastSyncedAt: number | null
+  setOnlineStatus: (online: boolean) => void
+  updateSyncTime: (timestamp: number) => void
+}
+
+const NetworkContext = createContext<NetworkContextValue | undefined>(undefined)
+
+function NetworkProvider({
+  children,
+  initialOnline,
+  initialSyncedAt,
+}: {
+  children: React.ReactNode
+  initialOnline?: boolean
+  initialSyncedAt?: number | null
+}) {
+  const [isOnline, setIsOnline] = useState<boolean>(initialOnline ?? navigator.onLine)
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(initialSyncedAt ?? null)
+
+  const setOnlineStatus = useCallback((online: boolean) => setIsOnline(online), [])
+  const updateSyncTime = useCallback((ts: number) => setLastSyncedAt(ts), [])
+
+  // Listen for browser online/offline events.
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  const value = useMemo<NetworkContextValue>(
+    () => ({ isOnline, lastSyncedAt, setOnlineStatus, updateSyncTime }),
+    [isOnline, lastSyncedAt, setOnlineStatus, updateSyncTime],
+  )
+
+  return <NetworkContext.Provider value={value}>{children}</NetworkContext.Provider>
+}
+
+export function useNetworkContext(): NetworkContextValue {
+  const ctx = useContext(NetworkContext)
+  if (ctx === undefined) throw new Error('useNetworkContext must be used within an AppProvider')
+  return ctx
+}
+
+// ---------------------------------------------------------------------------
+// AppProvider — composition root for all 5 focused providers
+// ---------------------------------------------------------------------------
+
+interface AppProviderProps {
+  children: React.ReactNode
+  /** Partial initial state for testing and storybook scenarios. */
+  initialState?: Partial<AppState>
+}
+
+export function AppProvider({ children, initialState }: AppProviderProps) {
+  return (
+    <ThemeProvider initialTheme={initialState?.theme}>
+      <UserProvider initialUser={initialState?.user}>
+        <UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
+          <ModalProvider initialModals={initialState?.modals}>
+            <NetworkProvider
+              initialOnline={initialState?.isOnline}
+              initialSyncedAt={initialState?.lastSyncedAt}
+            >
+              {children}
+            </NetworkProvider>
+          </ModalProvider>
+        </UIPreferencesProvider>
+      </UserProvider>
+    </ThemeProvider>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Backward-compatible aggregate hooks
+//
+// These preserve the existing public API so call sites don't need to change.
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns the full AppState snapshot. Prefer the focused hooks below
+ * (`useThemeMode`, `useCurrentUser`, etc.) to avoid unnecessary re-renders.
+ */
+export function useAppState(): AppState {
+  const { theme } = useTheme()
+  const { user } = useUser()
+  const { uiPreferences } = useUIPreferencesContext()
+  const { modals } = useModalContext()
+  const { isOnline, lastSyncedAt } = useNetworkContext()
+  return useMemo(
+    () => ({ theme, user, uiPreferences, modals, isOnline, lastSyncedAt }),
+    [theme, user, uiPreferences, modals, isOnline, lastSyncedAt],
+  )
+}
+
+/** Backward-compatible actions bag. */
+export interface AppActionsContextValue {
   setTheme: (theme: ThemeMode) => void
   setUser: (user: User | null) => void
   updateUIPreferences: (preferences: Partial<UIPreferences>) => void
@@ -176,176 +407,48 @@ interface AppActionsContextValue {
   resetState: () => void
 }
 
-// Create two separate contexts to prevent unnecessary re-renders
-// State context - components that only need to read state
-const AppStateContext = createContext<AppState | undefined>(undefined)
-
-// Actions context - components that only need to dispatch actions
-const AppActionsContext = createContext<AppActionsContextValue | undefined>(undefined)
-
-// ---------------------------------------------------------------------------
-// Provider Component
-// ---------------------------------------------------------------------------
-
-interface AppProviderProps {
-  children: React.ReactNode
-  initialState?: Partial<AppState>
-}
-
-export function AppProvider({ children, initialState: customInitialState }: AppProviderProps) {
-  // Merge custom initial state if provided
-  const mergedInitialState = useMemo(
-    () => ({
-      ...initialState,
-      ...customInitialState,
-      uiPreferences: {
-        ...initialState.uiPreferences,
-        ...(customInitialState?.uiPreferences || {})
-      },
-      modals: {
-        ...initialState.modals,
-        ...(customInitialState?.modals || {})
-      }
-    }),
-    [customInitialState]
-  )
-
-  const [state, dispatch] = useReducer(appReducer, mergedInitialState)
-
-  // Memoized action creators to prevent re-renders
-  const actions = useMemo<AppActionsContextValue>(
-    () => ({
-      setTheme: (theme: ThemeMode) => dispatch({ type: 'SET_THEME', payload: theme }),
-      setUser: (user: User | null) => dispatch({ type: 'SET_USER', payload: user }),
-      updateUIPreferences: (preferences: Partial<UIPreferences>) =>
-        dispatch({ type: 'UPDATE_UI_PREFERENCES', payload: preferences }),
-      toggleModal: (modal: keyof ModalState, open?: boolean) =>
-        dispatch({ type: 'TOGGLE_MODAL', payload: { modal, open } }),
-      setOnlineStatus: (isOnline: boolean) =>
-        dispatch({ type: 'SET_ONLINE_STATUS', payload: isOnline }),
-      updateSyncTime: (timestamp: number) =>
-        dispatch({ type: 'UPDATE_SYNC_TIME', payload: timestamp }),
-      resetState: () => dispatch({ type: 'RESET_STATE' })
-    }),
-    []
-  )
-
-  // Listen for online/offline events
-  useEffect(() => {
-    const handleOnline = () => dispatch({ type: 'SET_ONLINE_STATUS', payload: true })
-    const handleOffline = () => dispatch({ type: 'SET_ONLINE_STATUS', payload: false })
-
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
-
-    return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [])
-
-  // Apply DOM class, persist to localStorage, and notify main process whenever
-  // theme changes. This runs for every route (including WelcomePage) because
-  // AppProvider wraps the entire component tree.
-  useEffect(() => {
-    applyThemeClass(state.theme)
-
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, state.theme)
-    } catch (error) {
-      console.error('Failed to save theme mode:', error)
-    }
-
-    window.app.setTheme(state.theme)
-  }, [state.theme])
-
-  // When in "system" mode, track OS preference changes in real-time
-  useEffect(() => {
-    if (state.theme !== 'system') return
-
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleOsChange = (e: MediaQueryListEvent): void => {
-      document.documentElement.classList.toggle(DARK_CLASS, e.matches)
-    }
-
-    mq.addEventListener('change', handleOsChange)
-    return () => mq.removeEventListener('change', handleOsChange)
-  }, [state.theme])
-
-  // Listen for IPC theme-change events from the Electron main process.
-  // Keeps sibling windows in sync when theme is changed from another
-  // window or from the macOS Developer menu.
-  useEffect(() => {
-    const cleanup = window.app.onThemeChange((theme: string) => {
-      if (theme === 'light' || theme === 'dark' || theme === 'system') {
-        dispatch({ type: 'SET_THEME', payload: theme as ThemeMode })
-      }
-    })
-    return cleanup
-  }, [])
-
-  // Persist UI preferences to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('app-ui-preferences', JSON.stringify(state.uiPreferences))
-    } catch (error) {
-      console.error('Failed to save UI preferences:', error)
-    }
-  }, [state.uiPreferences])
-
-  // Load UI preferences from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('app-ui-preferences')
-      if (saved) {
-        const preferences = JSON.parse(saved) as UIPreferences
-        dispatch({ type: 'UPDATE_UI_PREFERENCES', payload: preferences })
-      }
-    } catch (error) {
-      console.error('Failed to load UI preferences:', error)
-    }
-  }, [])
-
-  return (
-    <AppStateContext.Provider value={state}>
-      <AppActionsContext.Provider value={actions}>
-        {children}
-      </AppActionsContext.Provider>
-    </AppStateContext.Provider>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Hooks for consuming context
-// ---------------------------------------------------------------------------
-
 /**
- * Hook to access the full app state.
- * Only use this if you need the entire state object.
- * For specific values, use the selector hooks below for better performance.
- */
-export function useAppState(): AppState {
-  const context = useContext(AppStateContext)
-  if (context === undefined) {
-    throw new Error('useAppState must be used within an AppProvider')
-  }
-  return context
-}
-
-/**
- * Hook to access app actions.
- * This hook does not cause re-renders when state changes.
+ * Returns all action creators in a single bag — matches the old API.
+ * Components using only actions won't re-render on state changes because
+ * each individual provider's action ref is stable.
  */
 export function useAppActions(): AppActionsContextValue {
-  const context = useContext(AppActionsContext)
-  if (context === undefined) {
-    throw new Error('useAppActions must be used within an AppProvider')
-  }
-  return context
+  const { setTheme } = useTheme()
+  const { setUser } = useUser()
+  const { updateUIPreferences } = useUIPreferencesContext()
+  const { toggleModal } = useModalContext()
+  const { setOnlineStatus, updateSyncTime } = useNetworkContext()
+
+  // resetState re-navigates all 5 contexts back to their defaults. Because
+  // each sub-provider owns its own useState, we drive them through their
+  // stable setters with the default values.
+  const resetState = useCallback(() => {
+    setTheme(readPersistedTheme())
+    setUser(null)
+    updateUIPreferences(defaultUIPreferences)
+    toggleModal('settingsOpen', false)
+    toggleModal('commandPaletteOpen', false)
+    toggleModal('searchOpen', false)
+    toggleModal('shareDialogOpen', false)
+    setOnlineStatus(navigator.onLine)
+  }, [setTheme, setUser, updateUIPreferences, toggleModal, setOnlineStatus])
+
+  return useMemo(
+    () => ({
+      setTheme,
+      setUser,
+      updateUIPreferences,
+      toggleModal,
+      setOnlineStatus,
+      updateSyncTime,
+      resetState,
+    }),
+    [setTheme, setUser, updateUIPreferences, toggleModal, setOnlineStatus, updateSyncTime, resetState],
+  )
 }
 
 /**
- * Hook to select a specific value from app state.
+ * Select a derived value from the full AppState.
  * Only re-renders when the selected value changes.
  */
 export function useAppSelector<T>(selector: (state: AppState) => T): T {
@@ -354,69 +457,50 @@ export function useAppSelector<T>(selector: (state: AppState) => T): T {
 }
 
 // ---------------------------------------------------------------------------
-// Convenience hooks for common use cases
+// Focused convenience hooks (unchanged public API)
 // ---------------------------------------------------------------------------
 
-/**
- * Hook to get current theme mode
- */
 export function useThemeMode(): ThemeMode {
-  return useAppSelector((state) => state.theme)
+  return useTheme().theme
 }
 
-/**
- * Hook to get current user
- */
 export function useCurrentUser(): User | null {
-  return useAppSelector((state) => state.user)
+  return useUser().user
 }
 
-/**
- * Hook to get UI preferences
- */
 export function useUIPreferences(): UIPreferences {
-  return useAppSelector((state) => state.uiPreferences)
+  return useUIPreferencesContext().uiPreferences
 }
 
-/**
- * Hook to get modal states
- */
 export function useModalStates(): ModalState {
-  return useAppSelector((state) => state.modals)
+  return useModalContext().modals
 }
 
-/**
- * Hook to get a specific modal state
- */
 export function useModal(modal: keyof ModalState): [boolean, (open?: boolean) => void] {
-  const isOpen = useAppSelector((state) => state.modals[modal])
-  const { toggleModal } = useAppActions()
-
-  const toggle = useCallback(
-    (open?: boolean) => toggleModal(modal, open),
-    [modal, toggleModal]
-  )
-
-  return [isOpen, toggle]
+  const { modals, toggleModal } = useModalContext()
+  const toggle = useCallback((open?: boolean) => toggleModal(modal, open), [modal, toggleModal])
+  return [modals[modal], toggle]
 }
 
-/**
- * Hook to get online status
- */
 export function useOnlineStatus(): boolean {
-  return useAppSelector((state) => state.isOnline)
+  return useNetworkContext().isOnline
 }
 
-/**
- * Hook to get last sync time
- */
 export function useLastSyncTime(): number | null {
-  return useAppSelector((state) => state.lastSyncedAt)
+  return useNetworkContext().lastSyncedAt
 }
 
 // ---------------------------------------------------------------------------
-// Exports
+// Legacy context exports (some tests import these directly)
 // ---------------------------------------------------------------------------
 
-export { AppStateContext, AppActionsContext }
-export type { AppContextValue, AppActionsContextValue }
+// These are thin facades so the test file import `{ AppStateContext, AppActionsContext }`
+// continues to compile. They are not meaningful for new code.
+export const AppStateContext = createContext<AppState | undefined>(undefined)
+export const AppActionsContext = createContext<AppActionsContextValue | undefined>(undefined)
+
+// Kept for type compatibility only.
+export interface AppContextValue {
+  state: AppState
+  dispatch: React.Dispatch<never>
+}
