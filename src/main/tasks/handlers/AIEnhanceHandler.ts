@@ -78,15 +78,10 @@ export class AIEnhanceHandler implements TaskHandler<AIEnhanceInput, AIEnhanceOu
     streamReporter?: StreamReporter
   ): Promise<AIEnhanceOutput> {
     const resolver = new ProviderResolver(this.storeService)
-    let provider
-    try {
-      provider = resolver.resolve({
-        providerId: input.providerId,
-        modelId: input.modelId
-      })
-    } catch (err) {
-      throw err
-    }
+    const provider = resolver.resolve({
+      providerId: input.providerId,
+      modelId: input.modelId
+    })
 
     const { apiKey, modelName, providerId } = provider
 
