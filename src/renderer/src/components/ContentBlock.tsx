@@ -30,6 +30,9 @@ export interface ContentBlockProps {
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
   placeholder?: string
+  /** When true the editor will grab focus immediately after mount. Used to
+   * auto-focus a newly inserted block created by pressing Enter. */
+  autoFocus?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -73,6 +76,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   onDelete,
   onAdd,
   placeholder = 'Type here...',
+  autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
   const { t } = useTranslation()
   const dragControls = useDragControls()
@@ -83,11 +87,13 @@ export const ContentBlock = React.memo(function ContentBlock({
   // taskId tracked in state so useEffect dependencies stay reactive.
   const [enhanceTaskId, setEnhanceTaskId] = useState<string | null>(null)
 
-  // Stable callback ref for onChange so useEditor options don't need to re-create the editor.
+  // Stable callback refs so useEditor options never need to re-create the editor.
   const onChangeRef = React.useRef(onChange)
   onChangeRef.current = onChange
   const blockIdRef = React.useRef(block.id)
   blockIdRef.current = block.id
+  const onAddRef = React.useRef(onAdd)
+  onAddRef.current = onAdd
 
   // Holds the original text before enhance started so we can revert on error/cancel.
   const originalTextRef = useRef<string>('')
@@ -114,6 +120,15 @@ export const ContentBlock = React.memo(function ContentBlock({
       attributes: {
         class: 'focus:outline-none min-h-[1em] text-base leading-tight text-foreground',
       },
+      handleKeyDown: (_view, event) => {
+        if (event.key === 'Enter') {
+          // Block both hard Enter and Shift+Enter so the editor stays
+          // single-paragraph. Trigger block creation instead.
+          onAddRef.current?.(blockIdRef.current)
+          return true
+        }
+        return false
+      },
     },
   })
 
@@ -121,6 +136,21 @@ export const ContentBlock = React.memo(function ContentBlock({
   useEffect(() => {
     editorRef.current = editor
   }, [editor])
+
+  // Auto-focus this block's editor when the parent signals it was just inserted
+  // (e.g., the user pressed Enter in the previous block). We run this once when
+  // the editor becomes available and autoFocus is true. Using a ref to ensure
+  // we only fire once even if `editor` identity changes during init.
+  const didAutoFocusRef = useRef(false)
+  useEffect(() => {
+    if (!autoFocus || didAutoFocusRef.current) return
+    if (!editor || editor.isDestroyed) return
+    didAutoFocusRef.current = true
+    // Defer to the next microtask so the DOM is fully committed before focusing.
+    Promise.resolve().then(() => {
+      if (!editor.isDestroyed) editor.commands.focus('start')
+    })
+  }, [autoFocus, editor])
 
   // Sync external content changes (e.g., when the block resets or is edited elsewhere).
   // Guard: skip while enhancing so streamed tokens are not overwritten by echoed onChange calls.

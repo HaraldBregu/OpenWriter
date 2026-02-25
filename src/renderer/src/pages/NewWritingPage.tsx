@@ -71,6 +71,15 @@ const NewWritingPage: React.FC = () => {
 
   const [showSidebar, setShowSidebar] = useState(true)
   const [aiSettings, setAiSettings] = useState(DEFAULT_INFERENCE_SETTINGS)
+  // ID of the block that should receive focus on its next render (set when a
+  // new block is inserted via Enter). Cleared after one render so subsequent
+  // re-renders do not re-focus the same block.
+  const [focusBlockId, setFocusBlockId] = useState<string | null>(null)
+  useEffect(() => {
+    if (!focusBlockId) return
+    // Clear after the render that delivers autoFocus=true to ContentBlock.
+    setFocusBlockId(null)
+  }, [focusBlockId])
 
   // Restore inference settings from the saved output config when editing an existing writing
   const outputItem = useAppSelector(selectOutputItemById('writings', writing?.outputId ?? ''))
@@ -226,6 +235,7 @@ const NewWritingPage: React.FC = () => {
     const newBlock: Block = createBlock()
     const updated = [...writing.blocks.slice(0, index + 1), newBlock, ...writing.blocks.slice(index + 1)]
     dispatch(updateWritingBlocks({ writingId: writing.id, blocks: updated }))
+    setFocusBlockId(newBlock.id)
   }, [writing, dispatch])
 
   const handleReorder = useCallback((reordered: Block[]) => {
@@ -248,11 +258,12 @@ const NewWritingPage: React.FC = () => {
   }, [])
 
   const handleDraftAddBlockAfter = useCallback((afterId: string) => {
+    const newBlock: Block = createBlock()
     setDraftBlocks((prev) => {
       const index = prev.findIndex((b) => b.id === afterId)
-      const newBlock: Block = createBlock()
       return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
     })
+    setFocusBlockId(newBlock.id)
   }, [])
 
   const handleDraftReorder = useCallback((reordered: Block[]) => {
@@ -384,18 +395,22 @@ const NewWritingPage: React.FC = () => {
               onReorder={isDraft ? handleDraftReorder : handleReorder}
               className="flex flex-col gap-0"
             >
-              {blocks.map((block, index) => (
-                <ContentBlock
-                  key={block.id}
-                  block={block}
-                  isOnly={blocks.length === 1}
-                  isLast={index === blocks.length - 1}
-                  onChange={isDraft ? handleDraftChange : handleChange}
-                  onDelete={isDraft ? handleDraftDelete : handleDelete}
-                  onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
-                  placeholder={t('writing.startWriting')}
-                />
-              ))}
+              {blocks.map((block, index) => {
+                const shouldFocus = focusBlockId === block.id
+                return (
+                  <ContentBlock
+                    key={block.id}
+                    block={block}
+                    isOnly={blocks.length === 1}
+                    isLast={index === blocks.length - 1}
+                    onChange={isDraft ? handleDraftChange : handleChange}
+                    onDelete={isDraft ? handleDraftDelete : handleDelete}
+                    onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
+                    placeholder={t('writing.startWriting')}
+                    autoFocus={shouldFocus}
+                  />
+                )
+              })}
             </Reorder.Group>
             <InsertBlockPlaceholder
               onClick={() => {
