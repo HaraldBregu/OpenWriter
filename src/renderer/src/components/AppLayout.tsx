@@ -118,6 +118,7 @@ const settingsMenuItems: SettingsMenuItem[] = [
 const currentUser: { name: string } | null = { name: "John Doe" };
 
 const SettingsPopover = React.memo(function SettingsPopover() {
+  const { t } = useTranslation();
   return (
     <AppPopover>
       <AppPopoverTrigger asChild>
@@ -126,7 +127,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
           className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
           <span className="flex-1 truncate text-sm text-left">
-            {currentUser ? currentUser.name : "Sign in"}
+            {currentUser ? currentUser.name : t("common.signIn")}
           </span>
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
         </button>
@@ -135,17 +136,18 @@ const SettingsPopover = React.memo(function SettingsPopover() {
         <div className="py-1">
           {settingsMenuItems.map((item) => {
             const Icon = item.icon;
+            const label = t(item.titleKey);
             const className =
               "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
             return item.url ? (
-              <Link key={item.title} to={item.url} className={className}>
+              <Link key={item.titleKey} to={item.url} className={className}>
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span>{item.title}</span>
+                <span>{label}</span>
               </Link>
             ) : (
-              <button key={item.title} type="button" className={className}>
+              <button key={item.titleKey} type="button" className={className}>
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span>{item.title}</span>
+                <span>{label}</span>
               </button>
             );
           })}
@@ -158,7 +160,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
                 className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4 shrink-0" />
-                <span>Log out</span>
+                <span>{t("common.logOut")}</span>
               </button>
             </>
           )}
