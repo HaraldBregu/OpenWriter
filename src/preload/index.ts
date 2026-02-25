@@ -555,6 +555,20 @@ const clipboard = {
 // window.store — Persisted AI model settings
 // ---------------------------------------------------------------------------
 const store = {
+    // New provider settings methods
+    getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
+        return unwrapIpcResult(ipcRenderer.invoke('store-get-all-provider-settings'))
+    },
+    getProviderSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null> => {
+        return unwrapIpcResult(ipcRenderer.invoke('store-get-provider-settings', providerId))
+    },
+    setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('store-set-provider-settings', providerId, settings))
+    },
+    setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }): Promise<void> => {
+        return unwrapIpcResult(ipcRenderer.invoke('store-set-inference-defaults', providerId, update))
+    },
+    // Legacy methods
     getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
         return unwrapIpcResult(ipcRenderer.invoke('store-get-all-model-settings'))
     },

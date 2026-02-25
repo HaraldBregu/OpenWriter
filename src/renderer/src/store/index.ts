@@ -7,6 +7,7 @@ import writingsReducer from './writingsSlice'
 import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
+import aiSettingsReducer from './aiSettingsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
     writings: writingsReducer,
     directories: directoriesReducer,
     personalityFiles: personalityFilesReducer,
-    output: outputReducer
+    output: outputReducer,
+    aiSettings: aiSettingsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
