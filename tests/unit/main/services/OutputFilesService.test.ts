@@ -33,7 +33,7 @@ jest.mock('chokidar', () => ({
 
 import fs from 'node:fs/promises'
 import chokidar from 'chokidar'
-import path from 'node:path'
+import 'node:path'
 import { OutputFilesService } from '../../../../src/main/services/output-files'
 import { EventBus } from '../../../../src/main/core/EventBus'
 
