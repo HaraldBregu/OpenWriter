@@ -57,7 +57,7 @@
           "CFBundleTypeExtensions": ["tsrct"],
           "CFBundleTypeRole": "Manager",
           "LSHandlerRank": "Owner",
-          "LSItemContentTypes": ["com.tesseract-ai.tesseract-ai.document"]
+          "LSItemContentTypes": ["com.openwriter.openwriter.document"]
         }
       ],
       "UTExportedTypeDeclarations": [
