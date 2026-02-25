@@ -280,6 +280,17 @@ const NewPostPage: React.FC = () => {
     }
   }, [isDraft, post, dispatch])
 
+  // Resolve display values for both modes
+  const title = isDraft ? draftTitle : post?.title ?? ''
+  const blocks = isDraft ? draftBlocks : post?.blocks ?? []
+
+  const { charCount, wordCount } = useMemo(() => {
+    const joined = blocks.map((b) => b.content).join(' ').trim()
+    const chars = joined.length
+    const words = joined.length === 0 ? 0 : joined.split(/\s+/).filter(Boolean).length
+    return { charCount: chars, wordCount: words }
+  }, [blocks])
+
   // ---------------------------------------------------------------------------
   // Guard: existing post not found in Redux
   // ---------------------------------------------------------------------------
@@ -290,17 +301,6 @@ const NewPostPage: React.FC = () => {
       </div>
     )
   }
-
-  // Resolve display values for both modes
-  const title = isDraft ? draftTitle : post!.title
-  const blocks = isDraft ? draftBlocks : post!.blocks
-
-  const { charCount, wordCount } = useMemo(() => {
-    const joined = blocks.map((b) => b.content).join(' ').trim()
-    const chars = joined.length
-    const words = joined.length === 0 ? 0 : joined.split(/\s+/).filter(Boolean).length
-    return { charCount: chars, wordCount: words }
-  }, [blocks])
 
   return (
     <div className="h-full flex flex-col">
