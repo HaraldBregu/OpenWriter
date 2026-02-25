@@ -15,6 +15,7 @@ import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import type { Agent, AgentInput, AgentEvent } from '../AgentBase'
 import type { StoreService } from '../../services/store'
+import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -34,53 +35,6 @@ const SYSTEM_PROMPT = `You are a precise writing editor. Your task is to improve
 - Do NOT remove important details
 - Do NOT change the formatting structure (paragraphs, lists, etc.)
 - Output ONLY the improved text — no explanations, no preamble, no commentary`
-
-/**
- * Known reasoning model prefixes that do not support the temperature parameter.
- */
-const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview']
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function isReasoningModel(modelName: string): boolean {
-  const normalized = modelName.toLowerCase()
-  return REASONING_MODEL_PREFIXES.some(
-    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-  )
-}
-
-function extractTokenFromChunk(content: unknown): string {
-  if (typeof content === 'string') return content
-
-  if (Array.isArray(content)) {
-    return content
-      .filter((c): c is { text: string } => typeof c === 'object' && c !== null && 'text' in c)
-      .map((c) => c.text)
-      .join('')
-  }
-
-  return ''
-}
-
-function classifyError(error: unknown): 'abort' | 'auth' | 'rate_limit' | 'unknown' {
-  if (error instanceof Error) {
-    const msg = error.message.toLowerCase()
-    const name = error.name.toLowerCase()
-
-    if (name === 'aborterror' || msg.includes('abort') || msg.includes('cancel')) {
-      return 'abort'
-    }
-    if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid api key')) {
-      return 'auth'
-    }
-    if (msg.includes('429') || msg.includes('rate limit')) {
-      return 'rate_limit'
-    }
-  }
-  return 'unknown'
-}
 
 // ---------------------------------------------------------------------------
 // Agent implementation
