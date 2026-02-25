@@ -256,6 +256,7 @@ const DocumentCard = React.memo(function DocumentCard({
   onDelete,
   onView
 }: DocumentCardProps) {
+  const { t } = useTranslation()
   const Icon = getFileIcon(document)
 
   return (
@@ -289,11 +290,11 @@ const DocumentCard = React.memo(function DocumentCard({
           <AppDropdownMenuContent align="end">
             <AppDropdownMenuItem onClick={() => onView(document)}>
               <Eye className="h-4 w-4" />
-              View
+              {t('common.view')}
             </AppDropdownMenuItem>
             <AppDropdownMenuItem>
               <Copy className="h-4 w-4" />
-              Copy Path
+              {t('documents.copyPath')}
             </AppDropdownMenuItem>
             <AppDropdownMenuSeparator />
             <AppDropdownMenuItem
@@ -301,7 +302,7 @@ const DocumentCard = React.memo(function DocumentCard({
               onClick={() => onDelete(document.id)}
             >
               <Trash2 className="h-4 w-4" />
-              Delete
+              {t('common.delete')}
             </AppDropdownMenuItem>
           </AppDropdownMenuContent>
         </AppDropdownMenu>
