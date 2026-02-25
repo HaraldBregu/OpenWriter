@@ -318,11 +318,11 @@ const DirectoriesPage: React.FC = () => {
                           {formatPath(dir.path)}
                         </AppCardDescription>
                         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                          <span>Added: {formatDate(dir.addedAt)}</span>
+                          <span>{t('directories.added', { date: formatDate(dir.addedAt) })}</span>
                           {dir.lastIndexedAt && (
                             <>
                               <span>-</span>
-                              <span>Indexed: {formatDate(dir.lastIndexedAt)}</span>
+                              <span>{t('directories.indexedAt', { date: formatDate(dir.lastIndexedAt) })}</span>
                             </>
                           )}
                         </div>
