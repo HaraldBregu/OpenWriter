@@ -98,7 +98,7 @@ const RecentItem = React.memo(function RecentItem({
   meta,
   route,
   requiresPostCreation
-}: (typeof recentItems)[number]) {
+}: (typeof recentItemDefs)[number]) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
