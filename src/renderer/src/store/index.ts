@@ -8,6 +8,15 @@ import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
 import aiSettingsReducer from './aiSettingsSlice'
+import { listenerMiddleware } from './listenerMiddleware'
+import { registerPostsHydration } from './postsHydration'
+import { registerWritingsHydration } from './writingsHydration'
+
+// Register hydration listeners before the store is created.
+// These replace the extraReducers string-matching pattern in postsSlice and
+// writingsSlice, eliminating the circular import via outputSlice.
+registerPostsHydration()
+registerWritingsHydration()
 
 export const store = configureStore({
   reducer: {
@@ -20,7 +29,7 @@ export const store = configureStore({
     aiSettings: aiSettingsReducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware().prepend(listenerMiddleware.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>
