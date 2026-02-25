@@ -72,7 +72,7 @@ export const PersonalityChatInput: React.FC<PersonalityChatInputProps> = React.m
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={placeholder}
+              placeholder={resolvedPlaceholder}
               disabled={disabled || isLoading}
               className="w-full resize-none rounded-lg border border-input bg-background px-4 py-3 pr-12 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
               rows={1}
