@@ -372,6 +372,11 @@ export const outputSlice = createSlice({
             category: action.payload.category,
             tags: action.payload.tags,
             visibility: action.payload.visibility,
+            provider: action.payload.provider,
+            model: action.payload.model,
+            temperature: action.payload.temperature,
+            maxTokens: action.payload.maxTokens,
+            reasoning: action.payload.reasoning,
             updatedAt: action.payload.updatedAt,
           }
         }
