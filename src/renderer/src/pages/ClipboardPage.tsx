@@ -93,7 +93,7 @@ const ClipboardPage: React.FC = () => {
     ctx.fillStyle = '#000000'
     ctx.font = 'bold 24px Arial'
     ctx.textAlign = 'center'
-    ctx.fillText('Tesseract AI', width / 2, height / 2 + 8)
+    ctx.fillText('OpenWriter', width / 2, height / 2 + 8)
 
     // Draw timestamp
     ctx.fillStyle = '#ffffff'
