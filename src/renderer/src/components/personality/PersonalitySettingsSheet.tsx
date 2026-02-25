@@ -288,7 +288,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
               <AppInput
                 type="number"
                 min={0}
-                placeholder="Enter character limit"
+                placeholder={t('inferenceSettings.enterCharacterLimit')}
                 value={settings.maxTokens ?? ''}
                 onChange={handleCustomMaxTokensChange}
                 className="h-8 text-xs"
