@@ -50,7 +50,7 @@ export class StoreValidators {
       throw new Error('Model name must be between 1 and 200 characters')
     }
     // Allow alphanumeric, hyphens, underscores, dots, and forward slashes (for model paths like "meta/llama-3")
-    if (!/^[a-zA-Z0-9\-_.\/]+$/.test(modelName)) {
+    if (!/^[a-zA-Z0-9\-_./]+$/.test(modelName)) {
       throw new Error('Model name contains invalid characters')
     }
   }
