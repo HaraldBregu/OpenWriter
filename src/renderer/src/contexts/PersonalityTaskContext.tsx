@@ -361,7 +361,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
         store.update(sectionId, { error: errorMsg, isLoading: false })
       }
     },
-    [store]
+    [store, service]
   )
 
   const cancelTask = useCallback(
