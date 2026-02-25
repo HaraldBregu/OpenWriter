@@ -38,16 +38,16 @@ test.describe('App Launch', () => {
   })
 
   test('should display the WelcomePage by default', async () => {
-    // The WelcomePage shows "Tesseract AI" heading
+    // The WelcomePage shows "OpenWriter" heading
     const heading = ctx.page.locator('h1')
     await expect(heading).toBeVisible({ timeout: 10_000 })
     const text = await heading.textContent()
-    expect(text).toContain('Tesseract AI')
+    expect(text).toContain('OpenWriter')
   })
 
   test('should display the title bar', async () => {
     // The TitleBar renders a span with the app title
-    const titleSpan = ctx.page.locator('span:text("Tesseract AI")').first()
+    const titleSpan = ctx.page.locator('span:text("OpenWriter")').first()
     await expect(titleSpan).toBeVisible({ timeout: 10_000 })
   })
 
