@@ -82,7 +82,7 @@ const app = {
     return paths[name] ?? `/fake/${name}`
   }),
   getVersion: jest.fn().mockReturnValue('1.0.0'),
-  getName: jest.fn().mockReturnValue('Tesseract AI'),
+  getName: jest.fn().mockReturnValue('OpenWriter'),
   isReady: jest.fn().mockReturnValue(true),
   whenReady: jest.fn().mockResolvedValue(undefined),
   quit: jest.fn(),
