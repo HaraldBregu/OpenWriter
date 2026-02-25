@@ -1,7 +1,7 @@
 {
   "productName": "OpenWriter",
   "appId": "com.openwriter.openwriter",
-  "copyright": "OpenWriter Project © 2026",
+  "copyright": "© 2026 OpenWriter Project. All rights reserved.",
   "files": [
     "out/**",
     "resources/**"
