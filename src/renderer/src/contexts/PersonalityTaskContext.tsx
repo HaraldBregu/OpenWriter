@@ -296,7 +296,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
     })
 
     return () => unsubscribe()
-  }, [store, autoSave])
+  }, [store, autoSave, service])
 
   // -----------------------------------------------------------------------
   // Action callbacks — stable across renders because store never changes.
