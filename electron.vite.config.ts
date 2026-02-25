@@ -36,7 +36,7 @@ export default defineConfig({
     },
     plugins: [
       react(),
-      tsconfigPaths()
+      tsconfigPaths({ ignoreConfigErrors: true })
     ]
   }
 })
