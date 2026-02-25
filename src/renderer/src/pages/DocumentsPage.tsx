@@ -388,6 +388,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
   onClose,
   onDownload
 }: RemoteDownloadModalProps) {
+  const { t } = useTranslation()
   const [url, setUrl] = useState('')
   const [status, setStatus] = useState<DownloadStatus>('idle')
   const [progress, setProgress] = useState(0)
