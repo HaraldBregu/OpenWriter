@@ -598,6 +598,24 @@
     "noteFeature4": "Supporta diversi livelli di urgenza e modalità silenziosa"
   },
 
+  "creativityPresets": {
+    "precise": "Preciso",
+    "balanced": "Bilanciato",
+    "creative": "Creativo",
+    "very-creative": "Molto Creativo",
+    "imaginative": "Immaginativo",
+    "custom": "Personalizzato"
+  },
+
+  "textLengthPresets": {
+    "short": "Breve (500 caratteri)",
+    "medium": "Medio (1.000 caratteri)",
+    "long": "Lungo (2.000 caratteri)",
+    "very-long": "Molto Lungo (4.000 caratteri)",
+    "unlimited": "Illimitato",
+    "custom": "Personalizzato"
+  },
+
   "relativeTime": {
     "justNow": "adesso",
     "minutesAgo": "{{count}} min fa",
