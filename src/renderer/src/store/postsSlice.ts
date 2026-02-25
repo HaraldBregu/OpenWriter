@@ -268,6 +268,7 @@ export const {
   updatePostCategory,
   updatePostTags,
   updatePostVisibility,
+  updatePostInferenceSettings,
   deletePost,
   loadPosts,
   handleExternalPostChange,

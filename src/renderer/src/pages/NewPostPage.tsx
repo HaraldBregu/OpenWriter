@@ -185,7 +185,7 @@ const NewPostPage: React.FC = () => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [isDraft, post, dispatch])
+  }, [isDraft, post, aiSettings, dispatch])
 
   // ---------------------------------------------------------------------------
   // Edit mode callbacks
