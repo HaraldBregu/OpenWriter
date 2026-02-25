@@ -162,7 +162,7 @@
     "artifactName": "${productName}.${ext}",
     "forceCodeSigning": false,
     "signtoolOptions": {
-      "publisherName": "Tesseract AI Project"
+      "publisherName": "OpenWriter Project"
     },
     "requestedExecutionLevel": "asInvoker",
     "extraResources": [
