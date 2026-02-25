@@ -41,6 +41,8 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
   const [isFullScreen, setIsFullScreen] = useState(false)
 
   useEffect(() => {
+    if (!window.win) return
+
     window.win.isMaximized().then(setIsMaximized)
     window.win.isFullScreen().then(setIsFullScreen)
 
