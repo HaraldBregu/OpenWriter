@@ -454,7 +454,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                         className="shrink-0"
                       >
                         <StopCircle className="mr-2 h-4 w-4" />
-                        Stop
+                        {t('personality.stop')}
                       </AppButton>
                     ) : (
                       <AppButton
@@ -464,13 +464,13 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                         className="shrink-0"
                       >
                         <Send className="mr-2 h-4 w-4" />
-                        Submit
+                        {t('personality.submit')}
                       </AppButton>
                     )}
                   </div>
 
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Press Enter to submit your question
+                    {t('personality.pressEnterToSubmit')}
                   </p>
                 </div>
               </div>
