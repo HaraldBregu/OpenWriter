@@ -119,6 +119,27 @@ export const postsSlice = createSlice({
       if (post) post.outputId = action.payload.outputId
     },
 
+    updatePostInferenceSettings(
+      state,
+      action: PayloadAction<{
+        postId: string
+        provider: string
+        model: string
+        temperature: number
+        maxTokens: number | null
+        reasoning: boolean
+      }>
+    ) {
+      const post = state.posts.find((p) => p.id === action.payload.postId)
+      if (!post) return
+      post.provider = action.payload.provider
+      post.model = action.payload.model
+      post.temperature = action.payload.temperature
+      post.maxTokens = action.payload.maxTokens
+      post.reasoning = action.payload.reasoning
+      post.updatedAt = Date.now()
+    },
+
     deletePost(state, action: PayloadAction<string>) {
       state.posts = state.posts.filter((p) => p.id !== action.payload)
     },
