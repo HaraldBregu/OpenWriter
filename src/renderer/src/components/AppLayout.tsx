@@ -214,7 +214,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Personality: false,
   });
 
-  const [workspaceName, setWorkspaceName] = useState<string>("Tesseract AI");
+  const [workspaceName, setWorkspaceName] = useState<string>("OpenWriter");
 
   // Load workspace name on mount
   useEffect(() => {
@@ -228,7 +228,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               ? workspacePath.split(/[/\\]/)
               : [];
           const folderName = pathParts[pathParts.length - 1];
-          setWorkspaceName(`${folderName} (workspace)` || "Tesseract AI");
+          setWorkspaceName(`${folderName} (workspace)` || "OpenWriter");
         }
       } catch (error) {
         console.error("[AppLayout] Failed to load workspace name:", error);
@@ -415,7 +415,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             >
               <img
                 src={logoIcon}
-                alt="Tesseract AI"
+                alt="OpenWriter"
                 className="h-6 w-6 rounded-full object-cover"
               />
               <span className="text-md font-normal tracking-tight">
