@@ -40,7 +40,6 @@ export interface AIChatOutput {
 // ---------------------------------------------------------------------------
 
 const LOG_PREFIX = '[AIChatHandler]'
-const DEFAULT_MODEL = 'gpt-4o-mini'
 const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant.'
 
 // ---------------------------------------------------------------------------
