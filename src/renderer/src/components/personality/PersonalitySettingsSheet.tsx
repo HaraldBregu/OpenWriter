@@ -229,7 +229,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
 
         {/* Creativity Level (replaces Temperature) */}
         <div className="space-y-1.5">
-          <AppLabel className="text-xs">Creativity Level</AppLabel>
+          <AppLabel className="text-xs">{t('inferenceSettings.creativityLevel')}</AppLabel>
           <AppSelect
             value={creativityLevel}
             onValueChange={handleCreativityLevelChange}
