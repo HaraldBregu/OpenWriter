@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useLanguage } from "../hooks/useLanguage";
 import { usePostsLoader } from "../hooks/usePostsLoader";
 import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";

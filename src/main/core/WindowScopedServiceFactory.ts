@@ -108,12 +108,14 @@ export class WindowScopedServiceFactory {
  * Can be overridden or extended by applications that need custom services.
  */
 export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFactory {
-  const { WorkspaceService } = require('../services/workspace')
-  const { WorkspaceMetadataService } = require('../services/workspace-metadata')
-  const { FileWatcherService } = require('../services/file-watcher')
-  const { DocumentsWatcherService } = require('../services/documents-watcher')
-  const { PersonalityFilesService } = require('../services/personality-files')
-  const { OutputFilesService } = require('../services/output-files')
+  // Use absolute paths to ensure correct module resolution in compiled output
+  const servicesDir = path.resolve(__dirname, '../services')
+  const { WorkspaceService } = require(path.join(servicesDir, 'workspace'))
+  const { WorkspaceMetadataService } = require(path.join(servicesDir, 'workspace-metadata'))
+  const { FileWatcherService } = require(path.join(servicesDir, 'file-watcher'))
+  const { DocumentsWatcherService } = require(path.join(servicesDir, 'documents-watcher'))
+  const { PersonalityFilesService } = require(path.join(servicesDir, 'personality-files'))
+  const { OutputFilesService } = require(path.join(servicesDir, 'output-files'))
 
   const factory = new WindowScopedServiceFactory()
 
