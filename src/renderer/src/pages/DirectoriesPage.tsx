@@ -133,8 +133,8 @@ const DirectoriesPage: React.FC = () => {
   const handleIndexDirectories = useCallback(async () => {
     if (directories.length === 0) {
       await window.notification.show({
-        title: 'No Directories',
-        body: 'Please add directories to index first.',
+        title: t('directoryNotifications.noDirectoriesTitle'),
+        body: t('directoryNotifications.noDirectoriesBody'),
         urgency: 'normal'
       })
       return
@@ -160,22 +160,25 @@ const DirectoriesPage: React.FC = () => {
         }
       }
 
+      const count = directories.length
       await window.notification.show({
-        title: 'Indexing Complete',
-        body: `Successfully indexed ${directories.length} ${directories.length === 1 ? 'directory' : 'directories'}.`,
+        title: t('directoryNotifications.indexingCompleteTitle'),
+        body: count === 1
+          ? t('directoryNotifications.indexingCompleteBody_one', { count })
+          : t('directoryNotifications.indexingCompleteBody_other', { count }),
         urgency: 'normal'
       })
     } catch (err) {
       console.error('[DirectoriesPage] Failed to index directories:', err)
       await window.notification.show({
-        title: 'Indexing Failed',
-        body: 'Failed to index directories. Please try again.',
+        title: t('directoryNotifications.indexingFailedTitle'),
+        body: t('directoryNotifications.indexingFailedBody'),
         urgency: 'critical'
       })
     } finally {
       setIsIndexing(false)
     }
-  }, [directories, dispatch])
+  }, [directories, dispatch, t])
 
   function formatPath(filePath: string): string {
     if (!filePath) return ''
