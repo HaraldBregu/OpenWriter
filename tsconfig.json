@@ -7,7 +7,7 @@
       "@pages/*": ["src/renderer/src/pages/*"],
       "@store/*": ["src/renderer/src/store/*"],
       "@components/*": ["src/renderer/src/components/*"],
-      "@icons/*": ["src/src/renderer/src/components/icons/*"],
+      "@icons/*": ["src/renderer/src/components/icons/*"],
       "@resources/*": ["resources/*"]
     },
     "jsx": "react-jsx",
