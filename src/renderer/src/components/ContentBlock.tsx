@@ -7,6 +7,8 @@ import { type Editor } from '@tiptap/core'
 import Document from '@tiptap/extension-document'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
+import { AppButton } from '@/components/app'
+import { useTask } from '@/hooks/useTask'
 
 // ---------------------------------------------------------------------------
 // Custom Document extension: restricts the schema to exactly one paragraph.
@@ -17,8 +19,6 @@ import { Markdown } from '@tiptap/markdown'
 // and no other insertion path can create a second paragraph node.
 // ---------------------------------------------------------------------------
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' })
-import { AppButton } from '@/components/app'
-import { useTask } from '@/hooks/useTask'
 
 // ---------------------------------------------------------------------------
 // Types
