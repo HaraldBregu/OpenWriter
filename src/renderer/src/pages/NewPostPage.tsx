@@ -319,11 +319,12 @@ const NewPostPage: React.FC = () => {
               onReorder={isDraft ? handleDraftReorder : handleReorder}
               className="flex flex-col gap-0"
             >
-              {blocks.map((block) => (
+              {blocks.map((block, index) => (
                 <ContentBlock
                   key={block.id}
                   block={block}
                   isOnly={blocks.length === 1}
+                  isLast={index === blocks.length - 1}
                   onChange={isDraft ? handleDraftChange : handleChange}
                   onDelete={isDraft ? handleDraftDelete : handleDelete}
                   onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
