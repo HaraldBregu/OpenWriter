@@ -53,12 +53,13 @@ const recentItemDefs = [
 
 const CategoryCard = React.memo(function CategoryCard({
   icon: Icon,
-  label,
-  description,
+  labelKey,
+  descriptionKey,
   route,
   accent,
   requiresPostCreation
-}: (typeof categories)[number]) {
+}: (typeof categoryDefs)[number]) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
@@ -82,8 +83,8 @@ const CategoryCard = React.memo(function CategoryCard({
         <Icon className="h-4 w-4" />
       </div>
       <div>
-        <p className="text-sm font-medium text-foreground">{label}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        <p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{t(descriptionKey)}</p>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all mt-auto self-end" />
     </button>
