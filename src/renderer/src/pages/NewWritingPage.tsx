@@ -19,11 +19,13 @@ import {
   updateWritingBlocks,
   updateWritingTitle,
   deleteWriting,
+  updateWritingInferenceSettings,
 } from '../store/writingsSlice'
-import { saveOutputItem, updateOutputItem, deleteOutputItem } from '@/store/outputSlice'
+import { saveOutputItem, updateOutputItem, deleteOutputItem, selectOutputItemById } from '@/store/outputSlice'
 import {
   PersonalitySettingsPanel,
   DEFAULT_INFERENCE_SETTINGS,
+  type InferenceSettings,
 } from '@/components/personality/PersonalitySettingsSheet'
 
 // ---------------------------------------------------------------------------
