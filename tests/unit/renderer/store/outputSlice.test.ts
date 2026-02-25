@@ -53,7 +53,9 @@ function makeOutputItem(overrides: Partial<OutputItem> = {}): OutputItem {
     type: 'posts' as OutputType,
     path: '/workspace/output/posts/item-1',
     title: 'Test Post',
-    content: 'Hello world',
+    blocks: [
+      { name: 'block-uuid-1', content: 'Hello world', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }
+    ],
     category: 'general',
     tags: ['tag-a'],
     visibility: 'private',
