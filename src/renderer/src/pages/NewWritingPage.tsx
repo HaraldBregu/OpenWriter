@@ -38,6 +38,7 @@ const NewWritingPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const isDraft = id === undefined
 
