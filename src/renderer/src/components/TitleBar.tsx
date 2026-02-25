@@ -80,7 +80,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
             type="button"
             onClick={() => window.app.popupMenu()}
             className={btnNoHover}
-            title="Application menu"
+            title={t('titleBar.applicationMenu')}
           >
             <Menu className="h-[18px] w-[18px]" strokeWidth={1.5} />
           </button>
@@ -90,7 +90,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
               type="button"
               onClick={onToggleSidebar}
               className={btnNoHover}
-              title="Toggle sidebar"
+              title={t('titleBar.toggleSidebar')}
             >
               <PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
             </button>
