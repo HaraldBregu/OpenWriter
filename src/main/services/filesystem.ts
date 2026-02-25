@@ -26,7 +26,7 @@ export class FilesystemService {
     const result = await dialog.showOpenDialog(focusedWindow!, {
       properties: ['openFile'],
       filters: [
-        { name: 'Tesseract AI Documents', extensions: ['tsrct'] },
+        { name: 'OpenWriter Documents', extensions: ['tsrct'] },
         { name: 'Text Files', extensions: ['txt', 'md', 'json', 'js', 'ts', 'tsx', 'jsx', 'html', 'css', 'xml', 'yaml', 'yml', 'csv', 'log', 'ini', 'cfg', 'env'] },
         { name: 'All Files', extensions: ['*'] }
       ]
@@ -62,7 +62,7 @@ export class FilesystemService {
     const result = await dialog.showSaveDialog(focusedWindow!, {
       defaultPath: defaultName,
       filters: [
-        { name: 'Tesseract AI Documents', extensions: ['tsrct'] },
+        { name: 'OpenWriter Documents', extensions: ['tsrct'] },
         { name: 'Text Files', extensions: ['txt', 'md', 'json', 'js', 'ts'] },
         { name: 'All Files', extensions: ['*'] }
       ]
