@@ -18,12 +18,14 @@ import {
   setPostOutputId,
   updatePostBlocks,
   updatePostTitle,
-  deletePost
+  deletePost,
+  updatePostInferenceSettings,
 } from '../store/postsSlice'
-import { saveOutputItem, updateOutputItem, deleteOutputItem } from '@/store/outputSlice'
+import { saveOutputItem, updateOutputItem, deleteOutputItem, selectOutputItemById } from '@/store/outputSlice'
 import {
   PersonalitySettingsPanel,
   DEFAULT_INFERENCE_SETTINGS,
+  type InferenceSettings,
 } from '@/components/personality/PersonalitySettingsSheet'
 
 // ---------------------------------------------------------------------------
