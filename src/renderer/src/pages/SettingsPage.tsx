@@ -23,7 +23,17 @@ const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
 
 const SettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('general')
+  const { t } = useTranslation()
   useLanguage()
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'general', label: t('settings.tabs.general') },
+    { id: 'models', label: t('settings.tabs.models') },
+    { id: 'media', label: t('settings.tabs.media') },
+    { id: 'devices', label: t('settings.tabs.devices') },
+    { id: 'tools', label: t('settings.tabs.tools') },
+    { id: 'system', label: t('settings.tabs.system') },
+  ]
 
   const ActiveComponent = tabComponents[activeTab]
 
