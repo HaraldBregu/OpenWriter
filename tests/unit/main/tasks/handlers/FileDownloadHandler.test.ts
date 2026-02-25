@@ -49,7 +49,7 @@ jest.mock('fs', () => ({
 // The net.request mock is defined inside the factory so it is always defined
 // when the factory runs (jest.mock calls are hoisted to top of file).
 // We expose a reference via a module-level variable that is populated lazily.
-let mockNetRequest: jest.Mock
+let _mockNetRequest: jest.Mock
 
 jest.mock('electron', () => {
   const original = jest.requireActual('../../../../../tests/mocks/electron')
