@@ -200,9 +200,9 @@ const DirectoriesPage: React.FC = () => {
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Indexed Directories</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{t('directories.title')}</h1>
               <p className="text-muted-foreground">
-                Manage directories for AI-powered document search and retrieval.
+                {t('directories.description')}
               </p>
             </div>
             <div className="flex gap-2">
