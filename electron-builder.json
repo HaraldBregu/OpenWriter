@@ -131,7 +131,7 @@
   },
   "deb": {
     "packageCategory": "utils",
-    "maintainer": "Tesseract AI Project <contact@tesseract-ai.org>",
+    "maintainer": "OpenWriter Project <contact@openwriter.org>",
     "afterInstall": "./scripts/postinstall.sh",
     "depends": [
       "libgtk-3-0",
