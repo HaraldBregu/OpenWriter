@@ -27,7 +27,8 @@ import postsReducer, {
   selectPostCount,
   type Post
 } from '../../../../src/renderer/src/store/postsSlice'
-import type { OutputItem } from '../../../../src/renderer/src/store/outputSlice'
+import type { OutputItem, OutputBlockItem } from '../../../../src/renderer/src/store/outputSlice'
+import type { Block } from '../../../../src/renderer/src/components/ContentBlock'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,11 +40,21 @@ function createInitialState() {
   }
 }
 
+/** Create a Block with timestamps for test use. */
+function makeBlock(id: string, content: string): Block {
+  return { id, content, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }
+}
+
+/** Create an OutputBlockItem (bridge-side block). */
+function makeOutputBlock(name: string, content: string): OutputBlockItem {
+  return { name, content, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-02T00:00:00.000Z' }
+}
+
 function createTestPost(overrides: Partial<Post> = {}): Post {
   return {
     id: 'test-post-id',
     title: 'Test Post',
-    blocks: [{ id: 'block-1', content: 'Test content' }],
+    blocks: [makeBlock('block-1', 'Test content')],
     category: 'technology',
     tags: ['test', 'example'],
     visibility: 'public',
@@ -60,7 +71,10 @@ function makeOutputItem(overrides: Partial<OutputItem> = {}): OutputItem {
     type: 'posts',
     path: '/workspace/output/posts/output-1',
     title: 'Disk Post Title',
-    content: 'Paragraph one\n\nParagraph two',
+    blocks: [
+      makeOutputBlock('block-uuid-1', 'Paragraph one'),
+      makeOutputBlock('block-uuid-2', 'Paragraph two'),
+    ],
     category: 'technology',
     tags: ['disk-tag'],
     visibility: 'public',
@@ -111,6 +125,22 @@ describe('postsSlice', () => {
         expect(result.posts[0].updatedAt).toBeTruthy()
       })
 
+      it('should create a block with ISO timestamps', () => {
+        // Arrange
+        const state = createInitialState()
+
+        // Act
+        const result = postsReducer(state, createPost())
+
+        // Assert
+        const block = result.posts[0].blocks[0]
+        expect(block.createdAt).toBeTruthy()
+        expect(block.updatedAt).toBeTruthy()
+        // Verify they are valid ISO 8601 strings
+        expect(() => new Date(block.createdAt)).not.toThrow()
+        expect(() => new Date(block.updatedAt)).not.toThrow()
+      })
+
       it('should prepend new posts (most recent first)', () => {
         // Arrange
         let state = createInitialState()
@@ -133,8 +163,8 @@ describe('postsSlice', () => {
         let state = createInitialState()
         state.posts.push(createTestPost({ id: 'post-1' }))
         const newBlocks = [
-          { id: 'block-a', content: 'Updated content 1' },
-          { id: 'block-b', content: 'Updated content 2' }
+          makeBlock('block-a', 'Updated content 1'),
+          makeBlock('block-b', 'Updated content 2')
         ]
         const beforeUpdatedAt = state.posts[0].updatedAt
 
@@ -556,12 +586,16 @@ describe('postsSlice', () => {
       expect(result.posts[0].reasoning).toBe(true)
     })
 
-    it('should split multi-paragraph content into one block per paragraph', () => {
+    it('should reconstruct blocks from individual disk block items', () => {
       // Arrange
       const state = createInitialState()
       const diskItem = makeOutputItem({
         id: 'output-1',
-        content: 'Paragraph one\n\nParagraph two\n\nParagraph three'
+        blocks: [
+          makeOutputBlock('block-uuid-1', 'Paragraph one'),
+          makeOutputBlock('block-uuid-2', 'Paragraph two'),
+          makeOutputBlock('block-uuid-3', 'Paragraph three'),
+        ]
       })
 
       // Act
@@ -574,10 +608,47 @@ describe('postsSlice', () => {
       expect(result.posts[0].blocks[2].content).toBe('Paragraph three')
     })
 
-    it('should create a single empty block when disk content is empty', () => {
+    it('should use block name as the Block id when hydrating from disk', () => {
+      // Arrange — the block name in config.json is used as the Redux block id
+      const state = createInitialState()
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        blocks: [makeOutputBlock('my-stable-uuid', 'Content')]
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts[0].blocks[0].id).toBe('my-stable-uuid')
+    })
+
+    it('should preserve block timestamps when hydrating from disk', () => {
       // Arrange
       const state = createInitialState()
-      const diskItem = makeOutputItem({ id: 'output-1', content: '' })
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        blocks: [{
+          name: 'block-1',
+          content: 'Hello',
+          createdAt: '2024-03-01T00:00:00.000Z',
+          updatedAt: '2024-03-15T00:00:00.000Z',
+        }]
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const block = result.posts[0].blocks[0]
+      expect(block.createdAt).toBe('2024-03-01T00:00:00.000Z')
+      expect(block.updatedAt).toBe('2024-03-15T00:00:00.000Z')
+    })
+
+    it('should create a single empty block when disk blocks array is empty', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', blocks: [] })
 
       // Act
       const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
@@ -587,13 +658,13 @@ describe('postsSlice', () => {
       expect(result.posts[0].blocks[0].content).toBe('')
     })
 
-    it('should NOT rebuild blocks when disk content matches current blocks exactly', () => {
-      // Arrange — blocks and disk content are identical
+    it('should NOT rebuild blocks when disk content is identical to current blocks', () => {
+      // Arrange — blocks and disk content are identical by name+content fingerprint
       const existing = createTestPost({
         id: 'post-1',
         blocks: [
-          { id: 'block-1', content: 'Paragraph one' },
-          { id: 'block-2', content: 'Paragraph two' }
+          makeBlock('block-uuid-1', 'Paragraph one'),
+          makeBlock('block-uuid-2', 'Paragraph two'),
         ],
         outputId: 'output-1'
       })
@@ -602,7 +673,10 @@ describe('postsSlice', () => {
 
       const diskItem = makeOutputItem({
         id: 'output-1',
-        content: 'Paragraph one\n\nParagraph two'
+        blocks: [
+          makeOutputBlock('block-uuid-1', 'Paragraph one'),
+          makeOutputBlock('block-uuid-2', 'Paragraph two'),
+        ]
       })
 
       // Act
@@ -631,7 +705,7 @@ describe('postsSlice', () => {
       // Arrange — existing post has inference settings; disk content is identical
       const existing = createTestPost({
         id: 'post-1',
-        blocks: [{ id: 'block-1', content: 'Same content' }],
+        blocks: [makeBlock('block-uuid-1', 'Same content')],
         outputId: 'output-1',
         provider: 'anthropic',
         model: 'claude-opus-4-6',
@@ -643,7 +717,7 @@ describe('postsSlice', () => {
 
       const diskItem = makeOutputItem({
         id: 'output-1',
-        content: 'Same content',
+        blocks: [makeOutputBlock('block-uuid-1', 'Same content')],
         provider: 'anthropic',
         model: 'claude-opus-4-6',
         temperature: 0.8,
