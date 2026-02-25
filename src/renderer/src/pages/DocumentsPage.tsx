@@ -889,7 +889,7 @@ const DocumentsPage: React.FC = () => {
                 </span>
               </div>
               <span>
-                Total size: {formatFileSize(documents.reduce((sum, doc) => sum + doc.size, 0))}
+                {t('documents.totalSize', { size: formatFileSize(documents.reduce((sum, doc) => sum + doc.size, 0)) })}
               </span>
             </div>
           </div>
