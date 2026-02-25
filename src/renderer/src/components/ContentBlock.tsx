@@ -117,7 +117,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   const editorOptions = useMemo(() => ({
     extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
     content: block.content || '',
-    contentType: 'markdown',
+    contentType: 'markdown' as const,
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
       onChangeRef.current(blockIdRef.current, ed.getMarkdown())
@@ -143,7 +143,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
   }), [block.content])
 
-  const editor = useEditor(editorOptions)
+  const editor = useEditor(editorOptions as any)
 
   // Keep editorRef in sync whenever useEditor returns a new instance.
   useEffect(() => {
