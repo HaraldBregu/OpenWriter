@@ -223,7 +223,8 @@ export const {
   updateWritingTitle,
   updateWritingInferenceSettings,
   deleteWriting,
-  loadWritings
+  loadWritings,
+  hydrateWritingsFromDisk,
 } = writingsSlice.actions
 
 // ---------------------------------------------------------------------------
