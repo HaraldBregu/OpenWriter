@@ -287,7 +287,8 @@ export const {
   deletePost,
   loadPosts,
   handleExternalPostChange,
-  handleExternalPostDelete
+  handleExternalPostDelete,
+  hydratePostsFromDisk,
 } = postsSlice.actions
 
 // ---------------------------------------------------------------------------
