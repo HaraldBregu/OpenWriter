@@ -191,9 +191,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const posts = useAppSelector(selectPosts);
   const writings = useAppSelector(selectWritings);
+
+  // Subscribe to IPC context-menu events. Each hook uses the ref pattern
+  // internally so re-subscriptions never occur on post/writing array changes.
+  usePostContextMenu(posts);
+  useWritingContextMenu(writings);
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: true,
@@ -253,146 +257,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     },
     [],
   );
-
-  // Listen for context menu actions
-  useEffect(() => {
-    const cleanup = window.contextMenu.onPostAction((data) => {
-      const { action, postId } = data;
-
-      switch (action) {
-        case "open":
-          navigate(`/new/post/${postId}`);
-          break;
-
-        case "duplicate": {
-          // Find the source post
-          const sourcePost = posts.find((p) => p.id === postId);
-          if (!sourcePost) break;
-
-          // Create a new post
-          const newPostAction = createPost();
-          dispatch(newPostAction);
-          const newPostId = newPostAction.payload.id;
-
-          // Copy all fields from source post to new post
-          dispatch(
-            updatePostTitle({
-              postId: newPostId,
-              title: `${sourcePost.title} (Copy)`,
-            }),
-          );
-          dispatch(
-            updatePostBlocks({ postId: newPostId, blocks: sourcePost.blocks }),
-          );
-          dispatch(
-            updatePostCategory({
-              postId: newPostId,
-              category: sourcePost.category,
-            }),
-          );
-          dispatch(
-            updatePostTags({ postId: newPostId, tags: sourcePost.tags }),
-          );
-          dispatch(
-            updatePostVisibility({
-              postId: newPostId,
-              visibility: sourcePost.visibility,
-            }),
-          );
-
-          // Navigate to the new post
-          navigate(`/new/post/${newPostId}`);
-          break;
-        }
-
-        case "rename":
-          // Navigate to the post page (title is editable there)
-          navigate(`/new/post/${postId}`);
-          break;
-
-        case "delete": {
-          const postToDelete = posts.find((p) => p.id === postId);
-          if (postToDelete?.outputId) {
-            dispatch(
-              deleteOutputItem({ type: "posts", id: postToDelete.outputId }),
-            );
-          }
-          dispatch(deletePost(postId));
-          // If currently viewing this post, navigate to home
-          if (location.pathname === `/new/post/${postId}`) {
-            navigate("/home");
-          }
-          break;
-        }
-      }
-    });
-
-    return cleanup;
-  }, [dispatch, navigate, location.pathname, posts]);
-
-  // Listen for writing context menu actions
-  useEffect(() => {
-    const cleanup = window.contextMenu.onWritingAction((data) => {
-      const { action, writingId } = data;
-
-      switch (action) {
-        case "open":
-          navigate(`/new/writing/${writingId}`);
-          break;
-
-        case "duplicate": {
-          const source = writings.find((w) => w.id === writingId);
-          if (!source) break;
-          const newId = crypto.randomUUID();
-          dispatch(
-            addWriting({
-              id: newId,
-              title: `${source.title} (Copy)`,
-              blocks: source.blocks.map((b) => {
-                const now = new Date().toISOString()
-                return {
-                  id: crypto.randomUUID(),
-                  content: b.content,
-                  createdAt: now,
-                  updatedAt: now,
-                }
-              }),
-              category: source.category,
-              tags: source.tags,
-              visibility: source.visibility,
-              createdAt: Date.now(),
-              updatedAt: Date.now(),
-            }),
-          );
-          navigate(`/new/writing/${newId}`);
-          break;
-        }
-
-        case "rename":
-          navigate(`/new/writing/${writingId}`);
-          break;
-
-        case "delete": {
-          const writingToDelete = writings.find((w) => w.id === writingId);
-          if (writingToDelete?.outputId) {
-            dispatch(
-              deleteOutputItem({
-                type: "writings",
-                id: writingToDelete.outputId,
-              }),
-            );
-          }
-          dispatch(deleteWriting(writingId));
-          if (location.pathname === `/new/writing/${writingId}`) {
-            navigate("/home");
-          }
-          break;
-        }
-      }
-    });
-
-    return cleanup;
-  }, [dispatch, navigate, location.pathname, writings]);
 
   return (
     <>
