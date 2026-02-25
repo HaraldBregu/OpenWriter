@@ -11,7 +11,7 @@
  * These tests use AppProvider + useAppState (from AppContext).
  */
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { AppProvider, useAppState } from '../../../../src/renderer/src/contexts/AppContext'
 
 // Helper component that exposes theme state
