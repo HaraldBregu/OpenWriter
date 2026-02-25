@@ -281,7 +281,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
               ))}
             </AppSelectContent>
           </AppSelect>
-          {textLengthLevel === 'custom' && (
+          {textLengthLevel === 'custom' && hasModel && (
             <div className="pt-1">
               <AppInput
                 type="number"
