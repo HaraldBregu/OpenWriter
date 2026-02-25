@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { aiProviders } from '@/config/aiProviders'
 
 const ModelsSettings: React.FC = () => {
+  const { t } = useTranslation()
   const [selectedModels, setSelectedModels] = useState<Record<string, string>>(
     Object.fromEntries(aiProviders.map((p) => [p.id, p.models[0].id]))
   )

@@ -2,7 +2,8 @@ import { ipcMain } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
-import type { StoreService, ModelSettings } from '../services/store'
+import type { StoreService } from '../services/store'
+import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
 import { StoreValidators } from '../shared/validators'
 import { wrapSimpleHandler } from './IpcErrorHandler'
 
@@ -15,7 +16,53 @@ export class StoreIpc implements IpcModule {
   register(container: ServiceContainer, _eventBus: EventBus): void {
     const store = container.get<StoreService>('store')
 
-    // Model settings
+    // --- New provider settings channels ---
+
+    ipcMain.handle(
+      'store-get-all-provider-settings',
+      wrapSimpleHandler(() => store.getAllProviderSettings(), 'store-get-all-provider-settings')
+    )
+
+    ipcMain.handle(
+      'store-get-provider-settings',
+      wrapSimpleHandler((providerId: string) => {
+        StoreValidators.validateProviderId(providerId)
+        return store.getProviderSettings(providerId)
+      }, 'store-get-provider-settings')
+    )
+
+    ipcMain.handle(
+      'store-set-provider-settings',
+      wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
+        StoreValidators.validateProviderId(providerId)
+        StoreValidators.validateModelName(settings.selectedModel)
+        StoreValidators.validateApiToken(settings.apiToken)
+        StoreValidators.validateTemperature(settings.temperature)
+        StoreValidators.validateMaxTokens(settings.maxTokens)
+        StoreValidators.validateReasoning(settings.reasoning)
+        return store.setProviderSettings(providerId, settings)
+      }, 'store-set-provider-settings')
+    )
+
+    ipcMain.handle(
+      'store-set-inference-defaults',
+      wrapSimpleHandler((providerId: string, update: InferenceDefaultsUpdate) => {
+        StoreValidators.validateProviderId(providerId)
+        if (update.temperature !== undefined) {
+          StoreValidators.validateTemperature(update.temperature)
+        }
+        if (update.maxTokens !== undefined) {
+          StoreValidators.validateMaxTokens(update.maxTokens)
+        }
+        if (update.reasoning !== undefined) {
+          StoreValidators.validateReasoning(update.reasoning)
+        }
+        return store.setInferenceDefaults(providerId, update)
+      }, 'store-set-inference-defaults')
+    )
+
+    // --- Legacy model settings channels ---
+
     ipcMain.handle(
       'store-get-model-settings',
       wrapSimpleHandler((providerId: string) => {
@@ -45,13 +92,14 @@ export class StoreIpc implements IpcModule {
     )
     ipcMain.handle(
       'store-set-model-settings',
-      wrapSimpleHandler((providerId: string, settings: ModelSettings) => {
+      wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
         StoreValidators.validateProviderId(providerId)
         return store.setModelSettings(providerId, settings)
       }, 'store-set-model-settings')
     )
 
-    // Workspace settings
+    // --- Workspace settings channels ---
+
     ipcMain.handle(
       'store-get-current-workspace',
       wrapSimpleHandler(() => store.getCurrentWorkspace(), 'store-get-current-workspace')
