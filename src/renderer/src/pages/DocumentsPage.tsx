@@ -548,6 +548,7 @@ RemoteDownloadModal.displayName = 'RemoteDownloadModal'
 // ---------------------------------------------------------------------------
 
 const DocumentsPage: React.FC = () => {
+  const { t } = useTranslation()
   // State
   const [documents, setDocuments] = useState<Document[]>([])
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
