@@ -121,14 +121,14 @@ export class AgentService {
   /**
    * List all active sessions
    */
-  private listSessions(): AgentSessionInfo[] {
+  listSessions(): AgentSessionInfo[] {
     return Array.from(this.sessions.values())
   }
 
   /**
    * Clear all sessions
    */
-  private clearSessions(): number {
+  clearSessions(): number {
     const count = this.sessions.size
 
     // Cancel all controllers
@@ -142,7 +142,7 @@ export class AgentService {
   /**
    * Run an agent with session support
    */
-  private async runAgentSession(options: AgentRunOptions, win: BrowserWindow): Promise<void> {
+  async runAgentSession(options: AgentRunOptions, win: BrowserWindow): Promise<void> {
     let controller = this.controllers.get(options.sessionId)
 
     if (!controller) {
