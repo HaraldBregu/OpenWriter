@@ -3,7 +3,7 @@
  * Validates security path validation to prevent traversal attacks.
  */
 import { PathValidator } from '../../../../src/main/shared/PathValidator'
-import { app } from 'electron'
+import 'electron'
 
 describe('PathValidator', () => {
   beforeEach(() => {
