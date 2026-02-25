@@ -377,7 +377,7 @@ const NewWritingPage: React.FC = () => {
                   onChange={isDraft ? handleDraftChange : handleChange}
                   onDelete={isDraft ? handleDraftDelete : handleDelete}
                   onAdd={isDraft ? handleDraftAddBlockAfter : handleAddBlockAfter}
-                  placeholder="Start writing..."
+                  placeholder={t('writing.startWriting')}
                 />
               ))}
             </Reorder.Group>
