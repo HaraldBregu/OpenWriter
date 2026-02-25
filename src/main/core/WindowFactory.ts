@@ -15,7 +15,7 @@ export interface WindowPreset {
 export class WindowFactory {
   private readonly baseWebPreferences: Electron.WebPreferences = {
     preload: path.join(__dirname, '../preload/index.mjs'),
-    sandbox: false,
+    sandbox: true,
     nodeIntegration: false,
     contextIsolation: true,
     devTools: is.dev,
