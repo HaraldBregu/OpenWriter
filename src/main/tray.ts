@@ -59,7 +59,7 @@ export class Tray {
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: isVisible ? m.hideTesseractAI || 'Hide Tesseract AI' : m.showTesseractAI,
+        label: isVisible ? m.hideOpenWriter || 'Hide OpenWriter' : m.showOpenWriter,
         click: () => {
           this.callbacks.onToggleApp()
           // Rebuild menu after toggle to update the label
