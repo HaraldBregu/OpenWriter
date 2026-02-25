@@ -341,20 +341,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarSeparator className="my-1" />
 
                   {/* Posts, Writing — collapsible section headers */}
-                  {topNavSections.map((section) => {
-                    const isOpen = sectionsOpen[section];
-                    const isPosts = section === "Posts";
-                    const isWriting = section === "Writing";
+                  {topNavSectionKeys.map((sectionKey) => {
+                    // Use stable English identifiers for state keys
+                    const sectionId = sectionKey === "sidebar.writing" ? "Writing" : "Posts";
+                    const isOpen = sectionsOpen[sectionId];
+                    const isPosts = sectionId === "Posts";
+                    const isWriting = sectionId === "Writing";
                     return (
-                      <AppSidebarMenuItem key={section}>
+                      <AppSidebarMenuItem key={sectionKey}>
                         <button
                           type="button"
-                          onClick={() => toggleSection(section)}
+                          onClick={() => toggleSection(sectionId)}
                           className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                         >
-                          <span className="tracking-wider">{section}</span>
+                          <span className="tracking-wider">{t(sectionKey)}</span>
                           <ChevronRight
-                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Knowledge"] ? "rotate-90" : ""}`}
+                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                           />
                         </button>
                         {isOpen && (
@@ -367,7 +369,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                     e.preventDefault();
                                     handlePostContextMenu(
                                       post.id,
-                                      post.title || "Untitled Post",
+                                      post.title || t("sidebar.untitledPost"),
                                     );
                                   }}
                                 >
@@ -385,10 +387,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                     >
                                       <FileText className="h-3.5 w-3.5 shrink-0" />
                                       <span className="flex-1 truncate">
-                                        {post.title || "Untitled Post"}
+                                        {post.title || t("sidebar.untitledPost")}
                                       </span>
                                       <span className="text-xs text-muted-foreground/40 shrink-0">
-                                        {formatRelativeTime(post.updatedAt)}
+                                        {formatRelativeTime(post.updatedAt, t)}
                                       </span>
                                     </Link>
                                   </AppSidebarMenuSubButton>
@@ -417,10 +419,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                     >
                                       <PenLine className="h-3.5 w-3.5 shrink-0" />
                                       <span className="flex-1 truncate">
-                                        {writing.title || "Untitled Writing"}
+                                        {writing.title || t("sidebar.untitledWriting")}
                                       </span>
                                       <span className="text-xs text-muted-foreground/40 shrink-0">
-                                        {formatRelativeTime(writing.updatedAt)}
+                                        {formatRelativeTime(writing.updatedAt, t)}
                                       </span>
                                     </Link>
                                   </AppSidebarMenuSubButton>
