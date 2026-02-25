@@ -408,6 +408,15 @@
     "delete": "Elimina"
   },
 
+  "imageBlock": {
+    "dropOrClick": "Trascina un'immagine qui o clicca per sfogliare",
+    "altPlaceholder": "Aggiungi testo alternativo per l'accessibilità…",
+    "selectImage": "Seleziona immagine",
+    "removeImage": "Rimuovi immagine",
+    "delete": "Elimina",
+    "insertImage": "Inserisci immagine"
+  },
+
   "inferenceSettings": {
     "title": "Impostazioni Inferenza",
     "description": "Configura modello e parametri.",
