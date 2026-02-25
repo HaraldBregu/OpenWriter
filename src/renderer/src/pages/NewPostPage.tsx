@@ -160,8 +160,11 @@ const NewPostPage: React.FC = () => {
           title,
           content,
           visibility: 'private',
-          provider: 'manual',
-          model: '',
+          provider: aiSettings.providerId,
+          model: aiSettings.modelId,
+          temperature: aiSettings.temperature,
+          maxTokens: aiSettings.maxTokens,
+          reasoning: aiSettings.reasoning,
         }))
       } else {
         const saved = await dispatch(saveOutputItem({
@@ -169,8 +172,11 @@ const NewPostPage: React.FC = () => {
           title,
           content,
           visibility: 'private',
-          provider: 'manual',
-          model: '',
+          provider: aiSettings.providerId,
+          model: aiSettings.modelId,
+          temperature: aiSettings.temperature,
+          maxTokens: aiSettings.maxTokens,
+          reasoning: aiSettings.reasoning,
         })).unwrap()
         savedOutputIdRef.current = saved.id
         if (post) dispatch(setPostOutputId({ postId: post.id, outputId: saved.id }))
