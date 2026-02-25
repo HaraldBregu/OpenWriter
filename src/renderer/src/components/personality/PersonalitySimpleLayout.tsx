@@ -147,7 +147,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       // Restore inference settings from the conversation's saved metadata so
       // the sidebar reflects the exact config that was used when it was written.
       const meta = loadedFile.metadata
-      setInferenceSettings({
+      applySnapshot({
         providerId: meta.provider,
         modelId: meta.model,
         temperature: typeof meta.temperature === 'number' ? meta.temperature : DEFAULT_INFERENCE_SETTINGS.temperature,
