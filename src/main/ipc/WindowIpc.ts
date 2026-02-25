@@ -17,36 +17,36 @@ export class WindowIpc implements IpcModule {
     const windowManager = container.get<WindowManagerService>('windowManager')
     const appState = container.get<AppState>('appState')
 
-    // Window creation
+    // Window creation — channel names must match what the preload's window.wm namespace calls
     ipcMain.handle(
-      'window-create-child',
-      wrapSimpleHandler(() => windowManager.createChildWindow(), 'window-create-child')
+      'wm-create-child',
+      wrapSimpleHandler(() => windowManager.createChildWindow(), 'wm-create-child')
     )
     ipcMain.handle(
-      'window-create-modal',
-      wrapSimpleHandler(() => windowManager.createModalWindow(), 'window-create-modal')
+      'wm-create-modal',
+      wrapSimpleHandler(() => windowManager.createModalWindow(), 'wm-create-modal')
     )
     ipcMain.handle(
-      'window-create-frameless',
-      wrapSimpleHandler(() => windowManager.createFramelessWindow(), 'window-create-frameless')
+      'wm-create-frameless',
+      wrapSimpleHandler(() => windowManager.createFramelessWindow(), 'wm-create-frameless')
     )
     ipcMain.handle(
-      'window-create-widget',
-      wrapSimpleHandler(() => windowManager.createWidgetWindow(), 'window-create-widget')
+      'wm-create-widget',
+      wrapSimpleHandler(() => windowManager.createWidgetWindow(), 'wm-create-widget')
     )
 
-    // Window management
+    // Window management — channel names must match what the preload's window.wm namespace calls
     ipcMain.handle(
-      'window-close',
-      wrapSimpleHandler((id: number) => windowManager.closeWindow(id), 'window-close')
+      'wm-close-window',
+      wrapSimpleHandler((id: number) => windowManager.closeWindow(id), 'wm-close-window')
     )
     ipcMain.handle(
-      'window-close-all-managed',
-      wrapSimpleHandler(() => windowManager.closeAllManaged(), 'window-close-all-managed')
+      'wm-close-all',
+      wrapSimpleHandler(() => windowManager.closeAllManaged(), 'wm-close-all')
     )
     ipcMain.handle(
-      'window-get-state',
-      wrapSimpleHandler(() => windowManager.getState(), 'window-get-state')
+      'wm-get-state',
+      wrapSimpleHandler(() => windowManager.getState(), 'wm-get-state')
     )
 
     // Window control handlers
