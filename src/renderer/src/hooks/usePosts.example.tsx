@@ -218,7 +218,7 @@ export function PostsListExample() {
     await createPost({
       id: `post-${Date.now()}`,
       title: 'New Post',
-      blocks: [{ id: 'block-1', content: 'Hello World' }],
+      blocks: [{ id: 'block-1', content: 'Hello World', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }],
       category: 'general',
       tags: ['example'],
       visibility: 'public'
