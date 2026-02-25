@@ -276,20 +276,20 @@ export const ContentBlock = React.memo(function ContentBlock({
         {/* Action bar */}
         <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0">
           <ActionButton
-            title={isEnhancing ? 'Enhancing…' : 'Enhance with AI'}
+            title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
             onClick={handleEnhance}
             disabled={isEnhancing || isEmpty}
           >
             <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
           </ActionButton>
           <ActionButton
-            title="Copy"
+            title={t('contentBlock.copy')}
             onClick={handleCopy}
           >
             <Copy className="h-3.5 w-3.5" />
           </ActionButton>
           <ActionButton
-            title="Delete"
+            title={t('contentBlock.delete')}
             onClick={() => onDelete(block.id)}
             disabled={isOnly}
           >
