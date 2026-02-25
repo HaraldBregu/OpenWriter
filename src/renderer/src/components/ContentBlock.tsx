@@ -63,6 +63,7 @@ ActionButton.displayName = 'ActionButton'
 export const ContentBlock = React.memo(function ContentBlock({
   block,
   isOnly,
+  isLast = false,
   onChange,
   onDelete,
   onAdd,
