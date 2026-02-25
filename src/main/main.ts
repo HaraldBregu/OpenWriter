@@ -43,29 +43,11 @@ export class Main {
     this.windowContextManager.create(this.window)
     console.log(`[Main] Created window context for window ${this.window.id}`)
 
-    // Registering a handler for update-target-url tells Electron that the app
-    // owns the status-bar display. An intentional no-op suppresses the native
-    // Chromium URL bubble that would otherwise appear on link hover.
-    this.window.webContents.on('update-target-url', () => {})
+    // Attach common window handlers (shared with workspace windows)
+    this.attachCommonWindowHandlers(this.window)
 
     this.window.once('ready-to-show', () => {
       this.window?.show()
-    })
-
-    this.window.on('maximize', () => {
-      this.window?.webContents.send('window:maximize-change', true)
-    })
-
-    this.window.on('unmaximize', () => {
-      this.window?.webContents.send('window:maximize-change', false)
-    })
-
-    this.window.on('enter-full-screen', () => {
-      this.window?.webContents.send('window:fullscreen-change', true)
-    })
-
-    this.window.on('leave-full-screen', () => {
-      this.window?.webContents.send('window:fullscreen-change', false)
     })
 
     // Minimize to tray instead of closing
