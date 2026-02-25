@@ -300,7 +300,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
                             day: 'numeric',
                             year: 'numeric'
                           })
-                        : 'Version'}
+                        : t('personality.version')}
                     </span>
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0" />
                   </AppButton>
