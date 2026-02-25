@@ -532,7 +532,7 @@
     "tryThis": "Try this",
     "askToGetStarted": "Ask a question to get started.",
     "generatingResponse": "Generating response...",
-    "pressEnterToSubmit": "Press Enter to submit your question",
+    "pressEnterToSubmit": "Press Enter to send, Shift+Enter for a new line",
     "stop": "Stop",
     "submit": "Submit"
   },
