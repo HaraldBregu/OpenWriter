@@ -41,7 +41,7 @@ const mockBrowserWindowInstance = {
   isDestroyed: jest.fn().mockReturnValue(false),
   isFocused: jest.fn().mockReturnValue(true),
   setTitle: jest.fn(),
-  getTitle: jest.fn().mockReturnValue('Tesseract AI'),
+  getTitle: jest.fn().mockReturnValue('OpenWriter'),
   getBounds: jest.fn().mockReturnValue({ x: 0, y: 0, width: 1200, height: 800 }),
   setBounds: jest.fn(),
   setMenu: jest.fn(),
