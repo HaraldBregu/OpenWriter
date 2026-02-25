@@ -37,7 +37,6 @@ export interface AIEnhanceOutput {
 // ---------------------------------------------------------------------------
 
 const LOG_PREFIX = '[AIEnhanceHandler]'
-const DEFAULT_MODEL = 'gpt-4o-mini'
 
 const SYSTEM_PROMPT =
   'You are an expert writing assistant. When given a piece of text, you continue it ' +
