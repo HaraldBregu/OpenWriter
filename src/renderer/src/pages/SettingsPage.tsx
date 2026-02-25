@@ -1,4 +1,5 @@
 import React, { useState, lazy, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useLanguage } from '../hooks/useLanguage'
 import { LoadingSkeleton } from '../components/LoadingSkeleton'
 
@@ -10,15 +11,6 @@ const ToolsSettings = lazy(() => import('./settings/ToolsSettings'))
 const SystemSettings = lazy(() => import('./settings/SystemSettings'))
 
 type Tab = 'general' | 'models' | 'media' | 'devices' | 'tools' | 'system'
-
-const tabs: { id: Tab; label: string }[] = [
-  { id: 'general', label: 'General' },
-  { id: 'models', label: 'Models' },
-  { id: 'media', label: 'Media' },
-  { id: 'devices', label: 'Devices' },
-  { id: 'tools', label: 'Tools' },
-  { id: 'system', label: 'System' }
-]
 
 const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
   general: GeneralSettings,
