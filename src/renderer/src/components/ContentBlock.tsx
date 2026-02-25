@@ -70,6 +70,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   onAdd,
   placeholder = 'Type here...',
 }: ContentBlockProps): React.JSX.Element {
+  const { t } = useTranslation()
   const dragControls = useDragControls()
 
   // Track whether the editor is empty to conditionally show the placeholder span.
