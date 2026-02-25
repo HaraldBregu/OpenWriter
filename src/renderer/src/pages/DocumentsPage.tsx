@@ -825,9 +825,9 @@ const DocumentsPage: React.FC = () => {
                 <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">Supported:</span> Text files (.txt, .md), code files (.js, .ts, .py, .html, .css, .json, etc.)
+                    <span className="font-medium text-foreground">{t('documents.supportedTypes').split(':')[0]}:</span> {t('documents.supportedTypes').split(': ')[1]}
                     <span className="mx-1.5">•</span>
-                    <span className="font-medium text-foreground">Not supported:</span> Images, videos, audio, binary documents
+                    <span className="font-medium text-foreground">{t('documents.notSupportedTypes').split(':')[0]}:</span> {t('documents.notSupportedTypes').split(': ')[1]}
                   </p>
                 </div>
               </div>
