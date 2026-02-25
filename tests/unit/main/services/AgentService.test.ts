@@ -3,7 +3,7 @@
  * Validates session management, IPC handler registration, and status reporting.
  * AgentController and LangChain are mocked since they require external API keys.
  */
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 
 // Mock the AgentController before importing AgentService
 jest.mock('../../../../src/main/agent/AgentController', () => ({
