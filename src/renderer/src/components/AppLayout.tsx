@@ -419,7 +419,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                 className="h-6 w-6 rounded-full object-cover"
               />
               <span className="text-md font-normal tracking-tight">
-                Tesseract AI
+                OpenWriter
               </span>
             </Link>
           </AppSidebarHeader>
