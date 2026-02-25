@@ -60,6 +60,7 @@ class DelayedAgent implements Agent {
 class ErrorAgent implements Agent {
   readonly name = 'error'
 
+  // eslint-disable-next-line require-yield
   async *run(_input: AgentInput, _runId: string, _signal: AbortSignal): AsyncGenerator<AgentEvent> {
     throw new Error('Test error')
   }
