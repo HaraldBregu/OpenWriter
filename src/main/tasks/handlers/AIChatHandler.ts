@@ -66,15 +66,10 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
     // --- Resolve configuration -----------------------------------------------
 
     const resolver = new ProviderResolver(this.storeService)
-    let provider
-    try {
-      provider = resolver.resolve({
-        providerId: input.providerId,
-        modelId: input.modelId
-      })
-    } catch (err) {
-      throw err
-    }
+    const provider = resolver.resolve({
+      providerId: input.providerId,
+      modelId: input.modelId
+    })
 
     const { apiKey, modelName, providerId } = provider
     const temperature = input.temperature ?? 0.7
