@@ -598,6 +598,24 @@
     "noteFeature4": "Supports different urgency levels and silent mode"
   },
 
+  "creativityPresets": {
+    "precise": "Precise",
+    "balanced": "Balanced",
+    "creative": "Creative",
+    "very-creative": "Very Creative",
+    "imaginative": "Imaginative",
+    "custom": "Custom"
+  },
+
+  "textLengthPresets": {
+    "short": "Short (500 chars)",
+    "medium": "Medium (1,000 chars)",
+    "long": "Long (2,000 chars)",
+    "very-long": "Very Long (4,000 chars)",
+    "unlimited": "Unlimited",
+    "custom": "Custom"
+  },
+
   "relativeTime": {
     "justNow": "just now",
     "minutesAgo": "{{count}}m ago",
