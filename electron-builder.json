@@ -103,11 +103,11 @@
     "category": "Utility",
     "artifactName": "${productName}-${version}.${ext}",
     "icon": "./resources/icons/linux",
-    "maintainer": "Tesseract AI Project",
-    "synopsis": "Tesseract AI",
-    "description": "Tesseract AI - Advanced AI manager",
-    "vendor": "Tesseract AI Project",
-    "executableName": "tesseract-ai",
+    "maintainer": "OpenWriter Project",
+    "synopsis": "OpenWriter",
+    "description": "OpenWriter - Advanced AI manager",
+    "vendor": "OpenWriter Project",
+    "executableName": "openwriter",
     "desktop": {
       "entry": {
         "Type": "Application",
