@@ -115,7 +115,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   const { submitTask, cancelTask, tasks } = useTask()
 
   const editor = useEditor({
-    extensions: [StarterKit, Markdown],
+    extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
     content: block.content || '',
     contentType: 'markdown',
     immediatelyRender: false,
