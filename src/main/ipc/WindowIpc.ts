@@ -150,7 +150,7 @@ export class WindowIpc implements IpcModule {
         },
         {
           label: 'Help',
-          submenu: [{ label: 'About Tesseract AI', click: () => {} }]
+          submenu: [{ label: 'About OpenWriter', click: () => {} }]
         }
       ])
 
