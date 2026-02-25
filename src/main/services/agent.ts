@@ -185,7 +185,7 @@ export class AgentService {
   /**
    * Cancel a specific run across all sessions
    */
-  private cancelRun(runId: string): void {
+  cancelRun(runId: string): void {
     for (const controller of this.controllers.values()) {
       controller.cancel(runId)
     }
@@ -195,7 +195,7 @@ export class AgentService {
   /**
    * Cancel all runs in a specific session
    */
-  private cancelSession(sessionId: string): boolean {
+  cancelSession(sessionId: string): boolean {
     const controller = this.controllers.get(sessionId)
     if (!controller) return false
 
@@ -207,7 +207,7 @@ export class AgentService {
   /**
    * Check if a run is active
    */
-  private isRunning(runId: string): boolean {
+  isRunning(runId: string): boolean {
     for (const controller of this.controllers.values()) {
       if (controller.isRunning(runId)) {
         return true
@@ -219,7 +219,7 @@ export class AgentService {
   /**
    * Get overall service status
    */
-  private getStatus(): {
+  getStatus(): {
     totalSessions: number
     activeSessions: number
     totalMessages: number
@@ -235,7 +235,7 @@ export class AgentService {
   /**
    * Update session activity timestamp and message count
    */
-  private updateSessionActivity(sessionId: string, messageCount: number): void {
+  updateSessionActivity(sessionId: string, messageCount: number): void {
     const session = this.sessions.get(sessionId)
     if (session) {
       session.lastActivity = Date.now()
