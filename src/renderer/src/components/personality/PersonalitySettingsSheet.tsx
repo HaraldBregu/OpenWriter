@@ -192,14 +192,14 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
   return (
     <div className="flex h-full w-[280px] shrink-0 flex-col border-l border-border bg-background overflow-y-auto">
       <div className="px-4 py-4 border-b border-border">
-        <h2 className="text-sm font-semibold">Inference Settings</h2>
-        <p className="text-xs text-muted-foreground mt-1">Configure model and parameters.</p>
+        <h2 className="text-sm font-semibold">{t('inferenceSettings.title')}</h2>
+        <p className="text-xs text-muted-foreground mt-1">{t('inferenceSettings.description')}</p>
       </div>
 
       <div className="p-4 space-y-5">
         {/* Provider */}
         <div className="space-y-1.5">
-          <AppLabel className="text-xs">Provider</AppLabel>
+          <AppLabel className="text-xs">{t('inferenceSettings.provider')}</AppLabel>
           <AppSelect value={settings.providerId} onValueChange={handleProviderChange}>
             <AppSelectTrigger className="w-full h-8 text-xs">
               <AppSelectValue />
