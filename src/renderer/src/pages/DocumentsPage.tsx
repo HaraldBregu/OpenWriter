@@ -508,7 +508,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
             <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
               <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-destructive">Download failed</p>
+                <p className="text-sm font-medium text-destructive">{t('documents.downloadFailed')}</p>
                 <p className="text-xs text-destructive/80 mt-1">{errorMessage}</p>
               </div>
             </div>
