@@ -17,6 +17,11 @@ export interface Writing {
   updatedAt: number
   /** ID of the corresponding output folder on disk (set after first save) */
   outputId?: string
+  provider?: string
+  model?: string
+  temperature?: number
+  maxTokens?: number | null
+  reasoning?: boolean
 }
 
 interface WritingsState {

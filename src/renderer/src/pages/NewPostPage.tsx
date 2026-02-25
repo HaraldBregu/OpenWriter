@@ -238,6 +238,20 @@ const NewPostPage: React.FC = () => {
     setDraftBlocks(reordered)
   }, [])
 
+  const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
+    setAiSettings(next)
+    if (!isDraft && post) {
+      dispatch(updatePostInferenceSettings({
+        postId: post.id,
+        provider: next.providerId,
+        model: next.modelId,
+        temperature: next.temperature,
+        maxTokens: next.maxTokens,
+        reasoning: next.reasoning,
+      }))
+    }
+  }, [isDraft, post, dispatch])
+
   // ---------------------------------------------------------------------------
   // Guard: existing post not found in Redux
   // ---------------------------------------------------------------------------
