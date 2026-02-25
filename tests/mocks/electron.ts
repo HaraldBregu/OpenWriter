@@ -1,7 +1,7 @@
 /**
  * Mock for the 'electron' module.
  *
- * Provides jest.fn() stubs for every Electron API used in the Tesseract AI
+ * Provides jest.fn() stubs for every Electron API used in the OpenWriter
  * main process.  Each mock is individually importable so tests can set up
  * return values and assertions on a per-test basis.
  *
