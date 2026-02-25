@@ -15,7 +15,7 @@ import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import type { Agent, AgentInput, AgentEvent } from '../AgentBase'
 import type { StoreService } from '../../services/store'
-import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
+import { isReasoningModel, extractTokenFromChunk, classifyError } from '../../shared/aiUtils'
 
 // ---------------------------------------------------------------------------
 // Constants
