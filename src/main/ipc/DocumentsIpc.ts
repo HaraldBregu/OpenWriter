@@ -181,6 +181,9 @@ export class DocumentsIpc implements IpcModule {
     ipcMain.handle(
       'documents:download-from-url',
       wrapIpcHandler(async (event: IpcMainInvokeEvent, url: string): Promise<DocumentMetadata> => {
+        // Validate URL format and protocol
+        this.validateDownloadUrl(url)
+
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const documentsWatcher = this.tryGetWindowService<DocumentsWatcherService>(event, container, 'documentsWatcher')
 
