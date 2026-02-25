@@ -51,6 +51,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   }))
   // Section-level defaults loaded from disk (null = not loaded yet or absent)
   const [sectionDefaults, setSectionDefaults] = useState<InferenceSettings | null>(null)
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const contentRef = useRef<HTMLDivElement>(null)
   const saveSectionConfigTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
