@@ -1,7 +1,7 @@
 {
-  "name": "tesseract-ai",
-  "productName": "Tesseract AI",
-  "homepage": "https://github.com/HaraldBregu/tesseract-ai",
+  "name": "openwriter",
+  "productName": "OpenWriter",
+  "homepage": "https://github.com/HaraldBregu/openwriter",
   "description": "A desktop app with multi prebuilt features",
   "author": "Harald Bregu <harald@9spartans.com>",
   "version": "1.0.0",
