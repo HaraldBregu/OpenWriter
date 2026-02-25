@@ -154,9 +154,9 @@
       "title": "Theme",
       "description": "Choose how the application appearance is determined.",
       "light": "Light",
-      "lightDescription": "Always use the light colour scheme",
+      "lightDescription": "Always use the light color scheme",
       "dark": "Dark",
-      "darkDescription": "Always use the dark colour scheme",
+      "darkDescription": "Always use the dark color scheme",
       "system": "System",
       "systemDescription": "Follow the operating system preference"
     },
