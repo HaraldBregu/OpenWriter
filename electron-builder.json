@@ -52,7 +52,7 @@
       "NSBluetoothPeripheralUsageDescription": "OpenWriter needs access to Bluetooth peripherals for device connectivity.",
       "CFBundleDocumentTypes": [
         {
-          "CFBundleTypeName": "Tesseract AI File",
+          "CFBundleTypeName": "OpenWriter File",
           "CFBundleTypeIconFile": "fileIcon.icns",
           "CFBundleTypeExtensions": ["tsrct"],
           "CFBundleTypeRole": "Manager",
