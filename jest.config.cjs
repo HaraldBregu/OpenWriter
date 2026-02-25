@@ -53,6 +53,10 @@ module.exports = {
       testEnvironment: 'jest-environment-jsdom',
       roots: ['<rootDir>/tests/unit/renderer'],
       transform: {
+        // Apply the vite-env-transform to renderer source files that may contain
+        // `import.meta.env.*` references (Vite-only syntax unsupported by ts-jest CJS).
+        '^.+/src/renderer/.+\\.tsx?$': '<rootDir>/tests/transforms/vite-env-transform.cjs',
+        // All other TypeScript files (tests, shared utilities) use vanilla ts-jest.
         '^.+\\.tsx?$': [
           'ts-jest',
           {
