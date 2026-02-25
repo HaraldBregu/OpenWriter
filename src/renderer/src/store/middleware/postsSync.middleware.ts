@@ -1,5 +1,37 @@
-import type { Middleware } from '@reduxjs/toolkit'
+import { isAnyOf, type Middleware } from '@reduxjs/toolkit'
+import {
+  createPost,
+  addPost,
+  setPostOutputId,
+  updatePostBlocks,
+  updatePostTitle,
+  updatePostCategory,
+  updatePostTags,
+  updatePostVisibility,
+  updatePostInferenceSettings,
+  deletePost,
+} from '../postsSlice'
 import type { Post } from '../postsSlice'
+
+/**
+ * Explicit opt-in matcher for actions that should trigger a workspace sync.
+ *
+ * OCP: adding a new sync-worthy action means adding it here — no exclusion
+ * list to maintain, no silent bugs from action renames or new 'posts/' actions
+ * that should NOT be synced.
+ */
+const isSyncablePostAction = isAnyOf(
+  createPost,
+  addPost,
+  setPostOutputId,
+  updatePostBlocks,
+  updatePostTitle,
+  updatePostCategory,
+  updatePostTags,
+  updatePostVisibility,
+  updatePostInferenceSettings,
+  deletePost,
+)
 
 // Define the state shape we need (avoids circular reference with RootState)
 interface PostsState {
