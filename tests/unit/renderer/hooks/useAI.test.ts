@@ -2,7 +2,7 @@
  * Tests for useAI hook.
  * Manages AI inference with streaming responses.
  */
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { useAI } from '../../../../src/renderer/src/hooks/useAI'
 
 // Mock window.ai
