@@ -2,7 +2,7 @@
  * Tests for WorkspaceIpc.
  * Verifies workspace management IPC handlers.
  */
-import { ipcMain, dialog, BrowserWindow } from 'electron'
+import { ipcMain, dialog } from 'electron'
 import { WorkspaceIpc } from '../../../../src/main/ipc/WorkspaceIpc'
 import { ServiceContainer } from '../../../../src/main/core/ServiceContainer'
 import { EventBus } from '../../../../src/main/core/EventBus'
