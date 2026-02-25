@@ -181,15 +181,11 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
     try {
       let modelName = task.modelId || 'unknown'
       if (modelName === 'unknown') {
-        try {
-          const settings = await window.store.getModelSettings(task.providerId)
-          modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
-        } catch {
-          modelName = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
-        }
+        const settings = await service.getModelSettings(task.providerId)
+        modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
       }
 
-      const saveResult = await window.personality.save({
+      const saveResult = await service.savePersonality({
         sectionId,
         content: markdownContent,
         metadata: {
@@ -211,7 +207,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
       console.error(`[PersonalityTask] Auto-save error for ${sectionId}:`, message)
       store.update(sectionId, { isSaving: false, lastSaveError: message })
     }
-  }, [store])
+  }, [store, service])
 
   // -----------------------------------------------------------------------
   // Global IPC event listener
