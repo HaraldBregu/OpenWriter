@@ -281,10 +281,10 @@ if (!isMac) {
 ```
 [Menu] Spawning separate process for workspace: /Users/user/workspace-a
 [WorkspaceProcess] Spawning new process for workspace: /Users/user/workspace-a
-[WorkspaceProcess] Electron path: /Applications/Tesseract AI.app/Contents/MacOS/Tesseract AI
-[WorkspaceProcess] App path: /Applications/Tesseract AI.app/Contents/Resources/app.asar
+[WorkspaceProcess] Electron path: /Applications/OpenWriter.app/Contents/MacOS/OpenWriter
+[WorkspaceProcess] App path: /Applications/OpenWriter.app/Contents/Resources/app.asar
 [WorkspaceProcess] Args: [
-  '/Applications/Tesseract AI.app/Contents/Resources/app.asar',
+  '/Applications/OpenWriter.app/Contents/Resources/app.asar',
   '--workspace',
   '/Users/user/workspace-a',
   '--process-type=workspace'

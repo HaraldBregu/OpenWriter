@@ -254,10 +254,10 @@ useEffect(() => {
 cat ~/Library/Application\ Support/Tesseract\ AI/settings.json
 
 # Windows
-type %APPDATA%\Tesseract AI\settings.json
+type %APPDATA%\OpenWriter\settings.json
 
 # Linux
-cat ~/.config/tesseract-ai/settings.json
+cat ~/.config/openwriter/settings.json
 ```
 
 ### Enable Debug Logging

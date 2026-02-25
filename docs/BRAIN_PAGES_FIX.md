@@ -70,26 +70,26 @@ BrainChatMessages (displays streaming response)
 
 ### Key Components
 
-1. **useLlmChat Hook** (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/hooks/useLlmChat.ts`)
+1. **useLlmChat Hook** (`/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/hooks/useLlmChat.ts`)
    - Manages chat state and streaming
    - Calls pipeline with ChatAgent
    - Listens for streaming events
    - Handles message accumulation
 
-2. **ChatAgent** (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/pipeline/agents/ChatAgent.ts`)
+2. **ChatAgent** (`/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/pipeline/agents/ChatAgent.ts`)
    - Uses LangChain with OpenAI
    - Yields streaming tokens via async generator
    - Handles conversation history
    - Applies system prompts
    - Supports multiple OpenAI providers via StoreService
 
-3. **PipelineService** (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/pipeline/PipelineService.ts`)
+3. **PipelineService** (`/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/pipeline/PipelineService.ts`)
    - Orchestrates agent execution
    - Manages AbortControllers for cancellation
    - Forwards events to EventBus
    - Tracks active runs
 
-4. **PipelineIpc** (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PipelineIpc.ts`)
+4. **PipelineIpc** (`/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PipelineIpc.ts`)
    - Exposes IPC handlers for pipeline operations
    - Returns runId for tracking
    - Supports cancellation via fire-and-forget channel
@@ -246,7 +246,7 @@ To verify the fix works correctly:
 
 ### LlmIpc Module Status
 
-The `LlmIpc` module (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/LlmIpc.ts`) is currently registered but not actively used. It emits events (`llm:chat:request`, `llm:session:create`) to the EventBus, but there's no service listening to these events.
+The `LlmIpc` module (`/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/LlmIpc.ts`) is currently registered but not actively used. It emits events (`llm:chat:request`, `llm:session:create`) to the EventBus, but there's no service listening to these events.
 
 **Options for LlmIpc:**
 1. **Keep as-is**: Leave it for potential future use
@@ -267,7 +267,7 @@ The `LlmIpc` module (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/s
 
 ## Files Modified
 
-1. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/hooks/useLlmChat.ts`
+1. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/hooks/useLlmChat.ts`
    - Changed event listener from `window.ai` to `window.api`
    - Changed cancel method from `window.ai` to `window.api`
    - Fixed error event data structure
@@ -275,14 +275,14 @@ The `LlmIpc` module (`/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/s
 
 ## Files Reviewed (No Changes Needed)
 
-1. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/components/brain/BrainChatContainer.tsx`
-2. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/components/brain/BrainChatInput.tsx`
-3. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/components/brain/BrainChatMessages.tsx`
-4. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/PrinciplesPage.tsx`
-5. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/ConsciousnessPage.tsx`
-6. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/MemoryPage.tsx`
-7. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/ReasoningPage.tsx`
-8. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/PerceptionPage.tsx`
+1. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/components/brain/BrainChatContainer.tsx`
+2. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/components/brain/BrainChatInput.tsx`
+3. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/components/brain/BrainChatMessages.tsx`
+4. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/PrinciplesPage.tsx`
+5. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/ConsciousnessPage.tsx`
+6. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/MemoryPage.tsx`
+7. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/ReasoningPage.tsx`
+8. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/PerceptionPage.tsx`
 
 ## Conclusion
 

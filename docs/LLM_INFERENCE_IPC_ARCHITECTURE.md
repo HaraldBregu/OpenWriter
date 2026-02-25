@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the Electron IPC architecture for LLM inference integration in Tesseract AI. The design follows the existing IPC patterns established in the codebase while introducing specialized features for LLM operations including streaming, session management, and robust error handling.
+This document outlines the Electron IPC architecture for LLM inference integration in OpenWriter. The design follows the existing IPC patterns established in the codebase while introducing specialized features for LLM operations including streaming, session management, and robust error handling.
 
 ## Architecture Principles
 
@@ -934,4 +934,4 @@ const inferenceId = await window.api.llmInference({
 
 ## Conclusion
 
-This architecture provides a robust, secure, and performant foundation for LLM inference in Tesseract AI. It follows established patterns while introducing specialized features for streaming, session management, and comprehensive error handling. The design is extensible, allowing for future enhancements such as multi-modal support, custom providers, and advanced caching strategies.
+This architecture provides a robust, secure, and performant foundation for LLM inference in OpenWriter. It follows established patterns while introducing specialized features for streaming, session management, and comprehensive error handling. The design is extensible, allowing for future enhancements such as multi-modal support, custom providers, and advanced caching strategies.

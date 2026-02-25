@@ -2,7 +2,7 @@
 
 ## Overview
 
-A complete workspace selection system has been implemented for Tesseract AI, allowing users to select a folder for their projects on first launch.
+A complete workspace selection system has been implemented for OpenWriter, allowing users to select a folder for their projects on first launch.
 
 ## Implementation Status: COMPLETE
 
@@ -150,8 +150,8 @@ Main Window Opens
 ```bash
 # Option A: Delete settings file
 rm ~/Library/Application\ Support/Tesseract\ AI/settings.json  # macOS
-rm %APPDATA%/Tesseract AI/settings.json                         # Windows
-rm ~/.config/tesseract-ai/settings.json                         # Linux
+rm %APPDATA%/OpenWriter/settings.json                         # Windows
+rm ~/.config/openwriter/settings.json                         # Linux
 
 # Option B: Edit settings.json and remove currentWorkspace
 

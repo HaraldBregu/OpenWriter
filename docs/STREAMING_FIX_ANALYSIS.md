@@ -27,7 +27,7 @@ BrainSimpleLayout component (renderer)
 
 ## Root Cause Identified
 
-The issue is in the event listener callback check at `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/hooks/useAI.ts` **line 86-89**:
+The issue is in the event listener callback check at `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/hooks/useAI.ts` **line 86-89**:
 
 ```typescript
 if (event.type === 'token' && currentRunIdRef.current) {
@@ -57,5 +57,5 @@ if (event.type === 'token' && currentRunIdRef.current) {
 
 ## Files to Fix
 
-1. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/hooks/useAI.ts` - Event handling and state updates
+1. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/hooks/useAI.ts` - Event handling and state updates
 2. Optionally add logging to PipelineService and EventBus if renderer-side fixes don't work

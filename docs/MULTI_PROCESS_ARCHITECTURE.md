@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tesseract AI uses a multi-process architecture where each workspace runs in a completely isolated Electron process. This ensures absolute isolation between workspaces - no shared memory, no shared services, no data leakage.
+OpenWriter uses a multi-process architecture where each workspace runs in a completely isolated Electron process. This ensures absolute isolation between workspaces - no shared memory, no shared services, no data leakage.
 
 ## Architecture
 
@@ -269,8 +269,8 @@ src/main/
 ### Process Verification
 
 ```bash
-# List all Tesseract AI processes
-ps aux | grep tesseract-ai
+# List all OpenWriter processes
+ps aux | grep openwriter
 
 # Should see:
 # - 1 launcher process

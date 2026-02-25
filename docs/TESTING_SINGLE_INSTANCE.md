@@ -107,9 +107,9 @@ ps aux | grep -i electron | grep -i tesseract
 ps aux | grep -i tesseract
 
 # Example output:
-# user 1000 ... tesseract-ai                    # launcher
-# user 1001 ... tesseract-ai --workspace /path/a  # workspace A
-# user 1002 ... tesseract-ai --workspace /path/b  # workspace B
+# user 1000 ... openwriter                    # launcher
+# user 1001 ... openwriter --workspace /path/a  # workspace A
+# user 1002 ... openwriter --workspace /path/b  # workspace B
 ```
 
 ✅ **Each workspace window is independent**:

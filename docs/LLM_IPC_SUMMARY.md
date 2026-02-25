@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a high-level summary of the LLM inference IPC architecture designed for Tesseract AI's Electron application. The architecture follows existing patterns while introducing specialized capabilities for streaming LLM responses, session management, and robust error handling.
+This document provides a high-level summary of the LLM inference IPC architecture designed for OpenWriter's Electron application. The architecture follows existing patterns while introducing specialized capabilities for streaming LLM responses, session management, and robust error handling.
 
 ## Key Documents
 

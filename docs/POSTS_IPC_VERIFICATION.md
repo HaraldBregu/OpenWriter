@@ -14,7 +14,7 @@ The `posts:load-from-workspace` IPC handler has been verified to be **correctly 
 
 ### 1. Core Functionality ✅
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PostsIpc.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PostsIpc.ts`
 
 The IPC handler implements all required features:
 
@@ -27,7 +27,7 @@ The IPC handler implements all required features:
 
 ### 2. Integration ✅
 
-**Preload Bridge:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.ts` (Lines 509-520)
+**Preload Bridge:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.ts` (Lines 509-520)
 
 ```typescript
 postsLoadFromWorkspace: (): Promise<Array<Post>> => {
@@ -35,7 +35,7 @@ postsLoadFromWorkspace: (): Promise<Array<Post>> => {
 }
 ```
 
-**TypeScript Types:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.d.ts` (Lines 277-286)
+**TypeScript Types:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.d.ts` (Lines 277-286)
 
 ```typescript
 postsLoadFromWorkspace: () => Promise<Array<{
@@ -50,7 +50,7 @@ postsLoadFromWorkspace: () => Promise<Array<{
 }>>
 ```
 
-**Bootstrap Registration:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/bootstrap.ts` (Line 155)
+**Bootstrap Registration:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/bootstrap.ts` (Line 155)
 
 ```typescript
 const ipcModules: IpcModule[] = [
@@ -277,7 +277,7 @@ function PostsList() {
 
 ### Unit Tests
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/__tests__/PostsIpc.test.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/__tests__/PostsIpc.test.ts`
 
 A test file skeleton has been created. To complete testing:
 
@@ -349,7 +349,7 @@ npm test -- PostsIpc.test.ts
 ### Main Process Files
 
 ```
-/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/
+/Users/haraldbregu/Documents/9Spartans/apps/openwriter/
 ├── src/main/
 │   ├── ipc/
 │   │   ├── PostsIpc.ts                    [✅ Enhanced]
@@ -533,6 +533,6 @@ The `posts:load-from-workspace` implementation is **production-ready** with the 
 
 For questions or issues with the Posts IPC implementation, refer to:
 
-- **Main Implementation:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PostsIpc.ts`
-- **Tests:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/__tests__/PostsIpc.test.ts`
-- **Project Docs:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/CLAUDE.md`
+- **Main Implementation:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PostsIpc.ts`
+- **Tests:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/__tests__/PostsIpc.test.ts`
+- **Project Docs:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/CLAUDE.md`

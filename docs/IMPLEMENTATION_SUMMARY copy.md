@@ -2,7 +2,7 @@
 
 ## Overview
 
-A production-ready React Context system has been implemented for the Tesseract AI Electron application. This system complements the existing Redux setup by providing an optimized way to manage UI-specific state.
+A production-ready React Context system has been implemented for the OpenWriter Electron application. This system complements the existing Redux setup by providing an optimized way to manage UI-specific state.
 
 ## What Was Created
 
@@ -339,7 +339,7 @@ See `__tests__/AppContext.test.tsx` for comprehensive examples.
 
 All files are in:
 ```
-/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/
+/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/
 ├── contexts/
 │   ├── AppContext.tsx                    # Core implementation
 │   ├── index.ts                          # Exports

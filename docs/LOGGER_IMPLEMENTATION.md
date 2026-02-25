@@ -7,20 +7,20 @@ A production-quality logging system has been implemented for the Electron main p
 ## Implementation Files
 
 ### Core Logger Service
-- **File**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/services/logger.ts`
-- **Documentation**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/services/logger.md`
+- **File**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/services/logger.ts`
+- **Documentation**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/services/logger.md`
 
 ### Integration Points
-- **Bootstrap**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/bootstrap.ts`
+- **Bootstrap**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/bootstrap.ts`
   - Added LoggerService initialization
   - Added `setupEventLogging()` function for Electron event hooks
   - Updated `setupAppLifecycle()` to use logger
 
-- **Main Process**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/index.ts`
+- **Main Process**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/index.ts`
   - Integrated logger into app initialization
   - Added logging for file open events
 
-- **Event System**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/core/EventBus.ts`
+- **Event System**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/core/EventBus.ts`
   - Added `workspace:changed` event type
 
 ## Features Implemented
@@ -208,13 +208,13 @@ The following enhancements could be added in the future:
 Logs are stored in the application data directory:
 
 ### macOS
-`~/Library/Application Support/Tesseract AI/logs/`
+`~/Library/Application Support/OpenWriter/logs/`
 
 ### Windows
-`%APPDATA%\Tesseract AI\logs\`
+`%APPDATA%\OpenWriter\logs\`
 
 ### Linux
-`~/.config/Tesseract AI/logs/`
+`~/.config/OpenWriter/logs/`
 
 ## Performance Characteristics
 

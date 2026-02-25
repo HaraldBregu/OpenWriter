@@ -12,7 +12,7 @@ The brain pages architecture is **100% correctly implemented**. The ChatAgent, P
 ## ✅ Architecture Verification
 
 ### 1. Agent Registration
-**File**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/bootstrap.ts` (line 125)
+**File**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/bootstrap.ts` (line 125)
 
 ```typescript
 agentRegistry.register(new ChatAgent(storeService))
@@ -24,8 +24,8 @@ agentRegistry.register(new ChatAgent(storeService))
 
 ### 2. IPC Bridge
 **Files**:
-- Preload: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.ts` (lines 716-736)
-- IPC Handler: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PipelineIpc.ts`
+- Preload: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.ts` (lines 716-736)
+- IPC Handler: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PipelineIpc.ts`
 
 ```typescript
 // Renderer → Main
@@ -40,7 +40,7 @@ onPipelineEvent: (callback: (event: PipelineEvent) => void)
 ✅ **Type Safety**: TypeScript types match across preload/main/renderer
 
 ### 3. React Hook Integration
-**File**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/hooks/useLlmChat.ts`
+**File**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/hooks/useLlmChat.ts`
 
 ```typescript
 // Submit flow
@@ -66,8 +66,8 @@ window.api.onPipelineEvent((event) => {
 
 ### 4. Brain Page Usage
 **Files**:
-- `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/ConsciousnessPage.tsx`
-- `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/pages/brain/PrinciplesPage.tsx`
+- `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/ConsciousnessPage.tsx`
+- `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/pages/brain/PrinciplesPage.tsx`
 
 ```tsx
 <BrainChatContainer
@@ -384,6 +384,6 @@ If issues persist after following this guide:
 ---
 
 **Report Generated**: 2026-02-23
-**Version**: Tesseract AI (Electron-based)
+**Version**: OpenWriter (Electron-based)
 **Architecture**: Verified ✅
 **Next Action**: Test with enhanced logging

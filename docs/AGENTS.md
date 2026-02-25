@@ -1,10 +1,10 @@
-# AGENTS.md - Tesseract AI Development Guide
+# AGENTS.md - OpenWriter Development Guide
 
 This file provides guidance for agentic coding agents working in this repository.
 
 ## Project Overview
 
-Tesseract AI is an Electron-based advanced text editor application built with React, TypeScript, and Electron-Vite. It handles custom `.tsrct` file format and supports multi-platform distribution.
+OpenWriter is an Electron-based advanced text editor application built with React, TypeScript, and Electron-Vite. It handles custom `.tsrct` file format and supports multi-platform distribution.
 
 ## Build Commands
 

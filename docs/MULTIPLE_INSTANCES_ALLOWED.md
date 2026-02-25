@@ -233,9 +233,9 @@ ps aux | grep -i tesseract | wc -l
 ps aux | grep tesseract
 
 # Output:
-user 1001 ... tesseract-ai                          # launcher
-user 2001 ... tesseract-ai --workspace /path/a      # workspace A
-user 3001 ... tesseract-ai --workspace /path/b      # workspace B
+user 1001 ... openwriter                          # launcher
+user 2001 ... openwriter --workspace /path/a      # workspace A
+user 3001 ... openwriter --workspace /path/b      # workspace B
 ```
 
 ### Example 2: Multiple Launchers with Workspaces
@@ -244,13 +244,13 @@ user 3001 ... tesseract-ai --workspace /path/b      # workspace B
 ps aux | grep tesseract
 
 # Output:
-user 1001 ... tesseract-ai                          # launcher 1
-user 2001 ... tesseract-ai --workspace /path/a      # launcher 1 → workspace A
-user 3001 ... tesseract-ai --workspace /path/b      # launcher 1 → workspace B
+user 1001 ... openwriter                          # launcher 1
+user 2001 ... openwriter --workspace /path/a      # launcher 1 → workspace A
+user 3001 ... openwriter --workspace /path/b      # launcher 1 → workspace B
 
-user 1002 ... tesseract-ai                          # launcher 2
-user 2002 ... tesseract-ai --workspace /path/c      # launcher 2 → workspace C
-user 3002 ... tesseract-ai --workspace /path/d      # launcher 2 → workspace D
+user 1002 ... openwriter                          # launcher 2
+user 2002 ... openwriter --workspace /path/c      # launcher 2 → workspace C
+user 3002 ... openwriter --workspace /path/d      # launcher 2 → workspace D
 ```
 
 ### Example 3: Maximum Independence
@@ -259,14 +259,14 @@ user 3002 ... tesseract-ai --workspace /path/d      # launcher 2 → workspace D
 ps aux | grep tesseract
 
 # Output:
-user 1001 ... tesseract-ai                          # launcher 1
-user 1002 ... tesseract-ai                          # launcher 2
-user 1003 ... tesseract-ai                          # launcher 3
-user 2001 ... tesseract-ai --workspace /path/a      # workspace
-user 2002 ... tesseract-ai --workspace /path/b      # workspace
-user 2003 ... tesseract-ai --workspace /path/c      # workspace
-user 2004 ... tesseract-ai --workspace /path/d      # workspace
-user 2005 ... tesseract-ai --workspace /path/e      # workspace
+user 1001 ... openwriter                          # launcher 1
+user 1002 ... openwriter                          # launcher 2
+user 1003 ... openwriter                          # launcher 3
+user 2001 ... openwriter --workspace /path/a      # workspace
+user 2002 ... openwriter --workspace /path/b      # workspace
+user 2003 ... openwriter --workspace /path/c      # workspace
+user 2004 ... openwriter --workspace /path/d      # workspace
+user 2005 ... openwriter --workspace /path/e      # workspace
 ```
 
 ## Console Logs

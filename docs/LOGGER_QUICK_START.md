@@ -17,9 +17,9 @@ The LoggerService is a production-ready logging system for the Electron main pro
 ## Where Are Logs Stored?
 
 Logs are stored in the application data directory:
-- **macOS**: `~/Library/Application Support/Tesseract AI/logs/`
-- **Windows**: `%APPDATA%\Tesseract AI\logs\`
-- **Linux**: `~/.config/Tesseract AI/logs/`
+- **macOS**: `~/Library/Application Support/OpenWriter/logs/`
+- **Windows**: `%APPDATA%\OpenWriter\logs\`
+- **Linux**: `~/.config/OpenWriter/logs/`
 
 Example log files:
 ```
@@ -271,7 +271,7 @@ Navigate to the log directory and view with any text editor:
 open ~/Library/Application\ Support/Tesseract\ AI/logs/
 
 # Windows
-explorer %APPDATA%\Tesseract AI\logs
+explorer %APPDATA%\OpenWriter\logs
 
 # Linux
 xdg-open ~/.config/Tesseract\ AI/logs/
@@ -312,9 +312,9 @@ If logging impacts performance:
 ## Need More Help?
 
 See full documentation:
-- **Full API**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/services/logger.md`
-- **Examples**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/services/logger-example.ts`
-- **Implementation**: `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/LOGGER_IMPLEMENTATION.md`
+- **Full API**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/services/logger.md`
+- **Examples**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/services/logger-example.ts`
+- **Implementation**: `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/LOGGER_IMPLEMENTATION.md`
 
 ## Quick Reference
 

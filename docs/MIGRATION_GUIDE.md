@@ -40,7 +40,7 @@ interface UIState {
 
 ### Step 2: Add to AppContext Types
 
-Update `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/contexts/AppContext.tsx`:
+Update `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/contexts/AppContext.tsx`:
 
 ```typescript
 // Add your new state to the AppState interface

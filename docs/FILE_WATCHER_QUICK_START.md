@@ -226,12 +226,12 @@ chmod 644 workspace/posts/*.json
 
 **macOS:**
 ```
-System Preferences → Notifications → Tesseract AI → Allow notifications
+System Preferences → Notifications → OpenWriter → Allow notifications
 ```
 
 **Windows:**
 ```
-Settings → System → Notifications → Tesseract AI → On
+Settings → System → Notifications → OpenWriter → On
 ```
 
 **Linux:**

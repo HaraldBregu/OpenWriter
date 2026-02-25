@@ -1,6 +1,6 @@
 # Chunk-Based Streaming Architecture
 
-This document explains how the chunk-based streaming system works in Tesseract AI's pipeline architecture, following the same pattern as `AgentController.ts`.
+This document explains how the chunk-based streaming system works in OpenWriter's pipeline architecture, following the same pattern as `AgentController.ts`.
 
 ## 🏗️ Architecture Overview
 

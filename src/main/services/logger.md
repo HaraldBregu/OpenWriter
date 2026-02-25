@@ -322,12 +322,12 @@ To manually clean up logs:
 find ~/Library/Application\ Support/Tesseract\ AI/logs -name "*.log" -mtime +30 -delete
 
 # Remove logs older than 30 days (Windows PowerShell)
-Get-ChildItem "$env:APPDATA\Tesseract AI\logs\*.log" | Where-Object {$_.LastWriteTime -lt (Get-Date).AddDays(-30)} | Remove-Item
+Get-ChildItem "$env:APPDATA\OpenWriter\logs\*.log" | Where-Object {$_.LastWriteTime -lt (Get-Date).AddDays(-30)} | Remove-Item
 ```
 
 ### Accessing Logs
 
 Log files are stored in the application data directory:
-- **macOS**: `~/Library/Application Support/Tesseract AI/logs/`
-- **Windows**: `%APPDATA%\Tesseract AI\logs\`
-- **Linux**: `~/.config/Tesseract AI/logs/`
+- **macOS**: `~/Library/Application Support/OpenWriter/logs/`
+- **Windows**: `%APPDATA%\OpenWriter\logs\`
+- **Linux**: `~/.config/OpenWriter/logs/`

@@ -1,6 +1,6 @@
 # Pipeline Concurrent Testing Guide
 
-This guide explains how to test concurrent AI pipeline execution in Tesseract AI.
+This guide explains how to test concurrent AI pipeline execution in OpenWriter.
 
 ## New AI-Powered Test Agents
 
@@ -37,7 +37,7 @@ Two new LangChain-powered test agents have been added to verify concurrent pipel
 Choose one of these methods:
 
 **Option 1: Settings UI (Recommended)**
-1. Open Tesseract AI
+1. Open OpenWriter
 2. Go to Settings → Models tab
 3. Enter your OpenAI API key
 4. Select a model (e.g., gpt-4o-mini)

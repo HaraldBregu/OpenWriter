@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-This document outlines a comprehensive architecture for integrating LLM (Large Language Model) inference capabilities into the brain subsection pages (Consciousness, Reasoning, Memory, Perception, Principles). The design follows existing patterns in the Tesseract AI codebase, ensuring consistency, maintainability, and scalability.
+This document outlines a comprehensive architecture for integrating LLM (Large Language Model) inference capabilities into the brain subsection pages (Consciousness, Reasoning, Memory, Perception, Principles). The design follows existing patterns in the OpenWriter codebase, ensuring consistency, maintainability, and scalability.
 
 ## Table of Contents
 
@@ -2063,7 +2063,7 @@ test('Consciousness page LLM interaction', async ({ page }) => {
 ## Appendix: File Structure
 
 ```
-tesseract-ai/
+openwriter/
 ├── src/
 │   ├── main/
 │   │   ├── llm/
@@ -2125,4 +2125,4 @@ This architecture provides a robust, scalable foundation for integrating LLM cap
 6. **Secure:** API keys encrypted, sensitive data protected
 7. **Testable:** Clear separation of concerns enables comprehensive testing
 
-The implementation follows the existing Tesseract AI architecture patterns, ensuring consistency and maintainability. The roadmap provides a clear path from basic functionality to advanced features over 8 weeks.
+The implementation follows the existing OpenWriter architecture patterns, ensuring consistency and maintainability. The roadmap provides a clear path from basic functionality to advanced features over 8 weeks.

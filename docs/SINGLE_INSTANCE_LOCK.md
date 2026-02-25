@@ -373,7 +373,7 @@ The single instance lock is handled by Electron itself, but electron-builder set
     "fileAssociations": [
       {
         "ext": "tsrct",
-        "name": "Tesseract AI Document",
+        "name": "OpenWriter Document",
         "role": "Editor"
       }
     ]
@@ -408,7 +408,7 @@ ps aux | grep -i electron | grep -i tesseract
 
 **Windows**:
 - Open Task Manager
-- Look for "Tesseract AI" processes
+- Look for "OpenWriter" processes
 - Should see 1 launcher + N workspaces
 
 ### Test Single Instance Lock

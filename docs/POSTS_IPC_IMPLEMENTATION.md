@@ -8,7 +8,7 @@ Successfully implemented Electron main process functionality for syncing posts t
 
 ### 1. Main Process - PostsIpc Module
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PostsIpc.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PostsIpc.ts`
 
 Implemented a complete IPC module with the following handlers:
 
@@ -36,7 +36,7 @@ Implemented a complete IPC module with the following handlers:
 
 ### 2. Preload Script Updates
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.ts`
 
 Added type-safe IPC methods:
 - `postsSyncToWorkspace(posts)` - Batch sync with result reporting
@@ -48,13 +48,13 @@ All methods use the `unwrapIpcResult` helper for automatic error handling.
 
 ### 3. TypeScript Type Definitions
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.d.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.d.ts`
 
 Updated global Window API types to include all new Posts IPC methods with full type safety.
 
 ### 4. Module Registration
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/bootstrap.ts`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/bootstrap.ts`
 
 - Imported `PostsIpc` from IPC modules
 - Added to `ipcModules` array for automatic registration
@@ -62,7 +62,7 @@ Updated global Window API types to include all new Posts IPC methods with full t
 
 ### 5. Comprehensive Documentation
 
-**File:** `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/POSTS_IPC_USAGE.md`
+**File:** `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/POSTS_IPC_USAGE.md`
 
 Created extensive usage guide covering:
 - Overview and file structure
@@ -285,16 +285,16 @@ const posts = await window.api.postsLoadFromWorkspace()
 ## Files Modified/Created
 
 ### Created
-1. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/PostsIpc.ts` - Main IPC handler
-2. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/POSTS_IPC_USAGE.md` - Usage guide
-3. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/POSTS_IPC_IMPLEMENTATION.md` - This file
+1. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/PostsIpc.ts` - Main IPC handler
+2. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/POSTS_IPC_USAGE.md` - Usage guide
+3. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/POSTS_IPC_IMPLEMENTATION.md` - This file
 
 ### Modified
-1. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/ipc/index.ts` - Export PostsIpc
-2. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/main/bootstrap.ts` - Import and register PostsIpc
-3. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.ts` - Add Posts IPC methods
-4. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/preload/index.d.ts` - Add type definitions
-5. `/Users/haraldbregu/Documents/9Spartans/apps/tesseract-ai/src/renderer/src/store/middleware/postsSync.middleware.ts` - Fix circular reference
+1. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/ipc/index.ts` - Export PostsIpc
+2. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/main/bootstrap.ts` - Import and register PostsIpc
+3. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.ts` - Add Posts IPC methods
+4. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/preload/index.d.ts` - Add type definitions
+5. `/Users/haraldbregu/Documents/9Spartans/apps/openwriter/src/renderer/src/store/middleware/postsSync.middleware.ts` - Fix circular reference
 
 ## Conclusion
 

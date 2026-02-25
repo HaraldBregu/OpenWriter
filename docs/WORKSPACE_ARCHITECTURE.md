@@ -298,7 +298,7 @@
 ## File System Structure
 
 ```
-Tesseract AI/
+OpenWriter/
 ├── app/
 │   ├── main/
 │   │   ├── index.ts ────────────► Entry point with workspace check

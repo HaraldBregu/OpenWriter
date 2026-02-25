@@ -1,10 +1,10 @@
 # Workspace Selection Feature
 
-This document describes the workspace selection system implemented for Tesseract AI.
+This document describes the workspace selection system implemented for OpenWriter.
 
 ## Overview
 
-The workspace selection feature allows users to choose a folder where their Tesseract AI projects will be stored. On first launch (or when no workspace is configured), a dedicated workspace selection window appears before the main application window.
+The workspace selection feature allows users to choose a folder where their OpenWriter projects will be stored. On first launch (or when no workspace is configured), a dedicated workspace selection window appears before the main application window.
 
 ## Architecture
 
@@ -83,7 +83,7 @@ workspaceClear(): Promise<void>
 ## User Flow
 
 ### First Launch (No Workspace)
-1. User launches Tesseract AI
+1. User launches OpenWriter
 2. Workspace selector window appears
 3. User can:
    - Click "Browse Folder" to select a new workspace
@@ -93,7 +93,7 @@ workspaceClear(): Promise<void>
 5. Workspace selector closes and main window opens
 
 ### Subsequent Launches (Workspace Configured)
-1. User launches Tesseract AI
+1. User launches OpenWriter
 2. Application loads with previously selected workspace
 3. Main window opens directly (no selector)
 
@@ -106,9 +106,9 @@ workspaceClear(): Promise<void>
 
 ### Storage Location
 - File: `{userData}/settings.json`
-- macOS: `~/Library/Application Support/Tesseract AI/settings.json`
-- Windows: `%APPDATA%/Tesseract AI/settings.json`
-- Linux: `~/.config/tesseract-ai/settings.json`
+- macOS: `~/Library/Application Support/OpenWriter/settings.json`
+- Windows: `%APPDATA%/OpenWriter/settings.json`
+- Linux: `~/.config/openwriter/settings.json`
 
 ### Storage Schema
 ```json

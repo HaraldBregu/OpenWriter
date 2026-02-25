@@ -357,4 +357,4 @@ For issues or questions:
 
 ## License
 
-Same as the main Tesseract AI project.
+Same as the main OpenWriter project.

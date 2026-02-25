@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the refactoring of Tesseract AI's routing system from **React Router** to a custom **context-based navigation system**. This change simplifies the codebase, reduces dependencies, and provides better control over page lifecycle management.
+This document describes the refactoring of OpenWriter's routing system from **React Router** to a custom **context-based navigation system**. This change simplifies the codebase, reduces dependencies, and provides better control over page lifecycle management.
 
 ## Motivation
 
@@ -306,7 +306,7 @@ This prevents unnecessary re-renders of consuming components.
 
 ## Conclusion
 
-The migration from React Router to a context-based navigation system provides a simpler, more maintainable, and more performant solution for Tesseract AI. The custom system is tailored specifically for Electron desktop applications and provides better control over component lifecycle and memory management.
+The migration from React Router to a context-based navigation system provides a simpler, more maintainable, and more performant solution for OpenWriter. The custom system is tailored specifically for Electron desktop applications and provides better control over component lifecycle and memory management.
 
 ### Next Steps
 
