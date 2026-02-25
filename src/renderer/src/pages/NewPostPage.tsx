@@ -260,7 +260,7 @@ const NewPostPage: React.FC = () => {
   if (!isDraft && !post) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
-        <p>Post not found.</p>
+        <p>{t('post.notFound')}</p>
       </div>
     )
   }
