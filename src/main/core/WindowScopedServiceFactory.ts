@@ -1,7 +1,12 @@
 import type { ServiceContainer, EventBus } from './index'
 import type { StoreService } from '../services/store'
 import type { WorkspaceService } from '../services/workspace'
-import path from 'node:path'
+import { WorkspaceService as WorkspaceServiceImpl } from '../services/workspace'
+import { WorkspaceMetadataService } from '../services/workspace-metadata'
+import { FileWatcherService } from '../services/file-watcher'
+import { DocumentsWatcherService } from '../services/documents-watcher'
+import { PersonalityFilesService } from '../services/personality-files'
+import { OutputFilesService } from '../services/output-files'
 
 /**
  * Interface for window-scoped service definitions.
