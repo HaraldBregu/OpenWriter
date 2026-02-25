@@ -13,16 +13,16 @@ export function WindowControls() {
   }, [])
 
   const handleMinimize = () => {
-    window.win.minimize()
+    window.win?.minimize()
   }
 
   const handleMaximize = () => {
-    window.win.maximize()
+    window.win?.maximize()
     setIsMaximized(!isMaximized)
   }
 
   const handleClose = () => {
-    window.win.close()
+    window.win?.close()
   }
 
   // macOS style - traffic lights on the left
