@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from 'react'
 interface Post {
   id: string
   title: string
-  blocks: Array<{ id: string; content: string }>
+  blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
   category: string
   tags: string[]
   visibility: string
