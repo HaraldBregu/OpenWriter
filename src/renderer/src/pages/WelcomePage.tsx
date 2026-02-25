@@ -285,7 +285,7 @@ const WelcomePage: React.FC = () => {
                     <button
                       onClick={(e) => handleRemoveRecentProject(project.path, e)}
                       className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
-                      title="Remove from recent projects"
+                      title={t('welcome.removeFromRecent')}
                     >
                       <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                     </button>
