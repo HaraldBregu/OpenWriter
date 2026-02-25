@@ -332,7 +332,7 @@ const DirectoriesPage: React.FC = () => {
                         size="icon"
                         onClick={() => handleRemoveDirectory(dir.id)}
                         className="shrink-0"
-                        title="Remove directory"
+                        title={t('directories.removeDirectory')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </AppButton>

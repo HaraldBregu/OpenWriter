@@ -118,13 +118,9 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
     setActiveFileId(null)
     setIsNewMode(true)
     setInputValue('')
-    // Restore section config defaults (or app defaults if no section config)
-    setInferenceSettings(sectionDefaults ?? {
-      ...DEFAULT_INFERENCE_SETTINGS,
-      providerId: providerId || 'openai',
-      modelId: getDefaultModelId(providerId || 'openai')
-    })
-  }, [clear, sectionDefaults, providerId])
+    // Restore section config defaults (or global provider fallback)
+    resetToSectionDefaults()
+  }, [clear, resetToSectionDefaults])
 
   const handleFileSelect = useCallback(async (file: PersonalityFile) => {
     try {
