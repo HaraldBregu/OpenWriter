@@ -397,7 +397,7 @@ const NewPostPage: React.FC = () => {
       {/* Footer */}
       <div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
         <span className="text-xs text-muted-foreground">
-          {charCount} characters · {wordCount} words
+          {t('post.charactersAndWords', { chars: charCount, words: wordCount })}
         </span>
       </div>
     </div>
