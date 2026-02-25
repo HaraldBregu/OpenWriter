@@ -296,6 +296,7 @@ const DocumentListItem = React.memo(function DocumentListItem({
   onDelete,
   onView
 }: DocumentListItemProps) {
+  const { t } = useTranslation()
   const Icon = getFileIcon(document)
 
   return (
@@ -312,7 +313,7 @@ const DocumentListItem = React.memo(function DocumentListItem({
 
       <div className="flex items-center gap-6 text-xs text-muted-foreground">
         <span className="w-20 text-right">{formatFileSize(document.size)}</span>
-        <span className="w-24 text-right">{formatDate(document.importedAt)}</span>
+        <span className="w-24 text-right">{formatDate(document.importedAt, t)}</span>
       </div>
 
       <DocumentActionMenu
