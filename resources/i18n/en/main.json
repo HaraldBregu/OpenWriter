@@ -381,7 +381,7 @@
     "integrations": "Integrations",
     "integrationsDescription": "Connect your tools",
     "tip": "Tip",
-    "tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to toggle the sidebar."
+    "tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to show or hide the sidebar."
   },
 
   "post": {
