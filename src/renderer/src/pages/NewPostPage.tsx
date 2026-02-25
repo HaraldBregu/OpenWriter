@@ -119,7 +119,12 @@ const NewPostPage: React.FC = () => {
       const saved = await dispatch(saveOutputItem({
         type: 'posts',
         title: draftTitle || 'Untitled Post',
-        content: draftBlocks.map((b) => b.content).join('\n\n'),
+        blocks: draftBlocks.map((b) => ({
+          name: b.id,
+          content: b.content,
+          createdAt: b.createdAt,
+          updatedAt: b.updatedAt,
+        })),
         visibility: 'private',
         provider: aiSettings.providerId,
         model: aiSettings.modelId,
