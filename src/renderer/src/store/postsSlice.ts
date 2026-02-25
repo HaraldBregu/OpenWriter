@@ -204,6 +204,11 @@ export const postsSlice = createSlice({
             existing.category = item.category
             existing.tags = item.tags
             existing.visibility = item.visibility
+            existing.provider = item.provider
+            existing.model = item.model
+            existing.temperature = item.temperature
+            existing.maxTokens = item.maxTokens
+            existing.reasoning = item.reasoning
             existing.updatedAt = new Date(item.updatedAt).getTime()
             // Rebuild blocks only if content actually changed
             const currentContent = existing.blocks.map((b) => b.content).join('\n\n')
