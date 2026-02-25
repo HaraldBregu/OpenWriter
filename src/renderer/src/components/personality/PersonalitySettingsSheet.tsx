@@ -247,12 +247,12 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
             </AppSelectContent>
           </AppSelect>
           {hasModel && modelIsReasoning && (
-            <p className="text-[11px] text-muted-foreground">Not supported for reasoning models.</p>
+            <p className="text-[11px] text-muted-foreground">{t('inferenceSettings.notSupportedReasoning')}</p>
           )}
           {creativityLevel === 'custom' && hasModel && !modelIsReasoning && (
             <div className="pt-1 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-muted-foreground">Custom value</span>
+                <span className="text-[11px] text-muted-foreground">{t('inferenceSettings.customValue')}</span>
                 <span className="text-[11px] text-muted-foreground tabular-nums">
                   {settings.temperature.toFixed(1)}
                 </span>
