@@ -45,17 +45,15 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   // effect must not immediately reload the most recent file over the top.
   const [isNewMode, setIsNewMode] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const [inferenceSettings, setInferenceSettings] = useState<InferenceSettings>(() => ({
-    ...DEFAULT_INFERENCE_SETTINGS,
-    providerId: providerId || 'openai',
-    modelId: getDefaultModelId(providerId || 'openai')
-  }))
-  // Section-level defaults loaded from disk (null = not loaded yet or absent)
-  const [sectionDefaults, setSectionDefaults] = useState<InferenceSettings | null>(null)
+  const {
+    settings: inferenceSettings,
+    onChange: handleUserSettingsChange,
+    applySnapshot,
+    resetToSectionDefaults
+  } = useInferenceSettings(sectionId, providerId ?? 'openai')
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const contentRef = useRef<HTMLDivElement>(null)
-  const saveSectionConfigTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Get files for this section for the dropdown
   const files = useAppSelector(
