@@ -201,7 +201,7 @@ describe('PersonalityFilesService', () => {
       const folderName = '2024-01-15_120000'
 
       // readdir for personality dir returns one section entry
-      mockFs.readdir.mockImplementation((dirPath: any, options?: any) => {
+      mockFs.readdir.mockImplementation((dirPath: any, _options?: any) => {
         const pathStr = String(dirPath)
         // Personality root → returns the section dir
         if (pathStr === path.join(WORKSPACE, 'personality')) {
