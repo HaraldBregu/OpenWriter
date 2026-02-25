@@ -62,8 +62,9 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
     const runId = randomUUID()
     const controller = new AbortController()
 
-    this.activeRuns.set(runId, {
-      runId,
+    // Register execution with base class
+    this.registerExecution({
+      id: runId,
       agentName,
       controller,
       startedAt: Date.now()
@@ -76,27 +77,6 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
     this.driveRun(runId, agent.name, agent.run(input, runId, controller.signal), windowId)
 
     return runId
-  }
-
-  /**
-   * Cancel an in-flight run by its ID.
-   * Returns true if the run was found and aborted, false otherwise.
-   */
-  cancel(runId: string): boolean {
-    const run = this.activeRuns.get(runId)
-    if (!run) return false
-
-    console.log(`[PipelineService] Cancelling run ${runId}`)
-    run.controller.abort()
-    this.activeRuns.delete(runId)
-    return true
-  }
-
-  /**
-   * Check whether a run is currently active.
-   */
-  isRunning(runId: string): boolean {
-    return this.activeRuns.has(runId)
   }
 
   /**
