@@ -44,6 +44,28 @@ export class WindowFactory {
     }
 
     const win = new BrowserWindow(options)
+
+    // Prevent arbitrary window.open() calls from creating unrestricted windows
+    win.webContents.setWindowOpenHandler(() => {
+      return { action: 'deny' }
+    })
+
+    // Prevent navigation to external URLs
+    win.webContents.on('will-navigate', (event, url) => {
+      const appUrl = process.env['ELECTRON_RENDERER_URL'] || 'file://'
+      if (is.dev) {
+        // In dev mode, only allow navigation within the dev server
+        if (!url.startsWith(appUrl) && !url.startsWith('file://')) {
+          event.preventDefault()
+        }
+      } else {
+        // In production, only allow file:// URLs (local files)
+        if (!url.startsWith('file://')) {
+          event.preventDefault()
+        }
+      }
+    })
+
     this.loadContent(win)
     return win
   }
