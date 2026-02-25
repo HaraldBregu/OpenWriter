@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMediaPermissions } from '../../hooks/useMediaPermissions'
 
-const statusLabel = (s: string) => {
-  if (s === 'granted') return 'Granted'
-  if (s === 'denied') return 'Denied'
-  if (s === 'restricted') return 'Restricted'
-  return 'Not determined'
+const statusLabel = (s: string, t: (key: string) => string) => {
+  if (s === 'granted') return t('settings.permissions.granted')
+  if (s === 'denied') return t('settings.permissions.denied')
+  if (s === 'restricted') return t('settings.permissions.restricted')
+  return t('settings.permissions.notDetermined')
 }
 
 const statusColor = (s: string) => {
