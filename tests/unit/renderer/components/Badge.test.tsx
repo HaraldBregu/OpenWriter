@@ -2,7 +2,6 @@
  * Tests for Badge UI component (shadcn/ui).
  * Renders a styled badge with variant support.
  */
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Badge } from '../../../../src/renderer/src/components/ui/badge'
 
