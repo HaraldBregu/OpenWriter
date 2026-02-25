@@ -188,7 +188,7 @@ const NewWritingPage: React.FC = () => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [isDraft, writing, dispatch])
+  }, [isDraft, writing, aiSettings, dispatch])
 
   // ---------------------------------------------------------------------------
   // Edit mode callbacks
