@@ -30,8 +30,10 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
 
   constructor(
     private readonly registry: AgentRegistry,
-    private readonly eventBus: EventBus
-  ) {}
+    eventBus: EventBus
+  ) {
+    super(eventBus)
+  }
 
   // -------------------------------------------------------------------------
   // Public API
