@@ -29,6 +29,9 @@ export default tseslint.config(
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
       'react-refresh/only-export-components': 'warn',
     }
   }
