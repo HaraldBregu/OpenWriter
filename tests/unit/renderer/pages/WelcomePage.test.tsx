@@ -93,7 +93,7 @@ describe('WelcomePage', () => {
   it('should render the app logo', () => {
     renderWelcomePage()
 
-    const img = screen.getByAltText('Tesseract AI')
+    const img = screen.getByAltText('OpenWriter')
     expect(img).toBeInTheDocument()
     expect(img).toHaveAttribute('src', 'test-logo.png')
   })
