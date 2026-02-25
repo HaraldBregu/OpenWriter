@@ -158,7 +158,12 @@ const NewWritingPage: React.FC = () => {
     saveTimerRef.current = setTimeout(async () => {
       const workspace = await window.workspace.getCurrent()
       if (!workspace) return
-      const content = writing.blocks.map((b) => b.content).join('\n\n')
+      const outputBlocks = writing.blocks.map((b) => ({
+        name: b.id,
+        content: b.content,
+        createdAt: b.createdAt,
+        updatedAt: b.updatedAt,
+      }))
       const title = writing.title || 'Untitled Writing'
       const outputId = savedOutputIdRef.current
       if (outputId) {
@@ -166,7 +171,7 @@ const NewWritingPage: React.FC = () => {
           id: outputId,
           type: 'writings',
           title,
-          content,
+          blocks: outputBlocks,
           category: 'writing',
           visibility: 'private',
           provider: aiSettings.providerId,
@@ -179,7 +184,7 @@ const NewWritingPage: React.FC = () => {
         const saved = await dispatch(saveOutputItem({
           type: 'writings',
           title,
-          content,
+          blocks: outputBlocks,
           category: 'writing',
           visibility: 'private',
           provider: aiSettings.providerId,
