@@ -343,7 +343,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
               size="icon"
               className="shrink-0 h-9 w-9"
               onClick={handleCreateNew}
-              title="New conversation"
+              title={t('personality.newConversation')}
             >
               <Plus className="h-4 w-4" />
             </AppButton>
