@@ -461,12 +461,15 @@ describe('outputSlice', () => {
         // Arrange
         const original = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Old Title', category: 'cat-a' })
         const state = { ...createInitialState(), items: [original] }
+        const updatedBlocks = [
+          { name: 'block-uuid-1', content: 'Updated content', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-06-01T00:00:00.000Z' }
+        ]
         const updated = makeOutputItem({
           id: 'item-1',
           type: 'posts',
           title: 'New Title',
           category: 'cat-b',
-          content: 'Updated content',
+          blocks: updatedBlocks,
           visibility: 'public',
           tags: ['new-tag'],
           updatedAt: '2024-06-01T00:00:00.000Z'
@@ -478,7 +481,7 @@ describe('outputSlice', () => {
         // Assert
         expect(result.items[0].title).toBe('New Title')
         expect(result.items[0].category).toBe('cat-b')
-        expect(result.items[0].content).toBe('Updated content')
+        expect(result.items[0].blocks).toEqual(updatedBlocks)
         expect(result.items[0].visibility).toBe('public')
         expect(result.items[0].tags).toEqual(['new-tag'])
         expect(result.items[0].updatedAt).toBe('2024-06-01T00:00:00.000Z')
