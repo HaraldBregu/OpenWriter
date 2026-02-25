@@ -571,7 +571,7 @@ const DocumentsPage: React.FC = () => {
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)
-      setImportError(error instanceof Error ? error.message : 'Failed to import files')
+      setImportError(error instanceof Error ? error.message : t('documents.importFailed'))
     } finally {
       setIsImporting(false)
     }
