@@ -441,7 +441,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       onClick={() => toggleSection("Knowledge")}
                       className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <span className="tracking-wider">Knowledge</span>
+                      <span className="tracking-wider">{t("sidebar.knowledge")}</span>
                       <ChevronRight
                         className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Knowledge"] ? "rotate-90" : ""}`}
                       />
@@ -456,7 +456,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           >
                             <Link to="/documents" className="ml-0">
                               <FolderOpen className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">Documents</span>
+                              <span className="flex-1 truncate">{t("sidebar.documents")}</span>
                             </Link>
                           </AppSidebarMenuSubButton>
                         </AppSidebarMenuSubItem>
@@ -469,7 +469,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                             <Link to="/directories" className="ml-0">
                               <FolderOpen className="h-3.5 w-3.5 shrink-0" />
                               <span className="flex-1 truncate">
-                                Directories
+                                {t("sidebar.directories")}
                               </span>
                             </Link>
                           </AppSidebarMenuSubButton>
