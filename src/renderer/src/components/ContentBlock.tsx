@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
@@ -182,6 +182,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     const unsub = window.task.onEvent((event) => {
       if (event.type !== 'stream') return
       const data = event.data as { taskId: string; token?: string }
+      console.log('[ContentBlock] Received token:', data.token)
       if (data.taskId !== enhanceTaskId) return
       const token = data.token
       if (!token) return
