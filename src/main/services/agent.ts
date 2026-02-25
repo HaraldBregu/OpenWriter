@@ -114,7 +114,7 @@ export class AgentService {
   /**
    * Get session information
    */
-  private getSession(sessionId: string): AgentSessionInfo | null {
+  getSession(sessionId: string): AgentSessionInfo | null {
     return this.sessions.get(sessionId) || null
   }
 
