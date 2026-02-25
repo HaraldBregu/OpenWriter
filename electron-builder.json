@@ -111,14 +111,14 @@
     "desktop": {
       "entry": {
         "Type": "Application",
-        "Name": "Tesseract AI",
+        "Name": "OpenWriter",
         "Comment": "Advanced AI manager",
-        "Icon": "tesseract-ai",
+        "Icon": "openwriter",
         "Terminal": false,
         "Categories": "Office;WordProcessor;AI;",
-        "MimeType": "application/x-tesseract-ai-document;",
+        "MimeType": "application/x-openwriter-document;",
         "StartupNotify": true,
-        "StartupWMClass": "Tesseract AI"
+        "StartupWMClass": "OpenWriter"
       }
     },
     "extraResources": [
