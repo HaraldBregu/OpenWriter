@@ -2,7 +2,7 @@
  * Tests for useIsMobile hook (shadcn/ui).
  * Detects mobile viewport based on window width.
  */
-import { renderHook, act } from '@testing-library/react'
+import { renderHook } from '@testing-library/react'
 import { useIsMobile } from '../../../../src/renderer/src/components/hooks/use-mobile'
 
 describe('useIsMobile', () => {
