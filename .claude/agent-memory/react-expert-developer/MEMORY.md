@@ -92,6 +92,15 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - `ThemeMode` = `'light' | 'dark' | 'system'` — defined in `AppContext.tsx`, do NOT redefine
 - `useTheme()` at `src/renderer/src/hooks/useTheme.ts` — call once in `AppLayout`
 - `useIsDark()` at `src/renderer/src/hooks/useIsDark.ts` — MutationObserver on `<html>.classList`
+- `AppContext.tsx` lives at `src/renderer/src/contexts/AppContext.tsx` (not `src/renderer/src/`)
+- ALWAYS guard `window.app.*` calls with optional chaining (`window.app?.setTheme(theme)`) — the preload bridge is absent in Jest (jsdom) and any non-Electron renderer context. Bare access crashes with "Cannot read properties of undefined".
+- Likewise guard `window.app?.onThemeChange` before registering IPC listeners: `if (!window.app?.onThemeChange) return`
+
+## Test Location Convention
+- Jest renderer project scans `tests/unit/renderer/` ONLY — tests under `src/renderer/src/**/__tests__/` are NOT picked up.
+- Correct locations: `tests/unit/renderer/contexts/`, `tests/unit/renderer/components/`, `tests/unit/renderer/hooks/`, etc.
+- Use `@/` path alias (e.g. `@/contexts/AppContext`) in renderer test files instead of relative `../` paths.
+- Add `localStorage.clear()` in `beforeEach` for any test that exercises `ThemeProvider` — `readPersistedTheme()` reads localStorage and leaks state across tests.
 
 ## TipTap Editor (v3)
 - `setContent(content, { emitUpdate: false })` — second arg is object in v3, not boolean
