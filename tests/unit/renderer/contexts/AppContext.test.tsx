@@ -386,7 +386,7 @@ describe('AppContext', () => {
 
       expect(() => {
         render(<ThemeDisplay />)
-      }).toThrow('useAppState must be used within an AppProvider')
+      }).toThrow('useTheme must be used within an AppProvider')
 
       spy.mockRestore()
     })
@@ -396,7 +396,7 @@ describe('AppContext', () => {
 
       expect(() => {
         render(<ThemeToggle />)
-      }).toThrow('useAppActions must be used within an AppProvider')
+      }).toThrow('useTheme must be used within an AppProvider')
 
       spy.mockRestore()
     })
