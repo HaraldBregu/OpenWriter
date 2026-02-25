@@ -458,11 +458,11 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
         <div className="p-6 space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              Document URL
+              {t('documents.documentURL')}
             </label>
             <AppInput
               type="url"
-              placeholder="https://example.com/document.pdf"
+              placeholder={t('documents.documentURLPlaceholder')}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={status === 'downloading'}
