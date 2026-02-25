@@ -4,6 +4,9 @@ out
 dist
 .env
 
+# Claude worktrees
+.claude/worktrees/
+
 # Test artifacts
 coverage
 playwright-report
