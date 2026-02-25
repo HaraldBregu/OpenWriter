@@ -66,27 +66,27 @@ interface AppLayoutProps {
 }
 
 // ---------------------------------------------------------------------------
-// Nav items
+// Nav items — slugs and shortcuts are locale-independent; labels use i18n
 // ---------------------------------------------------------------------------
 
-const quickCreateItems = [
-  { title: "Write", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
-  { title: "New Post", icon: PlusCircle, url: "/new/post", shortcut: "⌘N" },
+const quickCreateSlugs = [
+  { titleKey: "sidebar.write",   icon: PenLine,   url: "/new/writing", shortcut: "⌘W" },
+  { titleKey: "sidebar.newPost", icon: PlusCircle, url: "/new/post",   shortcut: "⌘N" },
 ];
 
-const topNavSections = ["Writing", "Posts"];
+const topNavSectionKeys = ["sidebar.writing", "sidebar.posts"];
 
-const personalityItems = [
-  { title: "Emotional Depth", icon: Heart, slug: "emotional-depth" },
-  { title: "Consciousness", icon: Lightbulb, slug: "consciousness" },
-  { title: "Motivation", icon: Flame, slug: "motivation" },
-  { title: "Moral Intuition", icon: Scale, slug: "moral-intuition" },
-  { title: "Irrationality", icon: Shuffle, slug: "irrationality" },
-  { title: "Growth", icon: Sprout, slug: "growth" },
-  { title: "Social Identity", icon: Users, slug: "social-identity" },
-  { title: "Creativity", icon: Palette, slug: "creativity" },
-  { title: "Mortality", icon: Hourglass, slug: "mortality" },
-  { title: "Contradiction", icon: GitMerge, slug: "contradiction" },
+const personalitySlugs = [
+  { titleKey: "personalityItems.emotionalDepth", icon: Heart,    slug: "emotional-depth" },
+  { titleKey: "personalityItems.consciousness",  icon: Lightbulb, slug: "consciousness" },
+  { titleKey: "personalityItems.motivation",     icon: Flame,    slug: "motivation" },
+  { titleKey: "personalityItems.moralIntuition", icon: Scale,    slug: "moral-intuition" },
+  { titleKey: "personalityItems.irrationality",  icon: Shuffle,  slug: "irrationality" },
+  { titleKey: "personalityItems.growth",         icon: Sprout,   slug: "growth" },
+  { titleKey: "personalityItems.socialIdentity", icon: Users,    slug: "social-identity" },
+  { titleKey: "personalityItems.creativity",     icon: Palette,  slug: "creativity" },
+  { titleKey: "personalityItems.mortality",      icon: Hourglass, slug: "mortality" },
+  { titleKey: "personalityItems.contradiction",  icon: GitMerge, slug: "contradiction" },
 ];
 
 // ---------------------------------------------------------------------------
