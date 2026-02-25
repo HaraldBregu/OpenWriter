@@ -157,7 +157,12 @@ const NewPostPage: React.FC = () => {
     saveTimerRef.current = setTimeout(async () => {
       const workspace = await window.workspace.getCurrent()
       if (!workspace) return
-      const content = post.blocks.map((b) => b.content).join('\n\n')
+      const outputBlocks = post.blocks.map((b) => ({
+        name: b.id,
+        content: b.content,
+        createdAt: b.createdAt,
+        updatedAt: b.updatedAt,
+      }))
       const title = post.title || 'Untitled Post'
       const outputId = savedOutputIdRef.current
       if (outputId) {
@@ -165,7 +170,7 @@ const NewPostPage: React.FC = () => {
           id: outputId,
           type: 'posts',
           title,
-          content,
+          blocks: outputBlocks,
           visibility: 'private',
           provider: aiSettings.providerId,
           model: aiSettings.modelId,
@@ -177,7 +182,7 @@ const NewPostPage: React.FC = () => {
         const saved = await dispatch(saveOutputItem({
           type: 'posts',
           title,
-          content,
+          blocks: outputBlocks,
           visibility: 'private',
           provider: aiSettings.providerId,
           model: aiSettings.modelId,
