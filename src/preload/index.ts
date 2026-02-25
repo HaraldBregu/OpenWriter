@@ -1130,84 +1130,81 @@ const personality = {
 // ---------------------------------------------------------------------------
 // window.output — Output file management for posts and writings
 // ---------------------------------------------------------------------------
+
+/** A single content block hydrated from its <name>.md file on disk. */
+interface OutputContentBlock {
+    name: string
+    content: string
+    filetype: 'markdown'
+    type: 'content'
+    createdAt: string
+    updatedAt: string
+}
+
+/** Shape of an output entry as returned by the main process. */
+interface OutputFileResult {
+    id: string
+    type: string
+    path: string
+    metadata: {
+        title: string
+        type: string
+        category: string
+        tags: string[]
+        visibility: string
+        provider: string
+        model: string
+        temperature?: number
+        maxTokens?: number | null
+        reasoning?: boolean
+        createdAt: string
+        updatedAt: string
+        content: Array<{
+            type: 'content'
+            filetype: 'markdown'
+            name: string
+            createdAt: string
+            updatedAt: string
+        }>
+    }
+    blocks: OutputContentBlock[]
+    savedAt: number
+}
+
 const output = {
     save: (input: {
         type: string
-        content: string
+        blocks: Array<{
+            name: string
+            content: string
+            filetype?: 'markdown'
+            type?: 'content'
+        }>
         metadata?: Record<string, unknown>
     }): Promise<{ id: string; path: string; savedAt: number }> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:save', input))
     },
-    loadAll: (): Promise<Array<{
-        id: string
-        type: string
-        path: string
-        metadata: {
-            title: string
-            type: string
-            category: string
-            tags: string[]
-            visibility: string
-            provider: string
-            model: string
-            temperature?: number
-            maxTokens?: number | null
-            reasoning?: boolean
-            createdAt: string
-            updatedAt: string
-        }
-        content: string
-        savedAt: number
-    }>> => {
+    loadAll: (): Promise<OutputFileResult[]> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-all'))
     },
-    loadByType: (type: string): Promise<Array<{
-        id: string
-        type: string
-        path: string
-        metadata: {
-            title: string
-            type: string
-            category: string
-            tags: string[]
-            visibility: string
-            provider: string
-            model: string
-            temperature?: number
-            maxTokens?: number | null
-            reasoning?: boolean
-            createdAt: string
-            updatedAt: string
-        }
-        content: string
-        savedAt: number
-    }>> => {
+    loadByType: (type: string): Promise<OutputFileResult[]> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-by-type', type))
     },
-    loadOne: (params: { type: string; id: string }): Promise<{
-        id: string
-        type: string
-        path: string
-        metadata: {
-            title: string
-            type: string
-            category: string
-            tags: string[]
-            visibility: string
-            provider: string
-            model: string
-            temperature?: number
-            maxTokens?: number | null
-            reasoning?: boolean
-            createdAt: string
-            updatedAt: string
-        }
-        content: string
-        savedAt: number
-    } | null> => {
+    loadOne: (params: { type: string; id: string }): Promise<OutputFileResult | null> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:load-one', params))
     },
-    update: (params: { type: string; id: string; content: string; metadata: Record<string, unknown> }): Promise<void> => {
+    update: (params: {
+        type: string
+        id: string
+        blocks: Array<{
+            name: string
+            content: string
+            createdAt?: string
+            filetype?: 'markdown'
+            type?: 'content'
+        }>
+        metadata: Record<string, unknown>
+    }): Promise<void> => {
         return unwrapIpcResult(ipcRenderer.invoke('output:update', params))
     },
     delete: (params: { type: string; id: string }): Promise<void> => {
