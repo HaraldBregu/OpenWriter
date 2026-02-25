@@ -184,17 +184,19 @@ describe('TitleBar — window controls (non-Mac)', () => {
     })
   })
 
-  it('calls window.win.maximize when the restore button is clicked (currently maximized)', async () => {
+  it('calls window.win.maximize exactly once when the restore button is clicked', async () => {
     ;(window.win.isMaximized as jest.Mock).mockResolvedValue(true)
-    const user = userEvent.setup()
+    // Create a fresh spy on maximize for this isolated assertion
+    const maximizeSpy = jest.fn()
+    ;(window.win.maximize as jest.Mock).mockImplementation(maximizeSpy)
 
+    const user = userEvent.setup()
     renderOnWindows()
 
-    // Wait for the async maximize state to settle
     const restoreBtn = await screen.findByTitle(KEYS.restore)
     await user.click(restoreBtn)
 
-    expect(window.win.maximize).toHaveBeenCalledTimes(1)
+    expect(maximizeSpy).toHaveBeenCalledTimes(1)
   })
 })
 
