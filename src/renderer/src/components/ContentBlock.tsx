@@ -293,6 +293,14 @@ export const ContentBlock = React.memo(function ContentBlock({
           </ActionButton>
         </div>
       </div>
+      {onAdd && (
+        <div
+          className="group/add mx-5 h-1 hover:h-8 transition-all duration-200 flex items-center justify-center rounded cursor-pointer hover:bg-muted/30"
+          onClick={() => onAdd(block.id)}
+        >
+          <Plus className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/add:opacity-100 transition-opacity duration-150" />
+        </div>
+      )}
     </Reorder.Item>
   )
 })
