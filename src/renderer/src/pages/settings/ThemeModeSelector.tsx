@@ -1,31 +1,8 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { AppRadioGroup, AppRadioGroupItem, AppLabel } from '@/components/app'
 import { useThemeMode, useAppActions } from '../../contexts'
 import type { ThemeMode } from '../../contexts'
-
-interface ThemeOption {
-  value: ThemeMode
-  label: string
-  description: string
-}
-
-const THEME_OPTIONS: ThemeOption[] = [
-  {
-    value: 'light',
-    label: 'Light',
-    description: 'Always use the light colour scheme'
-  },
-  {
-    value: 'dark',
-    label: 'Dark',
-    description: 'Always use the dark colour scheme'
-  },
-  {
-    value: 'system',
-    label: 'System',
-    description: 'Follow the operating system preference'
-  }
-]
 
 /**
  * Segmented radio-group control that lets users choose between
@@ -37,15 +14,34 @@ const THEME_OPTIONS: ThemeOption[] = [
 export function ThemeModeSelector(): React.ReactElement {
   const themeMode = useThemeMode()
   const { setTheme } = useAppActions()
+  const { t } = useTranslation()
+
+  const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
+    {
+      value: 'light',
+      label: t('settings.theme.light'),
+      description: t('settings.theme.lightDescription'),
+    },
+    {
+      value: 'dark',
+      label: t('settings.theme.dark'),
+      description: t('settings.theme.darkDescription'),
+    },
+    {
+      value: 'system',
+      label: t('settings.theme.system'),
+      description: t('settings.theme.systemDescription'),
+    },
+  ]
 
   return (
     <AppRadioGroup
       value={themeMode}
       onValueChange={(value) => setTheme(value as ThemeMode)}
       className="grid gap-0"
-      aria-label="Theme mode"
+      aria-label={t('settings.theme.title')}
     >
-      {THEME_OPTIONS.map((option) => (
+      {themeOptions.map((option) => (
         <div
           key={option.value}
           className="flex items-center justify-between px-4 py-3"
