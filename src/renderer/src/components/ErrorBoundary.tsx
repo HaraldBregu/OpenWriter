@@ -1,5 +1,6 @@
 import React from 'react'
 import { AlertCircle } from 'lucide-react'
+import i18next from 'i18next'
 
 interface ErrorBoundaryProps {
   children: React.ReactNode
