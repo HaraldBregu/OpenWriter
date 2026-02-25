@@ -2,9 +2,6 @@ import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/too
 import type { Block } from '@/components/ContentBlock'
 import type { OutputItem } from './outputSlice'
 
-// OutputItem is imported only for the hydrateFromDisk reducer payload type.
-// postsSlice does NOT import outputSlice at runtime — no circular dependency.
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
