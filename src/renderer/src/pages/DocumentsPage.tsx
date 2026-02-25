@@ -488,7 +488,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
               </div>
               <p className="text-xs text-muted-foreground flex items-center gap-2">
                 <Loader2 className="h-3 w-3 animate-spin" />
-                Downloading... {progress}%
+                {t('documents.downloading', { progress })}
               </p>
             </div>
           )}
