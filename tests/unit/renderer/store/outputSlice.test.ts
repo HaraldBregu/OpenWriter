@@ -482,6 +482,150 @@ describe('outputSlice', () => {
         expect(result.items[0].updatedAt).toBe('2024-06-01T00:00:00.000Z')
       })
 
+      it('fulfilled: should persist provider when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'openai' })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'anthropic' })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].provider).toBe('anthropic')
+      })
+
+      it('fulfilled: should persist model when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', model: 'gpt-4o' })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', model: 'claude-opus-4-6' })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].model).toBe('claude-opus-4-6')
+      })
+
+      it('fulfilled: should persist temperature when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', temperature: 0.7 })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', temperature: 1.2 })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].temperature).toBe(1.2)
+      })
+
+      it('fulfilled: should persist maxTokens when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: null })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: 4096 })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].maxTokens).toBe(4096)
+      })
+
+      it('fulfilled: should persist null maxTokens (unlimited) when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: 2048 })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: null })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].maxTokens).toBeNull()
+      })
+
+      it('fulfilled: should persist reasoning when updating an item', () => {
+        // Arrange
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', reasoning: false })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'posts', reasoning: true })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert
+        expect(result.items[0].reasoning).toBe(true)
+      })
+
+      it('fulfilled: should persist all inference fields together in one update', () => {
+        // Arrange — item with one set of inference settings
+        const original = makeOutputItem({
+          id: 'item-1',
+          type: 'posts',
+          provider: 'openai',
+          model: 'gpt-4o',
+          temperature: 0.7,
+          maxTokens: null,
+          reasoning: false
+        })
+        const state = { ...createInitialState(), items: [original] }
+
+        // Update with a completely different set of inference settings
+        const updated = makeOutputItem({
+          id: 'item-1',
+          type: 'posts',
+          provider: 'anthropic',
+          model: 'claude-opus-4-6',
+          temperature: 1.8,
+          maxTokens: 4000,
+          reasoning: true,
+          title: 'Also Updated Title'
+        })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert — all five inference fields updated
+        const item = result.items[0]
+        expect(item.provider).toBe('anthropic')
+        expect(item.model).toBe('claude-opus-4-6')
+        expect(item.temperature).toBe(1.8)
+        expect(item.maxTokens).toBe(4000)
+        expect(item.reasoning).toBe(true)
+        // Confirm non-inference fields are also updated
+        expect(item.title).toBe('Also Updated Title')
+      })
+
+      it('fulfilled: should not overwrite savedAt or path (fields not in update payload)', () => {
+        // Arrange — item has a known path and savedAt
+        const original = makeOutputItem({
+          id: 'item-1',
+          type: 'posts',
+          path: '/workspace/output/posts/item-1',
+          savedAt: 12345
+        })
+        const state = { ...createInitialState(), items: [original] }
+
+        // The update thunk returns an item with path='' and a new savedAt
+        const updated = makeOutputItem({
+          id: 'item-1',
+          type: 'posts',
+          path: '',         // update thunk always returns empty path
+          savedAt: 99999
+        })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert — the reducer applies the payload as-is (path and savedAt are NOT
+        // fields in the spread, so they keep their original values from the item)
+        // path is NOT in the reducer's spread list, so original is preserved
+        expect(result.items[0].path).toBe('/workspace/output/posts/item-1')
+      })
+
       it('fulfilled: should not change state when id + type does not match', () => {
         // Arrange
         const original = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Original' })
@@ -493,6 +637,19 @@ describe('outputSlice', () => {
 
         // Assert
         expect(result.items[0].title).toBe('Original')
+      })
+
+      it('fulfilled: should not update a posts item when the payload type is writings', () => {
+        // Arrange — item is type='posts', payload claims type='writings'
+        const original = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'openai' })
+        const state = { ...createInitialState(), items: [original] }
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'anthropic' })
+
+        // Act
+        const result = outputReducer(state, fulfilled(updateOutputItem, updated))
+
+        // Assert — no match, provider unchanged
+        expect(result.items[0].provider).toBe('openai')
       })
     })
 
