@@ -50,30 +50,26 @@ export class EnhanceAgent implements Agent {
   async *run(input: AgentInput, runId: string, signal: AbortSignal): AsyncGenerator<AgentEvent> {
     // --- Resolve configuration -----------------------------------------------
 
-    const providerId = (input.context?.providerId as string) || 'openai'
-    const storeSettings = this.storeService.getModelSettings(providerId)
-
-    console.log(`${LOG_PREFIX} Run ${runId} - StoreSettings:`, storeSettings)
-
-    const apiKey = storeSettings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
-
-    if (!apiKey || apiKey === 'your-openai-api-key-here') {
-      console.error(`${LOG_PREFIX} Run ${runId} - API key validation failed`)
+    const resolver = new ProviderResolver(this.storeService)
+    let provider
+    try {
+      provider = resolver.resolve({
+        providerId: input.context?.providerId as string | undefined,
+        modelId: input.context?.modelId as string | undefined
+      })
+    } catch (err) {
+      console.error(`${LOG_PREFIX} Run ${runId} - Provider resolution failed:`, err)
       yield {
         type: 'error',
         data: {
           runId,
-          message:
-            'No API key configured. Set it in Settings for the OpenAI provider, or add VITE_OPENAI_API_KEY to your .env file.'
+          message: err instanceof Error ? err.message : 'Failed to resolve provider configuration'
         }
       }
       return
     }
 
-    const contextModelId = input.context?.modelId as string | undefined
-    const modelName =
-      contextModelId || storeSettings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || DEFAULT_MODEL
-
+    const { apiKey, modelName, providerId } = provider
     const temperature = 0.3
 
     console.log(
