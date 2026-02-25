@@ -83,6 +83,11 @@ module.exports = {
     }
   ],
 
+  // Automatically clear, reset, and restore mocks between tests
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+
   // Global coverage config
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

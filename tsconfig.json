@@ -11,7 +11,6 @@
       "@resources/*": ["resources/*"]
     },
     "jsx": "react-jsx",
-    "types": ["jest", "@testing-library/jest-dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
