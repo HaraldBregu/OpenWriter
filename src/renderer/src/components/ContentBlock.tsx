@@ -8,7 +8,7 @@ import Document from '@tiptap/extension-document'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
-import { useTask } from '@/hooks/useTask'
+import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 
 // ---------------------------------------------------------------------------
 // Custom Document extension: restricts the schema to exactly one paragraph.
@@ -94,25 +94,20 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   // Track whether the editor is empty to conditionally show the placeholder span.
   const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
-  const [isEnhancing, setIsEnhancing] = useState(false)
-  // taskId tracked in state so useEffect dependencies stay reactive.
-  const [enhanceTaskId, setEnhanceTaskId] = useState<string | null>(null)
 
   // Stable callback refs so useEditor options never need to re-create the editor.
-  const onChangeRef = React.useRef(onChange)
+  const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
-  const blockIdRef = React.useRef(block.id)
+  const blockIdRef = useRef(block.id)
   blockIdRef.current = block.id
-  const onAddRef = React.useRef(onAdd)
+  const onAddRef = useRef(onAdd)
   onAddRef.current = onAdd
 
-  // Holds the original text before enhance started so we can revert on error/cancel.
-  const originalTextRef = useRef<string>('')
-  // Stable ref to the editor so the token event handler can access it without
+  // Stable ref to the editor so the enhancement hook can access it without
   // being recreated on every render.
   const editorRef = useRef<Editor | null>(null)
 
-  const { submitTask, cancelTask, tasks } = useTask()
+  const { isEnhancing, handleEnhance } = useBlockEnhancement({ editorRef, onChangeRef, blockIdRef })
 
   const editorOptions = useMemo(() => ({
     extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
@@ -141,7 +136,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         return false
       },
     },
-  }), [])
+  }), []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const editor = useEditor(editorOptions as any)
 
@@ -177,94 +172,6 @@ export const ContentBlock = React.memo(function ContentBlock({
       setIsEmpty(editor.isEmpty)
     }
   }, [block.content, editor, isEnhancing])
-
-  // Stream tokens directly into the TipTap editor so the user sees them appear word by word.
-  useEffect(() => {
-    if (!enhanceTaskId) return
-    const unsub = window.task.onEvent((event) => {
-      if (event.type !== 'stream') return
-      const data = event.data as { taskId: string; token?: string }
-      console.log('[ContentBlock] Received token:', data.token)
-      if (data.taskId !== enhanceTaskId) return
-      const token = data.token
-      if (!token) return
-      const ed = editorRef.current
-      if (!ed || ed.isDestroyed) return
-      // insertContent appends at the current cursor position (end of doc after the
-      // separator we inserted in handleEnhance).
-      ed.commands.insertContent(token)
-    })
-    return () => unsub()
-  }, [enhanceTaskId])
-
-  // React to task lifecycle changes tracked by useTask.
-  useEffect(() => {
-    if (!enhanceTaskId) return
-    const taskState = tasks.get(enhanceTaskId)
-    if (!taskState) return
-
-    if (taskState.status === 'completed') {
-      // The editor already contains the full streamed content — just sync parent state.
-      const ed = editorRef.current
-      if (ed && !ed.isDestroyed) {
-        onChangeRef.current(blockIdRef.current, ed.getMarkdown())
-      }
-      setIsEnhancing(false)
-      setEnhanceTaskId(null)
-    } else if (taskState.status === 'error') {
-      console.error('[ContentBlock] Enhance error:', taskState.error)
-      // Revert editor to the text that existed before enhance started.
-      const ed = editorRef.current
-      if (ed && !ed.isDestroyed) {
-        ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
-        onChangeRef.current(blockIdRef.current, originalTextRef.current)
-      }
-      setIsEnhancing(false)
-      setEnhanceTaskId(null)
-    } else if (taskState.status === 'cancelled') {
-      // Revert editor to the text that existed before enhance started.
-      const ed = editorRef.current
-      if (ed && !ed.isDestroyed) {
-        ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
-        onChangeRef.current(blockIdRef.current, originalTextRef.current)
-      }
-      setIsEnhancing(false)
-      setEnhanceTaskId(null)
-    }
-  }, [enhanceTaskId, tasks])
-
-  // Cancel any in-flight enhance task on unmount.
-  useEffect(() => {
-    return () => {
-      if (enhanceTaskId) cancelTask(enhanceTaskId)
-    }
-  }, [enhanceTaskId, cancelTask])
-
-  const handleEnhance = useCallback(async () => {
-    if (!editor || isEnhancing) return
-    const currentText = editor.getMarkdown()
-    if (!currentText.trim()) return
-
-    // Snapshot the current text so we can revert on error or cancellation.
-    originalTextRef.current = currentText
-
-    setIsEnhancing(true)
-
-    // Move cursor to the very end of the document and insert a paragraph break
-    // so streamed tokens appear after the existing content on a new line.
-    editor.commands.focus('end')
-    editor.commands.insertContent('\n\n')
-
-    const taskId = await submitTask('ai-enhance', { text: currentText })
-    if (taskId) {
-      setEnhanceTaskId(taskId)
-    } else {
-      // Submit failed — revert the separator we just inserted.
-      editor.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
-      onChangeRef.current(blockIdRef.current, originalTextRef.current)
-      setIsEnhancing(false)
-    }
-  }, [editor, isEnhancing, submitTask])
 
   const handleCopy = useCallback(() => {
     if (!editor) return

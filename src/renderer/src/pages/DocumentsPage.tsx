@@ -26,7 +26,6 @@ import {
   AppDropdownMenu,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
-  AppDropdownMenuSeparator,
   AppDropdownMenuTrigger
 } from '@/components/app'
 import { DocumentActionMenu } from '@/components/DocumentActionMenu'
