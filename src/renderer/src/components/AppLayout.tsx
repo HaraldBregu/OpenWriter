@@ -293,10 +293,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
                   {/* Quick-create items */}
-                  {quickCreateItems.map((item) => {
+                  {quickCreateSlugs.map((item) => {
                     const Icon = item.icon;
-                    const isNewPost = item.title === "New Post";
-                    const isNewWriting = item.title === "New Writing";
+                    const title = t(item.titleKey);
+                    const isNewPost = item.titleKey === "sidebar.newPost";
+                    const isNewWriting = item.titleKey === "sidebar.write";
                     const hasClickHandler = isNewPost || isNewWriting;
                     const clickHandler = isNewPost
                       ? handleNewPost
