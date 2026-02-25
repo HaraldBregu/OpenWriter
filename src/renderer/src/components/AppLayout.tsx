@@ -228,7 +228,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               ? workspacePath.split(/[/\\]/)
               : [];
           const folderName = pathParts[pathParts.length - 1];
-          setWorkspaceName(`${folderName} (workspace)` || "OpenWriter");
+          setWorkspaceName(folderName ? `${folderName} (workspace)` : "OpenWriter");
         }
       } catch (error) {
         console.error("[AppLayout] Failed to load workspace name:", error);
