@@ -1,6 +1,6 @@
 # Testing Guide
 
-This document covers how to run, write, and maintain tests for the Tesseract AI Electron application.
+This document covers how to run, write, and maintain tests for the OpenWriter Electron application.
 
 ## Prerequisites
 
