@@ -241,6 +241,20 @@ const NewWritingPage: React.FC = () => {
     setDraftBlocks(reordered)
   }, [])
 
+  const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
+    setAiSettings(next)
+    if (!isDraft && writing) {
+      dispatch(updateWritingInferenceSettings({
+        writingId: writing.id,
+        provider: next.providerId,
+        model: next.modelId,
+        temperature: next.temperature,
+        maxTokens: next.maxTokens,
+        reasoning: next.reasoning,
+      }))
+    }
+  }, [isDraft, writing, dispatch])
+
   // ---------------------------------------------------------------------------
   // Guard: existing writing not found in Redux
   // ---------------------------------------------------------------------------
