@@ -139,10 +139,11 @@ RecentItem.displayName = 'RecentItem'
 // ---------------------------------------------------------------------------
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const hour = new Date().getHours()
   const greeting =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+    hour < 12 ? t('home.goodMorning') : hour < 18 ? t('home.goodAfternoon') : t('home.goodEvening')
 
   return (
     <div className="h-full overflow-y-auto">
@@ -154,15 +155,15 @@ const HomePage: React.FC = () => {
             {greeting}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            What would you like to work on today?
+            {t('home.workOnToday')}
           </p>
         </div>
 
         {/* Categories */}
         <section className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            {categories.map((cat) => (
-              <CategoryCard key={cat.label} {...cat} />
+            {categoryDefs.map((cat) => (
+              <CategoryCard key={cat.labelKey} {...cat} />
             ))}
           </div>
         </section>
@@ -173,19 +174,19 @@ const HomePage: React.FC = () => {
         <section className="space-y-1">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Recent
+              {t('home.recent')}
             </h2>
             <button
               type="button"
               onClick={() => navigate('/documents/local')}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
-              View all
+              {t('home.viewAll')}
               <ArrowRight className="h-3 w-3" />
             </button>
           </div>
           <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
-            {recentItems.map((item) => (
+            {recentItemDefs.map((item) => (
               <RecentItem key={item.label} {...item} />
             ))}
           </div>
@@ -205,8 +206,8 @@ const HomePage: React.FC = () => {
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground">Documents</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Browse your files</p>
+                <p className="text-sm font-medium text-foreground">{t('home.documents')}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('home.documentsDescription')}</p>
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
             </button>
@@ -220,8 +221,8 @@ const HomePage: React.FC = () => {
                 <Puzzle className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground">Integrations</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Connect your tools</p>
+                <p className="text-sm font-medium text-foreground">{t('home.integrations')}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('home.integrationsDescription')}</p>
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
             </button>
@@ -234,10 +235,9 @@ const HomePage: React.FC = () => {
         <section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">
           <Star className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-foreground">Tip</p>
+            <p className="text-sm font-medium text-foreground">{t('home.tip')}</p>
             <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-              Use the sidebar to navigate between Posts and Writing.
-              Press the menu icon in the title bar to toggle the sidebar.
+              {t('home.tipContent')}
             </p>
           </div>
         </section>
