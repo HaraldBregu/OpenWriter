@@ -237,7 +237,10 @@ const NewWritingPage: React.FC = () => {
   // Draft mode callbacks
   // ---------------------------------------------------------------------------
   const handleDraftChange = useCallback((blockId: string, content: string) => {
-    setDraftBlocks((prev) => prev.map((b) => (b.id === blockId ? { ...b, content } : b)))
+    const now = new Date().toISOString()
+    setDraftBlocks((prev) =>
+      prev.map((b) => (b.id === blockId ? { ...b, content, updatedAt: now } : b))
+    )
   }, [])
 
   const handleDraftDelete = useCallback((blockId: string) => {
