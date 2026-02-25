@@ -81,7 +81,7 @@ describe('WelcomePage', () => {
     renderWelcomePage()
 
     // h1 heading
-    expect(screen.getByRole('heading', { name: /Tesseract AI/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /OpenWriter/i })).toBeInTheDocument()
   })
 
   it('should render the title bar', () => {
