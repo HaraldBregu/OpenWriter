@@ -441,7 +441,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <Download className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-foreground">Download from URL</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('documents.downloadFromURLTitle')}</h3>
           </div>
           <AppButton
             variant="ghost"
