@@ -36,6 +36,7 @@ export interface TitleBarProps {
 }
 
 export const TitleBar = React.memo(function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
+  const { t } = useTranslation()
   const [isMaximized, setIsMaximized] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState(false)
 
