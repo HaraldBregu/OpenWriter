@@ -33,10 +33,28 @@ See `violations.md` for full details. Summary:
 **Medium (ISP)**
 - `PersonalitySimpleLayout.tsx` selector at line 59: hardcoded union type with all 10 personality sections instead of accepting `string`
 
-### Refactoring Priorities
-1. Extract `useDocumentContextMenu` hook from AppLayout.tsx (post/writing action handlers)
-2. Extract `useAutoSave` hook shared by NewPostPage and NewWritingPage
-3. Create `useEditorPage` or `EditorPageBase` to deduplicate NewPostPage/NewWritingPage
-4. Move IPC calls in PersonalityTaskContext behind an injected service interface
-5. Replace string-matched `'output/loadAll/fulfilled'` with RTK action matcher
-6. Extract `DocumentActionMenu` component shared between DocumentCard and DocumentListItem
+### Refactoring Completed (2026-02-25)
+- **DocumentActionMenu** extracted to `src/renderer/src/components/DocumentActionMenu.tsx` — eliminates duplicated dropdown between DocumentCard and DocumentListItem
+- **usePostContextMenu** extracted to `src/renderer/src/hooks/usePostContextMenu.ts` — fixes re-subscription on every keystroke via ref pattern
+- **useWritingContextMenu** extracted to `src/renderer/src/hooks/useWritingContextMenu.ts` — same ref pattern fix
+
+### Ref Pattern for IPC Subscriptions (React — key insight)
+When a `useEffect` subscribes to IPC events and needs latest Redux state without re-subscribing:
+```ts
+const dataRef = useRef(data)
+dataRef.current = data  // assign on every render
+useEffect(() => {
+  const cleanup = window.someIpc.onEvent((event) => {
+    const item = dataRef.current.find(...)  // reads latest via ref
+  })
+  return cleanup
+}, [dispatch, navigate])  // only stable deps — NOT the array
+```
+
+### Remaining Refactoring Priorities
+1. Export `PersonalitySectionId` type from `personalityFilesSlice.ts` (trivial)
+2. Replace `postsSyncMiddleware` string-prefix matching with `isAnyOf()` (low risk)
+3. Break circular import in postsSlice/writingsSlice via RTK `createListenerMiddleware` (medium risk)
+4. Split AppContext (422 lines) into 5 focused contexts (medium risk, many consumers)
+5. Move IPC calls in PersonalityTaskContext behind injected service interface (high risk, deferred)
+6. Deduplicate NewPostPage/NewWritingPage via shared hook or base (medium)
