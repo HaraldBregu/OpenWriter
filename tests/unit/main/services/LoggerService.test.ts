@@ -41,7 +41,7 @@ const mockUnlinkSync = fs.unlinkSync as jest.Mock
 
 // The electron mock is loaded automatically via jest.config.cjs moduleNameMapper
 // We import app just so we can reference the mock's getPath return value
-import { app } from 'electron'
+import 'electron'
 
 // ---------------------------------------------------------------------------
 // Helpers
