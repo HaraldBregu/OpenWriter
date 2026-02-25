@@ -169,10 +169,10 @@ export const ContentBlock = React.memo(function ContentBlock({
   useEffect(() => {
     if (!enhanceTaskId) return
     const unsub = window.task.onEvent((event) => {
-      if (event.type !== 'progress') return
-      const data = event.data as { taskId: string; message?: string; detail?: { token?: string } }
-      if (data.taskId !== enhanceTaskId || data.message !== 'token') return
-      const token = data.detail?.token
+      if (event.type !== 'stream') return
+      const data = event.data as { taskId: string; token?: string }
+      if (data.taskId !== enhanceTaskId) return
+      const token = data.token
       if (!token) return
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
