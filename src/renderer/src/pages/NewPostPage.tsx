@@ -204,7 +204,10 @@ const NewPostPage: React.FC = () => {
   // ---------------------------------------------------------------------------
   const handleChange = useCallback((blockId: string, content: string) => {
     if (!post) return
-    const updated = post.blocks.map((b) => (b.id === blockId ? { ...b, content } : b))
+    const now = new Date().toISOString()
+    const updated = post.blocks.map((b) =>
+      b.id === blockId ? { ...b, content, updatedAt: now } : b
+    )
     dispatch(updatePostBlocks({ postId: post.id, blocks: updated }))
   }, [post, dispatch])
 
