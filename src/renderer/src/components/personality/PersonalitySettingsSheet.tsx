@@ -109,6 +109,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
   settings,
   onSettingsChange
 }) => {
+  const { t } = useTranslation()
   const currentProvider = aiProviders.find((p) => p.id === settings.providerId)
   const hasProvider = !!currentProvider
   const models = currentProvider?.models ?? []
