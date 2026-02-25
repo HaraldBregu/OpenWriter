@@ -13,8 +13,8 @@ jest.mock('@electron-toolkit/utils', () => ({
 // Mock i18n
 jest.mock('../../../../src/main/i18n', () => ({
   loadTranslations: jest.fn().mockReturnValue({
-    showTesseractAI: 'Show Tesseract AI',
-    hideTesseractAI: 'Hide Tesseract AI',
+    showOpenWriter: 'Show OpenWriter',
+    hideOpenWriter: 'Hide OpenWriter',
     quit: 'Quit'
   })
 }))
