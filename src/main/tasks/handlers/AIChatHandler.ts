@@ -66,20 +66,18 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
   ): Promise<AIChatOutput> {
     // --- Resolve configuration -----------------------------------------------
 
-    const providerId = input.providerId || 'openai'
-    const storeSettings = this.storeService.getModelSettings(providerId)
-
-    const apiKey = storeSettings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
-
-    if (!apiKey || apiKey === 'your-openai-api-key-here') {
-      throw new Error(
-        'No API key configured. Set it in Settings for the OpenAI provider, or add VITE_OPENAI_API_KEY to your .env file.'
-      )
+    const resolver = new ProviderResolver(this.storeService)
+    let provider
+    try {
+      provider = resolver.resolve({
+        providerId: input.providerId,
+        modelId: input.modelId
+      })
+    } catch (err) {
+      throw err
     }
 
-    const modelName =
-      input.modelId || storeSettings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || DEFAULT_MODEL
-
+    const { apiKey, modelName, providerId } = provider
     const temperature = input.temperature ?? 0.7
     const maxTokens = input.maxTokens && input.maxTokens > 0 ? input.maxTokens : undefined
     const systemPrompt = input.systemPrompt || DEFAULT_SYSTEM_PROMPT
