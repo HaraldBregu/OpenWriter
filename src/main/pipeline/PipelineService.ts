@@ -80,6 +80,17 @@ export class PipelineService extends ExecutorBase<PipelineRun> {
   }
 
   /**
+   * Return a snapshot of all active runs with agent names.
+   */
+  listActiveRuns(): Array<{ runId: string; agentName: string; startedAt: number }> {
+    return Array.from(this.activeExecutions.values()).map(({ id, agentName, startedAt }) => ({
+      runId: id,
+      agentName,
+      startedAt
+    }))
+  }
+
+  /**
    * Return the names of all agents available in the registry.
    */
   listAgents(): string[] {
