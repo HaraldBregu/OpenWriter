@@ -30,7 +30,8 @@ import writingsReducer, {
   selectWritingCount,
   type Writing
 } from '../../../../src/renderer/src/store/writingsSlice'
-import type { OutputItem } from '../../../../src/renderer/src/store/outputSlice'
+import type { OutputItem, OutputBlockItem } from '../../../../src/renderer/src/store/outputSlice'
+import type { Block } from '../../../../src/renderer/src/components/ContentBlock'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -42,8 +43,14 @@ function createInitialState() {
   }
 }
 
-function makeBlock(id: string, content: string) {
-  return { id, content }
+/** Create a Block with timestamps for test use. */
+function makeBlock(id: string, content: string): Block {
+  return { id, content, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }
+}
+
+/** Create an OutputBlockItem (bridge-side block). */
+function makeOutputBlock(name: string, content: string): OutputBlockItem {
+  return { name, content, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-02T00:00:00.000Z' }
 }
 
 function makeWriting(overrides: Partial<Writing> = {}): Writing {
@@ -67,7 +74,10 @@ function makeOutputItem(overrides: Partial<OutputItem> = {}): OutputItem {
     type: 'writings',
     path: '/workspace/output/writings/output-1',
     title: 'Disk Title',
-    content: 'Paragraph one\n\nParagraph two',
+    blocks: [
+      makeOutputBlock('block-uuid-1', 'Paragraph one'),
+      makeOutputBlock('block-uuid-2', 'Paragraph two'),
+    ],
     category: 'writing',
     tags: ['disk-tag'],
     visibility: 'public',
@@ -126,6 +136,21 @@ describe('writingsSlice', () => {
         // Assert
         expect(result.writings[0].blocks).toHaveLength(1)
         expect(result.writings[0].blocks[0].content).toBe('')
+      })
+
+      it('should create a block with ISO timestamps', () => {
+        // Arrange
+        const state = createInitialState()
+
+        // Act
+        const result = writingsReducer(state, createWriting())
+
+        // Assert
+        const block = result.writings[0].blocks[0]
+        expect(block.createdAt).toBeTruthy()
+        expect(block.updatedAt).toBeTruthy()
+        expect(() => new Date(block.createdAt)).not.toThrow()
+        expect(() => new Date(block.updatedAt)).not.toThrow()
       })
 
       it('should set default metadata fields', () => {
@@ -640,12 +665,16 @@ describe('writingsSlice', () => {
       expect(result.writings[0].reasoning).toBe(true)
     })
 
-    it('should split multi-paragraph content into one block per paragraph', () => {
+    it('should reconstruct blocks from individual disk block items', () => {
       // Arrange
       const state = createInitialState()
       const diskItem = makeOutputItem({
         id: 'output-1',
-        content: 'Paragraph one\n\nParagraph two\n\nParagraph three'
+        blocks: [
+          makeOutputBlock('block-uuid-1', 'Paragraph one'),
+          makeOutputBlock('block-uuid-2', 'Paragraph two'),
+          makeOutputBlock('block-uuid-3', 'Paragraph three'),
+        ]
       })
 
       // Act
@@ -658,10 +687,47 @@ describe('writingsSlice', () => {
       expect(result.writings[0].blocks[2].content).toBe('Paragraph three')
     })
 
-    it('should create a single empty block when disk content is empty', () => {
+    it('should use block name as the Block id when hydrating from disk', () => {
       // Arrange
       const state = createInitialState()
-      const diskItem = makeOutputItem({ id: 'output-1', content: '' })
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        blocks: [makeOutputBlock('my-stable-uuid', 'Content')]
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.writings[0].blocks[0].id).toBe('my-stable-uuid')
+    })
+
+    it('should preserve block timestamps when hydrating from disk', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        blocks: [{
+          name: 'block-1',
+          content: 'Hello',
+          createdAt: '2024-03-01T00:00:00.000Z',
+          updatedAt: '2024-03-15T00:00:00.000Z',
+        }]
+      })
+
+      // Act
+      const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const block = result.writings[0].blocks[0]
+      expect(block.createdAt).toBe('2024-03-01T00:00:00.000Z')
+      expect(block.updatedAt).toBe('2024-03-15T00:00:00.000Z')
+    })
+
+    it('should create a single empty block when disk blocks array is empty', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', blocks: [] })
 
       // Act
       const result = writingsReducer(state, outputLoadAllFulfilled([diskItem]))
@@ -671,12 +737,12 @@ describe('writingsSlice', () => {
       expect(result.writings[0].blocks[0].content).toBe('')
     })
 
-    it('should update an existing writing when disk title/content changed', () => {
+    it('should update an existing writing when disk blocks changed', () => {
       // Arrange
       const existingWriting = makeWriting({
         id: 'writing-1',
         title: 'Old Title',
-        blocks: [makeBlock('b1', 'Old content')],
+        blocks: [makeBlock('old-block-id', 'Old content')],
         outputId: 'output-1',
         category: 'old-cat',
         tags: ['old-tag'],
@@ -686,7 +752,10 @@ describe('writingsSlice', () => {
       const diskItem = makeOutputItem({
         id: 'output-1',
         title: 'New Title',
-        content: 'New paragraph one\n\nNew paragraph two',
+        blocks: [
+          makeOutputBlock('new-block-1', 'New paragraph one'),
+          makeOutputBlock('new-block-2', 'New paragraph two'),
+        ],
         category: 'new-cat',
         tags: ['new-tag'],
         visibility: 'public',
@@ -709,21 +778,26 @@ describe('writingsSlice', () => {
     })
 
     it('should NOT rebuild blocks when disk content is identical to current blocks', () => {
-      // Arrange — blocks and disk content match exactly
+      // Arrange — blocks and disk content match exactly by name+content fingerprint
       const existingWriting = makeWriting({
         id: 'writing-1',
         title: 'Same Title',
-        blocks: [makeBlock('block-1', 'Paragraph one'), makeBlock('block-2', 'Paragraph two')],
+        blocks: [
+          makeBlock('block-uuid-1', 'Paragraph one'),
+          makeBlock('block-uuid-2', 'Paragraph two'),
+        ],
         outputId: 'output-1'
       })
       const state = { writings: [existingWriting] }
       const originalBlockIds = existingWriting.blocks.map((b) => b.id)
 
-      // Disk content joins with \n\n — exactly matches what blocks produce
       const diskItem = makeOutputItem({
         id: 'output-1',
         title: 'Same Title',
-        content: 'Paragraph one\n\nParagraph two'
+        blocks: [
+          makeOutputBlock('block-uuid-1', 'Paragraph one'),
+          makeOutputBlock('block-uuid-2', 'Paragraph two'),
+        ]
       })
 
       // Act
@@ -738,7 +812,7 @@ describe('writingsSlice', () => {
       // Arrange — existing writing has inference settings; disk content is identical
       const existingWriting = makeWriting({
         id: 'writing-1',
-        blocks: [makeBlock('block-1', 'Same content')],
+        blocks: [makeBlock('block-uuid-1', 'Same content')],
         outputId: 'output-1',
         provider: 'anthropic',
         model: 'claude-opus-4-6',
@@ -750,7 +824,7 @@ describe('writingsSlice', () => {
 
       const diskItem = makeOutputItem({
         id: 'output-1',
-        content: 'Same content',
+        blocks: [makeOutputBlock('block-uuid-1', 'Same content')],
         provider: 'anthropic',
         model: 'claude-opus-4-6',
         temperature: 0.8,
