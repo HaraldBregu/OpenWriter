@@ -165,7 +165,7 @@ const WelcomePage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <TitleBar title="Tesseract AI" />
+      <TitleBar title="OpenWriter" />
 
       {/* Main content — vertically centered, not scrollable */}
       <div className="flex flex-col items-center flex-1 px-8 py-12 overflow-hidden">
