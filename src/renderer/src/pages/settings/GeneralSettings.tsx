@@ -41,13 +41,13 @@ const GeneralSettings: React.FC = () => {
 
       {/* Permissions */}
       <section className="space-y-3">
-        <h2 className="text-sm font-normal text-muted-foreground">Permissions</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">{t('settings.sections.permissions')}</h2>
         <div className="rounded-md border divide-y">
           <div className="flex items-center justify-between px-4 py-3">
             <div>
-              <p className="text-sm font-normal">Microphone</p>
+              <p className="text-sm font-normal">{t('settings.permissions.microphone')}</p>
               <p className={`text-xs ${statusColor(microphoneStatus)}`}>
-                {statusLabel(microphoneStatus)}
+                {statusLabel(microphoneStatus, t)}
               </p>
             </div>
             {microphoneStatus !== 'granted' && (
@@ -55,15 +55,15 @@ const GeneralSettings: React.FC = () => {
                 onClick={requestMicrophone}
                 className="text-xs font-normal px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Request
+                {t('settings.permissions.request')}
               </button>
             )}
           </div>
           <div className="flex items-center justify-between px-4 py-3">
             <div>
-              <p className="text-sm font-normal">Camera</p>
+              <p className="text-sm font-normal">{t('settings.permissions.camera')}</p>
               <p className={`text-xs ${statusColor(cameraStatus)}`}>
-                {statusLabel(cameraStatus)}
+                {statusLabel(cameraStatus, t)}
               </p>
             </div>
             {cameraStatus !== 'granted' && (
@@ -71,7 +71,7 @@ const GeneralSettings: React.FC = () => {
                 onClick={requestCamera}
                 className="text-xs font-normal px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Request
+                {t('settings.permissions.request')}
               </button>
             )}
           </div>
@@ -80,18 +80,18 @@ const GeneralSettings: React.FC = () => {
           onClick={checkPermissionStatus}
           className="text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
-          Refresh status
+          {t('settings.permissions.refreshStatus')}
         </button>
       </section>
 
       {/* Workspace */}
       <section className="space-y-3">
-        <h2 className="text-sm font-normal text-muted-foreground">Workspace</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">{t('settings.sections.workspace')}</h2>
         <div className="rounded-md border divide-y text-sm">
           <div className="flex justify-between px-4 py-2.5">
-            <span className="text-muted-foreground">Current Workspace</span>
-            <span className="font-mono text-xs truncate max-w-md" title={currentWorkspace || 'Not set'}>
-              {currentWorkspace || 'Not set'}
+            <span className="text-muted-foreground">{t('settings.workspace.currentWorkspace')}</span>
+            <span className="font-mono text-xs truncate max-w-md" title={currentWorkspace || t('settings.workspace.notSet')}>
+              {currentWorkspace || t('settings.workspace.notSet')}
             </span>
           </div>
         </div>
@@ -99,14 +99,14 @@ const GeneralSettings: React.FC = () => {
 
       {/* System */}
       <section className="space-y-3">
-        <h2 className="text-sm font-normal text-muted-foreground">System</h2>
+        <h2 className="text-sm font-normal text-muted-foreground">{t('settings.sections.system')}</h2>
         <div className="rounded-md border divide-y text-sm">
           <div className="flex justify-between px-4 py-2.5">
-            <span className="text-muted-foreground">Platform</span>
+            <span className="text-muted-foreground">{t('settings.systemInfo.platform')}</span>
             <span className="font-mono text-xs">{navigator.platform}</span>
           </div>
           <div className="flex justify-between px-4 py-2.5">
-            <span className="text-muted-foreground">Language</span>
+            <span className="text-muted-foreground">{t('settings.systemInfo.language')}</span>
             <span className="font-mono text-xs">{navigator.language}</span>
           </div>
         </div>
