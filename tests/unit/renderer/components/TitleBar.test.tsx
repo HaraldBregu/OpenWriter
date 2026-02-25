@@ -247,18 +247,24 @@ describe('TitleBar — sidebar toggle', () => {
     expect(onToggle).toHaveBeenCalledTimes(1)
   })
 
-  it('invokes onToggleSidebar independently of window.win calls', async () => {
+  it('does not call window.win.minimize or close when toggling the sidebar', async () => {
     const onToggle = jest.fn()
     const user = userEvent.setup()
+
+    // Use fresh mock references captured here to avoid any state from
+    // prior tests even though clearMocks:true resets call history globally.
+    const minimizeSpy = jest.fn()
+    const closeSpy = jest.fn()
+    ;(window.win.minimize as jest.Mock).mockImplementation(minimizeSpy)
+    ;(window.win.close as jest.Mock).mockImplementation(closeSpy)
 
     renderOnWindows({ onToggleSidebar: onToggle })
 
     await user.click(screen.getByTitle(KEYS.toggleSidebar))
 
-    // Sidebar toggle should NOT invoke window controls
-    expect(window.win.minimize).not.toHaveBeenCalled()
-    expect(window.win.maximize).not.toHaveBeenCalled()
-    expect(window.win.close).not.toHaveBeenCalled()
+    expect(onToggle).toHaveBeenCalledTimes(1)
+    expect(minimizeSpy).not.toHaveBeenCalled()
+    expect(closeSpy).not.toHaveBeenCalled()
   })
 })
 

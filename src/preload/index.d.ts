@@ -737,8 +737,9 @@ declare global {
       onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
     }
 
-    /** Background task queue */
-    task: {
+    /** Background task queue.
+     *  Declared optional so renderer code can guard against non-Electron environments. */
+    task?: {
       submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }>
       cancel: (taskId: string) => Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }>
       list: () => Promise<{ success: true; data: TaskInfo[] } | { success: false; error: { code: string; message: string } }>
