@@ -92,21 +92,24 @@ const DirectoriesPage: React.FC = () => {
           .join('\n')
         console.warn('[DirectoriesPage] Some directories could not be added:', errorMessages)
 
+        const count = response.errors.length
         await window.notification.show({
-          title: 'Some Directories Skipped',
-          body: `${response.errors.length} director${response.errors.length === 1 ? 'y' : 'ies'} could not be added. Check console for details.`,
+          title: t('directoryNotifications.someSkippedTitle'),
+          body: count === 1
+            ? t('directoryNotifications.someSkippedBody_one', { count })
+            : t('directoryNotifications.someSkippedBody_other', { count }),
           urgency: 'normal'
         })
       }
     } catch (err) {
       console.error('[DirectoriesPage] Failed to add directories:', err)
       await window.notification.show({
-        title: 'Error',
-        body: 'Failed to add directories. Please try again.',
+        title: t('directoryNotifications.addErrorTitle'),
+        body: t('directoryNotifications.addErrorBody'),
         urgency: 'normal'
       })
     }
-  }, [dispatch])
+  }, [dispatch, t])
 
   const handleRemoveDirectory = useCallback(
     async (id: string) => {
