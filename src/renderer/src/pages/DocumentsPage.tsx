@@ -645,7 +645,7 @@ const DocumentsPage: React.FC = () => {
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
-      setImportError(error instanceof Error ? error.message : 'Failed to import dropped files')
+      setImportError(error instanceof Error ? error.message : t('documents.importFailed'))
     } finally {
       setIsImporting(false)
     }
