@@ -46,7 +46,7 @@ import { PersonalityFilesService } from '../../../../src/main/services/personali
 import { EventBus } from '../../../../src/main/core/EventBus'
 
 const mockAccess = fs.access as jest.Mock
-const mockMkdir = fs.mkdir as jest.Mock
+const _mockMkdir = fs.mkdir as jest.Mock
 const mockWriteFile = fs.writeFile as jest.Mock
 const mockReadFile = fs.readFile as jest.Mock
 const mockReaddir = fs.readdir as jest.Mock
