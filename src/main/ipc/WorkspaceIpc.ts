@@ -85,6 +85,10 @@ export class WorkspaceIpc implements IpcModule {
       'workspace-directory-exists',
       wrapSimpleHandler((directoryPath: string) => {
         try {
+          // Validate path is safe before checking filesystem
+          if (!PathValidator.isPathSafe(directoryPath)) {
+            return false
+          }
           return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory()
         } catch {
           return false
