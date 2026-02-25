@@ -109,6 +109,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
   onSettingsChange
 }) => {
   const currentProvider = aiProviders.find((p) => p.id === settings.providerId)
+  const hasProvider = !!currentProvider
   const models = currentProvider?.models ?? []
   const modelIsReasoning = isReasoningModel(settings.modelId)
 
