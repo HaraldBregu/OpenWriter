@@ -2,7 +2,7 @@
  * Tests for FilesystemService.
  * Validates file read/write, dialog operations, and directory watching.
  */
-import { dialog, BrowserWindow } from 'electron'
+import { dialog } from 'electron'
 import { FilesystemService } from '../../../../src/main/services/filesystem'
 
 // Mock node:fs
