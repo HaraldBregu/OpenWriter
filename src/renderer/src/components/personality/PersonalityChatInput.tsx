@@ -102,7 +102,7 @@ export const PersonalityChatInput: React.FC<PersonalityChatInputProps> = React.m
         </div>
 
         <p className="mt-2 text-xs text-muted-foreground">
-          Press Enter to send, Shift+Enter for new line
+          {t('personality.pressEnterToSubmit')}
         </p>
       </div>
     </div>
