@@ -176,6 +176,7 @@ const EmptyState = React.memo(function EmptyState({
   onDownloadRemote,
   isImporting
 }: EmptyStateProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 text-center">
       <div className="w-20 h-20 rounded-2xl bg-muted/60 flex items-center justify-center mb-6">
@@ -183,20 +184,20 @@ const EmptyState = React.memo(function EmptyState({
       </div>
 
       <h2 className="text-xl font-semibold text-foreground mb-2">
-        No documents yet
+        {t('documents.noDocumentsTitle')}
       </h2>
       <p className="text-sm text-muted-foreground mb-4 max-w-md">
-        Import text-based files from your computer or download documents from a remote source to get started.
+        {t('documents.noDocumentsDescription')}
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <AppButton onClick={onImportFiles} size="default" disabled={isImporting}>
           {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {isImporting ? 'Importing...' : 'Import Files'}
+          {isImporting ? t('documents.importing') : t('documents.importFiles')}
         </AppButton>
         <AppButton onClick={onDownloadRemote} variant="outline" size="default">
           <Download className="h-4 w-4" />
-          Download from URL/Remote
+          {t('documents.downloadFromURL')}
         </AppButton>
       </div>
 
@@ -204,14 +205,14 @@ const EmptyState = React.memo(function EmptyState({
         <div className="flex items-start gap-3">
           <Info className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
           <div className="text-left">
-            <p className="text-sm font-medium text-foreground mb-2">Supported file types:</p>
+            <p className="text-sm font-medium text-foreground mb-2">{t('documents.supportedFileTypes')}</p>
             <ul className="text-xs text-muted-foreground space-y-1">
               {SUPPORTED_FILE_TYPES.map((type, index) => (
                 <li key={index}>• {type}</li>
               ))}
             </ul>
             <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
-              <span className="font-medium">Note:</span> Images, videos, and binary documents are not supported.
+              <span className="font-medium">Note:</span> {t('documents.supportedNote')}
             </p>
           </div>
         </div>
