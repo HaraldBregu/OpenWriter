@@ -485,14 +485,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       onClick={() => toggleSection("Personality")}
                       className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
                     >
-                      <span className="tracking-wider">Personality</span>
+                      <span className="tracking-wider">{t("sidebar.personality")}</span>
                       <ChevronRight
                         className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Personality"] ? "rotate-90" : ""}`}
                       />
                     </button>
                     {sectionsOpen["Personality"] && (
                       <AppSidebarMenuSub className="border-none ml-0">
-                        {personalityItems.map((item) => {
+                        {personalitySlugs.map((item) => {
                           const Icon = item.icon;
                           const itemPath = `/personality/${item.slug}`;
                           return (
@@ -505,7 +505,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                 <Link to={itemPath} className="ml-0">
                                   <Icon className="h-3.5 w-3.5 shrink-0" />
                                   <span className="flex-1 truncate">
-                                    {item.title}
+                                    {t(item.titleKey)}
                                   </span>
                                 </Link>
                               </AppSidebarMenuSubButton>
@@ -527,7 +527,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     >
                       <Link to="/debug">
                         <Bug className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Debug Tools</span>
+                        <span className="flex-1 truncate">{t("sidebar.debugTools")}</span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 font-mono uppercase tracking-wider">
                           Dev
                         </span>
