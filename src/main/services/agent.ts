@@ -244,6 +244,27 @@ export class AgentService {
   }
 
   /**
+   * Run agent with default session (for backward compatibility with agent:run IPC)
+   */
+  async runAgentWithDefaultSession(
+    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    runId: string,
+    providerId: string,
+    win: BrowserWindow
+  ): Promise<void> {
+    const sessionId = 'default'
+    let controller = this.controllers.get(sessionId)
+
+    if (!controller) {
+      this.createSession({ sessionId, providerId })
+      controller = this.controllers.get(sessionId)!
+    }
+
+    await controller.runAgent(messages, runId, providerId, win)
+    this.updateSessionActivity(sessionId, messages.length)
+  }
+
+  /**
    * Cleanup - cancel all active runs
    */
   cleanup(): void {
