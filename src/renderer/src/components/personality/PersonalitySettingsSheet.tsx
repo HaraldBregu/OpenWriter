@@ -111,6 +111,7 @@ export const PersonalitySettingsPanel: React.FC<PersonalitySettingsPanelProps> =
   const currentProvider = aiProviders.find((p) => p.id === settings.providerId)
   const hasProvider = !!currentProvider
   const models = currentProvider?.models ?? []
+  const hasModel = hasProvider && models.some((m) => m.id === settings.modelId)
   const modelIsReasoning = isReasoningModel(settings.modelId)
 
   // Local UI state for the creativity level dropdown

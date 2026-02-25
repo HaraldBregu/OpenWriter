@@ -68,7 +68,8 @@
       "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full.txt 2>&1; echo \"Exit: $?\")",
       "Bash(npx jest \"tests/unit/main/pipeline/agents/CounterAgent\" --forceExit --no-coverage --clearCache > /tmp/clear-cache.txt 2>&1; echo \"Exit: $?\")",
       "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full2.txt 2>&1; echo \"Exit: $?\")",
-      "Bash(npx jest \"tests/unit/renderer/hooks/useOutputFiles|tests/unit/renderer/hooks/usePersonalityFiles|tests/unit/renderer/hooks/usePostsFileWatcher|tests/unit/renderer/hooks/usePostsLoader\" --forceExit --no-coverage > /tmp/hooks-new2.txt 2>&1; echo \"Exit: $?\" && grep -E \"PASS|FAIL|Tests:\" /tmp/hooks-new2.txt)"
+      "Bash(npx jest \"tests/unit/renderer/hooks/useOutputFiles|tests/unit/renderer/hooks/usePersonalityFiles|tests/unit/renderer/hooks/usePostsFileWatcher|tests/unit/renderer/hooks/usePostsLoader\" --forceExit --no-coverage > /tmp/hooks-new2.txt 2>&1; echo \"Exit: $?\" && grep -E \"PASS|FAIL|Tests:\" /tmp/hooks-new2.txt)",
+      "Bash(cat:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
