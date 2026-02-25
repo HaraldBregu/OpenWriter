@@ -28,5 +28,27 @@
 - No emojis in code or responses
 - Absolute file paths required in all responses
 
+## AI Settings Architecture (designed, not yet implemented)
+- Shared types live in `src/shared/types/aiSettings.ts` — requires `@shared/` Vite alias
+- `ProviderSettings` extends old `ModelSettings` with `temperature`, `maxTokens`, `reasoning`
+- Redux slice: `src/renderer/src/store/aiSettingsSlice.ts` — loads on app start, mirrors Electron Store
+- `loadAISettings` thunk dispatched once from AppLayout (or equivalent root effect)
+- Hooks: `useAISettings` (global/ModelsSettings) and `useInferenceSettings(sectionId)` (personality pages)
+- Section configs remain on disk (workspace-scoped), NOT in Redux — loaded per-mount via IPC
+- Three-tier precedence in useInferenceSettings: section config > global Redux defaults > DEFAULT_INFERENCE_SETTINGS
+- `DEFAULT_INFERENCE_SETTINGS` and `DEFAULT_PROVIDER_SETTINGS` defined only in `src/shared/types/aiSettings.ts`
+- Old `ModelSettings` interface in `store.ts` → replaced by `ProviderSettings` import from shared types
+- Migration: `migrateProviderSettings()` in StoreService fills missing fields from existing settings.json
+- AppContext deliberately NOT used for AI settings — it is UI-only (theme, modals, preferences)
+
+## Key File Locations (AI Settings)
+- `src/main/services/store.ts` — StoreService, StoreSchema
+- `src/main/ipc/StoreIpc.ts` — IPC channel registrations for store operations
+- `src/main/shared/validators.ts` — StoreValidators class (input validation for IPC handlers)
+- `src/preload/index.ts` + `src/preload/index.d.ts` — window.store bridge
+- `src/renderer/src/pages/settings/ModelsSettings.tsx` — settings UI (currently uses local state + direct IPC)
+- `src/renderer/src/components/personality/PersonalitySimpleLayout.tsx` — personality chat UI with inference settings
+- `src/renderer/src/components/personality/PersonalitySettingsSheet.tsx` — inference settings panel component
+
 ## Links to Detail Files
 - `theme-pattern.md` — full analysis of theme system pattern decision

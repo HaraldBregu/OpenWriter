@@ -119,8 +119,11 @@ const NewPostPage: React.FC = () => {
         title: draftTitle || 'Untitled Post',
         content: draftBlocks.map((b) => b.content).join('\n\n'),
         visibility: 'private',
-        provider: 'manual',
-        model: '',
+        provider: aiSettings.providerId,
+        model: aiSettings.modelId,
+        temperature: aiSettings.temperature,
+        maxTokens: aiSettings.maxTokens,
+        reasoning: aiSettings.reasoning,
       })).unwrap()
       savedOutputIdRef.current = saved.id
       dispatch(setPostOutputId({ postId: draftIdRef.current, outputId: saved.id }))
