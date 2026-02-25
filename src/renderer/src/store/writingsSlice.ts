@@ -89,6 +89,27 @@ export const writingsSlice = createSlice({
       writing.updatedAt = Date.now()
     },
 
+    updateWritingInferenceSettings(
+      state,
+      action: PayloadAction<{
+        writingId: string
+        provider: string
+        model: string
+        temperature: number
+        maxTokens: number | null
+        reasoning: boolean
+      }>
+    ) {
+      const writing = state.writings.find((w) => w.id === action.payload.writingId)
+      if (!writing) return
+      writing.provider = action.payload.provider
+      writing.model = action.payload.model
+      writing.temperature = action.payload.temperature
+      writing.maxTokens = action.payload.maxTokens
+      writing.reasoning = action.payload.reasoning
+      writing.updatedAt = Date.now()
+    },
+
     deleteWriting(state, action: PayloadAction<string>) {
       state.writings = state.writings.filter((w) => w.id !== action.payload)
     },

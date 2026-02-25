@@ -387,7 +387,7 @@ const NewPostPage: React.FC = () => {
         {showSidebar && (
           <PersonalitySettingsPanel
             settings={aiSettings}
-            onSettingsChange={setAiSettings}
+            onSettingsChange={handleAiSettingsChange}
           />
         )}
       </div>
