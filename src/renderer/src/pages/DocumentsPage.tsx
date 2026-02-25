@@ -252,6 +252,7 @@ const DocumentCard = React.memo(function DocumentCard({
   onDelete,
   onView
 }: DocumentCardProps) {
+  const { t } = useTranslation()
   const Icon = getFileIcon(document)
 
   return (
@@ -268,7 +269,7 @@ const DocumentCard = React.memo(function DocumentCard({
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span>{formatFileSize(document.size)}</span>
             <span>•</span>
-            <span>{formatDate(document.importedAt)}</span>
+            <span>{formatDate(document.importedAt, t)}</span>
           </div>
         </div>
 
