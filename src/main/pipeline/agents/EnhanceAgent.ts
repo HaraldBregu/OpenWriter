@@ -16,13 +16,13 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import type { Agent, AgentInput, AgentEvent } from '../AgentBase'
 import type { StoreService } from '../../services/store'
 import { isReasoningModel, extractTokenFromChunk, classifyError } from '../../shared/aiUtils'
+import { ProviderResolver } from '../../shared/ProviderResolver'
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const LOG_PREFIX = '[EnhanceAgent]'
-const DEFAULT_MODEL = 'gpt-4o-mini'
 
 const SYSTEM_PROMPT = `You are a precise writing editor. Your task is to improve the given text while following these rules strictly:
 
