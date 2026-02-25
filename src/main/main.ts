@@ -22,6 +22,38 @@ export class Main {
     console.log('[Main] Main class initialized')
   }
 
+  /**
+   * Attach common window event handlers shared by all window types.
+   * This eliminates duplicate code between create() and createWorkspaceWindow().
+   *
+   * Handlers include:
+   *   - update-target-url: Suppresses native Chromium URL bubble on link hover
+   *   - maximize/unmaximize: Notifies renderer of window state changes
+   *   - enter/leave fullscreen: Notifies renderer of fullscreen state changes
+   */
+  private attachCommonWindowHandlers(win: BrowserWindow): void {
+    // Suppress native Chromium URL bubble on link hover
+    win.webContents.on('update-target-url', () => {})
+
+    // Notify renderer when window is maximized/unmaximized
+    win.on('maximize', () => {
+      win.webContents.send('window:maximize-change', true)
+    })
+
+    win.on('unmaximize', () => {
+      win.webContents.send('window:maximize-change', false)
+    })
+
+    // Notify renderer when entering/leaving fullscreen
+    win.on('enter-full-screen', () => {
+      win.webContents.send('window:fullscreen-change', true)
+    })
+
+    win.on('leave-full-screen', () => {
+      win.webContents.send('window:fullscreen-change', false)
+    })
+  }
+
   create(): BrowserWindow {
     const isMac = process.platform === 'darwin'
     this.window = this.windowFactory.create({
