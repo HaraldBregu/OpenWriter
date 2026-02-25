@@ -47,7 +47,7 @@
 - `window.contextMenu` — showWriting, onWritingAction, showPost, onPostAction
 - `window.directories` — list, add, addMany, remove, validate, markIndexed, onChanged
 - `window.personality` — save, loadAll, loadOne, delete, onFileChange, onWatcherError, loadSectionConfig, saveSectionConfig, onSectionConfigChange
-- `window.output` — save, loadAll, loadByType, loadOne, update, delete, onFileChange, onWatcherError
+- `window.output` — save(blocks[]), loadAll, loadByType, loadOne, update(blocks[]), delete, onFileChange, onWatcherError
 - `window.task` — submit, cancel, list, onEvent (unchanged)
 - `window.ai` — inference, cancel, onEvent, listAgents, listRuns (unchanged)
 - IPC channel names are UNCHANGED — only JS-side bridge property names were renamed
