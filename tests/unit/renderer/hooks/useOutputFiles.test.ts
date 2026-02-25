@@ -142,9 +142,27 @@ describe('useOutputFiles — initial load', () => {
           maxTokens: null,
           reasoning: false,
           createdAt: NOW_ISO,
-          updatedAt: NOW_ISO
+          updatedAt: NOW_ISO,
+          content: [
+            {
+              type: 'content',
+              filetype: 'markdown',
+              name: 'block-uuid-0001',
+              createdAt: NOW_ISO,
+              updatedAt: NOW_ISO,
+            },
+          ],
         },
-        content: 'Some content',
+        blocks: [
+          {
+            name: 'block-uuid-0001',
+            content: 'Some content',
+            filetype: 'markdown',
+            type: 'content',
+            createdAt: NOW_ISO,
+            updatedAt: NOW_ISO,
+          },
+        ],
         savedAt: Date.now()
       }
     ])
