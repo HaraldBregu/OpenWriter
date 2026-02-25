@@ -66,10 +66,10 @@ test.describe('Navigation', () => {
     await navigateTo(ctx.page, '/')
     await ctx.page.waitForTimeout(1000)
 
-    // WelcomePage should show the "Tesseract AI" heading
+    // WelcomePage should show the "OpenWriter" heading
     const heading = ctx.page.locator('h1')
     await expect(heading).toBeVisible({ timeout: 10_000 })
     const text = await heading.textContent()
-    expect(text).toContain('Tesseract AI')
+    expect(text).toContain('OpenWriter')
   })
 })
