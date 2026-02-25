@@ -54,10 +54,15 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   const dispatch = useAppDispatch()
   const contentRef = useRef<HTMLDivElement>(null)
 
-  // Get files for this section for the dropdown
-  const files = useAppSelector(
-    selectPersonalityFilesBySection(sectionId as 'emotional-depth' | 'consciousness' | 'motivation' | 'moral-intuition' | 'irrationality' | 'growth' | 'social-identity' | 'creativity' | 'mortality' | 'contradiction')
+  // Get files for this section for the dropdown.
+  // The factory selector must be memoized so the same createSelector instance is
+  // reused across renders — without this, a new instance is created every render
+  // and reselect's cache is never hit, causing recomputation on every Redux dispatch.
+  const selectFilesForSection = useMemo(
+    () => selectPersonalityFilesBySection(sectionId as 'emotional-depth' | 'consciousness' | 'motivation' | 'moral-intuition' | 'irrationality' | 'growth' | 'social-identity' | 'creativity' | 'mortality' | 'contradiction'),
+    [sectionId]
   )
+  const files = useAppSelector(selectFilesForSection)
 
   const {
     messages,
