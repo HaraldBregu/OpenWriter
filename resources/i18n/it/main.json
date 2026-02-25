@@ -532,7 +532,7 @@
     "tryThis": "Prova questo",
     "askToGetStarted": "Fai una domanda per iniziare.",
     "generatingResponse": "Generazione risposta...",
-    "pressEnterToSubmit": "Premi Invio per inviare la tua domanda",
+    "pressEnterToSubmit": "Premi Invio per inviare, Shift+Invio per una nuova riga",
     "stop": "Ferma",
     "submit": "Invia"
   },
