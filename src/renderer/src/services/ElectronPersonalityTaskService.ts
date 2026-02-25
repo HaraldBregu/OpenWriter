@@ -19,7 +19,24 @@ import type {
  * App.tsx instantiates this class and passes it to PersonalityTaskProvider.
  */
 export class ElectronPersonalityTaskService implements IPersonalityTaskService {
+  /**
+   * Asserts that the Electron IPC bridge for the `task` namespace is available.
+   * window.task is injected by the preload script via contextBridge.exposeInMainWorld.
+   * If it is undefined the renderer is running in a window that was opened without
+   * the preload, or in a non-Electron environment (tests, storybook) without a mock.
+   */
+  private assertBridge(): void {
+    if (!window.task) {
+      throw new Error(
+        '[ElectronPersonalityTaskService] window.task is undefined. ' +
+        'Ensure the BrowserWindow that renders this page has the preload script ' +
+        'configured, or inject a MockPersonalityTaskService via PersonalityTaskProvider.'
+      )
+    }
+  }
+
   onTaskEvent(handler: (event: TaskEvent) => void): () => void {
+    this.assertBridge()
     return window.task.onEvent((raw) => {
       handler({
         type: raw.type as TaskEvent['type'],
@@ -29,6 +46,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
   }
 
   async submitTask(input: SubmitTaskInput): Promise<SubmitTaskResult | SubmitTaskError> {
+    this.assertBridge()
     const payload: Record<string, unknown> = {
       prompt: input.prompt,
       providerId: input.providerId,
@@ -45,6 +63,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
   }
 
   cancelTask(taskId: string): void {
+    if (!window.task) return
     window.task.cancel(taskId)
   }
 

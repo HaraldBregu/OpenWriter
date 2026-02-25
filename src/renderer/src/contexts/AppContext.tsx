@@ -119,7 +119,10 @@ function ThemeProvider({
     } catch (error) {
       console.error('Failed to save theme mode:', error)
     }
-    window.app.setTheme(theme)
+    // window.app is only present inside the Electron preload context.
+    // Guard against undefined so this works safely in tests and any
+    // environment where the preload bridge is not loaded.
+    window.app?.setTheme(theme)
   }, [theme])
 
   // Track OS preference changes in real-time when mode is 'system'.
