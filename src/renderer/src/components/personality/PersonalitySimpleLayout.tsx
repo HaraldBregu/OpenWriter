@@ -14,9 +14,10 @@ import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
 import { useAppSelector, useAppDispatch } from '@/store'
 import { selectPersonalityFilesBySection, loadPersonalityFiles } from '@/store/personalityFilesSlice'
 import type { PersonalityFile } from '@/store/personalityFilesSlice'
-import { PersonalitySettingsPanel, DEFAULT_INFERENCE_SETTINGS } from './PersonalitySettingsSheet'
-import type { InferenceSettings } from './PersonalitySettingsSheet'
-import { getDefaultModelId } from '@/config/aiProviders'
+import { PersonalitySettingsPanel } from './PersonalitySettingsSheet'
+import type { InferenceSettings } from '../../../../shared/types/aiSettings'
+import { DEFAULT_INFERENCE_SETTINGS } from '../../../../shared/types/aiSettings'
+import { useInferenceSettings } from '@/hooks/useInferenceSettings'
 
 export interface PersonalitySimpleLayoutProps {
   sectionId: string

@@ -249,17 +249,17 @@ const DirectoriesPage: React.FC = () => {
               <div className="flex items-center justify-around">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-foreground">{directories.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Directories</p>
+                  <p className="text-sm text-muted-foreground">{t('directories.totalDirectories')}</p>
                 </div>
                 <AppSeparator orientation="vertical" className="h-12" />
                 <div className="text-center">
                   <p className="text-3xl font-bold text-foreground">{indexedCount}</p>
-                  <p className="text-sm text-muted-foreground">Indexed</p>
+                  <p className="text-sm text-muted-foreground">{t('directories.indexed')}</p>
                 </div>
                 <AppSeparator orientation="vertical" className="h-12" />
                 <div className="text-center">
                   <p className="text-3xl font-bold text-foreground">{pendingCount}</p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-sm text-muted-foreground">{t('directories.pending')}</p>
                 </div>
               </div>
             </AppCardContent>
