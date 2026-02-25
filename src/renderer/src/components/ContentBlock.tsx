@@ -114,7 +114,7 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   const { submitTask, cancelTask, tasks } = useTask()
 
-  const editor = useEditor({
+  const editorOptions = useMemo(() => ({
     extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
     content: block.content || '',
     contentType: 'markdown',
@@ -141,7 +141,9 @@ export const ContentBlock = React.memo(function ContentBlock({
         return false
       },
     },
-  })
+  }), [block.content])
+
+  const editor = useEditor(editorOptions)
 
   // Keep editorRef in sync whenever useEditor returns a new instance.
   useEffect(() => {
