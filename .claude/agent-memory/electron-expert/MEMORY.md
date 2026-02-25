@@ -61,5 +61,16 @@
 - Section config change events: `personality:section-config-changed` — payload `{ sectionId, config, timestamp }`
 - 3-layer fallback for new conversation metadata: caller input → section config → APP_DEFAULTS
 
+## Output System (per-block .md format)
+- New format: `<workspace>/output/<type>/<YYYY-MM-DD_HHmmss>/config.json + <uuid>.md` per block
+- `config.json` has a `content: ContentBlockDescriptor[]` array (ordered, each maps to a .md file)
+- Legacy `DATA.md` format is auto-migrated on first `loadFolder()` call (no manual step needed)
+- `OutputFilesService.save()` requires `blocks: [{name, content}]` — NOT flat `content: string`
+- `OutputFilesService.update()` requires `blocks` array — diffs against existing to delete removed blocks
+- Watcher depth=3 (was 2) to cover: output/ → type/ → date-folder/ → block.md
+- `BLOCK_FILE_RE = /^[0-9a-f-]+\.md$/i` used to identify block files in watcher `ignored` predicate
+- Both config changes and block .md changes emit same `output:file-changed` event with the date-folder as `fileId`
+- `window.posts` (PostsIpc) remains unchanged — uses separate `<workspace>/posts/{id}.json` flat format
+
 ## Details Files
 - See `patterns.md` for extended code patterns
