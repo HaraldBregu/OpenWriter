@@ -114,15 +114,9 @@ export class WindowScopedServiceFactory {
 export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFactory {
   const factory = new WindowScopedServiceFactory()
 
-  // Register workspace service (primary dependency for other services)
-  factory.register({
-    key: 'workspace',
-    factory: ({ storeService, eventBus }) => {
-      const service = new WorkspaceServiceImpl(storeService, eventBus)
-      service.initialize()
-      return service
-    }
-  })
+  // Note: 'workspace' is NOT registered here. WindowContext constructs and registers
+  // WorkspaceService directly before calling createAndRegisterAll(), and passes the
+  // instance as context.workspaceService for downstream services to depend on.
 
   // Register workspace metadata service (depends on workspace)
   factory.register({
