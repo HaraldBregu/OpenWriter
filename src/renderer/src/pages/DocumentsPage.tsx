@@ -473,7 +473,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
               }}
             />
             <p className="text-xs text-muted-foreground">
-              Enter the URL of the document you want to download
+              {t('documents.documentURLHint')}
             </p>
           </div>
 
