@@ -369,7 +369,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
       const task = store.getSnapshot(sectionId)
       if (!task.taskId) return
 
-      window.task.cancel(task.taskId)
+      service.cancelTask(task.taskId)
       taskIdToSectionRef.current.delete(task.taskId)
 
       store.update(sectionId, {
@@ -378,7 +378,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
         taskId: null
       })
     },
-    [store]
+    [store, service]
   )
 
   const clearTask = useCallback(
