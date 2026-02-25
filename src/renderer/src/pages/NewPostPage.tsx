@@ -289,7 +289,7 @@ const NewPostPage: React.FC = () => {
               ? setDraftTitle(e.target.value)
               : dispatch(updatePostTitle({ postId: post!.id, title: e.target.value }))
           }
-          placeholder="New post"
+          placeholder={t('post.titlePlaceholder')}
           className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full"
         />
         <div className="flex items-center gap-3">
