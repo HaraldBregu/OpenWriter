@@ -46,10 +46,10 @@
     "icon": "./resources/icons/mac/icon.icns",
     "extendInfo": {
       "LSApplicationCategoryType": "public.app-category.utilities",
-      "NSMicrophoneUsageDescription": "Tesseract AI needs access to your microphone for audio recording features.",
-      "NSCameraUsageDescription": "Tesseract AI needs access to your camera for video recording features.",
-      "NSBluetoothAlwaysUsageDescription": "Tesseract AI needs access to Bluetooth to connect and manage Bluetooth devices.",
-      "NSBluetoothPeripheralUsageDescription": "Tesseract AI needs access to Bluetooth peripherals for device connectivity.",
+      "NSMicrophoneUsageDescription": "OpenWriter needs access to your microphone for audio recording features.",
+      "NSCameraUsageDescription": "OpenWriter needs access to your camera for video recording features.",
+      "NSBluetoothAlwaysUsageDescription": "OpenWriter needs access to Bluetooth to connect and manage Bluetooth devices.",
+      "NSBluetoothPeripheralUsageDescription": "OpenWriter needs access to Bluetooth peripherals for device connectivity.",
       "CFBundleDocumentTypes": [
         {
           "CFBundleTypeName": "Tesseract AI File",
