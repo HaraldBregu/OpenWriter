@@ -72,7 +72,7 @@ function makeDirent(name: string, isDir: boolean) {
 }
 
 const SECTION_DIR = `${WORKSPACE}/personality/${SECTION_ID}`
-const FOLDER_PATH = `${SECTION_DIR}/${DATE_FOLDER}`
+const _FOLDER_PATH = `${SECTION_DIR}/${DATE_FOLDER}`
 
 const SAMPLE_METADATA = {
   title: 'Consciousness',
