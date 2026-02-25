@@ -1,5 +1,5 @@
 /**
- * Shared test utilities for Tesseract AI tests.
+ * Shared test utilities for OpenWriter tests.
  */
 
 /**
