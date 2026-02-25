@@ -337,14 +337,14 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
       })
 
       try {
-        const result = await window.task.submit('ai-chat', {
+        const result = await service.submitTask({
           prompt: trimmed,
           providerId,
           systemPrompt,
           messages: conversationHistory,
-          ...(options?.modelId ? { modelId: options.modelId } : {}),
-          ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
-          ...(options?.maxTokens ? { maxTokens: options.maxTokens } : {})
+          modelId: options?.modelId,
+          temperature: options?.temperature,
+          maxTokens: options?.maxTokens,
         })
 
         if (result.success) {
