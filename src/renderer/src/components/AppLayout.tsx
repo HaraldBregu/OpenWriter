@@ -305,7 +305,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                         ? handleNewWriting
                         : undefined;
                     return (
-                      <AppSidebarMenuItem key={item.title}>
+                      <AppSidebarMenuItem key={item.titleKey}>
                         <AppSidebarMenuButton
                           asChild={!hasClickHandler}
                           // isActive={location.pathname === item.url}
@@ -316,7 +316,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                             <>
                               <Icon className="h-3.5 w-3.5 shrink-0" />
                               <span className="flex-1 truncate">
-                                {item.title}
+                                {title}
                               </span>
                               <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
                                 {item.shortcut}
@@ -326,7 +326,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                             <Link to={item.url}>
                               <Icon className="h-3.5 w-3.5 shrink-0" />
                               <span className="flex-1 truncate">
-                                {item.title}
+                                {title}
                               </span>
                               <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
                                 {item.shortcut}
