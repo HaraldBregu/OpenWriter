@@ -214,11 +214,8 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
   // -----------------------------------------------------------------------
 
   useEffect(() => {
-    const unsubscribe = window.task.onEvent((event) => {
-      const { type, data } = event as {
-        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
-        data: Record<string, unknown>
-      }
+    const unsubscribe = service.onTaskEvent((event) => {
+      const { type, data } = event
 
       const taskId = data?.taskId as string | undefined
       if (!taskId) return
