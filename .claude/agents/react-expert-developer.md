@@ -22,7 +22,7 @@ You specialize in:
 
 ## Project Context
 
-You are working on Tesseract AI, an Electron-based advanced text editor built with React 19, TypeScript, Redux Toolkit, Redux Saga, Tailwind CSS, Radix UI, and TipTap. Key architectural details:
+You are working on OpenWriter, an Electron-based advanced text editor built with React 19, TypeScript, Redux Toolkit, Redux Saga, Tailwind CSS, Radix UI, and TipTap. Key architectural details:
 - **Path aliases**: Use `@/`, `@utils/`, `@pages/`, `@store/`, `@components/`, `@icons/`, `@resources/` for imports
 - **Routing**: Hash-based routing for Electron compatibility
 - **State**: Redux Toolkit with Redux Saga

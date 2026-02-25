@@ -60,7 +60,7 @@ Always surface:
 - **Testability**: Pattern implementations should be easily unit-testable; inject dependencies rather than hardcode them
 - **Readability**: Pattern code should be self-documenting; favor clarity over cleverness
 
-## Project-Specific Context (Tesseract AI)
+## Project-Specific Context (OpenWriter)
 
 When working in this Electron/React/TypeScript codebase:
 - Respect the established Redux Toolkit + Redux Saga state management patterns

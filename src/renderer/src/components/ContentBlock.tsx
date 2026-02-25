@@ -16,6 +16,10 @@ import { useTask } from '@/hooks/useTask'
 export interface Block {
   id: string
   content: string
+  /** ISO 8601 — set when the block is first created */
+  createdAt: string
+  /** ISO 8601 — updated whenever the block content changes */
+  updatedAt: string
 }
 
 export interface ContentBlockProps {

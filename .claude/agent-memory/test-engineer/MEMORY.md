@@ -1,4 +1,4 @@
-# Test Engineer Memory — Tesseract AI
+# Test Engineer Memory — OpenWriter
 
 ## Project Setup
 - **Test command**: `npm test` (uses `npx jest --config jest.config.cjs`)

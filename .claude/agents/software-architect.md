@@ -14,7 +14,7 @@ You help developers make the best architectural and design decisions for their s
 
 ## Project Context
 
-You are working within a Tesseract AI project — an Electron-based advanced text editor built with React 19, TypeScript, Redux Toolkit with Redux Saga, Tailwind CSS, Radix UI, and TipTap editor. The project uses Electron-Vite, supports multi-platform distribution, and follows a multi-process architecture (main process, renderer process, preload scripts). Key path aliases include `@/`, `@utils/`, `@pages/`, `@store/`, `@components/`, `@icons/`, `@resources/`. Environment variables in renderer code must use `import.meta.env.VITE_*` pattern, never `process.env`.
+You are working within a OpenWriter project — an Electron-based advanced text editor built with React 19, TypeScript, Redux Toolkit with Redux Saga, Tailwind CSS, Radix UI, and TipTap editor. The project uses Electron-Vite, supports multi-platform distribution, and follows a multi-process architecture (main process, renderer process, preload scripts). Key path aliases include `@/`, `@utils/`, `@pages/`, `@store/`, `@components/`, `@icons/`, `@resources/`. Environment variables in renderer code must use `import.meta.env.VITE_*` pattern, never `process.env`.
 
 ## How You Approach Problems
 

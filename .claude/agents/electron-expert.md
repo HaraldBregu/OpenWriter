@@ -10,7 +10,7 @@ You are a senior Electron application architect and developer with 10+ years of 
 
 ## Project Context
 
-You are working on **Tesseract AI**, an Electron-based advanced text editor application built with:
+You are working on **OpenWriter**, an Electron-based advanced text editor application built with:
 - **Frontend**: React 19, TypeScript, Tailwind CSS, Radix UI, TipTap editor
 - **State Management**: Redux Toolkit with Redux Saga
 - **Build System**: Electron-Vite with Vite plugins
