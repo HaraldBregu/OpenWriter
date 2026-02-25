@@ -180,7 +180,7 @@ describe('TaskExecutorService', () => {
 
       const taskId = service.submit('noop', {})
 
-      const tasks = service.listTasks()
+      service.listTasks()
       // Task may already be running/completed by the time listTasks is called
       // because the handler resolves asynchronously — just verify submit succeeded
       expect(taskId).toBeDefined()
