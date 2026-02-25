@@ -498,7 +498,7 @@ const RemoteDownloadModal = React.memo(function RemoteDownloadModal({
             <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
               <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
               <p className="text-sm text-green-600 dark:text-green-400">
-                Download completed successfully
+                {t('documents.downloadCompleted')}
               </p>
             </div>
           )}
