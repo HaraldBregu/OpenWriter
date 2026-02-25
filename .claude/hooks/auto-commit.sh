@@ -18,4 +18,5 @@ if [ -z "$COMMIT_MSG" ]; then
 fi
 
 git commit -m "$COMMIT_MSG" || true
+git push || true
 exit 0
