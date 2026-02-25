@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Send, StopCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { AppButton } from '@/components/app/AppButton'
 
 export interface PersonalityChatInputProps {
