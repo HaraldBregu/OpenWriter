@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tesseract AI is an Electron-based advanced text editor application. It's built with React, TypeScript, and uses Electron-Vite for the build system. The application supports multi-platform distribution (Windows, macOS, Linux) and handles custom file formats (.tsx).
+OpenWriter is an Electron-based advanced text editor application. It's built with React, TypeScript, and uses Electron-Vite for the build system. The application supports multi-platform distribution (Windows, macOS, Linux) and handles custom file formats (.tsx).
 
 ## Development Commands
 
