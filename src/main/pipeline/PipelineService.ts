@@ -9,25 +9,24 @@
  *     to the EventBus for delivery to the renderer.
  *  5. Track active runs so concurrent agents can coexist.
  *
- * Implements Disposable so ServiceContainer calls destroy() on shutdown,
- * aborting any in-flight runs.
+ * Inherits lifecycle management from ExecutorBase to eliminate duplicate code
+ * shared with TaskExecutorService.
  */
 
 import { randomUUID } from 'crypto'
-import type { Disposable } from '../core/ServiceContainer'
+import { ExecutorBase, type ExecutionRecord } from '../services/ExecutorBase'
 import type { EventBus } from '../core/EventBus'
 import type { AgentRegistry } from './AgentRegistry'
 import type { AgentInput } from './AgentBase'
 
-interface ActiveRun {
-  runId: string
+interface PipelineRun extends ExecutionRecord {
+  id: string
   agentName: string
   controller: AbortController
   startedAt: number
 }
 
-export class PipelineService implements Disposable {
-  private activeRuns = new Map<string, ActiveRun>()
+export class PipelineService extends ExecutorBase<PipelineRun> {
 
   constructor(
     private readonly registry: AgentRegistry,
