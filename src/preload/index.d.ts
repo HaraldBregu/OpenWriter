@@ -251,10 +251,6 @@ declare global {
       setTheme: (theme: string) => void
       showContextMenu: () => void
       showContextMenuEditable: () => void
-      windowMinimize: () => void
-      windowMaximize: () => void
-      windowClose: () => void
-      windowIsMaximized: () => Promise<boolean>
       onLanguageChange: (callback: (lng: string) => void) => () => void
       onThemeChange: (callback: (theme: string) => void) => () => void
       onFileOpened: (callback: (filePath: string) => void) => () => void
