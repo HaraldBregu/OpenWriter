@@ -408,6 +408,15 @@
     "delete": "Delete"
   },
 
+  "imageBlock": {
+    "dropOrClick": "Drop an image here or click to browse",
+    "altPlaceholder": "Add alt text for accessibility…",
+    "selectImage": "Select image",
+    "removeImage": "Remove image",
+    "delete": "Delete",
+    "insertImage": "Insert image"
+  },
+
   "inferenceSettings": {
     "title": "Inference Settings",
     "description": "Configure model and parameters.",
