@@ -31,5 +31,7 @@
   "theme": "Tema",
   "light": "Chiaro",
   "dark": "Scuro",
-  "system": "Sistema"
+  "system": "Sistema",
+  "showConsole": "Mostra Console",
+  "refresh": "Ricarica"
 }
