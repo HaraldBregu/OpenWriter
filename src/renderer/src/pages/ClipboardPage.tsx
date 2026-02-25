@@ -29,7 +29,7 @@ const ClipboardPage: React.FC = () => {
     refresh
   } = useClipboard()
 
-  const [customText, setCustomText] = useState('Hello from Tesseract AI clipboard!')
+  const [customText, setCustomText] = useState('Hello from OpenWriter clipboard!')
   const [customHTML, setCustomHTML] = useState('<h1>Hello World</h1><p>This is <strong>HTML</strong> content</p>')
   const [pastedText, setPastedText] = useState('')
   const [copySuccess, setCopySuccess] = useState(false)
