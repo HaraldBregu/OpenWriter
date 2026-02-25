@@ -3,6 +3,12 @@
  *
  * Tests cover:
  *   - All reducers (createPost, updatePostBlocks, updatePostTitle, etc.)
+ *   - updatePostInferenceSettings: all five fields, updatedAt bump, no-op on missing ID
+ *   - Extra reducer: output/loadAll/fulfilled hydration
+ *     - Maps inference fields (provider, model, temperature, maxTokens, reasoning) into new Posts
+ *     - Updates inference fields on existing Posts when disk data changes
+ *     - Removes Posts whose outputId no longer exists on disk
+ *     - Skips Posts with no outputId (unsaved in-session drafts)
  *   - Selectors (selectPosts, selectPostById, selectPostCount)
  *   - Edge cases (missing post IDs, empty state)
  */
@@ -14,21 +20,25 @@ import postsReducer, {
   updatePostCategory,
   updatePostTags,
   updatePostVisibility,
+  updatePostInferenceSettings,
   deletePost,
   selectPosts,
   selectPostById,
   selectPostCount,
   type Post
 } from '../../../../src/renderer/src/store/postsSlice'
+import type { OutputItem } from '../../../../src/renderer/src/store/outputSlice'
 
-// Helper to create a well-known initial state
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
 function createInitialState() {
   return {
     posts: [] as Post[]
   }
 }
 
-// Helper to create a test post
 function createTestPost(overrides: Partial<Post> = {}): Post {
   return {
     id: 'test-post-id',
@@ -37,11 +47,46 @@ function createTestPost(overrides: Partial<Post> = {}): Post {
     category: 'technology',
     tags: ['test', 'example'],
     visibility: 'public',
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: 1000,
+    updatedAt: 1000,
     ...overrides
   }
 }
+
+/** Build an OutputItem of type 'posts' to simulate disk data. */
+function makeOutputItem(overrides: Partial<OutputItem> = {}): OutputItem {
+  return {
+    id: 'output-1',
+    type: 'posts',
+    path: '/workspace/output/posts/output-1',
+    title: 'Disk Post Title',
+    content: 'Paragraph one\n\nParagraph two',
+    category: 'technology',
+    tags: ['disk-tag'],
+    visibility: 'public',
+    provider: 'openai',
+    model: 'gpt-4o',
+    temperature: 0.7,
+    maxTokens: 2048,
+    reasoning: false,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-02-01T00:00:00.000Z',
+    savedAt: 2000,
+    ...overrides
+  }
+}
+
+/**
+ * Simulate the `output/loadAll/fulfilled` action that postsSlice listens to.
+ * The payload is OutputItem[] (all types); the reducer filters by type='posts'.
+ */
+function outputLoadAllFulfilled(payload: OutputItem[]) {
+  return { type: 'output/loadAll/fulfilled', payload }
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
 
 describe('postsSlice', () => {
   describe('reducers', () => {
@@ -271,6 +316,94 @@ describe('postsSlice', () => {
       })
     })
 
+    describe('updatePostInferenceSettings', () => {
+      const INFERENCE_PAYLOAD = {
+        postId: 'post-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 1.2,
+        maxTokens: 4096,
+        reasoning: true
+      }
+
+      it('should update all five inference fields on the matching post', () => {
+        // Arrange
+        const state = createInitialState()
+        state.posts.push(createTestPost({ id: 'post-1' }))
+
+        // Act
+        const result = postsReducer(state, updatePostInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert
+        const post = result.posts[0]
+        expect(post.provider).toBe('anthropic')
+        expect(post.model).toBe('claude-opus-4-6')
+        expect(post.temperature).toBe(1.2)
+        expect(post.maxTokens).toBe(4096)
+        expect(post.reasoning).toBe(true)
+      })
+
+      it('should accept null for maxTokens (unlimited)', () => {
+        // Arrange
+        const state = createInitialState()
+        state.posts.push(createTestPost({ id: 'post-1' }))
+
+        // Act
+        const result = postsReducer(
+          state,
+          updatePostInferenceSettings({ ...INFERENCE_PAYLOAD, maxTokens: null })
+        )
+
+        // Assert
+        expect(result.posts[0].maxTokens).toBeNull()
+      })
+
+      it('should bump updatedAt after updating inference settings', () => {
+        // Arrange
+        const state = createInitialState()
+        state.posts.push(createTestPost({ id: 'post-1', updatedAt: 1000 }))
+        jest.spyOn(Date, 'now').mockReturnValue(9999)
+
+        // Act
+        const result = postsReducer(state, updatePostInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert
+        expect(result.posts[0].updatedAt).toBe(9999)
+
+        // Cleanup
+        jest.restoreAllMocks()
+      })
+
+      it('should not modify other posts when postId matches only one', () => {
+        // Arrange
+        const state = createInitialState()
+        state.posts.push(createTestPost({ id: 'post-1', provider: 'openai' }))
+        state.posts.push(createTestPost({ id: 'post-2', provider: 'openai' }))
+
+        // Act
+        const result = postsReducer(state, updatePostInferenceSettings(INFERENCE_PAYLOAD))
+
+        // Assert: post-2 remains unchanged
+        expect(result.posts[1].provider).toBe('openai')
+        expect(result.posts[1].model).toBeUndefined()
+      })
+
+      it('should be a no-op when postId does not exist', () => {
+        // Arrange
+        const state = createInitialState()
+        state.posts.push(createTestPost({ id: 'post-1', provider: 'openai' }))
+
+        // Act
+        const result = postsReducer(
+          state,
+          updatePostInferenceSettings({ ...INFERENCE_PAYLOAD, postId: 'nonexistent' })
+        )
+
+        // Assert: state unchanged
+        expect(result.posts[0].provider).toBeUndefined()
+      })
+    })
+
     describe('deletePost', () => {
       it('should remove the post by ID', () => {
         // Arrange
@@ -301,6 +434,277 @@ describe('postsSlice', () => {
     })
   })
 
+  // ---------------------------------------------------------------------------
+  // Extra reducers: output/loadAll/fulfilled hydration
+  // ---------------------------------------------------------------------------
+
+  describe('extra reducers: output/loadAll/fulfilled hydration', () => {
+    it('should add new posts from disk that do not yet exist in Redux', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', title: 'From Disk' })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts).toHaveLength(1)
+      expect(result.posts[0].title).toBe('From Disk')
+      expect(result.posts[0].outputId).toBe('output-1')
+    })
+
+    it('should map all inference fields when adding a new post from disk', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 1.8,
+        maxTokens: 4000,
+        reasoning: true
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const post = result.posts[0]
+      expect(post.provider).toBe('anthropic')
+      expect(post.model).toBe('claude-opus-4-6')
+      expect(post.temperature).toBe(1.8)
+      expect(post.maxTokens).toBe(4000)
+      expect(post.reasoning).toBe(true)
+    })
+
+    it('should map null maxTokens from disk (unlimited)', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', maxTokens: null })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts[0].maxTokens).toBeNull()
+    })
+
+    it('should update inference fields on an existing post when disk data changed', () => {
+      // Arrange
+      const existing = createTestPost({
+        id: 'post-1',
+        outputId: 'output-1',
+        provider: 'openai',
+        model: 'gpt-4o',
+        temperature: 0.7,
+        maxTokens: null,
+        reasoning: false
+      })
+      const state = { posts: [existing] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-sonnet-4-5-20250929',
+        temperature: 0.5,
+        maxTokens: 2000,
+        reasoning: false,
+        updatedAt: '2025-01-01T00:00:00.000Z'
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      const post = result.posts[0]
+      expect(post.id).toBe('post-1') // Redux ID preserved
+      expect(post.provider).toBe('anthropic')
+      expect(post.model).toBe('claude-sonnet-4-5-20250929')
+      expect(post.temperature).toBe(0.5)
+      expect(post.maxTokens).toBe(2000)
+      expect(post.reasoning).toBe(false)
+    })
+
+    it('should update reasoning to true on an existing post when disk sets reasoning=true', () => {
+      // Arrange — post currently has reasoning: false
+      const existing = createTestPost({
+        id: 'post-1',
+        outputId: 'output-1',
+        provider: 'openai',
+        model: 'o1',
+        reasoning: false
+      })
+      const state = { posts: [existing] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        provider: 'openai',
+        model: 'o1',
+        temperature: 0.7,
+        maxTokens: null,
+        reasoning: true
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts[0].reasoning).toBe(true)
+    })
+
+    it('should split multi-paragraph content into one block per paragraph', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        content: 'Paragraph one\n\nParagraph two\n\nParagraph three'
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts[0].blocks).toHaveLength(3)
+      expect(result.posts[0].blocks[0].content).toBe('Paragraph one')
+      expect(result.posts[0].blocks[1].content).toBe('Paragraph two')
+      expect(result.posts[0].blocks[2].content).toBe('Paragraph three')
+    })
+
+    it('should create a single empty block when disk content is empty', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItem = makeOutputItem({ id: 'output-1', content: '' })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert
+      expect(result.posts[0].blocks).toHaveLength(1)
+      expect(result.posts[0].blocks[0].content).toBe('')
+    })
+
+    it('should NOT rebuild blocks when disk content matches current blocks exactly', () => {
+      // Arrange — blocks and disk content are identical
+      const existing = createTestPost({
+        id: 'post-1',
+        blocks: [
+          { id: 'block-1', content: 'Paragraph one' },
+          { id: 'block-2', content: 'Paragraph two' }
+        ],
+        outputId: 'output-1'
+      })
+      const state = { posts: [existing] }
+      const originalBlockIds = existing.blocks.map((b) => b.id)
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        content: 'Paragraph one\n\nParagraph two'
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert — block IDs unchanged (blocks not rebuilt)
+      const resultBlockIds = result.posts[0].blocks.map((b) => b.id)
+      expect(resultBlockIds).toEqual(originalBlockIds)
+    })
+
+    it('should remove posts whose outputId no longer exists on disk', () => {
+      // Arrange — one saved post, one unsaved in-session draft
+      const savedPost = createTestPost({ id: 'post-1', outputId: 'output-1' })
+      const unsavedPost = createTestPost({ id: 'post-2', outputId: undefined })
+      const state = { posts: [savedPost, unsavedPost] }
+
+      // Act — disk returns no posts-type items
+      const result = postsReducer(state, outputLoadAllFulfilled([]))
+
+      // Assert — only the unsaved draft survives
+      expect(result.posts).toHaveLength(1)
+      expect(result.posts[0].id).toBe('post-2')
+    })
+
+    it('should preserve inference fields already on an existing post when inference fields survive refresh', () => {
+      // Arrange — existing post has inference settings; disk content is identical
+      const existing = createTestPost({
+        id: 'post-1',
+        blocks: [{ id: 'block-1', content: 'Same content' }],
+        outputId: 'output-1',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 0.8,
+        maxTokens: 2000,
+        reasoning: false
+      })
+      const state = { posts: [existing] }
+
+      const diskItem = makeOutputItem({
+        id: 'output-1',
+        content: 'Same content',
+        provider: 'anthropic',
+        model: 'claude-opus-4-6',
+        temperature: 0.8,
+        maxTokens: 2000,
+        reasoning: false
+      })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert — inference fields preserved intact
+      const post = result.posts[0]
+      expect(post.provider).toBe('anthropic')
+      expect(post.model).toBe('claude-opus-4-6')
+      expect(post.temperature).toBe(0.8)
+      expect(post.maxTokens).toBe(2000)
+      expect(post.reasoning).toBe(false)
+    })
+
+    it('should ignore output items of types other than posts', () => {
+      // Arrange
+      const state = createInitialState()
+      const writingItem = makeOutputItem({ id: 'writing-1', type: 'writings' })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([writingItem]))
+
+      // Assert — writings should not be hydrated into posts
+      expect(result.posts).toHaveLength(0)
+    })
+
+    it('should not add a post twice if it already has a matching outputId', () => {
+      // Arrange
+      const existing = createTestPost({ id: 'post-1', outputId: 'output-1' })
+      const state = { posts: [existing] }
+      const diskItem = makeOutputItem({ id: 'output-1' })
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled([diskItem]))
+
+      // Assert — no duplicate
+      expect(result.posts).toHaveLength(1)
+    })
+
+    it('should handle multiple new disk posts at once', () => {
+      // Arrange
+      const state = createInitialState()
+      const diskItems = [
+        makeOutputItem({ id: 'output-1', title: 'First' }),
+        makeOutputItem({ id: 'output-2', title: 'Second' }),
+        makeOutputItem({ id: 'output-3', title: 'Third' })
+      ]
+
+      // Act
+      const result = postsReducer(state, outputLoadAllFulfilled(diskItems))
+
+      // Assert
+      expect(result.posts).toHaveLength(3)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Selectors
+  // ---------------------------------------------------------------------------
+
   describe('selectors', () => {
     it('selectPosts should return the posts array', () => {
       const state = { posts: createInitialState() }
@@ -327,6 +731,27 @@ describe('postsSlice', () => {
       // Non-existent post
       const nonExistentSelector = selectPostById('nonexistent')
       expect(nonExistentSelector(stateWithPosts)).toBeNull()
+    })
+
+    it('selectPostById should return a post that includes inference fields', () => {
+      // Ensure inference fields are accessible via selector (not stripped)
+      const post = createTestPost({
+        id: 'post-1',
+        provider: 'openai',
+        model: 'gpt-4o',
+        temperature: 0.7,
+        maxTokens: 2048,
+        reasoning: false
+      })
+      const state = { posts: { posts: [post] } }
+      const selector = selectPostById('post-1')
+      const selected = selector(state)
+
+      expect(selected?.provider).toBe('openai')
+      expect(selected?.model).toBe('gpt-4o')
+      expect(selected?.temperature).toBe(0.7)
+      expect(selected?.maxTokens).toBe(2048)
+      expect(selected?.reasoning).toBe(false)
     })
 
     it('selectPostCount should return the number of posts', () => {

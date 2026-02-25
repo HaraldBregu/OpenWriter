@@ -307,20 +307,20 @@ const NewPostPage: React.FC = () => {
             <AppDropdownMenuContent align="end">
               <AppDropdownMenuItem>
                 <Eye className="h-4 w-4" />
-                Preview
+                {t('common.preview')}
               </AppDropdownMenuItem>
               <AppDropdownMenuItem>
                 <Download className="h-4 w-4" />
-                Download
+                {t('common.download')}
               </AppDropdownMenuItem>
               <AppDropdownMenuItem>
                 <Share2 className="h-4 w-4" />
-                Share
+                {t('common.share')}
               </AppDropdownMenuItem>
               <AppDropdownMenuSeparator />
               <AppDropdownMenuItem>
                 <Copy className="h-4 w-4" />
-                Duplicate
+                {t('common.duplicate')}
               </AppDropdownMenuItem>
               {!isDraft && (
                 <AppDropdownMenuItem
@@ -333,7 +333,7 @@ const NewPostPage: React.FC = () => {
                   }}
                 >
                   <Trash2 className="h-4 w-4" />
-                  Move to Trash
+                  {t('common.moveToTrash')}
                 </AppDropdownMenuItem>
               )}
             </AppDropdownMenuContent>
