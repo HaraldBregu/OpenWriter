@@ -1271,11 +1271,11 @@ const task = {
         return ipcRenderer.invoke('task:list')
     },
     onEvent: (callback: (event: {
-        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
         data: unknown
     }) => void): (() => void) => {
         const handler = (_event: Electron.IpcRendererEvent, taskEvent: {
-            type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled'
+            type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
             data: unknown
         }): void => {
             callback(taskEvent)

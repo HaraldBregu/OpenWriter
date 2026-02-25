@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { PersonalityChatMessages } from './PersonalityChatMessages'
 import { PersonalityChatInput } from './PersonalityChatInput'
-import { useLlmChat } from '@/hooks/useLlmChat'
+import { usePersonalityTask } from '@/contexts/PersonalityTaskContext'
 
 export interface PersonalityChatContainerProps {
   sectionId: string
@@ -24,16 +24,22 @@ export const PersonalityChatContainer: React.FC<PersonalityChatContainerProps> =
     isLoading,
     isStreaming,
     error,
+    latestResponse,
     submit,
     cancel
-  } = useLlmChat({
-    sectionId,
-    systemPrompt,
-    providerId,
-    onError: (error) => {
-      console.error(`[PersonalityChat:${sectionId}] Error:`, error)
-    }
-  })
+  } = usePersonalityTask(sectionId, systemPrompt, providerId)
+
+  // During streaming the last assistant message has empty content while
+  // latestResponse accumulates tokens.  Merge them for display.
+  const displayMessages = useMemo(() => {
+    if (!isStreaming || !latestResponse) return messages
+
+    return messages.map((msg, idx) =>
+      idx === messages.length - 1 && msg.role === 'assistant' && !msg.content
+        ? { ...msg, content: latestResponse }
+        : msg
+    )
+  }, [messages, isStreaming, latestResponse])
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card">
@@ -50,7 +56,7 @@ export const PersonalityChatContainer: React.FC<PersonalityChatContainerProps> =
       )}
 
       <PersonalityChatMessages
-        messages={messages}
+        messages={displayMessages}
         isStreaming={isStreaming}
         emptyStateMessage={emptyStateMessage}
       />

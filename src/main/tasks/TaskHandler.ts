@@ -13,6 +13,15 @@ export interface ProgressReporter {
 }
 
 /**
+ * Stream reporter for real-time token delivery.
+ * Used by AI handlers to emit streamed content tokens.
+ */
+export interface StreamReporter {
+  /** Emit a streamed token for real-time content delivery. */
+  stream(token: string): void
+}
+
+/**
  * Task handler interface for implementing background operations.
  * Uses Strategy pattern to encapsulate task-specific behavior.
  *
@@ -42,7 +51,13 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
    * @param input - Task input data
    * @param signal - Abort signal for cancellation
    * @param reporter - Progress reporter for status updates
+   * @param streamReporter - Optional stream reporter for token delivery
    * @returns Promise resolving to task output
    */
-  execute(input: TInput, signal: AbortSignal, reporter: ProgressReporter): Promise<TOutput>
+  execute(
+    input: TInput,
+    signal: AbortSignal,
+    reporter: ProgressReporter,
+    streamReporter?: StreamReporter
+  ): Promise<TOutput>
 }
