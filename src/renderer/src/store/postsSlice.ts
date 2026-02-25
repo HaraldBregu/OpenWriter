@@ -33,6 +33,20 @@ const initialState: PostsState = {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Create a fresh Block with ISO 8601 timestamps.
+ * Kept in this slice so prepare() functions don't import from ContentBlock
+ * (that would create a component → store → component import cycle risk).
+ */
+function makeBlock(content = ''): Block {
+  const now = new Date().toISOString()
+  return { id: crypto.randomUUID(), content, createdAt: now, updatedAt: now }
+}
+
+// ---------------------------------------------------------------------------
 // Slice
 // ---------------------------------------------------------------------------
 
@@ -49,7 +63,7 @@ export const postsSlice = createSlice({
           payload: {
             id: nanoid(),
             title: '',
-            blocks: [{ id: nanoid(), content: '' }],
+            blocks: [makeBlock()],
             category: 'technology',
             tags: [],
             visibility: 'public',
@@ -210,15 +224,20 @@ export const postsSlice = createSlice({
             existing.maxTokens = item.maxTokens
             existing.reasoning = item.reasoning
             existing.updatedAt = new Date(item.updatedAt).getTime()
-            // Rebuild blocks only if content actually changed
-            const currentContent = existing.blocks.map((b) => b.content).join('\n\n')
-            if (currentContent !== item.content) {
-              existing.blocks = item.content
-                ? item.content
-                    .split('\n\n')
-                    .filter(Boolean)
-                    .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
-                : [{ id: crypto.randomUUID(), content: '' }]
+
+            // Rebuild blocks only if content actually changed.
+            // Compare by joining block names + content as a quick fingerprint.
+            const diskFingerprint = item.blocks.map((b) => `${b.name}:${b.content}`).join('|')
+            const currentFingerprint = existing.blocks.map((b) => `${b.id}:${b.content}`).join('|')
+            if (diskFingerprint !== currentFingerprint) {
+              existing.blocks = item.blocks.length > 0
+                ? item.blocks.map((b): Block => ({
+                    id: b.name,
+                    content: b.content,
+                    createdAt: b.createdAt,
+                    updatedAt: b.updatedAt,
+                  }))
+                : [makeBlock()]
             }
           }
         }
@@ -232,12 +251,14 @@ export const postsSlice = createSlice({
           .map((item): Post => ({
             id: crypto.randomUUID(),
             title: item.title,
-            blocks: item.content
-              ? item.content
-                  .split('\n\n')
-                  .filter(Boolean)
-                  .map((line): Block => ({ id: crypto.randomUUID(), content: line }))
-              : [{ id: crypto.randomUUID(), content: '' }],
+            blocks: item.blocks.length > 0
+              ? item.blocks.map((b): Block => ({
+                  id: b.name,
+                  content: b.content,
+                  createdAt: b.createdAt,
+                  updatedAt: b.updatedAt,
+                }))
+              : [makeBlock()],
             category: item.category,
             tags: item.tags,
             visibility: item.visibility,
