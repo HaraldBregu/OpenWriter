@@ -596,5 +596,42 @@
     "noteFeature2": "Facendo clic su una notifica si porta l'app in primo piano",
     "noteFeature3": "Tutti gli eventi notifica (mostrata, cliccata, chiusa) vengono tracciati",
     "noteFeature4": "Supporta diversi livelli di urgenza e modalità silenziosa"
+  },
+
+  "relativeTime": {
+    "justNow": "adesso",
+    "minutesAgo": "{{count}} min fa",
+    "hoursAgo": "{{count}} h fa",
+    "daysAgo": "{{count}} g fa"
+  },
+
+  "personalityItems": {
+    "emotionalDepth": "Profondità Emotiva",
+    "consciousness": "Coscienza",
+    "motivation": "Motivazione",
+    "moralIntuition": "Intuizione Morale",
+    "irrationality": "Irrazionalità",
+    "growth": "Crescita",
+    "socialIdentity": "Identità Sociale",
+    "creativity": "Creatività",
+    "mortality": "Mortalità",
+    "contradiction": "Contraddizione"
+  },
+
+  "directoryNotifications": {
+    "someSkippedTitle": "Alcune Cartelle Saltate",
+    "someSkippedBody_one": "{{count}} cartella non è stata aggiunta. Controlla la console per i dettagli.",
+    "someSkippedBody_other": "{{count}} cartelle non sono state aggiunte. Controlla la console per i dettagli.",
+    "addErrorTitle": "Errore",
+    "addErrorBody": "Impossibile aggiungere le cartelle. Riprova.",
+    "removeErrorTitle": "Errore",
+    "removeErrorBody": "Impossibile rimuovere la cartella. Riprova.",
+    "noDirectoriesTitle": "Nessuna Cartella",
+    "noDirectoriesBody": "Aggiungi almeno una cartella prima di indicizzare.",
+    "indexingCompleteTitle": "Indicizzazione Completata",
+    "indexingCompleteBody_one": "{{count}} cartella indicizzata con successo.",
+    "indexingCompleteBody_other": "{{count}} cartelle indicizzate con successo.",
+    "indexingFailedTitle": "Indicizzazione Fallita",
+    "indexingFailedBody": "Impossibile indicizzare le cartelle. Riprova."
   }
 }
