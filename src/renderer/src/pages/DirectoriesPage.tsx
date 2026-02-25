@@ -28,6 +28,7 @@ import {
 } from '../store/directoriesSlice'
 
 const DirectoriesPage: React.FC = () => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const directories = useAppSelector(selectDirectories)
   const isLoading = useAppSelector(selectDirectoriesLoading)
