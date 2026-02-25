@@ -57,88 +57,9 @@ export class AgentService {
   }
 
   /**
-   * Register all IPC handlers for agent operations
-   */
-  registerHandlers(): void {
-    // Session management
-    ipcMain.handle('agent:create-session', async (_event, config: AgentSessionConfig) => {
-      return this.createSession(config)
-    })
-
-    ipcMain.handle('agent:destroy-session', async (_event, sessionId: string) => {
-      return this.destroySession(sessionId)
-    })
-
-    ipcMain.handle('agent:get-session', async (_event, sessionId: string) => {
-      return this.getSession(sessionId)
-    })
-
-    ipcMain.handle('agent:list-sessions', async () => {
-      return this.listSessions()
-    })
-
-    ipcMain.handle('agent:clear-sessions', async () => {
-      return this.clearSessions()
-    })
-
-    // Agent execution
-    ipcMain.handle('agent:run', async (event, messages, runId, providerId) => {
-      // Validate inputs
-      AgentValidators.validateMessages(messages)
-      AgentValidators.validateRunId(runId)
-      StoreValidators.validateProviderId(providerId)
-
-      const win = BrowserWindow.fromWebContents(event.sender)
-      if (!win) throw new Error('No window found')
-
-      // Use default session if not specified
-      const sessionId = 'default'
-      let controller = this.controllers.get(sessionId)
-
-      if (!controller) {
-        controller = new AgentController(this.storeService)
-        this.controllers.set(sessionId, controller)
-      }
-
-      await controller.runAgent(messages, runId, providerId, win)
-      this.updateSessionActivity(sessionId, messages.length)
-    })
-
-    ipcMain.handle('agent:run-session', async (event, options: AgentRunOptions) => {
-      // Validate inputs
-      AgentValidators.validateSessionId(options.sessionId)
-      AgentValidators.validateRunId(options.runId)
-      AgentValidators.validateMessages(options.messages)
-      StoreValidators.validateProviderId(options.providerId)
-
-      const win = BrowserWindow.fromWebContents(event.sender)
-      if (!win) throw new Error('No window found')
-
-      return this.runAgentSession(options, win)
-    })
-
-    ipcMain.on('agent:cancel', (_event, runId: string) => {
-      this.cancelRun(runId)
-    })
-
-    ipcMain.handle('agent:cancel-session', async (_event, sessionId: string) => {
-      return this.cancelSession(sessionId)
-    })
-
-    // Agent status
-    ipcMain.handle('agent:get-status', async () => {
-      return this.getStatus()
-    })
-
-    ipcMain.handle('agent:is-running', async (_event, runId: string) => {
-      return this.isRunning(runId)
-    })
-  }
-
-  /**
    * Create a new agent session
    */
-  private createSession(config: AgentSessionConfig): AgentSessionInfo {
+  createSession(config: AgentSessionConfig): AgentSessionInfo {
     // Validate inputs
     AgentValidators.validateSessionId(config.sessionId)
     StoreValidators.validateProviderId(config.providerId)
