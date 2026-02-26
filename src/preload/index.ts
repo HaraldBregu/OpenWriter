@@ -354,60 +354,6 @@ const contextMenu: ContextMenuApi = {
 }
 
 // ---------------------------------------------------------------------------
-// window.directories — Indexed directory management
-// ---------------------------------------------------------------------------
-const directories: DirectoriesApi = {
-    list: (): Promise<Array<{
-        id: string
-        path: string
-        addedAt: number
-        isIndexed: boolean
-        lastIndexedAt?: number
-    }>> => {
-        return typedInvokeUnwrap(DirectoriesChannels.list)
-    },
-    add: (dirPath: string): Promise<{
-        id: string
-        path: string
-        addedAt: number
-        isIndexed: boolean
-        lastIndexedAt?: number
-    }> => {
-        return typedInvokeUnwrap(DirectoriesChannels.add, dirPath)
-    },
-    addMany: (dirPaths: string[]): Promise<{
-        added: Array<{
-            id: string
-            path: string
-            addedAt: number
-            isIndexed: boolean
-            lastIndexedAt?: number
-        }>
-        errors: Array<{ path: string; error: string }>
-    }> => {
-        return typedInvokeUnwrap(DirectoriesChannels.addMany, dirPaths)
-    },
-    remove: (id: string): Promise<boolean> => {
-        return typedInvokeUnwrap(DirectoriesChannels.remove, id)
-    },
-    validate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
-        return typedInvokeUnwrap(DirectoriesChannels.validate, dirPath)
-    },
-    markIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
-        return typedInvokeUnwrap(DirectoriesChannels.markIndexed, id, isIndexed)
-    },
-    onChanged: (callback: (directories: Array<{
-        id: string
-        path: string
-        addedAt: number
-        isIndexed: boolean
-        lastIndexedAt?: number
-    }>) => void): (() => void) => {
-        return typedOn(DirectoriesChannels.changed, callback)
-    },
-}
-
-// ---------------------------------------------------------------------------
 // window.personality — Personality/conversation file management
 // ---------------------------------------------------------------------------
 const personality: PersonalityApi = {
