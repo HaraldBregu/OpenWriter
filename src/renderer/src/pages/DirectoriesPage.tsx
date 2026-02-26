@@ -13,7 +13,6 @@ import {
 import { useAppDispatch, useAppSelector } from '../store'
 import {
   loadDirectories,
-  addDirectories,
   removeDirectory,
   markDirectoryIndexed,
   setLoading,
