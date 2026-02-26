@@ -93,16 +93,6 @@ export function usePostsFileWatcher(): void {
       timestamp: number
     }): Promise<void> => {
       console.error('[PostsFileWatcher] Watcher error:', errorData)
-
-      try {
-        await window.notification.show({
-          title: 'File Watcher Error',
-          body: `Error monitoring posts directory: ${errorData.error}`,
-          urgency: 'critical'
-        })
-      } catch (notifError) {
-        console.error('[PostsFileWatcher] Failed to show notification:', notifError)
-      }
     }
 
     // Register event listeners
