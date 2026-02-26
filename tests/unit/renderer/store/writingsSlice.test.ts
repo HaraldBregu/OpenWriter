@@ -859,9 +859,9 @@ describe('writingsSlice', () => {
     })
 
     it('should ignore output items of types other than writings', () => {
-      // Arrange
+      // Arrange — use a cast to simulate an unknown type that should be filtered out
       const state = createInitialState()
-      const postItem = makeOutputItem({ id: 'post-1', type: 'posts' })
+      const postItem = makeOutputItem({ id: 'post-1', type: 'posts' as OutputItem['type'] })
 
       // Act
       const result = writingsReducer(state, outputLoadAllFulfilled([postItem]))
