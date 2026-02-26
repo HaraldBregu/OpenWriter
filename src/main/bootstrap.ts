@@ -129,7 +129,6 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new CustomIpc(),
     new DocumentsIpc(),
     new PipelineIpc(),
-    new PostsIpc(),
     new StoreIpc(),
     new WorkspaceIpc(),
     new DirectoriesIpc(),
