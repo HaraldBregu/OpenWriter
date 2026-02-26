@@ -17,10 +17,7 @@ import type {
     WindowApi,
     StoreApi,
     WorkspaceApi,
-    DocumentsApi,
     ContextMenuApi,
-    DirectoriesApi,
-    PersonalityApi,
     OutputApi,
     TaskApi,
 } from './index.d'
