@@ -133,6 +133,12 @@ export class WorkspaceService implements Disposable {
       currentPath: null,
       previousPath
     })
+
+    // Broadcast to all renderer windows
+    this.eventBus.broadcast('workspace:changed', {
+      currentPath: null,
+      previousPath
+    })
   }
 
   /**
