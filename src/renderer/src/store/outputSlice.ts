@@ -5,7 +5,7 @@ import type { RootState } from './index'
 // Types
 // ---------------------------------------------------------------------------
 
-export type OutputType = 'writings'
+export type OutputType = 'posts' | 'writings'
 
 /**
  * A single content block as stored in Redux.
