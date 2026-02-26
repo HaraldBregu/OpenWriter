@@ -108,6 +108,10 @@
     "feature4": "Informazioni di rete specifiche della piattaforma",
     "feature5": "Accesso in sola lettura (non può modificare le impostazioni di rete)"
   },
+  "workspace": {
+    "deletedBanner": "La cartella del tuo workspace e stata eliminata o spostata. Seleziona un nuovo workspace.",
+    "inaccessibleBanner": "La cartella del tuo workspace non e piu accessibile. Seleziona un nuovo workspace."
+  },
   "settings": {
     "title": "Impostazioni",
     "description": "Configura le preferenze dell'applicazione",
