@@ -165,7 +165,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       setLoadedConversation(null)
       dispatch(loadPersonalityFiles())
     }
-  }, [sectionId, dispatch])
+  }, [sectionId, dispatch, applySnapshot])
 
   // Auto-load the most recent file on mount, and re-fire after stale state is cleared.
   // Blocked while a task is loading/streaming/saving so submit doesn't re-trigger a
