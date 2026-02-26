@@ -79,6 +79,31 @@ export class CustomIpc implements IpcModule {
       editMenu.popup({ window: win })
     })
 
+    // Writing context menu — invoked by the renderer; sends action events back
+    ipcMain.handle(AppChannels.showWritingContextMenu, (event, writingId: string, _writingTitle: string) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+
+      const sendAction = (action: WritingContextMenuAction['action']): void => {
+        event.sender.send(AppChannels.writingContextMenuAction, { action, writingId } satisfies WritingContextMenuAction)
+      }
+
+      const menu = Menu.buildFromTemplate([
+        { label: 'Open',      click: () => sendAction('open') },
+        { label: 'Duplicate', click: () => sendAction('duplicate') },
+        { type: 'separator' },
+        { label: 'Rename',    click: () => sendAction('rename') },
+        { type: 'separator' },
+        {
+          label: 'Move to Trash',
+          accelerator: 'CmdOrCtrl+Backspace',
+          click: () => sendAction('delete'),
+        },
+      ])
+
+      menu.popup({ window: win })
+    })
+
     console.log(`[IPC] Registered ${this.name} module`)
   }
 }

@@ -444,7 +444,6 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
-        contextBridge.exposeInMainWorld('contextMenu', contextMenu)
         contextBridge.exposeInMainWorld('task', task)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
