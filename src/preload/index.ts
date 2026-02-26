@@ -580,7 +580,7 @@ const posts: PostsApi = {
 // ---------------------------------------------------------------------------
 // window.documents — Document import, download, and file-watch events
 // ---------------------------------------------------------------------------
-const documents = {
+const documents: DocumentsApi = {
     importFiles: (): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
