@@ -173,6 +173,7 @@ export interface WorkspaceApi {
   clear: () => Promise<void>
   directoryExists: (directoryPath: string) => Promise<boolean>
   removeRecent: (workspacePath: string) => Promise<void>
+  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
 }
 
 /** Post sync and file-watch events */
