@@ -94,63 +94,6 @@ const win: WindowApi = {
 }
 
 // ---------------------------------------------------------------------------
-// window.media — Microphone / camera permissions and device enumeration
-// ---------------------------------------------------------------------------
-const media: MediaApi = {
-    requestMicrophonePermission: () => {
-        return typedInvoke(MediaChannels.requestMicrophone)
-    },
-    requestCameraPermission: () => {
-        return typedInvoke(MediaChannels.requestCamera)
-    },
-    getMicrophonePermissionStatus: () => {
-        return typedInvoke(MediaChannels.getMicrophoneStatus)
-    },
-    getCameraPermissionStatus: () => {
-        return typedInvoke(MediaChannels.getCameraStatus)
-    },
-    getDevices: (type: 'audioinput' | 'videoinput') => {
-        return typedInvoke(MediaChannels.getDevices, type)
-    },
-}
-
-// ---------------------------------------------------------------------------
-// window.bluetooth — Bluetooth capability queries
-// ---------------------------------------------------------------------------
-const bluetooth: BluetoothApi = {
-    isSupported: () => {
-        return typedInvoke(BluetoothChannels.isSupported)
-    },
-    getPermissionStatus: () => {
-        return typedInvoke(BluetoothChannels.getPermissionStatus)
-    },
-    getInfo: () => {
-        return typedInvoke(BluetoothChannels.getInfo)
-    },
-}
-
-// ---------------------------------------------------------------------------
-// window.network — Network connectivity and interface information
-// ---------------------------------------------------------------------------
-const network: NetworkApi = {
-    isSupported: () => {
-        return typedInvoke(NetworkChannels.isSupported)
-    },
-    getConnectionStatus: () => {
-        return typedInvoke(NetworkChannels.getConnectionStatus)
-    },
-    getInterfaces: () => {
-        return typedInvoke(NetworkChannels.getInterfaces)
-    },
-    getInfo: () => {
-        return typedInvoke(NetworkChannels.getInfo)
-    },
-    onStatusChange: (callback) => {
-        return typedOn(NetworkChannels.statusChanged, callback)
-    },
-}
-
-// ---------------------------------------------------------------------------
 // window.cron — Scheduled job management
 // ---------------------------------------------------------------------------
 const cron: CronApi = {
