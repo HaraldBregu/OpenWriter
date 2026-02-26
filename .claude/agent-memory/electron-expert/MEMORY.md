@@ -27,7 +27,7 @@
 
 ## Preload Namespace Map (post-split)
 - `window.electron` — ElectronAPI (unchanged)
-- `window.app` — playSound, setTheme, showContextMenu, showContextMenuEditable, onLanguageChange, onThemeChange, onFileOpened, popupMenu, getPlatform
+- `window.app` — playSound, setTheme, showContextMenu, showContextMenuEditable, onLanguageChange, onThemeChange, onFileOpened, popupMenu, getPlatform, showWriting, onWritingAction
 - `window.win` — minimize, maximize, close, isMaximized, isFullScreen, onMaximizeChange, onFullScreenChange
 - `window.media` — requestMicrophonePermission, requestCameraPermission, getMicrophonePermissionStatus, getCameraPermissionStatus, getDevices
 - `window.bluetooth` — isSupported, getPermissionStatus, getInfo
