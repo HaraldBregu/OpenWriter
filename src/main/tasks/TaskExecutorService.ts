@@ -467,6 +467,7 @@ export class TaskExecutorService implements Disposable {
         } satisfies TaskEvent)
       } else {
         const message = err instanceof Error ? err.message : String(err)
+        const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR'
         console.error(`[TaskExecutorService] Task ${taskId} failed:`, err)
 
         task.status = 'error'
@@ -475,7 +476,7 @@ export class TaskExecutorService implements Disposable {
 
         this.send(windowId, 'task:event', {
           type: 'error',
-          data: { taskId, message }
+          data: { taskId, message, code }
         } satisfies TaskEvent)
       }
     } finally {

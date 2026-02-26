@@ -2,7 +2,8 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { TaskExecutorService } from '../tasks/TaskExecutorService'
-import type { TaskOptions } from '../tasks/TaskDescriptor'
+import type { TaskOptions, ActiveTask } from '../tasks/TaskDescriptor'
+import type { TaskInfo, TaskPriority } from '../../shared/types/ipc/types'
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway'
 import { TaskChannels } from '../../shared/types/ipc/channels'
 
@@ -16,30 +17,49 @@ interface TaskSubmitInput {
 }
 
 /**
- * Serializable task info returned by task:list.
- * Omits non-serializable fields (AbortController, timeoutHandle) from ActiveTask.
+ * Input payload for task:update-priority channel.
  */
-interface TaskInfo {
+interface TaskUpdatePriorityInput {
   taskId: string
-  type: string
-  status: string
-  priority: string
-  startedAt?: number
-  completedAt?: number
-  windowId?: number
-  error?: string
+  priority: TaskPriority
+}
+
+/** Strip non-serializable fields from ActiveTask for IPC transport. */
+function toTaskInfo(t: ActiveTask): TaskInfo {
+  return {
+    taskId: t.taskId,
+    type: t.type,
+    status: t.status,
+    priority: t.priority,
+    startedAt: t.startedAt,
+    completedAt: t.completedAt,
+    windowId: t.windowId,
+    error: t.error
+  }
 }
 
 /**
  * IPC handlers for the background task system.
  *
- * Channels:
- *  - task:submit  (command) -- Submit a new task. Returns { taskId }.
- *  - task:cancel  (command) -- Cancel a running/queued task. Returns boolean.
- *  - task:list    (query)   -- List active tasks. Returns TaskInfo[].
+ * Channels (invoke/handle):
+ *  - task:submit          (command) -- Submit a new task. Returns { taskId }.
+ *  - task:cancel          (command) -- Cancel a running/queued task. Returns boolean.
+ *  - task:list            (query)   -- List active tasks. Returns TaskInfo[].
+ *  - task:pause           (command) -- Pause a queued task. Returns boolean.
+ *  - task:resume          (command) -- Resume a paused task. Returns boolean.
+ *  - task:update-priority (command) -- Update priority of queued/paused task. Returns boolean.
+ *  - task:get-result      (query)   -- Retrieve completed task info by ID. Returns TaskInfo | null.
+ *  - task:queue-status    (query)   -- Return queue metrics. Returns TaskQueueStatus.
  *
  * Streaming events are pushed from TaskExecutorService via EventBus on the
- * `task:event` channel. The renderer subscribes with onTaskEvent().
+ * `task:event` channel. The renderer subscribes with window.task.onEvent().
+ *
+ * Security notes:
+ *  - windowId is always stamped from event.sender.id in task:submit, never trusted from payload.
+ *  - pause/resume/updatePriority operate on any task by ID; window-scoping enforcement is at
+ *    the service level (tasks owned by other windows will simply return false if not found).
+ *  - getResult is intentionally not window-scoped so developers can retrieve any task result
+ *    by ID — guard this at the application layer if cross-window access is undesirable.
  */
 export class TaskIpc implements IpcModule {
   readonly name = 'task'
@@ -53,7 +73,7 @@ export class TaskIpc implements IpcModule {
      */
     registerCommandWithEvent(TaskChannels.submit, async (event, payload: TaskSubmitInput) => {
       const options: TaskOptions = { ...payload.options }
-      // Security: always trust the sender identity from the event, not the renderer.
+      // Security: always use the sender's webContents ID, never the renderer-supplied windowId.
       options.windowId = event.sender.id
       const taskId = await executor.submit(payload.type, payload.input, options)
       return { taskId }
@@ -67,21 +87,57 @@ export class TaskIpc implements IpcModule {
     })
 
     /**
-     * List all active tasks (queued + running).
+     * List all active tasks (queued + running, including paused).
      */
     registerQuery(TaskChannels.list, () => {
-      const tasks = executor.listTasks()
-      // Strip non-serializable fields for IPC transport
-      return tasks.map((t): TaskInfo => ({
-        taskId: t.taskId,
-        type: t.type,
-        status: t.status,
-        priority: t.priority,
-        startedAt: t.startedAt,
-        completedAt: t.completedAt,
-        windowId: t.windowId,
-        error: t.error
-      }))
+      return executor.listTasks().map(toTaskInfo)
+    })
+
+    /**
+     * Pause a queued task.
+     * Only tasks with status 'queued' can be paused; running tasks must be cancelled.
+     * Returns true if the task was found in queued state and successfully paused.
+     */
+    registerCommand(TaskChannels.pause, (taskId: string) => {
+      return executor.pause(taskId)
+    })
+
+    /**
+     * Resume a paused task and return it to the priority queue.
+     * Returns true if the task was found in paused state and successfully resumed.
+     */
+    registerCommand(TaskChannels.resume, (taskId: string) => {
+      return executor.resume(taskId)
+    })
+
+    /**
+     * Update the priority of a queued or paused task.
+     * The queue is re-sorted immediately and a priority-changed event is emitted.
+     * Returns true if the task was found and updated.
+     */
+    registerCommand(TaskChannels.updatePriority, (taskId: string, priority: TaskPriority) => {
+      // Validate priority value to prevent invalid state from untrusted renderer input
+      if (priority !== 'low' && priority !== 'normal' && priority !== 'high') {
+        throw new Error(`Invalid priority value: ${String(priority)}`)
+      }
+      return executor.updatePriority(taskId, priority)
+    })
+
+    /**
+     * Retrieve a completed, errored, or cancelled task result by ID.
+     * Active tasks (queued/running/paused) are also returned.
+     * Returns null if the task ID is unknown or its TTL has expired.
+     */
+    registerQuery(TaskChannels.getResult, (taskId: string) => {
+      const task = executor.getTaskResult(taskId)
+      return task ? toTaskInfo(task) : null
+    })
+
+    /**
+     * Return a snapshot of queue metrics: queued, running, completed counts.
+     */
+    registerQuery(TaskChannels.queueStatus, () => {
+      return executor.getQueueStatus()
     })
 
     // --- Window close cleanup -------------------------------------------------
