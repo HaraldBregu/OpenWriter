@@ -153,22 +153,22 @@
   - Actions: `addEntry`, `setWritingItemId`, `updateEntryBlocks`, `updateEntryTitle`, `removeEntry`
   - Selectors: `selectWritingEntries`, `selectWritingEntryById(id)`, `selectWritingItemsStatus`
 - Hook: `src/renderer/src/hooks/useCreateWriting.ts`
-  - Calls `window.output.save({ type: 'writings', blocks, metadata })` — NO Redux thunks
+  - Calls `window.workspace.output.save({ type: 'writings', blocks, metadata })` — NO Redux thunks
   - Dispatches `addEntry` only after disk write succeeds (conservative, non-optimistic)
   - In-flight guard via `useRef(false)` prevents double-creation from rapid clicks
   - Returns `{ createWriting, isLoading, error, reset }`
 - Hook: `src/renderer/src/hooks/useWritingItems.ts`
-  - Subscribes to `window.workspace.onChange` AND `window.output.onFileChange` (filtered to `outputType === 'writings'`)
+  - Subscribes to `window.workspace.onChange` AND `window.workspace.output.onFileChange` (filtered to `outputType === 'writings'`)
   - Dispatches `loadWritingItems` thunk on mount + debounced reloads (500ms)
   - Call once at AppLayout level
 - Hook: `src/renderer/src/hooks/useDraftEditor.ts`
-  - Edit mode auto-save: calls `window.output.update({ type: 'writings', id, blocks, metadata })` after 1s debounce
-  - Draft auto-commit: calls `window.output.save(...)` after 1s debounce
+  - Edit mode auto-save: calls `window.workspace.output.update({ type: 'writings', id, blocks, metadata })` after 1s debounce
+  - Draft auto-commit: calls `window.workspace.output.save(...)` after 1s debounce
   - Block `id` is used as the block file `name` in output save/update
   - Returns `savedWritingItemIdRef` for use in delete handler
 - AppLayout: `useWritingItems()` called in outer `AppLayout`; sidebar uses `selectWritingEntries`
-- useWritingContextMenu: duplicate uses `window.output.save`; delete uses `window.output.delete`
-- NewWritingPage delete: `window.output.delete({ type: 'writings', id: writingItemId })`
+- useWritingContextMenu: duplicate uses `window.workspace.output.save`; delete uses `window.workspace.output.delete`
+- NewWritingPage delete: `window.workspace.output.delete({ type: 'writings', id: writingItemId })`
 - writingsSlice.ts and writingsHydration.ts are NO LONGER imported by the store — only writingItemsSlice is used
 - i18n keys: `writing.creating`, `writing.createError`, `writing.noWorkspace`, `home.noRecentWritings` (EN + IT)
 
