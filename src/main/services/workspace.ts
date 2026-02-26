@@ -104,8 +104,14 @@ export class WorkspaceService implements Disposable {
 
     console.log('[WorkspaceService] Workspace changed:', previousPath, '->', normalized)
 
-    // Notify other services via EventBus (main-process listeners only)
+    // Notify other services via EventBus (main-process listeners)
     this.eventBus.emit('workspace:changed', {
+      currentPath: normalized,
+      previousPath
+    })
+
+    // Broadcast to all renderer windows
+    this.eventBus.broadcast('workspace:changed', {
       currentPath: normalized,
       previousPath
     })
