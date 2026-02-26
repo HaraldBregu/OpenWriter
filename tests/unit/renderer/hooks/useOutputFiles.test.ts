@@ -3,7 +3,7 @@
  *
  * The hook:
  *  1. On mount, checks window.workspace.getCurrent() — if a workspace exists,
- *     dispatches loadOutputItems() (async thunk that calls window.output.loadAll).
+ *     dispatches loadOutputItems() (async thunk that calls window.workspace.output.loadAll).
  *  2. Subscribes to window.workspace.output.onFileChange() and re-dispatches loadOutputItems
  *     after a 500 ms debounce on each event.
  *  3. On unmount, calls the unsubscribe function and cancels any pending debounce.
@@ -94,7 +94,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('useOutputFiles — initial load', () => {
-  it('calls window.output.loadAll when a workspace is present', async () => {
+  it('calls window.workspace.output.loadAll when a workspace is present', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
@@ -105,7 +105,7 @@ describe('useOutputFiles — initial load', () => {
     })
   })
 
-  it('does not call window.output.loadAll when no workspace is set', async () => {
+  it('does not call window.workspace.output.loadAll when no workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
@@ -173,7 +173,7 @@ describe('useOutputFiles — initial load', () => {
     })
   })
 
-  it('logs an error and does not throw when window.output.loadAll rejects', async () => {
+  it('logs an error and does not throw when window.workspace.output.loadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
     mockOutputLoadAll.mockRejectedValue(new Error('Load failed'))
 
