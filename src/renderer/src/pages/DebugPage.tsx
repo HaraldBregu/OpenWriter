@@ -1,8 +1,5 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react'
-import { Bug, Folder, RefreshCw, FileJson, AlertCircle, FlaskConical, Download } from 'lucide-react'
-import { useAppSelector, useAppDispatch } from '../store'
-import { selectPosts } from '../store/postsSlice'
-import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
+import { Bug, Folder, RefreshCw, AlertCircle, FlaskConical, Download } from 'lucide-react'
 import { LoadingSkeleton } from '../components/LoadingSkeleton'
 
 const PipelineTestPage = lazy(() => import('./PipelineTestPage'))
@@ -29,15 +26,12 @@ const tabs: TabConfig[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// DebugToolsPanel — original debug content
+// DebugToolsPanel — workspace diagnostics
 // ---------------------------------------------------------------------------
 
 function DebugToolsPanel(): React.ReactElement {
-  const dispatch = useAppDispatch()
-  const posts = useAppSelector(selectPosts)
   const [workspacePath, setWorkspacePath] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [loadingPosts, setLoadingPosts] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const loadWorkspace = async (): Promise<void> => {
@@ -52,21 +46,6 @@ function DebugToolsPanel(): React.ReactElement {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleLoadPosts = async (): Promise<void> => {
-    setLoadingPosts(true)
-    setError(null)
-    try {
-      console.log('[DebugPage] Manually triggering post load...')
-      await reloadPostsFromWorkspace(dispatch)
-      console.log('[DebugPage] Posts loaded successfully')
-    } catch (err) {
-      console.error('[DebugPage] Failed to load posts:', err)
-      setError(err instanceof Error ? err.message : String(err))
-    } finally {
-      setLoadingPosts(false)
     }
   }
 
@@ -123,54 +102,6 @@ function DebugToolsPanel(): React.ReactElement {
               )}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Posts Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <FileJson className="h-5 w-5" />
-            Posts in Redux Store
-          </h2>
-          <button
-            onClick={handleLoadPosts}
-            disabled={loadingPosts || !workspacePath}
-            className="px-3 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loadingPosts ? 'animate-spin' : ''}`} />
-            Load Posts
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          <div>
-            <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-              Posts Count
-            </label>
-            <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-900 rounded border dark:border-gray-700">
-              <code className="text-sm font-mono text-blue-600 dark:text-blue-400">
-                {posts.length} post{posts.length !== 1 ? 's' : ''}
-              </code>
-            </div>
-          </div>
-
-          {posts.length > 0 && (
-            <div>
-              <label className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                Post IDs
-              </label>
-              <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-900 rounded border dark:border-gray-700 max-h-40 overflow-y-auto">
-                <ul className="text-sm font-mono space-y-1">
-                  {posts.map((post) => (
-                    <li key={post.id} className="text-gray-700 dark:text-gray-300">
-                      • {post.id} - {post.title || '(untitled)'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
