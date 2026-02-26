@@ -30,6 +30,7 @@ import type {
     OutputApi,
     TaskApi,
     AiApi,
+    WritingItemsApi,
 } from './index.d'
 
 // ---------------------------------------------------------------------------
