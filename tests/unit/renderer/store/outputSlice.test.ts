@@ -241,14 +241,14 @@ describe('outputSlice', () => {
       })
 
       it('should not remove items when type does not match even if ID matches', () => {
-        // Arrange
+        // Arrange — item is 'writings', action targets a mismatched type (cast to bypass TS)
         const item = makeOutputItem({ id: 'item-1', type: 'writings' })
         const state = { ...createInitialState(), items: [item] }
 
-        // Act
-        const result = outputReducer(state, removeItem({ id: 'item-1', type: 'writings' }))
+        // Act — use a mismatched type that will never equal 'writings'
+        const result = outputReducer(state, removeItem({ id: 'item-1', type: 'posts' as OutputType }))
 
-        // Assert
+        // Assert — item remains because types don't match
         expect(result.items).toHaveLength(1)
       })
 
