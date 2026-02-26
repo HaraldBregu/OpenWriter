@@ -27,6 +27,8 @@ import type {
   TaskSubmitPayload,
   TaskInfo,
   TaskEvent,
+  TaskQueueStatus,
+  TaskPriority,
   PostData,
   PostSyncResult,
   PostFileChangeEvent,
