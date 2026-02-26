@@ -41,10 +41,9 @@
 - `window.clipboard` — writeText, readText, writeHTML, readHTML, writeImage, readImage, clear, getContent, getFormats, hasText, hasImage, hasHTML
 - `window.store` — getAllModelSettings, getModelSettings, setSelectedModel, setApiToken, setModelSettings
 - `window.workspace` — selectFolder, getCurrent, setCurrent, getRecent, clear, directoryExists, removeRecent
-- `window.posts` — syncToWorkspace, update, delete, loadFromWorkspace, onFileChange, onWatcherError
 - `window.documents` — importFiles, importByPaths, downloadFromUrl, loadAll, delete, onFileChange, onWatcherError
 - `window.agent` — run, cancel, onEvent, createSession, destroySession, getSession, listSessions, clearSessions, runSession, cancelSession, getStatus, isRunning
-- `window.contextMenu` — showWriting, onWritingAction, showPost, onPostAction
+- `window.contextMenu` — showWriting, onWritingAction
 - `window.directories` — list, add, addMany, remove, validate, markIndexed, onChanged
 - `window.personality` — save, loadAll, loadOne, delete, onFileChange, onWatcherError, loadSectionConfig, saveSectionConfig, onSectionConfigChange
 - `window.output` — save(blocks[]), loadAll, loadByType, loadOne, update(blocks[]), delete, onFileChange, onWatcherError

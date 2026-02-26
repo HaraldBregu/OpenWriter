@@ -72,7 +72,8 @@
       "Bash(cat:*)",
       "Bash(grep TS4023:*)",
       "Bash(npm run:*)",
-      "Bash(yarn typecheck:*)"
+      "Bash(yarn typecheck:*)",
+      "Bash(yarn build:dev:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
