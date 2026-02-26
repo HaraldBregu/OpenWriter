@@ -48,6 +48,11 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
+  WritingItem,
+  CreateWritingItemInput,
+  SaveWritingItemInput,
+  WriteWritingItemResult,
+  WritingItemChangeEvent,
 } from './types'
 
 // ===========================================================================
