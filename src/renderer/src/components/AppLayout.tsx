@@ -325,7 +325,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                                   {writing.title || t("sidebar.untitledWriting")}
                                 </span>
                                 <span className="text-xs text-muted-foreground/40 shrink-0">
-                                  {formatRelativeTime(writing.updatedAt, t)}
+                                  {formatRelativeTime(writing.savedAt, t)}
                                 </span>
                               </Link>
                             </AppSidebarMenuSubButton>
