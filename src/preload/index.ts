@@ -660,6 +660,21 @@ const task: TaskApi = {
     },
     onEvent: (callback) => {
         return typedOn(TaskChannels.event, callback)
+    },
+    pause: (taskId: string) => {
+        return typedInvokeRaw(TaskChannels.pause, taskId)
+    },
+    resume: (taskId: string) => {
+        return typedInvokeRaw(TaskChannels.resume, taskId)
+    },
+    updatePriority: (taskId: string, priority: 'low' | 'normal' | 'high') => {
+        return typedInvokeRaw(TaskChannels.updatePriority, taskId, priority)
+    },
+    getResult: (taskId: string) => {
+        return typedInvokeRaw(TaskChannels.getResult, taskId)
+    },
+    queueStatus: () => {
+        return typedInvokeRaw(TaskChannels.queueStatus)
     }
 } satisfies TaskApi;
 
