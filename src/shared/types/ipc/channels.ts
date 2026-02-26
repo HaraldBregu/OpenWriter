@@ -15,6 +15,7 @@ import type {
   CronJobResult,
   CronValidationResult,
   WorkspaceInfo,
+  WorkspaceChangedEvent,
   ChatMessage,
   AgentSessionConfig,
   AgentSessionInfo,
