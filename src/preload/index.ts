@@ -1005,7 +1005,7 @@ const task: TaskApi = {
 // ---------------------------------------------------------------------------
 // window.ai — AI inference API (pipeline-based)
 // ---------------------------------------------------------------------------
-const ai = {
+const ai: AiApi = {
     // Run AI inference using the pipeline
     inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
         return typedInvokeRaw(PipelineChannels.run, agentName, input)
