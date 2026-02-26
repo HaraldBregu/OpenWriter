@@ -61,13 +61,6 @@ export function usePostsFileWatcher(): void {
           // Post was deleted externally - remove from Redux
           console.debug('[PostsFileWatcher] Post deleted externally:', event.postId)
           dispatch(handleExternalPostDelete(event.postId))
-
-          // Show user notification
-          await window.notification.show({
-            title: 'Post Deleted',
-            body: `Post was deleted externally: ${event.postId}`,
-            urgency: 'normal'
-          })
         } else {
           // Post was added or changed externally - reload from disk
           console.debug('[PostsFileWatcher] Post changed externally, reloading:', event.postId)
