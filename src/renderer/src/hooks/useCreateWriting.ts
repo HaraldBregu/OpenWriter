@@ -39,14 +39,14 @@ export interface UseCreateWritingReturn {
  *
  * 1. Guards against concurrent calls while a creation is in flight.
  * 2. Verifies that a workspace is active before attempting any file I/O.
- * 3. Calls `window.writingItems.create` to create the folder + config.json
- *    + content.md on disk.
+ * 3. Calls `window.output.save` to create the folder + config.json + block
+ *    .md files on disk under <workspace>/output/writings/<timestamp>/.
  * 4. Dispatches `addEntry` to Redux with the new entry so the sidebar updates
  *    immediately without waiting for the next file-watcher reload.
  * 5. Returns the new entity ID so the caller can navigate immediately.
  *
- * The hook uses a conservative (non-optimistic) approach: Redux is only
- * updated after the disk write succeeds, preventing ghost entries on failure.
+ * Uses a conservative (non-optimistic) approach: Redux is only updated after
+ * the disk write succeeds, preventing ghost entries on failure.
  */
 export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCreateWritingReturn {
   const { defaultTitle = '', onSuccess, onError } = options
@@ -83,17 +83,36 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
         }
 
         const resolvedTitle = title ?? defaultTitle
+        const now = new Date().toISOString()
 
-        // Persist the folder + config.json + content.md to disk.
-        const result = await window.writingItems.create({
-          title: resolvedTitle || 'Untitled Writing',
-          content: '',
-          status: 'draft',
-          category: 'writing',
-          tags: [],
+        // Create the initial block for this writing
+        const blockName = crypto.randomUUID()
+
+        // Persist to disk via window.output.save (workspace-backed OutputFilesService).
+        // This writes <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json
+        // and one <blockName>.md file per block.
+        const result = await window.output.save({
+          type: 'writings',
+          blocks: [
+            {
+              name: blockName,
+              content: '',
+              createdAt: now,
+              updatedAt: now,
+            },
+          ],
+          metadata: {
+            title: resolvedTitle || 'Untitled Writing',
+            category: 'writing',
+            tags: [],
+            visibility: 'private',
+            provider: 'manual',
+            model: '',
+          },
         })
 
-        const now = new Date(result.savedAt).toISOString()
+        const savedAt = result.savedAt
+        const savedAtIso = new Date(savedAt).toISOString()
         const entryId = crypto.randomUUID()
 
         const newEntry: WritingEntry = {
@@ -104,15 +123,15 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
             {
               id: crypto.randomUUID(),
               content: '',
-              createdAt: now,
-              updatedAt: now,
+              createdAt: savedAtIso,
+              updatedAt: savedAtIso,
             },
           ],
           category: 'writing',
           tags: [],
-          createdAt: now,
-          updatedAt: now,
-          savedAt: result.savedAt,
+          createdAt: savedAtIso,
+          updatedAt: savedAtIso,
+          savedAt,
         }
 
         // Commit to Redux only after disk write succeeds
