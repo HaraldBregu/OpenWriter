@@ -11,6 +11,9 @@ import { loadWritingItems } from '@/store/writingItemsSlice'
  *  3. Debounce file-watcher events so rapid filesystem notifications do not
  *     trigger redundant reloads (e.g. folder deletion fires multiple events).
  *
+ * Persistence is via window.output (OutputFilesService), which stores writings
+ * at <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/.
+ *
  * This hook must be called once at AppLayout level so a single IPC subscription
  * is active for the lifetime of the app window.
  */
@@ -63,12 +66,15 @@ export function useWritingItems(): void {
     })
 
     // -----------------------------------------------------------------------
-    // File-watcher listener — reload when the filesystem changes externally
-    // (e.g. another app edits content.md, or the user deletes a folder manually)
+    // File-watcher listener — reload when the filesystem changes externally.
+    // Uses window.output.onFileChange filtered to 'writings' type so we only
+    // react to changes relevant to the writing editor, not posts or other types.
     // -----------------------------------------------------------------------
-    const unsubscribeFileChange = window.writingItems.onFileChange((event) => {
-      console.log(`[useWritingItems] File ${event.type}: item ${event.itemId}`)
-      scheduleDebouncedLoad()
+    const unsubscribeFileChange = window.output.onFileChange((event) => {
+      if (event.outputType === 'writings') {
+        console.log(`[useWritingItems] Output file ${event.type}: writings/${event.fileId}`)
+        scheduleDebouncedLoad()
+      }
     })
 
     return () => {

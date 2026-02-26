@@ -350,56 +350,6 @@ export interface SectionConfigChangeEvent {
   timestamp: number
 }
 
-// ---- Writing Items --------------------------------------------------------
-
-export type WritingItemStatus = 'draft' | 'in-progress' | 'complete' | 'archived'
-
-export interface WritingItemMetadata {
-  title: string
-  status: WritingItemStatus
-  category: string
-  tags: string[]
-  createdAt: string
-  updatedAt: string
-}
-
-export interface WritingItem {
-  id: string
-  path: string
-  metadata: WritingItemMetadata
-  content: string
-  savedAt: number
-}
-
-export interface CreateWritingItemInput {
-  title: string
-  content?: string
-  status?: WritingItemStatus
-  category?: string
-  tags?: string[]
-}
-
-export interface SaveWritingItemInput {
-  title?: string
-  content?: string
-  status?: WritingItemStatus
-  category?: string
-  tags?: string[]
-}
-
-export interface WriteWritingItemResult {
-  id: string
-  path: string
-  savedAt: number
-}
-
-export interface WritingItemChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  itemId: string
-  itemPath: string
-  timestamp: number
-}
-
 // ---- Context Menu ---------------------------------------------------------
 
 export interface WritingContextMenuAction {
