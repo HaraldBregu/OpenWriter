@@ -29,7 +29,7 @@ import {
 // ---------------------------------------------------------------------------
 // window.app — General application utilities
 // ---------------------------------------------------------------------------
-const app = {
+const app: AppApi = {
     playSound: (): void => {
         typedSend(AppChannels.playSound)
     },
