@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow, Menu } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
-import { ContextMenuChannels } from '../../shared/types/ipc/channels'
+import { AppChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for context menu operations.
