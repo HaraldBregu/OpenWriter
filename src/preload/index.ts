@@ -150,32 +150,19 @@ const bluetooth: BluetoothApi = {
 // window.network — Network connectivity and interface information
 // ---------------------------------------------------------------------------
 const network: NetworkApi = {
-    isSupported: (): Promise<boolean> => {
+    isSupported: () => {
         return typedInvoke(NetworkChannels.isSupported)
     },
-    getConnectionStatus: (): Promise<string> => {
+    getConnectionStatus: () => {
         return typedInvoke(NetworkChannels.getConnectionStatus)
     },
-    getInterfaces: (): Promise<Array<{
-        name: string
-        family: 'IPv4' | 'IPv6'
-        address: string
-        netmask: string
-        mac: string
-        internal: boolean
-        cidr: string | null
-    }>> => {
+    getInterfaces: () => {
         return typedInvoke(NetworkChannels.getInterfaces)
     },
-    getInfo: (): Promise<{
-        platform: string
-        supported: boolean
-        isOnline: boolean
-        interfaceCount: number
-    }> => {
+    getInfo: () => {
         return typedInvoke(NetworkChannels.getInfo)
     },
-    onStatusChange: (callback: (status: string) => void): (() => void) => {
+    onStatusChange: (callback) => {
         return typedOn(NetworkChannels.statusChanged, callback)
     },
 }
