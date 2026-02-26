@@ -7,6 +7,7 @@
 - Bridge types live in `src/preload/index.d.ts` — always read this file before writing async thunks that call any `window.*` bridge.
 - Bridge shapes often differ from Redux shapes (e.g. nested `metadata` object vs flat item). Always map at the thunk boundary.
 - `window.api` NO LONGER EXISTS — fully split into domain namespaces. See Namespace Map below.
+- `window.store` NO LONGER EXISTS — all store methods merged into `window.app` (Feb 2026). Use `window.app.getAllProviderSettings`, `window.app.setProviderSettings`, `window.app.setInferenceDefaults`, `window.app.getModelSettings`, etc.
 - `window.workspace.output.save` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
 
 ## Namespace Map (window.api is gone — use these namespaces)
