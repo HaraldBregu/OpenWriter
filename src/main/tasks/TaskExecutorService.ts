@@ -476,7 +476,14 @@ export class TaskExecutorService implements Disposable {
       // Clean up timeout
       if (task.timeoutHandle) {
         clearTimeout(task.timeoutHandle)
+        task.timeoutHandle = undefined
       }
+
+      // Move to completed store for TTL-based result retrieval
+      this.completedTasks.set(taskId, {
+        task: { ...task, controller: undefined as unknown as AbortController },
+        expiresAt: Date.now() + COMPLETED_TASK_TTL_MS
+      })
 
       this.activeTasks.delete(taskId)
       this.runningCount--
@@ -488,6 +495,16 @@ export class TaskExecutorService implements Disposable {
 
       // Process next tasks in queue
       this.drainQueue()
+    }
+  }
+
+  /** Evict completed tasks whose TTL has expired. */
+  private gcCompletedTasks(): void {
+    const now = Date.now()
+    for (const [taskId, entry] of this.completedTasks) {
+      if (entry.expiresAt <= now) {
+        this.completedTasks.delete(taskId)
+      }
     }
   }
 
