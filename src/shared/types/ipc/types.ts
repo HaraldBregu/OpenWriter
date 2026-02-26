@@ -194,7 +194,7 @@ export interface DocumentFileChangeEvent {
 
 // ---- Output ---------------------------------------------------------------
 
-export type OutputType = 'posts' | 'writings'
+export type OutputType = 'writings'
 
 export interface BlockContentItem {
   name: string

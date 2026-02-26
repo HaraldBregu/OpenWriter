@@ -71,7 +71,8 @@
       "Bash(npx jest \"tests/unit/renderer/hooks/useOutputFiles|tests/unit/renderer/hooks/usePersonalityFiles|tests/unit/renderer/hooks/usePostsFileWatcher|tests/unit/renderer/hooks/usePostsLoader\" --forceExit --no-coverage > /tmp/hooks-new2.txt 2>&1; echo \"Exit: $?\" && grep -E \"PASS|FAIL|Tests:\" /tmp/hooks-new2.txt)",
       "Bash(cat:*)",
       "Bash(grep TS4023:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(yarn typecheck:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

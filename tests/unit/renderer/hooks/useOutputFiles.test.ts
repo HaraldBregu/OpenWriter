@@ -221,9 +221,9 @@ describe('useOutputFiles — file-change subscription', () => {
     act(() => {
       capturedFileChangeCallback?.({
         type: 'added',
-        outputType: 'posts',
+        outputType: 'writings',
         fileId: 'new-item',
-        filePath: '/workspace/output/posts/new-item/DATA.md',
+        filePath: '/workspace/output/writings/new-item/DATA.md',
         timestamp: Date.now()
       })
     })
@@ -305,9 +305,9 @@ describe('useOutputFiles — cleanup on unmount', () => {
     act(() => {
       capturedFileChangeCallback?.({
         type: 'removed',
-        outputType: 'posts',
+        outputType: 'writings',
         fileId: 'deleted-item',
-        filePath: '/workspace/output/posts/deleted-item/DATA.md',
+        filePath: '/workspace/output/writings/deleted-item/DATA.md',
         timestamp: Date.now()
       })
     })
