@@ -63,15 +63,13 @@ function installWindowMocks(): void {
 // ---------------------------------------------------------------------------
 
 type TestState = {
-  writings: ReturnType<typeof writingsReducer>
-  output: ReturnType<typeof outputReducer>
+  writingItems: ReturnType<typeof writingItemsReducer>
 }
 
 function createWrapper() {
   const store = configureStore<TestState>({
     reducer: {
-      writings: writingsReducer,
-      output: outputReducer,
+      writingItems: writingItemsReducer,
     },
   })
   const wrapper = ({ children }: { children: React.ReactNode }) =>
