@@ -51,6 +51,24 @@
 - `window.task` — submit, cancel, list, onEvent (unchanged)
 - `window.ai` — inference, cancel, onEvent, listAgents, listRuns (unchanged)
 - IPC channel names are UNCHANGED — only JS-side bridge property names were renamed
+- `window.win` and `window.task` are declared `?` (optional) in index.d.ts — always guard before use
+
+## Preload Registration Rules
+- Preload registers all 22 namespaces via a `for` loop (each in its own try/catch) so a single failure cannot block remaining namespaces
+- Guard: `if (process.contextIsolated)` → `contextBridge.exposeInMainWorld`; else `globalThis.*` (fallback)
+- All windows use the single WindowFactory which sets preload + sandbox:true + contextIsolation:true — there are no unpreloaded windows in this app
+
+## IPC Channel Name Pitfalls
+- `window.wm.*` calls channels `wm-get-state`, `wm-create-child`, `wm-create-modal`, `wm-create-frameless`, `wm-create-widget`, `wm-close-window`, `wm-close-all`
+- WindowIpc.ts must register those exact `wm-*` names (previously a bug: it registered `window-*` names instead)
+- `window.app` no longer has windowMinimize/windowMaximize/windowClose/windowIsMaximized — use `window.win.*` exclusively for window controls
+
+## Renderer Bridge Guard Patterns
+- `useTask` hook: `typeof window.task?.submit !== 'function'` guard before every call
+- `useBlockEnhancement`: `if (!window.task) return` before subscribing to task events
+- `TitleBar`/`WindowControls`: `if (!window.win) return` in useEffect + `window.win?.minimize()` in handlers
+- `ElectronPersonalityTaskService`: `assertBridge()` helper throws if undefined; use `window.task!` after it
+- TypeScript cannot flow-narrow through a void method that throws — use `window.task!` after assertBridge()
 
 ## Personality System
 - Conversations: `<workspace>/personality/<section>/<YYYY-MM-DD_HHmmss>/config.json + DATA.md`
