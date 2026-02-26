@@ -77,7 +77,7 @@ export function useInferenceSettings(
   useEffect(() => {
     let cancelled = false
 
-    window.personality
+    window.workspace.personality
       .loadSectionConfig({ sectionId })
       .then((config) => {
         if (cancelled) return
