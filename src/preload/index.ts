@@ -653,7 +653,6 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('output', output)
         contextBridge.exposeInMainWorld('task', task)
         contextBridge.exposeInMainWorld('ai', ai)
-        contextBridge.exposeInMainWorld('writingItems', writingItems)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }

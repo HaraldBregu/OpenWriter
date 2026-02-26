@@ -58,11 +58,19 @@ export interface UseDraftEditorReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Serialize blocks to a single markdown string for storage in content.md.
- * Blocks are separated by a double newline so the content reads naturally.
+ * Serialize blocks to the output format expected by window.output.save/update.
+ * Each block becomes an object with a stable name (UUID), its content, and
+ * timestamps. The name is preserved across saves using the block's own `id`.
  */
-function serializeBlocksToContent(blocks: Block[]): string {
-  return blocks.map((b) => b.content).join('\n\n')
+function serializeBlocksForOutput(
+  blocks: Block[]
+): Array<{ name: string; content: string; createdAt: string; updatedAt: string }> {
+  return blocks.map((b) => ({
+    name: b.id,
+    content: b.content,
+    createdAt: b.createdAt,
+    updatedAt: b.updatedAt,
+  }))
 }
 
 // ---------------------------------------------------------------------------
@@ -80,10 +88,10 @@ function serializeBlocksToContent(blocks: Block[]): string {
  *  - AI settings local state (no persistence to disk — simple defaults)
  *  - focusBlockId management (set on block insert, cleared after one render)
  *
- * Persistence backend: `window.writingItems.*` (WritingItemsService).
+ * Persistence backend: `window.output` (OutputFilesService via workspace).
  * Each writing is stored as:
- *   <workspace>/writings/<YYYY-MM-DD_HHmmss>/config.json   (metadata)
- *   <workspace>/writings/<YYYY-MM-DD_HHmmss>/content.md    (all block text joined)
+ *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json   (metadata)
+ *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/<blockId>.md  (per block)
  *
  * @param id         - Route param. Undefined means draft mode.
  * @param routeBase  - Navigation base path, e.g. '/new/writing'
@@ -156,6 +164,7 @@ export function useDraftEditor(
 
   // ---------------------------------------------------------------------------
   // Draft mode: auto-commit to Redux + disk on first real content (1 s delay)
+  // Writes to window.output.save (workspace-backed OutputFilesService).
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isDraft || committedRef.current) return
@@ -171,18 +180,22 @@ export function useDraftEditor(
       if (!workspace) return
 
       const now = new Date().toISOString()
-      const nowMs = Date.now()
       const entryId = draftIdRef.current
 
-      // Create on disk first
+      // Create on disk first via workspace-backed output service
       let result: { id: string; path: string; savedAt: number }
       try {
-        result = await window.writingItems.create({
-          title: draftTitle || 'Untitled Writing',
-          content: serializeBlocksToContent(draftBlocks),
-          status: 'draft',
-          category: 'writing',
-          tags: [],
+        result = await window.output.save({
+          type: 'writings',
+          blocks: serializeBlocksForOutput(draftBlocks),
+          metadata: {
+            title: draftTitle || 'Untitled Writing',
+            category: 'writing',
+            tags: [],
+            visibility: 'private',
+            provider: 'manual',
+            model: '',
+          },
         })
       } catch (err) {
         console.error('[useDraftEditor] Failed to create writing item on disk:', err)
@@ -203,7 +216,7 @@ export function useDraftEditor(
           tags: [],
           createdAt: now,
           updatedAt: now,
-          savedAt: nowMs,
+          savedAt: result.savedAt,
         })
       )
 
@@ -214,7 +227,7 @@ export function useDraftEditor(
   }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
 
   // ---------------------------------------------------------------------------
-  // Edit mode: auto-save to disk 1 s after changes
+  // Edit mode: auto-save to disk 1 s after changes via window.output.update
   // ---------------------------------------------------------------------------
   const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -232,25 +245,41 @@ export function useDraftEditor(
       if (!workspace) return
 
       const title = entry.title || 'Untitled Writing'
-      const content = serializeBlocksToContent(entry.blocks)
       const currentWritingItemId = savedWritingItemIdRef.current
 
       if (currentWritingItemId) {
-        // Update existing writing item on disk (partial update)
+        // Update existing writing item on disk (partial update via output.update)
         try {
-          await window.writingItems.save(currentWritingItemId, { title, content })
+          await window.output.update({
+            type: 'writings',
+            id: currentWritingItemId,
+            blocks: serializeBlocksForOutput(entry.blocks),
+            metadata: {
+              title,
+              category: entry.category,
+              tags: entry.tags,
+              visibility: 'private',
+              provider: 'manual',
+              model: '',
+            },
+          })
         } catch (err) {
           console.error('[useDraftEditor] Failed to save writing item:', err)
         }
       } else {
         // First save for an entry that was added to Redux but not yet persisted
         try {
-          const result = await window.writingItems.create({
-            title: title,
-            content,
-            status: 'draft',
-            category: 'writing',
-            tags: [],
+          const result = await window.output.save({
+            type: 'writings',
+            blocks: serializeBlocksForOutput(entry.blocks),
+            metadata: {
+              title,
+              category: entry.category,
+              tags: entry.tags,
+              visibility: 'private',
+              provider: 'manual',
+              model: '',
+            },
           })
           savedWritingItemIdRef.current = result.id
           dispatch(setWritingItemId({ entryId: entry.id, writingItemId: result.id }))
