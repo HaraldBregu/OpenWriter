@@ -48,21 +48,6 @@ export interface CronValidationResult {
   error?: string
 }
 
-// ---- Window Manager -------------------------------------------------------
-
-export type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
-
-export interface ManagedWindowInfo {
-  id: number
-  type: ManagedWindowType
-  title: string
-  createdAt: number
-}
-
-export interface WindowManagerState {
-  windows: ManagedWindowInfo[]
-}
-
 // ---- Workspace ------------------------------------------------------------
 
 export interface WorkspaceInfo {
