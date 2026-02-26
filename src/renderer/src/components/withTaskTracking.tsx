@@ -124,7 +124,7 @@ export function withTaskTracking<TInput, TProps extends WithTaskTrackingInjected
 
     return (
       <WrappedComponent
-        {...(ownProps as TProps)}
+        {...(ownProps as unknown as TProps)}
         ref={ref}
         taskTracking={taskTracking}
       />
