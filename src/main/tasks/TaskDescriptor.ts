@@ -87,4 +87,9 @@ export interface ActiveTask {
    * Error message (set on error)
    */
   error?: string
+
+  /**
+   * Timestamp when the task was paused (while still queued).
+   */
+  pausedAt?: number
 }
