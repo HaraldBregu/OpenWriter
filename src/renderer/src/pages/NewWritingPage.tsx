@@ -13,8 +13,7 @@ import {
 } from '@/components/app'
 import { ContentBlock, InsertBlockPlaceholder } from '@/components/ContentBlock'
 import { useAppDispatch } from '../store'
-import { deleteWriting } from '../store/writingsSlice'
-import { deleteOutputItem } from '@/store/outputSlice'
+import { removeEntry } from '../store/writingItemsSlice'
 import { PersonalitySettingsPanel } from '@/components/personality/PersonalitySettingsSheet'
 import { useDraftEditor } from '@/hooks/useDraftEditor'
 
@@ -34,7 +33,7 @@ const NewWritingPage: React.FC = () => {
     isDraft,
     title,
     blocks,
-    savedOutputIdRef,
+    savedWritingItemIdRef,
     handleTitleChange,
     handleChange,
     handleDelete,
@@ -110,10 +109,16 @@ const NewWritingPage: React.FC = () => {
               {!isDraft && id && (
                 <AppDropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={() => {
-                    const outputId = savedOutputIdRef.current
-                    if (outputId) dispatch(deleteOutputItem({ type: 'writings', id: outputId }))
-                    dispatch(deleteWriting(id))
+                  onClick={async () => {
+                    const writingItemId = savedWritingItemIdRef.current
+                    if (writingItemId) {
+                      try {
+                        await window.writingItems.delete(writingItemId)
+                      } catch (err) {
+                        console.error('[NewWritingPage] Failed to delete writing item from disk:', err)
+                      }
+                    }
+                    dispatch(removeEntry(id))
                     navigate('/home')
                   }}
                 >
