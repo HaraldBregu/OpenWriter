@@ -192,8 +192,6 @@ export const PersonalityChannels = {
 export const ContextMenuChannels = {
   writing: 'context-menu:writing',
   writingAction: 'context-menu:writing-action',
-  post: 'context-menu:post',
-  postAction: 'context-menu:post-action',
 } as const
 
 export const AppChannels = {

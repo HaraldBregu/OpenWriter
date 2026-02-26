@@ -2,7 +2,6 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  Newspaper,
   PenLine,
   FolderOpen,
   Puzzle,
@@ -11,8 +10,6 @@ import {
   Star
 } from 'lucide-react'
 import { AppSeparator } from '@/components/app'
-import { useAppDispatch } from '../store'
-import { createPost } from '../store/postsSlice'
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
@@ -20,21 +17,12 @@ import { createPost } from '../store/postsSlice'
 
 const categoryDefs = [
   {
-    icon: Newspaper,
-    labelKey: 'home.posts',
-    descriptionKey: 'home.postsDescription',
-    route: '/new/post',
-    accent: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-    requiresPostCreation: true
-  },
-  {
     icon: PenLine,
     labelKey: 'home.writing',
     descriptionKey: 'home.writingDescription',
     route: '/new/writing',
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-    requiresPostCreation: false
-  }
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -42,9 +30,8 @@ const categoryDefs = [
 // ---------------------------------------------------------------------------
 
 const recentItemDefs = [
-  { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing', requiresPostCreation: false },
-  { icon: Newspaper, label: 'Release Announcement', meta: '3 days ago', route: '/new/post', requiresPostCreation: true },
-  { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local', requiresPostCreation: false }
+  { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing' },
+  { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local' }
 ] as const
 
 // ---------------------------------------------------------------------------
@@ -57,21 +44,13 @@ const CategoryCard = React.memo(function CategoryCard({
   descriptionKey,
   route,
   accent,
-  requiresPostCreation
 }: (typeof categoryDefs)[number]) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   const handleClick = useCallback(() => {
-    if (requiresPostCreation) {
-      const action = createPost()
-      dispatch(action)
-      navigate(`/new/post/${action.payload.id}`)
-    } else {
-      navigate(route)
-    }
-  }, [requiresPostCreation, dispatch, navigate, route])
+    navigate(route)
+  }, [navigate, route])
 
   return (
     <button
@@ -97,20 +76,12 @@ const RecentItem = React.memo(function RecentItem({
   label,
   meta,
   route,
-  requiresPostCreation
 }: (typeof recentItemDefs)[number]) {
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   const handleClick = useCallback(() => {
-    if (requiresPostCreation) {
-      const action = createPost()
-      dispatch(action)
-      navigate(`/new/post/${action.payload.id}`)
-    } else {
-      navigate(route)
-    }
-  }, [requiresPostCreation, dispatch, navigate, route])
+    navigate(route)
+  }, [navigate, route])
 
   return (
     <button
