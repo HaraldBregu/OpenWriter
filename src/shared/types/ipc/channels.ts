@@ -57,21 +57,6 @@ import type {
 // Channel Name Constants (grouped by domain)
 // ===========================================================================
 
-export const ClipboardChannels = {
-  writeText: 'clipboard-write-text',
-  readText: 'clipboard-read-text',
-  writeHTML: 'clipboard-write-html',
-  readHTML: 'clipboard-read-html',
-  writeImage: 'clipboard-write-image',
-  readImage: 'clipboard-read-image',
-  clear: 'clipboard-clear',
-  getContent: 'clipboard-get-content',
-  getFormats: 'clipboard-get-formats',
-  hasText: 'clipboard-has-text',
-  hasImage: 'clipboard-has-image',
-  hasHTML: 'clipboard-has-html',
-} as const
-
 export const StoreChannels = {
   getAllProviderSettings: 'store-get-all-provider-settings',
   getProviderSettings: 'store-get-provider-settings',
