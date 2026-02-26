@@ -46,7 +46,6 @@
 - `window.workspace.personality` — save, loadAll, loadOne, delete, onFileChange, onWatcherError, loadSectionConfig, saveSectionConfig, onSectionConfigChange
 - `window.workspace.output` — save(blocks[]), loadAll, loadByType, loadOne, update(blocks[]), delete, onFileChange, onWatcherError (MOVED from window.output)
 - `window.agent` — run, cancel, onEvent, createSession, destroySession, getSession, listSessions, clearSessions, runSession, cancelSession, getStatus, isRunning
-- `window.contextMenu` — showWriting, onWritingAction
 - `window.task` — submit, cancel, list, onEvent (unchanged)
 - `window.ai` — inference, cancel, onEvent, listAgents, listRuns (unchanged)
 - IPC channel names are UNCHANGED — only JS-side bridge property names were renamed
