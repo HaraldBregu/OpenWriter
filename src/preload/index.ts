@@ -519,7 +519,7 @@ const workspace: WorkspaceApi = {
 // ---------------------------------------------------------------------------
 // window.posts — Post sync and file-watch events
 // ---------------------------------------------------------------------------
-const posts = {
+const posts: PostsApi = {
     syncToWorkspace: (postsData: Array<{
         id: string
         title: string
