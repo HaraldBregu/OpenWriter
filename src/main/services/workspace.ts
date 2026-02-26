@@ -133,6 +133,7 @@ export class WorkspaceService implements Disposable {
     this.currentPath = null
     this.openedAt = 0
 
+    this.stopValidationTimer()
     this.store.clearCurrentWorkspace()
 
     console.log('[WorkspaceService] Workspace cleared, was:', previousPath)
