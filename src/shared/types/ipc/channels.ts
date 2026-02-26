@@ -289,12 +289,6 @@ export interface InvokeChannelMap {
   [TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null }
   [TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus }
 
-  // ---- Posts (IpcResult-wrapped) ----
-  [PostsChannels.syncToWorkspace]: { args: [posts: PostData[]]; result: PostSyncResult }
-  [PostsChannels.updatePost]: { args: [post: PostData]; result: void }
-  [PostsChannels.deletePost]: { args: [postId: string]; result: void }
-  [PostsChannels.loadFromWorkspace]: { args: []; result: PostData[] }
-
   // ---- Documents (IpcResult-wrapped) ----
   [DocumentsChannels.importFiles]: { args: []; result: DocumentInfo[] }
   [DocumentsChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }

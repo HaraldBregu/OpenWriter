@@ -56,14 +56,6 @@ const WelcomePage: React.FC = () => {
         // Set workspace in current window
         await window.workspace.setCurrent(folderPath)
 
-        // Load posts from workspace (don't block navigation if this fails)
-        try {
-          await reloadPostsFromWorkspace(dispatch)
-        } catch (error) {
-          console.error('Failed to load posts after workspace selection:', error)
-          // Continue to navigation even if posts fail to load
-        }
-
         // Load output items from workspace (don't block navigation if this fails)
         try {
           await dispatch(loadOutputItems())
