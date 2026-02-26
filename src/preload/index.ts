@@ -1,8 +1,19 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { writeFileSync } from 'fs'
+import { homedir } from 'os'
+import { join } from 'path'
 
 // Debug: Mark that preload is loading
 ;(globalThis as any).__preloadStarted = true
 console.log('[preload] Module loading started')
+
+// Write to debug file
+try {
+  const debugFile = join(homedir(), 'Desktop', 'preload-debug.txt')
+  writeFileSync(debugFile, `[${new Date().toISOString()}] Preload module started loading\n`, { flag: 'a' })
+} catch (e) {
+  // Silent fail
+}
 
 /**
  * IPC Result types matching the main process wrappers
