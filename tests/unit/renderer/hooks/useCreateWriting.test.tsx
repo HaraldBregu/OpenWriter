@@ -45,17 +45,14 @@ const SAVED_RESULT = {
 
 function installWindowMocks(): void {
   Object.defineProperty(window, 'workspace', {
-    value: { getCurrent: mockWorkspaceGetCurrent },
-    writable: true,
-    configurable: true,
-  })
-
-  Object.defineProperty(window, 'output', {
     value: {
-      save: mockOutputSave,
-      loadAll: mockOutputLoadAll,
-      onFileChange: jest.fn().mockReturnValue(jest.fn()),
-      onWatcherError: jest.fn().mockReturnValue(jest.fn()),
+      getCurrent: mockWorkspaceGetCurrent,
+      output: {
+        save: mockOutputSave,
+        loadAll: mockOutputLoadAll,
+        onFileChange: jest.fn().mockReturnValue(jest.fn()),
+        onWatcherError: jest.fn().mockReturnValue(jest.fn()),
+      },
     },
     writable: true,
     configurable: true,
