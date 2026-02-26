@@ -361,12 +361,7 @@ export interface EventChannelMap {
   [AppChannels.fileOpened]: { data: string }
   [WindowChannels.maximizeChange]: { data: boolean }
   [WindowChannels.fullScreenChange]: { data: boolean }
-  [WmChannels.stateChanged]: { data: WindowManagerState }
-  [NetworkChannels.statusChanged]: { data: NetworkConnectionStatus }
   [CronChannels.jobResult]: { data: CronJobResult }
-  [LifecycleChannels.event]: { data: LifecycleEvent }
-  [FsChannels.watchEvent]: { data: FsWatchEvent }
-  [NotificationChannels.event]: { data: NotificationResult }
   [AgentChannels.token]: { data: unknown }
   [AgentChannels.thinking]: { data: unknown }
   [AgentChannels.toolStart]: { data: unknown }
