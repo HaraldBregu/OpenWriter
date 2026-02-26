@@ -8,46 +8,6 @@
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
-// ---- Media / Permissions --------------------------------------------------
-
-export type MediaPermissionStatus = 'granted' | 'denied' | 'not-determined' | 'restricted'
-
-export interface MediaDeviceInfo {
-  deviceId: string
-  kind: 'audioinput' | 'videoinput' | 'audiooutput'
-  label: string
-  groupId: string
-}
-
-// ---- Bluetooth ------------------------------------------------------------
-
-export interface BluetoothInfo {
-  platform: string
-  supported: boolean
-  apiAvailable: boolean
-}
-
-// ---- Network --------------------------------------------------------------
-
-export type NetworkConnectionStatus = 'online' | 'offline' | 'unknown'
-
-export interface NetworkInterfaceInfo {
-  name: string
-  family: 'IPv4' | 'IPv6'
-  address: string
-  netmask: string
-  mac: string
-  internal: boolean
-  cidr: string | null
-}
-
-export interface NetworkInfo {
-  platform: string
-  supported: boolean
-  isOnline: boolean
-  interfaceCount: number
-}
-
 // ---- Cron -----------------------------------------------------------------
 
 export interface CronJobConfig {
