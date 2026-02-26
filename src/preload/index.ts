@@ -1361,9 +1361,6 @@ if (process.contextIsolated) {
         } catch (error) {
             const errMsg = error instanceof Error ? error.message : String(error)
             console.error(`[preload] Failed to expose window.${name}:`, errMsg)
-            try {
-              writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] FAILED: window.${name}: ${errMsg}\n`, { flag: 'a' })
-            } catch (e) {}
         }
     }
     console.log('[preload] All namespaces exposed successfully')
