@@ -60,8 +60,6 @@ const App: React.FC = () => {
                         <Route path="/personality/motivation" element={<RouteWrapper><MotivationPage /></RouteWrapper>} />
                         <Route path="/personality/social-identity" element={<RouteWrapper><SocialIdentityPage /></RouteWrapper>} />
                         <Route path="/personality/creativity" element={<RouteWrapper><CreativityPage /></RouteWrapper>} />
-                        <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
-                        <Route path="/downloads-demo" element={<Navigate to="/debug" replace />} />
                       </Routes>
                     </Suspense>
                   </AppLayout>
