@@ -322,7 +322,6 @@ export interface InvokeChannelMap {
 
   // ---- Context Menu (raw) ----
   [ContextMenuChannels.writing]: { args: [writingId: string, writingTitle: string]; result: void }
-  [ContextMenuChannels.post]: { args: [postId: string, postTitle: string]; result: void }
 }
 
 /**
