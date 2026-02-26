@@ -5,7 +5,6 @@ import { Tray } from './tray'
 import { Menu } from './menu'
 import { WorkspaceProcessManager } from './workspace-process'
 
-import type { LifecycleService } from './services/lifecycle'
 import type { WorkspaceService } from './services/workspace'
 import type { WorkspaceMetadataService } from './services/workspace-metadata'
 import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, setupEventLogging, cleanup } from './bootstrap'
