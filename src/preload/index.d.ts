@@ -262,6 +262,11 @@ export interface TaskApi {
   submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<IpcResult<{ taskId: string }>>
   cancel: (taskId: string) => Promise<IpcResult<boolean>>
   list: () => Promise<IpcResult<TaskInfo[]>>
+  pause: (taskId: string) => Promise<IpcResult<boolean>>
+  resume: (taskId: string) => Promise<IpcResult<boolean>>
+  updatePriority: (taskId: string, priority: 'low' | 'normal' | 'high') => Promise<IpcResult<boolean>>
+  getResult: (taskId: string) => Promise<IpcResult<TaskInfo | null>>
+  queueStatus: () => Promise<IpcResult<TaskQueueStatus>>
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
