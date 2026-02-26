@@ -128,7 +128,6 @@ app.whenReady().then(async () => {
     // Setting a menu and hiding the bar keeps accelerators working without
     // showing a native menu bar on the frameless window.
     if (process.platform !== 'darwin') {
-      const { Menu: ElectronMenu } = require('electron')
       const minimalMenu = ElectronMenu.buildFromTemplate([
         {
           label: 'Edit',
