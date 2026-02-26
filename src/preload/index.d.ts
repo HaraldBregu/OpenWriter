@@ -165,6 +165,8 @@ export interface WorkspaceApi {
   directories: DirectoriesApi
   /** Personality / conversation file management */
   personality: PersonalityApi
+  /** Output file management (posts and writings) */
+  output: OutputApi
 }
 
 /** Document import, download, and file-watch events */
