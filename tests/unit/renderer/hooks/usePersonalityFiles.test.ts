@@ -95,7 +95,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('usePersonalityFiles — initial load', () => {
-  it('calls window.personality.loadAll when a workspace is present', async () => {
+  it('calls window.workspace.personality.loadAll when a workspace is present', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
@@ -106,7 +106,7 @@ describe('usePersonalityFiles — initial load', () => {
     })
   })
 
-  it('does not call window.personality.loadAll when no workspace is set', async () => {
+  it('does not call window.workspace.personality.loadAll when no workspace is set', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
 
     const { wrapper } = createWrapper()
@@ -152,7 +152,7 @@ describe('usePersonalityFiles — initial load', () => {
     })
   })
 
-  it('logs an error and does not throw when window.personality.loadAll rejects', async () => {
+  it('logs an error and does not throw when window.workspace.personality.loadAll rejects', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
     mockPersonalityLoadAll.mockRejectedValue(new Error('Network error'))
 
