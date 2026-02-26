@@ -128,17 +128,6 @@ async function syncPostsToElectron(posts: Post[]): Promise<void> {
     }
   } catch (error) {
     console.error('[PostsSync] Failed to sync posts to Electron:', error)
-
-    // Show user-facing error notification
-    try {
-      await window.notification.show({
-        title: 'Sync Failed',
-        body: 'Failed to save posts to workspace. Your changes may not be persisted.',
-        urgency: 'critical'
-      })
-    } catch (notifError) {
-      console.error('[PostsSync] Failed to show notification:', notifError)
-    }
   }
 }
 
