@@ -3,14 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { createBlock, type Block } from '@/components/ContentBlock'
 import {
-  selectWritingById,
-  addWriting,
-  setWritingOutputId,
-  updateWritingBlocks,
-  updateWritingTitle,
-  updateWritingInferenceSettings,
-} from '@/store/writingsSlice'
-import { saveOutputItem, updateOutputItem, selectOutputItemById } from '@/store/outputSlice'
+  selectWritingEntryById,
+  addEntry,
+  setWritingItemId,
+  updateEntryBlocks,
+  updateEntryTitle,
+  type WritingEntry,
+} from '@/store/writingItemsSlice'
 import {
   DEFAULT_INFERENCE_SETTINGS,
   type InferenceSettings,
@@ -29,8 +28,8 @@ export interface UseDraftEditorReturn {
   blocks: Block[]
   /** ID of the Redux entity (undefined while in draft mode). */
   entityId: string | undefined
-  /** Output folder ID of the last successful save — exposed so the page can delete it. */
-  savedOutputIdRef: React.MutableRefObject<string | null>
+  /** The on-disk writingItemId of the last successful save — used for deletion. */
+  savedWritingItemIdRef: React.MutableRefObject<string | null>
   /** Update the title — routes to local draft state or a Redux dispatch automatically. */
   handleTitleChange: (value: string) => void
   /** Change a block's content. */
@@ -45,14 +44,25 @@ export interface UseDraftEditorReturn {
   handleAppendBlock: () => void
   /** Current AI settings (local state, not stored in Redux between page visits). */
   aiSettings: InferenceSettings
-  /** Update AI settings — also persists to Redux when in edit mode. */
+  /** Update AI settings. */
   handleAiSettingsChange: (next: InferenceSettings) => void
   /**
    * The block ID that should receive focus on the next render.
-   * `ContentBlock` consumes this via `autoFocus`. It is reset to null after
-   * one render so the same block is not re-focused on subsequent re-renders.
+   * Consumed by ContentBlock via `autoFocus`. Reset to null after one render.
    */
   focusBlockId: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Serialize blocks to a single markdown string for storage in content.md.
+ * Blocks are separated by a double newline so the content reads naturally.
+ */
+function serializeBlocksToContent(blocks: Block[]): string {
+  return blocks.map((b) => b.content).join('\n\n')
 }
 
 // ---------------------------------------------------------------------------
@@ -60,15 +70,20 @@ export interface UseDraftEditorReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Manages the shared state and side-effects for NewWritingPage.
+ * Manages shared state and side-effects for NewWritingPage.
  *
  * Responsibilities:
  *  - Draft mode: local title/blocks state, auto-commit timer (1 s after first content)
  *  - Edit mode: reads entity from Redux, auto-save timer (1 s debounce)
  *  - Draft key reset: detects "New Writing" being clicked again via navigation state
  *  - Block CRUD callbacks — routes to draft local state or Redux dispatch based on mode
- *  - AI settings local state with restore from output item on edit mode mount
+ *  - AI settings local state (no persistence to disk — simple defaults)
  *  - focusBlockId management (set on block insert, cleared after one render)
+ *
+ * Persistence backend: `window.writingItems.*` (WritingItemsService).
+ * Each writing is stored as:
+ *   <workspace>/writings/<YYYY-MM-DD_HHmmss>/config.json   (metadata)
+ *   <workspace>/writings/<YYYY-MM-DD_HHmmss>/content.md    (all block text joined)
  *
  * @param id         - Route param. Undefined means draft mode.
  * @param routeBase  - Navigation base path, e.g. '/new/writing'
@@ -84,12 +99,9 @@ export function useDraftEditor(
   const isDraft = id === undefined
 
   // ---------------------------------------------------------------------------
-  // Redux entity selectors
+  // Redux entity
   // ---------------------------------------------------------------------------
-  const writing = useAppSelector(selectWritingById(id ?? ''))
-
-  const outputId = writing?.outputId ?? ''
-  const outputItem = useAppSelector(selectOutputItemById('writings', outputId))
+  const entry: WritingEntry | null = useAppSelector(selectWritingEntryById(id ?? ''))
 
   // ---------------------------------------------------------------------------
   // Draft state
@@ -99,12 +111,18 @@ export function useDraftEditor(
   const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
   const committedRef = useRef(false)
 
-  // Tracks the output folder ID for both modes.
-  // Seeded from the entity's outputId so it survives remounts.
-  const savedOutputIdRef = useRef<string | null>(writing?.outputId ?? null)
+  // Tracks the on-disk writingItemId for both modes.
+  // Seeded from the existing entity so it survives remounts.
+  const savedWritingItemIdRef = useRef<string | null>(entry?.writingItemId ?? null)
+  useEffect(() => {
+    if (!isDraft && entry?.writingItemId) {
+      savedWritingItemIdRef.current = entry.writingItemId
+    }
+  }, [isDraft, entry?.writingItemId])
 
   // ---------------------------------------------------------------------------
-  // Draft key reset — fires when the user clicks "New Writing" again
+  // Draft key reset — fires when the user clicks "New Writing" again while
+  // already on the /new/writing route (navigation state carries a new draftKey)
   // ---------------------------------------------------------------------------
   const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
   const prevDraftKeyRef = useRef(draftKey)
@@ -116,28 +134,16 @@ export function useDraftEditor(
     setDraftBlocks([createBlock()])
     draftIdRef.current = crypto.randomUUID()
     committedRef.current = false
-    savedOutputIdRef.current = null
+    savedWritingItemIdRef.current = null
   }, [isDraft, draftKey])
 
   // ---------------------------------------------------------------------------
-  // AI settings
+  // AI settings — simple local state, not persisted to disk in this system
   // ---------------------------------------------------------------------------
   const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
-
-  // Restore inference settings from the saved output config when opening an existing entity.
-  useEffect(() => {
-    if (!isDraft && outputItem) {
-      setAiSettings({
-        providerId: outputItem.provider || DEFAULT_INFERENCE_SETTINGS.providerId,
-        modelId: outputItem.model || DEFAULT_INFERENCE_SETTINGS.modelId,
-        temperature: outputItem.temperature ?? DEFAULT_INFERENCE_SETTINGS.temperature,
-        maxTokens: outputItem.maxTokens !== undefined ? outputItem.maxTokens : DEFAULT_INFERENCE_SETTINGS.maxTokens,
-        reasoning: outputItem.reasoning ?? DEFAULT_INFERENCE_SETTINGS.reasoning,
-      })
-    }
-    // outputItem.id is a stable proxy for "a different output item was loaded"
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDraft, outputItem?.id])
+  // Keep a ref so the async auto-save timer always reads the latest value
+  const aiSettingsRef = useRef(aiSettings)
+  aiSettingsRef.current = aiSettings
 
   // ---------------------------------------------------------------------------
   // focusBlockId — set when a block is inserted; cleared after one render
@@ -149,14 +155,8 @@ export function useDraftEditor(
   }, [focusBlockId])
 
   // ---------------------------------------------------------------------------
-  // Draft mode: auto-commit to Redux + save output on first real content
+  // Draft mode: auto-commit to Redux + disk on first real content (1 s delay)
   // ---------------------------------------------------------------------------
-  // Capture aiSettings in a ref so the async timer always sees the latest value
-  // without needing aiSettings in the dependency array (which would reset the
-  // timer on every settings change before the user has typed anything).
-  const aiSettingsRef = useRef(aiSettings)
-  aiSettingsRef.current = aiSettings
-
   useEffect(() => {
     if (!isDraft || committedRef.current) return
 
@@ -170,48 +170,57 @@ export function useDraftEditor(
       const workspace = await window.workspace.getCurrent()
       if (!workspace) return
 
-      const now = Date.now()
-      const settings = aiSettingsRef.current
+      const now = new Date().toISOString()
+      const nowMs = Date.now()
+      const entryId = draftIdRef.current
 
-      dispatch(addWriting({
-        id: draftIdRef.current,
-        title: draftTitle,
-        blocks: draftBlocks,
-        category: 'writing',
-        tags: [],
-        visibility: 'private',
-        createdAt: now,
-        updatedAt: now,
-      }))
-      const saved = await dispatch(saveOutputItem({
-        type: 'writings',
-        title: draftTitle || 'Untitled Writing',
-        blocks: draftBlocks.map((b) => ({ name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt })),
-        category: 'writing',
-        visibility: 'private',
-        provider: settings.providerId,
-        model: settings.modelId,
-        temperature: settings.temperature,
-        maxTokens: settings.maxTokens,
-        reasoning: settings.reasoning,
-      })).unwrap()
-      savedOutputIdRef.current = saved.id
-      dispatch(setWritingOutputId({ writingId: draftIdRef.current, outputId: saved.id }))
+      // Create on disk first
+      let result: { id: string; path: string; savedAt: number }
+      try {
+        result = await window.writingItems.create({
+          title: draftTitle || 'Untitled Writing',
+          content: serializeBlocksToContent(draftBlocks),
+          status: 'draft',
+          category: 'writing',
+          tags: [],
+        })
+      } catch (err) {
+        console.error('[useDraftEditor] Failed to create writing item on disk:', err)
+        committedRef.current = false
+        return
+      }
 
-      navigate(`${routeBase}/${draftIdRef.current}`, { replace: true })
+      savedWritingItemIdRef.current = result.id
+
+      // Commit to Redux only after disk write succeeds
+      dispatch(
+        addEntry({
+          id: entryId,
+          writingItemId: result.id,
+          title: draftTitle,
+          blocks: draftBlocks,
+          category: 'writing',
+          tags: [],
+          createdAt: now,
+          updatedAt: now,
+          savedAt: nowMs,
+        })
+      )
+
+      navigate(`${routeBase}/${entryId}`, { replace: true })
     }, 1000)
 
     return () => clearTimeout(timer)
   }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
 
   // ---------------------------------------------------------------------------
-  // Edit mode: auto-save to output 1 s after changes
+  // Edit mode: auto-save to disk 1 s after changes
   // ---------------------------------------------------------------------------
   const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (isDraft || !writing) return
+    if (isDraft || !entry) return
     if (isFirstEditRender.current) {
       isFirstEditRender.current = false
       return
@@ -222,136 +231,157 @@ export function useDraftEditor(
       const workspace = await window.workspace.getCurrent()
       if (!workspace) return
 
-      const outputBlocks = writing.blocks.map((b) => ({
-        name: b.id,
-        content: b.content,
-        createdAt: b.createdAt,
-        updatedAt: b.updatedAt,
-      }))
-      const settings = aiSettingsRef.current
-      const title = writing.title || 'Untitled Writing'
-      const currentOutputId = savedOutputIdRef.current
+      const title = entry.title || 'Untitled Writing'
+      const content = serializeBlocksToContent(entry.blocks)
+      const currentWritingItemId = savedWritingItemIdRef.current
 
-      const sharedPayload = {
-        title,
-        blocks: outputBlocks,
-        visibility: 'private' as const,
-        category: 'writing',
-        provider: settings.providerId,
-        model: settings.modelId,
-        temperature: settings.temperature,
-        maxTokens: settings.maxTokens,
-        reasoning: settings.reasoning,
-      }
-
-      if (currentOutputId) {
-        dispatch(updateOutputItem({
-          id: currentOutputId,
-          type: 'writings',
-          ...sharedPayload,
-        }))
+      if (currentWritingItemId) {
+        // Update existing writing item on disk (partial update)
+        try {
+          await window.writingItems.save(currentWritingItemId, { title, content })
+        } catch (err) {
+          console.error('[useDraftEditor] Failed to save writing item:', err)
+        }
       } else {
-        const saved = await dispatch(saveOutputItem({
-          type: 'writings',
-          ...sharedPayload,
-        })).unwrap()
-        savedOutputIdRef.current = saved.id
-        dispatch(setWritingOutputId({ writingId: writing.id, outputId: saved.id }))
+        // First save for an entry that was added to Redux but not yet persisted
+        try {
+          const result = await window.writingItems.create({
+            title: title,
+            content,
+            status: 'draft',
+            category: 'writing',
+            tags: [],
+          })
+          savedWritingItemIdRef.current = result.id
+          dispatch(setWritingItemId({ entryId: entry.id, writingItemId: result.id }))
+        } catch (err) {
+          console.error('[useDraftEditor] Failed to create writing item on first save:', err)
+        }
       }
     }, 1000)
 
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [isDraft, writing, dispatch]) // aiSettings accessed via ref; writing covers block/title changes
+  }, [isDraft, entry, dispatch]) // aiSettings accessed via ref; entry covers block/title changes
 
   // ---------------------------------------------------------------------------
-  // Callbacks — all route to draft local state or Redux dispatch based on isDraft
+  // Callbacks — route to draft local state or Redux dispatch based on isDraft
   // ---------------------------------------------------------------------------
 
-  const handleTitleChange = useCallback((value: string) => {
-    if (isDraft) {
-      setDraftTitle(value)
-    } else if (writing) {
-      dispatch(updateWritingTitle({ writingId: writing.id, title: value }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleTitleChange = useCallback(
+    (value: string) => {
+      if (isDraft) {
+        setDraftTitle(value)
+      } else if (entry) {
+        dispatch(updateEntryTitle({ entryId: entry.id, title: value }))
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
 
-  const handleChange = useCallback((blockId: string, content: string) => {
-    const now = new Date().toISOString()
-    if (isDraft) {
-      setDraftBlocks((prev) => prev.map((b) => b.id === blockId ? { ...b, content, updatedAt: now } : b))
-    } else if (writing) {
-      dispatch(updateWritingBlocks({ writingId: writing.id, blocks: writing.blocks.map((b) => b.id === blockId ? { ...b, content, updatedAt: now } : b) }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleChange = useCallback(
+    (blockId: string, content: string) => {
+      const now = new Date().toISOString()
+      if (isDraft) {
+        setDraftBlocks((prev) =>
+          prev.map((b) => (b.id === blockId ? { ...b, content, updatedAt: now } : b))
+        )
+      } else if (entry) {
+        dispatch(
+          updateEntryBlocks({
+            entryId: entry.id,
+            blocks: entry.blocks.map((b) =>
+              b.id === blockId ? { ...b, content, updatedAt: now } : b
+            ),
+          })
+        )
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
 
-  const handleDelete = useCallback((blockId: string) => {
-    if (isDraft) {
-      setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
-    } else if (writing) {
-      dispatch(updateWritingBlocks({ writingId: writing.id, blocks: writing.blocks.filter((b) => b.id !== blockId) }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleDelete = useCallback(
+    (blockId: string) => {
+      if (isDraft) {
+        setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
+      } else if (entry) {
+        dispatch(
+          updateEntryBlocks({
+            entryId: entry.id,
+            blocks: entry.blocks.filter((b) => b.id !== blockId),
+          })
+        )
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
 
-  const handleAddBlockAfter = useCallback((afterId: string) => {
-    const newBlock = createBlock()
-    if (isDraft) {
-      setDraftBlocks((prev) => {
-        const index = prev.findIndex((b) => b.id === afterId)
-        return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
-      })
-    } else if (writing) {
-      const index = writing.blocks.findIndex((b) => b.id === afterId)
-      dispatch(updateWritingBlocks({ writingId: writing.id, blocks: [...writing.blocks.slice(0, index + 1), newBlock, ...writing.blocks.slice(index + 1)] }))
-    }
-    setFocusBlockId(newBlock.id)
-  }, [isDraft, writing, dispatch])
+  const handleAddBlockAfter = useCallback(
+    (afterId: string) => {
+      const newBlock = createBlock()
+      if (isDraft) {
+        setDraftBlocks((prev) => {
+          const index = prev.findIndex((b) => b.id === afterId)
+          return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
+        })
+      } else if (entry) {
+        const index = entry.blocks.findIndex((b) => b.id === afterId)
+        dispatch(
+          updateEntryBlocks({
+            entryId: entry.id,
+            blocks: [
+              ...entry.blocks.slice(0, index + 1),
+              newBlock,
+              ...entry.blocks.slice(index + 1),
+            ],
+          })
+        )
+      }
+      setFocusBlockId(newBlock.id)
+    },
+    [isDraft, entry, dispatch]
+  )
 
-  const handleReorder = useCallback((reordered: Block[]) => {
-    if (isDraft) {
-      setDraftBlocks(reordered)
-    } else if (writing) {
-      dispatch(updateWritingBlocks({ writingId: writing.id, blocks: reordered }))
-    }
-  }, [isDraft, writing, dispatch])
+  const handleReorder = useCallback(
+    (reordered: Block[]) => {
+      if (isDraft) {
+        setDraftBlocks(reordered)
+      } else if (entry) {
+        dispatch(updateEntryBlocks({ entryId: entry.id, blocks: reordered }))
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
 
   const handleAppendBlock = useCallback(() => {
     const newBlock = createBlock()
     if (isDraft) {
       setDraftBlocks((prev) => [...prev, newBlock])
-    } else if (writing) {
-      dispatch(updateWritingBlocks({ writingId: writing.id, blocks: [...writing.blocks, newBlock] }))
+    } else if (entry) {
+      dispatch(
+        updateEntryBlocks({ entryId: entry.id, blocks: [...entry.blocks, newBlock] })
+      )
     }
     setFocusBlockId(newBlock.id)
-  }, [isDraft, writing, dispatch])
+  }, [isDraft, entry, dispatch])
 
   const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
     setAiSettings(next)
-    if (!isDraft && writing) {
-      dispatch(updateWritingInferenceSettings({
-        writingId: writing.id,
-        provider: next.providerId,
-        model: next.modelId,
-        temperature: next.temperature,
-        maxTokens: next.maxTokens,
-        reasoning: next.reasoning,
-      }))
-    }
-  }, [isDraft, writing, dispatch])
+  }, [])
 
   // ---------------------------------------------------------------------------
   // Resolved display values
   // ---------------------------------------------------------------------------
-  const title = isDraft ? draftTitle : (writing?.title ?? '')
-  const blocks = isDraft ? draftBlocks : (writing?.blocks ?? [])
+  const title = isDraft ? draftTitle : (entry?.title ?? '')
+  const blocks = isDraft ? draftBlocks : (entry?.blocks ?? [])
 
   return {
     isDraft,
     title,
     blocks,
     entityId: id,
-    savedOutputIdRef,
+    savedWritingItemIdRef,
     handleTitleChange,
     handleChange,
     handleDelete,
