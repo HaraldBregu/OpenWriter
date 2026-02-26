@@ -70,20 +70,7 @@
       "Bash(npx jest --forceExit --no-coverage > /tmp/jest-full2.txt 2>&1; echo \"Exit: $?\")",
       "Bash(npx jest \"tests/unit/renderer/hooks/useOutputFiles|tests/unit/renderer/hooks/usePersonalityFiles|tests/unit/renderer/hooks/usePostsFileWatcher|tests/unit/renderer/hooks/usePostsLoader\" --forceExit --no-coverage > /tmp/hooks-new2.txt 2>&1; echo \"Exit: $?\" && grep -E \"PASS|FAIL|Tests:\" /tmp/hooks-new2.txt)",
       "Bash(cat:*)",
-      "Bash(grep TS4023:*)",
-      "Bash(cd /c/Users/BRGHLD87H/Documents/tesseract-ai && git check-ignore -v src/shared/types/aiSettings.ts src/renderer/src/hooks/useAISettings.ts src/renderer/src/hooks/useInferenceSettings.ts src/renderer/src/store/aiSettingsSlice.ts 2>&1)",
-      "Bash(cd:*)",
-      "Bash(grep worktree:*)",
-      "Bash(git rm:*)",
-      "Bash(yarn lint:*)",
-      "Bash(yarn typecheck:*)",
-      "Bash(grep Test Suites::*)",
-      "Bash(pkill:*)",
-      "Bash(echo Checking preload file location::*)",
-      "Bash(tail:*)",
-      "Bash(echo EXIT CODE: $?:*)",
-      "Bash(echo WEB EXIT: $?:*)",
-      "Bash(echo NODE EXIT: $?:*)"
+      "Bash(grep TS4023:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
