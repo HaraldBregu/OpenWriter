@@ -7,20 +7,24 @@
 - Bridge types live in `src/preload/index.d.ts` — always read this file before writing async thunks that call any `window.*` bridge.
 - Bridge shapes often differ from Redux shapes (e.g. nested `metadata` object vs flat item). Always map at the thunk boundary.
 - `window.api` NO LONGER EXISTS — fully split into domain namespaces. See Namespace Map below.
-- `window.output.save` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
+- `window.workspace.output.save` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
 
 ## Namespace Map (window.api is gone — use these namespaces)
-All methods drop the domain prefix: `window.output.save`, `window.workspace.getCurrent`, etc.
 - bluetooth → `window.bluetooth.*`; clipboard → `window.clipboard.*`; cron → `window.cron.*`
 - lifecycle → `window.lifecycle.*`; notification → `window.notification.*`; wm → `window.wm.*`
-- output → `window.output.*`; personality → `window.personality.*`; posts → `window.posts.*`
-- documents → `window.documents.*`; store → `window.store.*`; workspace → `window.workspace.*`
-- directories → `window.directories.*`; agent → `window.agent.*`; fs → `window.fs.*`
-- dialog → `window.dialog.*`; network → `window.network.*`; media → `window.media.*`
+- store → `window.store.*`; workspace → `window.workspace.*`
 - app utilities → `window.app.*`; window controls → `window.win.*`
 - context menus → `window.contextMenu.showWriting/onWritingAction/showPost/onPostAction`
 - AI pipeline → `window.ai.inference/cancel/listAgents/onEvent`
-- REMOVED: `window.writingItems` — no longer exists in preload; use `window.output` for writings
+- REMOVED: `window.writingItems` — no longer exists; use `window.workspace.output` for writings
+- REMOVED: top-level `window.output` — all output API is now nested under `window.workspace.output`
+
+## window.workspace nested sub-namespaces
+- `window.workspace.documents.*` — document import, download, file-watch
+- `window.workspace.directories.*` — indexed directory management
+- `window.workspace.personality.*` — personality/conversation file management
+- `window.workspace.output.*` — output file management (posts and writings)
+  - `save`, `loadAll`, `loadByType`, `loadOne`, `update`, `delete`, `onFileChange`, `onWatcherError`
 
 ## window.store — new vs old methods
 - OLD (still in preload): `getAllModelSettings`, `getModelSettings`, `setSelectedModel`, `setApiToken`, `setModelSettings`
