@@ -250,7 +250,7 @@ const lifecycle: LifecycleApi = {
 // ---------------------------------------------------------------------------
 // window.wm — Window manager (child / modal / frameless / widget windows)
 // ---------------------------------------------------------------------------
-const wm = {
+const wm: WindowManagerApi = {
     getState: (): Promise<{
         windows: Array<{ id: number; type: string; title: string; createdAt: number }>
     }> => {
