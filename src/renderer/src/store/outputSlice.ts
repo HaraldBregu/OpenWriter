@@ -5,7 +5,12 @@ import type { RootState } from './index'
 // Types
 // ---------------------------------------------------------------------------
 
-export type OutputType = 'posts' | 'writings'
+/**
+ * Valid output content types.
+ * Mirrors src/shared/types/ipc/types.ts `OutputType` — only 'writings' is
+ * supported by the main-process OutputFilesService.
+ */
+export type OutputType = 'writings'
 
 /**
  * A single content block as stored in Redux.
