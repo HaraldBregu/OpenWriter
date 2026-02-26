@@ -116,6 +116,10 @@ export interface AppApi {
   onFileOpened: (callback: (filePath: string) => void) => () => void
   popupMenu: () => void
   getPlatform: () => Promise<string>
+  /** Show the writing-item context menu for the given writing. */
+  showWriting: (writingId: string, writingTitle: string) => Promise<void>
+  /** Subscribe to writing context-menu action events. */
+  onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
