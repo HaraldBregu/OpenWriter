@@ -50,16 +50,10 @@ const WelcomePage: React.FC = () => {
       const folderPath = await window.workspace.selectFolder()
 
       if (folderPath) {
-        // Set workspace in current window
+        // Set workspace in current window.
+        // useOutputFiles (mounted in AppLayout) listens to workspace.onChange
+        // and will reload output items automatically when this fires.
         await window.workspace.setCurrent(folderPath)
-
-        // Load output items from workspace (don't block navigation if this fails)
-        try {
-          await dispatch(loadOutputItems())
-        } catch (error) {
-          console.error('Failed to load output items after workspace selection:', error)
-          // Continue to navigation even if output items fail to load
-        }
 
         // Navigate current window to home
         navigate('/home')
@@ -67,7 +61,7 @@ const WelcomePage: React.FC = () => {
     } catch (error) {
       console.error('Failed to open project:', error)
     }
-  }, [navigate, dispatch])
+  }, [navigate])
 
   const handleOpenRecentProject = useCallback(async (path: string, exists: boolean) => {
     // Don't allow opening non-existent directories

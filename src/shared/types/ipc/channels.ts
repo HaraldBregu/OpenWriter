@@ -392,4 +392,6 @@ export interface EventChannelMap {
   [PersonalityChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
   [DirectoriesChannels.changed]: { data: DirectoryEntry[] }
   [ContextMenuChannels.writingAction]: { data: WritingContextMenuAction }
+  [WritingItemsChannels.fileChanged]: { data: WritingItemChangeEvent }
+  [WritingItemsChannels.watcherError]: { data: WatcherError }
 }
