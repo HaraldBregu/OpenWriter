@@ -17,6 +17,8 @@ const WelcomePage: React.FC = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
+  const deletionReason = useWorkspaceDeletionReason()
+  const clearDeletion = useClearDeletionReason()
 
   useEffect(() => {
     loadRecentProjects()
