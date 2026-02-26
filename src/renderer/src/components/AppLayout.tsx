@@ -463,7 +463,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
   usePersonalityFiles(); // Load personality files from workspace on app startup
-  useOutputFiles(); // Load output files (writings) from workspace
+  useWritingItems(); // Load writing items from workspace
 
   return (
     <div className="flex flex-col h-screen">
