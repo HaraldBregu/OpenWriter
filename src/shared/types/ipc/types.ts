@@ -165,12 +165,13 @@ export type TaskEvent =
   | { type: 'started'; data: { taskId: string } }
   | { type: 'progress'; data: { taskId: string; percent: number; message?: string; detail?: unknown } }
   | { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
-  | { type: 'error'; data: { taskId: string; message: string; code?: string } }
+  | { type: 'error'; data: { taskId: string; message: string; code: string } }
   | { type: 'cancelled'; data: { taskId: string } }
   | { type: 'stream'; data: { taskId: string; token: string } }
   | { type: 'paused'; data: { taskId: string } }
   | { type: 'resumed'; data: { taskId: string; position: number } }
   | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
+  | { type: 'queue-position'; data: { taskId: string; position: number } }
 
 // ---- Posts ----------------------------------------------------------------
 
