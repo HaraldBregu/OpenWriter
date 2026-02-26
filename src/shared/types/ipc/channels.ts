@@ -335,6 +335,13 @@ export interface InvokeChannelMap {
   [PersonalityChannels.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
   [PersonalityChannels.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
 
+  // ---- Writing Items (IpcResult-wrapped) ----
+  [WritingItemsChannels.create]: { args: [input: CreateWritingItemInput]; result: WriteWritingItemResult }
+  [WritingItemsChannels.save]: { args: [id: string, input: SaveWritingItemInput]; result: WriteWritingItemResult }
+  [WritingItemsChannels.loadAll]: { args: []; result: WritingItem[] }
+  [WritingItemsChannels.loadOne]: { args: [id: string]; result: WritingItem | null }
+  [WritingItemsChannels.delete]: { args: [id: string]; result: void }
+
   // ---- Context Menu (raw) ----
   [ContextMenuChannels.writing]: { args: [writingId: string, writingTitle: string]; result: void }
 }
