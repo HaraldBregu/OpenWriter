@@ -8,6 +8,9 @@
  *  4. Create an AbortController per task for independent cancellation.
  *  5. Forward TaskEvents to the EventBus for renderer delivery.
  *  6. Drain the queue automatically when execution slots free up.
+ *  7. Support pause/resume of queued tasks without losing queue position.
+ *  8. Support priority updates that reorder the queue immediately.
+ *  9. Retain completed/errored/cancelled tasks for TTL seconds for result retrieval.
  *
  * Implements Disposable so ServiceContainer calls destroy() on shutdown,
  * aborting any in-flight tasks.
@@ -20,6 +23,10 @@ import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
 import type { TaskEvent } from './TaskEvents'
 import type { ProgressReporter, StreamReporter } from './TaskHandler'
 import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor'
+import type { TaskQueueStatus } from '../../shared/types/ipc/types'
+
+/** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
+const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000 // 5 minutes
 
 /** Priority ordering for queue sorting (higher number = higher priority). */
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
