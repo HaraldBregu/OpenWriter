@@ -417,24 +417,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     )}
                   </AppSidebarMenuItem>
 
-                  <AppSidebarSeparator className="my-1" />
-
-                  {/* Debug (Dev Tool) */}
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/debug"}
-                      className="h-9 px-3"
-                    >
-                      <Link to="/debug">
-                        <Bug className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">{t("sidebar.debugTools")}</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 font-mono uppercase tracking-wider">
-                          Dev
-                        </span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
