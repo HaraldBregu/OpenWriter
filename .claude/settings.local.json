@@ -74,7 +74,8 @@
       "Bash(npm run:*)",
       "Bash(yarn typecheck:*)",
       "Bash(yarn build:dev:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(git:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

@@ -62,24 +62,15 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
   - `resetToSectionDefaults` uses section defaults from ref or Redux global fallback
   - Replaces inline `useState`/`useEffect`/timer pattern in `PersonalitySimpleLayout`
 
-## Output System (per-block file storage, updated Feb 2026)
-- Storage: `workspace/output/{type}/{YYYY-MM-DD_HHmmss}/<block-uuid>.md` + `config.json`
-- config.json has `content: BlockContentItem[]` where each entry maps to one .md file (name = block uuid)
-- Block ordering = array position in config.json's `content` array
-- Types: `'writings'` ONLY — `'posts'` was removed; `OutputType = 'writings'` in shared/ipc/types.ts, outputSlice.ts, and main service
-- Slice: `src/renderer/src/store/outputSlice.ts`
-- Bridge API: `window.output.save`, `window.output.loadAll`, `window.output.update`, `window.output.delete`
-- `window.output.save/update` now accept `blocks[]` not `content: string`
-- `window.output.loadAll` returns `OutputFile` with `blocks: OutputFileBlock[]` not `content: string`
-- There are NO `workspace:create-writing-item` or `workspace:save-writing-item` channels — writing creation always goes through `output:save` (`window.output.save`)
+## Output System (kept for reference — no longer used for writings)
+- `outputSlice.ts` still exists but is NOT used by the writing creation flow
+- Writing storage now uses `window.writingItems.*` exclusively (see Writing Creation Architecture below)
 
 ## Block Architecture (updated Feb 2026)
 - `Block` interface (`src/renderer/src/components/ContentBlock.tsx`): `{ id, content, createdAt, updatedAt }` (ISO 8601 timestamps)
 - `createBlock()` factory stamps both timestamps on creation
-- `makeBlock()` helper in postsSlice / writingsSlice for use in prepare() without importing from component
-- `OutputBlockItem` (in outputSlice): `{ name, content, createdAt, updatedAt }` — `name` is the .md filename AND the Redux Block.id
 - On handleChange in pages, callers stamp `updatedAt: new Date().toISOString()` before dispatching
-- Fingerprint comparison for change detection: `blocks.map(b => \`\${b.name/id}:\${b.content}\`).join('|')`
+- Blocks are serialized to a single markdown string (`\n\n` separator) for `content.md` storage via `writingItems` API
 
 ## Component Library
 - App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
