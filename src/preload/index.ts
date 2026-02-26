@@ -19,7 +19,7 @@ import type {
 } from './index.d'
 
 // ---------------------------------------------------------------------------
-// window.app — General application utilities
+// window.app — General application utilities + persisted AI model settings
 // ---------------------------------------------------------------------------
 const app: AppApi = {
     playSound: (): void => {
@@ -54,6 +54,37 @@ const app: AppApi = {
     },
     onWritingAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
         return typedOn(AppChannels.writingContextMenuAction, callback)
+    },
+    // -------------------------------------------------------------------------
+    // Persisted AI model settings (merged from former window.store namespace)
+    // -------------------------------------------------------------------------
+    getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
+        return typedInvokeUnwrap(StoreChannels.getAllProviderSettings)
+    },
+    getProviderSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null> => {
+        return typedInvokeUnwrap(StoreChannels.getProviderSettings, providerId)
+    },
+    setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }): Promise<void> => {
+        return typedInvokeUnwrap(StoreChannels.setProviderSettings, providerId, settings)
+    },
+    setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }): Promise<void> => {
+        return typedInvokeUnwrap(StoreChannels.setInferenceDefaults, providerId, update)
+    },
+    // Legacy methods — kept for backward compatibility with any remaining callers
+    getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
+        return typedInvokeUnwrap(StoreChannels.getAllModelSettings)
+    },
+    getModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
+        return typedInvokeUnwrap(StoreChannels.getModelSettings, providerId)
+    },
+    setSelectedModel: (providerId: string, modelId: string): Promise<void> => {
+        return typedInvokeUnwrap(StoreChannels.setSelectedModel, providerId, modelId)
+    },
+    setApiToken: (providerId: string, token: string): Promise<void> => {
+        return typedInvokeUnwrap(StoreChannels.setApiToken, providerId, token)
+    },
+    setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
+        return typedInvokeUnwrap(StoreChannels.setModelSettings, providerId, settings)
     },
 }
 
