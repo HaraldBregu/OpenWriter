@@ -3,6 +3,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { MediaPermissionsService } from '../services/media-permissions'
+import { MediaChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for media permissions (camera, microphone, screen).
@@ -13,11 +14,11 @@ export class MediaPermissionsIpc implements IpcModule {
   register(container: ServiceContainer, _eventBus: EventBus): void {
     const media = container.get<MediaPermissionsService>('mediaPermissions')
 
-    ipcMain.handle('media-permissions-get-camera', () => media.getCameraPermissionStatus())
-    ipcMain.handle('media-permissions-get-microphone', () => media.getMicrophonePermissionStatus())
-    ipcMain.handle('media-permissions-request-camera', () => media.requestCameraPermission())
-    ipcMain.handle('media-permissions-request-microphone', () => media.requestMicrophonePermission())
-    ipcMain.handle('media-permissions-get-devices', (_e, type: 'audioinput' | 'videoinput') =>
+    ipcMain.handle(MediaChannels.getCameraStatus, () => media.getCameraPermissionStatus())
+    ipcMain.handle(MediaChannels.getMicrophoneStatus, () => media.getMicrophonePermissionStatus())
+    ipcMain.handle(MediaChannels.requestCamera, () => media.requestCameraPermission())
+    ipcMain.handle(MediaChannels.requestMicrophone, () => media.requestMicrophonePermission())
+    ipcMain.handle(MediaChannels.getDevices, (_e, type: 'audioinput' | 'videoinput') =>
       media.getMediaDevices(type)
     )
 

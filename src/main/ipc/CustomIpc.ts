@@ -6,6 +6,7 @@ import { is } from '@electron-toolkit/utils'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import { AppChannels } from '../../shared/types/ipc/channels'
 
 const execFileAsync = promisify(execFile)
 
@@ -18,7 +19,7 @@ export class CustomIpc implements IpcModule {
 
   register(_container: ServiceContainer, _eventBus: EventBus): void {
     // Play sound handler
-    ipcMain.on('play-sound', async () => {
+    ipcMain.on(AppChannels.playSound, async () => {
       const soundPath = is.dev
         ? path.join(__dirname, '../../resources/sounds/click6.wav')
         : path.join(process.resourcesPath, 'resources/sounds/click6.wav')
@@ -43,7 +44,7 @@ export class CustomIpc implements IpcModule {
     })
 
     // Context menu handler (standard)
-    ipcMain.on('context-menu', (event) => {
+    ipcMain.on(AppChannels.contextMenu, (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 
@@ -60,7 +61,7 @@ export class CustomIpc implements IpcModule {
     })
 
     // Context menu handler (editable)
-    ipcMain.on('context-menu-editable', (event) => {
+    ipcMain.on(AppChannels.contextMenuEditable, (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 

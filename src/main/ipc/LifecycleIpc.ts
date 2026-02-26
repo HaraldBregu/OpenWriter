@@ -3,6 +3,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { LifecycleService } from '../services/lifecycle'
+import { LifecycleChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for application lifecycle operations.
@@ -14,9 +15,9 @@ export class LifecycleIpc implements IpcModule {
   register(container: ServiceContainer, eventBus: EventBus): void {
     const lifecycle = container.get<LifecycleService>('lifecycle')
 
-    ipcMain.handle('lifecycle-get-state', () => lifecycle.getState())
-    ipcMain.handle('lifecycle-get-events', () => lifecycle.getEvents())
-    ipcMain.handle('lifecycle-restart', () => lifecycle.restart())
+    ipcMain.handle(LifecycleChannels.getState, () => lifecycle.getState())
+    ipcMain.handle(LifecycleChannels.getEvents, () => lifecycle.getEvents())
+    ipcMain.handle(LifecycleChannels.restart, () => lifecycle.restart())
 
     // Broadcast lifecycle events to all windows
     lifecycle.onEvent((event) => {

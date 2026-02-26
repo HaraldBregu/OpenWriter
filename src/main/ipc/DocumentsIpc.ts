@@ -10,6 +10,7 @@ import { DocumentsService } from '../services/documents'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
 import { getAllTextExtensions, getSupportedFileTypesDescription } from '../utils/file-type-validator'
+import { DocumentsChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for managing documents in the workspace.
@@ -35,7 +36,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata[] - Array of imported file metadata
      */
     ipcMain.handle(
-      'documents:import-files',
+      DocumentsChannels.importFiles,
       wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -78,7 +79,7 @@ export class DocumentsIpc implements IpcModule {
           }
           throw err
         }
-      }, 'documents:import-files')
+      }, DocumentsChannels.importFiles)
     )
 
     /**
@@ -89,7 +90,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata[] - Array of imported file metadata
      */
     ipcMain.handle(
-      'documents:import-by-paths',
+      DocumentsChannels.importByPaths,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, paths: string[]) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -102,7 +103,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.importFiles(currentWorkspace, paths)
-      }, 'documents:import-by-paths')
+      }, DocumentsChannels.importByPaths)
     )
 
     /**
@@ -113,7 +114,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata - Downloaded file metadata
      */
     ipcMain.handle(
-      'documents:download-from-url',
+      DocumentsChannels.downloadFromUrl,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, url: string) => {
         // Validate URL format and protocol
         this.validateDownloadUrl(url)
@@ -129,7 +130,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.downloadFromUrl(currentWorkspace, url)
-      }, 'documents:download-from-url')
+      }, DocumentsChannels.downloadFromUrl)
     )
 
     /**
@@ -140,7 +141,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata[] - Array of all document metadata
      */
     ipcMain.handle(
-      'documents:load-all',
+      DocumentsChannels.loadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -153,7 +154,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.loadAll(currentWorkspace)
-      }, 'documents:load-all')
+      }, DocumentsChannels.loadAll)
     )
 
     /**
@@ -164,7 +165,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'documents:delete-file',
+      DocumentsChannels.deleteFile,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -177,7 +178,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         await documentsService.deleteFile(id, currentWorkspace)
-      }, 'documents:delete-file')
+      }, DocumentsChannels.deleteFile)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

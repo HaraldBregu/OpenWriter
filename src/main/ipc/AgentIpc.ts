@@ -6,6 +6,7 @@ import type { EventBus } from '../core/EventBus'
 import type { AgentService, AgentSessionConfig, AgentRunOptions } from '../services/agent'
 import { AgentValidators, StoreValidators } from '../shared/validators'
 import { wrapIpcHandler } from './IpcErrorHandler'
+import { AgentChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for agent operations.
@@ -27,44 +28,44 @@ export class AgentIpc implements IpcModule {
     // ===== Session Management =====
 
     ipcMain.handle(
-      'agent:create-session',
+      AgentChannels.createSession,
       wrapIpcHandler(async (_event, config: AgentSessionConfig) => {
         return agent.createSession(config)
-      }, 'agent:create-session')
+      }, AgentChannels.createSession)
     )
 
     ipcMain.handle(
-      'agent:destroy-session',
+      AgentChannels.destroySession,
       wrapIpcHandler(async (_event, sessionId: string) => {
         return agent.destroySession(sessionId)
-      }, 'agent:destroy-session')
+      }, AgentChannels.destroySession)
     )
 
     ipcMain.handle(
-      'agent:get-session',
+      AgentChannels.getSession,
       wrapIpcHandler(async (_event, sessionId: string) => {
         return agent.getSession(sessionId)
-      }, 'agent:get-session')
+      }, AgentChannels.getSession)
     )
 
     ipcMain.handle(
-      'agent:list-sessions',
+      AgentChannels.listSessions,
       wrapIpcHandler(async () => {
         return agent.listSessions()
-      }, 'agent:list-sessions')
+      }, AgentChannels.listSessions)
     )
 
     ipcMain.handle(
-      'agent:clear-sessions',
+      AgentChannels.clearSessions,
       wrapIpcHandler(async () => {
         return agent.clearSessions()
-      }, 'agent:clear-sessions')
+      }, AgentChannels.clearSessions)
     )
 
     // ===== Agent Execution =====
 
     ipcMain.handle(
-      'agent:run',
+      AgentChannels.run,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, messages, runId, providerId) => {
         // Validate inputs
         AgentValidators.validateMessages(messages)
@@ -75,11 +76,11 @@ export class AgentIpc implements IpcModule {
         if (!win) throw new Error('No window found')
 
         return await agent.runAgentWithDefaultSession(messages, runId, providerId, win)
-      }, 'agent:run')
+      }, AgentChannels.run)
     )
 
     ipcMain.handle(
-      'agent:run-session',
+      AgentChannels.runSession,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, options: AgentRunOptions) => {
         // Validate inputs
         AgentValidators.validateSessionId(options.sessionId)
@@ -91,34 +92,34 @@ export class AgentIpc implements IpcModule {
         if (!win) throw new Error('No window found')
 
         return await agent.runAgentSession(options, win)
-      }, 'agent:run-session')
+      }, AgentChannels.runSession)
     )
 
-    ipcMain.on('agent:cancel', (_event, runId: string) => {
+    ipcMain.on(AgentChannels.cancel, (_event, runId: string) => {
       agent.cancelRun(runId)
     })
 
     ipcMain.handle(
-      'agent:cancel-session',
+      AgentChannels.cancelSession,
       wrapIpcHandler(async (_event, sessionId: string) => {
         return agent.cancelSession(sessionId)
-      }, 'agent:cancel-session')
+      }, AgentChannels.cancelSession)
     )
 
     // ===== Agent Status =====
 
     ipcMain.handle(
-      'agent:get-status',
+      AgentChannels.getStatus,
       wrapIpcHandler(async () => {
         return agent.getStatus()
-      }, 'agent:get-status')
+      }, AgentChannels.getStatus)
     )
 
     ipcMain.handle(
-      'agent:is-running',
+      AgentChannels.isRunning,
       wrapIpcHandler(async (_event, runId: string) => {
         return agent.isRunning(runId)
-      }, 'agent:is-running')
+      }, AgentChannels.isRunning)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

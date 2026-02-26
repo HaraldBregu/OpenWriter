@@ -79,7 +79,11 @@
       "Bash(yarn typecheck:*)",
       "Bash(grep Test Suites::*)",
       "Bash(pkill:*)",
-      "Bash(echo Checking preload file location::*)"
+      "Bash(echo Checking preload file location::*)",
+      "Bash(tail:*)",
+      "Bash(echo EXIT CODE: $?:*)",
+      "Bash(echo WEB EXIT: $?:*)",
+      "Bash(echo NODE EXIT: $?:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

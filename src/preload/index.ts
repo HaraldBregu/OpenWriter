@@ -1,90 +1,61 @@
-import { contextBridge, ipcRenderer } from 'electron'
-
-/**
- * IPC Result types matching the main process wrappers
- */
-interface IpcError {
-    success: false
-    error: {
-        code: string
-        message: string
-        stack?: string
-    }
-}
-
-interface IpcSuccess<T> {
-    success: true
-    data: T
-}
-
-type IpcResult<T> = IpcSuccess<T> | IpcError
-
-/**
- * Helper to unwrap IpcResult from main process handlers
- * Throws an error if the IPC call failed
- */
-async function unwrapIpcResult<T>(promise: Promise<IpcResult<T>>): Promise<T> {
-    const result = await promise
-    if (result.success) {
-        return result.data
-    } else {
-        const error = new Error(result.error.message)
-        error.name = result.error.code
-        if (result.error.stack) {
-            error.stack = result.error.stack
-        }
-        throw error
-    }
-}
+import { contextBridge } from 'electron'
+import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } from './typed-ipc'
+import {
+    AppChannels,
+    WindowChannels,
+    MediaChannels,
+    BluetoothChannels,
+    NetworkChannels,
+    CronChannels,
+    LifecycleChannels,
+    WmChannels,
+    FsChannels,
+    DialogChannels,
+    NotificationChannels,
+    ClipboardChannels,
+    StoreChannels,
+    WorkspaceChannels,
+    PostsChannels,
+    DocumentsChannels,
+    AgentChannels,
+    ContextMenuChannels,
+    DirectoriesChannels,
+    PersonalityChannels,
+    OutputChannels,
+    TaskChannels,
+    PipelineChannels,
+} from '../shared/types/ipc/channels'
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities
 // ---------------------------------------------------------------------------
 const app = {
     playSound: (): void => {
-        ipcRenderer.send('play-sound')
+        typedSend(AppChannels.playSound)
     },
     setTheme: (theme: string): void => {
-        ipcRenderer.send('set-theme', theme)
+        typedSend(AppChannels.setTheme, theme)
     },
     showContextMenu: (): void => {
-        ipcRenderer.send('context-menu')
+        typedSend(AppChannels.contextMenu)
     },
     showContextMenuEditable: (): void => {
-        ipcRenderer.send('context-menu-editable')
+        typedSend(AppChannels.contextMenuEditable)
     },
     onLanguageChange: (callback: (lng: string) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, lng: string): void => {
-            callback(lng)
-        }
-        ipcRenderer.on('change-language', handler)
-        return () => {
-            ipcRenderer.removeListener('change-language', handler)
-        }
+        return typedOn(AppChannels.changeLanguage, callback)
     },
     onThemeChange: (callback: (theme: string) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, theme: string): void => {
-            callback(theme)
-        }
-        ipcRenderer.on('change-theme', handler)
-        return () => {
-            ipcRenderer.removeListener('change-theme', handler)
-        }
+        return typedOn(AppChannels.changeTheme, callback)
     },
     onFileOpened: (callback: (filePath: string) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, filePath: string): void => {
-            callback(filePath)
-        }
-        ipcRenderer.on('file-opened', handler)
-        return () => {
-            ipcRenderer.removeListener('file-opened', handler)
-        }
+        return typedOn(AppChannels.fileOpened, callback)
     },
     popupMenu: (): void => {
-        ipcRenderer.send('window:popup-menu')
+        typedSend(WindowChannels.popupMenu)
     },
     getPlatform: (): Promise<string> => {
-        return ipcRenderer.invoke('window:get-platform')
+        return typedInvoke(WindowChannels.getPlatform)
     },
 }
 
@@ -93,37 +64,25 @@ const app = {
 // ---------------------------------------------------------------------------
 const win = {
     minimize: (): void => {
-        ipcRenderer.send('window:minimize')
+        typedSend(WindowChannels.minimize)
     },
     maximize: (): void => {
-        ipcRenderer.send('window:maximize')
+        typedSend(WindowChannels.maximize)
     },
     close: (): void => {
-        ipcRenderer.send('window:close')
+        typedSend(WindowChannels.close)
     },
     isMaximized: (): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('window:is-maximized'))
+        return typedInvokeUnwrap(WindowChannels.isMaximized)
     },
     isFullScreen: (): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('window:is-fullscreen'))
+        return typedInvokeUnwrap(WindowChannels.isFullScreen)
     },
     onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, isMaximized: boolean): void => {
-            callback(isMaximized)
-        }
-        ipcRenderer.on('window:maximize-change', handler)
-        return () => {
-            ipcRenderer.removeListener('window:maximize-change', handler)
-        }
+        return typedOn(WindowChannels.maximizeChange, callback)
     },
     onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, isFullScreen: boolean): void => {
-            callback(isFullScreen)
-        }
-        ipcRenderer.on('window:fullscreen-change', handler)
-        return () => {
-            ipcRenderer.removeListener('window:fullscreen-change', handler)
-        }
+        return typedOn(WindowChannels.fullScreenChange, callback)
     },
 }
 
@@ -132,19 +91,19 @@ const win = {
 // ---------------------------------------------------------------------------
 const media = {
     requestMicrophonePermission: (): Promise<string> => {
-        return ipcRenderer.invoke('request-microphone-permission')
+        return typedInvoke(MediaChannels.requestMicrophone)
     },
     requestCameraPermission: (): Promise<string> => {
-        return ipcRenderer.invoke('request-camera-permission')
+        return typedInvoke(MediaChannels.requestCamera)
     },
     getMicrophonePermissionStatus: (): Promise<string> => {
-        return ipcRenderer.invoke('get-microphone-status')
+        return typedInvoke(MediaChannels.getMicrophoneStatus)
     },
     getCameraPermissionStatus: (): Promise<string> => {
-        return ipcRenderer.invoke('get-camera-status')
+        return typedInvoke(MediaChannels.getCameraStatus)
     },
-    getDevices: (type: 'audioinput' | 'videoinput'): Promise<MediaDeviceInfo[]> => {
-        return ipcRenderer.invoke('get-media-devices', type)
+    getDevices: (type: 'audioinput' | 'videoinput') => {
+        return typedInvoke(MediaChannels.getDevices, type)
     },
 }
 
@@ -153,13 +112,13 @@ const media = {
 // ---------------------------------------------------------------------------
 const bluetooth = {
     isSupported: (): Promise<boolean> => {
-        return ipcRenderer.invoke('bluetooth-is-supported')
+        return typedInvoke(BluetoothChannels.isSupported)
     },
     getPermissionStatus: (): Promise<string> => {
-        return ipcRenderer.invoke('bluetooth-get-permission-status')
+        return typedInvoke(BluetoothChannels.getPermissionStatus)
     },
     getInfo: (): Promise<{ platform: string; supported: boolean; apiAvailable: boolean }> => {
-        return ipcRenderer.invoke('bluetooth-get-info')
+        return typedInvoke(BluetoothChannels.getInfo)
     },
 }
 
@@ -168,10 +127,10 @@ const bluetooth = {
 // ---------------------------------------------------------------------------
 const network = {
     isSupported: (): Promise<boolean> => {
-        return ipcRenderer.invoke('network-is-supported')
+        return typedInvoke(NetworkChannels.isSupported)
     },
     getConnectionStatus: (): Promise<string> => {
-        return ipcRenderer.invoke('network-get-connection-status')
+        return typedInvoke(NetworkChannels.getConnectionStatus)
     },
     getInterfaces: (): Promise<Array<{
         name: string
@@ -182,7 +141,7 @@ const network = {
         internal: boolean
         cidr: string | null
     }>> => {
-        return ipcRenderer.invoke('network-get-interfaces')
+        return typedInvoke(NetworkChannels.getInterfaces)
     },
     getInfo: (): Promise<{
         platform: string
@@ -190,16 +149,10 @@ const network = {
         isOnline: boolean
         interfaceCount: number
     }> => {
-        return ipcRenderer.invoke('network-get-info')
+        return typedInvoke(NetworkChannels.getInfo)
     },
     onStatusChange: (callback: (status: string) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, status: string): void => {
-            callback(status)
-        }
-        ipcRenderer.on('network-status-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('network-status-changed', handler)
-        }
+        return typedOn(NetworkChannels.statusChanged, callback)
     },
 }
 
@@ -219,7 +172,7 @@ const cron = {
         description?: string
         humanReadable?: string
     }>> => {
-        return ipcRenderer.invoke('cron-get-all-jobs')
+        return typedInvoke(CronChannels.getAll)
     },
     getJob: (id: string): Promise<{
         id: string
@@ -233,16 +186,16 @@ const cron = {
         description?: string
         humanReadable?: string
     } | null> => {
-        return ipcRenderer.invoke('cron-get-job', id)
+        return typedInvoke(CronChannels.getJob, id)
     },
     start: (id: string): Promise<boolean> => {
-        return ipcRenderer.invoke('cron-start-job', id)
+        return typedInvoke(CronChannels.start, id)
     },
     stop: (id: string): Promise<boolean> => {
-        return ipcRenderer.invoke('cron-stop-job', id)
+        return typedInvoke(CronChannels.stop, id)
     },
     delete: (id: string): Promise<boolean> => {
-        return ipcRenderer.invoke('cron-delete-job', id)
+        return typedInvoke(CronChannels.delete, id)
     },
     create: (config: {
         id: string
@@ -252,13 +205,13 @@ const cron = {
         runCount: number
         description?: string
     }): Promise<boolean> => {
-        return ipcRenderer.invoke('cron-create-job', config)
+        return typedInvoke(CronChannels.create, config)
     },
     updateSchedule: (id: string, schedule: string): Promise<boolean> => {
-        return ipcRenderer.invoke('cron-update-schedule', id, schedule)
+        return typedInvoke(CronChannels.updateSchedule, id, schedule)
     },
     validateExpression: (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
-        return ipcRenderer.invoke('cron-validate-expression', expression)
+        return typedInvoke(CronChannels.validateExpression, expression)
     },
     onJobResult: (callback: (result: {
         id: string
@@ -267,19 +220,7 @@ const cron = {
         message?: string
         data?: unknown
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, result: {
-            id: string
-            timestamp: Date
-            success: boolean
-            message?: string
-            data?: unknown
-        }): void => {
-            callback(result)
-        }
-        ipcRenderer.on('cron-job-result', handler)
-        return () => {
-            ipcRenderer.removeListener('cron-job-result', handler)
-        }
+        return typedOn(CronChannels.jobResult, callback)
     },
 }
 
@@ -293,22 +234,16 @@ const lifecycle = {
         appReadyAt: number | null
         platform: string
     }> => {
-        return ipcRenderer.invoke('lifecycle-get-state')
+        return typedInvoke(LifecycleChannels.getState)
     },
     getEvents: (): Promise<Array<{ type: string; timestamp: number; detail?: string }>> => {
-        return ipcRenderer.invoke('lifecycle-get-events')
+        return typedInvoke(LifecycleChannels.getEvents)
     },
     restart: (): Promise<void> => {
-        return ipcRenderer.invoke('lifecycle-restart')
+        return typedInvoke(LifecycleChannels.restart)
     },
     onEvent: (callback: (event: { type: string; timestamp: number; detail?: string }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, lifecycleEvent: { type: string; timestamp: number; detail?: string }): void => {
-            callback(lifecycleEvent)
-        }
-        ipcRenderer.on('lifecycle-event', handler)
-        return () => {
-            ipcRenderer.removeListener('lifecycle-event', handler)
-        }
+        return typedOn(LifecycleChannels.event, callback)
     },
 }
 
@@ -319,38 +254,30 @@ const wm = {
     getState: (): Promise<{
         windows: Array<{ id: number; type: string; title: string; createdAt: number }>
     }> => {
-        return ipcRenderer.invoke('wm-get-state')
+        return typedInvoke(WmChannels.getState)
     },
     createChild: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
-        return ipcRenderer.invoke('wm-create-child')
+        return typedInvoke(WmChannels.createChild)
     },
     createModal: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
-        return ipcRenderer.invoke('wm-create-modal')
+        return typedInvoke(WmChannels.createModal)
     },
     createFrameless: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
-        return ipcRenderer.invoke('wm-create-frameless')
+        return typedInvoke(WmChannels.createFrameless)
     },
     createWidget: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
-        return ipcRenderer.invoke('wm-create-widget')
+        return typedInvoke(WmChannels.createWidget)
     },
     closeWindow: (id: number): Promise<boolean> => {
-        return ipcRenderer.invoke('wm-close-window', id)
+        return typedInvoke(WmChannels.closeWindow, id)
     },
     closeAll: (): Promise<void> => {
-        return ipcRenderer.invoke('wm-close-all')
+        return typedInvoke(WmChannels.closeAll)
     },
     onStateChange: (callback: (state: {
         windows: Array<{ id: number; type: string; title: string; createdAt: number }>
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, state: {
-            windows: Array<{ id: number; type: string; title: string; createdAt: number }>
-        }): void => {
-            callback(state)
-        }
-        ipcRenderer.on('wm-state-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('wm-state-changed', handler)
-        }
+        return typedOn(WmChannels.stateChanged, callback)
     },
 }
 
@@ -365,7 +292,7 @@ const fs = {
         size: number
         lastModified: number
     } | null> => {
-        return ipcRenderer.invoke('fs-open-file')
+        return typedInvoke(FsChannels.openFileDialog)
     },
     readFile: (filePath: string): Promise<{
         filePath: string
@@ -374,31 +301,31 @@ const fs = {
         size: number
         lastModified: number
     }> => {
-        return ipcRenderer.invoke('fs-read-file', filePath)
+        return typedInvoke(FsChannels.readFile, filePath)
     },
     saveFile: (defaultName: string, content: string): Promise<{
         success: boolean
         filePath: string | null
     }> => {
-        return ipcRenderer.invoke('fs-save-file', defaultName, content)
+        return typedInvoke(FsChannels.saveFileDialog, defaultName, content)
     },
     writeFile: (filePath: string, content: string): Promise<{
         success: boolean
         filePath: string
     }> => {
-        return ipcRenderer.invoke('fs-write-file', filePath, content)
+        return typedInvoke(FsChannels.writeFile, filePath, content)
     },
     selectDirectory: (): Promise<string | null> => {
-        return ipcRenderer.invoke('fs-select-directory')
+        return typedInvoke(FsChannels.selectDirectory)
     },
     watchDirectory: (dirPath: string): Promise<boolean> => {
-        return ipcRenderer.invoke('fs-watch-directory', dirPath)
+        return typedInvoke(FsChannels.watchDirectory, dirPath)
     },
     unwatchDirectory: (dirPath: string): Promise<boolean> => {
-        return ipcRenderer.invoke('fs-unwatch-directory', dirPath)
+        return typedInvoke(FsChannels.unwatchDirectory, dirPath)
     },
     getWatched: (): Promise<string[]> => {
-        return ipcRenderer.invoke('fs-get-watched')
+        return typedInvoke(FsChannels.getWatchedDirectories)
     },
     onWatchEvent: (callback: (event: {
         eventType: string
@@ -406,18 +333,7 @@ const fs = {
         directory: string
         timestamp: number
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, fsEvent: {
-            eventType: string
-            filename: string | null
-            directory: string
-            timestamp: number
-        }): void => {
-            callback(fsEvent)
-        }
-        ipcRenderer.on('fs-watch-event', handler)
-        return () => {
-            ipcRenderer.removeListener('fs-watch-event', handler)
-        }
+        return typedOn(FsChannels.watchEvent, callback)
     },
 }
 
@@ -430,35 +346,35 @@ const dialog = {
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('dialog-open'))
+        return typedInvokeUnwrap(DialogChannels.open)
     },
     openDirectory: (multiSelections = false): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('dialog-open-directory', multiSelections))
+        return typedInvokeUnwrap(DialogChannels.openDirectory, multiSelections)
     },
     save: (): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('dialog-save'))
+        return typedInvokeUnwrap(DialogChannels.save)
     },
     message: (message: string, detail: string, buttons: string[]): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('dialog-message', message, detail, buttons))
+        return typedInvokeUnwrap(DialogChannels.message, message, detail, buttons)
     },
     error: (title: string, content: string): Promise<{
         type: string
         timestamp: number
         data: Record<string, unknown>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('dialog-error', title, content))
+        return typedInvokeUnwrap(DialogChannels.error, title, content)
     },
 }
 
@@ -467,7 +383,7 @@ const dialog = {
 // ---------------------------------------------------------------------------
 const notification = {
     isSupported: (): Promise<boolean> => {
-        return ipcRenderer.invoke('notification-is-supported')
+        return typedInvoke(NotificationChannels.isSupported)
     },
     show: (options: {
         title: string
@@ -475,7 +391,7 @@ const notification = {
         silent?: boolean
         urgency?: 'normal' | 'critical' | 'low'
     }): Promise<string> => {
-        return ipcRenderer.invoke('notification-show', options)
+        return typedInvoke(NotificationChannels.show, options)
     },
     onEvent: (callback: (result: {
         id: string
@@ -484,19 +400,7 @@ const notification = {
         timestamp: number
         action: 'clicked' | 'closed' | 'shown'
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, result: {
-            id: string
-            title: string
-            body: string
-            timestamp: number
-            action: 'clicked' | 'closed' | 'shown'
-        }): void => {
-            callback(result)
-        }
-        ipcRenderer.on('notification-event', handler)
-        return () => {
-            ipcRenderer.removeListener('notification-event', handler)
-        }
+        return typedOn(NotificationChannels.event, callback)
     },
 }
 
@@ -505,25 +409,25 @@ const notification = {
 // ---------------------------------------------------------------------------
 const clipboard = {
     writeText: (text: string): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-write-text', text)
+        return typedInvoke(ClipboardChannels.writeText, text)
     },
     readText: (): Promise<string> => {
-        return ipcRenderer.invoke('clipboard-read-text')
+        return typedInvoke(ClipboardChannels.readText)
     },
     writeHTML: (html: string): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-write-html', html)
+        return typedInvoke(ClipboardChannels.writeHTML, html)
     },
     readHTML: (): Promise<string> => {
-        return ipcRenderer.invoke('clipboard-read-html')
+        return typedInvoke(ClipboardChannels.readHTML)
     },
     writeImage: (dataURL: string): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-write-image', dataURL)
+        return typedInvoke(ClipboardChannels.writeImage, dataURL)
     },
     readImage: (): Promise<{ dataURL: string; width: number; height: number } | null> => {
-        return ipcRenderer.invoke('clipboard-read-image')
+        return typedInvoke(ClipboardChannels.readImage)
     },
     clear: (): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-clear')
+        return typedInvoke(ClipboardChannels.clear)
     },
     getContent: (): Promise<{
         type: 'text' | 'image' | 'html'
@@ -534,19 +438,19 @@ const clipboard = {
         height?: number
         timestamp: number
     } | null> => {
-        return ipcRenderer.invoke('clipboard-get-content')
+        return typedInvoke(ClipboardChannels.getContent)
     },
     getFormats: (): Promise<string[]> => {
-        return ipcRenderer.invoke('clipboard-get-formats')
+        return typedInvoke(ClipboardChannels.getFormats)
     },
     hasText: (): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-has-text')
+        return typedInvoke(ClipboardChannels.hasText)
     },
     hasImage: (): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-has-image')
+        return typedInvoke(ClipboardChannels.hasImage)
     },
     hasHTML: (): Promise<boolean> => {
-        return ipcRenderer.invoke('clipboard-has-html')
+        return typedInvoke(ClipboardChannels.hasHTML)
     },
 }
 
@@ -556,32 +460,32 @@ const clipboard = {
 const store = {
     // New provider settings methods
     getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-get-all-provider-settings'))
+        return typedInvokeUnwrap(StoreChannels.getAllProviderSettings)
     },
     getProviderSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-get-provider-settings', providerId))
+        return typedInvokeUnwrap(StoreChannels.getProviderSettings, providerId)
     },
     setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-set-provider-settings', providerId, settings))
+        return typedInvokeUnwrap(StoreChannels.setProviderSettings, providerId, settings)
     },
     setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-set-inference-defaults', providerId, update))
+        return typedInvokeUnwrap(StoreChannels.setInferenceDefaults, providerId, update)
     },
     // Legacy methods
     getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-get-all-model-settings'))
+        return typedInvokeUnwrap(StoreChannels.getAllModelSettings)
     },
     getModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-get-model-settings', providerId))
+        return typedInvokeUnwrap(StoreChannels.getModelSettings, providerId)
     },
     setSelectedModel: (providerId: string, modelId: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-set-selected-model', providerId, modelId))
+        return typedInvokeUnwrap(StoreChannels.setSelectedModel, providerId, modelId)
     },
     setApiToken: (providerId: string, token: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-set-api-token', providerId, token))
+        return typedInvokeUnwrap(StoreChannels.setApiToken, providerId, token)
     },
     setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('store-set-model-settings', providerId, settings))
+        return typedInvokeUnwrap(StoreChannels.setModelSettings, providerId, settings)
     },
 }
 
@@ -590,25 +494,25 @@ const store = {
 // ---------------------------------------------------------------------------
 const workspace = {
     selectFolder: (): Promise<string | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace:select-folder'))
+        return typedInvokeUnwrap(WorkspaceChannels.selectFolder)
     },
     getCurrent: (): Promise<string | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-get-current'))
+        return typedInvokeUnwrap(WorkspaceChannels.getCurrent)
     },
     setCurrent: (workspacePath: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-set-current', workspacePath))
+        return typedInvokeUnwrap(WorkspaceChannels.setCurrent, workspacePath)
     },
     getRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-get-recent'))
+        return typedInvokeUnwrap(WorkspaceChannels.getRecent)
     },
     clear: (): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-clear'))
+        return typedInvokeUnwrap(WorkspaceChannels.clear)
     },
     directoryExists: (directoryPath: string): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-directory-exists', directoryPath))
+        return typedInvokeUnwrap(WorkspaceChannels.directoryExists, directoryPath)
     },
     removeRecent: (workspacePath: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('workspace-remove-recent', workspacePath))
+        return typedInvokeUnwrap(WorkspaceChannels.removeRecent, workspacePath)
     },
 }
 
@@ -619,7 +523,7 @@ const posts = {
     syncToWorkspace: (postsData: Array<{
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
@@ -631,34 +535,34 @@ const posts = {
         failedCount: number
         errors?: Array<{ postId: string; error: string }>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('posts:sync-to-workspace', postsData))
+        return typedInvokeUnwrap(PostsChannels.syncToWorkspace, postsData)
     },
     update: (post: {
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
         createdAt: number
         updatedAt: number
     }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('posts:update-post', post))
+        return typedInvokeUnwrap(PostsChannels.updatePost, post)
     },
     delete: (postId: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('posts:delete-post', postId))
+        return typedInvokeUnwrap(PostsChannels.deletePost, postId)
     },
     loadFromWorkspace: (): Promise<Array<{
         id: string
         title: string
-        blocks: Array<{ id: string; content: string }>
+        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
         category: string
         tags: string[]
         visibility: string
         createdAt: number
         updatedAt: number
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('posts:load-from-workspace'))
+        return typedInvokeUnwrap(PostsChannels.loadFromWorkspace)
     },
     onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
@@ -666,27 +570,10 @@ const posts = {
         filePath: string
         timestamp: number
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
-            type: 'added' | 'changed' | 'removed'
-            postId: string
-            filePath: string
-            timestamp: number
-        }): void => {
-            callback(changeEvent)
-        }
-        ipcRenderer.on('posts:file-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('posts:file-changed', handler)
-        }
+        return typedOn(PostsChannels.fileChanged, callback)
     },
     onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
-            callback(errorData)
-        }
-        ipcRenderer.on('posts:watcher-error', handler)
-        return () => {
-            ipcRenderer.removeListener('posts:watcher-error', handler)
-        }
+        return typedOn(PostsChannels.watcherError, callback)
     },
 }
 
@@ -698,28 +585,28 @@ const documents = {
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('documents:import-files'))
+        return typedInvokeUnwrap(DocumentsChannels.importFiles)
     },
     importByPaths: (paths: string[]): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('documents:import-by-paths', paths))
+        return typedInvokeUnwrap(DocumentsChannels.importByPaths, paths)
     },
     downloadFromUrl: (url: string): Promise<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('documents:download-from-url', url))
+        return typedInvokeUnwrap(DocumentsChannels.downloadFromUrl, url)
     },
     loadAll: (): Promise<Array<{
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('documents:load-all'))
+        return typedInvokeUnwrap(DocumentsChannels.loadAll)
     },
     delete: (id: string): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('documents:delete-file', id))
+        return typedInvokeUnwrap(DocumentsChannels.deleteFile, id)
     },
     onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed';
@@ -727,27 +614,10 @@ const documents = {
         filePath: string;
         timestamp: number;
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
-            type: 'added' | 'changed' | 'removed';
-            fileId: string;
-            filePath: string;
-            timestamp: number;
-        }): void => {
-            callback(changeEvent)
-        }
-        ipcRenderer.on('documents:file-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('documents:file-changed', handler)
-        }
+        return typedOn(DocumentsChannels.fileChanged, callback)
     },
     onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
-            callback(errorData)
-        }
-        ipcRenderer.on('documents:watcher-error', handler)
-        return () => {
-            ipcRenderer.removeListener('documents:watcher-error', handler)
-        }
+        return typedOn(DocumentsChannels.watcherError, callback)
     },
 }
 
@@ -756,22 +626,27 @@ const documents = {
 // ---------------------------------------------------------------------------
 const agent = {
     run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
-        return ipcRenderer.invoke('agent:run', messages, runId, providerId)
+        return typedInvoke(AgentChannels.run, messages, runId, providerId)
     },
     cancel: (runId: string): void => {
-        ipcRenderer.send('agent:cancel', runId)
+        typedSend(AgentChannels.cancel, runId)
     },
     onEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
-        const channels = ['agent:token', 'agent:thinking', 'agent:tool_start', 'agent:tool_end', 'agent:done', 'agent:error']
-        const handlers: Array<[string, (e: Electron.IpcRendererEvent, data: unknown) => void]> = channels.map((channel) => {
-            const handler = (_e: Electron.IpcRendererEvent, data: unknown): void => {
+        const channels = [
+            AgentChannels.token,
+            AgentChannels.thinking,
+            AgentChannels.toolStart,
+            AgentChannels.toolEnd,
+            AgentChannels.done,
+            AgentChannels.error,
+        ] as const
+        const cleanups = channels.map((channel) => {
+            return typedOn(channel, (data: unknown) => {
                 callback(channel, data)
-            }
-            ipcRenderer.on(channel, handler)
-            return [channel, handler]
+            })
         })
         return (): void => {
-            handlers.forEach(([channel, handler]) => ipcRenderer.removeListener(channel, handler))
+            cleanups.forEach((cleanup) => cleanup())
         }
     },
     createSession: (config: {
@@ -792,10 +667,10 @@ const agent = {
         messageCount: number
         metadata?: Record<string, unknown>
     }> => {
-        return ipcRenderer.invoke('agent:create-session', config)
+        return typedInvoke(AgentChannels.createSession, config)
     },
     destroySession: (sessionId: string): Promise<boolean> => {
-        return ipcRenderer.invoke('agent:destroy-session', sessionId)
+        return typedInvoke(AgentChannels.destroySession, sessionId)
     },
     getSession: (sessionId: string): Promise<{
         sessionId: string
@@ -807,7 +682,7 @@ const agent = {
         messageCount: number
         metadata?: Record<string, unknown>
     } | null> => {
-        return ipcRenderer.invoke('agent:get-session', sessionId)
+        return typedInvoke(AgentChannels.getSession, sessionId)
     },
     listSessions: (): Promise<Array<{
         sessionId: string
@@ -819,10 +694,10 @@ const agent = {
         messageCount: number
         metadata?: Record<string, unknown>
     }>> => {
-        return ipcRenderer.invoke('agent:list-sessions')
+        return typedInvoke(AgentChannels.listSessions)
     },
     clearSessions: (): Promise<number> => {
-        return ipcRenderer.invoke('agent:clear-sessions')
+        return typedInvoke(AgentChannels.clearSessions)
     },
     runSession: (options: {
         sessionId: string
@@ -833,20 +708,20 @@ const agent = {
         maxTokens?: number
         stream?: boolean
     }): Promise<void> => {
-        return ipcRenderer.invoke('agent:run-session', options)
+        return typedInvoke(AgentChannels.runSession, options)
     },
     cancelSession: (sessionId: string): Promise<boolean> => {
-        return ipcRenderer.invoke('agent:cancel-session', sessionId)
+        return typedInvoke(AgentChannels.cancelSession, sessionId)
     },
     getStatus: (): Promise<{
         totalSessions: number
         activeSessions: number
         totalMessages: number
     }> => {
-        return ipcRenderer.invoke('agent:get-status')
+        return typedInvoke(AgentChannels.getStatus)
     },
     isRunning: (runId: string): Promise<boolean> => {
-        return ipcRenderer.invoke('agent:is-running', runId)
+        return typedInvoke(AgentChannels.isRunning, runId)
     },
 }
 
@@ -855,28 +730,16 @@ const agent = {
 // ---------------------------------------------------------------------------
 const contextMenu = {
     showWriting: (writingId: string, writingTitle: string): Promise<void> => {
-        return ipcRenderer.invoke('context-menu:writing', writingId, writingTitle)
+        return typedInvoke(ContextMenuChannels.writing, writingId, writingTitle)
     },
     onWritingAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, data: { action: string; writingId: string }): void => {
-            callback(data)
-        }
-        ipcRenderer.on('context-menu:writing-action', handler)
-        return () => {
-            ipcRenderer.removeListener('context-menu:writing-action', handler)
-        }
+        return typedOn(ContextMenuChannels.writingAction, callback)
     },
     showPost: (postId: string, postTitle: string): Promise<void> => {
-        return ipcRenderer.invoke('context-menu:post', postId, postTitle)
+        return typedInvoke(ContextMenuChannels.post, postId, postTitle)
     },
     onPostAction: (callback: (data: { action: string; postId: string }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, data: { action: string; postId: string }): void => {
-            callback(data)
-        }
-        ipcRenderer.on('context-menu:post-action', handler)
-        return () => {
-            ipcRenderer.removeListener('context-menu:post-action', handler)
-        }
+        return typedOn(ContextMenuChannels.postAction, callback)
     },
 }
 
@@ -891,7 +754,7 @@ const directories = {
         isIndexed: boolean
         lastIndexedAt?: number
     }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:list'))
+        return typedInvokeUnwrap(DirectoriesChannels.list)
     },
     add: (dirPath: string): Promise<{
         id: string
@@ -900,7 +763,7 @@ const directories = {
         isIndexed: boolean
         lastIndexedAt?: number
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:add', dirPath))
+        return typedInvokeUnwrap(DirectoriesChannels.add, dirPath)
     },
     addMany: (dirPaths: string[]): Promise<{
         added: Array<{
@@ -912,16 +775,16 @@ const directories = {
         }>
         errors: Array<{ path: string; error: string }>
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:add-many', dirPaths))
+        return typedInvokeUnwrap(DirectoriesChannels.addMany, dirPaths)
     },
     remove: (id: string): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:remove', id))
+        return typedInvokeUnwrap(DirectoriesChannels.remove, id)
     },
     validate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:validate', dirPath))
+        return typedInvokeUnwrap(DirectoriesChannels.validate, dirPath)
     },
     markIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
-        return unwrapIpcResult(ipcRenderer.invoke('directories:mark-indexed', id, isIndexed))
+        return typedInvokeUnwrap(DirectoriesChannels.markIndexed, id, isIndexed)
     },
     onChanged: (callback: (directories: Array<{
         id: string
@@ -930,19 +793,7 @@ const directories = {
         isIndexed: boolean
         lastIndexedAt?: number
     }>) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, dirs: Array<{
-            id: string
-            path: string
-            addedAt: number
-            isIndexed: boolean
-            lastIndexedAt?: number
-        }>): void => {
-            callback(dirs)
-        }
-        ipcRenderer.on('directories:changed', handler)
-        return () => {
-            ipcRenderer.removeListener('directories:changed', handler)
-        }
+        return typedOn(DirectoriesChannels.changed, callback)
     },
 }
 
@@ -959,50 +810,22 @@ const personality = {
         path: string
         savedAt: number
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:save', input))
+        return typedInvokeUnwrap(PersonalityChannels.save, input)
     },
-    loadAll: (): Promise<Array<{
-        id: string
-        sectionId: string
-        path: string
-        metadata: {
-            sectionId: string
-            title?: string
-            createdAt: number
-            updatedAt: number
-            tags?: string[]
-            [key: string]: unknown
-        }
-        content: string
-        savedAt: number
-    }>> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:load-all'))
+    loadAll: () => {
+        return typedInvokeUnwrap(PersonalityChannels.loadAll)
     },
     loadOne: (params: {
         sectionId: string
         id: string
-    }): Promise<{
-        id: string
-        sectionId: string
-        path: string
-        metadata: {
-            sectionId: string
-            title?: string
-            createdAt: number
-            updatedAt: number
-            tags?: string[]
-            [key: string]: unknown
-        }
-        content: string
-        savedAt: number
-    } | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:load-one', params))
+    }) => {
+        return typedInvokeUnwrap(PersonalityChannels.loadOne, params)
     },
     delete: (params: {
         sectionId: string
         id: string
     }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:delete', params))
+        return typedInvokeUnwrap(PersonalityChannels.delete, params)
     },
     onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
@@ -1011,28 +834,10 @@ const personality = {
         filePath: string
         timestamp: number
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
-            type: 'added' | 'changed' | 'removed'
-            sectionId: string
-            fileId: string
-            filePath: string
-            timestamp: number
-        }): void => {
-            callback(changeEvent)
-        }
-        ipcRenderer.on('personality:file-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('personality:file-changed', handler)
-        }
+        return typedOn(PersonalityChannels.fileChanged, callback)
     },
     onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
-            callback(errorData)
-        }
-        ipcRenderer.on('personality:watcher-error', handler)
-        return () => {
-            ipcRenderer.removeListener('personality:watcher-error', handler)
-        }
+        return typedOn(PersonalityChannels.watcherError, callback)
     },
     /**
      * Load the section-level config for the given section.
@@ -1050,7 +855,7 @@ const personality = {
         createdAt: string
         updatedAt: string
     } | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:load-section-config', params))
+        return typedInvokeUnwrap(PersonalityChannels.loadSectionConfig, params)
     },
     /**
      * Create or update the section-level config for the given section.
@@ -1079,7 +884,7 @@ const personality = {
         createdAt: string
         updatedAt: string
     }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('personality:save-section-config', params))
+        return typedInvokeUnwrap(PersonalityChannels.saveSectionConfig, params)
     },
     /**
      * Subscribe to section config changes (both app-triggered and external file edits).
@@ -1101,96 +906,34 @@ const personality = {
         } | null
         timestamp: number
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
-            sectionId: string
-            config: {
-                schemaVersion: number
-                provider: string
-                model: string
-                temperature?: number | null
-                maxTokens?: number | null
-                reasoning?: boolean
-                displayName?: string
-                description?: string
-                createdAt: string
-                updatedAt: string
-            } | null
-            timestamp: number
-        }): void => {
-            callback(changeEvent)
-        }
-        ipcRenderer.on('personality:section-config-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('personality:section-config-changed', handler)
-        }
+        return typedOn(PersonalityChannels.sectionConfigChanged, callback)
     },
 }
 
 // ---------------------------------------------------------------------------
 // window.output — Output file management for posts and writings
 // ---------------------------------------------------------------------------
-
-/** A single content block hydrated from its <name>.md file on disk. */
-interface OutputContentBlock {
-    name: string
-    content: string
-    filetype: 'markdown'
-    type: 'content'
-    createdAt: string
-    updatedAt: string
-}
-
-/** Shape of an output entry as returned by the main process. */
-interface OutputFileResult {
-    id: string
-    type: string
-    path: string
-    metadata: {
-        title: string
-        type: string
-        category: string
-        tags: string[]
-        visibility: string
-        provider: string
-        model: string
-        temperature?: number
-        maxTokens?: number | null
-        reasoning?: boolean
-        createdAt: string
-        updatedAt: string
-        content: Array<{
-            type: 'content'
-            filetype: 'markdown'
-            name: string
-            createdAt: string
-            updatedAt: string
-        }>
-    }
-    blocks: OutputContentBlock[]
-    savedAt: number
-}
-
 const output = {
     save: (input: {
         type: string
         blocks: Array<{
             name: string
             content: string
-            filetype?: 'markdown'
-            type?: 'content'
+            createdAt: string
+            updatedAt: string
         }>
         metadata?: Record<string, unknown>
     }): Promise<{ id: string; path: string; savedAt: number }> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:save', input))
+        return typedInvokeUnwrap(OutputChannels.save, input)
     },
-    loadAll: (): Promise<OutputFileResult[]> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:load-all'))
+    loadAll: () => {
+        return typedInvokeUnwrap(OutputChannels.loadAll)
     },
-    loadByType: (type: string): Promise<OutputFileResult[]> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:load-by-type', type))
+    loadByType: (type: string) => {
+        return typedInvokeUnwrap(OutputChannels.loadByType, type)
     },
-    loadOne: (params: { type: string; id: string }): Promise<OutputFileResult | null> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:load-one', params))
+    loadOne: (params: { type: string; id: string }) => {
+        return typedInvokeUnwrap(OutputChannels.loadOne, params)
     },
     update: (params: {
         type: string
@@ -1204,10 +947,10 @@ const output = {
         }>
         metadata: Record<string, unknown>
     }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:update', params))
+        return typedInvokeUnwrap(OutputChannels.update, params)
     },
     delete: (params: { type: string; id: string }): Promise<void> => {
-        return unwrapIpcResult(ipcRenderer.invoke('output:delete', params))
+        return typedInvokeUnwrap(OutputChannels.delete, params)
     },
     onFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
@@ -1216,28 +959,10 @@ const output = {
         filePath: string
         timestamp: number
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, changeEvent: {
-            type: 'added' | 'changed' | 'removed'
-            outputType: string
-            fileId: string
-            filePath: string
-            timestamp: number
-        }): void => {
-            callback(changeEvent)
-        }
-        ipcRenderer.on('output:file-changed', handler)
-        return () => {
-            ipcRenderer.removeListener('output:file-changed', handler)
-        }
+        return typedOn(OutputChannels.fileChanged, callback)
     },
     onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, errorData: { error: string; timestamp: number }): void => {
-            callback(errorData)
-        }
-        ipcRenderer.on('output:watcher-error', handler)
-        return () => {
-            ipcRenderer.removeListener('output:watcher-error', handler)
-        }
+        return typedOn(OutputChannels.watcherError, callback)
     },
 }
 
@@ -1250,10 +975,10 @@ const task = {
         timeoutMs?: number
         windowId?: number
     }): Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('task:submit', { type, input, options })
+        return typedInvokeRaw(TaskChannels.submit, { type, input, options })
     },
     cancel: (taskId: string): Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('task:cancel', taskId)
+        return typedInvokeRaw(TaskChannels.cancel, taskId)
     },
     list: (): Promise<{
         success: true; data: Array<{
@@ -1267,22 +992,13 @@ const task = {
             error?: string
         }>
     } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('task:list')
+        return typedInvokeRaw(TaskChannels.list)
     },
     onEvent: (callback: (event: {
         type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
         data: unknown
     }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, taskEvent: {
-            type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
-            data: unknown
-        }): void => {
-            callback(taskEvent)
-        }
-        ipcRenderer.on('task:event', handler)
-        return () => {
-            ipcRenderer.removeListener('task:event', handler)
-        }
+        return typedOn(TaskChannels.event, callback)
     }
 }
 
@@ -1292,29 +1008,23 @@ const task = {
 const ai = {
     // Run AI inference using the pipeline
     inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:run', agentName, input)
+        return typedInvokeRaw(PipelineChannels.run, agentName, input)
     },
     // Cancel a running AI inference
     cancel: (runId: string): void => {
-        ipcRenderer.send('pipeline:cancel', runId)
+        typedSend(PipelineChannels.cancel, runId)
     },
     // Listen for AI inference events (tokens, thinking, done, error)
     onEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
-        const handler = (_event: Electron.IpcRendererEvent, pipelineEvent: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }): void => {
-            callback(pipelineEvent)
-        }
-        ipcRenderer.on('pipeline:event', handler)
-        return () => {
-            ipcRenderer.removeListener('pipeline:event', handler)
-        }
+        return typedOn(PipelineChannels.event, callback)
     },
     // List available AI agents
     listAgents: (): Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:list-agents')
+        return typedInvokeRaw(PipelineChannels.listAgents)
     },
     // List active AI runs
     listRuns: (): Promise<{ success: true; data: Array<{ runId: string; agentName: string; startedAt: number }> } | { success: false; error: { code: string; message: string } }> => {
-        return ipcRenderer.invoke('pipeline:list-runs')
+        return typedInvokeRaw(PipelineChannels.listRuns)
     }
 }
 

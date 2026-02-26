@@ -2,6 +2,7 @@ import { ipcMain, BrowserWindow, nativeTheme } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import { AppChannels } from '../../shared/types/ipc/channels'
 
 const VALID_THEMES = ['light', 'dark', 'system'] as const
 
@@ -16,7 +17,7 @@ export class ThemeIpc implements IpcModule {
   private lastTheme: string | null = null
 
   register(_container: ServiceContainer, eventBus: EventBus): void {
-    ipcMain.on('set-theme', (event, theme: string) => {
+    ipcMain.on(AppChannels.setTheme, (event, theme: string) => {
       if (!VALID_THEMES.includes(theme as (typeof VALID_THEMES)[number])) return
 
       // Deduplicate to prevent loops in multi-window scenarios
@@ -31,7 +32,7 @@ export class ThemeIpc implements IpcModule {
       const senderContents = event.sender
       BrowserWindow.getAllWindows().forEach((win) => {
         if (!win.isDestroyed() && win.webContents !== senderContents) {
-          win.webContents.send('change-theme', theme)
+          win.webContents.send(AppChannels.changeTheme, theme)
         }
       })
     })

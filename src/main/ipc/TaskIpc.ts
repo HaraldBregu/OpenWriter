@@ -4,6 +4,7 @@ import type { EventBus } from '../core/EventBus'
 import type { TaskExecutorService } from '../tasks/TaskExecutorService'
 import type { TaskOptions } from '../tasks/TaskDescriptor'
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway'
+import { TaskChannels } from '../../shared/types/ipc/channels'
 
 /**
  * Input payload for task:submit channel.
@@ -50,7 +51,7 @@ export class TaskIpc implements IpcModule {
      * Submit a new task for background execution.
      * The windowId is stamped server-side from event.sender.id for security.
      */
-    registerCommandWithEvent('task:submit', async (event, payload: TaskSubmitInput) => {
+    registerCommandWithEvent(TaskChannels.submit, async (event, payload: TaskSubmitInput) => {
       const options: TaskOptions = { ...payload.options }
       // Security: always trust the sender identity from the event, not the renderer.
       options.windowId = event.sender.id
@@ -61,14 +62,14 @@ export class TaskIpc implements IpcModule {
     /**
      * Cancel a running or queued task.
      */
-    registerCommand('task:cancel', (taskId: string) => {
+    registerCommand(TaskChannels.cancel, (taskId: string) => {
       return executor.cancel(taskId)
     })
 
     /**
      * List all active tasks (queued + running).
      */
-    registerQuery('task:list', () => {
+    registerQuery(TaskChannels.list, () => {
       const tasks = executor.listTasks()
       // Strip non-serializable fields for IPC transport
       return tasks.map((t): TaskInfo => ({

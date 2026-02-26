@@ -1,243 +1,37 @@
-type MediaPermissionStatus = 'granted' | 'denied' | 'not-determined' | 'restricted'
-type NetworkConnectionStatus = 'online' | 'offline' | 'unknown'
-
-interface MediaDeviceInfo {
-  deviceId: string
-  kind: 'audioinput' | 'videoinput' | 'audiooutput'
-  label: string
-  groupId: string
-}
-
-interface NetworkInterfaceInfo {
-  name: string
-  family: 'IPv4' | 'IPv6'
-  address: string
-  netmask: string
-  mac: string
-  internal: boolean
-  cidr: string | null
-}
-
-interface NetworkInfo {
-  platform: string
-  supported: boolean
-  isOnline: boolean
-  interfaceCount: number
-}
-
-interface CronJobConfig {
-  id: string
-  name: string
-  schedule: string
-  enabled: boolean
-  lastRun?: Date
-  nextRun?: Date
-  runCount: number
-  description?: string
-}
-
-interface CronJobStatus {
-  id: string
-  name: string
-  schedule: string
-  enabled: boolean
-  running: boolean
-  lastRun?: Date
-  nextRun?: Date
-  runCount: number
-  description?: string
-  humanReadable?: string
-}
-
-interface CronJobResult {
-  id: string
-  timestamp: Date
-  success: boolean
-  message?: string
-  data?: unknown
-}
-
-interface LifecycleEvent {
-  type: string
-  timestamp: number
-  detail?: string
-}
-
-interface LifecycleState {
-  isSingleInstance: boolean
-  events: LifecycleEvent[]
-  appReadyAt: number | null
-  platform: string
-}
-
-interface FileInfo {
-  filePath: string
-  fileName: string
-  content: string
-  size: number
-  lastModified: number
-}
-
-interface FsWatchEvent {
-  eventType: string
-  filename: string | null
-  directory: string
-  timestamp: number
-}
-
-interface DialogResult {
-  type: string
-  timestamp: number
-  data: Record<string, unknown>
-}
-
-interface NotificationOptions {
-  title: string
-  body: string
-  silent?: boolean
-  urgency?: 'normal' | 'critical' | 'low'
-}
-
-interface NotificationResult {
-  id: string
-  title: string
-  body: string
-  timestamp: number
-  action: 'clicked' | 'closed' | 'shown'
-}
-
-interface ClipboardContent {
-  type: 'text' | 'image' | 'html'
-  text?: string
-  html?: string
-  dataURL?: string
-  width?: number
-  height?: number
-  timestamp: number
-}
-
-interface ClipboardImageData {
-  dataURL: string
-  width: number
-  height: number
-}
-
-interface WorkspaceInfo {
-  path: string
-  lastOpened: number
-}
-
-interface PipelineEvent {
-  type: 'token' | 'thinking' | 'done' | 'error'
-  data: unknown
-}
-
-interface TaskSubmitPayload {
-  type: string
-  input: unknown
-  options?: {
-    priority?: 'low' | 'normal' | 'high'
-    timeoutMs?: number
-    windowId?: number
-  }
-}
-
-interface TaskInfo {
-  taskId: string
-  type: string
-  status: string
-  priority: string
-  startedAt?: number
-  completedAt?: number
-  windowId?: number
-  error?: string
-}
-
-interface TaskEvent {
-  type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
-  data: unknown
-}
-
-interface PipelineActiveRun {
-  runId: string
-  agentName: string
-  startedAt: number
-}
-
-type OutputType = 'posts' | 'writings'
-
-/**
- * Describes a single content block entry stored in config.json's `content` array.
- * Each block has its own .md file whose name matches the `name` field.
- */
-interface BlockContentItem {
-  /** Must match the .md filename (without extension) stored in the output folder */
-  name: string
-  type: 'content'
-  filetype: 'markdown'
-  createdAt: string  // ISO 8601
-  updatedAt: string  // ISO 8601
-}
-
-interface OutputFileMetadata {
-  title: string
-  type: OutputType
-  category: string
-  tags: string[]
-  visibility: string
-  provider: string
-  model: string
-  temperature?: number
-  maxTokens?: number | null
-  reasoning?: boolean
-  createdAt: string
-  updatedAt: string
-  /** Ordered list of content blocks; position = display order */
-  content: BlockContentItem[]
-}
-
-/**
- * Represents a fully-loaded output folder.
- * `blocks` is the ordered array of { name, markdownContent } pairs
- * read from the individual .md files listed in config.json's `content` array.
- */
-interface OutputFileBlock {
-  name: string
-  content: string  // raw markdown from <name>.md
-  createdAt: string
-  updatedAt: string
-}
-
-interface OutputFile {
-  id: string
-  type: OutputType
-  path: string
-  metadata: OutputFileMetadata
-  /** Ordered content blocks (replaces the old flat `content: string`) */
-  blocks: OutputFileBlock[]
-  savedAt: number
-}
-
-interface OutputFileChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  outputType: string
-  fileId: string
-  filePath: string
-  timestamp: number
-}
-
-type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
-
-interface ManagedWindowInfo {
-  id: number
-  type: ManagedWindowType
-  title: string
-  createdAt: number
-}
-
-interface WindowManagerState {
-  windows: ManagedWindowInfo[]
-}
+import type {
+  MediaPermissionStatus,
+  MediaDeviceInfo,
+  NetworkConnectionStatus,
+  NetworkInterfaceInfo,
+  NetworkInfo,
+  CronJobConfig,
+  CronJobStatus,
+  CronJobResult,
+  LifecycleEvent,
+  LifecycleState,
+  FileInfo,
+  FsWatchEvent,
+  DialogResult,
+  NotificationOptions,
+  NotificationResult,
+  ClipboardContent,
+  ClipboardImageData,
+  WorkspaceInfo,
+  PipelineEvent,
+  PipelineActiveRun,
+  TaskSubmitPayload,
+  TaskInfo,
+  TaskEvent,
+  OutputType,
+  BlockContentItem,
+  OutputFileMetadata,
+  OutputFileBlock,
+  OutputFile,
+  OutputFileChangeEvent,
+  ManagedWindowType,
+  ManagedWindowInfo,
+  WindowManagerState,
+} from '../shared/types/ipc/types'
 
 declare global {
   interface Window {

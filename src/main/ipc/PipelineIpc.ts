@@ -4,6 +4,7 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { PipelineService } from '../pipeline/PipelineService'
 import { wrapIpcHandler, wrapSimpleHandler } from './IpcErrorHandler'
+import { PipelineChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for the agent pipeline.
@@ -26,30 +27,30 @@ export class PipelineIpc implements IpcModule {
 
     // Start a run -- returns the generated runId to the caller
     ipcMain.handle(
-      'pipeline:run',
+      PipelineChannels.run,
       wrapIpcHandler(async (event, agentName: string, input: { prompt: string; context?: Record<string, unknown> }) => {
         const win = BrowserWindow.fromWebContents(event.sender)
         const windowId = win && !win.isDestroyed() ? win.id : undefined
         const runId = await pipeline.start(agentName, input, windowId)
         return { runId }
-      }, 'pipeline:run')
+      }, PipelineChannels.run)
     )
 
     // Cancel a run -- fire-and-forget (ipcMain.on, not handle)
-    ipcMain.on('pipeline:cancel', (_event, runId: string) => {
+    ipcMain.on(PipelineChannels.cancel, (_event, runId: string) => {
       pipeline.cancel(runId)
     })
 
     // List registered agents
     ipcMain.handle(
-      'pipeline:list-agents',
-      wrapSimpleHandler(() => pipeline.listAgents(), 'pipeline:list-agents')
+      PipelineChannels.listAgents,
+      wrapSimpleHandler(() => pipeline.listAgents(), PipelineChannels.listAgents)
     )
 
     // List active runs
     ipcMain.handle(
-      'pipeline:list-runs',
-      wrapSimpleHandler(() => pipeline.listActiveRuns(), 'pipeline:list-runs')
+      PipelineChannels.listRuns,
+      wrapSimpleHandler(() => pipeline.listActiveRuns(), PipelineChannels.listRuns)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

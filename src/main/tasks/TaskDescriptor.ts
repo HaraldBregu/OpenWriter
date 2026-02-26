@@ -1,12 +1,10 @@
+import type { TaskPriority } from '../../shared/types/ipc/types'
+export type { TaskPriority }
+
 /**
  * Task status enumeration.
  */
 export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
-
-/**
- * Task priority levels for queue ordering.
- */
-export type TaskPriority = 'low' | 'normal' | 'high'
 
 /**
  * Options for task submission.

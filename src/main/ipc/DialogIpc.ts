@@ -4,6 +4,7 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { DialogService } from '../services/dialogs'
 import { wrapSimpleHandler } from './IpcErrorHandler'
+import { DialogChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for native dialog operations.
@@ -15,33 +16,33 @@ export class DialogIpc implements IpcModule {
     const dialog = container.get<DialogService>('dialog')
 
     ipcMain.handle(
-      'dialog-open',
-      wrapSimpleHandler(() => dialog.showOpenDialog(), 'dialog-open')
+      DialogChannels.open,
+      wrapSimpleHandler(() => dialog.showOpenDialog(), DialogChannels.open)
     )
     ipcMain.handle(
-      'dialog-open-directory',
+      DialogChannels.openDirectory,
       wrapSimpleHandler(
         (multiSelections: boolean) => dialog.showOpenDirectoryDialog(multiSelections),
-        'dialog-open-directory'
+        DialogChannels.openDirectory
       )
     )
     ipcMain.handle(
-      'dialog-save',
-      wrapSimpleHandler(() => dialog.showSaveDialog(), 'dialog-save')
+      DialogChannels.save,
+      wrapSimpleHandler(() => dialog.showSaveDialog(), DialogChannels.save)
     )
     ipcMain.handle(
-      'dialog-message',
+      DialogChannels.message,
       wrapSimpleHandler(
         (message: string, detail: string, buttons: string[]) =>
           dialog.showMessageBox(message, detail, buttons),
-        'dialog-message'
+        DialogChannels.message
       )
     )
     ipcMain.handle(
-      'dialog-error',
+      DialogChannels.error,
       wrapSimpleHandler(
         (title: string, content: string) => dialog.showErrorDialog(title, content),
-        'dialog-error'
+        DialogChannels.error
       )
     )
 

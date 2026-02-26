@@ -13,6 +13,7 @@ import type {
 import { VALID_OUTPUT_TYPES } from '../services/output-files'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { OutputChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for output content files (posts, writings).
@@ -40,7 +41,7 @@ export class OutputIpc implements IpcModule {
      * Output: SaveOutputFileResult - { id, path, savedAt }
      */
     ipcMain.handle(
-      'output:save',
+      OutputChannels.save,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, input: SaveOutputFileInput): Promise<SaveOutputFileResult> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
@@ -80,7 +81,7 @@ export class OutputIpc implements IpcModule {
 
           return result
         },
-        'output:save'
+        OutputChannels.save
       )
     )
 
@@ -92,7 +93,7 @@ export class OutputIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'output:update',
+      OutputChannels.update,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -136,7 +137,7 @@ export class OutputIpc implements IpcModule {
 
           console.log(`[OutputIpc] Updated output file: ${params.type}/${params.id}`)
         },
-        'output:update'
+        OutputChannels.update
       )
     )
 
@@ -148,7 +149,7 @@ export class OutputIpc implements IpcModule {
      * Output: OutputFile[] - Array of all output files
      */
     ipcMain.handle(
-      'output:load-all',
+      OutputChannels.loadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<OutputFile[]> => {
         const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
 
@@ -157,7 +158,7 @@ export class OutputIpc implements IpcModule {
         console.log(`[OutputIpc] Loaded ${files.length} output files`)
 
         return files
-      }, 'output:load-all')
+      }, OutputChannels.loadAll)
     )
 
     /**
@@ -168,7 +169,7 @@ export class OutputIpc implements IpcModule {
      * Output: OutputFile[] - Array of output files for that type
      */
     ipcMain.handle(
-      'output:load-by-type',
+      OutputChannels.loadByType,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, outputType: string): Promise<OutputFile[]> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
@@ -190,7 +191,7 @@ export class OutputIpc implements IpcModule {
 
           return files
         },
-        'output:load-by-type'
+        OutputChannels.loadByType
       )
     )
 
@@ -202,7 +203,7 @@ export class OutputIpc implements IpcModule {
      * Output: OutputFile | null - The output file or null if not found
      */
     ipcMain.handle(
-      'output:load-one',
+      OutputChannels.loadOne,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -235,7 +236,7 @@ export class OutputIpc implements IpcModule {
 
           return file
         },
-        'output:load-one'
+        OutputChannels.loadOne
       )
     )
 
@@ -247,7 +248,7 @@ export class OutputIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'output:delete',
+      OutputChannels.delete,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, params: { type: string; id: string }): Promise<void> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
@@ -271,7 +272,7 @@ export class OutputIpc implements IpcModule {
 
           console.log(`[OutputIpc] Deleted output file: ${params.type}/${params.id}`)
         },
-        'output:delete'
+        OutputChannels.delete
       )
     )
 
