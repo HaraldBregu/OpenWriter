@@ -227,7 +227,7 @@ const cron: CronApi = {
 // ---------------------------------------------------------------------------
 // window.lifecycle — App lifecycle state and events
 // ---------------------------------------------------------------------------
-const lifecycle = {
+const lifecycle: LifecycleApi = {
     getState: (): Promise<{
         isSingleInstance: boolean
         events: Array<{ type: string; timestamp: number; detail?: string }>
