@@ -1,29 +1,10 @@
 import type { IpcMainInvokeEvent } from 'electron'
 
-/**
- * Standardized IPC error response
- */
-export interface IpcError {
-  success: false
-  error: {
-    code: string
-    message: string
-    stack?: string
-  }
-}
+// Re-export shared IPC result types for backward compatibility
+export type { IpcError, IpcSuccess, IpcResult } from '../../shared/types/ipc/ipc-result'
 
-/**
- * Standardized IPC success response
- */
-export interface IpcSuccess<T> {
-  success: true
-  data: T
-}
-
-/**
- * Union type for IPC responses
- */
-export type IpcResult<T> = IpcSuccess<T> | IpcError
+// Import the types we need locally
+import type { IpcResult } from '../../shared/types/ipc/ipc-result'
 
 /**
  * Wraps an IPC handler with standardized error handling

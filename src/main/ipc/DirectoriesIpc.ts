@@ -6,6 +6,7 @@ import type { EventBus } from '../core/EventBus'
 import type { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { DirectoriesChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for indexed directory management.
@@ -21,70 +22,70 @@ export class DirectoriesIpc implements IpcModule {
 
     // List all indexed directories (window-scoped)
     ipcMain.handle(
-      'directories:list',
+      DirectoriesChannels.list,
       wrapIpcHandler((event: IpcMainInvokeEvent) => {
         const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
         return metadata.getDirectories()
-      }, 'directories:list')
+      }, DirectoriesChannels.list)
     )
 
     // Add a single directory (window-scoped)
     ipcMain.handle(
-      'directories:add',
+      DirectoriesChannels.add,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPath: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.addDirectory(dirPath)
         },
-        'directories:add'
+        DirectoriesChannels.add
       )
     )
 
     // Add multiple directories (window-scoped)
     ipcMain.handle(
-      'directories:add-many',
+      DirectoriesChannels.addMany,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPaths: string[]) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.addDirectories(dirPaths)
         },
-        'directories:add-many'
+        DirectoriesChannels.addMany
       )
     )
 
     // Remove a directory by ID (window-scoped)
     ipcMain.handle(
-      'directories:remove',
+      DirectoriesChannels.remove,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, id: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.removeDirectory(id)
         },
-        'directories:remove'
+        DirectoriesChannels.remove
       )
     )
 
     // Validate a directory path (window-scoped)
     ipcMain.handle(
-      'directories:validate',
+      DirectoriesChannels.validate,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPath: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.validateDirectory(dirPath)
         },
-        'directories:validate'
+        DirectoriesChannels.validate
       )
     )
 
     // Mark a directory as indexed (window-scoped)
     ipcMain.handle(
-      'directories:mark-indexed',
+      DirectoriesChannels.markIndexed,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, id: string, isIndexed: boolean) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.markDirectoryIndexed(id, isIndexed)
         },
-        'directories:mark-indexed'
+        DirectoriesChannels.markIndexed
       )
     )
 

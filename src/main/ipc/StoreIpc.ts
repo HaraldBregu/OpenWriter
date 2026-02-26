@@ -6,6 +6,7 @@ import type { StoreService } from '../services/store'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
 import { StoreValidators } from '../shared/validators'
 import { wrapSimpleHandler } from './IpcErrorHandler'
+import { StoreChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for settings/store operations.
@@ -19,20 +20,20 @@ export class StoreIpc implements IpcModule {
     // --- New provider settings channels ---
 
     ipcMain.handle(
-      'store-get-all-provider-settings',
-      wrapSimpleHandler(() => store.getAllProviderSettings(), 'store-get-all-provider-settings')
+      StoreChannels.getAllProviderSettings,
+      wrapSimpleHandler(() => store.getAllProviderSettings(), StoreChannels.getAllProviderSettings)
     )
 
     ipcMain.handle(
-      'store-get-provider-settings',
+      StoreChannels.getProviderSettings,
       wrapSimpleHandler((providerId: string) => {
         StoreValidators.validateProviderId(providerId)
         return store.getProviderSettings(providerId)
-      }, 'store-get-provider-settings')
+      }, StoreChannels.getProviderSettings)
     )
 
     ipcMain.handle(
-      'store-set-provider-settings',
+      StoreChannels.setProviderSettings,
       wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
         StoreValidators.validateProviderId(providerId)
         StoreValidators.validateModelName(settings.selectedModel)
@@ -41,11 +42,11 @@ export class StoreIpc implements IpcModule {
         StoreValidators.validateMaxTokens(settings.maxTokens)
         StoreValidators.validateReasoning(settings.reasoning)
         return store.setProviderSettings(providerId, settings)
-      }, 'store-set-provider-settings')
+      }, StoreChannels.setProviderSettings)
     )
 
     ipcMain.handle(
-      'store-set-inference-defaults',
+      StoreChannels.setInferenceDefaults,
       wrapSimpleHandler((providerId: string, update: InferenceDefaultsUpdate) => {
         StoreValidators.validateProviderId(providerId)
         if (update.temperature !== undefined) {
@@ -58,66 +59,66 @@ export class StoreIpc implements IpcModule {
           StoreValidators.validateReasoning(update.reasoning)
         }
         return store.setInferenceDefaults(providerId, update)
-      }, 'store-set-inference-defaults')
+      }, StoreChannels.setInferenceDefaults)
     )
 
     // --- Legacy model settings channels ---
 
     ipcMain.handle(
-      'store-get-model-settings',
+      StoreChannels.getModelSettings,
       wrapSimpleHandler((providerId: string) => {
         StoreValidators.validateProviderId(providerId)
         return store.getModelSettings(providerId)
-      }, 'store-get-model-settings')
+      }, StoreChannels.getModelSettings)
     )
     ipcMain.handle(
-      'store-get-all-model-settings',
-      wrapSimpleHandler(() => store.getAllModelSettings(), 'store-get-all-model-settings')
+      StoreChannels.getAllModelSettings,
+      wrapSimpleHandler(() => store.getAllModelSettings(), StoreChannels.getAllModelSettings)
     )
     ipcMain.handle(
-      'store-set-selected-model',
+      StoreChannels.setSelectedModel,
       wrapSimpleHandler((providerId: string, modelId: string) => {
         StoreValidators.validateProviderId(providerId)
         StoreValidators.validateModelName(modelId)
         return store.setSelectedModel(providerId, modelId)
-      }, 'store-set-selected-model')
+      }, StoreChannels.setSelectedModel)
     )
     ipcMain.handle(
-      'store-set-api-token',
+      StoreChannels.setApiToken,
       wrapSimpleHandler((providerId: string, token: string) => {
         StoreValidators.validateProviderId(providerId)
         StoreValidators.validateApiToken(token)
         return store.setApiToken(providerId, token)
-      }, 'store-set-api-token')
+      }, StoreChannels.setApiToken)
     )
     ipcMain.handle(
-      'store-set-model-settings',
+      StoreChannels.setModelSettings,
       wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
         StoreValidators.validateProviderId(providerId)
         return store.setModelSettings(providerId, settings)
-      }, 'store-set-model-settings')
+      }, StoreChannels.setModelSettings)
     )
 
     // --- Workspace settings channels ---
 
     ipcMain.handle(
-      'store-get-current-workspace',
-      wrapSimpleHandler(() => store.getCurrentWorkspace(), 'store-get-current-workspace')
+      StoreChannels.getCurrentWorkspace,
+      wrapSimpleHandler(() => store.getCurrentWorkspace(), StoreChannels.getCurrentWorkspace)
     )
     ipcMain.handle(
-      'store-set-current-workspace',
+      StoreChannels.setCurrentWorkspace,
       wrapSimpleHandler(
         (workspacePath: string) => store.setCurrentWorkspace(workspacePath),
-        'store-set-current-workspace'
+        StoreChannels.setCurrentWorkspace
       )
     )
     ipcMain.handle(
-      'store-get-recent-workspaces',
-      wrapSimpleHandler(() => store.getRecentWorkspaces(), 'store-get-recent-workspaces')
+      StoreChannels.getRecentWorkspaces,
+      wrapSimpleHandler(() => store.getRecentWorkspaces(), StoreChannels.getRecentWorkspaces)
     )
     ipcMain.handle(
-      'store-clear-current-workspace',
-      wrapSimpleHandler(() => store.clearCurrentWorkspace(), 'store-clear-current-workspace')
+      StoreChannels.clearCurrentWorkspace,
+      wrapSimpleHandler(() => store.clearCurrentWorkspace(), StoreChannels.clearCurrentWorkspace)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

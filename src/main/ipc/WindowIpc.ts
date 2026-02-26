@@ -5,6 +5,7 @@ import type { EventBus } from '../core/EventBus'
 import type { WindowManagerService } from '../services/window-manager'
 import type { AppState } from '../core/AppState'
 import { wrapIpcHandler, wrapSimpleHandler } from './IpcErrorHandler'
+import { WindowChannels, WmChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for window management operations.
@@ -19,42 +20,42 @@ export class WindowIpc implements IpcModule {
 
     // Window creation — channel names must match what the preload's window.wm namespace calls
     ipcMain.handle(
-      'wm-create-child',
-      wrapSimpleHandler(() => windowManager.createChildWindow(), 'wm-create-child')
+      WmChannels.createChild,
+      wrapSimpleHandler(() => windowManager.createChildWindow(), WmChannels.createChild)
     )
     ipcMain.handle(
-      'wm-create-modal',
-      wrapSimpleHandler(() => windowManager.createModalWindow(), 'wm-create-modal')
+      WmChannels.createModal,
+      wrapSimpleHandler(() => windowManager.createModalWindow(), WmChannels.createModal)
     )
     ipcMain.handle(
-      'wm-create-frameless',
-      wrapSimpleHandler(() => windowManager.createFramelessWindow(), 'wm-create-frameless')
+      WmChannels.createFrameless,
+      wrapSimpleHandler(() => windowManager.createFramelessWindow(), WmChannels.createFrameless)
     )
     ipcMain.handle(
-      'wm-create-widget',
-      wrapSimpleHandler(() => windowManager.createWidgetWindow(), 'wm-create-widget')
+      WmChannels.createWidget,
+      wrapSimpleHandler(() => windowManager.createWidgetWindow(), WmChannels.createWidget)
     )
 
     // Window management — channel names must match what the preload's window.wm namespace calls
     ipcMain.handle(
-      'wm-close-window',
-      wrapSimpleHandler((id: number) => windowManager.closeWindow(id), 'wm-close-window')
+      WmChannels.closeWindow,
+      wrapSimpleHandler((id: number) => windowManager.closeWindow(id), WmChannels.closeWindow)
     )
     ipcMain.handle(
-      'wm-close-all',
-      wrapSimpleHandler(() => windowManager.closeAllManaged(), 'wm-close-all')
+      WmChannels.closeAll,
+      wrapSimpleHandler(() => windowManager.closeAllManaged(), WmChannels.closeAll)
     )
     ipcMain.handle(
-      'wm-get-state',
-      wrapSimpleHandler(() => windowManager.getState(), 'wm-get-state')
+      WmChannels.getState,
+      wrapSimpleHandler(() => windowManager.getState(), WmChannels.getState)
     )
 
     // Window control handlers
-    ipcMain.on('window:minimize', (event) => {
+    ipcMain.on(WindowChannels.minimize, (event) => {
       BrowserWindow.fromWebContents(event.sender)?.minimize()
     })
 
-    ipcMain.on('window:maximize', (event) => {
+    ipcMain.on(WindowChannels.maximize, (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
       if (win.isMaximized()) {
@@ -64,29 +65,29 @@ export class WindowIpc implements IpcModule {
       }
     })
 
-    ipcMain.on('window:close', (event) => {
+    ipcMain.on(WindowChannels.close, (event) => {
       BrowserWindow.fromWebContents(event.sender)?.close()
     })
 
     ipcMain.handle(
-      'window:is-maximized',
+      WindowChannels.isMaximized,
       wrapIpcHandler(
         (event) => BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false,
-        'window:is-maximized'
+        WindowChannels.isMaximized
       )
     )
 
     ipcMain.handle(
-      'window:is-fullscreen',
+      WindowChannels.isFullScreen,
       wrapIpcHandler(
         (event) => BrowserWindow.fromWebContents(event.sender)?.isFullScreen() ?? false,
-        'window:is-fullscreen'
+        WindowChannels.isFullScreen
       )
     )
 
     ipcMain.handle(
-      'window:get-platform',
-      wrapSimpleHandler(() => process.platform, 'window:get-platform')
+      WindowChannels.getPlatform,
+      wrapSimpleHandler(() => process.platform, WindowChannels.getPlatform)
     )
 
     // Application popup menu (hamburger button)
@@ -94,7 +95,7 @@ export class WindowIpc implements IpcModule {
     // proven working pattern used by context-menu and context-menu-editable
     // in CustomIpc. The ipcMain.handle + ipcRenderer.invoke pattern was
     // silently failing for this channel.
-    ipcMain.on('window:popup-menu', (event) => {
+    ipcMain.on(WindowChannels.popupMenu, (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 

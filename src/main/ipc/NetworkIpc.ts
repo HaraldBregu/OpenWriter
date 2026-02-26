@@ -3,6 +3,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { NetworkService } from '../services/network'
+import { NetworkChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for network information.
@@ -13,10 +14,10 @@ export class NetworkIpc implements IpcModule {
   register(container: ServiceContainer, eventBus: EventBus): void {
     const network = container.get<NetworkService>('network')
 
-    ipcMain.handle('network-get-interfaces', () => network.getNetworkInterfaces())
-    ipcMain.handle('network-get-info', () => network.getNetworkInfo())
-    ipcMain.handle('network-get-connection-status', () => network.getConnectionStatus())
-    ipcMain.handle('network-is-supported', () => network.isNetworkSupported())
+    ipcMain.handle(NetworkChannels.getInterfaces, () => network.getNetworkInterfaces())
+    ipcMain.handle(NetworkChannels.getInfo, () => network.getNetworkInfo())
+    ipcMain.handle(NetworkChannels.getConnectionStatus, () => network.getConnectionStatus())
+    ipcMain.handle(NetworkChannels.isSupported, () => network.isNetworkSupported())
 
     // Start monitoring and broadcast status changes
     network.startMonitoring((status) => {

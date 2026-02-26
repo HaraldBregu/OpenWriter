@@ -4,6 +4,7 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { CronService } from '../services/cron'
 import { wrapSimpleHandler } from './IpcErrorHandler'
+import { CronChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for cron job management.
@@ -16,41 +17,41 @@ export class CronIpc implements IpcModule {
     const cron = container.get<CronService>('cron')
 
     ipcMain.handle(
-      'cron-get-all-jobs',
-      wrapSimpleHandler(() => cron.getAllJobs(), 'cron-get-all-jobs')
+      CronChannels.getAll,
+      wrapSimpleHandler(() => cron.getAllJobs(), CronChannels.getAll)
     )
     ipcMain.handle(
-      'cron-get-job',
-      wrapSimpleHandler((id: string) => cron.getJob(id), 'cron-get-job')
+      CronChannels.getJob,
+      wrapSimpleHandler((id: string) => cron.getJob(id), CronChannels.getJob)
     )
     ipcMain.handle(
-      'cron-start-job',
-      wrapSimpleHandler((id: string) => cron.startJob(id), 'cron-start-job')
+      CronChannels.start,
+      wrapSimpleHandler((id: string) => cron.startJob(id), CronChannels.start)
     )
     ipcMain.handle(
-      'cron-stop-job',
-      wrapSimpleHandler((id: string) => cron.stopJob(id), 'cron-stop-job')
+      CronChannels.stop,
+      wrapSimpleHandler((id: string) => cron.stopJob(id), CronChannels.stop)
     )
     ipcMain.handle(
-      'cron-delete-job',
-      wrapSimpleHandler((id: string) => cron.deleteJob(id), 'cron-delete-job')
+      CronChannels.delete,
+      wrapSimpleHandler((id: string) => cron.deleteJob(id), CronChannels.delete)
     )
     ipcMain.handle(
-      'cron-create-job',
-      wrapSimpleHandler((config) => cron.createJob(config), 'cron-create-job')
+      CronChannels.create,
+      wrapSimpleHandler((config) => cron.createJob(config), CronChannels.create)
     )
     ipcMain.handle(
-      'cron-update-schedule',
+      CronChannels.updateSchedule,
       wrapSimpleHandler(
         (id: string, schedule: string) => cron.updateJobSchedule(id, schedule),
-        'cron-update-schedule'
+        CronChannels.updateSchedule
       )
     )
     ipcMain.handle(
-      'cron-validate-expression',
+      CronChannels.validateExpression,
       wrapSimpleHandler(
         (expression: string) => cron.validateCronExpression(expression),
-        'cron-validate-expression'
+        CronChannels.validateExpression
       )
     )
 

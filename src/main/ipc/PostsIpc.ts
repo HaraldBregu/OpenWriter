@@ -9,6 +9,7 @@ import type { WorkspaceService } from '../services/workspace'
 import type { FileWatcherService } from '../services/file-watcher'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { PostsChannels } from '../../shared/types/ipc/channels'
 
 /**
  * Post structure from the renderer process.
@@ -76,7 +77,7 @@ export class PostsIpc implements IpcModule {
      * Output: SyncResult - Summary of sync operation
      */
     ipcMain.handle(
-      'posts:sync-to-workspace',
+      PostsChannels.syncToWorkspace,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, posts: Post[]): Promise<SyncResult> => {
         // Get window-scoped services
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
@@ -129,7 +130,7 @@ export class PostsIpc implements IpcModule {
           failedCount,
           errors: errors.length > 0 ? errors : undefined
         }
-      }, 'posts:sync-to-workspace')
+      }, PostsChannels.syncToWorkspace)
     )
 
     /**
@@ -140,7 +141,7 @@ export class PostsIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'posts:update-post',
+      PostsChannels.updatePost,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, post: Post): Promise<void> => {
         // Get window-scoped services
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
@@ -160,7 +161,7 @@ export class PostsIpc implements IpcModule {
 
         // Invalidate cache after update
         this.invalidateCache()
-      }, 'posts:update-post')
+      }, PostsChannels.updatePost)
     )
 
     /**
@@ -171,7 +172,7 @@ export class PostsIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'posts:delete-post',
+      PostsChannels.deletePost,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, postId: string): Promise<void> => {
         // Get window-scoped services
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
@@ -204,7 +205,7 @@ export class PostsIpc implements IpcModule {
           }
           console.log(`[PostsIpc] Post ${postId} already deleted (file not found)`)
         }
-      }, 'posts:delete-post')
+      }, PostsChannels.deletePost)
     )
 
     /**
@@ -221,7 +222,7 @@ export class PostsIpc implements IpcModule {
      *   - Validates post structure
      */
     ipcMain.handle(
-      'posts:load-from-workspace',
+      PostsChannels.loadFromWorkspace,
       wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<Post[]> => {
         // Get window-scoped workspace service
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
@@ -328,7 +329,7 @@ export class PostsIpc implements IpcModule {
         this.loadCache = { workspacePath: currentWorkspace, timestamp: now, posts }
 
         return posts
-      }, 'posts:load-from-workspace')
+      }, PostsChannels.loadFromWorkspace)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

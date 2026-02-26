@@ -8,6 +8,8 @@ import type { WorkspaceService } from '../services/workspace'
 import type { LoggerService } from '../services/logger'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { PathValidator } from '../shared/PathValidator'
+import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for workspace management.
@@ -24,7 +26,7 @@ export class WorkspaceIpc implements IpcModule {
     // Workspace folder selection dialog (global, not window-specific)
     // Shows folder picker and returns the selected path
     ipcMain.handle(
-      'workspace:select-folder',
+      WorkspaceChannels.selectFolder,
       wrapSimpleHandler(async () => {
         const result = await dialog.showOpenDialog({
           properties: ['openDirectory', 'createDirectory'],
@@ -38,67 +40,67 @@ export class WorkspaceIpc implements IpcModule {
           return workspacePath
         }
         return null
-      }, 'workspace:select-folder')
+      }, WorkspaceChannels.selectFolder)
     )
 
     // Get current workspace (window-scoped)
     ipcMain.handle(
-      'workspace-get-current',
+      WorkspaceChannels.getCurrent,
       wrapIpcHandler((event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         return workspace.getCurrent()
-      }, 'workspace-get-current')
+      }, WorkspaceChannels.getCurrent)
     )
 
     // Set current workspace (window-scoped)
     // Sets the workspace in the current window
     ipcMain.handle(
-      'workspace-set-current',
+      WorkspaceChannels.setCurrent,
       wrapIpcHandler((event: IpcMainInvokeEvent, workspacePath: string) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         logger.info('WorkspaceIpc', `Setting workspace: ${workspacePath}`)
         workspace.setCurrent(workspacePath)
-      }, 'workspace-set-current')
+      }, WorkspaceChannels.setCurrent)
     )
 
     // Get recent workspaces (window-scoped)
     ipcMain.handle(
-      'workspace-get-recent',
+      WorkspaceChannels.getRecent,
       wrapIpcHandler((event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         return workspace.getRecent()
-      }, 'workspace-get-recent')
+      }, WorkspaceChannels.getRecent)
     )
 
     // Clear current workspace (window-scoped)
     ipcMain.handle(
-      'workspace-clear',
+      WorkspaceChannels.clear,
       wrapIpcHandler((event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         workspace.clear()
-      }, 'workspace-clear')
+      }, WorkspaceChannels.clear)
     )
 
     // Check if a directory exists (global utility, read-only boolean check)
     ipcMain.handle(
-      'workspace-directory-exists',
+      WorkspaceChannels.directoryExists,
       wrapSimpleHandler((directoryPath: string) => {
         try {
           return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory()
         } catch {
           return false
         }
-      }, 'workspace-directory-exists')
+      }, WorkspaceChannels.directoryExists)
     )
 
     // Remove workspace from recent history (window-scoped)
     ipcMain.handle(
-      'workspace-remove-recent',
+      WorkspaceChannels.removeRecent,
       wrapIpcHandler((event: IpcMainInvokeEvent, workspacePath: string) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         workspace.removeRecent(workspacePath)
         logger.info('WorkspaceIpc', `Removed from recent: ${workspacePath}`)
-      }, 'workspace-remove-recent')
+      }, WorkspaceChannels.removeRecent)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)

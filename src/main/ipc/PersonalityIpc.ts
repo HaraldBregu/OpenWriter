@@ -13,6 +13,7 @@ import type {
 } from '../services/personality-files'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
+import { PersonalityChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for personality conversation files.
@@ -39,7 +40,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SavePersonalityFileResult - { id, path, savedAt }
      */
     ipcMain.handle(
-      'personality:save',
+      PersonalityChannels.save,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, input: SavePersonalityFileInput): Promise<SavePersonalityFileResult> => {
           const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
@@ -59,7 +60,7 @@ export class PersonalityIpc implements IpcModule {
 
           return result
         },
-        'personality:save'
+        PersonalityChannels.save
       )
     )
 
@@ -71,7 +72,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: PersonalityFile[] - Array of all personality files
      */
     ipcMain.handle(
-      'personality:load-all',
+      PersonalityChannels.loadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<PersonalityFile[]> => {
         const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
 
@@ -80,7 +81,7 @@ export class PersonalityIpc implements IpcModule {
         console.log(`[PersonalityIpc] Loaded ${files.length} personality files`)
 
         return files
-      }, 'personality:load-all')
+      }, PersonalityChannels.loadAll)
     )
 
     /**
@@ -91,7 +92,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: PersonalityFile | null - The personality file or null if not found
      */
     ipcMain.handle(
-      'personality:load-one',
+      PersonalityChannels.loadOne,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -118,7 +119,7 @@ export class PersonalityIpc implements IpcModule {
 
           return file
         },
-        'personality:load-one'
+        PersonalityChannels.loadOne
       )
     )
 
@@ -130,7 +131,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      'personality:delete',
+      PersonalityChannels.delete,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, params: { sectionId: string; id: string }): Promise<void> => {
           const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
@@ -148,7 +149,7 @@ export class PersonalityIpc implements IpcModule {
 
           console.log(`[PersonalityIpc] Deleted personality file: ${params.sectionId}/${params.id}`)
         },
-        'personality:delete'
+        PersonalityChannels.delete
       )
     )
 
@@ -160,7 +161,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SectionConfig | null — the config object, or null if not yet created
      */
     ipcMain.handle(
-      'personality:load-section-config',
+      PersonalityChannels.loadSectionConfig,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -183,7 +184,7 @@ export class PersonalityIpc implements IpcModule {
 
           return config
         },
-        'personality:load-section-config'
+        PersonalityChannels.loadSectionConfig
       )
     )
 
@@ -195,7 +196,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SectionConfig — the full updated config
      */
     ipcMain.handle(
-      'personality:save-section-config',
+      PersonalityChannels.saveSectionConfig,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -219,7 +220,7 @@ export class PersonalityIpc implements IpcModule {
 
           return config
         },
-        'personality:save-section-config'
+        PersonalityChannels.saveSectionConfig
       )
     )
 

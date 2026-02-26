@@ -5,6 +5,7 @@ import type { EventBus } from '../core/EventBus'
 import type { FilesystemService } from '../services/filesystem'
 import { PathValidator } from '../shared/PathValidator'
 import { wrapSimpleHandler } from './IpcErrorHandler'
+import { FsChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for filesystem operations.
@@ -17,51 +18,51 @@ export class FilesystemIpc implements IpcModule {
     const fs = container.get<FilesystemService>('filesystem')
 
     ipcMain.handle(
-      'fs-open-file-dialog',
-      wrapSimpleHandler(() => fs.openFileDialog(), 'fs-open-file-dialog')
+      FsChannels.openFileDialog,
+      wrapSimpleHandler(() => fs.openFileDialog(), FsChannels.openFileDialog)
     )
     ipcMain.handle(
-      'fs-read-file',
+      FsChannels.readFile,
       wrapSimpleHandler((path: string) => {
         PathValidator.assertPathSafe(path)
         return fs.readFile(path)
-      }, 'fs-read-file')
+      }, FsChannels.readFile)
     )
     ipcMain.handle(
-      'fs-write-file',
+      FsChannels.writeFile,
       wrapSimpleHandler((path: string, content: string) => {
         PathValidator.assertPathSafe(path)
         return fs.writeFile(path, content)
-      }, 'fs-write-file')
+      }, FsChannels.writeFile)
     )
     ipcMain.handle(
-      'fs-save-file-dialog',
+      FsChannels.saveFileDialog,
       wrapSimpleHandler(
         (defaultName: string, content: string) => fs.saveFileDialog(defaultName, content),
-        'fs-save-file-dialog'
+        FsChannels.saveFileDialog
       )
     )
     ipcMain.handle(
-      'fs-select-directory',
-      wrapSimpleHandler(() => fs.selectDirectory(), 'fs-select-directory')
+      FsChannels.selectDirectory,
+      wrapSimpleHandler(() => fs.selectDirectory(), FsChannels.selectDirectory)
     )
     ipcMain.handle(
-      'fs-watch-directory',
+      FsChannels.watchDirectory,
       wrapSimpleHandler((path: string) => {
         PathValidator.assertPathSafe(path)
         return fs.watchDirectory(path)
-      }, 'fs-watch-directory')
+      }, FsChannels.watchDirectory)
     )
     ipcMain.handle(
-      'fs-unwatch-directory',
+      FsChannels.unwatchDirectory,
       wrapSimpleHandler((path: string) => {
         PathValidator.assertPathSafe(path)
         return fs.unwatchDirectory(path)
-      }, 'fs-unwatch-directory')
+      }, FsChannels.unwatchDirectory)
     )
     ipcMain.handle(
-      'fs-get-watched-directories',
-      wrapSimpleHandler(() => fs.getWatchedDirectories(), 'fs-get-watched-directories')
+      FsChannels.getWatchedDirectories,
+      wrapSimpleHandler(() => fs.getWatchedDirectories(), FsChannels.getWatchedDirectories)
     )
 
     // Broadcast file change events to all windows
