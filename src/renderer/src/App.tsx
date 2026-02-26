@@ -21,13 +21,8 @@ const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
 const EmotionalDepthPage = lazy(() => import('./pages/personality/EmotionalDepthPage'))
 const ConsciousnessPage = lazy(() => import('./pages/personality/ConsciousnessPage'))
 const MotivationPage = lazy(() => import('./pages/personality/MotivationPage'))
-const MoralIntuitionPage = lazy(() => import('./pages/personality/MoralIntuitionPage'))
-const IrrationalityPage = lazy(() => import('./pages/personality/IrrationalityPage'))
-const GrowthPage = lazy(() => import('./pages/personality/GrowthPage'))
 const SocialIdentityPage = lazy(() => import('./pages/personality/SocialIdentityPage'))
 const CreativityPage = lazy(() => import('./pages/personality/CreativityPage'))
-const MortalityPage = lazy(() => import('./pages/personality/MortalityPage'))
-const ContradictionPage = lazy(() => import('./pages/personality/ContradictionPage'))
 const DebugPage = lazy(() => import('./pages/DebugPage'))
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
