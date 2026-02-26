@@ -54,6 +54,7 @@ export class WorkspaceService implements Disposable {
     if (persisted && this.isValidDirectory(persisted)) {
       this.currentPath = persisted
       this.openedAt = Date.now()
+      this.startValidationTimer()
       console.log('[WorkspaceService] Restored workspace from store:', persisted)
     } else if (persisted) {
       console.log('[WorkspaceService] Persisted workspace no longer exists, clearing:', persisted)
