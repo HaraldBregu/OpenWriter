@@ -21,14 +21,6 @@ const WelcomePage: React.FC = () => {
   const { t } = useTranslation()
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
 
-  // Debug: Check if window bridges are available
-  useEffect(() => {
-    console.log('[WelcomePage] window.workspace:', typeof (window as any).workspace)
-    console.log('[WelcomePage] window.workspace?.selectFolder:', typeof (window as any).workspace?.selectFolder)
-    console.log('[WelcomePage] __preloadStarted:', (globalThis as any).__preloadStarted)
-    console.log('[WelcomePage] __preloadSuccess:', (globalThis as any).__preloadSuccess)
-  }, [])
-
   useEffect(() => {
     loadRecentProjects()
   }, [])

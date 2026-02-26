@@ -239,8 +239,7 @@ interface WindowManagerState {
   windows: ManagedWindowInfo[]
 }
 
-declare global {
-  interface Window {
+interface Window {
     /** General application utilities */
     app: {
       playSound: () => void
@@ -751,4 +750,3 @@ declare global {
       listRuns: () => Promise<{ success: true; data: PipelineActiveRun[] } | { success: false; error: { code: string; message: string } }>
     }
   }
-}

@@ -34,7 +34,7 @@ export function useMediaRecorder(): UseMediaRecorderReturn {
   const [error, setError] = useState<string | null>(null)
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const timeIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const timeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(0)
   const pausedTimeRef = useRef<number>(0)
 

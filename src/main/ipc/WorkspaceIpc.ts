@@ -8,7 +8,6 @@ import type { WorkspaceService } from '../services/workspace'
 import type { LoggerService } from '../services/logger'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { PathValidator } from '../shared/PathValidator'
 
 /**
  * IPC handlers for workspace management.
@@ -80,15 +79,11 @@ export class WorkspaceIpc implements IpcModule {
       }, 'workspace-clear')
     )
 
-    // Check if a directory exists (global utility)
+    // Check if a directory exists (global utility, read-only boolean check)
     ipcMain.handle(
       'workspace-directory-exists',
       wrapSimpleHandler((directoryPath: string) => {
         try {
-          // Validate path is safe before checking filesystem
-          if (!PathValidator.isPathSafe(directoryPath)) {
-            return false
-          }
           return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory()
         } catch {
           return false
