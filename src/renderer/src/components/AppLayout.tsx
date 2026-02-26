@@ -193,6 +193,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // Listen for workspace changes from main process and update Redux
   useWorkspaceListener();
 
+  // Monitor workspace folder for external deletion and redirect to Welcome
+  useWorkspaceValidation();
+
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Writing: true,
     Knowledge: true,
