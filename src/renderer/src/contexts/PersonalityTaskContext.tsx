@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useRef, useCallback, useSyncExternalStore } from 'react'
-import type { AIMessage } from '@/hooks/useAI'
 import { loadPersonalityFiles } from '@/store/personalityFilesSlice'
 import { useAppDispatch } from '@/store'
 import type { IPersonalityTaskService } from '@/services/IPersonalityTaskService'
