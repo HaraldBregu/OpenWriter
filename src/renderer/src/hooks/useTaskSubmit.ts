@@ -45,11 +45,10 @@ const TERMINAL_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
   'cancelled',
 ])
 
-// Active statuses — the task can still receive lifecycle events.
-const ACTIVE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
+// Statuses from which a task can be paused.
+const PAUSABLE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
   'queued',
   'running',
-  'paused',
 ])
 
 // ---------------------------------------------------------------------------
