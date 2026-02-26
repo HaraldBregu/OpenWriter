@@ -150,24 +150,6 @@ export interface WindowApi {
   onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
 }
 
-/** Persisted AI model settings */
-export interface StoreApi {
-  getAllProviderSettings: () => Promise<Record<string, ProviderSettings>>
-  getProviderSettings: (providerId: string) => Promise<ProviderSettings | null>
-  setProviderSettings: (providerId: string, settings: ProviderSettings) => Promise<void>
-  setInferenceDefaults: (providerId: string, update: InferenceDefaultsUpdate) => Promise<void>
-  /** @deprecated Use getAllProviderSettings instead */
-  getAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
-  /** @deprecated Use getProviderSettings instead */
-  getModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
-  /** @deprecated Use setProviderSettings instead */
-  setSelectedModel: (providerId: string, modelId: string) => Promise<void>
-  /** @deprecated Use setProviderSettings instead */
-  setApiToken: (providerId: string, token: string) => Promise<void>
-  /** @deprecated Use setProviderSettings instead */
-  setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
-}
-
 /** Workspace folder selection and recent workspaces */
 export interface WorkspaceApi {
   selectFolder: () => Promise<string | null>

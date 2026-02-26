@@ -55,6 +55,10 @@ import type {
 // Channel Name Constants (grouped by domain)
 // ===========================================================================
 
+// StoreChannels has been merged into AppChannels. This alias is kept so that
+// any code that still imports StoreChannels continues to compile while the
+// migration is in progress. It should be removed once all call-sites are gone.
+/** @deprecated Import from AppChannels instead */
 export const StoreChannels = {
   getAllProviderSettings: 'store-get-all-provider-settings',
   getProviderSettings: 'store-get-provider-settings',
