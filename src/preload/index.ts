@@ -262,32 +262,28 @@ const lifecycle: LifecycleApi = {
 // window.wm — Window manager (child / modal / frameless / widget windows)
 // ---------------------------------------------------------------------------
 const wm: WindowManagerApi = {
-    getState: (): Promise<{
-        windows: Array<{ id: number; type: string; title: string; createdAt: number }>
-    }> => {
+    getState: () => {
         return typedInvoke(WmChannels.getState)
     },
-    createChild: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createChild: () => {
         return typedInvoke(WmChannels.createChild)
     },
-    createModal: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createModal: () => {
         return typedInvoke(WmChannels.createModal)
     },
-    createFrameless: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createFrameless: () => {
         return typedInvoke(WmChannels.createFrameless)
     },
-    createWidget: (): Promise<{ id: number; type: string; title: string; createdAt: number }> => {
+    createWidget: () => {
         return typedInvoke(WmChannels.createWidget)
     },
-    closeWindow: (id: number): Promise<boolean> => {
+    closeWindow: (id: number) => {
         return typedInvoke(WmChannels.closeWindow, id)
     },
-    closeAll: (): Promise<void> => {
+    closeAll: () => {
         return typedInvoke(WmChannels.closeAll)
     },
-    onStateChange: (callback: (state: {
-        windows: Array<{ id: number; type: string; title: string; createdAt: number }>
-    }) => void): (() => void) => {
+    onStateChange: (callback) => {
         return typedOn(WmChannels.stateChanged, callback)
     },
 }
