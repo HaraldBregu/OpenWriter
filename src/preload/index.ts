@@ -1365,7 +1365,9 @@ if (process.contextIsolated) {
         }
     }
     console.log('[preload] All namespaces exposed successfully')
+    ;(globalThis as any).__preloadSuccess = true
 } else {
+    console.log('[preload] Not in context isolated mode, using globalThis')
     // @ts-ignore (define in dts)
     globalThis.app = app
     // @ts-ignore (define in dts)
