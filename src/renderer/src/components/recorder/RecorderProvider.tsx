@@ -89,6 +89,27 @@ export function RecorderProvider({ config, children }: RecorderProviderProps) {
   const isAudioOnly = config.mediaType === 'microphone'
   const isScreen = config.mediaType === 'screen'
 
+  // handleStop is defined before handleStartPreview so that the onended callback
+  // always calls the most current version. We keep the ref pattern so that
+  // handleStartPreview doesn't need to list handleStop as a dependency (which
+  // would cause circular dependency issues with useCallback).
+  const handleStop = useCallback(() => {
+    if (isRecording) stopRecording()
+    stopStream()
+
+    if (screenStreamRef.current) {
+      screenStreamRef.current.getTracks().forEach((track) => track.stop())
+      screenStreamRef.current = null
+      if (videoRef.current) videoRef.current.srcObject = null
+    }
+    setScreenStreaming(false)
+  }, [isRecording, stopRecording, stopStream])
+
+  // Stable ref so the onended callback inside handleStartPreview always calls
+  // the latest version of handleStop without needing it in the dep array.
+  const handleStopRef = useRef(handleStop)
+  handleStopRef.current = handleStop
+
   const handleStartPreview = useCallback(async () => {
     clearRec()
 
@@ -120,7 +141,7 @@ export function RecorderProvider({ config, children }: RecorderProviderProps) {
           videoRef.current.srcObject = screenStream
         }
         screenStream.getVideoTracks()[0].onended = () => {
-          handleStop()
+          handleStopRef.current()
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to access screen'
@@ -139,18 +160,6 @@ export function RecorderProvider({ config, children }: RecorderProviderProps) {
       startRecording(activeStream, { mimeType })
     }
   }, [isScreen, isAudioOnly, stream, startRecording])
-
-  const handleStop = useCallback(() => {
-    if (isRecording) stopRecording()
-    stopStream()
-
-    if (screenStreamRef.current) {
-      screenStreamRef.current.getTracks().forEach((track) => track.stop())
-      screenStreamRef.current = null
-      if (videoRef.current) videoRef.current.srcObject = null
-    }
-    setScreenStreaming(false)
-  }, [isRecording, stopRecording, stopStream])
 
   const handleDownload = useCallback(() => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
