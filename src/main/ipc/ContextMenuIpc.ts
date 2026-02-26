@@ -20,20 +20,20 @@ export class ContextMenuIpc implements IpcModule {
         {
           label: 'Open',
           click: () => {
-            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'open', writingId })
+            event.sender.send(AppChannels.writingContextMenuAction, { action: 'open', writingId })
           }
         },
         {
           label: 'Duplicate',
           click: () => {
-            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'duplicate', writingId })
+            event.sender.send(AppChannels.writingContextMenuAction, { action: 'duplicate', writingId })
           }
         },
         { type: 'separator' },
         {
           label: 'Rename',
           click: () => {
-            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'rename', writingId })
+            event.sender.send(AppChannels.writingContextMenuAction, { action: 'rename', writingId })
           }
         },
         { type: 'separator' },
@@ -41,7 +41,7 @@ export class ContextMenuIpc implements IpcModule {
           label: 'Move to Trash',
           accelerator: 'CmdOrCtrl+Backspace',
           click: () => {
-            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'delete', writingId })
+            event.sender.send(AppChannels.writingContextMenuAction, { action: 'delete', writingId })
           }
         }
       ])
