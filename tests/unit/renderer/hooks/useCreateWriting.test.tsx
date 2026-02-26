@@ -5,7 +5,7 @@
  *  1. Guards against concurrent calls via an in-flight ref.
  *  2. Checks window.workspace.getCurrent() and returns null when no workspace.
  *  3. Dispatches saveOutputItem (window.workspace.output.save) to persist on disk.
- *  4. Dispatches addWriting + setWritingOutputId to Redux on success.
+ *  4. Dispatches addEntry to writingItemsSlice Redux on success.
  *  5. Calls onSuccess(writingId) and returns writingId on success.
  *  6. Sets error state and calls onError when save fails.
  *  7. Exposes reset() to clear error state.
