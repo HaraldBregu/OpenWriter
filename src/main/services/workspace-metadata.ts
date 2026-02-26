@@ -85,6 +85,7 @@ export class WorkspaceMetadataService implements Disposable {
   private debounceTimer: ReturnType<typeof setTimeout> | null = null
   private pendingWrite: { metadata: WorkspaceMetadata; workspacePath: string } | null = null
   private cache: { metadata: WorkspaceMetadata; workspacePath: string } | null = null
+  private workspaceEventUnsubscribe: (() => void) | null = null
 
   constructor(
     private readonly workspaceService: WorkspaceService,
