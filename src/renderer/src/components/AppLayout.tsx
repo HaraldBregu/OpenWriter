@@ -268,14 +268,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                         <AppSidebarMenuButton
                           className="h-9 px-3 group/item"
                           onClick={handleNewWriting}
+                          disabled={isCreatingWriting}
                         >
                           <Icon className="h-3.5 w-3.5 shrink-0" />
                           <span className="flex-1 truncate">
-                            {title}
+                            {isCreatingWriting ? t("writing.creating") : title}
                           </span>
-                          <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
-                            {item.shortcut}
-                          </span>
+                          {!isCreatingWriting && (
+                            <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
+                              {item.shortcut}
+                            </span>
+                          )}
                         </AppSidebarMenuButton>
                       </AppSidebarMenuItem>
                     );
