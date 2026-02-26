@@ -683,6 +683,4 @@ if (process.contextIsolated) {
     globalThis.task = task
     // @ts-ignore (define in dts)
     globalThis.ai = ai
-    // @ts-ignore (define in dts)
-    globalThis.writingItems = writingItems
 }
