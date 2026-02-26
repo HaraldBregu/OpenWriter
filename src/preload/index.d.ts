@@ -263,33 +263,6 @@ export interface AiApi {
   listRuns: () => Promise<IpcResult<PipelineActiveRun[]>>
 }
 
-/**
- * Writing item management.
- * Items are persisted to <workspace>/writings/<YYYY-MM-DD_HHmmss>/ on disk.
- */
-export interface WritingItemsApi {
-  /** Create a new writing item in the current workspace. */
-  create: (input: CreateWritingItemInput) => Promise<WriteWritingItemResult>
-  /** Save (partially update) an existing writing item. Only supplied fields are changed. */
-  save: (id: string, input: SaveWritingItemInput) => Promise<WriteWritingItemResult>
-  /** Load all writing items from the current workspace, sorted newest-first. */
-  loadAll: () => Promise<WritingItem[]>
-  /** Load a single writing item by its ID. Returns null if not found. */
-  loadOne: (id: string) => Promise<WritingItem | null>
-  /** Delete a writing item by its ID. */
-  delete: (id: string) => Promise<void>
-  /**
-   * Subscribe to writing item file changes (external edits detected by the watcher).
-   * Returns a cleanup function to remove the listener.
-   */
-  onFileChange: (callback: (event: WritingItemChangeEvent) => void) => () => void
-  /**
-   * Subscribe to file watcher errors.
-   * Returns a cleanup function to remove the listener.
-   */
-  onWatcherError: (callback: (error: WatcherError) => void) => () => void
-}
-
 // ---------------------------------------------------------------------------
 // Global Window augmentation
 // ---------------------------------------------------------------------------
