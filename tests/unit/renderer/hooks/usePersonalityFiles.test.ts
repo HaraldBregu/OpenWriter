@@ -170,14 +170,14 @@ describe('usePersonalityFiles — initial load', () => {
 })
 
 describe('usePersonalityFiles — file-change subscription', () => {
-  it('subscribes to window.personality.onFileChange on mount', async () => {
+  it('subscribes to window.workspace.personality.onFileChange on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
     renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.personality.onFileChange).toHaveBeenCalledTimes(1)
+      expect(window.workspace.personality.onFileChange).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -255,7 +255,7 @@ describe('usePersonalityFiles — cleanup on unmount', () => {
     const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.personality.onFileChange).toHaveBeenCalled()
+      expect(window.workspace.personality.onFileChange).toHaveBeenCalled()
     })
 
     unmount()
