@@ -111,13 +111,6 @@ app.on('open-file', (event, filePath) => {
 })
 
 app.whenReady().then(async () => {
-  // Get services from container
-  const lifecycleService = container.get<LifecycleService>('lifecycle')
-
-  // Initialize lifecycle service
-  // Note: Second instance file handler is configured in bootstrap
-  lifecycleService.initialize()
-
   // WORKSPACE MODE: Open workspace directly without launcher UI
   if (isWorkspaceMode && workspacePath) {
     logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
