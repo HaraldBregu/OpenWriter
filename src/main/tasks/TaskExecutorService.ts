@@ -342,10 +342,22 @@ export class TaskExecutorService implements Disposable {
 
   /**
    * Process queued tasks whenever execution slots are available.
+   * Paused tasks remain in the queue but are skipped.
    */
   private drainQueue(): void {
-    while (this.runningCount < this.maxConcurrency && this.queue.length > 0) {
-      const queued = this.queue.shift()!
+    let idx = 0
+    while (this.runningCount < this.maxConcurrency && idx < this.queue.length) {
+      const queued = this.queue[idx]
+      const task = this.activeTasks.get(queued.taskId)
+
+      // Skip paused tasks — leave them in the queue
+      if (task && task.status === 'paused') {
+        idx++
+        continue
+      }
+
+      // Remove from queue
+      this.queue.splice(idx, 1)
 
       // Skip if already cancelled while in queue
       if (queued.controller.signal.aborted) {
