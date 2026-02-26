@@ -624,7 +624,7 @@ const documents: DocumentsApi = {
 // ---------------------------------------------------------------------------
 // window.agent — AI agent execution and session management
 // ---------------------------------------------------------------------------
-const agent = {
+const agent: AgentApi = {
     run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
         return typedInvoke(AgentChannels.run, messages, runId, providerId)
     },
