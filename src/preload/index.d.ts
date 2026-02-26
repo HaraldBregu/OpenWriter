@@ -48,13 +48,6 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
-  WritingItem,
-  WritingItemStatus,
-  WritingItemMetadata,
-  CreateWritingItemInput,
-  SaveWritingItemInput,
-  WriteWritingItemResult,
-  WritingItemChangeEvent,
 } from '../shared/types/ipc/types'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/types/aiSettings'
 import type { IpcResult } from '../shared/types/ipc/ipc-result'
