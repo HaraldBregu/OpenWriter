@@ -183,6 +183,9 @@ const workspace: WorkspaceApi = {
     onChange: (callback: (event: { currentPath: string | null; previousPath: string | null }) => void): (() => void) => {
         return typedOn(WorkspaceChannels.changed, callback)
     },
+    onDeleted: (callback: (event: { deletedPath: string; reason: 'deleted' | 'inaccessible' | 'renamed'; timestamp: number }) => void): (() => void) => {
+        return typedOn(WorkspaceChannels.deleted, callback)
+    },
 } satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
