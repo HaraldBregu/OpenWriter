@@ -1,42 +1,4 @@
-// Use top-level try-catch to catch any errors
-try {
-  const { contextBridge, ipcRenderer } = require('electron')
-  const { writeFileSync } = require('fs')
-  const { homedir } = require('os')
-  const { join } = require('path')
-
-  // Debug: Mark that preload is loading
-  ;(globalThis as any).__preloadStarted = true
-  console.log('[preload] Module loading started')
-
-  // Write to debug file immediately
-  try {
-    const debugFile = join(homedir(), 'Desktop', 'preload-debug.txt')
-    writeFileSync(debugFile, `[${new Date().toISOString()}] Preload module executing\n`, { flag: 'a' })
-  } catch (e) {
-    // Silent fail on file write
-  }
-
-  // Continue with the rest of the module
-  // (we'll move all imports inside the try block)
-} catch (e) {
-  console.error('[preload] Fatal error in preload:', e)
-  if (typeof e === 'object' && e !== null && 'message' in e) {
-    const msg = (e as any).message
-    try {
-      const { writeFileSync } = require('fs')
-      const { homedir, join } = require('os')
-      const file = join(homedir(), 'Desktop', 'preload-error.txt')
-      writeFileSync(file, `ERROR: ${msg}\n`, { flag: 'a' })
-    } catch (e2) {}
-  }
-  throw e
-}
-
 import { contextBridge, ipcRenderer } from 'electron'
-import { writeFileSync } from 'fs'
-import { homedir } from 'os'
-import { join } from 'path'
 
 /**
  * IPC Result types matching the main process wrappers

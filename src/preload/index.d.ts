@@ -254,7 +254,7 @@ declare global {
       onLanguageChange: (callback: (lng: string) => void) => () => void
       onThemeChange: (callback: (theme: string) => void) => () => void
       onFileOpened: (callback: (filePath: string) => void) => () => void
-      popupMenu: () => Promise<void>
+      popupMenu: () => void
       getPlatform: () => Promise<string>
     }
 
