@@ -80,7 +80,7 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
         >
           <button
             type="button"
-            onClick={() => window.app.popupMenu()}
+            onClick={() => window.app?.popupMenu()}
             className={btnNoHover}
             title={t('titleBar.applicationMenu')}
           >

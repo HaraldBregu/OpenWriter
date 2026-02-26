@@ -90,22 +90,23 @@ export class WindowIpc implements IpcModule {
     )
 
     // Application popup menu (hamburger button)
-    ipcMain.handle(
-      'window:popup-menu',
-      wrapIpcHandler((event) => {
-        const win = BrowserWindow.fromWebContents(event.sender)
-        if (!win) return
+    // NOTE: Uses ipcMain.handle directly (not wrapIpcHandler) to match the
+    // working context-menu pattern. The async wrapper in wrapIpcHandler can
+    // interfere with the synchronous menu.popup() call.
+    ipcMain.handle('window:popup-menu', (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
 
       const menu = Menu.buildFromTemplate([
         {
           label: 'File',
           submenu: [
-            { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => {} },
-            { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => {} },
-            { type: 'separator' },
-            { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => {} },
-            { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => {} },
-            { type: 'separator' },
+            { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => { win.webContents.send('menu:new-file') } },
+            { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { win.webContents.send('menu:open-file') } },
+            { type: 'separator' as const },
+            { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => { win.webContents.send('menu:save') } },
+            { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => { win.webContents.send('menu:save-as') } },
+            { type: 'separator' as const },
             {
               label: 'Exit',
               click: () => {
@@ -150,13 +151,12 @@ export class WindowIpc implements IpcModule {
         },
         {
           label: 'Help',
-          submenu: [{ label: 'About OpenWriter', click: () => {} }]
+          submenu: [{ label: 'About OpenWriter', click: () => { win.webContents.send('menu:about') } }]
         }
       ])
 
-        menu.popup({ window: win })
-      }, 'window:popup-menu')
-    )
+      menu.popup({ window: win })
+    })
 
     // Broadcast window state changes to all windows
     windowManager.onStateChange((state) => {

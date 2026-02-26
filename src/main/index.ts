@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, dialog } from 'electron'
+import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu } from 'electron'
 import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
@@ -123,7 +123,42 @@ app.whenReady().then(async () => {
   if (isWorkspaceMode && workspacePath) {
     logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
 
-    // Create workspace window directly - no menu, no tray
+    // On Windows/Linux, set a minimal application menu then hide the bar.
+    // setApplicationMenu(null) would remove keyboard accelerators (Ctrl+C/V/Z).
+    // Setting a menu and hiding the bar keeps accelerators working without
+    // showing a native menu bar on the frameless window.
+    if (process.platform !== 'darwin') {
+      const minimalMenu = ElectronMenu.buildFromTemplate([
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'undo' as const },
+            { role: 'redo' as const },
+            { type: 'separator' as const },
+            { role: 'cut' as const },
+            { role: 'copy' as const },
+            { role: 'paste' as const },
+            { role: 'selectAll' as const },
+          ]
+        },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'reload' as const },
+            { role: 'forceReload' as const },
+            { role: 'togglefullscreen' as const },
+            { role: 'zoomIn' as const },
+            { role: 'zoomOut' as const },
+            { role: 'resetZoom' as const },
+          ]
+        }
+      ])
+      ElectronMenu.setApplicationMenu(minimalMenu)
+      // Note: frame:false already hides the menu bar, but the accelerators
+      // from the application menu remain active for keyboard shortcuts.
+    }
+
+    // Create workspace window directly - no tray
     const workspaceWindow = mainWindow.createWorkspaceWindow()
 
     // Set the workspace path immediately
