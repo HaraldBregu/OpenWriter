@@ -107,39 +107,6 @@ export const CronChannels = {
   jobResult: 'cron-job-result',
 } as const
 
-export const LifecycleChannels = {
-  getState: 'lifecycle-get-state',
-  getEvents: 'lifecycle-get-events',
-  restart: 'lifecycle-restart',
-  event: 'lifecycle-event',
-} as const
-
-export const FsChannels = {
-  openFileDialog: 'fs-open-file-dialog',
-  readFile: 'fs-read-file',
-  saveFileDialog: 'fs-save-file-dialog',
-  writeFile: 'fs-write-file',
-  selectDirectory: 'fs-select-directory',
-  watchDirectory: 'fs-watch-directory',
-  unwatchDirectory: 'fs-unwatch-directory',
-  getWatchedDirectories: 'fs-get-watched-directories',
-  watchEvent: 'fs-watch-event',
-} as const
-
-export const DialogChannels = {
-  open: 'dialog-open',
-  openDirectory: 'dialog-open-directory',
-  save: 'dialog-save',
-  message: 'dialog-message',
-  error: 'dialog-error',
-} as const
-
-export const NotificationChannels = {
-  isSupported: 'notification-is-supported',
-  show: 'notification-show',
-  event: 'notification-event',
-} as const
-
 export const AgentChannels = {
   createSession: 'agent:create-session',
   destroySession: 'agent:destroy-session',
