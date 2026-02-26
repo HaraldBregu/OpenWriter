@@ -108,35 +108,37 @@ export function DownloadsDemo() {
 
   // Sync task states to download states
   useEffect(() => {
-    const updated = new Map(downloads)
+    setDownloads((prev) => {
+      const updated = new Map(prev)
 
-    for (const [taskId, task] of tasks) {
-      const existing = updated.get(taskId)
-      if (!existing) continue // Only update downloads we initiated
+      for (const [taskId, task] of tasks) {
+        const existing = updated.get(taskId)
+        if (!existing) continue // Only update downloads we initiated
 
-      const detail = task.message ? (typeof task.message === 'object' ? task.message : {}) : {}
-      const progressDetail = typeof detail === 'object' && detail !== null ? detail as Record<string, unknown> : {}
+        const detail = task.message ? (typeof task.message === 'object' ? task.message : {}) : {}
+        const progressDetail = typeof detail === 'object' && detail !== null ? detail as Record<string, unknown> : {}
 
-      updated.set(taskId, {
-        ...existing,
-        status: task.status,
-        progress: task.progress ?? 0,
-        speed: progressDetail.speed as string | undefined,
-        eta: progressDetail.eta as string | undefined,
-        downloaded: progressDetail.downloaded as number | undefined,
-        total: progressDetail.total as number | undefined,
-        error: task.error,
-        result: task.result as DownloadState['result']
-      })
+        updated.set(taskId, {
+          ...existing,
+          status: task.status,
+          progress: task.progress ?? 0,
+          speed: progressDetail.speed as string | undefined,
+          eta: progressDetail.eta as string | undefined,
+          downloaded: progressDetail.downloaded as number | undefined,
+          total: progressDetail.total as number | undefined,
+          error: task.error,
+          result: task.result as DownloadState['result']
+        })
 
-      // Log state changes
-      if (existing.status !== task.status) {
-        addLog(`${taskId.slice(0, 8)}: ${existing.status} → ${task.status}`)
+        // Log state changes
+        if (existing.status !== task.status) {
+          addLog(`${taskId.slice(0, 8)}: ${existing.status} → ${task.status}`)
+        }
       }
-    }
 
-    setDownloads(updated)
-  }, [tasks])
+      return updated
+    })
+  }, [tasks, addLog])
 
   const formatBytes = (bytes: number | undefined) => {
     if (!bytes) return '0 B'
