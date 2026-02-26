@@ -184,9 +184,7 @@ export const workspaceSlice = createSlice({
 
     // removeRecentWorkspace
     builder.addCase(removeRecentWorkspace.fulfilled, (state, action) => {
-      state.recentWorkspaces = state.recentWorkspaces.filter(
-        (ws) => ws.path !== action.payload
-      )
+      state.recentWorkspaces = state.recentWorkspaces.filter(ws => ws.path !== action.payload)
     })
 
     // clearWorkspace
