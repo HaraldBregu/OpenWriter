@@ -16,14 +16,6 @@ interface TaskSubmitInput {
   options?: TaskOptions
 }
 
-/**
- * Input payload for task:update-priority channel.
- */
-interface TaskUpdatePriorityInput {
-  taskId: string
-  priority: TaskPriority
-}
-
 /** Strip non-serializable fields from ActiveTask for IPC transport. */
 function toTaskInfo(t: ActiveTask): TaskInfo {
   return {
