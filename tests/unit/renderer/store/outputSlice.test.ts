@@ -210,14 +210,14 @@ describe('outputSlice', () => {
       })
 
       it('should not modify state when type does not match even if ID matches', () => {
-        // Arrange — item is 'writings', action targets a non-existent type (cast to bypass TS)
+        // Arrange — item is 'writings', action targets 'posts' (different type, same id)
         const item = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Original' })
         const state = { ...createInitialState(), items: [item] }
 
-        // Act — use a mismatched type that will never equal 'writings'
+        // Act — type mismatch: 'posts' !== 'writings' so no item is found
         const result = outputReducer(
           state,
-          updateItem({ id: 'item-1', type: 'posts' as OutputType, changes: { title: 'Changed' } })
+          updateItem({ id: 'item-1', type: 'posts', changes: { title: 'Changed' } })
         )
 
         // Assert — no item found; title unchanged
