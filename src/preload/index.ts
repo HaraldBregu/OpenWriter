@@ -457,7 +457,7 @@ const clipboard: ClipboardApi = {
 // ---------------------------------------------------------------------------
 // window.store — Persisted AI model settings
 // ---------------------------------------------------------------------------
-const store = {
+const store: StoreApi = {
     // New provider settings methods
     getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
         return typedInvokeUnwrap(StoreChannels.getAllProviderSettings)
