@@ -108,6 +108,10 @@
     "feature4": "Platform-specific network information",
     "feature5": "Read-only access (cannot modify network settings)"
   },
+  "workspace": {
+    "deletedBanner": "Your workspace folder was deleted or moved. Please select a new workspace.",
+    "inaccessibleBanner": "Your workspace folder is no longer accessible. Please select a new workspace."
+  },
   "settings": {
     "title": "Settings",
     "description": "Configure your application preferences",
