@@ -80,13 +80,8 @@ const personalitySlugs = [
   { titleKey: "personalityItems.emotionalDepth", icon: Heart,    slug: "emotional-depth" },
   { titleKey: "personalityItems.consciousness",  icon: Lightbulb, slug: "consciousness" },
   { titleKey: "personalityItems.motivation",     icon: Flame,    slug: "motivation" },
-  { titleKey: "personalityItems.moralIntuition", icon: Scale,    slug: "moral-intuition" },
-  { titleKey: "personalityItems.irrationality",  icon: Shuffle,  slug: "irrationality" },
-  { titleKey: "personalityItems.growth",         icon: Sprout,   slug: "growth" },
   { titleKey: "personalityItems.socialIdentity", icon: Users,    slug: "social-identity" },
   { titleKey: "personalityItems.creativity",     icon: Palette,  slug: "creativity" },
-  { titleKey: "personalityItems.mortality",      icon: Hourglass, slug: "mortality" },
-  { titleKey: "personalityItems.contradiction",  icon: GitMerge, slug: "contradiction" },
 ];
 
 // ---------------------------------------------------------------------------
