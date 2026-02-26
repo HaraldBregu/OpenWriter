@@ -137,7 +137,8 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new TaskIpc(),
     new OutputIpc(),
     new PersonalityIpc(),
-    new ThemeIpc()
+    new ThemeIpc(),
+    new WindowIpc()
   ]
 
   for (const module of ipcModules) {
