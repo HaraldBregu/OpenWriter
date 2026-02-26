@@ -247,10 +247,7 @@ declare global {
     win?: WindowApi
     store: StoreApi
     workspace: WorkspaceApi
-    documents: DocumentsApi
     contextMenu: ContextMenuApi
-    directories: DirectoriesApi
-    personality: PersonalityApi
     output: OutputApi
     /** Optional: not present in all window types */
     task?: TaskApi
