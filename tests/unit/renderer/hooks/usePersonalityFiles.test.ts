@@ -44,18 +44,15 @@ let capturedFileChangeCallback: PersonalityFileChangeCallback | null = null
 
 function installWindowMocks(): void {
   Object.defineProperty(window, 'workspace', {
-    value: { getCurrent: mockWorkspaceGetCurrent },
-    writable: true,
-    configurable: true
-  })
-
-  Object.defineProperty(window, 'personality', {
     value: {
-      loadAll: mockPersonalityLoadAll,
-      onFileChange: jest.fn().mockImplementation((cb: PersonalityFileChangeCallback) => {
-        capturedFileChangeCallback = cb
-        return mockUnsubscribeFileChange
-      })
+      getCurrent: mockWorkspaceGetCurrent,
+      personality: {
+        loadAll: mockPersonalityLoadAll,
+        onFileChange: jest.fn().mockImplementation((cb: PersonalityFileChangeCallback) => {
+          capturedFileChangeCallback = cb
+          return mockUnsubscribeFileChange
+        }),
+      },
     },
     writable: true,
     configurable: true
