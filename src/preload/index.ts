@@ -888,24 +888,13 @@ const task: TaskApi = {
         priority?: 'low' | 'normal' | 'high'
         timeoutMs?: number
         windowId?: number
-    }): Promise<{ success: true; data: { taskId: string } } | { success: false; error: { code: string; message: string } }> => {
+    }) => {
         return typedInvokeRaw(TaskChannels.submit, { type, input, options })
     },
-    cancel: (taskId: string): Promise<{ success: true; data: boolean } | { success: false; error: { code: string; message: string } }> => {
+    cancel: (taskId: string) => {
         return typedInvokeRaw(TaskChannels.cancel, taskId)
     },
-    list: (): Promise<{
-        success: true; data: Array<{
-            taskId: string
-            type: string
-            status: string
-            priority: string
-            startedAt?: number
-            completedAt?: number
-            windowId?: number
-            error?: string
-        }>
-    } | { success: false; error: { code: string; message: string } }> => {
+    list: () => {
         return typedInvokeRaw(TaskChannels.list)
     },
     onEvent: (callback) => {
