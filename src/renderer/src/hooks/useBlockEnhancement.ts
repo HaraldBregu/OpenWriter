@@ -68,9 +68,9 @@ export function useBlockEnhancement({
       if (!token) return
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
-      // insertContent appends at the current cursor position (end of doc after
-      // the separator inserted in handleEnhance).
-      ed.commands.insertContent(token)
+      // Strip newlines so the SingleParagraphDocument schema is never violated.
+      const sanitized = token.replace(/\n/g, ' ')
+      if (sanitized) ed.commands.insertContent(sanitized)
     })
     return () => unsub()
   }, [enhanceTaskId, editorRef])
@@ -128,10 +128,8 @@ export function useBlockEnhancement({
     originalTextRef.current = currentText
     setIsEnhancing(true)
 
-    // Move cursor to the end and insert a separator so streamed tokens appear
-    // after the original content on a new line.
+    // Clear the editor so streamed tokens replace the original content.
     ed.commands.focus('end')
-    ed.commands.insertContent('\n\n')
 
     const taskId = await submitTask('ai-enhance', { text: currentText })
     if (taskId) {
