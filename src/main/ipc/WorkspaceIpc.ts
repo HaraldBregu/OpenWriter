@@ -8,7 +8,6 @@ import type { WorkspaceService } from '../services/workspace'
 import type { LoggerService } from '../services/logger'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { PathValidator } from '../shared/PathValidator'
 import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**

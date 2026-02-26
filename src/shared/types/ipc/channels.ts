@@ -8,7 +8,6 @@
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
-import type { IpcResult } from './ipc-result'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../aiSettings'
 import type {
   MediaPermissionStatus,
