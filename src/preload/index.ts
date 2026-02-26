@@ -907,23 +907,23 @@ const task: TaskApi = {
 // ---------------------------------------------------------------------------
 const ai: AiApi = {
     // Run AI inference using the pipeline
-    inference: (agentName: string, input: { prompt: string; context?: Record<string, unknown> }): Promise<{ success: true; data: { runId: string } } | { success: false; error: { code: string; message: string } }> => {
+    inference: (agentName: string, input) => {
         return typedInvokeRaw(PipelineChannels.run, agentName, input)
     },
     // Cancel a running AI inference
-    cancel: (runId: string): void => {
+    cancel: (runId: string) => {
         typedSend(PipelineChannels.cancel, runId)
     },
     // Listen for AI inference events (tokens, thinking, done, error)
-    onEvent: (callback: (event: { type: 'token' | 'thinking' | 'done' | 'error'; data: unknown }) => void): (() => void) => {
+    onEvent: (callback) => {
         return typedOn(PipelineChannels.event, callback)
     },
     // List available AI agents
-    listAgents: (): Promise<{ success: true; data: string[] } | { success: false; error: { code: string; message: string } }> => {
+    listAgents: () => {
         return typedInvokeRaw(PipelineChannels.listAgents)
     },
     // List active AI runs
-    listRuns: (): Promise<{ success: true; data: Array<{ runId: string; agentName: string; startedAt: number }> } | { success: false; error: { code: string; message: string } }> => {
+    listRuns: () => {
         return typedInvokeRaw(PipelineChannels.listRuns)
     }
 }
