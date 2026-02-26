@@ -37,7 +37,9 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
 
   onTaskEvent(handler: (event: TaskEvent) => void): () => void {
     this.assertBridge()
-    return window.task.onEvent((raw) => {
+    // Non-null assertion is safe here: assertBridge() throws if window.task is undefined,
+    // so control only reaches this line when window.task is defined.
+    return window.task!.onEvent((raw) => {
       handler({
         type: raw.type as TaskEvent['type'],
         data: raw.data as Record<string, unknown>,
@@ -57,7 +59,8 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     if (input.temperature !== undefined) payload.temperature = input.temperature
     if (input.maxTokens) payload.maxTokens = input.maxTokens
 
-    const result = await window.task.submit('ai-chat', payload)
+    // Non-null assertion is safe here: assertBridge() throws if window.task is undefined.
+    const result = await window.task!.submit('ai-chat', payload)
     // window.task.submit returns { success, data } | { success: false, error }
     return result as SubmitTaskResult | SubmitTaskError
   }
