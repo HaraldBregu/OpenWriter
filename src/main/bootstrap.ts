@@ -77,23 +77,7 @@ export function bootstrapServices(): BootstrapResult {
   // Register services (order matters for dependencies)
   const storeService = container.register('store', new StoreService())
 
-  // LifecycleService - callbacks will be set later via setCallbacks()
-  container.register('lifecycle', new LifecycleService())
-
-  container.register('mediaPermissions', new MediaPermissionsService())
-  container.register('bluetooth', new BluetoothService())
-  container.register('network', new NetworkService())
   container.register('cron', new CronService())
-
-  // WindowManagerService needs WindowFactory
-  const windowManager = new WindowManagerService()
-  windowManager.setWindowFactory(windowFactory)
-  container.register('windowManager', windowManager)
-
-  container.register('filesystem', new FilesystemService())
-  container.register('dialog', new DialogService())
-  container.register('notification', new NotificationService())
-  container.register('clipboard', new ClipboardService())
   container.register('fileManagement', new FileManagementService())
 
   // REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
