@@ -18,7 +18,6 @@ import { HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import chatReducer from '../../../../src/renderer/src/store/chatSlice'
-import postsReducer from '../../../../src/renderer/src/store/postsSlice'
 import directoriesReducer from '../../../../src/renderer/src/store/directoriesSlice'
 
 // Mock lucide-react icons used in this page
@@ -41,18 +40,12 @@ jest.mock('../../../../src/renderer/src/components/TitleBar', () => ({
 // Mock logo import (handled as a static asset)
 jest.mock('@resources/icons/icon.png', () => 'test-logo.png')
 
-// Mock usePostsLoader so the page doesn't try to load real posts
-jest.mock('../../../../src/renderer/src/hooks/usePostsLoader', () => ({
-  reloadPostsFromWorkspace: jest.fn().mockResolvedValue(undefined)
-}))
-
 import WelcomePage from '../../../../src/renderer/src/pages/WelcomePage'
 
 function renderWelcomePage() {
   const store = configureStore({
     reducer: {
       chat: chatReducer,
-      posts: postsReducer,
       directories: directoriesReducer
     }
   })
