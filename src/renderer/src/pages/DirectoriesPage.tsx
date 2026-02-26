@@ -44,7 +44,7 @@ const DirectoriesPage: React.FC = () => {
     // Clear existing directories to prevent showing stale data
     dispatch(clearDirectories())
     try {
-      const dirs = await window.directories.list()
+      const dirs = await window.workspace.directories.list()
       console.log('[DirectoriesPage] Received', dirs.length, 'directories from main process')
       dispatch(loadDirectories(dirs))
     } catch (err) {
@@ -60,7 +60,7 @@ const DirectoriesPage: React.FC = () => {
 
   // Listen for external directory changes from main process
   useEffect(() => {
-    const unsubscribe = window.directories.onChanged((dirs) => {
+    const unsubscribe = window.workspace.directories.onChanged((dirs) => {
       console.log('[DirectoriesPage] Received directories:changed event with', dirs.length, 'directories')
       dispatch(handleExternalDirectoriesChange(dirs))
     })
@@ -75,7 +75,7 @@ const DirectoriesPage: React.FC = () => {
   const handleRemoveDirectory = useCallback(
     async (id: string) => {
       try {
-        const removed = await window.directories.remove(id)
+        const removed = await window.workspace.directories.remove(id)
         if (removed) {
           dispatch(removeDirectory(id))
         }
@@ -100,7 +100,7 @@ const DirectoriesPage: React.FC = () => {
       // Mark all as indexed via main process
       for (const dir of directories) {
         if (!dir.isIndexed) {
-          const success = await window.directories.markIndexed(dir.id, true)
+          const success = await window.workspace.directories.markIndexed(dir.id, true)
           if (success) {
             dispatch(markDirectoryIndexed({
               id: dir.id,
