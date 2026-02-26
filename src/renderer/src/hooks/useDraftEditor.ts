@@ -297,10 +297,12 @@ export function useDraftEditor(
           ...(type === 'writings' ? { category: 'writing' } : {}),
         })).unwrap()
         savedOutputIdRef.current = saved.id
-        if (type === 'posts' && post) {
-          dispatch(setPostOutputId({ postId: post.id, outputId: saved.id }))
-        } else if (type === 'writings' && writing) {
-          dispatch(setWritingOutputId({ writingId: writing.id, outputId: saved.id }))
+        // Use entity.id captured at the top of the effect instead of going through
+        // the separate post/writing refs — entity is already a dependency.
+        if (type === 'posts') {
+          dispatch(setPostOutputId({ postId: entity.id, outputId: saved.id }))
+        } else {
+          dispatch(setWritingOutputId({ writingId: entity.id, outputId: saved.id }))
         }
       }
     }, 1000)
