@@ -10,6 +10,9 @@ import {
   Star
 } from 'lucide-react'
 import { AppSeparator } from '@/components/app'
+import { useAppSelector } from '../store'
+import { selectWritings } from '../store/writingsSlice'
+import type { Writing } from '../store/writingsSlice'
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
@@ -26,13 +29,21 @@ const categoryDefs = [
 ]
 
 // ---------------------------------------------------------------------------
-// Placeholder recent items — labels are content placeholders, not UI strings
+// Helpers
 // ---------------------------------------------------------------------------
 
-const recentItemDefs = [
-  { icon: PenLine, label: 'Q1 Strategy Brief', meta: '2 hours ago', route: '/new/writing' },
-  { icon: FolderOpen, label: 'Design Assets', meta: 'Last week', route: '/documents/local' }
-] as const
+type TFunction = (key: string, options?: Record<string, unknown>) => string
+
+function formatRelativeTime(timestamp: number, t: TFunction): string {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000)
+  if (seconds < 60) return t('relativeTime.justNow')
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return t('relativeTime.minutesAgo', { count: minutes })
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return t('relativeTime.hoursAgo', { count: hours })
+  const days = Math.floor(hours / 24)
+  return t('relativeTime.daysAgo', { count: days })
+}
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -71,17 +82,19 @@ const CategoryCard = React.memo(function CategoryCard({
 })
 CategoryCard.displayName = 'CategoryCard'
 
-const RecentItem = React.memo(function RecentItem({
-  icon: Icon,
-  label,
-  meta,
-  route,
-}: (typeof recentItemDefs)[number]) {
+interface RecentWritingItemProps {
+  writing: Writing
+}
+
+const RecentWritingItem = React.memo(function RecentWritingItem({
+  writing,
+}: RecentWritingItemProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const handleClick = useCallback(() => {
-    navigate(route)
-  }, [navigate, route])
+    navigate(`/new/writing/${writing.id}`)
+  }, [navigate, writing.id])
 
   return (
     <button
@@ -90,20 +103,22 @@ const RecentItem = React.memo(function RecentItem({
       className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/60 transition-colors group w-full text-left"
     >
       <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
-        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+        <PenLine className="h-3.5 w-3.5 text-muted-foreground" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">{label}</p>
+        <p className="text-sm font-medium text-foreground truncate">
+          {writing.title || t('writing.untitled')}
+        </p>
         <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
           <Clock className="h-3 w-3" />
-          {meta}
+          {formatRelativeTime(writing.updatedAt, t)}
         </p>
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
     </button>
   )
 })
-RecentItem.displayName = 'RecentItem'
+RecentWritingItem.displayName = 'RecentWritingItem'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -112,6 +127,15 @@ RecentItem.displayName = 'RecentItem'
 const HomePage: React.FC = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  // Pull the 5 most-recently-updated writings from Redux.
+  // writingsSlice keeps writings in insertion order; we sort by updatedAt here
+  // so the list reflects actual recency regardless of creation order.
+  const allWritings = useAppSelector(selectWritings)
+  const recentWritings = [...allWritings]
+    .sort((a, b) => b.updatedAt - a.updatedAt)
+    .slice(0, 5)
+
   const hour = new Date().getHours()
   const greeting =
     hour < 12 ? t('home.goodMorning') : hour < 18 ? t('home.goodAfternoon') : t('home.goodEvening')
@@ -141,7 +165,7 @@ const HomePage: React.FC = () => {
 
         <AppSeparator />
 
-        {/* Recent */}
+        {/* Recent writings */}
         <section className="space-y-1">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -156,11 +180,17 @@ const HomePage: React.FC = () => {
               <ArrowRight className="h-3 w-3" />
             </button>
           </div>
-          <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
-            {recentItemDefs.map((item) => (
-              <RecentItem key={item.label} {...item} />
-            ))}
-          </div>
+          {recentWritings.length > 0 ? (
+            <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
+              {recentWritings.map((writing) => (
+                <RecentWritingItem key={writing.id} writing={writing} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground py-3 px-1">
+              {t('home.noRecentWritings')}
+            </p>
+          )}
         </section>
 
         <AppSeparator />
