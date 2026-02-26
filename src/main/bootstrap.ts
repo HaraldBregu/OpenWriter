@@ -35,7 +35,6 @@ import {
   CustomIpc,
   DocumentsIpc,
   PipelineIpc,
-  PostsIpc,
   StoreIpc,
   WorkspaceIpc,
   DirectoriesIpc,
