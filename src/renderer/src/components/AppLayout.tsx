@@ -2,15 +2,11 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../hooks/useLanguage";
-import { usePostsLoader } from "../hooks/usePostsLoader";
-import { usePostsFileWatcher } from "../hooks/usePostsFileWatcher";
 import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
 import { useOutputFiles } from "../hooks/useOutputFiles";
-import { usePostContextMenu } from "../hooks/usePostContextMenu";
 import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
 import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectPosts } from "../store/postsSlice";
 import { selectWritings } from "../store/writingsSlice";
 import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspaceSlice";
 import { TitleBar } from "./TitleBar";
@@ -49,7 +45,6 @@ import {
   ChevronRight,
   Bell,
   Bug,
-  PlusCircle,
   FileText,
   Heart,
   Lightbulb,
@@ -67,11 +62,8 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateSlugs = [
-  { titleKey: "sidebar.write",   icon: PenLine,   url: "/new/writing", shortcut: "⌘W" },
-  { titleKey: "sidebar.newPost", icon: PlusCircle, url: "/new/post",   shortcut: "⌘N" },
+  { titleKey: "sidebar.write", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
 ];
-
-const topNavSectionKeys = ["sidebar.writing", "sidebar.posts"];
 
 const personalitySlugs = [
   { titleKey: "personalityItems.emotionalDepth", icon: Heart,    slug: "emotional-depth" },
@@ -190,20 +182,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const posts = useAppSelector(selectPosts);
   const writings = useAppSelector(selectWritings);
   const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 
   // Subscribe to IPC context-menu events. Each hook uses the ref pattern
-  // internally so re-subscriptions never occur on post/writing array changes.
-  usePostContextMenu(posts);
+  // internally so re-subscriptions never occur on writing array changes.
   useWritingContextMenu(writings);
 
   // Listen for workspace changes from main process and update Redux
   useWorkspaceListener();
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
-    Posts: true,
     Writing: true,
     Knowledge: false,
     Personality: false,
@@ -220,20 +209,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     [],
   );
 
-  const handleNewPost = useCallback(() => {
-    navigate("/new/post", { state: { draftKey: Date.now() } });
-  }, [navigate]);
-
   const handleNewWriting = useCallback(() => {
     navigate("/new/writing", { state: { draftKey: Date.now() } });
   }, [navigate]);
-
-  const handlePostContextMenu = useCallback(
-    (postId: string, postTitle: string) => {
-      window.contextMenu.showPost(postId, postTitle);
-    },
-    [],
-  );
 
   const handleWritingContextMenu = useCallback(
     (writingId: string, writingTitle: string) => {
@@ -278,43 +256,19 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {quickCreateSlugs.map((item) => {
                     const Icon = item.icon;
                     const title = t(item.titleKey);
-                    const isNewPost = item.titleKey === "sidebar.newPost";
-                    const isNewWriting = item.titleKey === "sidebar.write";
-                    const hasClickHandler = isNewPost || isNewWriting;
-                    const clickHandler = isNewPost
-                      ? handleNewPost
-                      : isNewWriting
-                        ? handleNewWriting
-                        : undefined;
                     return (
                       <AppSidebarMenuItem key={item.titleKey}>
                         <AppSidebarMenuButton
-                          asChild={!hasClickHandler}
-                          // isActive={location.pathname === item.url}
                           className="h-9 px-3 group/item"
-                          onClick={clickHandler}
+                          onClick={handleNewWriting}
                         >
-                          {hasClickHandler ? (
-                            <>
-                              <Icon className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">
-                                {title}
-                              </span>
-                              <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
-                                {item.shortcut}
-                              </span>
-                            </>
-                          ) : (
-                            <Link to={item.url}>
-                              <Icon className="h-3.5 w-3.5 shrink-0" />
-                              <span className="flex-1 truncate">
-                                {title}
-                              </span>
-                              <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
-                                {item.shortcut}
-                              </span>
-                            </Link>
-                          )}
+                          <Icon className="h-3.5 w-3.5 shrink-0" />
+                          <span className="flex-1 truncate">
+                            {title}
+                          </span>
+                          <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
+                            {item.shortcut}
+                          </span>
                         </AppSidebarMenuButton>
                       </AppSidebarMenuItem>
                     );
@@ -322,99 +276,54 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
                   <AppSidebarSeparator className="my-1" />
 
-                  {/* Posts, Writing — collapsible section headers */}
-                  {topNavSectionKeys.map((sectionKey) => {
-                    // Use stable English identifiers for state keys
-                    const sectionId = sectionKey === "sidebar.writing" ? "Writing" : "Posts";
-                    const isOpen = sectionsOpen[sectionId];
-                    const isPosts = sectionId === "Posts";
-                    const isWriting = sectionId === "Writing";
-                    return (
-                      <AppSidebarMenuItem key={sectionKey}>
-                        <button
-                          type="button"
-                          onClick={() => toggleSection(sectionId)}
-                          className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
-                        >
-                          <span className="tracking-wider">{t(sectionKey)}</span>
-                          <ChevronRight
-                            className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
-                          />
-                        </button>
-                        {isOpen && (
-                          <AppSidebarMenuSub className="border-none ml-0">
-                            {isPosts &&
-                              posts.map((post) => (
-                                <AppSidebarMenuSubItem
-                                  key={post.id}
-                                  onContextMenu={(e) => {
-                                    e.preventDefault();
-                                    handlePostContextMenu(
-                                      post.id,
-                                      post.title || t("sidebar.untitledPost"),
-                                    );
-                                  }}
-                                >
-                                  <AppSidebarMenuSubButton
-                                    asChild
-                                    isActive={
-                                      location.pathname ===
-                                      `/new/post/${post.id}`
-                                    }
-                                    className="ml-0"
-                                  >
-                                    <Link
-                                      to={`/new/post/${post.id}`}
-                                      className="ml-0"
-                                    >
-                                      <FileText className="h-3.5 w-3.5 shrink-0" />
-                                      <span className="flex-1 truncate">
-                                        {post.title || t("sidebar.untitledPost")}
-                                      </span>
-                                      <span className="text-xs text-muted-foreground/40 shrink-0">
-                                        {formatRelativeTime(post.updatedAt, t)}
-                                      </span>
-                                    </Link>
-                                  </AppSidebarMenuSubButton>
-                                </AppSidebarMenuSubItem>
-                              ))}
-                            {isWriting &&
-                              writings.map((writing) => (
-                                <AppSidebarMenuSubItem key={writing.id}>
-                                  <AppSidebarMenuSubButton
-                                    asChild
-                                    isActive={
-                                      location.pathname ===
-                                      `/new/writing/${writing.id}`
-                                    }
-                                    className="ml-0"
-                                    onContextMenu={() =>
-                                      handleWritingContextMenu(
-                                        writing.id,
-                                        writing.title,
-                                      )
-                                    }
-                                  >
-                                    <Link
-                                      to={`/new/writing/${writing.id}`}
-                                      className="ml-0"
-                                    >
-                                      <PenLine className="h-3.5 w-3.5 shrink-0" />
-                                      <span className="flex-1 truncate">
-                                        {writing.title || t("sidebar.untitledWriting")}
-                                      </span>
-                                      <span className="text-xs text-muted-foreground/40 shrink-0">
-                                        {formatRelativeTime(writing.updatedAt, t)}
-                                      </span>
-                                    </Link>
-                                  </AppSidebarMenuSubButton>
-                                </AppSidebarMenuSubItem>
-                              ))}
-                          </AppSidebarMenuSub>
-                        )}
-                      </AppSidebarMenuItem>
-                    );
-                  })}
+                  {/* Writing — collapsible section */}
+                  <AppSidebarMenuItem>
+                    <button
+                      type="button"
+                      onClick={() => toggleSection("Writing")}
+                      className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
+                    >
+                      <span className="tracking-wider">{t("sidebar.writing")}</span>
+                      <ChevronRight
+                        className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Writing"] ? "rotate-90" : ""}`}
+                      />
+                    </button>
+                    {sectionsOpen["Writing"] && (
+                      <AppSidebarMenuSub className="border-none ml-0">
+                        {writings.map((writing) => (
+                          <AppSidebarMenuSubItem key={writing.id}>
+                            <AppSidebarMenuSubButton
+                              asChild
+                              isActive={
+                                location.pathname ===
+                                `/new/writing/${writing.id}`
+                              }
+                              className="ml-0"
+                              onContextMenu={() =>
+                                handleWritingContextMenu(
+                                  writing.id,
+                                  writing.title,
+                                )
+                              }
+                            >
+                              <Link
+                                to={`/new/writing/${writing.id}`}
+                                className="ml-0"
+                              >
+                                <FileText className="h-3.5 w-3.5 shrink-0" />
+                                <span className="flex-1 truncate">
+                                  {writing.title || t("sidebar.untitledWriting")}
+                                </span>
+                                <span className="text-xs text-muted-foreground/40 shrink-0">
+                                  {formatRelativeTime(writing.updatedAt, t)}
+                                </span>
+                              </Link>
+                            </AppSidebarMenuSubButton>
+                          </AppSidebarMenuSubItem>
+                        ))}
+                      </AppSidebarMenuSub>
+                    )}
+                  </AppSidebarMenuItem>
 
                   {/* Knowledge — collapsible section */}
                   <AppSidebarMenuItem>
@@ -543,10 +452,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
-  usePostsLoader(); // Load posts from workspace on app startup
-  usePostsFileWatcher(); // Listen for external file changes in posts directory
   usePersonalityFiles(); // Load personality files from workspace on app startup
-  useOutputFiles(); // Load output files (posts, writings) from workspace
+  useOutputFiles(); // Load output files (writings) from workspace
 
   return (
     <div className="flex flex-col h-screen">
