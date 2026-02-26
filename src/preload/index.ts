@@ -159,7 +159,7 @@ const network: NetworkApi = {
 // ---------------------------------------------------------------------------
 // window.cron — Scheduled job management
 // ---------------------------------------------------------------------------
-const cron = {
+const cron: CronApi = {
     getAll: (): Promise<Array<{
         id: string
         name: string
