@@ -1,5 +1,3 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-
 type MediaPermissionStatus = 'granted' | 'denied' | 'not-determined' | 'restricted'
 type NetworkConnectionStatus = 'online' | 'offline' | 'unknown'
 

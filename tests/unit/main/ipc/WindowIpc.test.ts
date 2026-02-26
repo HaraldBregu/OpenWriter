@@ -48,17 +48,17 @@ describe('WindowIpc', () => {
     const handleCalls = (ipcMain.handle as jest.Mock).mock.calls
     const channels = handleCalls.map((c: unknown[]) => c[0])
 
-    // 7 handle calls for window management + window:is-maximized + window:get-platform + window:popup-menu
-    expect(channels).toContain('window-create-child')
-    expect(channels).toContain('window-create-modal')
-    expect(channels).toContain('window-create-frameless')
-    expect(channels).toContain('window-create-widget')
-    expect(channels).toContain('window-close')
-    expect(channels).toContain('window-close-all-managed')
-    expect(channels).toContain('window-get-state')
+    // 7 handle calls for window management + window:is-maximized + window:is-fullscreen + window:get-platform
+    expect(channels).toContain('wm-create-child')
+    expect(channels).toContain('wm-create-modal')
+    expect(channels).toContain('wm-create-frameless')
+    expect(channels).toContain('wm-create-widget')
+    expect(channels).toContain('wm-close-window')
+    expect(channels).toContain('wm-close-all')
+    expect(channels).toContain('wm-get-state')
     expect(channels).toContain('window:is-maximized')
+    expect(channels).toContain('window:is-fullscreen')
     expect(channels).toContain('window:get-platform')
-    expect(channels).toContain('window:popup-menu')
   })
 
   it('should register ipcMain.on calls for window controls', () => {
@@ -68,6 +68,7 @@ describe('WindowIpc', () => {
     expect(channels).toContain('window:minimize')
     expect(channels).toContain('window:maximize')
     expect(channels).toContain('window:close')
+    expect(channels).toContain('window:popup-menu')
   })
 
   it('should broadcast window state changes via EventBus', () => {

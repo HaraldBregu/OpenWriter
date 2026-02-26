@@ -180,7 +180,7 @@ export const mockApi = {
   onPipelineEvent: jest.fn().mockReturnValue(jest.fn()),
 
   // Window controls
-  popupMenu: jest.fn().mockResolvedValue(undefined),
+  popupMenu: jest.fn(),
   windowMinimize: jest.fn(),
   windowMaximize: jest.fn(),
   windowClose: jest.fn(),

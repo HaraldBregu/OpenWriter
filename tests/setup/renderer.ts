@@ -32,7 +32,7 @@ Object.defineProperty(window, 'app', {
     onLanguageChange: jest.fn().mockReturnValue(jest.fn()),
     onThemeChange: jest.fn().mockReturnValue(jest.fn()),
     onFileOpened: jest.fn().mockReturnValue(jest.fn()),
-    popupMenu: jest.fn().mockResolvedValue(undefined),
+    popupMenu: jest.fn(),
     getPlatform: jest.fn().mockResolvedValue('win32')
   },
   writable: true, configurable: true
