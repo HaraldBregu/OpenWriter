@@ -187,17 +187,6 @@ Object.defineProperty(window, 'clipboard', {
   writable: true, configurable: true
 })
 
-Object.defineProperty(window, 'store', {
-  value: {
-    getAllModelSettings: jest.fn().mockResolvedValue({}),
-    getModelSettings: jest.fn().mockResolvedValue(null),
-    setSelectedModel: jest.fn().mockResolvedValue(undefined),
-    setApiToken: jest.fn().mockResolvedValue(undefined),
-    setModelSettings: jest.fn().mockResolvedValue(undefined)
-  },
-  writable: true, configurable: true
-})
-
 Object.defineProperty(window, 'workspace', {
   value: {
     selectFolder: jest.fn().mockResolvedValue(null),
