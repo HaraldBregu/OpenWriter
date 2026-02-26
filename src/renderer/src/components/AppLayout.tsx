@@ -3,12 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../hooks/useLanguage";
 import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
-import { useOutputFiles } from "../hooks/useOutputFiles";
+import { useWritingItems } from "../hooks/useWritingItems";
 import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
 import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
 import { useCreateWriting } from "../hooks/useCreateWriting";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectWritings } from "../store/writingsSlice";
+import { selectWritingEntries } from "../store/writingItemsSlice";
 import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspaceSlice";
 import { TitleBar } from "./TitleBar";
 import {
