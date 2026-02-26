@@ -908,10 +908,7 @@ const task: TaskApi = {
     } | { success: false; error: { code: string; message: string } }> => {
         return typedInvokeRaw(TaskChannels.list)
     },
-    onEvent: (callback: (event: {
-        type: 'queued' | 'started' | 'progress' | 'completed' | 'error' | 'cancelled' | 'stream'
-        data: unknown
-    }) => void): (() => void) => {
+    onEvent: (callback) => {
         return typedOn(TaskChannels.event, callback)
     }
 }
