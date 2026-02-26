@@ -116,41 +116,6 @@ const win: WindowApi = {
 }
 
 // ---------------------------------------------------------------------------
-// window.store — Persisted AI model settings
-// ---------------------------------------------------------------------------
-const store: StoreApi = {
-    // New provider settings methods
-    getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
-        return typedInvokeUnwrap(StoreChannels.getAllProviderSettings)
-    },
-    getProviderSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null> => {
-        return typedInvokeUnwrap(StoreChannels.getProviderSettings, providerId)
-    },
-    setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setProviderSettings, providerId, settings)
-    },
-    setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setInferenceDefaults, providerId, update)
-    },
-    // Legacy methods
-    getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
-        return typedInvokeUnwrap(StoreChannels.getAllModelSettings)
-    },
-    getModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
-        return typedInvokeUnwrap(StoreChannels.getModelSettings, providerId)
-    },
-    setSelectedModel: (providerId: string, modelId: string): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setSelectedModel, providerId, modelId)
-    },
-    setApiToken: (providerId: string, token: string): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setApiToken, providerId, token)
-    },
-    setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setModelSettings, providerId, settings)
-    },
-}
-
-// ---------------------------------------------------------------------------
 // window.workspace — Workspace folder selection, recent workspaces, and docs/dirs/personality
 // ---------------------------------------------------------------------------
 const workspace: WorkspaceApi = {
