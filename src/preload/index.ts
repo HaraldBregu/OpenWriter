@@ -3,6 +3,7 @@ import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } fr
 import {
     AppChannels,
     WindowChannels,
+    StoreChannels,
     WorkspaceChannels,
     DocumentsChannels,
     DirectoriesChannels,
