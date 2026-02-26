@@ -1323,10 +1323,6 @@ const ai = {
 // ---------------------------------------------------------------------------
 console.log('[preload] Starting to expose namespaces. contextIsolated:', process.contextIsolated)
 
-try {
-  writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] About to expose namespaces. contextIsolated=${process.contextIsolated}\n`, { flag: 'a' })
-} catch (e) {}
-
 if (process.contextIsolated) {
     // Register each namespace independently so a single failure cannot
     // prevent subsequent namespaces from being exposed to the renderer.
