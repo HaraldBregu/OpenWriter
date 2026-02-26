@@ -18,7 +18,6 @@ import type {
     StoreApi,
     WorkspaceApi,
     ContextMenuApi,
-    OutputApi,
     TaskApi,
 } from './index.d'
 
