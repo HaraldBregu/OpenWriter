@@ -19,14 +19,7 @@ export default defineConfig({
     },
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
-    build: {
-      rollupOptions: {
-        output: {
-          entryFileNames: '[name].js'  // Use .js instead of .mjs for Electron compatibility
-        }
-      }
-    }
+    plugins: [externalizeDepsPlugin()]
   },
   renderer: {
     publicDir: resolve(__dirname, './src/renderer/public'),
