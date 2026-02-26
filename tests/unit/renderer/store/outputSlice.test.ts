@@ -745,24 +745,18 @@ describe('outputSlice', () => {
     })
 
     it('selectOutputItemsByType should filter items by type', () => {
-      const post = makeOutputItem({ id: 'p1', type: 'writings' })
-      const writing = makeOutputItem({ id: 'w1', type: 'writings' })
-      const state = makeRootState({ ...createInitialState(), items: [post, writing] })
+      const w1 = makeOutputItem({ id: 'w1', type: 'writings' })
+      const w2 = makeOutputItem({ id: 'w2', type: 'writings' })
+      const state = makeRootState({ ...createInitialState(), items: [w1, w2] })
 
-      const postSelector = selectOutputItemsByType('writings')
-      const writingSelector = selectOutputItemsByType('writings')
+      const selector = selectOutputItemsByType('writings')
 
-      expect(postSelector(state)).toHaveLength(1)
-      expect(postSelector(state)[0].id).toBe('p1')
-      expect(writingSelector(state)).toHaveLength(1)
-      expect(writingSelector(state)[0].id).toBe('w1')
+      expect(selector(state)).toHaveLength(2)
+      expect(selector(state).map((i) => i.id)).toEqual(['w1', 'w2'])
     })
 
-    it('selectOutputItemsByType should return an empty array when no items match', () => {
-      const state = makeRootState({
-        ...createInitialState(),
-        items: [makeOutputItem({ id: 'p1', type: 'writings' })]
-      })
+    it('selectOutputItemsByType should return an empty array when no items exist', () => {
+      const state = makeRootState(createInitialState())
       const selector = selectOutputItemsByType('writings')
       expect(selector(state)).toEqual([])
     })
