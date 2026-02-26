@@ -48,7 +48,7 @@ export class WindowFactory {
       icon: this.iconPath,
       ...overrides,
       webPreferences: {
-        ...this.baseWebPreferences,
+        ...this.getBaseWebPreferences(),
         ...overrides.webPreferences
       }
     }
