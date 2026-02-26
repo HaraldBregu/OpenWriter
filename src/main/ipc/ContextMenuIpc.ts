@@ -12,7 +12,7 @@ export class ContextMenuIpc implements IpcModule {
   readonly name = 'context-menu'
 
   register(_container: ServiceContainer, _eventBus: EventBus): void {
-    ipcMain.handle(ContextMenuChannels.writing, (event, writingId: string, _writingTitle: string) => {
+    ipcMain.handle(AppChannels.showWritingContextMenu, (event, writingId: string, _writingTitle: string) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 
@@ -20,20 +20,20 @@ export class ContextMenuIpc implements IpcModule {
         {
           label: 'Open',
           click: () => {
-            event.sender.send(ContextMenuChannels.writingAction, { action: 'open', writingId })
+            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'open', writingId })
           }
         },
         {
           label: 'Duplicate',
           click: () => {
-            event.sender.send(ContextMenuChannels.writingAction, { action: 'duplicate', writingId })
+            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'duplicate', writingId })
           }
         },
         { type: 'separator' },
         {
           label: 'Rename',
           click: () => {
-            event.sender.send(ContextMenuChannels.writingAction, { action: 'rename', writingId })
+            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'rename', writingId })
           }
         },
         { type: 'separator' },
@@ -41,7 +41,7 @@ export class ContextMenuIpc implements IpcModule {
           label: 'Move to Trash',
           accelerator: 'CmdOrCtrl+Backspace',
           click: () => {
-            event.sender.send(ContextMenuChannels.writingAction, { action: 'delete', writingId })
+            event.sender.send(AppChannels.showWritingContextMenuAction, { action: 'delete', writingId })
           }
         }
       ])
