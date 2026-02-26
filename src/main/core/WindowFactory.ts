@@ -18,7 +18,8 @@ export class WindowFactory {
 
   constructor() {
     // Use path.resolve to ensure absolute path for preload
-    this.preloadPath = path.resolve(__dirname, '../preload/index.mjs')
+    // Use .js instead of .mjs for Electron compatibility (preload scripts should be CommonJS/plain JS)
+    this.preloadPath = path.resolve(__dirname, '../preload/index.js')
     this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png')
     console.log('[WindowFactory] Preload path:', this.preloadPath)
   }
