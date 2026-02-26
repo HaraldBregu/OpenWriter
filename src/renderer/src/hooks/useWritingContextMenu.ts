@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
  * - `entriesRef` always holds the current entries without being a dependency.
  * - The subscription effect depends only on stable values (dispatch, navigate).
  *
- * Persistence is via window.output (OutputFilesService via workspace).
+ * Persistence is via window.workspace.output (OutputFilesService via workspace).
  */
 export function useWritingContextMenu(entries: WritingEntry[]): void {
   const dispatch = useAppDispatch()
@@ -44,7 +44,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
 
           // Create duplicate on disk first via workspace-backed output service
           try {
-            const result = await window.output.save({
+            const result = await window.workspace.output.save({
               type: 'writings',
               blocks: source.blocks.map((b) => ({
                 name: b.id,
@@ -95,7 +95,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
           const entryToDelete = entriesRef.current.find((e) => e.id === writingId)
           if (entryToDelete?.writingItemId) {
             try {
-              await window.output.delete({ type: 'writings', id: entryToDelete.writingItemId })
+              await window.workspace.output.delete({ type: 'writings', id: entryToDelete.writingItemId })
             } catch (err) {
               console.error('[useWritingContextMenu] Failed to delete writing item from disk:', err)
             }

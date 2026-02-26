@@ -39,7 +39,7 @@ export interface UseCreateWritingReturn {
  *
  * 1. Guards against concurrent calls while a creation is in flight.
  * 2. Verifies that a workspace is active before attempting any file I/O.
- * 3. Calls `window.output.save` to create the folder + config.json + block
+ * 3. Calls `window.workspace.output.save` to create the folder + config.json + block
  *    .md files on disk under <workspace>/output/writings/<timestamp>/.
  * 4. Dispatches `addEntry` to Redux with the new entry so the sidebar updates
  *    immediately without waiting for the next file-watcher reload.
@@ -88,10 +88,10 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
         // Create the initial block for this writing
         const blockName = crypto.randomUUID()
 
-        // Persist to disk via window.output.save (workspace-backed OutputFilesService).
+        // Persist to disk via window.workspace.output.save (workspace-backed OutputFilesService).
         // This writes <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json
         // and one <blockName>.md file per block.
-        const result = await window.output.save({
+        const result = await window.workspace.output.save({
           type: 'writings',
           blocks: [
             {

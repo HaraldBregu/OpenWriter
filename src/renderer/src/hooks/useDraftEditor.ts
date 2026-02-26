@@ -58,7 +58,7 @@ export interface UseDraftEditorReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Serialize blocks to the output format expected by window.output.save/update.
+ * Serialize blocks to the output format expected by window.workspace.output.save/update.
  * Each block becomes an object with a stable name (UUID), its content, and
  * timestamps. The name is preserved across saves using the block's own `id`.
  */
@@ -88,7 +88,7 @@ function serializeBlocksForOutput(
  *  - AI settings local state (no persistence to disk — simple defaults)
  *  - focusBlockId management (set on block insert, cleared after one render)
  *
- * Persistence backend: `window.output` (OutputFilesService via workspace).
+ * Persistence backend: `window.workspace.output` (OutputFilesService via workspace).
  * Each writing is stored as:
  *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json   (metadata)
  *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/<blockId>.md  (per block)
@@ -164,7 +164,7 @@ export function useDraftEditor(
 
   // ---------------------------------------------------------------------------
   // Draft mode: auto-commit to Redux + disk on first real content (1 s delay)
-  // Writes to window.output.save (workspace-backed OutputFilesService).
+  // Writes to window.workspace.output.save (workspace-backed OutputFilesService).
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isDraft || committedRef.current) return
@@ -185,7 +185,7 @@ export function useDraftEditor(
       // Create on disk first via workspace-backed output service
       let result: { id: string; path: string; savedAt: number }
       try {
-        result = await window.output.save({
+        result = await window.workspace.output.save({
           type: 'writings',
           blocks: serializeBlocksForOutput(draftBlocks),
           metadata: {
@@ -227,7 +227,7 @@ export function useDraftEditor(
   }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
 
   // ---------------------------------------------------------------------------
-  // Edit mode: auto-save to disk 1 s after changes via window.output.update
+  // Edit mode: auto-save to disk 1 s after changes via window.workspace.output.update
   // ---------------------------------------------------------------------------
   const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -250,7 +250,7 @@ export function useDraftEditor(
       if (currentWritingItemId) {
         // Update existing writing item on disk (partial update via output.update)
         try {
-          await window.output.update({
+          await window.workspace.output.update({
             type: 'writings',
             id: currentWritingItemId,
             blocks: serializeBlocksForOutput(entry.blocks),
@@ -269,7 +269,7 @@ export function useDraftEditor(
       } else {
         // First save for an entry that was added to Redux but not yet persisted
         try {
-          const result = await window.output.save({
+          const result = await window.workspace.output.save({
             type: 'writings',
             blocks: serializeBlocksForOutput(entry.blocks),
             metadata: {

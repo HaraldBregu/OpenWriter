@@ -39,7 +39,6 @@ import {
   WorkspaceIpc,
   DirectoriesIpc,
   TaskIpc,
-  OutputIpc,
   PersonalityIpc,
   ThemeIpc,
   WindowIpc,

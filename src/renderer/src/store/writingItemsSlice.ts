@@ -10,13 +10,13 @@ import type { Block } from '@/components/ContentBlock'
 /**
  * Redux-friendly representation of a writing item loaded from disk.
  *
- * The disk format (OutputFilesService via window.output) stores content as
+ * The disk format (OutputFilesService via window.workspace.output) stores content as
  * per-block .md files inside <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/.
  * The editor renders `Block[]` internally; each OutputFile block maps 1:1 to
  * a WritingEntry block.
  *
  * `writingItemId` is the stable on-disk folder name (YYYY-MM-DD_HHmmss) used
- * whenever calling `window.output.*`. It is distinct from `id`, which is a
+ * whenever calling `window.workspace.output.*`. It is distinct from `id`, which is a
  * client-side UUID used for React routing and Redux keying.
  */
 export interface WritingEntry {
@@ -66,7 +66,7 @@ function makeBlock(content = '', createdAt?: string, updatedAt?: string): Block 
 }
 
 /**
- * Map an OutputFile from window.output to a WritingEntry for Redux.
+ * Map an OutputFile from window.workspace.output to a WritingEntry for Redux.
  * Each output block maps to a writing block. If there are no blocks, a single
  * empty block is created so the editor always has something to render.
  */
@@ -94,14 +94,14 @@ function mapOutputFileToEntry(file: OutputFile): WritingEntry {
 // ---------------------------------------------------------------------------
 
 /**
- * Load all writing items from the current workspace via window.output.loadByType.
+ * Load all writing items from the current workspace via window.workspace.output.loadByType.
  * Returns an empty array when no workspace is active.
  */
 export const loadWritingItems = createAsyncThunk<WritingEntry[], void, { rejectValue: string }>(
   'writingItems/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.output.loadByType('writings')
+      const files = await window.workspace.output.loadByType('writings')
       return files.map(mapOutputFileToEntry)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load writing items'
@@ -120,7 +120,7 @@ export const writingItemsSlice = createSlice({
   reducers: {
     /**
      * Add a writing entry immediately after a successful disk creation.
-     * Called by useCreateWriting after window.output.save succeeds.
+     * Called by useCreateWriting after window.workspace.output.save succeeds.
      */
     addEntry(state, action: PayloadAction<WritingEntry>) {
       state.entries.unshift(action.payload)
