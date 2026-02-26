@@ -225,7 +225,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const handleWritingContextMenu = useCallback(
     (writingId: string, writingTitle: string) => {
-      window.contextMenu.showWriting(writingId, writingTitle);
+      window.app.showWriting(writingId, writingTitle);
     },
     [],
   );
