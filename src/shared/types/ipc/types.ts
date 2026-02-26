@@ -357,11 +357,6 @@ export interface WritingContextMenuAction {
   writingId: string
 }
 
-export interface PostContextMenuAction {
-  action: string
-  postId: string
-}
-
 // ---- Common ---------------------------------------------------------------
 
 export interface WatcherError {
