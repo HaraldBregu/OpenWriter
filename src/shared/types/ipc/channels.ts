@@ -270,32 +270,6 @@ export interface InvokeChannelMap {
   [CronChannels.updateSchedule]: { args: [id: string, schedule: string]; result: boolean }
   [CronChannels.validateExpression]: { args: [expression: string]; result: CronValidationResult }
 
-  // ---- Lifecycle (raw) ----
-  [LifecycleChannels.getState]: { args: []; result: LifecycleState }
-  [LifecycleChannels.getEvents]: { args: []; result: LifecycleEvent[] }
-  [LifecycleChannels.restart]: { args: []; result: void }
-
-  // ---- Filesystem (IpcResult-wrapped) ----
-  [FsChannels.openFileDialog]: { args: []; result: FileInfo | null }
-  [FsChannels.readFile]: { args: [filePath: string]; result: FileInfo }
-  [FsChannels.saveFileDialog]: { args: [defaultName: string, content: string]; result: FsSaveResult }
-  [FsChannels.writeFile]: { args: [filePath: string, content: string]; result: FsWriteResult }
-  [FsChannels.selectDirectory]: { args: []; result: string | null }
-  [FsChannels.watchDirectory]: { args: [dirPath: string]; result: boolean }
-  [FsChannels.unwatchDirectory]: { args: [dirPath: string]; result: boolean }
-  [FsChannels.getWatchedDirectories]: { args: []; result: string[] }
-
-  // ---- Dialog (IpcResult-wrapped) ----
-  [DialogChannels.open]: { args: []; result: DialogResult }
-  [DialogChannels.openDirectory]: { args: [multiSelections: boolean]; result: DialogResult }
-  [DialogChannels.save]: { args: []; result: DialogResult }
-  [DialogChannels.message]: { args: [message: string, detail: string, buttons: string[]]; result: DialogResult }
-  [DialogChannels.error]: { args: [title: string, content: string]; result: DialogResult }
-
-  // ---- Notification (raw) ----
-  [NotificationChannels.isSupported]: { args: []; result: boolean }
-  [NotificationChannels.show]: { args: [options: NotificationOptions]; result: string }
-
   // ---- Agent (IpcResult-wrapped for handle channels) ----
   [AgentChannels.createSession]: { args: [config: AgentSessionConfig]; result: AgentSessionInfo }
   [AgentChannels.destroySession]: { args: [sessionId: string]; result: boolean }
