@@ -107,9 +107,8 @@ export function DownloadsDemo() {
   }
 
   // Sync task states to download states.
-  // addLog is a plain inline function that only calls setDebugLog with a functional updater;
-  // it is safe to omit from the dep array — only `tasks` drives a meaningful re-sync.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // addLog is omitted from deps: it only calls setDebugLog with a functional updater and
+  // doesn't depend on any state itself. Only `tasks` drives meaningful re-syncs.
   useEffect(() => {
     setDownloads((prev) => {
       const updated = new Map(prev)
