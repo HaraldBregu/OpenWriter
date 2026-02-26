@@ -5,7 +5,7 @@
 // context can be tested without a live Electron environment.
 //
 // DIP: PersonalityTaskContext depends on this interface, not on the concrete
-// window.task / window.personality / window.store globals.
+// window.task / window.app / window.workspace globals.
 // ---------------------------------------------------------------------------
 
 export interface SavePersonalityOptions {
