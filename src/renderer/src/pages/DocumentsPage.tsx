@@ -575,7 +575,7 @@ const DocumentsPage: React.FC = () => {
     } finally {
       setIsImporting(false)
     }
-  }, [reloadDocuments])
+  }, [reloadDocuments, t])
 
   // Download from remote handler
   const handleDownloadRemote = useCallback(async (url: string) => {
