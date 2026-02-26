@@ -159,6 +159,12 @@ export interface WorkspaceApi {
   onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
   /** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
   onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void
+  /** Document import, download, and file-watch events */
+  documents: DocumentsApi
+  /** Indexed directory management */
+  directories: DirectoriesApi
+  /** Personality / conversation file management */
+  personality: PersonalityApi
 }
 
 /** Document import, download, and file-watch events */
