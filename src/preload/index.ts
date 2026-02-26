@@ -290,39 +290,19 @@ const fs: FileSystemApi = {
 // window.dialog — Native OS dialog boxes
 // ---------------------------------------------------------------------------
 const dialog: DialogApi = {
-    open: (): Promise<{
-        type: string
-        timestamp: number
-        data: Record<string, unknown>
-    }> => {
+    open: () => {
         return typedInvokeUnwrap(DialogChannels.open)
     },
-    openDirectory: (multiSelections = false): Promise<{
-        type: string
-        timestamp: number
-        data: Record<string, unknown>
-    }> => {
+    openDirectory: (multiSelections = false) => {
         return typedInvokeUnwrap(DialogChannels.openDirectory, multiSelections)
     },
-    save: (): Promise<{
-        type: string
-        timestamp: number
-        data: Record<string, unknown>
-    }> => {
+    save: () => {
         return typedInvokeUnwrap(DialogChannels.save)
     },
-    message: (message: string, detail: string, buttons: string[]): Promise<{
-        type: string
-        timestamp: number
-        data: Record<string, unknown>
-    }> => {
+    message: (message: string, detail: string, buttons: string[]) => {
         return typedInvokeUnwrap(DialogChannels.message, message, detail, buttons)
     },
-    error: (title: string, content: string): Promise<{
-        type: string
-        timestamp: number
-        data: Record<string, unknown>
-    }> => {
+    error: (title: string, content: string) => {
         return typedInvokeUnwrap(DialogChannels.error, title, content)
     },
 }
@@ -331,24 +311,13 @@ const dialog: DialogApi = {
 // window.notification — Desktop notifications
 // ---------------------------------------------------------------------------
 const notification: NotificationApi = {
-    isSupported: (): Promise<boolean> => {
+    isSupported: () => {
         return typedInvoke(NotificationChannels.isSupported)
     },
-    show: (options: {
-        title: string
-        body: string
-        silent?: boolean
-        urgency?: 'normal' | 'critical' | 'low'
-    }): Promise<string> => {
+    show: (options) => {
         return typedInvoke(NotificationChannels.show, options)
     },
-    onEvent: (callback: (result: {
-        id: string
-        title: string
-        body: string
-        timestamp: number
-        action: 'clicked' | 'closed' | 'shown'
-    }) => void): (() => void) => {
+    onEvent: (callback) => {
         return typedOn(NotificationChannels.event, callback)
     },
 }
