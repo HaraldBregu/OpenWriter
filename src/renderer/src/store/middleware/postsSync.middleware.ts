@@ -171,17 +171,6 @@ async function deletePostFile(postId: string): Promise<void> {
   } catch (error) {
     console.error('[PostsSync] Failed to delete post file:', error)
 
-    // Show user-facing error notification
-    try {
-      await window.notification.show({
-        title: 'Delete Failed',
-        body: `Failed to delete post file. The file may still exist in the workspace.`,
-        urgency: 'normal'
-      })
-    } catch (notifError) {
-      console.error('[PostsSync] Failed to show notification:', notifError)
-    }
-
     throw error
   }
 }
