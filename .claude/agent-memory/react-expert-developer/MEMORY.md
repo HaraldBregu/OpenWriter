@@ -13,7 +13,7 @@
 ## Namespace Map (window.api is gone — use these namespaces)
 - bluetooth → `window.bluetooth.*`; clipboard → `window.clipboard.*`; cron → `window.cron.*`
 - lifecycle → `window.lifecycle.*`; notification → `window.notification.*`; wm → `window.wm.*`
-- store → `window.store.*`; workspace → `window.workspace.*`
+- store methods → MERGED INTO `window.app.*` (window.store removed); workspace → `window.workspace.*`
 - app utilities → `window.app.*`; window controls → `window.win.*`
 - context menus → merged into `window.app`: `window.app.showWriting/onWritingAction`
 - REMOVED: `window.contextMenu` — no longer exists; use `window.app.showWriting/onWritingAction` instead
