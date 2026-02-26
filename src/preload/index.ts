@@ -340,49 +340,6 @@ const workspace: WorkspaceApi = {
     },
 } satisfies WorkspaceApi;
 
-// ---------------------------------------------------------------------------
-// window.documents — Document import, download, and file-watch events
-// ---------------------------------------------------------------------------
-const documents: DocumentsApi = {
-    importFiles: (): Promise<Array<{
-        id: string; name: string; path: string; size: number;
-        mimeType: string; importedAt: number; lastModified: number;
-    }>> => {
-        return typedInvokeUnwrap(DocumentsChannels.importFiles)
-    },
-    importByPaths: (paths: string[]): Promise<Array<{
-        id: string; name: string; path: string; size: number;
-        mimeType: string; importedAt: number; lastModified: number;
-    }>> => {
-        return typedInvokeUnwrap(DocumentsChannels.importByPaths, paths)
-    },
-    downloadFromUrl: (url: string): Promise<{
-        id: string; name: string; path: string; size: number;
-        mimeType: string; importedAt: number; lastModified: number;
-    }> => {
-        return typedInvokeUnwrap(DocumentsChannels.downloadFromUrl, url)
-    },
-    loadAll: (): Promise<Array<{
-        id: string; name: string; path: string; size: number;
-        mimeType: string; importedAt: number; lastModified: number;
-    }>> => {
-        return typedInvokeUnwrap(DocumentsChannels.loadAll)
-    },
-    delete: (id: string): Promise<void> => {
-        return typedInvokeUnwrap(DocumentsChannels.deleteFile, id)
-    },
-    onFileChange: (callback: (event: {
-        type: 'added' | 'changed' | 'removed';
-        fileId: string;
-        filePath: string;
-        timestamp: number;
-    }) => void): (() => void) => {
-        return typedOn(DocumentsChannels.fileChanged, callback)
-    },
-    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        return typedOn(DocumentsChannels.watcherError, callback)
-    },
-}
 
 // ---------------------------------------------------------------------------
 // window.contextMenu — Application-specific context menus
