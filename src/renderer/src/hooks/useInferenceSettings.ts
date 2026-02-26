@@ -43,7 +43,7 @@ interface UseInferenceSettingsReturn {
  *
  * Resolution order (highest precedence first):
  *   1. Local React state (in-memory, session-scoped)
- *   2. Section config from disk (`window.personality.loadSectionConfig`)
+ *   2. Section config from disk (`window.workspace.personality.loadSectionConfig`)
  *   3. Provider-level global fallback from Redux (`selectEffectiveInferenceSettings`)
  *   4. Hard-coded `DEFAULT_INFERENCE_SETTINGS`
  *
