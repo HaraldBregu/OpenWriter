@@ -20,7 +20,7 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - app utilities → `window.app.*`; window controls → `window.win.*`
 - context menus → `window.contextMenu.showWriting/onWritingAction/showPost/onPostAction`
 - AI pipeline → `window.ai.inference/cancel/listAgents/onEvent`
-- writing items → `window.writingItems.create/save/loadAll/loadOne/delete/onFileChange/onWatcherError`
+- REMOVED: `window.writingItems` — no longer exists in preload; use `window.output` for writings
 
 ## window.store — new vs old methods
 - OLD (still in preload): `getAllModelSettings`, `getModelSettings`, `setSelectedModel`, `setApiToken`, `setModelSettings`
