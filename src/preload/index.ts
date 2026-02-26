@@ -62,7 +62,7 @@ const app: AppApi = {
 // ---------------------------------------------------------------------------
 // window.win — Window controls
 // ---------------------------------------------------------------------------
-const win = {
+const win: WindowApi = {
     minimize: (): void => {
         typedSend(WindowChannels.minimize)
     },
