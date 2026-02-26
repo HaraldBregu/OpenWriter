@@ -18,10 +18,17 @@ export class WindowFactory {
 
   constructor() {
     // Use path.resolve to ensure absolute path for preload
-    // Use .js instead of .mjs for Electron compatibility (preload scripts should be CommonJS/plain JS)
-    this.preloadPath = path.resolve(__dirname, '../preload/index.js')
+    this.preloadPath = path.resolve(__dirname, '../preload/index.mjs')
     this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png')
     console.log('[WindowFactory] Preload path:', this.preloadPath)
+    // Verify preload file exists
+    try {
+      const { existsSync } = require('fs')
+      const exists = existsSync(this.preloadPath)
+      console.log('[WindowFactory] Preload file exists:', exists)
+    } catch (e) {
+      // Silent fail
+    }
   }
 
   private getBaseWebPreferences(): Electron.WebPreferences {
