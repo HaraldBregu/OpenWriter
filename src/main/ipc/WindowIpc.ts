@@ -1,8 +1,8 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, type IpcMainInvokeEvent } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
-import { registerCommand, registerQuery } from './IpcGateway'
+import { wrapIpcHandler } from './IpcErrorHandler'
 import { WindowChannels } from '../../shared/types/ipc/channels'
 
 /**
