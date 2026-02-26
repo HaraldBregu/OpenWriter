@@ -157,15 +157,5 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
     }
   })
 
-  // Register writing items service (dedicated workspace:writings/ store)
-  factory.register({
-    key: 'writingItems',
-    factory: async ({ workspaceService, eventBus }) => {
-      const service = new WritingItemsService(workspaceService, eventBus)
-      await service.initialize()
-      return service
-    }
-  })
-
   return factory
 }
