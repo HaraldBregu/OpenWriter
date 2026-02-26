@@ -58,17 +58,6 @@ const App: React.FC = () => {
                       <Routes>
                         <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
                         <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
-                        <Route path="/microphone" element={<RouteWrapper><MicrophonePage /></RouteWrapper>} />
-                        <Route path="/camera" element={<RouteWrapper><CameraPage /></RouteWrapper>} />
-                        <Route path="/screen" element={<RouteWrapper><ScreenPage /></RouteWrapper>} />
-                        <Route path="/bluetooth" element={<RouteWrapper><BluetoothPage /></RouteWrapper>} />
-                        <Route path="/network" element={<RouteWrapper><NetworkPage /></RouteWrapper>} />
-                        <Route path="/lifecycle" element={<RouteWrapper><LifecyclePage /></RouteWrapper>} />
-                        <Route path="/windows" element={<RouteWrapper><WindowManagerPage /></RouteWrapper>} />
-                        <Route path="/filesystem" element={<RouteWrapper><FilesystemPage /></RouteWrapper>} />
-                        <Route path="/dialogs" element={<RouteWrapper><DialogsPage /></RouteWrapper>} />
-                        <Route path="/notifications" element={<RouteWrapper><NotificationsPage /></RouteWrapper>} />
-                        <Route path="/clipboard" element={<RouteWrapper><ClipboardPage /></RouteWrapper>} />
                         <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
                         <Route path="/pipeline-test" element={<Navigate to="/debug" replace />} />
                         <Route path="/new/post" element={<RouteWrapper><NewPostPage /></RouteWrapper>} />
