@@ -714,25 +714,7 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.win = win
     // @ts-ignore (define in dts)
-    globalThis.media = media
-    // @ts-ignore (define in dts)
-    globalThis.bluetooth = bluetooth
-    // @ts-ignore (define in dts)
-    globalThis.network = network
-    // @ts-ignore (define in dts)
     globalThis.cron = cron
-    // @ts-ignore (define in dts)
-    globalThis.lifecycle = lifecycle
-    // @ts-ignore (define in dts)
-    globalThis.wm = wm
-    // @ts-ignore (define in dts)
-    globalThis.fs = fs
-    // @ts-ignore (define in dts)
-    globalThis.dialog = dialog
-    // @ts-ignore (define in dts)
-    globalThis.notification = notification
-    // @ts-ignore (define in dts)
-    globalThis.clipboard = clipboard
     // @ts-ignore (define in dts)
     globalThis.store = store
     // @ts-ignore (define in dts)
