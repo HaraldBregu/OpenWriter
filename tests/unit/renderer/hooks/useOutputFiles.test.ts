@@ -4,7 +4,7 @@
  * The hook:
  *  1. On mount, checks window.workspace.getCurrent() — if a workspace exists,
  *     dispatches loadOutputItems() (async thunk that calls window.output.loadAll).
- *  2. Subscribes to window.output.onFileChange() and re-dispatches loadOutputItems
+ *  2. Subscribes to window.workspace.output.onFileChange() and re-dispatches loadOutputItems
  *     after a 500 ms debounce on each event.
  *  3. On unmount, calls the unsubscribe function and cancels any pending debounce.
  *
@@ -191,14 +191,14 @@ describe('useOutputFiles — initial load', () => {
 })
 
 describe('useOutputFiles — file-change subscription', () => {
-  it('subscribes to window.output.onFileChange on mount', async () => {
+  it('subscribes to window.workspace.output.onFileChange on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path')
 
     const { wrapper } = createWrapper()
     renderHook(() => useOutputFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.output.onFileChange).toHaveBeenCalledTimes(1)
+      expect(window.workspace.output.onFileChange).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -279,7 +279,7 @@ describe('useOutputFiles — cleanup on unmount', () => {
     const { unmount } = renderHook(() => useOutputFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.output.onFileChange).toHaveBeenCalled()
+      expect(window.workspace.output.onFileChange).toHaveBeenCalled()
     })
 
     unmount()
