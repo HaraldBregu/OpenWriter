@@ -514,7 +514,7 @@ const DocumentsPage: React.FC = () => {
   // Shared reload function — always fetches from disk for consistency
   const reloadDocuments = useCallback(async () => {
     try {
-      const docs = await window.documents.loadAll()
+      const docs = await window.workspace.documents.loadAll()
       setDocuments(docs)
       return docs
     } catch (error) {
@@ -546,7 +546,7 @@ const DocumentsPage: React.FC = () => {
       await reloadDocuments()
     }
 
-    const unsubscribeFileChange = window.documents.onFileChange(handleFileChange)
+    const unsubscribeFileChange = window.workspace.documents.onFileChange(handleFileChange)
 
     return () => {
       unsubscribeFileChange()
@@ -567,7 +567,7 @@ const DocumentsPage: React.FC = () => {
     try {
       setIsImporting(true)
       setImportError(null)
-      await window.documents.importFiles()
+      await window.workspace.documents.importFiles()
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to import files:', error)
@@ -580,7 +580,7 @@ const DocumentsPage: React.FC = () => {
   // Download from remote handler
   const handleDownloadRemote = useCallback(async (url: string) => {
     try {
-      await window.documents.downloadFromUrl(url)
+      await window.workspace.documents.downloadFromUrl(url)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to download file:', error)
@@ -591,7 +591,7 @@ const DocumentsPage: React.FC = () => {
   // Delete document handler
   const handleDeleteDocument = useCallback(async (id: string) => {
     try {
-      await window.documents.delete(id)
+      await window.workspace.documents.delete(id)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to delete document:', error)
@@ -641,7 +641,7 @@ const DocumentsPage: React.FC = () => {
       setIsImporting(true)
       setImportError(null)
       const paths = files.map(file => (file as File & { path: string }).path)
-      await window.documents.importByPaths(paths)
+      await window.workspace.documents.importByPaths(paths)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
