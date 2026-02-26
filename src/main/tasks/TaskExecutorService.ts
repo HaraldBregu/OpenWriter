@@ -197,12 +197,133 @@ export class TaskExecutorService implements Disposable {
   }
 
   /**
+   * Pause a queued task. Running tasks cannot be paused — they must be cancelled.
+   * Returns true if the task was found in queued state and paused.
+   */
+  pause(taskId: string): boolean {
+    const task = this.activeTasks.get(taskId)
+    if (!task || task.status !== 'queued') return false
+
+    task.status = 'paused'
+    task.pausedAt = Date.now()
+
+    this.send(task.windowId, 'task:event', {
+      type: 'paused',
+      data: { taskId }
+    } satisfies TaskEvent)
+
+    console.log(`[TaskExecutorService] Task ${taskId} paused`)
+    return true
+  }
+
+  /**
+   * Resume a paused task.
+   * The task is returned to the queue in its original priority order.
+   * Returns true if the task was found in paused state and resumed.
+   */
+  resume(taskId: string): boolean {
+    const task = this.activeTasks.get(taskId)
+    if (!task || task.status !== 'paused') return false
+
+    task.status = 'queued'
+    task.pausedAt = undefined
+
+    // Re-sort to restore priority order; position is based on current queue state
+    this.sortQueue()
+
+    const queued = this.queue.find((q) => q.taskId === taskId)
+    const position = queued ? this.queue.indexOf(queued) + 1 : 1
+
+    this.send(task.windowId, 'task:event', {
+      type: 'resumed',
+      data: { taskId, position }
+    } satisfies TaskEvent)
+
+    console.log(`[TaskExecutorService] Task ${taskId} resumed at position ${position}`)
+
+    // Allow execution if a slot is free
+    this.drainQueue()
+    return true
+  }
+
+  /**
+   * Update the priority of a queued or paused task.
+   * The queue is re-sorted immediately.
+   * Returns true if the task was found and its priority updated.
+   */
+  updatePriority(taskId: string, newPriority: TaskPriority): boolean {
+    const task = this.activeTasks.get(taskId)
+    if (!task || (task.status !== 'queued' && task.status !== 'paused')) return false
+
+    task.priority = newPriority
+
+    const queued = this.queue.find((q) => q.taskId === taskId)
+    if (queued) {
+      queued.priority = newPriority
+    }
+
+    this.sortQueue()
+
+    const position = queued ? this.queue.indexOf(queued) + 1 : 1
+
+    this.send(task.windowId, 'task:event', {
+      type: 'priority-changed',
+      data: { taskId, priority: newPriority, position }
+    } satisfies TaskEvent)
+
+    console.log(`[TaskExecutorService] Task ${taskId} priority updated to "${newPriority}"`)
+
+    // A higher priority task may now be eligible to run sooner
+    this.drainQueue()
+    return true
+  }
+
+  /**
+   * Retrieve a completed/errored/cancelled task by its ID.
+   * Active (queued/running) tasks are also returned.
+   * Returns undefined if the task is unknown or its TTL has expired.
+   */
+  getTaskResult(taskId: string): ActiveTask | undefined {
+    const active = this.activeTasks.get(taskId)
+    if (active) return active
+
+    const entry = this.completedTasks.get(taskId)
+    if (entry && entry.expiresAt > Date.now()) return entry.task
+
+    return undefined
+  }
+
+  /**
+   * Return a snapshot of queue metrics.
+   */
+  getQueueStatus(): TaskQueueStatus {
+    let queued = 0
+    let running = 0
+    let completed = this.completedTasks.size
+
+    for (const task of this.activeTasks.values()) {
+      if (task.status === 'running') {
+        running++
+      } else {
+        // queued or paused both count as queued from a metrics perspective
+        queued++
+      }
+    }
+
+    return { queued, running, completed }
+  }
+
+  /**
    * Disposable -- abort every active task on shutdown.
    */
   destroy(): void {
     console.log(
       `[TaskExecutorService] Destroying, aborting ${this.activeTasks.size} task(s)`
     )
+    if (this.gcHandle) {
+      clearInterval(this.gcHandle)
+      this.gcHandle = null
+    }
     for (const task of this.activeTasks.values()) {
       task.controller.abort()
       if (task.timeoutHandle) {
@@ -210,6 +331,7 @@ export class TaskExecutorService implements Disposable {
       }
     }
     this.activeTasks.clear()
+    this.completedTasks.clear()
     this.queue = []
     this.runningCount = 0
   }
