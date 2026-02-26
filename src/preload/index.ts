@@ -171,66 +171,31 @@ const network: NetworkApi = {
 // window.cron — Scheduled job management
 // ---------------------------------------------------------------------------
 const cron: CronApi = {
-    getAll: (): Promise<Array<{
-        id: string
-        name: string
-        schedule: string
-        enabled: boolean
-        running: boolean
-        lastRun?: Date
-        nextRun?: Date
-        runCount: number
-        description?: string
-        humanReadable?: string
-    }>> => {
+    getAll: () => {
         return typedInvoke(CronChannels.getAll)
     },
-    getJob: (id: string): Promise<{
-        id: string
-        name: string
-        schedule: string
-        enabled: boolean
-        running: boolean
-        lastRun?: Date
-        nextRun?: Date
-        runCount: number
-        description?: string
-        humanReadable?: string
-    } | null> => {
+    getJob: (id: string) => {
         return typedInvoke(CronChannels.getJob, id)
     },
-    start: (id: string): Promise<boolean> => {
+    start: (id: string) => {
         return typedInvoke(CronChannels.start, id)
     },
-    stop: (id: string): Promise<boolean> => {
+    stop: (id: string) => {
         return typedInvoke(CronChannels.stop, id)
     },
-    delete: (id: string): Promise<boolean> => {
+    delete: (id: string) => {
         return typedInvoke(CronChannels.delete, id)
     },
-    create: (config: {
-        id: string
-        name: string
-        schedule: string
-        enabled: boolean
-        runCount: number
-        description?: string
-    }): Promise<boolean> => {
+    create: (config) => {
         return typedInvoke(CronChannels.create, config)
     },
-    updateSchedule: (id: string, schedule: string): Promise<boolean> => {
+    updateSchedule: (id: string, schedule: string) => {
         return typedInvoke(CronChannels.updateSchedule, id, schedule)
     },
-    validateExpression: (expression: string): Promise<{ valid: boolean; description?: string; error?: string }> => {
+    validateExpression: (expression: string) => {
         return typedInvoke(CronChannels.validateExpression, expression)
     },
-    onJobResult: (callback: (result: {
-        id: string
-        timestamp: Date
-        success: boolean
-        message?: string
-        data?: unknown
-    }) => void): (() => void) => {
+    onJobResult: (callback) => {
         return typedOn(CronChannels.jobResult, callback)
     },
 }
