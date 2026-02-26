@@ -128,11 +128,21 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
   - `useTaskEvents(taskId?)` — bounded event history (max 50), global or scoped
   - `useTaskProgress(taskId)` — useSyncExternalStore for surgical percent/message updates
   - `useTaskStatus(taskId)` — status-only, minimal re-renders
+- `TrackedTaskState` includes: taskId, type, status, priority, progress, queuePosition, durationMs, error, result, streamedContent, events
+- `TaskStatus` = `'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'` — 'paused' is NOT terminal
+- All new event types in applyEvent: 'paused', 'resumed', 'priority-changed', 'queue-position'
+- Hooks (updated Feb 2026):
+  - `useTaskSubmit` — adds pause(), resume(), updatePriority(), queuePosition
+  - `useTaskResult(taskId?)` — fetches completed result via window.task.getResult(); auto-refetches on 'completed'
+  - `useTaskStream(taskId)` — useSyncExternalStore-backed token accumulation, zero cross-task re-renders
+  - `useTaskQueue()` — live sorted queue view + queueStatus metrics via window.task.queueStatus()
 - HOC: `src/renderer/src/components/withTaskTracking.tsx` — injects `taskTracking` prop bag
+- CRITICAL: pause()/resume() read live store snapshot (not React state) to avoid stale-closure bugs
+- PAUSABLE_STATUSES = 'queued' | 'running' only — 'paused' itself is NOT pausable (prevents double-pause)
 - All hooks require `<TaskProvider>` ancestor; throw descriptive error if missing
 - Place `<TaskProvider>` once at AppLayout level — single IPC subscription for the whole app
 - `window.task` is optional in preload.d.ts — always guard with `typeof window.task?.method === 'function'`
-- Tests: `tests/unit/renderer/hooks/useTaskSubmit.test.tsx` — 16 passing tests
+- Tests: `useTaskSubmit.test.tsx` (16) + `useTaskSubmitExtended.test.tsx` (16) = 32 passing
 
 ## i18n System
 - Translation files: `resources/i18n/en/main.json` and `resources/i18n/it/main.json`
