@@ -6,9 +6,17 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { WorkspaceService } from '../services/workspace'
 import type { LoggerService } from '../services/logger'
+import type {
+  OutputFilesService,
+  OutputFile,
+  OutputType,
+  SaveOutputFileInput,
+  SaveOutputFileResult,
+} from '../services/output-files'
+import { VALID_OUTPUT_TYPES } from '../services/output-files'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { WorkspaceChannels } from '../../shared/types/ipc/channels'
+import { WorkspaceChannels, OutputChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for workspace management.
