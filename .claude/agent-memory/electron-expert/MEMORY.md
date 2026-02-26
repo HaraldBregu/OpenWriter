@@ -58,6 +58,17 @@
 - Guard: `if (process.contextIsolated)` → `contextBridge.exposeInMainWorld`; else `globalThis.*` (fallback)
 - All windows use the single WindowFactory which sets preload + sandbox:true + contextIsolation:true — there are no unpreloaded windows in this app
 
+## Task Manager Extensions (added channels)
+- `task:pause` / `task:resume` — queued-only pause/resume; running tasks must be cancelled
+- `task:update-priority` — reorders queue immediately; input validated against allowlist in IPC handler
+- `task:get-result` — returns `TaskInfo | null`; searches activeTasks first, then completedTasks (5-min TTL)
+- `task:queue-status` — returns `{ queued, running, completed }` metrics snapshot
+- Completed tasks stored in `completedTasks` Map with TTL; GC runs via `setInterval` every 60s (unref'd)
+- `TaskStatus` now includes `'paused'`; `drainQueue()` skips `task.status === 'paused'` entries in-place
+- Priority update also calls `drainQueue()` — a promoted task may claim a free slot immediately
+- `TaskEvent` union extended: `paused`, `resumed` (with position), `priority-changed` (with priority + position)
+- `TaskInfo` in shared/types upgraded to use `TaskStatus` / `TaskPriority` proper types (not `string`)
+
 ## IPC Channel Name Pitfalls
 - `window.wm.*` calls channels `wm-get-state`, `wm-create-child`, `wm-create-modal`, `wm-create-frameless`, `wm-create-widget`, `wm-close-window`, `wm-close-all`
 - WindowIpc.ts must register those exact `wm-*` names (previously a bug: it registered `window-*` names instead)
