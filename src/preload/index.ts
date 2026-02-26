@@ -645,7 +645,6 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('cron', cron)
         contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
-        contextBridge.exposeInMainWorld('posts', posts)
         contextBridge.exposeInMainWorld('documents', documents)
         contextBridge.exposeInMainWorld('agent', agent)
         contextBridge.exposeInMainWorld('contextMenu', contextMenu)
