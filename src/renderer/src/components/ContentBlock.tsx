@@ -109,10 +109,9 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   const { isEnhancing, handleEnhance } = useBlockEnhancement({ editorRef, onChangeRef, blockIdRef })
 
-  const editorOptions = useMemo(() => ({
+  const editorOptions = useMemo<UseEditorOptions>(() => ({
     extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
     content: block.content || '',
-    contentType: 'markdown' as const,
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
       onChangeRef.current(blockIdRef.current, ed.getMarkdown())
@@ -138,7 +137,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
   }), []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const editor = useEditor(editorOptions as any)
+  const editor = useEditor(editorOptions)
 
   // Keep editorRef in sync whenever useEditor returns a new instance.
   useEffect(() => {
