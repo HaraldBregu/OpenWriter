@@ -244,7 +244,6 @@ declare global {
     app: AppApi
     /** Optional: not present in all window types */
     win?: WindowApi
-    store: StoreApi
     workspace: WorkspaceApi
     /** Optional: not present in all window types */
     task?: TaskApi

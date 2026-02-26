@@ -206,6 +206,21 @@ export const AppChannels = {
   // Writing context menu (formerly ContextMenuChannels)
   showWritingContextMenu: 'context-menu:writing',
   writingContextMenuAction: 'context-menu:writing-action',
+  // Store / AI model settings (merged from StoreChannels)
+  getAllProviderSettings: 'store-get-all-provider-settings',
+  getProviderSettings: 'store-get-provider-settings',
+  setProviderSettings: 'store-set-provider-settings',
+  setInferenceDefaults: 'store-set-inference-defaults',
+  /** @deprecated Use getAllProviderSettings instead */
+  getAllModelSettings: 'store-get-all-model-settings',
+  /** @deprecated Use getProviderSettings instead */
+  getModelSettings: 'store-get-model-settings',
+  /** @deprecated Use setProviderSettings instead */
+  setSelectedModel: 'store-set-selected-model',
+  /** @deprecated Use setProviderSettings instead */
+  setApiToken: 'store-set-api-token',
+  /** @deprecated Use setProviderSettings instead */
+  setModelSettings: 'store-set-model-settings',
 } as const
 
 // Legacy model settings type (kept for backward compat with store legacy channels)
