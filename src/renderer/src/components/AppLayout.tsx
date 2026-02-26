@@ -52,13 +52,8 @@ import {
   Heart,
   Lightbulb,
   Flame,
-  Scale,
-  Shuffle,
-  Sprout,
   Users,
   Palette,
-  Hourglass,
-  GitMerge,
 } from "lucide-react";
 
 interface AppLayoutProps {
