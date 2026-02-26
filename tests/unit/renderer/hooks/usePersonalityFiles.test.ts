@@ -3,8 +3,8 @@
  *
  * The hook:
  *  1. On mount, calls window.workspace.getCurrent(). If a workspace exists,
- *     dispatches loadPersonalityFiles() (thunk that calls window.personality.loadAll).
- *  2. Subscribes to window.personality.onFileChange() and re-dispatches
+ *     dispatches loadPersonalityFiles() (thunk that calls window.workspace.personality.loadAll).
+ *  2. Subscribes to window.workspace.personality.onFileChange() and re-dispatches
  *     loadPersonalityFiles after a 500 ms debounce on each event.
  *  3. On unmount, calls the unsubscribe function and cancels any pending debounce.
  *
