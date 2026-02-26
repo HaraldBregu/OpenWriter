@@ -257,7 +257,7 @@ describe('useCreateWriting — no active workspace', () => {
       await result.current.createWriting()
     })
 
-    expect(store.getState().writings.writings).toHaveLength(0)
+    expect(store.getState().writingItems.entries).toHaveLength(0)
   })
 })
 
@@ -318,7 +318,7 @@ describe('useCreateWriting — save failure', () => {
       await result.current.createWriting()
     })
 
-    expect(store.getState().writings.writings).toHaveLength(0)
+    expect(store.getState().writingItems.entries).toHaveLength(0)
   })
 
   it('wraps non-Error rejections in an Error instance', async () => {
