@@ -6,7 +6,6 @@ import {
     StoreChannels,
     WorkspaceChannels,
     DocumentsChannels,
-    ContextMenuChannels,
     DirectoriesChannels,
     PersonalityChannels,
     OutputChannels,
