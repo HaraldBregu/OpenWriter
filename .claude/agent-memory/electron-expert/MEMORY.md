@@ -98,7 +98,7 @@
 - Watcher depth=3 (was 2) to cover: output/ → type/ → date-folder/ → block.md
 - `BLOCK_FILE_RE = /^[0-9a-f-]+\.md$/i` used to identify block files in watcher `ignored` predicate
 - Both config changes and block .md changes emit same `output:file-changed` event with the date-folder as `fileId`
-- `window.posts` (PostsIpc) remains unchanged — uses separate `<workspace>/posts/{id}.json` flat format
+- Posts sync system (`window.posts`, `PostsIpc`, `FileWatcherService`) has been fully removed from this project
 
 ## Details Files
 - See `patterns.md` for extended code patterns
