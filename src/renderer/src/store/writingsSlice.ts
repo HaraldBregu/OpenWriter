@@ -26,10 +26,16 @@ export interface Writing {
 
 interface WritingsState {
   writings: Writing[]
+  /**
+   * Error message set when `useCreateWriting` encounters a failure.
+   * Cleared by `clearWritingCreationError` or the next successful creation.
+   */
+  creationError: string | null
 }
 
 const initialState: WritingsState = {
-  writings: []
+  writings: [],
+  creationError: null,
 }
 
 // ---------------------------------------------------------------------------
