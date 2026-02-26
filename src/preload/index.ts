@@ -436,7 +436,6 @@ if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('app', app)
         contextBridge.exposeInMainWorld('win', win)
-        contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('task', task)
     } catch (error) {
@@ -447,8 +446,6 @@ if (process.contextIsolated) {
     globalThis.app = app
     // @ts-ignore (define in dts)
     globalThis.win = win
-    // @ts-ignore (define in dts)
-    globalThis.store = store
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
