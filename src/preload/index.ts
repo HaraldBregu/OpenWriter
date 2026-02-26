@@ -114,16 +114,16 @@ const win: WindowApi = {
 // window.media — Microphone / camera permissions and device enumeration
 // ---------------------------------------------------------------------------
 const media: MediaApi = {
-    requestMicrophonePermission: (): Promise<string> => {
+    requestMicrophonePermission: () => {
         return typedInvoke(MediaChannels.requestMicrophone)
     },
-    requestCameraPermission: (): Promise<string> => {
+    requestCameraPermission: () => {
         return typedInvoke(MediaChannels.requestCamera)
     },
-    getMicrophonePermissionStatus: (): Promise<string> => {
+    getMicrophonePermissionStatus: () => {
         return typedInvoke(MediaChannels.getMicrophoneStatus)
     },
-    getCameraPermissionStatus: (): Promise<string> => {
+    getCameraPermissionStatus: () => {
         return typedInvoke(MediaChannels.getCameraStatus)
     },
     getDevices: (type: 'audioinput' | 'videoinput') => {
