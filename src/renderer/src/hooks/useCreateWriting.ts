@@ -153,8 +153,16 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
         onSuccess?.(writingId)
         return writingId
       } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('An unexpected error occurred while creating the writing.')
+        // RTK's `.unwrap()` throws a `SerializedError` (plain object with a
+        // `message` field), not an `Error` instance.  We normalise both shapes
+        // into a proper Error so callers always receive an Error object.
+        const message =
+          err instanceof Error
+            ? err.message
+            : typeof err === 'object' && err !== null && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : 'An unexpected error occurred while creating the writing.'
+        const error = new Error(message)
         setError(error)
         onError?.(error)
         return null
