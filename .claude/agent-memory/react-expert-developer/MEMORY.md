@@ -14,7 +14,10 @@
 - lifecycle → `window.lifecycle.*`; notification → `window.notification.*`; wm → `window.wm.*`
 - store → `window.store.*`; workspace → `window.workspace.*`
 - app utilities → `window.app.*`; window controls → `window.win.*`
-- context menus → `window.contextMenu.showWriting/onWritingAction/showPost/onPostAction`
+- context menus → merged into `window.app`: `window.app.showWriting/onWritingAction`
+- REMOVED: `window.contextMenu` — no longer exists; use `window.app.showWriting/onWritingAction` instead
+- Main-process handler: `src/main/ipc/ContextMenuIpc.ts` uses `AppChannels.showWritingContextMenu/writingContextMenuAction`
+- IPC barrel: `src/main/ipc/index.ts` exports `ContextMenuIpc` (was missing; added Feb 2026)
 - AI pipeline → `window.ai.inference/cancel/listAgents/onEvent`
 - REMOVED: `window.writingItems` — no longer exists; use `window.workspace.output` for writings
 - REMOVED: top-level `window.output` — all output API is now nested under `window.workspace.output`
