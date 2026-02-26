@@ -219,4 +219,83 @@ export class WorkspaceService implements Disposable {
       return false
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Workspace folder validation (deletion detection)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Start a periodic timer that checks whether the current workspace folder
+   * still exists on disk. If the folder is found to be missing the workspace
+   * is automatically cleared and a `workspace:deleted` event is emitted so
+   * the renderer can redirect the user.
+   */
+  private startValidationTimer(): void {
+    this.stopValidationTimer()
+
+    this.validationTimer = setInterval(() => {
+      if (!this.currentPath) {
+        this.stopValidationTimer()
+        return
+      }
+
+      if (!this.isValidDirectory(this.currentPath)) {
+        console.warn(
+          '[WorkspaceService] Workspace folder no longer exists:',
+          this.currentPath
+        )
+        this.handleWorkspaceGone(this.currentPath)
+      }
+    }, WorkspaceService.VALIDATION_INTERVAL_MS)
+  }
+
+  /**
+   * Stop the periodic validation timer.
+   */
+  private stopValidationTimer(): void {
+    if (this.validationTimer) {
+      clearInterval(this.validationTimer)
+      this.validationTimer = null
+    }
+  }
+
+  /**
+   * Called when the workspace folder is detected as missing.
+   * Clears the workspace and notifies both the main-process services
+   * and all renderer windows.
+   */
+  private handleWorkspaceGone(deletedPath: string): void {
+    // Determine reason: if parent directory exists but the folder does not
+    // it was likely deleted or renamed. Otherwise treat as inaccessible.
+    let reason: 'deleted' | 'inaccessible' | 'renamed' = 'deleted'
+    try {
+      const parentDir = path.dirname(deletedPath)
+      if (!fs.existsSync(parentDir)) {
+        reason = 'inaccessible'
+      }
+    } catch {
+      reason = 'inaccessible'
+    }
+
+    // Clear workspace state (this also stops the timer via clear())
+    this.clear()
+
+    const deletedEvent = {
+      deletedPath,
+      reason,
+      timestamp: Date.now()
+    }
+
+    // Emit typed main-process event
+    this.eventBus.emit('workspace:deleted', deletedEvent)
+
+    // Broadcast to all renderer windows
+    this.eventBus.broadcast('workspace:deleted', deletedEvent)
+
+    console.log(
+      '[WorkspaceService] Workspace gone event broadcast:',
+      deletedPath,
+      reason
+    )
+  }
 }
