@@ -1,5 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+// Debug: Mark that preload is loading
+;(globalThis as any).__preloadStarted = true
+console.log('[preload] Module loading started')
+
 /**
  * IPC Result types matching the main process wrappers
  */
