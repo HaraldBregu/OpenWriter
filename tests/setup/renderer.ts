@@ -259,56 +259,6 @@ Object.defineProperty(window, 'agent', {
   writable: true, configurable: true
 })
 
-Object.defineProperty(window, 'contextMenu', {
-  value: {
-    showWriting: jest.fn().mockResolvedValue(undefined),
-    onWritingAction: jest.fn().mockReturnValue(jest.fn()),
-  },
-  writable: true, configurable: true
-})
-
-Object.defineProperty(window, 'directories', {
-  value: {
-    list: jest.fn().mockResolvedValue([]),
-    add: jest.fn().mockResolvedValue({ id: '1', path: '/test', addedAt: Date.now(), isIndexed: false }),
-    addMany: jest.fn().mockResolvedValue({ added: [], errors: [] }),
-    remove: jest.fn().mockResolvedValue(true),
-    validate: jest.fn().mockResolvedValue({ valid: true }),
-    markIndexed: jest.fn().mockResolvedValue(true),
-    onChanged: jest.fn().mockReturnValue(jest.fn())
-  },
-  writable: true, configurable: true
-})
-
-Object.defineProperty(window, 'personality', {
-  value: {
-    save: jest.fn().mockResolvedValue({ id: '1', path: '/test', savedAt: Date.now() }),
-    loadAll: jest.fn().mockResolvedValue([]),
-    loadOne: jest.fn().mockResolvedValue(null),
-    delete: jest.fn().mockResolvedValue(undefined),
-    onFileChange: jest.fn().mockReturnValue(jest.fn()),
-    onWatcherError: jest.fn().mockReturnValue(jest.fn()),
-    loadSectionConfig: jest.fn().mockResolvedValue(null),
-    saveSectionConfig: jest.fn().mockResolvedValue({}),
-    onSectionConfigChange: jest.fn().mockReturnValue(jest.fn())
-  },
-  writable: true, configurable: true
-})
-
-Object.defineProperty(window, 'output', {
-  value: {
-    save: jest.fn().mockResolvedValue({ id: '1', path: '/test', savedAt: Date.now() }),
-    loadAll: jest.fn().mockResolvedValue([]),
-    loadByType: jest.fn().mockResolvedValue([]),
-    loadOne: jest.fn().mockResolvedValue(null),
-    update: jest.fn().mockResolvedValue(undefined),
-    delete: jest.fn().mockResolvedValue(undefined),
-    onFileChange: jest.fn().mockReturnValue(jest.fn()),
-    onWatcherError: jest.fn().mockReturnValue(jest.fn())
-  },
-  writable: true, configurable: true
-})
-
 Object.defineProperty(window, 'task', {
   value: {
     submit: jest.fn().mockResolvedValue({ success: true, data: { taskId: 'task-1' } }),
