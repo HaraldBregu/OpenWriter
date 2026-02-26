@@ -30,7 +30,6 @@ import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/ha
 import type { IpcModule } from './ipc'
 import {
   AgentIpc,
-  ContextMenuIpc,
   CronIpc,
   CustomIpc,
   DocumentsIpc,
