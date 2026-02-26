@@ -381,7 +381,7 @@ const dialog: DialogApi = {
 // ---------------------------------------------------------------------------
 // window.notification — Desktop notifications
 // ---------------------------------------------------------------------------
-const notification = {
+const notification: NotificationApi = {
     isSupported: (): Promise<boolean> => {
         return typedInvoke(NotificationChannels.isSupported)
     },
