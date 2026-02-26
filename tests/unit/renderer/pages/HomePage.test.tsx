@@ -4,8 +4,8 @@
  * The page shows:
  *  - A time-based greeting heading
  *  - Subtitle text
- *  - Category cards (Posts, Writing)
- *  - A Recent section with placeholder items (Q1 Strategy Brief, Release Announcement, Design Assets)
+ *  - Category cards (Writing)
+ *  - A Recent section with placeholder items (Q1 Strategy Brief, Design Assets)
  *  - A "View all" link
  *  - Documents and Integrations navigation cards
  *  - A Tip section
@@ -19,13 +19,12 @@ import { HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import chatReducer from '../../../../src/renderer/src/store/chatSlice'
-import postsReducer from '../../../../src/renderer/src/store/postsSlice'
 import directoriesReducer from '../../../../src/renderer/src/store/directoriesSlice'
 
 // Mock lucide-react to avoid SVG rendering complexity
 jest.mock('lucide-react', () => {
   const icons = [
-    'Newspaper', 'PenLine', 'FolderOpen', 'Puzzle',
+    'PenLine', 'FolderOpen', 'Puzzle',
     'ArrowRight', 'Clock', 'Star', 'Loader2', 'Square'
   ]
   const mocks: Record<string, (props: Record<string, unknown>) => React.ReactElement> = {}
@@ -42,7 +41,6 @@ function renderHomePage() {
   const store = configureStore({
     reducer: {
       chat: chatReducer,
-      posts: postsReducer,
       directories: directoriesReducer
     }
   })
@@ -75,13 +73,6 @@ describe('HomePage', () => {
 
   // ---- Category cards -----------------------------------------------------
 
-  it('should render the Posts category card', () => {
-    renderHomePage()
-
-    expect(screen.getByText('Posts')).toBeInTheDocument()
-    expect(screen.getByText('Publish to your audience')).toBeInTheDocument()
-  })
-
   it('should render the Writing category card', () => {
     renderHomePage()
 
@@ -102,7 +93,6 @@ describe('HomePage', () => {
 
     // Titles from the static recentItems array in HomePage
     expect(screen.getByText('Q1 Strategy Brief')).toBeInTheDocument()
-    expect(screen.getByText('Release Announcement')).toBeInTheDocument()
     expect(screen.getByText('Design Assets')).toBeInTheDocument()
   })
 

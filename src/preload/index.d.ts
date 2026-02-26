@@ -17,9 +17,6 @@ import type {
   CronValidationResult,
   WorkspaceInfo,
   WorkspaceChangedEvent,
-  PostData,
-  PostSyncResult,
-  PostFileChangeEvent,
   DocumentInfo,
   DocumentFileChangeEvent,
   AgentSessionConfig,
@@ -50,7 +47,6 @@ import type {
   PersonalityFileChangeEvent,
   SectionConfigChangeEvent,
   WritingContextMenuAction,
-  PostContextMenuAction,
   WatcherError,
 } from '../shared/types/ipc/types'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/types/aiSettings'
