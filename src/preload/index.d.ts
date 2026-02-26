@@ -241,8 +241,6 @@ interface WindowManagerState {
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-
     /** General application utilities */
     app: {
       playSound: () => void
