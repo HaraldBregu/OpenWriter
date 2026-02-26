@@ -478,7 +478,6 @@ function usePersonalityTask(
       maxTokens: options?.maxTokens,
       reasoning: options?.reasoning
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sectionId, systemPrompt, providerId, options?.modelId, options?.temperature, options?.maxTokens, options?.reasoning, submitTask]
   )
 
