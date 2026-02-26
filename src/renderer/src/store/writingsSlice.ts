@@ -137,6 +137,19 @@ export const writingsSlice = createSlice({
     },
 
     /**
+     * Record a writing creation error (set by useCreateWriting on failure).
+     * Stored here so any component in the tree can surface it if needed.
+     */
+    setWritingCreationError(state, action: PayloadAction<string>) {
+      state.creationError = action.payload
+    },
+
+    /** Clear the creation error, e.g. when the user dismisses a toast. */
+    clearWritingCreationError(state) {
+      state.creationError = null
+    },
+
+    /**
      * Hydrate writings from disk after outputSlice finishes loading.
      *
      * Previously this lived in extraReducers matching 'output/loadAll/fulfilled'
