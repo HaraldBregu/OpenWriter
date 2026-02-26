@@ -37,7 +37,7 @@ export const loadAISettings = createAsyncThunk<
   { rejectValue: string }
 >('aiSettings/load', async (_, { rejectWithValue }) => {
   try {
-    const result = await window.store.getAllProviderSettings()
+    const result = await window.app.getAllProviderSettings()
     return result ?? {}
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to load AI settings'
