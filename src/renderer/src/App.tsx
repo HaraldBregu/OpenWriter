@@ -14,7 +14,6 @@ import './index.css'
 const HomePage = lazy(() => import('./pages/HomePage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const NewPostPage = lazy(() => import('./pages/NewPostPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
