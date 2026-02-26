@@ -59,6 +59,7 @@ export function useBlockEnhancement({
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!enhanceTaskId) return
+    if (!window.task) return
     const unsub = window.task.onEvent((event) => {
       if (event.type !== 'stream') return
       const data = event.data as { taskId: string; token?: string }
