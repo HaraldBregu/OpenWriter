@@ -492,7 +492,7 @@ const store: StoreApi = {
 // ---------------------------------------------------------------------------
 // window.workspace — Workspace folder selection and recent workspaces
 // ---------------------------------------------------------------------------
-const workspace = {
+const workspace: WorkspaceApi = {
     selectFolder: (): Promise<string | null> => {
         return typedInvokeUnwrap(WorkspaceChannels.selectFolder)
     },
