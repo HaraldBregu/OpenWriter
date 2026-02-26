@@ -122,13 +122,9 @@ async function syncPostsToElectron(posts: Post[]): Promise<void> {
       errors: result.errors
     })
 
-    // Show warning if some posts failed to sync
+    // Check for sync errors (notifications disabled)
     if (result.failedCount > 0) {
-      await window.notification.show({
-        title: 'Partial Sync',
-        body: `${result.failedCount} post(s) failed to sync. Check console for details.`,
-        urgency: 'normal'
-      })
+      console.warn(`[PostsSync] ${result.failedCount} post(s) failed to sync`)
     }
   } catch (error) {
     console.error('[PostsSync] Failed to sync posts to Electron:', error)
