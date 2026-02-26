@@ -263,4 +263,7 @@ export const selectWritingCount = createSelector(
   (writings): number => writings.length
 )
 
+export const selectWritingCreationError = (state: { writings: WritingsState }): string | null =>
+  state.writings.creationError
+
 export default writingsSlice.reducer
