@@ -39,7 +39,7 @@
 - `window.dialog` — open, openDirectory, save, message, error
 - `window.notification` — isSupported, show, onEvent
 - `window.clipboard` — writeText, readText, writeHTML, readHTML, writeImage, readImage, clear, getContent, getFormats, hasText, hasImage, hasHTML
-- `window.store` — getAllModelSettings, getModelSettings, setSelectedModel, setApiToken, setModelSettings
+- `window.store` — REMOVED: merged into window.app. StoreIpc.ts deleted; handlers now in CustomIpc.ts
 - `window.workspace` — selectFolder, getCurrent, setCurrent, getRecent, clear, directoryExists, removeRecent + nested sub-objects below
 - `window.workspace.documents` — importFiles, importByPaths, downloadFromUrl, loadAll, delete, onFileChange, onWatcherError
 - `window.workspace.directories` — list, add, addMany, remove, validate, markIndexed, onChanged
