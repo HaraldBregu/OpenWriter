@@ -1,3 +1,15 @@
+// ---------------------------------------------------------------------------
+// Preload API Type Declarations
+// ---------------------------------------------------------------------------
+// These declarations extend the browser's global Window interface so that
+// renderer code can access window.app, window.win, etc. with full type safety.
+//
+// The interface Window block MUST live inside `declare global` so TypeScript
+// treats this as a module-augmentation rather than a standalone interface
+// declaration.  Without `declare global` the renderer tsconfig (which includes
+// this file as a global type) cannot merge it into `Window & typeof globalThis`.
+// ---------------------------------------------------------------------------
+
 import type {
   MediaPermissionStatus,
   MediaDeviceInfo,
@@ -7,9 +19,12 @@ import type {
   CronJobConfig,
   CronJobStatus,
   CronJobResult,
+  CronValidationResult,
   LifecycleEvent,
   LifecycleState,
   FileInfo,
+  FsSaveResult,
+  FsWriteResult,
   FsWatchEvent,
   DialogResult,
   NotificationOptions,
@@ -17,24 +32,119 @@ import type {
   ClipboardContent,
   ClipboardImageData,
   WorkspaceInfo,
-  PipelineEvent,
-  PipelineActiveRun,
-  TaskSubmitPayload,
-  TaskInfo,
-  TaskEvent,
-  OutputType,
-  BlockContentItem,
-  OutputFileMetadata,
-  OutputFileBlock,
-  OutputFile,
-  OutputFileChangeEvent,
   ManagedWindowType,
   ManagedWindowInfo,
   WindowManagerState,
+  PostData,
+  PostSyncResult,
+  PostFileChangeEvent,
+  DocumentInfo,
+  DocumentFileChangeEvent,
+  AgentSessionConfig,
+  AgentSessionInfo,
+  AgentRunOptions,
+  AgentStatusInfo,
+  PipelineEvent,
+  PipelineActiveRun,
+  PipelineInput,
+  TaskSubmitPayload,
+  TaskInfo,
+  TaskEvent,
+  OutputFile,
+  OutputFileChangeEvent,
+  SaveOutputInput,
+  SaveOutputResult,
+  OutputUpdateParams,
+  DirectoryEntry,
+  DirectoryAddManyResult,
+  DirectoryValidationResult,
+  PersonalityFile,
+  SavePersonalityInput,
+  SavePersonalityResult,
+  SectionConfig,
+  SectionConfigUpdate,
+  PersonalityFileChangeEvent,
+  SectionConfigChangeEvent,
+  WritingContextMenuAction,
+  PostContextMenuAction,
+  WatcherError,
 } from '../shared/types/ipc/types'
+import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/types/aiSettings'
+import type { IpcResult } from '../shared/types/ipc/ipc-result'
+
+// ---------------------------------------------------------------------------
+// Re-export shared types so renderer code can import them from the preload
+// declaration rather than reaching into the shared directory directly.
+// ---------------------------------------------------------------------------
+export type {
+  MediaPermissionStatus,
+  MediaDeviceInfo,
+  NetworkConnectionStatus,
+  NetworkInterfaceInfo,
+  NetworkInfo,
+  CronJobConfig,
+  CronJobStatus,
+  CronJobResult,
+  CronValidationResult,
+  LifecycleEvent,
+  LifecycleState,
+  FileInfo,
+  FsSaveResult,
+  FsWriteResult,
+  FsWatchEvent,
+  DialogResult,
+  NotificationOptions,
+  NotificationResult,
+  ClipboardContent,
+  ClipboardImageData,
+  WorkspaceInfo,
+  ManagedWindowType,
+  ManagedWindowInfo,
+  WindowManagerState,
+  PostData,
+  PostSyncResult,
+  PostFileChangeEvent,
+  DocumentInfo,
+  DocumentFileChangeEvent,
+  AgentSessionConfig,
+  AgentSessionInfo,
+  AgentRunOptions,
+  AgentStatusInfo,
+  PipelineEvent,
+  PipelineActiveRun,
+  PipelineInput,
+  TaskSubmitPayload,
+  TaskInfo,
+  TaskEvent,
+  OutputFile,
+  OutputFileChangeEvent,
+  SaveOutputInput,
+  SaveOutputResult,
+  OutputUpdateParams,
+  DirectoryEntry,
+  DirectoryAddManyResult,
+  DirectoryValidationResult,
+  PersonalityFile,
+  SavePersonalityInput,
+  SavePersonalityResult,
+  SectionConfig,
+  SectionConfigUpdate,
+  PersonalityFileChangeEvent,
+  SectionConfigChangeEvent,
+  WritingContextMenuAction,
+  PostContextMenuAction,
+  WatcherError,
+  ProviderSettings,
+  InferenceDefaultsUpdate,
+  IpcResult,
+}
+
+// ---------------------------------------------------------------------------
+// API namespace interfaces
+// ---------------------------------------------------------------------------
 
 /** General application utilities */
-interface AppApi {
+export interface AppApi {
   playSound: () => void
   setTheme: (theme: string) => void
   showContextMenu: () => void
@@ -47,7 +157,7 @@ interface AppApi {
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
-interface WindowApi {
+export interface WindowApi {
   minimize: () => void
   maximize: () => void
   close: () => void
@@ -58,7 +168,7 @@ interface WindowApi {
 }
 
 /** Microphone / camera permissions and device enumeration */
-interface MediaApi {
+export interface MediaApi {
   requestMicrophonePermission: () => Promise<MediaPermissionStatus>
   requestCameraPermission: () => Promise<MediaPermissionStatus>
   getMicrophonePermissionStatus: () => Promise<MediaPermissionStatus>
@@ -67,14 +177,14 @@ interface MediaApi {
 }
 
 /** Bluetooth capability queries */
-interface BluetoothApi {
+export interface BluetoothApi {
   isSupported: () => Promise<boolean>
   getPermissionStatus: () => Promise<string>
   getInfo: () => Promise<{ platform: string; supported: boolean; apiAvailable: boolean }>
 }
 
 /** Network connectivity and interface information */
-interface NetworkApi {
+export interface NetworkApi {
   isSupported: () => Promise<boolean>
   getConnectionStatus: () => Promise<NetworkConnectionStatus>
   getInterfaces: () => Promise<NetworkInterfaceInfo[]>
@@ -83,7 +193,7 @@ interface NetworkApi {
 }
 
 /** Scheduled job management */
-interface CronApi {
+export interface CronApi {
   getAll: () => Promise<CronJobStatus[]>
   getJob: (id: string) => Promise<CronJobStatus | null>
   start: (id: string) => Promise<boolean>
@@ -91,12 +201,12 @@ interface CronApi {
   delete: (id: string) => Promise<boolean>
   create: (config: CronJobConfig) => Promise<boolean>
   updateSchedule: (id: string, schedule: string) => Promise<boolean>
-  validateExpression: (expression: string) => Promise<{ valid: boolean; description?: string; error?: string }>
+  validateExpression: (expression: string) => Promise<CronValidationResult>
   onJobResult: (callback: (result: CronJobResult) => void) => () => void
 }
 
 /** App lifecycle state and events */
-interface LifecycleApi {
+export interface LifecycleApi {
   getState: () => Promise<LifecycleState>
   getEvents: () => Promise<LifecycleEvent[]>
   restart: () => Promise<void>
@@ -104,7 +214,7 @@ interface LifecycleApi {
 }
 
 /** Window manager — child / modal / frameless / widget windows */
-interface WindowManagerApi {
+export interface WindowManagerApi {
   getState: () => Promise<WindowManagerState>
   createChild: () => Promise<ManagedWindowInfo>
   createModal: () => Promise<ManagedWindowInfo>
@@ -116,11 +226,11 @@ interface WindowManagerApi {
 }
 
 /** Filesystem operations and directory watching */
-interface FileSystemApi {
+export interface FileSystemApi {
   openFile: () => Promise<FileInfo | null>
   readFile: (filePath: string) => Promise<FileInfo>
-  saveFile: (defaultName: string, content: string) => Promise<{ success: boolean; filePath: string | null }>
-  writeFile: (filePath: string, content: string) => Promise<{ success: boolean; filePath: string }>
+  saveFile: (defaultName: string, content: string) => Promise<FsSaveResult>
+  writeFile: (filePath: string, content: string) => Promise<FsWriteResult>
   selectDirectory: () => Promise<string | null>
   watchDirectory: (dirPath: string) => Promise<boolean>
   unwatchDirectory: (dirPath: string) => Promise<boolean>
@@ -129,7 +239,7 @@ interface FileSystemApi {
 }
 
 /** Native OS dialog boxes */
-interface DialogApi {
+export interface DialogApi {
   open: () => Promise<DialogResult>
   openDirectory: (multiSelections?: boolean) => Promise<DialogResult>
   save: () => Promise<DialogResult>
@@ -138,14 +248,14 @@ interface DialogApi {
 }
 
 /** Desktop notifications */
-interface NotificationApi {
+export interface NotificationApi {
   isSupported: () => Promise<boolean>
   show: (options: NotificationOptions) => Promise<string>
   onEvent: (callback: (result: NotificationResult) => void) => () => void
 }
 
 /** Clipboard read / write operations */
-interface ClipboardApi {
+export interface ClipboardApi {
   writeText: (text: string) => Promise<boolean>
   readText: () => Promise<string>
   writeHTML: (html: string) => Promise<boolean>
@@ -161,20 +271,25 @@ interface ClipboardApi {
 }
 
 /** Persisted AI model settings */
-interface StoreApi {
-  getAllProviderSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>>
-  getProviderSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null>
-  setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }) => Promise<void>
-  setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }) => Promise<void>
+export interface StoreApi {
+  getAllProviderSettings: () => Promise<Record<string, ProviderSettings>>
+  getProviderSettings: (providerId: string) => Promise<ProviderSettings | null>
+  setProviderSettings: (providerId: string, settings: ProviderSettings) => Promise<void>
+  setInferenceDefaults: (providerId: string, update: InferenceDefaultsUpdate) => Promise<void>
+  /** @deprecated Use getAllProviderSettings instead */
   getAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>
+  /** @deprecated Use getProviderSettings instead */
   getModelSettings: (providerId: string) => Promise<{ selectedModel: string; apiToken: string } | null>
+  /** @deprecated Use setProviderSettings instead */
   setSelectedModel: (providerId: string, modelId: string) => Promise<void>
+  /** @deprecated Use setProviderSettings instead */
   setApiToken: (providerId: string, token: string) => Promise<void>
+  /** @deprecated Use setProviderSettings instead */
   setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }) => Promise<void>
 }
 
 /** Workspace folder selection and recent workspaces */
-interface WorkspaceApi {
+export interface WorkspaceApi {
   selectFolder: () => Promise<string | null>
   getCurrent: () => Promise<string | null>
   setCurrent: (workspacePath: string) => Promise<void>
@@ -184,108 +299,29 @@ interface WorkspaceApi {
   removeRecent: (workspacePath: string) => Promise<void>
 }
 
-interface PostData {
-  id: string
-  title: string
-  blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
-  category: string
-  tags: string[]
-  visibility: string
-  createdAt: number
-  updatedAt: number
-}
-
-interface PostSyncResult {
-  success: boolean
-  syncedCount: number
-  failedCount: number
-  errors?: Array<{ postId: string; error: string }>
-}
-
-interface PostFileChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  postId: string
-  filePath: string
-  timestamp: number
-}
-
 /** Post sync and file-watch events */
-interface PostsApi {
+export interface PostsApi {
   syncToWorkspace: (posts: PostData[]) => Promise<PostSyncResult>
   update: (post: PostData) => Promise<void>
   delete: (postId: string) => Promise<void>
   loadFromWorkspace: () => Promise<PostData[]>
   onFileChange: (callback: (event: PostFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-}
-
-interface DocumentInfo {
-  id: string
-  name: string
-  path: string
-  size: number
-  mimeType: string
-  importedAt: number
-  lastModified: number
-}
-
-interface DocumentFileChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  fileId: string
-  filePath: string
-  timestamp: number
+  onWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
 /** Document import, download, and file-watch events */
-interface DocumentsApi {
+export interface DocumentsApi {
   importFiles: () => Promise<DocumentInfo[]>
   importByPaths: (paths: string[]) => Promise<DocumentInfo[]>
   downloadFromUrl: (url: string) => Promise<DocumentInfo>
   loadAll: () => Promise<DocumentInfo[]>
   delete: (id: string) => Promise<void>
   onFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-}
-
-interface AgentSessionConfig {
-  sessionId: string
-  providerId: string
-  modelId?: string
-  systemPrompt?: string
-  temperature?: number
-  maxTokens?: number
-  metadata?: Record<string, unknown>
-}
-
-interface AgentSessionInfo {
-  sessionId: string
-  providerId: string
-  modelId: string
-  createdAt: number
-  lastActivity: number
-  isActive: boolean
-  messageCount: number
-  metadata?: Record<string, unknown>
-}
-
-interface AgentRunSessionOptions {
-  sessionId: string
-  runId: string
-  messages: Array<{ role: 'user' | 'assistant'; content: string }>
-  providerId: string
-  temperature?: number
-  maxTokens?: number
-  stream?: boolean
-}
-
-interface AgentStatus {
-  totalSessions: number
-  activeSessions: number
-  totalMessages: number
+  onWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
 /** AI agent execution and session management */
-interface AgentApi {
+export interface AgentApi {
   run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string) => Promise<void>
   cancel: (runId: string) => void
   onEvent: (callback: (eventType: string, data: unknown) => void) => () => void
@@ -294,262 +330,106 @@ interface AgentApi {
   getSession: (sessionId: string) => Promise<AgentSessionInfo | null>
   listSessions: () => Promise<AgentSessionInfo[]>
   clearSessions: () => Promise<number>
-  runSession: (options: AgentRunSessionOptions) => Promise<void>
+  runSession: (options: AgentRunOptions) => Promise<void>
   cancelSession: (sessionId: string) => Promise<boolean>
-  getStatus: () => Promise<AgentStatus>
+  getStatus: () => Promise<AgentStatusInfo>
   isRunning: (runId: string) => Promise<boolean>
 }
 
 /** Application-specific context menus */
-interface ContextMenuApi {
+export interface ContextMenuApi {
   showWriting: (writingId: string, writingTitle: string) => Promise<void>
-  onWritingAction: (callback: (data: { action: string; writingId: string }) => void) => () => void
+  onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void
   showPost: (postId: string, postTitle: string) => Promise<void>
-  onPostAction: (callback: (data: { action: string; postId: string }) => void) => () => void
-}
-
-interface DirectoryInfo {
-  id: string
-  path: string
-  addedAt: number
-  isIndexed: boolean
-  lastIndexedAt?: number
-}
-
-interface AddManyResult {
-  added: DirectoryInfo[]
-  errors: Array<{ path: string; error: string }>
+  onPostAction: (callback: (data: PostContextMenuAction) => void) => () => void
 }
 
 /** Indexed directory management */
-interface DirectoriesApi {
-  list: () => Promise<DirectoryInfo[]>
-  add: (dirPath: string) => Promise<DirectoryInfo>
-  addMany: (dirPaths: string[]) => Promise<AddManyResult>
+export interface DirectoriesApi {
+  list: () => Promise<DirectoryEntry[]>
+  add: (dirPath: string) => Promise<DirectoryEntry>
+  addMany: (dirPaths: string[]) => Promise<DirectoryAddManyResult>
   remove: (id: string) => Promise<boolean>
-  validate: (dirPath: string) => Promise<{ valid: boolean; error?: string }>
+  validate: (dirPath: string) => Promise<DirectoryValidationResult>
   markIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
-  onChanged: (callback: (directories: DirectoryInfo[]) => void) => () => void
-}
-
-interface PersonalitySaveInput {
-  sectionId: string
-  content: string
-  metadata?: Record<string, unknown>
-}
-
-interface PersonalitySaveResult {
-  id: string
-  path: string
-  savedAt: number
-}
-
-interface PersonalityFile {
-  id: string
-  sectionId: string
-  path: string
-  metadata: {
-    title: string
-    provider: string
-    model: string
-    [key: string]: unknown
-  }
-  content: string
-  savedAt: number
-}
-
-interface PersonalitySectionConfig {
-  schemaVersion: number
-  provider: string
-  model: string
-  temperature?: number | null
-  maxTokens?: number | null
-  reasoning?: boolean
-  displayName?: string
-  description?: string
-  createdAt: string
-  updatedAt: string
-}
-
-interface PersonalitySectionConfigUpdate {
-  provider?: string
-  model?: string
-  temperature?: number | null
-  maxTokens?: number | null
-  reasoning?: boolean
-  displayName?: string
-  description?: string
-}
-
-interface PersonalitySectionConfigChangeEvent {
-  sectionId: string
-  config: PersonalitySectionConfig | null
-  timestamp: number
-}
-
-interface PersonalityFileChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  sectionId: string
-  fileId: string
-  filePath: string
-  timestamp: number
+  onChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void
 }
 
 /** Personality / conversation file management */
-interface PersonalityApi {
-  save: (input: PersonalitySaveInput) => Promise<PersonalitySaveResult>
+export interface PersonalityApi {
+  save: (input: SavePersonalityInput) => Promise<SavePersonalityResult>
   loadAll: () => Promise<PersonalityFile[]>
   loadOne: (params: { sectionId: string; id: string }) => Promise<PersonalityFile | null>
   delete: (params: { sectionId: string; id: string }) => Promise<void>
   onFileChange: (callback: (event: PersonalityFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-  loadSectionConfig: (params: { sectionId: string }) => Promise<PersonalitySectionConfig | null>
-  saveSectionConfig: (params: { sectionId: string; update: PersonalitySectionConfigUpdate }) => Promise<PersonalitySectionConfig>
-  onSectionConfigChange: (callback: (event: PersonalitySectionConfigChangeEvent) => void) => () => void
+  onWatcherError: (callback: (error: WatcherError) => void) => () => void
+  loadSectionConfig: (params: { sectionId: string }) => Promise<SectionConfig | null>
+  saveSectionConfig: (params: { sectionId: string; update: SectionConfigUpdate }) => Promise<SectionConfig>
+  onSectionConfigChange: (callback: (event: SectionConfigChangeEvent) => void) => () => void
 }
 
-interface OutputBlockInput {
-  name: string
-  content: string
-  createdAt: string
-  updatedAt: string
-}
-
-interface OutputSaveInput {
-  type: string
-  blocks: OutputBlockInput[]
-  metadata?: Record<string, unknown>
-}
-
-interface OutputSaveResult {
-  id: string
-  path: string
-  savedAt: number
-}
-
-interface OutputUpdateParams {
-  type: string
-  id: string
-  blocks: OutputBlockInput[]
-  metadata: Record<string, unknown>
-}
-
-/** Output file management for posts and writings */
-interface OutputApi {
-  save: (input: OutputSaveInput) => Promise<OutputSaveResult>
+/** Output file management (posts and writings) */
+export interface OutputApi {
+  save: (input: SaveOutputInput) => Promise<SaveOutputResult>
   loadAll: () => Promise<OutputFile[]>
   loadByType: (type: string) => Promise<OutputFile[]>
   loadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
   update: (params: OutputUpdateParams) => Promise<void>
   delete: (params: { type: string; id: string }) => Promise<void>
   onFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: { error: string; timestamp: number }) => void) => () => void
-}
-
-interface TaskSubmitResult {
-  success: true
-  data: { taskId: string }
-}
-
-interface TaskSubmitError {
-  success: false
-  error: { code: string; message: string }
-}
-
-interface TaskListResult {
-  success: true
-  data: TaskInfo[]
-}
-
-interface TaskListError {
-  success: false
-  error: { code: string; message: string }
-}
-
-interface TaskCancelResult {
-  success: true
-  data: boolean
-}
-
-interface TaskCancelError {
-  success: false
-  error: { code: string; message: string }
+  onWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
 /** Background task queue */
-interface TaskApi {
-  submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<TaskSubmitResult | TaskSubmitError>
-  cancel: (taskId: string) => Promise<TaskCancelResult | TaskCancelError>
-  list: () => Promise<TaskListResult | TaskListError>
+export interface TaskApi {
+  submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<IpcResult<{ taskId: string }>>
+  cancel: (taskId: string) => Promise<IpcResult<boolean>>
+  list: () => Promise<IpcResult<TaskInfo[]>>
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
-interface InferenceInput {
-  prompt: string
-  context?: Record<string, unknown>
-}
-
-interface InferenceResult {
-  success: true
-  data: { runId: string }
-}
-
-interface InferenceError {
-  success: false
-  error: { code: string; message: string }
-}
-
-interface ListAgentsResult {
-  success: true
-  data: string[]
-}
-
-interface ListAgentsError {
-  success: false
-  error: { code: string; message: string }
-}
-
-interface ListRunsResult {
-  success: true
-  data: PipelineActiveRun[]
-}
-
-interface ListRunsError {
-  success: false
-  error: { code: string; message: string }
-}
-
 /** AI inference API (pipeline-based) */
-interface AiApi {
-  inference: (agentName: string, input: InferenceInput) => Promise<InferenceResult | InferenceError>
+export interface AiApi {
+  inference: (agentName: string, input: PipelineInput) => Promise<IpcResult<{ runId: string }>>
   cancel: (runId: string) => void
   onEvent: (callback: (event: PipelineEvent) => void) => () => void
-  listAgents: () => Promise<ListAgentsResult | ListAgentsError>
-  listRuns: () => Promise<ListRunsResult | ListRunsError>
+  listAgents: () => Promise<IpcResult<string[]>>
+  listRuns: () => Promise<IpcResult<PipelineActiveRun[]>>
 }
 
-interface Window {
-  app: AppApi
-  win?: WindowApi
-  media: MediaApi
-  bluetooth: BluetoothApi
-  network: NetworkApi
-  cron: CronApi
-  lifecycle: LifecycleApi
-  wm: WindowManagerApi
-  fs: FileSystemApi
-  dialog: DialogApi
-  notification: NotificationApi
-  clipboard: ClipboardApi
-  store: StoreApi
-  workspace: WorkspaceApi
-  posts: PostsApi
-  documents: DocumentsApi
-  agent: AgentApi
-  contextMenu: ContextMenuApi
-  directories: DirectoriesApi
-  personality: PersonalityApi
-  output: OutputApi
-  task?: TaskApi
-  ai: AiApi
+// ---------------------------------------------------------------------------
+// Global Window augmentation
+// ---------------------------------------------------------------------------
+// IMPORTANT: This must be inside `declare global` so TypeScript can merge
+// it with the built-in Window interface in renderer code.
+// ---------------------------------------------------------------------------
+
+declare global {
+  interface Window {
+    app: AppApi
+    /** Optional: not present in all window types */
+    win?: WindowApi
+    media: MediaApi
+    bluetooth: BluetoothApi
+    network: NetworkApi
+    cron: CronApi
+    lifecycle: LifecycleApi
+    wm: WindowManagerApi
+    fs: FileSystemApi
+    dialog: DialogApi
+    notification: NotificationApi
+    clipboard: ClipboardApi
+    store: StoreApi
+    workspace: WorkspaceApi
+    posts: PostsApi
+    documents: DocumentsApi
+    agent: AgentApi
+    contextMenu: ContextMenuApi
+    directories: DirectoriesApi
+    personality: PersonalityApi
+    output: OutputApi
+    /** Optional: not present in all window types */
+    task?: TaskApi
+    ai: AiApi
+  }
 }
