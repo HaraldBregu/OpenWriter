@@ -361,8 +361,6 @@ export interface EventChannelMap {
   [AgentChannels.error]: { data: unknown }
   [PipelineChannels.event]: { data: PipelineEvent }
   [TaskChannels.event]: { data: TaskEvent }
-  [PostsChannels.fileChanged]: { data: PostFileChangeEvent }
-  [PostsChannels.watcherError]: { data: WatcherError }
   [DocumentsChannels.fileChanged]: { data: DocumentFileChangeEvent }
   [DocumentsChannels.watcherError]: { data: WatcherError }
   [OutputChannels.fileChanged]: { data: OutputFileChangeEvent }
