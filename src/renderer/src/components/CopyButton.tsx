@@ -4,8 +4,8 @@ import { Copy, Check } from 'lucide-react'
 /** One-shot copy-to-clipboard button. */
 export const CopyButton = React.memo(function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
-  const copy = () => {
-    window.clipboard.writeText(text)
+  const copy = async () => {
+    await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
