@@ -42,7 +42,8 @@ import {
   TaskIpc,
   OutputIpc,
   PersonalityIpc,
-  ThemeIpc
+  ThemeIpc,
+  WindowIpc
 } from './ipc'
 
 export interface BootstrapResult {
