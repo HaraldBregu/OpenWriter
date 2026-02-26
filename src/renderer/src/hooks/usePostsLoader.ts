@@ -63,19 +63,6 @@ export function usePostsLoader(): {
         hasLoadedRef.current = true
         isLoadingRef.current = false
 
-        // Don't show notification for "file not found" errors
-        // (this is expected on first launch)
-        if (error instanceof Error && !error.message.includes('ENOENT')) {
-          try {
-            await window.notification.show({
-              title: 'Load Failed',
-              body: 'Failed to load posts from workspace.',
-              urgency: 'normal'
-            })
-          } catch (notifError) {
-            console.error('[PostsLoader] Failed to show notification:', notifError)
-          }
-        }
       }
     }
 
