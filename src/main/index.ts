@@ -123,7 +123,15 @@ app.whenReady().then(async () => {
   if (isWorkspaceMode && workspacePath) {
     logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
 
-    // Create workspace window directly - no menu, no tray
+    // On Windows/Linux, remove the native menu bar for frameless windows.
+    // Without this, Electron keeps a default application menu that can
+    // intercept Alt-key presses and conflict with the custom titlebar.
+    if (process.platform !== 'darwin') {
+      const { Menu: ElectronMenu } = require('electron')
+      ElectronMenu.setApplicationMenu(null)
+    }
+
+    // Create workspace window directly - no tray
     const workspaceWindow = mainWindow.createWorkspaceWindow()
 
     // Set the workspace path immediately
