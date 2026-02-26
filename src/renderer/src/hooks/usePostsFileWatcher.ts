@@ -75,14 +75,6 @@ export function usePostsFileWatcher(): void {
 
           if (updatedPost) {
             dispatch(handleExternalPostChange(updatedPost))
-
-            // Show user notification
-            const actionText = event.type === 'added' ? 'created' : 'modified'
-            await window.notification.show({
-              title: 'Post Updated',
-              body: `Post was ${actionText} externally: ${updatedPost.title || event.postId}`,
-              urgency: 'low'
-            })
           } else {
             console.warn('[PostsFileWatcher] Post not found after reload:', event.postId)
           }
