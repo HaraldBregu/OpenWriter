@@ -777,10 +777,11 @@ describe('outputSlice', () => {
       expect(selector(state)).toBeNull()
     })
 
-    it('selectOutputItemById should return null when type does not match', () => {
+    it('selectOutputItemById should return null when type is mismatched (cast)', () => {
+      // Cast to OutputType to simulate a caller passing the wrong type string
       const item = makeOutputItem({ id: 'item-1', type: 'writings' })
       const state = makeRootState({ ...createInitialState(), items: [item] })
-      const selector = selectOutputItemById('writings', 'item-1')
+      const selector = selectOutputItemById('posts' as OutputType, 'item-1')
       expect(selector(state)).toBeNull()
     })
 
