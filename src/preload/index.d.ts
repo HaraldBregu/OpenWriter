@@ -203,8 +203,6 @@ export interface AgentApi {
 export interface ContextMenuApi {
   showWriting: (writingId: string, writingTitle: string) => Promise<void>
   onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void
-  showPost: (postId: string, postTitle: string) => Promise<void>
-  onPostAction: (callback: (data: PostContextMenuAction) => void) => () => void
 }
 
 /** Indexed directory management */
