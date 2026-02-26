@@ -1321,8 +1321,6 @@ const ai = {
 // ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
-console.log('[preload] Starting to expose namespaces. contextIsolated:', process.contextIsolated)
-
 if (process.contextIsolated) {
     // Register each namespace independently so a single failure cannot
     // prevent subsequent namespaces from being exposed to the renderer.
@@ -1351,21 +1349,14 @@ if (process.contextIsolated) {
         ['task', task],
         ['ai', ai],
     ]
-    console.log('[preload] Exposing', namespaces.length, 'namespaces')
-    let successCount = 0
     for (const [name, api] of namespaces) {
         try {
             contextBridge.exposeInMainWorld(name, api)
-            console.log(`[preload] Exposed window.${name}`)
-            successCount++
         } catch (error) {
-            const errMsg = error instanceof Error ? error.message : String(error)
-            console.error(`[preload] Failed to expose window.${name}:`, errMsg)
+            console.error(`[preload] Failed to expose window.${name}:`, error)
         }
     }
-    console.log(`[preload] Exposed ${successCount}/${namespaces.length} namespaces successfully`)
 } else {
-    console.log('[preload] Not in context isolated mode, using globalThis')
     // @ts-ignore (define in dts)
     globalThis.app = app
     // @ts-ignore (define in dts)
