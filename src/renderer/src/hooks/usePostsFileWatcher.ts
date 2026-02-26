@@ -81,17 +81,6 @@ export function usePostsFileWatcher(): void {
         }
       } catch (error) {
         console.error('[PostsFileWatcher] Failed to handle file change:', error)
-
-        // Show error notification
-        try {
-          await window.notification.show({
-            title: 'Sync Error',
-            body: 'Failed to sync external file changes. Please refresh manually.',
-            urgency: 'normal'
-          })
-        } catch (notifError) {
-          console.error('[PostsFileWatcher] Failed to show notification:', notifError)
-        }
       }
     }
 
