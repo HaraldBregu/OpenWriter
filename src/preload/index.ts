@@ -1363,16 +1363,9 @@ if (process.contextIsolated) {
             console.error(`[preload] Failed to expose window.${name}:`, errMsg)
         }
     }
-    console.log('[preload] All namespaces exposed successfully')
-    ;(globalThis as any).__preloadSuccess = true
-    try {
-      writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] Preload SUCCESS: Exposed ${successCount}/${namespaces.length} namespaces\n`, { flag: 'a' })
-    } catch (e) {}
+    console.log(`[preload] Exposed ${successCount}/${namespaces.length} namespaces successfully`)
 } else {
     console.log('[preload] Not in context isolated mode, using globalThis')
-    try {
-      writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] Using globalThis mode\n`, { flag: 'a' })
-    } catch (e) {}
     // @ts-ignore (define in dts)
     globalThis.app = app
     // @ts-ignore (define in dts)
