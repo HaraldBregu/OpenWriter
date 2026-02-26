@@ -167,30 +167,6 @@ export interface WindowApi {
   onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
 }
 
-/** Microphone / camera permissions and device enumeration */
-export interface MediaApi {
-  requestMicrophonePermission: () => Promise<MediaPermissionStatus>
-  requestCameraPermission: () => Promise<MediaPermissionStatus>
-  getMicrophonePermissionStatus: () => Promise<MediaPermissionStatus>
-  getCameraPermissionStatus: () => Promise<MediaPermissionStatus>
-  getDevices: (type: 'audioinput' | 'videoinput') => Promise<MediaDeviceInfo[]>
-}
-
-/** Bluetooth capability queries */
-export interface BluetoothApi {
-  isSupported: () => Promise<boolean>
-  getPermissionStatus: () => Promise<string>
-  getInfo: () => Promise<{ platform: string; supported: boolean; apiAvailable: boolean }>
-}
-
-/** Network connectivity and interface information */
-export interface NetworkApi {
-  isSupported: () => Promise<boolean>
-  getConnectionStatus: () => Promise<NetworkConnectionStatus>
-  getInterfaces: () => Promise<NetworkInterfaceInfo[]>
-  getInfo: () => Promise<NetworkInfo>
-  onStatusChange: (callback: (status: NetworkConnectionStatus) => void) => () => void
-}
 
 /** Scheduled job management */
 export interface CronApi {
