@@ -107,19 +107,6 @@ export async function reloadPostsFromWorkspace(
   } catch (error) {
     console.error('[PostsReload] Failed to reload posts:', error)
 
-    // Don't show notification for "file not found" errors
-    if (error instanceof Error && !error.message.includes('ENOENT')) {
-      try {
-        await window.notification.show({
-          title: 'Reload Failed',
-          body: 'Failed to reload posts from workspace.',
-          urgency: 'normal'
-        })
-      } catch (notifError) {
-        console.error('[PostsReload] Failed to show notification:', notifError)
-      }
-    }
-
     throw error
   }
 }
