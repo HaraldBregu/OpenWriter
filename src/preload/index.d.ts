@@ -184,12 +184,6 @@ export interface DocumentsApi {
   onWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
-/** Application-specific context menus */
-export interface ContextMenuApi {
-  showWriting: (writingId: string, writingTitle: string) => Promise<void>
-  onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void
-}
-
 /** Indexed directory management */
 export interface DirectoriesApi {
   list: () => Promise<DirectoryEntry[]>

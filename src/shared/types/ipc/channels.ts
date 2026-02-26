@@ -191,11 +191,6 @@ export const PersonalityChannels = {
   sectionConfigChanged: 'personality:section-config-changed',
 } as const
 
-export const ContextMenuChannels = {
-  writing: 'context-menu:writing',
-  writingAction: 'context-menu:writing-action',
-} as const
-
 export const AppChannels = {
   playSound: 'play-sound',
   setTheme: 'set-theme',
@@ -204,6 +199,9 @@ export const AppChannels = {
   changeLanguage: 'change-language',
   changeTheme: 'change-theme',
   fileOpened: 'file-opened',
+  // Writing context menu (formerly ContextMenuChannels)
+  showWritingContextMenu: 'context-menu:writing',
+  writingContextMenuAction: 'context-menu:writing-action',
 } as const
 
 // Legacy model settings type (kept for backward compat with store legacy channels)
