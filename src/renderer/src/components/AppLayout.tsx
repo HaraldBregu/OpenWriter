@@ -6,6 +6,7 @@ import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
 import { useWritingItems } from "../hooks/useWritingItems";
 import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
 import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
+import { useWorkspaceValidation } from "../hooks/useWorkspaceValidation";
 import { useCreateWriting } from "../hooks/useCreateWriting";
 import { useAppDispatch, useAppSelector } from "../store";
 import { selectWritingEntries } from "../store/writingItemsSlice";
