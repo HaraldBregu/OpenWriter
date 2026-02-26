@@ -273,15 +273,10 @@ const fs: FileSystemApi = {
     unwatchDirectory: (dirPath: string) => {
         return typedInvoke(FsChannels.unwatchDirectory, dirPath)
     },
-    getWatched: (): Promise<string[]> => {
+    getWatched: () => {
         return typedInvoke(FsChannels.getWatchedDirectories)
     },
-    onWatchEvent: (callback: (event: {
-        eventType: string
-        filename: string | null
-        directory: string
-        timestamp: number
-    }) => void): (() => void) => {
+    onWatchEvent: (callback) => {
         return typedOn(FsChannels.watchEvent, callback)
     },
 }
