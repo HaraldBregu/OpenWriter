@@ -30,10 +30,10 @@
 - `window.workspace.output.*` — output file management (posts and writings)
   - `save`, `loadAll`, `loadByType`, `loadOne`, `update`, `delete`, `onFileChange`, `onWatcherError`
 
-## window.store — new vs old methods
-- OLD (still in preload): `getAllModelSettings`, `getModelSettings`, `setSelectedModel`, `setApiToken`, `setModelSettings`
-- NEW (added in parallel with aiSettingsSlice): `getAllProviderSettings`, `setProviderSettings`, `setInferenceDefaults`
-- `aiSettingsSlice.ts` targets the NEW API; always check preload d.ts before calling store methods
+## window.app — AI store methods (merged from former window.store, Feb 2026)
+- NEW: `window.app.getAllProviderSettings`, `window.app.getProviderSettings`, `window.app.setProviderSettings`, `window.app.setInferenceDefaults`
+- DEPRECATED (still on window.app for compat): `getAllModelSettings`, `getModelSettings`, `setSelectedModel`, `setApiToken`, `setModelSettings`
+- `aiSettingsSlice.ts` calls the NEW API via `window.app.*`; `window.store` is fully removed from preload and type declarations
 
 ## Redux Slice Conventions
 - Reference slices: `postsSlice.ts` (sync, prepare pattern), `personalityFilesSlice.ts` (async thunks)
