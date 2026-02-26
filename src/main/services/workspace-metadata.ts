@@ -119,8 +119,8 @@ export class WorkspaceMetadataService implements Disposable {
     }
 
     // Listen for workspace changes to re-initialize
-    // Note: Only register listener once (check if already registered)
-    this.eventBus.on('workspace:changed', (event) => {
+    // Store the unsubscribe function for cleanup in destroy()
+    this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
       const payload = event.payload as { currentPath: string | null; previousPath: string | null }
       this.handleWorkspaceChanged(payload.currentPath)
     })
