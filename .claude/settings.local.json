@@ -77,7 +77,8 @@
       "Bash(git rm:*)",
       "Bash(yarn lint:*)",
       "Bash(yarn typecheck:*)",
-      "Bash(grep Test Suites::*)"
+      "Bash(grep Test Suites::*)",
+      "Bash(pkill:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
