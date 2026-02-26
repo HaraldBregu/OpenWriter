@@ -800,7 +800,7 @@ const directories: DirectoriesApi = {
 // ---------------------------------------------------------------------------
 // window.personality — Personality/conversation file management
 // ---------------------------------------------------------------------------
-const personality = {
+const personality: PersonalityApi = {
     save: (input: {
         sectionId: string
         content: string
