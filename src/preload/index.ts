@@ -125,7 +125,7 @@ const bluetooth: BluetoothApi = {
 // ---------------------------------------------------------------------------
 // window.network — Network connectivity and interface information
 // ---------------------------------------------------------------------------
-const network = {
+const network: NetworkApi = {
     isSupported: (): Promise<boolean> => {
         return typedInvoke(NetworkChannels.isSupported)
     },
