@@ -190,67 +190,6 @@ const workspace: WorkspaceApi = {
 } satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
-// window.posts — Post sync and file-watch events
-// ---------------------------------------------------------------------------
-const posts: PostsApi = {
-    syncToWorkspace: (postsData: Array<{
-        id: string
-        title: string
-        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
-        category: string
-        tags: string[]
-        visibility: string
-        createdAt: number
-        updatedAt: number
-    }>): Promise<{
-        success: boolean
-        syncedCount: number
-        failedCount: number
-        errors?: Array<{ postId: string; error: string }>
-    }> => {
-        return typedInvokeUnwrap(PostsChannels.syncToWorkspace, postsData)
-    },
-    update: (post: {
-        id: string
-        title: string
-        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
-        category: string
-        tags: string[]
-        visibility: string
-        createdAt: number
-        updatedAt: number
-    }): Promise<void> => {
-        return typedInvokeUnwrap(PostsChannels.updatePost, post)
-    },
-    delete: (postId: string): Promise<void> => {
-        return typedInvokeUnwrap(PostsChannels.deletePost, postId)
-    },
-    loadFromWorkspace: (): Promise<Array<{
-        id: string
-        title: string
-        blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
-        category: string
-        tags: string[]
-        visibility: string
-        createdAt: number
-        updatedAt: number
-    }>> => {
-        return typedInvokeUnwrap(PostsChannels.loadFromWorkspace)
-    },
-    onFileChange: (callback: (event: {
-        type: 'added' | 'changed' | 'removed'
-        postId: string
-        filePath: string
-        timestamp: number
-    }) => void): (() => void) => {
-        return typedOn(PostsChannels.fileChanged, callback)
-    },
-    onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        return typedOn(PostsChannels.watcherError, callback)
-    },
-}
-
-// ---------------------------------------------------------------------------
 // window.documents — Document import, download, and file-watch events
 // ---------------------------------------------------------------------------
 const documents: DocumentsApi = {
