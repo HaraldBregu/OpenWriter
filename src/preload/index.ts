@@ -7,13 +7,11 @@ import {
     StoreChannels,
     WorkspaceChannels,
     DocumentsChannels,
-    AgentChannels,
     ContextMenuChannels,
     DirectoriesChannels,
     PersonalityChannels,
     OutputChannels,
     TaskChannels,
-    PipelineChannels,
 } from '../shared/types/ipc/channels'
 import type {
     AppApi,
@@ -22,13 +20,11 @@ import type {
     StoreApi,
     WorkspaceApi,
     DocumentsApi,
-    AgentApi,
     ContextMenuApi,
     DirectoriesApi,
     PersonalityApi,
     OutputApi,
     TaskApi,
-    AiApi,
 } from './index.d'
 
 // ---------------------------------------------------------------------------
@@ -230,110 +226,6 @@ const documents: DocumentsApi = {
     },
     onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         return typedOn(DocumentsChannels.watcherError, callback)
-    },
-}
-
-// ---------------------------------------------------------------------------
-// window.agent — AI agent execution and session management
-// ---------------------------------------------------------------------------
-const agent: AgentApi = {
-    run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string): Promise<void> => {
-        return typedInvoke(AgentChannels.run, messages, runId, providerId)
-    },
-    cancel: (runId: string): void => {
-        typedSend(AgentChannels.cancel, runId)
-    },
-    onEvent: (callback: (eventType: string, data: unknown) => void): (() => void) => {
-        const channels = [
-            AgentChannels.token,
-            AgentChannels.thinking,
-            AgentChannels.toolStart,
-            AgentChannels.toolEnd,
-            AgentChannels.done,
-            AgentChannels.error,
-        ] as const
-        const cleanups = channels.map((channel) => {
-            return typedOn(channel, (data: unknown) => {
-                callback(channel, data)
-            })
-        })
-        return (): void => {
-            cleanups.forEach((cleanup) => cleanup())
-        }
-    },
-    createSession: (config: {
-        sessionId: string
-        providerId: string
-        modelId?: string
-        systemPrompt?: string
-        temperature?: number
-        maxTokens?: number
-        metadata?: Record<string, unknown>
-    }): Promise<{
-        sessionId: string
-        providerId: string
-        modelId: string
-        createdAt: number
-        lastActivity: number
-        isActive: boolean
-        messageCount: number
-        metadata?: Record<string, unknown>
-    }> => {
-        return typedInvoke(AgentChannels.createSession, config)
-    },
-    destroySession: (sessionId: string): Promise<boolean> => {
-        return typedInvoke(AgentChannels.destroySession, sessionId)
-    },
-    getSession: (sessionId: string): Promise<{
-        sessionId: string
-        providerId: string
-        modelId: string
-        createdAt: number
-        lastActivity: number
-        isActive: boolean
-        messageCount: number
-        metadata?: Record<string, unknown>
-    } | null> => {
-        return typedInvoke(AgentChannels.getSession, sessionId)
-    },
-    listSessions: (): Promise<Array<{
-        sessionId: string
-        providerId: string
-        modelId: string
-        createdAt: number
-        lastActivity: number
-        isActive: boolean
-        messageCount: number
-        metadata?: Record<string, unknown>
-    }>> => {
-        return typedInvoke(AgentChannels.listSessions)
-    },
-    clearSessions: (): Promise<number> => {
-        return typedInvoke(AgentChannels.clearSessions)
-    },
-    runSession: (options: {
-        sessionId: string
-        runId: string
-        messages: Array<{ role: 'user' | 'assistant'; content: string }>
-        providerId: string
-        temperature?: number
-        maxTokens?: number
-        stream?: boolean
-    }): Promise<void> => {
-        return typedInvoke(AgentChannels.runSession, options)
-    },
-    cancelSession: (sessionId: string): Promise<boolean> => {
-        return typedInvoke(AgentChannels.cancelSession, sessionId)
-    },
-    getStatus: (): Promise<{
-        totalSessions: number
-        activeSessions: number
-        totalMessages: number
-    }> => {
-        return typedInvoke(AgentChannels.getStatus)
-    },
-    isRunning: (runId: string): Promise<boolean> => {
-        return typedInvoke(AgentChannels.isRunning, runId)
     },
 }
 
@@ -610,32 +502,6 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
-// window.ai — AI inference API (pipeline-based)
-// ---------------------------------------------------------------------------
-const ai: AiApi = {
-    // Run AI inference using the pipeline
-    inference: (agentName: string, input) => {
-        return typedInvokeRaw(PipelineChannels.run, agentName, input)
-    },
-    // Cancel a running AI inference
-    cancel: (runId: string) => {
-        typedSend(PipelineChannels.cancel, runId)
-    },
-    // Listen for AI inference events (tokens, thinking, done, error)
-    onEvent: (callback) => {
-        return typedOn(PipelineChannels.event, callback)
-    },
-    // List available AI agents
-    listAgents: () => {
-        return typedInvokeRaw(PipelineChannels.listAgents)
-    },
-    // List active AI runs
-    listRuns: () => {
-        return typedInvokeRaw(PipelineChannels.listRuns)
-    }
-}
-
-// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -646,13 +512,11 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('documents', documents)
-        contextBridge.exposeInMainWorld('agent', agent)
         contextBridge.exposeInMainWorld('contextMenu', contextMenu)
         contextBridge.exposeInMainWorld('directories', directories)
         contextBridge.exposeInMainWorld('personality', personality)
         contextBridge.exposeInMainWorld('output', output)
         contextBridge.exposeInMainWorld('task', task)
-        contextBridge.exposeInMainWorld('ai', ai)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }
@@ -670,8 +534,6 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.documents = documents
     // @ts-ignore (define in dts)
-    globalThis.agent = agent
-    // @ts-ignore (define in dts)
     globalThis.contextMenu = contextMenu
     // @ts-ignore (define in dts)
     globalThis.directories = directories
@@ -681,6 +543,4 @@ if (process.contextIsolated) {
     globalThis.output = output
     // @ts-ignore (define in dts)
     globalThis.task = task
-    // @ts-ignore (define in dts)
-    globalThis.ai = ai
 }

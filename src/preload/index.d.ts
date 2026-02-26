@@ -183,22 +183,6 @@ export interface DocumentsApi {
   onWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
-/** AI agent execution and session management */
-export interface AgentApi {
-  run: (messages: Array<{ role: 'user' | 'assistant'; content: string }>, runId: string, providerId: string) => Promise<void>
-  cancel: (runId: string) => void
-  onEvent: (callback: (eventType: string, data: unknown) => void) => () => void
-  createSession: (config: AgentSessionConfig) => Promise<AgentSessionInfo>
-  destroySession: (sessionId: string) => Promise<boolean>
-  getSession: (sessionId: string) => Promise<AgentSessionInfo | null>
-  listSessions: () => Promise<AgentSessionInfo[]>
-  clearSessions: () => Promise<number>
-  runSession: (options: AgentRunOptions) => Promise<void>
-  cancelSession: (sessionId: string) => Promise<boolean>
-  getStatus: () => Promise<AgentStatusInfo>
-  isRunning: (runId: string) => Promise<boolean>
-}
-
 /** Application-specific context menus */
 export interface ContextMenuApi {
   showWriting: (writingId: string, writingTitle: string) => Promise<void>
@@ -254,15 +238,6 @@ export interface TaskApi {
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
-/** AI inference API (pipeline-based) */
-export interface AiApi {
-  inference: (agentName: string, input: PipelineInput) => Promise<IpcResult<{ runId: string }>>
-  cancel: (runId: string) => void
-  onEvent: (callback: (event: PipelineEvent) => void) => () => void
-  listAgents: () => Promise<IpcResult<string[]>>
-  listRuns: () => Promise<IpcResult<PipelineActiveRun[]>>
-}
-
 // ---------------------------------------------------------------------------
 // Global Window augmentation
 // ---------------------------------------------------------------------------
@@ -279,7 +254,6 @@ declare global {
     store: StoreApi
     workspace: WorkspaceApi
     documents: DocumentsApi
-    agent: AgentApi
     contextMenu: ContextMenuApi
     directories: DirectoriesApi
     personality: PersonalityApi

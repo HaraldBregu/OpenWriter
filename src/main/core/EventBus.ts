@@ -23,6 +23,7 @@ export interface AppEvents {
   'window:created': { windowId: number; type: string }
   'window:closed': { windowId: number }
   'workspace:changed': { currentPath: string | null; previousPath: string | null }
+  'workspace:deleted': { deletedPath: string; reason: 'deleted' | 'inaccessible' | 'renamed'; timestamp: number }
   'documents:file-changed': { type: 'added' | 'changed' | 'removed'; fileId: string; filePath: string; timestamp: number }
   'documents:watcher-error': { error: string; timestamp: number }
   'theme:changed': { theme: 'light' | 'dark' | 'system' }

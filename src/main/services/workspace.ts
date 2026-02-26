@@ -31,6 +31,10 @@ export interface WorkspaceState {
 export class WorkspaceService implements Disposable {
   private currentPath: string | null = null
   private openedAt: number = 0
+  private validationTimer: ReturnType<typeof setInterval> | null = null
+
+  /** How often (ms) to check if the workspace folder still exists. */
+  private static readonly VALIDATION_INTERVAL_MS = 5_000
 
   constructor(
     private readonly store: StoreService,

@@ -12,7 +12,6 @@ import './index.css'
 
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'))
-const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
@@ -49,7 +48,6 @@ const App: React.FC = () => {
                     <Suspense fallback={<LoadingSkeleton />}>
                       <Routes>
                         <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
-                        <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
                         <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/new/writing/:id" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
