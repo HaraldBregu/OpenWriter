@@ -1,11 +1,21 @@
 {
   "appTitle": "OpenWriter",
-  "welcome": "Welcome to OpenWriter",
+  "welcome": {
+    "tagline": "An intelligent text editor for developers and writers. Open a project to get started.",
+    "freePlan": "Free Plan",
+    "upgradeToPro": "Upgrade to Pro",
+    "openWorkspace": "Open Workspace",
+    "openWorkspaceDescription": "Select a folder to begin working on your project",
+    "browse": "Browse...",
+    "recentProjects": "Recent Projects",
+    "viewAll": "View all",
+    "notFound": "(Not Found)",
+    "removeFromRecent": "Remove from recent projects"
+  },
   "subtitle": "Clean & Simple",
   "description": "A modern, advanced desktop application",
   "focusMessage": "Focus on what matters with a streamlined interface",
   "clickMe": "Click Me",
-
   "microphone": {
     "title": "Microphone",
     "description": "Record audio from your microphone with live waveform visualization",
@@ -13,7 +23,6 @@
     "status": "Status",
     "grantPermission": "Grant Permission"
   },
-
   "camera": {
     "title": "Camera",
     "description": "Record video from your camera",
@@ -21,14 +30,12 @@
     "status": "Status",
     "grantPermission": "Grant Permission"
   },
-
   "screen": {
     "title": "Screen Capture",
     "description": "Capture your screen",
     "startCapture": "Start Screen Capture",
     "stopCapture": "Stop Capture"
   },
-
   "bluetooth": {
     "title": "Bluetooth Manager",
     "description": "Scan and connect to Bluetooth devices",
@@ -62,7 +69,6 @@
     "requirement3": "Appropriate permissions granted",
     "requirement4": "HTTPS or localhost connection (security requirement)"
   },
-
   "network": {
     "title": "Network Manager",
     "description": "Monitor internet connectivity and network interfaces",
@@ -102,7 +108,6 @@
     "feature4": "Platform-specific network information",
     "feature5": "Read-only access (cannot modify network settings)"
   },
-
   "settings": {
     "title": "Settings",
     "description": "Configure your application preferences",
@@ -170,10 +175,9 @@
       "context": "{{window}} ctx"
     }
   },
-
   "cron": {
     "title": "Cron Jobs",
-    "description": "Schedule and manage automated tasks",
+    "description": "Description",
     "error": "Error:",
     "lastExecution": "Last Execution",
     "refresh": "Refresh",
@@ -183,7 +187,6 @@
     "jobName": "Job Name",
     "schedule": "Schedule",
     "validate": "Validate",
-    "description": "Description",
     "descriptionPlaceholder": "Optional description for this job",
     "create": "Create",
     "fillAllFields": "Please fill in all required fields",
@@ -208,7 +211,6 @@
     "exampleEveryHour": "Every hour: 0 * * * *",
     "exampleDaily": "Daily at 9 AM: 0 9 * * *"
   },
-
   "dialogs": {
     "title": "Native Dialogs",
     "description": "Demonstrate Electron's native dialog APIs with result logging",
@@ -233,7 +235,6 @@
     "feature3": "Message box returns the index and label of the clicked button",
     "feature4": "Error dialog is a synchronous blocking alert (showErrorBox)"
   },
-
   "filesystem": {
     "title": "Filesystem",
     "description": "Open, read, write files and watch directory changes",
@@ -266,7 +267,6 @@
     "feature4": "Watch directories for real-time change detection (rename, change)",
     "feature5": "All file operations run securely in the main process via IPC"
   },
-
   "windowManager": {
     "title": "Window Manager",
     "description": "Create and manage different types of application windows",
@@ -294,7 +294,6 @@
     "feature4": "Widget windows float above all other windows (always-on-top)",
     "feature5": "All managed windows are tracked and can be closed individually or together"
   },
-
   "lifecycle": {
     "title": "App Lifecycle",
     "description": "Monitor application lifecycle events and manage instance control",
@@ -317,7 +316,6 @@
     "feature3": "Application restart with two-click confirmation",
     "feature4": "Platform information and uptime monitoring"
   },
-
   "common": {
     "close": "Close",
     "cancel": "Cancel",
@@ -341,7 +339,6 @@
     "goHome": "Go Home",
     "restartApp": "Restart App"
   },
-
   "sidebar": {
     "write": "Write",
     "newPost": "New Post",
@@ -355,7 +352,6 @@
     "untitledPost": "Untitled Post",
     "untitledWriting": "Untitled Writing"
   },
-
   "menu": {
     "account": "Account",
     "settings": "Settings",
@@ -364,7 +360,6 @@
     "billing": "Billing",
     "helpAndSupport": "Help & Support"
   },
-
   "home": {
     "goodMorning": "Good morning",
     "goodAfternoon": "Good afternoon",
@@ -383,14 +378,12 @@
     "tip": "Tip",
     "tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to show or hide the sidebar."
   },
-
   "post": {
     "titlePlaceholder": "New post",
     "notFound": "Post not found.",
     "untitled": "Untitled Post",
     "charactersAndWords": "{{chars}} characters · {{words}} words"
   },
-
   "writing": {
     "titlePlaceholder": "Untitled Writing",
     "notFound": "Writing not found.",
@@ -398,16 +391,17 @@
     "startWriting": "Start writing...",
     "typeHere": "Type here...",
     "insertContent": "Insert content",
-    "charactersAndWords": "{{chars}} characters · {{words}} words"
+    "charactersAndWords": "{{chars}} characters · {{words}} words",
+    "creating": "Creating...",
+    "createError": "Failed to create writing. Please try again.",
+    "noWorkspace": "No active workspace. Please open a workspace first."
   },
-
   "contentBlock": {
     "enhanceWithAI": "Enhance with AI",
     "enhancing": "Enhancing…",
     "copy": "Copy",
     "delete": "Delete"
   },
-
   "imageBlock": {
     "dropOrClick": "Drop an image here or click to browse",
     "altPlaceholder": "Add alt text for accessibility…",
@@ -416,7 +410,6 @@
     "delete": "Delete",
     "insertImage": "Insert image"
   },
-
   "inferenceSettings": {
     "title": "Inference Settings",
     "description": "Configure model and parameters.",
@@ -430,7 +423,6 @@
     "reasoning": "Reasoning",
     "extendedThinking": "Extended thinking"
   },
-
   "errorBoundary": {
     "rootTitle": "Something went wrong",
     "rootMessage": "The application encountered an unexpected error. Please restart.",
@@ -442,7 +434,6 @@
     "goHome": "Go Home",
     "restartApp": "Restart App"
   },
-
   "titleBar": {
     "applicationMenu": "Application menu",
     "toggleSidebar": "Toggle sidebar",
@@ -451,20 +442,6 @@
     "restore": "Restore",
     "close": "Close"
   },
-
-  "welcome": {
-    "tagline": "An intelligent text editor for developers and writers. Open a project to get started.",
-    "freePlan": "Free Plan",
-    "upgradeToPro": "Upgrade to Pro",
-    "openWorkspace": "Open Workspace",
-    "openWorkspaceDescription": "Select a folder to begin working on your project",
-    "browse": "Browse...",
-    "recentProjects": "Recent Projects",
-    "viewAll": "View all",
-    "notFound": "(Not Found)",
-    "removeFromRecent": "Remove from recent projects"
-  },
-
   "documents": {
     "title": "Documents",
     "noDocumentsTitle": "No documents yet",
@@ -503,7 +480,6 @@
     "downloadFailed": "Download failed",
     "downloaded": "Downloaded"
   },
-
   "directories": {
     "title": "Indexed Directories",
     "description": "Manage directories for AI-powered document search and retrieval.",
@@ -521,7 +497,6 @@
     "indexedAt": "Indexed: {{date}}",
     "removeDirectory": "Remove directory"
   },
-
   "personality": {
     "saving": "Saving...",
     "saveFailed": "Save failed",
@@ -536,7 +511,6 @@
     "stop": "Stop",
     "submit": "Submit"
   },
-
   "clipboard": {
     "title": "Clipboard Manager",
     "description": "Copy and paste text, HTML, and images using the system clipboard",
@@ -568,7 +542,6 @@
     "feature3": "Supports multiple clipboard formats simultaneously",
     "feature4": "Canvas-based image generation example included"
   },
-
   "notifications": {
     "title": "System Notifications",
     "description": "Test native system notifications with custom content and click handlers",
@@ -597,7 +570,6 @@
     "noteFeature3": "All notification events (shown, clicked, closed) are tracked",
     "noteFeature4": "Supports different urgency levels and silent mode"
   },
-
   "creativityPresets": {
     "precise": "Precise",
     "balanced": "Balanced",
@@ -606,7 +578,6 @@
     "imaginative": "Imaginative",
     "custom": "Custom"
   },
-
   "textLengthPresets": {
     "short": "Short (500 chars)",
     "medium": "Medium (1,000 chars)",
@@ -615,14 +586,12 @@
     "unlimited": "Unlimited",
     "custom": "Custom"
   },
-
   "relativeTime": {
     "justNow": "just now",
     "minutesAgo": "{{count}}m ago",
     "hoursAgo": "{{count}}h ago",
     "daysAgo": "{{count}}d ago"
   },
-
   "personalityItems": {
     "emotionalDepth": "Emotional Depth",
     "consciousness": "Consciousness",
@@ -635,7 +604,6 @@
     "mortality": "Mortality",
     "contradiction": "Contradiction"
   },
-
   "directoryNotifications": {
     "someSkippedTitle": "Some Directories Skipped",
     "someSkippedBody_one": "{{count}} directory could not be added. Check the console for details.",

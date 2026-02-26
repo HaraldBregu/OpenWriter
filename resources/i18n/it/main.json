@@ -1,11 +1,21 @@
 {
   "appTitle": "OpenWriter",
-  "welcome": "Benvenuto in OpenWriter",
+  "welcome": {
+    "tagline": "Un editor di testo intelligente per sviluppatori e scrittori. Apri un progetto per iniziare.",
+    "freePlan": "Piano Gratuito",
+    "upgradeToPro": "Passa a Pro",
+    "openWorkspace": "Apri Area di Lavoro",
+    "openWorkspaceDescription": "Seleziona una cartella per iniziare a lavorare sul tuo progetto",
+    "browse": "Sfoglia...",
+    "recentProjects": "Progetti Recenti",
+    "viewAll": "Vedi tutti",
+    "notFound": "(Non Trovato)",
+    "removeFromRecent": "Rimuovi dai progetti recenti"
+  },
   "subtitle": "Pulito e Semplice",
   "description": "Un'applicazione desktop moderna e avanzata",
   "focusMessage": "Concentrati su ciò che conta con un'interfaccia semplificata",
   "clickMe": "Cliccami",
-
   "microphone": {
     "title": "Microfono",
     "description": "Registra audio dal tuo microfono con visualizzazione della forma d'onda",
@@ -13,7 +23,6 @@
     "status": "Stato",
     "grantPermission": "Concedi Autorizzazione"
   },
-
   "camera": {
     "title": "Fotocamera",
     "description": "Registra video dalla tua fotocamera",
@@ -21,14 +30,12 @@
     "status": "Stato",
     "grantPermission": "Concedi Autorizzazione"
   },
-
   "screen": {
     "title": "Cattura Schermo",
     "description": "Cattura il tuo schermo",
     "startCapture": "Avvia Cattura Schermo",
     "stopCapture": "Ferma Cattura"
   },
-
   "bluetooth": {
     "title": "Gestore Bluetooth",
     "description": "Scansiona e connetti dispositivi Bluetooth",
@@ -62,7 +69,6 @@
     "requirement3": "Autorizzazioni appropriate concesse",
     "requirement4": "Connessione HTTPS o localhost (requisito di sicurezza)"
   },
-
   "network": {
     "title": "Gestore Rete",
     "description": "Monitora la connettività internet e le interfacce di rete",
@@ -102,7 +108,6 @@
     "feature4": "Informazioni di rete specifiche della piattaforma",
     "feature5": "Accesso in sola lettura (non può modificare le impostazioni di rete)"
   },
-
   "settings": {
     "title": "Impostazioni",
     "description": "Configura le preferenze dell'applicazione",
@@ -170,10 +175,9 @@
       "context": "{{window}} ctx"
     }
   },
-
   "cron": {
     "title": "Lavori Cron",
-    "description": "Pianifica e gestisci attività automatizzate",
+    "description": "Descrizione",
     "error": "Errore:",
     "lastExecution": "Ultima Esecuzione",
     "refresh": "Aggiorna",
@@ -183,7 +187,6 @@
     "jobName": "Nome Lavoro",
     "schedule": "Pianificazione",
     "validate": "Valida",
-    "description": "Descrizione",
     "descriptionPlaceholder": "Descrizione opzionale per questo lavoro",
     "create": "Crea",
     "fillAllFields": "Si prega di compilare tutti i campi richiesti",
@@ -208,7 +211,6 @@
     "exampleEveryHour": "Ogni ora: 0 * * * *",
     "exampleDaily": "Giornaliero alle 9: 0 9 * * *"
   },
-
   "dialogs": {
     "title": "Finestre di Dialogo Native",
     "description": "Dimostra le API di dialogo native di Electron con registrazione dei risultati",
@@ -233,7 +235,6 @@
     "feature3": "La finestra di messaggio restituisce l'indice e l'etichetta del pulsante cliccato",
     "feature4": "Il dialogo di errore è un avviso bloccante sincrono (showErrorBox)"
   },
-
   "filesystem": {
     "title": "File System",
     "description": "Apri, leggi, scrivi file e monitora le modifiche alle cartelle",
@@ -266,7 +267,6 @@
     "feature4": "Monitora cartelle per il rilevamento delle modifiche in tempo reale (rinomina, modifica)",
     "feature5": "Tutte le operazioni sui file vengono eseguite in modo sicuro nel processo principale tramite IPC"
   },
-
   "windowManager": {
     "title": "Gestore Finestre",
     "description": "Crea e gestisci diversi tipi di finestre dell'applicazione",
@@ -294,7 +294,6 @@
     "feature4": "Le finestre widget flottano sopra tutte le altre finestre (sempre in primo piano)",
     "feature5": "Tutte le finestre gestite sono tracciate e possono essere chiuse singolarmente o insieme"
   },
-
   "lifecycle": {
     "title": "Ciclo di Vita App",
     "description": "Monitora gli eventi del ciclo di vita dell'applicazione e gestisci il controllo dell'istanza",
@@ -317,7 +316,6 @@
     "feature3": "Riavvio dell'applicazione con conferma a due clic",
     "feature4": "Informazioni sulla piattaforma e monitoraggio del tempo di attività"
   },
-
   "common": {
     "close": "Chiudi",
     "cancel": "Annulla",
@@ -341,7 +339,6 @@
     "goHome": "Vai alla Home",
     "restartApp": "Riavvia App"
   },
-
   "sidebar": {
     "write": "Scrivi",
     "newPost": "Nuovo Post",
@@ -355,7 +352,6 @@
     "untitledPost": "Post Senza Titolo",
     "untitledWriting": "Scrittura Senza Titolo"
   },
-
   "menu": {
     "account": "Account",
     "settings": "Impostazioni",
@@ -364,7 +360,6 @@
     "billing": "Fatturazione",
     "helpAndSupport": "Aiuto e Supporto"
   },
-
   "home": {
     "goodMorning": "Buongiorno",
     "goodAfternoon": "Buon pomeriggio",
@@ -383,14 +378,12 @@
     "tip": "Suggerimento",
     "tipContent": "Usa la barra laterale per navigare tra Post e Scrittura. Premi l'icona del menu nella barra del titolo per mostrare o nascondere la barra laterale."
   },
-
   "post": {
     "titlePlaceholder": "Nuovo post",
     "notFound": "Post non trovato.",
     "untitled": "Post Senza Titolo",
     "charactersAndWords": "{{chars}} caratteri · {{words}} parole"
   },
-
   "writing": {
     "titlePlaceholder": "Scrittura Senza Titolo",
     "notFound": "Scrittura non trovata.",
@@ -398,16 +391,17 @@
     "startWriting": "Inizia a scrivere...",
     "typeHere": "Scrivi qui...",
     "insertContent": "Inserisci contenuto",
-    "charactersAndWords": "{{chars}} caratteri · {{words}} parole"
+    "charactersAndWords": "{{chars}} caratteri · {{words}} parole",
+    "creating": "Creazione in corso...",
+    "createError": "Errore durante la creazione della scrittura. Riprova.",
+    "noWorkspace": "Nessun workspace attivo. Apri prima un workspace."
   },
-
   "contentBlock": {
     "enhanceWithAI": "Migliora con AI",
     "enhancing": "Miglioramento in corso…",
     "copy": "Copia",
     "delete": "Elimina"
   },
-
   "imageBlock": {
     "dropOrClick": "Trascina un'immagine qui o clicca per sfogliare",
     "altPlaceholder": "Aggiungi testo alternativo per l'accessibilità…",
@@ -416,7 +410,6 @@
     "delete": "Elimina",
     "insertImage": "Inserisci immagine"
   },
-
   "inferenceSettings": {
     "title": "Impostazioni Inferenza",
     "description": "Configura modello e parametri.",
@@ -430,7 +423,6 @@
     "reasoning": "Ragionamento",
     "extendedThinking": "Pensiero esteso"
   },
-
   "errorBoundary": {
     "rootTitle": "Qualcosa è andato storto",
     "rootMessage": "L'applicazione ha incontrato un errore imprevisto. Per favore riavvia.",
@@ -442,7 +434,6 @@
     "goHome": "Vai alla Home",
     "restartApp": "Riavvia App"
   },
-
   "titleBar": {
     "applicationMenu": "Menu applicazione",
     "toggleSidebar": "Mostra/nascondi barra laterale",
@@ -451,20 +442,6 @@
     "restore": "Ripristina",
     "close": "Chiudi"
   },
-
-  "welcome": {
-    "tagline": "Un editor di testo intelligente per sviluppatori e scrittori. Apri un progetto per iniziare.",
-    "freePlan": "Piano Gratuito",
-    "upgradeToPro": "Passa a Pro",
-    "openWorkspace": "Apri Area di Lavoro",
-    "openWorkspaceDescription": "Seleziona una cartella per iniziare a lavorare sul tuo progetto",
-    "browse": "Sfoglia...",
-    "recentProjects": "Progetti Recenti",
-    "viewAll": "Vedi tutti",
-    "notFound": "(Non Trovato)",
-    "removeFromRecent": "Rimuovi dai progetti recenti"
-  },
-
   "documents": {
     "title": "Documenti",
     "noDocumentsTitle": "Nessun documento ancora",
@@ -503,7 +480,6 @@
     "downloadFailed": "Download fallito",
     "downloaded": "Scaricato"
   },
-
   "directories": {
     "title": "Cartelle Indicizzate",
     "description": "Gestisci le cartelle per la ricerca e il recupero di documenti basati su AI.",
@@ -521,7 +497,6 @@
     "indexedAt": "Indicizzata: {{date}}",
     "removeDirectory": "Rimuovi cartella"
   },
-
   "personality": {
     "saving": "Salvataggio...",
     "saveFailed": "Salvataggio fallito",
@@ -536,7 +511,6 @@
     "stop": "Ferma",
     "submit": "Invia"
   },
-
   "clipboard": {
     "title": "Gestore Appunti",
     "description": "Copia e incolla testo, HTML e immagini usando gli appunti di sistema",
@@ -568,7 +542,6 @@
     "feature3": "Supporta più formati degli appunti simultaneamente",
     "feature4": "Esempio di generazione di immagini tramite canvas incluso"
   },
-
   "notifications": {
     "title": "Notifiche di Sistema",
     "description": "Testa le notifiche di sistema native con contenuto personalizzato e gestori di clic",
@@ -597,7 +570,6 @@
     "noteFeature3": "Tutti gli eventi notifica (mostrata, cliccata, chiusa) vengono tracciati",
     "noteFeature4": "Supporta diversi livelli di urgenza e modalità silenziosa"
   },
-
   "creativityPresets": {
     "precise": "Preciso",
     "balanced": "Bilanciato",
@@ -606,7 +578,6 @@
     "imaginative": "Immaginativo",
     "custom": "Personalizzato"
   },
-
   "textLengthPresets": {
     "short": "Breve (500 caratteri)",
     "medium": "Medio (1.000 caratteri)",
@@ -615,14 +586,12 @@
     "unlimited": "Illimitato",
     "custom": "Personalizzato"
   },
-
   "relativeTime": {
     "justNow": "adesso",
     "minutesAgo": "{{count}} min fa",
     "hoursAgo": "{{count}} h fa",
     "daysAgo": "{{count}} g fa"
   },
-
   "personalityItems": {
     "emotionalDepth": "Profondità Emotiva",
     "consciousness": "Coscienza",
@@ -635,7 +604,6 @@
     "mortality": "Mortalità",
     "contradiction": "Contraddizione"
   },
-
   "directoryNotifications": {
     "someSkippedTitle": "Alcune Cartelle Saltate",
     "someSkippedBody_one": "{{count}} cartella non è stata aggiunta. Controlla la console per i dettagli.",
