@@ -516,6 +516,7 @@ export const selectOutputItemsCount = createSelector(
 export const selectOutputItemsCountByType = createSelector(
   [selectAllOutputItems],
   (items): Record<OutputType, number> => ({
+    posts: 0,
     writings: 0,
     ...items.reduce<Partial<Record<OutputType, number>>>((acc, item) => {
       acc[item.type] = (acc[item.type] ?? 0) + 1
