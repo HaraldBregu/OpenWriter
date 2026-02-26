@@ -13,7 +13,7 @@ import type {
  *
  * Delegates every call to the Electron IPC bridge exposed on `window`.
  * This is the only file in the renderer that is allowed to reference
- * window.task, window.personality, and window.store directly.
+ * window.task, window.app, and window.workspace directly.
  *
  * DIP: PersonalityTaskContext imports IPersonalityTaskService, not this class.
  * App.tsx instantiates this class and passes it to PersonalityTaskProvider.
@@ -72,7 +72,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
 
   async getModelSettings(providerId: string): Promise<{ selectedModel?: string } | null> {
     try {
-      return await window.store.getModelSettings(providerId)
+      return await window.app.getModelSettings(providerId)
     } catch {
       return null
     }
