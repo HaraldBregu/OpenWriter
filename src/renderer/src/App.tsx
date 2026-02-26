@@ -22,8 +22,6 @@ const ConsciousnessPage = lazy(() => import('./pages/personality/ConsciousnessPa
 const MotivationPage = lazy(() => import('./pages/personality/MotivationPage'))
 const SocialIdentityPage = lazy(() => import('./pages/personality/SocialIdentityPage'))
 const CreativityPage = lazy(() => import('./pages/personality/CreativityPage'))
-const DebugPage = lazy(() => import('./pages/DebugPage'))
-
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary level="route">
