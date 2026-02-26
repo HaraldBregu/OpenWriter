@@ -361,6 +361,7 @@ export interface EventChannelMap {
   [AppChannels.fileOpened]: { data: string }
   [WindowChannels.maximizeChange]: { data: boolean }
   [WindowChannels.fullScreenChange]: { data: boolean }
+  [WorkspaceChannels.changed]: { data: WorkspaceChangedEvent }
   [CronChannels.jobResult]: { data: CronJobResult }
   [AgentChannels.token]: { data: unknown }
   [AgentChannels.thinking]: { data: unknown }
