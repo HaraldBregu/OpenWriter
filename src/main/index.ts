@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, dialog } from 'electron'
+import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu } from 'electron'
 import path from 'node:path'
 import { Main } from './main'
 import { Tray } from './tray'
