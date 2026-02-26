@@ -100,5 +100,17 @@
 - Both config changes and block .md changes emit same `output:file-changed` event with the date-folder as `fileId`
 - Posts sync system (`window.posts`, `PostsIpc`, `FileWatcherService`) has been fully removed from this project
 
+## Writing Items System
+- Storage: `<workspace>/writings/<YYYY-MM-DD_HHmmss>/config.json + content.md`
+- Service: `WritingItemsService` in `src/main/services/writing-items.ts` (window-scoped via factory)
+- IPC module: `WritingItemsIpc` in `src/main/ipc/WritingItemsIpc.ts`
+- Registered in `WindowScopedServiceFactory` under key `'writingItems'`
+- IPC channels: `workspace:create-writing-item`, `workspace:save-writing-item`, `workspace:load-writing-items`, `workspace:load-writing-item`, `workspace:delete-writing-item`
+- Push events: `writing-items:file-changed`, `writing-items:watcher-error`
+- Preload namespace: `window.writingItems` — create, save, loadAll, loadOne, delete, onFileChange, onWatcherError
+- Watcher depth=2: writings/ → date-folder/ → {config.json, content.md}
+- `save()` is a partial update — only supplied fields are mutated, createdAt always preserved
+- Item status values: 'draft' | 'in-progress' | 'complete' | 'archived'
+
 ## Details Files
 - See `patterns.md` for extended code patterns
