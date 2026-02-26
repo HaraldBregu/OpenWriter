@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import type { TaskSubmitOptions } from '../../../shared/types/ipc/types'
+import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types/ipc/types'
 import type { TaskStatus, TrackedTaskState } from '@/contexts/TaskContext'
 import { useTaskContext } from '@/contexts/TaskContext'
 
@@ -14,7 +14,7 @@ export interface UseTaskSubmitReturn<TResult = unknown> {
   status: TaskStatus | 'idle'
   /** 0–100 progress, populated by progress events. */
   progress: number
-  /** Optional progress message from the main process. */
+  /** Optional human-readable progress message from the main process. */
   progressMessage: string | undefined
   /** Error message when status === 'error'. */
   error: string | null
@@ -22,13 +22,35 @@ export interface UseTaskSubmitReturn<TResult = unknown> {
   result: TResult | null
   /** Accumulated streamed content (for streaming tasks). */
   streamedContent: string
+  /** Current queue position when status is 'queued' or 'paused'. */
+  queuePosition: number | undefined
   /** Submit the task. Returns the taskId on success, null on failure. */
   submit: () => Promise<string | null>
   /** Cancel the current task. No-op if not running. */
   cancel: () => Promise<void>
-  /** Reset hook back to idle state. No-op while a task is running. */
+  /** Pause the current task. Only valid when status is 'running' or 'queued'. */
+  pause: () => Promise<void>
+  /** Resume a paused task. Only valid when status is 'paused'. */
+  resume: () => Promise<void>
+  /** Change the priority of the queued or paused task. */
+  updatePriority: (priority: TaskPriority) => Promise<void>
+  /** Reset hook back to idle state. No-op while a task is active. */
   reset: () => void
 }
+
+// Terminal statuses — the task cannot change state again (except via a new submit).
+const TERMINAL_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
+  'completed',
+  'error',
+  'cancelled',
+])
+
+// Active statuses — the task can still receive lifecycle events.
+const ACTIVE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
+  'queued',
+  'running',
+  'paused',
+])
 
 // ---------------------------------------------------------------------------
 // Hook
@@ -40,20 +62,20 @@ export interface UseTaskSubmitReturn<TResult = unknown> {
  * a query hook) so the component can call submit() imperatively.
  *
  * Key behaviours:
- *  - Registers ownership in the shared TaskStore before events arrive
- *  - Auto-buffers events that arrive before the taskId is resolved
- *  - Cleans up its store subscription on unmount
+ *  - Registers ownership in the shared TaskStore before events arrive so no
+ *    events are dropped between IPC round-trip and subscription setup
+ *  - Cleans up its store subscription when the task reaches a terminal state
+ *    or the component unmounts
  *  - Gracefully no-ops when window.task is unavailable (e.g. in tests)
+ *  - pause(), resume(), updatePriority() are best-effort: the main process
+ *    emits the authoritative state change event
  *
  * @template TInput Type of the task input payload.
  * @template TResult Type of the result from the completed event.
  *
  * Usage:
- *   const { submit, status, progress, result, cancel } = useTaskSubmit(
- *     'file-export',
- *     { path: '/tmp/out.md' },
- *     { priority: 'high' }
- *   )
+ *   const { submit, pause, resume, updatePriority, status, progress } =
+ *     useTaskSubmit('file-export', { path: '/tmp/out.md' }, { priority: 'high' })
  *   await submit()
  */
 export function useTaskSubmit<TInput = unknown, TResult = unknown>(
@@ -70,6 +92,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<TResult | null>(null)
   const [streamedContent, setStreamedContent] = useState<string>('')
+  const [queuePosition, setQueuePosition] = useState<number | undefined>(undefined)
 
   // Stable ref to the current task ID so store callbacks don't go stale.
   const taskIdRef = useRef<string | null>(null)
@@ -77,7 +100,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   // Unsubscribe handle for the store subscription.
   const unsubRef = useRef<(() => void) | null>(null)
 
-  // Guard: prevents submitting while already running.
+  // Guard: prevents submitting while a task is already active.
   const runningRef = useRef<boolean>(false)
 
   // Clean up the store subscription for the current task.
@@ -96,7 +119,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
   }, [cleanupSubscription])
 
-  // Sync local state from the store snapshot whenever this task's entry changes.
+  // Sync all local state fields from the store snapshot.
   const syncFromStore = useCallback(
     (id: string) => {
       const snap: TrackedTaskState | undefined = store.getTaskSnapshot(id)
@@ -105,13 +128,15 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       setStatus(snap.status)
       setProgress(snap.progress.percent)
       setProgressMessage(snap.progress.message)
+      setQueuePosition(snap.queuePosition)
 
       if (snap.error !== undefined) setError(snap.error)
       if (snap.result !== undefined) setResult(snap.result as TResult)
       if (snap.streamedContent) setStreamedContent(snap.streamedContent)
 
-      // Tear down when the task reaches a terminal state.
-      if (snap.status === 'completed' || snap.status === 'error' || snap.status === 'cancelled') {
+      // Tear down the subscription once the task reaches a terminal state.
+      // 'paused' is NOT terminal — the task can resume and continue.
+      if (TERMINAL_STATUSES.has(snap.status)) {
         cleanupSubscription()
       }
     },
@@ -138,6 +163,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     setError(null)
     setResult(null)
     setStreamedContent('')
+    setQueuePosition(undefined)
     runningRef.current = true
 
     let resolvedTaskId: string
@@ -161,7 +187,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
 
     // Register task in the shared store so incoming events are accepted.
-    store.addTask(resolvedTaskId, type)
+    store.addTask(resolvedTaskId, type, options?.priority ?? 'normal')
 
     // Subscribe to this specific task's store key.
     taskIdRef.current = resolvedTaskId
@@ -187,7 +213,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const cancel = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
-
     if (typeof window.task?.cancel !== 'function') return
 
     try {
@@ -197,9 +222,48 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
   }, [])
 
+  const pause = useCallback(async (): Promise<void> => {
+    const id = taskIdRef.current
+    if (!id) return
+    if (!ACTIVE_STATUSES.has(status)) return
+    if (typeof window.task?.pause !== 'function') return
+
+    try {
+      await window.task.pause(id)
+    } catch {
+      // Best-effort — the paused event from the main process will update state.
+    }
+  }, [status])
+
+  const resume = useCallback(async (): Promise<void> => {
+    const id = taskIdRef.current
+    if (!id) return
+    if (status !== 'paused') return
+    if (typeof window.task?.resume !== 'function') return
+
+    try {
+      await window.task.resume(id)
+    } catch {
+      // Best-effort — the resumed event from the main process will update state.
+    }
+  }, [status])
+
+  const updatePriority = useCallback(async (priority: TaskPriority): Promise<void> => {
+    const id = taskIdRef.current
+    if (!id) return
+    if (typeof window.task?.updatePriority !== 'function') return
+
+    try {
+      await window.task.updatePriority(id, priority)
+    } catch {
+      // Best-effort — the priority-changed event from the main process will update state.
+    }
+  }, [])
+
   const reset = useCallback((): void => {
     // Only reset when not actively running — avoids dangling subscriptions.
     if (runningRef.current) return
+    cleanupSubscription()
     taskIdRef.current = null
     setTaskId(null)
     setStatus('idle')
@@ -208,7 +272,8 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     setError(null)
     setResult(null)
     setStreamedContent('')
-  }, [])
+    setQueuePosition(undefined)
+  }, [cleanupSubscription])
 
   return {
     taskId,
@@ -218,8 +283,12 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     error,
     result,
     streamedContent,
+    queuePosition,
     submit,
     cancel,
+    pause,
+    resume,
+    updatePriority,
     reset,
   }
 }
