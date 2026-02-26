@@ -456,10 +456,7 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
-        contextBridge.exposeInMainWorld('documents', documents)
         contextBridge.exposeInMainWorld('contextMenu', contextMenu)
-        contextBridge.exposeInMainWorld('directories', directories)
-        contextBridge.exposeInMainWorld('personality', personality)
         contextBridge.exposeInMainWorld('output', output)
         contextBridge.exposeInMainWorld('task', task)
     } catch (error) {
@@ -475,13 +472,7 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
-    globalThis.documents = documents
-    // @ts-ignore (define in dts)
     globalThis.contextMenu = contextMenu
-    // @ts-ignore (define in dts)
-    globalThis.directories = directories
-    // @ts-ignore (define in dts)
-    globalThis.personality = personality
     // @ts-ignore (define in dts)
     globalThis.output = output
     // @ts-ignore (define in dts)
