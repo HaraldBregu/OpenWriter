@@ -129,21 +129,6 @@ export interface WindowApi {
   onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
 }
 
-
-/** Scheduled job management */
-export interface CronApi {
-  getAll: () => Promise<CronJobStatus[]>
-  getJob: (id: string) => Promise<CronJobStatus | null>
-  start: (id: string) => Promise<boolean>
-  stop: (id: string) => Promise<boolean>
-  delete: (id: string) => Promise<boolean>
-  create: (config: CronJobConfig) => Promise<boolean>
-  updateSchedule: (id: string, schedule: string) => Promise<boolean>
-  validateExpression: (expression: string) => Promise<CronValidationResult>
-  onJobResult: (callback: (result: CronJobResult) => void) => () => void
-}
-
-
 /** Persisted AI model settings */
 export interface StoreApi {
   getAllProviderSettings: () => Promise<Record<string, ProviderSettings>>
@@ -254,7 +239,6 @@ declare global {
     app: AppApi
     /** Optional: not present in all window types */
     win?: WindowApi
-    cron: CronApi
     store: StoreApi
     workspace: WorkspaceApi
     documents: DocumentsApi

@@ -3,7 +3,6 @@ import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } fr
 import {
     AppChannels,
     WindowChannels,
-    CronChannels,
     StoreChannels,
     WorkspaceChannels,
     DocumentsChannels,
@@ -16,7 +15,6 @@ import {
 import type {
     AppApi,
     WindowApi,
-    CronApi,
     StoreApi,
     WorkspaceApi,
     DocumentsApi,
@@ -84,39 +82,6 @@ const win: WindowApi = {
     },
     onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
         return typedOn(WindowChannels.fullScreenChange, callback)
-    },
-}
-
-// ---------------------------------------------------------------------------
-// window.cron — Scheduled job management
-// ---------------------------------------------------------------------------
-const cron: CronApi = {
-    getAll: () => {
-        return typedInvoke(CronChannels.getAll)
-    },
-    getJob: (id: string) => {
-        return typedInvoke(CronChannels.getJob, id)
-    },
-    start: (id: string) => {
-        return typedInvoke(CronChannels.start, id)
-    },
-    stop: (id: string) => {
-        return typedInvoke(CronChannels.stop, id)
-    },
-    delete: (id: string) => {
-        return typedInvoke(CronChannels.delete, id)
-    },
-    create: (config) => {
-        return typedInvoke(CronChannels.create, config)
-    },
-    updateSchedule: (id: string, schedule: string) => {
-        return typedInvoke(CronChannels.updateSchedule, id, schedule)
-    },
-    validateExpression: (expression: string) => {
-        return typedInvoke(CronChannels.validateExpression, expression)
-    },
-    onJobResult: (callback) => {
-        return typedOn(CronChannels.jobResult, callback)
     },
 }
 
@@ -511,7 +476,6 @@ if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld('app', app)
         contextBridge.exposeInMainWorld('win', win)
-        contextBridge.exposeInMainWorld('cron', cron)
         contextBridge.exposeInMainWorld('store', store)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('documents', documents)
@@ -528,8 +492,6 @@ if (process.contextIsolated) {
     globalThis.app = app
     // @ts-ignore (define in dts)
     globalThis.win = win
-    // @ts-ignore (define in dts)
-    globalThis.cron = cron
     // @ts-ignore (define in dts)
     globalThis.store = store
     // @ts-ignore (define in dts)
