@@ -114,7 +114,7 @@ describe('useCreateWriting — success path', () => {
     expect(writingId).not.toBeNull()
   })
 
-  it('calls window.output.save exactly once with the correct type', async () => {
+  it('calls window.workspace.output.save exactly once with the correct type', async () => {
     const { wrapper } = createWrapper()
     const { result } = renderHook(() => useCreateWriting(), { wrapper })
 
@@ -227,7 +227,7 @@ describe('useCreateWriting — no active workspace', () => {
     expect(writingId).toBeNull()
   })
 
-  it('does not call window.output.save when workspace is absent', async () => {
+  it('does not call window.workspace.output.save when workspace is absent', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue(null)
     const { wrapper } = createWrapper()
     const { result } = renderHook(() => useCreateWriting(), { wrapper })
@@ -269,7 +269,7 @@ describe('useCreateWriting — no active workspace', () => {
 // ---------------------------------------------------------------------------
 
 describe('useCreateWriting — save failure', () => {
-  it('returns null when window.output.save rejects', async () => {
+  it('returns null when window.workspace.output.save rejects', async () => {
     mockOutputSave.mockRejectedValue(new Error('Disk full'))
     const { wrapper } = createWrapper()
     const { result } = renderHook(() => useCreateWriting(), { wrapper })
