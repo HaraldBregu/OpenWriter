@@ -194,7 +194,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Writing: true,
-    Knowledge: false,
+    Knowledge: true,
     Personality: false,
   });
 
