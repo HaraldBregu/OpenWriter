@@ -644,16 +644,16 @@ describe('outputSlice', () => {
         expect(result.items[0].title).toBe('Original')
       })
 
-      it('fulfilled: should not update a posts item when the payload type is writings', () => {
-        // Arrange — item is type='posts', payload claims type='writings'
+      it('fulfilled: should not update an item when payload id does not match any item', () => {
+        // Arrange — item has id 'item-1', payload targets 'item-999'
         const original = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'openai' })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'anthropic' })
+        const updated = makeOutputItem({ id: 'item-999', type: 'writings', provider: 'anthropic' })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
 
-        // Assert — no match, provider unchanged
+        // Assert — no match on id, provider unchanged
         expect(result.items[0].provider).toBe('openai')
       })
     })
