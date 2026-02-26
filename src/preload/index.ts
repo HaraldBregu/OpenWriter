@@ -668,8 +668,6 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
-    globalThis.posts = posts
-    // @ts-ignore (define in dts)
     globalThis.documents = documents
     // @ts-ignore (define in dts)
     globalThis.agent = agent
