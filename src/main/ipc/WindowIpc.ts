@@ -59,19 +59,25 @@ export class WindowIpc implements IpcModule {
 
     // --- Query handlers (invoke/handle) ---
 
-    registerQuery(WindowChannels.isMaximized, (event: Electron.IpcMainInvokeEvent) => {
-      const win = BrowserWindow.fromWebContents(event.sender)
-      return win ? win.isMaximized() : false
-    })
+    ipcMain.handle(
+      WindowChannels.isMaximized,
+      wrapIpcHandler((event: IpcMainInvokeEvent) => {
+        const win = BrowserWindow.fromWebContents(event.sender)
+        return win ? win.isMaximized() : false
+      }, 'window:is-maximized')
+    )
 
-    registerQuery(WindowChannels.isFullScreen, (event: Electron.IpcMainInvokeEvent) => {
-      const win = BrowserWindow.fromWebContents(event.sender)
-      return win ? win.isFullScreen() : false
-    })
+    ipcMain.handle(
+      WindowChannels.isFullScreen,
+      wrapIpcHandler((event: IpcMainInvokeEvent) => {
+        const win = BrowserWindow.fromWebContents(event.sender)
+        return win ? win.isFullScreen() : false
+      }, 'window:is-fullscreen')
+    )
 
-    registerQuery(WindowChannels.getPlatform, () => {
+    ipcMain.handle(WindowChannels.getPlatform, wrapIpcHandler(() => {
       return process.platform
-    })
+    }, 'window:get-platform'))
 
     console.log(`[IPC] Registered ${this.name} module`)
   }
