@@ -8,9 +8,11 @@ import { usePersonalityFiles } from "../hooks/usePersonalityFiles";
 import { useOutputFiles } from "../hooks/useOutputFiles";
 import { usePostContextMenu } from "../hooks/usePostContextMenu";
 import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
-import { useAppSelector } from "../store";
+import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
+import { useAppDispatch, useAppSelector } from "../store";
 import { selectPosts } from "../store/postsSlice";
 import { selectWritings } from "../store/writingsSlice";
+import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspaceSlice";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
