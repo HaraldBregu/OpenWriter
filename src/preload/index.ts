@@ -204,21 +204,16 @@ const cron: CronApi = {
 // window.lifecycle — App lifecycle state and events
 // ---------------------------------------------------------------------------
 const lifecycle: LifecycleApi = {
-    getState: (): Promise<{
-        isSingleInstance: boolean
-        events: Array<{ type: string; timestamp: number; detail?: string }>
-        appReadyAt: number | null
-        platform: string
-    }> => {
+    getState: () => {
         return typedInvoke(LifecycleChannels.getState)
     },
-    getEvents: (): Promise<Array<{ type: string; timestamp: number; detail?: string }>> => {
+    getEvents: () => {
         return typedInvoke(LifecycleChannels.getEvents)
     },
-    restart: (): Promise<void> => {
+    restart: () => {
         return typedInvoke(LifecycleChannels.restart)
     },
-    onEvent: (callback: (event: { type: string; timestamp: number; detail?: string }) => void): (() => void) => {
+    onEvent: (callback) => {
         return typedOn(LifecycleChannels.event, callback)
     },
 }
