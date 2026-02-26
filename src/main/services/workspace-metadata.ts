@@ -336,6 +336,10 @@ export class WorkspaceMetadataService implements Disposable {
    * Flushes any pending writes to ensure data is not lost.
    */
   destroy(): void {
+    if (this.workspaceEventUnsubscribe) {
+      this.workspaceEventUnsubscribe()
+      this.workspaceEventUnsubscribe = null
+    }
     this.flush()
     console.log('[WorkspaceMetadataService] Destroyed')
   }
