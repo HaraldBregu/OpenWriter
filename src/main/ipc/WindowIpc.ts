@@ -94,66 +94,69 @@ export class WindowIpc implements IpcModule {
     // working context-menu pattern. The async wrapper in wrapIpcHandler can
     // interfere with the synchronous menu.popup() call.
     ipcMain.handle('window:popup-menu', (event) => {
+
+      console.log('Received request to open application menu')
+
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 
-      const menu = Menu.buildFromTemplate([
-        {
-          label: 'File',
-          submenu: [
-            { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => { win.webContents.send('menu:new-file') } },
-            { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { win.webContents.send('menu:open-file') } },
-            { type: 'separator' as const },
-            { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => { win.webContents.send('menu:save') } },
-            { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => { win.webContents.send('menu:save-as') } },
-            { type: 'separator' as const },
-            {
-              label: 'Exit',
-              click: () => {
-                appState.setQuitting()
-                app.quit()
+        const menu = Menu.buildFromTemplate([
+          {
+            label: 'File',
+            submenu: [
+              { label: 'New File', accelerator: 'CmdOrCtrl+N', click: () => { win.webContents.send('menu:new-file') } },
+              { label: 'Open File...', accelerator: 'CmdOrCtrl+O', click: () => { win.webContents.send('menu:open-file') } },
+              { type: 'separator' as const },
+              { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => { win.webContents.send('menu:save') } },
+              { label: 'Save As...', accelerator: 'CmdOrCtrl+Shift+S', click: () => { win.webContents.send('menu:save-as') } },
+              { type: 'separator' as const },
+              {
+                label: 'Exit',
+                click: () => {
+                  appState.setQuitting()
+                  app.quit()
+                }
               }
-            }
-          ]
-        },
-        {
-          label: 'Edit',
-          submenu: [
-            { role: 'undo' as const },
-            { role: 'redo' as const },
-            { type: 'separator' as const },
-            { role: 'cut' as const },
-            { role: 'copy' as const },
-            { role: 'paste' as const },
-            { role: 'selectAll' as const }
-          ]
-        },
-        {
-          label: 'View',
-          submenu: [
-            { role: 'reload' as const },
-            { role: 'forceReload' as const },
-            { type: 'separator' as const },
-            { role: 'zoomIn' as const },
-            { role: 'zoomOut' as const },
-            { role: 'resetZoom' as const },
-            { type: 'separator' as const },
-            { role: 'togglefullscreen' as const },
-            { type: 'separator' as const },
-            {
-              label: 'Toggle Console',
-              accelerator: 'CmdOrCtrl+Shift+I',
-              click: () => {
-                win.webContents.toggleDevTools()
+            ]
+          },
+          {
+            label: 'Edit',
+            submenu: [
+              { role: 'undo' as const },
+              { role: 'redo' as const },
+              { type: 'separator' as const },
+              { role: 'cut' as const },
+              { role: 'copy' as const },
+              { role: 'paste' as const },
+              { role: 'selectAll' as const }
+            ]
+          },
+          {
+            label: 'View',
+            submenu: [
+              { role: 'reload' as const },
+              { role: 'forceReload' as const },
+              { type: 'separator' as const },
+              { role: 'zoomIn' as const },
+              { role: 'zoomOut' as const },
+              { role: 'resetZoom' as const },
+              { type: 'separator' as const },
+              { role: 'togglefullscreen' as const },
+              { type: 'separator' as const },
+              {
+                label: 'Toggle Console',
+                accelerator: 'CmdOrCtrl+Shift+I',
+                click: () => {
+                  win.webContents.toggleDevTools()
+                }
               }
-            }
-          ]
-        },
-        {
-          label: 'Help',
-          submenu: [{ label: 'About OpenWriter', click: () => { win.webContents.send('menu:about') } }]
-        }
-      ])
+            ]
+          },
+          {
+            label: 'Help',
+            submenu: [{ label: 'About OpenWriter', click: () => { win.webContents.send('menu:about') } }]
+          }
+        ])
 
       menu.popup({ window: win })
     })

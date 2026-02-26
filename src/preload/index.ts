@@ -118,8 +118,8 @@ const app = {
             ipcRenderer.removeListener('file-opened', handler)
         }
     },
-    popupMenu: (): Promise<void> => {
-        return ipcRenderer.invoke('window:popup-menu')
+    popupMenu: (): void => {
+        ipcRenderer.send('window:popup-menu')
     },
     getPlatform: (): Promise<string> => {
         return ipcRenderer.invoke('window:get-platform')
