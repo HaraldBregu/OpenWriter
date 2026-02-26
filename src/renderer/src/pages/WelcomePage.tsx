@@ -137,6 +137,27 @@ const WelcomePage: React.FC = () => {
     <div className="flex flex-col h-screen bg-background">
       <TitleBar title="OpenWriter" />
 
+      {/* Workspace deletion notification banner */}
+      {deletionReason && (
+        <div className="mx-8 mt-4 mb-0 flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
+          <p className="flex-1 text-sm text-foreground">
+            {t('workspace.deletedBanner', {
+              defaultValue:
+                deletionReason === 'inaccessible'
+                  ? 'Your workspace folder is no longer accessible. Please select a new workspace.'
+                  : 'Your workspace folder was deleted or moved. Please select a new workspace.'
+            })}
+          </p>
+          <button
+            onClick={clearDeletion}
+            className="h-6 w-6 rounded-md hover:bg-destructive/10 flex items-center justify-center transition-colors shrink-0"
+          >
+            <X className="h-3.5 w-3.5 text-destructive" />
+          </button>
+        </div>
+      )}
+
       {/* Main content — vertically centered, not scrollable */}
       <div className="flex flex-col items-center flex-1 px-8 py-12 overflow-hidden">
 
