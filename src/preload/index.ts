@@ -51,6 +51,12 @@ const app: AppApi = {
     getPlatform: (): Promise<string> => {
         return typedInvoke(WindowChannels.getPlatform)
     },
+    showWriting: (writingId: string, writingTitle: string): Promise<void> => {
+        return typedInvoke(ContextMenuChannels.writing, writingId, writingTitle)
+    },
+    onWritingAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
+        return typedOn(ContextMenuChannels.writingAction, callback)
+    },
 }
 
 // ---------------------------------------------------------------------------

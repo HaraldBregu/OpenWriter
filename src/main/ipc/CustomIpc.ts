@@ -7,6 +7,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import { AppChannels } from '../../shared/types/ipc/channels'
+import type { WritingContextMenuAction } from '../../shared/types/ipc/types'
 
 const execFileAsync = promisify(execFile)
 
