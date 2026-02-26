@@ -138,16 +138,19 @@ export interface TaskSubmitPayload<TInput = unknown> {
   options?: TaskSubmitOptions
 }
 
+export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
+
 export interface TaskInfo {
   taskId: string
   type: string
-  status: string
-  priority: string
+  status: TaskStatus
+  priority: TaskPriority
   startedAt?: number
   completedAt?: number
   windowId?: number
   error?: string
-  result?: unknown
+  queuePosition?: number
+  durationMs?: number
 }
 
 /** Queue metrics returned by task:queue-status */
