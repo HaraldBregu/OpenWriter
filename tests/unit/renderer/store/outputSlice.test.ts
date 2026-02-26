@@ -687,17 +687,17 @@ describe('outputSlice', () => {
       })
 
       it('fulfilled: should not remove items when type does not match', () => {
-        // Arrange
+        // Arrange — item is 'writings', delete action targets a mismatched type (cast)
         const item = makeOutputItem({ id: 'item-1', type: 'writings' })
         const state = { ...createInitialState(), items: [item] }
 
-        // Act
+        // Act — mismatched type: item won't be found, stays in state
         const result = outputReducer(
           state,
-          fulfilled(deleteOutputItem, { id: 'item-1', type: 'writings' })
+          fulfilled(deleteOutputItem, { id: 'item-1', type: 'posts' as OutputType })
         )
 
-        // Assert
+        // Assert — item remains because types don't match
         expect(result.items).toHaveLength(1)
       })
 
