@@ -49,14 +49,21 @@ interface QueuedTask {
 
 export class TaskExecutorService implements Disposable {
   private activeTasks = new Map<string, ActiveTask>()
+  /** Completed/errored/cancelled tasks retained for result retrieval until TTL expires. */
+  private completedTasks = new Map<string, { task: ActiveTask; expiresAt: number }>()
   private queue: QueuedTask[] = []
   private runningCount = 0
+  private gcHandle: NodeJS.Timeout | null = null
 
   constructor(
     private readonly registry: TaskHandlerRegistry,
     private readonly eventBus: EventBus,
     private readonly maxConcurrency: number = 5
-  ) {}
+  ) {
+    // Run GC every minute to evict expired completed tasks
+    this.gcHandle = setInterval(() => this.gcCompletedTasks(), 60_000)
+    this.gcHandle.unref()
+  }
 
   // ---------------------------------------------------------------------------
   // Public API
