@@ -233,8 +233,6 @@ Object.defineProperty(window, 'contextMenu', {
   value: {
     showWriting: jest.fn().mockResolvedValue(undefined),
     onWritingAction: jest.fn().mockReturnValue(jest.fn()),
-    showPost: jest.fn().mockResolvedValue(undefined),
-    onPostAction: jest.fn().mockReturnValue(jest.fn())
   },
   writable: true, configurable: true
 })
