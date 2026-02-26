@@ -638,6 +638,33 @@ const ai: AiApi = {
 }
 
 // ---------------------------------------------------------------------------
+// window.writingItems — Writing item management
+// ---------------------------------------------------------------------------
+const writingItems: WritingItemsApi = {
+    create: (input) => {
+        return typedInvokeUnwrap(WritingItemsChannels.create, input)
+    },
+    save: (id, input) => {
+        return typedInvokeUnwrap(WritingItemsChannels.save, id, input)
+    },
+    loadAll: () => {
+        return typedInvokeUnwrap(WritingItemsChannels.loadAll)
+    },
+    loadOne: (id) => {
+        return typedInvokeUnwrap(WritingItemsChannels.loadOne, id)
+    },
+    delete: (id) => {
+        return typedInvokeUnwrap(WritingItemsChannels.delete, id)
+    },
+    onFileChange: (callback) => {
+        return typedOn(WritingItemsChannels.fileChanged, callback)
+    },
+    onWatcherError: (callback) => {
+        return typedOn(WritingItemsChannels.watcherError, callback)
+    },
+} satisfies WritingItemsApi
+
+// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
