@@ -128,11 +128,11 @@ describe('useOutputFiles — initial load', () => {
     mockOutputLoadAll.mockResolvedValue([
       {
         id: 'item-001',
-        type: 'posts',
-        path: '/workspace/output/posts/item-001',
+        type: 'writings',
+        path: '/workspace/output/writings/item-001',
         metadata: {
           title: 'Hello World',
-          type: 'posts',
+          type: 'writings',
           category: 'tech',
           tags: ['a'],
           visibility: 'public',
