@@ -40,17 +40,18 @@
 - `window.notification` — isSupported, show, onEvent
 - `window.clipboard` — writeText, readText, writeHTML, readHTML, writeImage, readImage, clear, getContent, getFormats, hasText, hasImage, hasHTML
 - `window.store` — getAllModelSettings, getModelSettings, setSelectedModel, setApiToken, setModelSettings
-- `window.workspace` — selectFolder, getCurrent, setCurrent, getRecent, clear, directoryExists, removeRecent
-- `window.documents` — importFiles, importByPaths, downloadFromUrl, loadAll, delete, onFileChange, onWatcherError
+- `window.workspace` — selectFolder, getCurrent, setCurrent, getRecent, clear, directoryExists, removeRecent + nested sub-objects below
+- `window.workspace.documents` — importFiles, importByPaths, downloadFromUrl, loadAll, delete, onFileChange, onWatcherError
+- `window.workspace.directories` — list, add, addMany, remove, validate, markIndexed, onChanged
+- `window.workspace.personality` — save, loadAll, loadOne, delete, onFileChange, onWatcherError, loadSectionConfig, saveSectionConfig, onSectionConfigChange
+- `window.workspace.output` — save(blocks[]), loadAll, loadByType, loadOne, update(blocks[]), delete, onFileChange, onWatcherError (MOVED from window.output)
 - `window.agent` — run, cancel, onEvent, createSession, destroySession, getSession, listSessions, clearSessions, runSession, cancelSession, getStatus, isRunning
 - `window.contextMenu` — showWriting, onWritingAction
-- `window.directories` — list, add, addMany, remove, validate, markIndexed, onChanged
-- `window.personality` — save, loadAll, loadOne, delete, onFileChange, onWatcherError, loadSectionConfig, saveSectionConfig, onSectionConfigChange
-- `window.output` — save(blocks[]), loadAll, loadByType, loadOne, update(blocks[]), delete, onFileChange, onWatcherError
 - `window.task` — submit, cancel, list, onEvent (unchanged)
 - `window.ai` — inference, cancel, onEvent, listAgents, listRuns (unchanged)
 - IPC channel names are UNCHANGED — only JS-side bridge property names were renamed
 - `window.win` and `window.task` are declared `?` (optional) in index.d.ts — always guard before use
+- NOTE: `src/main/ipc/OutputIpc.ts` still exists on disk but is NOT registered — handlers are now in WorkspaceIpc. Safe to delete.
 
 ## Preload Registration Rules
 - Preload registers all 22 namespaces via a `for` loop (each in its own try/catch) so a single failure cannot block remaining namespaces
