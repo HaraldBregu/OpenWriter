@@ -143,6 +143,11 @@ export const TaskChannels = {
   cancel: 'task:cancel',
   list: 'task:list',
   event: 'task:event',
+  pause: 'task:pause',
+  resume: 'task:resume',
+  updatePriority: 'task:update-priority',
+  getResult: 'task:get-result',
+  queueStatus: 'task:queue-status',
 } as const
 
 export const PostsChannels = {
