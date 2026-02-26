@@ -1338,6 +1338,10 @@ const ai = {
 // ---------------------------------------------------------------------------
 console.log('[preload] Starting to expose namespaces. contextIsolated:', process.contextIsolated)
 
+try {
+  writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] About to expose namespaces. contextIsolated=${process.contextIsolated}\n`, { flag: 'a' })
+} catch (e) {}
+
 if (process.contextIsolated) {
     // Register each namespace independently so a single failure cannot
     // prevent subsequent namespaces from being exposed to the renderer.
@@ -1367,18 +1371,30 @@ if (process.contextIsolated) {
         ['ai', ai],
     ]
     console.log('[preload] Exposing', namespaces.length, 'namespaces')
+    let successCount = 0
     for (const [name, api] of namespaces) {
         try {
             contextBridge.exposeInMainWorld(name, api)
             console.log(`[preload] Exposed window.${name}`)
+            successCount++
         } catch (error) {
-            console.error(`[preload] Failed to expose window.${name}:`, error)
+            const errMsg = error instanceof Error ? error.message : String(error)
+            console.error(`[preload] Failed to expose window.${name}:`, errMsg)
+            try {
+              writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] FAILED: window.${name}: ${errMsg}\n`, { flag: 'a' })
+            } catch (e) {}
         }
     }
     console.log('[preload] All namespaces exposed successfully')
     ;(globalThis as any).__preloadSuccess = true
+    try {
+      writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] Preload SUCCESS: Exposed ${successCount}/${namespaces.length} namespaces\n`, { flag: 'a' })
+    } catch (e) {}
 } else {
     console.log('[preload] Not in context isolated mode, using globalThis')
+    try {
+      writeFileSync(join(homedir(), 'Desktop', 'preload-debug.txt'), `[${new Date().toISOString()}] Using globalThis mode\n`, { flag: 'a' })
+    } catch (e) {}
     // @ts-ignore (define in dts)
     globalThis.app = app
     // @ts-ignore (define in dts)
