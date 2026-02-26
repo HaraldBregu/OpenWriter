@@ -244,6 +244,8 @@ export const {
   deleteWriting,
   loadWritings,
   hydrateWritingsFromDisk,
+  setWritingCreationError,
+  clearWritingCreationError,
 } = writingsSlice.actions
 
 // ---------------------------------------------------------------------------
