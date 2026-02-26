@@ -370,6 +370,7 @@
     "writing": "Writing",
     "writingDescription": "Start a blank document",
     "recent": "Recent",
+    "noRecentWritings": "No writings yet. Create one to get started.",
     "viewAll": "View all",
     "documents": "Documents",
     "documentsDescription": "Browse your files",
