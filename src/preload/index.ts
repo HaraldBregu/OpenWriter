@@ -458,7 +458,5 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
-    globalThis.contextMenu = contextMenu
-    // @ts-ignore (define in dts)
     globalThis.task = task
 }
