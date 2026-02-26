@@ -913,7 +913,7 @@ const personality: PersonalityApi = {
 // ---------------------------------------------------------------------------
 // window.output — Output file management for posts and writings
 // ---------------------------------------------------------------------------
-const output = {
+const output: OutputApi = {
     save: (input: {
         type: string
         blocks: Array<{
