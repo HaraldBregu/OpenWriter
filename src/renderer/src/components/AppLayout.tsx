@@ -210,9 +210,15 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     [],
   );
 
-  const handleNewWriting = useCallback(() => {
-    navigate("/new/writing", { state: { draftKey: Date.now() } });
-  }, [navigate]);
+  const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
+    onSuccess: (writingId) => {
+      navigate(`/new/writing/${writingId}`);
+    },
+  });
+
+  const handleNewWriting = useCallback(async () => {
+    await createWriting();
+  }, [createWriting]);
 
   const handleWritingContextMenu = useCallback(
     (writingId: string, writingTitle: string) => {
