@@ -48,21 +48,6 @@ export interface CronValidationResult {
   error?: string
 }
 
-// ---- Lifecycle ------------------------------------------------------------
-
-export interface LifecycleEvent {
-  type: string
-  timestamp: number
-  detail?: string
-}
-
-export interface LifecycleState {
-  isSingleInstance: boolean
-  events: LifecycleEvent[]
-  appReadyAt: number | null
-  platform: string
-}
-
 // ---- Window Manager -------------------------------------------------------
 
 export type ManagedWindowType = 'child' | 'modal' | 'frameless' | 'widget'
