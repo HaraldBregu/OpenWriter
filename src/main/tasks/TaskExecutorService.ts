@@ -158,6 +158,12 @@ export class TaskExecutorService implements Disposable {
       data: { taskId }
     } satisfies TaskEvent)
 
+    // Retain in completed store for TTL-based result retrieval
+    this.completedTasks.set(taskId, {
+      task: { ...task, controller: undefined as unknown as AbortController },
+      expiresAt: Date.now() + COMPLETED_TASK_TTL_MS
+    })
+
     this.activeTasks.delete(taskId)
 
     return true
