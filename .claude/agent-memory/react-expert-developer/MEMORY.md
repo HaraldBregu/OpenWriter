@@ -136,25 +136,32 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - `window.task` is optional in preload.d.ts — always guard with `typeof window.task?.method === 'function'`
 - Tests: `useTaskSubmit.test.tsx` (16) + `useTaskSubmitExtended.test.tsx` (16) = 32 passing
 
-## Writing Creation Architecture (updated Feb 2026)
+## Writing Creation Architecture (migrated to writingItems API, Feb 2026)
+- ALL writing storage now goes through `window.writingItems.*` (WritingItemsService)
+- Disk format: `<workspace>/writings/<YYYY-MM-DD_HHmmss>/config.json` + `content.md`
+- `content.md` stores all blocks serialized as joined text (`\n\n` separator)
+- Slice: `src/renderer/src/store/writingItemsSlice.ts`
+  - `WritingEntry`: `{ id (UUID), writingItemId (YYYY-MM-DD_HHmmss folder name), title, blocks, category, tags, createdAt, updatedAt, savedAt }`
+  - Thunk: `loadWritingItems` → calls `window.writingItems.loadAll()`
+  - Actions: `addEntry`, `setWritingItemId`, `updateEntryBlocks`, `updateEntryTitle`, `removeEntry`
+  - Selectors: `selectWritingEntries`, `selectWritingEntryById(id)`, `selectWritingItemsStatus`
 - Hook: `src/renderer/src/hooks/useCreateWriting.ts`
-  - Calls `window.output.save` (via `saveOutputItem` thunk) immediately on button click (conservative, not optimistic)
-  - Dispatches `addWriting` + `setWritingOutputId` only after disk write succeeds
-  - In-flight guard via `useRef(false)` — prevents double-creation from rapid clicks
-  - RTK `.unwrap()` throws a plain string (from `rejectWithValue(string)`) — normalise in catch
+  - Calls `window.writingItems.create(...)` directly — NO Redux thunks
+  - Dispatches `addEntry` only after disk write succeeds (conservative, non-optimistic)
+  - In-flight guard via `useRef(false)` prevents double-creation from rapid clicks
   - Returns `{ createWriting, isLoading, error, reset }`
-- Slice: `src/renderer/src/store/writingsSlice.ts`
-  - `WritingsState` includes `creationError: string | null`
-  - Actions: `setWritingCreationError`, `clearWritingCreationError`
-  - Selector: `selectWritingCreationError`
-- AppLayout trigger: `handleNewWriting` in `AppLayoutInner` `await`s `createWriting()`; sidebar button has `disabled={isCreatingWriting}`
-- Hydration: `writingsHydration.ts` registers RTK listener for `loadOutputItems.fulfilled` → dispatches `hydrateWritingsFromDisk`
-- Hook: `useOutputFiles` (`src/renderer/src/hooks/useOutputFiles.ts`)
-  - Subscribes to BOTH `window.workspace.onChange` AND `window.output.onFileChange`
-  - Reloads output items (and triggers writingsSlice hydration) when workspace changes or files change externally
-  - Debounces both paths at 500ms to coalesce rapid events
+- Hook: `src/renderer/src/hooks/useWritingItems.ts` (replaces `useOutputFiles`)
+  - Subscribes to `window.workspace.onChange` AND `window.writingItems.onFileChange`
+  - Dispatches `loadWritingItems` thunk on mount + debounced reloads (500ms)
+  - Call once at AppLayout level
+- Hook: `src/renderer/src/hooks/useDraftEditor.ts`
+  - Edit mode auto-save: calls `window.writingItems.save(writingItemId, { title, content })` directly
+  - Draft auto-commit: calls `window.writingItems.create(...)` directly after 1s debounce
+  - Returns `savedWritingItemIdRef` (NOT `savedOutputIdRef`) for use in delete handler
+- AppLayout: `useWritingItems()` called in outer `AppLayout`; sidebar uses `selectWritingEntries`
+- useWritingContextMenu: duplicate/delete go directly through `window.writingItems.create/delete`
+- writingsSlice.ts and writingsHydration.ts are NO LONGER imported by the store — only writingItemsSlice is used
 - i18n keys: `writing.creating`, `writing.createError`, `writing.noWorkspace`, `home.noRecentWritings` (EN + IT)
-- Tests: `tests/unit/renderer/hooks/useCreateWriting.test.tsx` — 23 tests
 
 ## i18n System
 - Translation files: `resources/i18n/en/main.json` and `resources/i18n/it/main.json`
