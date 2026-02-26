@@ -3,12 +3,12 @@
  *
  * NOTE: The useBrainFiles hook no longer exists — it has been renamed to
  * usePersonalityFiles. This test file exercises usePersonalityFiles with a
- * focus on the window.personality.onFileChange subscription pattern.
+ * focus on the window.workspace.personality.onFileChange subscription pattern.
  *
  * The hook:
  *  - Uses window.workspace.getCurrent() to check for an active workspace
  *  - Calls window.personality.loadAll() via the loadPersonalityFiles thunk
- *  - Subscribes to window.personality.onFileChange() with a 500ms debounce
+ *  - Subscribes to window.workspace.personality.onFileChange() with a 500ms debounce
  *
  * Covers:
  *  - Initial load when workspace is set
@@ -149,14 +149,14 @@ describe('usePersonalityFiles (useBrainFiles)', () => {
     consoleError.mockRestore()
   })
 
-  it('should subscribe to window.personality.onFileChange events on mount', async () => {
+  it('should subscribe to window.workspace.personality.onFileChange events on mount', async () => {
     mockWorkspaceGetCurrent.mockResolvedValue('/workspace')
 
     const { wrapper } = createWrapper()
     renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.personality.onFileChange).toHaveBeenCalled()
+      expect(window.workspace.personality.onFileChange).toHaveBeenCalled()
     })
   })
 
@@ -207,7 +207,7 @@ describe('usePersonalityFiles (useBrainFiles)', () => {
     const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper })
 
     await waitFor(() => {
-      expect(window.personality.onFileChange).toHaveBeenCalled()
+      expect(window.workspace.personality.onFileChange).toHaveBeenCalled()
     })
 
     unmount()
