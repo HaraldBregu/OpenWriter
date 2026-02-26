@@ -120,6 +120,20 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx`
 - Row pattern: `flex items-center justify-between px-4 py-3`, grouped in `rounded-md border divide-y`
 
+## Task Manager Integration (added Feb 2026)
+- Context: `src/renderer/src/contexts/TaskContext.tsx` — hand-rolled external store (no Redux), subscriptions per taskId + 'ALL' key
+- Hooks:
+  - `useTaskSubmit(type, input, options?)` — submit + full lifecycle for a single task
+  - `useTaskList(filter?)` — all active tasks with optional filter, auto-updates via store
+  - `useTaskEvents(taskId?)` — bounded event history (max 50), global or scoped
+  - `useTaskProgress(taskId)` — useSyncExternalStore for surgical percent/message updates
+  - `useTaskStatus(taskId)` — status-only, minimal re-renders
+- HOC: `src/renderer/src/components/withTaskTracking.tsx` — injects `taskTracking` prop bag
+- All hooks require `<TaskProvider>` ancestor; throw descriptive error if missing
+- Place `<TaskProvider>` once at AppLayout level — single IPC subscription for the whole app
+- `window.task` is optional in preload.d.ts — always guard with `typeof window.task?.method === 'function'`
+- Tests: `tests/unit/renderer/hooks/useTaskSubmit.test.tsx` — 16 passing tests
+
 ## i18n System
 - Translation files: `resources/i18n/en/main.json` and `resources/i18n/it/main.json`
 - Always use `useTranslation` from `react-i18next` — never hardcode user-visible strings

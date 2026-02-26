@@ -32,6 +32,8 @@ import type {
   TaskSubmitPayload,
   TaskInfo,
   TaskEvent,
+  TaskPriority,
+  TaskQueueStatus,
   OutputFile,
   OutputFileChangeEvent,
   SaveOutputInput,
