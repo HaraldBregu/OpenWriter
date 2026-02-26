@@ -816,7 +816,7 @@ describe('outputSlice', () => {
           makeOutputItem({ id: 'w3', type: 'writings' })
         ]
       })
-      expect(selectOutputItemsCountByType(state)).toEqual({ writings: 3 })
+      expect(selectOutputItemsCountByType(state)).toEqual({ posts: 0, writings: 3 })
     })
 
     it('selectOutputLoading should return false in initial state', () => {
