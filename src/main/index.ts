@@ -123,12 +123,38 @@ app.whenReady().then(async () => {
   if (isWorkspaceMode && workspacePath) {
     logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
 
-    // On Windows/Linux, remove the native menu bar for frameless windows.
-    // Without this, Electron keeps a default application menu that can
-    // intercept Alt-key presses and conflict with the custom titlebar.
+    // On Windows/Linux, set a minimal application menu then hide the bar.
+    // setApplicationMenu(null) would remove keyboard accelerators (Ctrl+C/V/Z).
+    // Setting a menu and hiding the bar keeps accelerators working without
+    // showing a native menu bar on the frameless window.
     if (process.platform !== 'darwin') {
       const { Menu: ElectronMenu } = require('electron')
-      ElectronMenu.setApplicationMenu(null)
+      const minimalMenu = ElectronMenu.buildFromTemplate([
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'undo' as const },
+            { role: 'redo' as const },
+            { type: 'separator' as const },
+            { role: 'cut' as const },
+            { role: 'copy' as const },
+            { role: 'paste' as const },
+            { role: 'selectAll' as const },
+          ]
+        },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'reload' as const },
+            { role: 'forceReload' as const },
+            { role: 'togglefullscreen' as const },
+            { role: 'zoomIn' as const },
+            { role: 'zoomOut' as const },
+            { role: 'resetZoom' as const },
+          ]
+        }
+      ])
+      ElectronMenu.setApplicationMenu(minimalMenu)
     }
 
     // Create workspace window directly - no tray
