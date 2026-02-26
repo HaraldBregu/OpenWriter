@@ -23,7 +23,7 @@ const WelcomePage: React.FC = () => {
 
   useEffect(() => {
     loadRecentProjects()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps -- intentionally runs once on mount only
+  }, [])
 
   const loadRecentProjects = async () => {
     try {
