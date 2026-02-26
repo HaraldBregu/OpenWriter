@@ -2,8 +2,8 @@
  * Tests for ElectronPersonalityTaskService.
  *
  * Testing strategy:
- *   - The service accesses three global bridges: window.task, window.store,
- *     and window.personality. These are installed by tests/setup/renderer.ts
+ *   - The service accesses three global bridges: window.task, window.app,
+ *     and window.workspace. These are installed by tests/setup/renderer.ts
  *     with jest.fn() mocks. Individual tests configure mock return values.
  *   - The `assertBridge()` private method is exercised indirectly through the
  *     public API by removing window.task before the call.
