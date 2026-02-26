@@ -5,6 +5,7 @@
 
 export type { IpcModule } from './IpcModule'
 export { AgentIpc } from './AgentIpc'
+export { ContextMenuIpc } from './ContextMenuIpc'
 export { CronIpc } from './CronIpc'
 export { CustomIpc } from './CustomIpc'
 export { DocumentsIpc } from './DocumentsIpc'
