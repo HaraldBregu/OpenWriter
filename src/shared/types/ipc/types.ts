@@ -147,6 +147,14 @@ export interface TaskInfo {
   completedAt?: number
   windowId?: number
   error?: string
+  result?: unknown
+}
+
+/** Queue metrics returned by task:queue-status */
+export interface TaskQueueStatus {
+  queued: number
+  running: number
+  completed: number
 }
 
 export type TaskEvent =
@@ -157,6 +165,9 @@ export type TaskEvent =
   | { type: 'error'; data: { taskId: string; message: string; code?: string } }
   | { type: 'cancelled'; data: { taskId: string } }
   | { type: 'stream'; data: { taskId: string; token: string } }
+  | { type: 'paused'; data: { taskId: string } }
+  | { type: 'resumed'; data: { taskId: string; position: number } }
+  | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
 
 // ---- Posts ----------------------------------------------------------------
 
