@@ -284,7 +284,7 @@ const wm: WindowManagerApi = {
 // ---------------------------------------------------------------------------
 // window.fs — Filesystem operations and directory watching
 // ---------------------------------------------------------------------------
-const fs = {
+const fs: FileSystemApi = {
     openFile: (): Promise<{
         filePath: string
         fileName: string
