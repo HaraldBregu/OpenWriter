@@ -278,7 +278,6 @@ declare global {
     cron: CronApi
     store: StoreApi
     workspace: WorkspaceApi
-    posts: PostsApi
     documents: DocumentsApi
     agent: AgentApi
     contextMenu: ContextMenuApi

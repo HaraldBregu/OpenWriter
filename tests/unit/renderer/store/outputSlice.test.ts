@@ -1,5 +1,5 @@
 /**
- * Tests for outputSlice - the Redux store for AI-generated output items (posts & writings).
+ * Tests for outputSlice - the Redux store for AI-generated output items (writings).
  *
  * Tests cover:
  *   - Synchronous reducers: setItems, addItem, updateItem, removeItem, setLoading,
@@ -50,9 +50,9 @@ function createInitialState() {
 function makeOutputItem(overrides: Partial<OutputItem> = {}): OutputItem {
   return {
     id: 'item-1',
-    type: 'posts' as OutputType,
-    path: '/workspace/output/posts/item-1',
-    title: 'Test Post',
+    type: 'writings' as OutputType,
+    path: '/workspace/output/writings/item-1',
+    title: 'Test Writing',
     blocks: [
       { name: 'block-uuid-1', content: 'Hello world', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }
     ],
@@ -165,13 +165,13 @@ describe('outputSlice', () => {
     describe('updateItem', () => {
       it('should merge changes into the matching item', () => {
         // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Old Title' })
+        const item = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Old Title' })
         const state = { ...createInitialState(), items: [item] }
 
         // Act
         const result = outputReducer(
           state,
-          updateItem({ id: 'item-1', type: 'posts', changes: { title: 'New Title' } })
+          updateItem({ id: 'item-1', type: 'writings', changes: { title: 'New Title' } })
         )
 
         // Assert
@@ -181,13 +181,13 @@ describe('outputSlice', () => {
 
       it('should update updatedAt when merging changes', () => {
         // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts', updatedAt: '2024-01-01T00:00:00.000Z' })
+        const item = makeOutputItem({ id: 'item-1', type: 'writings', updatedAt: '2024-01-01T00:00:00.000Z' })
         const state = { ...createInitialState(), items: [item] }
 
         // Act
         const result = outputReducer(
           state,
-          updateItem({ id: 'item-1', type: 'posts', changes: { title: 'Updated' } })
+          updateItem({ id: 'item-1', type: 'writings', changes: { title: 'Updated' } })
         )
 
         // Assert
@@ -196,13 +196,13 @@ describe('outputSlice', () => {
 
       it('should not modify state when ID does not match', () => {
         // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Original' })
+        const item = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Original' })
         const state = { ...createInitialState(), items: [item] }
 
         // Act
         const result = outputReducer(
           state,
-          updateItem({ id: 'nonexistent', type: 'posts', changes: { title: 'Changed' } })
+          updateItem({ id: 'nonexistent', type: 'writings', changes: { title: 'Changed' } })
         )
 
         // Assert
@@ -210,17 +210,17 @@ describe('outputSlice', () => {
       })
 
       it('should not modify state when type does not match even if ID matches', () => {
-        // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Original' })
+        // Arrange — item is 'writings', action targets a non-existent type (cast to bypass TS)
+        const item = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Original' })
         const state = { ...createInitialState(), items: [item] }
 
-        // Act
+        // Act — use a mismatched type that will never equal 'writings'
         const result = outputReducer(
           state,
-          updateItem({ id: 'item-1', type: 'writings', changes: { title: 'Changed' } })
+          updateItem({ id: 'item-1', type: 'posts' as OutputType, changes: { title: 'Changed' } })
         )
 
-        // Assert
+        // Assert — no item found; title unchanged
         expect(result.items[0].title).toBe('Original')
       })
     })
@@ -228,12 +228,12 @@ describe('outputSlice', () => {
     describe('removeItem', () => {
       it('should remove the item matching id and type', () => {
         // Arrange
-        const itemA = makeOutputItem({ id: 'a', type: 'posts' })
+        const itemA = makeOutputItem({ id: 'a', type: 'writings' })
         const itemB = makeOutputItem({ id: 'b', type: 'writings' })
         const state = { ...createInitialState(), items: [itemA, itemB] }
 
         // Act
-        const result = outputReducer(state, removeItem({ id: 'a', type: 'posts' }))
+        const result = outputReducer(state, removeItem({ id: 'a', type: 'writings' }))
 
         // Assert
         expect(result.items).toHaveLength(1)
@@ -242,7 +242,7 @@ describe('outputSlice', () => {
 
       it('should not remove items when type does not match even if ID matches', () => {
         // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts' })
+        const item = makeOutputItem({ id: 'item-1', type: 'writings' })
         const state = { ...createInitialState(), items: [item] }
 
         // Act
@@ -257,7 +257,7 @@ describe('outputSlice', () => {
         const state = { ...createInitialState(), items: [makeOutputItem({ id: 'item-1' })] }
 
         // Act
-        const result = outputReducer(state, removeItem({ id: 'nonexistent', type: 'posts' }))
+        const result = outputReducer(state, removeItem({ id: 'nonexistent', type: 'writings' }))
 
         // Assert
         expect(result.items).toHaveLength(1)
@@ -459,14 +459,14 @@ describe('outputSlice', () => {
     describe('updateOutputItem', () => {
       it('fulfilled: should update the matching item in place by id + type', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Old Title', category: 'cat-a' })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Old Title', category: 'cat-a' })
         const state = { ...createInitialState(), items: [original] }
         const updatedBlocks = [
           { name: 'block-uuid-1', content: 'Updated content', createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-06-01T00:00:00.000Z' }
         ]
         const updated = makeOutputItem({
           id: 'item-1',
-          type: 'posts',
+          type: 'writings',
           title: 'New Title',
           category: 'cat-b',
           blocks: updatedBlocks,
@@ -489,9 +489,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist provider when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'openai' })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'openai' })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'anthropic' })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'anthropic' })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -502,9 +502,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist model when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', model: 'gpt-4o' })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', model: 'gpt-4o' })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', model: 'claude-opus-4-6' })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', model: 'claude-opus-4-6' })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -515,9 +515,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist temperature when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', temperature: 0.7 })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', temperature: 0.7 })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', temperature: 1.2 })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', temperature: 1.2 })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -528,9 +528,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist maxTokens when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: null })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', maxTokens: null })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: 4096 })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', maxTokens: 4096 })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -541,9 +541,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist null maxTokens (unlimited) when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: 2048 })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', maxTokens: 2048 })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', maxTokens: null })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', maxTokens: null })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -554,9 +554,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should persist reasoning when updating an item', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', reasoning: false })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', reasoning: false })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-1', type: 'posts', reasoning: true })
+        const updated = makeOutputItem({ id: 'item-1', type: 'writings', reasoning: true })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -569,7 +569,7 @@ describe('outputSlice', () => {
         // Arrange — item with one set of inference settings
         const original = makeOutputItem({
           id: 'item-1',
-          type: 'posts',
+          type: 'writings',
           provider: 'openai',
           model: 'gpt-4o',
           temperature: 0.7,
@@ -581,7 +581,7 @@ describe('outputSlice', () => {
         // Update with a completely different set of inference settings
         const updated = makeOutputItem({
           id: 'item-1',
-          type: 'posts',
+          type: 'writings',
           provider: 'anthropic',
           model: 'claude-opus-4-6',
           temperature: 1.8,
@@ -608,8 +608,8 @@ describe('outputSlice', () => {
         // Arrange — item has a known path and savedAt
         const original = makeOutputItem({
           id: 'item-1',
-          type: 'posts',
-          path: '/workspace/output/posts/item-1',
+          type: 'writings',
+          path: '/workspace/output/writings/item-1',
           savedAt: 12345
         })
         const state = { ...createInitialState(), items: [original] }
@@ -617,7 +617,7 @@ describe('outputSlice', () => {
         // The update thunk returns an item with path='' and a new savedAt
         const updated = makeOutputItem({
           id: 'item-1',
-          type: 'posts',
+          type: 'writings',
           path: '',         // update thunk always returns empty path
           savedAt: 99999
         })
@@ -633,9 +633,9 @@ describe('outputSlice', () => {
 
       it('fulfilled: should not change state when id + type does not match', () => {
         // Arrange
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', title: 'Original' })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', title: 'Original' })
         const state = { ...createInitialState(), items: [original] }
-        const updated = makeOutputItem({ id: 'item-99', type: 'posts', title: 'Changed' })
+        const updated = makeOutputItem({ id: 'item-99', type: 'writings', title: 'Changed' })
 
         // Act
         const result = outputReducer(state, fulfilled(updateOutputItem, updated))
@@ -646,7 +646,7 @@ describe('outputSlice', () => {
 
       it('fulfilled: should not update a posts item when the payload type is writings', () => {
         // Arrange — item is type='posts', payload claims type='writings'
-        const original = makeOutputItem({ id: 'item-1', type: 'posts', provider: 'openai' })
+        const original = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'openai' })
         const state = { ...createInitialState(), items: [original] }
         const updated = makeOutputItem({ id: 'item-1', type: 'writings', provider: 'anthropic' })
 
@@ -673,12 +673,12 @@ describe('outputSlice', () => {
 
       it('fulfilled: should remove the item matching id + type and set loading=false', () => {
         // Arrange
-        const itemA = makeOutputItem({ id: 'a', type: 'posts' })
+        const itemA = makeOutputItem({ id: 'a', type: 'writings' })
         const itemB = makeOutputItem({ id: 'b', type: 'writings' })
         const state = { ...createInitialState(), loading: true, items: [itemA, itemB] }
 
         // Act
-        const result = outputReducer(state, fulfilled(deleteOutputItem, { id: 'a', type: 'posts' }))
+        const result = outputReducer(state, fulfilled(deleteOutputItem, { id: 'a', type: 'writings' }))
 
         // Assert
         expect(result.loading).toBe(false)
@@ -688,7 +688,7 @@ describe('outputSlice', () => {
 
       it('fulfilled: should not remove items when type does not match', () => {
         // Arrange
-        const item = makeOutputItem({ id: 'item-1', type: 'posts' })
+        const item = makeOutputItem({ id: 'item-1', type: 'writings' })
         const state = { ...createInitialState(), items: [item] }
 
         // Act
@@ -745,11 +745,11 @@ describe('outputSlice', () => {
     })
 
     it('selectOutputItemsByType should filter items by type', () => {
-      const post = makeOutputItem({ id: 'p1', type: 'posts' })
+      const post = makeOutputItem({ id: 'p1', type: 'writings' })
       const writing = makeOutputItem({ id: 'w1', type: 'writings' })
       const state = makeRootState({ ...createInitialState(), items: [post, writing] })
 
-      const postSelector = selectOutputItemsByType('posts')
+      const postSelector = selectOutputItemsByType('writings')
       const writingSelector = selectOutputItemsByType('writings')
 
       expect(postSelector(state)).toHaveLength(1)
@@ -761,30 +761,30 @@ describe('outputSlice', () => {
     it('selectOutputItemsByType should return an empty array when no items match', () => {
       const state = makeRootState({
         ...createInitialState(),
-        items: [makeOutputItem({ id: 'p1', type: 'posts' })]
+        items: [makeOutputItem({ id: 'p1', type: 'writings' })]
       })
       const selector = selectOutputItemsByType('writings')
       expect(selector(state)).toEqual([])
     })
 
     it('selectOutputItemById should return the matching item', () => {
-      const target = makeOutputItem({ id: 'target', type: 'posts' })
+      const target = makeOutputItem({ id: 'target', type: 'writings' })
       const other = makeOutputItem({ id: 'other', type: 'writings' })
       const state = makeRootState({ ...createInitialState(), items: [target, other] })
 
-      const selector = selectOutputItemById('posts', 'target')
+      const selector = selectOutputItemById('writings', 'target')
       expect(selector(state)).not.toBeNull()
       expect(selector(state)?.id).toBe('target')
     })
 
     it('selectOutputItemById should return null when ID does not exist', () => {
       const state = makeRootState({ ...createInitialState(), items: [makeOutputItem({ id: 'a' })] })
-      const selector = selectOutputItemById('posts', 'nonexistent')
+      const selector = selectOutputItemById('writings', 'nonexistent')
       expect(selector(state)).toBeNull()
     })
 
     it('selectOutputItemById should return null when type does not match', () => {
-      const item = makeOutputItem({ id: 'item-1', type: 'posts' })
+      const item = makeOutputItem({ id: 'item-1', type: 'writings' })
       const state = makeRootState({ ...createInitialState(), items: [item] })
       const selector = selectOutputItemById('writings', 'item-1')
       expect(selector(state)).toBeNull()
@@ -809,19 +809,19 @@ describe('outputSlice', () => {
 
     it('selectOutputItemsCountByType should return zeroes when empty', () => {
       const state = makeRootState()
-      expect(selectOutputItemsCountByType(state)).toEqual({ posts: 0, writings: 0 })
+      expect(selectOutputItemsCountByType(state)).toEqual({ writings: 0 })
     })
 
     it('selectOutputItemsCountByType should tally counts per type', () => {
       const state = makeRootState({
         ...createInitialState(),
         items: [
-          makeOutputItem({ id: 'p1', type: 'posts' }),
-          makeOutputItem({ id: 'p2', type: 'posts' }),
+          makeOutputItem({ id: 'p1', type: 'writings' }),
+          makeOutputItem({ id: 'p2', type: 'writings' }),
           makeOutputItem({ id: 'w1', type: 'writings' })
         ]
       })
-      expect(selectOutputItemsCountByType(state)).toEqual({ posts: 2, writings: 1 })
+      expect(selectOutputItemsCountByType(state)).toEqual({ writings: 3 })
     })
 
     it('selectOutputLoading should return false in initial state', () => {
