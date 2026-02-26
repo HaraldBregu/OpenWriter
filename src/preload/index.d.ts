@@ -64,6 +64,7 @@ export type {
   CronJobResult,
   CronValidationResult,
   WorkspaceInfo,
+  WorkspaceChangedEvent,
   PostData,
   PostSyncResult,
   PostFileChangeEvent,
