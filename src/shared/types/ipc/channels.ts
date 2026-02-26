@@ -79,6 +79,7 @@ export const WorkspaceChannels = {
   clear: 'workspace-clear',
   directoryExists: 'workspace-directory-exists',
   removeRecent: 'workspace-remove-recent',
+  changed: 'workspace:changed',
 } as const
 
 export const WindowChannels = {
