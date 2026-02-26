@@ -78,7 +78,8 @@
       "Bash(yarn lint:*)",
       "Bash(yarn typecheck:*)",
       "Bash(grep Test Suites::*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(echo Checking preload file location::*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
