@@ -5,7 +5,6 @@ import { FolderOpen, Clock, X } from 'lucide-react'
 import { AppButton } from '@/components/app'
 import { TitleBar } from '@/components/TitleBar'
 import { useAppDispatch } from '../store'
-import { reloadPostsFromWorkspace } from '../hooks/usePostsLoader'
 import { loadOutputItems } from '@/store/outputSlice'
 import logoIcon from '@resources/icons/icon.png'
 
