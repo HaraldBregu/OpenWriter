@@ -95,39 +95,6 @@ export const WindowChannels = {
   popupMenu: 'window:popup-menu',
 } as const
 
-export const WmChannels = {
-  createChild: 'wm-create-child',
-  createModal: 'wm-create-modal',
-  createFrameless: 'wm-create-frameless',
-  createWidget: 'wm-create-widget',
-  closeWindow: 'wm-close-window',
-  closeAll: 'wm-close-all',
-  getState: 'wm-get-state',
-  stateChanged: 'wm-state-changed',
-} as const
-
-export const MediaChannels = {
-  requestMicrophone: 'media-permissions-request-microphone',
-  requestCamera: 'media-permissions-request-camera',
-  getMicrophoneStatus: 'media-permissions-get-microphone',
-  getCameraStatus: 'media-permissions-get-camera',
-  getDevices: 'media-permissions-get-devices',
-} as const
-
-export const BluetoothChannels = {
-  isSupported: 'bluetooth-is-supported',
-  getPermissionStatus: 'bluetooth-get-permission-status',
-  getInfo: 'bluetooth-get-info',
-} as const
-
-export const NetworkChannels = {
-  isSupported: 'network-is-supported',
-  getConnectionStatus: 'network-get-connection-status',
-  getInterfaces: 'network-get-interfaces',
-  getInfo: 'network-get-info',
-  statusChanged: 'network-status-changed',
-} as const
-
 export const CronChannels = {
   getAll: 'cron-get-all-jobs',
   getJob: 'cron-get-job',
