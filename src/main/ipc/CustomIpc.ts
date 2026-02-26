@@ -6,6 +6,10 @@ import { is } from '@electron-toolkit/utils'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { StoreService } from '../services/store'
+import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
+import { StoreValidators } from '../shared/validators'
+import { wrapSimpleHandler } from './IpcErrorHandler'
 import { AppChannels } from '../../shared/types/ipc/channels'
 import type { WritingContextMenuAction } from '../../shared/types/ipc/types'
 
@@ -13,12 +17,14 @@ const execFileAsync = promisify(execFile)
 
 /**
  * IPC handlers for custom application-specific operations.
- * Includes sound playback and context menu handling.
+ * Includes sound playback, context menu handling, and AI model store operations
+ * (formerly in StoreIpc, now consolidated here and exposed on window.app).
  */
 export class CustomIpc implements IpcModule {
   readonly name = 'custom'
 
-  register(_container: ServiceContainer, _eventBus: EventBus): void {
+  register(container: ServiceContainer, _eventBus: EventBus): void {
+    const store = container.get<StoreService>('store')
     // Play sound handler
     ipcMain.on(AppChannels.playSound, async () => {
       const soundPath = is.dev

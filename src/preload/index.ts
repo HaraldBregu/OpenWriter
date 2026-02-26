@@ -14,7 +14,6 @@ import {
 import type {
     AppApi,
     WindowApi,
-    StoreApi,
     WorkspaceApi,
     TaskApi,
 } from './index.d'
