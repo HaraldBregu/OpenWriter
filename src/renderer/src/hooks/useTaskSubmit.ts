@@ -228,7 +228,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 
     // Read the live store snapshot to avoid stale-closure status.
     const currentStatus = store.getTaskSnapshot(id)?.status
-    if (!currentStatus || !ACTIVE_STATUSES.has(currentStatus)) return
+    if (!currentStatus || !PAUSABLE_STATUSES.has(currentStatus)) return
 
     try {
       await window.task.pause(id)
