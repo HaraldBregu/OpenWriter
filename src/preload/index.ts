@@ -239,6 +239,59 @@ const workspace: WorkspaceApi = {
             return typedOn(DirectoriesChannels.changed, callback)
         },
     },
+    // Nested: Output file management (posts and writings)
+    output: {
+        save: (input: {
+            type: string
+            blocks: Array<{
+                name: string
+                content: string
+                createdAt: string
+                updatedAt: string
+            }>
+            metadata?: Record<string, unknown>
+        }): Promise<{ id: string; path: string; savedAt: number }> => {
+            return typedInvokeUnwrap(OutputChannels.save, input)
+        },
+        loadAll: () => {
+            return typedInvokeUnwrap(OutputChannels.loadAll)
+        },
+        loadByType: (type: string) => {
+            return typedInvokeUnwrap(OutputChannels.loadByType, type)
+        },
+        loadOne: (params: { type: string; id: string }) => {
+            return typedInvokeUnwrap(OutputChannels.loadOne, params)
+        },
+        update: (params: {
+            type: string
+            id: string
+            blocks: Array<{
+                name: string
+                content: string
+                createdAt?: string
+                filetype?: 'markdown'
+                type?: 'content'
+            }>
+            metadata: Record<string, unknown>
+        }): Promise<void> => {
+            return typedInvokeUnwrap(OutputChannels.update, params)
+        },
+        delete: (params: { type: string; id: string }): Promise<void> => {
+            return typedInvokeUnwrap(OutputChannels.delete, params)
+        },
+        onFileChange: (callback: (event: {
+            type: 'added' | 'changed' | 'removed'
+            outputType: string
+            fileId: string
+            filePath: string
+            timestamp: number
+        }) => void): (() => void) => {
+            return typedOn(OutputChannels.fileChanged, callback)
+        },
+        onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+            return typedOn(OutputChannels.watcherError, callback)
+        },
+    },
     // Nested: Personality/conversation file management
     personality: {
         save: (input: {
