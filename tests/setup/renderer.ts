@@ -33,7 +33,20 @@ Object.defineProperty(window, 'app', {
     onThemeChange: jest.fn().mockReturnValue(jest.fn()),
     onFileOpened: jest.fn().mockReturnValue(jest.fn()),
     popupMenu: jest.fn(),
-    getPlatform: jest.fn().mockResolvedValue('win32')
+    getPlatform: jest.fn().mockResolvedValue('win32'),
+    showWriting: jest.fn().mockResolvedValue(undefined),
+    onWritingAction: jest.fn().mockReturnValue(jest.fn()),
+    // Persisted AI model settings (merged from former window.store namespace)
+    getAllProviderSettings: jest.fn().mockResolvedValue({}),
+    getProviderSettings: jest.fn().mockResolvedValue(null),
+    setProviderSettings: jest.fn().mockResolvedValue(undefined),
+    setInferenceDefaults: jest.fn().mockResolvedValue(undefined),
+    // Legacy store methods
+    getAllModelSettings: jest.fn().mockResolvedValue({}),
+    getModelSettings: jest.fn().mockResolvedValue(null),
+    setSelectedModel: jest.fn().mockResolvedValue(undefined),
+    setApiToken: jest.fn().mockResolvedValue(undefined),
+    setModelSettings: jest.fn().mockResolvedValue(undefined),
   },
   writable: true, configurable: true
 })
