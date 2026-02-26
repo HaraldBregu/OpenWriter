@@ -13,18 +13,6 @@ import './index.css'
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const MicrophonePage = lazy(() => import('./pages/MicrophonePage'))
-const CameraPage = lazy(() => import('./pages/CameraPage'))
-const ScreenPage = lazy(() => import('./pages/ScreenPage'))
-const BluetoothPage = lazy(() => import('./pages/BluetoothPage'))
-const NetworkPage = lazy(() => import('./pages/NetworkPage'))
-const CronPage = lazy(() => import('./pages/CronPage'))
-const LifecyclePage = lazy(() => import('./pages/LifecyclePage'))
-const WindowManagerPage = lazy(() => import('./pages/WindowManagerPage'))
-const FilesystemPage = lazy(() => import('./pages/FilesystemPage'))
-const DialogsPage = lazy(() => import('./pages/DialogsPage'))
-const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
-const ClipboardPage = lazy(() => import('./pages/ClipboardPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const NewPostPage = lazy(() => import('./pages/NewPostPage'))
 const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
@@ -75,7 +63,6 @@ const App: React.FC = () => {
                         <Route path="/screen" element={<RouteWrapper><ScreenPage /></RouteWrapper>} />
                         <Route path="/bluetooth" element={<RouteWrapper><BluetoothPage /></RouteWrapper>} />
                         <Route path="/network" element={<RouteWrapper><NetworkPage /></RouteWrapper>} />
-                        <Route path="/cron" element={<RouteWrapper><CronPage /></RouteWrapper>} />
                         <Route path="/lifecycle" element={<RouteWrapper><LifecyclePage /></RouteWrapper>} />
                         <Route path="/windows" element={<RouteWrapper><WindowManagerPage /></RouteWrapper>} />
                         <Route path="/filesystem" element={<RouteWrapper><FilesystemPage /></RouteWrapper>} />

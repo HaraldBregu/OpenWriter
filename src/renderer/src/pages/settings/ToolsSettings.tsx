@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { CollapsibleSection } from './CollapsibleSection'
 import { LoadingSkeleton } from '../../components/LoadingSkeleton'
 
-const CronPage = lazy(() => import('../CronPage'))
 const LifecyclePage = lazy(() => import('../LifecyclePage'))
 const WindowManagerPage = lazy(() => import('../WindowManagerPage'))
 const FilesystemPage = lazy(() => import('../FilesystemPage'))
@@ -15,11 +14,6 @@ const ToolsSettings: React.FC = () => {
 
   return (
     <div className="divide-y">
-      <CollapsibleSection title={t('settings.sections.cronJobs')}>
-        <Suspense fallback={<LoadingSkeleton />}>
-          <CronPage />
-        </Suspense>
-      </CollapsibleSection>
       <CollapsibleSection title={t('settings.sections.lifecycle')}>
         <Suspense fallback={<LoadingSkeleton />}>
           <LifecyclePage />

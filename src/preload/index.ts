@@ -428,7 +428,7 @@ const workspace: WorkspaceApi = {
     removeRecent: (workspacePath: string): Promise<void> => {
         return typedInvokeUnwrap(WorkspaceChannels.removeRecent, workspacePath)
     },
-}
+} satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
 // window.posts — Post sync and file-watch events
@@ -900,7 +900,7 @@ const task: TaskApi = {
     onEvent: (callback) => {
         return typedOn(TaskChannels.event, callback)
     }
-}
+} satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
 // window.ai — AI inference API (pipeline-based)
