@@ -5,7 +5,6 @@ import { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { DocumentsWatcherService } from '../services/documents-watcher'
 import { PersonalityFilesService } from '../services/personality-files'
 import { OutputFilesService } from '../services/output-files'
-import { WritingItemsService } from '../services/writing-items'
 
 /**
  * Interface for window-scoped service definitions.
