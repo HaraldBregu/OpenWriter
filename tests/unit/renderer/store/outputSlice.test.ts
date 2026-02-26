@@ -628,7 +628,7 @@ describe('outputSlice', () => {
         // Assert — the reducer applies the payload as-is (path and savedAt are NOT
         // fields in the spread, so they keep their original values from the item)
         // path is NOT in the reducer's spread list, so original is preserved
-        expect(result.items[0].path).toBe('/workspace/output/posts/item-1')
+        expect(result.items[0].path).toBe('/workspace/output/writings/item-1')
       })
 
       it('fulfilled: should not change state when id + type does not match', () => {
