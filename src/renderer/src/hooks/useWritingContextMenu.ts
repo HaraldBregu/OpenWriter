@@ -26,7 +26,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
   pathnameRef.current = location.pathname
 
   useEffect(() => {
-    const cleanup = window.contextMenu.onWritingAction(async (data) => {
+    const cleanup = window.app.onWritingAction(async (data) => {
       const { action, writingId } = data
 
       switch (action) {
