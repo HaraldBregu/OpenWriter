@@ -3,14 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { createBlock, type Block } from '@/components/ContentBlock'
 import {
-  selectPostById,
-  addPost,
-  setPostOutputId,
-  updatePostBlocks,
-  updatePostTitle,
-  updatePostInferenceSettings,
-} from '@/store/postsSlice'
-import {
   selectWritingById,
   addWriting,
   setWritingOutputId,
@@ -28,10 +20,8 @@ import {
 // Types
 // ---------------------------------------------------------------------------
 
-export type EditorEntityType = 'posts' | 'writings'
-
 export interface UseDraftEditorReturn {
-  /** True when there is no persisted entity yet (first visit to /new/post or /new/writing). */
+  /** True when there is no persisted entity yet (first visit to /new/writing). */
   isDraft: boolean
   /** Resolved title for the current mode (draft local state or Redux entity). */
   title: string
@@ -70,22 +60,20 @@ export interface UseDraftEditorReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Manages the shared state and side-effects for NewPostPage and NewWritingPage.
+ * Manages the shared state and side-effects for NewWritingPage.
  *
  * Responsibilities:
  *  - Draft mode: local title/blocks state, auto-commit timer (1 s after first content)
  *  - Edit mode: reads entity from Redux, auto-save timer (1 s debounce)
- *  - Draft key reset: detects "New [Post|Writing]" being clicked again via navigation state
+ *  - Draft key reset: detects "New Writing" being clicked again via navigation state
  *  - Block CRUD callbacks — routes to draft local state or Redux dispatch based on mode
  *  - AI settings local state with restore from output item on edit mode mount
  *  - focusBlockId management (set on block insert, cleared after one render)
  *
- * @param type       - 'posts' | 'writings' — determines which Redux slice to target
  * @param id         - Route param. Undefined means draft mode.
- * @param routeBase  - Navigation base path, e.g. '/new/post' or '/new/writing'
+ * @param routeBase  - Navigation base path, e.g. '/new/writing'
  */
 export function useDraftEditor(
-  type: EditorEntityType,
   id: string | undefined,
   routeBase: string
 ): UseDraftEditorReturn {
@@ -96,14 +84,12 @@ export function useDraftEditor(
   const isDraft = id === undefined
 
   // ---------------------------------------------------------------------------
-  // Redux entity selectors (only one will be active at a time based on `type`)
+  // Redux entity selectors
   // ---------------------------------------------------------------------------
-  const post = useAppSelector(selectPostById(type === 'posts' ? (id ?? '') : ''))
-  const writing = useAppSelector(selectWritingById(type === 'writings' ? (id ?? '') : ''))
-  const entity = type === 'posts' ? post : writing
+  const writing = useAppSelector(selectWritingById(id ?? ''))
 
-  const outputId = entity?.outputId ?? ''
-  const outputItem = useAppSelector(selectOutputItemById(type, outputId))
+  const outputId = writing?.outputId ?? ''
+  const outputItem = useAppSelector(selectOutputItemById('writings', outputId))
 
   // ---------------------------------------------------------------------------
   // Draft state
@@ -115,10 +101,10 @@ export function useDraftEditor(
 
   // Tracks the output folder ID for both modes.
   // Seeded from the entity's outputId so it survives remounts.
-  const savedOutputIdRef = useRef<string | null>(entity?.outputId ?? null)
+  const savedOutputIdRef = useRef<string | null>(writing?.outputId ?? null)
 
   // ---------------------------------------------------------------------------
-  // Draft key reset — fires when the user clicks "New Post / New Writing" again
+  // Draft key reset — fires when the user clicks "New Writing" again
   // ---------------------------------------------------------------------------
   const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
   const prevDraftKeyRef = useRef(draftKey)
@@ -187,62 +173,36 @@ export function useDraftEditor(
       const now = Date.now()
       const settings = aiSettingsRef.current
 
-      if (type === 'posts') {
-        dispatch(addPost({
-          id: draftIdRef.current,
-          title: draftTitle,
-          blocks: draftBlocks,
-          category: 'technology',
-          tags: [],
-          visibility: 'public',
-          createdAt: now,
-          updatedAt: now,
-        }))
-        const saved = await dispatch(saveOutputItem({
-          type: 'posts',
-          title: draftTitle || 'Untitled Post',
-          blocks: draftBlocks.map((b) => ({ name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt })),
-          visibility: 'private',
-          provider: settings.providerId,
-          model: settings.modelId,
-          temperature: settings.temperature,
-          maxTokens: settings.maxTokens,
-          reasoning: settings.reasoning,
-        })).unwrap()
-        savedOutputIdRef.current = saved.id
-        dispatch(setPostOutputId({ postId: draftIdRef.current, outputId: saved.id }))
-      } else {
-        dispatch(addWriting({
-          id: draftIdRef.current,
-          title: draftTitle,
-          blocks: draftBlocks,
-          category: 'writing',
-          tags: [],
-          visibility: 'private',
-          createdAt: now,
-          updatedAt: now,
-        }))
-        const saved = await dispatch(saveOutputItem({
-          type: 'writings',
-          title: draftTitle || 'Untitled Writing',
-          blocks: draftBlocks.map((b) => ({ name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt })),
-          category: 'writing',
-          visibility: 'private',
-          provider: settings.providerId,
-          model: settings.modelId,
-          temperature: settings.temperature,
-          maxTokens: settings.maxTokens,
-          reasoning: settings.reasoning,
-        })).unwrap()
-        savedOutputIdRef.current = saved.id
-        dispatch(setWritingOutputId({ writingId: draftIdRef.current, outputId: saved.id }))
-      }
+      dispatch(addWriting({
+        id: draftIdRef.current,
+        title: draftTitle,
+        blocks: draftBlocks,
+        category: 'writing',
+        tags: [],
+        visibility: 'private',
+        createdAt: now,
+        updatedAt: now,
+      }))
+      const saved = await dispatch(saveOutputItem({
+        type: 'writings',
+        title: draftTitle || 'Untitled Writing',
+        blocks: draftBlocks.map((b) => ({ name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt })),
+        category: 'writing',
+        visibility: 'private',
+        provider: settings.providerId,
+        model: settings.modelId,
+        temperature: settings.temperature,
+        maxTokens: settings.maxTokens,
+        reasoning: settings.reasoning,
+      })).unwrap()
+      savedOutputIdRef.current = saved.id
+      dispatch(setWritingOutputId({ writingId: draftIdRef.current, outputId: saved.id }))
 
       navigate(`${routeBase}/${draftIdRef.current}`, { replace: true })
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, type, routeBase])
+  }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
 
   // ---------------------------------------------------------------------------
   // Edit mode: auto-save to output 1 s after changes
@@ -251,7 +211,7 @@ export function useDraftEditor(
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (isDraft || !entity) return
+    if (isDraft || !writing) return
     if (isFirstEditRender.current) {
       isFirstEditRender.current = false
       return
@@ -262,20 +222,21 @@ export function useDraftEditor(
       const workspace = await window.workspace.getCurrent()
       if (!workspace) return
 
-      const outputBlocks = entity.blocks.map((b) => ({
+      const outputBlocks = writing.blocks.map((b) => ({
         name: b.id,
         content: b.content,
         createdAt: b.createdAt,
         updatedAt: b.updatedAt,
       }))
       const settings = aiSettingsRef.current
-      const title = entity.title || (type === 'posts' ? 'Untitled Post' : 'Untitled Writing')
+      const title = writing.title || 'Untitled Writing'
       const currentOutputId = savedOutputIdRef.current
 
       const sharedPayload = {
         title,
         blocks: outputBlocks,
         visibility: 'private' as const,
+        category: 'writing',
         provider: settings.providerId,
         model: settings.modelId,
         temperature: settings.temperature,
@@ -286,66 +247,52 @@ export function useDraftEditor(
       if (currentOutputId) {
         dispatch(updateOutputItem({
           id: currentOutputId,
-          type,
+          type: 'writings',
           ...sharedPayload,
-          ...(type === 'writings' ? { category: 'writing' } : {}),
         }))
       } else {
         const saved = await dispatch(saveOutputItem({
-          type,
+          type: 'writings',
           ...sharedPayload,
-          ...(type === 'writings' ? { category: 'writing' } : {}),
         })).unwrap()
         savedOutputIdRef.current = saved.id
-        // Use entity.id captured at the top of the effect instead of going through
-        // the separate post/writing refs — entity is already a dependency.
-        if (type === 'posts') {
-          dispatch(setPostOutputId({ postId: entity.id, outputId: saved.id }))
-        } else {
-          dispatch(setWritingOutputId({ writingId: entity.id, outputId: saved.id }))
-        }
+        dispatch(setWritingOutputId({ writingId: writing.id, outputId: saved.id }))
       }
     }, 1000)
 
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [isDraft, entity, dispatch, type]) // aiSettings accessed via ref; entity covers block/title changes
+  }, [isDraft, writing, dispatch]) // aiSettings accessed via ref; writing covers block/title changes
 
   // ---------------------------------------------------------------------------
-  // Callbacks — all route to draft local state or Redux based on isDraft
+  // Callbacks — all route to draft local state or Redux dispatch based on isDraft
   // ---------------------------------------------------------------------------
 
   const handleTitleChange = useCallback((value: string) => {
     if (isDraft) {
       setDraftTitle(value)
-    } else if (type === 'posts' && post) {
-      dispatch(updatePostTitle({ postId: post.id, title: value }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       dispatch(updateWritingTitle({ writingId: writing.id, title: value }))
     }
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleChange = useCallback((blockId: string, content: string) => {
     const now = new Date().toISOString()
     if (isDraft) {
       setDraftBlocks((prev) => prev.map((b) => b.id === blockId ? { ...b, content, updatedAt: now } : b))
-    } else if (type === 'posts' && post) {
-      dispatch(updatePostBlocks({ postId: post.id, blocks: post.blocks.map((b) => b.id === blockId ? { ...b, content, updatedAt: now } : b) }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       dispatch(updateWritingBlocks({ writingId: writing.id, blocks: writing.blocks.map((b) => b.id === blockId ? { ...b, content, updatedAt: now } : b) }))
     }
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleDelete = useCallback((blockId: string) => {
     if (isDraft) {
       setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
-    } else if (type === 'posts' && post) {
-      dispatch(updatePostBlocks({ postId: post.id, blocks: post.blocks.filter((b) => b.id !== blockId) }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       dispatch(updateWritingBlocks({ writingId: writing.id, blocks: writing.blocks.filter((b) => b.id !== blockId) }))
     }
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleAddBlockAfter = useCallback((afterId: string) => {
     const newBlock = createBlock()
@@ -354,68 +301,50 @@ export function useDraftEditor(
         const index = prev.findIndex((b) => b.id === afterId)
         return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
       })
-    } else if (type === 'posts' && post) {
-      const index = post.blocks.findIndex((b) => b.id === afterId)
-      dispatch(updatePostBlocks({ postId: post.id, blocks: [...post.blocks.slice(0, index + 1), newBlock, ...post.blocks.slice(index + 1)] }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       const index = writing.blocks.findIndex((b) => b.id === afterId)
       dispatch(updateWritingBlocks({ writingId: writing.id, blocks: [...writing.blocks.slice(0, index + 1), newBlock, ...writing.blocks.slice(index + 1)] }))
     }
     setFocusBlockId(newBlock.id)
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleReorder = useCallback((reordered: Block[]) => {
     if (isDraft) {
       setDraftBlocks(reordered)
-    } else if (type === 'posts' && post) {
-      dispatch(updatePostBlocks({ postId: post.id, blocks: reordered }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       dispatch(updateWritingBlocks({ writingId: writing.id, blocks: reordered }))
     }
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleAppendBlock = useCallback(() => {
     const newBlock = createBlock()
     if (isDraft) {
       setDraftBlocks((prev) => [...prev, newBlock])
-    } else if (type === 'posts' && post) {
-      dispatch(updatePostBlocks({ postId: post.id, blocks: [...post.blocks, newBlock] }))
-    } else if (type === 'writings' && writing) {
+    } else if (writing) {
       dispatch(updateWritingBlocks({ writingId: writing.id, blocks: [...writing.blocks, newBlock] }))
     }
     setFocusBlockId(newBlock.id)
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
     setAiSettings(next)
-    if (!isDraft) {
-      if (type === 'posts' && post) {
-        dispatch(updatePostInferenceSettings({
-          postId: post.id,
-          provider: next.providerId,
-          model: next.modelId,
-          temperature: next.temperature,
-          maxTokens: next.maxTokens,
-          reasoning: next.reasoning,
-        }))
-      } else if (type === 'writings' && writing) {
-        dispatch(updateWritingInferenceSettings({
-          writingId: writing.id,
-          provider: next.providerId,
-          model: next.modelId,
-          temperature: next.temperature,
-          maxTokens: next.maxTokens,
-          reasoning: next.reasoning,
-        }))
-      }
+    if (!isDraft && writing) {
+      dispatch(updateWritingInferenceSettings({
+        writingId: writing.id,
+        provider: next.providerId,
+        model: next.modelId,
+        temperature: next.temperature,
+        maxTokens: next.maxTokens,
+        reasoning: next.reasoning,
+      }))
     }
-  }, [isDraft, type, post, writing, dispatch])
+  }, [isDraft, writing, dispatch])
 
   // ---------------------------------------------------------------------------
   // Resolved display values
   // ---------------------------------------------------------------------------
-  const title = isDraft ? draftTitle : (entity?.title ?? '')
-  const blocks = isDraft ? draftBlocks : (entity?.blocks ?? [])
+  const title = isDraft ? draftTitle : (writing?.title ?? '')
+  const blocks = isDraft ? draftBlocks : (writing?.blocks ?? [])
 
   return {
     isDraft,

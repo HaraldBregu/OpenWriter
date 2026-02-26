@@ -6,7 +6,6 @@ import {
     CronChannels,
     StoreChannels,
     WorkspaceChannels,
-    PostsChannels,
     DocumentsChannels,
     AgentChannels,
     ContextMenuChannels,
