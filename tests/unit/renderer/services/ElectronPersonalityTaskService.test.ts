@@ -388,8 +388,8 @@ describe('ElectronPersonalityTaskService — cancelTask', () => {
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — getModelSettings', () => {
-  it('returns the model settings from window.store.getModelSettings', async () => {
-    ;(window.store.getModelSettings as jest.Mock).mockResolvedValue({
+  it('returns the model settings from window.app.getModelSettings', async () => {
+    ;(window.app.getModelSettings as jest.Mock).mockResolvedValue({
       selectedModel: 'gpt-4o'
     })
 
@@ -397,11 +397,11 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
     const result = await service.getModelSettings('openai')
 
     expect(result).toEqual({ selectedModel: 'gpt-4o' })
-    expect(window.store.getModelSettings).toHaveBeenCalledWith('openai')
+    expect(window.app.getModelSettings).toHaveBeenCalledWith('openai')
   })
 
-  it('returns null when window.store.getModelSettings throws', async () => {
-    ;(window.store.getModelSettings as jest.Mock).mockRejectedValue(
+  it('returns null when window.app.getModelSettings throws', async () => {
+    ;(window.app.getModelSettings as jest.Mock).mockRejectedValue(
       new Error('Store unavailable')
     )
 
@@ -411,8 +411,8 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
     expect(result).toBeNull()
   })
 
-  it('returns null when window.store.getModelSettings returns null', async () => {
-    ;(window.store.getModelSettings as jest.Mock).mockResolvedValue(null)
+  it('returns null when window.app.getModelSettings returns null', async () => {
+    ;(window.app.getModelSettings as jest.Mock).mockResolvedValue(null)
 
     const service = createService()
     const result = await service.getModelSettings('openai')
