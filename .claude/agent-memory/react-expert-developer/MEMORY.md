@@ -144,6 +144,21 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
 - `window.task` is optional in preload.d.ts — always guard with `typeof window.task?.method === 'function'`
 - Tests: `useTaskSubmit.test.tsx` (16) + `useTaskSubmitExtended.test.tsx` (16) = 32 passing
 
+## Writing Creation Architecture (added Feb 2026)
+- Hook: `src/renderer/src/hooks/useCreateWriting.ts`
+  - Calls `window.output.save` immediately on button click (conservative, not optimistic)
+  - Dispatches `addWriting` + `setWritingOutputId` only after disk write succeeds
+  - In-flight guard via `useRef(false)` — prevents double-creation from rapid clicks
+  - RTK `.unwrap()` throws a plain string (from `rejectWithValue(string)`) — normalise in catch
+  - Returns `{ createWriting, isLoading, error, reset }`
+- Slice: `src/renderer/src/store/writingsSlice.ts`
+  - `WritingsState` now includes `creationError: string | null`
+  - New actions: `setWritingCreationError`, `clearWritingCreationError`
+  - New selector: `selectWritingCreationError`
+- AppLayout trigger: `handleNewWriting` in `AppLayoutInner` now `await`s `createWriting()`; sidebar button has `disabled={isCreatingWriting}` and shows `t('writing.creating')` label
+- i18n keys added: `writing.creating`, `writing.createError`, `writing.noWorkspace` (EN + IT)
+- Tests: `tests/unit/renderer/hooks/useCreateWriting.test.tsx` — 23 tests covering success, no-workspace, error, reset, isLoading, double-click guard
+
 ## i18n System
 - Translation files: `resources/i18n/en/main.json` and `resources/i18n/it/main.json`
 - Always use `useTranslation` from `react-i18next` — never hardcode user-visible strings
