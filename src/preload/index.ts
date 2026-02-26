@@ -1032,39 +1032,32 @@ const ai: AiApi = {
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
-    // Register each namespace independently so a single failure cannot
-    // prevent subsequent namespaces from being exposed to the renderer.
-    const namespaces: Array<[string, unknown]> = [
-        ['app', app],
-        ['win', win],
-        ['media', media],
-        ['bluetooth', bluetooth],
-        ['network', network],
-        ['cron', cron],
-        ['lifecycle', lifecycle],
-        ['wm', wm],
-        ['fs', fs],
-        ['dialog', dialog],
-        ['notification', notification],
-        ['clipboard', clipboard],
-        ['store', store],
-        ['workspace', workspace],
-        ['posts', posts],
-        ['documents', documents],
-        ['agent', agent],
-        ['contextMenu', contextMenu],
-        ['directories', directories],
-        ['personality', personality],
-        ['output', output],
-        ['task', task],
-        ['ai', ai],
-    ]
-    for (const [name, api] of namespaces) {
-        try {
-            contextBridge.exposeInMainWorld(name, api)
-        } catch (error) {
-            console.error(`[preload] Failed to expose window.${name}:`, error)
-        }
+    try {
+        contextBridge.exposeInMainWorld('app', app)
+        contextBridge.exposeInMainWorld('win', win)
+        contextBridge.exposeInMainWorld('media', media)
+        contextBridge.exposeInMainWorld('bluetooth', bluetooth)
+        contextBridge.exposeInMainWorld('network', network)
+        contextBridge.exposeInMainWorld('cron', cron)
+        contextBridge.exposeInMainWorld('lifecycle', lifecycle)
+        contextBridge.exposeInMainWorld('wm', wm)
+        contextBridge.exposeInMainWorld('fs', fs)
+        contextBridge.exposeInMainWorld('dialog', dialog)
+        contextBridge.exposeInMainWorld('notification', notification)
+        contextBridge.exposeInMainWorld('clipboard', clipboard)
+        contextBridge.exposeInMainWorld('store', store)
+        contextBridge.exposeInMainWorld('workspace', workspace)
+        contextBridge.exposeInMainWorld('posts', posts)
+        contextBridge.exposeInMainWorld('documents', documents)
+        contextBridge.exposeInMainWorld('agent', agent)
+        contextBridge.exposeInMainWorld('contextMenu', contextMenu)
+        contextBridge.exposeInMainWorld('directories', directories)
+        contextBridge.exposeInMainWorld('personality', personality)
+        contextBridge.exposeInMainWorld('output', output)
+        contextBridge.exposeInMainWorld('task', task)
+        contextBridge.exposeInMainWorld('ai', ai)
+    } catch (error) {
+        console.error('[preload] Failed to expose IPC APIs:', error)
     }
 } else {
     // @ts-ignore (define in dts)
