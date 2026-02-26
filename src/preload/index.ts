@@ -89,7 +89,7 @@ const win: WindowApi = {
 // ---------------------------------------------------------------------------
 // window.media — Microphone / camera permissions and device enumeration
 // ---------------------------------------------------------------------------
-const media = {
+const media: MediaApi = {
     requestMicrophonePermission: (): Promise<string> => {
         return typedInvoke(MediaChannels.requestMicrophone)
     },
