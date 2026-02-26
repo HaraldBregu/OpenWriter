@@ -340,7 +340,7 @@ const fs: FileSystemApi = {
 // ---------------------------------------------------------------------------
 // window.dialog — Native OS dialog boxes
 // ---------------------------------------------------------------------------
-const dialog = {
+const dialog: DialogApi = {
     open: (): Promise<{
         type: string
         timestamp: number
