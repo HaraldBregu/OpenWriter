@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useSyncExternalStore,
-} from 'react'
+import React, { createContext, useContext, useEffect, useRef } from 'react'
 import type { TaskEvent, TaskInfo } from '../../../shared/types/ipc/types'
 
 // ---------------------------------------------------------------------------
