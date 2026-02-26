@@ -407,7 +407,7 @@ const notification: NotificationApi = {
 // ---------------------------------------------------------------------------
 // window.clipboard — Clipboard read / write operations
 // ---------------------------------------------------------------------------
-const clipboard = {
+const clipboard: ClipboardApi = {
     writeText: (text: string): Promise<boolean> => {
         return typedInvoke(ClipboardChannels.writeText, text)
     },
