@@ -804,7 +804,7 @@ describe('outputSlice', () => {
 
     it('selectOutputItemsCountByType should return zeroes when empty', () => {
       const state = makeRootState()
-      expect(selectOutputItemsCountByType(state)).toEqual({ writings: 0 })
+      expect(selectOutputItemsCountByType(state)).toEqual({ posts: 0, writings: 0 })
     })
 
     it('selectOutputItemsCountByType should tally counts per type', () => {
