@@ -172,16 +172,6 @@ export interface WorkspaceApi {
   onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
 }
 
-/** Post sync and file-watch events */
-export interface PostsApi {
-  syncToWorkspace: (posts: PostData[]) => Promise<PostSyncResult>
-  update: (post: PostData) => Promise<void>
-  delete: (postId: string) => Promise<void>
-  loadFromWorkspace: () => Promise<PostData[]>
-  onFileChange: (callback: (event: PostFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: WatcherError) => void) => () => void
-}
-
 /** Document import, download, and file-watch events */
 export interface DocumentsApi {
   importFiles: () => Promise<DocumentInfo[]>
