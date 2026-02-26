@@ -231,20 +231,6 @@ interface LegacyModelSettings {
  * `result` = the logical return type.
  */
 export interface InvokeChannelMap {
-  // ---- Clipboard (raw, no IpcResult wrapping) ----
-  [ClipboardChannels.writeText]: { args: [text: string]; result: boolean }
-  [ClipboardChannels.readText]: { args: []; result: string }
-  [ClipboardChannels.writeHTML]: { args: [html: string]; result: boolean }
-  [ClipboardChannels.readHTML]: { args: []; result: string }
-  [ClipboardChannels.writeImage]: { args: [dataURL: string]; result: boolean }
-  [ClipboardChannels.readImage]: { args: []; result: ClipboardImageData | null }
-  [ClipboardChannels.clear]: { args: []; result: boolean }
-  [ClipboardChannels.getContent]: { args: []; result: ClipboardContent | null }
-  [ClipboardChannels.getFormats]: { args: []; result: string[] }
-  [ClipboardChannels.hasText]: { args: []; result: boolean }
-  [ClipboardChannels.hasImage]: { args: []; result: boolean }
-  [ClipboardChannels.hasHTML]: { args: []; result: boolean }
-
   // ---- Store (IpcResult-wrapped) ----
   [StoreChannels.getAllProviderSettings]: { args: []; result: Record<string, ProviderSettings> }
   [StoreChannels.getProviderSettings]: { args: [providerId: string]; result: ProviderSettings | null }
