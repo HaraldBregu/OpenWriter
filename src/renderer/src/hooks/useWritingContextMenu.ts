@@ -11,6 +11,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
  * The ref pattern prevents re-subscription on every render:
  * - `entriesRef` always holds the current entries without being a dependency.
  * - The subscription effect depends only on stable values (dispatch, navigate).
+ *
+ * Persistence is via window.output (OutputFilesService via workspace).
  */
 export function useWritingContextMenu(entries: WritingEntry[]): void {
   const dispatch = useAppDispatch()
@@ -40,14 +42,24 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
           const newId = crypto.randomUUID()
           const duplicatedTitle = source.title ? `${source.title} (Copy)` : ''
 
-          // Create duplicate on disk first
+          // Create duplicate on disk first via workspace-backed output service
           try {
-            const result = await window.writingItems.create({
-              title: duplicatedTitle || 'Untitled Writing',
-              content: source.blocks.map((b) => b.content).join('\n\n'),
-              status: 'draft',
-              category: source.category,
-              tags: [...source.tags],
+            const result = await window.output.save({
+              type: 'writings',
+              blocks: source.blocks.map((b) => ({
+                name: b.id,
+                content: b.content,
+                createdAt: now,
+                updatedAt: now,
+              })),
+              metadata: {
+                title: duplicatedTitle || 'Untitled Writing',
+                category: source.category,
+                tags: [...source.tags],
+                visibility: 'private',
+                provider: 'manual',
+                model: '',
+              },
             })
 
             dispatch(
@@ -83,7 +95,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
           const entryToDelete = entriesRef.current.find((e) => e.id === writingId)
           if (entryToDelete?.writingItemId) {
             try {
-              await window.writingItems.delete(entryToDelete.writingItemId)
+              await window.output.delete({ type: 'writings', id: entryToDelete.writingItemId })
             } catch (err) {
               console.error('[useWritingContextMenu] Failed to delete writing item from disk:', err)
             }
