@@ -148,7 +148,7 @@ export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValu
   'output/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.output.loadAll()
+      const files = await window.workspace.output.loadAll()
       return files.map(mapOutputFileToItem)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load output items'
@@ -181,7 +181,7 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
         reasoning,
       } = input
 
-      const saved = await window.output.save({
+      const saved = await window.workspace.output.save({
         type,
         blocks: blocks.map((b) => ({
           name: b.name,
@@ -256,7 +256,7 @@ export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInp
         reasoning,
       } = input
 
-      await window.output.update({
+      await window.workspace.output.update({
         type,
         id,
         blocks: blocks.map((b) => ({
@@ -315,7 +315,7 @@ export const deleteOutputItem = createAsyncThunk<
   'output/delete',
   async (params, { rejectWithValue }) => {
     try {
-      await window.output.delete(params)
+      await window.workspace.output.delete(params)
       return params
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete output item'
