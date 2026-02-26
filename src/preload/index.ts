@@ -25,6 +25,31 @@ import {
     TaskChannels,
     PipelineChannels,
 } from '../shared/types/ipc/channels'
+import type {
+    AppApi,
+    WindowApi,
+    MediaApi,
+    BluetoothApi,
+    NetworkApi,
+    CronApi,
+    LifecycleApi,
+    WindowManagerApi,
+    FileSystemApi,
+    DialogApi,
+    NotificationApi,
+    ClipboardApi,
+    StoreApi,
+    WorkspaceApi,
+    PostsApi,
+    DocumentsApi,
+    AgentApi,
+    ContextMenuApi,
+    DirectoriesApi,
+    PersonalityApi,
+    OutputApi,
+    TaskApi,
+    AiApi,
+} from './index.d'
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities
