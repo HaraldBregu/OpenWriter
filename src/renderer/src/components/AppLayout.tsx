@@ -242,9 +242,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     [],
   );
 
+  const displayWorkspaceName = workspaceNameFromPath
+    ? `${workspaceNameFromPath} (workspace)`
+    : "OpenWriter";
+
   return (
     <>
-      <TitleBar title={workspaceName} onToggleSidebar={toggleSidebar} />
+      <TitleBar title={displayWorkspaceName} onToggleSidebar={toggleSidebar} />
 
       <div className="flex flex-1 min-h-0 w-full">
         <AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
