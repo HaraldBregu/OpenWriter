@@ -183,7 +183,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const writings = useAppSelector(selectWritings);
+  const writings = useAppSelector(selectWritingEntries);
   const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 
   // Subscribe to IPC context-menu events. Each hook uses the ref pattern
