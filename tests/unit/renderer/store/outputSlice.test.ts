@@ -811,9 +811,9 @@ describe('outputSlice', () => {
       const state = makeRootState({
         ...createInitialState(),
         items: [
-          makeOutputItem({ id: 'p1', type: 'writings' }),
-          makeOutputItem({ id: 'p2', type: 'writings' }),
-          makeOutputItem({ id: 'w1', type: 'writings' })
+          makeOutputItem({ id: 'w1', type: 'writings' }),
+          makeOutputItem({ id: 'w2', type: 'writings' }),
+          makeOutputItem({ id: 'w3', type: 'writings' })
         ]
       })
       expect(selectOutputItemsCountByType(state)).toEqual({ writings: 3 })
