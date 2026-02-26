@@ -298,6 +298,11 @@ export interface InvokeChannelMap {
   [TaskChannels.submit]: { args: [payload: TaskSubmitPayload]; result: { taskId: string } }
   [TaskChannels.cancel]: { args: [taskId: string]; result: boolean }
   [TaskChannels.list]: { args: []; result: TaskInfo[] }
+  [TaskChannels.pause]: { args: [taskId: string]; result: boolean }
+  [TaskChannels.resume]: { args: [taskId: string]; result: boolean }
+  [TaskChannels.updatePriority]: { args: [taskId: string, priority: TaskPriority]; result: boolean }
+  [TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null }
+  [TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus }
 
   // ---- Posts (IpcResult-wrapped) ----
   [PostsChannels.syncToWorkspace]: { args: [posts: PostData[]]; result: PostSyncResult }
