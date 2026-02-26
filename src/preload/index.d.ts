@@ -328,5 +328,6 @@ declare global {
     /** Optional: not present in all window types */
     task?: TaskApi
     ai: AiApi
+    writingItems: WritingItemsApi
   }
 }
