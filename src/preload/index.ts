@@ -522,7 +522,5 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.contextMenu = contextMenu
     // @ts-ignore (define in dts)
-    globalThis.output = output
-    // @ts-ignore (define in dts)
     globalThis.task = task
 }
