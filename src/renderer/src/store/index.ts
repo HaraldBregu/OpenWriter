@@ -22,6 +22,7 @@ registerWritingsHydration()
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
+    workspace: workspaceReducer,
     posts: postsReducer,
     writings: writingsReducer,
     directories: directoriesReducer,
