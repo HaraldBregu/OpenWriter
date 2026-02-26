@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { WritingItem } from '../../../shared/types/ipc/types'
+import type { OutputFile } from '../../../shared/types/ipc/types'
 import type { RootState } from './index'
 import type { Block } from '@/components/ContentBlock'
 
@@ -10,13 +10,14 @@ import type { Block } from '@/components/ContentBlock'
 /**
  * Redux-friendly representation of a writing item loaded from disk.
  *
- * The disk format (WritingItemsService) stores content as a single `content.md`
- * file. The editor renders `Block[]` internally, so content is stored as one
- * block per writing item: the full markdown text lives in `blocks[0].content`.
+ * The disk format (OutputFilesService via window.output) stores content as
+ * per-block .md files inside <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/.
+ * The editor renders `Block[]` internally; each OutputFile block maps 1:1 to
+ * a WritingEntry block.
  *
- * `writingItemId` is the stable on-disk folder name (YYYY-MM-DD_HHmmss) and is
- * used whenever calling `window.writingItems.*`. It is distinct from `id`,
- * which is a client-side UUID used for React routing and Redux keying.
+ * `writingItemId` is the stable on-disk folder name (YYYY-MM-DD_HHmmss) used
+ * whenever calling `window.output.*`. It is distinct from `id`, which is a
+ * client-side UUID used for React routing and Redux keying.
  */
 export interface WritingEntry {
   /** Client-side UUID — used for routing (/new/writing/:id) and Redux keying. */
@@ -54,32 +55,37 @@ const initialState: WritingItemsState = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeBlock(content = ''): Block {
+function makeBlock(content = '', createdAt?: string, updatedAt?: string): Block {
   const now = new Date().toISOString()
-  return { id: crypto.randomUUID(), content, createdAt: now, updatedAt: now }
+  return {
+    id: crypto.randomUUID(),
+    content,
+    createdAt: createdAt ?? now,
+    updatedAt: updatedAt ?? now,
+  }
 }
 
 /**
- * Map a WritingItem from the IPC bridge to a WritingEntry for Redux.
- * The disk content string becomes the first (and only) block.
+ * Map an OutputFile from window.output to a WritingEntry for Redux.
+ * Each output block maps to a writing block. If there are no blocks, a single
+ * empty block is created so the editor always has something to render.
  */
-function mapWritingItemToEntry(item: WritingItem): WritingEntry {
-  const block = makeBlock(item.content)
-  // Preserve the original block timestamps from the file mtime via savedAt
-  const ts = new Date(item.savedAt).toISOString()
-  block.createdAt = item.metadata.createdAt || ts
-  block.updatedAt = item.metadata.updatedAt || ts
+function mapOutputFileToEntry(file: OutputFile): WritingEntry {
+  const blocks: Block[] =
+    file.blocks.length > 0
+      ? file.blocks.map((b) => makeBlock(b.content, b.createdAt, b.updatedAt))
+      : [makeBlock('')]
 
   return {
     id: crypto.randomUUID(),
-    writingItemId: item.id,
-    title: item.metadata.title,
-    blocks: [block],
-    category: item.metadata.category,
-    tags: item.metadata.tags,
-    createdAt: item.metadata.createdAt,
-    updatedAt: item.metadata.updatedAt,
-    savedAt: item.savedAt,
+    writingItemId: file.id,
+    title: file.metadata.title,
+    blocks,
+    category: file.metadata.category,
+    tags: file.metadata.tags,
+    createdAt: file.metadata.createdAt,
+    updatedAt: file.metadata.updatedAt,
+    savedAt: file.savedAt,
   }
 }
 
@@ -88,15 +94,15 @@ function mapWritingItemToEntry(item: WritingItem): WritingEntry {
 // ---------------------------------------------------------------------------
 
 /**
- * Load all writing items from the current workspace via window.writingItems.loadAll.
- * Returns an empty array when no workspace is active (the service handles that).
+ * Load all writing items from the current workspace via window.output.loadByType.
+ * Returns an empty array when no workspace is active.
  */
 export const loadWritingItems = createAsyncThunk<WritingEntry[], void, { rejectValue: string }>(
   'writingItems/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const items = await window.writingItems.loadAll()
-      return items.map(mapWritingItemToEntry)
+      const files = await window.output.loadByType('writings')
+      return files.map(mapOutputFileToEntry)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load writing items'
       return rejectWithValue(message)

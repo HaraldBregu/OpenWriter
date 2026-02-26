@@ -194,16 +194,6 @@ export const ContextMenuChannels = {
   writingAction: 'context-menu:writing-action',
 } as const
 
-export const WritingItemsChannels = {
-  create: 'workspace:create-writing-item',
-  save: 'workspace:save-writing-item',
-  loadAll: 'workspace:load-writing-items',
-  loadOne: 'workspace:load-writing-item',
-  delete: 'workspace:delete-writing-item',
-  fileChanged: 'writing-items:file-changed',
-  watcherError: 'writing-items:watcher-error',
-} as const
-
 export const AppChannels = {
   playSound: 'play-sound',
   setTheme: 'set-theme',
