@@ -17,6 +17,7 @@ import type {
   CronValidationResult,
   WorkspaceInfo,
   WorkspaceChangedEvent,
+  WorkspaceDeletedEvent,
   DocumentInfo,
   DocumentFileChangeEvent,
   AgentSessionConfig,
