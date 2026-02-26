@@ -124,7 +124,7 @@ describe('useCreateWriting — success path', () => {
     expect(callArg.type).toBe('writings')
   })
 
-  it('dispatches addWriting to Redux state after save', async () => {
+  it('dispatches addEntry to writingItems Redux state after save', async () => {
     const { store, wrapper } = createWrapper()
     const { result } = renderHook(() => useCreateWriting(), { wrapper })
 
@@ -133,10 +133,10 @@ describe('useCreateWriting — success path', () => {
     })
 
     const state = store.getState()
-    expect(state.writings.writings).toHaveLength(1)
+    expect(state.writingItems.entries).toHaveLength(1)
   })
 
-  it('links the writing to the output folder via setWritingOutputId', async () => {
+  it('links the writing to the output folder id via writingItemId', async () => {
     const { store, wrapper } = createWrapper()
     const { result } = renderHook(() => useCreateWriting(), { wrapper })
 
@@ -146,9 +146,9 @@ describe('useCreateWriting — success path', () => {
     })
 
     const state = store.getState()
-    const writing = state.writings.writings.find((w) => w.id === writingId)
-    expect(writing).toBeDefined()
-    expect(writing?.outputId).toBe(SAVED_RESULT.id)
+    const entry = state.writingItems.entries.find((e) => e.id === writingId)
+    expect(entry).toBeDefined()
+    expect(entry?.writingItemId).toBe(SAVED_RESULT.id)
   })
 
   it('calls onSuccess callback with the writing id', async () => {
