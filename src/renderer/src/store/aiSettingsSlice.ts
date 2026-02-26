@@ -55,7 +55,7 @@ export const saveProviderSettings = createAsyncThunk<
   { rejectValue: string }
 >('aiSettings/saveProvider', async ({ providerId, settings }, { rejectWithValue }) => {
   try {
-    await window.store.setProviderSettings(providerId, settings)
+    await window.app.setProviderSettings(providerId, settings)
     return { providerId, settings }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to save provider settings'
