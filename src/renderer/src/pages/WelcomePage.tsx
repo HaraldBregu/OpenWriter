@@ -142,12 +142,9 @@ const WelcomePage: React.FC = () => {
         <div className="mx-8 mt-4 mb-0 flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
           <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
           <p className="flex-1 text-sm text-foreground">
-            {t('workspace.deletedBanner', {
-              defaultValue:
-                deletionReason === 'inaccessible'
-                  ? 'Your workspace folder is no longer accessible. Please select a new workspace.'
-                  : 'Your workspace folder was deleted or moved. Please select a new workspace.'
-            })}
+            {deletionReason === 'inaccessible'
+              ? t('workspace.inaccessibleBanner')
+              : t('workspace.deletedBanner')}
           </p>
           <button
             onClick={clearDeletion}
