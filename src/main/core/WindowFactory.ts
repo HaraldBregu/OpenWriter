@@ -1,19 +1,6 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
-import { readFileSync } from 'node:fs'
-import { homedir } from 'node:os'
-
-// Debug: Log __dirname value
-const debugLogPath = path.join(homedir(), 'Desktop', 'windowfactory-debug.txt')
-try {
-  readFileSync(debugLogPath)  // Check if file exists to avoid creating empty file
-  const message = `[WindowFactory] __dirname=${__dirname}\n`
-  readFileSync(debugLogPath, 'utf-8')  // Read to append
-  // Uncomment to debug: require('fs').appendFileSync(debugLogPath, message)
-} catch (e) {
-  // File doesn't exist yet, skip
-}
 
 export interface WindowPreset {
   name: string
@@ -26,7 +13,13 @@ export interface WindowPreset {
  * and WindowManagerService.
  */
 export class WindowFactory {
-  private readonly preloadPath = path.resolve(__dirname, '../preload/index.mjs')
+  private readonly preloadPath: string
+
+  constructor() {
+    // Use path.resolve to ensure absolute path
+    this.preloadPath = path.resolve(__dirname, '../preload/index.mjs')
+    console.log('[WindowFactory] Preload path:', this.preloadPath)
+  }
 
   private readonly baseWebPreferences: Electron.WebPreferences = {
     preload: this.preloadPath,
