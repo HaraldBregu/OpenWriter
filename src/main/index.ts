@@ -154,6 +154,8 @@ app.whenReady().then(async () => {
         }
       ])
       ElectronMenu.setApplicationMenu(minimalMenu)
+      // Note: frame:false already hides the menu bar, but the accelerators
+      // from the application menu remain active for keyboard shortcuts.
     }
 
     // Create workspace window directly - no tray
