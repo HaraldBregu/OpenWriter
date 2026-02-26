@@ -173,33 +173,6 @@ export type TaskEvent =
   | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
   | { type: 'queue-position'; data: { taskId: string; position: number } }
 
-// ---- Posts ----------------------------------------------------------------
-
-export interface PostData {
-  id: string
-  title: string
-  blocks: Array<{ id: string; content: string; createdAt: string; updatedAt: string }>
-  category: string
-  tags: string[]
-  visibility: string
-  createdAt: number
-  updatedAt: number
-}
-
-export interface PostSyncResult {
-  success: boolean
-  syncedCount: number
-  failedCount: number
-  errors?: Array<{ postId: string; error: string }>
-}
-
-export interface PostFileChangeEvent {
-  type: 'added' | 'changed' | 'removed'
-  postId: string
-  filePath: string
-  timestamp: number
-}
-
 // ---- Documents ------------------------------------------------------------
 
 export interface DocumentInfo {
