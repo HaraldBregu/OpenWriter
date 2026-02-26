@@ -186,6 +186,9 @@ const workspace: WorkspaceApi = {
     removeRecent: (workspacePath: string): Promise<void> => {
         return typedInvokeUnwrap(WorkspaceChannels.removeRecent, workspacePath)
     },
+    onChange: (callback: (event: { currentPath: string | null; previousPath: string | null }) => void): (() => void) => {
+        return typedOn(WorkspaceChannels.changed, callback)
+    },
 } satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
