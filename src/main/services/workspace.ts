@@ -176,6 +176,7 @@ export class WorkspaceService implements Disposable {
    * Cleanup on shutdown.
    */
   destroy(): void {
+    this.stopValidationTimer()
     console.log('[WorkspaceService] Destroyed')
   }
 
