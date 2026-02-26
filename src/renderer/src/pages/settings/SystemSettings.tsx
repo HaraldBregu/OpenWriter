@@ -1,10 +1,7 @@
-import React, { lazy, Suspense } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CollapsibleSection } from './CollapsibleSection'
 import { ThemeModeSelector } from './ThemeModeSelector'
-import { LoadingSkeleton } from '../../components/LoadingSkeleton'
-
-const NotificationsPage = lazy(() => import('../NotificationsPage'))
 
 const SystemSettings: React.FC = () => {
   const { t } = useTranslation()
@@ -23,12 +20,6 @@ const SystemSettings: React.FC = () => {
             </div>
           </div>
         </div>
-      </CollapsibleSection>
-
-      <CollapsibleSection title={t('settings.sections.notifications')}>
-        <Suspense fallback={<LoadingSkeleton />}>
-          <NotificationsPage />
-        </Suspense>
       </CollapsibleSection>
     </div>
   )
