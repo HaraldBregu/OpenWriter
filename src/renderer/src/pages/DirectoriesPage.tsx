@@ -69,47 +69,9 @@ const DirectoriesPage: React.FC = () => {
   }, [dispatch])
 
   const handleAddDirectories = useCallback(async () => {
-    try {
-      // Use Electron dialog to select multiple directories
-      const result = await window.dialog.openDirectory(true)
-      const resultData = result.data as { canceled: boolean; filePaths: string[] }
-
-      if (resultData.canceled || !resultData.filePaths || resultData.filePaths.length === 0) {
-        return
-      }
-
-      // Send paths to main process for validation and persistence
-      const response = await window.directories.addMany(resultData.filePaths)
-
-      if (response.added.length > 0) {
-        dispatch(addDirectories(response.added))
-      }
-
-      // Report errors for any paths that failed validation
-      if (response.errors.length > 0) {
-        const errorMessages = response.errors
-          .map((e) => `${formatPath(e.path)}: ${e.error}`)
-          .join('\n')
-        console.warn('[DirectoriesPage] Some directories could not be added:', errorMessages)
-
-        const count = response.errors.length
-        await window.notification.show({
-          title: t('directoryNotifications.someSkippedTitle'),
-          body: count === 1
-            ? t('directoryNotifications.someSkippedBody_one', { count })
-            : t('directoryNotifications.someSkippedBody_other', { count }),
-          urgency: 'normal'
-        })
-      }
-    } catch (err) {
-      console.error('[DirectoriesPage] Failed to add directories:', err)
-      await window.notification.show({
-        title: t('directoryNotifications.addErrorTitle'),
-        body: t('directoryNotifications.addErrorBody'),
-        urgency: 'normal'
-      })
-    }
-  }, [dispatch, t])
+    // Directory selection disabled (requires dialog API)
+    console.info('[DirectoriesPage] Directory selection is not available')
+  }, [])
 
   const handleRemoveDirectory = useCallback(
     async (id: string) => {
