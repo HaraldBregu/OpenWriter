@@ -260,33 +260,6 @@ export interface InvokeChannelMap {
   [WindowChannels.isFullScreen]: { args: []; result: boolean }
   [WindowChannels.getPlatform]: { args: []; result: string }
 
-  // ---- Window Manager (IpcResult-wrapped) ----
-  [WmChannels.createChild]: { args: []; result: ManagedWindowInfo }
-  [WmChannels.createModal]: { args: []; result: ManagedWindowInfo }
-  [WmChannels.createFrameless]: { args: []; result: ManagedWindowInfo }
-  [WmChannels.createWidget]: { args: []; result: ManagedWindowInfo }
-  [WmChannels.closeWindow]: { args: [id: number]; result: boolean }
-  [WmChannels.closeAll]: { args: []; result: void }
-  [WmChannels.getState]: { args: []; result: WindowManagerState }
-
-  // ---- Media Permissions (raw, no IpcResult wrapping) ----
-  [MediaChannels.requestMicrophone]: { args: []; result: MediaPermissionStatus }
-  [MediaChannels.requestCamera]: { args: []; result: MediaPermissionStatus }
-  [MediaChannels.getMicrophoneStatus]: { args: []; result: MediaPermissionStatus }
-  [MediaChannels.getCameraStatus]: { args: []; result: MediaPermissionStatus }
-  [MediaChannels.getDevices]: { args: [type: 'audioinput' | 'videoinput']; result: MediaDeviceInfo[] }
-
-  // ---- Bluetooth (raw) ----
-  [BluetoothChannels.isSupported]: { args: []; result: boolean }
-  [BluetoothChannels.getPermissionStatus]: { args: []; result: string }
-  [BluetoothChannels.getInfo]: { args: []; result: BluetoothInfo }
-
-  // ---- Network (raw) ----
-  [NetworkChannels.isSupported]: { args: []; result: boolean }
-  [NetworkChannels.getConnectionStatus]: { args: []; result: NetworkConnectionStatus }
-  [NetworkChannels.getInterfaces]: { args: []; result: NetworkInterfaceInfo[] }
-  [NetworkChannels.getInfo]: { args: []; result: NetworkInfo }
-
   // ---- Cron (IpcResult-wrapped) ----
   [CronChannels.getAll]: { args: []; result: CronJobStatus[] }
   [CronChannels.getJob]: { args: [id: string]; result: CronJobStatus | null }
