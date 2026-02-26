@@ -728,7 +728,7 @@ const agent: AgentApi = {
 // ---------------------------------------------------------------------------
 // window.contextMenu — Application-specific context menus
 // ---------------------------------------------------------------------------
-const contextMenu = {
+const contextMenu: ContextMenuApi = {
     showWriting: (writingId: string, writingTitle: string): Promise<void> => {
         return typedInvoke(ContextMenuChannels.writing, writingId, writingTitle)
     },
