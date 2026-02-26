@@ -14,24 +14,26 @@ export interface WindowPreset {
  */
 export class WindowFactory {
   private readonly preloadPath: string
+  private readonly iconPath: string
 
   constructor() {
-    // Use path.resolve to ensure absolute path
+    // Use path.resolve to ensure absolute path for preload
     this.preloadPath = path.resolve(__dirname, '../preload/index.mjs')
+    this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png')
     console.log('[WindowFactory] Preload path:', this.preloadPath)
   }
 
-  private readonly baseWebPreferences: Electron.WebPreferences = {
-    preload: this.preloadPath,
-    sandbox: true,
-    nodeIntegration: false,
-    contextIsolation: true,
-    devTools: is.dev,
-    webSecurity: true,
-    allowRunningInsecureContent: false
+  private getBaseWebPreferences(): Electron.WebPreferences {
+    return {
+      preload: this.preloadPath,
+      sandbox: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      devTools: is.dev,
+      webSecurity: true,
+      allowRunningInsecureContent: false
+    }
   }
-
-  private readonly iconPath = path.join(__dirname, '../../resources/icons/icon.png')
 
   /**
    * Create a BrowserWindow with base security defaults merged with overrides.
