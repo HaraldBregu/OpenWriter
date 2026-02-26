@@ -649,7 +649,7 @@ const DocumentsPage: React.FC = () => {
     } finally {
       setIsImporting(false)
     }
-  }, [reloadDocuments])
+  }, [reloadDocuments, t])
 
   const hasDocuments = documents.length > 0
   const hasFilteredDocuments = filteredDocuments.length > 0
