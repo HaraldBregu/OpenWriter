@@ -45,6 +45,7 @@ function installWindowMocks(): void {
   Object.defineProperty(window, 'workspace', {
     value: {
       getCurrent: mockWorkspaceGetCurrent,
+      onChange: jest.fn().mockReturnValue(jest.fn()),
       output: {
         loadAll: mockOutputLoadAll,
         onFileChange: jest.fn().mockImplementation((cb: FileChangeCallback) => {
