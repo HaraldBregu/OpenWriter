@@ -110,7 +110,7 @@ const media: MediaApi = {
 // ---------------------------------------------------------------------------
 // window.bluetooth — Bluetooth capability queries
 // ---------------------------------------------------------------------------
-const bluetooth = {
+const bluetooth: BluetoothApi = {
     isSupported: (): Promise<boolean> => {
         return typedInvoke(BluetoothChannels.isSupported)
     },
