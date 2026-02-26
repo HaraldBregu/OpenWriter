@@ -250,7 +250,6 @@ declare global {
     store: StoreApi
     workspace: WorkspaceApi
     contextMenu: ContextMenuApi
-    output: OutputApi
     /** Optional: not present in all window types */
     task?: TaskApi
     ai: AiApi
