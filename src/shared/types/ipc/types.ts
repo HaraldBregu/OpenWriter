@@ -60,6 +60,19 @@ export interface WorkspaceChangedEvent {
   previousPath: string | null
 }
 
+/**
+ * Event emitted when the current workspace folder is detected as deleted,
+ * renamed, or otherwise inaccessible while the application is running.
+ */
+export interface WorkspaceDeletedEvent {
+  /** The path that was previously set as the workspace */
+  deletedPath: string
+  /** Human-readable reason for the event */
+  reason: 'deleted' | 'inaccessible' | 'renamed'
+  /** Timestamp when the deletion was detected */
+  timestamp: number
+}
+
 // ---- Agent ----------------------------------------------------------------
 
 export interface ChatMessage {
