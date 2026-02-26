@@ -146,15 +146,6 @@ export const TaskChannels = {
   queueStatus: 'task:queue-status',
 } as const
 
-export const PostsChannels = {
-  syncToWorkspace: 'posts:sync-to-workspace',
-  updatePost: 'posts:update-post',
-  deletePost: 'posts:delete-post',
-  loadFromWorkspace: 'posts:load-from-workspace',
-  fileChanged: 'posts:file-changed',
-  watcherError: 'posts:watcher-error',
-} as const
-
 export const DocumentsChannels = {
   importFiles: 'documents:import-files',
   importByPaths: 'documents:import-by-paths',
