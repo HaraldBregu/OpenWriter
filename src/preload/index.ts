@@ -347,12 +347,6 @@ const contextMenu: ContextMenuApi = {
     onWritingAction: (callback: (data: { action: string; writingId: string }) => void): (() => void) => {
         return typedOn(ContextMenuChannels.writingAction, callback)
     },
-    showPost: (postId: string, postTitle: string): Promise<void> => {
-        return typedInvoke(ContextMenuChannels.post, postId, postTitle)
-    },
-    onPostAction: (callback: (data: { action: string; postId: string }) => void): (() => void) => {
-        return typedOn(ContextMenuChannels.postAction, callback)
-    },
 }
 
 // ---------------------------------------------------------------------------

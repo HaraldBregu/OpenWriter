@@ -198,18 +198,6 @@ Object.defineProperty(window, 'workspace', {
   writable: true, configurable: true
 })
 
-Object.defineProperty(window, 'posts', {
-  value: {
-    syncToWorkspace: jest.fn().mockResolvedValue({ success: true, syncedCount: 0, failedCount: 0 }),
-    update: jest.fn().mockResolvedValue(undefined),
-    delete: jest.fn().mockResolvedValue(undefined),
-    loadFromWorkspace: jest.fn().mockResolvedValue([]),
-    onFileChange: jest.fn().mockReturnValue(jest.fn()),
-    onWatcherError: jest.fn().mockReturnValue(jest.fn())
-  },
-  writable: true, configurable: true
-})
-
 Object.defineProperty(window, 'documents', {
   value: {
     importFiles: jest.fn().mockResolvedValue([]),
