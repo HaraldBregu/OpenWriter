@@ -195,7 +195,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Writing: true,
     Knowledge: true,
-    Personality: false,
+    Personality: true,
   });
 
   // Load current workspace on mount

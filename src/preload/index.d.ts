@@ -172,6 +172,8 @@ export interface WorkspaceApi {
   directoryExists: (directoryPath: string) => Promise<boolean>
   removeRecent: (workspacePath: string) => Promise<void>
   onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
+  /** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
+  onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void
 }
 
 /** Document import, download, and file-watch events */
