@@ -26,7 +26,7 @@
  *   - cancelTask: is a no-op when window.task is undefined (graceful)
  *   - getModelSettings: delegates to window.app.getModelSettings
  *   - getModelSettings: returns null when window.app throws
- *   - savePersonality: delegates to window.personality.save
+ *   - savePersonality: delegates to window.workspace.personality.save
  */
 
 import type { TaskEvent } from '../../../../src/renderer/src/services/IPersonalityTaskService'
@@ -426,9 +426,9 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — savePersonality', () => {
-  it('delegates to window.personality.save with the provided options', async () => {
+  it('delegates to window.workspace.personality.save with the provided options', async () => {
     const savedResult = { id: 'saved-123' }
-    ;(window.personality.save as jest.Mock).mockResolvedValue(savedResult)
+    ;(window.workspace.personality.save as jest.Mock).mockResolvedValue(savedResult)
 
     const service = createService()
 
@@ -443,7 +443,7 @@ describe('ElectronPersonalityTaskService — savePersonality', () => {
       }
     })
 
-    expect(window.personality.save).toHaveBeenCalledWith({
+    expect(window.workspace.personality.save).toHaveBeenCalledWith({
       sectionId: 'consciousness',
       content: 'Deep thoughts',
       metadata: {
@@ -457,7 +457,7 @@ describe('ElectronPersonalityTaskService — savePersonality', () => {
   })
 
   it('returns the id from the save result', async () => {
-    ;(window.personality.save as jest.Mock).mockResolvedValue({ id: 'file-abc' })
+    ;(window.workspace.personality.save as jest.Mock).mockResolvedValue({ id: 'file-abc' })
 
     const service = createService()
     const result = await service.savePersonality({
