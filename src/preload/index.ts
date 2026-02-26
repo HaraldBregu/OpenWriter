@@ -252,43 +252,25 @@ const wm: WindowManagerApi = {
 // window.fs — Filesystem operations and directory watching
 // ---------------------------------------------------------------------------
 const fs: FileSystemApi = {
-    openFile: (): Promise<{
-        filePath: string
-        fileName: string
-        content: string
-        size: number
-        lastModified: number
-    } | null> => {
+    openFile: () => {
         return typedInvoke(FsChannels.openFileDialog)
     },
-    readFile: (filePath: string): Promise<{
-        filePath: string
-        fileName: string
-        content: string
-        size: number
-        lastModified: number
-    }> => {
+    readFile: (filePath: string) => {
         return typedInvoke(FsChannels.readFile, filePath)
     },
-    saveFile: (defaultName: string, content: string): Promise<{
-        success: boolean
-        filePath: string | null
-    }> => {
+    saveFile: (defaultName: string, content: string) => {
         return typedInvoke(FsChannels.saveFileDialog, defaultName, content)
     },
-    writeFile: (filePath: string, content: string): Promise<{
-        success: boolean
-        filePath: string
-    }> => {
+    writeFile: (filePath: string, content: string) => {
         return typedInvoke(FsChannels.writeFile, filePath, content)
     },
-    selectDirectory: (): Promise<string | null> => {
+    selectDirectory: () => {
         return typedInvoke(FsChannels.selectDirectory)
     },
-    watchDirectory: (dirPath: string): Promise<boolean> => {
+    watchDirectory: (dirPath: string) => {
         return typedInvoke(FsChannels.watchDirectory, dirPath)
     },
-    unwatchDirectory: (dirPath: string): Promise<boolean> => {
+    unwatchDirectory: (dirPath: string) => {
         return typedInvoke(FsChannels.unwatchDirectory, dirPath)
     },
     getWatched: (): Promise<string[]> => {
