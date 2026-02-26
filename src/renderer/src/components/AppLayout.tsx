@@ -189,13 +189,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const posts = useAppSelector(selectPosts);
   const writings = useAppSelector(selectWritings);
+  const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 
   // Subscribe to IPC context-menu events. Each hook uses the ref pattern
   // internally so re-subscriptions never occur on post/writing array changes.
   usePostContextMenu(posts);
   useWritingContextMenu(writings);
+
+  // Listen for workspace changes from main process and update Redux
+  useWorkspaceListener();
 
   const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
     Posts: true,
@@ -204,29 +209,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     Personality: false,
   });
 
-  const [workspaceName, setWorkspaceName] = useState<string>("OpenWriter");
-
-  // Load workspace name on mount
+  // Load current workspace on mount
   useEffect(() => {
-    async function loadWorkspaceName() {
-      try {
-        const workspacePath = await window.workspace.getCurrent();
-        if (workspacePath) {
-          // Extract folder name from path
-          const pathParts =
-            typeof workspacePath === "string"
-              ? workspacePath.split(/[/\\]/)
-              : [];
-          const folderName = pathParts[pathParts.length - 1];
-          setWorkspaceName(folderName ? `${folderName} (workspace)` : "OpenWriter");
-        }
-      } catch (error) {
-        console.error("[AppLayout] Failed to load workspace name:", error);
-      }
-    }
-
-    loadWorkspaceName();
-  }, []);
+    dispatch(loadCurrentWorkspace());
+  }, [dispatch]);
 
   const toggleSection = useCallback(
     (title: string) =>
