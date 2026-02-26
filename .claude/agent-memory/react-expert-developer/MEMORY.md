@@ -63,15 +63,17 @@ All methods drop the domain prefix: `window.output.save`, `window.workspace.getC
   - `resetToSectionDefaults` uses section defaults from ref or Redux global fallback
   - Replaces inline `useState`/`useEffect`/timer pattern in `PersonalitySimpleLayout`
 
-## Output System (kept for reference — no longer used for writings)
-- `outputSlice.ts` still exists but is NOT used by the writing creation flow
-- Writing storage now uses `window.writingItems.*` exclusively (see Writing Creation Architecture below)
+## Output System (used for writings)
+- `outputSlice.ts` still exists for posts/general use
+- Writing storage now goes through `window.output.*` exclusively (OutputFilesService via workspace)
+- Disk format: `<workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json` + per-block `<blockId>.md`
+- Block `id` is used as the block file name (name field in save/update calls)
 
 ## Block Architecture (updated Feb 2026)
 - `Block` interface (`src/renderer/src/components/ContentBlock.tsx`): `{ id, content, createdAt, updatedAt }` (ISO 8601 timestamps)
 - `createBlock()` factory stamps both timestamps on creation
 - On handleChange in pages, callers stamp `updatedAt: new Date().toISOString()` before dispatching
-- Blocks are serialized to a single markdown string (`\n\n` separator) for `content.md` storage via `writingItems` API
+- Blocks are serialized per-block via `window.output.save/update` — block `id` becomes the file `name`
 
 ## Component Library
 - App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
