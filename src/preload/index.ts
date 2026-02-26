@@ -746,7 +746,7 @@ const contextMenu: ContextMenuApi = {
 // ---------------------------------------------------------------------------
 // window.directories — Indexed directory management
 // ---------------------------------------------------------------------------
-const directories = {
+const directories: DirectoriesApi = {
     list: (): Promise<Array<{
         id: string
         path: string
