@@ -55,6 +55,11 @@ export interface WorkspaceInfo {
   lastOpened: number
 }
 
+export interface WorkspaceChangedEvent {
+  currentPath: string | null
+  previousPath: string | null
+}
+
 // ---- Agent ----------------------------------------------------------------
 
 export interface ChatMessage {
