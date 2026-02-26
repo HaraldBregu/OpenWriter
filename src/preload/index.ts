@@ -969,7 +969,7 @@ const output: OutputApi = {
 // ---------------------------------------------------------------------------
 // window.task — Background task queue
 // ---------------------------------------------------------------------------
-const task = {
+const task: TaskApi = {
     submit: (type: string, input: unknown, options?: {
         priority?: 'low' | 'normal' | 'high'
         timeoutMs?: number
