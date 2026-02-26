@@ -45,7 +45,6 @@ import {
   HelpCircle,
   ChevronRight,
   Bell,
-  Bug,
   FileText,
   Heart,
   Lightbulb,
