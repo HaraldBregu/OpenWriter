@@ -47,7 +47,6 @@ import type {
   PersonalityFileChangeEvent,
   SectionConfigChangeEvent,
   WritingContextMenuAction,
-  PostContextMenuAction,
   WatcherError,
 } from './types'
 
