@@ -70,23 +70,17 @@ const WelcomePage: React.FC = () => {
     }
 
     try {
-      // Set workspace in current window
+      // Set workspace in current window.
+      // useOutputFiles (mounted in AppLayout) listens to workspace.onChange
+      // and will reload output items automatically when this fires.
       await window.workspace.setCurrent(path)
-
-      // Load output items from workspace (don't block navigation if this fails)
-      try {
-        await dispatch(loadOutputItems())
-      } catch (error) {
-        console.error('Failed to load output items after workspace selection:', error)
-        // Continue to navigation even if output items fail to load
-      }
 
       // Navigate current window to home
       navigate('/home')
     } catch (error) {
       console.error('Failed to open recent project:', error)
     }
-  }, [navigate, dispatch])
+  }, [navigate])
 
   const handleRemoveRecentProject = useCallback(async (path: string, event: React.MouseEvent) => {
     // Prevent opening the project when clicking the remove button
