@@ -99,7 +99,7 @@ export const savePersonalityFile = createAsyncThunk(
   'personalityFiles/save',
   async (input: SavePersonalityFileInput, { rejectWithValue }) => {
     try {
-      const result = await window.personality.save(input)
+      const result = await window.workspace.personality.save(input)
       return result
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save personality file'
@@ -115,7 +115,7 @@ export const loadPersonalityFiles = createAsyncThunk(
   'personalityFiles/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.personality.loadAll()
+      const files = await window.workspace.personality.loadAll()
       return files
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load personality files'
@@ -134,7 +134,7 @@ export const deletePersonalityFile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await window.personality.delete(params)
+      await window.workspace.personality.delete(params)
       return params
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete personality file'
