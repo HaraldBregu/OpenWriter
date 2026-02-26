@@ -64,13 +64,8 @@ const App: React.FC = () => {
                         <Route path="/personality/emotional-depth" element={<RouteWrapper><EmotionalDepthPage /></RouteWrapper>} />
                         <Route path="/personality/consciousness" element={<RouteWrapper><ConsciousnessPage /></RouteWrapper>} />
                         <Route path="/personality/motivation" element={<RouteWrapper><MotivationPage /></RouteWrapper>} />
-                        <Route path="/personality/moral-intuition" element={<RouteWrapper><MoralIntuitionPage /></RouteWrapper>} />
-                        <Route path="/personality/irrationality" element={<RouteWrapper><IrrationalityPage /></RouteWrapper>} />
-                        <Route path="/personality/growth" element={<RouteWrapper><GrowthPage /></RouteWrapper>} />
                         <Route path="/personality/social-identity" element={<RouteWrapper><SocialIdentityPage /></RouteWrapper>} />
                         <Route path="/personality/creativity" element={<RouteWrapper><CreativityPage /></RouteWrapper>} />
-                        <Route path="/personality/mortality" element={<RouteWrapper><MortalityPage /></RouteWrapper>} />
-                        <Route path="/personality/contradiction" element={<RouteWrapper><ContradictionPage /></RouteWrapper>} />
                         <Route path="/debug" element={<RouteWrapper><DebugPage /></RouteWrapper>} />
                         <Route path="/downloads-demo" element={<Navigate to="/debug" replace />} />
                       </Routes>
