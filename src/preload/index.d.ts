@@ -247,7 +247,6 @@ declare global {
     win?: WindowApi
     store: StoreApi
     workspace: WorkspaceApi
-    contextMenu: ContextMenuApi
     /** Optional: not present in all window types */
     task?: TaskApi
     ai: AiApi

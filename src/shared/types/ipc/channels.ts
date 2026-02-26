@@ -320,8 +320,8 @@ export interface InvokeChannelMap {
   [PersonalityChannels.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
   [PersonalityChannels.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
 
-  // ---- Context Menu (raw) ----
-  [ContextMenuChannels.writing]: { args: [writingId: string, writingTitle: string]; result: void }
+  // ---- App — writing context menu (raw invoke) ----
+  [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
 }
 
 /**
