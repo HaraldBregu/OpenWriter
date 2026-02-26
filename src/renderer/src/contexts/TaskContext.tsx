@@ -1,17 +1,18 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
-import type { TaskEvent, TaskInfo } from '../../../shared/types/ipc/types'
+import type { TaskEvent, TaskInfo, TaskPriority } from '../../../shared/types/ipc/types'
 
 // ---------------------------------------------------------------------------
 // Re-exported shared types
 // ---------------------------------------------------------------------------
 
-export type { TaskEvent, TaskInfo }
+export type { TaskEvent, TaskInfo, TaskPriority }
 
 // ---------------------------------------------------------------------------
 // Local state types
 // ---------------------------------------------------------------------------
 
-export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
+// Mirrors the shared TaskStatus union, including the new 'paused' state.
+export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
 
 export interface TaskProgressState {
   percent: number
@@ -27,8 +28,12 @@ export interface TaskEventRecord {
 
 export interface TrackedTaskState {
   taskId: string
+  type: string
   status: TaskStatus
+  priority: TaskPriority
   progress: TaskProgressState
+  queuePosition?: number
+  durationMs?: number
   error?: string
   result?: unknown
   streamedContent: string
@@ -42,8 +47,9 @@ export interface TrackedTaskState {
 // Map<subscriptionKey, Set<listener>> for per-granularity subscriptions.
 //
 // Subscription keys:
-//   - 'ALL'        → notified on every task mutation (useTaskList)
-//   - taskId       → notified only when that specific task changes (useTaskProgress, useTask)
+//   'ALL'    → notified on every task mutation (useTaskList, useTaskQueue)
+//   taskId   → notified only when that specific task changes (useTaskProgress,
+//              useTaskSubmit, useTaskStatus, useTaskStream)
 //
 // This guarantees that a stream token for task-A does not cause task-B
 // observers to re-render.
@@ -51,18 +57,18 @@ export interface TrackedTaskState {
 
 const MAX_EVENT_HISTORY = 50
 
-interface TaskStore {
+export interface TaskStore {
   getTaskSnapshot: (taskId: string) => TrackedTaskState | undefined
   getAllTasksSnapshot: () => TaskInfo[]
   subscribe: (key: string, listener: () => void) => () => void
-  applyEvent: (event: TaskEvent, knownTaskIds?: Set<string>) => void
-  addTask: (taskId: string, type: string) => void
+  applyEvent: (event: TaskEvent) => void
+  addTask: (taskId: string, type: string, priority?: TaskPriority) => void
   getTrackedIds: () => Set<string>
 }
 
 function createTaskStore(): TaskStore {
   const taskMap = new Map<string, TrackedTaskState>()
-  // Stable snapshots for non-mutated passes — avoids reference churn in useSyncExternalStore
+  // Stable snapshot cache — avoids reference churn in useSyncExternalStore
   const snapshotCache = new Map<string, TrackedTaskState>()
   // Flat snapshot of all tasks as TaskInfo[] — rebuilt on each mutation
   let allTasksSnapshot: TaskInfo[] = []
@@ -75,9 +81,14 @@ function createTaskStore(): TaskStore {
   function rebuildAllSnapshot(): void {
     allTasksSnapshot = Array.from(taskMap.values()).map((t) => ({
       taskId: t.taskId,
-      type: '',
+      type: t.type,
       status: t.status,
-      priority: 'normal',
+      priority: t.priority,
+      queuePosition: t.queuePosition,
+      durationMs: t.durationMs,
+      startedAt: undefined,
+      completedAt: undefined,
+      error: t.error,
     }))
   }
 
@@ -92,11 +103,13 @@ function createTaskStore(): TaskStore {
     notifyKey('ALL')
   }
 
-  function addTask(taskId: string, _type: string): void {
+  function addTask(taskId: string, type: string, priority: TaskPriority = 'normal'): void {
     if (taskMap.has(taskId)) return
     const initial: TrackedTaskState = {
       taskId,
+      type,
       status: 'queued',
+      priority,
       progress: { percent: 0 },
       streamedContent: '',
       events: [],
@@ -111,22 +124,18 @@ function createTaskStore(): TaskStore {
   function appendEvent(taskId: string, record: TaskEventRecord): TaskEventRecord[] {
     const prev = taskMap.get(taskId)
     if (!prev) return []
-    const events =
-      prev.events.length >= MAX_EVENT_HISTORY
-        ? [...prev.events.slice(1), record]
-        : [...prev.events, record]
-    return events
+    return prev.events.length >= MAX_EVENT_HISTORY
+      ? [...prev.events.slice(1), record]
+      : [...prev.events, record]
   }
 
-  function applyEvent(event: TaskEvent, knownTaskIds?: Set<string>): void {
+  function applyEvent(event: TaskEvent): void {
     const data = event.data as { taskId: string }
     const taskId = data?.taskId
     if (!taskId) return
 
-    // Only process events for tasks we know about (optionally filtered by caller)
-    if (knownTaskIds && !knownTaskIds.has(taskId)) return
-
-    // Auto-create entry for queued events even if addTask wasn't called yet
+    // Auto-create an entry for queued events so the store stays consistent
+    // even when the provider receives an event before addTask() is called.
     if (!taskMap.has(taskId)) {
       if (event.type === 'queued') {
         addTask(taskId, '')
@@ -143,14 +152,16 @@ function createTaskStore(): TaskStore {
     const events = appendEvent(taskId, record)
 
     switch (event.type) {
-      case 'queued':
-        update(taskId, { status: 'queued', events })
+      case 'queued': {
+        const qd = event.data
+        update(taskId, { status: 'queued', queuePosition: qd.position, events })
         break
+      }
       case 'started':
-        update(taskId, { status: 'running', events })
+        update(taskId, { status: 'running', queuePosition: undefined, events })
         break
       case 'progress': {
-        const pd = event.data as { taskId: string; percent: number; message?: string; detail?: unknown }
+        const pd = event.data
         update(taskId, {
           status: 'running',
           progress: { percent: pd.percent, message: pd.message, detail: pd.detail },
@@ -159,31 +170,51 @@ function createTaskStore(): TaskStore {
         break
       }
       case 'completed': {
-        const cd = event.data as { taskId: string; result: unknown; durationMs: number }
+        const cd = event.data
         update(taskId, {
           status: 'completed',
           progress: { percent: 100 },
           result: cd.result,
+          durationMs: cd.durationMs,
+          queuePosition: undefined,
           events,
         })
         break
       }
       case 'error': {
-        const ed = event.data as { taskId: string; message: string; code?: string }
-        update(taskId, { status: 'error', error: ed.message, events })
+        const ed = event.data
+        update(taskId, { status: 'error', error: ed.message, queuePosition: undefined, events })
         break
       }
       case 'cancelled':
-        update(taskId, { status: 'cancelled', events })
+        update(taskId, { status: 'cancelled', queuePosition: undefined, events })
         break
       case 'stream': {
-        const sd = event.data as { taskId: string; token: string }
+        const sd = event.data
         const prev = taskMap.get(taskId)
         update(taskId, {
           status: 'running',
           streamedContent: (prev?.streamedContent ?? '') + (sd.token ?? ''),
           events,
         })
+        break
+      }
+      case 'paused':
+        update(taskId, { status: 'paused', events })
+        break
+      case 'resumed': {
+        const rd = event.data
+        update(taskId, { status: 'queued', queuePosition: rd.position, events })
+        break
+      }
+      case 'priority-changed': {
+        const pcd = event.data
+        update(taskId, { priority: pcd.priority, queuePosition: pcd.position, events })
+        break
+      }
+      case 'queue-position': {
+        const qpd = event.data
+        update(taskId, { queuePosition: qpd.position, events })
         break
       }
     }
@@ -245,8 +276,8 @@ interface TaskProviderProps {
 /**
  * TaskProvider — mounts a single global window.task.onEvent listener and
  * broadcasts all incoming TaskEvents into the shared TaskStore. Components
- * that subscribe via useTask / useTaskList / useTaskProgress read from the
- * same store and re-render only when their specific slice changes.
+ * that subscribe via useTaskSubmit / useTaskList / useTaskProgress / etc.
+ * read from the same store and re-render only when their specific slice changes.
  *
  * Place this once, high in the component tree (e.g. AppLayout), so all
  * task-aware components share a single IPC subscription.
@@ -259,7 +290,7 @@ function TaskProvider({ children }: TaskProviderProps): React.JSX.Element {
   }
   const store = storeRef.current
 
-  // Single global IPC listener — all task events are funnelled here.
+  // Single global IPC listener — all task events are funnelled into the store.
   useEffect(() => {
     if (typeof window.task?.onEvent !== 'function') return
 
@@ -270,7 +301,7 @@ function TaskProvider({ children }: TaskProviderProps): React.JSX.Element {
     return () => unsub()
   }, [store])
 
-  // Context value is a stable object — the store ref never changes.
+  // Context value is a stable object — the store ref never changes identity.
   const contextValueRef = useRef<TaskContextValue>({ store })
 
   return (
@@ -300,4 +331,4 @@ function useTaskContext(): TaskContextValue {
 // ---------------------------------------------------------------------------
 
 export { TaskProvider, TaskContext, useTaskContext }
-export type { TaskContextValue, TaskStore }
+export type { TaskContextValue }
