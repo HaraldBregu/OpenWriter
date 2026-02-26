@@ -44,7 +44,7 @@ const NewWritingPage: React.FC = () => {
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
-  } = useDraftEditor('writings', id, '/new/writing')
+  } = useDraftEditor(id, '/new/writing')
 
   const { charCount, wordCount } = useMemo(() => {
     const joined = blocks.map((b) => b.content).join(' ').trim()

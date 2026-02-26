@@ -21,7 +21,6 @@ import type {
     CronApi,
     StoreApi,
     WorkspaceApi,
-    PostsApi,
     DocumentsApi,
     AgentApi,
     ContextMenuApi,
