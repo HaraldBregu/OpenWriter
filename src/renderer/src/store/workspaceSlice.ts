@@ -146,7 +146,7 @@ export const workspaceSlice = createSlice({
       .addCase(loadRecentWorkspaces.fulfilled, (state, action) => {
         state.recentWorkspaces = action.payload
       })
-      .addCase(loadRecentWorkspaces.rejected, (state, action) => {
+      .addCase(loadRecentWorkspaces.rejected, (_state, action) => {
         console.error('Failed to load recent workspaces:', action.error)
       })
 
