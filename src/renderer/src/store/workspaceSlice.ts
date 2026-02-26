@@ -11,6 +11,8 @@ export interface WorkspaceState {
   recentWorkspaces: WorkspaceInfo[]
   status: 'idle' | 'loading' | 'ready' | 'error'
   error: string | null
+  /** Set when the workspace folder is externally deleted/moved while the app is open */
+  deletionReason: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -96,7 +98,8 @@ const initialState: WorkspaceState = {
   currentPath: null,
   recentWorkspaces: [],
   status: 'idle',
-  error: null
+  error: null,
+  deletionReason: null
 }
 
 export const workspaceSlice = createSlice({
@@ -114,6 +117,7 @@ export const workspaceSlice = createSlice({
       state.currentPath = action.payload.currentPath
       state.status = 'ready'
       state.error = null
+      state.deletionReason = null
     },
 
     /**
@@ -123,6 +127,28 @@ export const workspaceSlice = createSlice({
       state.recentWorkspaces = state.recentWorkspaces.filter(
         (ws) => ws.path !== action.payload
       )
+    },
+
+    /**
+     * Handle workspace folder deletion detected by the main process.
+     * Clears the workspace and records the reason so the UI can display
+     * an appropriate message to the user.
+     */
+    handleWorkspaceDeleted: (
+      state,
+      action: PayloadAction<{ deletedPath: string; reason: string }>
+    ) => {
+      state.currentPath = null
+      state.status = 'ready'
+      state.error = null
+      state.deletionReason = action.payload.reason
+    },
+
+    /**
+     * Clear the deletion reason (e.g., after the user has acknowledged the message).
+     */
+    clearDeletionReason: (state) => {
+      state.deletionReason = null
     }
   },
   extraReducers: (builder) => {
@@ -204,7 +230,12 @@ export const workspaceSlice = createSlice({
 // Actions
 // ---------------------------------------------------------------------------
 
-export const { handleWorkspaceChanged, handleRecentRemoved } = workspaceSlice.actions
+export const {
+  handleWorkspaceChanged,
+  handleRecentRemoved,
+  handleWorkspaceDeleted,
+  clearDeletionReason
+} = workspaceSlice.actions
 
 // ---------------------------------------------------------------------------
 // Selectors
@@ -250,6 +281,11 @@ export const selectWorkspaceError = createSelector(
 export const selectWorkspaceIsLoading = createSelector(
   selectWorkspaceStatus,
   (status) => status === 'loading'
+)
+
+export const selectWorkspaceDeletionReason = createSelector(
+  selectWorkspaceState,
+  (state) => state.deletionReason
 )
 
 export default workspaceSlice.reducer
