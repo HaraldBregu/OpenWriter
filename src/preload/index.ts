@@ -14,6 +14,7 @@ import {
     OutputChannels,
     TaskChannels,
     PipelineChannels,
+    WritingItemsChannels,
 } from '../shared/types/ipc/channels'
 import type {
     AppApi,
