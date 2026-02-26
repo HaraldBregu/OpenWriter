@@ -59,32 +59,32 @@ const app: AppApi = {
     // Persisted AI model settings (merged from former window.store namespace)
     // -------------------------------------------------------------------------
     getAllProviderSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }>> => {
-        return typedInvokeUnwrap(StoreChannels.getAllProviderSettings)
+        return typedInvokeUnwrap(AppChannels.getAllProviderSettings)
     },
     getProviderSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean } | null> => {
-        return typedInvokeUnwrap(StoreChannels.getProviderSettings, providerId)
+        return typedInvokeUnwrap(AppChannels.getProviderSettings, providerId)
     },
     setProviderSettings: (providerId: string, settings: { selectedModel: string; apiToken: string; temperature: number; maxTokens: number | null; reasoning: boolean }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setProviderSettings, providerId, settings)
+        return typedInvokeUnwrap(AppChannels.setProviderSettings, providerId, settings)
     },
     setInferenceDefaults: (providerId: string, update: { temperature?: number; maxTokens?: number | null; reasoning?: boolean }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setInferenceDefaults, providerId, update)
+        return typedInvokeUnwrap(AppChannels.setInferenceDefaults, providerId, update)
     },
     // Legacy methods — kept for backward compatibility with any remaining callers
     getAllModelSettings: (): Promise<Record<string, { selectedModel: string; apiToken: string }>> => {
-        return typedInvokeUnwrap(StoreChannels.getAllModelSettings)
+        return typedInvokeUnwrap(AppChannels.getAllModelSettings)
     },
     getModelSettings: (providerId: string): Promise<{ selectedModel: string; apiToken: string } | null> => {
-        return typedInvokeUnwrap(StoreChannels.getModelSettings, providerId)
+        return typedInvokeUnwrap(AppChannels.getModelSettings, providerId)
     },
     setSelectedModel: (providerId: string, modelId: string): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setSelectedModel, providerId, modelId)
+        return typedInvokeUnwrap(AppChannels.setSelectedModel, providerId, modelId)
     },
     setApiToken: (providerId: string, token: string): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setApiToken, providerId, token)
+        return typedInvokeUnwrap(AppChannels.setApiToken, providerId, token)
     },
     setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
-        return typedInvokeUnwrap(StoreChannels.setModelSettings, providerId, settings)
+        return typedInvokeUnwrap(AppChannels.setModelSettings, providerId, settings)
     },
 }
 

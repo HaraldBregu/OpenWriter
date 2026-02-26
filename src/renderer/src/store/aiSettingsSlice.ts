@@ -73,7 +73,7 @@ export const persistInferenceDefaults = createAsyncThunk<
   { rejectValue: string }
 >('aiSettings/persistInferenceDefaults', async ({ providerId, update }, { rejectWithValue }) => {
   try {
-    await window.store.setInferenceDefaults(providerId, update)
+    await window.app.setInferenceDefaults(providerId, update)
     return { providerId, update }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to persist inference defaults'
