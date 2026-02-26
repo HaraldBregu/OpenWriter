@@ -1,30 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMediaPermissions } from '../../hooks/useMediaPermissions'
-
-const statusLabel = (s: string, t: (key: string) => string) => {
-  if (s === 'granted') return t('settings.permissions.granted')
-  if (s === 'denied') return t('settings.permissions.denied')
-  if (s === 'restricted') return t('settings.permissions.restricted')
-  return t('settings.permissions.notDetermined')
-}
-
-const statusColor = (s: string) => {
-  if (s === 'granted') return 'text-green-600 dark:text-green-400'
-  if (s === 'denied') return 'text-red-600 dark:text-red-400'
-  return 'text-yellow-600 dark:text-yellow-400'
-}
 
 const GeneralSettings: React.FC = () => {
   const { t } = useTranslation()
   const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null)
-  const {
-    microphoneStatus,
-    cameraStatus,
-    requestMicrophone,
-    requestCamera,
-    checkPermissionStatus
-  } = useMediaPermissions()
 
   useEffect(() => {
     window.workspace.getCurrent().then((workspace) => {
