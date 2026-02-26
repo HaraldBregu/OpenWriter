@@ -89,9 +89,14 @@ export function useTask(): UseTaskReturn {
 
   // Clear all cleanup timers on unmount.
   useEffect(() => {
+    // Capture the ref value inside the effect so the cleanup closure always
+    // references the Map that was current when the effect ran. This avoids
+    // the react-hooks/exhaustive-deps warning about ref values changing by
+    // the time the cleanup function executes.
+    const timersMap = cleanupTimersRef.current
     return () => {
-      cleanupTimersRef.current.forEach((timer) => clearTimeout(timer))
-      cleanupTimersRef.current.clear()
+      timersMap.forEach((timer) => clearTimeout(timer))
+      timersMap.clear()
     }
   }, [])
 
