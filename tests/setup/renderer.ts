@@ -195,20 +195,48 @@ Object.defineProperty(window, 'workspace', {
     getRecent: jest.fn().mockResolvedValue([]),
     clear: jest.fn().mockResolvedValue(undefined),
     directoryExists: jest.fn().mockResolvedValue(true),
-    removeRecent: jest.fn().mockResolvedValue(undefined)
-  },
-  writable: true, configurable: true
-})
-
-Object.defineProperty(window, 'documents', {
-  value: {
-    importFiles: jest.fn().mockResolvedValue([]),
-    importByPaths: jest.fn().mockResolvedValue([]),
-    downloadFromUrl: jest.fn().mockResolvedValue({}),
-    loadAll: jest.fn().mockResolvedValue([]),
-    delete: jest.fn().mockResolvedValue(undefined),
-    onFileChange: jest.fn().mockReturnValue(jest.fn()),
-    onWatcherError: jest.fn().mockReturnValue(jest.fn())
+    removeRecent: jest.fn().mockResolvedValue(undefined),
+    onChange: jest.fn().mockReturnValue(jest.fn()),
+    onDeleted: jest.fn().mockReturnValue(jest.fn()),
+    documents: {
+      importFiles: jest.fn().mockResolvedValue([]),
+      importByPaths: jest.fn().mockResolvedValue([]),
+      downloadFromUrl: jest.fn().mockResolvedValue({}),
+      loadAll: jest.fn().mockResolvedValue([]),
+      delete: jest.fn().mockResolvedValue(undefined),
+      onFileChange: jest.fn().mockReturnValue(jest.fn()),
+      onWatcherError: jest.fn().mockReturnValue(jest.fn()),
+    },
+    directories: {
+      list: jest.fn().mockResolvedValue([]),
+      add: jest.fn().mockResolvedValue({ id: '1', path: '/test', addedAt: Date.now(), isIndexed: false }),
+      addMany: jest.fn().mockResolvedValue({ added: [], errors: [] }),
+      remove: jest.fn().mockResolvedValue(true),
+      validate: jest.fn().mockResolvedValue({ valid: true }),
+      markIndexed: jest.fn().mockResolvedValue(true),
+      onChanged: jest.fn().mockReturnValue(jest.fn()),
+    },
+    personality: {
+      save: jest.fn().mockResolvedValue({ id: '1', path: '/test', savedAt: Date.now() }),
+      loadAll: jest.fn().mockResolvedValue([]),
+      loadOne: jest.fn().mockResolvedValue(null),
+      delete: jest.fn().mockResolvedValue(undefined),
+      onFileChange: jest.fn().mockReturnValue(jest.fn()),
+      onWatcherError: jest.fn().mockReturnValue(jest.fn()),
+      loadSectionConfig: jest.fn().mockResolvedValue(null),
+      saveSectionConfig: jest.fn().mockResolvedValue({}),
+      onSectionConfigChange: jest.fn().mockReturnValue(jest.fn()),
+    },
+    output: {
+      save: jest.fn().mockResolvedValue({ id: '1', path: '/test', savedAt: Date.now() }),
+      loadAll: jest.fn().mockResolvedValue([]),
+      loadByType: jest.fn().mockResolvedValue([]),
+      loadOne: jest.fn().mockResolvedValue(null),
+      update: jest.fn().mockResolvedValue(undefined),
+      delete: jest.fn().mockResolvedValue(undefined),
+      onFileChange: jest.fn().mockReturnValue(jest.fn()),
+      onWatcherError: jest.fn().mockReturnValue(jest.fn()),
+    },
   },
   writable: true, configurable: true
 })

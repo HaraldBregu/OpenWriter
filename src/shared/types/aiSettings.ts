@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 // Imported by:
 //   - src/main/services/store.ts          (via ../../shared/types/aiSettings)
-//   - src/main/ipc/StoreIpc.ts            (via ../../shared/types/aiSettings)
+//   - src/main/ipc/CustomIpc.ts           (via ../../shared/types/aiSettings)
 //   - src/main/shared/validators.ts       (via ../../shared/types/aiSettings)
 //   - src/preload/index.ts                (via ../shared/types/aiSettings)
 //   - src/renderer/src/store/aiSettingsSlice.ts
