@@ -42,7 +42,8 @@ import {
   OutputIpc,
   PersonalityIpc,
   ThemeIpc,
-  WindowIpc
+  WindowIpc,
+  WritingItemsIpc
 } from './ipc'
 
 export interface BootstrapResult {
