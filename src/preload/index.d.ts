@@ -321,16 +321,7 @@ declare global {
     app: AppApi
     /** Optional: not present in all window types */
     win?: WindowApi
-    media: MediaApi
-    bluetooth: BluetoothApi
-    network: NetworkApi
     cron: CronApi
-    lifecycle: LifecycleApi
-    wm: WindowManagerApi
-    fs: FileSystemApi
-    dialog: DialogApi
-    notification: NotificationApi
-    clipboard: ClipboardApi
     store: StoreApi
     workspace: WorkspaceApi
     posts: PostsApi
