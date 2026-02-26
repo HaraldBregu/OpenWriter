@@ -51,7 +51,6 @@ const App: React.FC = () => {
                         <Route path="/home" element={<RouteWrapper><HomePage /></RouteWrapper>} />
                         <Route path="/dashboard" element={<RouteWrapper><DashboardPage /></RouteWrapper>} />
                         <Route path="/settings" element={<RouteWrapper><SettingsPage /></RouteWrapper>} />
-                        <Route path="/pipeline-test" element={<Navigate to="/debug" replace />} />
                         <Route path="/new/writing" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/new/writing/:id" element={<RouteWrapper><NewWritingPage /></RouteWrapper>} />
                         <Route path="/documents" element={<RouteWrapper><DocumentsPage /></RouteWrapper>} />
