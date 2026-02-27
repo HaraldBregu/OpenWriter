@@ -150,7 +150,7 @@ export function useInferenceSettings(
 
       saveTimerRef.current = setTimeout(() => {
         saveTimerRef.current = null
-        window.workspace.personality
+        window.workspace
           .saveSectionConfig({
             sectionId,
             update: {
