@@ -284,7 +284,7 @@ const workspace: WorkspaceApi = {
         return typedOn(WorkspaceChannels.outputFileChanged, callback)
     },
     onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        return typedOn(OutputChannels.watcherError, callback)
+        return typedOn(WorkspaceChannels.outputWatcherError, callback)
     },
     // -------------------------------------------------------------------------
     // Personality/conversation file management
