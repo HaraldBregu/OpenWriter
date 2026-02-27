@@ -3,32 +3,30 @@
  *
  * Testing strategy:
  *   - All tests use MockPersonalityTaskService (no Electron globals required).
- *   - PersonalityTaskProvider is always given an explicit `service` prop so the
- *     production ElectronPersonalityTaskService singleton is never instantiated.
+ *   - PersonalityTaskProvider requires a <TaskProvider> ancestor (for the shared
+ *     TaskStore). The wrapper below composes: Redux > TaskProvider > PersonalityTaskProvider.
+ *   - Events (stream, complete, error, cancelled) are driven by calling
+ *     sharedStore.applyEvent() directly — no window.task IPC is needed in tests.
  *   - A minimal Redux store wraps every render so that useAppDispatch() works.
- *   - Individual test suites are separated into their own describe blocks to
- *     prevent React 19 async state updates from bleeding across test boundaries.
  *
  * Cases covered:
- *   - Provider mounts and unmounts without error when given a mock service
+ *   - Provider mounts and unmounts without error
  *   - usePersonalityTask throws when used outside the provider
  *   - submitTask adds a user message and transitions to isLoading=true
- *   - Stream tokens accumulate in latestResponse
+ *   - Empty/whitespace prompts are ignored
+ *   - Double-submit while loading is a no-op
+ *   - submitTask failure result sets error and clears isLoading
+ *   - submitTask thrown exception sets error and clears isLoading
+ *   - Stream tokens accumulate in latestResponse and set isStreaming=true
+ *   - Multiple stream tokens concatenate correctly
+ *   - First stream token creates an assistant message placeholder
  *   - completed event finalises messages, sets isLoading=false, triggers save
  *   - error event sets the error field and clears loading state
  *   - cancelled event clears loading state
  *   - cancelTask cancels the running task and resets state
+ *   - cancelTask is a no-op when no active task
  *   - clearTask resets a section back to the default state
- *   - onTaskEvent errors are caught and logged without unmounting the tree
  *   - Multiple sections are isolated (stream for A does not affect B)
- *   - Cleanup: unsubscribes from task events on unmount
- *
- * import.meta.env handling:
- *   PersonalityTaskContext.tsx references `import.meta.env.VITE_OPENAI_MODEL`.
- *   The jest.config.cjs renderer project applies tests/transforms/vite-env-transform.cjs
- *   to all renderer source files, which rewrites import.meta.env.* to
- *   globalThis.__VITE_ENV__.*. The global is seeded as undefined so the fallback
- *   value ('gpt-4o-mini') is used in tests.
  */
 
 import React, { act } from 'react'
@@ -36,8 +34,11 @@ import { renderHook, render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import personalityFilesReducer from '../../../../src/renderer/src/store/personalityFilesSlice'
+import { TaskProvider } from '../../../../src/renderer/src/contexts/TaskContext'
+import { useTaskContext } from '../../../../src/renderer/src/contexts/TaskContext'
 import { PersonalityTaskProvider, usePersonalityTask } from '../../../../src/renderer/src/contexts/PersonalityTaskContext'
 import { MockPersonalityTaskService } from '../../../../src/renderer/src/services/__mocks__/MockPersonalityTaskService'
+import type { TaskStore } from '../../../../src/renderer/src/contexts/TaskContext'
 
 // ---------------------------------------------------------------------------
 // Redux store — minimal store with only the slice PersonalityTaskContext touches
@@ -52,23 +53,41 @@ function createTestStore() {
 }
 
 // ---------------------------------------------------------------------------
+// TaskStore accessor helper
+//
+// Since TaskProvider holds the store internally, we need a way to grab it from
+// tests. We do this with a small probe component that reads the context and
+// stashes the store into a ref we control.
+// ---------------------------------------------------------------------------
+
+function StoreProbe({ storeRef }: { storeRef: React.MutableRefObject<TaskStore | null> }) {
+  const { store } = useTaskContext()
+  storeRef.current = store
+  return null
+}
+
+// ---------------------------------------------------------------------------
 // Wrapper helpers
 // ---------------------------------------------------------------------------
 
 function makeWrapper(service: MockPersonalityTaskService) {
-  const store = createTestStore()
+  const reduxStore = createTestStore()
+  const storeRef: React.MutableRefObject<TaskStore | null> = { current: null }
 
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <Provider store={store}>
-        <PersonalityTaskProvider service={service}>
-          {children}
-        </PersonalityTaskProvider>
+      <Provider store={reduxStore}>
+        <TaskProvider>
+          <StoreProbe storeRef={storeRef} />
+          <PersonalityTaskProvider service={service}>
+            {children}
+          </PersonalityTaskProvider>
+        </TaskProvider>
       </Provider>
     )
   }
 
-  return { Wrapper, store }
+  return { Wrapper, reduxStore, storeRef }
 }
 
 // ---------------------------------------------------------------------------
@@ -99,63 +118,6 @@ describe('PersonalityTaskProvider — mounting', () => {
 
     expect(screen.getByTestId('child')).toBeInTheDocument()
   })
-
-  it('registers a task event listener on mount', () => {
-    const service = new MockPersonalityTaskService()
-    const onTaskEventSpy = jest.spyOn(service, 'onTaskEvent')
-    const { Wrapper } = makeWrapper(service)
-
-    render(
-      <Wrapper>
-        <div />
-      </Wrapper>
-    )
-
-    expect(onTaskEventSpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('unsubscribes from task events on unmount', () => {
-    const service = new MockPersonalityTaskService()
-    const unsubscribe = jest.fn()
-    jest.spyOn(service, 'onTaskEvent').mockReturnValue(unsubscribe)
-
-    const { Wrapper } = makeWrapper(service)
-    const { unmount } = render(
-      <Wrapper>
-        <div />
-      </Wrapper>
-    )
-
-    unmount()
-
-    expect(unsubscribe).toHaveBeenCalledTimes(1)
-  })
-
-  it('catches and logs errors thrown by onTaskEvent without crashing the tree', () => {
-    const service = new MockPersonalityTaskService()
-    jest.spyOn(service, 'onTaskEvent').mockImplementation(() => {
-      throw new Error('Bridge unavailable')
-    })
-
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-    const { Wrapper } = makeWrapper(service)
-
-    expect(() =>
-      render(
-        <Wrapper>
-          <div data-testid="safe-child">safe</div>
-        </Wrapper>
-      )
-    ).not.toThrow()
-
-    expect(screen.getByTestId('safe-child')).toBeInTheDocument()
-    expect(consoleSpy).toHaveBeenCalledWith(
-      '[PersonalityTaskProvider] Failed to register task event listener:',
-      expect.any(Error)
-    )
-
-    consoleSpy.mockRestore()
-  })
 })
 
 // ---------------------------------------------------------------------------
@@ -164,16 +126,20 @@ describe('PersonalityTaskProvider — mounting', () => {
 
 describe('usePersonalityTask — outside provider', () => {
   it('throws an error when used without a PersonalityTaskProvider', () => {
-    const store = createTestStore()
+    const reduxStore = createTestStore()
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() =>
       renderHook(() => usePersonalityTask(SECTION), {
         wrapper: ({ children }) => (
-          <Provider store={store}>{children}</Provider>
+          <Provider store={reduxStore}>
+            <TaskProvider>
+              {children}
+            </TaskProvider>
+          </Provider>
         )
       })
-    ).toThrow('usePersonalityTask must be used within a PersonalityTaskProvider')
+    ).toThrow(/usePersonalityTask must be used within/i)
 
     consoleSpy.mockRestore()
   })
@@ -314,7 +280,7 @@ describe('usePersonalityTask — stream events', () => {
 
   async function setupStreamingSession() {
     const service = new MockPersonalityTaskService()
-    const { Wrapper } = makeWrapper(service)
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -326,14 +292,18 @@ describe('usePersonalityTask — stream events', () => {
       await result.current.submit(USER_PROMPT)
     })
 
-    return { service, result, unmount, taskId: 'mock-task-1' }
+    const taskId = 'mock-task-1'
+    return { service, result, unmount, taskId, storeRef }
   }
 
   it('appends stream tokens to latestResponse and sets isStreaming=true', async () => {
-    const { service, result, unmount, taskId } = await setupStreamingSession()
+    const { result, unmount, taskId, storeRef } = await setupStreamingSession()
 
     act(() => {
-      service.simulateStream(taskId, 'Hello ')
+      storeRef.current!.applyEvent({
+        type: 'stream',
+        data: { taskId, token: 'Hello ' }
+      })
     })
 
     expect(result.current.isStreaming).toBe(true)
@@ -343,11 +313,11 @@ describe('usePersonalityTask — stream events', () => {
   })
 
   it('concatenates multiple stream tokens in order', async () => {
-    const { service, result, unmount, taskId } = await setupStreamingSession()
+    const { result, unmount, taskId, storeRef } = await setupStreamingSession()
 
     act(() => {
-      service.simulateStream(taskId, 'Hello ')
-      service.simulateStream(taskId, 'world')
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'Hello ' } })
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'world' } })
     })
 
     expect(result.current.latestResponse).toBe('Hello world')
@@ -356,10 +326,10 @@ describe('usePersonalityTask — stream events', () => {
   })
 
   it('adds an assistant message placeholder on the first stream token', async () => {
-    const { service, result, unmount, taskId } = await setupStreamingSession()
+    const { result, unmount, taskId, storeRef } = await setupStreamingSession()
 
     act(() => {
-      service.simulateStream(taskId, 'First token')
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'First token' } })
     })
 
     expect(result.current.messages).toHaveLength(2)
@@ -380,7 +350,7 @@ describe('usePersonalityTask — completed event', () => {
 
   it('sets isLoading=false and isStreaming=false on completion', async () => {
     const service = new MockPersonalityTaskService()
-    const { Wrapper } = makeWrapper(service)
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -394,11 +364,14 @@ describe('usePersonalityTask — completed event', () => {
     const taskId = 'mock-task-1'
 
     act(() => {
-      service.simulateStream(taskId, 'Final ')
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'Final ' } })
     })
 
     await act(async () => {
-      service.simulateComplete(taskId, 'Final answer')
+      storeRef.current!.applyEvent({
+        type: 'completed',
+        data: { taskId, result: { content: 'Final answer' }, durationMs: 100 }
+      })
     })
 
     expect(result.current.isLoading).toBe(false)
@@ -409,7 +382,7 @@ describe('usePersonalityTask — completed event', () => {
 
   it('finalises the assistant message content on completion', async () => {
     const service = new MockPersonalityTaskService()
-    const { Wrapper } = makeWrapper(service)
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -423,11 +396,14 @@ describe('usePersonalityTask — completed event', () => {
     const taskId = 'mock-task-1'
 
     act(() => {
-      service.simulateStream(taskId, 'streaming token')
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'streaming token' } })
     })
 
     await act(async () => {
-      service.simulateComplete(taskId, 'The real final answer')
+      storeRef.current!.applyEvent({
+        type: 'completed',
+        data: { taskId, result: { content: 'The real final answer' }, durationMs: 100 }
+      })
     })
 
     const assistantMsg = result.current.messages.find((m) => m.role === 'assistant')
@@ -436,10 +412,10 @@ describe('usePersonalityTask — completed event', () => {
     unmount()
   })
 
-  it('triggers savePersonality after completion', async () => {
+  it('triggers save after completion', async () => {
     const service = new MockPersonalityTaskService()
-    const saveSpy = jest.spyOn(service, 'savePersonality')
-    const { Wrapper } = makeWrapper(service)
+    const saveSpy = jest.spyOn(service, 'save')
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -453,11 +429,14 @@ describe('usePersonalityTask — completed event', () => {
     const taskId = 'mock-task-1'
 
     act(() => {
-      service.simulateStream(taskId, 'content')
+      storeRef.current!.applyEvent({ type: 'stream', data: { taskId, token: 'content' } })
     })
 
     await act(async () => {
-      service.simulateComplete(taskId, 'Final content to save')
+      storeRef.current!.applyEvent({
+        type: 'completed',
+        data: { taskId, result: { content: 'Final content to save' }, durationMs: 100 }
+      })
     })
 
     // autoSave is async — give microtasks time to flush
@@ -485,7 +464,7 @@ describe('usePersonalityTask — error event', () => {
 
   it('sets error and clears loading state when an error event arrives', async () => {
     const service = new MockPersonalityTaskService()
-    const { Wrapper } = makeWrapper(service)
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -497,7 +476,10 @@ describe('usePersonalityTask — error event', () => {
     })
 
     act(() => {
-      service.simulateError('mock-task-1', 'Something went wrong')
+      storeRef.current!.applyEvent({
+        type: 'error',
+        data: { taskId: 'mock-task-1', message: 'Something went wrong' }
+      })
     })
 
     expect(result.current.error).toBe('Something went wrong')
@@ -519,7 +501,7 @@ describe('usePersonalityTask — cancelled event', () => {
 
   it('clears loading/streaming state when a cancelled event arrives', async () => {
     const service = new MockPersonalityTaskService()
-    const { Wrapper } = makeWrapper(service)
+    const { Wrapper, storeRef } = makeWrapper(service)
 
     const { result, unmount } = renderHook(
       () => usePersonalityTask(SECTION, SYSTEM_PROMPT, PROVIDER_ID),
@@ -531,7 +513,10 @@ describe('usePersonalityTask — cancelled event', () => {
     })
 
     act(() => {
-      service.simulateCancelled('mock-task-1')
+      storeRef.current!.applyEvent({
+        type: 'cancelled',
+        data: { taskId: 'mock-task-1' }
+      })
     })
 
     expect(result.current.isLoading).toBe(false)
@@ -639,14 +624,18 @@ describe('usePersonalityTask — section isolation', () => {
 
   it('stream events for section A do not affect section B', async () => {
     const service = new MockPersonalityTaskService()
-    const store = createTestStore()
+    const reduxStore = createTestStore()
+    const storeRef: React.MutableRefObject<TaskStore | null> = { current: null }
 
     function Wrapper({ children }: { children: React.ReactNode }) {
       return (
-        <Provider store={store}>
-          <PersonalityTaskProvider service={service}>
-            {children}
-          </PersonalityTaskProvider>
+        <Provider store={reduxStore}>
+          <TaskProvider>
+            <StoreProbe storeRef={storeRef} />
+            <PersonalityTaskProvider service={service}>
+              {children}
+            </PersonalityTaskProvider>
+          </TaskProvider>
         </Provider>
       )
     }
@@ -673,7 +662,10 @@ describe('usePersonalityTask — section isolation', () => {
 
     // Stream only to A's task
     act(() => {
-      service.simulateStream('mock-task-1', 'only for A')
+      storeRef.current!.applyEvent({
+        type: 'stream',
+        data: { taskId: 'mock-task-1', token: 'only for A' }
+      })
     })
 
     expect(resultA.current.latestResponse).toBe('only for A')
