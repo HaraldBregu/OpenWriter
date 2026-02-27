@@ -114,7 +114,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata - Downloaded file metadata
      */
     ipcMain.handle(
-      DocumentsChannels.downloadFromUrl,
+      WorkspaceChannels.documents.downloadFromUrl,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, url: string) => {
         // Validate URL format and protocol
         this.validateDownloadUrl(url)
@@ -130,7 +130,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.downloadFromUrl(currentWorkspace, url)
-      }, DocumentsChannels.downloadFromUrl)
+      }, WorkspaceChannels.documents.downloadFromUrl)
     )
 
     /**
