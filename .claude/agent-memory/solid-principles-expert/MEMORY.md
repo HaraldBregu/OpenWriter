@@ -1,6 +1,6 @@
 # SOLID Expert Agent Memory
 
-## Project: OpenWriter (tesseract-ai)
+## Project: OpenWriter
 
 ### Architecture Overview
 - Electron + React 19 + TypeScript renderer
