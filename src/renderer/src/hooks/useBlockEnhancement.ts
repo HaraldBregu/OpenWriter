@@ -51,6 +51,8 @@ export function useBlockEnhancement({
 
   // Snapshot of content before enhance started — used to revert on error/cancel.
   const originalTextRef = useRef<string>('')
+  // Buffer that accumulates all streamed tokens as raw markdown.
+  const streamBufferRef = useRef<string>('')
 
   const { submitTask, cancelTask, tasks } = useTask()
 
@@ -69,17 +71,10 @@ export function useBlockEnhancement({
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
 
-      // Split the token on newlines so each line becomes a separate paragraph.
-      const parts = token.split('\n')
-      for (let i = 0; i < parts.length; i++) {
-        if (parts[i]) {
-          ed.commands.insertContent(parts[i])
-        }
-        // Each \n between parts creates a new paragraph node.
-        if (i < parts.length - 1) {
-          ed.commands.splitBlock()
-        }
-      }
+      // Append the token to the buffer and re-set the full content as markdown.
+      // The markdown parser converts \n into proper <p> nodes automatically.
+      streamBufferRef.current += token
+      ed.commands.setContent(streamBufferRef.current, { emitUpdate: false, contentType: 'markdown' })
     })
     return () => unsub()
   }, [enhanceTaskId, editorRef])
