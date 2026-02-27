@@ -299,7 +299,7 @@ const workspace: WorkspaceApi = {
         path: string
         savedAt: number
     }> => {
-        return typedInvokeUnwrap(PersonalityChannels.save, input)
+        return typedInvokeUnwrap(WorkspaceChannels.personality.save, input)
     },
     loadPersonalities: () => {
         return typedInvokeUnwrap(PersonalityChannels.loadAll)
@@ -365,7 +365,7 @@ const workspace: WorkspaceApi = {
         createdAt: string
         updatedAt: string
     }> => {
-        return typedInvokeUnwrap(PersonalityChannels.saveSectionConfig, params)
+        return typedInvokeUnwrap(WorkspaceChannels.personality.saveSectionConfig, params)
     },
     onSectionConfigChange: (callback: (event: {
         sectionId: string
