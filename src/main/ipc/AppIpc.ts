@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, Menu } from 'electron'
+import { ipcMain, BrowserWindow, Menu, nativeTheme } from 'electron'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import path from 'node:path'
