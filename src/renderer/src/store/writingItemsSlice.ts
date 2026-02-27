@@ -101,7 +101,7 @@ export const loadWritingItems = createAsyncThunk<WritingEntry[], void, { rejectV
   'writingItems/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.workspace.output.loadByType('writings')
+      const files = await window.workspace.loadOutputsByType('writings')
       return files.map(mapOutputFileToEntry)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load writing items'
