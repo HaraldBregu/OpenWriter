@@ -179,7 +179,7 @@ export interface ITaskCompletionHandler<TSaveResult extends EntityTaskSaveResult
  */
 export interface EntityTaskContextConfig<
   TSubmitInput,
-  TSubmitResult extends EntityTaskSubmitResult,
+  _TSubmitResult extends EntityTaskSubmitResult,
   TSaveOptions,
   TSaveResult extends EntityTaskSaveResult,
 > {
