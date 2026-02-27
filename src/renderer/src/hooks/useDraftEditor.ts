@@ -164,7 +164,7 @@ export function useDraftEditor(
 
   // ---------------------------------------------------------------------------
   // Draft mode: auto-commit to Redux + disk on first real content (1 s delay)
-  // Writes to window.workspace.output.save (workspace-backed OutputFilesService).
+  // Writes to window.workspace.saveOutput (workspace-backed OutputFilesService).
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!isDraft || committedRef.current) return
