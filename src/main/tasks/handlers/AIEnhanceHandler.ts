@@ -5,12 +5,12 @@
  * prompt, and streams tokens back via StreamReporter.
  */
 
-import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
 import type { StoreService } from '../../services/store'
-import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
+import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
 import { ProviderResolver } from '../../shared/ProviderResolver'
+import { createChatModel } from '../../shared/ChatModelFactory'
 
 // ---------------------------------------------------------------------------
 // Types
