@@ -129,8 +129,9 @@ export function useBlockEnhancement({
     const currentText = ed.getMarkdown()
     if (!currentText.trim()) return
 
-    // Snapshot for potential revert.
+    // Snapshot for potential revert and reset the stream buffer.
     originalTextRef.current = currentText
+    streamBufferRef.current = ''
     setIsEnhancing(true)
 
     // Clear the editor so streamed tokens replace the original content.
