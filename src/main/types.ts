@@ -51,9 +51,9 @@ export type { WorkspaceInfo, StoreSchema } from './services/store'
 export type { FileTypeValidationResult } from './utils/file-type-validator'
 
 // ---- Task handler types --------------------------------------------------
-export type { AIChatInput, AIChatOutput } from './tasks/handlers/AIChatHandler'
+export type { AIChatInput, AIChatOutput } from './tasksManager/handlers/AIChatHandler'
 export type {
   FileDownloadInput,
   FileDownloadOutput,
   DownloadDiagnostics,
-} from './tasks/handlers/FileDownloadHandler'
+} from './tasksManager/handlers/FileDownloadHandler'
