@@ -43,5 +43,4 @@ How to behave:
   },
 }
 
-agentRegistry.register(definition)
 export { definition as StoryWriterAgent }
