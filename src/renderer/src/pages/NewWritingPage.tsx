@@ -171,7 +171,7 @@ const NewWritingPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <div className="flex flex-col min-w-0 shrink-0">
+          <div className="flex flex-col shrink-0">
             <PersonalitySettingsPanel
               settings={aiSettings}
               onSettingsChange={handleAiSettingsChange}
