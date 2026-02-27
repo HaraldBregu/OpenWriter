@@ -30,7 +30,6 @@ import {
   AppIpc,
   WorkspaceIpc,
   TaskIpc,
-  ThemeIpc,
   WindowIpc,
 } from './ipc'
 
