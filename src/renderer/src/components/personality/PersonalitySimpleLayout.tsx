@@ -171,22 +171,22 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
   // Blocked while a task is loading/streaming/saving so submit doesn't re-trigger a
   // file load before the newly created file appears in the list.
   // Also blocked when the user has explicitly requested a new blank conversation (isNewMode),
-  // or when a specific file is pending selection via lastSavedFileId.
+  // or when a specific file is pending selection via lastSaved.
   useEffect(() => {
-    if (files.length > 0 && !loadedConversation && !activeFileId && !isLoading && !isStreaming && !isNewMode && !isSaving && !lastSavedFileId) {
+    if (files.length > 0 && !loadedConversation && !activeFileId && !isLoading && !isStreaming && !isNewMode && !isSaving && !lastSaved?.id) {
       const mostRecent = [...files].sort((a, b) => b.savedAt - a.savedAt)[0]
       handleFileSelect(mostRecent)
     }
-  }, [files, loadedConversation, activeFileId, isLoading, isStreaming, isNewMode, isSaving, lastSavedFileId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [files, loadedConversation, activeFileId, isLoading, isStreaming, isNewMode, isSaving, lastSaved?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // After auto-save completes, select the newly created file once it appears in the Redux list.
   useEffect(() => {
-    if (!lastSavedFileId || files.length === 0) return
-    const savedFile = files.find(f => f.id === lastSavedFileId)
+    if (!lastSaved?.id || files.length === 0) return
+    const savedFile = files.find(f => f.id === lastSaved.id)
     if (savedFile) {
       handleFileSelect(savedFile)
     }
-  }, [lastSavedFileId, files]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lastSaved?.id, files]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Clear stale state when the active file is no longer in the files list (was deleted)
   useEffect(() => {
