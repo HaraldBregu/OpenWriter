@@ -122,19 +122,6 @@ export const PersonalityChannels = {
   sectionConfigChanged: 'personality:section-config-changed',
 } as const
 
-export const AgentManagerChannels = {
-  createSession: 'agentManager:create-session',
-  destroySession: 'agentManager:destroy-session',
-  getSession: 'agentManager:get-session',
-  listSessions: 'agentManager:list-sessions',
-  start: 'agentManager:start',
-  cancel: 'agentManager:cancel',
-  cancelSession: 'agentManager:cancel-session',
-  getStatus: 'agentManager:get-status',
-  listRuns: 'agentManager:list-runs',
-  event: 'agentManager:event',
-} as const
-
 export const AppChannels = {
   playSound: 'play-sound',
   setTheme: 'set-theme',
