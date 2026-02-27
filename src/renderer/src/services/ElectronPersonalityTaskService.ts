@@ -5,7 +5,6 @@ import type {
   SubmitTaskInput,
   SubmitTaskResult,
   SubmitTaskError,
-  TaskEvent,
 } from './IPersonalityTaskService'
 
 /**
