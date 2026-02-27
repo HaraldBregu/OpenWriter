@@ -6,7 +6,6 @@
  * kept low to favour consistency and predictability over novelty.
  */
 
-import { agentRegistry } from '../AgentRegistry'
 import type { AgentDefinition } from '../AgentDefinition'
 
 const definition: AgentDefinition = {
