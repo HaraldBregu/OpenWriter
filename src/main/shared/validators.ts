@@ -1,6 +1,6 @@
 /**
  * Input validators for preventing injection attacks and malformed data.
- * Used by CustomIpc (store handlers) and AgentService to validate user inputs.
+ * Used by CustomIpc (store handlers) to validate user inputs.
  */
 export class StoreValidators {
   private static readonly VALID_PROVIDERS = ['anthropic', 'openai', 'google', 'meta', 'mistral']
