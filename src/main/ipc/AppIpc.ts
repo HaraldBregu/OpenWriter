@@ -20,11 +20,33 @@ const execFileAsync = promisify(execFile)
  * Includes sound playback, context menu handling, and AI model store operations
  * (formerly in StoreIpc, now consolidated here and exposed on window.app).
  */
-export class AppIpc implements IpcModule {
-  readonly name = 'custom'
+const VALID_THEMES = ['light', 'dark', 'system'] as const
 
-  register(container: ServiceContainer, _eventBus: EventBus): void {
+export class AppIpc implements IpcModule {
+  readonly name = 'app'
+
+  private lastTheme: string | null = null
+
+  register(container: ServiceContainer, eventBus: EventBus): void {
     const store = container.get<StoreService>('store')
+
+    // Theme handler
+    ipcMain.on(AppChannels.setTheme, (event, theme: string) => {
+      if (!VALID_THEMES.includes(theme as (typeof VALID_THEMES)[number])) return
+      if (this.lastTheme === theme) return
+      this.lastTheme = theme
+
+      nativeTheme.themeSource = theme as 'light' | 'dark' | 'system'
+      eventBus.emit('theme:changed', { theme: theme as 'light' | 'dark' | 'system' })
+
+      const senderContents = event.sender
+      BrowserWindow.getAllWindows().forEach((win) => {
+        if (!win.isDestroyed() && win.webContents !== senderContents) {
+          win.webContents.send(AppChannels.changeTheme, theme)
+        }
+      })
+    })
+
     // Play sound handler
     ipcMain.on(AppChannels.playSound, async () => {
       const soundPath = is.dev
