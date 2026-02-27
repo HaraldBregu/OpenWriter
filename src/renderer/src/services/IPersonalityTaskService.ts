@@ -45,20 +45,6 @@ export interface SubmitTaskError {
   error: { message: string }
 }
 
-export type TaskEventType =
-  | 'queued'
-  | 'started'
-  | 'progress'
-  | 'completed'
-  | 'error'
-  | 'cancelled'
-  | 'stream'
-
-export interface TaskEvent {
-  type: TaskEventType
-  data: Record<string, unknown>
-}
-
 export interface IPersonalityTaskService {
   /**
    * Submit an AI chat task. Returns a result envelope.
