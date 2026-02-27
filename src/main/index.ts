@@ -8,6 +8,7 @@ import { WorkspaceProcessManager } from './workspace-process'
 import type { WorkspaceService } from './services/workspace'
 import type { WorkspaceMetadataService } from './services/workspace-metadata'
 import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, setupEventLogging, cleanup } from './bootstrap'
+import { TSRCT_EXT } from './constants'
 
 // Check if running in workspace mode
 const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode()
@@ -25,8 +26,6 @@ console.log('[Main] Enabling IPC modules...')
 bootstrapIpcModules(container, eventBus)
 setupAppLifecycle(appState, logger)
 setupEventLogging(logger)
-
-const TSRCT_EXT = '.tsrct'
 
 function isTsrctFile(filePath: string): boolean {
   return path.extname(filePath).toLowerCase() === TSRCT_EXT
