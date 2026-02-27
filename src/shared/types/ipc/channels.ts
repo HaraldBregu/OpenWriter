@@ -67,47 +67,6 @@ export const WindowChannels = {
   popupMenu: 'window:popup-menu',
 } as const
 
-export const CronChannels = {
-  getAll: 'cron-get-all-jobs',
-  getJob: 'cron-get-job',
-  start: 'cron-start-job',
-  stop: 'cron-stop-job',
-  delete: 'cron-delete-job',
-  create: 'cron-create-job',
-  updateSchedule: 'cron-update-schedule',
-  validateExpression: 'cron-validate-expression',
-  jobResult: 'cron-job-result',
-} as const
-
-export const AgentChannels = {
-  createSession: 'agent:create-session',
-  destroySession: 'agent:destroy-session',
-  getSession: 'agent:get-session',
-  listSessions: 'agent:list-sessions',
-  clearSessions: 'agent:clear-sessions',
-  run: 'agent:run',
-  runSession: 'agent:run-session',
-  cancel: 'agent:cancel',
-  cancelSession: 'agent:cancel-session',
-  getStatus: 'agent:get-status',
-  isRunning: 'agent:is-running',
-  // Event channels pushed from main → renderer
-  token: 'agent:token',
-  thinking: 'agent:thinking',
-  toolStart: 'agent:tool_start',
-  toolEnd: 'agent:tool_end',
-  done: 'agent:done',
-  error: 'agent:error',
-} as const
-
-export const PipelineChannels = {
-  run: 'pipeline:run',
-  cancel: 'pipeline:cancel',
-  listAgents: 'pipeline:list-agents',
-  listRuns: 'pipeline:list-runs',
-  event: 'pipeline:event',
-} as const
-
 export const TaskChannels = {
   submit: 'task:submit',
   cancel: 'task:cancel',
