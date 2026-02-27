@@ -53,6 +53,35 @@ export const WorkspaceChannels = {
   removeRecent: 'workspace-remove-recent',
   changed: 'workspace:changed',
   deleted: 'workspace:deleted',
+  documents: {
+    importFiles: 'documents:import-files',
+    importByPaths: 'documents:import-by-paths',
+    downloadFromUrl: 'documents:download-from-url',
+    loadAll: 'documents:load-all',
+    deleteFile: 'documents:delete-file',
+    fileChanged: 'documents:file-changed',
+    watcherError: 'documents:watcher-error',
+  },
+  directories: {
+    list: 'directories:list',
+    add: 'directories:add',
+    addMany: 'directories:add-many',
+    remove: 'directories:remove',
+    validate: 'directories:validate',
+    markIndexed: 'directories:mark-indexed',
+    changed: 'directories:changed',
+  },
+  personality: {
+    save: 'personality:save',
+    loadAll: 'personality:load-all',
+    loadOne: 'personality:load-one',
+    delete: 'personality:delete',
+    loadSectionConfig: 'personality:load-section-config',
+    saveSectionConfig: 'personality:save-section-config',
+    fileChanged: 'personality:file-changed',
+    watcherError: 'personality:watcher-error',
+    sectionConfigChanged: 'personality:section-config-changed',
+  },
 } as const
 
 export const WindowChannels = {
