@@ -250,3 +250,6 @@ export function createBlock(): Block {
 
 // Re-export for backward compatibility
 export { ContentBlockPlaceholder as InsertBlockPlaceholder } from './ContentBlockPlaceholder'
+
+// Re-export for backward compatibility
+export { ContentBlockPlaceholder as InsertBlockPlaceholder } from './ContentBlockPlaceholder'
