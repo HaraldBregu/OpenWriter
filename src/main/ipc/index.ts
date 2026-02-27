@@ -4,7 +4,7 @@
  */
 
 export type { IpcModule } from './IpcModule'
-export { CustomIpc } from './CustomIpc'
+export { AppIpc } from './AppIpc'
 export { TaskIpc } from './TaskIpc'
 export { WorkspaceIpc } from './WorkspaceIpc'
 export { ThemeIpc } from './ThemeIpc'
