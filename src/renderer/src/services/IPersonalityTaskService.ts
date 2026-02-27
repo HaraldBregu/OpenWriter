@@ -61,11 +61,6 @@ export interface TaskEvent {
 
 export interface IPersonalityTaskService {
   /**
-   * Subscribe to task lifecycle events. Returns an unsubscribe function.
-   */
-  onTaskEvent(handler: (event: TaskEvent) => void): () => void
-
-  /**
    * Submit an AI chat task. Returns a result envelope.
    */
   submitTask(input: SubmitTaskInput): Promise<SubmitTaskResult | SubmitTaskError>
