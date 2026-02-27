@@ -269,7 +269,7 @@ export function useDraftEditor(
       } else {
         // First save for an entry that was added to Redux but not yet persisted
         try {
-          const result = await window.workspace.output.save({
+          const result = await window.workspace.saveOutput({
             type: 'writings',
             blocks: serializeBlocksForOutput(entry.blocks),
             metadata: {
