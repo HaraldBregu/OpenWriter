@@ -51,17 +51,6 @@ export const mockApi = {
   }),
   onNetworkStatusChange: jest.fn().mockReturnValue(jest.fn()),
 
-  // Cron
-  cronGetAllJobs: jest.fn().mockResolvedValue([]),
-  cronGetJob: jest.fn().mockResolvedValue(null),
-  cronStartJob: jest.fn().mockResolvedValue(true),
-  cronStopJob: jest.fn().mockResolvedValue(true),
-  cronDeleteJob: jest.fn().mockResolvedValue(true),
-  cronCreateJob: jest.fn().mockResolvedValue(true),
-  cronUpdateSchedule: jest.fn().mockResolvedValue(true),
-  cronValidateExpression: jest.fn().mockResolvedValue({ valid: true, description: 'Every minute' }),
-  onCronJobResult: jest.fn().mockReturnValue(jest.fn()),
-
   // Lifecycle
   lifecycleGetState: jest.fn().mockResolvedValue({
     events: [],
