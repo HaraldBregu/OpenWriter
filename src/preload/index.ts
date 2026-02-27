@@ -272,7 +272,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.update, params)
     },
     deleteOutput: (params: { type: string; id: string }): Promise<void> => {
-        return typedInvokeUnwrap(OutputChannels.delete, params)
+        return typedInvokeUnwrap(WorkspaceChannels.outputDelete, params)
     },
     onOutputFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
