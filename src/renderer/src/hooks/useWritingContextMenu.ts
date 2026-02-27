@@ -95,7 +95,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
           const entryToDelete = entriesRef.current.find((e) => e.id === writingId)
           if (entryToDelete?.writingItemId) {
             try {
-              await window.workspace.output.delete({ type: 'writings', id: entryToDelete.writingItemId })
+              await window.workspace.deleteOutput({ type: 'writings', id: entryToDelete.writingItemId })
             } catch (err) {
               console.error('[useWritingContextMenu] Failed to delete writing item from disk:', err)
             }

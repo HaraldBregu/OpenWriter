@@ -100,7 +100,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   const { isEnhancing, handleEnhance } = useBlockEnhancement({ editorRef, onChangeRef, blockIdRef })
 
   const editorOptions = useMemo<UseEditorOptions>(() => ({
-    extensions: [SingleParagraphDocument, StarterKit.configure({ document: false }), Markdown],
+    extensions: [StarterKit, Markdown],
     content: block.content || '',
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
@@ -113,16 +113,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[1em] text-base leading-tight text-foreground',
-      },
-      handleKeyDown: (_view, event) => {
-        if (event.key === 'Enter') {
-          // Block both hard Enter and Shift+Enter so the editor stays
-          // single-paragraph. Trigger block creation instead.
-          onAddRef.current?.(blockIdRef.current)
-          return true
-        }
-        return false
+        class: 'focus:outline-none min-h-[4em] text-base leading-relaxed text-foreground',
       },
     },
   }), []) // eslint-disable-line react-hooks/exhaustive-deps
