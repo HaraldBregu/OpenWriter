@@ -79,13 +79,13 @@ export class DirectoriesIpc implements IpcModule {
 
     // Mark a directory as indexed (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.markIndexed,
+      WorkspaceChannels.directories.markIndexed,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, id: string, isIndexed: boolean) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.markDirectoryIndexed(id, isIndexed)
         },
-        DirectoriesChannels.markIndexed
+        WorkspaceChannels.directories.markIndexed
       )
     )
 
