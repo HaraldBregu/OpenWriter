@@ -389,6 +389,7 @@ export interface SendChannelMap {
   [WindowChannels.close]: { args: [] }
   [WindowChannels.popupMenu]: { args: [] }
   [AgentChannels.cancel]: { args: [runId: string] }
+  [AgentManagerChannels.cancel]: { args: [runId: string] }
   [PipelineChannels.cancel]: { args: [runId: string] }
 }
 
