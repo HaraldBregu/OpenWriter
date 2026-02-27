@@ -38,7 +38,7 @@ export class AgentManager implements Disposable {
   private resolver: ProviderResolver
 
   constructor(
-    private readonly storeService: StoreService,
+    storeService: StoreService,
     private readonly eventBus: EventBus,
   ) {
     this.resolver = new ProviderResolver(storeService)
