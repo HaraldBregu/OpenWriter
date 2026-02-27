@@ -120,7 +120,7 @@ export const writingItemsSlice = createSlice({
   reducers: {
     /**
      * Add a writing entry immediately after a successful disk creation.
-     * Called by useCreateWriting after window.workspace.output.save succeeds.
+     * Called by useCreateWriting after window.workspace.saveOutput succeeds.
      */
     addEntry(state, action: PayloadAction<WritingEntry>) {
       state.entries.unshift(action.payload)
