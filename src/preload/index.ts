@@ -340,7 +340,7 @@ const workspace: WorkspaceApi = {
         createdAt: string
         updatedAt: string
     } | null> => {
-        return typedInvokeUnwrap(WorkspaceChannels.personality.loadSectionConfig, params)
+        return typedInvokeUnwrap(WorkspaceChannels.loadSectionConfig, params)
     },
     saveSectionConfig: (params: {
         sectionId: string
