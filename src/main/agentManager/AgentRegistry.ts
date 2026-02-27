@@ -81,5 +81,8 @@ export function buildSessionConfig(
     ...overrides,
     // providerId from argument always wins — it is the resolved, authoritative value
     providerId,
+    // Carry the graph factory through so AgentSession can use it at run time.
+    // Overrides can replace this by explicitly setting buildGraph: undefined.
+    buildGraph: overrides.buildGraph ?? def.buildGraph,
   }
 }
