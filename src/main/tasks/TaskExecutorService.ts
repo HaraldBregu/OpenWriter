@@ -305,7 +305,7 @@ export class TaskExecutorService implements Disposable {
   getQueueStatus(): TaskQueueStatus {
     let queued = 0
     let running = 0
-    let completed = this.completedTasks.size
+    const completed = this.completedTasks.size
 
     for (const task of this.activeTasks.values()) {
       if (task.status === 'running') {
