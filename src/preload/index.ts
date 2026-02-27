@@ -5,12 +5,14 @@ import {
     WindowChannels,
     WorkspaceChannels,
     TaskChannels,
+    AgentChannels,
 } from '../shared/types/ipc/channels'
 import type {
     AppApi,
     WindowApi,
     WorkspaceApi,
     TaskApi,
+    AgentApi,
 } from './index.d'
 
 // ---------------------------------------------------------------------------
