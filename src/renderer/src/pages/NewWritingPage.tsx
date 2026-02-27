@@ -144,7 +144,7 @@ const NewWritingPage: React.FC = () => {
       <div className="flex flex-1 overflow-hidden bg-background">
         {/* Main content area */}
         <div className="overflow-y-auto flex-1 min-w-0">
-          <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col gap-2">
+          <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-2">
             <Reorder.Group
               axis="y"
               values={blocks}
@@ -171,10 +171,12 @@ const NewWritingPage: React.FC = () => {
 
         {/* Right sidebar */}
         {showSidebar && (
-          <PersonalitySettingsPanel
-            settings={aiSettings}
-            onSettingsChange={handleAiSettingsChange}
-          />
+          <div className="flex flex-col min-w-0 shrink-0">
+            <PersonalitySettingsPanel
+              settings={aiSettings}
+              onSettingsChange={handleAiSettingsChange}
+            />
+          </div>
         )}
       </div>
 
