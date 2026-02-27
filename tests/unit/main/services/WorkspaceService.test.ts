@@ -6,7 +6,6 @@
  */
 
 import fs from 'node:fs'
-import path from 'node:path'
 
 // We need to import the real module but mock specific behaviors
 jest.mock('node:fs')
