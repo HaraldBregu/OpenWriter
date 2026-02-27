@@ -100,5 +100,14 @@
 - Both config changes and block .md changes emit same `output:file-changed` event with the date-folder as `fileId`
 - Posts sync system (`window.posts`, `PostsIpc`, `FileWatcherService`) has been fully removed from this project
 
+## Agent IPC System
+- `AgentChannels.event = 'agentManager:event'` — matches the hardcoded channel inside `AgentManager.startStreaming`; do NOT change without updating AgentManager
+- Shared agent types live in `src/shared/types/ipc/types.ts` (re-declared from AgentManagerTypes.ts / AgentDefinition.ts so channels.ts can import them without pulling from src/main/)
+- `AgentIpc.createSession` validates agentId against `agentRegistry.get(agentId)` before building config
+- `AgentIpc.startStreaming` uses `registerCommandWithEvent` to stamp `windowId = event.sender.id` — never trusted from renderer payload
+- `AgentRegistry` singleton exported from `src/main/agentManager/AgentRegistry.ts`; `buildSessionConfig(def, providerId, overrides)` helper is co-located there
+- `agentManager` is registered in `ServiceContainer` as `'agentManager'`; `AgentIpc` retrieves it via `container.get<AgentManager>('agentManager')`
+- Preload uses `typedInvokeUnwrap` for all agent queries/commands except `startStreaming` which uses `typedInvoke` (AgentManager returns the runId directly without IpcResult wrapping)
+
 ## Details Files
 - See `patterns.md` for extended code patterns
