@@ -560,7 +560,7 @@ export class WorkspaceIpc implements IpcModule {
     )
 
     ipcMain.handle(
-      OutputChannels.loadOne,
+      WorkspaceChannels.outputLoadOne,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -588,7 +588,7 @@ export class WorkspaceIpc implements IpcModule {
           }
           return file
         },
-        OutputChannels.loadOne
+        WorkspaceChannels.outputLoadOne
       )
     )
 
