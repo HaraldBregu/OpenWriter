@@ -10,21 +10,9 @@
 
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../aiSettings'
 import type {
-  CronJobConfig,
-  CronJobStatus,
-  CronJobResult,
-  CronValidationResult,
   WorkspaceInfo,
   WorkspaceChangedEvent,
   WorkspaceDeletedEvent,
-  ChatMessage,
-  AgentSessionConfig,
-  AgentSessionInfo,
-  AgentRunOptions,
-  AgentStatusInfo,
-  PipelineInput,
-  PipelineEvent,
-  PipelineActiveRun,
   TaskSubmitPayload,
   TaskInfo,
   TaskEvent,
@@ -49,15 +37,6 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
-} from './types'
-
-import type {
-  AMSessionConfig,
-  AMRequest,
-  AMStreamEvent,
-  AMSessionSnapshot,
-  AMRunSnapshot,
-  AMManagerStatus,
 } from './types'
 
 // ===========================================================================
