@@ -200,11 +200,11 @@ export interface InvokeChannelMap {
   [TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus }
 
   // ---- Documents (IpcResult-wrapped) ----
-  [WorkspaceChannels.documents.importFiles]: { args: []; result: DocumentInfo[] }
-  [WorkspaceChannels.documents.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }
-  [WorkspaceChannels.documents.downloadFromUrl]: { args: [url: string]; result: DocumentInfo }
-  [WorkspaceChannels.documents.loadAll]: { args: []; result: DocumentInfo[] }
-  [WorkspaceChannels.documents.deleteFile]: { args: [id: string]; result: void }
+  [WorkspaceChannels.importFiles]: { args: []; result: DocumentInfo[] }
+  [WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }
+  [WorkspaceChannels.downloadFromUrl]: { args: [url: string]; result: DocumentInfo }
+  [WorkspaceChannels.documentsLoadAll]: { args: []; result: DocumentInfo[] }
+  [WorkspaceChannels.deleteFile]: { args: [id: string]; result: void }
 
   // ---- Output (IpcResult-wrapped) ----
   [OutputChannels.save]: { args: [input: SaveOutputInput]; result: SaveOutputResult }
@@ -215,20 +215,20 @@ export interface InvokeChannelMap {
   [OutputChannels.delete]: { args: [params: { type: string; id: string }]; result: void }
 
   // ---- Directories (IpcResult-wrapped) ----
-  [WorkspaceChannels.directories.list]: { args: []; result: DirectoryEntry[] }
-  [WorkspaceChannels.directories.add]: { args: [dirPath: string]; result: DirectoryEntry }
-  [WorkspaceChannels.directories.addMany]: { args: [dirPaths: string[]]; result: DirectoryAddManyResult }
-  [WorkspaceChannels.directories.remove]: { args: [id: string]; result: boolean }
-  [WorkspaceChannels.directories.validate]: { args: [dirPath: string]; result: DirectoryValidationResult }
-  [WorkspaceChannels.directories.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean }
+  [WorkspaceChannels.list]: { args: []; result: DirectoryEntry[] }
+  [WorkspaceChannels.add]: { args: [dirPath: string]; result: DirectoryEntry }
+  [WorkspaceChannels.addMany]: { args: [dirPaths: string[]]; result: DirectoryAddManyResult }
+  [WorkspaceChannels.remove]: { args: [id: string]; result: boolean }
+  [WorkspaceChannels.validate]: { args: [dirPath: string]; result: DirectoryValidationResult }
+  [WorkspaceChannels.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean }
 
   // ---- Personality (IpcResult-wrapped) ----
-  [WorkspaceChannels.personality.save]: { args: [input: SavePersonalityInput]; result: SavePersonalityResult }
-  [WorkspaceChannels.personality.loadAll]: { args: []; result: PersonalityFile[] }
-  [WorkspaceChannels.personality.loadOne]: { args: [params: { sectionId: string; id: string }]; result: PersonalityFile | null }
-  [WorkspaceChannels.personality.delete]: { args: [params: { sectionId: string; id: string }]; result: void }
-  [WorkspaceChannels.personality.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
-  [WorkspaceChannels.personality.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
+  [WorkspaceChannels.save]: { args: [input: SavePersonalityInput]; result: SavePersonalityResult }
+  [WorkspaceChannels.personalityLoadAll]: { args: []; result: PersonalityFile[] }
+  [WorkspaceChannels.loadOne]: { args: [params: { sectionId: string; id: string }]; result: PersonalityFile | null }
+  [WorkspaceChannels.delete]: { args: [params: { sectionId: string; id: string }]; result: void }
+  [WorkspaceChannels.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
+  [WorkspaceChannels.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
 
   // ---- App — writing context menu (raw invoke) ----
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
