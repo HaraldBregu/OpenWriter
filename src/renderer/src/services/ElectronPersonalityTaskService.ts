@@ -1,11 +1,11 @@
 import type {
   IPersonalityTaskService,
-  SavePersonalityOptions,
-  SavePersonalityResult,
-  SubmitTaskInput,
-  SubmitTaskResult,
-  SubmitTaskError,
-} from './IPersonalityTaskService'
+  PersonalitySubmitInput,
+  PersonalitySubmitResult,
+  PersonalitySaveOptions,
+  PersonalitySaveResult,
+} from '@/contexts/PersonalityTaskContext'
+import type { EntityTaskIpcResult } from '@/services/IEntityTaskService'
 
 /**
  * Production implementation of IPersonalityTaskService.
@@ -28,13 +28,15 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     if (!window.task) {
       throw new Error(
         '[ElectronPersonalityTaskService] window.task is undefined. ' +
-        'Ensure the BrowserWindow that renders this page has the preload script ' +
-        'configured, or inject a MockPersonalityTaskService via PersonalityTaskProvider.'
+        'Ensure the BrowserWindow has the preload script configured, or ' +
+        'inject a mock service via <PersonalityTaskProvider service={...}>.',
       )
     }
   }
 
-  async submitTask(input: SubmitTaskInput): Promise<SubmitTaskResult | SubmitTaskError> {
+  async submitTask(
+    input: PersonalitySubmitInput,
+  ): Promise<EntityTaskIpcResult<PersonalitySubmitResult>> {
     this.assertBridge()
     const payload: Record<string, unknown> = {
       prompt: input.prompt,
@@ -48,13 +50,11 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
 
     // Non-null assertion is safe here: assertBridge() throws if window.task is undefined.
     const result = await window.task!.submit('ai-chat', payload)
-    // window.task.submit returns { success, data } | { success: false, error }
-    return result as SubmitTaskResult | SubmitTaskError
+    return result as EntityTaskIpcResult<PersonalitySubmitResult>
   }
 
   cancelTask(taskId: string): void {
-    if (!window.task) return
-    window.task.cancel(taskId)
+    window.task?.cancel(taskId)
   }
 
   async getModelSettings(providerId: string): Promise<{ selectedModel?: string } | null> {
@@ -65,7 +65,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     }
   }
 
-  async savePersonality(options: SavePersonalityOptions): Promise<SavePersonalityResult> {
+  async save(options: PersonalitySaveOptions): Promise<PersonalitySaveResult> {
     return window.workspace.savePersonality(options)
   }
 }
