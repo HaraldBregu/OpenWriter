@@ -134,7 +134,7 @@ export const deletePersonalityFile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await window.workspace.personality.delete(params)
+      await window.workspace.deletePersonality(params)
       return params
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete personality file'
