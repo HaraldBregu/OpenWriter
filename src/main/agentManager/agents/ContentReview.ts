@@ -59,5 +59,4 @@ Behaviour rules:
   },
 }
 
-agentRegistry.register(definition)
 export { definition as ContentReviewAgent }
