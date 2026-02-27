@@ -67,6 +67,7 @@ const App: React.FC = () => {
               </Routes>
           </Router>
           </PersonalityTaskProvider>
+          </TaskProvider>
         </AppProvider>
       </Provider>
     </ErrorBoundary>
