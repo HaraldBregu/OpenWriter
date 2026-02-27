@@ -165,7 +165,7 @@ const NewWritingPage: React.FC = () => {
                 />
               ))}
             </Reorder.Group>
-            <InsertBlockPlaceholder onClick={handleAppendBlock} />
+            <ContentBlockPlaceholder onClick={handleAppendBlock} />
           </div>
         </div>
 
