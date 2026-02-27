@@ -52,13 +52,13 @@ import type {
 } from './types'
 
 import type {
-  AgentSessionConfig as AMSessionConfig,
-  AgentRequest as AMRequest,
-  AgentStreamEvent as AMStreamEvent,
-  AgentSessionSnapshot,
-  AgentRunSnapshot,
-  AgentManagerStatus,
-} from '../../main/agentManager/AgentManagerTypes'
+  AMSessionConfig,
+  AMRequest,
+  AMStreamEvent,
+  AMSessionSnapshot,
+  AMRunSnapshot,
+  AMManagerStatus,
+} from './types'
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
