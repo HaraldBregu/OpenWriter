@@ -31,25 +31,25 @@ export class DirectoriesIpc implements IpcModule {
 
     // Add a single directory (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.add,
+      WorkspaceChannels.directories.add,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPath: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.addDirectory(dirPath)
         },
-        DirectoriesChannels.add
+        WorkspaceChannels.directories.add
       )
     )
 
     // Add multiple directories (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.addMany,
+      WorkspaceChannels.directories.addMany,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPaths: string[]) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.addDirectories(dirPaths)
         },
-        DirectoriesChannels.addMany
+        WorkspaceChannels.directories.addMany
       )
     )
 
