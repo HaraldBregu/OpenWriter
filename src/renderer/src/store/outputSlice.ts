@@ -148,7 +148,7 @@ export const loadOutputItems = createAsyncThunk<OutputItem[], void, { rejectValu
   'output/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.workspace.output.loadAll()
+      const files = await window.workspace.loadOutputs()
       return files.map(mapOutputFileToItem)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load output items'
