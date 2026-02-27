@@ -44,5 +44,4 @@ Length calibration:
   },
 }
 
-agentRegistry.register(definition)
 export { definition as SummarizerAgent }
