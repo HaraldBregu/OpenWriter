@@ -204,16 +204,6 @@ export interface InvokeChannelMap {
   [TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null }
   [TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus }
 
-  // ---- AgentManager (IpcResult-wrapped) ----
-  [AgentManagerChannels.createSession]: { args: [config: AMSessionConfig]; result: AMSessionSnapshot }
-  [AgentManagerChannels.destroySession]: { args: [sessionId: string]; result: boolean }
-  [AgentManagerChannels.getSession]: { args: [sessionId: string]; result: AMSessionSnapshot | null }
-  [AgentManagerChannels.listSessions]: { args: []; result: AMSessionSnapshot[] }
-  [AgentManagerChannels.start]: { args: [sessionId: string, request: AMRequest]; result: { runId: string } }
-  [AgentManagerChannels.cancelSession]: { args: [sessionId: string]; result: boolean }
-  [AgentManagerChannels.getStatus]: { args: []; result: AMManagerStatus }
-  [AgentManagerChannels.listRuns]: { args: []; result: AMRunSnapshot[] }
-
   // ---- Documents (IpcResult-wrapped) ----
   [DocumentsChannels.importFiles]: { args: []; result: DocumentInfo[] }
   [DocumentsChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }
