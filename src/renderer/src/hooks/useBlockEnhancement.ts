@@ -68,6 +68,9 @@ export function useBlockEnhancement({
       if (!token) return
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
+
+              console.log("token: ", token)
+
       // Insert content exactly as it arrives, preserving newlines and formatting.
       ed.commands.insertContent(token)
     })
@@ -97,6 +100,7 @@ export function useBlockEnhancement({
       // Revert editor to the text that existed before enhance started.
       const ed = editorRef.current
       if (ed && !ed.isDestroyed) {
+
         ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
         onChangeRef.current(blockIdRef.current, originalTextRef.current)
       }

@@ -143,6 +143,13 @@ export const ContentBlock = React.memo(function ContentBlock({
     })
   }, [editor])
 
+  // Disable the editor while AI enhancement is running so the user cannot
+  // type into the block and interfere with streamed tokens.
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    editor.setEditable(!isEnhancing)
+  }, [editor, isEnhancing])
+
   // Sync external content changes (e.g., when the block resets or is edited elsewhere).
   // Guard: skip while enhancing so streamed tokens are not overwritten by echoed onChange calls.
   useEffect(() => {
