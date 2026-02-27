@@ -163,6 +163,11 @@ export interface InvokeChannelMap {
   [AppChannels.getProviderSettings]: { args: [providerId: string]; result: ProviderSettings | null }
   [AppChannels.setProviderSettings]: { args: [providerId: string, settings: ProviderSettings]; result: void }
   [AppChannels.setInferenceDefaults]: { args: [providerId: string, update: InferenceDefaultsUpdate]; result: void }
+  [AppChannels.getAllModelSettings]: { args: []; result: Record<string, LegacyModelSettings> }
+  [AppChannels.getModelSettings]: { args: [providerId: string]; result: LegacyModelSettings | null }
+  [AppChannels.setSelectedModel]: { args: [providerId: string, modelId: string]; result: void }
+  [AppChannels.setApiToken]: { args: [providerId: string, token: string]; result: void }
+  [AppChannels.setModelSettings]: { args: [providerId: string, settings: LegacyModelSettings]; result: void }
 
   // ---- Workspace (IpcResult-wrapped) ----
   [WorkspaceChannels.selectFolder]: { args: []; result: string | null }
