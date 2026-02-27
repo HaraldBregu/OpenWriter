@@ -13,7 +13,7 @@ import type { CompiledStateGraph } from '@langchain/langgraph'
 import type { ResolvedProvider } from '../shared/ProviderResolver'
 import { extractTokenFromChunk, classifyError, toUserMessage } from '../shared/aiUtils'
 import { createChatModel } from '../shared/ChatModelFactory'
-import type { AgentStreamEvent } from './AIAgentsManagerTypes'
+import type { AgentStreamEvent } from './aiAgentsManagerTypes'
 import type { AIAgentsHistoryMessage } from './AIAgentsSession'
 
 const LOG_PREFIX = '[AIAgentsExecutor]'

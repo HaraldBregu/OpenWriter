@@ -19,7 +19,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store'
 import { LoggerService } from './services/logger'
 import { FileManagementService } from './services/FileManagementService'
-import { AIAgentsManager, AIAgentsRegistry, ALL_AGENT_DEFINITIONS } from './AIAgentsManager'
+import { AIAgentsManager, AIAgentsRegistry, ALL_AGENT_DEFINITIONS } from './aiAgentsManager'
 import { TasksManagerHandlerRegistry } from './tasksManager/TasksManagerHandlerRegistry'
 import { TasksManagerExecutor } from './tasksManager/TasksManagerExecutor'
 import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasksManager/handlers'
