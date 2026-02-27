@@ -145,6 +145,12 @@ export const AppChannels = {
   setModelSettings: 'store-set-model-settings',
 } as const
 
+// Legacy model settings type (kept for backward compat with store legacy channels)
+interface LegacyModelSettings {
+  selectedModel: string
+  apiToken: string
+}
+
 // ===========================================================================
 // Channel-to-Type Maps
 // ===========================================================================
