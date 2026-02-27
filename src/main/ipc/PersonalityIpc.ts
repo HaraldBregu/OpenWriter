@@ -13,7 +13,7 @@ import type {
 } from '../services/personality-files'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { PersonalityChannels } from '../../shared/types/ipc/channels'
+import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for personality conversation files.
