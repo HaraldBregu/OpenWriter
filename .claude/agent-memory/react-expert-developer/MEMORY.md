@@ -8,7 +8,7 @@
 - Bridge shapes often differ from Redux shapes (e.g. nested `metadata` object vs flat item). Always map at the thunk boundary.
 - `window.api` NO LONGER EXISTS — fully split into domain namespaces. See Namespace Map below.
 - `window.store` NO LONGER EXISTS — all store methods merged into `window.app` (Feb 2026). Use `window.app.getAllProviderSettings`, `window.app.setProviderSettings`, `window.app.setInferenceDefaults`, `window.app.getModelSettings`, etc.
-- `window.workspace.output.save` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
+- `window.workspace.saveOutput` returns only `{ id, path, savedAt }` — construct the full `OutputItem` inline from input; no follow-up load needed.
 
 ## Namespace Map (window.api is gone — use these namespaces)
 - bluetooth → `window.bluetooth.*`; clipboard → `window.clipboard.*`; cron → `window.cron.*`
@@ -20,15 +20,16 @@
 - Main-process handler: `src/main/ipc/ContextMenuIpc.ts` uses `AppChannels.showWritingContextMenu/writingContextMenuAction`
 - IPC barrel: `src/main/ipc/index.ts` exports `ContextMenuIpc` (was missing; added Feb 2026)
 - AI pipeline → `window.ai.inference/cancel/listAgents/onEvent`
-- REMOVED: `window.writingItems` — no longer exists; use `window.workspace.output` for writings
-- REMOVED: top-level `window.output` — all output API is now nested under `window.workspace.output`
+- REMOVED: `window.writingItems` — no longer exists; use `window.workspace.saveOutput/loadOutputsByType` for writings
+- REMOVED: top-level `window.output` — all output API is now flat on `window.workspace`
+- REMOVED: nested sub-namespaces `window.workspace.documents.*`, `window.workspace.directories.*`, `window.workspace.personality.*`, `window.workspace.output.*` — all flattened (Feb 2026)
 
-## window.workspace nested sub-namespaces
-- `window.workspace.documents.*` — document import, download, file-watch
-- `window.workspace.directories.*` — indexed directory management
-- `window.workspace.personality.*` — personality/conversation file management
-- `window.workspace.output.*` — output file management (posts and writings)
-  - `save`, `loadAll`, `loadByType`, `loadOne`, `update`, `delete`, `onFileChange`, `onWatcherError`
+## window.workspace flat API (Feb 2026 refactor — sub-namespaces removed)
+- Documents: `loadDocuments`, `deleteDocument`, `importFiles`, `importByPaths`, `downloadFromUrl`, `onDocumentFileChange`, `onDocumentWatcherError`
+- Directories: `listDirectories`, `addDirectory`, `addDirectories`, `removeDirectory`, `validateDirectory`, `markDirectoryIndexed`, `onDirectoriesChanged`
+- Personality: `savePersonality`, `loadPersonalities`, `loadPersonality`, `deletePersonality`, `saveSectionConfig`, `loadSectionConfig`, `onPersonalityFileChange`, `onPersonalityWatcherError`, `onSectionConfigChange`
+- Output: `saveOutput`, `loadOutputs`, `loadOutputsByType`, `loadOutput`, `updateOutput`, `deleteOutput`, `onOutputFileChange`, `onOutputWatcherError`
+- CRITICAL: Do NOT use old nested form (`window.workspace.output.save`, `window.workspace.personality.loadAll`, etc.) — they no longer exist on the preload bridge.
 
 ## window.app — AI store methods (merged from former window.store, Feb 2026)
 - NEW: `window.app.getAllProviderSettings`, `window.app.getProviderSettings`, `window.app.setProviderSettings`, `window.app.setInferenceDefaults`
