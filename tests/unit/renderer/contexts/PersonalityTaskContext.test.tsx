@@ -624,40 +624,38 @@ describe('usePersonalityTask — section isolation', () => {
 
   it('stream events for section A do not affect section B', async () => {
     const service = new MockPersonalityTaskService()
-    const reduxStore = createTestStore()
-    const storeRef: React.MutableRefObject<TaskStore | null> = { current: null }
+    const { Wrapper, storeRef } = makeWrapper(service)
 
-    function Wrapper({ children }: { children: React.ReactNode }) {
-      return (
-        <Provider store={reduxStore}>
-          <TaskProvider>
-            <StoreProbe storeRef={storeRef} />
-            <PersonalityTaskProvider service={service}>
-              {children}
-            </PersonalityTaskProvider>
-          </TaskProvider>
-        </Provider>
-      )
+    // Capture values from both hooks in a combined component so they share
+    // the same provider tree and thus the same TaskStore instance.
+    interface DualResult {
+      aLatest: string
+      bLatest: string
+      aSubmit: (p: string) => Promise<void>
+      bSubmit: (p: string) => Promise<void>
     }
 
-    // Mount both section hooks simultaneously
-    const { result: resultA, unmount: unmountA } = renderHook(
-      () => usePersonalityTask('consciousness', SYSTEM_PROMPT, PROVIDER_ID),
-      { wrapper: Wrapper }
-    )
-    const { result: resultB, unmount: unmountB } = renderHook(
-      () => usePersonalityTask('motivation', SYSTEM_PROMPT, PROVIDER_ID),
-      { wrapper: Wrapper }
-    )
+    function useDualHooks(): DualResult {
+      const a = usePersonalityTask('consciousness', SYSTEM_PROMPT, PROVIDER_ID)
+      const b = usePersonalityTask('motivation', SYSTEM_PROMPT, PROVIDER_ID)
+      return {
+        aLatest: a.latestResponse,
+        bLatest: b.latestResponse,
+        aSubmit: a.submit,
+        bSubmit: b.submit,
+      }
+    }
 
-    // Submit for A — gets taskId 'mock-task-1'
+    const { result, unmount } = renderHook(() => useDualHooks(), { wrapper: Wrapper })
+
+    // Submit for consciousness — gets taskId 'mock-task-1'
     await act(async () => {
-      await resultA.current.submit(USER_PROMPT)
+      await result.current.aSubmit(USER_PROMPT)
     })
 
-    // Submit for B — gets taskId 'mock-task-2'
+    // Submit for motivation — gets taskId 'mock-task-2'
     await act(async () => {
-      await resultB.current.submit(USER_PROMPT)
+      await result.current.bSubmit(USER_PROMPT)
     })
 
     // Stream only to A's task
@@ -668,10 +666,9 @@ describe('usePersonalityTask — section isolation', () => {
       })
     })
 
-    expect(resultA.current.latestResponse).toBe('only for A')
-    expect(resultB.current.latestResponse).toBe('')
+    expect(result.current.aLatest).toBe('only for A')
+    expect(result.current.bLatest).toBe('')
 
-    unmountA()
-    unmountB()
+    unmount()
   })
 })
