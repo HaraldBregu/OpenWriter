@@ -51,6 +51,15 @@ import type {
   WatcherError,
 } from './types'
 
+import type {
+  AgentSessionConfig as AMSessionConfig,
+  AgentRequest as AMRequest,
+  AgentStreamEvent as AMStreamEvent,
+  AgentSessionSnapshot,
+  AgentRunSnapshot,
+  AgentManagerStatus,
+} from '../../main/agentManager/AgentManagerTypes'
+
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
 // ===========================================================================
