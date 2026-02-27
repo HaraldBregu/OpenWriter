@@ -129,13 +129,11 @@ export function useBlockEnhancement({
     const currentText = ed.getMarkdown()
     if (!currentText.trim()) return
 
-    // Snapshot for potential revert and reset the stream buffer.
+    // Snapshot for potential revert and seed the buffer with existing content
+    // so streamed tokens are appended after it.
     originalTextRef.current = currentText
-    streamBufferRef.current = ''
+    streamBufferRef.current = currentText
     setIsEnhancing(true)
-
-    // Clear the editor so streamed tokens replace the original content.
-    ed.commands.focus('end')
 
     const taskId = await submitTask('ai-enhance', { text: currentText })
     if (taskId) {
