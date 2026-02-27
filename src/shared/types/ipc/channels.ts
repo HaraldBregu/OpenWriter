@@ -412,6 +412,7 @@ export interface EventChannelMap {
   [AgentChannels.toolEnd]: { data: unknown }
   [AgentChannels.done]: { data: unknown }
   [AgentChannels.error]: { data: unknown }
+  [AgentManagerChannels.event]: { data: AMStreamEvent }
   [PipelineChannels.event]: { data: PipelineEvent }
   [TaskChannels.event]: { data: TaskEvent }
   [DocumentsChannels.fileChanged]: { data: DocumentFileChangeEvent }
