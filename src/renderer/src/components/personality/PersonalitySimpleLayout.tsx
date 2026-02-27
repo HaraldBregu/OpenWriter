@@ -75,7 +75,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
     latestResponse,
     isSaving,
     lastSaveError,
-    lastSavedFileId
+    lastSaved
   } = usePersonalityTask(sectionId, systemPrompt, inferenceSettings.providerId, {
     modelId: inferenceSettings.modelId,
     temperature: inferenceSettings.temperature,
