@@ -150,6 +150,23 @@ export const AppChannels = {
   setModelSettings: 'store-set-model-settings',
 } as const
 
+export const AgentChannels = {
+  // Queries
+  listAgents: 'agent:list-agents',
+  getStatus: 'agent:get-status',
+  listSessions: 'agent:list-sessions',
+  listActiveRuns: 'agent:list-active-runs',
+  // Commands
+  createSession: 'agent:create-session',
+  destroySession: 'agent:destroy-session',
+  startStreaming: 'agent:start-streaming',
+  cancelRun: 'agent:cancel-run',
+  cancelSession: 'agent:cancel-session',
+  // Event channel (main → renderer push)
+  // Must match the hardcoded channel in AgentManager.startStreaming.
+  event: 'agentManager:event',
+} as const
+
 // Legacy model settings type (kept for backward compat with store legacy channels)
 interface LegacyModelSettings {
   selectedModel: string
