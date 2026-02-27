@@ -170,7 +170,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.documentsLoadAll)
     },
     deleteDocument: (id: string): Promise<void> => {
-        return typedInvokeUnwrap(WorkspaceChannels.documents.deleteFile, id)
+        return typedInvokeUnwrap(WorkspaceChannels.deleteFile, id)
     },
     onDocumentFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed';
