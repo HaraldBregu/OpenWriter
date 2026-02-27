@@ -268,60 +268,6 @@ export interface WritingContextMenuAction {
   writingId: string
 }
 
-// ---- AgentManager ---------------------------------------------------------
-
-export interface AMSessionConfig {
-  providerId: string
-  modelId?: string
-  systemPrompt?: string
-  temperature?: number
-  maxTokens?: number
-  maxHistoryMessages?: number
-  metadata?: Record<string, unknown>
-}
-
-export interface AMRequest {
-  prompt: string
-  messages?: Array<{ role: 'user' | 'assistant'; content: string }>
-  providerId?: string
-  modelId?: string
-  temperature?: number
-  maxTokens?: number
-}
-
-export type AMStreamEvent =
-  | { type: 'token'; token: string; runId: string }
-  | { type: 'thinking'; content: string; runId: string }
-  | { type: 'done'; content: string; tokenCount: number; runId: string }
-  | { type: 'error'; error: string; code: string; runId: string }
-
-export interface AMSessionSnapshot {
-  sessionId: string
-  providerId: string
-  modelId: string
-  systemPrompt: string
-  temperature: number
-  maxTokens: number | undefined
-  maxHistoryMessages: number
-  historyLength: number
-  activeRunIds: string[]
-  createdAt: number
-  lastActivity: number
-  metadata?: Record<string, unknown>
-}
-
-export interface AMRunSnapshot {
-  runId: string
-  sessionId: string
-  startedAt: number
-}
-
-export interface AMManagerStatus {
-  totalSessions: number
-  activeSessions: number
-  activeRuns: number
-}
-
 // ---- Common ---------------------------------------------------------------
 
 export interface WatcherError {
