@@ -227,7 +227,7 @@ export function useDraftEditor(
   }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
 
   // ---------------------------------------------------------------------------
-  // Edit mode: auto-save to disk 1 s after changes via window.workspace.output.update
+  // Edit mode: auto-save to disk 1 s after changes via window.workspace.updateOutput
   // ---------------------------------------------------------------------------
   const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
