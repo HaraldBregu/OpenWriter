@@ -205,7 +205,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 relative overflow-hidden">
+        <div className={`flex-1 min-w-0 relative overflow-hidden${isEnhancing ? ' opacity-60 pointer-events-none' : ''}`}>
           {/* Placeholder shown when editor is empty */}
           {isEmpty && (
             <span
