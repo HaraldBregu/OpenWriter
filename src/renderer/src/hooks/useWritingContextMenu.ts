@@ -44,7 +44,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
 
           // Create duplicate on disk first via workspace-backed output service
           try {
-            const result = await window.workspace.output.save({
+            const result = await window.workspace.saveOutput({
               type: 'writings',
               blocks: source.blocks.map((b) => ({
                 name: b.id,
