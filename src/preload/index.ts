@@ -425,39 +425,6 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
-// window.agent — Named agent registry and streaming AI sessions
-// ---------------------------------------------------------------------------
-const agent: AgentApi = {
-    listAgents: () => {
-        return typedInvokeUnwrap(AgentChannels.listAgents)
-    },
-    getStatus: () => {
-        return typedInvokeUnwrap(AgentChannels.getStatus)
-    },
-    listSessions: () => {
-        return typedInvokeUnwrap(AgentChannels.listSessions)
-    },
-    createSession: (agentId, providerId, overrides?) => {
-        return typedInvokeUnwrap(AgentChannels.createSession, agentId, providerId, overrides)
-    },
-    destroySession: (sessionId) => {
-        return typedInvokeUnwrap(AgentChannels.destroySession, sessionId)
-    },
-    startStreaming: (sessionId, request) => {
-        return typedInvoke(AgentChannels.startStreaming, sessionId, request)
-    },
-    cancelRun: (runId) => {
-        return typedInvokeUnwrap(AgentChannels.cancelRun, runId)
-    },
-    cancelSession: (sessionId) => {
-        return typedInvokeUnwrap(AgentChannels.cancelSession, sessionId)
-    },
-    onEvent: (callback) => {
-        return typedOn(AgentChannels.event, callback)
-    },
-} satisfies AgentApi;
-
-// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
