@@ -69,7 +69,6 @@ export function bootstrapServices(): BootstrapResult {
   // Register services (order matters for dependencies)
   const storeService = container.register('store', new StoreService())
 
-  container.register('cron', new CronService())
   container.register('fileManagement', new FileManagementService())
 
   // REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
