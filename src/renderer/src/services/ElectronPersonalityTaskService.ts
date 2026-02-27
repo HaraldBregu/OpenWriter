@@ -34,18 +34,6 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     }
   }
 
-  onTaskEvent(handler: (event: TaskEvent) => void): () => void {
-    this.assertBridge()
-    // Non-null assertion is safe here: assertBridge() throws if window.task is undefined,
-    // so control only reaches this line when window.task is defined.
-    return window.task!.onEvent((raw) => {
-      handler({
-        type: raw.type as TaskEvent['type'],
-        data: raw.data as Record<string, unknown>,
-      })
-    })
-  }
-
   async submitTask(input: SubmitTaskInput): Promise<SubmitTaskResult | SubmitTaskError> {
     this.assertBridge()
     const payload: Record<string, unknown> = {
