@@ -10,6 +10,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Disposable } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { StoreService } from '../services/store'
 import { ProviderResolver } from '../shared/ProviderResolver'
 import { AgentSession } from './AgentSession'
 import { executeAgentStream } from './AgentExecutor'
