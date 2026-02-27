@@ -383,7 +383,7 @@ const workspace: WorkspaceApi = {
         } | null
         timestamp: number
     }) => void): (() => void) => {
-        return typedOn(PersonalityChannels.sectionConfigChanged, callback)
+        return typedOn(WorkspaceChannels.personality.sectionConfigChanged, callback)
     },
 } satisfies WorkspaceApi;
 
