@@ -262,5 +262,7 @@ declare global {
     workspace: WorkspaceApi
     /** Optional: not present in all window types */
     task?: TaskApi
+    /** Named agent registry and streaming AI sessions */
+    agent: AgentApi
   }
 }
