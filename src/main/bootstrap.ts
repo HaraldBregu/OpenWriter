@@ -103,11 +103,8 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 
   const ipcModules: IpcModule[] = [
     new CustomIpc(),   // Also owns store/AI-model settings (merged from StoreIpc)
-    new DocumentsIpc(),
     new WorkspaceIpc(),
-    new DirectoriesIpc(),
     new TaskIpc(),
-    new PersonalityIpc(),
     new ThemeIpc(),
     new WindowIpc(),
   ]
