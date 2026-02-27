@@ -27,7 +27,7 @@ export class WindowFactory {
       const { existsSync } = require('fs')
       const exists = existsSync(this.preloadPath)
       console.log('[WindowFactory] Preload file exists:', exists)
-    } catch (e) {
+    } catch {
       // Silent fail
     }
   }
