@@ -161,7 +161,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SectionConfig | null — the config object, or null if not yet created
      */
     ipcMain.handle(
-      PersonalityChannels.loadSectionConfig,
+      WorkspaceChannels.personality.loadSectionConfig,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -184,7 +184,7 @@ export class PersonalityIpc implements IpcModule {
 
           return config
         },
-        PersonalityChannels.loadSectionConfig
+        WorkspaceChannels.personality.loadSectionConfig
       )
     )
 
