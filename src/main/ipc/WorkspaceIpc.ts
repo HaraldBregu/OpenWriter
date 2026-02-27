@@ -29,7 +29,7 @@ import { DocumentsService } from '../services/documents'
 import { getAllTextExtensions, getSupportedFileTypesDescription } from '../utils/file-type-validator'
 import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { WorkspaceChannels, OutputChannels } from '../../shared/types/ipc/channels'
+import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for all workspace-related concerns:
