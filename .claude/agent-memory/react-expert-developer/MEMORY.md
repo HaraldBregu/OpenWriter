@@ -110,7 +110,9 @@
 - `setContent(content, { emitUpdate: false })` — second arg is object in v3, not boolean
 - `immediatelyRender: false` required in Electron/Vite
 - Use ref pattern for callbacks in `useEditor` to avoid editor re-creation
-- Compare `editor.getHTML()` vs incoming content before calling `setContent` to avoid cursor reset
+- Compare `editor.getMarkdown()` vs incoming content before calling `setContent` to avoid cursor reset (use getMarkdown when the Markdown extension is installed, NOT getHTML)
+- CRITICAL: Always pass `contentType: 'markdown'` in both `useEditor` options AND `setContent` options when using `@tiptap/markdown`. Without it at init time, raw markdown strings are treated as HTML — `\n\n` paragraph breaks collapse into a single text node, losing all paragraph structure. The `getMarkdown()` vs `block.content` guard then matches and `setContent` is never called to fix it.
+- `@tiptap/markdown` v3 adds `contentType` to `EditorOptions`, `SetContentOptions`, `InsertContentOptions` — always provide it
 - Component: `src/renderer/src/components/ContentBlock.tsx`
 
 ## PersonalitySettingsPanel
