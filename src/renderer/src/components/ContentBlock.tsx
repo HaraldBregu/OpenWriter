@@ -10,15 +10,6 @@ import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
 import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 
-// ---------------------------------------------------------------------------
-// Custom Document extension: restricts the schema to exactly one paragraph.
-// StarterKit's default Document allows `content: 'block+'` (multiple blocks).
-// By replacing it with `content: 'paragraph'` (singular, no `+`), TipTap's
-// ProseMirror schema enforces the constraint at the document model level —
-// pasted multi-paragraph content is automatically flattened into one paragraph,
-// and no other insertion path can create a second paragraph node.
-// ---------------------------------------------------------------------------
-const SingleParagraphDocument = Document.extend({ content: 'paragraph' })
 
 // ---------------------------------------------------------------------------
 // Types
