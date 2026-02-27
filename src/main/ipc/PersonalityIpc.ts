@@ -40,7 +40,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SavePersonalityFileResult - { id, path, savedAt }
      */
     ipcMain.handle(
-      PersonalityChannels.save,
+      WorkspaceChannels.personality.save,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, input: SavePersonalityFileInput): Promise<SavePersonalityFileResult> => {
           const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
@@ -60,7 +60,7 @@ export class PersonalityIpc implements IpcModule {
 
           return result
         },
-        PersonalityChannels.save
+        WorkspaceChannels.personality.save
       )
     )
 
@@ -196,7 +196,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: SectionConfig — the full updated config
      */
     ipcMain.handle(
-      PersonalityChannels.saveSectionConfig,
+      WorkspaceChannels.personality.saveSectionConfig,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -220,7 +220,7 @@ export class PersonalityIpc implements IpcModule {
 
           return config
         },
-        PersonalityChannels.saveSectionConfig
+        WorkspaceChannels.personality.saveSectionConfig
       )
     )
 
