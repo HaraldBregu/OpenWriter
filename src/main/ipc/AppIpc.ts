@@ -20,7 +20,7 @@ const execFileAsync = promisify(execFile)
  * Includes sound playback, context menu handling, and AI model store operations
  * (formerly in StoreIpc, now consolidated here and exposed on window.app).
  */
-export class CustomIpc implements IpcModule {
+export class AppIpc implements IpcModule {
   readonly name = 'custom'
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
@@ -46,7 +46,7 @@ export class CustomIpc implements IpcModule {
           await execFileAsync('aplay', [soundPath])
         }
       } catch (err) {
-        console.error('[CustomIpc] Sound playback failed:', err)
+        console.error('[AppIpc] Sound playback failed:', err)
       }
     })
 
