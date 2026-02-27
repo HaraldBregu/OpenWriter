@@ -14,19 +14,19 @@ export type {
 
 // ---- Task system types ---------------------------------------------------
 // Note: Individual task type files are co-located with their domain code.
-// Import directly from the specific file when needed within the tasks subtree.
+// Import directly from the specific file when needed within the tasksManager subtree.
 export type {
   TaskPriority,
   TaskStatus,
   TaskOptions,
   ActiveTask,
-} from './tasks/TaskDescriptor'
+} from './tasksManager/TasksManagerDescriptor'
 
 export type {
   ProgressReporter,
   StreamReporter,
-  TaskHandler,
-} from './tasks/TaskHandler'
+  TasksManagerHandler,
+} from './tasksManager/TasksManagerHandler'
 
 // ---- Core types ----------------------------------------------------------
 // Note: Core types are co-located with their implementation files.
