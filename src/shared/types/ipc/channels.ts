@@ -202,11 +202,11 @@ export interface InvokeChannelMap {
   [TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus }
 
   // ---- Documents (IpcResult-wrapped) ----
-  [DocumentsChannels.importFiles]: { args: []; result: DocumentInfo[] }
-  [DocumentsChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }
-  [DocumentsChannels.downloadFromUrl]: { args: [url: string]; result: DocumentInfo }
-  [DocumentsChannels.loadAll]: { args: []; result: DocumentInfo[] }
-  [DocumentsChannels.deleteFile]: { args: [id: string]; result: void }
+  [WorkspaceChannels.documents.importFiles]: { args: []; result: DocumentInfo[] }
+  [WorkspaceChannels.documents.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] }
+  [WorkspaceChannels.documents.downloadFromUrl]: { args: [url: string]; result: DocumentInfo }
+  [WorkspaceChannels.documents.loadAll]: { args: []; result: DocumentInfo[] }
+  [WorkspaceChannels.documents.deleteFile]: { args: [id: string]; result: void }
 
   // ---- Output (IpcResult-wrapped) ----
   [OutputChannels.save]: { args: [input: SaveOutputInput]; result: SaveOutputResult }
