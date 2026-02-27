@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as fs from 'fs/promises'
 import { createWriteStream, WriteStream } from 'fs'
 import { TaskHandler, ProgressReporter } from '../TaskHandler'
+import { DOWNLOAD_PROGRESS_THROTTLE_MS } from '../../constants'
 
 export interface FileDownloadInput {
   url: string
