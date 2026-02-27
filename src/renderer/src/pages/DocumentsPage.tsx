@@ -546,7 +546,7 @@ const DocumentsPage: React.FC = () => {
       await reloadDocuments()
     }
 
-    const unsubscribeFileChange = window.workspace.documents.onFileChange(handleFileChange)
+    const unsubscribeFileChange = window.workspace.onDocumentFileChange(handleFileChange)
 
     return () => {
       unsubscribeFileChange()
