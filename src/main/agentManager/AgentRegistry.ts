@@ -57,13 +57,6 @@ export class AgentRegistry {
 }
 
 // ---------------------------------------------------------------------------
-// Singleton
-// ---------------------------------------------------------------------------
-
-/** Module-level singleton — import this from anywhere in the main process. */
-export const agentRegistry = new AgentRegistry()
-
-// ---------------------------------------------------------------------------
 // Session config builder
 // ---------------------------------------------------------------------------
 
