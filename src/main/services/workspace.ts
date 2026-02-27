@@ -3,6 +3,7 @@ import path from 'node:path'
 import type { StoreService } from './store'
 import type { EventBus } from '../core/EventBus'
 import type { Disposable } from '../core/ServiceContainer'
+import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants'
 
 /**
  * Snapshot of the current workspace state.
