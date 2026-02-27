@@ -27,7 +27,7 @@ import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/ha
 // IPC modules
 import type { IpcModule } from './ipc'
 import {
-  CustomIpc,
+  AppIpc,
   WorkspaceIpc,
   TaskIpc,
   ThemeIpc,
