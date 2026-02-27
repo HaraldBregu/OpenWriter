@@ -185,7 +185,7 @@ export function useDraftEditor(
       // Create on disk first via workspace-backed output service
       let result: { id: string; path: string; savedAt: number }
       try {
-        result = await window.workspace.output.save({
+        result = await window.workspace.saveOutput({
           type: 'writings',
           blocks: serializeBlocksForOutput(draftBlocks),
           metadata: {
