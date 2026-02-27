@@ -332,7 +332,7 @@ function createEntityTaskStore<TSaveResult extends EntityTaskSaveResult>(
 // Context value
 // ---------------------------------------------------------------------------
 
-interface EntityTaskContextValue<
+export interface EntityTaskContextValue<
   TSubmitInput,
   TSubmitResult extends EntityTaskSubmitResult,
   TSaveOptions,
