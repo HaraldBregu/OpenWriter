@@ -92,7 +92,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: PersonalityFile | null - The personality file or null if not found
      */
     ipcMain.handle(
-      WorkspaceChannels.personality.loadOne,
+      WorkspaceChannels.loadOne,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -119,7 +119,7 @@ export class PersonalityIpc implements IpcModule {
 
           return file
         },
-        WorkspaceChannels.personality.loadOne
+        WorkspaceChannels.loadOne
       )
     )
 
