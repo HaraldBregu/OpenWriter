@@ -30,7 +30,7 @@ import {
   AppIpc,
   AgentIpc,
   WorkspaceIpc,
-  TaskIpc,
+  TasksManagerIpc,
   WindowIpc,
 } from './ipc'
 
