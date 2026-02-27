@@ -33,68 +33,6 @@ export interface WorkspaceDeletedEvent {
   timestamp: number
 }
 
-// ---- Agent ----------------------------------------------------------------
-
-export interface ChatMessage {
-  role: 'user' | 'assistant'
-  content: string
-}
-
-export interface AgentSessionConfig {
-  sessionId: string
-  providerId: string
-  modelId?: string
-  systemPrompt?: string
-  temperature?: number
-  maxTokens?: number
-  metadata?: Record<string, unknown>
-}
-
-export interface AgentSessionInfo {
-  sessionId: string
-  providerId: string
-  modelId: string
-  createdAt: number
-  lastActivity: number
-  isActive: boolean
-  messageCount: number
-  metadata?: Record<string, unknown>
-}
-
-export interface AgentRunOptions {
-  sessionId: string
-  runId: string
-  messages: ChatMessage[]
-  providerId: string
-  temperature?: number
-  maxTokens?: number
-  stream?: boolean
-}
-
-export interface AgentStatusInfo {
-  totalSessions: number
-  activeSessions: number
-  totalMessages: number
-}
-
-// ---- Pipeline -------------------------------------------------------------
-
-export interface PipelineInput {
-  prompt: string
-  context?: Record<string, unknown>
-}
-
-export interface PipelineEvent {
-  type: 'token' | 'thinking' | 'done' | 'error'
-  data: unknown
-}
-
-export interface PipelineActiveRun {
-  runId: string
-  agentName: string
-  startedAt: number
-}
-
 // ---- Task -----------------------------------------------------------------
 
 export type TaskPriority = 'low' | 'normal' | 'high'
