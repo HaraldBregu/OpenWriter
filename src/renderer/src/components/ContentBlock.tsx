@@ -90,9 +90,6 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChangeRef.current = onChange
   const blockIdRef = useRef(block.id)
   blockIdRef.current = block.id
-  const onAddRef = useRef(onAdd)
-  onAddRef.current = onAdd
-
   // Stable ref to the editor so the enhancement hook can access it without
   // being recreated on every render.
   const editorRef = useRef<Editor | null>(null)
