@@ -262,8 +262,8 @@ export interface EventChannelMap {
   [TaskChannels.event]: { data: TaskEvent }
   [WorkspaceChannels.documentsFileChanged]: { data: DocumentFileChangeEvent }
   [WorkspaceChannels.documentsWatcherError]: { data: WatcherError }
-  [OutputChannels.fileChanged]: { data: OutputFileChangeEvent }
-  [OutputChannels.watcherError]: { data: WatcherError }
+  [WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent }
+  [WorkspaceChannels.outputWatcherError]: { data: WatcherError }
   [WorkspaceChannels.personalityFileChanged]: { data: PersonalityFileChangeEvent }
   [WorkspaceChannels.personalityWatcherError]: { data: WatcherError }
   [WorkspaceChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
