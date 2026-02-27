@@ -6,7 +6,7 @@ import type { EventBus } from '../core/EventBus'
 import type { WorkspaceMetadataService } from '../services/workspace-metadata'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
-import { DirectoriesChannels } from '../../shared/types/ipc/channels'
+import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for indexed directory management.
