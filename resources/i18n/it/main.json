@@ -394,7 +394,7 @@
     "untitled": "Scrittura Senza Titolo",
     "startWriting": "Inizia a scrivere...",
     "typeHere": "Scrivi qui...",
-    "insertContent": "Inserisci contenuto",
+    "insertSection": "Inserisci sezione",
     "charactersAndWords": "{{chars}} caratteri · {{words}} parole",
     "creating": "Creazione in corso...",
     "createError": "Errore durante la creazione della scrittura. Riprova.",
