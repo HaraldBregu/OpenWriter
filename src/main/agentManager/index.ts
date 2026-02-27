@@ -1,5 +1,4 @@
 export { AgentManager } from './AgentManager'
-export { AgentManagerIpc } from './AgentManagerIpc'
 export { AgentSession } from './AgentSession'
 export { executeAgentStream } from './AgentExecutor'
 export type {
