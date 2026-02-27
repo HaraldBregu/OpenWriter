@@ -2,6 +2,7 @@ import { app } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import { ProviderSettings, DEFAULT_PROVIDER_INFERENCE, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
+import { MAX_RECENT_WORKSPACES } from '../constants'
 
 // Re-export for backward compatibility with files that import ModelSettings from here
 export type { ProviderSettings as ModelSettings }
