@@ -1,23 +1,32 @@
 /**
- * agents/index.ts — barrel that self-registers all named agents.
+ * agents/index.ts — named agent definitions barrel.
  *
- * Importing this module is enough to populate the agentRegistry singleton.
- * Each file calls `agentRegistry.register()` as a side effect on import.
- *
- * Import order matters only for readability — registration order does not
- * affect behaviour because the registry is keyed by unique string ids.
+ * Definitions are plain exported constants. Registration is done explicitly
+ * in bootstrapServices() via agentRegistry.register(), following the same
+ * pattern as TaskHandlerRegistry — visible, ordered, and test-isolation safe.
  */
 
-// Side-effect imports — trigger agentRegistry.register() for each agent
-import './StoryWriter'
-import './TextCompleter'
-import './ContentReview'
-import './Summarizer'
-import './ToneAdjuster'
-
-// Named re-exports — allow callers to reference specific definitions directly
 export { StoryWriterAgent } from './StoryWriter'
 export { TextCompleterAgent } from './TextCompleter'
 export { ContentReviewAgent } from './ContentReview'
 export { SummarizerAgent } from './Summarizer'
 export { ToneAdjusterAgent } from './ToneAdjuster'
+
+import { StoryWriterAgent } from './StoryWriter'
+import { TextCompleterAgent } from './TextCompleter'
+import { ContentReviewAgent } from './ContentReview'
+import { SummarizerAgent } from './Summarizer'
+import { ToneAdjusterAgent } from './ToneAdjuster'
+import type { AgentDefinition } from '../AgentDefinition'
+
+/**
+ * All built-in agent definitions in display order.
+ * Pass this to agentRegistry.register() in bootstrapServices().
+ */
+export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
+  StoryWriterAgent,
+  TextCompleterAgent,
+  ContentReviewAgent,
+  SummarizerAgent,
+  ToneAdjusterAgent,
+]
