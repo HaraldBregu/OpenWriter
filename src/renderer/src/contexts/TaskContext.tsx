@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import type { TaskEvent, TaskInfo, TaskPriority } from '../../../shared/types/ipc/types'
+import { TASK_MAX_EVENT_HISTORY } from '@/constants'
 
 // ---------------------------------------------------------------------------
 // Re-exported shared types
