@@ -370,19 +370,19 @@ export class LoggerService implements Disposable {
       })
     })
 
-    this.eventBus.on('agentManager:run:start', (event) => {
+    this.eventBus.on('AIAgentsManager:run:start', (event) => {
       const payload = event.payload as { sessionId: string; runId: string }
-      this.info('AgentManager', `Agent run started: ${payload.runId} (session: ${payload.sessionId})`)
+      this.info('AIAgentsManager', `Agent run started: ${payload.runId} (session: ${payload.sessionId})`)
     })
 
-    this.eventBus.on('agentManager:run:complete', (event) => {
+    this.eventBus.on('AIAgentsManager:run:complete', (event) => {
       const payload = event.payload as { sessionId: string; runId: string; duration: number }
-      this.info('AgentManager', `Agent run completed: ${payload.runId} (duration: ${payload.duration}ms)`)
+      this.info('AIAgentsManager', `Agent run completed: ${payload.runId} (duration: ${payload.duration}ms)`)
     })
 
-    this.eventBus.on('agentManager:run:error', (event) => {
+    this.eventBus.on('AIAgentsManager:run:error', (event) => {
       const payload = event.payload as { sessionId: string; runId: string; error: string }
-      this.error('AgentManager', `Agent run failed: ${payload.runId} - ${payload.error}`)
+      this.error('AIAgentsManager', `Agent run failed: ${payload.runId} - ${payload.error}`)
     })
   }
 
