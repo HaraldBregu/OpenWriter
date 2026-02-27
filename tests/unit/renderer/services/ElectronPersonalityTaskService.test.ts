@@ -326,17 +326,17 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Suite 5: savePersonality
+// Suite 5: save
 // ---------------------------------------------------------------------------
 
-describe('ElectronPersonalityTaskService — savePersonality', () => {
-  it('delegates to window.workspace.personality.save with the provided options', async () => {
+describe('ElectronPersonalityTaskService — save', () => {
+  it('delegates to window.workspace.savePersonality with the provided options', async () => {
     const savedResult = { id: 'saved-123' }
-    ;(window.workspace.personality.save as jest.Mock).mockResolvedValue(savedResult)
+    ;(window.workspace.savePersonality as jest.Mock).mockResolvedValue(savedResult)
 
     const service = createService()
 
-    const result = await service.savePersonality({
+    const result = await service.save({
       sectionId: 'consciousness',
       content: 'Deep thoughts',
       metadata: {
@@ -347,7 +347,7 @@ describe('ElectronPersonalityTaskService — savePersonality', () => {
       }
     })
 
-    expect(window.workspace.personality.save).toHaveBeenCalledWith({
+    expect(window.workspace.savePersonality).toHaveBeenCalledWith({
       sectionId: 'consciousness',
       content: 'Deep thoughts',
       metadata: {
@@ -361,10 +361,10 @@ describe('ElectronPersonalityTaskService — savePersonality', () => {
   })
 
   it('returns the id from the save result', async () => {
-    ;(window.workspace.personality.save as jest.Mock).mockResolvedValue({ id: 'file-abc' })
+    ;(window.workspace.savePersonality as jest.Mock).mockResolvedValue({ id: 'file-abc' })
 
     const service = createService()
-    const result = await service.savePersonality({
+    const result = await service.save({
       sectionId: 'motivation',
       content: 'Driven by purpose',
       metadata: { title: 'motivation', provider: 'openai', model: 'gpt-4o' }
