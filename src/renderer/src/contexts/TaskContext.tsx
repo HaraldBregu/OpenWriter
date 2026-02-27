@@ -56,7 +56,7 @@ export interface TrackedTaskState {
 // observers to re-render.
 // ---------------------------------------------------------------------------
 
-const MAX_EVENT_HISTORY = 50
+const MAX_EVENT_HISTORY = TASK_MAX_EVENT_HISTORY
 
 export interface TaskStore {
   getTaskSnapshot: (taskId: string) => TrackedTaskState | undefined
