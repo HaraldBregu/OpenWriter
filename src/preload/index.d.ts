@@ -198,43 +198,6 @@ export interface TaskApi {
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
-/** Named agent registry and streaming AI sessions */
-export interface AgentApi {
-  /** List all registered named agents as IPC-safe metadata. */
-  listAgents: () => Promise<AgentDefinitionInfo[]>
-  /** Return AgentManager runtime status (session/run counts). */
-  getStatus: () => Promise<AgentManagerStatus>
-  /** List all live session snapshots. */
-  listSessions: () => Promise<AgentSessionSnapshot[]>
-  /**
-   * Create a new session from a named agent definition.
-   * @param agentId   - Registered agent id (e.g. 'story-writer').
-   * @param providerId - Active provider id (e.g. 'openai').
-   * @param overrides  - Optional partial config overrides.
-   */
-  createSession: (
-    agentId: string,
-    providerId: string,
-    overrides?: Partial<AgentSessionConfig>
-  ) => Promise<AgentSessionSnapshot>
-  /** Destroy a session and cancel its active runs. Returns true if found. */
-  destroySession: (sessionId: string) => Promise<boolean>
-  /**
-   * Start a streaming run on an existing session.
-   * Returns the runId immediately; stream events arrive via onEvent().
-   */
-  startStreaming: (sessionId: string, request: AgentRequest) => Promise<string>
-  /** Cancel a single active run. Returns true if the run was found and aborted. */
-  cancelRun: (runId: string) => Promise<boolean>
-  /** Cancel all active runs for a session. Returns true if any runs were cancelled. */
-  cancelSession: (sessionId: string) => Promise<boolean>
-  /**
-   * Subscribe to streaming events from the main process.
-   * Returns an unsubscribe function — call it to stop listening.
-   */
-  onEvent: (callback: (event: AgentStreamEvent) => void) => () => void
-}
-
 // ---------------------------------------------------------------------------
 // Global Window augmentation
 // ---------------------------------------------------------------------------
