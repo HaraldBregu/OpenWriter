@@ -10,7 +10,7 @@ import { DocumentsService } from '../services/documents'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { getWindowService } from './IpcHelpers'
 import { getAllTextExtensions, getSupportedFileTypesDescription } from '../utils/file-type-validator'
-import { DocumentsChannels } from '../../shared/types/ipc/channels'
+import { WorkspaceChannels } from '../../shared/types/ipc/channels'
 
 /**
  * IPC handlers for managing documents in the workspace.
