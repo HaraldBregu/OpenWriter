@@ -178,7 +178,7 @@ const workspace: WorkspaceApi = {
         filePath: string;
         timestamp: number;
     }) => void): (() => void) => {
-        return typedOn(WorkspaceChannels.documents.fileChanged, callback)
+        return typedOn(WorkspaceChannels.documentsFileChanged, callback)
     },
     onDocumentWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         return typedOn(WorkspaceChannels.documents.watcherError, callback)
