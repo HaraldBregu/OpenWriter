@@ -43,26 +43,6 @@ import type {
 // Channel Name Constants (grouped by domain)
 // ===========================================================================
 
-// StoreChannels has been merged into AppChannels. This alias is kept so that
-// any code that still imports StoreChannels continues to compile while the
-// migration is in progress. It should be removed once all call-sites are gone.
-/** @deprecated Import from AppChannels instead */
-export const StoreChannels = {
-  getAllProviderSettings: 'store-get-all-provider-settings',
-  getProviderSettings: 'store-get-provider-settings',
-  setProviderSettings: 'store-set-provider-settings',
-  setInferenceDefaults: 'store-set-inference-defaults',
-  getAllModelSettings: 'store-get-all-model-settings',
-  getModelSettings: 'store-get-model-settings',
-  setSelectedModel: 'store-set-selected-model',
-  setApiToken: 'store-set-api-token',
-  setModelSettings: 'store-set-model-settings',
-  getCurrentWorkspace: 'store-get-current-workspace',
-  setCurrentWorkspace: 'store-set-current-workspace',
-  getRecentWorkspaces: 'store-get-recent-workspaces',
-  clearCurrentWorkspace: 'store-clear-current-workspace',
-} as const
-
 export const WorkspaceChannels = {
   selectFolder: 'workspace:select-folder',
   getCurrent: 'workspace-get-current',
