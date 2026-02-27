@@ -81,7 +81,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   type: string,
   input: TInput,
   options?: TaskSubmitOptions
-): UseTaskSubmitReturn<TResult> {
+): UseTaskSubmitReturn<TInput, TResult> {
   const { store } = useTaskContext()
 
   const [taskId, setTaskId] = useState<string | null>(null)
