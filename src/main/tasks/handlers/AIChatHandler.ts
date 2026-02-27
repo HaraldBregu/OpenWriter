@@ -15,6 +15,7 @@ import type { StoreService } from '../../services/store'
 import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils'
 import { ProviderResolver } from '../../shared/ProviderResolver'
 import { createChatModel } from '../../shared/ChatModelFactory'
+import { DEFAULT_AI_SYSTEM_PROMPT } from '../../constants'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,7 +41,7 @@ export interface AIChatOutput {
 // ---------------------------------------------------------------------------
 
 const LOG_PREFIX = '[AIChatHandler]'
-const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant.'
+const DEFAULT_SYSTEM_PROMPT = DEFAULT_AI_SYSTEM_PROMPT
 
 // ---------------------------------------------------------------------------
 // Handler
