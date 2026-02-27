@@ -100,7 +100,7 @@ const DirectoriesPage: React.FC = () => {
       // Mark all as indexed via main process
       for (const dir of directories) {
         if (!dir.isIndexed) {
-          const success = await window.workspace.directories.markIndexed(dir.id, true)
+          const success = await window.workspace.markDirectoryIndexed(dir.id, true)
           if (success) {
             dispatch(markDirectoryIndexed({
               id: dir.id,
