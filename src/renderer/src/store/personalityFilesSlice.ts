@@ -99,7 +99,7 @@ export const savePersonalityFile = createAsyncThunk(
   'personalityFiles/save',
   async (input: SavePersonalityFileInput, { rejectWithValue }) => {
     try {
-      const result = await window.workspace.personality.save(input)
+      const result = await window.workspace.savePersonality(input)
       return result
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save personality file'
