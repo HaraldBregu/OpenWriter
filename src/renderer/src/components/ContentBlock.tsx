@@ -110,7 +110,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[16em] text-base leading-relaxed text-foreground',
+        class: 'focus:outline-none min-h-[32em] text-base leading-relaxed text-foreground',
       },
     },
   }), []) // eslint-disable-line react-hooks/exhaustive-deps
