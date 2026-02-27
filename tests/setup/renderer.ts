@@ -198,6 +198,11 @@ Object.defineProperty(window, 'workspace', {
     removeRecent: jest.fn().mockResolvedValue(undefined),
     onChange: jest.fn().mockReturnValue(jest.fn()),
     onDeleted: jest.fn().mockReturnValue(jest.fn()),
+    // Flat workspace API methods
+    savePersonality: jest.fn().mockResolvedValue({ id: '1', path: '/test', savedAt: Date.now() }),
+    loadPersonalities: jest.fn().mockResolvedValue([]),
+    loadPersonality: jest.fn().mockResolvedValue(null),
+    deletePersonality: jest.fn().mockResolvedValue(undefined),
     documents: {
       importFiles: jest.fn().mockResolvedValue([]),
       importByPaths: jest.fn().mockResolvedValue([]),
