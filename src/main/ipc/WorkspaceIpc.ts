@@ -593,7 +593,7 @@ export class WorkspaceIpc implements IpcModule {
     )
 
     ipcMain.handle(
-      OutputChannels.delete,
+      WorkspaceChannels.outputDelete,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, params: { type: string; id: string }): Promise<void> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
@@ -613,7 +613,7 @@ export class WorkspaceIpc implements IpcModule {
           await outputFiles.delete(params.type as OutputType, params.id)
           logger.info('WorkspaceIpc', `Deleted output file: ${params.type}/${params.id}`)
         },
-        OutputChannels.delete
+        WorkspaceChannels.outputDelete
       )
     )
 
