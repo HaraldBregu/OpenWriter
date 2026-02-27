@@ -111,7 +111,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[32em] py-2 text-base leading-relaxed text-foreground',
+        class: 'focus:outline-none min-h-[32em] py-0 text-base leading-relaxed text-foreground',
       },
     },
   }), []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -193,11 +193,11 @@ export const ContentBlock = React.memo(function ContentBlock({
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 relative py-2">
+        <div className="flex-1 min-w-0 relative py-2 overflow-hidden">
           {/* Placeholder shown when editor is empty */}
           {isEmpty && (
             <span
-              className="absolute inset-0 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
+              className="absolute inset-0 py-2.5 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
               aria-hidden="true"
             >
               {placeholder}
@@ -207,7 +207,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         </div>
 
         {/* Action bar */}
-        <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0">
+        <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0 my-2">
           <ActionButton
             title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
             onClick={handleEnhance}
