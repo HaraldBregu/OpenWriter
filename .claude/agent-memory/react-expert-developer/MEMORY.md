@@ -74,7 +74,7 @@
 
 ## Output System (used for writings)
 - `outputSlice.ts` still exists for posts/general use
-- Writing storage now goes through `window.output.*` exclusively (OutputFilesService via workspace)
+- Writing storage goes through flat `window.workspace.saveOutput/loadOutputs/updateOutput/deleteOutput` (OutputFilesService via workspace)
 - Disk format: `<workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json` + per-block `<blockId>.md`
 - Block `id` is used as the block file name (name field in save/update calls)
 
@@ -82,7 +82,7 @@
 - `Block` interface (`src/renderer/src/components/ContentBlock.tsx`): `{ id, content, createdAt, updatedAt }` (ISO 8601 timestamps)
 - `createBlock()` factory stamps both timestamps on creation
 - On handleChange in pages, callers stamp `updatedAt: new Date().toISOString()` before dispatching
-- Blocks are serialized per-block via `window.output.save/update` — block `id` becomes the file `name`
+- Blocks are serialized per-block via `window.workspace.saveOutput/updateOutput` — block `id` becomes the file `name`
 
 ## Component Library
 - App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
