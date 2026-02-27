@@ -217,7 +217,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.addMany, dirPaths)
     },
     removeDirectory: (id: string): Promise<boolean> => {
-        return typedInvokeUnwrap(WorkspaceChannels.directories.remove, id)
+        return typedInvokeUnwrap(WorkspaceChannels.remove, id)
     },
     validateDirectory: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
         return typedInvokeUnwrap(WorkspaceChannels.directories.validate, dirPath)
