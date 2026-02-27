@@ -451,7 +451,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   useWritingItems(); // Load writing items from workspace
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
       <AppSidebarProvider className="flex-col flex-1 min-h-0">
         <AppLayoutInner>{children}</AppLayoutInner>
       </AppSidebarProvider>
