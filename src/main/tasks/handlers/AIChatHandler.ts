@@ -84,12 +84,13 @@ export class AIChatHandler implements TaskHandler<AIChatInput, AIChatOutput> {
 
     // --- Build the LangChain model -------------------------------------------
 
-    const model = new ChatOpenAI({
+    const model = createChatModel({
+      providerId,
       apiKey,
-      model: modelName,
+      modelName,
       streaming: true,
-      ...(isReasoningModel(modelName) ? {} : { temperature }),
-      ...(maxTokens ? { maxTokens } : {})
+      temperature,
+      maxTokens,
     })
 
     // --- Build message chain -------------------------------------------------
