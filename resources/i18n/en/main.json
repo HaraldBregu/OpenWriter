@@ -134,7 +134,6 @@
       "screen": "Screen",
       "bluetooth": "Bluetooth",
       "network": "Network",
-      "cronJobs": "Cron Jobs",
       "lifecycle": "Lifecycle",
       "windows": "Windows",
       "filesystem": "Filesystem",
