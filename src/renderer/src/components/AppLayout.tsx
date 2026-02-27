@@ -431,8 +431,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
           </AppSidebarFooter>
         </AppSidebar>
 
-        <AppSidebarInset className="flex flex-col flex-1 min-h-0">
-          <main className="flex-1 overflow-y-auto bg-background">
+        <AppSidebarInset className="flex flex-col flex-1 min-h-0 min-w-0">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
             {children}
           </main>
         </AppSidebarInset>
