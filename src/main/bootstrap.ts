@@ -78,18 +78,18 @@ export function bootstrapServices(): BootstrapResult {
 
   container.register('agentManager', new AgentManager(storeService, eventBus))
 
-  // Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
+  // Named agent registry — populated explicitly (mirrors TasksManagerHandlerRegistry pattern)
   const agentRegistry = container.register('agentRegistry', new AgentRegistry())
   for (const def of ALL_AGENT_DEFINITIONS) {
     agentRegistry.register(def)
   }
 
-  // Task system -- handler registry + executor service + built-in handlers
-  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
+  // Task system -- handler registry + executor + built-in handlers
+  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TasksManagerHandlerRegistry())
   taskHandlerRegistry.register(new FileDownloadHandler())
   taskHandlerRegistry.register(new AIChatHandler(storeService))
   taskHandlerRegistry.register(new AIEnhanceHandler(storeService))
-  container.register('taskExecutor', new TaskExecutorService(taskHandlerRegistry, eventBus, 5))
+  container.register('taskExecutor', new TasksManagerExecutor(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
   const windowContextManager = new WindowContextManager(container, eventBus)
