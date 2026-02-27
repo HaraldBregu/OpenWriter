@@ -58,7 +58,7 @@ export interface UseDraftEditorReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Serialize blocks to the output format expected by window.workspace.output.save/update.
+ * Serialize blocks to the output format expected by window.workspace.saveOutput/updateOutput.
  * Each block becomes an object with a stable name (UUID), its content, and
  * timestamps. The name is preserved across saves using the block's own `id`.
  */
