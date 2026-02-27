@@ -72,7 +72,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: PersonalityFile[] - Array of all personality files
      */
     ipcMain.handle(
-      WorkspaceChannels.personality.loadAll,
+      WorkspaceChannels.personalityLoadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<PersonalityFile[]> => {
         const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
 
@@ -81,7 +81,7 @@ export class PersonalityIpc implements IpcModule {
         console.log(`[PersonalityIpc] Loaded ${files.length} personality files`)
 
         return files
-      }, WorkspaceChannels.personality.loadAll)
+      }, WorkspaceChannels.personalityLoadAll)
     )
 
     /**
