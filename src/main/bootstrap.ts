@@ -87,6 +87,7 @@ export function bootstrapServices(): BootstrapResult {
   container.register('logger', logger)
 
   container.register('agent', new AgentService(storeService))
+  container.register('agentManager', new AgentManager(storeService, eventBus))
 
   // Pipeline -- agent registry + pipeline service + built-in agents
   const agentRegistry = container.register('agentRegistry', new AgentRegistry())
