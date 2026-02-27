@@ -442,7 +442,7 @@ export class WorkspaceIpc implements IpcModule {
     // -------------------------------------------------------------------------
 
     ipcMain.handle(
-      OutputChannels.save,
+      WorkspaceChannels.outputSave,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, input: SaveOutputFileInput): Promise<SaveOutputFileResult> => {
           const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
@@ -474,7 +474,7 @@ export class WorkspaceIpc implements IpcModule {
           logger.info('WorkspaceIpc', `Saved output file for type ${input.type}: ${result.id}`)
           return result
         },
-        OutputChannels.save
+        WorkspaceChannels.outputSave
       )
     )
 
