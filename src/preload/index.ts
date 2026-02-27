@@ -167,7 +167,7 @@ const workspace: WorkspaceApi = {
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
-        return typedInvokeUnwrap(WorkspaceChannels.documents.loadAll)
+        return typedInvokeUnwrap(WorkspaceChannels.documentsLoadAll)
     },
     deleteDocument: (id: string): Promise<void> => {
         return typedInvokeUnwrap(WorkspaceChannels.documents.deleteFile, id)
