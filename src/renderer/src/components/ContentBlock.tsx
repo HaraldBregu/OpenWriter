@@ -160,7 +160,7 @@ export const ContentBlock = React.memo(function ContentBlock({
       value={block}
       dragListener={false}
       dragControls={dragControls}
-      className="group relative px-5 py-2 cursor-default select-none"
+      className="group relative px-5 py-4 cursor-default select-none"
       style={{ zIndex: 1 }}
     >
       <div className="flex items-start gap-3">
