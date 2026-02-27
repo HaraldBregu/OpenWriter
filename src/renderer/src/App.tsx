@@ -39,7 +39,7 @@ const App: React.FC = () => {
       <Provider store={store}>
         <AppProvider>
           <TaskProvider>
-          <PersonalityTaskProvider>
+          <PersonalityTaskProvider service={electronPersonalityTaskService}>
           <Router>
               <Routes>
                 {/* Welcome page - standalone, shown first */}
