@@ -4,9 +4,6 @@ import {
     AppChannels,
     WindowChannels,
     WorkspaceChannels,
-    DocumentsChannels,
-    DirectoriesChannels,
-    PersonalityChannels,
     OutputChannels,
     TaskChannels,
 } from '../shared/types/ipc/channels'
