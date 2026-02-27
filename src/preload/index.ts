@@ -232,7 +232,7 @@ const workspace: WorkspaceApi = {
         isIndexed: boolean
         lastIndexedAt?: number
     }>) => void): (() => void) => {
-        return typedOn(WorkspaceChannels.directories.changed, callback)
+        return typedOn(WorkspaceChannels.directoriesChanged, callback)
     },
     // -------------------------------------------------------------------------
     // Output file management (posts and writings)
