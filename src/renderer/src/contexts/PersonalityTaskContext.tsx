@@ -51,6 +51,9 @@ export type IPersonalityTaskService = IEntityTaskService<
   PersonalitySaveResult
 >
 
+// Resolved once at module load time so the config callbacks below stay pure.
+const DEFAULT_MODEL = import.meta.env.VITE_OPENAI_MODEL ?? 'gpt-4o-mini'
+
 // ---------------------------------------------------------------------------
 // Context bundle — thin adapter over the generic EntityTaskContext
 // ---------------------------------------------------------------------------
