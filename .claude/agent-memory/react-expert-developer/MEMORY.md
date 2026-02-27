@@ -199,3 +199,10 @@
 - Both EN and IT files must be kept in sync whenever new keys are added
 - Helper functions that format labels must accept `t` as a parameter (e.g. `statusLabel(s, t)`)
 - Sub-components inside pages each call `useTranslation()` independently (React memo boundary is fine)
+
+## Jest / Transform Gotchas (Windows, added Feb 2026)
+- `import.meta.env` FAILS in Jest for renderer context files — DO NOT use it inside `createEntityTaskContext()` config callbacks or module-level. Use string literals as final fallbacks.
+- `store/index.ts` imported missing `chatSlice` — created stub at `src/renderer/src/store/chatSlice.ts`
+- `window.workspace.savePersonality` must be in `tests/setup/renderer.ts` workspace mock
+- PersonalityTaskContext tests wrap with `<TaskProvider>` ancestor; drive events via `sharedStore.applyEvent()` via `StoreProbe` component
+- Section isolation tests: both hooks must share the SAME `renderHook` call (same React tree = same TaskProvider)
