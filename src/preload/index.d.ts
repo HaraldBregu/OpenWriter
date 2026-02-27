@@ -213,6 +213,5 @@ declare global {
     workspace: WorkspaceApi
     /** Optional: not present in all window types */
     task?: TaskApi
-    ai: AiApi
   }
 }
