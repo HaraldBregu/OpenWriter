@@ -34,6 +34,10 @@ export interface UseTaskReturn {
 // ---------------------------------------------------------------------------
 
 /**
+ * @deprecated Use `useTaskSubmit` from `@/hooks/useTaskSubmit` instead. This hook
+ * maintains its own IPC listener and local Map, bypassing the shared TaskStore.
+ * It is kept only for backward compatibility and will be removed in a future release.
+ *
  * useTask -- local-state hook for submitting and tracking background tasks
  * executed by the Electron main process via window.task.
  *
