@@ -266,15 +266,6 @@ export interface EventChannelMap {
   [WindowChannels.fullScreenChange]: { data: boolean }
   [WorkspaceChannels.changed]: { data: WorkspaceChangedEvent }
   [WorkspaceChannels.deleted]: { data: WorkspaceDeletedEvent }
-  [CronChannels.jobResult]: { data: CronJobResult }
-  [AgentChannels.token]: { data: unknown }
-  [AgentChannels.thinking]: { data: unknown }
-  [AgentChannels.toolStart]: { data: unknown }
-  [AgentChannels.toolEnd]: { data: unknown }
-  [AgentChannels.done]: { data: unknown }
-  [AgentChannels.error]: { data: unknown }
-  [AgentManagerChannels.event]: { data: AMStreamEvent }
-  [PipelineChannels.event]: { data: PipelineEvent }
   [TaskChannels.event]: { data: TaskEvent }
   [DocumentsChannels.fileChanged]: { data: DocumentFileChangeEvent }
   [DocumentsChannels.watcherError]: { data: WatcherError }
