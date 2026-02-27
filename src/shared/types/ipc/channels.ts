@@ -108,16 +108,6 @@ export const TaskChannels = {
   queueStatus: 'task:queue-status',
 } as const
 
-export const DocumentsChannels = {
-  importFiles: 'documents:import-files',
-  importByPaths: 'documents:import-by-paths',
-  downloadFromUrl: 'documents:download-from-url',
-  loadAll: 'documents:load-all',
-  deleteFile: 'documents:delete-file',
-  fileChanged: 'documents:file-changed',
-  watcherError: 'documents:watcher-error',
-} as const
-
 export const OutputChannels = {
   save: 'output:save',
   loadAll: 'output:load-all',
