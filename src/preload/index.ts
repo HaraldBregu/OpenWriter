@@ -181,7 +181,7 @@ const workspace: WorkspaceApi = {
         return typedOn(WorkspaceChannels.documentsFileChanged, callback)
     },
     onDocumentWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        return typedOn(WorkspaceChannels.documents.watcherError, callback)
+        return typedOn(WorkspaceChannels.documentsWatcherError, callback)
     },
     // -------------------------------------------------------------------------
     // Indexed directory management
