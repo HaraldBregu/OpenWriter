@@ -6,10 +6,10 @@
  * async generator that yields AgentStreamEvents.
  */
 
-import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
 import type { ResolvedProvider } from '../shared/ProviderResolver'
-import { isReasoningModel, extractTokenFromChunk, classifyError, toUserMessage } from '../shared/aiUtils'
+import { extractTokenFromChunk, classifyError, toUserMessage } from '../shared/aiUtils'
+import { createChatModel } from '../shared/ChatModelFactory'
 import type { AgentStreamEvent } from './AgentManagerTypes'
 import type { HistoryMessage } from './AgentSession'
 
