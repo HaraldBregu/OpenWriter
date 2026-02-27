@@ -168,7 +168,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     let resolvedTaskId: string
 
     try {
-      const ipcResult = await window.task.submit(type, input, options)
+      const ipcResult = await window.task.submit(type, inputOverride ?? input, options)
 
       if (!ipcResult.success) {
         runningRef.current = false
