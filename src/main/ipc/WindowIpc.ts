@@ -52,8 +52,10 @@ export class WindowIpc implements IpcModule {
     ipcMain.on(WindowChannels.popupMenu, (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (win) {
-        // This is handled by the application's menu setup
-        // Just acknowledge the request
+        const menu = ElectronMenu.getApplicationMenu()
+        if (menu) {
+          menu.popup({ window: win })
+        }
       }
     })
 
