@@ -264,13 +264,13 @@ export interface EventChannelMap {
   [WorkspaceChannels.changed]: { data: WorkspaceChangedEvent }
   [WorkspaceChannels.deleted]: { data: WorkspaceDeletedEvent }
   [TaskChannels.event]: { data: TaskEvent }
-  [DocumentsChannels.fileChanged]: { data: DocumentFileChangeEvent }
-  [DocumentsChannels.watcherError]: { data: WatcherError }
+  [WorkspaceChannels.documents.fileChanged]: { data: DocumentFileChangeEvent }
+  [WorkspaceChannels.documents.watcherError]: { data: WatcherError }
   [OutputChannels.fileChanged]: { data: OutputFileChangeEvent }
   [OutputChannels.watcherError]: { data: WatcherError }
-  [PersonalityChannels.fileChanged]: { data: PersonalityFileChangeEvent }
-  [PersonalityChannels.watcherError]: { data: WatcherError }
-  [PersonalityChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
-  [DirectoriesChannels.changed]: { data: DirectoryEntry[] }
+  [WorkspaceChannels.personality.fileChanged]: { data: PersonalityFileChangeEvent }
+  [WorkspaceChannels.personality.watcherError]: { data: WatcherError }
+  [WorkspaceChannels.personality.sectionConfigChanged]: { data: SectionConfigChangeEvent }
+  [WorkspaceChannels.directories.changed]: { data: DirectoryEntry[] }
   [AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction }
 }
