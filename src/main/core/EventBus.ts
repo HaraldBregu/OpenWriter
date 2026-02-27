@@ -19,6 +19,9 @@ export interface AppEvents {
   'agent:run:start': { sessionId: string; runId: string }
   'agent:run:complete': { sessionId: string; runId: string; duration: number }
   'agent:run:error': { sessionId: string; runId: string; error: string }
+  'agentManager:run:start': { sessionId: string; runId: string }
+  'agentManager:run:complete': { sessionId: string; runId: string; duration: number }
+  'agentManager:run:error': { sessionId: string; runId: string; error: string }
   'error:critical': { error: Error; context: string }
   'window:created': { windowId: number; type: string }
   'window:closed': { windowId: number }
