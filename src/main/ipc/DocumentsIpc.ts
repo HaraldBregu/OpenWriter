@@ -141,7 +141,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata[] - Array of all document metadata
      */
     ipcMain.handle(
-      DocumentsChannels.loadAll,
+      WorkspaceChannels.documents.loadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -154,7 +154,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.loadAll(currentWorkspace)
-      }, DocumentsChannels.loadAll)
+      }, WorkspaceChannels.documents.loadAll)
     )
 
     /**
