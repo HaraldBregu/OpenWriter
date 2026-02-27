@@ -445,6 +445,4 @@ if (process.contextIsolated) {
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
     globalThis.task = task
-    // @ts-ignore (define in dts)
-    globalThis.agent = agent
 }
