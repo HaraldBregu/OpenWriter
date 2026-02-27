@@ -28,6 +28,12 @@ export class AgentSession {
   readonly maxHistoryMessages: number
   readonly createdAt: number
   readonly metadata?: Record<string, unknown>
+  /**
+   * Optional LangGraph factory — not serialized in toSnapshot() because
+   * functions cannot be transmitted over Electron IPC.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
 
   private history: HistoryMessage[] = []
   private activeRuns = new Set<string>()
@@ -42,6 +48,7 @@ export class AgentSession {
     this.maxTokens = config.maxTokens && config.maxTokens > 0 ? config.maxTokens : undefined
     this.maxHistoryMessages = config.maxHistoryMessages ?? DEFAULT_MAX_HISTORY
     this.metadata = config.metadata
+    this.buildGraph = config.buildGraph
     this.createdAt = Date.now()
     this._lastActivity = this.createdAt
   }
