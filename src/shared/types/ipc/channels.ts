@@ -115,17 +115,6 @@ export const TaskChannels = {
   queueStatus: 'task:queue-status',
 } as const
 
-export const OutputChannels = {
-  save: 'output:save',
-  loadAll: 'output:load-all',
-  loadByType: 'output:load-by-type',
-  loadOne: 'output:load-one',
-  update: 'output:update',
-  delete: 'output:delete',
-  fileChanged: 'output:file-changed',
-  watcherError: 'output:watcher-error',
-} as const
-
 export const AppChannels = {
   playSound: 'play-sound',
   setTheme: 'set-theme',
