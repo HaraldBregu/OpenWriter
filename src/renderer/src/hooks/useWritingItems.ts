@@ -67,7 +67,7 @@ export function useWritingItems(): void {
 
     // -----------------------------------------------------------------------
     // File-watcher listener — reload when the filesystem changes externally.
-    // Uses window.workspace.output.onFileChange filtered to 'writings' type so we only
+    // Uses window.workspace.onOutputFileChange filtered to 'writings' type so we only
     // react to changes relevant to the writing editor, not posts or other types.
     // -----------------------------------------------------------------------
     const unsubscribeFileChange = window.workspace.onOutputFileChange((event) => {
