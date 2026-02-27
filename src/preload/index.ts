@@ -193,7 +193,7 @@ const workspace: WorkspaceApi = {
         isIndexed: boolean
         lastIndexedAt?: number
     }>> => {
-        return typedInvokeUnwrap(WorkspaceChannels.directories.list)
+        return typedInvokeUnwrap(WorkspaceChannels.list)
     },
     addDirectory: (dirPath: string): Promise<{
         id: string
