@@ -133,23 +133,7 @@ export const AppChannels = {
   getProviderSettings: 'store-get-provider-settings',
   setProviderSettings: 'store-set-provider-settings',
   setInferenceDefaults: 'store-set-inference-defaults',
-  /** @deprecated Use getAllProviderSettings instead */
-  getAllModelSettings: 'store-get-all-model-settings',
-  /** @deprecated Use getProviderSettings instead */
-  getModelSettings: 'store-get-model-settings',
-  /** @deprecated Use setProviderSettings instead */
-  setSelectedModel: 'store-set-selected-model',
-  /** @deprecated Use setProviderSettings instead */
-  setApiToken: 'store-set-api-token',
-  /** @deprecated Use setProviderSettings instead */
-  setModelSettings: 'store-set-model-settings',
 } as const
-
-// Legacy model settings type (kept for backward compat with store legacy channels)
-interface LegacyModelSettings {
-  selectedModel: string
-  apiToken: string
-}
 
 // ===========================================================================
 // Channel-to-Type Maps
@@ -169,11 +153,6 @@ export interface InvokeChannelMap {
   [AppChannels.getProviderSettings]: { args: [providerId: string]; result: ProviderSettings | null }
   [AppChannels.setProviderSettings]: { args: [providerId: string, settings: ProviderSettings]; result: void }
   [AppChannels.setInferenceDefaults]: { args: [providerId: string, update: InferenceDefaultsUpdate]; result: void }
-  [AppChannels.getAllModelSettings]: { args: []; result: Record<string, LegacyModelSettings> }
-  [AppChannels.getModelSettings]: { args: [providerId: string]; result: LegacyModelSettings | null }
-  [AppChannels.setSelectedModel]: { args: [providerId: string, modelId: string]; result: void }
-  [AppChannels.setApiToken]: { args: [providerId: string, token: string]; result: void }
-  [AppChannels.setModelSettings]: { args: [providerId: string, settings: LegacyModelSettings]; result: void }
 
   // ---- Workspace (IpcResult-wrapped) ----
   [WorkspaceChannels.selectFolder]: { args: []; result: string | null }
