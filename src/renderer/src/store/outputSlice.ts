@@ -181,7 +181,7 @@ export const saveOutputItem = createAsyncThunk<OutputItem, SaveOutputItemInput, 
         reasoning,
       } = input
 
-      const saved = await window.workspace.output.save({
+      const saved = await window.workspace.saveOutput({
         type,
         blocks: blocks.map((b) => ({
           name: b.name,
