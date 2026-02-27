@@ -37,6 +37,7 @@ export class AgentIpc implements IpcModule {
 
   register(container: ServiceContainer, _eventBus: EventBus): void {
     const agentManager = container.get<AgentManager>('agentManager')
+    const agentRegistry = container.get<AgentRegistry>('agentRegistry')
 
     // ---- Queries ---------------------------------------------------------------
 
