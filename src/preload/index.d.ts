@@ -150,7 +150,7 @@ export interface WindowApi {
   onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
 }
 
-/** Workspace folder selection and recent workspaces */
+/** Workspace folder selection, recent workspaces, and document/directory/personality/output management */
 export interface WorkspaceApi {
   selectFolder: () => Promise<string | null>
   getCurrent: () => Promise<string | null>
@@ -162,61 +162,49 @@ export interface WorkspaceApi {
   onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
   /** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
   onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void
-  /** Document import, download, and file-watch events */
-  documents: DocumentsApi
-  /** Indexed directory management */
-  directories: DirectoriesApi
-  /** Personality / conversation file management */
-  personality: PersonalityApi
-  /** Output file management (posts and writings) */
-  output: OutputApi
-}
-
-/** Document import, download, and file-watch events */
-export interface DocumentsApi {
+  // -------------------------------------------------------------------------
+  // Document import, download, and file-watch events
+  // -------------------------------------------------------------------------
   importFiles: () => Promise<DocumentInfo[]>
   importByPaths: (paths: string[]) => Promise<DocumentInfo[]>
   downloadFromUrl: (url: string) => Promise<DocumentInfo>
-  loadAll: () => Promise<DocumentInfo[]>
-  delete: (id: string) => Promise<void>
-  onFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: WatcherError) => void) => () => void
-}
-
-/** Indexed directory management */
-export interface DirectoriesApi {
-  list: () => Promise<DirectoryEntry[]>
-  add: (dirPath: string) => Promise<DirectoryEntry>
-  addMany: (dirPaths: string[]) => Promise<DirectoryAddManyResult>
-  remove: (id: string) => Promise<boolean>
-  validate: (dirPath: string) => Promise<DirectoryValidationResult>
-  markIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
-  onChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void
-}
-
-/** Personality / conversation file management */
-export interface PersonalityApi {
-  save: (input: SavePersonalityInput) => Promise<SavePersonalityResult>
-  loadAll: () => Promise<PersonalityFile[]>
-  loadOne: (params: { sectionId: string; id: string }) => Promise<PersonalityFile | null>
-  delete: (params: { sectionId: string; id: string }) => Promise<void>
-  onFileChange: (callback: (event: PersonalityFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: WatcherError) => void) => () => void
+  loadDocuments: () => Promise<DocumentInfo[]>
+  deleteDocument: (id: string) => Promise<void>
+  onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void
+  onDocumentWatcherError: (callback: (error: WatcherError) => void) => () => void
+  // -------------------------------------------------------------------------
+  // Indexed directory management
+  // -------------------------------------------------------------------------
+  listDirectories: () => Promise<DirectoryEntry[]>
+  addDirectory: (dirPath: string) => Promise<DirectoryEntry>
+  addDirectories: (dirPaths: string[]) => Promise<DirectoryAddManyResult>
+  removeDirectory: (id: string) => Promise<boolean>
+  validateDirectory: (dirPath: string) => Promise<DirectoryValidationResult>
+  markDirectoryIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
+  onDirectoriesChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void
+  // -------------------------------------------------------------------------
+  // Personality / conversation file management
+  // -------------------------------------------------------------------------
+  savePersonality: (input: SavePersonalityInput) => Promise<SavePersonalityResult>
+  loadPersonalities: () => Promise<PersonalityFile[]>
+  loadPersonality: (params: { sectionId: string; id: string }) => Promise<PersonalityFile | null>
+  deletePersonality: (params: { sectionId: string; id: string }) => Promise<void>
+  onPersonalityFileChange: (callback: (event: PersonalityFileChangeEvent) => void) => () => void
+  onPersonalityWatcherError: (callback: (error: WatcherError) => void) => () => void
   loadSectionConfig: (params: { sectionId: string }) => Promise<SectionConfig | null>
   saveSectionConfig: (params: { sectionId: string; update: SectionConfigUpdate }) => Promise<SectionConfig>
   onSectionConfigChange: (callback: (event: SectionConfigChangeEvent) => void) => () => void
-}
-
-/** Output file management (posts and writings) */
-export interface OutputApi {
-  save: (input: SaveOutputInput) => Promise<SaveOutputResult>
-  loadAll: () => Promise<OutputFile[]>
-  loadByType: (type: string) => Promise<OutputFile[]>
-  loadOne: (params: { type: string; id: string }) => Promise<OutputFile | null>
-  update: (params: OutputUpdateParams) => Promise<void>
-  delete: (params: { type: string; id: string }) => Promise<void>
-  onFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
-  onWatcherError: (callback: (error: WatcherError) => void) => () => void
+  // -------------------------------------------------------------------------
+  // Output file management (posts and writings)
+  // -------------------------------------------------------------------------
+  saveOutput: (input: SaveOutputInput) => Promise<SaveOutputResult>
+  loadOutputs: () => Promise<OutputFile[]>
+  loadOutputsByType: (type: string) => Promise<OutputFile[]>
+  loadOutput: (params: { type: string; id: string }) => Promise<OutputFile | null>
+  updateOutput: (params: OutputUpdateParams) => Promise<void>
+  deleteOutput: (params: { type: string; id: string }) => Promise<void>
+  onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
+  onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
 
 /** Background task queue */
