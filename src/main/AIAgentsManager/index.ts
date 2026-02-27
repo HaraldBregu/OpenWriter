@@ -1,4 +1,4 @@
-export { AIAgentsManager } from './aiAgentsManager'
+export { AIAgentsManager } from './AIAgentsManager'
 export { AIAgentsSession } from './AIAgentsSession'
 export { executeAIAgentsStream } from './AIAgentsExecutor'
 export type {
@@ -8,7 +8,7 @@ export type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-} from './aiAgentsManagerTypes'
+} from './AIAgentsManagerTypes'
 
 // Named agent registry
 export { AIAgentsRegistry, buildSessionConfig } from './AIAgentsRegistry'

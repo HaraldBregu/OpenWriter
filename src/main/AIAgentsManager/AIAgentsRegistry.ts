@@ -8,7 +8,7 @@
  * Callers that need a live session config should use `buildSessionConfig()`.
  */
 
-import type { AgentSessionConfig } from './aiAgentsManagerTypes'
+import type { AgentSessionConfig } from './AIAgentsManagerTypes'
 import { type AIAgentsDefinition, type AIAgentsDefinitionInfo, toAIAgentsDefinitionInfo } from './AIAgentsDefinition'
 
 // ---------------------------------------------------------------------------

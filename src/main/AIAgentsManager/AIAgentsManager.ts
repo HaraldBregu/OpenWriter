@@ -21,7 +21,7 @@ import type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-} from './aiAgentsManagerTypes'
+} from './AIAgentsManagerTypes'
 
 const LOG_PREFIX = '[AIAgentsManager]'
 
