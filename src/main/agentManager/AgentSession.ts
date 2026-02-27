@@ -6,6 +6,8 @@
 
 import { randomUUID } from 'node:crypto'
 import type { AgentSessionConfig, AgentSessionSnapshot } from './AgentManagerTypes'
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
+import type { CompiledStateGraph } from '@langchain/langgraph'
 
 const DEFAULT_MAX_HISTORY = 50
 const DEFAULT_TEMPERATURE = 0.7
