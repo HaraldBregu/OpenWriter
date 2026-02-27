@@ -223,7 +223,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.directories.validate, dirPath)
     },
     markDirectoryIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
-        return typedInvokeUnwrap(DirectoriesChannels.markIndexed, id, isIndexed)
+        return typedInvokeUnwrap(WorkspaceChannels.directories.markIndexed, id, isIndexed)
     },
     onDirectoriesChanged: (callback: (directories: Array<{
         id: string
