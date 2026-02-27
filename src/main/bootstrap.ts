@@ -81,7 +81,6 @@ export function bootstrapServices(): BootstrapResult {
   const logger = new LoggerService(eventBus)
   container.register('logger', logger)
 
-  container.register('agent', new AgentService(storeService))
   container.register('agentManager', new AgentManager(storeService, eventBus))
 
   // Task system -- handler registry + executor service + built-in handlers
