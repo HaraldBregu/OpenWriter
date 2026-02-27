@@ -479,7 +479,7 @@ export class WorkspaceIpc implements IpcModule {
     )
 
     ipcMain.handle(
-      OutputChannels.update,
+      WorkspaceChannels.update,
       wrapIpcHandler(
         async (
           event: IpcMainInvokeEvent,
@@ -522,7 +522,7 @@ export class WorkspaceIpc implements IpcModule {
           })
           logger.info('WorkspaceIpc', `Updated output file: ${params.type}/${params.id}`)
         },
-        OutputChannels.update
+        WorkspaceChannels.update
       )
     )
 
