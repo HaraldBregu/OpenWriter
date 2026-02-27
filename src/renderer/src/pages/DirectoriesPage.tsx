@@ -44,7 +44,7 @@ const DirectoriesPage: React.FC = () => {
     // Clear existing directories to prevent showing stale data
     dispatch(clearDirectories())
     try {
-      const dirs = await window.workspace.directories.list()
+      const dirs = await window.workspace.listDirectories()
       console.log('[DirectoriesPage] Received', dirs.length, 'directories from main process')
       dispatch(loadDirectories(dirs))
     } catch (err) {
