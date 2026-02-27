@@ -144,7 +144,7 @@ const NewWritingPage: React.FC = () => {
       <div className="flex flex-1 overflow-hidden bg-background w-full">
         {/* Main content area */}
         <div className="overflow-y-auto flex-1 min-w-0 w-full">
-          <div className="max-w-6xl w-full mx-auto px-6 py-10 flex flex-col gap-2">
+          <div className="w-full px-6 py-10 flex flex-col gap-2">
             <Reorder.Group
               axis="y"
               values={blocks}
