@@ -394,7 +394,7 @@
     "untitled": "Untitled Writing",
     "startWriting": "Start writing...",
     "typeHere": "Type here...",
-    "insertContent": "Insert content",
+    "insertSection": "Insert section",
     "charactersAndWords": "{{chars}} characters · {{words}} words",
     "creating": "Creating...",
     "createError": "Failed to create writing. Please try again.",
