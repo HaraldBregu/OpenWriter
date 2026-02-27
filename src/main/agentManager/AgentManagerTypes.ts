@@ -5,6 +5,9 @@
  * usable from IPC, task handlers, and any main-process service.
  */
 
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
+import type { CompiledStateGraph } from '@langchain/langgraph'
+
 // ---------------------------------------------------------------------------
 // Session configuration
 // ---------------------------------------------------------------------------
@@ -17,6 +20,12 @@ export interface AgentSessionConfig {
   maxTokens?: number
   maxHistoryMessages?: number
   metadata?: Record<string, unknown>
+  /**
+   * LangGraph factory — when set, the session runs the agent as a StateGraph
+   * instead of a plain chat completion. Not serialized over IPC.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
 }
 
 // ---------------------------------------------------------------------------
