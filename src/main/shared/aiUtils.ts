@@ -72,6 +72,6 @@ export function toUserMessage(kind: ReturnType<typeof classifyError>, rawMessage
     case 'rate_limit':
       return 'Rate limit exceeded. Please wait a moment and try again.'
     default:
-      return `OpenAI request failed: ${rawMessage}`
+      return `AI request failed: ${rawMessage}`
   }
 }
