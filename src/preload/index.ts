@@ -326,7 +326,7 @@ const workspace: WorkspaceApi = {
         return typedOn(WorkspaceChannels.personality.fileChanged, callback)
     },
     onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-        return typedOn(PersonalityChannels.watcherError, callback)
+        return typedOn(WorkspaceChannels.personality.watcherError, callback)
     },
     loadSectionConfig: (params: { sectionId: string }): Promise<{
         schemaVersion: number
