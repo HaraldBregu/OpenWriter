@@ -1,9 +1,9 @@
 /**
- * AgentRegistry — singleton registry of all named AgentDefinitions.
+ * AgentRegistry — registry of all named AgentDefinitions.
  *
- * Agent files self-register by importing `agentRegistry` and calling
- * `agentRegistry.register(definition)` as a module side effect.  The barrel
- * at `agents/index.ts` triggers those side effects in one import.
+ * Instantiated once in bootstrapServices() and registered in ServiceContainer
+ * as 'agentRegistry', following the same pattern as TaskHandlerRegistry.
+ * Definitions are registered explicitly in bootstrap — not via module side effects.
  *
  * Callers that need a live session config should use `buildSessionConfig()`.
  */
