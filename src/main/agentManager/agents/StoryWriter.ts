@@ -6,7 +6,6 @@
  * is set high to encourage creative variation.
  */
 
-import { agentRegistry } from '../AgentRegistry'
 import type { AgentDefinition } from '../AgentDefinition'
 
 const definition: AgentDefinition = {
