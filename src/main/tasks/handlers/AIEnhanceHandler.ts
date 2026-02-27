@@ -89,11 +89,12 @@ export class AIEnhanceHandler implements TaskHandler<AIEnhanceInput, AIEnhanceOu
 
     reporter.progress(0, 'connecting')
 
-    const model = new ChatOpenAI({
+    const model = createChatModel({
+      providerId,
       apiKey,
-      model: modelName,
+      modelName,
       streaming: true,
-      ...(isReasoningModel(modelName) ? {} : { temperature: 0.7 })
+      temperature: 0.7,
     })
 
     const prompt = buildContinuationPrompt(input)
