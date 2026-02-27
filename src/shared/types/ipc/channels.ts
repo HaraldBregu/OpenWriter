@@ -37,6 +37,13 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
+  AgentDefinitionInfo,
+  AgentSessionConfig,
+  AgentRequest,
+  AgentStreamEvent,
+  AgentSessionSnapshot,
+  AgentRunSnapshot,
+  AgentManagerStatus,
 } from './types'
 
 // ===========================================================================
