@@ -7,7 +7,7 @@ import { useTaskContext } from '@/contexts/TaskContext'
 // Types
 // ---------------------------------------------------------------------------
 
-export interface UseTaskSubmitReturn<TResult = unknown> {
+export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
   /** Task ID assigned by the main process. Null before submit() is called. */
   taskId: string | null
   /** Current lifecycle status. */
