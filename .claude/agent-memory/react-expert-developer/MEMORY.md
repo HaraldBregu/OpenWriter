@@ -148,32 +148,32 @@
 - `window.task` is optional in preload.d.ts — always guard with `typeof window.task?.method === 'function'`
 - Tests: `useTaskSubmit.test.tsx` (16) + `useTaskSubmitExtended.test.tsx` (16) = 32 passing
 
-## Writing Creation Architecture (migrated to window.output API, Feb 2026)
-- ALL writing storage now goes through `window.output.*` (OutputFilesService via workspace)
+## Writing Creation Architecture (migrated to flat workspace API, Feb 2026)
+- ALL writing storage now goes through flat `window.workspace.*` methods (OutputFilesService via workspace)
 - `window.writingItems` has been REMOVED from preload — do NOT use it
 - Disk format: `<workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json` + per-block `<blockId>.md`
 - Slice: `src/renderer/src/store/writingItemsSlice.ts`
   - `WritingEntry`: `{ id (UUID), writingItemId (YYYY-MM-DD_HHmmss folder name), title, blocks, category, tags, createdAt, updatedAt, savedAt }`
-  - Thunk: `loadWritingItems` → calls `window.output.loadByType('writings')`, maps `OutputFile` → `WritingEntry`
+  - Thunk: `loadWritingItems` → calls `window.workspace.loadOutputsByType('writings')`, maps `OutputFile` → `WritingEntry`
   - Actions: `addEntry`, `setWritingItemId`, `updateEntryBlocks`, `updateEntryTitle`, `removeEntry`
   - Selectors: `selectWritingEntries`, `selectWritingEntryById(id)`, `selectWritingItemsStatus`
 - Hook: `src/renderer/src/hooks/useCreateWriting.ts`
-  - Calls `window.workspace.output.save({ type: 'writings', blocks, metadata })` — NO Redux thunks
+  - Calls `window.workspace.saveOutput({ type: 'writings', blocks, metadata })` — NO Redux thunks
   - Dispatches `addEntry` only after disk write succeeds (conservative, non-optimistic)
   - In-flight guard via `useRef(false)` prevents double-creation from rapid clicks
   - Returns `{ createWriting, isLoading, error, reset }`
 - Hook: `src/renderer/src/hooks/useWritingItems.ts`
-  - Subscribes to `window.workspace.onChange` AND `window.workspace.output.onFileChange` (filtered to `outputType === 'writings'`)
+  - Subscribes to `window.workspace.onChange` AND `window.workspace.onOutputFileChange` (filtered to `outputType === 'writings'`)
   - Dispatches `loadWritingItems` thunk on mount + debounced reloads (500ms)
   - Call once at AppLayout level
 - Hook: `src/renderer/src/hooks/useDraftEditor.ts`
-  - Edit mode auto-save: calls `window.workspace.output.update({ type: 'writings', id, blocks, metadata })` after 1s debounce
-  - Draft auto-commit: calls `window.workspace.output.save(...)` after 1s debounce
+  - Edit mode auto-save: calls `window.workspace.updateOutput({ type: 'writings', id, blocks, metadata })` after 1s debounce
+  - Draft auto-commit: calls `window.workspace.saveOutput(...)` after 1s debounce
   - Block `id` is used as the block file `name` in output save/update
   - Returns `savedWritingItemIdRef` for use in delete handler
 - AppLayout: `useWritingItems()` called in outer `AppLayout`; sidebar uses `selectWritingEntries`
-- useWritingContextMenu: duplicate uses `window.workspace.output.save`; delete uses `window.workspace.output.delete`
-- NewWritingPage delete: `window.workspace.output.delete({ type: 'writings', id: writingItemId })`
+- useWritingContextMenu: duplicate uses `window.workspace.saveOutput`; delete uses `window.workspace.deleteOutput`
+- NewWritingPage delete: `window.workspace.deleteOutput({ type: 'writings', id: writingItemId })`
 - writingsSlice.ts and writingsHydration.ts are NO LONGER imported by the store — only writingItemsSlice is used
 - i18n keys: `writing.creating`, `writing.createError`, `writing.noWorkspace`, `home.noRecentWritings` (EN + IT)
 
