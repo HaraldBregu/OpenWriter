@@ -205,12 +205,12 @@ export interface InvokeChannelMap {
   [WorkspaceChannels.deleteFile]: { args: [id: string]; result: void }
 
   // ---- Output (IpcResult-wrapped) ----
-  [OutputChannels.save]: { args: [input: SaveOutputInput]; result: SaveOutputResult }
-  [OutputChannels.loadAll]: { args: []; result: OutputFile[] }
-  [OutputChannels.loadByType]: { args: [type: string]; result: OutputFile[] }
-  [OutputChannels.loadOne]: { args: [params: { type: string; id: string }]; result: OutputFile | null }
-  [OutputChannels.update]: { args: [params: OutputUpdateParams]; result: void }
-  [OutputChannels.delete]: { args: [params: { type: string; id: string }]; result: void }
+  [WorkspaceChannels.outputSave]: { args: [input: SaveOutputInput]; result: SaveOutputResult }
+  [WorkspaceChannels.outputLoadAll]: { args: []; result: OutputFile[] }
+  [WorkspaceChannels.loadByType]: { args: [type: string]; result: OutputFile[] }
+  [WorkspaceChannels.outputLoadOne]: { args: [params: { type: string; id: string }]; result: OutputFile | null }
+  [WorkspaceChannels.update]: { args: [params: OutputUpdateParams]; result: void }
+  [WorkspaceChannels.outputDelete]: { args: [params: { type: string; id: string }]; result: void }
 
   // ---- Directories (IpcResult-wrapped) ----
   [WorkspaceChannels.list]: { args: []; result: DirectoryEntry[] }
