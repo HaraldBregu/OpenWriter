@@ -580,7 +580,7 @@ const DocumentsPage: React.FC = () => {
   // Download from remote handler
   const handleDownloadRemote = useCallback(async (url: string) => {
     try {
-      await window.workspace.documents.downloadFromUrl(url)
+      await window.workspace.downloadFromUrl(url)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to download file:', error)
