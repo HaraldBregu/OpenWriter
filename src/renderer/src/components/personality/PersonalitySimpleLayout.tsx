@@ -131,7 +131,7 @@ export const PersonalitySimpleLayout: React.FC<PersonalitySimpleLayoutProps> = R
       console.log(`[PersonalitySimpleLayout:${sectionId}] Loading conversation:`, file.id)
 
       // Load the full file content
-      const loadedFile = await window.workspace.personality.loadOne({
+      const loadedFile = await window.workspace.loadPersonality({
         sectionId: file.sectionId,
         id: file.id
       })
