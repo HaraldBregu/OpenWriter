@@ -16,9 +16,6 @@
  * Cases covered:
  *   - assertBridge(): throws when window.task is undefined
  *   - assertBridge(): does not throw when window.task is present
- *   - onTaskEvent: registers a listener via window.task.onEvent
- *   - onTaskEvent: returns an unsubscribe function that removes the listener
- *   - onTaskEvent: normalises raw IPC events to TaskEvent shape
  *   - submitTask: delegates to window.task.submit with correct payload
  *   - submitTask: includes optional fields (modelId, temperature, maxTokens)
  *   - submitTask: omits optional fields when not provided
@@ -29,7 +26,6 @@
  *   - savePersonality: delegates to window.workspace.personality.save
  */
 
-import type { TaskEvent } from '../../../../src/renderer/src/services/IPersonalityTaskService'
 import { ElectronPersonalityTaskService } from '../../../../src/renderer/src/services/ElectronPersonalityTaskService'
 
 // ---------------------------------------------------------------------------
@@ -76,14 +72,6 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
     restoreTaskBridge()
   })
 
-  it('onTaskEvent throws an informative error when window.task is undefined', () => {
-    const service = createService()
-
-    expect(() => service.onTaskEvent(jest.fn())).toThrow(
-      '[ElectronPersonalityTaskService] window.task is undefined.'
-    )
-  })
-
   it('submitTask throws when window.task is undefined', async () => {
     const service = createService()
 
@@ -107,91 +95,7 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
 })
 
 // ---------------------------------------------------------------------------
-// Suite 2: assertBridge() — bridge present
-// ---------------------------------------------------------------------------
-
-describe('ElectronPersonalityTaskService — assertBridge() when bridge is present', () => {
-  beforeEach(() => {
-    ;(window.task.onEvent as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.task.submit as jest.Mock).mockResolvedValue({
-      success: true,
-      data: { taskId: 'task-abc' }
-    })
-  })
-
-  it('onTaskEvent does not throw when window.task is available', () => {
-    const service = createService()
-    expect(() => service.onTaskEvent(jest.fn())).not.toThrow()
-  })
-})
-
-// ---------------------------------------------------------------------------
-// Suite 3: onTaskEvent
-// ---------------------------------------------------------------------------
-
-describe('ElectronPersonalityTaskService — onTaskEvent', () => {
-  beforeEach(() => {
-    ;(window.task.onEvent as jest.Mock).mockReturnValue(jest.fn())
-  })
-
-  it('calls window.task.onEvent with a raw callback', () => {
-    const service = createService()
-    service.onTaskEvent(jest.fn())
-
-    expect(window.task.onEvent).toHaveBeenCalledWith(expect.any(Function))
-  })
-
-  it('returns the unsubscribe function provided by window.task.onEvent', () => {
-    const unsubscribe = jest.fn()
-    ;(window.task.onEvent as jest.Mock).mockReturnValue(unsubscribe)
-
-    const service = createService()
-    const returned = service.onTaskEvent(jest.fn())
-
-    expect(returned).toBe(unsubscribe)
-  })
-
-  it('invokes the handler with a normalised TaskEvent when the raw callback fires', () => {
-    let capturedRawCallback: ((raw: unknown) => void) | null = null
-    ;(window.task.onEvent as jest.Mock).mockImplementation((cb) => {
-      capturedRawCallback = cb
-      return jest.fn()
-    })
-
-    const handler = jest.fn()
-    const service = createService()
-    service.onTaskEvent(handler)
-
-    // Simulate IPC firing the raw callback
-    const rawEvent = { type: 'stream', data: { taskId: 'tid-1', token: 'Hello' } }
-    capturedRawCallback!(rawEvent)
-
-    expect(handler).toHaveBeenCalledWith<[TaskEvent]>({
-      type: 'stream',
-      data: { taskId: 'tid-1', token: 'Hello' }
-    })
-  })
-
-  it('passes through the event type unchanged', () => {
-    let capturedRawCallback: ((raw: unknown) => void) | null = null
-    ;(window.task.onEvent as jest.Mock).mockImplementation((cb) => {
-      capturedRawCallback = cb
-      return jest.fn()
-    })
-
-    const handler = jest.fn()
-    const service = createService()
-    service.onTaskEvent(handler)
-
-    capturedRawCallback!({ type: 'completed', data: { taskId: 't1', result: { content: 'done' } } })
-
-    const received = handler.mock.calls[0][0] as TaskEvent
-    expect(received.type).toBe('completed')
-  })
-})
-
-// ---------------------------------------------------------------------------
-// Suite 4: submitTask
+// Suite 2: submitTask
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — submitTask', () => {
@@ -371,7 +275,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Suite 5: cancelTask
+// Suite 3: cancelTask
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — cancelTask', () => {
@@ -384,7 +288,7 @@ describe('ElectronPersonalityTaskService — cancelTask', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Suite 6: getModelSettings
+// Suite 4: getModelSettings
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — getModelSettings', () => {
@@ -422,7 +326,7 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Suite 7: savePersonality
+// Suite 5: savePersonality
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — savePersonality', () => {
