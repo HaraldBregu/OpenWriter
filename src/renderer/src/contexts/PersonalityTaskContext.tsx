@@ -4,7 +4,6 @@ import { useAppDispatch } from '@/store'
 import type { IPersonalityTaskService } from '@/services/IPersonalityTaskService'
 import { electronPersonalityTaskService } from '@/services/ElectronPersonalityTaskService'
 import { useTaskContext } from '@/contexts/TaskContext'
-import type { TaskStore as SharedTaskStore } from '@/contexts/TaskContext'
 
 // ---------------------------------------------------------------------------
 // Types
