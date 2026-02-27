@@ -39,7 +39,7 @@ export interface UseCreateWritingReturn {
  *
  * 1. Guards against concurrent calls while a creation is in flight.
  * 2. Verifies that a workspace is active before attempting any file I/O.
- * 3. Calls `window.workspace.output.save` to create the folder + config.json + block
+ * 3. Calls `window.workspace.saveOutput` to create the folder + config.json + block
  *    .md files on disk under <workspace>/output/writings/<timestamp>/.
  * 4. Dispatches `addEntry` to Redux with the new entry so the sidebar updates
  *    immediately without waiting for the next file-watcher reload.
