@@ -1,36 +1,3 @@
-// ---------------------------------------------------------------------------
-// Main Process Type Barrel
-// ---------------------------------------------------------------------------
-// Single import point for all main-process-only type definitions.
-// These types are NOT safe to use in preload or renderer (they may reference
-// Node.js APIs or Electron main-process internals).
-//
-// Individual type files are preserved for co-location with their domain code.
-// This barrel makes cross-module main-process imports cleaner.
-//
-// Usage:
-//   import type { BluetoothDeviceInfo, NetworkConnectionStatus } from '../types'
-// ---------------------------------------------------------------------------
-
-// ---- Hardware / OS types --------------------------------------------------
-export type {
-  BluetoothDeviceInfo,
-  BluetoothScanResult,
-  BluetoothConnectionStatus,
-  BluetoothPermissionStatus,
-} from './types/bluetooth'
-
-export type {
-  MediaPermissionStatus,
-  MediaDeviceInfo,
-  MediaType,
-} from './types/media'
-
-export type {
-  NetworkConnectionStatus,
-  NetworkInterfaceInfo,
-  NetworkInfo,
-} from './types/network'
 
 // ---- Agent manager types --------------------------------------------------
 // Note: AgentManagerTypes.ts lives in its domain folder for co-location.
