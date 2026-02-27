@@ -202,7 +202,7 @@ const workspace: WorkspaceApi = {
         isIndexed: boolean
         lastIndexedAt?: number
     }> => {
-        return typedInvokeUnwrap(DirectoriesChannels.add, dirPath)
+        return typedInvokeUnwrap(WorkspaceChannels.directories.add, dirPath)
     },
     addDirectories: (dirPaths: string[]): Promise<{
         added: Array<{
@@ -214,7 +214,7 @@ const workspace: WorkspaceApi = {
         }>
         errors: Array<{ path: string; error: string }>
     }> => {
-        return typedInvokeUnwrap(DirectoriesChannels.addMany, dirPaths)
+        return typedInvokeUnwrap(WorkspaceChannels.directories.addMany, dirPaths)
     },
     removeDirectory: (id: string): Promise<boolean> => {
         return typedInvokeUnwrap(DirectoriesChannels.remove, id)
