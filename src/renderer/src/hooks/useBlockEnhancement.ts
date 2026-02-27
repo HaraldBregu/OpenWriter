@@ -1,10 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { type Editor } from '@tiptap/core'
-import { useTask } from '@/hooks/useTask'
+import { useTaskSubmit } from '@/hooks/useTaskSubmit'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+interface AIEnhanceInput {
+  text: string
+}
+
+interface AIEnhanceOutput {
+  content: string
+  tokenCount: number
+}
 
 export interface UseBlockEnhancementOptions {
   /** Stable ref to the TipTap editor instance. The hook reads/writes to it imperatively. */
@@ -31,7 +40,7 @@ export interface UseBlockEnhancementReturn {
 
 /**
  * Manages the full AI enhancement lifecycle for a single ContentBlock:
- *   1. Submits an 'ai-enhance' task via window.task
+ *   1. Submits an 'ai-enhance' task via the shared TaskStore (useTaskSubmit)
  *   2. Streams tokens directly into the TipTap editor as they arrive
  *   3. Syncs parent state on completion
  *   4. Reverts the editor to the pre-enhance snapshot on error or cancellation
@@ -46,79 +55,77 @@ export function useBlockEnhancement({
   blockIdRef,
 }: UseBlockEnhancementOptions): UseBlockEnhancementReturn {
   const [isEnhancing, setIsEnhancing] = useState(false)
-  // Tracked in state so useEffect dependency arrays stay reactive.
-  const [enhanceTaskId, setEnhanceTaskId] = useState<string | null>(null)
 
   // Snapshot of content before enhance started — used to revert on error/cancel.
   const originalTextRef = useRef<string>('')
   // Buffer that accumulates all streamed tokens as raw markdown.
   const streamBufferRef = useRef<string>('')
+  // Track last applied streamedContent length to detect new tokens.
+  const lastStreamLengthRef = useRef<number>(0)
 
-  const { submitTask, cancelTask, tasks } = useTask()
+  const {
+    submit,
+    cancel,
+    status,
+    streamedContent,
+    reset,
+  } = useTaskSubmit<AIEnhanceInput, AIEnhanceOutput>('ai-enhance', { text: '' })
 
   // ---------------------------------------------------------------------------
   // Stream tokens into the editor
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (!enhanceTaskId) return
-    if (!window.task) return
-    const unsub = window.task.onEvent((event) => {
-      if (event.type !== 'stream') return
-      const data = event.data as { taskId: string; token?: string }
-      if (data.taskId !== enhanceTaskId) return
-      const token = data.token
-      if (!token) return
-      const ed = editorRef.current
-      if (!ed || ed.isDestroyed) return
+    if (!isEnhancing) return
+    if (streamedContent.length <= lastStreamLengthRef.current) return
 
-      // Append the token to the buffer and re-set the full content as markdown.
-      // The markdown parser converts \n into proper <p> nodes automatically.
-      streamBufferRef.current += token
-      ed.commands.setContent(streamBufferRef.current, { emitUpdate: false, contentType: 'markdown' })
-    })
-    return () => unsub()
-  }, [enhanceTaskId, editorRef])
+    const newTokens = streamedContent.slice(lastStreamLengthRef.current)
+    lastStreamLengthRef.current = streamedContent.length
+
+    const ed = editorRef.current
+    if (!ed || ed.isDestroyed) return
+
+    streamBufferRef.current += newTokens
+    ed.commands.setContent(streamBufferRef.current, { emitUpdate: false, contentType: 'markdown' })
+  }, [streamedContent, isEnhancing, editorRef])
 
   // ---------------------------------------------------------------------------
   // React to task lifecycle transitions
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (!enhanceTaskId) return
-    const taskState = tasks.get(enhanceTaskId)
-    if (!taskState) return
+    if (!isEnhancing) return
 
-    if (taskState.status === 'completed') {
-      // Editor already holds the full streamed content — just sync parent state.
+    if (status === 'completed') {
       const ed = editorRef.current
       if (ed && !ed.isDestroyed) {
         onChangeRef.current(blockIdRef.current, ed.getMarkdown())
       }
       setIsEnhancing(false)
-      setEnhanceTaskId(null)
-    } else if (taskState.status === 'error' || taskState.status === 'cancelled') {
-      if (taskState.status === 'error') {
-        console.error('[useBlockEnhancement] Enhance error:', taskState.error)
+      lastStreamLengthRef.current = 0
+      reset()
+    } else if (status === 'error' || status === 'cancelled') {
+      if (status === 'error') {
+        console.error('[useBlockEnhancement] Enhance error')
       }
-      // Revert editor to the text that existed before enhance started.
       const ed = editorRef.current
       if (ed && !ed.isDestroyed) {
-
         ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
         onChangeRef.current(blockIdRef.current, originalTextRef.current)
       }
       setIsEnhancing(false)
-      setEnhanceTaskId(null)
+      lastStreamLengthRef.current = 0
+      reset()
     }
-  }, [enhanceTaskId, tasks, editorRef, onChangeRef, blockIdRef])
+  }, [status, isEnhancing, editorRef, onChangeRef, blockIdRef, reset])
 
   // ---------------------------------------------------------------------------
   // Cancel in-flight task on unmount
   // ---------------------------------------------------------------------------
   useEffect(() => {
     return () => {
-      if (enhanceTaskId) cancelTask(enhanceTaskId)
+      if (isEnhancing) cancel()
     }
-  }, [enhanceTaskId, cancelTask])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEnhancing, cancel])
 
   // ---------------------------------------------------------------------------
   // handleEnhance
@@ -133,18 +140,17 @@ export function useBlockEnhancement({
     // so streamed tokens are appended after it.
     originalTextRef.current = currentText
     streamBufferRef.current = currentText
+    lastStreamLengthRef.current = 0
     setIsEnhancing(true)
 
-    const taskId = await submitTask('ai-enhance', { text: currentText })
-    if (taskId) {
-      setEnhanceTaskId(taskId)
-    } else {
-      // Submit failed — revert the separator we just inserted.
+    const taskId = await submit({ text: currentText })
+    if (!taskId) {
+      // Submit failed — revert.
       ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
       onChangeRef.current(blockIdRef.current, originalTextRef.current)
       setIsEnhancing(false)
     }
-  }, [editorRef, isEnhancing, submitTask, onChangeRef, blockIdRef])
+  }, [editorRef, isEnhancing, submit, onChangeRef, blockIdRef])
 
   return { isEnhancing, handleEnhance }
 }
