@@ -308,7 +308,7 @@ const workspace: WorkspaceApi = {
         sectionId: string
         id: string
     }) => {
-        return typedInvokeUnwrap(PersonalityChannels.loadOne, params)
+        return typedInvokeUnwrap(WorkspaceChannels.personality.loadOne, params)
     },
     deletePersonality: (params: {
         sectionId: string
