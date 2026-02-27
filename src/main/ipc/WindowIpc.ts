@@ -9,9 +9,10 @@ import { WindowChannels } from '../../shared/types/ipc/channels'
  * IPC handlers for window management operations.
  *
  * Channels (send/on):
- *  - window:minimize  (send) -- Minimize the window
- *  - window:maximize  (send) -- Toggle maximize state
- *  - window:close     (send) -- Close the window
+ *  - window:minimize   (send) -- Minimize the window
+ *  - window:maximize   (send) -- Toggle maximize state
+ *  - window:close      (send) -- Close the window
+ *  - window:popup-menu (send) -- Show application menu as popup (Windows/Linux)
  *
  * Channels (invoke/handle):
  *  - window:is-maximized  (query) -- Check if window is maximized
