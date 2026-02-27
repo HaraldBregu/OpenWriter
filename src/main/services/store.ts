@@ -164,8 +164,8 @@ export class StoreService {
       lastOpened: Date.now()
     })
 
-    // Keep only last 10
-    this.data.recentWorkspaces = this.data.recentWorkspaces.slice(0, 10)
+    // Keep only last MAX_RECENT_WORKSPACES entries
+    this.data.recentWorkspaces = this.data.recentWorkspaces.slice(0, MAX_RECENT_WORKSPACES)
   }
 
   clearCurrentWorkspace(): void {
