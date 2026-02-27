@@ -79,7 +79,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
   }
 
   async savePersonality(options: SavePersonalityOptions): Promise<SavePersonalityResult> {
-    return window.workspace.personality.save(options)
+    return window.workspace.savePersonality(options)
   }
 }
 
