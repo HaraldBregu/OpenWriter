@@ -1,11 +1,11 @@
 import type {
   IPersonalityTaskService,
-  SavePersonalityOptions,
-  SavePersonalityResult,
-  SubmitTaskInput,
-  SubmitTaskResult,
-  SubmitTaskError,
-} from '../IPersonalityTaskService'
+  PersonalitySubmitInput,
+  PersonalitySubmitResult,
+  PersonalitySaveOptions,
+  PersonalitySaveResult,
+} from '@/contexts/PersonalityTaskContext'
+import type { EntityTaskIpcResult } from '@/services/IEntityTaskService'
 
 /**
  * In-memory mock of IPersonalityTaskService for use in Jest tests and
@@ -18,7 +18,7 @@ import type {
 export class MockPersonalityTaskService implements IPersonalityTaskService {
   private taskCounter = 0
 
-  async submitTask(_input: SubmitTaskInput): Promise<SubmitTaskResult | SubmitTaskError> {
+  async submitTask(_input: PersonalitySubmitInput): Promise<EntityTaskIpcResult<PersonalitySubmitResult>> {
     const taskId = `mock-task-${++this.taskCounter}`
     return { success: true, data: { taskId } }
   }
@@ -31,7 +31,7 @@ export class MockPersonalityTaskService implements IPersonalityTaskService {
     return { selectedModel: 'gpt-4o-mini' }
   }
 
-  async savePersonality(_options: SavePersonalityOptions): Promise<SavePersonalityResult> {
+  async save(_options: PersonalitySaveOptions): Promise<PersonalitySaveResult> {
     return { id: `mock-saved-${Date.now()}` }
   }
 }
