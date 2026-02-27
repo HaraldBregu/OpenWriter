@@ -24,8 +24,8 @@ export interface UseTaskSubmitReturn<TResult = unknown> {
   streamedContent: string
   /** Current queue position when status is 'queued' or 'paused'. */
   queuePosition: number | undefined
-  /** Submit the task. Returns the taskId on success, null on failure. */
-  submit: () => Promise<string | null>
+  /** Submit the task. Optionally pass an inputOverride to replace the default input for this call. Returns the taskId on success, null on failure. */
+  submit: (inputOverride?: TInput) => Promise<string | null>
   /** Cancel the current task. No-op if not running. */
   cancel: () => Promise<void>
   /** Pause the current task. Only valid when status is 'running' or 'queued'. */
