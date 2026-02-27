@@ -130,6 +130,7 @@ export class AgentManager implements Disposable {
         history,
         prompt: request.prompt,
         signal: controller.signal,
+        buildGraph: session.buildGraph,
       })
 
       for await (const event of gen) {
