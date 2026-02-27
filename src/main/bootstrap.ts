@@ -111,7 +111,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new AppIpc(),
     new AgentIpc(),
     new WorkspaceIpc(),
-    new TaskIpc(),
+    new TasksManagerIpc(),
     new WindowIpc(),
   ]
 
