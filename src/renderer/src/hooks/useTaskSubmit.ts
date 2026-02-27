@@ -142,7 +142,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     [store, cleanupSubscription]
   )
 
-  const submit = useCallback(async (): Promise<string | null> => {
+  const submit = useCallback(async (inputOverride?: TInput): Promise<string | null> => {
     if (runningRef.current) return null
 
     if (typeof window.task?.submit !== 'function') {
