@@ -271,5 +271,4 @@ export interface EventChannelMap {
   [WorkspaceChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
   [WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] }
   [AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction }
-  [AgentChannels.event]: { data: AgentStreamEvent }
 }
