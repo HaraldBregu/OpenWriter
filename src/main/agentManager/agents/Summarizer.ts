@@ -5,7 +5,6 @@
  * Temperature is low to maximise factual grounding.
  */
 
-import { agentRegistry } from '../AgentRegistry'
 import type { AgentDefinition } from '../AgentDefinition'
 
 const definition: AgentDefinition = {
