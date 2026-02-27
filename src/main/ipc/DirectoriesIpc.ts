@@ -67,13 +67,13 @@ export class DirectoriesIpc implements IpcModule {
 
     // Validate a directory path (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.validate,
+      WorkspaceChannels.directories.validate,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, dirPath: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.validateDirectory(dirPath)
         },
-        DirectoriesChannels.validate
+        WorkspaceChannels.directories.validate
       )
     )
 
