@@ -126,6 +126,18 @@
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx`
 - Row pattern: `flex items-center justify-between px-4 py-3`, grouped in `rounded-md border divide-y`
 
+## EntityTaskContext Pattern (added Feb 2026)
+- Generic factory: `src/renderer/src/contexts/EntityTaskContext.tsx` — `createEntityTaskContext<TSubmitInput, TSubmitResult, TSaveOptions, TSaveResult>(config)` returns `{ Provider, useEntityTask, Context }`
+- Generic service interface: `src/renderer/src/services/IEntityTaskService.ts` — four methods: `submitTask`, `cancelTask`, `getModelSettings`, `save`
+- Config object keys: `displayName`, `defaultProviderId`, `buildSubmitInput`, `taskType`, `extractResultContent`, `buildSaveOptions`, `completionHandler`
+- `ITaskCompletionHandler<TSaveResult>` — optional hooks: `onComplete` (return false to suppress save), `onSaved`, `onSaveError`
+- `InferenceOptions` — shared `{ modelId?, temperature?, maxTokens?, reasoning? }` type used across all entity task contexts
+- Personality is now a thin adapter: `PersonalityTaskContext.refactored.tsx` — ~120 LOC vs 500 LOC original, same public API
+- Pattern: domain types → `createEntityTaskContext(config)` → Provider + hook with domain-specific names exported
+- Provider must be placed INSIDE `<TaskProvider>` in the component tree (reads sharedStore via useTaskContext)
+- Store isolation: hand-rolled external store keyed by entityId — stream tokens for entity-A never cause entity-B to re-render
+- `completionHandler.onSaved` receives `dispatch` — use it to fire Redux actions (e.g. `dispatch(loadPersonalityFiles())`)
+
 ## Task Manager Integration (added Feb 2026)
 - Context: `src/renderer/src/contexts/TaskContext.tsx` — hand-rolled external store (no Redux), subscriptions per taskId + 'ALL' key
 - Hooks:
