@@ -30,11 +30,8 @@ import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/ha
 // IPC modules
 import type { IpcModule } from './ipc'
 import {
-  AgentIpc,
-  CronIpc,
   CustomIpc,
   DocumentsIpc,
-  PipelineIpc,
   WorkspaceIpc,
   DirectoriesIpc,
   TaskIpc,
