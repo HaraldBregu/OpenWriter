@@ -115,7 +115,7 @@ const win: WindowApi = {
 }
 
 // ---------------------------------------------------------------------------
-// window.workspace — Workspace folder selection, recent workspaces, and docs/dirs/personality
+// window.workspace — Workspace folder selection, documents, directories, personality, output
 // ---------------------------------------------------------------------------
 const workspace: WorkspaceApi = {
     selectFolder: (): Promise<string | null> => {
@@ -145,192 +145,234 @@ const workspace: WorkspaceApi = {
     onDeleted: (callback: (event: { deletedPath: string; reason: 'deleted' | 'inaccessible' | 'renamed'; timestamp: number }) => void): (() => void) => {
         return typedOn(WorkspaceChannels.deleted, callback)
     },
-    // Nested: Document import, download, and file-watch events
-    documents: {
-        importFiles: (): Promise<Array<{
-            id: string; name: string; path: string; size: number;
-            mimeType: string; importedAt: number; lastModified: number;
-        }>> => {
-            return typedInvokeUnwrap(DocumentsChannels.importFiles)
-        },
-        importByPaths: (paths: string[]): Promise<Array<{
-            id: string; name: string; path: string; size: number;
-            mimeType: string; importedAt: number; lastModified: number;
-        }>> => {
-            return typedInvokeUnwrap(DocumentsChannels.importByPaths, paths)
-        },
-        downloadFromUrl: (url: string): Promise<{
-            id: string; name: string; path: string; size: number;
-            mimeType: string; importedAt: number; lastModified: number;
-        }> => {
-            return typedInvokeUnwrap(DocumentsChannels.downloadFromUrl, url)
-        },
-        loadAll: (): Promise<Array<{
-            id: string; name: string; path: string; size: number;
-            mimeType: string; importedAt: number; lastModified: number;
-        }>> => {
-            return typedInvokeUnwrap(DocumentsChannels.loadAll)
-        },
-        delete: (id: string): Promise<void> => {
-            return typedInvokeUnwrap(DocumentsChannels.deleteFile, id)
-        },
-        onFileChange: (callback: (event: {
-            type: 'added' | 'changed' | 'removed';
-            fileId: string;
-            filePath: string;
-            timestamp: number;
-        }) => void): (() => void) => {
-            return typedOn(DocumentsChannels.fileChanged, callback)
-        },
-        onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-            return typedOn(DocumentsChannels.watcherError, callback)
-        },
+    // -------------------------------------------------------------------------
+    // Document import, download, and file-watch events
+    // -------------------------------------------------------------------------
+    importFiles: (): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return typedInvokeUnwrap(DocumentsChannels.importFiles)
     },
-    // Nested: Indexed directory management
-    directories: {
-        list: (): Promise<Array<{
+    importByPaths: (paths: string[]): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return typedInvokeUnwrap(DocumentsChannels.importByPaths, paths)
+    },
+    downloadFromUrl: (url: string): Promise<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }> => {
+        return typedInvokeUnwrap(DocumentsChannels.downloadFromUrl, url)
+    },
+    loadDocuments: (): Promise<Array<{
+        id: string; name: string; path: string; size: number;
+        mimeType: string; importedAt: number; lastModified: number;
+    }>> => {
+        return typedInvokeUnwrap(DocumentsChannels.loadAll)
+    },
+    deleteDocument: (id: string): Promise<void> => {
+        return typedInvokeUnwrap(DocumentsChannels.deleteFile, id)
+    },
+    onDocumentFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed';
+        fileId: string;
+        filePath: string;
+        timestamp: number;
+    }) => void): (() => void) => {
+        return typedOn(DocumentsChannels.fileChanged, callback)
+    },
+    onDocumentWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        return typedOn(DocumentsChannels.watcherError, callback)
+    },
+    // -------------------------------------------------------------------------
+    // Indexed directory management
+    // -------------------------------------------------------------------------
+    listDirectories: (): Promise<Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }>> => {
+        return typedInvokeUnwrap(DirectoriesChannels.list)
+    },
+    addDirectory: (dirPath: string): Promise<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }> => {
+        return typedInvokeUnwrap(DirectoriesChannels.add, dirPath)
+    },
+    addDirectories: (dirPaths: string[]): Promise<{
+        added: Array<{
             id: string
             path: string
             addedAt: number
             isIndexed: boolean
             lastIndexedAt?: number
-        }>> => {
-            return typedInvokeUnwrap(DirectoriesChannels.list)
-        },
-        add: (dirPath: string): Promise<{
-            id: string
-            path: string
-            addedAt: number
-            isIndexed: boolean
-            lastIndexedAt?: number
-        }> => {
-            return typedInvokeUnwrap(DirectoriesChannels.add, dirPath)
-        },
-        addMany: (dirPaths: string[]): Promise<{
-            added: Array<{
-                id: string
-                path: string
-                addedAt: number
-                isIndexed: boolean
-                lastIndexedAt?: number
-            }>
-            errors: Array<{ path: string; error: string }>
-        }> => {
-            return typedInvokeUnwrap(DirectoriesChannels.addMany, dirPaths)
-        },
-        remove: (id: string): Promise<boolean> => {
-            return typedInvokeUnwrap(DirectoriesChannels.remove, id)
-        },
-        validate: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
-            return typedInvokeUnwrap(DirectoriesChannels.validate, dirPath)
-        },
-        markIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
-            return typedInvokeUnwrap(DirectoriesChannels.markIndexed, id, isIndexed)
-        },
-        onChanged: (callback: (directories: Array<{
-            id: string
-            path: string
-            addedAt: number
-            isIndexed: boolean
-            lastIndexedAt?: number
-        }>) => void): (() => void) => {
-            return typedOn(DirectoriesChannels.changed, callback)
-        },
+        }>
+        errors: Array<{ path: string; error: string }>
+    }> => {
+        return typedInvokeUnwrap(DirectoriesChannels.addMany, dirPaths)
     },
-    // Nested: Output file management (posts and writings)
-    output: {
-        save: (input: {
-            type: string
-            blocks: Array<{
-                name: string
-                content: string
-                createdAt: string
-                updatedAt: string
-            }>
-            metadata?: Record<string, unknown>
-        }): Promise<{ id: string; path: string; savedAt: number }> => {
-            return typedInvokeUnwrap(OutputChannels.save, input)
-        },
-        loadAll: () => {
-            return typedInvokeUnwrap(OutputChannels.loadAll)
-        },
-        loadByType: (type: string) => {
-            return typedInvokeUnwrap(OutputChannels.loadByType, type)
-        },
-        loadOne: (params: { type: string; id: string }) => {
-            return typedInvokeUnwrap(OutputChannels.loadOne, params)
-        },
-        update: (params: {
-            type: string
-            id: string
-            blocks: Array<{
-                name: string
-                content: string
-                createdAt?: string
-                filetype?: 'markdown'
-                type?: 'content'
-            }>
-            metadata: Record<string, unknown>
-        }): Promise<void> => {
-            return typedInvokeUnwrap(OutputChannels.update, params)
-        },
-        delete: (params: { type: string; id: string }): Promise<void> => {
-            return typedInvokeUnwrap(OutputChannels.delete, params)
-        },
-        onFileChange: (callback: (event: {
-            type: 'added' | 'changed' | 'removed'
-            outputType: string
-            fileId: string
-            filePath: string
-            timestamp: number
-        }) => void): (() => void) => {
-            return typedOn(OutputChannels.fileChanged, callback)
-        },
-        onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-            return typedOn(OutputChannels.watcherError, callback)
-        },
+    removeDirectory: (id: string): Promise<boolean> => {
+        return typedInvokeUnwrap(DirectoriesChannels.remove, id)
     },
-    // Nested: Personality/conversation file management
-    personality: {
-        save: (input: {
-            sectionId: string
+    validateDirectory: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
+        return typedInvokeUnwrap(DirectoriesChannels.validate, dirPath)
+    },
+    markDirectoryIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
+        return typedInvokeUnwrap(DirectoriesChannels.markIndexed, id, isIndexed)
+    },
+    onDirectoriesChanged: (callback: (directories: Array<{
+        id: string
+        path: string
+        addedAt: number
+        isIndexed: boolean
+        lastIndexedAt?: number
+    }>) => void): (() => void) => {
+        return typedOn(DirectoriesChannels.changed, callback)
+    },
+    // -------------------------------------------------------------------------
+    // Output file management (posts and writings)
+    // -------------------------------------------------------------------------
+    saveOutput: (input: {
+        type: string
+        blocks: Array<{
+            name: string
             content: string
-            metadata?: Record<string, unknown>
-        }): Promise<{
-            id: string
-            path: string
-            savedAt: number
-        }> => {
-            return typedInvokeUnwrap(PersonalityChannels.save, input)
-        },
-        loadAll: () => {
-            return typedInvokeUnwrap(PersonalityChannels.loadAll)
-        },
-        loadOne: (params: {
-            sectionId: string
-            id: string
-        }) => {
-            return typedInvokeUnwrap(PersonalityChannels.loadOne, params)
-        },
-        delete: (params: {
-            sectionId: string
-            id: string
-        }): Promise<void> => {
-            return typedInvokeUnwrap(PersonalityChannels.delete, params)
-        },
-        onFileChange: (callback: (event: {
-            type: 'added' | 'changed' | 'removed'
-            sectionId: string
-            fileId: string
-            filePath: string
-            timestamp: number
-        }) => void): (() => void) => {
-            return typedOn(PersonalityChannels.fileChanged, callback)
-        },
-        onWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
-            return typedOn(PersonalityChannels.watcherError, callback)
-        },
-        loadSectionConfig: (params: { sectionId: string }): Promise<{
+            createdAt: string
+            updatedAt: string
+        }>
+        metadata?: Record<string, unknown>
+    }): Promise<{ id: string; path: string; savedAt: number }> => {
+        return typedInvokeUnwrap(OutputChannels.save, input)
+    },
+    loadOutputs: () => {
+        return typedInvokeUnwrap(OutputChannels.loadAll)
+    },
+    loadOutputsByType: (type: string) => {
+        return typedInvokeUnwrap(OutputChannels.loadByType, type)
+    },
+    loadOutput: (params: { type: string; id: string }) => {
+        return typedInvokeUnwrap(OutputChannels.loadOne, params)
+    },
+    updateOutput: (params: {
+        type: string
+        id: string
+        blocks: Array<{
+            name: string
+            content: string
+            createdAt?: string
+            filetype?: 'markdown'
+            type?: 'content'
+        }>
+        metadata: Record<string, unknown>
+    }): Promise<void> => {
+        return typedInvokeUnwrap(OutputChannels.update, params)
+    },
+    deleteOutput: (params: { type: string; id: string }): Promise<void> => {
+        return typedInvokeUnwrap(OutputChannels.delete, params)
+    },
+    onOutputFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        outputType: string
+        fileId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        return typedOn(OutputChannels.fileChanged, callback)
+    },
+    onOutputWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        return typedOn(OutputChannels.watcherError, callback)
+    },
+    // -------------------------------------------------------------------------
+    // Personality/conversation file management
+    // -------------------------------------------------------------------------
+    savePersonality: (input: {
+        sectionId: string
+        content: string
+        metadata?: Record<string, unknown>
+    }): Promise<{
+        id: string
+        path: string
+        savedAt: number
+    }> => {
+        return typedInvokeUnwrap(PersonalityChannels.save, input)
+    },
+    loadPersonalities: () => {
+        return typedInvokeUnwrap(PersonalityChannels.loadAll)
+    },
+    loadPersonality: (params: {
+        sectionId: string
+        id: string
+    }) => {
+        return typedInvokeUnwrap(PersonalityChannels.loadOne, params)
+    },
+    deletePersonality: (params: {
+        sectionId: string
+        id: string
+    }): Promise<void> => {
+        return typedInvokeUnwrap(PersonalityChannels.delete, params)
+    },
+    onPersonalityFileChange: (callback: (event: {
+        type: 'added' | 'changed' | 'removed'
+        sectionId: string
+        fileId: string
+        filePath: string
+        timestamp: number
+    }) => void): (() => void) => {
+        return typedOn(PersonalityChannels.fileChanged, callback)
+    },
+    onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
+        return typedOn(PersonalityChannels.watcherError, callback)
+    },
+    loadSectionConfig: (params: { sectionId: string }): Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+    } | null> => {
+        return typedInvokeUnwrap(PersonalityChannels.loadSectionConfig, params)
+    },
+    saveSectionConfig: (params: {
+        sectionId: string
+        update: {
+            provider?: string
+            model?: string
+            temperature?: number | null
+            maxTokens?: number | null
+            reasoning?: boolean
+            displayName?: string
+            description?: string
+        }
+    }): Promise<{
+        schemaVersion: number
+        provider: string
+        model: string
+        temperature?: number | null
+        maxTokens?: number | null
+        reasoning?: boolean
+        displayName?: string
+        description?: string
+        createdAt: string
+        updatedAt: string
+    }> => {
+        return typedInvokeUnwrap(PersonalityChannels.saveSectionConfig, params)
+    },
+    onSectionConfigChange: (callback: (event: {
+        sectionId: string
+        config: {
             schemaVersion: number
             provider: string
             model: string
@@ -341,52 +383,10 @@ const workspace: WorkspaceApi = {
             description?: string
             createdAt: string
             updatedAt: string
-        } | null> => {
-            return typedInvokeUnwrap(PersonalityChannels.loadSectionConfig, params)
-        },
-        saveSectionConfig: (params: {
-            sectionId: string
-            update: {
-                provider?: string
-                model?: string
-                temperature?: number | null
-                maxTokens?: number | null
-                reasoning?: boolean
-                displayName?: string
-                description?: string
-            }
-        }): Promise<{
-            schemaVersion: number
-            provider: string
-            model: string
-            temperature?: number | null
-            maxTokens?: number | null
-            reasoning?: boolean
-            displayName?: string
-            description?: string
-            createdAt: string
-            updatedAt: string
-        }> => {
-            return typedInvokeUnwrap(PersonalityChannels.saveSectionConfig, params)
-        },
-        onSectionConfigChange: (callback: (event: {
-            sectionId: string
-            config: {
-                schemaVersion: number
-                provider: string
-                model: string
-                temperature?: number | null
-                maxTokens?: number | null
-                reasoning?: boolean
-                displayName?: string
-                description?: string
-                createdAt: string
-                updatedAt: string
-            } | null
-            timestamp: number
-        }) => void): (() => void) => {
-            return typedOn(PersonalityChannels.sectionConfigChanged, callback)
-        },
+        } | null
+        timestamp: number
+    }) => void): (() => void) => {
+        return typedOn(PersonalityChannels.sectionConfigChanged, callback)
     },
 } satisfies WorkspaceApi;
 
