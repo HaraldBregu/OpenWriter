@@ -88,7 +88,7 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
         // Create the initial block for this writing
         const blockName = crypto.randomUUID()
 
-        // Persist to disk via window.workspace.output.save (workspace-backed OutputFilesService).
+        // Persist to disk via window.workspace.saveOutput (workspace-backed OutputFilesService).
         // This writes <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json
         // and one <blockName>.md file per block.
         const result = await window.workspace.saveOutput({
