@@ -250,7 +250,7 @@ export function useDraftEditor(
       if (currentWritingItemId) {
         // Update existing writing item on disk (partial update via output.update)
         try {
-          await window.workspace.output.update({
+          await window.workspace.updateOutput({
             type: 'writings',
             id: currentWritingItemId,
             blocks: serializeBlocksForOutput(entry.blocks),
