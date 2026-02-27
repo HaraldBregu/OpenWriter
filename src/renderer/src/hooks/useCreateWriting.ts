@@ -91,7 +91,7 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
         // Persist to disk via window.workspace.output.save (workspace-backed OutputFilesService).
         // This writes <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json
         // and one <blockName>.md file per block.
-        const result = await window.workspace.output.save({
+        const result = await window.workspace.saveOutput({
           type: 'writings',
           blocks: [
             {
