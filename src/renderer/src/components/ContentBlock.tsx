@@ -192,7 +192,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 relative">
+        <div className="flex-1 min-w-0 relative py-2">
           {/* Placeholder shown when editor is empty */}
           {isEmpty && (
             <span
