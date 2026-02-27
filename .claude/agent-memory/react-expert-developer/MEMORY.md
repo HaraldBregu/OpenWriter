@@ -67,7 +67,7 @@
 - Section hook: `src/renderer/src/hooks/useInferenceSettings.ts`
   - Signature: `useInferenceSettings(sectionId, defaultProviderId?)`
   - Returns: `{ settings, isLoaded, onChange, applySnapshot, resetToSectionDefaults }`
-  - `onChange` debounces 500ms before calling `window.personality.saveSectionConfig`
+  - `onChange` debounces 500ms before calling `window.workspace.saveSectionConfig`
   - `applySnapshot` sets local state without disk write (restoring saved conversations)
   - `resetToSectionDefaults` uses section defaults from ref or Redux global fallback
   - Replaces inline `useState`/`useEffect`/timer pattern in `PersonalitySimpleLayout`
