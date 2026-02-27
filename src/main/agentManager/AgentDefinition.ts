@@ -7,6 +7,8 @@
  */
 
 import type { AgentSessionConfig } from './AgentManagerTypes'
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
+import type { CompiledStateGraph } from '@langchain/langgraph'
 
 // ---------------------------------------------------------------------------
 // Core definition
@@ -36,6 +38,18 @@ export interface AgentDefinition {
     placeholder: string
     multiline?: boolean
   }
+  /**
+   * Optional LangGraph factory. When present, the agent runs as a full
+   * LangGraph StateGraph instead of a plain chat completion.
+   *
+   * Called once per run with the resolved model (streaming enabled). Returns
+   * a compiled graph whose final node's output is collected as the assistant
+   * response via streamMode: "messages".
+   *
+   * @param model - The resolved LangChain chat model (streaming enabled).
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
 }
 
 // ---------------------------------------------------------------------------
