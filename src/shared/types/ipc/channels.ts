@@ -44,6 +44,7 @@ import type {
 // ===========================================================================
 
 export const WorkspaceChannels = {
+  // Workspace
   selectFolder: 'workspace:select-folder',
   getCurrent: 'workspace-get-current',
   setCurrent: 'workspace-set-current',
@@ -53,35 +54,32 @@ export const WorkspaceChannels = {
   removeRecent: 'workspace-remove-recent',
   changed: 'workspace:changed',
   deleted: 'workspace:deleted',
-  documents: {
-    importFiles: 'documents:import-files',
-    importByPaths: 'documents:import-by-paths',
-    downloadFromUrl: 'documents:download-from-url',
-    loadAll: 'documents:load-all',
-    deleteFile: 'documents:delete-file',
-    fileChanged: 'documents:file-changed',
-    watcherError: 'documents:watcher-error',
-  },
-  directories: {
-    list: 'directories:list',
-    add: 'directories:add',
-    addMany: 'directories:add-many',
-    remove: 'directories:remove',
-    validate: 'directories:validate',
-    markIndexed: 'directories:mark-indexed',
-    changed: 'directories:changed',
-  },
-  personality: {
-    save: 'personality:save',
-    loadAll: 'personality:load-all',
-    loadOne: 'personality:load-one',
-    delete: 'personality:delete',
-    loadSectionConfig: 'personality:load-section-config',
-    saveSectionConfig: 'personality:save-section-config',
-    fileChanged: 'personality:file-changed',
-    watcherError: 'personality:watcher-error',
-    sectionConfigChanged: 'personality:section-config-changed',
-  },
+  // Documents
+  importFiles: 'documents:import-files',
+  importByPaths: 'documents:import-by-paths',
+  downloadFromUrl: 'documents:download-from-url',
+  documentsLoadAll: 'documents:load-all',
+  deleteFile: 'documents:delete-file',
+  documentsFileChanged: 'documents:file-changed',
+  documentsWatcherError: 'documents:watcher-error',
+  // Directories
+  list: 'directories:list',
+  add: 'directories:add',
+  addMany: 'directories:add-many',
+  remove: 'directories:remove',
+  validate: 'directories:validate',
+  markIndexed: 'directories:mark-indexed',
+  directoriesChanged: 'directories:changed',
+  // Personality
+  save: 'personality:save',
+  personalityLoadAll: 'personality:load-all',
+  loadOne: 'personality:load-one',
+  delete: 'personality:delete',
+  loadSectionConfig: 'personality:load-section-config',
+  saveSectionConfig: 'personality:save-section-config',
+  personalityFileChanged: 'personality:file-changed',
+  personalityWatcherError: 'personality:watcher-error',
+  sectionConfigChanged: 'personality:section-config-changed',
 } as const
 
 export const WindowChannels = {
