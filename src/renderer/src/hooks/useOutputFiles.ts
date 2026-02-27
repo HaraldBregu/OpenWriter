@@ -69,7 +69,7 @@ export function useOutputFiles(): void {
     // File-watcher listener — reloads when the filesystem changes externally
     // (e.g., another app writes a file, or the user deletes a folder manually).
     // ---------------------------------------------------------------------------
-    const unsubscribeFileChange = window.workspace.output.onFileChange((event) => {
+    const unsubscribeFileChange = window.workspace.onOutputFileChange((event) => {
       console.log(`[useOutputFiles] File ${event.type}: ${event.outputType}/${event.fileId}`)
       scheduleDebouncedLoad()
     })
