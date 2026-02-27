@@ -47,22 +47,11 @@ import type { IpcResult } from '../shared/types/ipc/ipc-result'
 // declaration rather than reaching into the shared directory directly.
 // ---------------------------------------------------------------------------
 export type {
-  CronJobConfig,
-  CronJobStatus,
-  CronJobResult,
-  CronValidationResult,
   WorkspaceInfo,
   WorkspaceChangedEvent,
   WorkspaceDeletedEvent,
   DocumentInfo,
   DocumentFileChangeEvent,
-  AgentSessionConfig,
-  AgentSessionInfo,
-  AgentRunOptions,
-  AgentStatusInfo,
-  PipelineEvent,
-  PipelineActiveRun,
-  PipelineInput,
   TaskSubmitPayload,
   TaskInfo,
   TaskEvent,
