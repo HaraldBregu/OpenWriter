@@ -80,6 +80,15 @@ export const WorkspaceChannels = {
   personalityFileChanged: 'personality:file-changed',
   personalityWatcherError: 'personality:watcher-error',
   sectionConfigChanged: 'personality:section-config-changed',
+  // Output
+  outputSave: 'output:save',
+  outputLoadAll: 'output:load-all',
+  loadByType: 'output:load-by-type',
+  outputLoadOne: 'output:load-one',
+  update: 'output:update',
+  outputDelete: 'output:delete',
+  outputFileChanged: 'output:file-changed',
+  outputWatcherError: 'output:watcher-error',
 } as const
 
 export const WindowChannels = {
