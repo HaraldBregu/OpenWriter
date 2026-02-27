@@ -85,15 +85,6 @@ export function bootstrapServices(): BootstrapResult {
   container.register('agent', new AgentService(storeService))
   container.register('agentManager', new AgentManager(storeService, eventBus))
 
-  // Pipeline -- agent registry + pipeline service + built-in agents
-  const agentRegistry = container.register('agentRegistry', new AgentRegistry())
-  agentRegistry.register(new EchoAgent())
-  agentRegistry.register(new ChatAgent(storeService))
-  agentRegistry.register(new CounterAgent(storeService))
-  agentRegistry.register(new AlphabetAgent(storeService))
-  agentRegistry.register(new EnhanceAgent(storeService))
-  container.register('pipeline', new PipelineService(agentRegistry, eventBus))
-
   // Task system -- handler registry + executor service + built-in handlers
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
   taskHandlerRegistry.register(new FileDownloadHandler())
