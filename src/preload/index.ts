@@ -4,7 +4,6 @@ import {
     AppChannels,
     WindowChannels,
     WorkspaceChannels,
-    OutputChannels,
     TaskChannels,
 } from '../shared/types/ipc/channels'
 import type {
