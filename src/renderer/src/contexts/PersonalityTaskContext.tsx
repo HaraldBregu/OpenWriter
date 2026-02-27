@@ -111,7 +111,7 @@ const {
       metadata: {
         title: entityId,
         provider: state.providerId,
-        model: state.modelId ?? import.meta.env.VITE_OPENAI_MODEL ?? 'gpt-4o-mini',
+        model: state.modelId ?? DEFAULT_MODEL,
         temperature: state.temperature,
         maxTokens: state.maxTokens,
         reasoning: state.reasoning,
