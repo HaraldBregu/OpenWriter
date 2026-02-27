@@ -6,7 +6,6 @@
  * Mid-range temperature allows natural variation without drifting from intent.
  */
 
-import { agentRegistry } from '../AgentRegistry'
 import type { AgentDefinition } from '../AgentDefinition'
 
 const definition: AgentDefinition = {
