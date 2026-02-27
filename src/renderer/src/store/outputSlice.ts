@@ -315,7 +315,7 @@ export const deleteOutputItem = createAsyncThunk<
   'output/delete',
   async (params, { rejectWithValue }) => {
     try {
-      await window.workspace.output.delete(params)
+      await window.workspace.deleteOutput(params)
       return params
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete output item'
