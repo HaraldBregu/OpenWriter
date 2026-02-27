@@ -256,7 +256,7 @@ export const updateOutputItem = createAsyncThunk<OutputItem, UpdateOutputItemInp
         reasoning,
       } = input
 
-      await window.workspace.output.update({
+      await window.workspace.updateOutput({
         type,
         id,
         blocks: blocks.map((b) => ({
