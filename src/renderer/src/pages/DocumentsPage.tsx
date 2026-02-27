@@ -641,7 +641,7 @@ const DocumentsPage: React.FC = () => {
       setIsImporting(true)
       setImportError(null)
       const paths = files.map(file => (file as File & { path: string }).path)
-      await window.workspace.documents.importByPaths(paths)
+      await window.workspace.importByPaths(paths)
       await reloadDocuments()
     } catch (error) {
       console.error('[DocumentsPage] Failed to handle drop:', error)
