@@ -22,11 +22,11 @@ export class DirectoriesIpc implements IpcModule {
 
     // List all indexed directories (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.list,
+      WorkspaceChannels.directories.list,
       wrapIpcHandler((event: IpcMainInvokeEvent) => {
         const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
         return metadata.getDirectories()
-      }, DirectoriesChannels.list)
+      }, WorkspaceChannels.directories.list)
     )
 
     // Add a single directory (window-scoped)
