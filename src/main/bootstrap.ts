@@ -28,7 +28,6 @@ import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasksMan
 import type { IpcModule } from './ipc'
 import {
   AppIpc,
-  AIAgentsManagerIpc,
   WorkspaceIpc,
   TasksManagerIpc,
   WindowIpc,
