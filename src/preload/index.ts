@@ -246,7 +246,7 @@ const workspace: WorkspaceApi = {
         }>
         metadata?: Record<string, unknown>
     }): Promise<{ id: string; path: string; savedAt: number }> => {
-        return typedInvokeUnwrap(OutputChannels.save, input)
+        return typedInvokeUnwrap(WorkspaceChannels.outputSave, input)
     },
     loadOutputs: () => {
         return typedInvokeUnwrap(OutputChannels.loadAll)
