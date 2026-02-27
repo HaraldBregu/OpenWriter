@@ -323,7 +323,7 @@ const workspace: WorkspaceApi = {
         filePath: string
         timestamp: number
     }) => void): (() => void) => {
-        return typedOn(PersonalityChannels.fileChanged, callback)
+        return typedOn(WorkspaceChannels.personality.fileChanged, callback)
     },
     onPersonalityWatcherError: (callback: (error: { error: string; timestamp: number }) => void): (() => void) => {
         return typedOn(PersonalityChannels.watcherError, callback)
