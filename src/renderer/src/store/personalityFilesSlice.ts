@@ -115,7 +115,7 @@ export const loadPersonalityFiles = createAsyncThunk(
   'personalityFiles/loadAll',
   async (_, { rejectWithValue }) => {
     try {
-      const files = await window.workspace.personality.loadAll()
+      const files = await window.workspace.loadPersonalities()
       return files
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load personality files'
