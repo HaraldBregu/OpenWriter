@@ -20,9 +20,9 @@ import { StoreService } from './services/store'
 import { LoggerService } from './services/logger'
 import { FileManagementService } from './services/FileManagementService'
 import { AgentManager, AgentRegistry, ALL_AGENT_DEFINITIONS } from './agentManager'
-import { TaskHandlerRegistry } from './tasks/TaskHandlerRegistry'
-import { TaskExecutorService } from './tasks/TaskExecutorService'
-import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/handlers'
+import { TasksManagerHandlerRegistry } from './tasksManager/TasksManagerHandlerRegistry'
+import { TasksManagerExecutor } from './tasksManager/TasksManagerExecutor'
+import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasksManager/handlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
