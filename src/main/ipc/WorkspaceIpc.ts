@@ -527,13 +527,13 @@ export class WorkspaceIpc implements IpcModule {
     )
 
     ipcMain.handle(
-      OutputChannels.loadAll,
+      WorkspaceChannels.outputLoadAll,
       wrapIpcHandler(async (event: IpcMainInvokeEvent): Promise<OutputFile[]> => {
         const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
         const files = await outputFiles.loadAll()
         logger.info('WorkspaceIpc', `Loaded ${files.length} output files`)
         return files
-      }, OutputChannels.loadAll)
+      }, WorkspaceChannels.outputLoadAll)
     )
 
     ipcMain.handle(
