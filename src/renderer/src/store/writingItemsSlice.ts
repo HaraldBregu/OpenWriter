@@ -16,7 +16,7 @@ import type { Block } from '@/components/ContentBlock'
  * a WritingEntry block.
  *
  * `writingItemId` is the stable on-disk folder name (YYYY-MM-DD_HHmmss) used
- * whenever calling `window.workspace.output.*`. It is distinct from `id`, which is a
+ * whenever calling `window.workspace.saveOutput/updateOutput/deleteOutput`. It is distinct from `id`, which is a
  * client-side UUID used for React routing and Redux keying.
  */
 export interface WritingEntry {
