@@ -82,7 +82,7 @@ const app: AppApi = {
     setModelSettings: (providerId: string, settings: { selectedModel: string; apiToken: string }): Promise<void> => {
         return typedInvokeUnwrap(AppChannels.setModelSettings, providerId, settings)
     },
-}
+} satisfies AppApi;
 
 // ---------------------------------------------------------------------------
 // window.win — Window controls
@@ -109,7 +109,7 @@ const win: WindowApi = {
     onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
         return typedOn(WindowChannels.fullScreenChange, callback)
     },
-}
+} satisfies WindowApi;
 
 // ---------------------------------------------------------------------------
 // window.workspace — Workspace folder selection, documents, directories, personality, output
