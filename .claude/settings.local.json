@@ -76,7 +76,8 @@
       "Bash(yarn build:dev:*)",
       "Bash(git stash:*)",
       "Bash(git:*)",
-      "Bash(./node_modules/.bin/jest StoreIpc|CustomIpc:*)"
+      "Bash(./node_modules/.bin/jest StoreIpc|CustomIpc:*)",
+      "Bash(test:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
