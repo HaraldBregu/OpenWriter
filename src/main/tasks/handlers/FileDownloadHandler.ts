@@ -44,7 +44,7 @@ interface DownloadTiming {
   lastProgressTime: number
 }
 
-const PROGRESS_THROTTLE_MS = 100 // Update every 100ms max
+const PROGRESS_THROTTLE_MS = DOWNLOAD_PROGRESS_THROTTLE_MS // Update every 100ms max
 
 /**
  * Production-grade file download handler with:
