@@ -94,7 +94,7 @@ function mapOutputFileToEntry(file: OutputFile): WritingEntry {
 // ---------------------------------------------------------------------------
 
 /**
- * Load all writing items from the current workspace via window.workspace.output.loadByType.
+ * Load all writing items from the current workspace via window.workspace.loadOutputsByType.
  * Returns an empty array when no workspace is active.
  */
 export const loadWritingItems = createAsyncThunk<WritingEntry[], void, { rejectValue: string }>(
