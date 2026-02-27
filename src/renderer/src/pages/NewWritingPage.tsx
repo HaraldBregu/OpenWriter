@@ -113,7 +113,7 @@ const NewWritingPage: React.FC = () => {
                     const writingItemId = savedWritingItemIdRef.current
                     if (writingItemId) {
                       try {
-                        await window.workspace.output.delete({ type: 'writings', id: writingItemId })
+                        await window.workspace.deleteOutput({ type: 'writings', id: writingItemId })
                       } catch (err) {
                         console.error('[NewWritingPage] Failed to delete writing item from disk:', err)
                       }
