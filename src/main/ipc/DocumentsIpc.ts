@@ -165,7 +165,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      WorkspaceChannels.documents.deleteFile,
+      WorkspaceChannels.deleteFile,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -178,7 +178,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         await documentsService.deleteFile(id, currentWorkspace)
-      }, WorkspaceChannels.documents.deleteFile)
+      }, WorkspaceChannels.deleteFile)
     )
 
     console.log(`[IPC] Registered ${this.name} module`)
