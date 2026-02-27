@@ -3,6 +3,8 @@ import { loadPersonalityFiles } from '@/store/personalityFilesSlice'
 import { useAppDispatch } from '@/store'
 import type { IPersonalityTaskService } from '@/services/IPersonalityTaskService'
 import { electronPersonalityTaskService } from '@/services/ElectronPersonalityTaskService'
+import { useTaskContext } from '@/contexts/TaskContext'
+import type { TaskStore as SharedTaskStore } from '@/contexts/TaskContext'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -143,12 +145,15 @@ interface PersonalityTaskProviderProps {
 }
 
 function PersonalityTaskProvider({ children, service = electronPersonalityTaskService }: PersonalityTaskProviderProps): React.JSX.Element {
-  // The store is created once per provider mount and never changes.
+  // The personality store is created once per provider mount and never changes.
   const storeRef = useRef<PersonalityTaskStore | null>(null)
   if (!storeRef.current) {
     storeRef.current = createPersonalityTaskStore()
   }
   const store = storeRef.current
+
+  // Access the shared TaskStore from the parent <TaskProvider>.
+  const { store: sharedStore } = useTaskContext()
 
   // Maps taskId -> sectionId so streaming events can be routed correctly.
   const taskIdToSectionRef = useRef<Map<string, string>>(new Map())
@@ -209,98 +214,93 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
   }, [store, service])
 
   // -----------------------------------------------------------------------
-  // Global IPC event listener
+  // Subscribe to the shared TaskStore for personality task events
   // -----------------------------------------------------------------------
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined
-    try {
-      unsubscribe = service.onTaskEvent((event) => {
-      const { type, data } = event
+    // Subscribe to ALL events in the shared TaskStore, then filter by
+    // taskIds we own (via taskIdToSectionRef).
+    const unsub = sharedStore.subscribe('ALL', () => {
+      for (const [taskId, sectionId] of taskIdToSectionRef.current.entries()) {
+        const snap = sharedStore.getTaskSnapshot(taskId)
+        if (!snap) continue
 
-      const taskId = data?.taskId as string | undefined
-      if (!taskId) return
+        const task = store.getSnapshot(sectionId)
 
-      const sectionId = taskIdToSectionRef.current.get(taskId)
-      if (!sectionId) return
+        if (snap.streamedContent && snap.streamedContent.length > task.latestResponse.length) {
+          const newContent = snap.streamedContent
+          // Detect incremental tokens since last update
+          const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
 
-      const task = store.getSnapshot(sectionId)
-
-      if (type === 'stream') {
-        const token = data.token as string
-        if (!token) return
-
-        const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
-
-        if (isFirstToken) {
-          const assistantMsg: AIMessage = {
-            id: `msg-${Date.now()}`,
-            role: 'assistant',
-            content: '',
-            timestamp: Date.now()
+          if (isFirstToken) {
+            const assistantMsg: AIMessage = {
+              id: `msg-${Date.now()}`,
+              role: 'assistant',
+              content: '',
+              timestamp: Date.now()
+            }
+            store.update(sectionId, {
+              messages: [...task.messages, assistantMsg],
+              isStreaming: true,
+              latestResponse: newContent
+            })
+          } else {
+            store.update(sectionId, { latestResponse: newContent })
           }
+        }
+
+        if (snap.status === 'completed') {
+          const result = snap.result as { content: string; tokenCount: number } | undefined
+          const currentTask = store.getSnapshot(sectionId)
+          const finalContent = result?.content || currentTask.latestResponse
+
+          const updatedMessages = currentTask.messages.map((msg, idx) =>
+            idx === currentTask.messages.length - 1 && msg.role === 'assistant'
+              ? { ...msg, content: finalContent }
+              : msg
+          )
+
+          const completedTask: TaskState = {
+            ...currentTask,
+            messages: updatedMessages,
+            isLoading: false,
+            isStreaming: false,
+            taskId: null
+          }
+          store.update(sectionId, completedTask)
+
+          taskIdToSectionRef.current.delete(taskId)
+
+          console.log(`[PersonalityTask] Task completed for ${sectionId}`)
+          autoSave(sectionId, completedTask, finalContent)
+        } else if (snap.status === 'error') {
+          const errorMessage = snap.error || 'An error occurred'
+          console.error(`[PersonalityTask] Error for ${sectionId}:`, errorMessage)
+
           store.update(sectionId, {
-            messages: [...task.messages, assistantMsg],
-            isStreaming: true,
-            latestResponse: token
+            error: errorMessage,
+            isLoading: false,
+            isStreaming: false,
+            taskId: null
           })
-        } else {
-          store.update(sectionId, { latestResponse: task.latestResponse + token })
+
+          taskIdToSectionRef.current.delete(taskId)
+        } else if (snap.status === 'cancelled') {
+          console.log(`[PersonalityTask] Task cancelled for ${sectionId}`)
+
+          store.update(sectionId, {
+            isLoading: false,
+            isStreaming: false,
+            taskId: null
+          })
+
+          taskIdToSectionRef.current.delete(taskId)
         }
-      } else if (type === 'completed') {
-        const result = data.result as { content: string; tokenCount: number } | undefined
-        const finalContent = result?.content || task.latestResponse
-
-        const updatedMessages = task.messages.map((msg, idx) =>
-          idx === task.messages.length - 1 && msg.role === 'assistant'
-            ? { ...msg, content: finalContent }
-            : msg
-        )
-
-        const completedTask: TaskState = {
-          ...task,
-          messages: updatedMessages,
-          isLoading: false,
-          isStreaming: false,
-          taskId: null
-        }
-        // Write the completed state directly then notify
-        store.update(sectionId, completedTask)
-
-        taskIdToSectionRef.current.delete(taskId)
-
-        console.log(`[PersonalityTask] Task completed for ${sectionId}`)
-        autoSave(sectionId, completedTask, finalContent)
-      } else if (type === 'error') {
-        const errorMessage = (data as { message?: string }).message || 'An error occurred'
-        console.error(`[PersonalityTask] Error for ${sectionId}:`, errorMessage)
-
-        store.update(sectionId, {
-          error: errorMessage,
-          isLoading: false,
-          isStreaming: false,
-          taskId: null
-        })
-
-        taskIdToSectionRef.current.delete(taskId)
-      } else if (type === 'cancelled') {
-        console.log(`[PersonalityTask] Task cancelled for ${sectionId}`)
-
-        store.update(sectionId, {
-          isLoading: false,
-          isStreaming: false,
-          taskId: null
-        })
-
-        taskIdToSectionRef.current.delete(taskId)
       }
     })
-    } catch (err) {
-      console.error('[PersonalityTaskProvider] Failed to register task event listener:', err)
-    }
 
-    return () => unsubscribe?.()
-  }, [store, autoSave, service])
+    return () => unsub()
+  }, [sharedStore, store, autoSave])
 
   // -----------------------------------------------------------------------
   // Action callbacks — stable across renders because store never changes.
@@ -354,6 +354,8 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
         if (result.success) {
           const taskId = result.data.taskId
           taskIdToSectionRef.current.set(taskId, sectionId)
+          // Register in the shared TaskStore so events are captured
+          sharedStore.addTask(taskId, 'ai-chat')
           store.update(sectionId, { taskId })
           console.log(`[PersonalityTask] Started task for ${sectionId}, taskId: ${taskId}`)
         } else {
@@ -365,7 +367,7 @@ function PersonalityTaskProvider({ children, service = electronPersonalityTaskSe
         store.update(sectionId, { error: errorMsg, isLoading: false })
       }
     },
-    [store, service]
+    [store, service, sharedStore]
   )
 
   const cancelTask = useCallback(
