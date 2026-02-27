@@ -8,6 +8,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
 import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
+import { ContentBlockPlaceholder } from './ContentBlockPlaceholder'
 
 
 // ---------------------------------------------------------------------------
