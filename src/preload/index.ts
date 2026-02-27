@@ -302,7 +302,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.personality.save, input)
     },
     loadPersonalities: () => {
-        return typedInvokeUnwrap(PersonalityChannels.loadAll)
+        return typedInvokeUnwrap(WorkspaceChannels.personality.loadAll)
     },
     loadPersonality: (params: {
         sectionId: string
