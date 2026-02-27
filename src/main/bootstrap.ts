@@ -119,15 +119,11 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
   console.log('[Bootstrap] Registering IPC modules...')
 
   const ipcModules: IpcModule[] = [
-    new AgentIpc(),
-    new CronIpc(),
     new CustomIpc(),   // Also owns store/AI-model settings (merged from StoreIpc)
     new DocumentsIpc(),
-    new PipelineIpc(),
     new WorkspaceIpc(),
     new DirectoriesIpc(),
     new TaskIpc(),
-    new AgentManagerIpc(),
     new PersonalityIpc(),
     new ThemeIpc(),
     new WindowIpc(),
