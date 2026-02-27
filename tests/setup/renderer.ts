@@ -95,21 +95,6 @@ Object.defineProperty(window, 'network', {
   writable: true, configurable: true
 })
 
-Object.defineProperty(window, 'cron', {
-  value: {
-    getAll: jest.fn().mockResolvedValue([]),
-    getJob: jest.fn().mockResolvedValue(null),
-    start: jest.fn().mockResolvedValue(true),
-    stop: jest.fn().mockResolvedValue(true),
-    delete: jest.fn().mockResolvedValue(true),
-    create: jest.fn().mockResolvedValue(true),
-    updateSchedule: jest.fn().mockResolvedValue(true),
-    validateExpression: jest.fn().mockResolvedValue({ valid: true }),
-    onJobResult: jest.fn().mockReturnValue(jest.fn())
-  },
-  writable: true, configurable: true
-})
-
 Object.defineProperty(window, 'lifecycle', {
   value: {
     getState: jest.fn().mockResolvedValue({ events: [], appReadyAt: Date.now(), platform: 'win32', isSingleInstance: true }),
