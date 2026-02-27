@@ -90,7 +90,7 @@ export class DocumentsIpc implements IpcModule {
      * Output: FileMetadata[] - Array of imported file metadata
      */
     ipcMain.handle(
-      DocumentsChannels.importByPaths,
+      WorkspaceChannels.documents.importByPaths,
       wrapIpcHandler(async (event: IpcMainInvokeEvent, paths: string[]) => {
         const workspace = getWindowService<WorkspaceService>(event, container, 'workspace')
         const fileManagement = container.get<FileManagementService>('fileManagement')
@@ -103,7 +103,7 @@ export class DocumentsIpc implements IpcModule {
 
         const documentsService = new DocumentsService(fileManagement, watcher)
         return await documentsService.importFiles(currentWorkspace, paths)
-      }, DocumentsChannels.importByPaths)
+      }, WorkspaceChannels.documents.importByPaths)
     )
 
     /**
