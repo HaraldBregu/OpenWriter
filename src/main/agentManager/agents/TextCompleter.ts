@@ -40,5 +40,4 @@ Rules you follow without exception:
   },
 }
 
-agentRegistry.register(definition)
 export { definition as TextCompleterAgent }
