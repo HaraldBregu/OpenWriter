@@ -55,13 +55,13 @@ export class DirectoriesIpc implements IpcModule {
 
     // Remove a directory by ID (window-scoped)
     ipcMain.handle(
-      DirectoriesChannels.remove,
+      WorkspaceChannels.directories.remove,
       wrapIpcHandler(
         (event: IpcMainInvokeEvent, id: string) => {
           const metadata = getWindowService<WorkspaceMetadataService>(event, container, 'workspaceMetadata')
           return metadata.removeDirectory(id)
         },
-        DirectoriesChannels.remove
+        WorkspaceChannels.directories.remove
       )
     )
 
