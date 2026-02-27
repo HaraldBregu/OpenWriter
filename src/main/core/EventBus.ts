@@ -16,9 +16,6 @@ export interface AppEvent {
 export interface AppEvents {
   'service:initialized': { service: string }
   'service:destroyed': { service: string }
-  'agent:run:start': { sessionId: string; runId: string }
-  'agent:run:complete': { sessionId: string; runId: string; duration: number }
-  'agent:run:error': { sessionId: string; runId: string; error: string }
   'agentManager:run:start': { sessionId: string; runId: string }
   'agentManager:run:complete': { sessionId: string; runId: string; duration: number }
   'agentManager:run:error': { sessionId: string; runId: string; error: string }
