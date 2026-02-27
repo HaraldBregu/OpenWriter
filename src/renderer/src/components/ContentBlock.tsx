@@ -196,7 +196,7 @@ export const ContentBlock = React.memo(function ContentBlock({
           {/* Placeholder shown when editor is empty */}
           {isEmpty && (
             <span
-              className="absolute inset-0 py-3 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
+              className="absolute inset-0 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
               aria-hidden="true"
             >
               {placeholder}
