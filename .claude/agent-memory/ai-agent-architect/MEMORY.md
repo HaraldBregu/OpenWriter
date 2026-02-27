@@ -30,6 +30,17 @@ The `agents/index.ts` barrel imports all files as side effects then re-exports n
 | summarizer | analysis | 0.3 | High-fidelity long-form summarisation |
 | tone-adjuster | editing | 0.6 | Tone rewriting (formal/casual/persuasive/etc.) |
 
+## LangGraph Integration (`@langchain/langgraph@1.2.0` installed)
+- `AgentDefinition.buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any,any,any,any,any,any>` — optional graph factory
+- `AgentSessionConfig.buildGraph` carries the factory from definition through to `AgentSession`
+- `AgentSession.buildGraph` — stored from config, NOT serialized in `toSnapshot()` (functions can't cross IPC)
+- `AgentExecutor` — if `input.buildGraph` is present, runs `executeGraphStream` using `streamMode:"messages"`; otherwise falls back to plain chat completion
+- `buildSessionConfig()` in AgentRegistry propagates `buildGraph` with: `overrides.buildGraph ?? def.buildGraph`
+- All 5 agents now implement `buildGraph` with real StateGraph topologies (see patterns.md)
+- `streamMode:"messages"` yields `[chunk, metadata]` tuples; extract content via `extractTokenFromChunk(chunk.content)`
+- Use `eslint-disable @typescript-eslint/no-explicit-any` on `CompiledStateGraph<any,any,any,any,any,any>` — 6 type params required, inference is impractical here
+- Lint baseline: 122 warnings, 0 errors (was 128 before this change)
+
 ## Key Conventions
 - `AgentDefinition.defaultConfig` has optional `providerId` — callers must supply a real one via `buildSessionConfig(def, providerId, overrides?)`
 - `AgentDefinitionInfo` is the IPC-safe projection — use `listInfo()` or `toAgentDefinitionInfo()` before sending to renderer
