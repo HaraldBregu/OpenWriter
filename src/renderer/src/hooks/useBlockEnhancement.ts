@@ -68,9 +68,8 @@ export function useBlockEnhancement({
       if (!token) return
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
-      // Strip newlines so the SingleParagraphDocument schema is never violated.
-      const sanitized = token.replace(/\n/g, ' ')
-      if (sanitized) ed.commands.insertContent(sanitized)
+      // Insert content exactly as it arrives, preserving newlines and formatting.
+      ed.commands.insertContent(token)
     })
     return () => unsub()
   }, [enhanceTaskId, editorRef])
