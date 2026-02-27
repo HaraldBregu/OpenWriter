@@ -100,6 +100,11 @@ export const ContentBlock = React.memo(function ContentBlock({
   const editorOptions = useMemo<UseEditorOptions>(() => ({
     extensions: [StarterKit, Markdown],
     content: block.content || '',
+    // Tell TipTap to parse the initial content string as Markdown so that
+    // paragraph breaks (blank lines) are correctly mapped to <p> nodes.
+    // Without this, TipTap treats the string as HTML, collapses \n\n into
+    // a single text run, and all paragraph structure is lost.
+    contentType: 'markdown',
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
       onChangeRef.current(blockIdRef.current, ed.getMarkdown())
