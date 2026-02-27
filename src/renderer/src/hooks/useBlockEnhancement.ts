@@ -69,10 +69,17 @@ export function useBlockEnhancement({
       const ed = editorRef.current
       if (!ed || ed.isDestroyed) return
 
-              console.log("token: ", token)
-
-      // Insert content exactly as it arrives, preserving newlines and formatting.
-      ed.commands.insertContent(token)
+      // Split the token on newlines so each line becomes a separate paragraph.
+      const parts = token.split('\n')
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+          ed.commands.insertContent(parts[i])
+        }
+        // Each \n between parts creates a new paragraph node.
+        if (i < parts.length - 1) {
+          ed.commands.splitBlock()
+        }
+      }
     })
     return () => unsub()
   }, [enhanceTaskId, editorRef])
