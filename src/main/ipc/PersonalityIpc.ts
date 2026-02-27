@@ -131,7 +131,7 @@ export class PersonalityIpc implements IpcModule {
      * Output: void
      */
     ipcMain.handle(
-      WorkspaceChannels.personality.delete,
+      WorkspaceChannels.delete,
       wrapIpcHandler(
         async (event: IpcMainInvokeEvent, params: { sectionId: string; id: string }): Promise<void> => {
           const personalityFiles = getWindowService<PersonalityFilesService>(event, container, 'personalityFiles')
@@ -149,7 +149,7 @@ export class PersonalityIpc implements IpcModule {
 
           console.log(`[PersonalityIpc] Deleted personality file: ${params.sectionId}/${params.id}`)
         },
-        WorkspaceChannels.personality.delete
+        WorkspaceChannels.delete
       )
     )
 
