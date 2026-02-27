@@ -217,20 +217,20 @@ export interface InvokeChannelMap {
   [OutputChannels.delete]: { args: [params: { type: string; id: string }]; result: void }
 
   // ---- Directories (IpcResult-wrapped) ----
-  [DirectoriesChannels.list]: { args: []; result: DirectoryEntry[] }
-  [DirectoriesChannels.add]: { args: [dirPath: string]; result: DirectoryEntry }
-  [DirectoriesChannels.addMany]: { args: [dirPaths: string[]]; result: DirectoryAddManyResult }
-  [DirectoriesChannels.remove]: { args: [id: string]; result: boolean }
-  [DirectoriesChannels.validate]: { args: [dirPath: string]; result: DirectoryValidationResult }
-  [DirectoriesChannels.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean }
+  [WorkspaceChannels.directories.list]: { args: []; result: DirectoryEntry[] }
+  [WorkspaceChannels.directories.add]: { args: [dirPath: string]; result: DirectoryEntry }
+  [WorkspaceChannels.directories.addMany]: { args: [dirPaths: string[]]; result: DirectoryAddManyResult }
+  [WorkspaceChannels.directories.remove]: { args: [id: string]; result: boolean }
+  [WorkspaceChannels.directories.validate]: { args: [dirPath: string]; result: DirectoryValidationResult }
+  [WorkspaceChannels.directories.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean }
 
   // ---- Personality (IpcResult-wrapped) ----
-  [PersonalityChannels.save]: { args: [input: SavePersonalityInput]; result: SavePersonalityResult }
-  [PersonalityChannels.loadAll]: { args: []; result: PersonalityFile[] }
-  [PersonalityChannels.loadOne]: { args: [params: { sectionId: string; id: string }]; result: PersonalityFile | null }
-  [PersonalityChannels.delete]: { args: [params: { sectionId: string; id: string }]; result: void }
-  [PersonalityChannels.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
-  [PersonalityChannels.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
+  [WorkspaceChannels.personality.save]: { args: [input: SavePersonalityInput]; result: SavePersonalityResult }
+  [WorkspaceChannels.personality.loadAll]: { args: []; result: PersonalityFile[] }
+  [WorkspaceChannels.personality.loadOne]: { args: [params: { sectionId: string; id: string }]; result: PersonalityFile | null }
+  [WorkspaceChannels.personality.delete]: { args: [params: { sectionId: string; id: string }]; result: void }
+  [WorkspaceChannels.personality.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
+  [WorkspaceChannels.personality.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
 
   // ---- App — writing context menu (raw invoke) ----
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
