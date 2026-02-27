@@ -1,507 +1,126 @@
-import React, { createContext, useContext, useEffect, useRef, useCallback, useSyncExternalStore } from 'react'
 import { loadPersonalityFiles } from '@/store/personalityFilesSlice'
-import { useAppDispatch } from '@/store'
-import type { IPersonalityTaskService } from '@/services/IPersonalityTaskService'
-import { electronPersonalityTaskService } from '@/services/ElectronPersonalityTaskService'
-import { useTaskContext } from '@/contexts/TaskContext'
+import { createEntityTaskContext } from '@/contexts/EntityTaskContext'
+import type { EntityTaskState, EntityChatMessage } from '@/contexts/EntityTaskContext'
+import type {
+  IEntityTaskService,
+  EntityTaskSubmitResult,
+  EntityTaskSaveResult,
+} from '@/services/IEntityTaskService'
+
+export type { EntityChatMessage as AIMessage }
 
 // ---------------------------------------------------------------------------
-// Types
+// Domain types
 // ---------------------------------------------------------------------------
 
-interface TaskState {
-  messages: AIMessage[]
-  isLoading: boolean
-  isStreaming: boolean
-  error: string | null
-  latestResponse: string
-  taskId: string | null
-  isSaving: boolean
-  lastSaveError: string | null
-  lastSavedFileId: string | null
-  providerId: string
-  modelId: string | null
-  temperature?: number
-  maxTokens?: number | null
-  reasoning?: boolean
+export interface PersonalitySubmitInput {
+  readonly prompt: string
+  readonly providerId: string
+  readonly systemPrompt: string
+  readonly messages: ReadonlyArray<{ role: string; content: string }>
+  readonly modelId?: string | null
+  readonly temperature?: number
+  readonly maxTokens?: number | null
 }
 
-interface SubmitTaskOptions {
-  modelId?: string | null
-  temperature?: number
-  maxTokens?: number | null
-  reasoning?: boolean
+export interface PersonalitySubmitResult extends EntityTaskSubmitResult {
+  readonly taskId: string
 }
 
-// ---------------------------------------------------------------------------
-// Defaults
-// ---------------------------------------------------------------------------
-
-const DEFAULT_TASK_STATE: TaskState = {
-  messages: [],
-  isLoading: false,
-  isStreaming: false,
-  error: null,
-  latestResponse: '',
-  taskId: null,
-  isSaving: false,
-  lastSaveError: null,
-  lastSavedFileId: null,
-  providerId: 'openai',
-  modelId: null,
-  temperature: undefined,
-  maxTokens: undefined,
-  reasoning: undefined
-}
-
-// ---------------------------------------------------------------------------
-// Store — lives outside React, holds all mutable task state.
-//
-// The design is a hand-rolled external store compatible with useSyncExternalStore:
-//   - `taskMap`       : Map<sectionId, TaskState> — the source of truth
-//   - `listeners`     : Map<sectionId, Set<() => void>> — per-section subscriber sets
-//   - `subscribe(id)` : returns an unsubscribe function for a given section
-//   - `getSnapshot(id)`: returns the current TaskState for a section (stable ref when unchanged)
-//   - `update(id, patch)`: immutably patches a section's state and notifies only its listeners
-//
-// This means a stream token for "consciousness" only wakes up the hook subscribed
-// to "consciousness", not the other 9 personality sections that may be mounted.
-// ---------------------------------------------------------------------------
-
-interface PersonalityTaskStore {
-  getSnapshot: (sectionId: string) => TaskState
-  subscribe: (sectionId: string, listener: () => void) => () => void
-  update: (sectionId: string, patch: Partial<TaskState>) => void
-  getOrCreate: (sectionId: string) => TaskState
-}
-
-function createPersonalityTaskStore(): PersonalityTaskStore {
-  const taskMap = new Map<string, TaskState>()
-  const listeners = new Map<string, Set<() => void>>()
-
-  function getOrCreate(sectionId: string): TaskState {
-    const existing = taskMap.get(sectionId)
-    if (existing) return existing
-    const fresh: TaskState = { ...DEFAULT_TASK_STATE }
-    taskMap.set(sectionId, fresh)
-    return fresh
+export interface PersonalitySaveOptions {
+  readonly sectionId: string
+  readonly content: string
+  readonly metadata: {
+    readonly title: string
+    readonly provider: string
+    readonly model: string
+    readonly temperature?: number
+    readonly maxTokens?: number | null
+    readonly reasoning?: boolean
   }
+}
 
-  function getSnapshot(sectionId: string): TaskState {
-    return getOrCreate(sectionId)
-  }
+export interface PersonalitySaveResult extends EntityTaskSaveResult {
+  readonly id: string
+}
 
-  function subscribe(sectionId: string, listener: () => void): () => void {
-    let set = listeners.get(sectionId)
-    if (!set) {
-      set = new Set()
-      listeners.set(sectionId, set)
+export type IPersonalityTaskService = IEntityTaskService<
+  PersonalitySubmitInput,
+  PersonalitySubmitResult,
+  PersonalitySaveOptions,
+  PersonalitySaveResult
+>
+
+// ---------------------------------------------------------------------------
+// Context bundle — thin adapter over the generic EntityTaskContext
+// ---------------------------------------------------------------------------
+
+const {
+  Provider: PersonalityTaskProvider,
+  useEntityTask: usePersonalityTask,
+  Context: PersonalityTaskContext,
+} = createEntityTaskContext<
+  PersonalitySubmitInput,
+  PersonalitySubmitResult,
+  PersonalitySaveOptions,
+  PersonalitySaveResult
+>({
+  displayName: 'PersonalityTask',
+  defaultProviderId: 'openai',
+  taskType: 'ai-chat',
+
+  buildSubmitInput: (
+    _entityId,
+    prompt,
+    systemPrompt,
+    state: EntityTaskState<PersonalitySaveResult>,
+    options,
+  ): PersonalitySubmitInput => {
+    const history = state.messages.map((m) => ({ role: m.role, content: m.content }))
+    return {
+      prompt,
+      providerId: state.providerId,
+      systemPrompt,
+      messages: history,
+      modelId: options.modelId ?? null,
+      temperature: options.temperature,
+      maxTokens: options.maxTokens,
     }
-    set.add(listener)
-    return () => {
-      set!.delete(listener)
-      if (set!.size === 0) listeners.delete(sectionId)
+  },
+
+  extractResultContent: (result: unknown): string => {
+    if (result && typeof result === 'object' && 'content' in result) {
+      return String((result as { content: unknown }).content)
     }
-  }
+    return ''
+  },
 
-  function update(sectionId: string, patch: Partial<TaskState>): void {
-    const prev = getOrCreate(sectionId)
-    const next: TaskState = { ...prev, ...patch }
-    taskMap.set(sectionId, next)
-    // Notify only the listeners subscribed to this specific section
-    listeners.get(sectionId)?.forEach((fn) => fn())
-  }
+  buildSaveOptions: (
+    entityId,
+    state: EntityTaskState<PersonalitySaveResult>,
+    finalContent,
+  ): PersonalitySaveOptions | null => {
+    if (!finalContent || state.messages.length === 0) return null
 
-  return { getSnapshot, subscribe, update, getOrCreate }
-}
-
-// ---------------------------------------------------------------------------
-// Context — holds the stable store reference and action dispatchers.
-// The store object never changes identity so the context value is always
-// the same reference: zero provider re-renders from task updates.
-// ---------------------------------------------------------------------------
-
-interface PersonalityTaskContextValue {
-  store: PersonalityTaskStore
-  submitTask: (sectionId: string, prompt: string, systemPrompt: string, providerId: string, options?: SubmitTaskOptions) => Promise<void>
-  cancelTask: (sectionId: string) => void
-  clearTask: (sectionId: string) => void
-}
-
-const PersonalityTaskContext = createContext<PersonalityTaskContextValue | undefined>(undefined)
-
-// ---------------------------------------------------------------------------
-// Provider
-// ---------------------------------------------------------------------------
-
-interface PersonalityTaskProviderProps {
-  children: React.ReactNode
-  /**
-   * Injectable service for IPC communication. Defaults to the production
-   * Electron implementation. Pass a MockPersonalityTaskService in tests.
-   */
-  service?: IPersonalityTaskService
-}
-
-function PersonalityTaskProvider({ children, service = electronPersonalityTaskService }: PersonalityTaskProviderProps): React.JSX.Element {
-  // The personality store is created once per provider mount and never changes.
-  const storeRef = useRef<PersonalityTaskStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createPersonalityTaskStore()
-  }
-  const store = storeRef.current
-
-  // Access the shared TaskStore from the parent <TaskProvider>.
-  const { store: sharedStore } = useTaskContext()
-
-  // Maps taskId -> sectionId so streaming events can be routed correctly.
-  const taskIdToSectionRef = useRef<Map<string, string>>(new Map())
-
-  const dispatch = useAppDispatch()
-  // Stable reference for dispatch so the event listener doesn't go stale.
-  const dispatchRef = useRef(dispatch)
-  dispatchRef.current = dispatch
-
-  // -----------------------------------------------------------------------
-  // Auto-save helper (called when a task completes)
-  // -----------------------------------------------------------------------
-
-  const autoSave = useCallback(async (sectionId: string, task: TaskState, content?: string) => {
-    if (task.messages.length === 0) return
-
-    const markdownContent = content || (() => {
-      const lastAssistant = [...task.messages].reverse().find((m) => m.role === 'assistant')
-      return lastAssistant?.content || ''
-    })()
-
-    if (!markdownContent) {
-      console.warn(`[PersonalityTask] Skipping auto-save for ${sectionId}: empty content`)
-      return
+    return {
+      sectionId: entityId,
+      content: finalContent,
+      metadata: {
+        title: entityId,
+        provider: state.providerId,
+        model: state.modelId ?? import.meta.env.VITE_OPENAI_MODEL ?? 'gpt-4o-mini',
+        temperature: state.temperature,
+        maxTokens: state.maxTokens,
+        reasoning: state.reasoning,
+      },
     }
+  },
 
-    store.update(sectionId, { isSaving: true, lastSaveError: null })
-
-    try {
-      let modelName = task.modelId || 'unknown'
-      if (modelName === 'unknown') {
-        const settings = await service.getModelSettings(task.providerId)
-        modelName = settings?.selectedModel || import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini'
-      }
-
-      const saveResult = await service.savePersonality({
-        sectionId,
-        content: markdownContent,
-        metadata: {
-          title: sectionId,
-          provider: task.providerId,
-          model: modelName,
-          temperature: task.temperature,
-          maxTokens: task.maxTokens,
-          reasoning: task.reasoning
-        }
-      })
-
-      store.update(sectionId, { isSaving: false, lastSavedFileId: saveResult.id })
-      dispatchRef.current(loadPersonalityFiles())
-
-      console.log(`[PersonalityTask] Auto-saved conversation for ${sectionId}`)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Auto-save failed'
-      console.error(`[PersonalityTask] Auto-save error for ${sectionId}:`, message)
-      store.update(sectionId, { isSaving: false, lastSaveError: message })
-    }
-  }, [store, service])
-
-  // -----------------------------------------------------------------------
-  // Subscribe to the shared TaskStore for personality task events
-  // -----------------------------------------------------------------------
-
-  useEffect(() => {
-    // Subscribe to ALL events in the shared TaskStore, then filter by
-    // taskIds we own (via taskIdToSectionRef).
-    const unsub = sharedStore.subscribe('ALL', () => {
-      for (const [taskId, sectionId] of taskIdToSectionRef.current.entries()) {
-        const snap = sharedStore.getTaskSnapshot(taskId)
-        if (!snap) continue
-
-        const task = store.getSnapshot(sectionId)
-
-        if (snap.streamedContent && snap.streamedContent.length > task.latestResponse.length) {
-          const newContent = snap.streamedContent
-          // Detect incremental tokens since last update
-          const isFirstToken = task.latestResponse.length === 0 && !task.isStreaming
-
-          if (isFirstToken) {
-            const assistantMsg: AIMessage = {
-              id: `msg-${Date.now()}`,
-              role: 'assistant',
-              content: '',
-              timestamp: Date.now()
-            }
-            store.update(sectionId, {
-              messages: [...task.messages, assistantMsg],
-              isStreaming: true,
-              latestResponse: newContent
-            })
-          } else {
-            store.update(sectionId, { latestResponse: newContent })
-          }
-        }
-
-        if (snap.status === 'completed') {
-          const result = snap.result as { content: string; tokenCount: number } | undefined
-          const currentTask = store.getSnapshot(sectionId)
-          const finalContent = result?.content || currentTask.latestResponse
-
-          const updatedMessages = currentTask.messages.map((msg, idx) =>
-            idx === currentTask.messages.length - 1 && msg.role === 'assistant'
-              ? { ...msg, content: finalContent }
-              : msg
-          )
-
-          const completedTask: TaskState = {
-            ...currentTask,
-            messages: updatedMessages,
-            isLoading: false,
-            isStreaming: false,
-            taskId: null
-          }
-          store.update(sectionId, completedTask)
-
-          taskIdToSectionRef.current.delete(taskId)
-
-          console.log(`[PersonalityTask] Task completed for ${sectionId}`)
-          autoSave(sectionId, completedTask, finalContent)
-        } else if (snap.status === 'error') {
-          const errorMessage = snap.error || 'An error occurred'
-          console.error(`[PersonalityTask] Error for ${sectionId}:`, errorMessage)
-
-          store.update(sectionId, {
-            error: errorMessage,
-            isLoading: false,
-            isStreaming: false,
-            taskId: null
-          })
-
-          taskIdToSectionRef.current.delete(taskId)
-        } else if (snap.status === 'cancelled') {
-          console.log(`[PersonalityTask] Task cancelled for ${sectionId}`)
-
-          store.update(sectionId, {
-            isLoading: false,
-            isStreaming: false,
-            taskId: null
-          })
-
-          taskIdToSectionRef.current.delete(taskId)
-        }
-      }
-    })
-
-    return () => unsub()
-  }, [sharedStore, store, autoSave])
-
-  // -----------------------------------------------------------------------
-  // Action callbacks — stable across renders because store never changes.
-  // -----------------------------------------------------------------------
-
-  const submitTask = useCallback(
-    async (sectionId: string, prompt: string, systemPrompt: string, providerId: string, options?: SubmitTaskOptions) => {
-      const trimmed = prompt.trim()
-      if (!trimmed) return
-
-      const task = store.getOrCreate(sectionId)
-      if (task.isLoading) return
-
-      const userMessage: AIMessage = {
-        id: `msg-${Date.now()}`,
-        role: 'user',
-        content: trimmed,
-        timestamp: Date.now()
-      }
-
-      const updatedMessages = [...task.messages, userMessage]
-      const conversationHistory = updatedMessages.map((m) => ({
-        role: m.role,
-        content: m.content
-      }))
-
-      store.update(sectionId, {
-        messages: updatedMessages,
-        isLoading: true,
-        isStreaming: false,
-        error: null,
-        latestResponse: '',
-        providerId,
-        modelId: options?.modelId ?? null,
-        temperature: options?.temperature,
-        maxTokens: options?.maxTokens,
-        reasoning: options?.reasoning
-      })
-
-      try {
-        const result = await service.submitTask({
-          prompt: trimmed,
-          providerId,
-          systemPrompt,
-          messages: conversationHistory,
-          modelId: options?.modelId,
-          temperature: options?.temperature,
-          maxTokens: options?.maxTokens,
-        })
-
-        if (result.success) {
-          const taskId = result.data.taskId
-          taskIdToSectionRef.current.set(taskId, sectionId)
-          // Register in the shared TaskStore so events are captured
-          sharedStore.addTask(taskId, 'ai-chat')
-          store.update(sectionId, { taskId })
-          console.log(`[PersonalityTask] Started task for ${sectionId}, taskId: ${taskId}`)
-        } else {
-          const errorMsg = result.error?.message || 'Failed to start AI task'
-          store.update(sectionId, { error: errorMsg, isLoading: false })
-        }
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : 'Failed to send message'
-        store.update(sectionId, { error: errorMsg, isLoading: false })
-      }
+  completionHandler: {
+    onSaved: (_entityId, _result, dispatch) => {
+      dispatch(loadPersonalityFiles())
     },
-    [store, service, sharedStore]
-  )
-
-  const cancelTask = useCallback(
-    (sectionId: string) => {
-      const task = store.getSnapshot(sectionId)
-      if (!task.taskId) return
-
-      service.cancelTask(task.taskId)
-      taskIdToSectionRef.current.delete(task.taskId)
-
-      store.update(sectionId, {
-        isLoading: false,
-        isStreaming: false,
-        taskId: null
-      })
-    },
-    [store, service]
-  )
-
-  const clearTask = useCallback(
-    (sectionId: string) => {
-      store.update(sectionId, { ...DEFAULT_TASK_STATE })
-    },
-    [store]
-  )
-
-  // Context value is created once — store, submitTask, cancelTask, clearTask
-  // are all stable references that never change after mount.
-  const contextValue = useRef<PersonalityTaskContextValue>({
-    store,
-    submitTask,
-    cancelTask,
-    clearTask,
-  })
-  // Keep action refs current in case useCallback ever produces a new identity
-  // (won't happen given stable [store] deps, but defensive).
-  contextValue.current.submitTask = submitTask
-  contextValue.current.cancelTask = cancelTask
-  contextValue.current.clearTask = clearTask
-
-  return (
-    <PersonalityTaskContext.Provider value={contextValue.current}>
-      {children}
-    </PersonalityTaskContext.Provider>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
-
-/**
- * usePersonalityTask — subscribes to a single personality section's task state.
- *
- * Uses `useSyncExternalStore` so that:
- *   - Only the component that called `usePersonalityTask(sectionId)` re-renders
- *     when that section's state changes.
- *   - Stream tokens for "consciousness" do NOT cause "motivation" to re-render,
- *     even if both are mounted simultaneously.
- *   - The provider component itself never re-renders due to task state changes.
- */
-interface UsePersonalityTaskOptions {
-  modelId?: string | null
-  temperature?: number
-  maxTokens?: number | null
-  reasoning?: boolean
-}
-
-function usePersonalityTask(
-  sectionId: string,
-  systemPrompt?: string,
-  providerId?: string,
-  options?: UsePersonalityTaskOptions
-): {
-  messages: AIMessage[]
-  isLoading: boolean
-  isStreaming: boolean
-  error: string | null
-  latestResponse: string
-  submit: (prompt: string) => Promise<void>
-  cancel: () => void
-  clear: () => void
-  isSaving: boolean
-  lastSaveError: string | null
-  lastSavedFileId: string | null
-} {
-  const ctx = useContext(PersonalityTaskContext)
-  if (ctx === undefined) {
-    throw new Error('usePersonalityTask must be used within a PersonalityTaskProvider')
-  }
-
-  const { store, submitTask, cancelTask, clearTask } = ctx
-
-  // Subscribe to only this section — useSyncExternalStore calls the subscribe
-  // function with a stable listener and will re-render only when that listener
-  // is notified (i.e. when store.update(sectionId, ...) is called).
-  //
-  // The subscribe and getSnapshot callbacks are re-created when sectionId changes,
-  // which is the correct behaviour — we want to switch subscriptions.
-  const task = useSyncExternalStore(
-    useCallback((listener) => store.subscribe(sectionId, listener), [store, sectionId]),
-    useCallback(() => store.getSnapshot(sectionId), [store, sectionId])
-  )
-
-  const submit = useCallback(
-    (prompt: string) => submitTask(sectionId, prompt, systemPrompt || '', providerId || 'openai', {
-      modelId: options?.modelId,
-      temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
-      reasoning: options?.reasoning
-    }),
-    [sectionId, systemPrompt, providerId, options?.modelId, options?.temperature, options?.maxTokens, options?.reasoning, submitTask]
-  )
-
-  const cancel = useCallback(() => cancelTask(sectionId), [sectionId, cancelTask])
-  const clear = useCallback(() => clearTask(sectionId), [sectionId, clearTask])
-
-  return {
-    messages: task.messages,
-    isLoading: task.isLoading,
-    isStreaming: task.isStreaming,
-    error: task.error,
-    latestResponse: task.latestResponse,
-    submit,
-    cancel,
-    clear,
-    isSaving: task.isSaving,
-    lastSaveError: task.lastSaveError,
-    lastSavedFileId: task.lastSavedFileId
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Exports
-// ---------------------------------------------------------------------------
+  },
+})
 
 export { PersonalityTaskProvider, usePersonalityTask, PersonalityTaskContext }
-export type { TaskState, PersonalityTaskContextValue }
