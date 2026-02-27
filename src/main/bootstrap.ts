@@ -76,10 +76,10 @@ export function bootstrapServices(): BootstrapResult {
   const logger = new LoggerService(eventBus)
   container.register('logger', logger)
 
-  container.register('agentManager', new AgentManager(storeService, eventBus))
+  container.register('AIAgentsManager', new AIAgentsManager(storeService, eventBus))
 
   // Named agent registry — populated explicitly (mirrors TasksManagerHandlerRegistry pattern)
-  const agentRegistry = container.register('agentRegistry', new AgentRegistry())
+  const agentRegistry = container.register('AIAgentsRegistry', new AIAgentsRegistry())
   for (const def of ALL_AGENT_DEFINITIONS) {
     agentRegistry.register(def)
   }
