@@ -254,6 +254,17 @@ export interface InvokeChannelMap {
 
   // ---- App — writing context menu (raw invoke) ----
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
+
+  // ---- Agent (IpcResult-wrapped via registerQuery/registerCommand) ----
+  [AgentChannels.listAgents]: { args: []; result: AgentDefinitionInfo[] }
+  [AgentChannels.getStatus]: { args: []; result: AgentManagerStatus }
+  [AgentChannels.listSessions]: { args: []; result: AgentSessionSnapshot[] }
+  [AgentChannels.listActiveRuns]: { args: []; result: AgentRunSnapshot[] }
+  [AgentChannels.createSession]: { args: [agentId: string, providerId: string, overrides?: Partial<AgentSessionConfig>]; result: AgentSessionSnapshot }
+  [AgentChannels.destroySession]: { args: [sessionId: string]; result: boolean }
+  [AgentChannels.startStreaming]: { args: [sessionId: string, request: AgentRequest]; result: string }
+  [AgentChannels.cancelRun]: { args: [runId: string]; result: boolean }
+  [AgentChannels.cancelSession]: { args: [sessionId: string]; result: boolean }
 }
 
 /**
