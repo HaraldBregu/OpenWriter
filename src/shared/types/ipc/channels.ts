@@ -169,20 +169,16 @@ interface LegacyModelSettings {
  * `result` = the logical return type.
  */
 export interface InvokeChannelMap {
-  // ---- Store (IpcResult-wrapped) ----
-  [StoreChannels.getAllProviderSettings]: { args: []; result: Record<string, ProviderSettings> }
-  [StoreChannels.getProviderSettings]: { args: [providerId: string]; result: ProviderSettings | null }
-  [StoreChannels.setProviderSettings]: { args: [providerId: string, settings: ProviderSettings]; result: void }
-  [StoreChannels.setInferenceDefaults]: { args: [providerId: string, update: InferenceDefaultsUpdate]; result: void }
-  [StoreChannels.getAllModelSettings]: { args: []; result: Record<string, LegacyModelSettings> }
-  [StoreChannels.getModelSettings]: { args: [providerId: string]; result: LegacyModelSettings | null }
-  [StoreChannels.setSelectedModel]: { args: [providerId: string, modelId: string]; result: void }
-  [StoreChannels.setApiToken]: { args: [providerId: string, token: string]; result: void }
-  [StoreChannels.setModelSettings]: { args: [providerId: string, settings: LegacyModelSettings]; result: void }
-  [StoreChannels.getCurrentWorkspace]: { args: []; result: string | null }
-  [StoreChannels.setCurrentWorkspace]: { args: [workspacePath: string]; result: void }
-  [StoreChannels.getRecentWorkspaces]: { args: []; result: WorkspaceInfo[] }
-  [StoreChannels.clearCurrentWorkspace]: { args: []; result: void }
+  // ---- App / Store (IpcResult-wrapped) ----
+  [AppChannels.getAllProviderSettings]: { args: []; result: Record<string, ProviderSettings> }
+  [AppChannels.getProviderSettings]: { args: [providerId: string]; result: ProviderSettings | null }
+  [AppChannels.setProviderSettings]: { args: [providerId: string, settings: ProviderSettings]; result: void }
+  [AppChannels.setInferenceDefaults]: { args: [providerId: string, update: InferenceDefaultsUpdate]; result: void }
+  [AppChannels.getAllModelSettings]: { args: []; result: Record<string, LegacyModelSettings> }
+  [AppChannels.getModelSettings]: { args: [providerId: string]; result: LegacyModelSettings | null }
+  [AppChannels.setSelectedModel]: { args: [providerId: string, modelId: string]; result: void }
+  [AppChannels.setApiToken]: { args: [providerId: string, token: string]; result: void }
+  [AppChannels.setModelSettings]: { args: [providerId: string, settings: LegacyModelSettings]; result: void }
 
   // ---- Workspace (IpcResult-wrapped) ----
   [WorkspaceChannels.selectFolder]: { args: []; result: string | null }
@@ -197,33 +193,6 @@ export interface InvokeChannelMap {
   [WindowChannels.isMaximized]: { args: []; result: boolean }
   [WindowChannels.isFullScreen]: { args: []; result: boolean }
   [WindowChannels.getPlatform]: { args: []; result: string }
-
-  // ---- Cron (IpcResult-wrapped) ----
-  [CronChannels.getAll]: { args: []; result: CronJobStatus[] }
-  [CronChannels.getJob]: { args: [id: string]; result: CronJobStatus | null }
-  [CronChannels.start]: { args: [id: string]; result: boolean }
-  [CronChannels.stop]: { args: [id: string]; result: boolean }
-  [CronChannels.delete]: { args: [id: string]; result: boolean }
-  [CronChannels.create]: { args: [config: CronJobConfig]; result: boolean }
-  [CronChannels.updateSchedule]: { args: [id: string, schedule: string]; result: boolean }
-  [CronChannels.validateExpression]: { args: [expression: string]; result: CronValidationResult }
-
-  // ---- Agent (IpcResult-wrapped for handle channels) ----
-  [AgentChannels.createSession]: { args: [config: AgentSessionConfig]; result: AgentSessionInfo }
-  [AgentChannels.destroySession]: { args: [sessionId: string]; result: boolean }
-  [AgentChannels.getSession]: { args: [sessionId: string]; result: AgentSessionInfo | null }
-  [AgentChannels.listSessions]: { args: []; result: AgentSessionInfo[] }
-  [AgentChannels.clearSessions]: { args: []; result: number }
-  [AgentChannels.run]: { args: [messages: ChatMessage[], runId: string, providerId: string]; result: void }
-  [AgentChannels.runSession]: { args: [options: AgentRunOptions]; result: void }
-  [AgentChannels.cancelSession]: { args: [sessionId: string]; result: boolean }
-  [AgentChannels.getStatus]: { args: []; result: AgentStatusInfo }
-  [AgentChannels.isRunning]: { args: [runId: string]; result: boolean }
-
-  // ---- Pipeline (IpcResult-wrapped) ----
-  [PipelineChannels.run]: { args: [agentName: string, input: PipelineInput]; result: { runId: string } }
-  [PipelineChannels.listAgents]: { args: []; result: string[] }
-  [PipelineChannels.listRuns]: { args: []; result: PipelineActiveRun[] }
 
   // ---- Task (IpcResult-wrapped via registerQuery/registerCommand) ----
   [TaskChannels.submit]: { args: [payload: TaskSubmitPayload]; result: { taskId: string } }
