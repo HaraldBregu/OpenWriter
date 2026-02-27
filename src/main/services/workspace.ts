@@ -35,7 +35,7 @@ export class WorkspaceService implements Disposable {
   private validationTimer: ReturnType<typeof setInterval> | null = null
 
   /** How often (ms) to check if the workspace folder still exists. */
-  private static readonly VALIDATION_INTERVAL_MS = 5_000
+  private static readonly VALIDATION_INTERVAL_MS = WORKSPACE_VALIDATION_INTERVAL_MS
 
   constructor(
     private readonly store: StoreService,
