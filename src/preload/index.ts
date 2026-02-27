@@ -155,7 +155,7 @@ const workspace: WorkspaceApi = {
         id: string; name: string; path: string; size: number;
         mimeType: string; importedAt: number; lastModified: number;
     }>> => {
-        return typedInvokeUnwrap(DocumentsChannels.importByPaths, paths)
+        return typedInvokeUnwrap(WorkspaceChannels.documents.importByPaths, paths)
     },
     downloadFromUrl: (url: string): Promise<{
         id: string; name: string; path: string; size: number;
