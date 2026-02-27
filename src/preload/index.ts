@@ -249,7 +249,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.outputSave, input)
     },
     loadOutputs: () => {
-        return typedInvokeUnwrap(OutputChannels.loadAll)
+        return typedInvokeUnwrap(WorkspaceChannels.outputLoadAll)
     },
     loadOutputsByType: (type: string) => {
         return typedInvokeUnwrap(OutputChannels.loadByType, type)
