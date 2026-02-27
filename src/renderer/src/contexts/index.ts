@@ -41,3 +41,16 @@ export type {
   AppContextValue,
   AppActionsContextValue
 } from './AppContext'
+
+export {
+  createEntityTaskContext,
+} from './EntityTaskContext'
+
+export type {
+  EntityChatMessage,
+  EntityTaskState,
+  InferenceOptions,
+  UseEntityTaskReturn,
+  EntityTaskContextConfig,
+  ITaskCompletionHandler,
+} from './EntityTaskContext'
