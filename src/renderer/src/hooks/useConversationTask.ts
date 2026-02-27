@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useTaskSubmit } from '@/hooks/useTaskSubmit'
+import type { AIMessage } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Types
