@@ -75,7 +75,7 @@ const DirectoriesPage: React.FC = () => {
   const handleRemoveDirectory = useCallback(
     async (id: string) => {
       try {
-        const removed = await window.workspace.directories.remove(id)
+        const removed = await window.workspace.removeDirectory(id)
         if (removed) {
           dispatch(removeDirectory(id))
         }
