@@ -78,6 +78,12 @@ export function bootstrapServices(): BootstrapResult {
 
   container.register('agentManager', new AgentManager(storeService, eventBus))
 
+  // Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
+  const agentRegistry = container.register('agentRegistry', new AgentRegistry())
+  for (const def of ALL_AGENT_DEFINITIONS) {
+    agentRegistry.register(def)
+  }
+
   // Task system -- handler registry + executor service + built-in handlers
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
   taskHandlerRegistry.register(new FileDownloadHandler())
