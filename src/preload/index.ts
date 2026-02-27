@@ -314,7 +314,7 @@ const workspace: WorkspaceApi = {
         sectionId: string
         id: string
     }): Promise<void> => {
-        return typedInvokeUnwrap(WorkspaceChannels.personality.delete, params)
+        return typedInvokeUnwrap(WorkspaceChannels.delete, params)
     },
     onPersonalityFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
