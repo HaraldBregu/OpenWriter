@@ -255,7 +255,7 @@ const workspace: WorkspaceApi = {
         return typedInvokeUnwrap(WorkspaceChannels.loadByType, type)
     },
     loadOutput: (params: { type: string; id: string }) => {
-        return typedInvokeUnwrap(OutputChannels.loadOne, params)
+        return typedInvokeUnwrap(WorkspaceChannels.outputLoadOne, params)
     },
     updateOutput: (params: {
         type: string
