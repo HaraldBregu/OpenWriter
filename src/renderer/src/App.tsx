@@ -37,6 +37,7 @@ const App: React.FC = () => {
     <ErrorBoundary level="root">
       <Provider store={store}>
         <AppProvider>
+          <TaskProvider>
           <PersonalityTaskProvider>
           <Router>
               <Routes>
