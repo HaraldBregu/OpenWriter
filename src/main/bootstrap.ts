@@ -28,11 +28,8 @@ import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasks/ha
 import type { IpcModule } from './ipc'
 import {
   CustomIpc,
-  DocumentsIpc,
   WorkspaceIpc,
-  DirectoriesIpc,
   TaskIpc,
-  PersonalityIpc,
   ThemeIpc,
   WindowIpc,
 } from './ipc'
