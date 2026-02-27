@@ -5,7 +5,7 @@
 
 export type { IpcModule } from './IpcModule'
 export { AppIpc } from './AppIpc'
-export { AgentIpc } from './AgentIpc'
+export { AIAgentsManagerIpc } from './AIAgentsManagerIpc'
 export { TasksManagerIpc } from './TasksManagerIpc'
 export { WorkspaceIpc } from './WorkspaceIpc'
 export { WindowIpc } from './WindowIpc'
