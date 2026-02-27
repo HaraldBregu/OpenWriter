@@ -203,7 +203,9 @@ export const ContentBlock = React.memo(function ContentBlock({
               {placeholder}
             </span>
           )}
-          <EditorContent editor={editor} />
+          <div className="py-2">
+            <EditorContent editor={editor} />
+          </div>
         </div>
 
         {/* Action bar */}
@@ -247,9 +249,3 @@ export function createBlock(): Block {
   const now = new Date().toISOString()
   return { id: crypto.randomUUID(), content: '', createdAt: now, updatedAt: now }
 }
-
-// Re-export for backward compatibility
-export { ContentBlockPlaceholder as InsertBlockPlaceholder } from './ContentBlockPlaceholder'
-
-// Re-export for backward compatibility
-export { ContentBlockPlaceholder as InsertBlockPlaceholder } from './ContentBlockPlaceholder'
