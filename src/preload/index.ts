@@ -269,7 +269,7 @@ const workspace: WorkspaceApi = {
         }>
         metadata: Record<string, unknown>
     }): Promise<void> => {
-        return typedInvokeUnwrap(OutputChannels.update, params)
+        return typedInvokeUnwrap(WorkspaceChannels.update, params)
     },
     deleteOutput: (params: { type: string; id: string }): Promise<void> => {
         return typedInvokeUnwrap(OutputChannels.delete, params)
