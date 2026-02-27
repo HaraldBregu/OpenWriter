@@ -203,9 +203,7 @@ export const ContentBlock = React.memo(function ContentBlock({
               {placeholder}
             </span>
           )}
-          <div className="py-2">
-            <EditorContent editor={editor} />
-          </div>
+          <EditorContent editor={editor} />
         </div>
 
         {/* Action bar */}
