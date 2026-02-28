@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   Bold, Italic, Strikethrough, Code,
-  Heading1, Heading2, List, ListOrdered, Quote,
+  List, ListOrdered, Quote,
 } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
