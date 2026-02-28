@@ -212,6 +212,22 @@ export interface TasksManagerApi {
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
+/** AIAgentsManager — session/run management and streaming */
+export interface AiAgentApi {
+  listAgents: () => Promise<IpcResult<AIAgentsDefinitionInfo[]>>
+  getAgent: (agentId: string) => Promise<IpcResult<AIAgentsDefinitionInfo | undefined>>
+  getStatus: () => Promise<IpcResult<AIAgentsManagerStatus>>
+  listSessions: () => Promise<IpcResult<AgentSessionSnapshot[]>>
+  getSession: (sessionId: string) => Promise<IpcResult<AgentSessionSnapshot | undefined>>
+  listActiveRuns: () => Promise<IpcResult<AgentRunSnapshot[]>>
+  createSession: (agentId: string, config?: Partial<AgentSessionConfig>) => Promise<IpcResult<string>>
+  destroySession: (sessionId: string) => Promise<IpcResult<void>>
+  cancelRun: (runId: string) => Promise<IpcResult<void>>
+  cancelSession: (sessionId: string) => Promise<IpcResult<void>>
+  startStreaming: (sessionId: string, request: AgentRequest, options?: { windowId?: number }) => Promise<IpcResult<string>>
+  onEvent: (callback: (event: AgentStreamEvent) => void) => () => void
+}
+
 // ---------------------------------------------------------------------------
 // Global Window augmentation
 // ---------------------------------------------------------------------------
