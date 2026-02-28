@@ -36,6 +36,7 @@ import {
   WorkspaceIpc,
   TasksManagerIpc,
   WindowIpc,
+  AIAgentsManagerIpc,
 } from './ipc'
 
 export interface BootstrapResult {
