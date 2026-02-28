@@ -13,7 +13,7 @@ import { AppTextEditor } from '@/components/app/AppTextEditor'
 // ---------------------------------------------------------------------------
 
 /** Discriminated union of all block types supported by the editor. */
-export type BlockType = 'text' | 'heading' | 'media'
+export type BlockType = 'paragraph' | 'heading' | 'media'
 
 export interface Block {
   id: string
@@ -268,7 +268,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   }, [block.content])
 
   // Only text blocks can be AI-enhanced.
-  const canEnhance = block.type === 'text'
+  const canEnhance = block.type === 'paragraph'
 
   return (
     <Reorder.Item
@@ -307,7 +307,7 @@ export const ContentBlock = React.memo(function ContentBlock({
 
         {/* Content area */}
         <div className="flex-1 min-w-0">
-          {block.type === 'text' && (
+          {block.type === 'paragraph' && (
             <AppTextEditor
               type="PARAGRAPH"
               value={block.content}
@@ -377,7 +377,7 @@ export const ContentBlock = React.memo(function ContentBlock({
 })
 ContentBlock.displayName = 'ContentBlock'
 
-export function createBlock(type: BlockType = 'text'): Block {
+export function createBlock(type: BlockType = 'paragraph'): Block {
   const now = new Date().toISOString()
   return { id: crypto.randomUUID(), type, content: '', createdAt: now, updatedAt: now }
 }

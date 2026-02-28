@@ -170,7 +170,7 @@ export interface SaveOutputInput {
     content: string
     createdAt: string
     updatedAt: string
-    blockType?: 'text' | 'heading' | 'media'
+    blockType?: 'paragraph' | 'heading' | 'media'
     blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
     mediaSrc?: string
     mediaAlt?: string
@@ -193,7 +193,7 @@ export interface OutputUpdateParams {
     createdAt?: string
     filetype?: 'markdown'
     type?: 'content'
-    blockType?: 'text' | 'heading' | 'media'
+    blockType?: 'paragraph' | 'heading' | 'media'
     blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
     mediaSrc?: string
     mediaAlt?: string

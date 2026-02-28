@@ -91,8 +91,8 @@ function serializeBlocksForOutput(
     createdAt: b.createdAt,
     updatedAt: b.updatedAt,
     // Only serialize optional fields when they carry meaningful values so the
-    // output stays lean for standard 'text' blocks.
-    ...(b.type !== 'text' ? { blockType: b.type } : {}),
+    // output stays lean for standard 'paragraph' blocks.
+    ...(b.type !== 'paragraph' ? { blockType: b.type } : {}),
     ...(b.level !== undefined ? { blockLevel: b.level } : {}),
     ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
     ...(b.mediaAlt !== undefined ? { mediaAlt: b.mediaAlt } : {}),

@@ -47,7 +47,7 @@ const initialState: WritingsState = {
  */
 function makeBlock(content = ''): Block {
   const now = new Date().toISOString()
-  return { id: crypto.randomUUID(), type: 'text', content, createdAt: now, updatedAt: now }
+  return { id: crypto.randomUUID(), type: 'paragraph', content, createdAt: now, updatedAt: now }
 }
 
 // ---------------------------------------------------------------------------
@@ -188,7 +188,7 @@ export const writingsSlice = createSlice({
             existing.blocks = item.blocks.length > 0
               ? item.blocks.map((b): Block => ({
                   id: b.name,
-                  type: (b.blockType as Block['type'] | undefined) ?? 'text',
+                  type: (b.blockType as Block['type'] | undefined) ?? 'paragraph',
                   ...(b.blockLevel !== undefined ? { level: b.blockLevel as Block['level'] } : {}),
                   content: b.content,
                   ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
@@ -213,7 +213,7 @@ export const writingsSlice = createSlice({
           blocks: item.blocks.length > 0
             ? item.blocks.map((b): Block => ({
                 id: b.name,
-                type: (b.blockType as Block['type'] | undefined) ?? 'text',
+                type: (b.blockType as Block['type'] | undefined) ?? 'paragraph',
                 ...(b.blockLevel !== undefined ? { level: b.blockLevel as Block['level'] } : {}),
                 content: b.content,
                 ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
