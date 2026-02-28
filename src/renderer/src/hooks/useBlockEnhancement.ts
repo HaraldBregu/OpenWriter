@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { type Editor } from '@tiptap/core'
 import { useTaskSubmit } from '@/hooks/useTaskSubmit'
 
 // ---------------------------------------------------------------------------
@@ -17,18 +16,19 @@ interface AIEnhanceOutput {
 
 export interface UsePageEnhancementOptions {
   /**
-   * Stable ref to the onChange callback used to sync block state after
-   * enhancement completes or is reverted.
+   * Stable ref to the onChange callback used to sync block content during
+   * streaming and after enhancement completes or is reverted.
    *
    * Signature: (blockId: string, content: string) => void
    */
   onChangeRef: React.RefObject<(blockId: string, content: string) => void>
   /**
-   * Map of blockId -> MutableRefObject<Editor | null>.
-   * The parent page populates this map via the onEditorReady callback that
-   * each ContentBlock calls when its TipTap editor is initialised.
+   * Stable ref to a function that returns the current content for a block.
+   * Used to snapshot content before enhancement starts.
+   *
+   * Signature: (blockId: string) => string
    */
-  editorRefs: React.RefObject<Map<string, React.MutableRefObject<Editor | null>>>
+  getBlockContent: React.RefObject<(blockId: string) => string>
 }
 
 export interface UsePageEnhancementReturn {
@@ -39,8 +39,7 @@ export interface UsePageEnhancementReturn {
   enhancingBlockId: string | null
   /**
    * Trigger AI enhancement for the given block.
-   * No-ops when: another block is already being enhanced, the editor for this
-   * block is not registered / is destroyed, or the block content is empty.
+   * No-ops when another block is already being enhanced or block content is empty.
    */
   handleEnhance: (blockId: string) => Promise<void>
 }
@@ -50,37 +49,36 @@ export interface UsePageEnhancementReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * Manages the full AI enhancement lifecycle at the page level, decoupled from
- * individual ContentBlock instances.
+ * Manages the full AI enhancement lifecycle at the page level.
  *
  * Flow:
- *   1. NewWritingPage collects TipTap editor refs from each ContentBlock via the
- *      onEditorReady(blockId, editor) prop. These refs are stored in a Map and
- *      passed to this hook via `editorRefs`.
- *   2. When the user clicks "Enhance" inside a ContentBlock, the block calls
- *      onEnhance(blockId). NewWritingPage forwards this to handleEnhance(blockId).
- *   3. The hook looks up the editor for that block, snapshots the content, sets
- *      enhancingBlockId, and submits the 'ai-enhance' task.
- *   4. Streamed tokens are written directly into the target editor.
- *   5. On completion the parent onChange is called to sync Redux state.
- *   6. On error / cancel the editor is reverted to the pre-enhance snapshot.
- *   7. Any in-flight task is cancelled on hook unmount.
+ *   1. handleEnhance(blockId) snapshots the block's current content via
+ *      getBlockContent, then submits the 'ai-enhance' task.
+ *   2. Streamed tokens are written back through onChangeRef → Redux state →
+ *      block.content prop → AppTextEditor value → TipTap internal sync.
+ *      The target block's AppTextEditor is disabled during this phase so no
+ *      user edits interfere with the stream.
+ *   3. On completion the final content is already in Redux state — no extra
+ *      sync needed.
+ *   4. On error / cancel the block is reverted to the pre-enhance snapshot
+ *      via onChangeRef.
+ *   5. Any in-flight task is cancelled on hook unmount.
  *
  * Only one block can be enhanced at a time. Concurrent calls are ignored.
  */
 export function usePageEnhancement({
   onChangeRef,
-  editorRefs,
+  getBlockContent,
 }: UsePageEnhancementOptions): UsePageEnhancementReturn {
   const [enhancingBlockId, setEnhancingBlockId] = useState<string | null>(null)
 
   // Snapshot of content before enhance started — used to revert on error/cancel.
   const originalTextRef = useRef<string>('')
-  // Buffer that accumulates all streamed tokens as raw markdown.
+  // Accumulates all streamed tokens (seeded with original content).
   const streamBufferRef = useRef<string>('')
-  // Track last applied streamedContent length to detect new tokens.
+  // Tracks how many characters of streamedContent have been consumed.
   const lastStreamLengthRef = useRef<number>(0)
-  // Stable ref to the block ID being enhanced (avoids stale closure in effects).
+  // Stable ref to the block ID being enhanced (avoids stale closure in cleanup).
   const enhancingBlockIdRef = useRef<string | null>(null)
 
   const {
@@ -91,24 +89,13 @@ export function usePageEnhancement({
     reset,
   } = useTaskSubmit<AIEnhanceInput, AIEnhanceOutput>('ai-enhance', { text: '' })
 
-  // Keep ref in sync so effects that read enhancingBlockIdRef are never stale.
+  // Keep ref in sync so the unmount cleanup always sees the current value.
   useEffect(() => {
     enhancingBlockIdRef.current = enhancingBlockId
   }, [enhancingBlockId])
 
   // ---------------------------------------------------------------------------
-  // Helper: look up the editor for a given block ID
-  // ---------------------------------------------------------------------------
-  const getEditor = useCallback(
-    (blockId: string): Editor | null => {
-      const editorRef = editorRefs.current?.get(blockId)
-      return editorRef?.current ?? null
-    },
-    [editorRefs],
-  )
-
-  // ---------------------------------------------------------------------------
-  // Stream tokens into the editor
+  // Stream tokens → Redux state → AppTextEditor value prop
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!enhancingBlockId) return
@@ -117,12 +104,9 @@ export function usePageEnhancement({
     const newTokens = streamedContent.slice(lastStreamLengthRef.current)
     lastStreamLengthRef.current = streamedContent.length
 
-    const ed = getEditor(enhancingBlockId)
-    if (!ed || ed.isDestroyed) return
-
     streamBufferRef.current += newTokens
-    ed.commands.setContent(streamBufferRef.current, { emitUpdate: false, contentType: 'markdown' })
-  }, [streamedContent, enhancingBlockId, getEditor])
+    onChangeRef.current(enhancingBlockId, streamBufferRef.current)
+  }, [streamedContent, enhancingBlockId, onChangeRef])
 
   // ---------------------------------------------------------------------------
   // React to task lifecycle transitions
@@ -131,10 +115,7 @@ export function usePageEnhancement({
     if (!enhancingBlockId) return
 
     if (status === 'completed') {
-      const ed = getEditor(enhancingBlockId)
-      if (ed && !ed.isDestroyed) {
-        onChangeRef.current(enhancingBlockId, ed.getMarkdown())
-      }
+      // Content is already committed to Redux via the streaming effect above.
       setEnhancingBlockId(null)
       lastStreamLengthRef.current = 0
       reset()
@@ -142,16 +123,13 @@ export function usePageEnhancement({
       if (status === 'error') {
         console.error('[usePageEnhancement] Enhance error for block', enhancingBlockId)
       }
-      const ed = getEditor(enhancingBlockId)
-      if (ed && !ed.isDestroyed) {
-        ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
-        onChangeRef.current(enhancingBlockId, originalTextRef.current)
-      }
+      // Revert the block to its pre-enhance content.
+      onChangeRef.current(enhancingBlockId, originalTextRef.current)
       setEnhancingBlockId(null)
       lastStreamLengthRef.current = 0
       reset()
     }
-  }, [status, enhancingBlockId, getEditor, onChangeRef, reset])
+  }, [status, enhancingBlockId, onChangeRef, reset])
 
   // ---------------------------------------------------------------------------
   // Cancel in-flight task on unmount
@@ -171,14 +149,11 @@ export function usePageEnhancement({
       // Only one block at a time.
       if (enhancingBlockId) return
 
-      const ed = getEditor(blockId)
-      if (!ed || ed.isDestroyed) return
-
-      const currentText = ed.getMarkdown()
+      const currentText = getBlockContent.current(blockId)
       if (!currentText.trim()) return
 
       // Snapshot for potential revert; seed the buffer so streamed tokens
-      // are appended after the current content.
+      // are appended to (or replace) the current content.
       originalTextRef.current = currentText
       streamBufferRef.current = currentText
       lastStreamLengthRef.current = 0
@@ -187,14 +162,11 @@ export function usePageEnhancement({
       const taskId = await submit({ text: currentText })
       if (!taskId) {
         // Submit failed — revert immediately.
-        if (!ed.isDestroyed) {
-          ed.commands.setContent(originalTextRef.current, { emitUpdate: false, contentType: 'markdown' })
-          onChangeRef.current(blockId, originalTextRef.current)
-        }
+        onChangeRef.current(blockId, originalTextRef.current)
         setEnhancingBlockId(null)
       }
     },
-    [enhancingBlockId, getEditor, submit, onChangeRef],
+    [enhancingBlockId, getBlockContent, submit, onChangeRef],
   )
 
   return { enhancingBlockId, handleEnhance }
