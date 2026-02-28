@@ -31,7 +31,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
 
       switch (action) {
         case 'open':
-          navigate(`/new/writing/${writingId}`)
+          navigate(`/content/${writingId}`)
           break
 
         case 'duplicate': {
