@@ -38,6 +38,13 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
+  AgentSessionConfig,
+  AgentRequest,
+  AgentStreamEvent,
+  AgentSessionSnapshot,
+  AgentRunSnapshot,
+  AIAgentsManagerStatus,
+  AIAgentsDefinitionInfo,
 } from '../shared/types/ipc/types'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/types/aiSettings'
 import type { IpcResult } from '../shared/types/ipc/ipc-result'
