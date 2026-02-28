@@ -7,6 +7,7 @@ import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
 import aiSettingsReducer from './aiSettingsSlice'
 import writingItemsReducer from './writingItemsSlice'
+import enhancementReducer from './enhancementSlice'
 import { listenerMiddleware } from './listenerMiddleware'
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     output: outputReducer,
     aiSettings: aiSettingsReducer,
     writingItems: writingItemsReducer,
+    enhancement: enhancementReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware)
