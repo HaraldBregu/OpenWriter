@@ -139,4 +139,12 @@ export function subscribeToTask(
   }
 }
 
-export const taskEventBus = { subscribeToTask }
+/**
+ * Returns the latest snapshot for a task, or undefined if unknown.
+ * Useful for reading current state on mount without waiting for the next event.
+ */
+export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
+  return snapshots.get(taskId)
+}
+
+export const taskEventBus = { subscribeToTask, getTaskSnapshot }
