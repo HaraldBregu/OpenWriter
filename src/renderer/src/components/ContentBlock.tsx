@@ -101,9 +101,10 @@ export const ContentBlock = React.memo(function ContentBlock({
   }, [block.id, dispatch, entryId])
 
 useEffect(() => {
-  window.tasksManager.onEvent((event) => {  
+  const unsub = window.tasksManager.onEvent((event) => {  
     console.log('[ContentBlock] Received task event:', event.data)  
   })
+  return unsub
 }, [])
 
   const handleEnhanceClick = useCallback(async () => {
