@@ -38,6 +38,12 @@ export interface UsePageEnhancementReturn {
    */
   enhancingBlockId: string | null
   /**
+   * Live streaming content for the block currently being enhanced.
+   * Pass directly to the target AppTextEditor as `streamingContent` so tokens
+   * render without going through Redux (keeps the rest of the app interactive).
+   */
+  streamingEntry: { blockId: string; content: string } | null
+  /**
    * Trigger AI enhancement for the given block.
    * No-ops when another block is already being enhanced or block content is empty.
    */
