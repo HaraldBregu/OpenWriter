@@ -12,7 +12,7 @@ import type {
     WindowApi,
     WorkspaceApi,
     TasksManagerApi,
-    AIAgentsManagerAPI,
+    AgentManagerAPI,
 } from './index.d'
 import type { AgentRequest, AgentSessionConfig } from '../shared/types/ipc/types'
 
