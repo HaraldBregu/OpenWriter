@@ -203,15 +203,17 @@ function TipTapAdapter({
   const editor = useEditor(editorOptions, [])
 
   // Sync external value → editor (controlled-component behaviour).
+  // streamingContent takes priority over value during AI enhancement, letting
+  // tokens render directly without triggering onChange or Redux dispatches.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
     const current = editor.getMarkdown()
-    const incoming = value || ''
+    const incoming = streamingContent !== undefined ? streamingContent : (value || '')
     if (current !== incoming) {
       editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
       setIsEmpty(editor.isEmpty)
     }
-  }, [value, editor])
+  }, [value, streamingContent, editor])
 
   // Sync disabled state → TipTap editable flag.
   useEffect(() => {
