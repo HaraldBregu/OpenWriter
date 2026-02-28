@@ -147,7 +147,8 @@ export function subscribeToTask(
     s.delete(cb)
     if (s.size === 0) {
       subscribers.delete(taskId)
-      snapshots.delete(taskId)
+      // Do NOT delete the snapshot here — it must survive re-mounts mid-stream.
+      // Snapshots are cleared after terminal events (completed/error/cancelled).
     }
   }
 }
