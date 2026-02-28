@@ -9,28 +9,9 @@ import {
 import { Reorder, useDragControls } from 'framer-motion'
 import { AppButton } from '@/components/app'
 import { AppTextEditor } from '@/components/app/AppTextEditor'
+import type { Block } from '@/components/block.types'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-/** Only paragraph blocks are supported. */
-export type BlockType = 'paragraph'
-
-export interface Block {
-  id: string
-  /** Always 'paragraph'. Kept in the interface for forwards-compatibility with
-   *  data loaded from disk that may have been written by an older version. */
-  type: BlockType
-  /**
-   * Rich-text / markdown content.
-   */
-  content: string
-  /** ISO 8601 — set when the block is first created */
-  createdAt: string
-  /** ISO 8601 — updated whenever the block content changes */
-  updatedAt: string
-}
+export type { BlockType, Block } from '@/components/block.types'
 
 export interface ContentBlockProps {
   block: Block
