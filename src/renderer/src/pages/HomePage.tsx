@@ -12,6 +12,7 @@ import {
 import { AppSeparator } from '@/components/app'
 import { useAppSelector } from '../store'
 import { selectWritingEntries, type WritingEntry } from '../store/writingItemsSlice'
+import { useCreateWriting } from '../hooks/useCreateWriting'
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
