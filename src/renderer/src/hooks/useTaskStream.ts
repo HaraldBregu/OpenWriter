@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useSyncExternalStore } from 'react'
-import { useTaskContext } from '@/contexts/TaskContext'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -24,23 +24,19 @@ export interface UseTaskStreamReturn {
  * output. Uses useSyncExternalStore keyed to a single task, meaning only
  * this component re-renders on each token — other task observers are unaffected.
  *
- * The accumulated content is read directly from the TaskStore snapshot rather
+ * The accumulated content is read directly from the taskStore snapshot rather
  * than maintained as separate local state, avoiding double-write patterns.
  *
  * @param taskId The ID of the streaming task to observe.
- *
- * Usage:
- *   const { content, isStreaming, isDone } = useTaskStream(taskId)
- *   return <pre>{content}{isStreaming && <BlinkingCursor />}</pre>
  */
 export function useTaskStream(taskId: string): UseTaskStreamReturn {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   // Subscribe only to this task's key so only this component re-renders
   // when a new stream token arrives.
   const snapshot = useSyncExternalStore(
-    useCallback((listener) => store.subscribe(taskId, listener), [store, taskId]),
-    useCallback(() => store.getTaskSnapshot(taskId), [store, taskId])
+    useCallback((listener) => taskStore.subscribe(taskId, listener), [taskId]),
+    useCallback(() => taskStore.getTaskSnapshot(taskId), [taskId])
   )
 
   const content = snapshot?.streamedContent ?? ''
