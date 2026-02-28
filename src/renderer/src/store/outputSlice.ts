@@ -77,7 +77,7 @@ export interface SaveOutputItemInput {
   reasoning?: boolean
 }
 
-interface OutputState {
+export interface OutputState {
   items: OutputItem[]
   loading: boolean
   error: string | null
