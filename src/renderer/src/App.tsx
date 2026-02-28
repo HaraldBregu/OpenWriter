@@ -40,6 +40,7 @@ const App: React.FC = () => {
       <Provider store={store}>
         <AppProvider>
           <TaskProvider>
+          <EnhancementProvider>
           <PersonalityTaskProvider service={electronPersonalityTaskService}>
           <Router>
               <Routes>
