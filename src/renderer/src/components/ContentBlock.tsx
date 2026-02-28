@@ -262,6 +262,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   useEffect(() => {
     // Recovery: task was already running before this component mounted.
     const existing = getTaskSnapshot(block.id)
+    console.log('Existing task snapshot on mount for block', block.id, existing)
     if (existing) {
       if (existing.status === 'running' || existing.status === 'queued') {
         originalTextRef.current = block.content
