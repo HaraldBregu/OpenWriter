@@ -109,5 +109,15 @@
 - `agentManager` is registered in `ServiceContainer` as `'agentManager'`; `AgentIpc` retrieves it via `container.get<AgentManager>('agentManager')`
 - Preload uses `typedInvokeUnwrap` for all agent queries/commands except `startStreaming` which uses `typedInvoke` (AgentManager returns the runId directly without IpcResult wrapping)
 
+## AIAgentTaskHandler — IPC payload requirements
+- Handler type: `'ai-agent'` — registered in TasksManager bootstrap
+- Required fields in submit payload: `agentId` (string, must match registry), `prompt`, `providerId`
+- Optional: `modelId` (top-level), `overrides: { temperature?, maxTokens?, modelId? }`
+- `systemPrompt` and `messages` are NOT part of AIAgentTaskInput — each agent graph builds its own system prompts internally; do NOT forward them from renderer services
+- Bug pattern to avoid: omitting `agentId` from the payload causes `AIAgentTaskHandler.validate()` to throw before the task is queued; the personality service had this bug (now fixed)
+- `ElectronPersonalityTaskService` uses `agentId: 'text-completer'` hardcoded — it maps personality chat to the TextCompleter agent
+- Generic service: `ElectronAIAgentTaskService` in `src/renderer/src/services/ElectronAIAgentTaskService.ts`; constructed via `createAIAgentTaskService(agentId)` factory
+- `window.tasksManager` is declared `?` (optional) — always call `assertBridge()` before `window.tasksManager!`
+
 ## Details Files
 - See `patterns.md` for extended code patterns
