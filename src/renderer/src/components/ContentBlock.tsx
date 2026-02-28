@@ -1,12 +1,22 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Sparkles, Trash2, Plus, Copy, GripVertical } from 'lucide-react'
+import {
+  Sparkles, Trash2, Plus, Copy, GripVertical,
+  Bold, Italic, Strikethrough, Code,
+  Heading1, Heading2, List, ListOrdered, Quote,
+} from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
-import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
+import { useEditor, EditorContent, BubbleMenu, type UseEditorOptions } from '@tiptap/react'
 import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
 import { AppButton } from '@/components/app'
+import {
+  AppTooltip,
+  AppTooltipTrigger,
+  AppTooltipContent,
+  AppTooltipProvider,
+} from '@/components/app/AppTooltip'
 import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 
 
