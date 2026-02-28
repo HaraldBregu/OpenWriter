@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TaskEvent } from '../../../shared/types/ipc/types'
-import type { TaskEventRecord } from '@/contexts/TaskContext'
-import { useTaskContext } from '@/contexts/TaskContext'
+import type { TaskEventRecord } from '@/services/taskStore'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -28,19 +28,10 @@ export interface UseTaskEventsReturn {
  * When taskId is undefined, all task events are collected (useful for a
  * global activity feed or debugging panel).
  *
- * Cleanup: unsubscribes from the store and the IPC listener on unmount.
- *
  * @param taskId Optional task ID to filter events. Omit to receive all events.
- *
- * Usage:
- *   // All events
- *   const { events, latest, clear } = useTaskEvents()
- *
- *   // Events for a specific task
- *   const { events } = useTaskEvents('task-abc-123')
  */
 export function useTaskEvents(taskId?: string): UseTaskEventsReturn {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   const [events, setEvents] = useState<TaskEventRecord[]>([])
   const latestRef = useRef<TaskEventRecord | null>(null)
@@ -53,7 +44,7 @@ export function useTaskEvents(taskId?: string): UseTaskEventsReturn {
   // and hydrate local state so the caller sees events from before mount.
   useEffect(() => {
     if (taskId) {
-      const snap = store.getTaskSnapshot(taskId)
+      const snap = taskStore.getTaskSnapshot(taskId)
       if (snap) {
         setEvents(snap.events)
         latestRef.current = snap.events[snap.events.length - 1] ?? null
@@ -65,28 +56,26 @@ export function useTaskEvents(taskId?: string): UseTaskEventsReturn {
       setEvents([])
       latestRef.current = null
     }
-  }, [store, taskId])
+  }, [taskId])
 
   // Subscribe to the store for ongoing event updates.
   useEffect(() => {
     const subscriptionKey = taskId ?? 'ALL'
 
-    const unsub = store.subscribe(subscriptionKey, () => {
+    const unsub = taskStore.subscribe(subscriptionKey, () => {
       if (taskIdRef.current) {
-        const snap = store.getTaskSnapshot(taskIdRef.current)
+        const snap = taskStore.getTaskSnapshot(taskIdRef.current)
         if (snap) {
           setEvents(snap.events)
           latestRef.current = snap.events[snap.events.length - 1] ?? null
         }
       } else {
-        // Global mode: we get notified on ALL updates. We cannot easily get a
-        // cross-task merged event list from the store snapshot, so we subscribe
-        // to raw IPC events instead (see the separate IPC effect below).
+        // Global mode: handled by the separate IPC effect below.
       }
     })
 
     return unsub
-  }, [store, taskId])
+  }, [taskId])
 
   // For the global (taskId-less) mode, maintain a separate IPC listener to
   // collect all events across all tasks.
