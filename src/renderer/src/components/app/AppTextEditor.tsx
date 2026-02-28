@@ -86,7 +86,6 @@ interface HeadingRendererProps {
   disabled: boolean | undefined
   id: string | undefined
   headingLevel: HeadingLevel
-  onHeadingLevelChange: ((level: HeadingLevel) => void) | undefined
   forwardedRef: React.Ref<HTMLInputElement>
 }
 
