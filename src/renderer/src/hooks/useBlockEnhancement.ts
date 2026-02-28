@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { useAppSelector } from '../store'
+import { useAppSelector, useAppDispatch } from '../store'
 import {
   selectEnhancingBlockIds,
   selectStreamingEntries,
@@ -7,7 +7,7 @@ import {
   selectBlockStreamingContent,
 } from '../store/enhancementSlice'
 import { selectWritingEntryById } from '../store/writingItemsSlice'
-import { useEnhancementContext } from '@/contexts/EnhancementContext'
+import { startEnhancement } from '@/services/enhancementService'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -16,7 +16,7 @@ import { useEnhancementContext } from '@/contexts/EnhancementContext'
 export interface UsePageEnhancementOptions {
   /**
    * The client-side UUID of the writing entry being edited.
-   * Required so EnhancementContext can dispatch `updateBlockContent` to the
+   * Required so enhancementService can dispatch `updateBlockContent` to the
    * correct Redux entry when a task completes or reverts.
    */
   entryId: string
@@ -47,10 +47,10 @@ export interface UsePageEnhancementReturn {
 // ---------------------------------------------------------------------------
 
 /**
- * usePageEnhancement — thin adapter between ContentPage and EnhancementContext.
+ * usePageEnhancement — thin adapter between ContentPage and enhancementService.
  *
  * All task submission, subscription, and streaming logic lives in
- * EnhancementContext (app-root-level provider that never unmounts on
+ * enhancementService (module-level singleton that never unmounts on
  * navigation).  This hook simply:
  *
  *   1. Reads `enhancingBlockIds` and `streamingEntries` from Redux and converts
@@ -58,13 +58,13 @@ export interface UsePageEnhancementReturn {
  *      ContentBlock expects.
  *   2. Reads the current block content from Redux so `startEnhancement` can
  *      snapshot it when `handleEnhance` is called.
- *   3. Delegates the actual enhancement to `startEnhancement` from context.
+ *   3. Delegates the actual enhancement to `startEnhancement` from enhancementService.
  *
  * Because state is in Redux, navigation away from ContentPage no longer loses
- * streaming progress — the app-root provider keeps running.
+ * streaming progress — the module-level service keeps running.
  */
 export function usePageEnhancement({ entryId }: UsePageEnhancementOptions): UsePageEnhancementReturn {
-  const { startEnhancement } = useEnhancementContext()
+  const dispatch = useAppDispatch()
 
   // ---------------------------------------------------------------------------
   // Redux state — serialisable forms, converted to Set/Map for ContentBlock.
@@ -104,10 +104,10 @@ export function usePageEnhancement({ entryId }: UsePageEnhancementOptions): UseP
       async (blockId: string): Promise<void> => {
         // Read current block content from Redux at call-time (no stale closure).
         const currentText = entry?.blocks.find((b) => b.id === blockId)?.content ?? ''
-        await startEnhancement({ blockId, entryId, text: currentText })
+        await startEnhancement(dispatch, { blockId, entryId, text: currentText })
       },
     // entry reference changes when blocks are edited; entryId is stable per page.
-    [entry, entryId, startEnhancement],
+    [entry, entryId, dispatch],
   )
 
   return { enhancingBlockIds, streamingEntries, handleEnhance }
@@ -138,7 +138,7 @@ export function useBlockEnhancement(
   blockId: string,
   entryId: string,
 ): UseBlockEnhancementReturn {
-  const { startEnhancement } = useEnhancementContext()
+  const dispatch = useAppDispatch()
 
   // Per-block selectors — stable factory instances (created once per blockId).
   const isEnhancingSelector = useMemo(() => selectIsBlockEnhancing(blockId), [blockId])
@@ -151,8 +151,8 @@ export function useBlockEnhancement(
 
   const handleEnhance = useCallback(() => {
     const text = entry?.blocks.find((b) => b.id === blockId)?.content ?? ''
-    startEnhancement({ blockId, entryId, text })
-  }, [blockId, entryId, entry, startEnhancement])
+    startEnhancement(dispatch, { blockId, entryId, text })
+  }, [blockId, entryId, entry, dispatch])
 
   return { isEnhancing, streamingContent, handleEnhance }
 }
