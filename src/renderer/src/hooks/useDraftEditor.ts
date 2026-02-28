@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { createBlock, type Block } from '@/components/ContentBlock'
+import { createBlock, type Block, type BlockType } from '@/components/ContentBlock'
 import {
   selectWritingEntryById,
   addEntry,
