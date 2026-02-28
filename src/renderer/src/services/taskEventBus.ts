@@ -150,4 +150,14 @@ export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
   return snapshots.get(taskId)
 }
 
-export const taskEventBus = { subscribeToTask, getTaskSnapshot }
+/**
+ * Seed the cumulative `content` field for a task before streaming begins.
+ * Call this with the original text so that streamed tokens are appended to it.
+ */
+export function initTaskContent(taskId: string, initialContent: string): void {
+  const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '' }
+  const next: TaskSnapshot = { ...prev, content: initialContent }
+  snapshots.set(taskId, next)
+}
+
+export const taskEventBus = { subscribeToTask, getTaskSnapshot, initTaskContent }
