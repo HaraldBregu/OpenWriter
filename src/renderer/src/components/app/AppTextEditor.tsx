@@ -260,6 +260,7 @@ interface ParagraphRendererProps {
   id: string | undefined
   extensions: AnyExtension[] | undefined
   forwardedRef: React.Ref<HTMLDivElement>
+  streamingContent: string | undefined
 }
 
 const ParagraphRenderer = React.memo(function ParagraphRenderer({
