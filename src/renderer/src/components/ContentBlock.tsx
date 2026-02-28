@@ -386,7 +386,7 @@ export const ContentBlock = React.memo(function ContentBlock({
               {placeholder}
             </span>
           )}
-          <EditorBubbleMenu editor={editor} />
+          <EditorBubbleMenu editor={editor} onEnhance={handleEnhance} isEnhancing={isEnhancing} />
           <EditorContent editor={editor} />
         </div>
 
