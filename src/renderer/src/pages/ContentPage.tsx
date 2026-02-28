@@ -17,7 +17,6 @@ import { useAppDispatch } from '../store'
 import { removeEntry } from '../store/writingItemsSlice'
 import { PersonalitySettingsPanel } from '@/components/personality/PersonalitySettingsSheet'
 import { useContentEditor } from '@/hooks/useContentEditor'
-import { usePageEnhancement } from '@/hooks/useBlockEnhancement'
 
 // ---------------------------------------------------------------------------
 // Page
