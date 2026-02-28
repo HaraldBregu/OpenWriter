@@ -67,6 +67,8 @@ export interface ContentBlockProps {
   placeholder?: string
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
+  /** @deprecated TipTap is now managed internally by AppTextEditor. This prop is ignored. */
+  onEditorReady?: (blockId: string, editor: unknown) => void
 }
 
 // ---------------------------------------------------------------------------
