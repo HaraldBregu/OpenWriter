@@ -182,5 +182,5 @@ export function usePageEnhancement({
     [enhancingBlockId, getBlockContent, submit, onChangeRef],
   )
 
-  return { enhancingBlockId, handleEnhance }
+  return { enhancingBlockId, streamingEntry, handleEnhance }
 }
