@@ -112,3 +112,47 @@ export function usePageEnhancement({ entryId }: UsePageEnhancementOptions): UseP
 
   return { enhancingBlockIds, streamingEntries, handleEnhance }
 }
+
+// ---------------------------------------------------------------------------
+// useBlockEnhancement — per-block hook for use inside ContentBlock
+// ---------------------------------------------------------------------------
+
+export interface UseBlockEnhancementReturn {
+  /** True while this specific block is being AI-enhanced. */
+  isEnhancing: boolean
+  /** Live streamed content for this block, or undefined when idle. */
+  streamingContent: string | undefined
+  /** Trigger enhancement for this block. */
+  handleEnhance: () => void
+}
+
+/**
+ * Per-block hook that reads only this block's slice of Redux enhancement state.
+ * Because the selectors are scoped to a single blockId, only this block
+ * re-renders when its own streaming content changes — other blocks are unaffected.
+ *
+ * @param blockId  - The stable block UUID.
+ * @param entryId  - The writing entry UUID (needed to read current block content).
+ */
+export function useBlockEnhancement(
+  blockId: string,
+  entryId: string,
+): UseBlockEnhancementReturn {
+  const { startEnhancement } = useEnhancementContext()
+
+  // Per-block selectors — stable factory instances (created once per blockId).
+  const isEnhancingSelector = useMemo(() => selectIsBlockEnhancing(blockId), [blockId])
+  const streamingContentSelector = useMemo(() => selectBlockStreamingContent(blockId), [blockId])
+  const entrySelector = useMemo(() => selectWritingEntryById(entryId), [entryId])
+
+  const isEnhancing = useAppSelector(isEnhancingSelector)
+  const streamingContent = useAppSelector(streamingContentSelector)
+  const entry = useAppSelector(entrySelector)
+
+  const handleEnhance = useCallback(() => {
+    const text = entry?.blocks.find((b) => b.id === blockId)?.content ?? ''
+    startEnhancement({ blockId, entryId, text })
+  }, [blockId, entryId, entry, startEnhancement])
+
+  return { isEnhancing, streamingContent, handleEnhance }
+}
