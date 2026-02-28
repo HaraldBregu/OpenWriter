@@ -182,10 +182,6 @@ export interface OutputUpdateParams {
     createdAt?: string
     filetype?: 'markdown'
     type?: 'content'
-    blockType?: 'paragraph' | 'heading' | 'media'
-    blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
-    mediaSrc?: string
-    mediaAlt?: string
   }>
   metadata: Record<string, unknown>
 }
