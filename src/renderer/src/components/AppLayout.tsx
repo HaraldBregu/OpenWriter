@@ -215,7 +215,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
     onSuccess: (writingId) => {
-      navigate(`/new/writing/${writingId}`);
+      navigate(`/content/${writingId}`);
     },
   });
 
