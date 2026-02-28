@@ -210,11 +210,8 @@ export const writingsSlice = createSlice({
           blocks: item.blocks.length > 0
             ? item.blocks.map((b): Block => ({
                 id: b.name,
-                type: (b.blockType as Block['type'] | undefined) ?? 'paragraph',
-                ...(b.blockLevel !== undefined ? { level: b.blockLevel as Block['level'] } : {}),
+                type: 'paragraph',
                 content: b.content,
-                ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
-                ...(b.mediaAlt !== undefined ? { mediaAlt: b.mediaAlt } : {}),
                 createdAt: b.createdAt,
                 updatedAt: b.updatedAt,
               }))
