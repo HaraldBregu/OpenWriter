@@ -264,18 +264,17 @@ export const ContentBlock = React.memo(function ContentBlock({
     const existing = getTaskSnapshot(block.id)
     if (existing && (existing.status === 'running' || existing.status === 'queued')) {
       originalTextRef.current = block.content
-      const seeded = originalTextRef.current + (existing.streamedContent ?? '')
-      setStreamingContent(seeded)
+      setStreamingContent(existing.content ?? '')
       setIsEnhancing(true)
     }
 
     const unsub = subscribeToTask(block.id, (snap) => {
-      if (snap.streamedContent) {
+      if (snap.content) {
         console.log('Received streamed content update for block', block.id, snap.streamedContent)
-        setStreamingContent(originalTextRef.current + snap.streamedContent)
+        setStreamingContent(snap.content)
       }
       if (snap.status === 'completed') {
-        const finalContent = originalTextRef.current + (snap.streamedContent ?? '')
+        const finalContent = snap.content ?? ''
         dispatch(updateBlockContent({ entryId, blockId: block.id, content: finalContent }))
         setStreamingContent(undefined)
         setIsEnhancing(false)
