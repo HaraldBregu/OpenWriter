@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppDispatch } from '@/store'
 import { updateBlockContent } from '@/store/writingItemsSlice'
-import { subscribeToTask } from '@/services/taskEventBus'
+import { subscribeToTask, getTaskSnapshot } from '@/services/taskEventBus'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   ImagePlus, Link, X,
