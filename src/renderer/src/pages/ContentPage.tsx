@@ -50,27 +50,15 @@ const ContentPage: React.FC = () => {
   } = useDraftEditor(id, '/content')
 
   // ---------------------------------------------------------------------------
-  // AI Enhancement — owned at page level
+  // AI Enhancement — delegates to EnhancementContext (app-root level).
   //
-  // Content is streamed back through onChangeRef → Redux state → block.content
-  // prop → AppTextEditor value → TipTap internal sync. No direct editor refs needed.
+  // State (enhancingBlockIds, streamingEntries) lives in Redux and survives
+  // navigation.  The provider never unmounts, so tasks run to completion even
+  // when the user navigates away from this page mid-stream.
   // ---------------------------------------------------------------------------
 
-  const onChangeRef = useRef(handleChange)
-  onChangeRef.current = handleChange
-
-  // Stable ref to a lookup function so usePageEnhancement can snapshot the
-  // current block content without receiving blocks as a prop.
-  const blocksRef = useRef(blocks)
-  blocksRef.current = blocks
-
-  const getBlockContent = useRef((blockId: string) =>
-    blocksRef.current.find((b) => b.id === blockId)?.content ?? '',
-  )
-
   const { enhancingBlockIds, streamingEntries, handleEnhance } = usePageEnhancement({
-    onChangeRef,
-    getBlockContent,
+    entryId: id ?? '',
   })
 
   // ---------------------------------------------------------------------------
