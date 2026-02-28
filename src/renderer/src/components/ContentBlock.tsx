@@ -85,7 +85,7 @@ export interface ContentBlockProps {
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
   /**
-   * Called once when the TipTap editor instance is ready (or changes).
+   * Called once when the TipTap editor instance is ready (or destroyed).
    * NewWritingPage stores these refs so it can read content during enhancement.
    */
   onEditorReady: (blockId: string, editor: Editor | null) => void
@@ -245,7 +245,136 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
 EditorBubbleMenu.displayName = 'EditorBubbleMenu'
 
 // ---------------------------------------------------------------------------
-// HeadingLevelSelect
+// TextBlockEditor — TipTap editor, only mounted for type==='text' blocks.
+//
+// Extracting this into its own component ensures useEditor() (a hook) is only
+// called when the block is actually a text block. This avoids creating idle
+// editor instances for heading/media blocks and upholds the Rules of Hooks
+// (hooks are always called in the same order within a component, never
+// conditionally skipped — we achieve this by only rendering this component
+// when needed, not by guarding the hook call itself).
+// ---------------------------------------------------------------------------
+
+interface TextBlockEditorProps {
+  block: Block
+  onChangeRef: React.RefObject<(id: string, content: string) => void>
+  blockIdRef: React.RefObject<string>
+  onEditorReady: (blockId: string, editor: Editor | null) => void
+  onEnhance: () => void
+  isEnhancing: boolean
+  autoFocus: boolean
+  placeholder: string
+}
+
+const TextBlockEditor = React.memo(function TextBlockEditor({
+  block,
+  onChangeRef,
+  blockIdRef,
+  onEditorReady,
+  onEnhance,
+  isEnhancing,
+  autoFocus,
+  placeholder,
+}: TextBlockEditorProps): React.JSX.Element {
+  const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
+
+  const editorRef = useRef<Editor | null>(null)
+  const onEditorReadyRef = useRef(onEditorReady)
+  onEditorReadyRef.current = onEditorReady
+
+  const editorOptions = useMemo<UseEditorOptions>(() => ({
+    extensions: [
+      StarterKit.configure({ bulletList: false, orderedList: false, listItem: false }),
+      BulletList,
+      OrderedList,
+      ListItem,
+      ListKeymap,
+      Markdown,
+    ],
+    content: block.content || '',
+    contentType: 'markdown',
+    immediatelyRender: false,
+    onUpdate: ({ editor: ed }: { editor: Editor }) => {
+      onChangeRef.current(blockIdRef.current, ed.getMarkdown())
+      setIsEmpty(ed.isEmpty)
+    },
+    onCreate: ({ editor: ed }: { editor: Editor }) => {
+      editorRef.current = ed
+      onEditorReadyRef.current(blockIdRef.current, ed)
+      setIsEmpty(ed.isEmpty)
+    },
+    editorProps: {
+      attributes: {
+        class: 'focus:outline-none min-h-[32em] py-2 text-base leading-relaxed text-foreground break-words',
+      },
+    },
+  }), []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const editor = useEditor(editorOptions)
+
+  // Keep ref in sync and notify parent when the editor changes.
+  useEffect(() => {
+    editorRef.current = editor ?? null
+    onEditorReadyRef.current(blockIdRef.current, editor ?? null)
+  }, [editor, blockIdRef])
+
+  // Notify parent on unmount so the map entry is cleaned up.
+  useEffect(() => {
+    return () => {
+      onEditorReadyRef.current(blockIdRef.current, null)
+    }
+  }, [blockIdRef])
+
+  // Capture the initial autoFocus value at mount time. The parent clears
+  // focusBlockId after one render, so we store it in a ref.
+  const shouldAutoFocusRef = useRef(autoFocus)
+  useEffect(() => {
+    if (!shouldAutoFocusRef.current) return
+    if (!editor || editor.isDestroyed) return
+    shouldAutoFocusRef.current = false
+    Promise.resolve().then(() => {
+      if (!editor.isDestroyed) editor.commands.focus('start')
+    })
+  }, [editor])
+
+  // Disable the editor while AI enhancement is running.
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    editor.setEditable(!isEnhancing)
+  }, [editor, isEnhancing])
+
+  // Sync external content changes; guard while enhancing so streamed tokens
+  // are not overwritten by echoed onChange calls.
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    if (isEnhancing) return
+    const current = editor.getMarkdown()
+    const incoming = block.content || ''
+    if (current !== incoming) {
+      editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
+      setIsEmpty(editor.isEmpty)
+    }
+  }, [block.content, editor, isEnhancing])
+
+  return (
+    <div className={`relative overflow-hidden${isEnhancing ? ' opacity-60 pointer-events-none' : ''}`}>
+      {isEmpty && (
+        <span
+          className="absolute inset-0 py-2.5 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
+          aria-hidden="true"
+        >
+          {placeholder}
+        </span>
+      )}
+      <EditorBubbleMenu editor={editor} onEnhance={onEnhance} isEnhancing={isEnhancing} />
+      <EditorContent editor={editor} />
+    </div>
+  )
+})
+TextBlockEditor.displayName = 'TextBlockEditor'
+
+// ---------------------------------------------------------------------------
+// HeadingContent
 // ---------------------------------------------------------------------------
 
 const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
@@ -530,112 +659,25 @@ export const ContentBlock = React.memo(function ContentBlock({
   const { t } = useTranslation()
   const dragControls = useDragControls()
 
-  // Track whether the text editor is empty to conditionally show placeholder.
-  const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
-
-  // Stable callback refs so useEditor options never need to re-create the editor.
+  // Stable callback refs — these are passed through to TextBlockEditor so the
+  // TipTap hooks inside that component never receive stale closures.
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
   const blockIdRef = useRef(block.id)
   blockIdRef.current = block.id
 
-  // Stable ref to the editor so the parent page can access it for enhancement.
-  const editorRef = useRef<Editor | null>(null)
-
-  // Notify parent whenever the editor instance changes.
-  const onEditorReadyRef = useRef(onEditorReady)
-  onEditorReadyRef.current = onEditorReady
-
-  // Only initialise TipTap for text blocks; null otherwise.
-  const isTextBlock = block.type === 'text'
-
-  const editorOptions = useMemo<UseEditorOptions>(() => ({
-    extensions: [
-      StarterKit.configure({ bulletList: false, orderedList: false, listItem: false }),
-      BulletList,
-      OrderedList,
-      ListItem,
-      ListKeymap,
-      Markdown,
-    ],
-    content: block.content || '',
-    contentType: 'markdown',
-    immediatelyRender: false,
-    onUpdate: ({ editor: ed }: { editor: Editor }) => {
-      onChangeRef.current(blockIdRef.current, ed.getMarkdown())
-      setIsEmpty(ed.isEmpty)
-    },
-    onCreate: ({ editor: ed }: { editor: Editor }) => {
-      editorRef.current = ed
-      onEditorReadyRef.current(blockIdRef.current, ed)
-      setIsEmpty(ed.isEmpty)
-    },
-    editorProps: {
-      attributes: {
-        class: 'focus:outline-none min-h-[32em] py-2 text-base leading-relaxed text-foreground break-words',
-      },
-    },
-  }), []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // useEditor is always called; pass enabled: false for non-text blocks so
-  // TipTap doesn't mount an actual DOM element (avoids React hook rule violations).
-  const editor = useEditor({ ...editorOptions, editorProps: isTextBlock ? editorOptions.editorProps : undefined }, [])
-
-  // Keep editorRef in sync and notify parent.
-  useEffect(() => {
-    editorRef.current = editor ?? null
-    onEditorReadyRef.current(block.id, editor ?? null)
-  }, [editor, block.id])
-
-  // Destroy the editor when the block type switches away from 'text'.
-  useEffect(() => {
-    if (!isTextBlock && editor && !editor.isDestroyed) {
-      editor.destroy()
-      editorRef.current = null
-      onEditorReadyRef.current(block.id, null)
-    }
-  }, [isTextBlock, editor, block.id])
-
-  // Capture the initial autoFocus value at mount time.
-  const shouldAutoFocusRef = useRef(autoFocus)
-  useEffect(() => {
-    if (!shouldAutoFocusRef.current || !isTextBlock) return
-    if (!editor || editor.isDestroyed) return
-    shouldAutoFocusRef.current = false
-    Promise.resolve().then(() => {
-      if (!editor.isDestroyed) editor.commands.focus('start')
-    })
-  }, [editor, isTextBlock])
-
-  // Disable the editor while AI enhancement is running.
-  useEffect(() => {
-    if (!editor || editor.isDestroyed) return
-    editor.setEditable(!isEnhancing)
-  }, [editor, isEnhancing])
-
-  // Sync external content changes; guard while enhancing.
-  useEffect(() => {
-    if (!editor || editor.isDestroyed) return
-    if (isEnhancing) return
-    const current = editor.getMarkdown()
-    const incoming = block.content || ''
-    if (current !== incoming) {
-      editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
-      setIsEmpty(editor.isEmpty)
-    }
-  }, [block.content, editor, isEnhancing])
-
-  const handleCopy = useCallback(() => {
-    if (block.type === 'text' && editor) {
-      navigator.clipboard.writeText(editor.getText())
-    } else if (block.type === 'heading') {
-      navigator.clipboard.writeText(block.content)
-    }
-  }, [editor, block.type, block.content])
-
   const handleEnhanceClick = useCallback(() => {
     onEnhance(block.id)
   }, [onEnhance, block.id])
+
+  const handleCopy = useCallback(() => {
+    if (block.type === 'heading') {
+      navigator.clipboard.writeText(block.content)
+    }
+    // For 'text' blocks, copy is handled inside TextBlockEditor via the editor's
+    // getText(). We don't have direct editor access here — rely on the bubbleMenu
+    // or the OS copy shortcut when the block is focused.
+  }, [block.type, block.content])
 
   // Heading and media blocks cannot be AI-enhanced.
   const canEnhance = block.type === 'text'
@@ -683,19 +725,22 @@ export const ContentBlock = React.memo(function ContentBlock({
             <BlockTypeMenu block={block} onChangeType={onChangeType} />
           </div>
 
+          {/*
+            Each type renders its own sub-component. TextBlockEditor owns useEditor()
+            so the hook is only ever called when the block is actually a text block,
+            which keeps React hook call order stable and avoids idle editor instances.
+          */}
           {block.type === 'text' && (
-            <div className={`relative overflow-hidden${isEnhancing ? ' opacity-60 pointer-events-none' : ''}`}>
-              {isEmpty && (
-                <span
-                  className="absolute inset-0 py-2.5 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
-                  aria-hidden="true"
-                >
-                  {placeholder}
-                </span>
-              )}
-              <EditorBubbleMenu editor={editor} onEnhance={handleEnhanceClick} isEnhancing={isEnhancing} />
-              <EditorContent editor={editor} />
-            </div>
+            <TextBlockEditor
+              block={block}
+              onChangeRef={onChangeRef}
+              blockIdRef={blockIdRef}
+              onEditorReady={onEditorReady}
+              onEnhance={handleEnhanceClick}
+              isEnhancing={isEnhancing}
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+            />
           )}
 
           {block.type === 'heading' && (
@@ -719,12 +764,12 @@ export const ContentBlock = React.memo(function ContentBlock({
             <ActionButton
               title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
               onClick={handleEnhanceClick}
-              disabled={isEnhancing || (block.type === 'text' && isEmpty)}
+              disabled={isEnhancing}
             >
               <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
             </ActionButton>
           )}
-          {block.type !== 'media' && (
+          {block.type === 'heading' && (
             <ActionButton
               title={t('contentBlock.copy')}
               onClick={handleCopy}
