@@ -57,16 +57,8 @@ export interface ContentBlockProps {
   onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
-  /**
-   * Trigger AI enhancement for this block. Provided by the parent page.
-   * ContentBlock simply calls onEnhance(block.id) — the actual async logic
-   * lives in ContentPage via usePageEnhancement.
-   */
-  onEnhance: (blockId: string) => void
-  /** True while this specific block is being enhanced by the AI. */
-  isEnhancing: boolean
-  /** Live streaming content from the AI enhancement hook. Passed directly to AppTextEditor to avoid Redux re-renders on every token. */
-  streamingContent?: string
+  /** Writing entry UUID — used by the internal useBlockEnhancement hook. */
+  entryId: string
   placeholder?: string
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
