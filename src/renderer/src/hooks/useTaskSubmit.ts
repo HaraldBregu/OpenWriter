@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types/ipc/types'
-import type { TaskStatus, TrackedTaskState } from '@/contexts/TaskContext'
-import { useTaskContext } from '@/contexts/TaskContext'
+import type { TaskStatus, TrackedTaskState } from '@/services/taskStore'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,7 +61,7 @@ const PAUSABLE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
  * a query hook) so the component can call submit() imperatively.
  *
  * Key behaviours:
- *  - Registers ownership in the shared TaskStore before events arrive so no
+ *  - Registers ownership in the shared taskStore before events arrive so no
  *    events are dropped between IPC round-trip and subscription setup
  *  - Cleans up its store subscription when the task reaches a terminal state
  *    or the component unmounts
@@ -71,18 +71,14 @@ const PAUSABLE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
  *
  * @template TInput Type of the task input payload.
  * @template TResult Type of the result from the completed event.
- *
- * Usage:
- *   const { submit, pause, resume, updatePriority, status, progress } =
- *     useTaskSubmit('file-export', { path: '/tmp/out.md' }, { priority: 'high' })
- *   await submit()
  */
 export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   type: string,
   input: TInput,
   options?: TaskSubmitOptions
 ): UseTaskSubmitReturn<TInput, TResult> {
-  const { store } = useTaskContext()
+  // Ensure the global IPC listener is active.
+  taskStore.ensureListening()
 
   const [taskId, setTaskId] = useState<string | null>(null)
   const [status, setStatus] = useState<TaskStatus | 'idle'>('idle')
@@ -121,7 +117,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   // Sync all local state fields from the store snapshot.
   const syncFromStore = useCallback(
     (id: string) => {
-      const snap: TrackedTaskState | undefined = store.getTaskSnapshot(id)
+      const snap: TrackedTaskState | undefined = taskStore.getTaskSnapshot(id)
       if (!snap) return
 
       setStatus(snap.status)
@@ -139,7 +135,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
         cleanupSubscription()
       }
     },
-    [store, cleanupSubscription]
+    [cleanupSubscription]
   )
 
   const submit = useCallback(async (inputOverride?: TInput): Promise<string | null> => {
@@ -186,7 +182,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
 
     // Register task in the shared store so incoming events are accepted.
-    store.addTask(resolvedTaskId, type, options?.priority ?? 'normal')
+    taskStore.addTask(resolvedTaskId, type, options?.priority ?? 'normal')
 
     // Subscribe to this specific task's store key.
     taskIdRef.current = resolvedTaskId
@@ -197,7 +193,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       unsubRef.current()
     }
 
-    unsubRef.current = store.subscribe(resolvedTaskId, () => {
+    unsubRef.current = taskStore.subscribe(resolvedTaskId, () => {
       if (taskIdRef.current) {
         syncFromStore(taskIdRef.current)
       }
@@ -207,7 +203,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     syncFromStore(resolvedTaskId)
 
     return resolvedTaskId
-  }, [store, type, input, options, syncFromStore])
+  }, [type, input, options, syncFromStore])
 
   const cancel = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
@@ -227,7 +223,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     if (typeof window.tasksManager?.pause !== 'function') return
 
     // Read the live store snapshot to avoid stale-closure status.
-    const currentStatus = store.getTaskSnapshot(id)?.status
+    const currentStatus = taskStore.getTaskSnapshot(id)?.status
     if (!currentStatus || !PAUSABLE_STATUSES.has(currentStatus)) return
 
     try {
@@ -235,7 +231,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     } catch {
       // Best-effort — the paused event from the main process will update state.
     }
-  }, [store])
+  }, [])
 
   const resume = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
@@ -243,7 +239,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     if (typeof window.tasksManager?.resume !== 'function') return
 
     // Read the live store snapshot to avoid stale-closure status.
-    const currentStatus = store.getTaskSnapshot(id)?.status
+    const currentStatus = taskStore.getTaskSnapshot(id)?.status
     if (currentStatus !== 'paused') return
 
     try {
@@ -251,7 +247,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     } catch {
       // Best-effort — the resumed event from the main process will update state.
     }
-  }, [store])
+  }, [])
 
   const updatePriority = useCallback(async (priority: TaskPriority): Promise<void> => {
     const id = taskIdRef.current
