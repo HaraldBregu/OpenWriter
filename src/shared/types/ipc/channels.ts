@@ -254,6 +254,19 @@ export interface InvokeChannelMap {
   // ---- App — writing context menu (raw invoke) ----
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
 
+  // ---- AIAgentsManager (IpcResult-wrapped) ----
+  [AiAgentChannels.listAgents]: { args: []; result: AIAgentsDefinitionInfo[] }
+  [AiAgentChannels.getAgent]: { args: [agentId: string]; result: AIAgentsDefinitionInfo | undefined }
+  [AiAgentChannels.getStatus]: { args: []; result: AIAgentsManagerStatus }
+  [AiAgentChannels.listSessions]: { args: []; result: AgentSessionSnapshot[] }
+  [AiAgentChannels.getSession]: { args: [sessionId: string]; result: AgentSessionSnapshot | undefined }
+  [AiAgentChannels.listActiveRuns]: { args: []; result: AgentRunSnapshot[] }
+  [AiAgentChannels.createSession]: { args: [agentId: string, config?: Partial<AgentSessionConfig>]; result: string }
+  [AiAgentChannels.destroySession]: { args: [sessionId: string]; result: void }
+  [AiAgentChannels.cancelRun]: { args: [runId: string]; result: void }
+  [AiAgentChannels.cancelSession]: { args: [sessionId: string]; result: void }
+  [AiAgentChannels.startStreaming]: { args: [sessionId: string, request: AgentRequest, options?: { windowId?: number }]; result: string }
+
 }
 
 /**
