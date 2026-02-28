@@ -1,10 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { createBlock, type Block, type BlockType } from '@/components/ContentBlock'
 import {
   selectWritingEntryById,
-  addEntry,
   setWritingItemId,
   updateEntryBlocks,
   updateEntryTitle,
@@ -20,17 +18,17 @@ import {
 // ---------------------------------------------------------------------------
 
 export interface UseDraftEditorReturn {
-  /** True when there is no persisted entity yet (first visit to /new/writing). */
+  /** Always false — entries are created on disk before navigating. */
   isDraft: boolean
-  /** Resolved title for the current mode (draft local state or Redux entity). */
+  /** Resolved title from the Redux entity. */
   title: string
-  /** Resolved blocks for the current mode (draft local state or Redux entity). */
+  /** Resolved blocks from the Redux entity. */
   blocks: Block[]
-  /** ID of the Redux entity (undefined while in draft mode). */
+  /** ID of the Redux entity. */
   entityId: string | undefined
   /** The on-disk writingItemId of the last successful save — used for deletion. */
   savedWritingItemIdRef: React.MutableRefObject<string | null>
-  /** Update the title — routes to local draft state or a Redux dispatch automatically. */
+  /** Update the title via Redux dispatch. */
   handleTitleChange: (value: string) => void
   /** Change a block's content. */
   handleChange: (blockId: string, content: string) => void
@@ -106,11 +104,13 @@ function serializeBlocksForOutput(
 /**
  * Manages shared state and side-effects for ContentPage.
  *
+ * The entry is always created on disk (via useCreateWriting) before navigation,
+ * so this hook only operates in "edit" mode — reading from Redux and auto-saving
+ * to disk on changes.
+ *
  * Responsibilities:
- *  - Draft mode: local title/blocks state, auto-commit timer (1 s after first content)
- *  - Edit mode: reads entity from Redux, auto-save timer (1 s debounce)
- *  - Draft key reset: detects "New Writing" being clicked again via navigation state
- *  - Block CRUD callbacks — routes to draft local state or Redux dispatch based on mode
+ *  - Reads entity from Redux, auto-save timer (1 s debounce)
+ *  - Block CRUD callbacks via Redux dispatch
  *  - AI settings local state (no persistence to disk — simple defaults)
  *  - focusBlockId management (set on block insert, cleared after one render)
  *
@@ -119,65 +119,33 @@ function serializeBlocksForOutput(
  *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/config.json   (metadata)
  *   <workspace>/output/writings/<YYYY-MM-DD_HHmmss>/<blockId>.md  (per block)
  *
- * @param id         - Route param. Undefined means draft mode.
- * @param routeBase  - Navigation base path, e.g. '/new/writing'
+ * @param id         - Route param (always defined — entries are pre-created).
+ * @param _routeBase - Navigation base path (kept for API compatibility).
  */
 export function useDraftEditor(
   id: string | undefined,
-  routeBase: string
+  _routeBase: string
 ): UseDraftEditorReturn {
-  const navigate = useNavigate()
-  const location = useLocation()
   const dispatch = useAppDispatch()
-
-  const isDraft = id === undefined
 
   // ---------------------------------------------------------------------------
   // Redux entity
   // ---------------------------------------------------------------------------
   const entry: WritingEntry | null = useAppSelector(selectWritingEntryById(id ?? ''))
 
-  // ---------------------------------------------------------------------------
-  // Draft state
-  // ---------------------------------------------------------------------------
-  const draftIdRef = useRef(crypto.randomUUID())
-  const [draftTitle, setDraftTitle] = useState('')
-  const [draftBlocks, setDraftBlocks] = useState<Block[]>([createBlock()])
-  const committedRef = useRef(false)
-
-  // Tracks the on-disk writingItemId for both modes.
+  // Tracks the on-disk writingItemId.
   // Seeded from the existing entity so it survives remounts.
   const savedWritingItemIdRef = useRef<string | null>(entry?.writingItemId ?? null)
   useEffect(() => {
-    if (!isDraft && entry?.writingItemId) {
+    if (entry?.writingItemId) {
       savedWritingItemIdRef.current = entry.writingItemId
     }
-  }, [isDraft, entry?.writingItemId])
-
-  // ---------------------------------------------------------------------------
-  // Draft key reset — fires when the user clicks "New Writing" again while
-  // already on the /new/writing route (navigation state carries a new draftKey)
-  // ---------------------------------------------------------------------------
-  const draftKey = (location.state as { draftKey?: number } | null)?.draftKey ?? 0
-  const prevDraftKeyRef = useRef(draftKey)
-  useEffect(() => {
-    if (!isDraft) return
-    if (prevDraftKeyRef.current === draftKey) return
-    prevDraftKeyRef.current = draftKey
-    setDraftTitle('')
-    setDraftBlocks([createBlock()])
-    draftIdRef.current = crypto.randomUUID()
-    committedRef.current = false
-    savedWritingItemIdRef.current = null
-  }, [isDraft, draftKey])
+  }, [entry?.writingItemId])
 
   // ---------------------------------------------------------------------------
   // AI settings — simple local state, not persisted to disk in this system
   // ---------------------------------------------------------------------------
   const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
-  // Keep a ref so the async auto-save timer always reads the latest value
-  const aiSettingsRef = useRef(aiSettings)
-  aiSettingsRef.current = aiSettings
 
   // ---------------------------------------------------------------------------
   // focusBlockId — set when a block is inserted; cleared after one render
@@ -189,77 +157,13 @@ export function useDraftEditor(
   }, [focusBlockId])
 
   // ---------------------------------------------------------------------------
-  // Draft mode: auto-commit to Redux + disk on first real content (1 s delay)
-  // Writes to window.workspace.saveOutput (workspace-backed OutputFilesService).
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (!isDraft || committedRef.current) return
-
-    const hasContent = draftTitle.trim() || draftBlocks.some((b) => b.content.trim())
-    if (!hasContent) return
-
-    const timer = setTimeout(async () => {
-      if (committedRef.current) return
-      committedRef.current = true
-
-      const workspace = await window.workspace.getCurrent()
-      if (!workspace) return
-
-      const now = new Date().toISOString()
-      const entryId = draftIdRef.current
-
-      // Create on disk first via workspace-backed output service
-      let result: { id: string; path: string; savedAt: number }
-      try {
-        result = await window.workspace.saveOutput({
-          type: 'writings',
-          blocks: serializeBlocksForOutput(draftBlocks),
-          metadata: {
-            title: draftTitle || 'Untitled Writing',
-            category: 'writing',
-            tags: [],
-            visibility: 'private',
-            provider: 'manual',
-            model: '',
-          },
-        })
-      } catch (err) {
-        console.error('[useDraftEditor] Failed to create writing item on disk:', err)
-        committedRef.current = false
-        return
-      }
-
-      savedWritingItemIdRef.current = result.id
-
-      // Commit to Redux only after disk write succeeds
-      dispatch(
-        addEntry({
-          id: entryId,
-          writingItemId: result.id,
-          title: draftTitle,
-          blocks: draftBlocks,
-          category: 'writing',
-          tags: [],
-          createdAt: now,
-          updatedAt: now,
-          savedAt: result.savedAt,
-        })
-      )
-
-      navigate(`${routeBase}/${entryId}`, { replace: true })
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [isDraft, draftTitle, draftBlocks, dispatch, navigate, routeBase])
-
-  // ---------------------------------------------------------------------------
-  // Edit mode: auto-save to disk 1 s after changes via window.workspace.updateOutput
+  // Auto-save to disk 1 s after changes via window.workspace.updateOutput
   // ---------------------------------------------------------------------------
   const isFirstEditRender = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (isDraft || !entry) return
+    if (!entry) return
     if (isFirstEditRender.current) {
       isFirstEditRender.current = false
       return
@@ -318,31 +222,25 @@ export function useDraftEditor(
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [isDraft, entry, dispatch]) // aiSettings accessed via ref; entry covers block/title changes
+  }, [entry, dispatch])
 
   // ---------------------------------------------------------------------------
-  // Callbacks — route to draft local state or Redux dispatch based on isDraft
+  // Callbacks — always dispatch to Redux
   // ---------------------------------------------------------------------------
 
   const handleTitleChange = useCallback(
     (value: string) => {
-      if (isDraft) {
-        setDraftTitle(value)
-      } else if (entry) {
+      if (entry) {
         dispatch(updateEntryTitle({ entryId: entry.id, title: value }))
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleChange = useCallback(
     (blockId: string, content: string) => {
       const now = new Date().toISOString()
-      if (isDraft) {
-        setDraftBlocks((prev) =>
-          prev.map((b) => (b.id === blockId ? { ...b, content, updatedAt: now } : b))
-        )
-      } else if (entry) {
+      if (entry) {
         dispatch(
           updateEntryBlocks({
             entryId: entry.id,
@@ -353,14 +251,12 @@ export function useDraftEditor(
         )
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleDelete = useCallback(
     (blockId: string) => {
-      if (isDraft) {
-        setDraftBlocks((prev) => prev.filter((b) => b.id !== blockId))
-      } else if (entry) {
+      if (entry) {
         dispatch(
           updateEntryBlocks({
             entryId: entry.id,
@@ -369,18 +265,13 @@ export function useDraftEditor(
         )
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleAddBlockAfter = useCallback(
     (afterId: string) => {
       const newBlock = createBlock()
-      if (isDraft) {
-        setDraftBlocks((prev) => {
-          const index = prev.findIndex((b) => b.id === afterId)
-          return [...prev.slice(0, index + 1), newBlock, ...prev.slice(index + 1)]
-        })
-      } else if (entry) {
+      if (entry) {
         const index = entry.blocks.findIndex((b) => b.id === afterId)
         dispatch(
           updateEntryBlocks({
@@ -395,31 +286,27 @@ export function useDraftEditor(
       }
       setFocusBlockId(newBlock.id)
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleReorder = useCallback(
     (reordered: Block[]) => {
-      if (isDraft) {
-        setDraftBlocks(reordered)
-      } else if (entry) {
+      if (entry) {
         dispatch(updateEntryBlocks({ entryId: entry.id, blocks: reordered }))
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleAppendBlock = useCallback(() => {
     const newBlock = createBlock()
-    if (isDraft) {
-      setDraftBlocks((prev) => [...prev, newBlock])
-    } else if (entry) {
+    if (entry) {
       dispatch(
         updateEntryBlocks({ entryId: entry.id, blocks: [...entry.blocks, newBlock] })
       )
     }
     setFocusBlockId(newBlock.id)
-  }, [isDraft, entry, dispatch])
+  }, [entry, dispatch])
 
   const handleChangeBlockType = useCallback(
     (blockId: string, type: BlockType, level?: Block['level']) => {
@@ -441,9 +328,7 @@ export function useDraftEditor(
         return updated
       }
 
-      if (isDraft) {
-        setDraftBlocks((prev) => prev.map(applyToBlock))
-      } else if (entry) {
+      if (entry) {
         dispatch(
           updateEntryBlocks({
             entryId: entry.id,
@@ -452,7 +337,7 @@ export function useDraftEditor(
         )
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleChangeMedia = useCallback(
@@ -461,9 +346,7 @@ export function useDraftEditor(
       const applyToBlock = (b: Block): Block =>
         b.id === blockId ? { ...b, mediaSrc, mediaAlt, updatedAt: now } : b
 
-      if (isDraft) {
-        setDraftBlocks((prev) => prev.map(applyToBlock))
-      } else if (entry) {
+      if (entry) {
         dispatch(
           updateEntryBlocks({
             entryId: entry.id,
@@ -472,7 +355,7 @@ export function useDraftEditor(
         )
       }
     },
-    [isDraft, entry, dispatch]
+    [entry, dispatch]
   )
 
   const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
@@ -482,11 +365,11 @@ export function useDraftEditor(
   // ---------------------------------------------------------------------------
   // Resolved display values
   // ---------------------------------------------------------------------------
-  const title = isDraft ? draftTitle : (entry?.title ?? '')
-  const blocks = isDraft ? draftBlocks : (entry?.blocks ?? [])
+  const title = entry?.title ?? ''
+  const blocks = entry?.blocks ?? []
 
   return {
-    isDraft,
+    isDraft: false,
     title,
     blocks,
     entityId: id,
