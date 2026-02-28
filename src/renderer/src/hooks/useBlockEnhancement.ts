@@ -126,7 +126,9 @@ export function usePageEnhancement({
     if (!enhancingBlockId) return
 
     if (status === 'completed') {
-      // Content is already committed to Redux via the streaming effect above.
+      // Commit the final streamed content to Redux in a single dispatch.
+      onChangeRef.current(enhancingBlockId, streamBufferRef.current)
+      setStreamingEntry(null)
       setEnhancingBlockId(null)
       lastStreamLengthRef.current = 0
       reset()
@@ -134,8 +136,9 @@ export function usePageEnhancement({
       if (status === 'error') {
         console.error('[usePageEnhancement] Enhance error for block', enhancingBlockId)
       }
-      // Revert the block to its pre-enhance content.
+      // Revert the block to its pre-enhance content in a single dispatch.
       onChangeRef.current(enhancingBlockId, originalTextRef.current)
+      setStreamingEntry(null)
       setEnhancingBlockId(null)
       lastStreamLengthRef.current = 0
       reset()
