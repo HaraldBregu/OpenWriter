@@ -105,7 +105,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
             }
           }
           dispatch(removeEntry(writingId))
-          if (pathnameRef.current === `/new/writing/${writingId}`) {
+          if (pathnameRef.current === `/content/${writingId}`) {
             navigate('/home')
           }
           break
