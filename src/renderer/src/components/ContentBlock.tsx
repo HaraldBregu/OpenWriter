@@ -174,26 +174,6 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
           {/* Separator */}
           <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
 
-          {/* Heading group */}
-          <BubbleMenuButton
-            tooltip="Heading 1"
-            isActive={editor.isActive('heading', { level: 1 })}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          >
-            <Heading1 className="h-3.5 w-3.5" />
-          </BubbleMenuButton>
-
-          <BubbleMenuButton
-            tooltip="Heading 2"
-            isActive={editor.isActive('heading', { level: 2 })}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          >
-            <Heading2 className="h-3.5 w-3.5" />
-          </BubbleMenuButton>
-
-          {/* Separator */}
-          <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
-
           {/* Lists and blockquote group */}
           <BubbleMenuButton
             tooltip="Bullet List"
