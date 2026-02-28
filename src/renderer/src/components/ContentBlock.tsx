@@ -240,24 +240,21 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChangeMedia,
   onDelete,
   onAdd,
-  onEnhance,
-  isEnhancing,
-  streamingContent,
+  entryId,
   placeholder = 'Type here...',
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
   const { t } = useTranslation()
   const dragControls = useDragControls()
 
+  const { isEnhancing, streamingContent, handleEnhance: handleEnhanceClick } =
+    useBlockEnhancement(block.id, entryId)
+
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
     (content: string) => onChange(block.id, content),
     [onChange, block.id],
   )
-
-  const handleEnhanceClick = useCallback(() => {
-    onEnhance(block.id)
-  }, [onEnhance, block.id])
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(block.content)
