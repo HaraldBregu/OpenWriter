@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { createBlock, type Block, type BlockType } from '@/components/ContentBlock'
+import { createBlock, type Block } from '@/components/ContentBlock'
 import {
   selectWritingEntryById,
   setWritingItemId,
@@ -40,17 +40,6 @@ export interface UseDraftEditorReturn {
   handleReorder: (reordered: Block[]) => void
   /** Append a new block at the end and focus it. */
   handleAppendBlock: () => void
-  /**
-   * Change a block's type (and optionally its heading level).
-   * For 'text' and 'media' types the level is ignored.
-   * Content is preserved across type switches so the user does not lose work.
-   */
-  handleChangeBlockType: (blockId: string, type: BlockType, level?: Block['level']) => void
-  /**
-   * Update the media source and alt text of a 'media' block.
-   * Passing empty strings for both clears the media.
-   */
-  handleChangeMedia: (blockId: string, mediaSrc: string, mediaAlt: string) => void
   /** Current AI settings (local state, not stored in Redux between page visits). */
   aiSettings: InferenceSettings
   /** Update AI settings. */
@@ -68,8 +57,8 @@ export interface UseDraftEditorReturn {
 
 /**
  * Serialize blocks to the output format expected by window.workspace.saveOutput/updateOutput.
- * Each block becomes an object with a stable name (UUID), its content, and
- * timestamps. The name is preserved across saves using the block's own `id`.
+ * Each block becomes an object with a stable name (UUID), its content, and timestamps.
+ * The name is preserved across saves using the block's own `id`.
  */
 function serializeBlocksForOutput(
   blocks: Block[]
@@ -78,22 +67,12 @@ function serializeBlocksForOutput(
   content: string
   createdAt: string
   updatedAt: string
-  blockType?: Block['type']
-  blockLevel?: Block['level']
-  mediaSrc?: string
-  mediaAlt?: string
 }> {
   return blocks.map((b) => ({
     name: b.id,
     content: b.content,
     createdAt: b.createdAt,
     updatedAt: b.updatedAt,
-    // Only serialize optional fields when they carry meaningful values so the
-    // output stays lean for standard 'paragraph' blocks.
-    ...(b.type !== 'paragraph' ? { blockType: b.type } : {}),
-    ...(b.level !== undefined ? { blockLevel: b.level } : {}),
-    ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
-    ...(b.mediaAlt !== undefined ? { mediaAlt: b.mediaAlt } : {}),
   }))
 }
 
@@ -308,56 +287,6 @@ export function useContentEditor(
     setFocusBlockId(newBlock.id)
   }, [entry, dispatch])
 
-  const handleChangeBlockType = useCallback(
-    (blockId: string, type: BlockType, level?: Block['level']) => {
-      const now = new Date().toISOString()
-      const applyToBlock = (b: Block): Block => {
-        if (b.id !== blockId) return b
-        const updated: Block = { ...b, type, updatedAt: now }
-        // Carry heading level when switching to 'heading'; clear it otherwise.
-        if (type === 'heading') {
-          updated.level = level ?? 1
-        } else {
-          delete updated.level
-        }
-        // Clear media fields when switching away from 'media'.
-        if (type !== 'media') {
-          delete updated.mediaSrc
-          delete updated.mediaAlt
-        }
-        return updated
-      }
-
-      if (entry) {
-        dispatch(
-          updateEntryBlocks({
-            entryId: entry.id,
-            blocks: entry.blocks.map(applyToBlock),
-          })
-        )
-      }
-    },
-    [entry, dispatch]
-  )
-
-  const handleChangeMedia = useCallback(
-    (blockId: string, mediaSrc: string, mediaAlt: string) => {
-      const now = new Date().toISOString()
-      const applyToBlock = (b: Block): Block =>
-        b.id === blockId ? { ...b, mediaSrc, mediaAlt, updatedAt: now } : b
-
-      if (entry) {
-        dispatch(
-          updateEntryBlocks({
-            entryId: entry.id,
-            blocks: entry.blocks.map(applyToBlock),
-          })
-        )
-      }
-    },
-    [entry, dispatch]
-  )
-
   const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
     setAiSettings(next)
   }, [])
@@ -380,8 +309,6 @@ export function useContentEditor(
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
-    handleChangeBlockType,
-    handleChangeMedia,
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
