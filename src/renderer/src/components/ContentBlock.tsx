@@ -249,6 +249,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   onAdd,
   onEnhance,
   isEnhancing,
+  streamingContent,
   placeholder = 'Type here...',
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
