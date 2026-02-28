@@ -193,8 +193,8 @@ const ContentPage: React.FC = () => {
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
                   onEnhance={handleEnhance}
-                  isEnhancing={enhancingBlockId === block.id}
-                  streamingContent={streamingEntry?.blockId === block.id ? streamingEntry.content : undefined}
+                  isEnhancing={enhancingBlockIds.has(block.id)}
+                  streamingContent={streamingEntries.get(block.id)}
                   placeholder={t('writing.startWriting')}
                   autoFocus={focusBlockId === block.id}
                 />
