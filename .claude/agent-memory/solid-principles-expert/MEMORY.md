@@ -15,7 +15,7 @@ See `violations.md` for full details. Summary:
 
 **Critical (SRP)**
 - `AppLayout.tsx` (715 lines): navigation, context menu handling, file watching, routing, data loading hooks — 5+ responsibilities
-- `NewPostPage.tsx` / `NewWritingPage.tsx` (437/446 lines): near-identical files with draft management, auto-save, block CRUD, AI settings, routing — DRY violation + SRP
+- `NewPostPage.tsx` / `ContentPage.tsx` (437/446 lines): near-identical files with draft management, auto-save, block CRUD, AI settings, routing — DRY violation + SRP
 
 **Critical (DIP)**
 - `PersonalityTaskContext.tsx` (492 lines): directly calls `window.task.onEvent`, `window.personality.save`, `window.store.getModelSettings` — tightly coupled to Electron IPC globals
