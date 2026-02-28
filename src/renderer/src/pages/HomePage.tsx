@@ -23,7 +23,6 @@ const categoryDefs = [
     icon: PenLine,
     labelKey: 'home.writing',
     descriptionKey: 'home.writingDescription',
-    route: '/new/writing',
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
   },
 ]
