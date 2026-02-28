@@ -59,7 +59,7 @@ export interface ContentBlockProps {
   /**
    * Trigger AI enhancement for this block. Provided by the parent page.
    * ContentBlock simply calls onEnhance(block.id) — the actual async logic
-   * lives in NewWritingPage via usePageEnhancement.
+   * lives in ContentPage via usePageEnhancement.
    */
   onEnhance: (blockId: string) => void
   /** True while this specific block is being enhanced by the AI. */
