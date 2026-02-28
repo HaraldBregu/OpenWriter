@@ -4,7 +4,7 @@ import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   Bold, Italic, Strikethrough,
   List, ListOrdered,
-  ImagePlus, Link, X, ChevronDown,
+  ImagePlus, Link, X,
 } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
