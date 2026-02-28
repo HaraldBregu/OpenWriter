@@ -49,7 +49,7 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     if (input.maxTokens) payload.maxTokens = input.maxTokens
 
     // Non-null assertion is safe here: assertBridge() throws if window.tasksManager is undefined.
-    const result = await window.tasksManager!.submit('ai-chat', payload)
+    const result = await window.tasksManager!.submit('ai-agent', payload)
     return result as EntityTaskIpcResult<PersonalitySubmitResult>
   }
 
