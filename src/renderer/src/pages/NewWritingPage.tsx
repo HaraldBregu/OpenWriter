@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Download, Eye, Settings2, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
 import { Reorder } from 'framer-motion'
+import { type Editor } from '@tiptap/core'
 import {
   AppButton,
   AppDropdownMenu,
@@ -17,6 +18,7 @@ import { useAppDispatch } from '../store'
 import { removeEntry } from '../store/writingItemsSlice'
 import { PersonalitySettingsPanel } from '@/components/personality/PersonalitySettingsSheet'
 import { useDraftEditor } from '@/hooks/useDraftEditor'
+import { usePageEnhancement } from '@/hooks/useBlockEnhancement'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -41,11 +43,57 @@ const NewWritingPage: React.FC = () => {
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
+    handleChangeBlockType,
+    handleChangeMedia,
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
   } = useDraftEditor(id, '/new/writing')
 
+  // ---------------------------------------------------------------------------
+  // AI Enhancement — owned at page level
+  //
+  // Each ContentBlock registers its TipTap editor via onEditorReady(blockId, editor).
+  // These refs are stored in a Map and passed to usePageEnhancement so the hook
+  // can locate the correct editor when handleEnhance(blockId) is invoked.
+  // ---------------------------------------------------------------------------
+
+  // Map of blockId -> MutableRefObject<Editor | null>
+  // Using a ref-of-Map to keep identity stable across renders.
+  const editorRefsMapRef = useRef<Map<string, React.MutableRefObject<Editor | null>>>(new Map())
+
+  const onChangeRef = useRef(handleChange)
+  onChangeRef.current = handleChange
+
+  const { enhancingBlockId, handleEnhance } = usePageEnhancement({
+    onChangeRef,
+    editorRefs: editorRefsMapRef,
+  })
+
+  /**
+   * Called by each ContentBlock once its TipTap editor is created (or destroyed).
+   * We store a MutableRefObject keyed by blockId so the enhancement hook can
+   * imperatively read/write the editor without triggering re-renders.
+   */
+  const handleEditorReady = useCallback((blockId: string, editor: Editor | null) => {
+    const map = editorRefsMapRef.current
+    if (editor) {
+      // Upsert: reuse the existing ref object so consumers never see a new reference.
+      const existing = map.get(blockId)
+      if (existing) {
+        existing.current = editor
+      } else {
+        map.set(blockId, { current: editor })
+      }
+    } else {
+      // Editor destroyed — remove from map (block deleted or type changed).
+      map.delete(blockId)
+    }
+  }, [])
+
+  // ---------------------------------------------------------------------------
+  // Derived stats
+  // ---------------------------------------------------------------------------
   const { charCount, wordCount } = useMemo(() => {
     const joined = blocks.map((b) => b.content).join(' ').trim()
     const chars = joined.length
@@ -158,10 +206,15 @@ const NewWritingPage: React.FC = () => {
                   isOnly={blocks.length === 1}
                   isLast={index === blocks.length - 1}
                   onChange={handleChange}
+                  onChangeMedia={handleChangeMedia}
+                  onChangeType={handleChangeBlockType}
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
+                  onEnhance={handleEnhance}
+                  isEnhancing={enhancingBlockId === block.id}
                   placeholder={t('writing.startWriting')}
                   autoFocus={focusBlockId === block.id}
+                  onEditorReady={handleEditorReady}
                 />
               ))}
             </Reorder.Group>
