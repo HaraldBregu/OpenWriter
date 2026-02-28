@@ -67,6 +67,12 @@ export interface ParagraphEditorProps extends BaseEditorProps {
    * avoid unnecessary editor re-creation.
    */
   extensions?: AnyExtension[]
+  /**
+   * Live streaming content that overrides `value` in the TipTap editor without
+   * triggering `onChange` or Redux updates. Pass from the AI enhancement hook
+   * to avoid re-rendering the whole page on every token.
+   */
+  streamingContent?: string
   headingLevel?: never
 }
 
