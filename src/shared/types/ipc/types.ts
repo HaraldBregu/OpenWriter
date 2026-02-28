@@ -136,6 +136,14 @@ export interface OutputFileBlock {
   content: string
   createdAt: string
   updatedAt: string
+  /** Block type — 'text' (default), 'heading', or 'media'. */
+  blockType?: 'text' | 'heading' | 'media'
+  /** Heading level (1–6). Only set when blockType === 'heading'. */
+  blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
+  /** Image source (data URL or file path). Only set when blockType === 'media'. */
+  mediaSrc?: string
+  /** Alt text for the image. Only set when blockType === 'media'. */
+  mediaAlt?: string
 }
 
 export interface OutputFile {
