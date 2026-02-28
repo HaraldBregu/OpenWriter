@@ -122,7 +122,7 @@ function serializeBlocksForOutput(
  * @param id         - Route param (always defined — entries are pre-created).
  * @param _routeBase - Navigation base path (kept for API compatibility).
  */
-export function useDraftEditor(
+export function useContentEditor(
   id: string | undefined,
   _routeBase: string
 ): UseDraftEditorReturn {
