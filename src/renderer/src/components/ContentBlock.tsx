@@ -4,8 +4,12 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import {
   selectIsBlockEnhancing,
   selectBlockStreamingContent,
+  markEnhancing,
+  updateStreamingEntry,
+  clearEnhancingBlock,
 } from '@/store/enhancementSlice'
-import { startEnhancement } from '@/services/enhancementService'
+import { updateBlockContent } from '@/store/writingItemsSlice'
+import { subscribeToTask } from '@/services/taskEventBus'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   ImagePlus, Link, X,
