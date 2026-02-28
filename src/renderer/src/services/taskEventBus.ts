@@ -167,8 +167,8 @@ export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
  * Call this with the original text so that streamed tokens are appended to it.
  */
 export function initTaskContent(taskId: string, initialContent: string): void {
-  const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '' }
-  const next: TaskSnapshot = { ...prev, content: initialContent }
+  const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '', seedContent: '' }
+  const next: TaskSnapshot = { ...prev, seedContent: initialContent, content: initialContent }
   snapshots.set(taskId, next)
 }
 
