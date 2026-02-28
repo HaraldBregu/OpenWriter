@@ -4,6 +4,7 @@ import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   Bold, Italic, Strikethrough,
   List, ListOrdered,
+  ImagePlus, Link, X, ChevronDown,
 } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
@@ -22,7 +23,6 @@ import {
   AppTooltipContent,
   AppTooltipProvider,
 } from '@/components/app/AppTooltip'
-import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 
 
 // ---------------------------------------------------------------------------
@@ -65,13 +65,30 @@ export interface ContentBlockProps {
   block: Block
   isOnly: boolean
   isLast?: boolean
+  /** Called when block rich-text / heading content changes. */
   onChange: (id: string, content: string) => void
+  /** Called when the block's media src / alt changes. */
+  onChangeMedia: (id: string, mediaSrc: string, mediaAlt: string) => void
+  /** Called when the user switches this block to a different type or heading level. */
+  onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
+  /**
+   * Trigger AI enhancement for this block. Provided by the parent page.
+   * ContentBlock simply calls onEnhance(block.id) — the actual async logic
+   * lives in NewWritingPage via usePageEnhancement.
+   */
+  onEnhance: (blockId: string) => void
+  /** True while this specific block is being enhanced by the AI. */
+  isEnhancing: boolean
   placeholder?: string
-  /** When true the editor will grab focus immediately after mount. Used to
-   * auto-focus a newly inserted block created by pressing Enter. */
+  /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
+  /**
+   * Called once when the TipTap editor instance is ready (or changes).
+   * NewWritingPage stores these refs so it can read content during enhancement.
+   */
+  onEditorReady: (blockId: string, editor: Editor | null) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -82,7 +99,6 @@ interface ActionButtonProps {
   title: string
   onClick: () => void
   disabled?: boolean
-  danger?: boolean
   children: React.ReactNode
 }
 
@@ -104,7 +120,7 @@ const ActionButton = React.memo(function ActionButton({ title, onClick, disabled
 ActionButton.displayName = 'ActionButton'
 
 // ---------------------------------------------------------------------------
-// EditorBubbleMenu
+// EditorBubbleMenu (text blocks only)
 // ---------------------------------------------------------------------------
 
 interface BubbleMenuButtonProps {
@@ -193,7 +209,7 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
           {/* Separator */}
           <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
 
-          {/* Lists and blockquote group */}
+          {/* Lists group */}
           <BubbleMenuButton
             tooltip="Bullet List"
             isActive={editor.isActive('bulletList')}
@@ -229,6 +245,270 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
 EditorBubbleMenu.displayName = 'EditorBubbleMenu'
 
 // ---------------------------------------------------------------------------
+// HeadingLevelSelect
+// ---------------------------------------------------------------------------
+
+const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
+const headingTagClass: Record<number, string> = {
+  1: 'text-4xl font-bold',
+  2: 'text-3xl font-bold',
+  3: 'text-2xl font-semibold',
+  4: 'text-xl font-semibold',
+  5: 'text-lg font-medium',
+  6: 'text-base font-medium',
+}
+
+interface HeadingContentProps {
+  block: Block
+  onChange: (id: string, content: string) => void
+  onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
+  autoFocus: boolean
+  placeholder: string
+}
+
+const HeadingContent = React.memo(function HeadingContent({
+  block,
+  onChange,
+  onChangeType,
+  autoFocus,
+  placeholder,
+}: HeadingContentProps): React.JSX.Element {
+  const { t } = useTranslation()
+  const level = block.level ?? 1
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [autoFocus])
+
+  return (
+    <div className="flex flex-col gap-2 py-1">
+      {/* Level selector */}
+      <div className="flex items-center gap-1">
+        {HEADING_LEVELS.map((l) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => onChangeType(block.id, 'heading', l as Block['level'])}
+            className={`px-2 py-0.5 text-xs rounded-md transition-colors ${
+              level === l
+                ? 'bg-accent text-accent-foreground font-semibold'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+            }`}
+          >
+            H{l}
+          </button>
+        ))}
+      </div>
+      {/* Heading input */}
+      <input
+        ref={inputRef}
+        type="text"
+        value={block.content}
+        onChange={(e) => onChange(block.id, e.target.value)}
+        placeholder={placeholder || t('contentBlock.headingPlaceholder')}
+        className={`w-full bg-transparent border-none outline-none placeholder:text-muted-foreground/40 text-foreground leading-tight ${headingTagClass[level]}`}
+      />
+    </div>
+  )
+})
+HeadingContent.displayName = 'HeadingContent'
+
+// ---------------------------------------------------------------------------
+// MediaContent (image block integrated from former ImageBlock.tsx)
+// ---------------------------------------------------------------------------
+
+interface MediaContentProps {
+  block: Block
+  onChangeMedia: (id: string, mediaSrc: string, mediaAlt: string) => void
+}
+
+function readFileAsDataUrl(file: File, cb: (dataUrl: string) => void): void {
+  const reader = new FileReader()
+  reader.onload = () => {
+    if (typeof reader.result === 'string') cb(reader.result)
+  }
+  reader.readAsDataURL(file)
+}
+
+const MediaContent = React.memo(function MediaContent({
+  block,
+  onChangeMedia,
+}: MediaContentProps): React.JSX.Element {
+  const { t } = useTranslation()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
+
+  const hasImage = Boolean(block.mediaSrc)
+
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      readFileAsDataUrl(file, (dataUrl) => {
+        onChangeMedia(block.id, dataUrl, block.mediaAlt || file.name)
+      })
+      e.target.value = ''
+    },
+    [block.id, block.mediaAlt, onChangeMedia],
+  )
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDragOver(false)
+      const file = e.dataTransfer.files?.[0]
+      if (!file || !file.type.startsWith('image/')) return
+      readFileAsDataUrl(file, (dataUrl) => {
+        onChangeMedia(block.id, dataUrl, block.mediaAlt || file.name)
+      })
+    },
+    [block.id, block.mediaAlt, onChangeMedia],
+  )
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }, [])
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragOver(false)
+  }, [])
+
+  const handleAltChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeMedia(block.id, block.mediaSrc ?? '', e.target.value)
+    },
+    [block.id, block.mediaSrc, onChangeMedia],
+  )
+
+  const handleClearImage = useCallback(() => {
+    onChangeMedia(block.id, '', '')
+  }, [block.id, onChangeMedia])
+
+  return (
+    <div className="flex-1 min-w-0 py-3">
+      {hasImage ? (
+        <div className="relative rounded-lg overflow-hidden border border-border">
+          <img
+            src={block.mediaSrc}
+            alt={block.mediaAlt}
+            className="w-full h-auto max-h-[500px] object-contain bg-muted/20"
+          />
+          {/* Alt text input overlaid at the bottom */}
+          <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-background">
+            <Link className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <input
+              type="text"
+              value={block.mediaAlt ?? ''}
+              onChange={handleAltChange}
+              placeholder={t('imageBlock.altPlaceholder')}
+              className="flex-1 text-xs text-muted-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50"
+            />
+          </div>
+          {/* Clear button */}
+          <button
+            type="button"
+            onClick={handleClearImage}
+            className="absolute top-2 right-2 p-1 rounded-md bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground border border-border transition-colors"
+            title={t('imageBlock.removeImage')}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        /* Empty state — drop zone / file picker */
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={() => fileInputRef.current?.click()}
+          className={`flex flex-col items-center justify-center gap-2 py-10 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+            isDragOver
+              ? 'border-primary/50 bg-primary/5'
+              : 'border-border/70 hover:border-border hover:bg-muted/20'
+          }`}
+        >
+          <ImagePlus className="h-8 w-8 text-muted-foreground/40" />
+          <span className="text-sm text-muted-foreground/60">
+            {t('imageBlock.dropOrClick')}
+          </span>
+        </div>
+      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+    </div>
+  )
+})
+MediaContent.displayName = 'MediaContent'
+
+// ---------------------------------------------------------------------------
+// BlockTypeMenu — dropdown for switching block type
+// ---------------------------------------------------------------------------
+
+interface BlockTypeMenuProps {
+  block: Block
+  onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
+}
+
+const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
+  text: 'Text',
+  heading: 'Heading',
+  media: 'Image',
+}
+
+const BlockTypeMenu = React.memo(function BlockTypeMenu({ block, onChangeType }: BlockTypeMenuProps) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-0.5 px-1 py-0.5 text-xs text-muted-foreground/50 hover:text-muted-foreground rounded transition-colors"
+        title="Change block type"
+      >
+        {BLOCK_TYPE_LABELS[block.type]}
+        <ChevronDown className="h-3 w-3" />
+      </button>
+      {open && (
+        <>
+          {/* Backdrop to close on outside click */}
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} aria-hidden="true" />
+          <div className="absolute left-0 top-full mt-1 z-20 min-w-[120px] bg-background border border-border rounded-md shadow-md py-1">
+            {(['text', 'heading', 'media'] as BlockType[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => {
+                  onChangeType(block.id, t, t === 'heading' ? (block.level ?? 1) : undefined)
+                  setOpen(false)
+                }}
+                className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                  block.type === t
+                    ? 'text-foreground font-medium bg-muted/40'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
+                }`}
+              >
+                {BLOCK_TYPE_LABELS[t]}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+})
+BlockTypeMenu.displayName = 'BlockTypeMenu'
+
+// ---------------------------------------------------------------------------
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
@@ -237,15 +517,20 @@ export const ContentBlock = React.memo(function ContentBlock({
   isOnly,
   isLast = false,
   onChange,
+  onChangeMedia,
+  onChangeType,
   onDelete,
   onAdd,
+  onEnhance,
+  isEnhancing,
   placeholder = 'Type here...',
   autoFocus = false,
+  onEditorReady,
 }: ContentBlockProps): React.JSX.Element {
   const { t } = useTranslation()
   const dragControls = useDragControls()
 
-  // Track whether the editor is empty to conditionally show the placeholder span.
+  // Track whether the text editor is empty to conditionally show placeholder.
   const [isEmpty, setIsEmpty] = useState<boolean>(() => !block.content || block.content === '<p></p>')
 
   // Stable callback refs so useEditor options never need to re-create the editor.
@@ -253,11 +538,16 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChangeRef.current = onChange
   const blockIdRef = useRef(block.id)
   blockIdRef.current = block.id
-  // Stable ref to the editor so the enhancement hook can access it without
-  // being recreated on every render.
+
+  // Stable ref to the editor so the parent page can access it for enhancement.
   const editorRef = useRef<Editor | null>(null)
 
-  const { isEnhancing, handleEnhance } = useBlockEnhancement({ editorRef, onChangeRef, blockIdRef })
+  // Notify parent whenever the editor instance changes.
+  const onEditorReadyRef = useRef(onEditorReady)
+  onEditorReadyRef.current = onEditorReady
+
+  // Only initialise TipTap for text blocks; null otherwise.
+  const isTextBlock = block.type === 'text'
 
   const editorOptions = useMemo<UseEditorOptions>(() => ({
     extensions: [
@@ -269,10 +559,6 @@ export const ContentBlock = React.memo(function ContentBlock({
       Markdown,
     ],
     content: block.content || '',
-    // Tell TipTap to parse the initial content string as Markdown so that
-    // paragraph breaks (blank lines) are correctly mapped to <p> nodes.
-    // Without this, TipTap treats the string as HTML, collapses \n\n into
-    // a single text run, and all paragraph structure is lost.
     contentType: 'markdown',
     immediatelyRender: false,
     onUpdate: ({ editor: ed }: { editor: Editor }) => {
@@ -281,6 +567,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
     onCreate: ({ editor: ed }: { editor: Editor }) => {
       editorRef.current = ed
+      onEditorReadyRef.current(blockIdRef.current, ed)
       setIsEmpty(ed.isEmpty)
     },
     editorProps: {
@@ -290,37 +577,43 @@ export const ContentBlock = React.memo(function ContentBlock({
     },
   }), []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const editor = useEditor(editorOptions)
+  // useEditor is always called; pass enabled: false for non-text blocks so
+  // TipTap doesn't mount an actual DOM element (avoids React hook rule violations).
+  const editor = useEditor({ ...editorOptions, editorProps: isTextBlock ? editorOptions.editorProps : undefined }, [])
 
-  // Keep editorRef in sync whenever useEditor returns a new instance.
+  // Keep editorRef in sync and notify parent.
   useEffect(() => {
-    editorRef.current = editor
-  }, [editor])
+    editorRef.current = editor ?? null
+    onEditorReadyRef.current(block.id, editor ?? null)
+  }, [editor, block.id])
 
-  // Capture the initial autoFocus value at mount time. The parent clears
-  // focusBlockId after one render, so the prop may flip to false before
-  // TipTap finishes initialising the editor. Storing the initial value in a
-  // ref lets us honour the intent even when the prop is already gone.
+  // Destroy the editor when the block type switches away from 'text'.
+  useEffect(() => {
+    if (!isTextBlock && editor && !editor.isDestroyed) {
+      editor.destroy()
+      editorRef.current = null
+      onEditorReadyRef.current(block.id, null)
+    }
+  }, [isTextBlock, editor, block.id])
+
+  // Capture the initial autoFocus value at mount time.
   const shouldAutoFocusRef = useRef(autoFocus)
   useEffect(() => {
-    if (!shouldAutoFocusRef.current) return
+    if (!shouldAutoFocusRef.current || !isTextBlock) return
     if (!editor || editor.isDestroyed) return
     shouldAutoFocusRef.current = false
-    // Defer to the next microtask so the DOM is fully committed before focusing.
     Promise.resolve().then(() => {
       if (!editor.isDestroyed) editor.commands.focus('start')
     })
-  }, [editor])
+  }, [editor, isTextBlock])
 
-  // Disable the editor while AI enhancement is running so the user cannot
-  // type into the block and interfere with streamed tokens.
+  // Disable the editor while AI enhancement is running.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
     editor.setEditable(!isEnhancing)
   }, [editor, isEnhancing])
 
-  // Sync external content changes (e.g., when the block resets or is edited elsewhere).
-  // Guard: skip while enhancing so streamed tokens are not overwritten by echoed onChange calls.
+  // Sync external content changes; guard while enhancing.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
     if (isEnhancing) return
@@ -333,9 +626,19 @@ export const ContentBlock = React.memo(function ContentBlock({
   }, [block.content, editor, isEnhancing])
 
   const handleCopy = useCallback(() => {
-    if (!editor) return
-    navigator.clipboard.writeText(editor.getText())
-  }, [editor])
+    if (block.type === 'text' && editor) {
+      navigator.clipboard.writeText(editor.getText())
+    } else if (block.type === 'heading') {
+      navigator.clipboard.writeText(block.content)
+    }
+  }, [editor, block.type, block.content])
+
+  const handleEnhanceClick = useCallback(() => {
+    onEnhance(block.id)
+  }, [onEnhance, block.id])
+
+  // Heading and media blocks cannot be AI-enhanced.
+  const canEnhance = block.type === 'text'
 
   return (
     <Reorder.Item
@@ -373,36 +676,62 @@ export const ContentBlock = React.memo(function ContentBlock({
           </AppButton>
         </div>
 
-        {/* Content */}
-        <div className={`flex-1 min-w-0 relative overflow-hidden${isEnhancing ? ' opacity-60 pointer-events-none' : ''}`}>
-          {/* Placeholder shown when editor is empty */}
-          {isEmpty && (
-            <span
-              className="absolute inset-0 py-2.5 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
-              aria-hidden="true"
-            >
-              {placeholder}
-            </span>
+        {/* Content area — switches on block.type */}
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          {/* Block type switcher — shown on hover */}
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <BlockTypeMenu block={block} onChangeType={onChangeType} />
+          </div>
+
+          {block.type === 'text' && (
+            <div className={`relative overflow-hidden${isEnhancing ? ' opacity-60 pointer-events-none' : ''}`}>
+              {isEmpty && (
+                <span
+                  className="absolute inset-0 py-2.5 pointer-events-none select-none text-base leading-tight text-muted-foreground/50"
+                  aria-hidden="true"
+                >
+                  {placeholder}
+                </span>
+              )}
+              <EditorBubbleMenu editor={editor} onEnhance={handleEnhanceClick} isEnhancing={isEnhancing} />
+              <EditorContent editor={editor} />
+            </div>
           )}
-          <EditorBubbleMenu editor={editor} onEnhance={handleEnhance} isEnhancing={isEnhancing} />
-          <EditorContent editor={editor} />
+
+          {block.type === 'heading' && (
+            <HeadingContent
+              block={block}
+              onChange={onChange}
+              onChangeType={onChangeType}
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+            />
+          )}
+
+          {block.type === 'media' && (
+            <MediaContent block={block} onChangeMedia={onChangeMedia} />
+          )}
         </div>
 
         {/* Action bar */}
         <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0 my-2">
-          <ActionButton
-            title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
-            onClick={handleEnhance}
-            disabled={isEnhancing || isEmpty}
-          >
-            <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
-          </ActionButton>
-          <ActionButton
-            title={t('contentBlock.copy')}
-            onClick={handleCopy}
-          >
-            <Copy className="h-3.5 w-3.5" />
-          </ActionButton>
+          {canEnhance && (
+            <ActionButton
+              title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
+              onClick={handleEnhanceClick}
+              disabled={isEnhancing || (block.type === 'text' && isEmpty)}
+            >
+              <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
+            </ActionButton>
+          )}
+          {block.type !== 'media' && (
+            <ActionButton
+              title={t('contentBlock.copy')}
+              onClick={handleCopy}
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </ActionButton>
+          )}
           <ActionButton
             title={t('contentBlock.delete')}
             onClick={() => onDelete(block.id)}
