@@ -1,4 +1,3 @@
-import { webContents } from 'electron'
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
@@ -25,8 +24,10 @@ import { AiAgentChannels } from '../../shared/types/ipc/channels'
  *  - aiAgent:cancelSession  (command) -- Cancel all runs for a session.
  *  - aiAgent:startStreaming (command) -- Start a streaming run. Returns runId.
  *
- * Streaming events are pushed directly to the originating renderer window on
- * the `aiAgent:event` channel via webContents.send.
+ * Streaming events are pushed directly to the originating renderer window via
+ * AIAgentsManager.startStreaming on the `AIAgentsManager:event` channel
+ * (aliased as AiAgentChannels.event). The renderer subscribes with
+ * window.aiAgent.onEvent().
  *
  * Security notes:
  *  - windowId for startStreaming is always stamped from event.sender.id, never
@@ -88,6 +89,7 @@ export class AIAgentsManagerIpc implements IpcModule {
     /**
      * Create a new agent session.
      * The agentId is validated against the registry; unknown ids throw.
+     * An optional partial AgentSessionConfig can override definition defaults.
      * Returns the new sessionId.
      */
     registerCommand(AiAgentChannels.createSession, (agentId: string, config?: Partial<AgentSessionConfig>) => {
@@ -127,40 +129,19 @@ export class AIAgentsManagerIpc implements IpcModule {
 
     /**
      * Start a streaming run for an existing session.
+     *
      * The windowId is stamped server-side from event.sender.id for security.
-     * Stream events are pushed to the originating window on `aiAgent:event`.
+     * Stream events are routed directly to the originating window by
+     * AIAgentsManager.startStreaming via EventBus.sendTo on the
+     * `AIAgentsManager:event` channel (= AiAgentChannels.event).
+     *
      * Returns the runId immediately (fire-and-start pattern).
      */
-    registerCommandWithEvent(AiAgentChannels.startStreaming, async (event, sessionId: string, request: AgentRequest, _options?: { windowId?: number }) => {
+    registerCommandWithEvent(AiAgentChannels.startStreaming, (event, sessionId: string, request: AgentRequest, _options?: { windowId?: number }) => {
       // Security: always use the sender's webContents ID, never the renderer-supplied windowId.
       const windowId = event.sender.id
-
-      const runId = manager.startStreaming(sessionId, request, { windowId: undefined })
-
-      // Subscribe to stream events emitted by the manager for this run and
-      // forward them to the originating window on the typed aiAgent:event channel.
-      const unsubscribe = _eventBus.on('AIAgentsManager:run:complete', () => {
-        // Cleanup handled by manager internally; no relay needed here.
-      })
-      // Remove the no-op listener immediately — actual relay is set up below.
-      unsubscribe()
-
-      // Relay: iterate the stream generator in the background and push events
-      // directly to the originating renderer window on `aiAgent:event`.
-      const iterate = async (): Promise<void> => {
-        for await (const streamEvent of manager.stream(sessionId, request)) {
-          const wc = webContents.fromId(windowId)
-          if (!wc || wc.isDestroyed()) break
-          wc.send(AiAgentChannels.event, streamEvent)
-        }
-      }
-
-      iterate().catch((err) => {
-        console.error(`[AIAgentsManagerIpc] Unexpected error relaying stream for run ${runId}:`, err)
-      })
-
-      return runId
-    }, _eventBus)
+      return manager.startStreaming(sessionId, request, { windowId })
+    })
 
     console.log(`[IPC] Registered ${this.name} module`)
   }
