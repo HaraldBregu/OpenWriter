@@ -12,7 +12,7 @@ import type {
     WindowApi,
     WorkspaceApi,
     TasksManagerApi,
-    AIAgentsManagerApi,
+    AIAgentsManagerAPI,
 } from './index.d'
 import type { AgentRequest, AgentSessionConfig } from '../shared/types/ipc/types'
 
@@ -430,7 +430,7 @@ const tasksManager: TasksManagerApi = {
 // ---------------------------------------------------------------------------
 // window.aiAgent — AIAgentsManager session/run management + streaming events
 // ---------------------------------------------------------------------------
-const aiAgent: AIAgentsManagerApi = {
+const aiAgent: AIAgentsManagerAPI = {
     listAgents: () => {
         return typedInvokeRaw(AiAgentChannels.listAgents)
     },
@@ -467,7 +467,7 @@ const aiAgent: AIAgentsManagerApi = {
     onEvent: (callback) => {
         return typedOn(AiAgentChannels.event, callback)
     },
-} satisfies AIAgentsManagerApi;
+} satisfies AIAgentsManagerAPI;
 
 // ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
