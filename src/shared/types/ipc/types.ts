@@ -165,7 +165,16 @@ export interface OutputFileChangeEvent {
 
 export interface SaveOutputInput {
   type: string
-  blocks: Array<{ name: string; content: string; createdAt: string; updatedAt: string }>
+  blocks: Array<{
+    name: string
+    content: string
+    createdAt: string
+    updatedAt: string
+    blockType?: 'text' | 'heading' | 'media'
+    blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
+    mediaSrc?: string
+    mediaAlt?: string
+  }>
   metadata?: Record<string, unknown>
 }
 
