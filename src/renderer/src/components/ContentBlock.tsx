@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react'
-import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { subscribeToTask } from '@/services/taskEventBus'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
   ImagePlus, Link, X,
