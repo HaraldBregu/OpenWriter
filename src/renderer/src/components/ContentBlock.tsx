@@ -76,6 +76,151 @@ const ActionButton = React.memo(function ActionButton({ title, onClick, disabled
 ActionButton.displayName = 'ActionButton'
 
 // ---------------------------------------------------------------------------
+// EditorBubbleMenu
+// ---------------------------------------------------------------------------
+
+interface BubbleMenuButtonProps {
+  tooltip: string
+  isActive: boolean
+  onClick: () => void
+  children: React.ReactNode
+}
+
+const BubbleMenuButton = React.memo(function BubbleMenuButton({
+  tooltip,
+  isActive,
+  onClick,
+  children,
+}: BubbleMenuButtonProps): React.JSX.Element {
+  return (
+    <AppTooltip>
+      <AppTooltipTrigger asChild>
+        <AppButton
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onClick}
+          className={`h-7 w-7 rounded-md shrink-0 ${
+            isActive
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          {children}
+        </AppButton>
+      </AppTooltipTrigger>
+      <AppTooltipContent side="top" sideOffset={6}>
+        <p className="text-xs">{tooltip}</p>
+      </AppTooltipContent>
+    </AppTooltip>
+  )
+})
+BubbleMenuButton.displayName = 'BubbleMenuButton'
+
+interface EditorBubbleMenuProps {
+  editor: Editor | null
+}
+
+const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
+  editor,
+}: EditorBubbleMenuProps): React.JSX.Element | null {
+  if (!editor) return null
+
+  return (
+    <BubbleMenu
+      editor={editor}
+      tippyOptions={{ duration: 120, placement: 'top' }}
+    >
+      <AppTooltipProvider delayDuration={400}>
+        <div className="flex items-center gap-0.5 px-1.5 py-1 bg-background border border-border rounded-lg shadow-md">
+          {/* Text formatting group */}
+          <BubbleMenuButton
+            tooltip="Bold"
+            isActive={editor.isActive('bold')}
+            onClick={() => editor.chain().focus().toggleBold().run()}
+          >
+            <Bold className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Italic"
+            isActive={editor.isActive('italic')}
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+          >
+            <Italic className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Strikethrough"
+            isActive={editor.isActive('strike')}
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+          >
+            <Strikethrough className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Inline Code"
+            isActive={editor.isActive('code')}
+            onClick={() => editor.chain().focus().toggleCode().run()}
+          >
+            <Code className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          {/* Separator */}
+          <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
+
+          {/* Heading group */}
+          <BubbleMenuButton
+            tooltip="Heading 1"
+            isActive={editor.isActive('heading', { level: 1 })}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          >
+            <Heading1 className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Heading 2"
+            isActive={editor.isActive('heading', { level: 2 })}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          >
+            <Heading2 className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          {/* Separator */}
+          <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
+
+          {/* Lists and blockquote group */}
+          <BubbleMenuButton
+            tooltip="Bullet List"
+            isActive={editor.isActive('bulletList')}
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+          >
+            <List className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Numbered List"
+            isActive={editor.isActive('orderedList')}
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          >
+            <ListOrdered className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+
+          <BubbleMenuButton
+            tooltip="Blockquote"
+            isActive={editor.isActive('blockquote')}
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          >
+            <Quote className="h-3.5 w-3.5" />
+          </BubbleMenuButton>
+        </div>
+      </AppTooltipProvider>
+    </BubbleMenu>
+  )
+})
+EditorBubbleMenu.displayName = 'EditorBubbleMenu'
+
+// ---------------------------------------------------------------------------
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
