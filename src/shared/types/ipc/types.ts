@@ -187,7 +187,17 @@ export interface SaveOutputResult {
 export interface OutputUpdateParams {
   type: string
   id: string
-  blocks: Array<{ name: string; content: string; createdAt?: string; filetype?: 'markdown'; type?: 'content' }>
+  blocks: Array<{
+    name: string
+    content: string
+    createdAt?: string
+    filetype?: 'markdown'
+    type?: 'content'
+    blockType?: 'text' | 'heading' | 'media'
+    blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
+    mediaSrc?: string
+    mediaAlt?: string
+  }>
   metadata: Record<string, unknown>
 }
 
