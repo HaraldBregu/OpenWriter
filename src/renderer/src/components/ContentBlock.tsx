@@ -282,6 +282,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     setStreamingContent(originalText)
 
     const unsub = subscribeToTask(block.id, (snap) => {
+      console.log(`[ContentBlock] Task update for block ${block.id}:`, snap)
       if (snap.streamedContent) {
         streamBuffer.value = originalText + snap.streamedContent
         setStreamingContent(streamBuffer.value)
