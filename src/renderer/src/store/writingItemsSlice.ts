@@ -85,7 +85,17 @@ function makeBlock(
 function mapOutputFileToEntry(file: OutputFile): WritingEntry {
   const blocks: Block[] =
     file.blocks.length > 0
-      ? file.blocks.map((b) => makeBlock(b.content, b.createdAt, b.updatedAt))
+      ? file.blocks.map((b) =>
+          makeBlock(
+            b.content,
+            b.createdAt,
+            b.updatedAt,
+            (b.blockType as BlockType | undefined) ?? 'text',
+            b.blockLevel as Block['level'] | undefined,
+            b.mediaSrc,
+            b.mediaAlt,
+          )
+        )
       : [makeBlock('')]
 
   return {
