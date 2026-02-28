@@ -176,12 +176,12 @@ function applyEvent(event: TaskEvent): void {
       break
     case 'stream': {
       const sd = event.data
-      const prev = taskMap.get(taskId)
       const token = sd.token ?? ''
+      const aiContent = sd.content ?? ''
       patch(taskId, {
         status: 'running',
         streamedContent: token,
-        content: (prev?.content ?? '') + token,
+        content: aiContent,
         events,
       })
       break
