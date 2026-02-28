@@ -12,6 +12,11 @@ export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error'
  */
 export interface TaskOptions {
   /**
+   * Custom task ID. If provided, the executor will use this instead of generating a UUID.
+   */
+  taskId?: string
+
+  /**
    * Task priority (default: 'normal')
    */
   priority?: TaskPriority
