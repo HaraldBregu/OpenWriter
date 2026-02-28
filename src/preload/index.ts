@@ -467,7 +467,7 @@ const agentManager: AgentManagerAPI = {
     onEvent: (callback) => {
         return typedOn(AiAgentChannels.event, callback)
     },
-} satisfies AIAgentsManagerAPI;
+} satisfies AgentManagerAPI;
 
 // ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
