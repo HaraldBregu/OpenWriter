@@ -268,9 +268,46 @@ export const ContentBlock = React.memo(function ContentBlock({
   const isEnhancing = useAppSelector(isEnhancingSelector)
   const streamingContent = useAppSelector(streamingContentSelector)
 
-  const handleEnhanceClick = useCallback(() => {
-    startEnhancement(dispatch, { blockId: block.id, entryId, text: block.content })
-  }, [dispatch, block.id, block.content, entryId])
+  // Module-level set shared across all ContentBlock instances so two blocks
+  // cannot submit duplicate tasks simultaneously.
+  const handleEnhanceClick = useCallback(async () => {
+    if (isEnhancing) return
+    const text = block.content
+    if (!text.trim()) return
+    if (typeof window.tasksManager?.submit !== 'function') return
+
+    dispatch(markEnhancing(block.id))
+
+    let taskId: string
+    try {
+      const result = await window.tasksManager.submit('ai-enhance', { text })
+      if (!result.success) {
+        dispatch(clearEnhancingBlock(block.id))
+        return
+      }
+      taskId = result.data.taskId
+    } catch {
+      dispatch(clearEnhancingBlock(block.id))
+      return
+    }
+
+    const originalText = text
+    const streamBuffer = { value: originalText }
+
+    subscribeToTask(taskId, (snap) => {
+      if (snap.streamedContent) {
+        streamBuffer.value = originalText + snap.streamedContent
+        dispatch(updateStreamingEntry({ blockId: block.id, content: streamBuffer.value }))
+      }
+      if (snap.status === 'completed') {
+        dispatch(updateBlockContent({ entryId, blockId: block.id, content: streamBuffer.value }))
+        dispatch(clearEnhancingBlock(block.id))
+      } else if (snap.status === 'error' || snap.status === 'cancelled') {
+        dispatch(updateBlockContent({ entryId, blockId: block.id, content: originalText }))
+        dispatch(clearEnhancingBlock(block.id))
+      }
+    })
+  }, [dispatch, isEnhancing, block.id, block.content, entryId])
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
