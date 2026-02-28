@@ -69,7 +69,11 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
                 title: duplicatedTitle,
                 blocks: source.blocks.map((b) => ({
                   id: crypto.randomUUID(),
+                  type: b.type,
+                  ...(b.level !== undefined ? { level: b.level } : {}),
                   content: b.content,
+                  ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
+                  ...(b.mediaAlt !== undefined ? { mediaAlt: b.mediaAlt } : {}),
                   createdAt: now,
                   updatedAt: now,
                 })),
