@@ -5,6 +5,9 @@ export { AppInput } from './AppInput'
 
 export { AppTextarea } from './AppTextarea'
 
+export { AppTextEditor } from './AppTextEditor'
+export type { AppTextEditorProps, HeadingEditorProps, ParagraphEditorProps, HeadingLevel } from './AppTextEditor'
+
 export { AppLabel } from './AppLabel'
 
 export { AppBadge, badgeVariants } from './AppBadge'
