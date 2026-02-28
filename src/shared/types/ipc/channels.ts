@@ -134,7 +134,8 @@ export const AiAgentChannels = {
   cancelRun: 'aiAgent:cancelRun',
   cancelSession: 'aiAgent:cancelSession',
   startStreaming: 'aiAgent:startStreaming',
-  event: 'aiAgent:event',
+  /** Push channel: matches the internal channel used by AIAgentsManager.startStreaming. */
+  event: 'AIAgentsManager:event',
 } as const
 
 export const AppChannels = {
