@@ -163,7 +163,7 @@ export const writingItemsSlice = createSlice({
     },
 
     /**
-     * Replace the blocks of an existing entry (used by useDraftEditor on edit).
+     * Replace the blocks of an existing entry (used by useContentEditor on edit).
      */
     updateEntryBlocks(
       state,
