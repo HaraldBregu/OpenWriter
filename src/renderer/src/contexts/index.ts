@@ -41,38 +41,3 @@ export type {
   AppContextValue,
   AppActionsContextValue
 } from './AppContext'
-
-export {
-  createEntityTaskContext,
-} from './EntityTaskContext'
-
-export type {
-  EntityChatMessage,
-  EntityTaskState,
-  InferenceOptions,
-  UseEntityTaskReturn,
-  EntityTaskContextConfig,
-  ITaskCompletionHandler,
-} from './EntityTaskContext'
-
-export {
-  createAIAgentContext,
-  StoryWriterTask,
-  ContentReviewTask,
-  SummarizerTask,
-  ToneAdjusterTask,
-  TextCompleterTask,
-  useStoryWriterTask,
-  useContentReviewTask,
-  useSummarizerTask,
-  useToneAdjusterTask,
-  useTextCompleterTask,
-} from './AIAgentTaskContext'
-
-export type {
-  AIAgentSubmitInput,
-  AIAgentSubmitResult,
-  AIAgentSaveOptions,
-  AIAgentSaveResult,
-  AIAgentMessage,
-} from './AIAgentTaskContext'
