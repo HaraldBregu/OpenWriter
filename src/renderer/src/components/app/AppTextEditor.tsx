@@ -272,6 +272,7 @@ const ParagraphRenderer = React.memo(function ParagraphRenderer({
   disabled,
   extensions,
   forwardedRef,
+  streamingContent,
 }: ParagraphRendererProps): React.JSX.Element {
   // Merge consumer extensions after defaults. Stable reference required from call site.
   const mergedExtensions = useMemo(
