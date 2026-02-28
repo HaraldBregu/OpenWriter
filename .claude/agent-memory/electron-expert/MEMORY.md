@@ -100,14 +100,17 @@
 - Both config changes and block .md changes emit same `output:file-changed` event with the date-folder as `fileId`
 - Posts sync system (`window.posts`, `PostsIpc`, `FileWatcherService`) has been fully removed from this project
 
-## Agent IPC System
-- `AgentChannels.event = 'agentManager:event'` — matches the hardcoded channel inside `AgentManager.startStreaming`; do NOT change without updating AgentManager
-- Shared agent types live in `src/shared/types/ipc/types.ts` (re-declared from AgentManagerTypes.ts / AgentDefinition.ts so channels.ts can import them without pulling from src/main/)
-- `AgentIpc.createSession` validates agentId against `agentRegistry.get(agentId)` before building config
-- `AgentIpc.startStreaming` uses `registerCommandWithEvent` to stamp `windowId = event.sender.id` — never trusted from renderer payload
-- `AgentRegistry` singleton exported from `src/main/agentManager/AgentRegistry.ts`; `buildSessionConfig(def, providerId, overrides)` helper is co-located there
-- `agentManager` is registered in `ServiceContainer` as `'agentManager'`; `AgentIpc` retrieves it via `container.get<AgentManager>('agentManager')`
-- Preload uses `typedInvokeUnwrap` for all agent queries/commands except `startStreaming` which uses `typedInvoke` (AgentManager returns the runId directly without IpcResult wrapping)
+## Agent IPC System (AIAgentsManager — current)
+- `AiAgentChannels.event = 'AIAgentsManager:event'` — matches the hardcoded channel inside `AIAgentsManager.startStreaming`; do NOT change without updating both
+- `AIAgentsManager` is registered in `ServiceContainer` as `'AIAgentsManager'` (capital A); `AIAgentsRegistry` as `'AIAgentsRegistry'`
+- `AIAgentsManagerIpc` (src/main/ipc/AIAgentsManagerIpc.ts) retrieves both via `container.get<T>('AIAgentsManager')` and `container.get<T>('AIAgentsRegistry')`
+- `startStreaming` IPC handler uses `registerCommandWithEvent` — stamps `windowId = event.sender.id`, then passes it to `manager.startStreaming(sessionId, request, { windowId })`
+- `manager.startStreaming` pushes events directly via `eventBus.sendTo(windowId, 'AIAgentsManager:event', event)` → `win.webContents.send(...)` — NO EventBus.on() relay needed
+- `AiAgentChannels.event` value is deliberately `'AIAgentsManager:event'` (not `'aiAgent:event'`) to match manager's internal channel — this is the KEY design decision
+- Shared agent types (AgentSessionConfig, AgentRequest, AgentStreamEvent, AgentSessionSnapshot, AgentRunSnapshot, AIAgentsManagerStatus, AIAgentsDefinitionInfo) are re-declared in `src/shared/types/ipc/types.ts` — do NOT import from src/main/ in channels.ts or types.ts
+- `createSession` IPC handler validates agentId against registry and merges def.defaultConfig with caller overrides
+- Preload uses `typedInvokeRaw` for all aiAgent invoke channels (returns full IpcResult envelope); `typedOn` for events
+- `window.aiAgent` is declared `?` (optional) in index.d.ts — guard before use
 
 ## AIAgentTaskHandler — IPC payload requirements
 - Handler type: `'ai-agent'` — registered in TasksManager bootstrap
