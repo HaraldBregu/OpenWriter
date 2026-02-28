@@ -43,6 +43,7 @@ export interface TrackedTaskState {
   error?: string
   result?: unknown
   streamedContent: string
+  content: string
   events: TaskEventRecord[]
 }
 
