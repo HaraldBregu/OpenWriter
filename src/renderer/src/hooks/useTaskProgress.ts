@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useSyncExternalStore } from 'react'
-import type { TaskStatus } from '@/contexts/TaskContext'
-import { useTaskContext } from '@/contexts/TaskContext'
+import type { TaskStatus } from '@/services/taskStore'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,23 +31,20 @@ export interface UseTaskProgressReturn {
  * consumers of the shared store.
  *
  * @param taskId The ID of the task to track.
- *
- * Usage:
- *   const { percent, message, status, cancel } = useTaskProgress(taskId)
  */
 export function useTaskProgress(taskId: string): UseTaskProgressReturn {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   // Subscribe only to this task's key — zero cross-task re-renders.
   const snapshot = useSyncExternalStore(
-    useCallback((listener) => store.subscribe(taskId, listener), [store, taskId]),
-    useCallback(() => store.getTaskSnapshot(taskId), [store, taskId])
+    useCallback((listener) => taskStore.subscribe(taskId, listener), [taskId]),
+    useCallback(() => taskStore.getTaskSnapshot(taskId), [taskId])
   )
 
   const cancel = useCallback(async (): Promise<void> => {
     if (typeof window.tasksManager?.cancel !== 'function') return
 
-    const snap = store.getTaskSnapshot(taskId)
+    const snap = taskStore.getTaskSnapshot(taskId)
     if (!snap || snap.status === 'completed' || snap.status === 'cancelled' || snap.status === 'error') {
       return
     }
@@ -58,7 +55,7 @@ export function useTaskProgress(taskId: string): UseTaskProgressReturn {
       // Best-effort — the task:event listener will handle the cancelled status
       // when the main process confirms.
     }
-  }, [store, taskId])
+  }, [taskId])
 
   if (!snapshot) {
     return { percent: 0, message: undefined, detail: undefined, status: 'unknown', cancel }
