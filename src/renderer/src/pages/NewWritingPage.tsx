@@ -68,7 +68,7 @@ const NewWritingPage: React.FC = () => {
     blocksRef.current.find((b) => b.id === blockId)?.content ?? '',
   )
 
-  const { enhancingBlockId, handleEnhance } = usePageEnhancement({
+  const { enhancingBlockId, streamingEntry, handleEnhance } = usePageEnhancement({
     onChangeRef,
     getBlockContent,
   })
