@@ -237,7 +237,14 @@ export const ContentBlock = React.memo(function ContentBlock({
   const { isEnhancing, handleEnhance } = useBlockEnhancement({ editorRef, onChangeRef, blockIdRef })
 
   const editorOptions = useMemo<UseEditorOptions>(() => ({
-    extensions: [StarterKit, Markdown],
+    extensions: [
+      StarterKit.configure({ bulletList: false, orderedList: false, listItem: false }),
+      BulletList,
+      OrderedList,
+      ListItem,
+      ListKeymap,
+      Markdown,
+    ],
     content: block.content || '',
     // Tell TipTap to parse the initial content string as Markdown so that
     // paragraph breaks (blank lines) are correctly mapped to <p> nodes.
