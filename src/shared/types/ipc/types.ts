@@ -38,6 +38,7 @@ export interface WorkspaceDeletedEvent {
 export type TaskPriority = 'low' | 'normal' | 'high'
 
 export interface TaskSubmitOptions {
+  taskId?: string
   priority?: TaskPriority
   timeoutMs?: number
   windowId?: number
