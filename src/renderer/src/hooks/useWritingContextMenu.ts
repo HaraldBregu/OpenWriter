@@ -84,7 +84,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
                 savedAt: result.savedAt,
               })
             )
-            navigate(`/new/writing/${newId}`)
+            navigate(`/content/${newId}`)
           } catch (err) {
             console.error('[useWritingContextMenu] Failed to duplicate writing item:', err)
           }
