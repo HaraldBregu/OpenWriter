@@ -104,7 +104,7 @@ function serializeBlocksForOutput(
 // ---------------------------------------------------------------------------
 
 /**
- * Manages shared state and side-effects for NewWritingPage.
+ * Manages shared state and side-effects for ContentPage.
  *
  * Responsibilities:
  *  - Draft mode: local title/blocks state, auto-commit timer (1 s after first content)
