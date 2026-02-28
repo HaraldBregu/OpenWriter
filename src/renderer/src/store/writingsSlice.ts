@@ -1,5 +1,5 @@
 import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
-import type { Block } from '@/components/ContentBlock'
+import type { Block } from '@/components/block.types'
 import type { OutputItem } from './outputSlice'
 
 // ---------------------------------------------------------------------------
