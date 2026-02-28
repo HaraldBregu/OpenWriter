@@ -139,6 +139,16 @@ const HomePage: React.FC = () => {
   const allEntries = useAppSelector(selectWritingEntries)
   const recentEntries = allEntries.slice(0, 5)
 
+  const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
+    onSuccess: (writingId) => {
+      navigate(`/new/writing/${writingId}`)
+    },
+  })
+
+  const handleNewWriting = useCallback(async () => {
+    await createWriting()
+  }, [createWriting])
+
   const hour = new Date().getHours()
   const greeting =
     hour < 12 ? t('home.goodMorning') : hour < 18 ? t('home.goodAfternoon') : t('home.goodEvening')
@@ -161,7 +171,15 @@ const HomePage: React.FC = () => {
         <section className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             {categoryDefs.map((cat) => (
-              <CategoryCard key={cat.labelKey} {...cat} />
+              <CategoryCard
+                key={cat.labelKey}
+                icon={cat.icon}
+                labelKey={cat.labelKey}
+                descriptionKey={cat.descriptionKey}
+                accent={cat.accent}
+                onClick={handleNewWriting}
+                disabled={isCreatingWriting}
+              />
             ))}
           </div>
         </section>
