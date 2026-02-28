@@ -17,8 +17,9 @@ import type { TaskEvent } from '../../../shared/types/ipc/types'
 
 export interface TaskSnapshot {
   status: string
-  streamedContent: string
-  content: string
+  streamedContent: string  // latest delta token only
+  content: string          // seedContent + all AI tokens (full display text)
+  seedContent: string      // original text before AI enhancement (set by initTaskContent)
   error?: string
   result?: unknown
 }
