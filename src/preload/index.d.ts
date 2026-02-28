@@ -241,9 +241,7 @@ declare global {
     /** Optional: not present in all window types */
     win?: WindowApi
     workspace: WorkspaceApi
-    /** Optional: not present in all window types */
-    tasksManager?: TasksManagerApi
-    /** Optional: not present in all window types */
+    tasksManager: TasksManagerApi
     agentManager: AgentManagerAPI
   }
 }
