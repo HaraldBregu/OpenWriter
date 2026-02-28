@@ -170,7 +170,7 @@
 - Slice: `src/renderer/src/store/writingItemsSlice.ts`
   - `WritingEntry`: `{ id (UUID), writingItemId (YYYY-MM-DD_HHmmss folder name), title, blocks, category, tags, createdAt, updatedAt, savedAt }`
   - Thunk: `loadWritingItems` → calls `window.workspace.loadOutputsByType('writings')`, maps `OutputFile` → `WritingEntry`
-  - Actions: `addEntry`, `setWritingItemId`, `updateEntryBlocks`, `updateEntryTitle`, `removeEntry`
+  - Actions: `addEntry`, `setWritingItemId`, `updateEntryBlocks`, `updateEntryTitle`, `updateBlockContent`, `removeEntry`
   - Selectors: `selectWritingEntries`, `selectWritingEntryById(id)`, `selectWritingItemsStatus`
 - Hook: `src/renderer/src/hooks/useCreateWriting.ts`
   - Calls `window.workspace.saveOutput({ type: 'writings', blocks, metadata })` — NO Redux thunks
