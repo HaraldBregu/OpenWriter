@@ -1,6 +1,11 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useAppSelector } from '../store'
-import { selectEnhancingBlockIds, selectStreamingEntries } from '../store/enhancementSlice'
+import {
+  selectEnhancingBlockIds,
+  selectStreamingEntries,
+  selectIsBlockEnhancing,
+  selectBlockStreamingContent,
+} from '../store/enhancementSlice'
 import { selectWritingEntryById } from '../store/writingItemsSlice'
 import { useEnhancementContext } from '@/contexts/EnhancementContext'
 
