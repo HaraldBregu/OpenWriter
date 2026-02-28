@@ -275,12 +275,11 @@ export const ContentBlock = React.memo(function ContentBlock({
     }
 
     const unsub = subscribeToTask(block.id, (snap) => {
-      if (snap.content) {
+      if (snap.status === 'running' && snap.streamedContent) {
+        // New token arrived — snap.content is the full accumulated text.
         setStreamingContent(snap.content)
-      }
-      if (snap.status === 'completed') {
-        const finalContent = snap.content ?? ''
-        dispatch(updateBlockContent({ entryId, blockId: block.id, content: finalContent }))
+      } else if (snap.status === 'completed') {
+        dispatch(updateBlockContent({ entryId, blockId: block.id, content: snap.content ?? '' }))
         setStreamingContent(undefined)
         setIsEnhancing(false)
       } else if (snap.status === 'error' || snap.status === 'cancelled') {
