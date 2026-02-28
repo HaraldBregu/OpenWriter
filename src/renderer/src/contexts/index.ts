@@ -54,3 +54,25 @@ export type {
   EntityTaskContextConfig,
   ITaskCompletionHandler,
 } from './EntityTaskContext'
+
+export {
+  createAIAgentContext,
+  StoryWriterTask,
+  ContentReviewTask,
+  SummarizerTask,
+  ToneAdjusterTask,
+  TextCompleterTask,
+  useStoryWriterTask,
+  useContentReviewTask,
+  useSummarizerTask,
+  useToneAdjusterTask,
+  useTextCompleterTask,
+} from './AIAgentTaskContext'
+
+export type {
+  AIAgentSubmitInput,
+  AIAgentSubmitResult,
+  AIAgentSaveOptions,
+  AIAgentSaveResult,
+  AIAgentMessage,
+} from './AIAgentTaskContext'
