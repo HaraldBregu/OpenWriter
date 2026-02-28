@@ -478,7 +478,7 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('tasksManager', tasksManager)
-        contextBridge.exposeInMainWorld('aiAgent', aiAgent)
+        contextBridge.exposeInMainWorld('agentManager', agentManager)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }
