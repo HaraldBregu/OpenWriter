@@ -161,8 +161,6 @@ const ContentPage: React.FC = () => {
                   isOnly={blocks.length === 1}
                   isLast={index === blocks.length - 1}
                   onChange={handleChange}
-                  onChangeMedia={handleChangeMedia}
-                  onChangeType={handleChangeBlockType}
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
                   entryId={id ?? ''}
