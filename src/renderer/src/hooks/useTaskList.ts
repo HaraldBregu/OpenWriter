@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TaskInfo } from '../../../shared/types/ipc/types'
-import { useTaskContext } from '@/contexts/TaskContext'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -26,22 +26,16 @@ export interface UseTaskListReturn {
  * filtering. Automatically updates whenever a TaskEvent mutates any task.
  *
  * On mount it fetches the current task list from the main process via
- * window.tasksManager.list() so the initial render is not empty. Subsequent updates
- * are driven by TaskProvider's shared store — no extra IPC round-trips.
+ * window.tasksManager.list() so the initial render is not empty. Subsequent
+ * updates are driven by the shared taskStore — no extra IPC round-trips.
  *
  * @param filter Optional predicate to narrow the returned tasks list.
- *
- * Usage:
- *   const { tasks, isLoading, error } = useTaskList()
- *   const { tasks: running } = useTaskList(t => t.status === 'running')
  */
 export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  // Local snapshot of all tasks — seeded from list() and then kept fresh by
-  // the store subscription. Stored in state so React re-renders on change.
   const [allTasks, setAllTasks] = useState<TaskInfo[]>([])
 
   // Stable ref to the filter so the subscription callback doesn't go stale
@@ -51,11 +45,11 @@ export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
 
   // Subscribe to the ALL key — notified on any task mutation.
   useEffect(() => {
-    const unsub = store.subscribe('ALL', () => {
-      setAllTasks(store.getAllTasksSnapshot())
+    const unsub = taskStore.subscribe('ALL', () => {
+      setAllTasks(taskStore.getAllTasksSnapshot())
     })
     return unsub
-  }, [store])
+  }, [])
 
   // Fetch the initial task list from the main process on mount.
   useEffect(() => {
@@ -74,9 +68,9 @@ export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
         if (result.success) {
           // Seed the store with known task IDs so events are accepted.
           for (const info of result.data) {
-            store.addTask(info.taskId, info.type)
+            taskStore.addTask(info.taskId, info.type)
           }
-          setAllTasks(store.getAllTasksSnapshot())
+          setAllTasks(taskStore.getAllTasksSnapshot())
         } else {
           setError(result.error.message)
         }
@@ -92,7 +86,7 @@ export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
     return () => {
       cancelled = true
     }
-  }, [store])
+  }, [])
 
   // Apply optional filter without re-subscribing on every render.
   const tasks = useCallback((): TaskInfo[] => {
