@@ -11,7 +11,6 @@ import { listenerMiddleware } from './listenerMiddleware'
 
 export const store = configureStore({
   reducer: {
-    chat: chatReducer,
     workspace: workspaceReducer,
     directories: directoriesReducer,
     personalityFiles: personalityFilesReducer,
