@@ -257,6 +257,17 @@ export const ContentBlock = React.memo(function ContentBlock({
   const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
   const originalTextRef = useRef<string>('')
 
+  // On mount (or block.id change): resume if a task for this block is already running.
+  useEffect(() => {
+    const snap = getTaskSnapshot(block.id)
+    if (!snap) return
+    if (snap.status === 'running' || snap.status === 'queued') {
+      originalTextRef.current = block.content
+      setIsEnhancing(true)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [block.id])
+
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
     const text = block.content
@@ -274,15 +285,18 @@ export const ContentBlock = React.memo(function ContentBlock({
     }
   }, [isEnhancing, block.id, block.content])
 
+  // Subscribe to task events whenever enhancing is active.
   useEffect(() => {
     if (!isEnhancing) return
 
     const originalText = originalTextRef.current
-    const streamBuffer = { value: originalText }
-    setStreamingContent(originalText)
+
+    // Seed with any content already streamed before this component mounted.
+    const currentSnap = getTaskSnapshot(block.id)
+    const streamBuffer = { value: originalText + (currentSnap?.streamedContent ?? '') }
+    setStreamingContent(streamBuffer.value)
 
     const unsub = subscribeToTask(block.id, (snap) => {
-      console.log(`[ContentBlock] Task update for block ${block.id}:`, snap)
       if (snap.streamedContent) {
         streamBuffer.value = originalText + snap.streamedContent
         setStreamingContent(streamBuffer.value)
