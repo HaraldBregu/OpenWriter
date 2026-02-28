@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSyncExternalStore } from 'react'
 import type { TaskInfo } from '../../../shared/types/ipc/types'
-import { useTaskContext } from '@/contexts/TaskContext'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -34,19 +34,15 @@ export interface UseTaskResultReturn<TResult = unknown> {
  *    the stream event provides
  *
  * Auto-fetches on mount if taskId is provided, and re-fetches whenever the
- * task transitions to 'completed' via the shared TaskStore.
+ * task transitions to 'completed' via the shared taskStore.
  *
  * @template TResult Type of the result payload inside TaskInfo.
  * @param taskId The ID of the task to retrieve. Hook is idle when undefined.
- *
- * Usage:
- *   const { result, fetchStatus, refetch } = useTaskResult<ExportResult>(taskId)
- *   if (fetchStatus === 'ready') { console.log(result) }
  */
 export function useTaskResult<TResult = unknown>(
   taskId: string | undefined
 ): UseTaskResultReturn<TResult> {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   const [taskInfo, setTaskInfo] = useState<TaskInfo | null>(null)
   const [fetchStatus, setFetchStatus] = useState<TaskResultStatus>('idle')
@@ -98,13 +94,13 @@ export function useTaskResult<TResult = unknown>(
   // then auto-fetch the full result from the main process.
   const statusSnapshot = useSyncExternalStore(
     useCallback(
-      (listener) => (taskId ? store.subscribe(taskId, listener) : () => {}),
-      [store, taskId]
+      (listener) => (taskId ? taskStore.subscribe(taskId, listener) : () => {}),
+      [taskId]
     ),
     useCallback(() => {
       if (!taskId) return undefined
-      return store.getTaskSnapshot(taskId)?.status
-    }, [store, taskId])
+      return taskStore.getTaskSnapshot(taskId)?.status
+    }, [taskId])
   )
 
   const prevStatusRef = useRef<string | undefined>(undefined)
