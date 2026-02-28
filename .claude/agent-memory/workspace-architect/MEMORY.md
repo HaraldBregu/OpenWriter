@@ -21,6 +21,20 @@
 4. All watchers (DocumentsWatcher, PersonalityFiles, OutputFiles) react to workspace change
 5. Metadata stored in `workspace.tsrct` JSON file in workspace root
 
+## Writing Creation Flow (updated)
+- All "New Writing" actions (sidebar + HomePage) use `useCreateWriting` hook
+- Hook calls `window.workspace.saveOutput()` to create disk folder first
+- Returns `SaveOutputResult { id, path, savedAt }` where `id` is disk folder name
+- Hook creates Redux entry with client-side UUID as `id`, disk folder as `writingItemId`
+- Navigates to `/new/writing/:entryId` where entryId is the client-side UUID
+- No more "draft mode" route at `/new/writing` (without :id) -- removed
+- `useDraftEditor` only operates in edit mode (reads from Redux, auto-saves to disk)
+
+## WritingEntry ID Design
+- `id`: client-side UUID for React routing and Redux keying
+- `writingItemId`: stable disk folder name (YYYY-MM-DD_HHmmss) for file I/O
+- `loadWritingItems` merge logic preserves existing `id` when matching by `writingItemId`
+
 ## Workspace Deletion Detection (implemented)
 - WorkspaceService runs 5s interval timer checking `fs.statSync` on workspace path
 - Timer starts on `initialize()` and `setCurrent()`, stops on `clear()` and `destroy()`
