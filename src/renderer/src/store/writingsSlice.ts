@@ -47,7 +47,7 @@ const initialState: WritingsState = {
  */
 function makeBlock(content = ''): Block {
   const now = new Date().toISOString()
-  return { id: crypto.randomUUID(), content, createdAt: now, updatedAt: now }
+  return { id: crypto.randomUUID(), type: 'text', content, createdAt: now, updatedAt: now }
 }
 
 // ---------------------------------------------------------------------------
