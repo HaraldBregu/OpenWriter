@@ -262,6 +262,7 @@ export const {
   setWritingItemId,
   updateEntryBlocks,
   updateEntryTitle,
+  updateBlockContent,
   removeEntry,
   setCreationError,
   clearCreationError,
