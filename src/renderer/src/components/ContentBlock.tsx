@@ -64,6 +64,8 @@ export interface ContentBlockProps {
   onEnhance: (blockId: string) => void
   /** True while this specific block is being enhanced by the AI. */
   isEnhancing: boolean
+  /** Live streaming content from the AI enhancement hook. Passed directly to AppTextEditor to avoid Redux re-renders on every token. */
+  streamingContent?: string
   placeholder?: string
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
