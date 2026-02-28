@@ -41,8 +41,6 @@ const ContentPage: React.FC = () => {
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
-    handleChangeBlockType,
-    handleChangeMedia,
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
