@@ -42,6 +42,17 @@ export interface UseDraftEditorReturn {
   handleReorder: (reordered: Block[]) => void
   /** Append a new block at the end and focus it. */
   handleAppendBlock: () => void
+  /**
+   * Change a block's type (and optionally its heading level).
+   * For 'text' and 'media' types the level is ignored.
+   * Content is preserved across type switches so the user does not lose work.
+   */
+  handleChangeBlockType: (blockId: string, type: BlockType, level?: Block['level']) => void
+  /**
+   * Update the media source and alt text of a 'media' block.
+   * Passing empty strings for both clears the media.
+   */
+  handleChangeMedia: (blockId: string, mediaSrc: string, mediaAlt: string) => void
   /** Current AI settings (local state, not stored in Redux between page visits). */
   aiSettings: InferenceSettings
   /** Update AI settings. */
