@@ -137,7 +137,6 @@ export function usePageEnhancement({
       })
       blockMap.clear()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ---------------------------------------------------------------------------
