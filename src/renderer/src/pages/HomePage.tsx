@@ -140,7 +140,7 @@ const HomePage: React.FC = () => {
 
   const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
     onSuccess: (writingId) => {
-      navigate(`/new/writing/${writingId}`)
+      navigate(`/content/${writingId}`)
     },
   })
 
