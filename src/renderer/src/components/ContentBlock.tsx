@@ -265,14 +265,12 @@ export const ContentBlock = React.memo(function ContentBlock({
 
     setIsEnhancing(true)
 
-    let taskId: string
     try {
-      const result = await window.tasksManager.submit('ai-enhance', { text })
+      const result = await window.tasksManager.submit('ai-enhance', { text }, { taskId: block.id })
       if (!result.success) {
         setIsEnhancing(false)
         return
       }
-      taskId = result.data.taskId
     } catch {
       setIsEnhancing(false)
       return
@@ -282,7 +280,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     const streamBuffer = { value: originalText }
     setStreamingContent(originalText)
 
-    const unsub = subscribeToTask(taskId, (snap) => {
+    const unsub = subscribeToTask(block.id, (snap) => {
       if (snap.streamedContent) {
         streamBuffer.value = originalText + snap.streamedContent
         setStreamingContent(streamBuffer.value)
