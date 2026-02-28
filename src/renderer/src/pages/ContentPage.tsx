@@ -167,6 +167,7 @@ const ContentPage: React.FC = () => {
                   onChangeType={handleChangeBlockType}
                   onDelete={handleDelete}
                   onAdd={handleAddBlockAfter}
+                  entryId={id ?? ''}
                   placeholder={t('writing.startWriting')}
                   autoFocus={focusBlockId === block.id}
                 />
