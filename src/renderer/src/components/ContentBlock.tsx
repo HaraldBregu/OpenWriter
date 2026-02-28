@@ -1,13 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAppDispatch, useAppSelector } from '@/store'
-import {
-  selectIsBlockEnhancing,
-  selectBlockStreamingContent,
-  markEnhancing,
-  updateStreamingEntry,
-  clearEnhancingBlock,
-} from '@/store/enhancementSlice'
+import { useAppDispatch } from '@/store'
 import { updateBlockContent } from '@/store/writingItemsSlice'
 import { subscribeToTask } from '@/services/taskEventBus'
 import {
