@@ -3,10 +3,6 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { AppProvider } from "./contexts";
-import { TaskProvider } from "@/contexts/TaskContext";
-import { EnhancementProvider } from "@/contexts/EnhancementContext";
-import { PersonalityTaskProvider } from "@/contexts/PersonalityTaskContext";
-import { electronPersonalityTaskService } from "@/services/ElectronPersonalityTaskService";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingSkeleton } from "./components/LoadingSkeleton";
@@ -43,111 +39,105 @@ const App: React.FC = () => {
     <ErrorBoundary level="root">
       <Provider store={store}>
         <AppProvider>
-          <TaskProvider>
-            <EnhancementProvider>
-              <PersonalityTaskProvider service={electronPersonalityTaskService}>
-                <Router>
-                  <Routes>
-                    {/* Welcome page - standalone, shown first */}
-                    <Route path="/" element={<WelcomePage />} />
+          <Router>
+            <Routes>
+              {/* Welcome page - standalone, shown first */}
+              <Route path="/" element={<WelcomePage />} />
 
-                    {/* All other routes use AppLayout */}
-                    <Route
-                      path="*"
-                      element={
-                        <AppLayout>
-                          <Suspense fallback={<LoadingSkeleton />}>
-                            <Routes>
-                              <Route
-                                path="/home"
-                                element={
-                                  <RouteWrapper>
-                                    <HomePage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/settings"
-                                element={
-                                  <RouteWrapper>
-                                    <SettingsPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/content/:id"
-                                element={
-                                  <RouteWrapper>
-                                    <ContentPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/documents"
-                                element={
-                                  <RouteWrapper>
-                                    <DocumentsPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/directories"
-                                element={
-                                  <RouteWrapper>
-                                    <DirectoriesPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/personality/emotional-depth"
-                                element={
-                                  <RouteWrapper>
-                                    <EmotionalDepthPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/personality/consciousness"
-                                element={
-                                  <RouteWrapper>
-                                    <ConsciousnessPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/personality/motivation"
-                                element={
-                                  <RouteWrapper>
-                                    <MotivationPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/personality/social-identity"
-                                element={
-                                  <RouteWrapper>
-                                    <SocialIdentityPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                              <Route
-                                path="/personality/creativity"
-                                element={
-                                  <RouteWrapper>
-                                    <CreativityPage />
-                                  </RouteWrapper>
-                                }
-                              />
-                            </Routes>
-                          </Suspense>
-                        </AppLayout>
-                      }
-                    />
-                  </Routes>
-                </Router>
-              </PersonalityTaskProvider>
-            </EnhancementProvider>
-          </TaskProvider>
+              {/* All other routes use AppLayout */}
+              <Route
+                path="*"
+                element={
+                  <AppLayout>
+                    <Suspense fallback={<LoadingSkeleton />}>
+                      <Routes>
+                        <Route
+                          path="/home"
+                          element={
+                            <RouteWrapper>
+                              <HomePage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/settings"
+                          element={
+                            <RouteWrapper>
+                              <SettingsPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/content/:id"
+                          element={
+                            <RouteWrapper>
+                              <ContentPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/documents"
+                          element={
+                            <RouteWrapper>
+                              <DocumentsPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/directories"
+                          element={
+                            <RouteWrapper>
+                              <DirectoriesPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/personality/emotional-depth"
+                          element={
+                            <RouteWrapper>
+                              <EmotionalDepthPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/personality/consciousness"
+                          element={
+                            <RouteWrapper>
+                              <ConsciousnessPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/personality/motivation"
+                          element={
+                            <RouteWrapper>
+                              <MotivationPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/personality/social-identity"
+                          element={
+                            <RouteWrapper>
+                              <SocialIdentityPage />
+                            </RouteWrapper>
+                          }
+                        />
+                        <Route
+                          path="/personality/creativity"
+                          element={
+                            <RouteWrapper>
+                              <CreativityPage />
+                            </RouteWrapper>
+                          }
+                        />
+                      </Routes>
+                    </Suspense>
+                  </AppLayout>
+                }
+              />
+            </Routes>
+          </Router>
         </AppProvider>
       </Provider>
     </ErrorBoundary>
