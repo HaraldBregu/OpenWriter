@@ -36,7 +36,7 @@ export interface WritingEntry {
   savedAt: number
 }
 
-interface WritingItemsState {
+export interface WritingItemsState {
   entries: WritingEntry[]
   status: 'idle' | 'loading' | 'loaded' | 'error'
   error: string | null
