@@ -168,6 +168,7 @@ function TipTapAdapter({
   disabled,
   extensions,
   forwardedRef,
+  streamingContent,
 }: TipTapAdapterProps): React.JSX.Element {
   const [isEmpty, setIsEmpty] = useState<boolean>(() => !value)
 
