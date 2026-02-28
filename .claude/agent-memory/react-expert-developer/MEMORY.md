@@ -188,7 +188,7 @@
   - Returns `savedWritingItemIdRef` for use in delete handler
 - AppLayout: `useWritingItems()` called in outer `AppLayout`; sidebar uses `selectWritingEntries`
 - useWritingContextMenu: duplicate uses `window.workspace.saveOutput`; delete uses `window.workspace.deleteOutput`
-- NewWritingPage delete: `window.workspace.deleteOutput({ type: 'writings', id: writingItemId })`
+- ContentPage delete: `window.workspace.deleteOutput({ type: 'writings', id: writingItemId })`
 - writingsSlice.ts and writingsHydration.ts are NO LONGER imported by the store — only writingItemsSlice is used
 - i18n keys: `writing.creating`, `writing.createError`, `writing.noWorkspace`, `home.noRecentWritings` (EN + IT)
 
