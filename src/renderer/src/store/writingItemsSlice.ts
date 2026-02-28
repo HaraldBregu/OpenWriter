@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { OutputFile } from '../../../shared/types/ipc/types'
 import type { RootState } from './index'
-import type { Block, BlockType } from '@/components/ContentBlock'
+import type { Block } from '@/components/ContentBlock'
 
 // ---------------------------------------------------------------------------
 // Types
