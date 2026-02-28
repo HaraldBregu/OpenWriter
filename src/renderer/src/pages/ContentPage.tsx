@@ -49,18 +49,6 @@ const ContentPage: React.FC = () => {
   } = useContentEditor(id, '/content')
 
   // ---------------------------------------------------------------------------
-  // AI Enhancement — delegates to EnhancementContext (app-root level).
-  //
-  // State (enhancingBlockIds, streamingEntries) lives in Redux and survives
-  // navigation.  The provider never unmounts, so tasks run to completion even
-  // when the user navigates away from this page mid-stream.
-  // ---------------------------------------------------------------------------
-
-  const { enhancingBlockIds, streamingEntries, handleEnhance } = usePageEnhancement({
-    entryId: id ?? '',
-  })
-
-  // ---------------------------------------------------------------------------
   // Derived stats
   // ---------------------------------------------------------------------------
   const { charCount, wordCount } = useMemo(() => {
