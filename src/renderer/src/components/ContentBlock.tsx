@@ -29,9 +29,32 @@ import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 // Types
 // ---------------------------------------------------------------------------
 
+/** Discriminated union of all block types supported by the editor. */
+export type BlockType = 'text' | 'heading' | 'media'
+
 export interface Block {
   id: string
+  /** Determines how the block is rendered and what fields are relevant. */
+  type: BlockType
+  /**
+   * Heading level (1–6). Only meaningful when type === 'heading'.
+   * Omitted for 'text' and 'media' blocks.
+   */
+  level?: 1 | 2 | 3 | 4 | 5 | 6
+  /**
+   * Rich-text / markdown content. Used by 'text' blocks.
+   * 'heading' blocks store plain-text title here as well.
+   * Empty string for 'media' blocks.
+   */
   content: string
+  /**
+   * Image source (data URL or file path). Only meaningful when type === 'media'.
+   */
+  mediaSrc?: string
+  /**
+   * Alt text for the media. Only meaningful when type === 'media'.
+   */
+  mediaAlt?: string
   /** ISO 8601 — set when the block is first created */
   createdAt: string
   /** ISO 8601 — updated whenever the block content changes */
