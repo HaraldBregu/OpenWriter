@@ -79,7 +79,7 @@ export type TaskEvent =
   | { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
   | { type: 'error'; data: { taskId: string; message: string; code: string } }
   | { type: 'cancelled'; data: { taskId: string } }
-  | { type: 'stream'; data: { taskId: string; token: string } }
+  | { type: 'stream'; data: { taskId: string; token: string; content: string } }
   | { type: 'paused'; data: { taskId: string } }
   | { type: 'resumed'; data: { taskId: string; position: number } }
   | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
