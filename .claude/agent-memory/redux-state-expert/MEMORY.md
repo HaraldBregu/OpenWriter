@@ -14,7 +14,7 @@
 - Block type + ContentBlock: `src/renderer/src/components/ContentBlock.tsx`
 - Draft editor hook: `src/renderer/src/hooks/useDraftEditor.ts`
 - Page enhancement hook: `src/renderer/src/hooks/useBlockEnhancement.ts`
-- Main page: `src/renderer/src/pages/NewWritingPage.tsx`
+- Main page: `src/renderer/src/pages/ContentPage.tsx`
 - Shared IPC types: `src/shared/types/ipc/types.ts`
 
 ## Block Data Model (writingItemsSlice + ContentBlock)
