@@ -49,7 +49,7 @@ export type PersonalitySectionId =
   | 'mortality'
   | 'contradiction'
 
-interface PersonalityFilesState {
+export interface PersonalityFilesState {
   files: {
     'emotional-depth': PersonalityFile[]
     consciousness: PersonalityFile[]
