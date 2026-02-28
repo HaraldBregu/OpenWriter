@@ -369,6 +369,7 @@ export const ContentBlock = React.memo(function ContentBlock({
               {placeholder}
             </span>
           )}
+          <EditorBubbleMenu editor={editor} />
           <EditorContent editor={editor} />
         </div>
 
