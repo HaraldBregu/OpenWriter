@@ -428,6 +428,48 @@ const tasksManager: TasksManagerApi = {
 } satisfies TasksManagerApi;
 
 // ---------------------------------------------------------------------------
+// window.aiAgent — AIAgentsManager session/run management + streaming events
+// ---------------------------------------------------------------------------
+const aiAgent: AiAgentApi = {
+    listAgents: () => {
+        return typedInvokeRaw(AiAgentChannels.listAgents)
+    },
+    getAgent: (agentId: string) => {
+        return typedInvokeRaw(AiAgentChannels.getAgent, agentId)
+    },
+    getStatus: () => {
+        return typedInvokeRaw(AiAgentChannels.getStatus)
+    },
+    listSessions: () => {
+        return typedInvokeRaw(AiAgentChannels.listSessions)
+    },
+    getSession: (sessionId: string) => {
+        return typedInvokeRaw(AiAgentChannels.getSession, sessionId)
+    },
+    listActiveRuns: () => {
+        return typedInvokeRaw(AiAgentChannels.listActiveRuns)
+    },
+    createSession: (agentId: string, config?: Partial<AgentSessionConfig>) => {
+        return typedInvokeRaw(AiAgentChannels.createSession, agentId, config)
+    },
+    destroySession: (sessionId: string) => {
+        return typedInvokeRaw(AiAgentChannels.destroySession, sessionId)
+    },
+    cancelRun: (runId: string) => {
+        return typedInvokeRaw(AiAgentChannels.cancelRun, runId)
+    },
+    cancelSession: (sessionId: string) => {
+        return typedInvokeRaw(AiAgentChannels.cancelSession, sessionId)
+    },
+    startStreaming: (sessionId: string, request: AgentRequest, options?: { windowId?: number }) => {
+        return typedInvokeRaw(AiAgentChannels.startStreaming, sessionId, request, options)
+    },
+    onEvent: (callback) => {
+        return typedOn(AiAgentChannels.event, callback)
+    },
+} satisfies AiAgentApi;
+
+// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -436,6 +478,7 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('tasksManager', tasksManager)
+        contextBridge.exposeInMainWorld('aiAgent', aiAgent)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }
@@ -448,4 +491,6 @@ if (process.contextIsolated) {
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
     globalThis.tasksManager = tasksManager
+    // @ts-ignore (define in dts)
+    globalThis.aiAgent = aiAgent
 }
