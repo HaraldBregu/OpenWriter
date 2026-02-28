@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
-  Bold, Italic, Strikethrough, Code,
-  List, ListOrdered, Quote,
+  Bold, Italic, Strikethrough,
+  List, ListOrdered,
 } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
