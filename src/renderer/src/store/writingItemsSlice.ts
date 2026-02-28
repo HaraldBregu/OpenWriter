@@ -59,19 +59,12 @@ function makeBlock(
   content = '',
   createdAt?: string,
   updatedAt?: string,
-  type: BlockType = 'paragraph',
-  level?: Block['level'],
-  mediaSrc?: string,
-  mediaAlt?: string,
 ): Block {
   const now = new Date().toISOString()
   return {
     id: crypto.randomUUID(),
-    type,
-    ...(level !== undefined ? { level } : {}),
+    type: 'paragraph',
     content,
-    ...(mediaSrc !== undefined ? { mediaSrc } : {}),
-    ...(mediaAlt !== undefined ? { mediaAlt } : {}),
     createdAt: createdAt ?? now,
     updatedAt: updatedAt ?? now,
   }
