@@ -342,7 +342,6 @@ const AppTextEditor = React.memo(
           disabled={props.disabled}
           id={props.id}
           headingLevel={props.headingLevel ?? 1}
-          onHeadingLevelChange={props.onHeadingLevelChange}
           forwardedRef={ref as React.Ref<HTMLInputElement>}
         />
       )
