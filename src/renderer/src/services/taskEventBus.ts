@@ -77,16 +77,26 @@ function ensureListening(): void {
       case 'completed': {
         const cd = event.data as { result?: unknown }
         next = { ...prev, status: 'completed', result: cd.result }
-        break
+        snapshots.set(taskId, next)
+        subscribers.get(taskId)?.forEach((cb) => cb(next))
+        // Clear snapshot after all subscribers have processed the terminal event.
+        setTimeout(() => snapshots.delete(taskId), 0)
+        return
       }
       case 'error': {
         const ed = event.data as { message?: string }
         next = { ...prev, status: 'error', error: ed.message }
-        break
+        snapshots.set(taskId, next)
+        subscribers.get(taskId)?.forEach((cb) => cb(next))
+        setTimeout(() => snapshots.delete(taskId), 0)
+        return
       }
       case 'cancelled':
         next = { ...prev, status: 'cancelled' }
-        break
+        snapshots.set(taskId, next)
+        subscribers.get(taskId)?.forEach((cb) => cb(next))
+        setTimeout(() => snapshots.delete(taskId), 0)
+        return
       case 'paused':
         next = { ...prev, status: 'paused' }
         break
