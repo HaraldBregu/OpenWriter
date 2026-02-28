@@ -42,8 +42,9 @@ export interface TrackedTaskState {
   durationMs?: number
   error?: string
   result?: unknown
-  streamedContent: string
-  content: string
+  streamedContent: string  // latest delta token
+  content: string          // full cumulative AI output (raw, no seed prepended)
+  seedContent: string      // original text before enhancement
   events: TaskEventRecord[]
 }
 
