@@ -309,7 +309,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                               asChild
                               isActive={
                                 location.pathname ===
-                                `/new/writing/${writing.id}`
+                                `/content/${writing.id}`
                               }
                               className="ml-0"
                               onContextMenu={() =>
