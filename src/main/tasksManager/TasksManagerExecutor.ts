@@ -83,7 +83,7 @@ export class TasksManagerExecutor implements Disposable {
       handler.validate(input)
     }
 
-    const taskId = randomUUID()
+    const taskId = options?.taskId ?? randomUUID()
     const priority = options?.priority ?? 'normal'
     const controller = new AbortController()
 
