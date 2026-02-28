@@ -175,8 +175,7 @@ export function usePageEnhancement({
 
       const taskId = await submit({ text: currentText })
       if (!taskId) {
-        // Submit failed — revert immediately.
-        onChangeRef.current(blockId, originalTextRef.current)
+        // Submit failed — revert immediately (no streaming started, so no streamingEntry to clear).
         setEnhancingBlockId(null)
       }
     },
