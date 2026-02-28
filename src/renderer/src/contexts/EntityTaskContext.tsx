@@ -388,7 +388,7 @@ export function createEntityTaskContext<
     displayName,
     defaultProviderId = 'openai',
     buildSubmitInput,
-    taskType = 'ai-chat',
+    taskType = 'ai-agent',
     extractResultContent = (result: unknown) =>
       (result as { content?: string } | null)?.content ?? '',
     buildSaveOptions,
