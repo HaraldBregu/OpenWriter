@@ -63,7 +63,7 @@ interface AppLayoutProps {
 // ---------------------------------------------------------------------------
 
 const quickCreateSlugs = [
-  { titleKey: "sidebar.write", icon: PenLine, url: "/new/writing", shortcut: "⌘W" },
+  { titleKey: "sidebar.write", icon: PenLine, url: "/content", shortcut: "⌘W" },
 ];
 
 const personalitySlugs = [
