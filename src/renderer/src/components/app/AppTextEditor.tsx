@@ -293,6 +293,7 @@ const ParagraphRenderer = React.memo(function ParagraphRenderer({
         disabled={disabled}
         extensions={mergedExtensions}
         forwardedRef={forwardedRef}
+        streamingContent={streamingContent}
       />
     </div>
   )
