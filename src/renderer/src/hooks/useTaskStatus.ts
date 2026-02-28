@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useSyncExternalStore } from 'react'
-import type { TaskStatus } from '@/contexts/TaskContext'
-import { useTaskContext } from '@/contexts/TaskContext'
+import type { TaskStatus } from '@/services/taskStore'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -21,21 +21,17 @@ export type TaskStatusOrUnknown = TaskStatus | 'unknown'
  *
  * @param taskId The ID of the task to track.
  * @returns The current status string, or 'unknown' if the task is not in the store.
- *
- * Usage:
- *   const status = useTaskStatus('task-abc-123')
- *   if (status === 'completed') { ... }
  */
 export function useTaskStatus(taskId: string): TaskStatusOrUnknown {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   // Derive status-only snapshot so changes to progress/stream don't trigger re-renders.
   const status = useSyncExternalStore(
-    useCallback((listener) => store.subscribe(taskId, listener), [store, taskId]),
+    useCallback((listener) => taskStore.subscribe(taskId, listener), [taskId]),
     useCallback((): TaskStatusOrUnknown => {
-      const snap = store.getTaskSnapshot(taskId)
+      const snap = taskStore.getTaskSnapshot(taskId)
       return snap?.status ?? 'unknown'
-    }, [store, taskId])
+    }, [taskId])
   )
 
   return status
