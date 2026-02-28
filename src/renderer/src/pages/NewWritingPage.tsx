@@ -196,7 +196,6 @@ const NewWritingPage: React.FC = () => {
                   isEnhancing={enhancingBlockId === block.id}
                   placeholder={t('writing.startWriting')}
                   autoFocus={focusBlockId === block.id}
-                  onEditorReady={handleEditorReady}
                 />
               ))}
             </Reorder.Group>
