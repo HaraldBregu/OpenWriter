@@ -492,5 +492,5 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.tasksManager = tasksManager
     // @ts-ignore (define in dts)
-    globalThis.aiAgent = aiAgent
+    globalThis.agentManager = agentManager
 }
