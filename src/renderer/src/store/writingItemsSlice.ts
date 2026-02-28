@@ -20,7 +20,7 @@ import type { Block, BlockType } from '@/components/ContentBlock'
  * client-side UUID used for React routing and Redux keying.
  */
 export interface WritingEntry {
-  /** Client-side UUID — used for routing (/new/writing/:id) and Redux keying. */
+  /** Client-side UUID — used for routing (/content/:id) and Redux keying. */
   id: string
   /** Stable on-disk folder name (YYYY-MM-DD_HHmmss). Null for unsaved drafts. */
   writingItemId: string | null
