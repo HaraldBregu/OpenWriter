@@ -34,7 +34,7 @@ export const MOBILE_BREAKPOINT_PX = 768
 export const DEFAULT_PROVIDER_ID = 'openai'
 
 /** Fallback task type string for generic AI chat submissions. */
-export const DEFAULT_TASK_TYPE = 'ai-chat'
+export const DEFAULT_TASK_TYPE = 'ai-agent'
 
 // ---- Routing -------------------------------------------------------------
 
