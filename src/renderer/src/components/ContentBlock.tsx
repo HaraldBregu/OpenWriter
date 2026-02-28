@@ -251,55 +251,55 @@ export const ContentBlock = React.memo(function ContentBlock({
   const dispatch = useAppDispatch()
 
   // ---------------------------------------------------------------------------
-  // AI Enhancement — state lives in Redux so it survives route changes.
-  // enhancementService (module-level) keeps the task subscription alive even
-  // while this component is unmounted.
+  // AI Enhancement — local state per block instance.
   // ---------------------------------------------------------------------------
-  const isEnhancingSelector = useMemo(() => selectIsBlockEnhancing(block.id), [block.id])
-  const streamingContentSelector = useMemo(() => selectBlockStreamingContent(block.id), [block.id])
+  const [isEnhancing, setIsEnhancing] = useState(false)
+  const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
+  const unsubRef = useRef<(() => void) | null>(null)
 
-  const isEnhancing = useAppSelector(isEnhancingSelector)
-  const streamingContent = useAppSelector(streamingContentSelector)
-
-  // Module-level set shared across all ContentBlock instances so two blocks
-  // cannot submit duplicate tasks simultaneously.
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
     const text = block.content
     if (!text.trim()) return
     if (typeof window.tasksManager?.submit !== 'function') return
 
-    dispatch(markEnhancing(block.id))
+    setIsEnhancing(true)
 
     let taskId: string
     try {
       const result = await window.tasksManager.submit('ai-enhance', { text })
       if (!result.success) {
-        dispatch(clearEnhancingBlock(block.id))
+        setIsEnhancing(false)
         return
       }
       taskId = result.data.taskId
     } catch {
-      dispatch(clearEnhancingBlock(block.id))
+      setIsEnhancing(false)
       return
     }
 
     const originalText = text
     const streamBuffer = { value: originalText }
+    setStreamingContent(originalText)
 
-    subscribeToTask(taskId, (snap) => {
+    const unsub = subscribeToTask(taskId, (snap) => {
       if (snap.streamedContent) {
         streamBuffer.value = originalText + snap.streamedContent
-        dispatch(updateStreamingEntry({ blockId: block.id, content: streamBuffer.value }))
+        setStreamingContent(streamBuffer.value)
       }
       if (snap.status === 'completed') {
         dispatch(updateBlockContent({ entryId, blockId: block.id, content: streamBuffer.value }))
-        dispatch(clearEnhancingBlock(block.id))
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+        unsubRef.current = null
       } else if (snap.status === 'error' || snap.status === 'cancelled') {
-        dispatch(updateBlockContent({ entryId, blockId: block.id, content: originalText }))
-        dispatch(clearEnhancingBlock(block.id))
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+        unsubRef.current = null
       }
     })
+
+    unsubRef.current = unsub
   }, [dispatch, isEnhancing, block.id, block.content, entryId])
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
