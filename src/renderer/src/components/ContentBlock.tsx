@@ -68,7 +68,8 @@ export interface ContentBlockProps {
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
   /** @deprecated TipTap is now managed internally by AppTextEditor. This prop is ignored. */
-  onEditorReady?: (blockId: string, editor: unknown) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onEditorReady?: (blockId: string, editor: any) => void
 }
 
 // ---------------------------------------------------------------------------
