@@ -98,6 +98,7 @@ export function addTask(taskId: string, type: string, priority: TaskPriority = '
     progress: { percent: 0 },
     streamedContent: '',
     content: '',
+    seedContent: '',
     events: [],
   }
   taskMap.set(taskId, initial)
