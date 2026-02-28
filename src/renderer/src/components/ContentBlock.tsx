@@ -110,8 +110,8 @@ export const ContentBlock = React.memo(function ContentBlock({
     if (typeof window.tasksManager?.submit !== 'function') return
 
     originalTextRef.current = text
+    accumulatedAiContentRef.current = ''
     setIsEnhancing(true)
-    initTaskContent(block.id, text)
 
     try {
       const result = await window.tasksManager.submit('ai-enhance', { text }, { taskId: block.id })
