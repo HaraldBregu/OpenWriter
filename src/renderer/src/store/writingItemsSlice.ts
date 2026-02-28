@@ -55,11 +55,23 @@ const initialState: WritingItemsState = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeBlock(content = '', createdAt?: string, updatedAt?: string): Block {
+function makeBlock(
+  content = '',
+  createdAt?: string,
+  updatedAt?: string,
+  type: BlockType = 'text',
+  level?: Block['level'],
+  mediaSrc?: string,
+  mediaAlt?: string,
+): Block {
   const now = new Date().toISOString()
   return {
     id: crypto.randomUUID(),
+    type,
+    ...(level !== undefined ? { level } : {}),
     content,
+    ...(mediaSrc !== undefined ? { mediaSrc } : {}),
+    ...(mediaAlt !== undefined ? { mediaAlt } : {}),
     createdAt: createdAt ?? now,
     updatedAt: updatedAt ?? now,
   }
