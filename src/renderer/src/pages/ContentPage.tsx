@@ -47,7 +47,7 @@ const ContentPage: React.FC = () => {
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
-  } = useDraftEditor(id, '/content')
+  } = useContentEditor(id, '/content')
 
   // ---------------------------------------------------------------------------
   // AI Enhancement — delegates to EnhancementContext (app-root level).
