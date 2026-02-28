@@ -257,16 +257,37 @@ export const ContentBlock = React.memo(function ContentBlock({
   const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
   const originalTextRef = useRef<string>('')
 
-  // On mount (or block.id change): resume if a task for this block is already running.
+  // Single permanent subscription tied to block.id.
+  // Handles recovery on mount (task already running) and all future task events.
   useEffect(() => {
-    const snap = getTaskSnapshot(block.id)
-    if (!snap) return
-    if (snap.status === 'running' || snap.status === 'queued') {
+    // Recovery: task was already running before this component mounted.
+    const existing = getTaskSnapshot(block.id)
+    if (existing && (existing.status === 'running' || existing.status === 'queued')) {
       originalTextRef.current = block.content
+      const seeded = originalTextRef.current + (existing.streamedContent ?? '')
+      setStreamingContent(seeded)
       setIsEnhancing(true)
     }
+
+    const unsub = subscribeToTask(block.id, (snap) => {
+      if (snap.streamedContent) {
+        setStreamingContent(originalTextRef.current + snap.streamedContent)
+      }
+      if (snap.status === 'completed') {
+        const finalContent = originalTextRef.current + (snap.streamedContent ?? '')
+        dispatch(updateBlockContent({ entryId, blockId: block.id, content: finalContent }))
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+      } else if (snap.status === 'error' || snap.status === 'cancelled') {
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+      }
+    })
+
+    return unsub
+  // block.content intentionally omitted — captured once into originalTextRef on submit/recovery
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [block.id])
+  }, [block.id, dispatch, entryId])
 
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
@@ -284,35 +305,6 @@ export const ContentBlock = React.memo(function ContentBlock({
       setIsEnhancing(false)
     }
   }, [isEnhancing, block.id, block.content])
-
-  // Subscribe to task events whenever enhancing is active.
-  useEffect(() => {
-    if (!isEnhancing) return
-
-    const originalText = originalTextRef.current
-
-    // Seed with any content already streamed before this component mounted.
-    const currentSnap = getTaskSnapshot(block.id)
-    const streamBuffer = { value: originalText + (currentSnap?.streamedContent ?? '') }
-    setStreamingContent(streamBuffer.value)
-
-    const unsub = subscribeToTask(block.id, (snap) => {
-      if (snap.streamedContent) {
-        streamBuffer.value = originalText + snap.streamedContent
-        setStreamingContent(streamBuffer.value)
-      }
-      if (snap.status === 'completed') {
-        dispatch(updateBlockContent({ entryId, blockId: block.id, content: streamBuffer.value }))
-        setStreamingContent(undefined)
-        setIsEnhancing(false)
-      } else if (snap.status === 'error' || snap.status === 'cancelled') {
-        setStreamingContent(undefined)
-        setIsEnhancing(false)
-      }
-    })
-
-    return unsub
-  }, [isEnhancing, block.id, dispatch, entryId])
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
