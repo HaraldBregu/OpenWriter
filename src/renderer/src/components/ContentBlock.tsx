@@ -579,65 +579,6 @@ const MediaContent = React.memo(function MediaContent({
 MediaContent.displayName = 'MediaContent'
 
 // ---------------------------------------------------------------------------
-// BlockTypeMenu — dropdown for switching block type
-// ---------------------------------------------------------------------------
-
-interface BlockTypeMenuProps {
-  block: Block
-  onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
-}
-
-const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
-  text: 'Text',
-  heading: 'Heading',
-  media: 'Image',
-}
-
-const BlockTypeMenu = React.memo(function BlockTypeMenu({ block, onChangeType }: BlockTypeMenuProps) {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-0.5 px-1 py-0.5 text-xs text-muted-foreground/50 hover:text-muted-foreground rounded transition-colors"
-        title="Change block type"
-      >
-        {BLOCK_TYPE_LABELS[block.type]}
-        <ChevronDown className="h-3 w-3" />
-      </button>
-      {open && (
-        <>
-          {/* Backdrop to close on outside click */}
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} aria-hidden="true" />
-          <div className="absolute left-0 top-full mt-1 z-20 min-w-[120px] bg-background border border-border rounded-md shadow-md py-1">
-            {(['text', 'heading', 'media'] as BlockType[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => {
-                  onChangeType(block.id, t, t === 'heading' ? (block.level ?? 1) : undefined)
-                  setOpen(false)
-                }}
-                className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
-                  block.type === t
-                    ? 'text-foreground font-medium bg-muted/40'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                }`}
-              >
-                {BLOCK_TYPE_LABELS[t]}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  )
-})
-BlockTypeMenu.displayName = 'BlockTypeMenu'
-
-// ---------------------------------------------------------------------------
 // ContentBlock Component
 // ---------------------------------------------------------------------------
 
