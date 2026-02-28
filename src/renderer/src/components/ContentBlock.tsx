@@ -255,28 +255,29 @@ export const ContentBlock = React.memo(function ContentBlock({
   // ---------------------------------------------------------------------------
   const [isEnhancing, setIsEnhancing] = useState(false)
   const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
-  const unsubRef = useRef<(() => void) | null>(null)
+  const originalTextRef = useRef<string>('')
 
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
     const text = block.content
     if (!text.trim()) return
-    if (typeof window.tasksManager.submit !== 'function') return
+    if (typeof window.tasksManager?.submit !== 'function') return
 
+    originalTextRef.current = text
     setIsEnhancing(true)
 
     try {
       const result = await window.tasksManager.submit('ai-enhance', { text }, { taskId: block.id })
-      if (!result.success) {
-        setIsEnhancing(false)
-        return
-      }
+      if (!result.success) setIsEnhancing(false)
     } catch {
       setIsEnhancing(false)
-      return
     }
+  }, [isEnhancing, block.id, block.content])
 
-    const originalText = text
+  useEffect(() => {
+    if (!isEnhancing) return
+
+    const originalText = originalTextRef.current
     const streamBuffer = { value: originalText }
     setStreamingContent(originalText)
 
@@ -289,16 +290,14 @@ export const ContentBlock = React.memo(function ContentBlock({
         dispatch(updateBlockContent({ entryId, blockId: block.id, content: streamBuffer.value }))
         setStreamingContent(undefined)
         setIsEnhancing(false)
-        unsubRef.current = null
       } else if (snap.status === 'error' || snap.status === 'cancelled') {
         setStreamingContent(undefined)
         setIsEnhancing(false)
-        unsubRef.current = null
       }
     })
 
-    unsubRef.current = unsub
-  }, [dispatch, isEnhancing, block.id, block.content, entryId])
+    return unsub
+  }, [isEnhancing, block.id, dispatch, entryId])
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
