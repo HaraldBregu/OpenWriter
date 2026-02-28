@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TaskInfo, TaskQueueStatus } from '../../../shared/types/ipc/types'
-import { useTaskContext } from '@/contexts/TaskContext'
+import { taskStore } from '@/services/taskStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,28 +30,13 @@ export interface UseTaskQueueReturn {
 
 /**
  * useTaskQueue — provides a live view of all tasks waiting in the queue,
- * sorted by position. Updates automatically when:
- *   - A new task is enqueued ('queued' event)
- *   - A task's position changes ('queue-position' event)
- *   - A task is resumed and re-enters the queue ('resumed' event)
- *   - A task priority changes and its position updates ('priority-changed' event)
- *   - A task starts running and leaves the queue ('started' event)
- *   - A task is cancelled or errors ('cancelled'/'error' events)
+ * sorted by position. Updates automatically when task events arrive.
  *
- * Also fetches aggregate TaskQueueStatus metrics on mount via window.tasksManager.queueStatus().
- *
- * Usage:
- *   const { queuedTasks, queueStatus, isLoading } = useTaskQueue()
- *   return (
- *     <ul>
- *       {queuedTasks.map(t => (
- *         <li key={t.taskId}>#{t.queuePosition} — {t.type} ({t.priority})</li>
- *       ))}
- *     </ul>
- *   )
+ * Also fetches aggregate TaskQueueStatus metrics on mount via
+ * window.tasksManager.queueStatus().
  */
 export function useTaskQueue(): UseTaskQueueReturn {
-  const { store } = useTaskContext()
+  taskStore.ensureListening()
 
   const [queuedTasks, setQueuedTasks] = useState<QueuedTaskInfo[]>([])
   const [queueStatus, setQueueStatus] = useState<TaskQueueStatus | null>(null)
@@ -60,7 +45,7 @@ export function useTaskQueue(): UseTaskQueueReturn {
 
   // Derives the sorted queued-task list from the store's all-tasks snapshot.
   const deriveQueue = useCallback((): QueuedTaskInfo[] => {
-    return store
+    return taskStore
       .getAllTasksSnapshot()
       .filter(
         (t): t is TaskInfo & { queuePosition: number } =>
@@ -69,20 +54,18 @@ export function useTaskQueue(): UseTaskQueueReturn {
       )
       .map((t) => ({ ...t, queuePosition: t.queuePosition }))
       .sort((a, b) => a.queuePosition - b.queuePosition)
-  }, [store])
+  }, [])
 
   // Subscribe to the 'ALL' key so any task mutation triggers a queue re-derivation.
-  // The filter inside deriveQueue() means only queued/paused tasks appear in the output.
   useEffect(() => {
-    // Hydrate immediately.
     setQueuedTasks(deriveQueue())
 
-    const unsub = store.subscribe('ALL', () => {
+    const unsub = taskStore.subscribe('ALL', () => {
       setQueuedTasks(deriveQueue())
     })
 
     return unsub
-  }, [store, deriveQueue])
+  }, [deriveQueue])
 
   // Stable ref to avoid re-running the fetch effect when refreshQueueStatus identity changes.
   const fetchRef = useRef<() => Promise<void>>(() => Promise.resolve())
