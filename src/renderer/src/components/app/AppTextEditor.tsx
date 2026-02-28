@@ -98,7 +98,6 @@ const HeadingRenderer = React.memo(function HeadingRenderer({
   disabled,
   id,
   headingLevel,
-  onHeadingLevelChange,
   forwardedRef,
 }: HeadingRendererProps): React.JSX.Element {
   const fallbackRef = useRef<HTMLInputElement>(null)
@@ -117,30 +116,7 @@ const HeadingRenderer = React.memo(function HeadingRenderer({
   )
 
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
-      {/* Level selector */}
-      <div className="flex items-center gap-1" role="group" aria-label="Heading level">
-        {HEADING_LEVELS.map((l) => (
-          <button
-            key={l}
-            type="button"
-            disabled={disabled}
-            onClick={() => onHeadingLevelChange?.(l)}
-            aria-pressed={headingLevel === l}
-            className={cn(
-              'px-2 py-0.5 text-xs rounded-md transition-colors',
-              'disabled:pointer-events-none disabled:opacity-50',
-              headingLevel === l
-                ? 'bg-accent text-accent-foreground font-semibold'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/40',
-            )}
-          >
-            H{l}
-          </button>
-        ))}
-      </div>
-
-      {/* Text input */}
+    <div className={cn(className)}>
       <input
         ref={forwardedRef ?? fallbackRef}
         id={id}
