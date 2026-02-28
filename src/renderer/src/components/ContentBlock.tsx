@@ -238,15 +238,78 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChangeMedia,
   onDelete,
   onAdd,
-  entryId,
   placeholder = 'Type here...',
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
   const { t } = useTranslation()
   const dragControls = useDragControls()
 
-  const { isEnhancing, streamingContent, handleEnhance: handleEnhanceClick } =
-    useBlockEnhancement(block.id, entryId)
+  // ---------------------------------------------------------------------------
+  // AI Enhancement — inline task submission + streaming
+  // ---------------------------------------------------------------------------
+  const [isEnhancing, setIsEnhancing] = useState(false)
+  const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
+
+  // Stable ref to the active unsub so the cleanup effect always sees it.
+  const unsubRef = useRef<(() => void) | null>(null)
+
+  // Cancel on unmount so we don't write to unmounted state.
+  useEffect(() => {
+    return () => {
+      unsubRef.current?.()
+      unsubRef.current = null
+    }
+  }, [])
+
+  const handleEnhanceClick = useCallback(async () => {
+    if (isEnhancing) return
+    const text = block.content
+    if (!text.trim()) return
+    if (typeof window.tasksManager?.submit !== 'function') return
+
+    setIsEnhancing(true)
+    setStreamingContent(text)
+
+    let taskId: string
+    try {
+      const result = await window.tasksManager.submit('ai-enhance', { text })
+      if (!result.success) {
+        setIsEnhancing(false)
+        setStreamingContent(undefined)
+        return
+      }
+      taskId = result.data.taskId
+    } catch {
+      setIsEnhancing(false)
+      setStreamingContent(undefined)
+      return
+    }
+
+    // Accumulate stream tokens seeded with original content.
+    let buffer = text
+
+    const unsub = subscribeToTask(taskId, (snap) => {
+      if (snap.streamedContent) {
+        buffer = text + snap.streamedContent
+        setStreamingContent(buffer)
+      }
+      if (snap.status === 'completed') {
+        onChange(block.id, buffer)
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+        unsubRef.current = null
+        unsub()
+      } else if (snap.status === 'error' || snap.status === 'cancelled') {
+        // Revert — do not call onChange, streaming clears.
+        setStreamingContent(undefined)
+        setIsEnhancing(false)
+        unsubRef.current = null
+        unsub()
+      }
+    })
+
+    unsubRef.current = unsub
+  }, [isEnhancing, block.id, block.content, onChange])
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
@@ -258,7 +321,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     navigator.clipboard.writeText(block.content)
   }, [block.content])
 
-  // Only text blocks can be AI-enhanced.
+  // Only paragraph blocks can be AI-enhanced.
   const canEnhance = block.type === 'paragraph'
 
   return (
