@@ -163,10 +163,6 @@ export interface SaveOutputInput {
     content: string
     createdAt: string
     updatedAt: string
-    blockType?: 'paragraph' | 'heading' | 'media'
-    blockLevel?: 1 | 2 | 3 | 4 | 5 | 6
-    mediaSrc?: string
-    mediaAlt?: string
   }>
   metadata?: Record<string, unknown>
 }
