@@ -18,6 +18,7 @@ import type { TaskEvent } from '../../../shared/types/ipc/types'
 export interface TaskSnapshot {
   status: string
   streamedContent: string
+  content: string
   error?: string
   result?: unknown
 }
