@@ -213,7 +213,7 @@ export interface TasksManagerApi {
 }
 
 /** AIAgentsManager — session/run management and streaming */
-export interface AiAgentApi {
+export interface AIAgentsManagerApi {
   listAgents: () => Promise<IpcResult<AIAgentsDefinitionInfo[]>>
   getAgent: (agentId: string) => Promise<IpcResult<AIAgentsDefinitionInfo | undefined>>
   getStatus: () => Promise<IpcResult<AIAgentsManagerStatus>>
