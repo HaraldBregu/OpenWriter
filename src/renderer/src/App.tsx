@@ -15,7 +15,7 @@ import './index.css'
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const NewWritingPage = lazy(() => import('./pages/NewWritingPage'))
+const ContentPage = lazy(() => import('./pages/ContentPage'))
 const DocumentsPage = lazy(() => import('./pages/DocumentsPage'))
 const DirectoriesPage = lazy(() => import('./pages/DirectoriesPage'))
 const EmotionalDepthPage = lazy(() => import('./pages/personality/EmotionalDepthPage'))
