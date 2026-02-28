@@ -183,14 +183,6 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
             <ListOrdered className="h-3.5 w-3.5" />
           </BubbleMenuButton>
 
-          <BubbleMenuButton
-            tooltip="Blockquote"
-            isActive={editor.isActive('blockquote')}
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          >
-            <Quote className="h-3.5 w-3.5" />
-          </BubbleMenuButton>
-
           {/* Separator */}
           <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
 
