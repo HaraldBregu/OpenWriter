@@ -194,7 +194,7 @@ export function useContentEditor(
             },
           })
         } catch (err) {
-          console.error('[useDraftEditor] Failed to save writing item:', err)
+          console.error('[useContentEditor] Failed to save writing item:', err)
         }
       } else {
         // First save for an entry that was added to Redux but not yet persisted
@@ -214,7 +214,7 @@ export function useContentEditor(
           savedWritingItemIdRef.current = result.id
           dispatch(setWritingItemId({ entryId: entry.id, writingItemId: result.id }))
         } catch (err) {
-          console.error('[useDraftEditor] Failed to create writing item on first save:', err)
+          console.error('[useContentEditor] Failed to create writing item on first save:', err)
         }
       }
     }, 1000)
