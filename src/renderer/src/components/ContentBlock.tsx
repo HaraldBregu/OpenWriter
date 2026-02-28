@@ -261,7 +261,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     if (isEnhancing) return
     const text = block.content
     if (!text.trim()) return
-    if (typeof window.tasksManager?.submit !== 'function') return
+    if (typeof window.tasksManager.submit !== 'function') return
 
     setIsEnhancing(true)
 
