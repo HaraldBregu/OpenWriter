@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react'
+import { useBlockEnhancement } from '@/hooks/useBlockEnhancement'
 import { useTranslation } from 'react-i18next'
 import {
   Sparkles, Trash2, Plus, Copy, GripVertical,
