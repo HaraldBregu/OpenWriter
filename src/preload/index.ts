@@ -5,13 +5,16 @@ import {
     WindowChannels,
     WorkspaceChannels,
     TaskChannels,
+    AiAgentChannels,
 } from '../shared/types/ipc/channels'
 import type {
     AppApi,
     WindowApi,
     WorkspaceApi,
     TasksManagerApi,
+    AiAgentApi,
 } from './index.d'
+import type { AgentRequest, AgentSessionConfig } from '../shared/types/ipc/types'
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
