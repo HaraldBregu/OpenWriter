@@ -67,7 +67,7 @@ const {
 >({
   displayName: 'PersonalityTask',
   defaultProviderId: 'openai',
-  taskType: 'ai-chat',
+  taskType: 'ai-agent',
 
   buildSubmitInput: (
     _entityId,
