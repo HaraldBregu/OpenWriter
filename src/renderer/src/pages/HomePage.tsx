@@ -98,7 +98,7 @@ const RecentWritingItem = React.memo(function RecentWritingItem({
   const navigate = useNavigate()
 
   const handleClick = useCallback(() => {
-    navigate(`/new/writing/${entry.id}`)
+    navigate(`/content/${entry.id}`)
   }, [navigate, entry.id])
 
   return (
