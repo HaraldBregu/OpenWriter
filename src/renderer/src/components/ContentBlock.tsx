@@ -120,10 +120,14 @@ BubbleMenuButton.displayName = 'BubbleMenuButton'
 
 interface EditorBubbleMenuProps {
   editor: Editor | null
+  onEnhance: () => void
+  isEnhancing: boolean
 }
 
 const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
   editor,
+  onEnhance,
+  isEnhancing,
 }: EditorBubbleMenuProps): React.JSX.Element | null {
   if (!editor) return null
 
