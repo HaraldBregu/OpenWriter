@@ -28,7 +28,7 @@ export interface UseTaskResultReturn<TResult = unknown> {
 
 /**
  * useTaskResult — fetches the persisted result of a completed (or errored)
- * task via window.task.getResult(taskId). This is useful when:
+ * task via window.tasksManager.getResult(taskId). This is useful when:
  *  - A component mounts after the task has already completed
  *  - You need full TaskInfo metadata (completedAt, durationMs) beyond what
  *    the stream event provides
@@ -58,7 +58,7 @@ export function useTaskResult<TResult = unknown>(
   const fetch = useCallback(async (): Promise<void> => {
     if (!taskId) return
     if (fetchingRef.current) return
-    if (typeof window.task?.getResult !== 'function') {
+    if (typeof window.tasksManager?.getResult !== 'function') {
       setFetchStatus('error')
       setFetchError('Task API not available. Check main process registration.')
       return
@@ -69,7 +69,7 @@ export function useTaskResult<TResult = unknown>(
     setFetchError(null)
 
     try {
-      const ipcResult = await window.task.getResult(taskId)
+      const ipcResult = await window.tasksManager.getResult(taskId)
 
       if (!ipcResult.success) {
         setFetchStatus('error')

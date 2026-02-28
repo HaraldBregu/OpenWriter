@@ -3,7 +3,7 @@
  *
  * Testing strategy:
  *  - A real TaskStore is created for each test via TaskProvider.
- *  - window.task is mocked at the module boundary; the mock is reset after each test.
+ *  - window.tasksManager is mocked at the module boundary; the mock is reset after each test.
  *  - Tests cover: idle initial state, successful submit, event-driven status/progress
  *    updates, streaming, error scenarios (API unavailable, IPC failure, submit throws),
  *    cancel, and reset.
@@ -19,7 +19,7 @@ import { useTaskSubmit } from '../../../../src/renderer/src/hooks/useTaskSubmit'
 import type { TaskEvent } from '../../../../src/shared/types/ipc/types'
 
 // ---------------------------------------------------------------------------
-// window.task mock
+// window.tasksManager mock
 // ---------------------------------------------------------------------------
 
 type TaskEventCallback = (event: TaskEvent) => void
@@ -87,25 +87,24 @@ describe('useTaskSubmit — API unavailable', () => {
     delete (window as Window & { task?: unknown }).task
   })
 
-  it('sets error status when window.task is not available', async () => {
-    delete (window as Window & { task?: unknown }).task
+  it("sets error status when window.tasksManager is not available", async () => {
+    delete (window as Window & { task?: unknown }).task;
 
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
-    const { result } = renderHook(
-      () => useTaskSubmit('test-task', {}),
-      { wrapper: Wrapper }
-    )
+    const { result } = renderHook(() => useTaskSubmit("test-task", {}), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
-      await result.current.submit()
-    })
+      await result.current.submit();
+    });
 
-    expect(result.current.status).toBe('error')
-    expect(result.current.error).toContain('not available')
+    expect(result.current.status).toBe("error");
+    expect(result.current.error).toContain("not available");
 
-    consoleSpy.mockRestore()
-  })
+    consoleSpy.mockRestore();
+  });
 })
 
 describe('useTaskSubmit — successful submit', () => {
@@ -322,25 +321,24 @@ describe('useTaskSubmit — cancel', () => {
     delete (window as Window & { task?: unknown }).task
   })
 
-  it('calls window.task.cancel with the correct taskId', async () => {
-    const mock = buildTaskMock()
-    ;(window as Window & { task?: unknown }).task = mock
+  it("calls window.tasksManager.cancel with the correct taskId", async () => {
+    const mock = buildTaskMock();
+    (window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(
-      () => useTaskSubmit('test-task', {}),
-      { wrapper: Wrapper }
-    )
-
-    await act(async () => {
-      await result.current.submit()
-    })
+    const { result } = renderHook(() => useTaskSubmit("test-task", {}), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
-      await result.current.cancel()
-    })
+      await result.current.submit();
+    });
 
-    expect(mock.cancel).toHaveBeenCalledWith('task-001')
-  })
+    await act(async () => {
+      await result.current.cancel();
+    });
+
+    expect(mock.cancel).toHaveBeenCalledWith("task-001");
+  });
 
   it('is a no-op when no task has been submitted', async () => {
     const mock = buildTaskMock()

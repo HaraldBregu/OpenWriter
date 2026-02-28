@@ -65,7 +65,7 @@ const PAUSABLE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
  *    events are dropped between IPC round-trip and subscription setup
  *  - Cleans up its store subscription when the task reaches a terminal state
  *    or the component unmounts
- *  - Gracefully no-ops when window.task is unavailable (e.g. in tests)
+ *  - Gracefully no-ops when window.tasksManager is unavailable (e.g. in tests)
  *  - pause(), resume(), updatePriority() are best-effort: the main process
  *    emits the authoritative state change event
  *
@@ -145,9 +145,9 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const submit = useCallback(async (inputOverride?: TInput): Promise<string | null> => {
     if (runningRef.current) return null
 
-    if (typeof window.task?.submit !== 'function') {
+    if (typeof window.tasksManager?.submit !== 'function') {
       console.warn(
-        '[useTaskSubmit] window.task.submit is not available. ' +
+        '[useTaskSubmit] window.tasksManager.submit is not available. ' +
           'The main-process task IPC handlers have not been registered yet.'
       )
       setStatus('error')
@@ -168,7 +168,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     let resolvedTaskId: string
 
     try {
-      const ipcResult = await window.task.submit(type, inputOverride ?? input, options)
+      const ipcResult = await window.tasksManager.submit(type, inputOverride ?? input, options)
 
       if (!ipcResult.success) {
         runningRef.current = false
@@ -212,10 +212,10 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const cancel = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.task?.cancel !== 'function') return
+    if (typeof window.tasksManager?.cancel !== 'function') return
 
     try {
-      await window.task.cancel(id)
+      await window.tasksManager.cancel(id)
     } catch {
       // Best-effort — the cancelled event from the main process will update state.
     }
@@ -224,14 +224,14 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const pause = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.task?.pause !== 'function') return
+    if (typeof window.tasksManager?.pause !== 'function') return
 
     // Read the live store snapshot to avoid stale-closure status.
     const currentStatus = store.getTaskSnapshot(id)?.status
     if (!currentStatus || !PAUSABLE_STATUSES.has(currentStatus)) return
 
     try {
-      await window.task.pause(id)
+      await window.tasksManager.pause(id)
     } catch {
       // Best-effort — the paused event from the main process will update state.
     }
@@ -240,14 +240,14 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const resume = useCallback(async (): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.task?.resume !== 'function') return
+    if (typeof window.tasksManager?.resume !== 'function') return
 
     // Read the live store snapshot to avoid stale-closure status.
     const currentStatus = store.getTaskSnapshot(id)?.status
     if (currentStatus !== 'paused') return
 
     try {
-      await window.task.resume(id)
+      await window.tasksManager.resume(id)
     } catch {
       // Best-effort — the resumed event from the main process will update state.
     }
@@ -256,10 +256,10 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const updatePriority = useCallback(async (priority: TaskPriority): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.task?.updatePriority !== 'function') return
+    if (typeof window.tasksManager?.updatePriority !== 'function') return
 
     try {
-      await window.task.updatePriority(id, priority)
+      await window.tasksManager.updatePriority(id, priority)
     } catch {
       // Best-effort — the priority-changed event from the main process will update state.
     }

@@ -93,11 +93,11 @@ export function useTaskEvents(taskId?: string): UseTaskEventsReturn {
   useEffect(() => {
     if (taskId) return // task-scoped mode uses the store subscription above
 
-    if (typeof window.task?.onEvent !== 'function') return
+    if (typeof window.tasksManager?.onEvent !== 'function') return
 
     const MAX = 50
 
-    const unsub = window.task.onEvent((event: TaskEvent) => {
+    const unsub = window.tasksManager.onEvent((event: TaskEvent) => {
       const data = event.data as { taskId: string }
       const record: TaskEventRecord = {
         type: event.type,

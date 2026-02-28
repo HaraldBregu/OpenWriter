@@ -38,7 +38,7 @@ export interface UseTaskQueueReturn {
  *   - A task starts running and leaves the queue ('started' event)
  *   - A task is cancelled or errors ('cancelled'/'error' events)
  *
- * Also fetches aggregate TaskQueueStatus metrics on mount via window.task.queueStatus().
+ * Also fetches aggregate TaskQueueStatus metrics on mount via window.tasksManager.queueStatus().
  *
  * Usage:
  *   const { queuedTasks, queueStatus, isLoading } = useTaskQueue()
@@ -88,7 +88,7 @@ export function useTaskQueue(): UseTaskQueueReturn {
   const fetchRef = useRef<() => Promise<void>>(() => Promise.resolve())
 
   const refreshQueueStatus = useCallback(async (): Promise<void> => {
-    if (typeof window.task?.queueStatus !== 'function') {
+    if (typeof window.tasksManager?.queueStatus !== 'function') {
       setError('Task API not available. Check main process registration.')
       setIsLoading(false)
       return
@@ -98,7 +98,7 @@ export function useTaskQueue(): UseTaskQueueReturn {
     setError(null)
 
     try {
-      const ipcResult = await window.task.queueStatus()
+      const ipcResult = await window.tasksManager.queueStatus()
 
       if (!ipcResult.success) {
         setError(ipcResult.error.message)

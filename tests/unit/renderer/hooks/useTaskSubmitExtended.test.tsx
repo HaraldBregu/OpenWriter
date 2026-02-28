@@ -12,7 +12,7 @@ import { useTaskSubmit } from '../../../../src/renderer/src/hooks/useTaskSubmit'
 import type { TaskEvent } from '../../../../src/shared/types/ipc/types'
 
 // ---------------------------------------------------------------------------
-// window.task mock helpers
+// window.tasksManager mock helpers
 // ---------------------------------------------------------------------------
 
 type TaskEventCallback = (event: TaskEvent) => void
@@ -214,33 +214,33 @@ describe('useTaskSubmit — pause()', () => {
     delete (window as Window & { task?: unknown }).task
   })
 
-  it('calls window.task.pause with the taskId when running', async () => {
-    const { mock, result, taskId } = await submitTask()
+  it("calls window.tasksManager.pause with the taskId when running", async () => {
+    const { mock, result, taskId } = await submitTask();
 
     act(() => {
-      mock.emit({ type: 'started', data: { taskId } })
-    })
+      mock.emit({ type: "started", data: { taskId } });
+    });
 
     await act(async () => {
-      await result.current.pause()
-    })
+      await result.current.pause();
+    });
 
-    expect(mock.pause).toHaveBeenCalledWith(taskId)
-  })
+    expect(mock.pause).toHaveBeenCalledWith(taskId);
+  });
 
-  it('calls window.task.pause with the taskId when queued', async () => {
-    const { mock, result, taskId } = await submitTask()
+  it("calls window.tasksManager.pause with the taskId when queued", async () => {
+    const { mock, result, taskId } = await submitTask();
 
     act(() => {
-      mock.emit({ type: 'queued', data: { taskId, position: 1 } })
-    })
+      mock.emit({ type: "queued", data: { taskId, position: 1 } });
+    });
 
     await act(async () => {
-      await result.current.pause()
-    })
+      await result.current.pause();
+    });
 
-    expect(mock.pause).toHaveBeenCalledWith(taskId)
-  })
+    expect(mock.pause).toHaveBeenCalledWith(taskId);
+  });
 
   it('is a no-op when already paused', async () => {
     const { mock, result, taskId } = await submitTask()
@@ -293,19 +293,19 @@ describe('useTaskSubmit — resume()', () => {
     delete (window as Window & { task?: unknown }).task
   })
 
-  it('calls window.task.resume with the taskId when paused', async () => {
-    const { mock, result, taskId } = await submitTask()
+  it("calls window.tasksManager.resume with the taskId when paused", async () => {
+    const { mock, result, taskId } = await submitTask();
 
     act(() => {
-      mock.emit({ type: 'paused', data: { taskId } })
-    })
+      mock.emit({ type: "paused", data: { taskId } });
+    });
 
     await act(async () => {
-      await result.current.resume()
-    })
+      await result.current.resume();
+    });
 
-    expect(mock.resume).toHaveBeenCalledWith(taskId)
-  })
+    expect(mock.resume).toHaveBeenCalledWith(taskId);
+  });
 
   it('is a no-op when task is running (not paused)', async () => {
     const { mock, result, taskId } = await submitTask()
@@ -328,15 +328,15 @@ describe('useTaskSubmit — updatePriority()', () => {
     delete (window as Window & { task?: unknown }).task
   })
 
-  it('calls window.task.updatePriority with taskId and the given priority', async () => {
-    const { mock, result, taskId } = await submitTask()
+  it("calls window.tasksManager.updatePriority with taskId and the given priority", async () => {
+    const { mock, result, taskId } = await submitTask();
 
     await act(async () => {
-      await result.current.updatePriority('high')
-    })
+      await result.current.updatePriority("high");
+    });
 
-    expect(mock.updatePriority).toHaveBeenCalledWith(taskId, 'high')
-  })
+    expect(mock.updatePriority).toHaveBeenCalledWith(taskId, "high");
+  });
 
   it('is a no-op when no task has been submitted', async () => {
     const mock = buildTaskMock()

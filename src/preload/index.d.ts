@@ -186,7 +186,7 @@ export interface WorkspaceApi {
 }
 
 /** Background task queue */
-export interface TaskApi {
+export interface TasksManagerApi {
   submit: (type: string, input: unknown, options?: TaskSubmitPayload['options']) => Promise<IpcResult<{ taskId: string }>>
   cancel: (taskId: string) => Promise<IpcResult<boolean>>
   list: () => Promise<IpcResult<TaskInfo[]>>
@@ -212,6 +212,6 @@ declare global {
     win?: WindowApi
     workspace: WorkspaceApi
     /** Optional: not present in all window types */
-    task?: TaskApi
+    tasksManager?: TasksManagerApi
   }
 }

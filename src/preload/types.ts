@@ -16,4 +16,4 @@
 
 // Re-export the public window API types so preload internals can import
 // from a single location without reaching into index.d.ts directly.
-export type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d'
+export type { AppApi, WindowApi, WorkspaceApi, TasksManagerApi } from './index.d'

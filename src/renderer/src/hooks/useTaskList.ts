@@ -11,7 +11,7 @@ export type TaskFilter = (task: TaskInfo) => boolean
 export interface UseTaskListReturn {
   /** All tasks visible to this hook, optionally filtered. */
   tasks: TaskInfo[]
-  /** True while the initial window.task.list() call is in-flight. */
+  /** True while the initial window.tasksManager.list() call is in-flight. */
   isLoading: boolean
   /** Error from the initial list call, null otherwise. */
   error: string | null
@@ -26,7 +26,7 @@ export interface UseTaskListReturn {
  * filtering. Automatically updates whenever a TaskEvent mutates any task.
  *
  * On mount it fetches the current task list from the main process via
- * window.task.list() so the initial render is not empty. Subsequent updates
+ * window.tasksManager.list() so the initial render is not empty. Subsequent updates
  * are driven by TaskProvider's shared store — no extra IPC round-trips.
  *
  * @param filter Optional predicate to narrow the returned tasks list.
@@ -59,7 +59,7 @@ export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
 
   // Fetch the initial task list from the main process on mount.
   useEffect(() => {
-    if (typeof window.task?.list !== 'function') {
+    if (typeof window.tasksManager?.list !== 'function') {
       setIsLoading(false)
       setError('Task API not available. Check main process registration.')
       return
@@ -67,7 +67,7 @@ export function useTaskList(filter?: TaskFilter): UseTaskListReturn {
 
     let cancelled = false
 
-    window.task
+    window.tasksManager
       .list()
       .then((result) => {
         if (cancelled) return

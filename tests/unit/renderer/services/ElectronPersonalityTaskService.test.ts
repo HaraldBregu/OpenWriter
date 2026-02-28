@@ -2,25 +2,25 @@
  * Tests for ElectronPersonalityTaskService.
  *
  * Testing strategy:
- *   - The service accesses three global bridges: window.task, window.app,
+ *   - The service accesses three global bridges: window.tasksManager, window.app,
  *     and window.workspace. These are installed by tests/setup/renderer.ts
  *     with jest.fn() mocks. Individual tests configure mock return values.
  *   - The `assertBridge()` private method is exercised indirectly through the
- *     public API by removing window.task before the call.
- *   - window.task.cancel does NOT throw when window.task is undefined — the
- *     method has an explicit guard (`if (!window.task) return`). This is
+ *     public API by removing window.tasksManager before the call.
+ *   - window.tasksManager.cancel does NOT throw when window.tasksManager is undefined — the
+ *     method has an explicit guard (`if (!window.tasksManager) return`). This is
  *     documented as intentional: cancel is fire-and-forget.
  *   - The service file uses `import.meta.env` references only in context files
  *     that import it; the service itself does not use import.meta directly.
  *
  * Cases covered:
- *   - assertBridge(): throws when window.task is undefined
- *   - assertBridge(): does not throw when window.task is present
- *   - submitTask: delegates to window.task.submit with correct payload
+ *   - assertBridge(): throws when window.tasksManager is undefined
+ *   - assertBridge(): does not throw when window.tasksManager is present
+ *   - submitTask: delegates to window.tasksManager.submit with correct payload
  *   - submitTask: includes optional fields (modelId, temperature, maxTokens)
  *   - submitTask: omits optional fields when not provided
- *   - cancelTask: delegates to window.task.cancel when bridge is present
- *   - cancelTask: is a no-op when window.task is undefined (graceful)
+ *   - cancelTask: delegates to window.tasksManager.cancel when bridge is present
+ *   - cancelTask: is a no-op when window.tasksManager is undefined (graceful)
  *   - getModelSettings: delegates to window.app.getModelSettings
  *   - getModelSettings: returns null when window.app throws
  *   - savePersonality: delegates to window.workspace.personality.save
@@ -36,7 +36,7 @@ function createService() {
   return new ElectronPersonalityTaskService()
 }
 
-// Save a reference to the original window.task installed by renderer.ts setup.
+// Save a reference to the original window.tasksManager installed by renderer.ts setup.
 // Individual tests that need to remove it do so inside their own describe block.
 function removeTaskBridge() {
   Object.defineProperty(window, 'task', {
@@ -72,7 +72,7 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
     restoreTaskBridge()
   })
 
-  it('submitTask throws when window.task is undefined', async () => {
+  it('submitTask throws when window.tasksManager is undefined', async () => {
     const service = createService()
 
     await expect(
@@ -82,13 +82,13 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
         systemPrompt: 'sys',
         messages: []
       })
-    ).rejects.toThrow('[ElectronPersonalityTaskService] window.task is undefined.')
+    ).rejects.toThrow('[ElectronPersonalityTaskService] window.tasksManager is undefined.')
   })
 
-  it('cancelTask is a no-op (does not throw) when window.task is undefined', () => {
+  it('cancelTask is a no-op (does not throw) when window.tasksManager is undefined', () => {
     const service = createService()
 
-    // cancelTask has an explicit guard: `if (!window.task) return`
+    // cancelTask has an explicit guard: `if (!window.tasksManager) return`
     // This ensures fire-and-forget cancels never crash the UI.
     expect(() => service.cancelTask('any-task-id')).not.toThrow()
   })
@@ -100,13 +100,13 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
 
 describe('ElectronPersonalityTaskService — submitTask', () => {
   beforeEach(() => {
-    ;(window.task.submit as jest.Mock).mockResolvedValue({
+    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: true,
       data: { taskId: 'new-task' }
     })
   })
 
-  it('calls window.task.submit with the required fields', async () => {
+  it('calls window.tasksManager.submit with the required fields', async () => {
     const service = createService()
 
     await service.submitTask({
@@ -116,7 +116,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
       messages: [{ role: 'user', content: 'hello' }]
     })
 
-    expect(window.task.submit).toHaveBeenCalledWith(
+    expect(window.tasksManager.submit).toHaveBeenCalledWith(
       'ai-chat',
       expect.objectContaining({
         prompt: 'test prompt',
@@ -130,7 +130,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   it('includes modelId in the payload when provided', async () => {
     const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
     Object.defineProperty(window, 'task', {
-      value: { ...window.task, submit: submitMock },
+      value: { ...window.tasksManager, submit: submitMock },
       writable: true, configurable: true
     })
 
@@ -153,7 +153,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   it('omits modelId from the payload when not provided', async () => {
     const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
     Object.defineProperty(window, 'task', {
-      value: { ...window.task, submit: submitMock },
+      value: { ...window.tasksManager, submit: submitMock },
       writable: true, configurable: true
     })
 
@@ -173,7 +173,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   it('includes temperature in the payload when provided', async () => {
     const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
     Object.defineProperty(window, 'task', {
-      value: { ...window.task, submit: submitMock },
+      value: { ...window.tasksManager, submit: submitMock },
       writable: true, configurable: true
     })
 
@@ -196,7 +196,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   it('omits temperature from the payload when undefined', async () => {
     const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
     Object.defineProperty(window, 'task', {
-      value: { ...window.task, submit: submitMock },
+      value: { ...window.tasksManager, submit: submitMock },
       writable: true, configurable: true
     })
 
@@ -217,7 +217,7 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
   it('includes maxTokens in the payload when provided', async () => {
     const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
     Object.defineProperty(window, 'task', {
-      value: { ...window.task, submit: submitMock },
+      value: { ...window.tasksManager, submit: submitMock },
       writable: true, configurable: true
     })
 
@@ -237,8 +237,8 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
     )
   })
 
-  it('returns the result envelope from window.task.submit', async () => {
-    ;(window.task.submit as jest.Mock).mockResolvedValue({
+  it('returns the result envelope from window.tasksManager.submit', async () => {
+    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: true,
       data: { taskId: 'new-task' }
     })
@@ -255,8 +255,8 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
     expect(result).toEqual({ success: true, data: { taskId: 'new-task' } })
   })
 
-  it('forwards a failure result from window.task.submit unchanged', async () => {
-    ;(window.task.submit as jest.Mock).mockResolvedValue({
+  it('forwards a failure result from window.tasksManager.submit unchanged', async () => {
+    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: false,
       error: { message: 'Provider not configured' }
     })
@@ -279,11 +279,11 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
 // ---------------------------------------------------------------------------
 
 describe('ElectronPersonalityTaskService — cancelTask', () => {
-  it('calls window.task.cancel with the task ID', () => {
+  it('calls window.tasksManager.cancel with the task ID', () => {
     const service = createService()
     service.cancelTask('task-xyz')
 
-    expect(window.task.cancel).toHaveBeenCalledWith('task-xyz')
+    expect(window.tasksManager.cancel).toHaveBeenCalledWith('task-xyz')
   })
 })
 

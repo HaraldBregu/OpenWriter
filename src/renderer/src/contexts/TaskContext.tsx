@@ -275,7 +275,7 @@ interface TaskProviderProps {
 }
 
 /**
- * TaskProvider — mounts a single global window.task.onEvent listener and
+ * TaskProvider — mounts a single global window.tasksManager.onEvent listener and
  * broadcasts all incoming TaskEvents into the shared TaskStore. Components
  * that subscribe via useTaskSubmit / useTaskList / useTaskProgress / etc.
  * read from the same store and re-render only when their specific slice changes.
@@ -293,9 +293,9 @@ function TaskProvider({ children }: TaskProviderProps): React.JSX.Element {
 
   // Single global IPC listener — all task events are funnelled into the store.
   useEffect(() => {
-    if (typeof window.task?.onEvent !== 'function') return
+    if (typeof window.tasksManager?.onEvent !== 'function') return
 
-    const unsub = window.task.onEvent((event: TaskEvent) => {
+    const unsub = window.tasksManager.onEvent((event: TaskEvent) => {
       store.applyEvent(event)
     })
 

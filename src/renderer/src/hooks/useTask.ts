@@ -39,7 +39,7 @@ export interface UseTaskReturn {
  * It is kept only for backward compatibility and will be removed in a future release.
  *
  * useTask -- local-state hook for submitting and tracking background tasks
- * executed by the Electron main process via window.task.
+ * executed by the Electron main process via window.tasksManager.
  *
  * Responsibilities:
  *  - Submits tasks via IPC and tracks their lifecycle in a Map<string, TaskState>
@@ -177,9 +177,9 @@ export function useTask(): UseTaskReturn {
 
   // Subscribe to task events on mount, unsubscribe on unmount.
   useEffect(() => {
-    if (typeof window.task?.onEvent !== 'function') return
+    if (typeof window.tasksManager?.onEvent !== 'function') return
 
-    const unsub = window.task.onEvent(
+    const unsub = window.tasksManager.onEvent(
       (event: { type: string; data: unknown }) => {
         const typedEvent = { type: event.type, data: event.data as Record<string, unknown> }
         const taskId = typedEvent.data.taskId as string
@@ -207,9 +207,9 @@ export function useTask(): UseTaskReturn {
   const submitTask = useCallback(
     async (type: string, input: unknown, options?: TaskOptions): Promise<string | null> => {
       // Graceful fallback: task API not yet available.
-      if (typeof window.task?.submit !== 'function') {
+      if (typeof window.tasksManager?.submit !== 'function') {
         console.warn(
-          '[useTask] window.task.submit is not available. ' +
+          '[useTask] window.tasksManager.submit is not available. ' +
             'The main-process task IPC handlers have not been registered yet.'
         )
         return null
@@ -218,7 +218,7 @@ export function useTask(): UseTaskReturn {
       let taskId: string
 
       try {
-        const result = await window.task.submit(type, input, options)
+        const result = await window.tasksManager.submit(type, input, options)
 
         // taskSubmit returns an IpcResult envelope
         if (!result.success) {
@@ -258,10 +258,10 @@ export function useTask(): UseTaskReturn {
   )
 
   const cancelTask = useCallback(async (taskId: string): Promise<boolean> => {
-    if (typeof window.task?.cancel !== 'function') return false
+    if (typeof window.tasksManager?.cancel !== 'function') return false
 
     try {
-      const result = await window.task.cancel(taskId)
+      const result = await window.tasksManager.cancel(taskId)
       if (result.success) return result.data
     } catch {
       // Best-effort cancellation -- the task:event listener will pick up

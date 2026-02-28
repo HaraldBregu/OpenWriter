@@ -12,7 +12,7 @@ import type { EntityTaskIpcResult } from '@/services/IEntityTaskService'
  *
  * Delegates every call to the Electron IPC bridge exposed on `window`.
  * This is the only file in the renderer that is allowed to reference
- * window.task, window.app, and window.workspace directly.
+ * window.tasksManager, window.app, and window.workspace directly.
  *
  * DIP: PersonalityTaskContext imports IPersonalityTaskService, not this class.
  * App.tsx instantiates this class and passes it to PersonalityTaskProvider.
@@ -20,14 +20,14 @@ import type { EntityTaskIpcResult } from '@/services/IEntityTaskService'
 export class ElectronPersonalityTaskService implements IPersonalityTaskService {
   /**
    * Asserts that the Electron IPC bridge for the `task` namespace is available.
-   * window.task is injected by the preload script via contextBridge.exposeInMainWorld.
+   * window.tasksManager is injected by the preload script via contextBridge.exposeInMainWorld.
    * If it is undefined the renderer is running in a window that was opened without
    * the preload, or in a non-Electron environment (tests, storybook) without a mock.
    */
   private assertBridge(): void {
-    if (!window.task) {
+    if (!window.tasksManager) {
       throw new Error(
-        '[ElectronPersonalityTaskService] window.task is undefined. ' +
+        '[ElectronPersonalityTaskService] window.tasksManager is undefined. ' +
         'Ensure the BrowserWindow has the preload script configured, or ' +
         'inject a mock service via <PersonalityTaskProvider service={...}>.',
       )
@@ -48,13 +48,13 @@ export class ElectronPersonalityTaskService implements IPersonalityTaskService {
     if (input.temperature !== undefined) payload.temperature = input.temperature
     if (input.maxTokens) payload.maxTokens = input.maxTokens
 
-    // Non-null assertion is safe here: assertBridge() throws if window.task is undefined.
-    const result = await window.task!.submit('ai-chat', payload)
+    // Non-null assertion is safe here: assertBridge() throws if window.tasksManager is undefined.
+    const result = await window.tasksManager!.submit('ai-chat', payload)
     return result as EntityTaskIpcResult<PersonalitySubmitResult>
   }
 
   cancelTask(taskId: string): void {
-    window.task?.cancel(taskId)
+    window.tasksManager?.cancel(taskId)
   }
 
   async getModelSettings(providerId: string): Promise<{ selectedModel?: string } | null> {

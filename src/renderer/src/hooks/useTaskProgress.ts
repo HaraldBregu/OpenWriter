@@ -45,7 +45,7 @@ export function useTaskProgress(taskId: string): UseTaskProgressReturn {
   )
 
   const cancel = useCallback(async (): Promise<void> => {
-    if (typeof window.task?.cancel !== 'function') return
+    if (typeof window.tasksManager?.cancel !== 'function') return
 
     const snap = store.getTaskSnapshot(taskId)
     if (!snap || snap.status === 'completed' || snap.status === 'cancelled' || snap.status === 'error') {
@@ -53,7 +53,7 @@ export function useTaskProgress(taskId: string): UseTaskProgressReturn {
     }
 
     try {
-      await window.task.cancel(taskId)
+      await window.tasksManager.cancel(taskId)
     } catch {
       // Best-effort — the task:event listener will handle the cancelled status
       // when the main process confirms.

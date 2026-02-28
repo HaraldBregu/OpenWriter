@@ -6,7 +6,7 @@
  *   - PersonalityTaskProvider requires a <TaskProvider> ancestor (for the shared
  *     TaskStore). The wrapper below composes: Redux > TaskProvider > PersonalityTaskProvider.
  *   - Events (stream, complete, error, cancelled) are driven by calling
- *     sharedStore.applyEvent() directly — no window.task IPC is needed in tests.
+ *     sharedStore.applyEvent() directly — no window.tasksManager IPC is needed in tests.
  *   - A minimal Redux store wraps every render so that useAppDispatch() works.
  *
  * Cases covered:

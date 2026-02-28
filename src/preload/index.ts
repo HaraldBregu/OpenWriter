@@ -10,7 +10,7 @@ import type {
     AppApi,
     WindowApi,
     WorkspaceApi,
-    TaskApi,
+    TasksManagerApi,
 } from './index.d'
 
 // ---------------------------------------------------------------------------
@@ -390,7 +390,7 @@ const workspace: WorkspaceApi = {
 // ---------------------------------------------------------------------------
 // window.task — Background task queue
 // ---------------------------------------------------------------------------
-const task: TaskApi = {
+const tasksManager: TasksManagerApi = {
     submit: (type: string, input: unknown, options?: {
         priority?: 'low' | 'normal' | 'high'
         timeoutMs?: number
@@ -422,7 +422,7 @@ const task: TaskApi = {
     queueStatus: () => {
         return typedInvokeRaw(TaskChannels.queueStatus)
     }
-} satisfies TaskApi;
+} satisfies TasksManagerApi;
 
 // ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
@@ -432,7 +432,7 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('app', app)
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('workspace', workspace)
-        contextBridge.exposeInMainWorld('task', task)
+        contextBridge.exposeInMainWorld('tasksManager', tasksManager)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }
@@ -444,5 +444,5 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
-    globalThis.task = task
+    globalThis.tasksManager = tasksManager
 }
