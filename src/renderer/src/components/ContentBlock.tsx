@@ -661,11 +661,6 @@ export const ContentBlock = React.memo(function ContentBlock({
 
         {/* Content area — switches on block.type */}
         <div className="flex-1 min-w-0 flex flex-col gap-1">
-          {/* Block type switcher — shown on hover */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <BlockTypeMenu block={block} onChangeType={onChangeType} />
-          </div>
-
           {/*
             Each type renders its own sub-component. TextBlockEditor owns useEditor()
             so the hook is only ever called when the block is actually a text block,
