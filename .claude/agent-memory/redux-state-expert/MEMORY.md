@@ -33,7 +33,7 @@ interface Block {
 Block type is the single source of truth in `ContentBlock.tsx` — both `writingItemsSlice.ts` and `writingsSlice.ts` import it.
 
 ## AI Enhancement Architecture (post-refactor)
-- `usePageEnhancement` (in `useBlockEnhancement.ts`) is owned by `NewWritingPage`
+- `usePageEnhancement` (in `useBlockEnhancement.ts`) is owned by `ContentPage`
 - Parent holds `Map<blockId, MutableRefObject<Editor | null>>` via `editorRefsMapRef`
 - Each `ContentBlock` reports its editor via `onEditorReady(blockId, editor)` prop
 - `ContentBlock` calls `onEnhance(blockId)` — no AI logic inside ContentBlock
