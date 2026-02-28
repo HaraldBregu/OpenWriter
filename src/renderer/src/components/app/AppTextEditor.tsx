@@ -372,6 +372,7 @@ const AppTextEditor = React.memo(
         disabled={props.disabled}
         id={props.id}
         extensions={props.extensions}
+        streamingContent={props.streamingContent}
         forwardedRef={ref as React.Ref<HTMLDivElement>}
       />
     )
