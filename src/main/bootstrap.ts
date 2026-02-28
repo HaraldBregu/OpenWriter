@@ -124,6 +124,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new WorkspaceIpc(),
     new TasksManagerIpc(),
     new WindowIpc(),
+    new AIAgentsManagerIpc(),
   ]
 
   for (const module of ipcModules) {
