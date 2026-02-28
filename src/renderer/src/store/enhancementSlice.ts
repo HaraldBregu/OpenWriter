@@ -94,4 +94,24 @@ export const selectStreamingEntries = createSelector(
   (s): Record<string, string> => s.streamingEntries,
 )
 
+/**
+ * Per-block selector — returns true only when the given blockId is enhancing.
+ * Use inside ContentBlock so only that block re-renders on its own state change.
+ */
+export const selectIsBlockEnhancing = (blockId: string) =>
+  createSelector(
+    [selectEnhancementState],
+    (s): boolean => s.enhancingBlockIds.includes(blockId),
+  )
+
+/**
+ * Per-block selector — returns the live streaming content for a single block,
+ * or undefined when the block is not currently streaming.
+ */
+export const selectBlockStreamingContent = (blockId: string) =>
+  createSelector(
+    [selectEnhancementState],
+    (s): string | undefined => s.streamingEntries[blockId],
+  )
+
 export default enhancementSlice.reducer
