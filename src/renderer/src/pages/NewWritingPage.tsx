@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Download, Eye, Settings2, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
 import { Reorder } from 'framer-motion'
-import { type Editor } from '@tiptap/core'
 import {
   AppButton,
   AppDropdownMenu,
