@@ -297,6 +297,7 @@ export const ContentBlock = React.memo(function ContentBlock({
 
     originalTextRef.current = text
     setIsEnhancing(true)
+    initTaskContent(block.id, text)
 
     try {
       const result = await window.tasksManager.submit('ai-enhance', { text }, { taskId: block.id })
