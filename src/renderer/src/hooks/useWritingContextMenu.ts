@@ -92,7 +92,7 @@ export function useWritingContextMenu(entries: WritingEntry[]): void {
         }
 
         case 'rename':
-          navigate(`/new/writing/${writingId}`)
+          navigate(`/content/${writingId}`)
           break
 
         case 'delete': {
