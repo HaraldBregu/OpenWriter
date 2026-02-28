@@ -244,6 +244,6 @@ declare global {
     /** Optional: not present in all window types */
     tasksManager?: TasksManagerApi
     /** Optional: not present in all window types */
-    aiAgent?: AiAgentApi
+    aiAgent?: AIAgentsManagerApi
   }
 }
