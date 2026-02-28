@@ -201,6 +201,15 @@
 - Helper functions that format labels must accept `t` as a parameter (e.g. `statusLabel(s, t)`)
 - Sub-components inside pages each call `useTranslation()` independently (React memo boundary is fine)
 
+## Enhancement Architecture (navigation-surviving AI streaming, Feb 2026)
+- See `enhancement-architecture.md` for full details.
+- `enhancementSlice.ts`: `{ enhancingBlockIds: string[], streamingEntries: Record<string,string> }` — actions: `markEnhancing`, `updateStreamingEntry`, `clearEnhancingBlock`
+- `EnhancementContext.tsx`: app-root provider (inside `<Provider>` + `<TaskProvider>`, outside router). Exposes `startEnhancement({ blockId, entryId, text })`. Never unmounts so tasks survive navigation.
+- `useBlockEnhancement.ts` (`usePageEnhancement`): reads Redux state, converts to Set/Map, delegates to `startEnhancement`. Takes `{ entryId }` (NOT `onChangeRef`/`getBlockContent`).
+- `ContentPage.tsx`: passes `entryId: id ?? ''` to `usePageEnhancement`; removed `onChangeRef`/`blocksRef`/`getBlockContent` refs.
+- Store key: `enhancement` in `src/renderer/src/store/index.ts`.
+- Provider order in `App.tsx`: `<Provider> → <TaskProvider> → <EnhancementProvider> → <Router>`.
+
 ## Jest / Transform Gotchas (Windows, added Feb 2026)
 - `import.meta.env` FAILS in Jest for renderer context files — DO NOT use it inside `createEntityTaskContext()` config callbacks or module-level. Use string literals as final fallbacks.
 - `store/index.ts` imported missing `chatSlice` — created stub at `src/renderer/src/store/chatSlice.ts`
