@@ -57,8 +57,6 @@ export interface ContentBlockProps {
   onChangeType: (id: string, type: BlockType, level?: Block['level']) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
-  /** Writing entry UUID — used by the internal useBlockEnhancement hook. */
-  entryId: string
   placeholder?: string
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
