@@ -156,6 +156,8 @@ interface TipTapAdapterProps {
   /** Already-merged extension list; must be a stable reference. */
   extensions: AnyExtension[]
   forwardedRef: React.Ref<HTMLDivElement>
+  /** When set, this content is shown in the editor instead of `value` and does not trigger `onChange`. */
+  streamingContent: string | undefined
 }
 
 function TipTapAdapter({
