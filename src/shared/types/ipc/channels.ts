@@ -37,16 +37,14 @@ import type {
   SectionConfigChangeEvent,
   WritingContextMenuAction,
   WatcherError,
-} from './types'
-import type {
   AgentSessionConfig,
   AgentRequest,
   AgentStreamEvent,
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-} from '../../../main/aiAgentsManager/AIAgentsManagerTypes'
-import type { AIAgentsDefinitionInfo } from '../../../main/aiAgentsManager/AIAgentsDefinition'
+  AIAgentsDefinitionInfo,
+} from './types'
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
