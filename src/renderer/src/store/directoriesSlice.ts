@@ -12,7 +12,7 @@ export interface IndexedDirectory {
   lastIndexedAt?: number
 }
 
-interface DirectoriesState {
+export interface DirectoriesState {
   directories: IndexedDirectory[]
   isLoading: boolean
   error: string | null
