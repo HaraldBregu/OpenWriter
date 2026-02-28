@@ -11,6 +11,10 @@ import { BubbleMenu } from '@tiptap/react/menus'
 import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
+import ListItem from '@tiptap/extension-list-item'
+import ListKeymap from '@tiptap/extension-list-keymap'
 import { AppButton } from '@/components/app'
 import {
   AppTooltip,
