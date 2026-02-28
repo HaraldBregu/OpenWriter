@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { createBlock, type Block } from '@/components/ContentBlock'
+import { createBlock, type Block } from '@/components/block.types'
 import {
   selectWritingEntryById,
   setWritingItemId,
