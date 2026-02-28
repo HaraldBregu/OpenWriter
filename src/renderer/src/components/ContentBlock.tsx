@@ -63,48 +63,45 @@ export const ContentBlock = React.memo(function ContentBlock({
   const [isEnhancing, setIsEnhancing] = useState(false)
   const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
   const originalTextRef = useRef<string>('')
+  const accumulatedAiContentRef = useRef<string>('')
 
   // Single permanent subscription tied to block.id.
-  // Handles recovery on mount (task already running) and all future task events.
+  // Receives all IPC task events and filters to those matching this block's taskId.
   useEffect(() => {
-    // Recovery: task was already running before this component mounted.
-    const existing = getTaskSnapshot(block.id)
-    if (existing) {
-      if (existing.status === 'running' || existing.status === 'queued') {
-        originalTextRef.current = block.content
-        setStreamingContent(existing.content ?? '')
-        setIsEnhancing(true)
-      } else if (existing.status === 'completed' && existing.content) {
-        // Task finished before this mount — commit the final content immediately.
-        dispatch(updateBlockContent({ entryId, blockId: block.id, content: existing.content }))
-      }
-    }
+    if (typeof window.tasksManager?.onEvent !== 'function') return
 
-    const unsub = subscribeToTask(block.id, (snap) => {
-      if (snap.status === 'running' && snap.streamedContent) {
-        // New token arrived — snap.content is the full accumulated text.
-        setStreamingContent(snap.content)
-      } else if (snap.status === 'completed') {
-        dispatch(updateBlockContent({ entryId, blockId: block.id, content: snap.content ?? '' }))
-        setStreamingContent(undefined)
-        setIsEnhancing(false)
-      } else if (snap.status === 'error' || snap.status === 'cancelled') {
-        setStreamingContent(undefined)
-        setIsEnhancing(false)
+    const unsub = window.tasksManager.onEvent((event) => {
+      const data = event.data as { taskId?: string }
+      if (data?.taskId !== block.id) return
+
+      switch (event.type) {
+        case 'stream': {
+          const sd = event.data as { token: string; content: string }
+          accumulatedAiContentRef.current = sd.content
+          setStreamingContent(originalTextRef.current + sd.content)
+          break
+        }
+        case 'completed': {
+          const finalContent = originalTextRef.current + accumulatedAiContentRef.current
+          dispatch(updateBlockContent({ entryId, blockId: block.id, content: finalContent }))
+          accumulatedAiContentRef.current = ''
+          setStreamingContent(undefined)
+          setIsEnhancing(false)
+          break
+        }
+        case 'error':
+        case 'cancelled':
+          accumulatedAiContentRef.current = ''
+          setStreamingContent(undefined)
+          setIsEnhancing(false)
+          break
       }
     })
 
     return unsub
-  // block.content intentionally omitted — captured once into originalTextRef on submit/recovery
+  // block.content intentionally omitted — captured once into originalTextRef on submit
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [block.id, dispatch, entryId])
-
-useEffect(() => {
-  const unsub = window.tasksManager.onEvent((event) => {  
-    console.log('[ContentBlock] Received task event:', event.data)  
-  })
-  return unsub
-}, [])
 
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
