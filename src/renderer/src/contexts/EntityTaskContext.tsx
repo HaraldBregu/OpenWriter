@@ -207,7 +207,7 @@ export interface EntityTaskContextConfig<
   ) => TSubmitInput
 
   /**
-   * The task type string forwarded to the shared TaskStore (e.g. 'ai-chat').
+   * The task type string forwarded to the shared TaskStore (e.g. 'ai-agent').
    * Must match what the main process registers as a task handler.
    */
   taskType?: string
