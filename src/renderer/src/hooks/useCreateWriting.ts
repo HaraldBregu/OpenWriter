@@ -122,6 +122,7 @@ export function useCreateWriting(options: UseCreateWritingOptions = {}): UseCrea
           blocks: [
             {
               id: crypto.randomUUID(),
+              type: 'text',
               content: '',
               createdAt: savedAtIso,
               updatedAt: savedAtIso,
