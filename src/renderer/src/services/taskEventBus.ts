@@ -51,7 +51,7 @@ function ensureListening(): void {
     if (!taskId) return
 
     // Build or update snapshot for this task.
-    const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '' }
+    const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '', seedContent: '' }
     let next: TaskSnapshot
 
     switch (event.type) {
