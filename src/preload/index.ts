@@ -428,9 +428,9 @@ const tasksManager: TasksManagerApi = {
 } satisfies TasksManagerApi;
 
 // ---------------------------------------------------------------------------
-// window.aiAgent — AIAgentsManager session/run management + streaming events
+// window.agentManager — AIAgentsManager session/run management + streaming events
 // ---------------------------------------------------------------------------
-const aiAgent: AIAgentsManagerAPI = {
+const agentManager: AgentManagerAPI = {
     listAgents: () => {
         return typedInvokeRaw(AiAgentChannels.listAgents)
     },
