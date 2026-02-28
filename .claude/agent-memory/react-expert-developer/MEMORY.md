@@ -79,10 +79,15 @@
 - Block `id` is used as the block file name (name field in save/update calls)
 
 ## Block Architecture (updated Feb 2026)
-- `Block` interface (`src/renderer/src/components/ContentBlock.tsx`): `{ id, content, createdAt, updatedAt }` (ISO 8601 timestamps)
-- `createBlock()` factory stamps both timestamps on creation
+- `Block` interface (`src/renderer/src/components/ContentBlock.tsx`): `{ id, type: 'paragraph', content, createdAt, updatedAt }` — only paragraph type exists; `level`, `mediaSrc`, `mediaAlt` have been removed
+- `BlockType = 'paragraph'` only — heading and media block types have been fully removed
+- `createBlock()` factory takes no arguments (always creates a paragraph block)
+- `ContentBlockProps` has no `onChangeMedia` or `onChangeType` — those callbacks are gone
+- `ContentBlock` always renders `<AppTextEditor type="PARAGRAPH">` and always shows the AI enhance button
 - On handleChange in pages, callers stamp `updatedAt: new Date().toISOString()` before dispatching
 - Blocks are serialized per-block via `window.workspace.saveOutput/updateOutput` — block `id` becomes the file `name`
+- `serializeBlocksForOutput` in `useContentEditor.ts` is now lean — only `{ name, content, createdAt, updatedAt }` (no blockType/blockLevel/mediaSrc/mediaAlt)
+- `OutputFileBlock` and `SaveOutputInput`/`OutputUpdateParams` in `shared/types/ipc/types.ts` also stripped of heading/media fields
 
 ## Component Library
 - App components barrel: `@/components/app` — `AppButton`, `AppTextarea`, `AppInput`, `AppLabel`, `AppSelect*`, `AppDropdownMenu*`, `AppSwitch`, `AppRadioGroup`, `AppRadioGroupItem`, etc.
