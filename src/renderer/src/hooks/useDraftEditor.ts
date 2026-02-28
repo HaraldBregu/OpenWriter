@@ -421,6 +421,60 @@ export function useDraftEditor(
     setFocusBlockId(newBlock.id)
   }, [isDraft, entry, dispatch])
 
+  const handleChangeBlockType = useCallback(
+    (blockId: string, type: BlockType, level?: Block['level']) => {
+      const now = new Date().toISOString()
+      const applyToBlock = (b: Block): Block => {
+        if (b.id !== blockId) return b
+        const updated: Block = { ...b, type, updatedAt: now }
+        // Carry heading level when switching to 'heading'; clear it otherwise.
+        if (type === 'heading') {
+          updated.level = level ?? 1
+        } else {
+          delete updated.level
+        }
+        // Clear media fields when switching away from 'media'.
+        if (type !== 'media') {
+          delete updated.mediaSrc
+          delete updated.mediaAlt
+        }
+        return updated
+      }
+
+      if (isDraft) {
+        setDraftBlocks((prev) => prev.map(applyToBlock))
+      } else if (entry) {
+        dispatch(
+          updateEntryBlocks({
+            entryId: entry.id,
+            blocks: entry.blocks.map(applyToBlock),
+          })
+        )
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
+
+  const handleChangeMedia = useCallback(
+    (blockId: string, mediaSrc: string, mediaAlt: string) => {
+      const now = new Date().toISOString()
+      const applyToBlock = (b: Block): Block =>
+        b.id === blockId ? { ...b, mediaSrc, mediaAlt, updatedAt: now } : b
+
+      if (isDraft) {
+        setDraftBlocks((prev) => prev.map(applyToBlock))
+      } else if (entry) {
+        dispatch(
+          updateEntryBlocks({
+            entryId: entry.id,
+            blocks: entry.blocks.map(applyToBlock),
+          })
+        )
+      }
+    },
+    [isDraft, entry, dispatch]
+  )
+
   const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
     setAiSettings(next)
   }, [])
