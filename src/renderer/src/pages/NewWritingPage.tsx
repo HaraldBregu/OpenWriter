@@ -146,7 +146,7 @@ const ContentPage: React.FC = () => {
                       try {
                         await window.workspace.deleteOutput({ type: 'writings', id: writingItemId })
                       } catch (err) {
-                        console.error('[NewWritingPage] Failed to delete writing item from disk:', err)
+                        console.error('[ContentPage] Failed to delete writing item from disk:', err)
                       }
                     }
                     dispatch(removeEntry(id))
