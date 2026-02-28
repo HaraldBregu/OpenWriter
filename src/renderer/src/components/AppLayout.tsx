@@ -320,7 +320,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                               }
                             >
                               <Link
-                                to={`/new/writing/${writing.id}`}
+                                to={`/content/${writing.id}`}
                                 className="ml-0"
                               >
                                 <FileText className="h-3.5 w-3.5 shrink-0" />
