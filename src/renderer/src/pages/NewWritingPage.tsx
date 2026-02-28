@@ -194,6 +194,7 @@ const NewWritingPage: React.FC = () => {
                   onAdd={handleAddBlockAfter}
                   onEnhance={handleEnhance}
                   isEnhancing={enhancingBlockId === block.id}
+                  streamingContent={streamingEntry?.blockId === block.id ? streamingEntry.content : undefined}
                   placeholder={t('writing.startWriting')}
                   autoFocus={focusBlockId === block.id}
                 />
