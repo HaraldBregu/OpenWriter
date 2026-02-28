@@ -23,7 +23,7 @@ import { usePageEnhancement } from '@/hooks/useBlockEnhancement'
 // Page
 // ---------------------------------------------------------------------------
 
-const NewWritingPage: React.FC = () => {
+const ContentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
