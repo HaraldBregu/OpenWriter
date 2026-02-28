@@ -57,4 +57,4 @@ useEffect(() => {
 3. Break circular import in postsSlice/writingsSlice via RTK `createListenerMiddleware` (medium risk)
 4. Split AppContext (422 lines) into 5 focused contexts (medium risk, many consumers)
 5. Move IPC calls in PersonalityTaskContext behind injected service interface (high risk, deferred)
-6. Deduplicate NewPostPage/NewWritingPage via shared hook or base (medium)
+6. Deduplicate NewPostPage/ContentPage via shared hook or base (medium)
