@@ -49,25 +49,31 @@ function formatRelativeTime(timestamp: number, t: TFunction): string {
 // Sub-components
 // ---------------------------------------------------------------------------
 
+interface CategoryCardProps {
+  icon: React.ElementType
+  labelKey: string
+  descriptionKey: string
+  accent: string
+  onClick: () => void
+  disabled?: boolean
+}
+
 const CategoryCard = React.memo(function CategoryCard({
   icon: Icon,
   labelKey,
   descriptionKey,
-  route,
   accent,
-}: (typeof categoryDefs)[number]) {
+  onClick,
+  disabled,
+}: CategoryCardProps) {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-
-  const handleClick = useCallback(() => {
-    navigate(route)
-  }, [navigate, route])
 
   return (
     <button
       type="button"
-      onClick={handleClick}
-      className="group flex flex-col gap-3 rounded-xl border border-border bg-background p-5 hover:border-border/80 hover:shadow-sm transition-all text-left"
+      onClick={onClick}
+      disabled={disabled}
+      className="group flex flex-col gap-3 rounded-xl border border-border bg-background p-5 hover:border-border/80 hover:shadow-sm transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
         <Icon className="h-4 w-4" />
