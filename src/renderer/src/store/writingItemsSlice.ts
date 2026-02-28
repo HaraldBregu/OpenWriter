@@ -188,6 +188,25 @@ export const writingItemsSlice = createSlice({
     },
 
     /**
+     * Update the content of a single block within an entry.
+     * Used by EnhancementContext to commit the final streamed result (or a
+     * revert) without replacing the entire blocks array.
+     */
+    updateBlockContent(
+      state,
+      action: PayloadAction<{ entryId: string; blockId: string; content: string }>
+    ) {
+      const { entryId, blockId, content } = action.payload
+      const entry = state.entries.find((e) => e.id === entryId)
+      if (!entry) return
+      const block = entry.blocks.find((b) => b.id === blockId)
+      if (!block) return
+      block.content = content
+      block.updatedAt = new Date().toISOString()
+      entry.updatedAt = new Date().toISOString()
+    },
+
+    /**
      * Remove a single entry by its client-side id.
      */
     removeEntry(state, action: PayloadAction<string>) {
