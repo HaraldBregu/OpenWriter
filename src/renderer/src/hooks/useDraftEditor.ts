@@ -64,12 +64,27 @@ export interface UseDraftEditorReturn {
  */
 function serializeBlocksForOutput(
   blocks: Block[]
-): Array<{ name: string; content: string; createdAt: string; updatedAt: string }> {
+): Array<{
+  name: string
+  content: string
+  createdAt: string
+  updatedAt: string
+  blockType?: Block['type']
+  blockLevel?: Block['level']
+  mediaSrc?: string
+  mediaAlt?: string
+}> {
   return blocks.map((b) => ({
     name: b.id,
     content: b.content,
     createdAt: b.createdAt,
     updatedAt: b.updatedAt,
+    // Only serialize optional fields when they carry meaningful values so the
+    // output stays lean for standard 'text' blocks.
+    ...(b.type !== 'text' ? { blockType: b.type } : {}),
+    ...(b.level !== undefined ? { blockLevel: b.level } : {}),
+    ...(b.mediaSrc !== undefined ? { mediaSrc: b.mediaSrc } : {}),
+    ...(b.mediaAlt !== undefined ? { mediaAlt: b.mediaAlt } : {}),
   }))
 }
 
