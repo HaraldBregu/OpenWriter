@@ -6,7 +6,8 @@ import {
   Heading1, Heading2, List, ListOrdered, Quote,
 } from 'lucide-react'
 import { Reorder, useDragControls } from 'framer-motion'
-import { useEditor, EditorContent, BubbleMenu, type UseEditorOptions } from '@tiptap/react'
+import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
 import { type Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
