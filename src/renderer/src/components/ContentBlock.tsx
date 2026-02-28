@@ -9,27 +9,7 @@ import {
 import { Reorder, useDragControls } from 'framer-motion'
 import { AppButton } from '@/components/app'
 import { AppTextEditor } from '@/components/app/AppTextEditor'
-import type { Block } from '@/components/block.types'
-
-export type { BlockType, Block } from '@/components/block.types'
-
-export interface ContentBlockProps {
-  block: Block
-  isOnly: boolean
-  isLast?: boolean
-  /** Called when block rich-text content changes. */
-  onChange: (id: string, content: string) => void
-  onDelete: (id: string) => void
-  onAdd?: (afterId: string) => void
-  /** Writing entry UUID — used to commit enhanced content to the correct Redux entry. */
-  entryId: string
-  placeholder?: string
-  /** When true the editor will grab focus immediately after mount. */
-  autoFocus?: boolean
-  /** @deprecated TipTap is now managed internally by AppTextEditor. This prop is ignored. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onEditorReady?: (blockId: string, editor: any) => void
-}
+import type { Block, ContentBlockProps } from '@/components/block.types'
 
 // ---------------------------------------------------------------------------
 // ActionButton
