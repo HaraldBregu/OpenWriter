@@ -262,15 +262,19 @@ export const ContentBlock = React.memo(function ContentBlock({
   useEffect(() => {
     // Recovery: task was already running before this component mounted.
     const existing = getTaskSnapshot(block.id)
-    if (existing && (existing.status === 'running' || existing.status === 'queued')) {
-      originalTextRef.current = block.content
-      setStreamingContent(existing.content ?? '')
-      setIsEnhancing(true)
+    if (existing) {
+      if (existing.status === 'running' || existing.status === 'queued') {
+        originalTextRef.current = block.content
+        setStreamingContent(existing.content ?? '')
+        setIsEnhancing(true)
+      } else if (existing.status === 'completed' && existing.content) {
+        // Task finished before this mount — commit the final content immediately.
+        dispatch(updateBlockContent({ entryId, blockId: block.id, content: existing.content }))
+      }
     }
 
     const unsub = subscribeToTask(block.id, (snap) => {
       if (snap.content) {
-        console.log('Received streamed content update for block', block.id, snap.streamedContent)
         setStreamingContent(snap.content)
       }
       if (snap.status === 'completed') {
