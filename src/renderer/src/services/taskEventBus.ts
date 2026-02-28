@@ -65,13 +65,13 @@ function ensureListening(): void {
         next = { ...prev, status: 'running' }
         break
       case 'stream': {
-        const sd = event.data as { token?: string }
+        const sd = event.data as { token?: string; content?: string }
         const token = sd.token ?? ''
         next = {
           ...prev,
           status: 'running',
           streamedContent: token,
-          content: (prev.content ?? '') + token,
+          content: (prev.seedContent ?? '') + (sd.content ?? (prev.content + token)),
         }
         break
       }
