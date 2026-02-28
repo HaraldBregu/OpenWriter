@@ -68,7 +68,6 @@ export interface ParagraphEditorProps extends BaseEditorProps {
    */
   extensions?: AnyExtension[]
   headingLevel?: never
-  onHeadingLevelChange?: never
 }
 
 /** Discriminated union covering all supported editor variants. */
