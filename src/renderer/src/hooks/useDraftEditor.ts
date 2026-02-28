@@ -497,6 +497,8 @@ export function useDraftEditor(
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
+    handleChangeBlockType,
+    handleChangeMedia,
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
