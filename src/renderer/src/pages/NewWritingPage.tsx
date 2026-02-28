@@ -52,43 +52,26 @@ const NewWritingPage: React.FC = () => {
   // ---------------------------------------------------------------------------
   // AI Enhancement — owned at page level
   //
-  // Each ContentBlock registers its TipTap editor via onEditorReady(blockId, editor).
-  // These refs are stored in a Map and passed to usePageEnhancement so the hook
-  // can locate the correct editor when handleEnhance(blockId) is invoked.
+  // Content is streamed back through onChangeRef → Redux state → block.content
+  // prop → AppTextEditor value → TipTap internal sync. No direct editor refs needed.
   // ---------------------------------------------------------------------------
-
-  // Map of blockId -> MutableRefObject<Editor | null>
-  // Using a ref-of-Map to keep identity stable across renders.
-  const editorRefsMapRef = useRef<Map<string, React.MutableRefObject<Editor | null>>>(new Map())
 
   const onChangeRef = useRef(handleChange)
   onChangeRef.current = handleChange
 
+  // Stable ref to a lookup function so usePageEnhancement can snapshot the
+  // current block content without receiving blocks as a prop.
+  const blocksRef = useRef(blocks)
+  blocksRef.current = blocks
+
+  const getBlockContent = useRef((blockId: string) =>
+    blocksRef.current.find((b) => b.id === blockId)?.content ?? '',
+  )
+
   const { enhancingBlockId, handleEnhance } = usePageEnhancement({
     onChangeRef,
-    editorRefs: editorRefsMapRef,
+    getBlockContent,
   })
-
-  /**
-   * Called by each ContentBlock once its TipTap editor is created (or destroyed).
-   * We store a MutableRefObject keyed by blockId so the enhancement hook can
-   * imperatively read/write the editor without triggering re-renders.
-   */
-  const handleEditorReady = useCallback((blockId: string, editor: Editor | null) => {
-    const map = editorRefsMapRef.current
-    if (editor) {
-      // Upsert: reuse the existing ref object so consumers never see a new reference.
-      const existing = map.get(blockId)
-      if (existing) {
-        existing.current = editor
-      } else {
-        map.set(blockId, { current: editor })
-      }
-    } else {
-      // Editor destroyed — remove from map (block deleted or type changed).
-      map.delete(blockId)
-    }
-  }, [])
 
   // ---------------------------------------------------------------------------
   // Derived stats
