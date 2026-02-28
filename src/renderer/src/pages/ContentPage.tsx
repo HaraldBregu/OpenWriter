@@ -47,7 +47,7 @@ const ContentPage: React.FC = () => {
     aiSettings,
     handleAiSettingsChange,
     focusBlockId,
-  } = useDraftEditor(id, '/new/writing')
+  } = useDraftEditor(id, '/content')
 
   // ---------------------------------------------------------------------------
   // AI Enhancement — owned at page level
