@@ -218,6 +218,18 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
           >
             <Quote className="h-3.5 w-3.5" />
           </BubbleMenuButton>
+
+          {/* Separator */}
+          <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
+
+          {/* Enhance with AI */}
+          <BubbleMenuButton
+            tooltip="Enhance with AI"
+            isActive={isEnhancing}
+            onClick={onEnhance}
+          >
+            <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
+          </BubbleMenuButton>
         </div>
       </AppTooltipProvider>
     </BubbleMenu>
