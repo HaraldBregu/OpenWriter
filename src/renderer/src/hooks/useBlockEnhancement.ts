@@ -77,6 +77,7 @@ export function usePageEnhancement({
   getBlockContent,
 }: UsePageEnhancementOptions): UsePageEnhancementReturn {
   const [enhancingBlockId, setEnhancingBlockId] = useState<string | null>(null)
+  const [streamingEntry, setStreamingEntry] = useState<{ blockId: string; content: string } | null>(null)
 
   // Snapshot of content before enhance started — used to revert on error/cancel.
   const originalTextRef = useRef<string>('')

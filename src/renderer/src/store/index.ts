@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
-import chatReducer from './chatSlice'
 import workspaceReducer from './workspaceSlice'
 import directoriesReducer from './directoriesSlice'
 import personalityFilesReducer from './personalityFilesSlice'
