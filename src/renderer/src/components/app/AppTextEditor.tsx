@@ -54,10 +54,8 @@ interface BaseEditorProps {
 
 export interface HeadingEditorProps extends BaseEditorProps {
   type: 'HEADING'
-  /** Heading level shown in the level selector. Defaults to `1`. */
+  /** Controls the font size/weight of the heading input. Defaults to `1`. */
   headingLevel?: HeadingLevel
-  /** Called when the user picks a different heading level. */
-  onHeadingLevelChange?: (level: HeadingLevel) => void
   extensions?: never
 }
 
