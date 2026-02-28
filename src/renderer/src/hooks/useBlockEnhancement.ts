@@ -102,7 +102,11 @@ export function usePageEnhancement({
   }, [enhancingBlockId])
 
   // ---------------------------------------------------------------------------
-  // Stream tokens → Redux state → AppTextEditor value prop
+  // Stream tokens → local state → AppTextEditor streamingContent prop
+  //
+  // Tokens are written to local React state (streamingEntry) only, NOT to Redux.
+  // This means only the affected ContentBlock re-renders on each token, keeping
+  // the rest of the application fully interactive during enhancement.
   // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!enhancingBlockId) return
@@ -112,8 +116,8 @@ export function usePageEnhancement({
     lastStreamLengthRef.current = streamedContent.length
 
     streamBufferRef.current += newTokens
-    onChangeRef.current(enhancingBlockId, streamBufferRef.current)
-  }, [streamedContent, enhancingBlockId, onChangeRef])
+    setStreamingEntry({ blockId: enhancingBlockId, content: streamBufferRef.current })
+  }, [streamedContent, enhancingBlockId])
 
   // ---------------------------------------------------------------------------
   // React to task lifecycle transitions
