@@ -100,6 +100,12 @@ export const ContentBlock = React.memo(function ContentBlock({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [block.id, dispatch, entryId])
 
+useEffect(() => {
+  window.tasksManager.onEvent((event) => {  
+    console.log('[ContentBlock] Received task event:', event.data)  
+  })
+}, [])
+
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return
     const text = block.content
