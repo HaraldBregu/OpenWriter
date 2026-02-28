@@ -163,14 +163,6 @@ const EditorBubbleMenu = React.memo(function EditorBubbleMenu({
             <Strikethrough className="h-3.5 w-3.5" />
           </BubbleMenuButton>
 
-          <BubbleMenuButton
-            tooltip="Inline Code"
-            isActive={editor.isActive('code')}
-            onClick={() => editor.chain().focus().toggleCode().run()}
-          >
-            <Code className="h-3.5 w-3.5" />
-          </BubbleMenuButton>
-
           {/* Separator */}
           <div className="w-px h-4 bg-border mx-0.5 shrink-0" aria-hidden="true" />
 
