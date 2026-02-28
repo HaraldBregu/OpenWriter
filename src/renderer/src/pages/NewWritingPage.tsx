@@ -251,4 +251,4 @@ const ContentPage: React.FC = () => {
   )
 }
 
-export default NewWritingPage
+export default ContentPage
