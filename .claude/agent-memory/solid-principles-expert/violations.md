@@ -24,10 +24,10 @@ Responsibilities mixed together:
 
 ---
 
-### 2. NewPostPage.tsx / NewWritingPage.tsx — Duplicated Responsibilities
+### 2. NewPostPage.tsx / ContentPage.tsx — Duplicated Responsibilities
 **Files**:
 - `src/renderer/src/pages/NewPostPage.tsx` (437 lines)
-- `src/renderer/src/pages/NewWritingPage.tsx` (446 lines)
+- `src/renderer/src/pages/ContentPage.tsx` (446 lines)
 
 These two files are structurally identical:
 - Draft mode management (lines 44–82 in each)
