@@ -22,7 +22,12 @@ import { FileManagementService } from './services/FileManagementService'
 import { AIAgentsManager, AIAgentsRegistry, ALL_AGENT_DEFINITIONS } from './aiAgentsManager'
 import { TasksManagerHandlerRegistry } from './tasksManager/TasksManagerHandlerRegistry'
 import { TasksManagerExecutor } from './tasksManager/TasksManagerExecutor'
-import { FileDownloadHandler, AIChatHandler, AIEnhanceHandler } from './tasksManager/handlers'
+import {
+  FileDownloadHandler,
+  AIChatHandler,
+  AIEnhanceHandler,
+  AIAgentTaskHandler,
+} from './tasksManager/handlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
