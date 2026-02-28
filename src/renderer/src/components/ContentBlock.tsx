@@ -9,7 +9,7 @@ import {
 import { Reorder, useDragControls } from 'framer-motion'
 import { AppButton } from '@/components/app'
 import { AppTextEditor } from '@/components/app/AppTextEditor'
-import type { Block, ContentBlockProps } from '@/components/block.types'
+import type { ContentBlockProps } from '@/components/block.types'
 
 // ---------------------------------------------------------------------------
 // ActionButton
