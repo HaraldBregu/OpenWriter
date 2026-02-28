@@ -318,6 +318,7 @@ export const ContentBlock = React.memo(function ContentBlock({
               placeholder={placeholder}
               autoFocus={autoFocus}
               disabled={isEnhancing}
+              streamingContent={streamingContent}
               className={isEnhancing ? 'opacity-60' : undefined}
             />
           )}
