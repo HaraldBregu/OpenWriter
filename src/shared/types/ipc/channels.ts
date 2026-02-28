@@ -307,5 +307,6 @@ export interface EventChannelMap {
   [WorkspaceChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
   [WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] }
   [AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction }
+  /** Push events from AIAgentsManager.startStreaming to the originating renderer window. */
   [AiAgentChannels.event]: { data: AgentStreamEvent }
 }
