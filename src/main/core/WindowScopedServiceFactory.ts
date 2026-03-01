@@ -136,16 +136,6 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
     }
   })
 
-  // Register personality files service
-  factory.register({
-    key: 'personalityFiles',
-    factory: ({ workspaceService, eventBus }) => {
-      const service = new PersonalityFilesService(workspaceService, eventBus)
-      service.initialize()
-      return service
-    }
-  })
-
   // Register output files service
   factory.register({
     key: 'outputFiles',
