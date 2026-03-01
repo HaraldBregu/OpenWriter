@@ -46,11 +46,6 @@ import {
   ChevronRight,
   Bell,
   FileText,
-  Heart,
-  Lightbulb,
-  Flame,
-  Users,
-  Palette,
 } from "lucide-react";
 
 interface AppLayoutProps {
