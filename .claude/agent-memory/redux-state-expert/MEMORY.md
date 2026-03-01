@@ -11,11 +11,13 @@
 - Writing items slice: `src/renderer/src/store/writingItemsSlice.ts`
 - Legacy writings slice: `src/renderer/src/store/writingsSlice.ts` (older, parallel system)
 - Output slice: `src/renderer/src/store/outputSlice.ts`
+- Tasks slice: `src/renderer/src/store/tasksSlice.ts`
+- Task IPC wiring: `src/renderer/src/store/taskListenerMiddleware.ts`
 - Block type + ContentBlock: `src/renderer/src/components/ContentBlock.tsx`
 - Draft editor hook: `src/renderer/src/hooks/useDraftEditor.ts`
 - Page enhancement hook: `src/renderer/src/hooks/useBlockEnhancement.ts`
 - Main page: `src/renderer/src/pages/ContentPage.tsx`
-- Shared IPC types: `src/shared/types/ipc/types.ts`
+- Shared IPC types: `src/shared/types.ts`
 
 ## Block Data Model (writingItemsSlice + ContentBlock)
 ```typescript
