@@ -4,7 +4,6 @@
  * Register these with TaskReactionRegistry in bootstrapServices().
  * Pattern mirrors ALL_AGENT_DEFINITIONS in aiAgentsManager — explicit,
  * ordered, and safe to tree-shake in tests.
- *
- * Example:
- *   export { MyFeatureTaskReaction } from './MyFeatureTaskReaction'
  */
+
+export { DemoTaskReaction } from './DemoTaskReaction'
