@@ -1,14 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
-import { taskStore, TrackedTaskState, TaskStatus } from '../services/taskStore'
+import { useState, useCallback } from 'react'
+import { useAppSelector } from '@/store'
+import { selectAllTasks, selectQueueStats, taskRemoved } from '@/store/tasksSlice'
+import type { TrackedTaskState, TaskStatus } from '@/store/tasksSlice'
+import { useAppDispatch } from '@/store'
 
-function buildSnapshot(): TrackedTaskState[] {
-  const arr: TrackedTaskState[] = []
-  for (const id of taskStore.getTrackedIds()) {
-    const snap = taskStore.getTaskSnapshot(id)
-    if (snap) arr.push(snap)
-  }
-  return arr
-}
+export type { TrackedTaskState, TaskStatus }
 
 export interface DebugQueueStats {
   queued: number
@@ -26,29 +22,30 @@ export interface UseDebugTasksReturn {
 }
 
 export function useDebugTasks(): UseDebugTasksReturn {
-  const [allTasks, setAllTasks] = useState<TrackedTaskState[]>(buildSnapshot)
+  const dispatch = useAppDispatch()
+  const allTasks = useAppSelector(selectAllTasks)
+  const rawStats = useAppSelector(selectQueueStats)
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    taskStore.ensureListening()
-    return taskStore.subscribe('ALL', () => {
-      setAllTasks(buildSnapshot())
-    })
-  }, [])
 
   const tasks = allTasks.filter((t) => !hiddenIds.has(t.taskId))
 
   const queueStats: DebugQueueStats = {
-    queued: allTasks.filter((t) => t.status === 'queued').length,
-    running: allTasks.filter((t) => t.status === 'running').length,
-    completed: allTasks.filter((t) => t.status === 'completed').length,
-    error: allTasks.filter((t) => (t.status as TaskStatus) === 'error').length,
-    cancelled: allTasks.filter((t) => t.status === 'cancelled').length,
+    queued: rawStats.queued,
+    running: rawStats.running,
+    completed: rawStats.completed,
+    error: rawStats.error,
+    cancelled: rawStats.cancelled,
   }
 
-  const hide = useCallback((taskId: string) => {
-    setHiddenIds((prev) => new Set([...prev, taskId]))
-  }, [])
+  // "Hide" removes the task from the local view and also removes it from the
+  // Redux store so it doesn't reappear on re-render.
+  const hide = useCallback(
+    (taskId: string) => {
+      setHiddenIds((prev) => new Set([...prev, taskId]))
+      dispatch(taskRemoved(taskId))
+    },
+    [dispatch]
+  )
 
   const cancel = useCallback(async (taskId: string) => {
     await window.tasksManager.cancel(taskId)
