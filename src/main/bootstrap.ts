@@ -101,7 +101,7 @@ export function bootstrapServices(): BootstrapResult {
   const aiAgentsRegistry = container.get<AIAgentsRegistry>('AIAgentsRegistry')
   taskHandlerRegistry.register(new AIAgentTaskHandler(aiAgentsManager, aiAgentsRegistry))
 
-  container.register('taskExecutor', new TasksManagerExecutor(taskHandlerRegistry, eventBus, 5))
+  container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
   const windowContextManager = new WindowContextManager(container, eventBus)
