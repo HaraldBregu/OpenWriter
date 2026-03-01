@@ -227,14 +227,6 @@ export interface InvokeChannelMap {
   [WorkspaceChannels.validate]: { args: [dirPath: string]; result: DirectoryValidationResult }
   [WorkspaceChannels.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean }
 
-  // ---- Personality (IpcResult-wrapped) ----
-  [WorkspaceChannels.save]: { args: [input: SavePersonalityInput]; result: SavePersonalityResult }
-  [WorkspaceChannels.personalityLoadAll]: { args: []; result: PersonalityFile[] }
-  [WorkspaceChannels.loadOne]: { args: [params: { sectionId: string; id: string }]; result: PersonalityFile | null }
-  [WorkspaceChannels.delete]: { args: [params: { sectionId: string; id: string }]; result: void }
-  [WorkspaceChannels.loadSectionConfig]: { args: [params: { sectionId: string }]; result: SectionConfig | null }
-  [WorkspaceChannels.saveSectionConfig]: { args: [params: { sectionId: string; update: SectionConfigUpdate }]; result: SectionConfig }
-
   // ---- App — writing context menu (raw invoke) ----
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
 
