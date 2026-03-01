@@ -62,22 +62,6 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
-                        <Route
-                          path="/documents"
-                          element={
-                            <RouteWrapper>
-                              <DocumentsPage />
-                            </RouteWrapper>
-                          }
-                        />
-                        <Route
-                          path="/directories"
-                          element={
-                            <RouteWrapper>
-                              <DirectoriesPage />
-                            </RouteWrapper>
-                          }
-                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
