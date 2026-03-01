@@ -207,57 +207,7 @@ export class TaskExecutor implements Disposable {
   }
 
   /**
-   * Pause a queued task. Running tasks cannot be paused — they must be cancelled.
-   * Returns true if the task was found in queued state and paused.
-   */
-  pause(taskId: string): boolean {
-    const task = this.activeTasks.get(taskId)
-    if (!task || task.status !== 'queued') return false
-
-    task.status = 'paused'
-    task.pausedAt = Date.now()
-
-    this.send(task.windowId, 'task:event', {
-      type: 'paused',
-      data: { taskId }
-    } satisfies TaskEvent)
-
-    console.log(`[TaskExecutor] Task ${taskId} paused`)
-    return true
-  }
-
-  /**
-   * Resume a paused task.
-   * The task is returned to the queue in its original priority order.
-   * Returns true if the task was found in paused state and resumed.
-   */
-  resume(taskId: string): boolean {
-    const task = this.activeTasks.get(taskId)
-    if (!task || task.status !== 'paused') return false
-
-    task.status = 'queued'
-    task.pausedAt = undefined
-
-    // Re-sort to restore priority order; position is based on current queue state
-    this.sortQueue()
-
-    const queued = this.queue.find((q) => q.taskId === taskId)
-    const position = queued ? this.queue.indexOf(queued) + 1 : 1
-
-    this.send(task.windowId, 'task:event', {
-      type: 'resumed',
-      data: { taskId, position }
-    } satisfies TaskEvent)
-
-    console.log(`[TaskExecutor] Task ${taskId} resumed at position ${position}`)
-
-    // Allow execution if a slot is free
-    this.drainQueue()
-    return true
-  }
-
-  /**
-   * Update the priority of a queued or paused task.
+   * Update the priority of a queued task.
    * The queue is re-sorted immediately.
    * Returns true if the task was found and its priority updated.
    */
