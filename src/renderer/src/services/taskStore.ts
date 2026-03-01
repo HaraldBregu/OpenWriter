@@ -18,7 +18,7 @@ import { TASK_MAX_EVENT_HISTORY } from '@/constants'
 // Types (previously exported from TaskContext)
 // ---------------------------------------------------------------------------
 
-export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
+export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
 
 export interface TaskProgressState {
   percent: number
