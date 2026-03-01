@@ -190,14 +190,6 @@ const HomePage: React.FC = () => {
             <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {t('home.recent')}
             </h2>
-            <button
-              type="button"
-              onClick={() => navigate('/documents/local')}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-            >
-              {t('home.viewAll')}
-              <ArrowRight className="h-3 w-3" />
-            </button>
           </div>
           {recentEntries.length > 0 ? (
             <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
