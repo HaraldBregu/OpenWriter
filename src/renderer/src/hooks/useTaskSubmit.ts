@@ -113,7 +113,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 
       if (snap.error !== undefined) setError(snap.error)
       if (snap.result !== undefined) setResult(snap.result as TResult)
-      if (snap.streamedContent) setStreamedContent(snap.streamedContent)
 
       // Tear down the subscription once the task reaches a terminal state.
       // Only terminal statuses stop event tracking.
