@@ -63,6 +63,14 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
+                        <Route
+                          path="/debug"
+                          element={
+                            <RouteWrapper>
+                              <DebugPage />
+                            </RouteWrapper>
+                          }
+                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
