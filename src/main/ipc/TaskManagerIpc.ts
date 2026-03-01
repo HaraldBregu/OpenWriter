@@ -37,9 +37,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
  *  - task:submit          (command) -- Submit a new task. Returns { taskId }.
  *  - task:cancel          (command) -- Cancel a running/queued task. Returns boolean.
  *  - task:list            (query)   -- List active tasks. Returns TaskInfo[].
- *  - task:pause           (command) -- Pause a queued task. Returns boolean.
- *  - task:resume          (command) -- Resume a paused task. Returns boolean.
- *  - task:update-priority (command) -- Update priority of queued/paused task. Returns boolean.
+ *  - task:update-priority (command) -- Update priority of a queued task. Returns boolean.
  *  - task:get-result      (query)   -- Retrieve completed task info by ID. Returns TaskInfo | null.
  *  - task:queue-status    (query)   -- Return queue metrics. Returns TaskQueueStatus.
  *
