@@ -41,7 +41,6 @@ export function useDebugTasks(): UseDebugTasksReturn {
   const queueStats: DebugQueueStats = {
     queued: allTasks.filter((t) => t.status === 'queued').length,
     running: allTasks.filter((t) => t.status === 'running').length,
-    paused: allTasks.filter((t) => t.status === 'paused').length,
     completed: allTasks.filter((t) => t.status === 'completed').length,
     error: allTasks.filter((t) => (t.status as TaskStatus) === 'error').length,
     cancelled: allTasks.filter((t) => t.status === 'cancelled').length,
