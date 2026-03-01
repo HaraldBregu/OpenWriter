@@ -312,12 +312,6 @@ const tasksManager: TasksManagerApi = {
     onEvent: (callback) => {
         return typedOn(TaskChannels.event, callback)
     },
-    pause: (taskId: string) => {
-        return typedInvokeRaw(TaskChannels.pause, taskId)
-    },
-    resume: (taskId: string) => {
-        return typedInvokeRaw(TaskChannels.resume, taskId)
-    },
     updatePriority: (taskId: string, priority: 'low' | 'normal' | 'high') => {
         return typedInvokeRaw(TaskChannels.updatePriority, taskId, priority)
     },
