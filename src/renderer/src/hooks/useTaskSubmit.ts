@@ -207,38 +207,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
   }, [])
 
-  const pause = useCallback(async (): Promise<void> => {
-    const id = taskIdRef.current
-    if (!id) return
-    if (typeof window.tasksManager?.pause !== 'function') return
-
-    // Read the live store snapshot to avoid stale-closure status.
-    const currentStatus = taskStore.getTaskSnapshot(id)?.status
-    if (!currentStatus || !PAUSABLE_STATUSES.has(currentStatus)) return
-
-    try {
-      await window.tasksManager.pause(id)
-    } catch {
-      // Best-effort — the paused event from the main process will update state.
-    }
-  }, [])
-
-  const resume = useCallback(async (): Promise<void> => {
-    const id = taskIdRef.current
-    if (!id) return
-    if (typeof window.tasksManager?.resume !== 'function') return
-
-    // Read the live store snapshot to avoid stale-closure status.
-    const currentStatus = taskStore.getTaskSnapshot(id)?.status
-    if (currentStatus !== 'paused') return
-
-    try {
-      await window.tasksManager.resume(id)
-    } catch {
-      // Best-effort — the resumed event from the main process will update state.
-    }
-  }, [])
-
   const updatePriority = useCallback(async (priority: TaskPriority): Promise<void> => {
     const id = taskIdRef.current
     if (!id) return
