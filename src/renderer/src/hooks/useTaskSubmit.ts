@@ -165,8 +165,8 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       return null
     }
 
-    // Register task in the shared store so incoming events are accepted.
-    taskStore.addTask(resolvedTaskId, type, options?.priority ?? 'normal')
+    // Register the task in Redux so incoming IPC events are accepted.
+    store.dispatch(taskAdded({ taskId: resolvedTaskId, type, priority: options?.priority ?? 'normal' }))
 
     // Subscribe to this specific task's store key.
     taskIdRef.current = resolvedTaskId
@@ -177,13 +177,15 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       unsubRef.current()
     }
 
-    unsubRef.current = taskStore.subscribe(resolvedTaskId, () => {
+    // Use the Redux store's built-in subscribe + selector to detect changes
+    // for this specific task and sync local component state.
+    unsubRef.current = store.subscribe(() => {
       if (taskIdRef.current) {
         syncFromStore(taskIdRef.current)
       }
     })
 
-    // Replay any events that were applied to the store before subscribe() ran.
+    // Replay any events that were already applied before subscribe() ran.
     syncFromStore(resolvedTaskId)
 
     return resolvedTaskId
