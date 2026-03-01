@@ -3,9 +3,8 @@ export type { TaskPriority }
 
 /**
  * Task status enumeration.
- * 'paused' tasks remain in the queue but are skipped by drainQueue until resumed.
  */
-export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
+export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
 
 /**
  * Options for task submission.
