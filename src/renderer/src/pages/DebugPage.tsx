@@ -196,26 +196,6 @@ function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps)
       {/* Actions — stop propagation so clicking a button doesn't toggle row selection */}
       <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1">
-          {canPause && (
-            <button
-              type="button"
-              title="Pause"
-              onClick={onPause}
-              className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-            >
-              <Pause className="h-3.5 w-3.5" />
-            </button>
-          )}
-          {canResume && (
-            <button
-              type="button"
-              title="Resume"
-              onClick={onResume}
-              className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-            >
-              <Play className="h-3.5 w-3.5" />
-            </button>
-          )}
           {canCancel && (
             <button
               type="button"
