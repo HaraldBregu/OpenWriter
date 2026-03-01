@@ -13,12 +13,12 @@ export interface ProgressReporter {
 }
 
 /**
- * Stream reporter for real-time token delivery.
- * Used by AI handlers to emit streamed content tokens.
+ * Stream reporter for real-time data delivery.
+ * Used by handlers to emit streamed chunks as they arrive.
  */
 export interface StreamReporter {
-  /** Emit a streamed token for real-time content delivery. */
-  stream(token: string): void
+  /** Emit a raw data batch. Each call delivers one chunk to the renderer. */
+  stream(data: string): void
 }
 
 /**
