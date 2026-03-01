@@ -86,6 +86,7 @@ export function bootstrapServices(): BootstrapResult {
 
   // Task system -- handler registry + executor
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
+  taskHandlerRegistry.register(new DemoTaskHandler())
   container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
