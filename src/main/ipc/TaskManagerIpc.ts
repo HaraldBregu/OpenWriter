@@ -44,7 +44,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
  *  - task:queue-status    (query)   -- Return queue metrics. Returns TaskQueueStatus.
  *
  * Streaming events are pushed from TaskExecutor via EventBus on the
- * `task:event` channel. The renderer subscribes with window.tasksManager.onEvent().
+ * `task:event` channel. The renderer subscribes with window.taskManager.onEvent().
  *
  * Security notes:
  *  - windowId is always stamped from event.sender.id in task:submit, never trusted from payload.
