@@ -273,10 +273,6 @@ export function useContentEditor(
     setFocusBlockId(newBlock.id)
   }, [entry, dispatch])
 
-  const handleAiSettingsChange = useCallback((next: InferenceSettings) => {
-    setAiSettings(next)
-  }, [])
-
   // ---------------------------------------------------------------------------
   // Resolved display values
   // ---------------------------------------------------------------------------
