@@ -113,11 +113,6 @@ export function useContentEditor(
   }, [entry?.writingItemId])
 
   // ---------------------------------------------------------------------------
-  // AI settings — simple local state, not persisted to disk in this system
-  // ---------------------------------------------------------------------------
-  const [aiSettings, setAiSettings] = useState<InferenceSettings>(DEFAULT_INFERENCE_SETTINGS)
-
-  // ---------------------------------------------------------------------------
   // focusBlockId — set when a block is inserted; cleared after one render
   // ---------------------------------------------------------------------------
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null)
