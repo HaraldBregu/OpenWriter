@@ -1,28 +1,7 @@
 import React, { useState, useCallback } from 'react'
-import { Bug, X, Square, Pause, Play, EyeOff, Plus, Zap, Clock, Radio, AlertTriangle } from 'lucide-react'
+import { Bug, X, Square, Pause, Play, EyeOff } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
 import { TrackedTaskState, TaskStatus } from '../services/taskStore'
-import { taskStore } from '../services/taskStore'
-
-// ---------------------------------------------------------------------------
-// Demo task variants
-// ---------------------------------------------------------------------------
-
-type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error'
-
-const DEMO_VARIANTS: { variant: DemoVariant; label: string; icon: React.ElementType; title: string }[] = [
-  { variant: 'fast',      label: 'Fast',      icon: Zap,           title: 'Completes in ~1.5s with progress steps' },
-  { variant: 'slow',      label: 'Slow',      icon: Clock,         title: 'Completes in ~8s, 10 progress steps' },
-  { variant: 'streaming', label: 'Stream',    icon: Radio,         title: 'Streams tokens one by one' },
-  { variant: 'error',     label: 'Error',     icon: AlertTriangle, title: 'Fails with a simulated error' },
-]
-
-async function submitDemo(variant: DemoVariant): Promise<void> {
-  const result = await window.tasksManager.submit('demo', { variant }, { priority: 'normal' })
-  if (result.success && result.data?.taskId) {
-    taskStore.addTask(result.data.taskId, `demo:${variant}`)
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
