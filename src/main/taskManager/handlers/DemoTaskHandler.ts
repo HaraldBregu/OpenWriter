@@ -8,7 +8,7 @@
  *   streaming — streams 21 tokens one by one (~3 s total)
  *   error     — progresses to 60 % then throws a simulated failure
  *
- * All variants respect AbortSignal so cancel/pause work correctly mid-run.
+ * All variants respect AbortSignal so cancel works correctly mid-run.
  */
 
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
