@@ -205,3 +205,12 @@
 - `import.meta.env` FAILS in Jest for renderer context files — DO NOT use it inside `createEntityTaskContext()` config callbacks or module-level. Use string literals as final fallbacks.
 - `store/index.ts` imported missing `chatSlice` — created stub at `src/renderer/src/store/chatSlice.ts`
 - NOTE: `window.workspace.savePersonality` mock in `tests/setup/renderer.ts` can be removed — personality feature deleted (Mar 2026)
+
+## Task Manager (Redux migration Mar 2026)
+- See `task-manager.md` for full details.
+- `taskStore.ts` singleton DELETED — all task state now in Redux under `state.tasks` (tasksSlice.ts)
+- IPC bridge: `taskListenerMiddleware.ts` wires `window.tasksManager.onEvent` → `dispatch(taskEventReceived(event))`, called once from `store/index.ts`
+- `useTaskSubmit`: local state = only `taskId`; all other fields via `useAppSelector(selectTaskById)`
+- `useDebugTasks`: `selectAllTasks` + `selectQueueStats`; `hide()` dispatches `taskRemoved`
+- TS4023 gotcha: `TasksState` must be exported from `tasksSlice.ts` or all other slice selectors break
+- `taskEventBus.ts` is for AI streaming — separate, do NOT touch
