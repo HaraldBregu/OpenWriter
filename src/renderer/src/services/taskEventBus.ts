@@ -98,12 +98,6 @@ function ensureListening(): void {
         subscribers.get(taskId)?.forEach((cb) => cb(next))
         setTimeout(() => snapshots.delete(taskId), 0)
         return
-      case 'paused':
-        next = { ...prev, status: 'paused' }
-        break
-      case 'resumed':
-        next = { ...prev, status: 'queued' }
-        break
       default:
         next = prev
     }
