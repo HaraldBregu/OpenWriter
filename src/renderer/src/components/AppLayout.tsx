@@ -45,6 +45,7 @@ import {
   ChevronRight,
   Bell,
   FileText,
+  Bug,
 } from "lucide-react";
 
 interface AppLayoutProps {
