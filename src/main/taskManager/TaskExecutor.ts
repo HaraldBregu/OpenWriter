@@ -213,7 +213,7 @@ export class TaskExecutor implements Disposable {
    */
   updatePriority(taskId: string, newPriority: TaskPriority): boolean {
     const task = this.activeTasks.get(taskId)
-    if (!task || (task.status !== 'queued' && task.status !== 'paused')) return false
+    if (!task || task.status !== 'queued') return false
 
     task.priority = newPriority
 
