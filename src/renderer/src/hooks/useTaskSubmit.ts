@@ -234,7 +234,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     progressMessage,
     error,
     result,
-    streamedContent,
     queuePosition,
     submit,
     cancel,
