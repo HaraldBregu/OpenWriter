@@ -26,8 +26,6 @@ export interface WithTaskTrackingInjectedProps {
     error: string | null
     /** Result payload when status === 'completed', null otherwise. */
     result: unknown
-    /** Accumulated streamed text (for streaming tasks). */
-    streamedContent: string
     /** Task ID after submission, null before. */
     taskId: string | null
   }
