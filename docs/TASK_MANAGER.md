@@ -1482,3 +1482,341 @@ Each hook subscribes to the same taskId key in the store but only re-renders whe
 | `src/renderer/src/hooks/useDebugTasks.ts` | All-tasks subscription for the debug page |
 | `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects `taskTracking` prop into any component |
 | `src/renderer/src/pages/DebugPage.tsx` | Debug page: live task table with controls and event log panel |
+
+---
+
+## 14. Using TaskManager from the Main Process (Node.js)
+
+The main process owns the entire task execution infrastructure. There are two distinct roles: **submitting tasks** (via `TaskExecutor`) and **reacting to tasks** (via `TaskReactionBus`).
+
+### 14.1 Implementing a Task Handler
+
+A `TaskHandler` performs the actual background work. It runs in the main process Node.js environment with full access to the file system, native APIs, and services.
+
+```typescript
+// src/main/taskManager/handlers/MyFeatureHandler.ts
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
+
+export interface MyFeatureInput {
+  filePath: string
+  options?: { compress: boolean }
+}
+
+export class MyFeatureHandler implements TaskHandler<MyFeatureInput, string> {
+  readonly type = 'feature:process-file'
+
+  validate(input: MyFeatureInput): void {
+    if (!input?.filePath) throw new Error('filePath is required')
+  }
+
+  async execute(
+    input: MyFeatureInput,
+    signal: AbortSignal,
+    reporter: ProgressReporter,
+    _stream?: StreamReporter,
+  ): Promise<string> {
+    reporter.progress(10, 'Reading file…')
+    // Always check signal.aborted before long operations
+    if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
+
+    // … do real work …
+    reporter.progress(90, 'Finalizing…')
+    await someAsyncOperation(signal)
+    reporter.progress(100, 'Done')
+
+    return 'output-path'
+  }
+}
+```
+
+**Key rules:**
+- Check `signal.aborted` before each async step so cancel/timeout works cleanly.
+- Call `reporter.progress(0–100, message?)` to emit `progress` events to the renderer.
+- Call `streamReporter.stream(token)` for real-time AI-style token delivery.
+- Throw `new DOMException('Aborted', 'AbortError')` (or let AbortSignal propagate) to signal cancellation.
+
+### 14.2 Registering a Task Handler
+
+Register handlers in `bootstrapServices()` inside `src/main/bootstrap.ts`:
+
+```typescript
+import { MyFeatureHandler } from './taskManager/handlers/MyFeatureHandler'
+
+// Task system
+const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
+taskHandlerRegistry.register(new MyFeatureHandler())
+// …more handlers…
+container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 20))
+```
+
+### 14.3 Submitting a Task from the Main Process
+
+The main process can submit tasks directly via the `TaskExecutor` without going through IPC:
+
+```typescript
+// Inside any main-process service or IPC handler
+const executor = container.get<TaskExecutor>('taskExecutor')
+
+const taskId = executor.submit('feature:process-file', { filePath: '/path/to/file' }, {
+  priority: 'high',
+  timeoutMs: 30_000,
+  // windowId: omit to broadcast events to all windows
+})
+```
+
+Events (`queued`, `started`, `progress`, `completed`, …) are automatically broadcast to all renderer windows via `EventBus.broadcast()`, or sent to a specific window when `windowId` is provided.
+
+### 14.4 Implementing a Task Reaction Handler
+
+A `TaskReactionHandler` runs **side-effects** in the main process when a task reaches a lifecycle milestone. It does not execute the task — it observes it.
+
+```typescript
+// src/main/taskManager/reactions/MyFeatureTaskReaction.ts
+import type {
+  TaskReactionHandler,
+  TaskSubmittedEvent,
+  TaskCompletedEvent,
+  TaskFailedEvent,
+} from '../TaskReactionHandler'
+
+export class MyFeatureTaskReaction implements TaskReactionHandler {
+  readonly taskType = 'feature:process-file'
+
+  onSubmitted(event: TaskSubmittedEvent): void {
+    console.log(`[MyFeature] Task queued: ${event.taskId}`)
+  }
+
+  async onCompleted(event: TaskCompletedEvent): Promise<void> {
+    // e.g. update a database, send a notification, chain another task
+    await notifyUser(event.result as string)
+    console.log(`[MyFeature] Processed in ${event.durationMs}ms`)
+  }
+
+  onFailed(event: TaskFailedEvent): void {
+    console.error(`[MyFeature] Failed: ${event.error}`)
+  }
+}
+```
+
+Use `taskType = '*'` to receive lifecycle events for **every** task type (useful for logging or analytics):
+
+```typescript
+export class TaskAuditReaction implements TaskReactionHandler {
+  readonly taskType = '*'
+
+  onCompleted(event: TaskCompletedEvent): void {
+    auditLog.record({ taskId: event.taskId, type: event.taskType, ms: event.durationMs })
+  }
+}
+```
+
+### 14.5 Registering a Reaction Handler
+
+Add the handler to the `TaskReactionRegistry` in `bootstrap.ts`:
+
+```typescript
+import { MyFeatureTaskReaction } from './taskManager/reactions/MyFeatureTaskReaction'
+import { TaskAuditReaction } from './taskManager/reactions/TaskAuditReaction'
+
+// in bootstrapServices():
+const taskReactionRegistry = new TaskReactionRegistry()
+taskReactionRegistry.register(new MyFeatureTaskReaction())
+taskReactionRegistry.register(new TaskAuditReaction()) // wildcard handler
+const taskReactionBus = container.register(
+  'taskReactionBus',
+  new TaskReactionBus(taskReactionRegistry, eventBus),
+)
+taskReactionBus.initialize()
+```
+
+### 14.6 Lifecycle Event Payloads
+
+| AppEvent key | Payload fields | When fired |
+|---|---|---|
+| `task:submitted` | `taskId, taskType, input, priority, windowId?` | After validation, before queuing |
+| `task:started` | `taskId, taskType, windowId?` | When execution slot is acquired |
+| `task:completed` | `taskId, taskType, result, durationMs, windowId?` | On successful completion |
+| `task:failed` | `taskId, taskType, error, code, windowId?` | On unhandled non-abort error |
+| `task:cancelled` | `taskId, taskType, windowId?` | On `cancel()` call or timeout abort |
+
+These are emitted via `EventBus.emit()` (main-process `AppEvents`) **in addition to** the IPC `task:event` channel pushed to the renderer.
+
+---
+
+## 15. Using TaskManager from the Renderer
+
+The renderer never touches `TaskExecutor` directly. All task operations go through the preload bridge (`window.tasksManager`) and are tracked by the `taskStore` singleton.
+
+### 15.1 Submitting a Task
+
+Use the `useTaskSubmit` hook for any component that needs to submit and track a single task:
+
+```typescript
+import { useTaskSubmit } from '../hooks/useTaskSubmit'
+
+function ProcessFileButton({ filePath }: { filePath: string }) {
+  const task = useTaskSubmit('feature:process-file', { filePath }, { priority: 'normal' })
+
+  return (
+    <div>
+      <button onClick={() => task.submit()} disabled={task.status === 'running'}>
+        Process
+      </button>
+
+      {task.status === 'running' && (
+        <>
+          <progress value={task.progress} max={100} />
+          <span>{task.progressMessage}</span>
+          <button onClick={() => task.pause()}>Pause</button>
+          <button onClick={() => task.cancel()}>Cancel</button>
+        </>
+      )}
+
+      {task.status === 'paused' && (
+        <button onClick={() => task.resume()}>Resume</button>
+      )}
+
+      {task.status === 'completed' && <p>Done: {String(task.result)}</p>}
+      {task.status === 'error' && <p>Error: {task.error}</p>}
+    </div>
+  )
+}
+```
+
+#### `useTaskSubmit` return shape
+
+| Field | Type | Description |
+|---|---|---|
+| `taskId` | `string \| null` | ID of the current task (null before first submit) |
+| `status` | `TaskStatus \| 'idle'` | Current lifecycle state |
+| `progress` | `number` | 0–100 progress percent |
+| `progressMessage` | `string?` | Human-readable progress label |
+| `error` | `string \| null` | Error message on failure |
+| `result` | `TResult \| null` | Task result on completion |
+| `streamedContent` | `string` | Accumulated stream tokens (AI tasks) |
+| `queuePosition` | `number?` | Position in queue while queued/paused |
+| `submit(input?)` | `() => Promise<string \| null>` | Submit (or re-submit) the task |
+| `cancel()` | `() => Promise<void>` | Cancel the running/queued task |
+| `pause()` | `() => Promise<void>` | Pause a queued task |
+| `resume()` | `() => Promise<void>` | Resume a paused task |
+| `updatePriority(p)` | `() => Promise<void>` | Change queue priority |
+| `reset()` | `() => void` | Reset to idle state |
+
+### 15.2 Streaming AI Content
+
+For tasks that stream tokens (AI generation), use `streamedContent`:
+
+```typescript
+function AIWritingPanel({ writingId }: { writingId: string }) {
+  const task = useTaskSubmit('ai:generate', { writingId })
+
+  return (
+    <div>
+      <button onClick={() => task.submit()}>Generate</button>
+      {/* streamedContent updates on every token without full re-render */}
+      <pre>{task.streamedContent}</pre>
+    </div>
+  )
+}
+```
+
+### 15.3 Direct preload API
+
+For non-React code or one-off operations, call `window.tasksManager` directly:
+
+```typescript
+// Submit without a hook
+const result = await window.tasksManager.submit('feature:process-file', { filePath }, { priority: 'high' })
+if (result.success) {
+  const { taskId } = result.data
+  // Seed the local taskStore so it appears in the debug page immediately
+  taskStore.addTask(taskId, 'feature:process-file')
+}
+
+// List all active tasks
+const { data: tasks } = await window.tasksManager.list()
+
+// Queue metrics
+const { data: status } = await window.tasksManager.queueStatus()
+console.log(status) // { queued: 2, running: 5, completed: 12 }
+
+// Subscribe to all task events globally
+const unsub = window.tasksManager.onEvent((event) => {
+  console.log(event.type, event.data)
+})
+// Later:
+unsub()
+```
+
+### 15.4 taskStore — low-level subscriptions
+
+`taskStore` is a module-level singleton that accumulates all IPC task events. Prefer `useTaskSubmit` for component-level work; use `taskStore` only for global observers (e.g. the debug page):
+
+```typescript
+import { taskStore } from '../services/taskStore'
+
+// Subscribe to all task changes
+const unsub = taskStore.subscribe('ALL', () => {
+  const allIds = taskStore.getTrackedIds()
+  for (const id of allIds) {
+    const snap = taskStore.getTaskSnapshot(id)
+    console.log(snap?.status, snap?.progress)
+  }
+})
+
+// Subscribe to a specific task
+const unsub2 = taskStore.subscribe(taskId, () => {
+  const snap = taskStore.getTaskSnapshot(taskId)
+  // snap.events contains the full event history
+})
+
+// Ensure the global IPC listener is running (called automatically by useTaskSubmit)
+taskStore.ensureListening()
+```
+
+### 15.5 Debug Page
+
+Navigate to `/debug` in the app to see a live table of all tracked tasks. Each row shows the task ID, type, status badge, priority, progress bar, duration, and action buttons (pause/resume/cancel/hide). Clicking a row opens a log panel showing all IPC events received for that task in reverse chronological order.
+
+---
+
+## 16. Task Reaction Layer
+
+The **Task Reaction Layer** is a main-process-only abstraction that decouples task side-effects from task execution. It follows the Observer pattern: `TaskExecutor` emits typed `AppEvents` through `EventBus`; `TaskReactionBus` subscribes to those events and dispatches them to the appropriate `TaskReactionHandler` implementations.
+
+### Why use reactions instead of putting logic in TaskHandler?
+
+| Concern | `TaskHandler` | `TaskReactionHandler` |
+|---|---|---|
+| Executes the task | ✅ | ❌ |
+| Reports progress to renderer | ✅ | ❌ |
+| Sends notifications / updates DB after completion | ❌ | ✅ |
+| Chains another task on failure | ❌ | ✅ |
+| Logs/audits all task types | ❌ | ✅ (use `taskType = '*'`) |
+| Can be added without touching executor | ❌ | ✅ |
+
+### Data flow
+
+```
+TaskExecutor
+  ├── submit()     → eventBus.emit('task:submitted', {...})
+  ├── executeTask()→ eventBus.emit('task:started',   {...})
+  │                  eventBus.emit('task:completed',  {...})
+  │                  eventBus.emit('task:failed',     {...})
+  │                  eventBus.emit('task:cancelled',  {...})
+  └── cancel()     → eventBus.emit('task:cancelled',  {...})
+
+EventBus.emit()
+  └── TaskReactionBus.on('task:*')
+        └── TaskReactionRegistry.getForType(taskType)
+              ├── [specific handler].onCompleted(event)
+              └── [wildcard handler].onCompleted(event)
+```
+
+### Error isolation
+
+Each handler call is wrapped in try/catch. A synchronous exception or a rejected async promise in one handler is caught, logged, and does **not** affect other handlers or the task system itself.
+
+### Shutdown
+
+`TaskReactionBus` implements `Disposable`. `ServiceContainer` calls `destroy()` on shutdown, which removes all `EventBus` subscriptions and prevents any handler from running after the app has started to quit.
