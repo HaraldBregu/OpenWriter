@@ -13,8 +13,6 @@ import "./index.css";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
-const DocumentsPage = lazy(() => import("./pages/DocumentsPage"));
-const DirectoriesPage = lazy(() => import("./pages/DirectoriesPage"));
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary level="route">
