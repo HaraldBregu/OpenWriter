@@ -28,7 +28,6 @@ import { WorkspaceChannels } from '../../shared/types/ipc/channels'
  *   - Workspace folder selection & recent history
  *   - Documents (import, download, load, delete)
  *   - Indexed directories management
- *   - Personality/conversation files
  *   - Output files (posts & writings)
  */
 export class WorkspaceIpc implements IpcModule {
