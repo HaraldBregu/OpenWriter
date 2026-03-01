@@ -114,12 +114,6 @@
 - CRITICAL: `BubbleMenu` and `FloatingMenu` are NOT on root `@tiptap/react` in v3. Import from sub-path: `import { BubbleMenu } from '@tiptap/react/menus'`. The `./menus` key is a first-class export in the package — Vite resolves it correctly.
 - Component: `src/renderer/src/components/ContentBlock.tsx`
 
-## PersonalitySettingsPanel
-- Location: `src/renderer/src/components/personality/PersonalitySettingsSheet.tsx`
-- `InferenceSettings` now lives in `src/shared/types/aiSettings.ts`; sheet re-exports it
-- Temperature = "Creativity Level" dropdown; maxTokens = "Text Length" dropdown
-- ModelsSettings uses i18n (`useTranslation`) — preserve `t()` calls when modifying
-
 ## Settings Page Patterns
 - Settings page: `src/renderer/src/pages/SettingsPage.tsx` — tabs: `general|models|media|devices|tools|system`
 - `CollapsibleSection` at `src/renderer/src/pages/settings/CollapsibleSection.tsx`
