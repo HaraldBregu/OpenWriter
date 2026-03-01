@@ -1,27 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useAppDispatch } from '@/store'
-import { updateBlockContent } from '@/store/writingItemsSlice'
-import {
-  Sparkles, Trash2, Plus, Copy, GripVertical,
-} from 'lucide-react'
-import { Reorder, useDragControls } from 'framer-motion'
-import { AppButton } from '@/components/app'
-import { AppTextEditor } from '@/components/app/AppTextEditor'
-import type { ContentBlockProps } from '@/components/block.types'
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useAppDispatch } from "@/store";
+import { updateBlockContent } from "@/store/writingItemsSlice";
+import { Sparkles, Trash2, Plus, Copy, GripVertical } from "lucide-react";
+import { Reorder, useDragControls } from "framer-motion";
+import { AppButton } from "@/components/app";
+import { AppTextEditor } from "@/components/app/AppTextEditor";
+import type { ContentBlockProps } from "@/components/block.types";
 
 // ---------------------------------------------------------------------------
 // ActionButton
 // ---------------------------------------------------------------------------
 
 interface ActionButtonProps {
-  title: string
-  onClick: () => void
-  disabled?: boolean
-  children: React.ReactNode
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
 }
 
-const ActionButton = React.memo(function ActionButton({ title, onClick, disabled = false, children }: ActionButtonProps) {
+const ActionButton = React.memo(function ActionButton({
+  title,
+  onClick,
+  disabled = false,
+  children,
+}: ActionButtonProps) {
   return (
     <AppButton
       type="button"
@@ -34,9 +37,9 @@ const ActionButton = React.memo(function ActionButton({ title, onClick, disabled
     >
       {children}
     </AppButton>
-  )
-})
-ActionButton.displayName = 'ActionButton'
+  );
+});
+ActionButton.displayName = "ActionButton";
 
 // ---------------------------------------------------------------------------
 // ContentBlock Component
@@ -50,86 +53,106 @@ export const ContentBlock = React.memo(function ContentBlock({
   onDelete,
   onAdd,
   entryId,
-  placeholder = 'Type here...',
+  placeholder = "Type here...",
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
-  const { t } = useTranslation()
-  const dragControls = useDragControls()
-  const dispatch = useAppDispatch()
+  const { t } = useTranslation();
+  const dragControls = useDragControls();
+  const dispatch = useAppDispatch();
 
   // ---------------------------------------------------------------------------
   // AI Enhancement — local state per block instance.
   // ---------------------------------------------------------------------------
-  const [isEnhancing, setIsEnhancing] = useState(false)
-  const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
-  const originalTextRef = useRef<string>('')
-  const accumulatedAiContentRef = useRef<string>('')
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [streamingContent, setStreamingContent] = useState<string | undefined>(
+    undefined,
+  );
+  const originalTextRef = useRef<string>("");
+  const accumulatedAiContentRef = useRef<string>("");
 
   // Single permanent subscription tied to block.id.
   // Receives all IPC task events and filters to those matching this block's taskId.
   useEffect(() => {
-    if (typeof window.tasksManager?.onEvent !== 'function') return
+    if (typeof window.tasksManager?.onEvent !== "function") return;
+
+    window.tasksManager.list().then((tasks) => {
+      console.log(`[ContentBlock] Current tasks:`, tasks);
+    });
 
     const unsub = window.tasksManager.onEvent((event) => {
-      const data = event.data as { taskId?: string }
-      if (data?.taskId !== block.id) return
-
+      const data = event.data as { taskId?: string };
+      if (data?.taskId !== block.id) return;
+      console.log(
+        `[ContentBlock] Received event for task ${data?.taskId}:`,
+        event,
+      );
       switch (event.type) {
-        case 'stream': {
-          const sd = event.data as { token: string; content: string }
-          accumulatedAiContentRef.current = sd.content
-          setStreamingContent(originalTextRef.current + sd.content)
-          break
+        case "stream": {
+          const sd = event.data as { token: string; content: string };
+          accumulatedAiContentRef.current = sd.content;
+          setStreamingContent(originalTextRef.current + sd.content);
+          break;
         }
-        case 'completed': {
-          const finalContent = originalTextRef.current + accumulatedAiContentRef.current
-          dispatch(updateBlockContent({ entryId, blockId: block.id, content: finalContent }))
-          accumulatedAiContentRef.current = ''
-          setStreamingContent(undefined)
-          setIsEnhancing(false)
-          break
+        case "completed": {
+          const finalContent =
+            originalTextRef.current + accumulatedAiContentRef.current;
+          dispatch(
+            updateBlockContent({
+              entryId,
+              blockId: block.id,
+              content: finalContent,
+            }),
+          );
+          accumulatedAiContentRef.current = "";
+          setStreamingContent(undefined);
+          setIsEnhancing(false);
+          break;
         }
-        case 'error':
-        case 'cancelled':
-          accumulatedAiContentRef.current = ''
-          setStreamingContent(undefined)
-          setIsEnhancing(false)
-          break
+        case "error":
+        case "cancelled":
+          accumulatedAiContentRef.current = "";
+          setStreamingContent(undefined);
+          setIsEnhancing(false);
+          break;
       }
-    })
+    });
 
-    return unsub
-  // block.content intentionally omitted — captured once into originalTextRef on submit
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [block.id, dispatch, entryId])
+    return unsub;
+    // block.content intentionally omitted — captured once into originalTextRef on submit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [block.id, dispatch, entryId]);
 
   const handleEnhanceClick = useCallback(async () => {
-    if (isEnhancing) return
-    const text = block.content
-    if (!text.trim()) return
-    if (typeof window.tasksManager?.submit !== 'function') return
+    if (isEnhancing) return;
+    const text = block.content;
+    if (!text.trim()) return;
+    if (typeof window.tasksManager?.submit !== "function") return;
 
-    originalTextRef.current = text
-    accumulatedAiContentRef.current = ''
-    setIsEnhancing(true)
+    originalTextRef.current = text;
+    accumulatedAiContentRef.current = "";
+    setIsEnhancing(true);
 
     try {
-      const result = await window.tasksManager.submit('ai-enhance', { text }, { taskId: block.id })
-      if (!result.success) setIsEnhancing(false)
+      const result = await window.tasksManager.submit(
+        "ai-enhance",
+        { text },
+        { taskId: block.id },
+      );
+      if (!result.success) setIsEnhancing(false);
     } catch {
-      setIsEnhancing(false)
+      setIsEnhancing(false);
     }
-  }, [isEnhancing, block.id, block.content])
+  }, [isEnhancing, block.id, block.content]);
 
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
     (content: string) => onChange(block.id, content),
     [onChange, block.id],
-  )
+  );
 
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(block.content)
-  }, [block.content])
+    navigator.clipboard.writeText(block.content);
+  }, [block.content]);
 
   return (
     <Reorder.Item
@@ -176,27 +199,30 @@ export const ContentBlock = React.memo(function ContentBlock({
             autoFocus={autoFocus}
             disabled={isEnhancing}
             streamingContent={streamingContent}
-            className={isEnhancing ? 'opacity-60' : undefined}
+            className={isEnhancing ? "opacity-60" : undefined}
           />
         </div>
 
         {/* Action bar */}
         <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0 my-2">
           <ActionButton
-            title={isEnhancing ? t('contentBlock.enhancing') : t('contentBlock.enhanceWithAI')}
+            title={
+              isEnhancing
+                ? t("contentBlock.enhancing")
+                : t("contentBlock.enhanceWithAI")
+            }
             onClick={handleEnhanceClick}
             disabled={isEnhancing}
           >
-            <Sparkles className={`h-3.5 w-3.5${isEnhancing ? ' animate-pulse' : ''}`} />
+            <Sparkles
+              className={`h-3.5 w-3.5${isEnhancing ? " animate-pulse" : ""}`}
+            />
           </ActionButton>
-          <ActionButton
-            title={t('contentBlock.copy')}
-            onClick={handleCopy}
-          >
+          <ActionButton title={t("contentBlock.copy")} onClick={handleCopy}>
             <Copy className="h-3.5 w-3.5" />
           </ActionButton>
           <ActionButton
-            title={t('contentBlock.delete')}
+            title={t("contentBlock.delete")}
             onClick={() => onDelete(block.id)}
             disabled={isOnly}
           >
@@ -214,6 +240,6 @@ export const ContentBlock = React.memo(function ContentBlock({
         </div>
       )}
     </Reorder.Item>
-  )
-})
-ContentBlock.displayName = 'ContentBlock'
+  );
+});
+ContentBlock.displayName = "ContentBlock";
