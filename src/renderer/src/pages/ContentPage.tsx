@@ -127,15 +127,6 @@ const ContentPage: React.FC = () => {
               )}
             </AppDropdownMenuContent>
           </AppDropdownMenu>
-          <AppButton
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => setShowSidebar(!showSidebar)}
-            title={showSidebar ? t('common.hideSettings') : t('common.showSettings')}
-          >
-            <Settings2 className="h-4 w-4" />
-          </AppButton>
         </div>
       </div>
 
