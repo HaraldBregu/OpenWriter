@@ -90,7 +90,7 @@ export function bootstrapServices(): BootstrapResult {
   }
 
   // Task system -- handler registry + executor + built-in handlers
-  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TasksManagerHandlerRegistry())
+  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
   taskHandlerRegistry.register(new FileDownloadHandler())
   taskHandlerRegistry.register(new AIChatHandler(storeService))
   taskHandlerRegistry.register(new AIEnhanceHandler(storeService))
