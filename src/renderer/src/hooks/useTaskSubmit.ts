@@ -22,7 +22,7 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
   result: TResult | null
   /** Accumulated streamed content (for streaming tasks). */
   streamedContent: string
-  /** Current queue position when status is 'queued' or 'paused'. */
+  /** Current queue position when status is 'queued'. */
   queuePosition: number | undefined
   /** Submit the task. Optionally pass an inputOverride to replace the default input for this call. Returns the taskId on success, null on failure. */
   submit: (inputOverride?: TInput) => Promise<string | null>
