@@ -119,7 +119,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       if (snap.streamedContent) setStreamedContent(snap.streamedContent)
 
       // Tear down the subscription once the task reaches a terminal state.
-      // 'paused' is NOT terminal — the task can resume and continue.
+      // Only terminal statuses stop event tracking.
       if (TERMINAL_STATUSES.has(snap.status)) {
         cleanupSubscription()
       }
