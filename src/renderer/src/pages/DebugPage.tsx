@@ -271,29 +271,50 @@ export default function DebugPage() {
       {/* Main panel */}
       <div className="flex flex-col flex-1 min-w-0 min-h-0">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
-          <div className="flex items-center gap-2">
-            <Bug className="h-5 w-5 text-muted-foreground" />
-            <h1 className="text-lg font-semibold">Debug</h1>
-          </div>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>
-              <span className="font-medium text-foreground">{queueStats.running}</span> running
-            </span>
-            <span>
-              <span className="font-medium text-foreground">{queueStats.queued}</span> queued
-            </span>
-            <span>
-              <span className="font-medium text-foreground">{queueStats.paused}</span> paused
-            </span>
-            <span>
-              <span className="font-medium text-foreground">{queueStats.completed}</span> completed
-            </span>
-            {queueStats.error > 0 && (
-              <span className="text-destructive">
-                <span className="font-medium">{queueStats.error}</span> errors
+        <div className="px-6 py-4 border-b shrink-0 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bug className="h-5 w-5 text-muted-foreground" />
+              <h1 className="text-lg font-semibold">Debug</h1>
+            </div>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span>
+                <span className="font-medium text-foreground">{queueStats.running}</span> running
               </span>
-            )}
+              <span>
+                <span className="font-medium text-foreground">{queueStats.queued}</span> queued
+              </span>
+              <span>
+                <span className="font-medium text-foreground">{queueStats.paused}</span> paused
+              </span>
+              <span>
+                <span className="font-medium text-foreground">{queueStats.completed}</span> completed
+              </span>
+              {queueStats.error > 0 && (
+                <span className="text-destructive">
+                  <span className="font-medium">{queueStats.error}</span> errors
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Demo task CTAs */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground mr-1 flex items-center gap-1">
+              <Plus className="h-3 w-3" /> Demo task:
+            </span>
+            {DEMO_VARIANTS.map(({ variant, label, icon: Icon, title }) => (
+              <button
+                key={variant}
+                type="button"
+                title={title}
+                onClick={() => submitDemo(variant)}
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Icon className="h-3 w-3" />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
