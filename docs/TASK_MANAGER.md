@@ -140,21 +140,18 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 
 | Component | Layer | File | Responsibility |
 |-----------|-------|------|----------------|
-| `TaskExecutorService` | Main | `src/main/tasks/TaskExecutorService.ts` | Orchestrates task execution, queuing, priority ordering, pause/resume, TTL result storage |
-| `TaskHandlerRegistry` | Main | `src/main/tasks/TaskHandlerRegistry.ts` | Maps task type strings to handler instances |
-| `TaskHandler` | Main | `src/main/tasks/TaskHandler.ts` | Interface for implementing task-specific logic |
-| `TaskIpc` | Main | `src/main/ipc/TaskIpc.ts` | IPC bridge: registers channels, stamps windowId, validates priority |
-| `TaskStore` | Renderer | `src/renderer/src/contexts/TaskContext.tsx` | External store with per-taskId subscriptions for zero-cost event routing |
-| `TaskProvider` | Renderer | `src/renderer/src/contexts/TaskContext.tsx` | Single global `onEvent` listener that feeds all events into the store |
-| `useTaskSubmit` | Renderer | `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle management for a single task submission |
-| `useTaskProgress` | Renderer | `src/renderer/src/hooks/useTaskProgress.ts` | Fine-grained progress tracking via `useSyncExternalStore` |
-| `useTaskStatus` | Renderer | `src/renderer/src/hooks/useTaskStatus.ts` | Status-only subscription (no re-render on progress/stream) |
-| `useTaskStream` | Renderer | `src/renderer/src/hooks/useTaskStream.ts` | Accumulated stream content for AI token delivery |
-| `useTaskList` | Renderer | `src/renderer/src/hooks/useTaskList.ts` | All active tasks with optional client-side filtering |
-| `useTaskQueue` | Renderer | `src/renderer/src/hooks/useTaskQueue.ts` | Live queue view with position tracking and metrics |
-| `useTaskEvents` | Renderer | `src/renderer/src/hooks/useTaskEvents.ts` | Bounded event history (max 50) for debugging/activity feeds |
-| `useTaskResult` | Renderer | `src/renderer/src/hooks/useTaskResult.ts` | Fetches persisted results via `getResult` IPC after completion |
-| `withTaskTracking` | Renderer | `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects `taskTracking` prop into any component |
+| `TaskExecutor` | Main | `src/main/taskManager/TaskExecutor.ts` | Orchestrates task execution, queuing, priority ordering, pause/resume, TTL result storage |
+| `TaskHandlerRegistry` | Main | `src/main/taskManager/TaskHandlerRegistry.ts` | Maps task type strings to `TaskHandler` instances |
+| `TaskHandler` | Main | `src/main/taskManager/TaskHandler.ts` | Interface for task execution logic (`execute`, `validate`, `ProgressReporter`, `StreamReporter`) |
+| `TaskReactionBus` | Main | `src/main/taskManager/TaskReactionBus.ts` | Subscribes to `AppEvents` from `EventBus`; fan-outs lifecycle events to registered reaction handlers |
+| `TaskReactionRegistry` | Main | `src/main/taskManager/TaskReactionRegistry.ts` | Maps task type strings to `TaskReactionHandler[]`; supports wildcard `'*'` |
+| `TaskReactionHandler` | Main | `src/main/taskManager/TaskReactionHandler.ts` | Interface for main-process side-effects on task lifecycle events |
+| `TaskManagerIpc` | Main | `src/main/ipc/TaskManagerIpc.ts` | IPC bridge: registers channels, stamps `windowId`, validates priority |
+| `EventBus` | Main | `src/main/core/EventBus.ts` | Dual-role: `broadcast/sendTo` for renderer IPC; `emit/on` for main-process `AppEvents` |
+| `taskStore` | Renderer | `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions via `useSyncExternalStore`; lazy IPC listener init |
+| `taskEventBus` | Renderer | `src/renderer/src/services/taskEventBus.ts` | Per-task event pub/sub for streaming content accumulation |
+| `useTaskSubmit` | Renderer | `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, pause, resume, stream |
+| `useDebugTasks` | Renderer | `src/renderer/src/hooks/useDebugTasks.ts` | Subscribes to all tracked tasks for the debug page; exposes controls |
 
 ### Data Flow
 
