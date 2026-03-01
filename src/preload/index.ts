@@ -114,7 +114,7 @@ const win: WindowApi = {
 } satisfies WindowApi;
 
 // ---------------------------------------------------------------------------
-// window.workspace — Workspace folder selection, documents, directories, personality, output
+// window.workspace — Workspace folder selection, documents, directories, output
 // ---------------------------------------------------------------------------
 const workspace: WorkspaceApi = {
     selectFolder: (): Promise<string | null> => {
