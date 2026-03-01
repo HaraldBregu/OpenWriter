@@ -11,7 +11,7 @@ import {
 import {
   DEFAULT_INFERENCE_SETTINGS,
   type InferenceSettings,
-} from '@/components/personality/PersonalitySettingsSheet'
+} from '../../../shared/types/aiSettings'
 
 // ---------------------------------------------------------------------------
 // Types
