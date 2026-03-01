@@ -142,7 +142,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     setProgressMessage(undefined)
     setError(null)
     setResult(null)
-    setStreamedContent('')
     setQueuePosition(undefined)
     runningRef.current = true
 
