@@ -20,14 +20,14 @@ import { StoreService } from './services/store'
 import { LoggerService } from './services/logger'
 import { FileManagementService } from './services/FileManagementService'
 import { AIAgentsManager, AIAgentsRegistry, ALL_AGENT_DEFINITIONS } from './aiAgentsManager'
-import { TasksManagerHandlerRegistry } from './tasksManager/TasksManagerHandlerRegistry'
-import { TasksManagerExecutor } from './tasksManager/TasksManagerExecutor'
+import { TaskHandlerRegistry } from './taskManager/TaskHandlerRegistry'
+import { TaskExecutor } from './taskManager/TaskExecutor'
 import {
   FileDownloadHandler,
   AIChatHandler,
   AIEnhanceHandler,
   AIAgentTaskHandler,
-} from './tasksManager/handlers'
+} from './taskHandlers'
 
 // IPC modules
 import type { IpcModule } from './ipc'
