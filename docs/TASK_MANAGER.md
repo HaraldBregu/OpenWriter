@@ -1440,28 +1440,45 @@ Each hook subscribes to the same taskId key in the store but only re-renders whe
 
 ## File Reference
 
+### Main Process
+
 | File | Description |
 |------|-------------|
-| `src/main/tasks/TaskExecutorService.ts` | Core executor: queue, concurrency, lifecycle, TTL store |
-| `src/main/tasks/TaskHandlerRegistry.ts` | Type-to-handler registry |
-| `src/main/tasks/TaskHandler.ts` | TaskHandler, ProgressReporter, StreamReporter interfaces |
-| `src/main/tasks/TaskDescriptor.ts` | ActiveTask, TaskOptions, TaskStatus types |
-| `src/main/tasks/TaskEvents.ts` | Re-exports TaskEvent from shared types |
-| `src/main/tasks/handlers/FileDownloadHandler.ts` | File download with retry, progress, SSRF protection |
-| `src/main/tasks/handlers/AIChatHandler.ts` | AI chat with stream token delivery |
-| `src/main/tasks/handlers/AIEnhanceHandler.ts` | AI content enhancement handler |
-| `src/main/ipc/TaskIpc.ts` | IPC channel registration, windowId stamping, input validation |
-| `src/shared/types/ipc/types.ts` | TaskEvent, TaskInfo, TaskStatus, TaskPriority, TaskQueueStatus |
-| `src/shared/types/ipc/channels.ts` | TaskChannels constant (channel name strings) |
-| `src/preload/index.ts` | window.task API implementation (lines 578-610) |
-| `src/preload/index.d.ts` | TaskApi type declaration (lines 257-267) |
-| `src/renderer/src/contexts/TaskContext.tsx` | TaskStore, TaskProvider, useTaskContext |
-| `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook for task submission |
-| `src/renderer/src/hooks/useTaskProgress.ts` | Fine-grained progress tracking |
-| `src/renderer/src/hooks/useTaskStatus.ts` | Status-only subscription |
-| `src/renderer/src/hooks/useTaskStream.ts` | Stream content accumulation |
-| `src/renderer/src/hooks/useTaskList.ts` | All active tasks with filtering |
-| `src/renderer/src/hooks/useTaskQueue.ts` | Queue view with position tracking |
-| `src/renderer/src/hooks/useTaskEvents.ts` | Bounded event history |
-| `src/renderer/src/hooks/useTaskResult.ts` | Post-completion result fetching |
-| `src/renderer/src/components/withTaskTracking.tsx` | HOC for injecting task tracking |
+| `src/main/taskManager/TaskExecutor.ts` | Core executor: queue, concurrency, lifecycle, TTL store |
+| `src/main/taskManager/TaskHandlerRegistry.ts` | Type-to-handler registry |
+| `src/main/taskManager/TaskHandler.ts` | `TaskHandler`, `ProgressReporter`, `StreamReporter` interfaces |
+| `src/main/taskManager/TaskDescriptor.ts` | `ActiveTask`, `TaskOptions`, `TaskStatus` types |
+| `src/main/taskManager/TaskEvents.ts` | Re-exports `TaskEvent` from shared types |
+| `src/main/taskManager/TaskReactionHandler.ts` | `TaskReactionHandler` interface + typed lifecycle event payloads |
+| `src/main/taskManager/TaskReactionRegistry.ts` | Type → `TaskReactionHandler[]` registry (supports wildcard `'*'`) |
+| `src/main/taskManager/TaskReactionBus.ts` | `Disposable` observer; subscribes to `AppEvents`, dispatches to handlers |
+| `src/main/taskManager/reactions/index.ts` | Barrel: register concrete `TaskReactionHandler` implementations here |
+| `src/main/taskManager/index.ts` | Public re-exports for the taskManager module |
+| `src/main/ipc/TaskManagerIpc.ts` | IPC channel registration, `windowId` stamping, input validation |
+| `src/main/core/EventBus.ts` | `broadcast/sendTo` (renderer IPC) + `emit/on` (`AppEvents` for main process) |
+| `src/main/bootstrap.ts` | Wires executor, reaction registry, reaction bus, and all IPC modules |
+
+### Shared
+
+| File | Description |
+|------|-------------|
+| `src/shared/types.ts` | `TaskEvent`, `TaskInfo`, `TaskStatus`, `TaskPriority`, `TaskQueueStatus`, `TaskSubmitPayload` |
+| `src/shared/channels.ts` | `TaskChannels` constant object (IPC channel name strings) |
+
+### Preload
+
+| File | Description |
+|------|-------------|
+| `src/preload/index.ts` | `window.tasksManager` API implementation |
+| `src/preload/index.d.ts` | `TasksManagerApi` type declaration |
+
+### Renderer
+
+| File | Description |
+|------|-------------|
+| `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions; lazy IPC listener |
+| `src/renderer/src/services/taskEventBus.ts` | Per-task event pub/sub for streaming content accumulation |
+| `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, pause, resume, stream |
+| `src/renderer/src/hooks/useDebugTasks.ts` | All-tasks subscription for the debug page |
+| `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects `taskTracking` prop into any component |
+| `src/renderer/src/pages/DebugPage.tsx` | Debug page: live task table with controls and event log panel |
