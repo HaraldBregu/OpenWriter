@@ -17,12 +17,10 @@ Files using `import.meta.env.VITE_*` require a shim before imports:
 const metaEnv = { VITE_OPENAI_API_KEY: undefined, VITE_OPENAI_MODEL: undefined }
 Object.defineProperty(global, 'import', { value: { meta: { env: metaEnv } }, writable: true, configurable: true })
 ```
-Confirmed in `tests/unit/main/tasks/handlers/AIChatHandler.test.ts`.
 
 ### Renderer-process tests
 `jest.config.cjs` applies `tests/transforms/vite-env-transform.cjs` to all
-`src/renderer/**` files. Rewrites `import.meta.env.VITE_X` → `globalThis.__VITE_ENV__?.VITE_X`.
-No test-side shim needed. See `ipc-bridge-testing.md` for details.
+`src/renderer/**` files. No test-side shim needed. See `ipc-bridge-testing.md`.
 
 ## react-i18next Mock Pattern
 Always mock BEFORE the component import. t(key) returns the key itself:
@@ -32,67 +30,63 @@ jest.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: jest.fn() }
 }))
 ```
-Then query by key: `screen.getByTitle('titleBar.close')`. See `component-testing.md`.
 
 ## window.* Mock Isolation Issue (resetMocks:true)
-
-`resetMocks: true` resets mock call history. But when you use `.mock.calls[0]` to
-inspect call arguments, the index may be wrong if the same mock was used in prior tests
-and `resetMocks` did not fully reset it. **Use fresh mocks per test** for payload assertions:
-```typescript
-const spy = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
-Object.defineProperty(window, 'task', { value: { ...window.task, submit: spy }, writable: true, configurable: true })
-// spy.mock.calls[0] is guaranteed to be from the current test
-```
-Or use `expect(spy).toHaveBeenCalledWith('channel', expect.objectContaining({ field: value }))`.
+`resetMocks: true` resets mock call history. Use fresh mocks per test for payload assertions.
 
 ## React 19 + RTL 16 Test Isolation
-Async state updates from one test can bleed into the next test's `act()`. Symptoms:
-- Tests pass alone but fail together
-- `TypeError: Cannot read properties of null (reading 'X')`
-
-Fix: separate describe blocks per logical group, each with its own `afterEach` that
-resets shared state. Always call `unmount()` in tests with never-resolving promises.
-
-## window.ai Mock Pattern
-Hook `usePipeline` uses `window.ai.inference/cancel/onEvent`:
-```typescript
-Object.defineProperty(window, 'ai', { value: { inference: jest.fn().mockResolvedValue(...), cancel: jest.fn(), onEvent: jest.fn().mockImplementation(cb => { listeners.push(cb); return () => {...} }) }, writable: true, configurable: true })
-// afterEach: Object.defineProperty(window, 'ai', { value: undefined, writable: true, configurable: true })
-```
+Async state updates from one test can bleed into the next test's `act()`. Fix: separate
+describe blocks per logical group, each with its own `afterEach`. Always call `unmount()`
+in tests with never-resolving promises.
 
 ## IPC / Service Mocking Patterns
-
-### WindowContextManager chain
-```typescript
-const mockWindowContext = { getService: jest.fn().mockReturnValue(mockService) }
-const mockWindowContextManager = { get: jest.fn().mockReturnValue(mockWindowContext) }
-container.register('windowContextManager', mockWindowContextManager)
-```
 
 ### window.api mock (preload bridge)
 Located at `tests/mocks/preload-bridge.ts`. Reset with `resetMockApi()` in `beforeEach`.
 
+### window.tasksManager mock (preload bridge for tasks)
+Exposed as `window.tasksManager` (NOT `window.task` — that is a different namespace).
+For taskEventBus/taskStore tests, mock directly:
+```typescript
+Object.defineProperty(window, 'tasksManager', {
+  value: { onEvent: jest.fn().mockImplementation((cb) => { globalCb = cb; return () => {} }) },
+  writable: true, configurable: true
+})
+```
+Clean up in `afterEach` by setting value to `undefined`.
+
+## Module Singleton Reset Pattern (renderer)
+`taskStore` and `taskEventBus` are module-level singletons. To isolate tests:
+1. Call `jest.resetModules()` in `beforeEach`
+2. `require()` the module fresh inside each test (dynamic require, not static import)
+3. **Do NOT use `jest.isolateModules()` with a synchronous callback** — the require
+   result is scoped to the callback and inaccessible outside.
+
+## TaskManager Architecture
+- **Source path**: `src/main/taskManager/` (NOT `src/main/tasks/`)
+- **TaskExecutor**: priority queue, maxConcurrency=5, AbortController per task, 5min TTL store
+- **TaskStatus**: 'queued' | 'running' | 'completed' | 'error' | 'cancelled' (NO 'paused')
+- **StreamReporter.stream(data)**: raw batch delivery, NO accumulation in executor
+- **TrackedTaskState**: NO streamedContent/content/seedContent (those live in taskEventBus)
+- **taskStore.applyEvent**: NOT exported as a named export — access via `taskStore.applyEvent`
+- **taskEventBus.TaskSnapshot**: HAS streamedContent/content/seedContent fields
+- **EventBus mock needs**: `broadcast`, `sendTo`, AND `emit` methods
+
+## TaskExecutor Testing Notes
+- Use `jest.useFakeTimers()`; use `jest.advanceTimersByTime(N)` NOT `jest.runAllTimers()`
+  because the GC interval (60s) causes an infinite loop with `runAllTimers()`
+- GC interval is unref'd but still ticks with fake timers
+- `HangingHandler`: resolves via `_resolve()`, rejects AbortError when signal fires
+- AbortError detection: `err.name === 'AbortError'` (not instanceof DOMException in Node)
+
 ## Key Module Renames (brain → personality)
-- `src/main/services/brain-files` → `src/main/services/personality-files` → `PersonalityFilesService`
+- `src/main/services/brain-files` → `PersonalityFilesService`
 - `src/renderer/src/store/brainFilesSlice` → `personalityFilesSlice`
 - `src/renderer/src/hooks/useBrainFiles` → `usePersonalityFiles`
 
-## PersonalityFilesService API
-- `save({ sectionId, content, metadata })` — writes config.json + DATA.md in `YYYY-MM-DD_HHmmss/`
-- `loadAll()` — uses `fs.access` (NOT `fs.stat`) for directory existence
-- `loadOne(sectionId, fileId)` — TWO separate args
-- `delete(sectionId, fileId)` — TWO separate args; uses `fs.rm({ recursive: true })`
-- `readdir` called with `{ withFileTypes: true }` — mock with `makeDirent(name, isDir)`
-
 ## Redux Slice Testing Conventions
-See `chatSlice.test.ts` for canonical pattern. Selector root state cast:
-```typescript
-{ chat: createInitialState() }  // for chatSlice
-{ output: createInitialState() } as unknown as Parameters<typeof selector>[0]  // for outputSlice
-```
+See `chatSlice.test.ts` for canonical pattern.
 Async thunk extra-reducers: `{ type: thunk.pending.type }` / `{ type: thunk.fulfilled.type, payload }`.
-Cross-slice matchers: `writingsReducer(state, { type: 'output/loadAll/fulfilled', payload: items })`.
 
 ## Test File Locations
 - Main process: `tests/unit/main/`
@@ -102,11 +96,12 @@ Cross-slice matchers: `writingsReducer(state, { type: 'output/loadAll/fulfilled'
 - Setup: `tests/setup/renderer.ts` (installed globally for renderer tests)
 
 ## Pre-existing Failures (do not investigate)
-- `brainFilesSlice.test.ts` — 10 failures (slice renamed, test out of sync)
+- `brainFilesSlice.test.ts` — 10 failures (slice renamed)
 - `usePostsLoader.test.ts` — 1 failure
 - `WelcomePage.test.tsx` — 8 failures
 - Main process: ~12 pre-existing failures in pipeline agent tests
-- Baseline: **16 failed, 101 passed, 117 total** test suites as of 2026-02-25
+- `TaskExecutorService.test.ts` (old) — imports from `src/main/tasks/` (stale path)
+- Baseline: **16 failed, 101 passed** as of 2026-02-25
 
 ## Topic Files
 - `component-testing.md` — PersonalitySettingsPanel, Radix UI, AppSelect/AppSwitch mocking
