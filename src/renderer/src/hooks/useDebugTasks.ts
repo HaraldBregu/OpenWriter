@@ -13,7 +13,6 @@ function buildSnapshot(): TrackedTaskState[] {
 export interface DebugQueueStats {
   queued: number
   running: number
-  paused: number
   completed: number
   error: number
   cancelled: number
@@ -24,8 +23,6 @@ export interface UseDebugTasksReturn {
   queueStats: DebugQueueStats
   hide: (taskId: string) => void
   cancel: (taskId: string) => Promise<void>
-  pause: (taskId: string) => Promise<void>
-  resume: (taskId: string) => Promise<void>
 }
 
 export function useDebugTasks(): UseDebugTasksReturn {
