@@ -15,17 +15,6 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const DocumentsPage = lazy(() => import("./pages/DocumentsPage"));
 const DirectoriesPage = lazy(() => import("./pages/DirectoriesPage"));
-const EmotionalDepthPage = lazy(
-  () => import("./pages/personality/EmotionalDepthPage"),
-);
-const ConsciousnessPage = lazy(
-  () => import("./pages/personality/ConsciousnessPage"),
-);
-const MotivationPage = lazy(() => import("./pages/personality/MotivationPage"));
-const SocialIdentityPage = lazy(
-  () => import("./pages/personality/SocialIdentityPage"),
-);
-const CreativityPage = lazy(() => import("./pages/personality/CreativityPage"));
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary level="route">
