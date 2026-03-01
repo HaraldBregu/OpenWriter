@@ -105,9 +105,9 @@ export const ContentBlock = React.memo(function ContentBlock({
 
       switch (event.type) {
         case "stream": {
-          const sd = event.data as { token: string; content: string };
-          accumulatedAiContentRef.current = sd.content;
-          setStreamingContent(originalTextRef.current + sd.content);
+          const sd = event.data as { data: string };
+          accumulatedAiContentRef.current += sd.data;
+          setStreamingContent(originalTextRef.current + accumulatedAiContentRef.current);
           break;
         }
         case "completed": {
