@@ -48,7 +48,6 @@
 - Relative import paths from renderer:
   - From `src/renderer/src/store/` → `../../../shared/types/aiSettings`
   - From `src/renderer/src/hooks/` → `../../../shared/types/aiSettings`
-  - From `src/renderer/src/components/personality/` → `../../../../shared/types/aiSettings`
 - `tsconfig.web.json` include array must contain `"src/shared/**/*"` for the renderer TS project to resolve these
 - When moving a type to shared, re-export from old location so existing imports don't break:
   `export type { InferenceSettings } from '../../../../shared/types/aiSettings'`
