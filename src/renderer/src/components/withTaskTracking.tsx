@@ -101,10 +101,17 @@ export function withTaskTracking<TInput, TProps extends WithTaskTrackingInjected
       progressMessage,
       error,
       result,
-      submit,
+      submit: hookSubmit,
       cancel,
       reset,
     } = useTaskSubmit<TInput>(config.type, resolvedInput(), config.options)
+
+    // Wrap submit so the HOC's injected prop matches `() => Promise<void>` —
+    // the resolved input is captured at call time from the factory/static value.
+    const submit = useCallback(
+      () => hookSubmit(resolvedInput()),
+      [hookSubmit, resolvedInput]
+    )
 
     const taskTracking: WithTaskTrackingInjectedProps['taskTracking'] = {
       submit,
