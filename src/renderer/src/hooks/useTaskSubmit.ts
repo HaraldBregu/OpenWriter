@@ -65,8 +65,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   input: TInput,
   options?: TaskSubmitOptions
 ): UseTaskSubmitReturn<TInput, TResult> {
-  // Ensure the global IPC listener is active.
-  taskStore.ensureListening()
+  // IPC listener is initialized in store/index.ts via setupTaskIpcListener().
 
   const [taskId, setTaskId] = useState<string | null>(null)
   const [status, setStatus] = useState<TaskStatus | 'idle'>('idle')
