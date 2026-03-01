@@ -54,13 +54,5 @@ export function useDebugTasks(): UseDebugTasksReturn {
     await window.tasksManager.cancel(taskId)
   }, [])
 
-  const pause = useCallback(async (taskId: string) => {
-    await window.tasksManager.pause(taskId)
-  }, [])
-
-  const resume = useCallback(async (taskId: string) => {
-    await window.tasksManager.resume(taskId)
-  }, [])
-
-  return { tasks, queueStats, hide, cancel, pause, resume }
+  return { tasks, queueStats, hide, cancel }
 }
