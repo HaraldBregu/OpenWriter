@@ -34,7 +34,7 @@ import type { IpcModule } from './ipc'
 import {
   AppIpc,
   WorkspaceIpc,
-  TasksManagerIpc,
+  TaskManagerIpc,
   WindowIpc,
   AIAgentsManagerIpc,
 } from './ipc'
