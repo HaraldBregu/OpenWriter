@@ -73,7 +73,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const [progressMessage, setProgressMessage] = useState<string | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<TResult | null>(null)
-  const [streamedContent, setStreamedContent] = useState<string>('')
   const [queuePosition, setQueuePosition] = useState<number | undefined>(undefined)
 
   // Stable ref to the current task ID so store callbacks don't go stale.
