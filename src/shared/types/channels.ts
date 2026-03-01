@@ -37,7 +37,7 @@ import type {
   AgentRunSnapshot,
   AIAgentsManagerStatus,
   AIAgentsDefinitionInfo,
-} from './ipc/types'
+} from './types'
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
