@@ -98,7 +98,7 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 |  Main Process                                                           |
 |                                                                         |
 |  +---------------------+     +------------------------+                 |
-|  | TaskIpc             |---->| TaskExecutorService    |                 |
+|  | TaskManagerIpc      |---->| TaskExecutor           |                 |
 |  |  - registers IPC    |     |  - queue + concurrency |                 |
 |  |  - stamps windowId  |     |  - lifecycle mgmt      |                 |
 |  |  - validates input  |     |  - TTL result store    |                 |
@@ -109,17 +109,30 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 |                              |  - type -> handler Map |                 |
 |                              +----------+-------------+                 |
 |                                         |                               |
-|                       +-----------------+-----------------+             |
-|                       |                 |                 |             |
-|              +--------v---+   +---------v--+   +---------v--+          |
-|              | AIChatHandler| |AIEnhanceHandler|FileDownloadHandler|    |
-|              +-------------+ +-------------+   +-------------+         |
+|                              +----------v-------------------+           |
+|                              | TaskHandler (per type)       |           |
+|                              |  execute(input, signal, ...) |           |
+|                              +------------------------------+           |
 |                                                                         |
-|  +---------------------+                                                |
-|  | EventBus            |  <-- TaskExecutorService emits task:event      |
-|  |  .sendTo(windowId)  |      events via EventBus for window routing    |
-|  |  .broadcast()       |                                                |
-|  +---------------------+                                                |
+|  +---------------------+  emit('task:submitted'|'task:started'|...)     |
+|  | EventBus            |<-- TaskExecutor emits AppEvents for            |
+|  |  .sendTo(windowId)  |    main-process observers (reaction layer)     |
+|  |  .broadcast()       |    AND pushes 'task:event' IPC to renderer     |
+|  |  .emit() / .on()    |                                                |
+|  +----------+----------+                                                |
+|             |                                                           |
+|  +----------v----------+     +------------------------+                 |
+|  | TaskReactionBus     |---->| TaskReactionRegistry   |                 |
+|  |  - subscribes to   |     |  - type -> handler[]   |                 |
+|  |    AppEvents        |     |  - wildcard '*' support|                 |
+|  |  - fan-out dispatch |     +----------+-------------+                 |
+|  |  - error isolation  |                |                               |
+|  +---------------------+     +----------v-------------------+           |
+|                              | TaskReactionHandler (per type)|          |
+|                              |  onSubmitted / onStarted /   |           |
+|                              |  onCompleted / onFailed /    |           |
+|                              |  onCancelled                 |           |
+|                              +------------------------------+           |
 +-------------------------------------------------------------------------+
 ```
 
