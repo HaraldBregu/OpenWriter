@@ -322,6 +322,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     )}
                   </AppSidebarMenuItem>
 
+                  <AppSidebarSeparator className="my-1" />
+
+                  {/* Debug */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      className="h-9 px-3"
+                      isActive={location.pathname === "/debug"}
+                    >
+                      <Link to="/debug">
+                        <Bug className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">Debug</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
