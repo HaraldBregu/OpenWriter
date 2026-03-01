@@ -265,7 +265,6 @@ export class TaskExecutor implements Disposable {
       if (task.status === 'running') {
         running++
       } else {
-        // queued or paused both count as queued from a metrics perspective
         queued++
       }
     }
