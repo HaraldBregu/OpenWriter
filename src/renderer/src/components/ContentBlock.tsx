@@ -61,6 +61,15 @@ export const ContentBlock = React.memo(function ContentBlock({
   const dispatch = useAppDispatch();
 
   // ---------------------------------------------------------------------------
+  // Stable refs — updated every render so the permanent subscription closure
+  // always reads the latest values without being listed as a dep.
+  // ---------------------------------------------------------------------------
+  const dispatchRef = useRef(dispatch);
+  dispatchRef.current = dispatch;
+  const entryIdRef = useRef(entryId);
+  entryIdRef.current = entryId;
+
+  // ---------------------------------------------------------------------------
   // AI Enhancement — local state per block instance.
   // ---------------------------------------------------------------------------
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -85,6 +94,8 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   // Single permanent subscription tied to block.id.
   // Receives all IPC task events and filters to those matching this block's taskId.
+  // dispatchRef / entryIdRef are read inside the closure so they never need to
+  // be deps — the ref values are always current at call time.
   useEffect(() => {
     if (typeof window.tasksManager?.onEvent !== "function") return;
 
@@ -100,7 +111,10 @@ export const ContentBlock = React.memo(function ContentBlock({
           break;
         }
         case "completed": {
-          const cd = event.data as { result?: { content?: string } };
+          const cd = event.data as {
+            result?: { content?: string };
+            durationMs?: number;
+          };
           // Use authoritative result from server; fall back to client accumulation.
           const aiOutput =
             cd.result?.content ?? accumulatedAiContentRef.current;
@@ -109,9 +123,9 @@ export const ContentBlock = React.memo(function ContentBlock({
           // stale block.content before Redux propagates. pendingFinalContentRef
           // tracks when to clear it once block.content has caught up.
           pendingFinalContentRef.current = finalContent;
-          dispatch(
+          dispatchRef.current(
             updateBlockContent({
-              entryId,
+              entryId: entryIdRef.current,
               blockId: block.id,
               content: finalContent,
             }),
@@ -125,6 +139,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         case "cancelled":
           pendingFinalContentRef.current = null;
           accumulatedAiContentRef.current = "";
+          originalTextRef.current = "";
           setStreamingContent(undefined);
           setIsEnhancing(false);
           break;
@@ -132,7 +147,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     });
 
     return unsub;
-  }, [block.id, dispatch, entryId]);
+  }, [block.id]); // permanent — only re-subscribes if block gets a new UUID
 
   const handleEnhanceClick = useCallback(async () => {
     if (isEnhancing) return;
@@ -142,6 +157,7 @@ export const ContentBlock = React.memo(function ContentBlock({
 
     originalTextRef.current = text;
     accumulatedAiContentRef.current = "";
+    pendingFinalContentRef.current = null;
     setIsEnhancing(true);
 
     try {
