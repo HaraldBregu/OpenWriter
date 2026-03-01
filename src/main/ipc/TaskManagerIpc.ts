@@ -77,7 +77,7 @@ export class TaskManagerIpc implements IpcModule {
     })
 
     /**
-     * List all active tasks (queued + running, including paused).
+     * List all active tasks (queued + running).
      */
     registerQuery(TaskChannels.list, () => {
       return executor.listTasks().map(toTaskInfo)
