@@ -8,11 +8,6 @@ import {
   updateEntryTitle,
   type WritingEntry,
 } from '@/store/writingItemsSlice'
-import {
-  DEFAULT_INFERENCE_SETTINGS,
-  type InferenceSettings,
-} from '../../../shared/types/aiSettings'
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -40,10 +35,6 @@ export interface UseDraftEditorReturn {
   handleReorder: (reordered: Block[]) => void
   /** Append a new block at the end and focus it. */
   handleAppendBlock: () => void
-  /** Current AI settings (local state, not stored in Redux between page visits). */
-  aiSettings: InferenceSettings
-  /** Update AI settings. */
-  handleAiSettingsChange: (next: InferenceSettings) => void
   /**
    * The block ID that should receive focus on the next render.
    * Consumed by ContentBlock via `autoFocus`. Reset to null after one render.
