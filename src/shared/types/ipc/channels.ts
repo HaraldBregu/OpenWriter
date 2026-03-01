@@ -277,9 +277,6 @@ export interface EventChannelMap {
   [WorkspaceChannels.documentsWatcherError]: { data: WatcherError }
   [WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent }
   [WorkspaceChannels.outputWatcherError]: { data: WatcherError }
-  [WorkspaceChannels.personalityFileChanged]: { data: PersonalityFileChangeEvent }
-  [WorkspaceChannels.personalityWatcherError]: { data: WatcherError }
-  [WorkspaceChannels.sectionConfigChanged]: { data: SectionConfigChangeEvent }
   [WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] }
   [AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction }
   /** Push events from AIAgentsManager.startStreaming to the originating renderer window. */
