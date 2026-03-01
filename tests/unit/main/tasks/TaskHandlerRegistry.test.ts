@@ -1,28 +1,41 @@
 /**
  * Tests for TaskHandlerRegistry.
  *
- * Validates handler registration, lookup, collision detection, existence checks,
- * type listing, and the clear utility used in test teardown.
+ * Testing strategy:
+ *  - A fresh registry is created in beforeEach to guarantee isolation.
+ *  - All methods are exercised through their public API only.
  *
- * TaskHandlerRegistry mirrors the AgentRegistry pattern — so tests follow the
- * same structure as AgentRegistry.test.ts.
+ * Cases covered:
+ *  - register(): adds a handler and makes it retrievable
+ *  - register(): throws on duplicate type identifier
+ *  - register(): allows multiple distinct types to coexist
+ *  - get(): returns the registered handler instance
+ *  - get(): throws for an unknown type
+ *  - get(): throws on an empty registry
+ *  - get(): retrieves each handler independently after bulk registration
+ *  - has(): returns true for a registered type
+ *  - has(): returns false for an unknown type
+ *  - has(): returns false on an empty registry
+ *  - listTypes(): returns [] for empty registry
+ *  - listTypes(): contains all registered type identifiers
+ *  - listTypes(): reflects incremental registrations
+ *  - clear(): removes all handlers
+ *  - clear(): allows re-registration after clearing
+ *  - clear(): is a no-op on an empty registry
  */
-import { TaskHandlerRegistry } from '../../../../src/main/tasks/TaskHandlerRegistry'
-import type { TaskHandler, ProgressReporter } from '../../../../src/main/tasks/TaskHandler'
+
+import { TaskHandlerRegistry } from '../../../../src/main/taskManager/TaskHandlerRegistry'
+import type { TaskHandler } from '../../../../src/main/taskManager/TaskHandler'
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Create a minimal TaskHandler implementation with the given type identifier. */
+/** Minimal TaskHandler stub with the given type identifier. */
 function makeHandler(type: string): TaskHandler {
   return {
     type,
-    execute: jest.fn().mockResolvedValue({ result: 'ok' }) as unknown as (
-      input: unknown,
-      signal: AbortSignal,
-      reporter: ProgressReporter
-    ) => Promise<unknown>
+    execute: jest.fn().mockResolvedValue({ result: 'ok' }),
   }
 }
 
@@ -34,33 +47,29 @@ describe('TaskHandlerRegistry', () => {
   let registry: TaskHandlerRegistry
 
   beforeEach(() => {
-    jest.clearAllMocks()
     registry = new TaskHandlerRegistry()
   })
 
-  // ---- register ------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // register()
+  // -------------------------------------------------------------------------
 
-  describe('register', () => {
-    it('should register a handler successfully', () => {
-      const handler = makeHandler('file-download')
-
-      registry.register(handler)
+  describe('register()', () => {
+    it('registers a handler and makes it accessible via has()', () => {
+      registry.register(makeHandler('file-download'))
 
       expect(registry.has('file-download')).toBe(true)
     })
 
-    it('should throw when registering a duplicate type', () => {
-      const handler1 = makeHandler('ai-chat')
-      const handler2 = makeHandler('ai-chat')
+    it('throws when registering a duplicate type identifier', () => {
+      registry.register(makeHandler('ai-chat'))
 
-      registry.register(handler1)
-
-      expect(() => registry.register(handler2)).toThrow(
+      expect(() => registry.register(makeHandler('ai-chat'))).toThrow(
         'Task handler already registered: ai-chat'
       )
     })
 
-    it('should register multiple handlers with different types', () => {
+    it('allows multiple handlers with distinct types to coexist', () => {
       registry.register(makeHandler('ai-chat'))
       registry.register(makeHandler('ai-enhance'))
       registry.register(makeHandler('file-download'))
@@ -69,30 +78,45 @@ describe('TaskHandlerRegistry', () => {
       expect(registry.has('ai-enhance')).toBe(true)
       expect(registry.has('file-download')).toBe(true)
     })
+
+    it('does not affect other types when one type is registered', () => {
+      registry.register(makeHandler('type-a'))
+
+      expect(registry.has('type-b')).toBe(false)
+    })
   })
 
-  // ---- get -----------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // get()
+  // -------------------------------------------------------------------------
 
-  describe('get', () => {
-    it('should return the registered handler by type', () => {
+  describe('get()', () => {
+    it('returns the exact handler instance that was registered', () => {
       const handler = makeHandler('ai-chat')
       registry.register(handler)
 
-      const retrieved = registry.get('ai-chat')
-
-      expect(retrieved).toBe(handler)
-      expect(retrieved.type).toBe('ai-chat')
+      expect(registry.get('ai-chat')).toBe(handler)
     })
 
-    it('should throw when type is not registered', () => {
-      expect(() => registry.get('nonexistent')).toThrow('Unknown task type: nonexistent')
+    it('returns a handler with the correct type property', () => {
+      registry.register(makeHandler('ai-chat'))
+
+      expect(registry.get('ai-chat').type).toBe('ai-chat')
     })
 
-    it('should throw for any unknown type on an empty registry', () => {
-      expect(() => registry.get('anything')).toThrow('Unknown task type: anything')
+    it('throws for an unknown type', () => {
+      expect(() => registry.get('nonexistent')).toThrow(
+        'Unknown task type: nonexistent'
+      )
     })
 
-    it('should retrieve each handler independently after multiple registrations', () => {
+    it('throws for any type on an empty registry', () => {
+      expect(() => registry.get('anything')).toThrow(
+        'Unknown task type: anything'
+      )
+    })
+
+    it('retrieves each handler independently when multiple are registered', () => {
       const chatHandler = makeHandler('ai-chat')
       const enhanceHandler = makeHandler('ai-enhance')
 
@@ -104,32 +128,36 @@ describe('TaskHandlerRegistry', () => {
     })
   })
 
-  // ---- has -----------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // has()
+  // -------------------------------------------------------------------------
 
-  describe('has', () => {
-    it('should return true for a registered handler', () => {
+  describe('has()', () => {
+    it('returns true for a registered handler', () => {
       registry.register(makeHandler('ai-chat'))
 
       expect(registry.has('ai-chat')).toBe(true)
     })
 
-    it('should return false for an unregistered type', () => {
+    it('returns false for an unregistered type', () => {
       expect(registry.has('nonexistent')).toBe(false)
     })
 
-    it('should return false on an empty registry', () => {
+    it('returns false on an empty registry', () => {
       expect(registry.has('ai-chat')).toBe(false)
     })
   })
 
-  // ---- listTypes -----------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // listTypes()
+  // -------------------------------------------------------------------------
 
-  describe('listTypes', () => {
-    it('should return an empty array for an empty registry', () => {
+  describe('listTypes()', () => {
+    it('returns an empty array for an empty registry', () => {
       expect(registry.listTypes()).toEqual([])
     })
 
-    it('should return all registered type identifiers', () => {
+    it('returns all registered type identifiers', () => {
       registry.register(makeHandler('ai-chat'))
       registry.register(makeHandler('ai-enhance'))
       registry.register(makeHandler('file-download'))
@@ -142,7 +170,7 @@ describe('TaskHandlerRegistry', () => {
       expect(types).toContain('file-download')
     })
 
-    it('should reflect changes after each registration', () => {
+    it('reflects each incremental registration', () => {
       expect(registry.listTypes()).toHaveLength(0)
 
       registry.register(makeHandler('step-one'))
@@ -153,12 +181,24 @@ describe('TaskHandlerRegistry', () => {
       expect(registry.listTypes()).toContain('step-one')
       expect(registry.listTypes()).toContain('step-two')
     })
+
+    it('does not expose internal details beyond type strings', () => {
+      registry.register(makeHandler('t1'))
+      registry.register(makeHandler('t2'))
+
+      const types = registry.listTypes()
+      for (const t of types) {
+        expect(typeof t).toBe('string')
+      }
+    })
   })
 
-  // ---- clear ---------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // clear()
+  // -------------------------------------------------------------------------
 
-  describe('clear', () => {
-    it('should remove all registered handlers', () => {
+  describe('clear()', () => {
+    it('removes all registered handlers', () => {
       registry.register(makeHandler('ai-chat'))
       registry.register(makeHandler('ai-enhance'))
 
@@ -169,20 +209,28 @@ describe('TaskHandlerRegistry', () => {
       expect(registry.has('ai-enhance')).toBe(false)
     })
 
-    it('should allow re-registration after clearing', () => {
+    it('allows re-registration of the same type after clearing', () => {
       const handler = makeHandler('ai-chat')
-
       registry.register(handler)
+
       registry.clear()
 
-      // Should not throw after clear
       expect(() => registry.register(handler)).not.toThrow()
       expect(registry.has('ai-chat')).toBe(true)
     })
 
-    it('should be a no-op on an empty registry', () => {
+    it('is a no-op on an empty registry', () => {
       expect(() => registry.clear()).not.toThrow()
       expect(registry.listTypes()).toEqual([])
+    })
+
+    it('causes get() to throw after clearing', () => {
+      registry.register(makeHandler('ai-chat'))
+      registry.clear()
+
+      expect(() => registry.get('ai-chat')).toThrow(
+        'Unknown task type: ai-chat'
+      )
     })
   })
 })
