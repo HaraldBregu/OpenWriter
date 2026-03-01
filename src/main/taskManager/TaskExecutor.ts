@@ -458,6 +458,8 @@ export class TaskExecutor implements Disposable {
         data: { taskId, result, durationMs }
       } satisfies TaskEvent)
 
+      this.eventBus.emit('task:completed', { taskId, taskType: type, result, durationMs, windowId })
+
       console.log(`[TaskExecutor] Task ${taskId} completed in ${durationMs}ms`)
     } catch (err) {
       // Task may have been cancelled via cancel()
