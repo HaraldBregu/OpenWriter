@@ -83,18 +83,8 @@ export function bootstrapServices(): BootstrapResult {
     agentRegistry.register(def)
   }
 
-  // Task system -- handler registry + executor + built-in handlers
+  // Task system -- handler registry + executor
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
-  taskHandlerRegistry.register(new FileDownloadHandler())
-  taskHandlerRegistry.register(new AIChatHandler(storeService))
-  taskHandlerRegistry.register(new AIEnhanceHandler(storeService))
-
-  // Register the generic AI agent task handler — must come after AIAgentsManager
-  // and AIAgentsRegistry are fully populated so registry.has() works at validate time.
-  const aiAgentsManager = container.get<AIAgentsManager>('AIAgentsManager')
-  const aiAgentsRegistry = container.get<AIAgentsRegistry>('AIAgentsRegistry')
-  taskHandlerRegistry.register(new AIAgentTaskHandler(aiAgentsManager, aiAgentsRegistry))
-
   container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 5))
 
   // Create WindowContextManager for managing per-window service instances
