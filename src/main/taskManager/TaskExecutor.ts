@@ -474,6 +474,8 @@ export class TaskExecutor implements Disposable {
           type: 'cancelled',
           data: { taskId }
         } satisfies TaskEvent)
+
+        this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId })
       } else {
         const message = err instanceof Error ? err.message : String(err)
         const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR'
@@ -487,6 +489,8 @@ export class TaskExecutor implements Disposable {
           type: 'error',
           data: { taskId, message, code }
         } satisfies TaskEvent)
+
+        this.eventBus.emit('task:failed', { taskId, taskType: type, error: message, code, windowId })
       }
     } finally {
       // Clean up timeout
