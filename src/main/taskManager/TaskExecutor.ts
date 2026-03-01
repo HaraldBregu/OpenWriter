@@ -161,6 +161,8 @@ export class TaskExecutor implements Disposable {
       data: { taskId }
     } satisfies TaskEvent)
 
+    this.eventBus.emit('task:cancelled', { taskId, taskType: task.type, windowId: task.windowId })
+
     // Retain in completed store for TTL-based result retrieval
     this.completedTasks.set(taskId, {
       task: { ...task, controller: undefined as unknown as AbortController },
