@@ -98,7 +98,7 @@ export class TaskManagerIpc implements IpcModule {
 
     /**
      * Retrieve a completed, errored, or cancelled task result by ID.
-     * Active tasks (queued/running/paused) are also returned.
+     * Active tasks (queued/running) are also returned.
      * Returns null if the task ID is unknown or its TTL has expired.
      */
     registerQuery(TaskChannels.getResult, (taskId: string) => {
