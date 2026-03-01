@@ -1,1 +1,1 @@
-export type { TaskEvent } from '../../shared/types/ipc/types'
+export type { TaskEvent } from '../../shared/types/types'

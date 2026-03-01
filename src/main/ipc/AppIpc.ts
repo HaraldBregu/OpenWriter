@@ -10,8 +10,8 @@ import type { StoreService } from '../services/store'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
 import { StoreValidators } from '../shared/validators'
 import { wrapSimpleHandler } from './IpcErrorHandler'
-import { AppChannels } from '../../shared/types/ipc/channels'
-import type { WritingContextMenuAction } from '../../shared/types/ipc/types'
+import { AppChannels } from '../../shared/types/channels'
+import type { WritingContextMenuAction } from '../../shared/types/types'
 
 const execFileAsync = promisify(execFile)
 

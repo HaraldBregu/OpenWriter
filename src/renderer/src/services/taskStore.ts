@@ -11,7 +11,7 @@
  * on first use.
  */
 
-import type { TaskEvent, TaskInfo, TaskPriority } from '../../../shared/types/ipc/types'
+import type { TaskEvent, TaskInfo, TaskPriority } from '../../../shared/types/types'
 import { TASK_MAX_EVENT_HISTORY } from '@/constants'
 
 // ---------------------------------------------------------------------------

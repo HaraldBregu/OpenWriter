@@ -9,7 +9,7 @@
  * This avoids the need for a React context to distribute task events.
  */
 
-import type { TaskEvent } from '../../../shared/types/ipc/types'
+import type { TaskEvent } from '../../../shared/types/types'
 
 // ---------------------------------------------------------------------------
 // Snapshot shape delivered to per-task subscribers

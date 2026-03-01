@@ -8,7 +8,7 @@
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
-import type { ProviderSettings, InferenceDefaultsUpdate } from '../aiSettings'
+import type { ProviderSettings, InferenceDefaultsUpdate } from './aiSettings'
 import type {
   WorkspaceInfo,
   WorkspaceChangedEvent,
@@ -37,7 +37,7 @@ import type {
   AgentRunSnapshot,
   AIAgentsManagerStatus,
   AIAgentsDefinitionInfo,
-} from './types'
+} from './ipc/types'
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)

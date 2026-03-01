@@ -23,7 +23,7 @@ import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
 import type { TaskEvent } from './TaskEvents'
 import type { ProgressReporter, StreamReporter } from './TaskHandler'
 import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor'
-import type { TaskQueueStatus } from '../../shared/types/ipc/types'
+import type { TaskQueueStatus } from '../../shared/types/types'
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
 const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000 // 5 minutes

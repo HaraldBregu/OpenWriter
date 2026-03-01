@@ -14,12 +14,12 @@
 // ---------------------------------------------------------------------------
 
 import { ipcRenderer } from 'electron'
-import type { IpcResult } from '../shared/types/ipc/ipc-result'
+import type { IpcResult } from '../shared/types/ipc-result'
 import type {
   InvokeChannelMap,
   SendChannelMap,
   EventChannelMap,
-} from '../shared/types/ipc/channels'
+} from '../shared/types/channels'
 
 // ---------------------------------------------------------------------------
 // typedInvoke — channel returns T directly (no IpcResult wrapping)

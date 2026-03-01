@@ -1,4 +1,4 @@
-import type { TaskPriority } from '../../shared/types/ipc/types'
+import type { TaskPriority } from '../../shared/types/types'
 export type { TaskPriority }
 
 /**

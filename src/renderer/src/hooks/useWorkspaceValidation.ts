@@ -7,7 +7,7 @@ import {
   selectCurrentWorkspacePath,
   selectWorkspaceDeletionReason
 } from '@/store/workspaceSlice'
-import type { WorkspaceDeletedEvent } from '../../../shared/types/ipc/types'
+import type { WorkspaceDeletedEvent } from '../../../shared/types/types'
 
 /**
  * Hook that monitors the workspace for external deletion and redirects
