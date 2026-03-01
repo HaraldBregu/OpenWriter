@@ -8,7 +8,6 @@
 //   - src/preload/index.ts                (via ../shared/types/aiSettings)
 //   - src/renderer/src/store/aiSettingsSlice.ts
 //   - src/renderer/src/hooks/useAISettings.ts
-//   - src/renderer/src/hooks/useInferenceSettings.ts
 //
 // DO NOT import Electron, Node.js, React, or any browser APIs here.
 // This file must be valid in all three process contexts.
