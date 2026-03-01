@@ -7,7 +7,7 @@ import {
   selectAISettingsStatus,
   selectAllProviderSettings
 } from '@/store/aiSettingsSlice'
-import type { ProviderSettings } from '../../../shared/types/aiSettings'
+import type { ProviderSettings } from '../../../shared/aiSettings'
 
 // ---------------------------------------------------------------------------
 // Return type

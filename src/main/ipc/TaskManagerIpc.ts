@@ -3,9 +3,9 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { TaskExecutor } from '../taskManager/TaskExecutor'
 import type { TaskOptions, ActiveTask } from '../taskManager/TaskDescriptor'
-import type { TaskInfo, TaskPriority } from '../../shared/types/types'
+import type { TaskInfo, TaskPriority } from '../../shared/types'
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway'
-import { TaskChannels } from '../../shared/types/channels'
+import { TaskChannels } from '../../shared/channels'
 
 /**
  * Input payload for task:submit channel.

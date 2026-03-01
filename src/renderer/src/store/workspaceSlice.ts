@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from './index'
-import type { WorkspaceInfo } from '../../../shared/types/types'
+import type { WorkspaceInfo } from '../../../shared/types'
 
 // ---------------------------------------------------------------------------
 // Types

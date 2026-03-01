@@ -1,5 +1,5 @@
 import React, { useCallback, forwardRef } from 'react'
-import type { TaskSubmitOptions } from "../../../shared/types/types";
+import type { TaskSubmitOptions } from "../../../shared/types";
 import type { TaskStatus } from '@/services/taskStore'
 import { useTaskSubmit } from '@/hooks/useTaskSubmit'
 

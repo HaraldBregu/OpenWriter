@@ -6,7 +6,7 @@ import {
     WorkspaceChannels,
     TaskChannels,
     AiAgentChannels,
-} from '../shared/types/channels'
+} from '../shared/channels'
 import type {
     AppApi,
     WindowApi,
@@ -14,7 +14,7 @@ import type {
     TasksManagerApi,
     AgentManagerAPI,
 } from './index.d'
-import type { AgentRequest, AgentSessionConfig } from '../shared/types/types'
+import type { AgentRequest, AgentSessionConfig } from '../shared/types'
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings

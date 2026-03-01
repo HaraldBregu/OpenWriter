@@ -38,9 +38,9 @@ import type {
   AgentRunSnapshot,
   AIAgentsManagerStatus,
   AIAgentsDefinitionInfo,
-} from '../shared/types/types'
-import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/types/aiSettings'
-import type { IpcResult } from '../shared/types/ipc-result'
+} from '../shared/types'
+import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/aiSettings'
+import type { IpcResult } from '../shared/ipc-result'
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload

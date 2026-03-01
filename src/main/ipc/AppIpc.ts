@@ -7,11 +7,11 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { StoreService } from '../services/store'
-import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/types/aiSettings'
+import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/aiSettings'
 import { StoreValidators } from '../shared/validators'
 import { wrapSimpleHandler } from './IpcErrorHandler'
-import { AppChannels } from '../../shared/types/channels'
-import type { WritingContextMenuAction } from '../../shared/types/types'
+import { AppChannels } from '../../shared/channels'
+import type { WritingContextMenuAction } from '../../shared/types'
 
 const execFileAsync = promisify(execFile)
 

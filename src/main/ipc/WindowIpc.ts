@@ -3,7 +3,7 @@ import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import { wrapIpcHandler } from './IpcErrorHandler'
-import { WindowChannels } from '../../shared/types/channels'
+import { WindowChannels } from '../../shared/channels'
 
 /**
  * IPC handlers for window management operations.

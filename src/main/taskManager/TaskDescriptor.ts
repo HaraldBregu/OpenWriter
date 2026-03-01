@@ -1,4 +1,4 @@
-import type { TaskPriority } from '../../shared/types/types'
+import type { TaskPriority } from '../../shared/types'
 export type { TaskPriority }
 
 /**

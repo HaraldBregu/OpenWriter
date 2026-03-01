@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAppDispatch } from '@/store'
 import { handleWorkspaceChanged } from '@/store/workspaceSlice'
-import type { WorkspaceChangedEvent } from '../../../shared/types/types'
+import type { WorkspaceChangedEvent } from '../../../shared/types'
 
 /**
  * Hook to listen for workspace change events from the main process.

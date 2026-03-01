@@ -4,8 +4,8 @@ import type {
   ProviderSettings,
   InferenceSettings,
   InferenceDefaultsUpdate
-} from '../../../shared/types/aiSettings'
-import { DEFAULT_INFERENCE_SETTINGS } from '../../../shared/types/aiSettings'
+} from '../../../shared/aiSettings'
+import { DEFAULT_INFERENCE_SETTINGS } from '../../../shared/aiSettings'
 
 // ---------------------------------------------------------------------------
 // State

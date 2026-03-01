@@ -6,7 +6,7 @@ import type { AIAgentsRegistry } from '../aiAgentsManager/AIAgentsRegistry'
 import { toAIAgentsDefinitionInfo } from '../aiAgentsManager/AIAgentsDefinition'
 import type { AgentRequest, AgentSessionConfig } from '../aiAgentsManager/AIAgentsManagerTypes'
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway'
-import { AiAgentChannels } from '../../shared/types/channels'
+import { AiAgentChannels } from '../../shared/channels'
 
 /**
  * IPC handlers for the AIAgentsManager subsystem.
