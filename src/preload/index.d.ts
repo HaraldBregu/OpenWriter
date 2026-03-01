@@ -128,7 +128,7 @@ export interface WindowApi {
   onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void
 }
 
-/** Workspace folder selection, recent workspaces, and document/directory/personality/output management */
+/** Workspace folder selection, recent workspaces, and document/directory/output management */
 export interface WorkspaceApi {
   selectFolder: () => Promise<string | null>
   getCurrent: () => Promise<string | null>
