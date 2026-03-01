@@ -303,7 +303,7 @@ export class TaskExecutor implements Disposable {
    * Process queued tasks whenever execution slots are available.
    */
   private drainQueue(): void {
-    let idx = 0
+    const idx = 0
     while (this.runningCount < this.maxConcurrency && idx < this.queue.length) {
       const queued = this.queue[idx]
 
