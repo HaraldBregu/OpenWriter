@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Bug, X, Square, Pause, Play, EyeOff } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
 import { TrackedTaskState, TaskStatus } from '../services/taskStore'
