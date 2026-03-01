@@ -10,14 +10,6 @@ import type { DocumentsWatcherService } from '../services/documents-watcher'
 import type { FileManagementService } from '../services/FileManagementService'
 import type { WorkspaceMetadataService } from '../services/workspace-metadata'
 import type {
-  PersonalityFilesService,
-  PersonalityFile,
-  SavePersonalityFileInput,
-  SavePersonalityFileResult,
-  SectionConfig,
-  SectionConfigUpdate,
-} from '../services/personality-files'
-import type {
   OutputFilesService,
   OutputFile,
   OutputType,
