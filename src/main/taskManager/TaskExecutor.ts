@@ -410,6 +410,8 @@ export class TaskExecutor implements Disposable {
       data: { taskId }
     } satisfies TaskEvent)
 
+    this.eventBus.emit('task:started', { taskId, taskType: type, windowId })
+
     console.log(`[TaskExecutor] Task ${taskId} started (type="${type}")`)
 
     try {
