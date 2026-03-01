@@ -20,8 +20,6 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
   error: string | null
   /** Result payload from the completed event, typed by TResult. */
   result: TResult | null
-  /** Accumulated streamed content (for streaming tasks). */
-  streamedContent: string
   /** Current queue position when status is 'queued'. */
   queuePosition: number | undefined
   /** Submit the task. Optionally pass an inputOverride to replace the default input for this call. Returns the taskId on success, null on failure. */
