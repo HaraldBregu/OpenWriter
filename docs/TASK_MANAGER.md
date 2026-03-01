@@ -44,6 +44,9 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 - [11. Implementing a Custom Task Handler](#11-implementing-a-custom-task-handler)
 - [12. Testing Recommendations](#12-testing-recommendations)
 - [13. Common Patterns](#13-common-patterns)
+- [14. Using TaskManager from the Main Process (Node.js)](#14-using-taskmanager-from-the-main-process-nodejs)
+- [15. Using TaskManager from the Renderer](#15-using-taskmanager-from-the-renderer)
+- [16. Task Reaction Layer](#16-task-reaction-layer)
 
 ---
 
