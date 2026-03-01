@@ -8,9 +8,8 @@
  *  4. Create an AbortController per task for independent cancellation.
  *  5. Forward TaskEvents to the EventBus for renderer delivery.
  *  6. Drain the queue automatically when execution slots free up.
- *  7. Support pause/resume of queued tasks without losing queue position.
- *  8. Support priority updates that reorder the queue immediately.
- *  9. Retain completed/errored/cancelled tasks for TTL seconds for result retrieval.
+ *  7. Support priority updates that reorder the queue immediately.
+ *  8. Retain completed/errored/cancelled tasks for TTL seconds for result retrieval.
  *
  * Implements Disposable so ServiceContainer calls destroy() on shutdown,
  * aborting any in-flight tasks.
