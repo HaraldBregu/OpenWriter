@@ -101,7 +101,6 @@ export function withTaskTracking<TInput, TProps extends WithTaskTrackingInjected
       progressMessage,
       error,
       result,
-      streamedContent,
       submit,
       cancel,
       reset,
@@ -116,7 +115,6 @@ export function withTaskTracking<TInput, TProps extends WithTaskTrackingInjected
       progressMessage,
       error,
       result,
-      streamedContent,
       taskId,
     }
 
