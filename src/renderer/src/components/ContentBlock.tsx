@@ -69,23 +69,29 @@ export const ContentBlock = React.memo(function ContentBlock({
   );
   const originalTextRef = useRef<string>("");
   const accumulatedAiContentRef = useRef<string>("");
+  // Holds the final content after completion until block.content catches up in Redux.
+  const pendingFinalContentRef = useRef<string | null>(null);
+
+  // Once block.content matches the pending final content, safe to clear streamingContent.
+  useEffect(() => {
+    if (
+      pendingFinalContentRef.current !== null &&
+      block.content === pendingFinalContentRef.current
+    ) {
+      pendingFinalContentRef.current = null;
+      setStreamingContent(undefined);
+    }
+  }, [block.content]);
 
   // Single permanent subscription tied to block.id.
   // Receives all IPC task events and filters to those matching this block's taskId.
   useEffect(() => {
     if (typeof window.tasksManager?.onEvent !== "function") return;
 
-    window.tasksManager.list().then((tasks) => {
-      console.log(`[ContentBlock] Current tasks:`, tasks);
-    });
-
     const unsub = window.tasksManager.onEvent((event) => {
       const data = event.data as { taskId?: string };
       if (data?.taskId !== block.id) return;
-      console.log(
-        `[ContentBlock] Received event for task ${data?.taskId}:`,
-        event,
-      );
+
       switch (event.type) {
         case "stream": {
           const sd = event.data as { token: string; content: string };
@@ -94,8 +100,15 @@ export const ContentBlock = React.memo(function ContentBlock({
           break;
         }
         case "completed": {
-          const finalContent =
-            originalTextRef.current + accumulatedAiContentRef.current;
+          const cd = event.data as { result?: { content?: string } };
+          // Use authoritative result from server; fall back to client accumulation.
+          const aiOutput =
+            cd.result?.content ?? accumulatedAiContentRef.current;
+          const finalContent = originalTextRef.current + aiOutput;
+          // Keep streamingContent = finalContent so TipTap doesn't revert to
+          // stale block.content before Redux propagates. pendingFinalContentRef
+          // tracks when to clear it once block.content has caught up.
+          pendingFinalContentRef.current = finalContent;
           dispatch(
             updateBlockContent({
               entryId,
@@ -104,12 +117,13 @@ export const ContentBlock = React.memo(function ContentBlock({
             }),
           );
           accumulatedAiContentRef.current = "";
-          setStreamingContent(undefined);
+          setStreamingContent(finalContent);
           setIsEnhancing(false);
           break;
         }
         case "error":
         case "cancelled":
+          pendingFinalContentRef.current = null;
           accumulatedAiContentRef.current = "";
           setStreamingContent(undefined);
           setIsEnhancing(false);
@@ -118,8 +132,6 @@ export const ContentBlock = React.memo(function ContentBlock({
     });
 
     return unsub;
-    // block.content intentionally omitted — captured once into originalTextRef on submit
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [block.id, dispatch, entryId]);
 
   const handleEnhanceClick = useCallback(async () => {
