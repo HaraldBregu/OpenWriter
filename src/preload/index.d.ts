@@ -161,18 +161,6 @@ export interface WorkspaceApi {
   markDirectoryIndexed: (id: string, isIndexed: boolean) => Promise<boolean>
   onDirectoriesChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void
   // -------------------------------------------------------------------------
-  // Personality / conversation file management
-  // -------------------------------------------------------------------------
-  savePersonality: (input: SavePersonalityInput) => Promise<SavePersonalityResult>
-  loadPersonalities: () => Promise<PersonalityFile[]>
-  loadPersonality: (params: { sectionId: string; id: string }) => Promise<PersonalityFile | null>
-  deletePersonality: (params: { sectionId: string; id: string }) => Promise<void>
-  onPersonalityFileChange: (callback: (event: PersonalityFileChangeEvent) => void) => () => void
-  onPersonalityWatcherError: (callback: (error: WatcherError) => void) => () => void
-  loadSectionConfig: (params: { sectionId: string }) => Promise<SectionConfig | null>
-  saveSectionConfig: (params: { sectionId: string; update: SectionConfigUpdate }) => Promise<SectionConfig>
-  onSectionConfigChange: (callback: (event: SectionConfigChangeEvent) => void) => () => void
-  // -------------------------------------------------------------------------
   // Output file management (posts and writings)
   // -------------------------------------------------------------------------
   saveOutput: (input: SaveOutputInput) => Promise<SaveOutputResult>
