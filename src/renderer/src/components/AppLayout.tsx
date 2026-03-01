@@ -36,7 +36,6 @@ import {
 import logoIcon from "@resources/icons/icon.png";
 import {
   PenLine,
-  FolderOpen,
   Settings,
   User,
   Shield,
