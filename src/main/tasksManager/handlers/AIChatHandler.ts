@@ -3,10 +3,6 @@
  *
  * Streams tokens to the renderer through StreamReporter (stream events),
  * and returns the full response content as the task result on completion.
- *
- * This replaces the PipelineService/ChatAgent flow for personality pages,
- * giving the task system full control over queueing, cancellation, and
- * lifecycle events.
  */
 
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
