@@ -291,8 +291,6 @@ export function useContentEditor(
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
-    aiSettings,
-    handleAiSettingsChange,
     focusBlockId,
   }
 }
