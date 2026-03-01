@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import workspaceReducer from './workspaceSlice'
 import directoriesReducer from './directoriesSlice'
-import personalityFilesReducer from './personalityFilesSlice'
 import outputReducer from './outputSlice'
 import aiSettingsReducer from './aiSettingsSlice'
 import writingItemsReducer from './writingItemsSlice'
@@ -13,7 +12,6 @@ export const store = configureStore({
   reducer: {
     workspace: workspaceReducer,
     directories: directoriesReducer,
-    personalityFiles: personalityFilesReducer,
     output: outputReducer,
     aiSettings: aiSettingsReducer,
     writingItems: writingItemsReducer,
