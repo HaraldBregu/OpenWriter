@@ -1,6 +1,6 @@
 import React, { useCallback, forwardRef } from 'react'
 import type { TaskSubmitOptions } from "../../../shared/types";
-import type { TaskStatus } from '@/store/tasksSlice'
+import type { TaskStatus, TaskProgressState } from '@/store/tasksSlice'
 import { useTaskSubmit } from '@/hooks/useTaskSubmit'
 
 // ---------------------------------------------------------------------------
@@ -10,21 +10,21 @@ import { useTaskSubmit } from '@/hooks/useTaskSubmit'
 /** Props injected by withTaskTracking into the wrapped component. */
 export interface WithTaskTrackingInjectedProps {
   taskTracking: {
-    /** Submit the configured task. Returns taskId on success, null on failure. */
-    submit: () => Promise<string | null>
+    /** Submit the configured task. */
+    submit: () => Promise<void>
     /** Cancel the running task. */
-    cancel: () => Promise<void>
+    cancel: () => void
     /** Reset hook state. No-op while running. */
     reset: () => void
-    /** Current lifecycle status. */
-    status: TaskStatus | 'idle'
-    /** 0–100 progress percentage. */
-    progress: number
+    /** Current lifecycle status. Null before submit() is called. */
+    status: TaskStatus | null
+    /** Progress state — percent 0–100 and optional message. */
+    progress: TaskProgressState
     /** Optional human-readable progress message. */
     progressMessage: string | undefined
-    /** Error message when status === 'error', null otherwise. */
-    error: string | null
-    /** Result payload when status === 'completed', null otherwise. */
+    /** Error message when status === 'error'. */
+    error: string | undefined
+    /** Result payload when status === 'completed'. */
     result: unknown
     /** Task ID after submission, null before. */
     taskId: string | null
