@@ -15,7 +15,6 @@ import { ContentBlock } from '@/components/ContentBlock'
 import { ContentBlockPlaceholder } from '@/components/ContentBlockPlaceholder'
 import { useAppDispatch } from '../store'
 import { removeEntry } from '../store/writingItemsSlice'
-import { PersonalitySettingsPanel } from '@/components/personality/PersonalitySettingsSheet'
 import { useContentEditor } from '@/hooks/useContentEditor'
 
 // ---------------------------------------------------------------------------
