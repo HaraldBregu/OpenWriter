@@ -348,7 +348,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
-  usePersonalityFiles(); // Load personality files from workspace on app startup
   useWritingItems(); // Load writing items from workspace
 
   return (
