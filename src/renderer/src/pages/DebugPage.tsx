@@ -328,8 +328,6 @@ export default function DebugPage() {
                     isSelected={selectedId === task.taskId}
                     onSelect={() => handleSelect(task.taskId)}
                     onCancel={() => cancel(task.taskId)}
-                    onPause={() => pause(task.taskId)}
-                    onResume={() => resume(task.taskId)}
                     onHide={() => handleHide(task.taskId)}
                   />
                 ))}
