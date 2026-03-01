@@ -5,7 +5,9 @@ import workspaceReducer from './workspaceSlice'
 import outputReducer from './outputSlice'
 import aiSettingsReducer from './aiSettingsSlice'
 import writingItemsReducer from './writingItemsSlice'
+import tasksReducer from './tasksSlice'
 import { listenerMiddleware } from './listenerMiddleware'
+import { setupTaskIpcListener } from './taskListenerMiddleware'
 
 export const store = configureStore({
   reducer: {
@@ -13,10 +15,15 @@ export const store = configureStore({
     output: outputReducer,
     aiSettings: aiSettingsReducer,
     writingItems: writingItemsReducer,
+    tasks: tasksReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware)
 })
+
+// Wire up the IPC → Redux bridge for task events.
+// This replaces ensureTaskStoreListening() from the former taskStore.ts singleton.
+setupTaskIpcListener(store)
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
