@@ -46,8 +46,8 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
  *
  * Security notes:
  *  - windowId is always stamped from event.sender.id in task:submit, never trusted from payload.
- *  - pause/resume/updatePriority operate on any task by ID; window-scoping enforcement is at
- *    the service level (tasks owned by other windows will simply return false if not found).
+ *  - updatePriority operates on any task by ID; window-scoping enforcement is at the service
+ *    level (tasks owned by other windows will simply return false if not found).
  *  - getResult is intentionally not window-scoped so developers can retrieve any task result
  *    by ID — guard this at the application layer if cross-window access is undesirable.
  */
