@@ -27,8 +27,6 @@ const ContentPage: React.FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  const [showSidebar, setShowSidebar] = useState(true)
-
   const {
     isDraft,
     title,
@@ -40,8 +38,6 @@ const ContentPage: React.FC = () => {
     handleAddBlockAfter,
     handleReorder,
     handleAppendBlock,
-    aiSettings,
-    handleAiSettingsChange,
     focusBlockId,
   } = useContentEditor(id, '/content')
 
