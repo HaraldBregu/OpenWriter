@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useAppDispatch, useAppSelector } from '@/store'
 import { createBlock, type Block } from '@/components/block.types'
 import {
