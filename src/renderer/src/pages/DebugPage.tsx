@@ -165,16 +165,11 @@ interface TaskRowProps {
   isSelected: boolean
   onSelect: () => void
   onCancel: () => void
-  onPause: () => void
-  onResume: () => void
   onHide: () => void
 }
 
-function TaskRow({ task, isSelected, onSelect, onCancel, onPause, onResume, onHide }: TaskRowProps) {
-  const canPause = task.status === 'running'
-  const canResume = task.status === 'paused'
-  const canCancel =
-    task.status === 'running' || task.status === 'queued' || task.status === 'paused'
+function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps) {
+  const canCancel = task.status === 'running' || task.status === 'queued'
 
   return (
     <tr
