@@ -168,18 +168,9 @@ function applyEvent(event: TaskEvent): void {
     case 'cancelled':
       patch(taskId, { status: 'cancelled', queuePosition: undefined, events })
       break
-    case 'stream': {
-      const sd = event.data
-      const token = sd.token ?? ''
-      const aiContent = sd.content ?? ''
-      patch(taskId, {
-        status: 'running',
-        streamedContent: token,
-        content: aiContent,
-        events,
-      })
+    case 'stream':
+      patch(taskId, { status: 'running', events })
       break
-    }
     case 'priority-changed': {
       const pcd = event.data
       patch(taskId, { priority: pcd.priority, queuePosition: pcd.position, events })
