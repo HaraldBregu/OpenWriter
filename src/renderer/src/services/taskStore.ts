@@ -186,14 +186,6 @@ function applyEvent(event: TaskEvent): void {
       })
       break
     }
-    case 'paused':
-      patch(taskId, { status: 'paused', events })
-      break
-    case 'resumed': {
-      const rd = event.data
-      patch(taskId, { status: 'queued', queuePosition: rd.position, events })
-      break
-    }
     case 'priority-changed': {
       const pcd = event.data
       patch(taskId, { priority: pcd.priority, queuePosition: pcd.position, events })
