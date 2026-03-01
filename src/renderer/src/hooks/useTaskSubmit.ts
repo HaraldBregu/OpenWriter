@@ -224,7 +224,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     setProgressMessage(undefined)
     setError(null)
     setResult(null)
-    setStreamedContent('')
     setQueuePosition(undefined)
   }, [cleanupSubscription])
 
