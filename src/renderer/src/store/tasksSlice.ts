@@ -46,7 +46,7 @@ export interface TrackedTaskState {
   events: TaskEventRecord[]
 }
 
-interface TasksState {
+export interface TasksState {
   tasks: Record<string, TrackedTaskState>
 }
 
