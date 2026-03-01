@@ -51,8 +51,6 @@ export interface InferenceDefaultsUpdate {
 /**
  * Hard-coded application-level defaults.
  * Used when no persisted value exists at any tier (store, section config).
- * Single source of truth -- replaces the duplicate definition in
- * PersonalitySettingsSheet.tsx and personality-files.ts.
  */
 export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
   providerId: 'openai',
