@@ -1,7 +1,34 @@
 import { useState, useCallback } from 'react'
-import { Bug, X, Square, Pause, Play, EyeOff } from 'lucide-react'
+import { Bug, X, Square, Pause, Play, EyeOff, Zap, Clock, Radio, AlertTriangle } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
-import { TrackedTaskState, TaskStatus } from '../services/taskStore'
+import { taskStore, TrackedTaskState, TaskStatus } from '../services/taskStore'
+
+// ---------------------------------------------------------------------------
+// Demo task submission
+// ---------------------------------------------------------------------------
+
+type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error'
+
+const DEMO_VARIANTS: {
+  variant: DemoVariant
+  label: string
+  icon: React.ElementType
+  description: string
+}[] = [
+  { variant: 'fast',      label: 'Fast',    icon: Zap,           description: '4 steps, ~1.2 s' },
+  { variant: 'slow',      label: 'Slow',    icon: Clock,         description: '10 steps, ~8 s' },
+  { variant: 'streaming', label: 'Stream',  icon: Radio,         description: 'Token stream, ~3 s' },
+  { variant: 'error',     label: 'Error',   icon: AlertTriangle, description: 'Fails at 60 %' },
+]
+
+async function submitDemoTask(variant: DemoVariant): Promise<void> {
+  const result = await window.tasksManager.submit('demo', { variant }, { priority: 'normal' })
+  if (result.success && result.data?.taskId) {
+    // Pre-seed the local store so the row appears immediately; the IPC 'queued'
+    // event will arrive shortly and fill in progress / status updates.
+    taskStore.addTask(result.data.taskId, 'demo')
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
