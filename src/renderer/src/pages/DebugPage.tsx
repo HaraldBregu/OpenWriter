@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
-import { taskStore, TrackedTaskState, TaskStatus } from '../services/taskStore'
+import type { TrackedTaskState, TaskStatus } from '@/store/tasksSlice'
+import { taskAdded } from '@/store/tasksSlice'
+import { store } from '@/store'
 
 // ---------------------------------------------------------------------------
 // Demo task submission
@@ -24,9 +26,9 @@ const DEMO_VARIANTS: {
 async function submitDemoTask(variant: DemoVariant): Promise<void> {
   const result = await window.tasksManager.submit('demo', { variant }, { priority: 'normal' })
   if (result.success && result.data?.taskId) {
-    // Pre-seed the local store so the row appears immediately; the IPC 'queued'
+    // Pre-seed the Redux store so the row appears immediately; the IPC 'queued'
     // event will arrive shortly and fill in progress / status updates.
-    taskStore.addTask(result.data.taskId, 'demo')
+    store.dispatch(taskAdded({ taskId: result.data.taskId, type: 'demo' }))
   }
 }
 

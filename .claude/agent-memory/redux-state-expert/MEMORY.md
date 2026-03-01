@@ -11,11 +11,13 @@
 - Writing items slice: `src/renderer/src/store/writingItemsSlice.ts`
 - Legacy writings slice: `src/renderer/src/store/writingsSlice.ts` (older, parallel system)
 - Output slice: `src/renderer/src/store/outputSlice.ts`
+- Tasks slice: `src/renderer/src/store/tasksSlice.ts`
+- Task IPC wiring: `src/renderer/src/store/taskListenerMiddleware.ts`
 - Block type + ContentBlock: `src/renderer/src/components/ContentBlock.tsx`
 - Draft editor hook: `src/renderer/src/hooks/useDraftEditor.ts`
 - Page enhancement hook: `src/renderer/src/hooks/useBlockEnhancement.ts`
 - Main page: `src/renderer/src/pages/ContentPage.tsx`
-- Shared IPC types: `src/shared/types/ipc/types.ts`
+- Shared IPC types: `src/shared/types.ts`
 
 ## Block Data Model (writingItemsSlice + ContentBlock)
 ```typescript
@@ -54,10 +56,23 @@ Block type is the single source of truth in `ContentBlock.tsx` — both `writing
 - All CRUD callbacks route to `setDraftBlocks` (draft) or `dispatch(updateEntryBlocks(...))` (edit)
 - `focusBlockId` is set on block insert and cleared after one render via useEffect
 
+## Task State (tasksSlice)
+- Replaced module-level `taskStore.ts` singleton with `tasksSlice.ts`
+- `TrackedTaskState` + `TaskProgressState` + `TaskEventRecord` live in `tasksSlice.ts`
+- `TaskStatus` / `TaskPriority` re-exported from `shared/types` via `tasksSlice.ts` for single import point
+- IPC bridge: `setupTaskIpcListener(store)` in `taskListenerMiddleware.ts`, called after store creation in `index.ts`
+- `stream` events only set status='running' in Redux — raw data consumed by AI layer via separate `window.tasksManager.onEvent`
+- `queue-position` event exists in shared/types and is handled (updates `queuePosition` only)
+- Ring buffer: `TASK_MAX_EVENT_HISTORY = 50` (from `constants.ts`), enforced via `shift()` in Immer draft
+- Selectors: `selectAllTasks`, `selectTaskById`, `selectTasksByStatus`, `selectQueueStats`
+- `useTaskSubmit` reads from Redux via `useAppSelector(selectTaskById)`, dispatches `taskAdded`/`taskRemoved`
+- `useDebugTasks` uses `useAppSelector(selectAllTasks)` + `selectQueueStats`
+
 ## Important Anti-patterns to Avoid
 - Never call `useEditor` (TipTap) conditionally — extract into a sub-component (`TextBlockEditor`) that only mounts when needed
 - Never put AI enhancement logic inside leaf components — keep it at the page level
 - Never mutate Redux state directly (Immer via RTK handles this, but be aware of nested arrays)
+- Never use a non-exported `interface` for a state shape that appears in `RootState` — causes TS4023 errors in every other slice file that exports selectors. Always `export interface` for slice state types.
 
 ## TypeScript Config
 - Web renderer: `tsconfig.web.json`
