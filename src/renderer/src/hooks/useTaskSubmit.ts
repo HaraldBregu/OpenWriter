@@ -56,8 +56,7 @@ const TERMINAL_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
  *  - Cleans up its store subscription when the task reaches a terminal state
  *    or the component unmounts
  *  - Gracefully no-ops when window.tasksManager is unavailable (e.g. in tests)
- *  - pause(), resume(), updatePriority() are best-effort: the main process
- *    emits the authoritative state change event
+ *  - updatePriority() is best-effort: the main process emits the authoritative state change event
  *
  * @template TInput Type of the task input payload.
  * @template TResult Type of the result from the completed event.
