@@ -41,12 +41,6 @@ const TERMINAL_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
   'cancelled',
 ])
 
-// Statuses from which a task can be paused.
-const PAUSABLE_STATUSES: ReadonlySet<TaskStatus | 'idle'> = new Set([
-  'queued',
-  'running',
-])
-
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
