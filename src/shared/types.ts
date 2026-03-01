@@ -80,8 +80,6 @@ export type TaskEvent =
   | { type: 'error'; data: { taskId: string; message: string; code: string } }
   | { type: 'cancelled'; data: { taskId: string } }
   | { type: 'stream'; data: { taskId: string; token: string; content: string } }
-  | { type: 'paused'; data: { taskId: string } }
-  | { type: 'resumed'; data: { taskId: string; position: number } }
   | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
   | { type: 'queue-position'; data: { taskId: string; position: number } }
 
