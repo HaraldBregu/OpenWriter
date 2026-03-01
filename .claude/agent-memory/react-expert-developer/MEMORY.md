@@ -37,8 +37,8 @@
 - `aiSettingsSlice.ts` calls the NEW API via `window.app.*`; `window.store` is fully removed from preload and type declarations
 
 ## Redux Slice Conventions
-- Reference slices: `postsSlice.ts` (sync, prepare pattern), `personalityFilesSlice.ts` (async thunks)
-- New output system: `outputSlice.ts`; new AI settings: `aiSettingsSlice.ts`
+- Reference slices: `writingItemsSlice.ts` (async thunks), `aiSettingsSlice.ts` (provider settings)
+- Output system: `outputSlice.ts`; AI settings: `aiSettingsSlice.ts`
 - Selectors use `createSelector` from `@reduxjs/toolkit` (reselect bundled)
 - Factory selectors return a new `createSelector` instance per call — safe at module level with stable args
 - Store is at `src/renderer/src/store/index.ts` — add new reducers here
