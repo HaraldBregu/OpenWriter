@@ -60,14 +60,6 @@ const quickCreateSlugs = [
   { titleKey: "sidebar.write", icon: PenLine, url: "/content", shortcut: "⌘W" },
 ];
 
-const personalitySlugs = [
-  { titleKey: "personalityItems.emotionalDepth", icon: Heart,    slug: "emotional-depth" },
-  { titleKey: "personalityItems.consciousness",  icon: Lightbulb, slug: "consciousness" },
-  { titleKey: "personalityItems.motivation",     icon: Flame,    slug: "motivation" },
-  { titleKey: "personalityItems.socialIdentity", icon: Users,    slug: "social-identity" },
-  { titleKey: "personalityItems.creativity",     icon: Palette,  slug: "creativity" },
-];
-
 // ---------------------------------------------------------------------------
 // Settings popover menu items
 // ---------------------------------------------------------------------------
