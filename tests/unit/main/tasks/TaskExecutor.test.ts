@@ -264,7 +264,9 @@ describe('TaskExecutor', () => {
       }
 
       await Promise.resolve()
-      jest.runAllTimers()
+      // Advance timers by a small amount to let the setTimeout(r, 0) handlers run
+      // without triggering the GC interval (which would cause an infinite loop with runAllTimers).
+      jest.advanceTimersByTime(10)
       await Promise.resolve()
       await Promise.resolve()
       await Promise.resolve()
