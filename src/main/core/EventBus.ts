@@ -27,6 +27,12 @@ export interface AppEvents {
   'documents:file-changed': { type: 'added' | 'changed' | 'removed'; fileId: string; filePath: string; timestamp: number }
   'documents:watcher-error': { error: string; timestamp: number }
   'theme:changed': { theme: 'light' | 'dark' | 'system' }
+  // Task lifecycle events — emitted by TaskExecutor for main-process observers (e.g. TaskReactionBus)
+  'task:submitted':  { taskId: string; taskType: string; input: unknown; priority: string; windowId?: number }
+  'task:started':    { taskId: string; taskType: string; windowId?: number }
+  'task:completed':  { taskId: string; taskType: string; result: unknown; durationMs: number; windowId?: number }
+  'task:failed':     { taskId: string; taskType: string; error: string; code: string; windowId?: number }
+  'task:cancelled':  { taskId: string; taskType: string; windowId?: number }
 }
 
 /**
