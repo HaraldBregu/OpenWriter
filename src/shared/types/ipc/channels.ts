@@ -70,16 +70,6 @@ export const WorkspaceChannels = {
   validate: 'directories:validate',
   markIndexed: 'directories:mark-indexed',
   directoriesChanged: 'directories:changed',
-  // Personality
-  save: 'personality:save',
-  personalityLoadAll: 'personality:load-all',
-  loadOne: 'personality:load-one',
-  delete: 'personality:delete',
-  loadSectionConfig: 'personality:load-section-config',
-  saveSectionConfig: 'personality:save-section-config',
-  personalityFileChanged: 'personality:file-changed',
-  personalityWatcherError: 'personality:watcher-error',
-  sectionConfigChanged: 'personality:section-config-changed',
   // Output
   outputSave: 'output:save',
   outputLoadAll: 'output:load-all',
