@@ -80,46 +80,6 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
-                        <Route
-                          path="/personality/emotional-depth"
-                          element={
-                            <RouteWrapper>
-                              <EmotionalDepthPage />
-                            </RouteWrapper>
-                          }
-                        />
-                        <Route
-                          path="/personality/consciousness"
-                          element={
-                            <RouteWrapper>
-                              <ConsciousnessPage />
-                            </RouteWrapper>
-                          }
-                        />
-                        <Route
-                          path="/personality/motivation"
-                          element={
-                            <RouteWrapper>
-                              <MotivationPage />
-                            </RouteWrapper>
-                          }
-                        />
-                        <Route
-                          path="/personality/social-identity"
-                          element={
-                            <RouteWrapper>
-                              <SocialIdentityPage />
-                            </RouteWrapper>
-                          }
-                        />
-                        <Route
-                          path="/personality/creativity"
-                          element={
-                            <RouteWrapper>
-                              <CreativityPage />
-                            </RouteWrapper>
-                          }
-                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
