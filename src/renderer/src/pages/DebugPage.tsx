@@ -225,7 +225,7 @@ function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps)
 // ---------------------------------------------------------------------------
 
 export default function DebugPage() {
-  const { tasks, queueStats, hide, cancel, pause, resume } = useDebugTasks()
+  const { tasks, queueStats, hide, cancel } = useDebugTasks()
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   // If the selected task gets hidden, clear the panel
