@@ -258,7 +258,6 @@ export default function DebugPage() {
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span><span className="font-medium text-foreground">{queueStats.running}</span> running</span>
               <span><span className="font-medium text-foreground">{queueStats.queued}</span> queued</span>
-              <span><span className="font-medium text-foreground">{queueStats.paused}</span> paused</span>
               <span><span className="font-medium text-foreground">{queueStats.completed}</span> completed</span>
               {queueStats.error > 0 && (
                 <span className="text-destructive">
