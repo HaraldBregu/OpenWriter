@@ -27,9 +27,9 @@
 ## window.workspace flat API (Feb 2026 refactor — sub-namespaces removed)
 - Documents: `loadDocuments`, `deleteDocument`, `importFiles`, `importByPaths`, `downloadFromUrl`, `onDocumentFileChange`, `onDocumentWatcherError`
 - Directories: `listDirectories`, `addDirectory`, `addDirectories`, `removeDirectory`, `validateDirectory`, `markDirectoryIndexed`, `onDirectoriesChanged`
-- Personality: `savePersonality`, `loadPersonalities`, `loadPersonality`, `deletePersonality`, `saveSectionConfig`, `loadSectionConfig`, `onPersonalityFileChange`, `onPersonalityWatcherError`, `onSectionConfigChange`
 - Output: `saveOutput`, `loadOutputs`, `loadOutputsByType`, `loadOutput`, `updateOutput`, `deleteOutput`, `onOutputFileChange`, `onOutputWatcherError`
-- CRITICAL: Do NOT use old nested form (`window.workspace.output.save`, `window.workspace.personality.loadAll`, etc.) — they no longer exist on the preload bridge.
+- REMOVED: Personality methods (`savePersonality`, `loadPersonalities`, etc.) — fully removed (Mar 2026)
+- CRITICAL: Do NOT use old nested form (`window.workspace.output.save`, etc.) — they no longer exist on the preload bridge.
 
 ## window.app — AI store methods (merged from former window.store, Feb 2026)
 - NEW: `window.app.getAllProviderSettings`, `window.app.getProviderSettings`, `window.app.setProviderSettings`, `window.app.setInferenceDefaults`
