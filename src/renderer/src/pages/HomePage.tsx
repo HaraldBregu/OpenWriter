@@ -206,24 +206,9 @@ const HomePage: React.FC = () => {
 
         <AppSeparator />
 
-        {/* Documents & Integrations */}
+        {/* Integrations */}
         <section className="space-y-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => navigate('/documents/local')}
-              className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group text-left"
-            >
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                <FolderOpen className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-foreground">{t('home.documents')}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{t('home.documentsDescription')}</p>
-              </div>
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
-            </button>
-
             <button
               type="button"
               onClick={() => navigate('/integrations')}
