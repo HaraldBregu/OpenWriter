@@ -17,8 +17,8 @@ Comprehensive documentation for OpenWriter's background task execution system. T
   - [Result Persistence](#result-persistence)
   - [Window Scoping](#window-scoping)
 - [3. Public APIs](#3-public-apis)
-  - [Main Process API (TaskExecutorService)](#main-process-api-taskexecutorservice)
-  - [Preload API (window.task)](#preload-api-windowtask)
+  - [Main Process API (TaskExecutor)](#main-process-api-taskexecutor)
+  - [Preload API (window.tasksManager)](#preload-api-windowtasksmanager)
   - [React Hooks](#react-hooks)
   - [React Components](#react-components)
 - [4. Event System](#4-event-system)
@@ -27,11 +27,9 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 - [5. Type System](#5-type-system)
 - [6. Usage Examples](#6-usage-examples)
   - [Example 1: Simple Task Submission](#example-1-simple-task-submission)
-  - [Example 2: Streaming AI Task](#example-2-streaming-ai-task)
+  - [Example 2: Streaming Task](#example-2-streaming-task)
   - [Example 3: Using withTaskTracking HOC](#example-3-using-withtasktracking-hoc)
-  - [Example 4: Manual Task Control](#example-4-manual-task-control)
-  - [Example 5: Queue Monitoring Dashboard](#example-5-queue-monitoring-dashboard)
-  - [Example 6: Fetching Results After Navigation](#example-6-fetching-results-after-navigation)
+  - [Example 4: Direct Preload API](#example-4-direct-preload-api)
 - [7. Internals](#7-internals)
   - [Queuing Algorithm](#queuing-algorithm)
   - [Result Persistence](#result-persistence-1)
@@ -59,88 +57,86 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 |  Renderer Process (React)                                               |
 |                                                                         |
 |  +-------------------+  +----------------+  +-----------------------+   |
-|  | <TaskProvider>     |  | useTaskSubmit  |  | withTaskTracking HOC  |   |
-|  |  - single onEvent |  | useTaskProgress|  |  - wraps any component|   |
-|  |  - shared store   |  | useTaskStatus  |  |  - injects taskTracking|  |
-|  +--------+----------+  | useTaskStream  |  +-----------+-----------+   |
-|           |              | useTaskList    |              |               |
-|           v              | useTaskQueue   |              |               |
-|  +--------+----------+  | useTaskEvents  |              |               |
-|  | TaskStore          |  | useTaskResult  |              |               |
-|  |  - per-taskId subs |  +-------+--------+              |               |
-|  |  - external store  |          |                       |               |
-|  +--------+-----------+          |                       |               |
-|           |                      |                       |               |
-+-----------+----------------------+-----------------------+---------------+
-            |                      |                       |
-            | events (push)        | IPC invoke/handle     |
-            |                      |                       |
-+-----------|----------------------+-----------------------+---------------+
-|  Preload  |                                                             |
-|           v                      |                       |              |
-|  +--------+-----------+          |                       |              |
-|  | window.task         |<--------+-----------------------+              |
-|  |  .submit()          |  typedInvokeRaw (IpcResult envelope)           |
-|  |  .cancel()          |                                                |
-|  |  .pause()           |  typedOn (task:event push channel)             |
-|  |  .resume()          |                                                |
-|  |  .updatePriority()  |                                                |
-|  |  .list()            |                                                |
-|  |  .getResult()       |                                                |
-|  |  .queueStatus()     |                                                |
-|  |  .onEvent()         |                                                |
-|  +---------------------+                                                |
-+----------+--------------------------------------------------------------+
-           |
-           | ipcMain.handle / ipcRenderer.on
-           |
-+----------v--------------------------------------------------------------+
-|  Main Process                                                           |
-|                                                                         |
-|  +---------------------+     +------------------------+                 |
-|  | TaskManagerIpc      |---->| TaskExecutor           |                 |
-|  |  - registers IPC    |     |  - queue + concurrency |                 |
-|  |  - stamps windowId  |     |  - lifecycle mgmt      |                 |
-|  |  - validates input  |     |  - TTL result store    |                 |
-|  +---------------------+     +----------+-------------+                 |
-|                                         |                               |
-|                              +----------v-------------+                 |
-|                              | TaskHandlerRegistry    |                 |
-|                              |  - type -> handler Map |                 |
-|                              +----------+-------------+                 |
-|                                         |                               |
-|                              +----------v-------------------+           |
-|                              | TaskHandler (per type)       |           |
-|                              |  execute(input, signal, ...) |           |
-|                              +------------------------------+           |
-|                                                                         |
-|  +---------------------+  emit('task:submitted'|'task:started'|...)     |
-|  | EventBus            |<-- TaskExecutor emits AppEvents for            |
-|  |  .sendTo(windowId)  |    main-process observers (reaction layer)     |
-|  |  .broadcast()       |    AND pushes 'task:event' IPC to renderer     |
-|  |  .emit() / .on()    |                                                |
-|  +----------+----------+                                                |
-|             |                                                           |
-|  +----------v----------+     +------------------------+                 |
-|  | TaskReactionBus     |---->| TaskReactionRegistry   |                 |
-|  |  - subscribes to   |     |  - type -> handler[]   |                 |
-|  |    AppEvents        |     |  - wildcard '*' support|                 |
-|  |  - fan-out dispatch |     +----------+-------------+                 |
-|  |  - error isolation  |                |                               |
-|  +---------------------+     +----------v-------------------+           |
-|                              | TaskReactionHandler (per type)|          |
-|                              |  onSubmitted / onStarted /   |           |
-|                              |  onCompleted / onFailed /    |           |
-|                              |  onCancelled                 |           |
-|                              +------------------------------+           |
-+-------------------------------------------------------------------------+
+|  | useTaskSubmit     |  | useDebugTasks  |  | withTaskTracking HOC  |   |
+|  |  submit/cancel    |  |  all-tasks view|  |  wraps any component  |   |
+|  |  progress/result  |  |  queue stats   |  |  injects taskTracking |   |
+|  +--------+----------+  +-------+--------+  +-----------+-----------+   |
+|           |                     |                        |               |
+|           v                     v                        |               |
+|  +--------+--------------------++                        |               |
+|  | taskStore (module singleton) |<-----------------------+               |
+|  |  - per-taskId subscriptions  |                                        |
+|  |  - lazy onEvent listener     |                                        |
+|  +--------+---------------------+                                        |
+|           |                                                               |
++-----------+--------------------------------------------------------------|
+            |
+            | task:event (push)   /   ipcRenderer.invoke (request)
+            |
++-----------|--------------------------------------------------------------+
+|  Preload  |                                                              |
+|           v                                                              |
+|  +--------+------------------+                                           |
+|  | window.tasksManager       |                                           |
+|  |  .submit()                |  typedInvokeRaw (IpcResult envelope)      |
+|  |  .cancel()                |                                           |
+|  |  .updatePriority()        |  typedOn (task:event push channel)        |
+|  |  .list()                  |                                           |
+|  |  .getResult()             |                                           |
+|  |  .queueStatus()           |                                           |
+|  |  .onEvent()               |                                           |
+|  +---------------------+-----+                                           |
++------------------------|-------------------------------------------------+
+                         |
+                         | ipcMain.handle / webContents.send
+                         |
++------------------------v-------------------------------------------------+
+|  Main Process                                                            |
+|                                                                          |
+|  +---------------------+     +------------------------+                  |
+|  | TaskManagerIpc      |---->| TaskExecutor           |                  |
+|  |  - registers IPC    |     |  - queue + concurrency |                  |
+|  |  - stamps windowId  |     |  - lifecycle mgmt      |                  |
+|  |  - validates input  |     |  - TTL result store    |                  |
+|  +---------------------+     +----------+-------------+                  |
+|                                         |                                |
+|                              +----------v-------------+                  |
+|                              | TaskHandlerRegistry    |                  |
+|                              |  - type -> handler Map |                  |
+|                              +----------+-------------+                  |
+|                                         |                                |
+|                              +----------v-------------------+            |
+|                              | TaskHandler (per type)       |            |
+|                              |  execute(input, signal, ...) |            |
+|                              +------------------------------+            |
+|                                                                          |
+|  +---------------------+  emit('task:submitted'|'task:started'|...)      |
+|  | EventBus            |<-- TaskExecutor emits AppEvents for             |
+|  |  .sendTo(windowId)  |    main-process observers (reaction layer)      |
+|  |  .broadcast()       |    AND pushes 'task:event' IPC to renderer      |
+|  |  .emit() / .on()    |                                                 |
+|  +----------+----------+                                                 |
+|             |                                                            |
+|  +----------v----------+     +------------------------+                  |
+|  | TaskReactionBus     |---->| TaskReactionRegistry   |                  |
+|  |  - subscribes to    |     |  - type -> handler[]   |                  |
+|  |    AppEvents        |     |  - wildcard '*' support|                  |
+|  |  - fan-out dispatch |     +----------+-------------+                  |
+|  |  - error isolation  |                |                                |
+|  +---------------------+     +----------v-------------------+            |
+|                              | TaskReactionHandler (per type)|           |
+|                              |  onSubmitted / onStarted /   |            |
+|                              |  onCompleted / onFailed /    |            |
+|                              |  onCancelled                 |            |
+|                              +------------------------------+            |
++--------------------------------------------------------------------------+
 ```
 
 ### Key Components
 
 | Component | Layer | File | Responsibility |
 |-----------|-------|------|----------------|
-| `TaskExecutor` | Main | `src/main/taskManager/TaskExecutor.ts` | Orchestrates task execution, queuing, priority ordering, pause/resume, TTL result storage |
+| `TaskExecutor` | Main | `src/main/taskManager/TaskExecutor.ts` | Orchestrates queuing, concurrency, lifecycle, TTL result storage |
 | `TaskHandlerRegistry` | Main | `src/main/taskManager/TaskHandlerRegistry.ts` | Maps task type strings to `TaskHandler` instances |
 | `TaskHandler` | Main | `src/main/taskManager/TaskHandler.ts` | Interface for task execution logic (`execute`, `validate`, `ProgressReporter`, `StreamReporter`) |
 | `TaskReactionBus` | Main | `src/main/taskManager/TaskReactionBus.ts` | Subscribes to `AppEvents` from `EventBus`; fan-outs lifecycle events to registered reaction handlers |
@@ -148,10 +144,11 @@ Comprehensive documentation for OpenWriter's background task execution system. T
 | `TaskReactionHandler` | Main | `src/main/taskManager/TaskReactionHandler.ts` | Interface for main-process side-effects on task lifecycle events |
 | `TaskManagerIpc` | Main | `src/main/ipc/TaskManagerIpc.ts` | IPC bridge: registers channels, stamps `windowId`, validates priority |
 | `EventBus` | Main | `src/main/core/EventBus.ts` | Dual-role: `broadcast/sendTo` for renderer IPC; `emit/on` for main-process `AppEvents` |
-| `taskStore` | Renderer | `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions via `useSyncExternalStore`; lazy IPC listener init |
-| `taskEventBus` | Renderer | `src/renderer/src/services/taskEventBus.ts` | Per-task event pub/sub for streaming content accumulation |
-| `useTaskSubmit` | Renderer | `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, pause, resume, stream |
-| `useDebugTasks` | Renderer | `src/renderer/src/hooks/useDebugTasks.ts` | Subscribes to all tracked tasks for the debug page; exposes controls |
+| `taskStore` | Renderer | `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions; lazy IPC listener init via `ensureListening()` |
+| `useTaskSubmit` | Renderer | `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, progress, result |
+| `useDebugTasks` | Renderer | `src/renderer/src/hooks/useDebugTasks.ts` | Subscribes to all tracked tasks for the debug page; exposes cancel/hide controls |
+| `withTaskTracking` | Renderer | `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects a `taskTracking` prop into any component |
+| `DebugPage` | Renderer | `src/renderer/src/pages/DebugPage.tsx` | Live task table with cancel/hide controls and event log panel |
 
 ### Data Flow
 
@@ -159,18 +156,18 @@ A task submission follows this path:
 
 ```
 1. Component calls submit() via useTaskSubmit
-2. useTaskSubmit calls window.task.submit(type, input, options)
+2. useTaskSubmit calls window.tasksManager.submit(type, input, options)
 3. Preload invokes typedInvokeRaw(TaskChannels.submit, ...)
-4. ipcMain.handle routes to TaskIpc
-5. TaskIpc stamps windowId from event.sender.id
-6. TaskIpc calls TaskExecutorService.submit()
+4. ipcMain.handle routes to TaskManagerIpc
+5. TaskManagerIpc stamps windowId from event.sender.id
+6. TaskManagerIpc calls TaskExecutor.submit()
 7. Executor validates input via handler.validate()
 8. Executor creates ActiveTask, enqueues, sorts, emits 'queued' event
 9. Executor calls drainQueue() -- if slot available, starts execution
 10. Handler.execute() runs with AbortSignal, ProgressReporter, StreamReporter
-11. Progress/stream events flow: Executor -> EventBus -> preload onEvent -> TaskStore
+11. Progress/stream events flow: Executor -> EventBus -> preload onEvent -> taskStore
 12. On completion: Executor emits 'completed' event, moves task to TTL store
-13. TaskStore updates snapshot, notifies per-taskId subscribers
+13. taskStore updates snapshot, notifies per-taskId subscribers
 14. useTaskSubmit syncs local state from store snapshot
 15. Component re-renders with new status/result
 ```
@@ -185,20 +182,20 @@ Every task progresses through a defined state machine:
 
 ```
                   +----------+
-     submit() --> | queued   |---+
-                  +----+-----+   |
-                       |         | pause()
-                  drainQueue()   |
-                       |         v
-                  +----v-----+  +----------+
-                  | running  |  | paused   |
-                  +----+-----+  +----+-----+
-                       |             |
-            +----------+------+  resume()
-            |          |      |      |
-       completed    error   abort    |
-            |          |      |      |
-            v          v      v      |
+     submit() --> | queued   |
+                  +----+-----+
+                       |
+                  drainQueue()
+                       |
+                  +----v-----+
+                  | running  |
+                  +----+-----+
+                       |
+            +----------+----------+
+            |          |          |
+       completed    error    cancel()/timeout
+            |          |          |
+            v          v          v
      +-----------+ +-------+ +----------+
      | completed | | error | | cancelled|
      +-----------+ +-------+ +----------+
@@ -217,16 +214,14 @@ Every task progresses through a defined state machine:
 | Status | Description |
 |--------|-------------|
 | `queued` | Waiting in the priority queue for an execution slot |
-| `paused` | Manually paused while queued; skipped by `drainQueue()` until resumed |
 | `running` | Actively executing in a handler |
 | `completed` | Handler returned successfully; result is available |
 | `error` | Handler threw a non-abort error |
-| `cancelled` | Aborted via `cancel()` or window close |
+| `cancelled` | Aborted via `cancel()`, timeout, or window close |
 
 **Constraints:**
-- Only `queued` tasks can be paused (running tasks must be cancelled).
-- Only `paused` tasks can be resumed.
-- Priority can only be updated on `queued` or `paused` tasks.
+- `cancel()` works on both `queued` and `running` tasks.
+- Priority can only be updated on `queued` tasks.
 - Terminal states (`completed`, `error`, `cancelled`) are final.
 
 ### Priority System
@@ -239,7 +234,7 @@ Tasks are assigned one of three priority levels:
 | `normal` | 2 | Default priority |
 | `low` | 1 | Executed only when no higher-priority tasks are queued |
 
-Priority affects queue ordering only. Once a task begins running, its priority has no further effect. Priority can be updated at any time while a task is `queued` or `paused`, triggering an immediate queue re-sort.
+Priority affects queue ordering only. Once a task begins running, its priority has no further effect. Priority can be updated at any time while a task is `queued`, triggering an immediate queue re-sort.
 
 ### Queue Management
 
@@ -251,9 +246,8 @@ The queue is a sorted array of `QueuedTask` entries. Ordering is determined by:
 The queue is re-sorted on:
 - Task submission (`submit`)
 - Priority update (`updatePriority`)
-- Task resume (`resume`)
 
-`drainQueue()` is called after every state change that might free an execution slot or add work (submit, resume, priority update, task completion). It iterates the sorted queue, skipping paused tasks, and starts tasks until `maxConcurrency` (default: 5) running tasks is reached.
+`drainQueue()` is called after every state change that might free an execution slot or add work (submit, priority update, task completion). It processes from the front of the sorted queue and starts tasks until `maxConcurrency` (default: 20) running tasks is reached. Already-aborted tasks are skipped and removed.
 
 ### Result Persistence
 
@@ -268,20 +262,20 @@ Completed, errored, and cancelled tasks are moved to a TTL-based store for later
 
 Each task is optionally associated with a `windowId`:
 
-- **Stamping**: `TaskIpc` always overrides `options.windowId` with `event.sender.id` from the IPC event. The renderer cannot spoof this value.
+- **Stamping**: `TaskManagerIpc` always overrides `options.windowId` with `event.sender.id` from the IPC event. The renderer cannot spoof this value.
 - **Event routing**: When `windowId` is set, events are sent via `EventBus.sendTo(windowId)` to that specific window. When unset, events are broadcast to all windows.
-- **Window close cleanup**: `TaskIpc` listens for `window:closed` events and calls `cancelByWindow(windowId)` to abort all tasks owned by the closing window.
+- **Window close cleanup**: `TaskManagerIpc` listens for `window:closed` events and calls `cancelByWindow(windowId)` to abort all tasks owned by the closing window.
 
 ---
 
 ## 3. Public APIs
 
-### Main Process API (TaskExecutorService)
+### Main Process API (TaskExecutor)
 
-Located at `src/main/tasks/TaskExecutorService.ts`.
+Located at `src/main/taskManager/TaskExecutor.ts`.
 
 ```typescript
-class TaskExecutorService implements Disposable {
+class TaskExecutor implements Disposable {
   /**
    * Submit a task for execution. Returns the taskId immediately.
    * The task is queued by priority and started when a slot is available.
@@ -296,20 +290,7 @@ class TaskExecutorService implements Disposable {
   cancel(taskId: string): boolean
 
   /**
-   * Pause a queued task. Running tasks cannot be paused.
-   * The task stays in the queue but is skipped by drainQueue().
-   * Returns true if the task was found in queued state and paused.
-   */
-  pause(taskId: string): boolean
-
-  /**
-   * Resume a paused task. Returns it to the priority queue.
-   * Returns true if the task was found in paused state and resumed.
-   */
-  resume(taskId: string): boolean
-
-  /**
-   * Update the priority of a queued or paused task.
+   * Update the priority of a queued task.
    * The queue is re-sorted immediately.
    * Returns true if the task was found and its priority updated.
    */
@@ -327,7 +308,7 @@ class TaskExecutorService implements Disposable {
   getQueueStatus(): TaskQueueStatus
 
   /**
-   * List all active tasks (queued + running + paused).
+   * List all active tasks (queued + running).
    * Does NOT include completed tasks from the TTL store.
    */
   listTasks(): ActiveTask[]
@@ -351,13 +332,13 @@ class TaskExecutorService implements Disposable {
 interface TaskOptions {
   priority?: TaskPriority   // 'low' | 'normal' | 'high' (default: 'normal')
   timeoutMs?: number        // Auto-cancel after N milliseconds (optional)
-  windowId?: number         // Set by TaskIpc, not by callers
+  windowId?: number         // Set by TaskManagerIpc, not by callers
 }
 ```
 
-### Preload API (window.task)
+### Preload API (window.tasksManager)
 
-Located at `src/preload/index.ts` (lines 578-610) and typed in `src/preload/index.d.ts` (lines 257-267).
+Located at `src/preload/index.ts`, typed in `src/preload/index.d.ts`.
 
 All methods return `Promise<IpcResult<T>>` (except `onEvent`) where `IpcResult` is:
 
@@ -368,7 +349,7 @@ type IpcResult<T> =
 ```
 
 ```typescript
-interface TaskApi {
+interface TasksManagerApi {
   /** Submit a task. Returns { taskId: string } on success. */
   submit(type: string, input: unknown, options?: TaskSubmitOptions): Promise<IpcResult<{ taskId: string }>>
 
@@ -378,13 +359,7 @@ interface TaskApi {
   /** List all active tasks. Returns TaskInfo[]. */
   list(): Promise<IpcResult<TaskInfo[]>>
 
-  /** Pause a queued task. Returns boolean. */
-  pause(taskId: string): Promise<IpcResult<boolean>>
-
-  /** Resume a paused task. Returns boolean. */
-  resume(taskId: string): Promise<IpcResult<boolean>>
-
-  /** Update priority of a queued or paused task. Returns boolean. */
+  /** Update priority of a queued task. Returns boolean. */
   updatePriority(taskId: string, priority: 'low' | 'normal' | 'high'): Promise<IpcResult<boolean>>
 
   /** Retrieve a completed/errored/cancelled task by ID. Returns TaskInfo or null. */
@@ -403,158 +378,64 @@ interface TaskApi {
 
 ### React Hooks
 
-All hooks below require a `<TaskProvider>` ancestor in the component tree.
+The renderer exposes two task-aware hooks.
 
 #### useTaskSubmit
 
 The primary hook for submitting and tracking a single task. Located at `src/renderer/src/hooks/useTaskSubmit.ts`.
+
+Internally calls `taskStore.ensureListening()` on mount, so no `TaskProvider` or context wrapper is needed.
 
 ```typescript
 function useTaskSubmit<TInput = unknown, TResult = unknown>(
   type: string,
   input: TInput,
   options?: TaskSubmitOptions
-): UseTaskSubmitReturn<TResult>
+): UseTaskSubmitReturn<TInput, TResult>
 
-interface UseTaskSubmitReturn<TResult> {
+interface UseTaskSubmitReturn<TInput, TResult> {
   taskId: string | null
   status: TaskStatus | 'idle'
-  progress: number                   // 0-100
+  progress: number                    // 0–100
   progressMessage: string | undefined
   error: string | null
   result: TResult | null
-  streamedContent: string
   queuePosition: number | undefined
-  submit: () => Promise<string | null>
+  submit: (inputOverride?: TInput) => Promise<string | null>
   cancel: () => Promise<void>
-  pause: () => Promise<void>
-  resume: () => Promise<void>
   updatePriority: (priority: TaskPriority) => Promise<void>
   reset: () => void
 }
 ```
 
-#### useTaskProgress
+#### useDebugTasks
 
-Fine-grained progress tracking for a known taskId. Uses `useSyncExternalStore` for surgical re-renders. Located at `src/renderer/src/hooks/useTaskProgress.ts`.
+Subscribes to all tasks tracked by the `taskStore` for the debug page. Located at `src/renderer/src/hooks/useDebugTasks.ts`.
 
 ```typescript
-function useTaskProgress(taskId: string): UseTaskProgressReturn
+function useDebugTasks(): UseDebugTasksReturn
 
-interface UseTaskProgressReturn {
-  percent: number              // 0-100
-  message: string | undefined  // Human-readable progress message
-  detail: unknown              // Structured detail payload
-  status: TaskStatus | 'unknown'
-  cancel: () => Promise<void>
+interface UseDebugTasksReturn {
+  tasks: TrackedTaskState[]       // Visible (non-hidden) tasks
+  queueStats: DebugQueueStats
+  hide: (taskId: string) => void
+  cancel: (taskId: string) => Promise<void>
 }
-```
 
-#### useTaskStatus
-
-Lightweight status-only subscription. Re-renders only when the status field changes, not on progress ticks or stream tokens. Located at `src/renderer/src/hooks/useTaskStatus.ts`.
-
-```typescript
-function useTaskStatus(taskId: string): TaskStatus | 'unknown'
-```
-
-#### useTaskStream
-
-Specialized hook for consuming streaming token output from AI tasks. Located at `src/renderer/src/hooks/useTaskStream.ts`.
-
-```typescript
-function useTaskStream(taskId: string): UseTaskStreamReturn
-
-interface UseTaskStreamReturn {
-  content: string       // Full accumulated text from all stream tokens
-  isStreaming: boolean   // True while status is 'running'
-  isDone: boolean        // True when status is 'completed'
-}
-```
-
-#### useTaskList
-
-Subscribes to all active tasks with optional client-side filtering. Fetches initial state from `window.task.list()` on mount. Located at `src/renderer/src/hooks/useTaskList.ts`.
-
-```typescript
-function useTaskList(filter?: TaskFilter): UseTaskListReturn
-
-type TaskFilter = (task: TaskInfo) => boolean
-
-interface UseTaskListReturn {
-  tasks: TaskInfo[]
-  isLoading: boolean
-  error: string | null
-}
-```
-
-#### useTaskQueue
-
-Live view of queued/paused tasks sorted by position plus aggregate queue metrics. Located at `src/renderer/src/hooks/useTaskQueue.ts`.
-
-```typescript
-function useTaskQueue(): UseTaskQueueReturn
-
-interface UseTaskQueueReturn {
-  queuedTasks: QueuedTaskInfo[]        // Sorted by queuePosition ascending
-  queueStatus: TaskQueueStatus | null  // { queued, running, completed }
-  isLoading: boolean
-  error: string | null
-  refreshQueueStatus: () => Promise<void>
-}
-```
-
-#### useTaskEvents
-
-Bounded event history (max 50) for debugging or activity feeds. Optionally scoped to a single task. Located at `src/renderer/src/hooks/useTaskEvents.ts`.
-
-```typescript
-function useTaskEvents(taskId?: string): UseTaskEventsReturn
-
-interface UseTaskEventsReturn {
-  events: TaskEventRecord[]
-  latest: TaskEventRecord | null
-  clear: () => void
-}
-```
-
-#### useTaskResult
-
-Fetches persisted results via `window.task.getResult()` for tasks that completed before the component mounted. Auto-refetches when the store detects a `completed` transition. Located at `src/renderer/src/hooks/useTaskResult.ts`.
-
-```typescript
-function useTaskResult<TResult = unknown>(taskId: string | undefined): UseTaskResultReturn<TResult>
-
-interface UseTaskResultReturn<TResult> {
-  taskInfo: TaskInfo | null
-  result: TResult | null
-  fetchStatus: 'idle' | 'loading' | 'ready' | 'error'
-  fetchError: string | null
-  refetch: () => Promise<void>
+interface DebugQueueStats {
+  queued: number
+  running: number
+  completed: number
+  error: number
+  cancelled: number
 }
 ```
 
 ### React Components
 
-#### TaskProvider
-
-Must be placed once, high in the component tree. Mounts a single global `window.task.onEvent` listener and feeds all events into the shared `TaskStore`.
-
-```tsx
-import { TaskProvider } from '@/contexts/TaskContext'
-
-function App() {
-  return (
-    <TaskProvider>
-      <AppLayout />
-    </TaskProvider>
-  )
-}
-```
-
 #### withTaskTracking (HOC)
 
-Wraps any component to inject a `taskTracking` prop with full task lifecycle management.
+Wraps any component to inject a `taskTracking` prop with full task lifecycle management. Located at `src/renderer/src/components/withTaskTracking.tsx`.
 
 ```typescript
 function withTaskTracking<TInput, TProps extends WithTaskTrackingInjectedProps>(
@@ -578,7 +459,6 @@ interface WithTaskTrackingInjectedProps {
     progressMessage: string | undefined
     error: string | null
     result: unknown
-    streamedContent: string
     taskId: string | null
   }
 }
@@ -590,21 +470,19 @@ interface WithTaskTrackingInjectedProps {
 
 ### Event Types Reference
 
-All events are defined as a discriminated union on the `type` field. Events are pushed from `TaskExecutorService` through the `EventBus` on the `task:event` channel.
+All events are defined as a discriminated union on the `type` field. Events are pushed from `TaskExecutor` through the `EventBus` on the `task:event` channel.
 
 | Event Type | Data Fields | Emitted When |
 |------------|-------------|--------------|
 | `queued` | `taskId`, `position` | Task is added to the queue |
 | `started` | `taskId` | Task begins execution (leaves queue) |
 | `progress` | `taskId`, `percent`, `message?`, `detail?` | Handler calls `reporter.progress()` |
-| `stream` | `taskId`, `token` | Handler calls `streamReporter.stream()` |
+| `stream` | `taskId`, `data` | Handler calls `streamReporter.stream(data)` — raw batch only |
 | `completed` | `taskId`, `result`, `durationMs` | Handler returns successfully |
 | `error` | `taskId`, `message`, `code` | Handler throws a non-abort error |
-| `cancelled` | `taskId` | Task is aborted (user cancel, timeout, or window close) |
-| `paused` | `taskId` | Task is paused via `pause()` |
-| `resumed` | `taskId`, `position` | Task is resumed via `resume()` |
+| `cancelled` | `taskId` | Task is aborted (cancel, timeout, or window close) |
 | `priority-changed` | `taskId`, `priority`, `position` | Priority updated via `updatePriority()` |
-| `queue-position` | `taskId`, `position` | Queue position changes (reserved for future use) |
+| `queue-position` | `taskId`, `position` | Queue position changes |
 
 ### Event Flow and Timing
 
@@ -622,20 +500,14 @@ drainQueue() -- if slot available:
   |
   +---> [progress] events (0..N times, throttled by handler)
   |
-  +---> [stream] events (0..N times, for AI handlers)
+  +---> [stream] events (0..N times, raw data batches)
   |
   v
 [completed] event (with result + durationMs)
   OR
 [error] event (with message + code)
   OR
-[cancelled] event (from abort/timeout/window close)
-```
-
-**Pause/resume flow:**
-
-```
-[queued] --> pause() --> [paused] --> resume() --> [resumed] (position = M) --> [started]
+[cancelled] event (from cancel()/timeout/window close)
 ```
 
 **Priority change flow:**
@@ -648,12 +520,12 @@ drainQueue() -- if slot available:
 
 ## 5. Type System
 
-All shared types are defined in `src/shared/types/ipc/types.ts`.
+All shared types are defined in `src/shared/types.ts`.
 
 ### TaskStatus
 
 ```typescript
-type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
+type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
 ```
 
 ### TaskPriority
@@ -672,9 +544,7 @@ type TaskEvent =
   | { type: 'completed';        data: { taskId: string; result: unknown; durationMs: number } }
   | { type: 'error';            data: { taskId: string; message: string; code: string } }
   | { type: 'cancelled';        data: { taskId: string } }
-  | { type: 'stream';           data: { taskId: string; token: string } }
-  | { type: 'paused';           data: { taskId: string } }
-  | { type: 'resumed';          data: { taskId: string; position: number } }
+  | { type: 'stream';           data: { taskId: string; data: string } }
   | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
   | { type: 'queue-position';   data: { taskId: string; position: number } }
 ```
@@ -700,7 +570,7 @@ interface TaskInfo {
 
 ### ActiveTask
 
-The full internal task descriptor maintained by `TaskExecutorService`. Contains non-serializable fields.
+The full internal task descriptor maintained by `TaskExecutor`. Contains non-serializable fields.
 
 ```typescript
 interface ActiveTask {
@@ -715,7 +585,6 @@ interface ActiveTask {
   windowId?: number
   result?: unknown
   error?: string
-  pausedAt?: number
 }
 ```
 
@@ -723,7 +592,7 @@ interface ActiveTask {
 
 ```typescript
 interface TaskQueueStatus {
-  queued: number      // Tasks waiting (includes paused)
+  queued: number      // Tasks waiting in queue
   running: number     // Tasks currently executing
   completed: number   // Tasks in TTL store
 }
@@ -731,7 +600,7 @@ interface TaskQueueStatus {
 
 ### TrackedTaskState (Renderer)
 
-The renderer-side representation maintained by `TaskStore`.
+The renderer-side representation maintained by `taskStore`.
 
 ```typescript
 interface TrackedTaskState {
@@ -744,7 +613,6 @@ interface TrackedTaskState {
   durationMs?: number
   error?: string
   result?: unknown
-  streamedContent: string
   events: TaskEventRecord[]       // Bounded ring, max 50
 }
 ```
@@ -772,7 +640,8 @@ interface ProgressReporter {
 }
 
 interface StreamReporter {
-  stream(token: string): void
+  /** Emit a raw data batch. Each call delivers one chunk to the renderer. No accumulation. */
+  stream(data: string): void
 }
 ```
 
@@ -828,51 +697,40 @@ function DownloadButton({ url }: { url: string }) {
 }
 ```
 
-### Example 2: Streaming AI Task
+### Example 2: Streaming Task
 
-```tsx
-import { useTaskSubmit } from '@/hooks/useTaskSubmit'
+For tasks that emit data chunks in real time, consume `stream` events via `window.tasksManager.onEvent` directly or handle them in the handler's `onCompleted` reaction. The `result` field on the `completed` event carries the final output.
 
-function AIChat({ prompt }: { prompt: string }) {
-  const {
-    submit,
-    status,
-    streamedContent,
-  } = useTaskSubmit('ai-chat', { prompt })
+```typescript
+// Handler side (main process)
+export class DataProcessorHandler implements TaskHandler<Input, string> {
+  readonly type = 'data:process'
 
-  return (
-    <div>
-      <button onClick={submit} disabled={status === 'running'}>
-        {status === 'running' ? 'Generating...' : 'Ask AI'}
-      </button>
-
-      {streamedContent && (
-        <div className="ai-response">
-          {streamedContent}
-          {status === 'running' && <span className="cursor" />}
-        </div>
-      )}
-    </div>
-  )
+  async execute(input: Input, signal: AbortSignal, reporter: ProgressReporter, stream?: StreamReporter): Promise<string> {
+    let output = ''
+    for await (const chunk of processStream(input, signal)) {
+      stream?.stream(chunk)       // emit raw batch — no accumulation
+      output += chunk
+      reporter.progress(/* ... */)
+    }
+    return output                 // full result available on completion
+  }
 }
 ```
 
-For components that only need the stream content and are given a taskId externally:
-
-```tsx
-import { useTaskStream } from '@/hooks/useTaskStream'
-
-function StreamViewer({ taskId }: { taskId: string }) {
-  const { content, isStreaming, isDone } = useTaskStream(taskId)
-
-  return (
-    <pre>
-      {content}
-      {isStreaming && <BlinkingCursor />}
-      {isDone && <span> [Done]</span>}
-    </pre>
-  )
-}
+```typescript
+// Renderer side — subscribe to stream events for a known taskId
+useEffect(() => {
+  const unsub = window.tasksManager.onEvent((event) => {
+    if (event.type === 'stream') {
+      const { taskId, data } = event.data as { taskId: string; data: string }
+      if (taskId === myTaskId) {
+        setOutput((prev) => prev + data)  // accumulate in component
+      }
+    }
+  })
+  return unsub
+}, [myTaskId])
 ```
 
 ### Example 3: Using withTaskTracking HOC
@@ -904,122 +762,33 @@ export default withTaskTracking(ExportButton, {
 })
 ```
 
-### Example 4: Manual Task Control
+### Example 4: Direct Preload API
 
-```tsx
-import { useTaskSubmit } from '@/hooks/useTaskSubmit'
+For non-React code or one-off operations, call `window.tasksManager` directly:
 
-function BatchProcessor() {
-  const task = useTaskSubmit('batch-process', { items: [1, 2, 3] })
-
-  return (
-    <div>
-      <button onClick={task.submit}>Start Batch</button>
-
-      {task.status === 'queued' && (
-        <div>
-          <p>Position in queue: #{task.queuePosition}</p>
-          <button onClick={task.pause}>Pause</button>
-          <button onClick={() => task.updatePriority('high')}>
-            Boost Priority
-          </button>
-        </div>
-      )}
-
-      {task.status === 'paused' && (
-        <div>
-          <p>Task paused</p>
-          <button onClick={task.resume}>Resume</button>
-          <button onClick={task.cancel}>Cancel</button>
-        </div>
-      )}
-
-      {task.status === 'running' && (
-        <div>
-          <progress value={task.progress} max={100} />
-          <button onClick={task.cancel}>Cancel</button>
-        </div>
-      )}
-
-      {(task.status === 'completed' || task.status === 'error' || task.status === 'cancelled') && (
-        <button onClick={task.reset}>Reset</button>
-      )}
-    </div>
-  )
+```typescript
+// Submit without a hook
+const result = await window.tasksManager.submit('feature:process-file', { filePath }, { priority: 'high' })
+if (result.success) {
+  const { taskId } = result.data
+  // Seed the local taskStore so it appears in the debug page immediately
+  taskStore.addTask(taskId, 'feature:process-file')
 }
-```
 
-### Example 5: Queue Monitoring Dashboard
+// List all active tasks
+const listResult = await window.tasksManager.list()
+const tasks = listResult.data // TaskInfo[]
 
-```tsx
-import { useTaskQueue } from '@/hooks/useTaskQueue'
-import { useTaskList } from '@/hooks/useTaskList'
+// Queue metrics
+const statusResult = await window.tasksManager.queueStatus()
+console.log(statusResult.data) // { queued: 2, running: 5, completed: 12 }
 
-function QueueDashboard() {
-  const { queuedTasks, queueStatus, isLoading, refreshQueueStatus } = useTaskQueue()
-  const { tasks: runningTasks } = useTaskList((t) => t.status === 'running')
-
-  if (isLoading) return <p>Loading...</p>
-
-  return (
-    <div>
-      {queueStatus && (
-        <div className="metrics">
-          <span>Queued: {queueStatus.queued}</span>
-          <span>Running: {queueStatus.running}</span>
-          <span>Completed: {queueStatus.completed}</span>
-          <button onClick={refreshQueueStatus}>Refresh</button>
-        </div>
-      )}
-
-      <h3>Queue ({queuedTasks.length})</h3>
-      <ul>
-        {queuedTasks.map((t) => (
-          <li key={t.taskId}>
-            #{t.queuePosition} - {t.type} ({t.priority})
-            {t.status === 'paused' && ' [PAUSED]'}
-          </li>
-        ))}
-      </ul>
-
-      <h3>Running ({runningTasks.length})</h3>
-      <ul>
-        {runningTasks.map((t) => (
-          <li key={t.taskId}>{t.type}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-```
-
-### Example 6: Fetching Results After Navigation
-
-When a component mounts after the task has already completed, use `useTaskResult` to retrieve the persisted result from the main process TTL store:
-
-```tsx
-import { useTaskResult } from '@/hooks/useTaskResult'
-
-function ResultViewer({ taskId }: { taskId: string }) {
-  const { result, fetchStatus, fetchError, refetch } = useTaskResult<{
-    filePath: string
-    size: number
-  }>(taskId)
-
-  if (fetchStatus === 'loading') return <p>Loading result...</p>
-  if (fetchStatus === 'error') return <p>Error: {fetchError}</p>
-
-  if (fetchStatus === 'ready' && result) {
-    return (
-      <div>
-        <p>File: {result.filePath}</p>
-        <p>Size: {result.size} bytes</p>
-      </div>
-    )
-  }
-
-  return <p>No result available (may have expired after 5 minutes)</p>
-}
+// Subscribe to all task events globally
+const unsub = window.tasksManager.onEvent((event) => {
+  console.log(event.type, event.data)
+})
+// Later:
+unsub()
 ```
 
 ---
@@ -1028,7 +797,7 @@ function ResultViewer({ taskId }: { taskId: string }) {
 
 ### Queuing Algorithm
 
-The queue is maintained as a sorted array in `TaskExecutorService`. The sort key is:
+The queue is maintained as a sorted array in `TaskExecutor`. The sort key is:
 
 ```typescript
 // Higher priority weight = earlier in queue; FIFO within same priority
@@ -1045,7 +814,7 @@ queue.sort((a, b) => {
 })
 ```
 
-`drainQueue()` iterates from index 0, skipping paused tasks (leaving them in-place), and starts tasks until `maxConcurrency` is reached or the queue is exhausted. Already-aborted tasks are also skipped and removed.
+`drainQueue()` processes from the front of the sorted queue, starting tasks until `maxConcurrency` is reached or the queue is exhausted. Already-aborted tasks are skipped and removed without starting.
 
 ### Result Persistence
 
@@ -1068,39 +837,38 @@ TTL = 5 minutes from task completion/error/cancellation
 
 ```
 Main Process                          Renderer
-+---------------------------+         +-----------------------------+
-| TaskExecutorService       |         | TaskProvider (single mount) |
-|   this.send(windowId,     |  IPC    |   window.task.onEvent(cb)   |
-|     'task:event', event)  | ------> |     cb(event)               |
-|                           |         |       |                     |
-| EventBus                  |         |       v                     |
-|   .sendTo(windowId, ...)  |         | TaskStore                   |
-|   .broadcast(...)         |         |   .applyEvent(event)        |
-+---------------------------+         |       |                     |
-                                      |   update(taskId, patch)     |
-                                      |       |                     |
-                                      |   notifyKey(taskId)  -----> per-task subscribers
-                                      |   notifyKey('ALL')   -----> list/queue subscribers
-                                      +-----------------------------+
++---------------------------+         +----------------------------------+
+| TaskExecutor              |         | taskStore.ensureListening()       |
+|   this.send(windowId,     |  IPC    |   window.tasksManager.onEvent(cb)|
+|     'task:event', event)  | ------> |     cb(event)                    |
+|                           |         |       |                          |
+| EventBus                  |         |       v                          |
+|   .sendTo(windowId, ...)  |         | taskStore.applyEvent(event)      |
+|   .broadcast(...)         |         |       |                          |
++---------------------------+         |   patch(taskId, ...)             |
+                                      |       |                          |
+                                      |   notifyKey(taskId) --> per-task |
+                                      |   notifyKey('ALL')  --> useDebug |
+                                      +----------------------------------+
 ```
 
 **Key design decisions:**
 
-1. **Single IPC listener**: `TaskProvider` mounts exactly one `window.task.onEvent` callback. This avoids O(N) IPC subscriptions when N hooks are active.
+1. **Single IPC listener**: `taskStore.ensureListening()` initializes exactly one `window.tasksManager.onEvent` callback on first call. Subsequent calls are no-ops. This avoids O(N) IPC subscriptions when N hooks are active.
 
-2. **Per-taskId routing**: The `TaskStore` uses subscription keys. A key can be a specific `taskId` or the special `'ALL'` key. When a task is updated, both `notifyKey(taskId)` and `notifyKey('ALL')` are called. Hooks like `useTaskProgress` subscribe to a specific taskId, so a stream token for task-A does not cause task-B observers to re-render.
+2. **Per-taskId routing**: The `taskStore` uses subscription keys. A key can be a specific `taskId` or the special `'ALL'` key. When a task is updated, both `notifyKey(taskId)` and `notifyKey('ALL')` are called. `useTaskSubmit` subscribes to a specific taskId, so a stream event for task-A does not cause task-B observers to re-render.
 
-3. **External store**: The `TaskStore` is created outside React (`createTaskStore()`) and accessed via `useSyncExternalStore`. This avoids React state update batching delays for high-frequency events like stream tokens.
+3. **Module singleton**: The `taskStore` is a plain module-level singleton (not a React context). No `TaskProvider` wrapper is needed in the component tree.
 
-4. **Snapshot caching**: The store maintains a `snapshotCache` Map so that `useSyncExternalStore` returns the same object reference when the task has not changed, preventing unnecessary re-renders.
+4. **Snapshot caching**: The store maintains a `snapshotCache` Map so hook callbacks return the same object reference when the task has not changed, preventing unnecessary re-renders.
 
 ### Window Scoping
 
 ```
 Renderer                         Main Process
 +---------+                      +-----------+
-| submit  | -- IPC invoke -----> | TaskIpc   |
-| (any    |                      |           |
+| submit  | -- IPC invoke -----> | TaskManagerIpc |
+| (any    |                      |                |
 |  windowId|   event.sender.id   | options.windowId = event.sender.id
 |  ignored)|   stamped server-   | (trusted)
 +---------+   side               +-----------+
@@ -1113,7 +881,7 @@ This means:
 
 ### Concurrency Model
 
-- **Max concurrency**: Configurable via constructor (default: 5).
+- **Max concurrency**: Configurable via constructor (default: 20).
 - **Non-blocking**: All task handlers return `Promise`. The Node.js event loop handles concurrency naturally.
 - **Per-task AbortController**: Each task gets its own `AbortController`. Cancelling one task does not affect others.
 - **Timeout**: Optional per-task timeout creates a `setTimeout` that calls `controller.abort()`. The timeout handle is cleared in the `finally` block.
@@ -1133,7 +901,7 @@ This means:
 | AbortError (cancellation) | Caught in `executeTask`; emits `cancelled` event | `cancelled` event |
 | Timeout | `setTimeout` triggers `controller.abort()`; handler receives AbortError | `cancelled` event |
 | IPC failure | Preload returns `IpcResult` with `success: false` | No event; caller checks `.success` |
-| Invalid priority | `TaskIpc` throws before reaching executor | IPC error result |
+| Invalid priority | `TaskManagerIpc` throws before reaching executor | IPC error result |
 
 ### Error Codes
 
@@ -1144,7 +912,7 @@ The `code` field in error events is populated from `Error.name` (e.g., `'Error'`
 All preload methods return an `IpcResult` envelope. The renderer must always check `result.success` before accessing `result.data`:
 
 ```typescript
-const result = await window.task.submit('file-download', { url: '...' })
+const result = await window.tasksManager.submit('file-download', { url: '...' })
 if (!result.success) {
   console.error('Submit failed:', result.error.message)
   return
@@ -1162,17 +930,17 @@ Hooks like `useTaskSubmit` handle this envelope internally and surface errors vi
 |-----------|-----------|-------|
 | Task lookup by ID | O(1) | `Map.get()` on `activeTasks` or `completedTasks` |
 | Event dispatch to subscribers | O(1) per task | Per-taskId subscription key routes directly |
-| Queue sort | O(n log n) | Standard array sort; runs on submit, resume, priority update |
-| Queue drain | O(n) | Linear scan skipping paused tasks |
+| Queue sort | O(n log n) | Standard array sort; runs on submit and priority update |
+| Queue drain | O(n) | Linear scan from front; aborted tasks skipped |
 | GC sweep | O(n) | Iterates `completedTasks` Map every 60 seconds |
 | Store snapshot rebuild | O(n) | Rebuilds `allTasksSnapshot` array on every mutation |
-| Stream token delivery | O(1) | Single store update + per-taskId notification |
+| Stream batch delivery | O(1) | Single store update + per-taskId notification |
 
 **Memory:**
 - Active tasks: One `ActiveTask` + one `QueuedTask` per queued task.
 - Completed tasks: TTL-evicted after 5 minutes. GC runs every 60 seconds.
 - Renderer store: One `TrackedTaskState` per tracked task, with bounded event history (max 50 events per task).
-- Snapshot cache: One cached reference per tracked task to prevent `useSyncExternalStore` churn.
+- Snapshot cache: One cached reference per tracked task to prevent unnecessary re-renders.
 
 ---
 
@@ -1180,36 +948,28 @@ Hooks like `useTaskSubmit` handle this envelope internally and surface errors vi
 
 ### Security
 
-1. **Server-side windowId enforcement**: `TaskIpc` always overrides `options.windowId` with `event.sender.id`. The renderer cannot inject a different windowId.
+1. **Server-side windowId enforcement**: `TaskManagerIpc` always overrides `options.windowId` with `event.sender.id`. The renderer cannot inject a different windowId.
 
-2. **Priority value allowlist**: `TaskIpc` validates that the priority value is one of `'low'`, `'normal'`, `'high'` before passing it to the executor. Invalid values throw an error.
+2. **Priority value allowlist**: `TaskManagerIpc` validates that the priority value is one of `'low'`, `'normal'`, `'high'` before passing it to the executor. Invalid values throw an error.
 
 3. **Input validation**: Handlers can implement `validate(input)` to reject malformed input before the task is queued.
 
-4. **SSRF protection**: `FileDownloadHandler` blocks private network addresses and localhost.
-
-5. **Dangerous file extension warnings**: `FileDownloadHandler` logs warnings for executable file types.
-
-6. **Window close cleanup**: All tasks owned by a closing window are cancelled automatically.
+4. **Window close cleanup**: All tasks owned by a closing window are cancelled automatically.
 
 ### Best Practices
 
-1. **Place TaskProvider high in the tree**: Wrap your app root or main layout so all task-aware components share a single IPC subscription.
+1. **No context provider needed**: `useTaskSubmit` calls `taskStore.ensureListening()` internally. No `<TaskProvider>` wrapper is required.
 
-2. **Choose the right hook for the job**:
-   - Use `useTaskSubmit` when you need to submit and track a task.
-   - Use `useTaskProgress` when you only need to display a progress bar for a known taskId.
-   - Use `useTaskStatus` when you only need to conditionally render based on status (minimal re-renders).
-   - Use `useTaskStream` when consuming AI streaming output.
-   - Use `useTaskResult` when fetching results for tasks that may have completed before mount.
+2. **Choose the right API**:
+   - Use `useTaskSubmit` when a component needs to submit and track its own task.
+   - Use `useDebugTasks` for an all-tasks view (debug page pattern).
+   - Use `window.tasksManager` directly for imperative/non-React code; remember to call `taskStore.addTask()` to make it visible in the debug page.
 
 3. **Respect the lifecycle**: Do not call `submit()` while a task is active (the hook guards against this). Call `reset()` after terminal states if you want to resubmit.
 
 4. **Handle all terminal states**: Always handle `completed`, `error`, and `cancelled` in your UI.
 
-5. **Use pause/resume for queue management only**: Running tasks cannot be paused. If you need to stop a running task, cancel it.
-
-6. **Clean up on unmount**: All hooks automatically unsubscribe on unmount. If using `window.task.onEvent` directly, store and call the returned unsubscribe function.
+5. **Clean up direct subscriptions**: If using `window.tasksManager.onEvent` directly, store and call the returned unsubscribe function in a `useEffect` cleanup.
 
 ---
 
@@ -1220,7 +980,7 @@ To add a new task type, implement the `TaskHandler` interface and register it.
 ### Step 1: Define Input/Output Types
 
 ```typescript
-// src/main/tasks/handlers/MyCustomHandler.ts
+// src/main/taskManager/handlers/MyCustomHandler.ts
 
 export interface MyCustomInput {
   documentId: string
@@ -1236,7 +996,7 @@ export interface MyCustomOutput {
 ### Step 2: Implement the Handler
 
 ```typescript
-import { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
+import type { TaskHandler, ProgressReporter } from '../TaskHandler'
 
 export class MyCustomHandler implements TaskHandler<MyCustomInput, MyCustomOutput> {
   readonly type = 'my-custom-export'
@@ -1254,17 +1014,13 @@ export class MyCustomHandler implements TaskHandler<MyCustomInput, MyCustomOutpu
     input: MyCustomInput,
     signal: AbortSignal,
     reporter: ProgressReporter,
-    _streamReporter?: StreamReporter
   ): Promise<MyCustomOutput> {
     reporter.progress(0, 'Preparing export...')
 
-    // Check for cancellation before expensive operations
-    if (signal.aborted) throw new Error('Task cancelled')
+    if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
 
-    // Simulate work
     reporter.progress(50, 'Converting document...')
 
-    // Pass signal to downstream APIs that support it
     const result = await convertDocument(input.documentId, input.format, signal)
 
     reporter.progress(100, 'Export complete')
@@ -1279,19 +1035,19 @@ export class MyCustomHandler implements TaskHandler<MyCustomInput, MyCustomOutpu
 
 ### Step 3: Register the Handler
 
-Register the handler during application bootstrap where the `TaskHandlerRegistry` is configured:
+Register the handler in `bootstrapServices()` inside `src/main/bootstrap.ts`:
 
 ```typescript
-import { MyCustomHandler } from './handlers/MyCustomHandler'
+import { MyCustomHandler } from './taskManager/handlers/MyCustomHandler'
 
-registry.register(new MyCustomHandler())
+taskHandlerRegistry.register(new MyCustomHandler())
 ```
 
 ### Key Implementation Notes
 
 - **Always respect `AbortSignal`**: Check `signal.aborted` before expensive operations and pass the signal to downstream APIs (fetch, file I/O, etc.).
-- **Report progress meaningfully**: Use `reporter.progress(percent, message, detail)` to give users feedback. The `detail` field can carry structured data (speed, ETA, etc.).
-- **Use `streamReporter` for streaming content**: AI handlers should emit tokens via `streamReporter.stream(token)` for real-time display.
+- **Report progress meaningfully**: Use `reporter.progress(percent, message?, detail?)` to give users feedback. The `detail` field can carry structured data (speed, ETA, etc.).
+- **Use `streamReporter` for batched output**: Call `streamReporter.stream(data)` with a raw chunk — no accumulation, no token tracking. Each call emits one `stream` event to the renderer.
 - **Throw on errors**: Do not catch and swallow errors. The executor handles error events, logging, and cleanup.
 - **Validate input early**: The `validate()` method runs before the task is queued. Fail fast with clear error messages.
 
@@ -1309,7 +1065,6 @@ registry.register(new MyCustomHandler())
 | Cancellation (queued) | Task removed from queue; `cancelled` event emitted |
 | Cancellation (running) | AbortSignal fires; handler can clean up |
 | Timeout | Task cancelled after `timeoutMs`; `cancelled` event emitted |
-| Pause/resume | Paused tasks skipped by `drainQueue`; resumed tasks re-enter queue |
 | Priority update | Queue re-sorted; `priority-changed` event with new position |
 | Result retrieval | Completed tasks available via `getTaskResult` within TTL |
 | TTL expiry | Tasks evicted from `completedTasks` after 5 minutes |
@@ -1321,58 +1076,40 @@ registry.register(new MyCustomHandler())
 
 | Scenario | What to Test |
 |----------|-------------|
-| Pause/resume workflow | Pause queued task, verify skipped, resume, verify re-queued and eventually runs |
 | Priority reordering | Submit low + high tasks; verify high runs first |
-| Result retrieval after navigation | Submit task, wait for completion, unmount component, remount, fetch via `useTaskResult` |
+| Result retrieval after navigation | Submit task, wait for completion, unmount, remount, verify result available |
 | Multi-window isolation | Submit tasks from two windows; close one; verify other window's tasks unaffected |
 | Event subscription cleanup | Mount/unmount components; verify no leaked IPC listeners |
-| Concurrent execution limit | Submit 10 tasks; verify only 5 run at a time |
-| Stream token accumulation | Submit AI task; verify `streamedContent` accumulates tokens in order |
+| Concurrent execution limit | Submit 30 tasks; verify only 20 run at a time |
+| Stream batch delivery | Submit streaming task; verify each `stream` event carries a raw batch |
 
 ### Mocking
 
-For renderer tests, mock `window.task` to avoid IPC:
+For renderer tests, mock `window.tasksManager` to avoid IPC:
 
 ```typescript
-const mockTaskApi = {
+const mockTasksManager = {
   submit: jest.fn().mockResolvedValue({ success: true, data: { taskId: 'test-123' } }),
   cancel: jest.fn().mockResolvedValue({ success: true, data: true }),
   list: jest.fn().mockResolvedValue({ success: true, data: [] }),
-  pause: jest.fn().mockResolvedValue({ success: true, data: true }),
-  resume: jest.fn().mockResolvedValue({ success: true, data: true }),
   updatePriority: jest.fn().mockResolvedValue({ success: true, data: true }),
   getResult: jest.fn().mockResolvedValue({ success: true, data: null }),
   queueStatus: jest.fn().mockResolvedValue({ success: true, data: { queued: 0, running: 0, completed: 0 } }),
   onEvent: jest.fn().mockReturnValue(() => {}),
 }
 
-Object.defineProperty(window, 'task', { value: mockTaskApi })
+Object.defineProperty(window, 'tasksManager', { value: mockTasksManager })
 ```
 
 ---
 
 ## 13. Common Patterns
 
-### TaskProvider Placement
-
-Place `<TaskProvider>` as high as needed -- typically wrapping the main application layout:
-
-```tsx
-// App.tsx or AppLayout.tsx
-<TaskProvider>
-  <Router>
-    <Sidebar />
-    <MainContent />
-  </Router>
-</TaskProvider>
-```
-
 ### Conditional Submission
 
 ```tsx
 const task = useTaskSubmit('export', { path }, { priority: 'high' })
 
-// Only submit when user clicks, not on mount
 const handleExport = async () => {
   const taskId = await task.submit()
   if (taskId) {
@@ -1381,7 +1118,7 @@ const handleExport = async () => {
 }
 ```
 
-### Error Boundary Integration
+### Error Display
 
 ```tsx
 function TaskErrorBoundary({ children }: { children: React.ReactNode }) {
@@ -1402,86 +1139,27 @@ function TaskErrorBoundary({ children }: { children: React.ReactNode }) {
 
 ### Cleanup Pattern for Direct API Usage
 
-When using `window.task.onEvent` directly (outside of hooks), always clean up:
+When using `window.tasksManager.onEvent` directly (outside of hooks), always clean up:
 
 ```typescript
 useEffect(() => {
-  const unsub = window.task.onEvent((event) => {
+  const unsub = window.tasksManager.onEvent((event) => {
     // handle event
   })
-
   return () => unsub()
 }, [])
 ```
 
-### Combining Hooks for Complex UIs
+### Seeding the Debug Page from Imperative Code
 
-```tsx
-function TaskDetail({ taskId }: { taskId: string }) {
-  const status = useTaskStatus(taskId)
-  const { percent, message } = useTaskProgress(taskId)
-  const { content, isStreaming } = useTaskStream(taskId)
-  const { events } = useTaskEvents(taskId)
-
-  return (
-    <div>
-      <StatusBadge status={status} />
-      <ProgressBar percent={percent} label={message} />
-      {isStreaming && <StreamView content={content} />}
-      <EventLog events={events} />
-    </div>
-  )
+```typescript
+const result = await window.tasksManager.submit('my-task', input)
+if (result.success) {
+  // Seed taskStore so the task appears in the debug page immediately.
+  // If the 'queued' IPC event arrives first, addTask is a no-op.
+  taskStore.addTask(result.data.taskId, 'my-task')
 }
 ```
-
-Each hook subscribes to the same taskId key in the store but only re-renders when its specific slice changes. `useTaskStatus` will not re-render on stream tokens, and `useTaskStream` will not re-render on status changes.
-
----
-
-## File Reference
-
-### Main Process
-
-| File | Description |
-|------|-------------|
-| `src/main/taskManager/TaskExecutor.ts` | Core executor: queue, concurrency, lifecycle, TTL store |
-| `src/main/taskManager/TaskHandlerRegistry.ts` | Type-to-handler registry |
-| `src/main/taskManager/TaskHandler.ts` | `TaskHandler`, `ProgressReporter`, `StreamReporter` interfaces |
-| `src/main/taskManager/TaskDescriptor.ts` | `ActiveTask`, `TaskOptions`, `TaskStatus` types |
-| `src/main/taskManager/TaskEvents.ts` | Re-exports `TaskEvent` from shared types |
-| `src/main/taskManager/TaskReactionHandler.ts` | `TaskReactionHandler` interface + typed lifecycle event payloads |
-| `src/main/taskManager/TaskReactionRegistry.ts` | Type → `TaskReactionHandler[]` registry (supports wildcard `'*'`) |
-| `src/main/taskManager/TaskReactionBus.ts` | `Disposable` observer; subscribes to `AppEvents`, dispatches to handlers |
-| `src/main/taskManager/reactions/index.ts` | Barrel: register concrete `TaskReactionHandler` implementations here |
-| `src/main/taskManager/index.ts` | Public re-exports for the taskManager module |
-| `src/main/ipc/TaskManagerIpc.ts` | IPC channel registration, `windowId` stamping, input validation |
-| `src/main/core/EventBus.ts` | `broadcast/sendTo` (renderer IPC) + `emit/on` (`AppEvents` for main process) |
-| `src/main/bootstrap.ts` | Wires executor, reaction registry, reaction bus, and all IPC modules |
-
-### Shared
-
-| File | Description |
-|------|-------------|
-| `src/shared/types.ts` | `TaskEvent`, `TaskInfo`, `TaskStatus`, `TaskPriority`, `TaskQueueStatus`, `TaskSubmitPayload` |
-| `src/shared/channels.ts` | `TaskChannels` constant object (IPC channel name strings) |
-
-### Preload
-
-| File | Description |
-|------|-------------|
-| `src/preload/index.ts` | `window.tasksManager` API implementation |
-| `src/preload/index.d.ts` | `TasksManagerApi` type declaration |
-
-### Renderer
-
-| File | Description |
-|------|-------------|
-| `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions; lazy IPC listener |
-| `src/renderer/src/services/taskEventBus.ts` | Per-task event pub/sub for streaming content accumulation |
-| `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, pause, resume, stream |
-| `src/renderer/src/hooks/useDebugTasks.ts` | All-tasks subscription for the debug page |
-| `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects `taskTracking` prop into any component |
-| `src/renderer/src/pages/DebugPage.tsx` | Debug page: live task table with controls and event log panel |
 
 ---
 
@@ -1513,17 +1191,18 @@ export class MyFeatureHandler implements TaskHandler<MyFeatureInput, string> {
     input: MyFeatureInput,
     signal: AbortSignal,
     reporter: ProgressReporter,
-    _stream?: StreamReporter,
+    stream?: StreamReporter,
   ): Promise<string> {
     reporter.progress(10, 'Reading file…')
-    // Always check signal.aborted before long operations
     if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
 
-    // … do real work …
-    reporter.progress(90, 'Finalizing…')
-    await someAsyncOperation(signal)
-    reporter.progress(100, 'Done')
+    // Emit raw output batches as they arrive
+    for await (const chunk of readChunks(input.filePath, signal)) {
+      stream?.stream(chunk)  // raw batch — renderer accumulates if needed
+      reporter.progress(/* ... */)
+    }
 
+    reporter.progress(100, 'Done')
     return 'output-path'
   }
 }
@@ -1532,7 +1211,7 @@ export class MyFeatureHandler implements TaskHandler<MyFeatureInput, string> {
 **Key rules:**
 - Check `signal.aborted` before each async step so cancel/timeout works cleanly.
 - Call `reporter.progress(0–100, message?)` to emit `progress` events to the renderer.
-- Call `streamReporter.stream(token)` for real-time AI-style token delivery.
+- Call `streamReporter.stream(data)` for real-time chunk delivery. Each call is one batch — no accumulation on the main process side.
 - Throw `new DOMException('Aborted', 'AbortError')` (or let AbortSignal propagate) to signal cancellation.
 
 ### 14.2 Registering a Task Handler
@@ -1542,19 +1221,16 @@ Register handlers in `bootstrapServices()` inside `src/main/bootstrap.ts`:
 ```typescript
 import { MyFeatureHandler } from './taskManager/handlers/MyFeatureHandler'
 
-// Task system
 const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
 taskHandlerRegistry.register(new MyFeatureHandler())
-// …more handlers…
 container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 20))
 ```
 
 ### 14.3 Submitting a Task from the Main Process
 
-The main process can submit tasks directly via the `TaskExecutor` without going through IPC:
+The main process can submit tasks directly via `TaskExecutor` without going through IPC:
 
 ```typescript
-// Inside any main-process service or IPC handler
 const executor = container.get<TaskExecutor>('taskExecutor')
 
 const taskId = executor.submit('feature:process-file', { filePath: '/path/to/file' }, {
@@ -1587,7 +1263,6 @@ export class MyFeatureTaskReaction implements TaskReactionHandler {
   }
 
   async onCompleted(event: TaskCompletedEvent): Promise<void> {
-    // e.g. update a database, send a notification, chain another task
     await notifyUser(event.result as string)
     console.log(`[MyFeature] Processed in ${event.durationMs}ms`)
   }
@@ -1616,17 +1291,20 @@ Add the handler to the `TaskReactionRegistry` in `bootstrap.ts`:
 
 ```typescript
 import { MyFeatureTaskReaction } from './taskManager/reactions/MyFeatureTaskReaction'
-import { TaskAuditReaction } from './taskManager/reactions/TaskAuditReaction'
 
-// in bootstrapServices():
 const taskReactionRegistry = new TaskReactionRegistry()
 taskReactionRegistry.register(new MyFeatureTaskReaction())
-taskReactionRegistry.register(new TaskAuditReaction()) // wildcard handler
 const taskReactionBus = container.register(
   'taskReactionBus',
   new TaskReactionBus(taskReactionRegistry, eventBus),
 )
 taskReactionBus.initialize()
+```
+
+Also export the concrete reaction from `src/main/taskManager/reactions/index.ts`:
+
+```typescript
+export { MyFeatureTaskReaction } from './MyFeatureTaskReaction'
 ```
 
 ### 14.6 Lifecycle Event Payloads
@@ -1667,13 +1345,8 @@ function ProcessFileButton({ filePath }: { filePath: string }) {
         <>
           <progress value={task.progress} max={100} />
           <span>{task.progressMessage}</span>
-          <button onClick={() => task.pause()}>Pause</button>
           <button onClick={() => task.cancel()}>Cancel</button>
         </>
-      )}
-
-      {task.status === 'paused' && (
-        <button onClick={() => task.resume()}>Resume</button>
       )}
 
       {task.status === 'completed' && <p>Done: {String(task.result)}</p>}
@@ -1693,130 +1366,164 @@ function ProcessFileButton({ filePath }: { filePath: string }) {
 | `progressMessage` | `string?` | Human-readable progress label |
 | `error` | `string \| null` | Error message on failure |
 | `result` | `TResult \| null` | Task result on completion |
-| `streamedContent` | `string` | Accumulated stream tokens (AI tasks) |
-| `queuePosition` | `number?` | Position in queue while queued/paused |
+| `queuePosition` | `number?` | Position in queue while queued |
 | `submit(input?)` | `() => Promise<string \| null>` | Submit (or re-submit) the task |
 | `cancel()` | `() => Promise<void>` | Cancel the running/queued task |
-| `pause()` | `() => Promise<void>` | Pause a queued task |
-| `resume()` | `() => Promise<void>` | Resume a paused task |
 | `updatePriority(p)` | `() => Promise<void>` | Change queue priority |
 | `reset()` | `() => void` | Reset to idle state |
 
-### 15.2 Streaming AI Content
+### 15.2 Consuming Stream Events
 
-For tasks that stream tokens (AI generation), use `streamedContent`:
+For tasks that emit data in batches, subscribe to `stream` events via `window.tasksManager.onEvent`. The renderer is responsible for accumulating chunks:
 
 ```typescript
-function AIWritingPanel({ writingId }: { writingId: string }) {
-  const task = useTaskSubmit('ai:generate', { writingId })
+function StreamingOutput({ taskId }: { taskId: string }) {
+  const [output, setOutput] = useState('')
 
-  return (
-    <div>
-      <button onClick={() => task.submit()}>Generate</button>
-      {/* streamedContent updates on every token without full re-render */}
-      <pre>{task.streamedContent}</pre>
-    </div>
-  )
+  useEffect(() => {
+    const unsub = window.tasksManager.onEvent((event) => {
+      if (event.type !== 'stream') return
+      const { taskId: id, data } = event.data as { taskId: string; data: string }
+      if (id === taskId) setOutput((prev) => prev + data)
+    })
+    return unsub
+  }, [taskId])
+
+  return <pre>{output}</pre>
 }
 ```
 
-### 15.3 Direct preload API
+### 15.3 Direct Preload API
 
 For non-React code or one-off operations, call `window.tasksManager` directly:
 
 ```typescript
-// Submit without a hook
 const result = await window.tasksManager.submit('feature:process-file', { filePath }, { priority: 'high' })
 if (result.success) {
   const { taskId } = result.data
-  // Seed the local taskStore so it appears in the debug page immediately
   taskStore.addTask(taskId, 'feature:process-file')
 }
-
-// List all active tasks
-const { data: tasks } = await window.tasksManager.list()
-
-// Queue metrics
-const { data: status } = await window.tasksManager.queueStatus()
-console.log(status) // { queued: 2, running: 5, completed: 12 }
-
-// Subscribe to all task events globally
-const unsub = window.tasksManager.onEvent((event) => {
-  console.log(event.type, event.data)
-})
-// Later:
-unsub()
 ```
-
-### 15.4 taskStore — low-level subscriptions
-
-`taskStore` is a module-level singleton that accumulates all IPC task events. Prefer `useTaskSubmit` for component-level work; use `taskStore` only for global observers (e.g. the debug page):
-
-```typescript
-import { taskStore } from '../services/taskStore'
-
-// Subscribe to all task changes
-const unsub = taskStore.subscribe('ALL', () => {
-  const allIds = taskStore.getTrackedIds()
-  for (const id of allIds) {
-    const snap = taskStore.getTaskSnapshot(id)
-    console.log(snap?.status, snap?.progress)
-  }
-})
-
-// Subscribe to a specific task
-const unsub2 = taskStore.subscribe(taskId, () => {
-  const snap = taskStore.getTaskSnapshot(taskId)
-  // snap.events contains the full event history
-})
-
-// Ensure the global IPC listener is running (called automatically by useTaskSubmit)
-taskStore.ensureListening()
-```
-
-### 15.5 Debug Page
-
-Navigate to `/debug` in the app to see a live table of all tracked tasks. Each row shows the task ID, type, status badge, priority, progress bar, duration, and action buttons (pause/resume/cancel/hide). Clicking a row opens a log panel showing all IPC events received for that task in reverse chronological order.
 
 ---
 
 ## 16. Task Reaction Layer
 
-The **Task Reaction Layer** is a main-process-only abstraction that decouples task side-effects from task execution. It follows the Observer pattern: `TaskExecutor` emits typed `AppEvents` through `EventBus`; `TaskReactionBus` subscribes to those events and dispatches them to the appropriate `TaskReactionHandler` implementations.
+The reaction layer runs **main-process side-effects** triggered by task lifecycle events without coupling to the executor. It uses the Observer + Registry pattern.
 
-### Why use reactions instead of putting logic in TaskHandler?
-
-| Concern | `TaskHandler` | `TaskReactionHandler` |
-|---|---|---|
-| Executes the task | ✅ | ❌ |
-| Reports progress to renderer | ✅ | ❌ |
-| Sends notifications / updates DB after completion | ❌ | ✅ |
-| Chains another task on failure | ❌ | ✅ |
-| Logs/audits all task types | ❌ | ✅ (use `taskType = '*'`) |
-| Can be added without touching executor | ❌ | ✅ |
-
-### Data flow
+### Architecture
 
 ```
 TaskExecutor
-  ├── submit()     → eventBus.emit('task:submitted', {...})
-  ├── executeTask()→ eventBus.emit('task:started',   {...})
-  │                  eventBus.emit('task:completed',  {...})
-  │                  eventBus.emit('task:failed',     {...})
-  │                  eventBus.emit('task:cancelled',  {...})
-  └── cancel()     → eventBus.emit('task:cancelled',  {...})
-
-EventBus.emit()
-  └── TaskReactionBus.on('task:*')
-        └── TaskReactionRegistry.getForType(taskType)
-              ├── [specific handler].onCompleted(event)
-              └── [wildcard handler].onCompleted(event)
+  └─ eventBus.emit('task:submitted' | 'task:started' | 'task:completed' | 'task:failed' | 'task:cancelled')
+        |
+        v
+  TaskReactionBus  (initialized via taskReactionBus.initialize())
+        |
+        v
+  TaskReactionRegistry.getForType(taskType)
+        |
+        +──> handler[].onSubmitted / onStarted / onCompleted / onFailed / onCancelled
+             (each handler is isolated; errors are caught per-handler)
 ```
 
-### Error isolation
+### TaskReactionHandler Interface
 
-Each handler call is wrapped in try/catch. A synchronous exception or a rejected async promise in one handler is caught, logged, and does **not** affect other handlers or the task system itself.
+```typescript
+interface TaskReactionHandler {
+  readonly taskType: string  // specific type string or '*' for wildcard
 
-### Shutdown
+  onSubmitted?(event: TaskSubmittedEvent): void | Promise<void>
+  onStarted?(event: TaskStartedEvent): void | Promise<void>
+  onCompleted?(event: TaskCompletedEvent): void | Promise<void>
+  onFailed?(event: TaskFailedEvent): void | Promise<void>
+  onCancelled?(event: TaskCancelledEvent): void | Promise<void>
+}
+```
 
-`TaskReactionBus` implements `Disposable`. `ServiceContainer` calls `destroy()` on shutdown, which removes all `EventBus` subscriptions and prevents any handler from running after the app has started to quit.
+All lifecycle methods are optional. Implement only the ones you need.
+
+### Event Payload Types
+
+```typescript
+interface TaskSubmittedEvent {
+  taskId: string; taskType: string; input: unknown; priority: string; windowId?: number
+}
+interface TaskStartedEvent {
+  taskId: string; taskType: string; windowId?: number
+}
+interface TaskCompletedEvent {
+  taskId: string; taskType: string; result: unknown; durationMs: number; windowId?: number
+}
+interface TaskFailedEvent {
+  taskId: string; taskType: string; error: string; code: string; windowId?: number
+}
+interface TaskCancelledEvent {
+  taskId: string; taskType: string; windowId?: number
+}
+```
+
+### Error Isolation
+
+Each handler's callback is wrapped in a `try/catch`. A throwing handler does not prevent other handlers from receiving the same event.
+
+### DemoTaskHandler
+
+A built-in handler (`src/main/taskManager/handlers/DemoTaskHandler.ts`) exercises all parts of the task lifecycle for use in the debug page:
+
+| Variant | Description |
+|---------|-------------|
+| `fast` | 4 progress steps, ~1.2 s |
+| `slow` | 10 progress steps, ~8 s |
+| `streaming` | 21 raw data batches at 140 ms each, ~3 s |
+| `error` | Progresses to 60 % then throws a simulated failure |
+
+All variants respect `AbortSignal` so cancel works mid-run.
+
+---
+
+## File Reference
+
+### Main Process
+
+| File | Description |
+|------|-------------|
+| `src/main/taskManager/TaskExecutor.ts` | Core executor: queue, concurrency, lifecycle, TTL store |
+| `src/main/taskManager/TaskHandlerRegistry.ts` | Type-to-handler registry |
+| `src/main/taskManager/TaskHandler.ts` | `TaskHandler`, `ProgressReporter`, `StreamReporter` interfaces |
+| `src/main/taskManager/TaskDescriptor.ts` | `ActiveTask`, `TaskOptions`, `TaskStatus` types |
+| `src/main/taskManager/TaskEvents.ts` | Re-exports `TaskEvent` from shared types |
+| `src/main/taskManager/TaskReactionHandler.ts` | `TaskReactionHandler` interface + typed lifecycle event payloads |
+| `src/main/taskManager/TaskReactionRegistry.ts` | Type → `TaskReactionHandler[]` registry (supports wildcard `'*'`) |
+| `src/main/taskManager/TaskReactionBus.ts` | `Disposable` observer; subscribes to `AppEvents`, dispatches to handlers |
+| `src/main/taskManager/handlers/DemoTaskHandler.ts` | Built-in demo handler with 4 variants (fast/slow/streaming/error) |
+| `src/main/taskManager/reactions/index.ts` | Barrel: register concrete `TaskReactionHandler` implementations here |
+| `src/main/taskManager/reactions/DemoTaskReaction.ts` | Reaction handler for the demo task type |
+| `src/main/taskManager/index.ts` | Public re-exports for the taskManager module |
+| `src/main/ipc/TaskManagerIpc.ts` | IPC channel registration, `windowId` stamping, input validation |
+| `src/main/core/EventBus.ts` | `broadcast/sendTo` (renderer IPC) + `emit/on` (`AppEvents` for main process) |
+| `src/main/bootstrap.ts` | Wires executor, reaction registry, reaction bus, and all IPC modules |
+
+### Shared
+
+| File | Description |
+|------|-------------|
+| `src/shared/types.ts` | `TaskEvent`, `TaskInfo`, `TaskStatus`, `TaskPriority`, `TaskQueueStatus`, `TaskSubmitPayload` |
+| `src/shared/channels.ts` | `TaskChannels` constant object (IPC channel name strings) |
+
+### Preload
+
+| File | Description |
+|------|-------------|
+| `src/preload/index.ts` | `window.tasksManager` API implementation |
+| `src/preload/index.d.ts` | `TasksManagerApi` type declaration |
+
+### Renderer
+
+| File | Description |
+|------|-------------|
+| `src/renderer/src/services/taskStore.ts` | Module-level singleton; per-taskId subscriptions; lazy IPC listener |
+| `src/renderer/src/hooks/useTaskSubmit.ts` | Full lifecycle hook: submit, cancel, progress, result |
+| `src/renderer/src/hooks/useDebugTasks.ts` | All-tasks subscription for the debug page |
+| `src/renderer/src/components/withTaskTracking.tsx` | HOC that injects `taskTracking` prop into any component |
+| `src/renderer/src/pages/DebugPage.tsx` | Debug page: live task table with cancel/hide controls and event log panel |
