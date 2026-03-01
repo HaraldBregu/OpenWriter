@@ -100,10 +100,10 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
   }, [cleanupSubscription])
 
-  // Sync all local state fields from the store snapshot.
+  // Sync all local state fields from the Redux store snapshot.
   const syncFromStore = useCallback(
     (id: string) => {
-      const snap: TrackedTaskState | undefined = taskStore.getTaskSnapshot(id)
+      const snap: TrackedTaskState | undefined = selectTaskById(store.getState(), id)
       if (!snap) return
 
       setStatus(snap.status)
