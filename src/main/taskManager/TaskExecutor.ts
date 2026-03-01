@@ -98,6 +98,9 @@ export class TaskExecutor implements Disposable {
 
     this.activeTasks.set(taskId, activeTask)
 
+    // Notify main-process observers (e.g. TaskReactionBus) about the new submission
+    this.eventBus.emit('task:submitted', { taskId, taskType: type, input, priority, windowId: options?.windowId })
+
     const queued: QueuedTask = {
       taskId,
       type,
