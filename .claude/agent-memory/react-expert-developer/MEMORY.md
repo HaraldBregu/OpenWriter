@@ -63,13 +63,7 @@
 - Bootstrap hook: `src/renderer/src/hooks/useAISettings.ts`
   - Dispatches `loadAISettings()` once when `status === 'idle'`; call at layout level
   - Returns: `{ providerSettings, status, selectModel, saveProviderSettings, updateApiToken }`
-- Section hook: `src/renderer/src/hooks/useInferenceSettings.ts`
-  - Signature: `useInferenceSettings(sectionId, defaultProviderId?)`
-  - Returns: `{ settings, isLoaded, onChange, applySnapshot, resetToSectionDefaults }`
-  - `onChange` debounces 500ms before calling `window.workspace.saveSectionConfig`
-  - `applySnapshot` sets local state without disk write (restoring saved conversations)
-  - `resetToSectionDefaults` uses section defaults from ref or Redux global fallback
-  - Replaces inline `useState`/`useEffect`/timer pattern in `PersonalitySimpleLayout`
+- REMOVED: `useInferenceSettings.ts` — deleted (Mar 2026) along with personality feature
 
 ## Output System (used for writings)
 - `outputSlice.ts` still exists for posts/general use
