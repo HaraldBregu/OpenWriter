@@ -28,11 +28,7 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
   submit: (inputOverride?: TInput) => Promise<string | null>
   /** Cancel the current task. No-op if not running. */
   cancel: () => Promise<void>
-  /** Pause the current task. Only valid when status is 'running' or 'queued'. */
-  pause: () => Promise<void>
-  /** Resume a paused task. Only valid when status is 'paused'. */
-  resume: () => Promise<void>
-  /** Change the priority of the queued or paused task. */
+  /** Change the priority of the queued task. */
   updatePriority: (priority: TaskPriority) => Promise<void>
   /** Reset hook back to idle state. No-op while a task is active. */
   reset: () => void
