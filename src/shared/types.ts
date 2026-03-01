@@ -50,7 +50,7 @@ export interface TaskSubmitPayload<TInput = unknown> {
   options?: TaskSubmitOptions
 }
 
-export type TaskStatus = 'queued' | 'paused' | 'running' | 'completed' | 'error' | 'cancelled'
+export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
 
 export interface TaskInfo {
   taskId: string
