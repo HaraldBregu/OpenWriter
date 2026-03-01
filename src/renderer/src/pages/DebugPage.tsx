@@ -43,10 +43,6 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = 
     label: 'Running',
     className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
   },
-  paused: {
-    label: 'Paused',
-    className: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-  },
   completed: {
     label: 'Completed',
     className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
