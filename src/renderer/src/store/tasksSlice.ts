@@ -14,6 +14,9 @@ import type { TaskEvent, TaskPriority, TaskStatus } from '../../../shared/types'
 import { TASK_MAX_EVENT_HISTORY } from '@/constants'
 import type { RootState } from './index'
 
+// Re-export shared types so consumers can import everything from this single module.
+export type { TaskStatus, TaskPriority } from '../../../shared/types'
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
