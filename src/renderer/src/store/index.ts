@@ -10,7 +10,6 @@ import { listenerMiddleware } from './listenerMiddleware'
 export const store = configureStore({
   reducer: {
     workspace: workspaceReducer,
-    directories: directoriesReducer,
     output: outputReducer,
     aiSettings: aiSettingsReducer,
     writingItems: writingItemsReducer,
