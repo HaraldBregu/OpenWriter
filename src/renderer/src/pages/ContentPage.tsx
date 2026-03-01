@@ -130,69 +130,30 @@ const ContentPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative flex flex-1 overflow-hidden bg-background w-full">
-        {/* Main content area */}
-        <div className="overflow-y-auto flex-1 min-w-0 w-full">
-          <div className="w-full px-6 py-10 flex flex-col gap-2">
-            <Reorder.Group
-              axis="y"
-              values={blocks}
-              onReorder={handleReorder}
-              className="flex flex-col gap-0"
-            >
-              {blocks.map((block, index) => (
-                <ContentBlock
-                  key={block.id}
-                  block={block}
-                  isOnly={blocks.length === 1}
-                  isLast={index === blocks.length - 1}
-                  onChange={handleChange}
-                  onDelete={handleDelete}
-                  onAdd={handleAddBlockAfter}
-                  entryId={id ?? ''}
-                  placeholder={t('writing.startWriting')}
-                  autoFocus={focusBlockId === block.id}
-                />
-              ))}
-            </Reorder.Group>
-            <ContentBlockPlaceholder onClick={handleAppendBlock} />
-          </div>
-        </div>
-
-        {/*
-          Right sidebar — two modes depending on viewport width:
-          - lg+ (>= 1024px): inline flex column, no overlay behaviour.
-          - < lg: fixed slide-over from the right, sits above content.
-          Both modes are driven by `showSidebar`; only the positioning changes.
-        */}
-
-        {/* Backdrop — only visible on small screens when sidebar is open */}
-        {showSidebar && (
-          <div
-            className="absolute inset-0 bg-black/30 lg:hidden z-10"
-            onClick={() => setShowSidebar(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Sidebar panel */}
-        <div
-          className={[
-            // Small-screen: fixed overlay sliding in from right
-            'absolute top-0 right-0 h-full z-20 transition-transform duration-300 ease-in-out',
-            showSidebar ? 'translate-x-0' : 'translate-x-full',
-            // Large-screen: inline, no overlay — override the absolute positioning
-            'lg:static lg:translate-x-0 lg:z-auto lg:transition-none',
-            // Hide completely on large screens when closed (inline mode)
-            !showSidebar && 'lg:hidden',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          <PersonalitySettingsPanel
-            settings={aiSettings}
-            onSettingsChange={handleAiSettingsChange}
-          />
+      <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+        <div className="w-full px-6 py-10 flex flex-col gap-2">
+          <Reorder.Group
+            axis="y"
+            values={blocks}
+            onReorder={handleReorder}
+            className="flex flex-col gap-0"
+          >
+            {blocks.map((block, index) => (
+              <ContentBlock
+                key={block.id}
+                block={block}
+                isOnly={blocks.length === 1}
+                isLast={index === blocks.length - 1}
+                onChange={handleChange}
+                onDelete={handleDelete}
+                onAdd={handleAddBlockAfter}
+                entryId={id ?? ''}
+                placeholder={t('writing.startWriting')}
+                autoFocus={focusBlockId === block.id}
+              />
+            ))}
+          </Reorder.Group>
+          <ContentBlockPlaceholder onClick={handleAppendBlock} />
         </div>
       </div>
 
