@@ -90,7 +90,7 @@ export function bootstrapServices(): BootstrapResult {
   // Task system -- handler registry + executor
   const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry())
   taskHandlerRegistry.register(new DemoTaskHandler())
-  const taskExecutor = container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 20))
+  container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 20))
 
   // Task reaction layer -- listens to AppEvents emitted by TaskExecutor and
   // dispatches lifecycle callbacks to registered TaskReactionHandlers.
