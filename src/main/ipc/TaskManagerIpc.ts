@@ -84,24 +84,7 @@ export class TaskManagerIpc implements IpcModule {
     })
 
     /**
-     * Pause a queued task.
-     * Only tasks with status 'queued' can be paused; running tasks must be cancelled.
-     * Returns true if the task was found in queued state and successfully paused.
-     */
-    registerCommand(TaskChannels.pause, (taskId: string) => {
-      return executor.pause(taskId)
-    })
-
-    /**
-     * Resume a paused task and return it to the priority queue.
-     * Returns true if the task was found in paused state and successfully resumed.
-     */
-    registerCommand(TaskChannels.resume, (taskId: string) => {
-      return executor.resume(taskId)
-    })
-
-    /**
-     * Update the priority of a queued or paused task.
+     * Update the priority of a queued task.
      * The queue is re-sorted immediately and a priority-changed event is emitted.
      * Returns true if the task was found and updated.
      */
