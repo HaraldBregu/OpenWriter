@@ -371,15 +371,12 @@ export class TaskExecutor implements Disposable {
         }
       }
 
-      let streamContent = ''
-
       const streamReporter: StreamReporter = {
-        stream: (token: string) => {
+        stream: (data: string) => {
           if (!this.activeTasks.has(taskId)) return
-          streamContent += token
           this.send(windowId, 'task:event', {
             type: 'stream',
-            data: { taskId, token, content: streamContent }
+            data: { taskId, data }
           } satisfies TaskEvent)
         }
       }
