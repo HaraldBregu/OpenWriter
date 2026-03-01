@@ -14,7 +14,7 @@ export type {
 
 // ---- Task system types ---------------------------------------------------
 // Note: Individual task type files are co-located with their domain code.
-// Import directly from the specific file when needed within the tasksManager subtree.
+// Import directly from the specific file when needed within the taskManager subtree.
 export type {
   TaskPriority,
   TaskStatus,
