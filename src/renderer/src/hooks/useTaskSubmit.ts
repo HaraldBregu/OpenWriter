@@ -245,8 +245,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     queuePosition,
     submit,
     cancel,
-    pause,
-    resume,
     updatePriority,
     reset,
   }
