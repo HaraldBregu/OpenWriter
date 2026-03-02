@@ -39,6 +39,8 @@ import {
   Bell,
   Bug,
   Bot,
+  PenLine,
+  Plus,
 } from "lucide-react";
 
 interface AppLayoutProps {
