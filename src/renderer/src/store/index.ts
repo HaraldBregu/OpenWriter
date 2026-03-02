@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
-import workspaceReducer from './workspace/workspaceSlice'
-import tasksReducer from './tasks/tasksSlice'
+import workspaceReducer from './workspace/reducer'
+import tasksReducer from './tasks/reducer'
 import { listenerMiddleware } from './listenerMiddleware'
 
 export const store = configureStore({
