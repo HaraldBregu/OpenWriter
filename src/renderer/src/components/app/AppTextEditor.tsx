@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
+import { useEditor, EditorContent, BubbleMenu, type UseEditorOptions } from '@tiptap/react'
 import { type Editor, type AnyExtension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Markdown } from '@tiptap/markdown'
