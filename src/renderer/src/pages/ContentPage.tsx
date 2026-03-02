@@ -14,7 +14,7 @@ import {
 import { ContentBlock } from '@/components/ContentBlock'
 import { ContentBlockPlaceholder } from '@/components/ContentBlockPlaceholder'
 import { useAppDispatch } from '../store'
-import { removeEntry } from '../store/writingItemsSlice'
+import { removeEntry } from '../store/writingItems/writingItemsSlice'
 import { useContentEditor } from '@/hooks/useContentEditor'
 
 // ---------------------------------------------------------------------------
