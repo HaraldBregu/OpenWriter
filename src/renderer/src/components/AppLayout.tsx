@@ -240,18 +240,36 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   {/* New Writing */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
-                      asChild
                       className="h-9 px-3"
-                      isActive={location.pathname === "/content"}
+                      onClick={handleNewWriting}
+                      disabled={creatingWriting}
                     >
-                      <Link to="/content">
-                        <Plus className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">{t("sidebar.newWriting") || "New Writing"}</span>
-                      </Link>
+                      <Plus className="h-3.5 w-3.5 shrink-0" />
+                      <span className="flex-1 truncate">{t("sidebar.newWriting") || "New Writing"}</span>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
                   <AppSidebarSeparator className="my-1" />
+
+                  {/* Existing writings */}
+                  {writings.map((w) => (
+                    <AppSidebarMenuItem key={w.id}>
+                      <AppSidebarMenuButton
+                        asChild
+                        className="h-9 px-3"
+                        isActive={location.pathname === `/content/${w.id}`}
+                      >
+                        <Link to={`/content/${w.id}`}>
+                          <PenLine className="h-3.5 w-3.5 shrink-0" />
+                          <span className="flex-1 truncate">
+                            {w.title || t("sidebar.untitledWriting") || "Untitled"}
+                          </span>
+                        </Link>
+                      </AppSidebarMenuButton>
+                    </AppSidebarMenuItem>
+                  ))}
+
+                  {writings.length > 0 && <AppSidebarSeparator className="my-1" />}
 
                   {/* Debug */}
                   <AppSidebarMenuItem>
