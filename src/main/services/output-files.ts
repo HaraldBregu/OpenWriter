@@ -253,10 +253,10 @@ export class OutputFilesService implements Disposable {
    * Save a new output entry using the per-block file format.
    *
    * Creates:
-   *   output/<type>/<YYYY-MM-DD_HHmmss>/config.json
-   *   output/<type>/<YYYY-MM-DD_HHmmss>/<block-uuid>.md   (one per block)
+   *   output/<type>/<uuid>/config.json
+   *   output/<type>/<uuid>/<block-uuid>.md   (one per block)
    *
-   * The folder name is the stable ID for this entry.
+   * The UUID folder name is the stable ID for this entry.
    */
   async save(input: SaveOutputFileInput): Promise<SaveOutputFileResult> {
     const currentWorkspace = this.workspace.getCurrent()
@@ -274,7 +274,7 @@ export class OutputFilesService implements Disposable {
     await this.ensureDirectory(typeDir)
 
     const timestamp = Date.now()
-    const folderName = this.formatDateFolderName(timestamp)
+    const folderName = randomUUID()
     const folderPath = path.join(typeDir, folderName)
 
     await this.ensureDirectory(folderPath)
