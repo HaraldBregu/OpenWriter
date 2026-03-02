@@ -26,7 +26,7 @@ import { renderHook, act, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { useCreateWriting } from '@/hooks/useCreateWriting'
-import writingItemsReducer from '@/store/writingItemsSlice'
+import writingItemsReducer from '@/store/writingItems/writingItemsSlice'
 
 // ---------------------------------------------------------------------------
 // Window mock helpers
