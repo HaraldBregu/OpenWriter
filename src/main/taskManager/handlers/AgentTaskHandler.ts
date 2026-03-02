@@ -65,7 +65,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
   // -------------------------------------------------------------------------
 
   async execute(
-    input: AgentTaskInput,
+    input: AgentTaskIrnput,
     signal: AbortSignal,
     reporter: ProgressReporter,
     streamReporter?: StreamReporter,
