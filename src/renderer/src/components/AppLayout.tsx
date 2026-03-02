@@ -225,7 +225,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       className="h-9 px-3"
-                      onClick={handleNewWriting}
+                      onClick={createWriting}
                       disabled={creatingWriting}
                     >
                       <Plus className="h-3.5 w-3.5 shrink-0" />
