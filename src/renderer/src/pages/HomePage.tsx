@@ -5,13 +5,9 @@ import {
   PenLine,
   Puzzle,
   ArrowRight,
-  Clock,
   Star
 } from 'lucide-react'
 import { AppSeparator } from '@/components/app'
-import { useAppSelector } from '../store'
-import { selectWritingEntries, type WritingEntry } from '../store/writingItems/writingItemsSlice'
-import { useCreateWriting } from '../hooks/useCreateWriting'
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
@@ -25,23 +21,6 @@ const categoryDefs = [
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
   },
 ]
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-type TFunction = (key: string, options?: Record<string, unknown>) => string
-
-function formatRelativeTime(timestamp: number, t: TFunction): string {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000)
-  if (seconds < 60) return t('relativeTime.justNow')
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return t('relativeTime.minutesAgo', { count: minutes })
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return t('relativeTime.hoursAgo', { count: hours })
-  const days = Math.floor(hours / 24)
-  return t('relativeTime.daysAgo', { count: days })
-}
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -86,44 +65,6 @@ const CategoryCard = React.memo(function CategoryCard({
 })
 CategoryCard.displayName = 'CategoryCard'
 
-interface RecentWritingItemProps {
-  entry: WritingEntry
-}
-
-const RecentWritingItem = React.memo(function RecentWritingItem({
-  entry,
-}: RecentWritingItemProps) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-
-  const handleClick = useCallback(() => {
-    navigate(`/content/${entry.id}`)
-  }, [navigate, entry.id])
-
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/60 transition-colors group w-full text-left"
-    >
-      <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
-        <PenLine className="h-3.5 w-3.5 text-muted-foreground" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">
-          {entry.title || t('writing.untitled')}
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          {formatRelativeTime(entry.savedAt, t)}
-        </p>
-      </div>
-      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
-    </button>
-  )
-})
-RecentWritingItem.displayName = 'RecentWritingItem'
-
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
@@ -132,20 +73,9 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  // Pull the 5 most-recently-saved writing entries from Redux.
-  // writingItemsSlice keeps entries sorted by savedAt (newest first).
-  const allEntries = useAppSelector(selectWritingEntries)
-  const recentEntries = allEntries.slice(0, 5)
-
-  const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
-    onSuccess: (writingId) => {
-      navigate(`/content/${writingId}`)
-    },
-  })
-
-  const handleNewWriting = useCallback(async () => {
-    await createWriting()
-  }, [createWriting])
+  const handleNewWriting = useCallback(() => {
+    navigate('/content')
+  }, [navigate])
 
   const hour = new Date().getHours()
   const greeting =
@@ -176,32 +106,9 @@ const HomePage: React.FC = () => {
                 descriptionKey={cat.descriptionKey}
                 accent={cat.accent}
                 onClick={handleNewWriting}
-                disabled={isCreatingWriting}
               />
             ))}
           </div>
-        </section>
-
-        <AppSeparator />
-
-        {/* Recent writings */}
-        <section className="space-y-1">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {t('home.recent')}
-            </h2>
-          </div>
-          {recentEntries.length > 0 ? (
-            <div className="rounded-xl border border-border bg-background overflow-hidden divide-y divide-border">
-              {recentEntries.map((entry) => (
-                <RecentWritingItem key={entry.id} entry={entry} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground py-3 px-1">
-              {t('home.noRecentWritings')}
-            </p>
-          )}
         </section>
 
         <AppSeparator />
