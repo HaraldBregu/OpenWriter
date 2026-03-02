@@ -1,0 +1,54 @@
+/**
+ * AgentRegistry — registry of all named AgentDefinitions.
+ *
+ * Instantiated once in bootstrapServices() and registered in ServiceContainer
+ * as 'AgentRegistry', following the same pattern as TaskHandlerRegistry.
+ * Definitions are registered explicitly in bootstrap — not via module side effects.
+ */
+
+import { type AgentDefinition, type AgentDefinitionInfo, toAgentDefinitionInfo } from './AgentDefinition'
+
+// ---------------------------------------------------------------------------
+// Registry class
+// ---------------------------------------------------------------------------
+
+export class AgentRegistry {
+  private readonly definitions = new Map<string, AgentDefinition>()
+
+  /**
+   * Register a named agent definition.
+   * Throws if a definition with the same `id` has already been registered —
+   * duplicate IDs indicate a programming error (copy-paste of an agent file).
+   */
+  register(def: AgentDefinition): void {
+    if (this.definitions.has(def.id)) {
+      throw new Error(
+        `[AgentRegistry] Duplicate agent id "${def.id}". Each agent must have a unique id.`
+      )
+    }
+    this.definitions.set(def.id, def)
+  }
+
+  /** Return the full definition for a given id, or `undefined` if not found. */
+  get(id: string): AgentDefinition | undefined {
+    return this.definitions.get(id)
+  }
+
+  /** Return all registered definitions in insertion order. */
+  list(): AgentDefinition[] {
+    return [...this.definitions.values()]
+  }
+
+  /**
+   * Return all definitions as IPC-safe snapshots.
+   * Use this whenever you need to send agent metadata to the renderer.
+   */
+  listInfo(): AgentDefinitionInfo[] {
+    return this.list().map(toAgentDefinitionInfo)
+  }
+
+  /** Returns true when an agent with the given id has been registered. */
+  has(id: string): boolean {
+    return this.definitions.has(id)
+  }
+}
