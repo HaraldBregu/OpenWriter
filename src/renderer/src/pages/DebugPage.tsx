@@ -32,6 +32,19 @@ async function submitDemoTask(variant: DemoVariant): Promise<void> {
   }
 }
 
+const AGENT_DEMO_PROMPT = 'Tell me an interesting fact about technology'
+
+async function submitAgentTask(): Promise<void> {
+  const result = await window.task.submit(
+    'agent-demo-agent',
+    { prompt: AGENT_DEMO_PROMPT },
+    { priority: 'normal' },
+  )
+  if (result.success && result.data?.taskId) {
+    store.dispatch(taskAdded({ taskId: result.data.taskId, type: 'agent-demo-agent' }))
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
