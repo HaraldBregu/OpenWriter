@@ -1,14 +1,28 @@
 /**
  * AIAgentsDefinition — describes a named, pre-configured agent.
  *
- * Named agents sit above raw AgentSessionConfig: they carry human-readable
- * metadata (name, description, category) alongside a set of opinionated
- * defaults that callers can optionally override at session-creation time.
+ * This module is intentionally self-contained: agent definitions are generic
+ * components with no dependency on AIAgentsManager or any other subsystem.
  */
 
-import type { AgentSessionConfig } from '../AIAgentsManager/AIAgentsManagerTypes'
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { CompiledStateGraph } from '@langchain/langgraph'
+
+// ---------------------------------------------------------------------------
+// Default configuration — standalone shape for agent definitions
+// ---------------------------------------------------------------------------
+
+export interface AgentDefaultConfig {
+  providerId?: string
+  modelId?: string
+  systemPrompt?: string
+  temperature?: number
+  maxTokens?: number
+  maxHistoryMessages?: number
+  metadata?: Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
+}
 
 // ---------------------------------------------------------------------------
 // Core definition
@@ -28,10 +42,9 @@ export interface AIAgentsDefinition {
    *
    * `providerId` is intentionally optional here: callers must supply a
    * concrete `providerId` (e.g. resolved from the user's active provider
-   * setting) when converting this definition into a live AgentSessionConfig
-   * via `buildSessionConfig()`.
+   * setting) when creating a live session from this definition.
    */
-  defaultConfig: Omit<AgentSessionConfig, 'providerId'> & { providerId?: string }
+  defaultConfig: AgentDefaultConfig
   /** Optional hints consumed by the UI to render the input form correctly. */
   inputHints?: {
     label: string
