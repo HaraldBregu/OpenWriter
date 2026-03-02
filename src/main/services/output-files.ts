@@ -717,7 +717,7 @@ export class OutputFilesService implements Disposable {
             return !(VALID_OUTPUT_TYPES as readonly string[]).includes(parts[0])
           }
 
-          // Depth 2 — allow date-named folders inside type dirs
+          // Depth 2 — allow UUID (or legacy date) named folders inside type dirs
           if (parts.length === 2) {
             return !this.DATE_FOLDER_RE.test(parts[1])
           }
