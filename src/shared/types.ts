@@ -272,7 +272,7 @@ export interface AIAgentsManagerStatus {
   activeRuns: number
 }
 
-export interface AIAgentsDefinitionInfo {
+export interface AgentDefinitionInfo {
   id: string
   name: string
   description: string
