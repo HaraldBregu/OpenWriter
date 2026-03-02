@@ -82,7 +82,7 @@ const EMPTY_PROGRESS: TaskProgressState = { percent: 0 }
  *  - On unmount cancels the task if still in a non-terminal status
  *  - cancel() / updatePriority() are best-effort IPC calls; the main process
  *    emits authoritative state-change events that Redux picks up
- *  - Gracefully no-ops when window.tasksManager is unavailable (tests)
+ *  - Gracefully no-ops when window.task is unavailable (tests)
  *
  * @template TInput Type of the task input payload.
  * @template TResult Type of the result from the completed event.
@@ -132,7 +132,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     return () => {
       const id = taskIdRef.current
       if (id && runningRef.current) {
-        window.tasksManager?.cancel(id).catch(() => {
+        window.task?.cancel(id).catch(() => {
           // Best-effort — no recovery needed.
         })
       }
@@ -143,9 +143,9 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     async (inputOverride?: TInput, submitOptions?: TaskOptions): Promise<void> => {
       if (runningRef.current) return
 
-      if (typeof window.tasksManager?.submit !== 'function') {
+      if (typeof window.task?.submit !== 'function') {
         console.warn(
-          '[useTaskSubmit] window.tasksManager.submit is not available. ' +
+          '[useTaskSubmit] window.task.submit is not available. ' +
             'The main-process task IPC handlers have not been registered yet.'
         )
         return
@@ -161,7 +161,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
       let resolvedTaskId: string
 
       try {
-        const ipcResult = await window.tasksManager.submit(
+        const ipcResult = await window.task.submit(
           type,
           inputOverride ?? input,
           mergedOptions
@@ -199,9 +199,9 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const cancel = useCallback((): void => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.tasksManager?.cancel !== 'function') return
+    if (typeof window.task?.cancel !== 'function') return
 
-    window.tasksManager.cancel(id).catch(() => {
+    window.task.cancel(id).catch(() => {
       // Best-effort — the cancelled event from the main process will update Redux.
     })
   }, [])
@@ -209,9 +209,9 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const updatePriority = useCallback((priority: TaskPriority): void => {
     const id = taskIdRef.current
     if (!id) return
-    if (typeof window.tasksManager?.updatePriority !== 'function') return
+    if (typeof window.task?.updatePriority !== 'function') return
 
-    window.tasksManager.updatePriority(id, priority).catch(() => {
+    window.task.updatePriority(id, priority).catch(() => {
       // Best-effort — the priority-changed event from the main process will update Redux.
     })
   }, [])
