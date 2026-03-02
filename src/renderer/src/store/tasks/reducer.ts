@@ -87,7 +87,7 @@ export const tasksSlice = createSlice({
         if (event.type === 'queued') {
           const newTask: TrackedTaskState = {
             taskId,
-            type: '',
+            type: event.type === 'queued' ? event.data.taskType : '',
             status: 'queued',
             priority: 'normal',
             progress: { percent: 0 },
