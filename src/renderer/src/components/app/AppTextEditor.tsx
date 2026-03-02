@@ -20,6 +20,7 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  GripVertical,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TabGhostText } from './extensions/TabGhostText'
