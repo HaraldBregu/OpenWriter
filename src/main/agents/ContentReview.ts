@@ -52,7 +52,7 @@ type ContentReviewState = typeof GraphState.State
 
 // Shared helper to extract user text from state messages
 function getUserText(state: ContentReviewState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m.getType() === 'human')
+  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
   return userMsg ? String(userMsg.content) : ''
 }
 
