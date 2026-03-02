@@ -5,7 +5,8 @@ import { useLanguage } from "../hooks/useLanguage";
 import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
 import { useWorkspaceValidation } from "../hooks/useWorkspaceValidation";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspace/workspaceSlice";
+import { selectWorkspaceName } from "../store/workspace/selectors";
+import { loadCurrentWorkspace } from "../store/workspace/actions";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
