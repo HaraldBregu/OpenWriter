@@ -346,7 +346,7 @@ function TipTapAdapter({
           {placeholder}
         </span>
       )}
-      {editor && <BubbleMenuToolbar editor={editor} />}
+      {editor && menuEl && createPortal(<BubbleMenuContent editor={editor} />, menuEl)}
       <EditorContent editor={editor} />
     </div>
   )
