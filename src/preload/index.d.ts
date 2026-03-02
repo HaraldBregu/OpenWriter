@@ -37,7 +37,7 @@ import type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-  AIAgentsDefinitionInfo,
+  AgentDefinitionInfo,
 } from '../shared/types'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/aiSettings'
 import type { IpcResult } from '../shared/ipc-result'
@@ -73,7 +73,7 @@ export type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-  AIAgentsDefinitionInfo,
+  AgentDefinitionInfo,
   ProviderSettings,
   InferenceDefaultsUpdate,
   IpcResult,
@@ -186,8 +186,8 @@ export interface  TasksManagerApi {
 
 /** AIAgentsManager — session/run management and streaming */
 export interface AgentManagerAPI {
-  listAgents: () => Promise<IpcResult<AIAgentsDefinitionInfo[]>>
-  getAgent: (agentId: string) => Promise<IpcResult<AIAgentsDefinitionInfo | undefined>>
+  listAgents: () => Promise<IpcResult<AgentDefinitionInfo[]>>
+  getAgent: (agentId: string) => Promise<IpcResult<AgentDefinitionInfo | undefined>>
   getStatus: () => Promise<IpcResult<AIAgentsManagerStatus>>
   listSessions: () => Promise<IpcResult<AgentSessionSnapshot[]>>
   getSession: (sessionId: string) => Promise<IpcResult<AgentSessionSnapshot | undefined>>
