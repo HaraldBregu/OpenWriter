@@ -3,8 +3,8 @@
 ## Project: OpenWriter (Electron + React + i18next)
 
 ### i18n Architecture
-- EN source: `resources/i18n/en/main.json` and `resources/i18n/en/menu.json`
-- IT translations: `resources/i18n/it/main.json` and `resources/i18n/it/menu.json`
+- EN source: `resources/i18n/en/main.json`, `resources/i18n/en/menu.json`, `resources/i18n/en/tray.json`
+- IT translations: `resources/i18n/it/main.json`, `resources/i18n/it/menu.json`, `resources/i18n/it/tray.json`
 - Main process uses `src/main/i18n.ts` (`loadTranslations(lng, component)`) — returns flat `Record<string, string>`
 - Renderer uses `react-i18next` with `useTranslation()` hook
 - Class components (e.g. ErrorBoundary) use `i18next.t()` directly (import from 'i18next')
