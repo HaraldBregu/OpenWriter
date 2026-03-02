@@ -16,9 +16,6 @@ export interface AppEvent {
 export interface AppEvents {
   'service:initialized': { service: string }
   'service:destroyed': { service: string }
-  'AIAgentsManager:run:start': { sessionId: string; runId: string }
-  'AIAgentsManager:run:complete': { sessionId: string; runId: string; duration: number }
-  'AIAgentsManager:run:error': { sessionId: string; runId: string; error: string }
   'error:critical': { error: Error; context: string }
   'window:created': { windowId: number; type: string }
   'window:closed': { windowId: number }
