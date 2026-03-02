@@ -6,7 +6,7 @@ import {
   clearDeletionReason,
   selectCurrentWorkspacePath,
   selectWorkspaceDeletionReason
-} from '@/store/workspaceSlice'
+} from '@/store/workspace/workspaceSlice'
 import type { WorkspaceDeletedEvent } from '../../../shared/types'
 
 /**
