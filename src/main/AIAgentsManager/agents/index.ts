@@ -23,7 +23,7 @@ import type { AIAgentsDefinition } from '../AIAgentsDefinition'
  * All built-in agent definitions in display order.
  * Pass this to AIAgentsRegistry.register() in bootstrapServices().
  */
-export const ALL_AGENT_DEFINITIONS: AIAgentsDefinition[] = [
+export const e: AIAgentsDefinition[] = [
   StoryWriterAgent,
   TextCompleterAgent,
   ContentReviewAgent,
