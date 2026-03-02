@@ -8,8 +8,8 @@ import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
 import { useWorkspaceValidation } from "../hooks/useWorkspaceValidation";
 import { useCreateWriting } from "../hooks/useCreateWriting";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectWritingEntries } from "../store/writingItemsSlice";
-import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspaceSlice";
+import { selectWritingEntries } from "../store/writingItems/writingItemsSlice";
+import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspace/workspaceSlice";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
