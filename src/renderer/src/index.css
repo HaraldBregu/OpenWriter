@@ -136,8 +136,9 @@
 }
 
 /* TabGhostText extension -------------------------------------------------- */
-.tiptap-ghost-text {
-  color: hsl(var(--muted-foreground) / 0.5);
+.tiptap-ghost-active::after {
+  content: attr(data-ghost-text);
+  color: hsl(var(--muted-foreground) / 0.45);
   font-style: italic;
   pointer-events: none;
   user-select: none;
