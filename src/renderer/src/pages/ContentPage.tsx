@@ -179,7 +179,7 @@ const ContentPage: React.FC = () => {
       // Navigate to home after a successful trash.
       // The AppLayout's onOutputFileChange listener will pick up the 'removed'
       // event emitted by OutputFilesService and refresh the sidebar list.
-      navigate('/')
+      navigate('/home')
     } catch (err) {
       console.error('[ContentPage] Failed to trash writing:', err)
       // Re-enable the button so the user can retry.
