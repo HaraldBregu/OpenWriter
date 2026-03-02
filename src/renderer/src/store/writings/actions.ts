@@ -18,7 +18,6 @@ function toWritingItem(f: {
   id: string
   path: string
   metadata: { title?: string }
-  blocks: { name: string; content: string; createdAt: string; updatedAt: string }[]
   savedAt: number
 }): WritingItem {
   return {
@@ -27,7 +26,6 @@ function toWritingItem(f: {
     path: f.path,
     createdAt: f.savedAt,
     updatedAt: f.savedAt,
-    blocks: f.blocks,
   }
 }
 
