@@ -319,7 +319,8 @@
     "documents": "Documents",
     "directories": "Directories",
     "untitledPost": "Untitled Post",
-    "untitledWriting": "Untitled Writing"
+    "untitledWriting": "Untitled Writing",
+    "writings": "Writings"
   },
   "menu": {
     "account": "Account",
