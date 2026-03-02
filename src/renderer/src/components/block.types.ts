@@ -24,8 +24,6 @@ export interface ContentBlockProps {
   onChange: (id: string, content: string) => void
   onDelete: (id: string) => void
   onAdd?: (afterId: string) => void
-  /** Writing entry UUID — used to commit enhanced content to the correct Redux entry. */
-  entryId: string
   placeholder?: string
   /** When true the editor will grab focus immediately after mount. */
   autoFocus?: boolean
