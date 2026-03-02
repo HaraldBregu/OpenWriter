@@ -1,16 +1,29 @@
+// State
+export type { WorkspaceState } from './state'
+export { initialState } from './state'
+
+// Async thunks
 export {
-  default,
-  workspaceSlice,
   loadCurrentWorkspace,
   loadRecentWorkspaces,
   selectWorkspace,
   openWorkspacePicker,
   removeRecentWorkspace,
   clearWorkspace,
+} from './actions'
+
+// Reducer, slice, and synchronous actions
+export {
+  workspaceSlice,
   handleWorkspaceChanged,
   handleRecentRemoved,
   handleWorkspaceDeleted,
   clearDeletionReason,
+} from './reducer'
+export { default } from './reducer'
+
+// Selectors
+export {
   selectWorkspaceState,
   selectCurrentWorkspacePath,
   selectHasWorkspace,
@@ -20,6 +33,4 @@ export {
   selectWorkspaceError,
   selectWorkspaceIsLoading,
   selectWorkspaceDeletionReason,
-} from './workspaceSlice'
-
-export type { WorkspaceState } from './workspaceSlice'
+} from './selectors'
