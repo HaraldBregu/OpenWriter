@@ -73,7 +73,7 @@ export interface TaskQueueStatus {
 }
 
 export type TaskEvent =
-  | { type: 'queued'; data: { taskId: string; position: number } }
+  | { type: 'queued'; data: { taskId: string; taskType: string; position: number } }
   | { type: 'started'; data: { taskId: string } }
   | { type: 'progress'; data: { taskId: string; percent: number; message?: string; detail?: unknown } }
   | { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
