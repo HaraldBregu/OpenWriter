@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { SaveOutputResult } from '../../preload/index.d'
+import type { SaveOutputResult } from '../../../shared/types'
 
 export interface UseCreateWritingOptions {
   /** Called immediately after the workspace IPC resolves, before navigation. */
