@@ -35,6 +35,14 @@
 - `pressEnterToSubmit`: "Press Enter to send, Shift+Enter for a new line"
 - Theme descriptions: "color scheme" (not "colour scheme")
 
+### Copy Quality Guidelines (English) — additional
+- `settings.models.comingSoon`: "Model configuration coming soon."
+
 ### Menu.ts (Main Process)
 - Uses `m = loadTranslations(lng, 'menu')` — all menu labels must be in `menu.json`
 - `showConsole` and `refresh` keys live in `menu.json`, not `main.json`
+
+### Grep Strategy for Finding Missing Keys
+- Use `grep -roh --include="*.tsx" --include="*.ts" -E "\bt\(['\"][^'\"]+['\"]" src/renderer/src/` to collect all `t()` call keys
+- Also grep for `titleKey`, `labelKey`, `descriptionKey` patterns which resolve at render time and are not literal `t()` calls
+- Then diff result against keys present in `resources/i18n/en/main.json`
