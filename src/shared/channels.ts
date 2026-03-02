@@ -192,6 +192,7 @@ export interface InvokeChannelMap {
   [WorkspaceChannels.outputLoadOne]: { args: [params: { type: string; id: string }]; result: OutputFile | null }
   [WorkspaceChannels.update]: { args: [params: OutputUpdateParams]; result: void }
   [WorkspaceChannels.outputDelete]: { args: [params: { type: string; id: string }]; result: void }
+  [WorkspaceChannels.outputTrash]: { args: [params: { type: string; id: string }]; result: void }
 
   // ---- Directories (IpcResult-wrapped) ----
   [WorkspaceChannels.list]: { args: []; result: DirectoryEntry[] }
