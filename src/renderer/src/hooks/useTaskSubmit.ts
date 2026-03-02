@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types'
-import type { TaskStatus, TaskProgressState } from '@/store/tasks/tasksSlice'
-import { taskAdded, taskRemoved, selectTaskById } from '@/store/tasks/tasksSlice'
+import type { TaskStatus, TaskProgressState } from '@/store/tasks/types'
+import { taskAdded, taskRemoved } from '@/store/tasks/actions'
+import { selectTaskById } from '@/store/tasks/selectors'
 import { useAppDispatch, useAppSelector } from '@/store'
 
 // ---------------------------------------------------------------------------
