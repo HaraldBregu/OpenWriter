@@ -163,7 +163,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
       setWritings(
         items.map((f) => ({
           id: f.id,
-          title: (f.metadata as Record<string, unknown>)?.title as string || "",
+          title: f.metadata.title || "",
         }))
       );
     } catch {
