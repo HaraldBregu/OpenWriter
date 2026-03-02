@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { AppSeparator } from '@/components/app'
 import { useAppSelector } from '../store'
-import { selectWritingEntries, type WritingEntry } from '../store/writingItemsSlice'
+import { selectWritingEntries, type WritingEntry } from '../store/writingItems/writingItemsSlice'
 import { useCreateWriting } from '../hooks/useCreateWriting'
 
 // ---------------------------------------------------------------------------
