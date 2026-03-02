@@ -134,3 +134,11 @@
 .tiptap ul {
     all: revert;
 }
+
+/* TabGhostText extension -------------------------------------------------- */
+.tiptap-ghost-text {
+  color: hsl(var(--muted-foreground) / 0.5);
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+}
