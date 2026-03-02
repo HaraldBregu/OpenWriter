@@ -2,15 +2,17 @@
  * AgentTaskHandler — bridge between TaskManager and AI Agents subsystems.
  *
  * One instance per registered agent definition (e.g. 'agent-story-writer').
- * This is the *only* file that imports from both subsystems, keeping them
- * fully decoupled from each other.
+ * Calls executeAIAgentsStream directly — no AIAgentsManager dependency,
+ * no session management. This is the *only* file that imports from both
+ * subsystems, keeping them fully decoupled from each other.
  */
 
+import { randomUUID } from 'node:crypto'
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
-import type { AIAgentsManager } from '../../AIAgentsManager/AIAgentsManager'
 import type { AIAgentsRegistry } from '../../AIAgentsManager/AIAgentsRegistry'
-import { buildSessionConfig } from '../../AIAgentsManager/AIAgentsRegistry'
+import { executeAIAgentsStream } from '../../AIAgentsManager/AIAgentsExecutor'
 import type { AgentStreamEvent } from '../../AIAgentsManager/AIAgentsManagerTypes'
+import type { ProviderResolver } from '../../shared/ProviderResolver'
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)
@@ -39,8 +41,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
   constructor(
     private readonly agentId: string,
-    private readonly agentsManager: AIAgentsManager,
     private readonly agentsRegistry: AIAgentsRegistry,
+    private readonly providerResolver: ProviderResolver,
   ) {
     this.type = `agent-${agentId}`
   }
@@ -59,7 +61,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
   }
 
   // -------------------------------------------------------------------------
-  // Execute (5-phase lifecycle)
+  // Execute
   // -------------------------------------------------------------------------
 
   async execute(
@@ -68,58 +70,58 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
     reporter: ProgressReporter,
     streamReporter?: StreamReporter,
   ): Promise<AgentTaskOutput> {
-    // Phase 1 — Resolve agent definition
+    // 1. Resolve agent definition
     const def = this.agentsRegistry.get(this.agentId)
     if (!def) {
       throw new Error(`Agent "${this.agentId}" not found in registry`)
     }
     reporter.progress(5, 'Resolved agent definition')
 
-    // Phase 2 — Create ephemeral session
-    const providerId = input.providerId ?? def.defaultConfig.providerId ?? 'openai'
-    const sessionConfig = buildSessionConfig(def, providerId, {
-      modelId: input.modelId,
-      temperature: input.temperature,
-      maxTokens: input.maxTokens,
+    // 2. Resolve provider
+    const providerId = input.providerId ?? def.defaultConfig.providerId
+    const provider = this.providerResolver.resolve({
+      providerId,
+      modelId: input.modelId ?? def.defaultConfig.modelId,
     })
-    const session = this.agentsManager.createSession(sessionConfig)
-    const sessionId = session.sessionId
-    reporter.progress(10, 'Session created')
+    reporter.progress(10, 'Provider resolved')
 
-    // Phase 3–5 — Stream, forward events, cleanup
+    // 3. Stream via executor directly
     let content = ''
     let tokenCount = 0
     let tokensSinceLastProgress = 0
     let currentProgress = 10
 
-    try {
-      const request = { prompt: input.prompt }
-      const gen = this.agentsManager.stream(sessionId, request, signal)
+    const gen = executeAIAgentsStream({
+      runId: randomUUID(),
+      provider,
+      systemPrompt: def.defaultConfig.systemPrompt ?? '',
+      temperature: input.temperature ?? def.defaultConfig.temperature ?? 0.7,
+      maxTokens: input.maxTokens ?? def.defaultConfig.maxTokens,
+      history: [],
+      prompt: input.prompt,
+      signal,
+      buildGraph: def.buildGraph,
+    })
 
-      for await (const event of gen) {
-        this.handleStreamEvent(
-          event,
-          streamReporter,
-          reporter,
-          (tc) => { tokenCount = tc },
-          (c) => { content = c },
-          () => {
-            tokensSinceLastProgress++
-            if (tokensSinceLastProgress >= 20 && currentProgress < 90) {
-              currentProgress = Math.min(currentProgress + 2, 90)
-              tokensSinceLastProgress = 0
-              reporter.progress(currentProgress, 'Streaming…')
-            }
-          },
-        )
-      }
-
-      reporter.progress(100, 'Complete')
-      return { content, tokenCount, agentId: this.agentId }
-    } finally {
-      // Phase 5 — Always destroy ephemeral session
-      this.agentsManager.destroySession(sessionId)
+    for await (const event of gen) {
+      this.handleStreamEvent(
+        event,
+        streamReporter,
+        () => {
+          tokensSinceLastProgress++
+          if (tokensSinceLastProgress >= 20 && currentProgress < 90) {
+            currentProgress = Math.min(currentProgress + 2, 90)
+            tokensSinceLastProgress = 0
+            reporter.progress(currentProgress, 'Streaming…')
+          }
+        },
+        (tc) => { tokenCount = tc },
+        (c) => { content = c },
+      )
     }
+
+    reporter.progress(100, 'Complete')
+    return { content, tokenCount, agentId: this.agentId }
   }
 
   // -------------------------------------------------------------------------
@@ -129,10 +131,9 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
   private handleStreamEvent(
     event: AgentStreamEvent,
     streamReporter: StreamReporter | undefined,
-    _reporter: ProgressReporter,
+    onToken: () => void,
     setTokenCount: (n: number) => void,
     setContent: (s: string) => void,
-    onToken: () => void,
   ): void {
     switch (event.type) {
       case 'token':
