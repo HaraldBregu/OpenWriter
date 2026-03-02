@@ -24,8 +24,11 @@ const HEADING_CLASS: Record<HeadingLevel, string> = {
   6: 'text-base font-medium',
 }
 
+const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
+
 const DEFAULT_EXTENSIONS: AnyExtension[] = [
-  StarterKit.configure({ bulletList: false, orderedList: false, listItem: false }),
+  StarterKit.configure({ bulletList: false, orderedList: false, listItem: false, heading: false }),
+  Heading.configure({ levels: HEADING_LEVELS }),
   Markdown,
   BulletList,
   OrderedList,
