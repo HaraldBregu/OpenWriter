@@ -19,8 +19,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store'
 import { LoggerService } from './services/logger'
 import { FileManagementService } from './services/FileManagementService'
-import { AIAgentsManager, AIAgentsRegistry } from './AIAgentsManager'
-import { ALL_AGENT_DEFINITIONS } from './agents'
+import { AgentRegistry, ALL_AGENT_DEFINITIONS } from './agents'
 import { TaskHandlerRegistry } from './taskManager/TaskHandlerRegistry'
 import { TaskExecutor } from './taskManager/TaskExecutor'
 import { TaskReactionRegistry } from './taskManager/TaskReactionRegistry'
@@ -37,7 +36,6 @@ import {
   WorkspaceIpc,
   TaskManagerIpc,
   WindowIpc,
-  AIAgentsManagerIpc,
 } from './ipc'
 
 export interface BootstrapResult {
@@ -82,10 +80,8 @@ export function bootstrapServices(): BootstrapResult {
   const logger = new LoggerService(eventBus)
   container.register('logger', logger)
 
-  container.register('AIAgentsManager', new AIAgentsManager(storeService, eventBus))
-
   // Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
-  const agentRegistry = container.register('AIAgentsRegistry', new AIAgentsRegistry())
+  const agentRegistry = container.register('AgentRegistry', new AgentRegistry())
   for (const def of ALL_AGENT_DEFINITIONS) {
     agentRegistry.register(def)
   }
@@ -130,7 +126,6 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     new WorkspaceIpc(),
     new TaskManagerIpc(),
     new WindowIpc(),
-    new AIAgentsManagerIpc(),
   ]
 
   for (const module of ipcModules) {
