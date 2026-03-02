@@ -62,11 +62,11 @@ interface SettingsMenuItem {
 }
 
 const settingsMenuItems: SettingsMenuItem[] = [
-  { titleKey: "menu.account",       icon: User },
-  { titleKey: "menu.settings",      icon: Settings, url: "/settings" },
+  { titleKey: "menu.account", icon: User },
+  { titleKey: "menu.settings", icon: Settings, url: "/settings" },
   { titleKey: "menu.notifications", icon: Bell },
-  { titleKey: "menu.privacy",       icon: Shield },
-  { titleKey: "menu.billing",       icon: CreditCard },
+  { titleKey: "menu.privacy", icon: Shield },
+  { titleKey: "menu.billing", icon: CreditCard },
   { titleKey: "menu.helpAndSupport", icon: HelpCircle },
 ];
 
@@ -156,7 +156,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // -------------------------------------------------------------------------
   // Writings list
   // -------------------------------------------------------------------------
-  const [writings, setWritings] = useState<Array<{ id: string; title: string }>>([]);
+  const [writings, setWritings] = useState<
+    Array<{ id: string; title: string }>
+  >([]);
   const [writingsOpen, setWritingsOpen] = useState(true);
 
   const refreshWritings = useCallback(async () => {
@@ -166,7 +168,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         items.map((f) => ({
           id: f.id,
           title: f.metadata.title || "",
-        }))
+        })),
       );
     } catch {
       // workspace may not be ready yet
@@ -191,12 +193,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // -------------------------------------------------------------------------
   // When saveOutput resolves we immediately prepend the new entry to local
   // state so the sidebar reflects it before the file-watcher event fires.
-  const handleWritingCreated = useCallback(
-    (result: { id: string }) => {
-      setWritings((prev) => [{ id: result.id, title: '' }, ...prev]);
-    },
-    []
-  );
+  const handleWritingCreated = useCallback((result: { id: string }) => {
+    setWritings((prev) => [{ id: result.id, title: "" }, ...prev]);
+  }, []);
 
   const { createWriting, isCreating: creatingWriting } = useCreateWriting({
     onCreated: handleWritingCreated,
@@ -231,7 +230,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
           {/* Nav */}
           <AppSidebarContent className="gap-0 py-2">
-
             {/* New Writing */}
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
@@ -243,12 +241,16 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       disabled={creatingWriting}
                     >
                       <Plus className="h-3.5 w-3.5 shrink-0" />
-                      <span className="flex-1 truncate">{t("sidebar.newWriting") || "New Writing"}</span>
+                      <span className="flex-1 truncate">
+                        {t("sidebar.newWriting") || "New Writing"}
+                      </span>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
+
+            <AppSidebarSeparator className="my-1" />
 
             {/* Writings collapsible group */}
             <AppSidebarGroup className="py-0">
@@ -256,10 +258,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                 className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors"
                 onClick={() => setWritingsOpen((prev) => !prev)}
               >
+                {t("sidebar.writings") || "Writings"}
                 <ChevronRight
                   className={`h-3 w-3 shrink-0 transition-transform duration-200 mr-1 ${writingsOpen ? "rotate-90" : ""}`}
                 />
-                {t("sidebar.writings") || "Writings"}
               </AppSidebarGroupLabel>
               {writingsOpen && (
                 <AppSidebarGroupContent>
@@ -274,7 +276,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           <Link to={`/content/${w.id}`}>
                             <PenLine className="h-3.5 w-3.5 shrink-0" />
                             <span className="flex-1 truncate">
-                              {w.title || t("sidebar.untitledWriting") || "Untitled"}
+                              {w.title ||
+                                t("sidebar.untitledWriting") ||
+                                "Untitled"}
                             </span>
                           </Link>
                         </AppSidebarMenuButton>
@@ -312,14 +316,15 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     >
                       <Link to="/agents">
                         <Bot className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">{t("common.agents") || "Agents"}</span>
+                        <span className="flex-1 truncate">
+                          {t("common.agents") || "Agents"}
+                        </span>
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
-
           </AppSidebarContent>
 
           {/* Footer — Settings popover */}
