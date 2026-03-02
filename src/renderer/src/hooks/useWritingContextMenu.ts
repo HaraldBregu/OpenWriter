@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useAppDispatch } from '../store'
-import { addEntry, removeEntry, type WritingEntry } from '../store/writingItemsSlice'
+import { addEntry, removeEntry, type WritingEntry } from '../store/writingItems/writingItemsSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 /**
