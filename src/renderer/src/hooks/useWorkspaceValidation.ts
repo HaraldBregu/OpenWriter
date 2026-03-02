@@ -1,12 +1,8 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store'
-import {
-  handleWorkspaceDeleted,
-  clearDeletionReason,
-  selectCurrentWorkspacePath,
-  selectWorkspaceDeletionReason
-} from '@/store/workspace/workspaceSlice'
+import { handleWorkspaceDeleted, clearDeletionReason } from '@/store/workspace/actions'
+import { selectCurrentWorkspacePath, selectWorkspaceDeletionReason } from '@/store/workspace/selectors'
 import type { WorkspaceDeletedEvent } from '../../../shared/types'
 
 /**
