@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   PenLine,
@@ -8,6 +7,7 @@ import {
   Star
 } from 'lucide-react'
 import { AppSeparator } from '@/components/app'
+import { useCreateWriting } from '@/hooks/useCreateWriting'
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
