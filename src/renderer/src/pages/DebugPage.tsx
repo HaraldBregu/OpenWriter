@@ -240,7 +240,7 @@ function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps)
 // SliceSection — collapsible JSON viewer for a single Redux slice
 // ---------------------------------------------------------------------------
 
-const SLICE_NAMES = ['workspace', 'aiSettings', 'writingItems', 'tasks'] as const
+const SLICE_NAMES = ['workspace', 'tasks'] as const
 type SliceName = (typeof SLICE_NAMES)[number]
 
 function entryCount(value: unknown): string {
