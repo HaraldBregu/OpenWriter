@@ -156,6 +156,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // Writings list
   // -------------------------------------------------------------------------
   const [writings, setWritings] = useState<Array<{ id: string; title: string }>>([]);
+  const [writingsOpen, setWritingsOpen] = useState(true);
 
   const refreshWritings = useCallback(async () => {
     try {
