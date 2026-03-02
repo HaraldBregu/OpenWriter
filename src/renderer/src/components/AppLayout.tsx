@@ -2,13 +2,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../hooks/useLanguage";
-import { useWritingItems } from "../hooks/useWritingItems";
-import { useWritingContextMenu } from "../hooks/useWritingContextMenu";
 import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
 import { useWorkspaceValidation } from "../hooks/useWorkspaceValidation";
-import { useCreateWriting } from "../hooks/useCreateWriting";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectWritingEntries } from "../store/writingItems/writingItemsSlice";
 import { selectWorkspaceName, loadCurrentWorkspace } from "../store/workspace/workspaceSlice";
 import { TitleBar } from "./TitleBar";
 import {
@@ -23,9 +19,6 @@ import {
   AppSidebarMenu,
   AppSidebarMenuButton,
   AppSidebarMenuItem,
-  AppSidebarMenuSub,
-  AppSidebarMenuSubItem,
-  AppSidebarMenuSubButton,
   AppSidebarSeparator,
   AppSidebarProvider,
   AppSidebarInset,
@@ -35,7 +28,6 @@ import {
 } from "./app";
 import logoIcon from "@resources/icons/icon.png";
 import {
-  PenLine,
   Settings,
   User,
   Shield,
@@ -44,7 +36,6 @@ import {
   HelpCircle,
   ChevronRight,
   Bell,
-  FileText,
   Bug,
   Bot,
 } from "lucide-react";
@@ -52,14 +43,6 @@ import {
 interface AppLayoutProps {
   readonly children: React.ReactNode;
 }
-
-// ---------------------------------------------------------------------------
-// Nav items — slugs and shortcuts are locale-independent; labels use i18n
-// ---------------------------------------------------------------------------
-
-const quickCreateSlugs = [
-  { titleKey: "sidebar.write", icon: PenLine, url: "/content", shortcut: "⌘W" },
-];
 
 // ---------------------------------------------------------------------------
 // Settings popover menu items
@@ -144,23 +127,6 @@ const SettingsPopover = React.memo(function SettingsPopover() {
 SettingsPopover.displayName = "SettingsPopover";
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-type TFunction = (key: string, options?: Record<string, unknown>) => string;
-
-function formatRelativeTime(timestamp: number, t: TFunction): string {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  if (seconds < 60) return t("relativeTime.justNow");
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return t("relativeTime.minutesAgo", { count: minutes });
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return t("relativeTime.hoursAgo", { count: hours });
-  const days = Math.floor(hours / 24);
-  return t("relativeTime.daysAgo", { count: days });
-}
-
-// ---------------------------------------------------------------------------
 // AppLayoutInner — rendered inside AppSidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
@@ -170,12 +136,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const writings = useAppSelector(selectWritingEntries);
   const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
-
-  // Subscribe to IPC context-menu events. Each hook uses the ref pattern
-  // internally so re-subscriptions never occur on writing array changes.
-  useWritingContextMenu(writings);
 
   // Listen for workspace changes from main process and update Redux
   useWorkspaceListener();
@@ -183,37 +144,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // Monitor workspace folder for external deletion and redirect to Welcome
   useWorkspaceValidation();
 
-  const [sectionsOpen, setSectionsOpen] = useState<Record<string, boolean>>({
-    Writing: true,
-  });
-
   // Load current workspace on mount
   useEffect(() => {
     dispatch(loadCurrentWorkspace());
   }, [dispatch]);
-
-  const toggleSection = useCallback(
-    (title: string) =>
-      setSectionsOpen((prev) => ({ ...prev, [title]: !prev[title] })),
-    [],
-  );
-
-  const { createWriting, isLoading: isCreatingWriting } = useCreateWriting({
-    onSuccess: (writingId) => {
-      navigate(`/content/${writingId}`);
-    },
-  });
-
-  const handleNewWriting = useCallback(async () => {
-    await createWriting();
-  }, [createWriting]);
-
-  const handleWritingContextMenu = useCallback(
-    (writingId: string, writingTitle: string) => {
-      window.app.showWriting(writingId, writingTitle);
-    },
-    [],
-  );
 
   const displayWorkspaceName = workspaceNameFromPath
     ? `${workspaceNameFromPath} (workspace)`
@@ -247,82 +181,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
-                  {/* Quick-create items */}
-                  {quickCreateSlugs.map((item) => {
-                    const Icon = item.icon;
-                    const title = t(item.titleKey);
-                    return (
-                      <AppSidebarMenuItem key={item.titleKey}>
-                        <AppSidebarMenuButton
-                          className="h-9 px-3 group/item"
-                          onClick={handleNewWriting}
-                          disabled={isCreatingWriting}
-                        >
-                          <Icon className="h-3.5 w-3.5 shrink-0" />
-                          <span className="flex-1 truncate">
-                            {isCreatingWriting ? t("writing.creating") : title}
-                          </span>
-                          {!isCreatingWriting && (
-                            <span className="text-xs text-muted-foreground/40 invisible group-hover/item:visible">
-                              {item.shortcut}
-                            </span>
-                          )}
-                        </AppSidebarMenuButton>
-                      </AppSidebarMenuItem>
-                    );
-                  })}
-
-                  <AppSidebarSeparator className="my-1" />
-
-                  {/* Writing — collapsible section */}
-                  <AppSidebarMenuItem>
-                    <button
-                      type="button"
-                      onClick={() => toggleSection("Writing")}
-                      className="flex w-full items-center justify-between h-8 px-3 text-xs font-medium text-sidebar-foreground/50 select-none cursor-pointer"
-                    >
-                      <span className="tracking-wider">{t("sidebar.writing")}</span>
-                      <ChevronRight
-                        className={`h-2.5 w-2.5 shrink-0 text-muted-foreground/40 transition-transform duration-200 ${sectionsOpen["Writing"] ? "rotate-90" : ""}`}
-                      />
-                    </button>
-                    {sectionsOpen["Writing"] && (
-                      <AppSidebarMenuSub className="border-none ml-0">
-                        {writings.map((writing) => (
-                          <AppSidebarMenuSubItem key={writing.id}>
-                            <AppSidebarMenuSubButton
-                              asChild
-                              isActive={
-                                location.pathname ===
-                                `/content/${writing.id}`
-                              }
-                              className="ml-0"
-                              onContextMenu={() =>
-                                handleWritingContextMenu(
-                                  writing.id,
-                                  writing.title,
-                                )
-                              }
-                            >
-                              <Link
-                                to={`/content/${writing.id}`}
-                                className="ml-0"
-                              >
-                                <FileText className="h-3.5 w-3.5 shrink-0" />
-                                <span className="flex-1 truncate">
-                                  {writing.title || t("sidebar.untitledWriting")}
-                                </span>
-                                <span className="text-xs text-muted-foreground/40 shrink-0">
-                                  {formatRelativeTime(writing.savedAt, t)}
-                                </span>
-                              </Link>
-                            </AppSidebarMenuSubButton>
-                          </AppSidebarMenuSubItem>
-                        ))}
-                      </AppSidebarMenuSub>
-                    )}
-                  </AppSidebarMenuItem>
-
                   <AppSidebarSeparator className="my-1" />
 
                   {/* Debug */}
@@ -348,7 +206,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     >
                       <Link to="/agents">
                         <Bot className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">Agents</span>
+                        <span className="flex-1 truncate">{t("common.agents") || "Agents"}</span>
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
@@ -380,7 +238,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 export function AppLayout({ children }: AppLayoutProps) {
   useLanguage();
-  useWritingItems(); // Load writing items from workspace
 
   return (
     <div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
