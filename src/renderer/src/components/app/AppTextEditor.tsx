@@ -271,16 +271,6 @@ function TipTapAdapter({
     }
   }, [menuEl])
 
-  useEffect(() => {
-    if (!editor || editor.isDestroyed || !menuEl) return
-    editor.registerPlugin(BubbleMenuPlugin({ editor, element: menuEl, pluginKey: 'bubbleMenu' }))
-    return () => {
-      editor.unregisterPlugin('bubbleMenu')
-    }
-    // editor ref is stable after creation; menuEl is stable by useMemo([])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor, menuEl])
-
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
       extensions,
