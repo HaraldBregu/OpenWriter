@@ -13,7 +13,7 @@ import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
 import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
 import type { BaseMessage } from '@langchain/core/messages'
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AIAgentsDefinition } from './AIAgentsDefinition'
+import type { AgentDefinition } from './AgentDefinition'
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -164,7 +164,7 @@ function buildStoryWriterGraph(model: BaseChatModel) {
 // Agent definition
 // ---------------------------------------------------------------------------
 
-const definition: AIAgentsDefinition = {
+const definition: AgentDefinition = {
   id: 'story-writer',
   name: 'Story Writer',
   description:
