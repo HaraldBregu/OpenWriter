@@ -177,7 +177,7 @@ const APP_DEFAULTS = {
  *   - Transparently migrate legacy DATA.md format on first load
  *
  * File Structure (new):
- *   <workspace>/output/<type>/<YYYY-MM-DD_HHmmss>/
+ *   <workspace>/output/<type>/<uuid>/
  *     +-- config.json          (metadata + content descriptor array)
  *     +-- <block-uuid>.md      (one file per content block)
  *     +-- <block-uuid>.md      ...
