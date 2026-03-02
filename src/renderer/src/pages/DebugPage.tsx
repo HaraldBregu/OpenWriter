@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle } from 'lucide-react'
+import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle, Bot } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
 import type { TrackedTaskState, TaskStatus } from '@/store/tasksSlice'
 import { taskAdded } from '@/store/tasksSlice'
