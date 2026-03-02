@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store'
-import { selectAllTasks, selectQueueStats, taskRemoved } from '@/store/tasksSlice'
-import type { TrackedTaskState } from '@/store/tasksSlice'
+import { selectAllTasks, selectQueueStats, taskRemoved } from '@/store/tasks/tasksSlice'
+import type { TrackedTaskState } from '@/store/tasks/tasksSlice'
 
 export type { TrackedTaskState }
 
