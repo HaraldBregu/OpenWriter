@@ -75,12 +75,3 @@ export const clearWorkspace = createAsyncThunk(
     return null
   }
 )
-
-// Re-export synchronous actions from the reducer so callers can import
-// everything workspace-action-related from this single file.
-export {
-  handleWorkspaceChanged,
-  handleRecentRemoved,
-  handleWorkspaceDeleted,
-  clearDeletionReason,
-} from './reducer'
