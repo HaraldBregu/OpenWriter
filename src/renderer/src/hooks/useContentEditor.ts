@@ -7,7 +7,7 @@ import {
   updateEntryBlocks,
   updateEntryTitle,
   type WritingEntry,
-} from '@/store/writingItemsSlice'
+} from '@/store/writingItems/writingItemsSlice'
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
