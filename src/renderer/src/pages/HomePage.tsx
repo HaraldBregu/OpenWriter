@@ -72,6 +72,7 @@ CategoryCard.displayName = 'CategoryCard'
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { createWriting, isCreating: creatingWriting } = useCreateWriting()
 
   const hour = new Date().getHours()
