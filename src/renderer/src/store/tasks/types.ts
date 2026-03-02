@@ -1,5 +1,7 @@
+import type { TaskStatus, TaskPriority } from '../../../../shared/types'
+
 // Re-export shared types so consumers can import everything from this module.
-export type { TaskStatus, TaskPriority } from '../../../../shared/types'
+export type { TaskStatus, TaskPriority }
 
 // ---------------------------------------------------------------------------
 // Slice-specific types
@@ -20,8 +22,8 @@ export interface TaskEventRecord {
 export interface TrackedTaskState {
   taskId: string
   type: string
-  status: import('../../../../shared/types').TaskStatus
-  priority: import('../../../../shared/types').TaskPriority
+  status: TaskStatus
+  priority: TaskPriority
   progress: TaskProgressState
   queuePosition?: number
   durationMs?: number
