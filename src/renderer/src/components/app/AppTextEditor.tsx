@@ -182,70 +182,74 @@ function BubbleMenuContent({ editor }: { editor: Editor }): React.JSX.Element {
     editor.isActive('heading', { level: l }),
   )
 
-  const btnBase =
-    'px-1.5 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer select-none'
+  const btn = 'p-1.5 rounded transition-colors cursor-pointer select-none'
   const btnActive = 'bg-foreground text-background'
-  const btnIdle = 'text-foreground hover:bg-muted'
+  const btnIdle = 'text-foreground/70 hover:bg-muted hover:text-foreground'
+
+  const headingIcons = { 1: Heading1, 2: Heading2, 3: Heading3 } as const
 
   return (
     <div
       // Prevent mousedown from stealing focus away from the editor.
       onMouseDown={(e) => e.preventDefault()}
-      className="flex items-center gap-0.5 rounded-lg border border-border bg-popover shadow-lg p-1"
+      className="flex items-center gap-px rounded-lg border border-border bg-popover shadow-md p-1"
     >
       {/* Heading toggles: H1 H2 H3 */}
-      {([1, 2, 3] as HeadingLevel[]).map((level) => (
-        <button
-          key={level}
-          onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
-          className={cn(btnBase, activeHeadingLevel === level ? btnActive : btnIdle, 'font-bold')}
-        >
-          H{level}
-        </button>
-      ))}
+      {([1, 2, 3] as const).map((level) => {
+        const Icon = headingIcons[level]
+        return (
+          <button
+            key={level}
+            onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
+            className={cn(btn, activeHeadingLevel === level ? btnActive : btnIdle)}
+          >
+            <Icon size={15} strokeWidth={2} />
+          </button>
+        )
+      })}
 
-      <div className="w-px h-4 bg-border mx-0.5" />
+      <div className="w-px h-4 bg-border mx-1" />
 
       {/* Inline format buttons */}
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
-        className={cn(btnBase, isBold ? btnActive : btnIdle, 'font-bold')}
+        className={cn(btn, isBold ? btnActive : btnIdle)}
       >
-        B
+        <Bold size={15} strokeWidth={2.5} />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={cn(btnBase, isItalic ? btnActive : btnIdle, 'italic')}
+        className={cn(btn, isItalic ? btnActive : btnIdle)}
       >
-        I
+        <Italic size={15} strokeWidth={2} />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={cn(btnBase, isStrike ? btnActive : btnIdle, 'line-through')}
+        className={cn(btn, isStrike ? btnActive : btnIdle)}
       >
-        S
+        <Strikethrough size={15} strokeWidth={2} />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleCode().run()}
-        className={cn(btnBase, isCode ? btnActive : btnIdle, 'font-mono')}
+        className={cn(btn, isCode ? btnActive : btnIdle)}
       >
-        {'</>'}
+        <Code size={15} strokeWidth={2} />
       </button>
 
-      <div className="w-px h-4 bg-border mx-0.5" />
+      <div className="w-px h-4 bg-border mx-1" />
 
       {/* List buttons */}
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={cn(btnBase, isBulletList ? btnActive : btnIdle)}
+        className={cn(btn, isBulletList ? btnActive : btnIdle)}
       >
-        UL
+        <List size={15} strokeWidth={2} />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={cn(btnBase, isOrderedList ? btnActive : btnIdle)}
+        className={cn(btn, isOrderedList ? btnActive : btnIdle)}
       >
-        OL
+        <ListOrdered size={15} strokeWidth={2} />
       </button>
     </div>
   )
