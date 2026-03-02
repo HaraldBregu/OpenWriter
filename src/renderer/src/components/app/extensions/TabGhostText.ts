@@ -8,17 +8,19 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view'
 
 export interface TabGhostTextOptions {
   /**
-   * The ghost text shown at the end of the current node when TAB is pressed.
-   * Defaults to an empty string — consumers should supply meaningful text
-   * (e.g. an AI suggestion).
+   * Text rendered via CSS `::after` on the current block node when TAB is
+   * pressed. Pass an AI suggestion or any hint string.
+   * Defaults to empty — the feature is a no-op until a placeholder is set.
    */
   placeholder: string
 }
 
 interface TabGhostState {
   active: boolean
-  /** Document position just after the end of the current block node. */
-  pos: number | null
+  /** Start position of the block node (before its opening token). */
+  nodeFrom: number | null
+  /** End position of the block node (after its closing token). */
+  nodeTo: number | null
 }
 
 // ---------------------------------------------------------------------------
@@ -32,12 +34,12 @@ export const TAB_GHOST_KEY = new PluginKey<TabGhostState>('tabGhostText')
 // ---------------------------------------------------------------------------
 
 /**
- * TabGhostText — shows a ghost-text decoration at the end of the current node
- * when the user presses TAB. ESC (or any content change / selection move)
- * dismisses it.
+ * TabGhostText
  *
- * @example
- * TabGhostText.configure({ placeholder: 'Continue writing…' })
+ * - TAB   → adds a `Decoration.node` with `data-ghost-text` on the current
+ *           block node; CSS `::after` renders the ghost text.
+ * - ESC   → removes the decoration.
+ * - Any selection move or document change → auto-dismisses.
  */
 export const TabGhostText = Extension.create<TabGhostTextOptions>({
   name: 'tabGhostText',
@@ -54,20 +56,18 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
         key: TAB_GHOST_KEY,
 
         // -----------------------------------------------------------------
-        // Plugin state machine
+        // State machine
         // -----------------------------------------------------------------
         state: {
-          init: (): TabGhostState => ({ active: false, pos: null }),
+          init: (): TabGhostState => ({ active: false, nodeFrom: null, nodeTo: null }),
 
           apply(tr, prev): TabGhostState {
-            // Explicit command via meta takes priority.
             const meta = tr.getMeta(TAB_GHOST_KEY) as TabGhostState | undefined
             if (meta !== undefined) return meta
 
-            // Dismiss automatically when the document or selection changes
-            // so the ghost never points to a stale position.
+            // Auto-dismiss when anything in the document or selection changes.
             if (prev.active && (tr.docChanged || tr.selectionSet)) {
-              return { active: false, pos: null }
+              return { active: false, nodeFrom: null, nodeTo: null }
             }
 
             return prev
@@ -84,17 +84,24 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
             if (event.key === 'Tab') {
               event.preventDefault()
 
-              // End of the current block node (paragraph, heading, …).
               const { $from } = view.state.selection
-              const pos = $from.end()
+              // Positions spanning the whole block node (paragraph, heading, …).
+              const nodeFrom = $from.before($from.depth)
+              const nodeTo = $from.after($from.depth)
 
-              view.dispatch(view.state.tr.setMeta(TAB_GHOST_KEY, { active: true, pos }))
+              view.dispatch(
+                view.state.tr.setMeta(TAB_GHOST_KEY, { active: true, nodeFrom, nodeTo }),
+              )
               return true
             }
 
             if (event.key === 'Escape' && state?.active) {
               view.dispatch(
-                view.state.tr.setMeta(TAB_GHOST_KEY, { active: false, pos: null }),
+                view.state.tr.setMeta(TAB_GHOST_KEY, {
+                  active: false,
+                  nodeFrom: null,
+                  nodeTo: null,
+                }),
               )
               return true
             }
@@ -103,30 +110,26 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
           },
 
           // -----------------------------------------------------------------
-          // Ghost-text decoration
+          // Node decoration — adds class + data attribute; CSS does the rest.
           // -----------------------------------------------------------------
           decorations(state) {
             const pluginState = TAB_GHOST_KEY.getState(state)
-            if (!pluginState?.active || pluginState.pos === null || !placeholder) {
+
+            if (
+              !pluginState?.active ||
+              pluginState.nodeFrom === null ||
+              pluginState.nodeTo === null ||
+              !placeholder
+            ) {
               return DecorationSet.empty
             }
 
-            const widget = Decoration.widget(
-              pluginState.pos,
-              () => {
-                const el = document.createElement('span')
-                el.className = 'tiptap-ghost-text'
-                el.setAttribute('aria-hidden', 'true')
-                el.textContent = placeholder
-                return el
-              },
-              // side: 1 → render after any real content at the same position.
-              // key keeps React/ProseMirror from re-creating the DOM node on
-              // every state update.
-              { side: 1, key: 'tab-ghost-text' },
-            )
+            const deco = Decoration.node(pluginState.nodeFrom, pluginState.nodeTo, {
+              class: 'tiptap-ghost-active',
+              'data-ghost-text': placeholder,
+            })
 
-            return DecorationSet.create(state.doc, [widget])
+            return DecorationSet.create(state.doc, [deco])
           },
         },
       }),
