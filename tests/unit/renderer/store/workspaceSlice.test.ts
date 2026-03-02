@@ -13,8 +13,8 @@ import {
   selectHasWorkspace,
   selectCurrentWorkspacePath,
   selectWorkspaceDeletionReason
-} from '../../../../src/renderer/src/store/workspace/workspaceSlice'
-import type { WorkspaceState } from '../../../../src/renderer/src/store/workspace/workspaceSlice'
+} from '../../../../src/renderer/src/store/workspace/slice'
+import type { WorkspaceState } from '../../../../src/renderer/src/store/workspace/slice'
 
 const reducer = workspaceSlice.reducer
 
