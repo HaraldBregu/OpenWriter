@@ -15,7 +15,7 @@ import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
 import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
 import type { BaseMessage } from '@langchain/core/messages'
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AIAgentsDefinition } from '../AIAgentsDefinition'
+import type { AIAgentsDefinition } from './AIAgentsDefinition'
 
 // ---------------------------------------------------------------------------
 // Graph state
