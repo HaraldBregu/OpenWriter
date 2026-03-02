@@ -33,5 +33,5 @@ export interface TrackedTaskState {
 }
 
 export interface TasksState {
-  tasks: Record<string, TrackedTaskState>
+  tasks: TrackedTaskState[]
 }
