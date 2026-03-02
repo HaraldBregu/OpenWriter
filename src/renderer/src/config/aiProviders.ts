@@ -64,16 +64,3 @@ export const aiProviders: AIProvider[] = [
   }
 ]
 
-const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview']
-
-export function isReasoningModel(modelId: string): boolean {
-  const normalized = modelId.toLowerCase()
-  return REASONING_MODEL_PREFIXES.some(
-    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-  )
-}
-
-export function getDefaultModelId(providerId: string): string {
-  const provider = aiProviders.find((p) => p.id === providerId)
-  return provider?.models[0]?.id ?? ''
-}
