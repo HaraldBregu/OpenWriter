@@ -26,6 +26,7 @@ import { TextCompleterAgent } from './TextCompleter'
 import { ContentReviewAgent } from './ContentReview'
 import { SummarizerAgent } from './Summarizer'
 import { ToneAdjusterAgent } from './ToneAdjuster'
+import { DemoAgent } from './DemoAgent'
 import type { AgentDefinition } from './AgentDefinition'
 
 /**
@@ -38,4 +39,5 @@ export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
   ContentReviewAgent,
   SummarizerAgent,
   ToneAdjusterAgent,
+  DemoAgent,
 ]
