@@ -237,14 +237,135 @@ function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps)
 }
 
 // ---------------------------------------------------------------------------
-// DebugPage
+// SliceSection — collapsible JSON viewer for a single Redux slice
 // ---------------------------------------------------------------------------
 
-export default function DebugPage() {
+const SLICE_NAMES = ['workspace', 'aiSettings', 'writingItems', 'tasks'] as const
+type SliceName = (typeof SLICE_NAMES)[number]
+
+function entryCount(value: unknown): string {
+  if (Array.isArray(value)) return `${value.length} items`
+  if (value && typeof value === 'object') return `${Object.keys(value).length} keys`
+  return typeof value
+}
+
+function SliceSection({ name, data }: { name: SliceName; data: unknown }) {
+  const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const json = JSON.stringify(data, null, 2)
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(json)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }, [json])
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-2 w-full px-4 py-2.5 text-left hover:bg-muted/50 transition-colors"
+      >
+        {open ? <ChevronDown className="h-4 w-4 shrink-0" /> : <ChevronRight className="h-4 w-4 shrink-0" />}
+        <span className="text-sm font-medium">{name}</span>
+        <span className="text-xs text-muted-foreground ml-auto">{entryCount(data)}</span>
+      </button>
+
+      {open && (
+        <div className="border-t relative">
+          <button
+            type="button"
+            onClick={handleCopy}
+            title="Copy to clipboard"
+            className="absolute top-2 right-2 p-1.5 rounded hover:bg-accent transition-colors text-muted-foreground"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
+          <pre className="p-4 pr-10 text-xs font-mono overflow-auto max-h-96 bg-muted/20 text-muted-foreground whitespace-pre-wrap break-all">
+            {json}
+          </pre>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// ReduxStateTab
+// ---------------------------------------------------------------------------
+
+function ReduxStateTab() {
+  const [live, setLive] = useState(false)
+  const [tick, setTick] = useState(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // When live mode is on, bump tick every second to force re-render
+  useEffect(() => {
+    if (live) {
+      intervalRef.current = setInterval(() => setTick((t) => t + 1), 1000)
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [live])
+
+  // Read slices — selector identity changes each render when live ticking,
+  // which is intentional so we always get the latest snapshot.
+  const workspace = useAppSelector((s: RootState) => s.workspace)
+  const aiSettings = useAppSelector((s: RootState) => s.aiSettings)
+  const writingItems = useAppSelector((s: RootState) => s.writingItems)
+  const tasks = useAppSelector((s: RootState) => s.tasks)
+
+  // Suppress unused-var warning — tick is used to trigger re-renders
+  void tick
+
+  const slices: { name: SliceName; data: unknown }[] = [
+    { name: 'workspace', data: workspace },
+    { name: 'aiSettings', data: aiSettings },
+    { name: 'writingItems', data: writingItems },
+    { name: 'tasks', data: tasks },
+  ]
+
+  return (
+    <div className="flex-1 overflow-auto p-6 space-y-3">
+      {/* Toolbar */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setTick((t) => t + 1)}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          <RefreshCw className="h-3 w-3" />
+          Refresh
+        </button>
+        <label className="inline-flex items-center gap-1.5 text-xs cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={live}
+            onChange={(e) => setLive(e.target.checked)}
+            className="rounded border-muted-foreground"
+          />
+          Live (1 s)
+        </label>
+      </div>
+
+      {/* Slice cards */}
+      {slices.map(({ name, data }) => (
+        <SliceSection key={name} name={name} data={data} />
+      ))}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// TasksTab — extracted from the original DebugPage content
+// ---------------------------------------------------------------------------
+
+function TasksTab() {
   const { tasks, queueStats, hide, cancel } = useDebugTasks()
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  // If the selected task gets hidden, clear the panel
   const selectedTask = tasks.find((t) => t.taskId === selectedId) ?? null
 
   const handleSelect = useCallback((taskId: string) => {
@@ -260,27 +381,19 @@ export default function DebugPage() {
   )
 
   return (
-    <div className="flex h-full">
-      {/* Main panel */}
+    <div className="flex flex-1 min-h-0">
       <div className="flex flex-col flex-1 min-w-0 min-h-0">
-        {/* Header */}
+        {/* Task header controls */}
         <div className="px-6 py-3 border-b shrink-0 space-y-2">
-          {/* Title + queue stats */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Bug className="h-5 w-5 text-muted-foreground" />
-              <h1 className="text-lg font-semibold">Debug</h1>
-            </div>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span><span className="font-medium text-foreground">{queueStats.running}</span> running</span>
-              <span><span className="font-medium text-foreground">{queueStats.queued}</span> queued</span>
-              <span><span className="font-medium text-foreground">{queueStats.completed}</span> completed</span>
-              {queueStats.error > 0 && (
-                <span className="text-destructive">
-                  <span className="font-medium">{queueStats.error}</span> errors
-                </span>
-              )}
-            </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span><span className="font-medium text-foreground">{queueStats.running}</span> running</span>
+            <span><span className="font-medium text-foreground">{queueStats.queued}</span> queued</span>
+            <span><span className="font-medium text-foreground">{queueStats.completed}</span> completed</span>
+            {queueStats.error > 0 && (
+              <span className="text-destructive">
+                <span className="font-medium">{queueStats.error}</span> errors
+              </span>
+            )}
           </div>
 
           {/* Demo task CTAs */}
@@ -327,27 +440,13 @@ export default function DebugPage() {
             <table className="w-full text-left">
               <thead className="border-b sticky top-0 bg-background z-10">
                 <tr>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Priority
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Progress
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">ID</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Priority</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Progress</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Duration</th>
+                  <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -367,8 +466,59 @@ export default function DebugPage() {
         </div>
       </div>
 
-      {/* Log panel — shown when a task row is selected */}
+      {/* Log panel */}
       {selectedTask && <LogPanel task={selectedTask} onClose={() => setSelectedId(null)} />}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// DebugPage
+// ---------------------------------------------------------------------------
+
+type DebugTab = 'tasks' | 'redux'
+
+export default function DebugPage() {
+  const [activeTab, setActiveTab] = useState<DebugTab>('tasks')
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header with tabs */}
+      <div className="px-6 py-3 border-b shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Bug className="h-5 w-5 text-muted-foreground" />
+            <h1 className="text-lg font-semibold">Debug</h1>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('tasks')}
+              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
+                activeTab === 'tasks'
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-background hover:bg-accent hover:text-accent-foreground'
+              }`}
+            >
+              Tasks
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('redux')}
+              className={`px-3 py-1 text-xs rounded-md border transition-colors ${
+                activeTab === 'redux'
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-background hover:bg-accent hover:text-accent-foreground'
+              }`}
+            >
+              Redux State
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'tasks' ? <TasksTab /> : <ReduxStateTab />}
     </div>
   )
 }
