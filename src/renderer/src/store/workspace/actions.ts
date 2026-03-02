@@ -2,12 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { WorkspaceInfo } from '../../../../shared/types'
 
 // ---------------------------------------------------------------------------
-// Async Thunks
+// Async thunks
 // ---------------------------------------------------------------------------
 
 /**
  * Load the current workspace path from the main process.
- * This is called once on app startup to hydrate the Redux store.
+ * Called once on app startup to hydrate the Redux store.
  */
 export const loadCurrentWorkspace = createAsyncThunk(
   'workspace/loadCurrent',
@@ -76,9 +76,8 @@ export const clearWorkspace = createAsyncThunk(
   }
 )
 
-// Re-export synchronous actions from the slice (reducer.ts).
-// Consumers that need synchronous actions (handleWorkspaceChanged, etc.)
-// should import from this file to keep imports consistent.
+// Re-export synchronous actions from the reducer so callers can import
+// everything workspace-action-related from this single file.
 export {
   handleWorkspaceChanged,
   handleRecentRemoved,
