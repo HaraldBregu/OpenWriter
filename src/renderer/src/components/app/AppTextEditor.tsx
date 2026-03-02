@@ -273,21 +273,6 @@ function TipTapAdapter({
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
-  // Imperative DOM element owned by BubbleMenuPlugin. Created once and
-  // appended to body so FloatingUI can position it freely.
-  const menuEl = useMemo(() => {
-    if (typeof document === 'undefined') return null
-    return document.createElement('div')
-  }, [])
-
-  useEffect(() => {
-    if (!menuEl) return
-    document.body.appendChild(menuEl)
-    return () => {
-      document.body.removeChild(menuEl)
-    }
-  }, [menuEl])
-
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
       extensions,
