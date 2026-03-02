@@ -11,6 +11,7 @@ export { TextCompleterAgent } from './TextCompleter'
 export { ContentReviewAgent } from './ContentReview'
 export { SummarizerAgent } from './Summarizer'
 export { ToneAdjusterAgent } from './ToneAdjuster'
+export { DemoAgent } from './DemoAgent'
 
 export type { AgentDefinition, AgentDefinitionInfo } from './AgentDefinition'
 export { toAgentDefinitionInfo } from './AgentDefinition'
