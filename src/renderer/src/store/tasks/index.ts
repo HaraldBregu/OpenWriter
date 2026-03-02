@@ -1,3 +1,4 @@
+/** Tasks slice public barrel — re-exports types, state, reducer, and selectors. */
 // Types
 export type {
   TaskStatus,
