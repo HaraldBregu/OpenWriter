@@ -46,6 +46,7 @@ const DEFAULT_EXTENSIONS: AnyExtension[] = [
   OrderedList,
   ListItem,
   ListKeymap,
+  TabGhostText,
 ]
 
 // ---------------------------------------------------------------------------
