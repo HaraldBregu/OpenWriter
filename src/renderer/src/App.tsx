@@ -9,7 +9,8 @@ import { LoadingSkeleton } from "./components/LoadingSkeleton";
 import WelcomePage from "./pages/WelcomePage";
 import type { TaskEvent } from "../../shared/types";
 import { taskEventReceived } from "./store/tasks/actions";
-import { loadWritings } from "./store/writings/actions";
+import { loadWritings, refreshWriting } from "./store/writings/actions";
+import { writingRemoved } from "./store/writings/actions";
 import "./index.css";
 
 // IPC → Redux bridge: forward every task event into the store.
