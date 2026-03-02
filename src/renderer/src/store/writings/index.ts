@@ -19,7 +19,7 @@ export {
 export { default } from './reducer'
 
 // Async actions
-export { loadWritings } from './actions'
+export { loadWritings, refreshWriting } from './actions'
 
 // Selectors
 export {
