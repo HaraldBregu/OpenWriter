@@ -166,7 +166,7 @@ export const tasksSlice = createSlice({
         }
         case 'stream': {
           // Raw batch — do NOT accumulate here. The AI layer subscribes
-          // directly to window.tasksManager.onEvent for streaming content.
+          // directly to window.task.onEvent for streaming content.
           task.status = 'running'
           break
         }
