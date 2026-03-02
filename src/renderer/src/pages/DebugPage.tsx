@@ -313,8 +313,6 @@ function ReduxStateTab() {
   // Read slices — selector identity changes each render when live ticking,
   // which is intentional so we always get the latest snapshot.
   const workspace = useAppSelector((s: RootState) => s.workspace)
-  const aiSettings = useAppSelector((s: RootState) => s.aiSettings)
-  const writingItems = useAppSelector((s: RootState) => s.writingItems)
   const tasks = useAppSelector((s: RootState) => s.tasks)
 
   // Suppress unused-var warning — tick is used to trigger re-renders
@@ -322,8 +320,6 @@ function ReduxStateTab() {
 
   const slices: { name: SliceName; data: unknown }[] = [
     { name: 'workspace', data: workspace },
-    { name: 'aiSettings', data: aiSettings },
-    { name: 'writingItems', data: writingItems },
     { name: 'tasks', data: tasks },
   ]
 
