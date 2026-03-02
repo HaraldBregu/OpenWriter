@@ -1,3 +1,4 @@
+/** Workspace slice initial state and state type definition. */
 import type { WorkspaceInfo } from '../../../../shared/types'
 
 // ---------------------------------------------------------------------------
