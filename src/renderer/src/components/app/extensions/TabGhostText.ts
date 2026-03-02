@@ -40,6 +40,10 @@ export const TAB_GHOST_KEY = new PluginKey<TabGhostState>('tabGhostText')
  *           block node; CSS `::after` renders the ghost text.
  * - ESC   → removes the decoration.
  * - Any selection move or document change → auto-dismisses.
+ *
+ * Key bindings are registered via `addKeyboardShortcuts` (high-priority
+ * TipTap keymap) so they fire before ListKeymap and other plugins that would
+ * otherwise consume the TAB event first.
  */
 export const TabGhostText = Extension.create<TabGhostTextOptions>({
   name: 'tabGhostText',
@@ -48,6 +52,42 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
     return { placeholder: '' }
   },
 
+  // -------------------------------------------------------------------------
+  // Keyboard shortcuts — run at TipTap keymap priority (before PM plugins).
+  // -------------------------------------------------------------------------
+  addKeyboardShortcuts() {
+    return {
+      Tab: () => {
+        const { $from } = this.editor.state.selection
+        const nodeFrom = $from.before($from.depth)
+        const nodeTo = $from.after($from.depth)
+
+        this.editor.view.dispatch(
+          this.editor.state.tr.setMeta(TAB_GHOST_KEY, { active: true, nodeFrom, nodeTo }),
+        )
+        // Return true to prevent the default tab / indent behaviour.
+        return true
+      },
+
+      Escape: () => {
+        const pluginState = TAB_GHOST_KEY.getState(this.editor.state)
+        if (!pluginState?.active) return false
+
+        this.editor.view.dispatch(
+          this.editor.state.tr.setMeta(TAB_GHOST_KEY, {
+            active: false,
+            nodeFrom: null,
+            nodeTo: null,
+          }),
+        )
+        return true
+      },
+    }
+  },
+
+  // -------------------------------------------------------------------------
+  // ProseMirror plugin — state machine + node decoration only.
+  // -------------------------------------------------------------------------
   addProseMirrorPlugins() {
     const { placeholder } = this.options
 
@@ -55,9 +95,6 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
       new Plugin<TabGhostState>({
         key: TAB_GHOST_KEY,
 
-        // -----------------------------------------------------------------
-        // State machine
-        // -----------------------------------------------------------------
         state: {
           init: (): TabGhostState => ({ active: false, nodeFrom: null, nodeTo: null }),
 
@@ -65,7 +102,7 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
             const meta = tr.getMeta(TAB_GHOST_KEY) as TabGhostState | undefined
             if (meta !== undefined) return meta
 
-            // Auto-dismiss when anything in the document or selection changes.
+            // Auto-dismiss on any selection move or document edit.
             if (prev.active && (tr.docChanged || tr.selectionSet)) {
               return { active: false, nodeFrom: null, nodeTo: null }
             }
@@ -74,44 +111,8 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
           },
         },
 
-        // -----------------------------------------------------------------
-        // Key handling
-        // -----------------------------------------------------------------
         props: {
-          handleKeyDown(view, event) {
-            const state = TAB_GHOST_KEY.getState(view.state)
-
-            if (event.key === 'Tab') {
-              event.preventDefault()
-
-              const { $from } = view.state.selection
-              // Positions spanning the whole block node (paragraph, heading, …).
-              const nodeFrom = $from.before($from.depth)
-              const nodeTo = $from.after($from.depth)
-
-              view.dispatch(
-                view.state.tr.setMeta(TAB_GHOST_KEY, { active: true, nodeFrom, nodeTo }),
-              )
-              return true
-            }
-
-            if (event.key === 'Escape' && state?.active) {
-              view.dispatch(
-                view.state.tr.setMeta(TAB_GHOST_KEY, {
-                  active: false,
-                  nodeFrom: null,
-                  nodeTo: null,
-                }),
-              )
-              return true
-            }
-
-            return false
-          },
-
-          // -----------------------------------------------------------------
           // Node decoration — adds class + data attribute; CSS does the rest.
-          // -----------------------------------------------------------------
           decorations(state) {
             const pluginState = TAB_GHOST_KEY.getState(state)
 
