@@ -1,3 +1,4 @@
+/** Tasks state selectors. */
 import { createSelector } from '@reduxjs/toolkit'
 import type { RootState } from '../index'
 import type { TrackedTaskState } from './types'
