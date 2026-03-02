@@ -187,6 +187,6 @@ declare global {
     /** Optional: not present in all window types */
     win?: WindowApi
     workspace: WorkspaceApi
-    tasksManager: TasksManagerApi
+    task: TaskApi
   }
 }
