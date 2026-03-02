@@ -18,10 +18,6 @@ export const store = configureStore({
     getDefaultMiddleware().prepend(listenerMiddleware.middleware)
 })
 
-// Wire up the IPC → Redux bridge for task events.
-// This replaces ensureTaskStoreListening() from the former taskStore.ts singleton.
-setupTaskIpcListener(store)
-
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
