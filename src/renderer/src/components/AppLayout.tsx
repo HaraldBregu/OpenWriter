@@ -46,6 +46,7 @@ import {
   Bell,
   FileText,
   Bug,
+  Bot,
 } from "lucide-react";
 
 interface AppLayoutProps {
