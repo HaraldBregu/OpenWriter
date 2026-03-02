@@ -1958,6 +1958,11 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-paragraph/-/extension-paragraph-3.20.0.tgz"
   integrity sha512-mM99zK4+RnEXIMCv6akfNATAs0Iija6FgyFA9J9NZ6N4o8y9QiNLLa6HjLpAC+W+VoCgQIekyoF/Q9ftxmAYDQ==
 
+"@tiptap/extension-placeholder@^3.20.0":
+  version "3.20.0"
+  resolved "https://registry.npmjs.org/@tiptap/extension-placeholder/-/extension-placeholder-3.20.0.tgz"
+  integrity sha512-ZhYD3L5m16ydSe2z8vqz+RdtAG/iOQaFHHedFct70tKRoLqi2ajF5kgpemu8DwpaRTcyiCN4G99J/+MqehKNjQ==
+
 "@tiptap/extension-strike@^3.20.0":
   version "3.20.0"
   resolved "https://registry.npmjs.org/@tiptap/extension-strike/-/extension-strike-3.20.0.tgz"
