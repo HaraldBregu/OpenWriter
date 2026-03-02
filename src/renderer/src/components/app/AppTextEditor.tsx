@@ -299,16 +299,6 @@ function TipTapAdapter({
 
   const editor = useEditor(editorOptions, [])
 
-  // Register BubbleMenuPlugin once the editor is ready. The plugin takes full
-  // ownership of showing, hiding, and positioning menuEl via FloatingUI.
-  useEffect(() => {
-    if (!editor || editor.isDestroyed || !menuEl) return
-    editor.registerPlugin(BubbleMenuPlugin({ editor, element: menuEl, pluginKey: 'bubbleMenu' }))
-    return () => {
-      editor.unregisterPlugin('bubbleMenu')
-    }
-  }, [editor, menuEl])
-
   // Sync external value → editor (controlled-component behaviour).
   // streamingContent takes priority over value during AI enhancement, letting
   // tokens render directly without triggering onChange or Redux dispatches.
