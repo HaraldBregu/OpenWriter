@@ -171,8 +171,8 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
     }),
   })
 
-  // Recompute position on every selectionUpdate so the toolbar tracks the
-  // selection as it grows, shrinks, or moves.
+  // Recompute position on every selectionUpdate and scroll so the toolbar
+  // tracks the selection as it grows, shrinks, moves, or scrolls out of view.
   useEffect(() => {
     const computePos = () => {
       const { selection } = editor.state
@@ -180,25 +180,30 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
         setPos(null)
         return
       }
-      // Use coordsAtPos for reliable viewport-relative coordinates that are
-      // always in sync with ProseMirror's internal state.
+      // coordsAtPos returns live viewport-relative coordinates, so it stays
+      // correct after a scroll without needing any scroll offset arithmetic.
       const { from, to } = selection
       const startCoords = editor.view.coordsAtPos(from)
       const endCoords = editor.view.coordsAtPos(to)
-      // Horizontal: midpoint between start and end of selection.
-      // Vertical: top of the topmost line (handles multi-line selections).
       setPos({
         x: (startCoords.left + endCoords.left) / 2,
         y: Math.min(startCoords.top, endCoords.top),
       })
     }
 
+    const clearPos = () => setPos(null)
+
     editor.on('selectionUpdate', computePos)
-    editor.on('blur', () => setPos(null))
+    editor.on('blur', clearPos)
+    // Capture phase catches scroll on any ancestor (the editor wrapper, a
+    // panel, or the window itself) without needing to locate the exact
+    // scrollable container.
+    window.addEventListener('scroll', computePos, { capture: true, passive: true })
 
     return () => {
       editor.off('selectionUpdate', computePos)
-      editor.off('blur', () => setPos(null))
+      editor.off('blur', clearPos)
+      window.removeEventListener('scroll', computePos, { capture: true })
     }
   }, [editor])
 
