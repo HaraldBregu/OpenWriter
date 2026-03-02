@@ -10,8 +10,9 @@
 - Class components (e.g. ErrorBoundary) use `i18next.t()` directly (import from 'i18next')
 
 ### Key i18n Namespacing Patterns
-- Sidebar section labels: `sidebar.*` (posts, writing, knowledge, personality, documents, directories, debugTools, untitledPost, untitledWriting)
-- Settings popover items: `menu.*` (account, settings, notifications, privacy, billing, helpAndSupport)
+- Sidebar section labels: `sidebar.*` (posts, writing, knowledge, personality, documents, directories, untitledPost, untitledWriting, newWriting)
+- Settings popover items: `menu.*` (account, settings, notifications, privacy, billing, helpAndSupport) — used as `titleKey` in AppLayout.tsx, NOT via direct `t()` call
+- Common actions: `common.*` — includes `agents` for the Agents sidebar nav item
 - Relative time: `relativeTime.*` (justNow, minutesAgo, hoursAgo, daysAgo) — takes `count` interpolation
 - Directory notifications: `directoryNotifications.*`
 - Personality items: `personalityItems.*`
