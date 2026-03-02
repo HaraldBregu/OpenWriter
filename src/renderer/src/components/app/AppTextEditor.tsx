@@ -149,6 +149,105 @@ const HeadingRenderer = React.memo(function HeadingRenderer({
 HeadingRenderer.displayName = 'HeadingRenderer'
 
 // ---------------------------------------------------------------------------
+// Internal: BubbleMenuToolbar
+// ---------------------------------------------------------------------------
+
+interface BubbleMenuToolbarProps {
+  editor: Editor
+}
+
+function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Element | null {
+  // Subscribe to selection changes so we re-render when selection changes.
+  const { isSelectionEmpty, isBold, isItalic, isStrike, isCode } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      isSelectionEmpty: ctx.editor.state.selection.empty,
+      isBold: ctx.editor.isActive('bold'),
+      isItalic: ctx.editor.isActive('italic'),
+      isStrike: ctx.editor.isActive('strike'),
+      isCode: ctx.editor.isActive('code'),
+    }),
+  })
+
+  // Derive position each render from the live DOM selection.
+  const pos = useMemo<{ x: number; y: number } | null>(() => {
+    if (isSelectionEmpty) return null
+    if (typeof window === 'undefined') return null
+    const domSel = window.getSelection()
+    if (!domSel || domSel.rangeCount === 0) return null
+    const rect = domSel.getRangeAt(0).getBoundingClientRect()
+    if (!rect.width && !rect.height) return null
+    return { x: rect.left + rect.width / 2, y: rect.top }
+  }, [isSelectionEmpty])
+
+  if (!pos || !editor.isEditable) return null
+
+  const activeHeadingLevel = ([1, 2, 3] as HeadingLevel[]).find((l) =>
+    editor.isActive('heading', { level: l }),
+  )
+
+  const btnBase =
+    'px-1.5 py-0.5 rounded text-xs font-medium transition-colors cursor-pointer select-none'
+  const btnActive = 'bg-foreground text-background'
+  const btnIdle = 'text-foreground hover:bg-muted'
+
+  return createPortal(
+    <div
+      style={{
+        position: 'fixed',
+        left: pos.x,
+        top: pos.y,
+        transform: 'translateX(-50%) translateY(calc(-100% - 8px))',
+        zIndex: 9999,
+      }}
+      // Prevent mousedown from stealing focus away from the editor.
+      onMouseDown={(e) => e.preventDefault()}
+      className="flex items-center gap-0.5 rounded-lg border border-border bg-popover shadow-lg p-1 pointer-events-auto"
+    >
+      {/* Heading toggles: H1 H2 H3 */}
+      {([1, 2, 3] as HeadingLevel[]).map((level) => (
+        <button
+          key={level}
+          onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
+          className={cn(btnBase, activeHeadingLevel === level ? btnActive : btnIdle, 'font-bold')}
+        >
+          H{level}
+        </button>
+      ))}
+
+      <div className="w-px h-4 bg-border mx-0.5" />
+
+      {/* Inline format buttons */}
+      <button
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        className={cn(btnBase, isBold ? btnActive : btnIdle, 'font-bold')}
+      >
+        B
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        className={cn(btnBase, isItalic ? btnActive : btnIdle, 'italic')}
+      >
+        I
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleStrike().run()}
+        className={cn(btnBase, isStrike ? btnActive : btnIdle, 'line-through')}
+      >
+        S
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleCode().run()}
+        className={cn(btnBase, isCode ? btnActive : btnIdle, 'font-mono')}
+      >
+        {'</>'}
+      </button>
+    </div>,
+    document.body,
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Internal: TipTapAdapter  (Adapter pattern — owns useEditor)
 // ---------------------------------------------------------------------------
 
