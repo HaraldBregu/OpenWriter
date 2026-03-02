@@ -1,7 +1,7 @@
 /**
  * taskEventBus — module-level singleton for subscribing to task events.
  *
- * Provides a single window.tasksManager.onEvent subscription (lazy-init on
+ * Provides a single window.task.onEvent subscription (lazy-init on
  * first use) shared across all callers. Individual callers subscribe via
  * subscribeToTask(taskId, cb), and only callbacks for the matching taskId
  * are invoked when an event arrives.
@@ -34,7 +34,7 @@ const subscribers = new Map<string, Set<(snap: TaskSnapshot) => void>>()
 /** Accumulated snapshots per task so late subscribers can replay. */
 const snapshots = new Map<string, TaskSnapshot>()
 
-/** The single unsub handle from window.tasksManager.onEvent. */
+/** The single unsub handle from window.task.onEvent. */
 let globalUnsub: (() => void) | null = null
 
 // ---------------------------------------------------------------------------
@@ -43,9 +43,9 @@ let globalUnsub: (() => void) | null = null
 
 function ensureListening(): void {
   if (globalUnsub !== null) return
-  if (typeof window.tasksManager?.onEvent !== 'function') return
+  if (typeof window.task?.onEvent !== 'function') return
 
-  globalUnsub = window.tasksManager.onEvent((event: TaskEvent) => {
+  globalUnsub = window.task.onEvent((event: TaskEvent) => {
     const data = event.data as { taskId?: string }
     const taskId = data?.taskId
     if (!taskId) return
