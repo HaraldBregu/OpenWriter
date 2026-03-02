@@ -70,6 +70,7 @@ export const WorkspaceChannels = {
   outputLoadOne: 'output:load-one',
   update: 'output:update',
   outputDelete: 'output:delete',
+  outputTrash: 'output:trash',
   outputFileChanged: 'output:file-changed',
   outputWatcherError: 'output:watcher-error',
 } as const
