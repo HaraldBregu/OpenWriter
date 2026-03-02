@@ -661,8 +661,8 @@ export class OutputFilesService implements Disposable {
    * Depth layout:
    *   output/               depth 0 (root, not counted)
    *   output/<type>/        depth 1
-   *   output/<type>/<date>/ depth 2  <- date folders
-   *   output/<type>/<date>/<file>    depth 3  <- config.json + block .md files
+   *   output/<type>/<id>/   depth 2  <- UUID (or legacy date) entry folders
+   *   output/<type>/<id>/<file>      depth 3  <- config.json + block .md files
    */
   private async startWatching(workspacePath: string): Promise<void> {
     const outputDir = path.join(workspacePath, this.OUTPUT_DIR_NAME)
