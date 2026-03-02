@@ -51,16 +51,18 @@ export const tasksSlice = createSlice({
       action: PayloadAction<{ taskId: string; type: string; priority?: TaskPriority }>
     ) {
       const { taskId, type, priority = 'normal' } = action.payload
-      if (state.tasks[taskId]) return
 
-      state.tasks[taskId] = {
+      // No-op if already tracked.
+      if (state.tasks.some((t) => t.taskId === taskId)) return
+
+      state.tasks.push({
         taskId,
         type,
         status: 'queued',
         priority,
         progress: { percent: 0 },
         events: [],
-      }
+      })
     },
 
     /**
@@ -78,10 +80,12 @@ export const tasksSlice = createSlice({
       const taskId = data?.taskId
       if (!taskId) return
 
-      // Auto-create on 'queued' when not yet tracked
-      if (!state.tasks[taskId]) {
+      // Auto-create on 'queued' when not yet tracked.
+      let task = state.tasks.find((t) => t.taskId === taskId)
+
+      if (!task) {
         if (event.type === 'queued') {
-          state.tasks[taskId] = {
+          const newTask: TrackedTaskState = {
             taskId,
             type: '',
             status: 'queued',
@@ -89,12 +93,13 @@ export const tasksSlice = createSlice({
             progress: { percent: 0 },
             events: [],
           }
+          state.tasks.push(newTask)
+          // Re-assign task to the Immer draft reference just pushed.
+          task = state.tasks[state.tasks.length - 1]
         } else {
           return
         }
       }
-
-      const task = state.tasks[taskId]
 
       const record: TaskEventRecord = {
         type: event.type,
@@ -164,7 +169,7 @@ export const tasksSlice = createSlice({
      * Remove a task from the store entirely (e.g. after user dismisses it).
      */
     taskRemoved(state, action: PayloadAction<string>) {
-      delete state.tasks[action.payload]
+      state.tasks = state.tasks.filter((t) => t.taskId !== action.payload)
     },
   },
 })
