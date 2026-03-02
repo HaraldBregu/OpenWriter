@@ -30,13 +30,8 @@ import type {
   DirectoryValidationResult,
   WritingContextMenuAction,
   WatcherError,
-  AgentSessionConfig,
-  AgentRequest,
-  AgentStreamEvent,
-  AgentSessionSnapshot,
-  AgentRunSnapshot,
-  AIAgentsManagerStatus,
   AgentDefinitionInfo,
+  AgentStreamEvent,
 } from './types'
 
 // ===========================================================================
