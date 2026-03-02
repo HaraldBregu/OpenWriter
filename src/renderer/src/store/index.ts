@@ -1,3 +1,4 @@
+/** Redux store configuration, root types, and typed dispatch/selector hooks. */
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
