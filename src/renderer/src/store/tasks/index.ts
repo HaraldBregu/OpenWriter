@@ -11,12 +11,9 @@ export type {
 // State
 export { initialState } from './state'
 
-// Reducer & slice
+// Reducer, slice, and synchronous actions
 export { tasksSlice, taskAdded, taskEventReceived, taskRemoved } from './reducer'
 export { default } from './reducer'
-
-// Actions (convenience re-export)
-export { taskAdded as taskAddedAction, taskEventReceived as taskEventReceivedAction, taskRemoved as taskRemovedAction } from './actions'
 
 // Selectors
 export {
