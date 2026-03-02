@@ -42,11 +42,13 @@ function toOutputBlock(b: Block) {
 const ContentPage: React.FC = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
   const [blocks, setBlocks] = useState<Block[]>(() => [createBlock()])
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [isTrashing, setIsTrashing] = useState(false)
 
   // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, blocks })
