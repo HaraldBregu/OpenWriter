@@ -292,7 +292,7 @@ const workspace: WorkspaceApi = {
 // ---------------------------------------------------------------------------
 // window.task — Background task queue
 // ---------------------------------------------------------------------------
-const tasksManager: TasksManagerApi = {
+const task: TaskApi = {
     submit: (type: string, input: unknown, options?: {
         priority?: 'low' | 'normal' | 'high'
         timeoutMs?: number
