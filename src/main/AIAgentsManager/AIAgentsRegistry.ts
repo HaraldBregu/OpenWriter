@@ -9,7 +9,7 @@
  */
 
 import type { AgentSessionConfig } from './AIAgentsManagerTypes'
-import { type AIAgentsDefinition, type AIAgentsDefinitionInfo, toAIAgentsDefinitionInfo } from './AIAgentsDefinition'
+import { type AIAgentsDefinition, type AIAgentsDefinitionInfo, toAIAgentsDefinitionInfo } from '../agents/AIAgentsDefinition'
 
 // ---------------------------------------------------------------------------
 // Registry class
