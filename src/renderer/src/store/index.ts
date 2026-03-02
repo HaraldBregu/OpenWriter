@@ -11,7 +11,6 @@ import { setupTaskIpcListener } from './taskListenerMiddleware'
 export const store = configureStore({
   reducer: {
     workspace: workspaceReducer,
-    output: outputReducer,
     aiSettings: aiSettingsReducer,
     writingItems: writingItemsReducer,
     tasks: tasksReducer,
