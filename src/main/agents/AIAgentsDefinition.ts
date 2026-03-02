@@ -6,7 +6,7 @@
  * defaults that callers can optionally override at session-creation time.
  */
 
-import type { AgentSessionConfig } from './AIAgentsManagerTypes'
+import type { AgentSessionConfig } from '../AIAgentsManager/AIAgentsManagerTypes'
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { CompiledStateGraph } from '@langchain/langgraph'
 
