@@ -171,6 +171,7 @@
     "models": {
       "title": "Models",
       "description": "Select the active model for each AI provider.",
+      "comingSoon": "Model configuration coming soon.",
       "apiKey": "API Key",
       "enterApiKey": "Enter {{provider}} API key…",
       "show": "Show",
