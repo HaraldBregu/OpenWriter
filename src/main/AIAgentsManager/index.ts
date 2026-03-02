@@ -12,5 +12,5 @@ export type {
 
 // Named agent registry
 export { AIAgentsRegistry, buildSessionConfig } from './AIAgentsRegistry'
-export type { AIAgentsDefinition, AIAgentsDefinitionInfo } from '../agents/AIAgentsDefinition'
+export type { AgentDefinition, AgentDefinitionInfo } from '../agents/AgentDefinition'
 export { ALL_AGENT_DEFINITIONS } from '../agents'
