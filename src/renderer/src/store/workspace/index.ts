@@ -1,3 +1,4 @@
+/** Workspace slice public barrel — re-exports state, actions, reducer, and selectors. */
 // State
 export type { WorkspaceState } from './state'
 export { initialState } from './state'
