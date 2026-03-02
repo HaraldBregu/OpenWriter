@@ -2,16 +2,16 @@
  * AgentTaskHandler — bridge between TaskManager and AI Agents subsystems.
  *
  * One instance per registered agent definition (e.g. 'agent-story-writer').
- * Calls executeAIAgentsStream directly — no AIAgentsManager dependency,
- * no session management. This is the *only* file that imports from both
- * subsystems, keeping them fully decoupled from each other.
+ * Calls executeAIAgentsStream directly — no session management.
+ * This is the *only* file that imports from both subsystems, keeping them
+ * fully decoupled from each other.
  */
 
 import { randomUUID } from 'node:crypto'
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
-import type { AIAgentsRegistry } from '../../AIAgentsManager/AIAgentsRegistry'
-import { executeAIAgentsStream } from '../../AIAgentsManager/AIAgentsExecutor'
-import type { AgentStreamEvent } from '../../AIAgentsManager/AIAgentsManagerTypes'
+import type { AgentRegistry } from '../../agents/AgentRegistry'
+import { executeAIAgentsStream } from '../../agents/AgentExecutor'
+import type { AgentStreamEvent } from '../../agents/AgentTypes'
 import type { ProviderResolver } from '../../shared/ProviderResolver'
 
 // ---------------------------------------------------------------------------
@@ -41,7 +41,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
   constructor(
     private readonly agentId: string,
-    private readonly agentsRegistry: AIAgentsRegistry,
+    private readonly agentsRegistry: AgentRegistry,
     private readonly providerResolver: ProviderResolver,
   ) {
     this.type = `agent-${agentId}`
