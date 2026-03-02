@@ -10,7 +10,7 @@ import type {
     AppApi,
     WindowApi,
     WorkspaceApi,
-    TasksManagerApi,
+    TaskApi,
 } from './index.d'
 
 // ---------------------------------------------------------------------------
