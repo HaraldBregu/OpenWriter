@@ -184,6 +184,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
+                  {/* New Writing */}
+                  <AppSidebarMenuItem>
+                    <AppSidebarMenuButton
+                      asChild
+                      className="h-9 px-3"
+                      isActive={location.pathname === "/content"}
+                    >
+                      <Link to="/content">
+                        <Plus className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1 truncate">{t("sidebar.newWriting") || "New Writing"}</span>
+                      </Link>
+                    </AppSidebarMenuButton>
+                  </AppSidebarMenuItem>
+
                   <AppSidebarSeparator className="my-1" />
 
                   {/* Debug */}
