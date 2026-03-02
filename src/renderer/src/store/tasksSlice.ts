@@ -3,9 +3,8 @@
  * singleton. All tracked task state now lives in the Redux store under the
  * `tasks` key so components can use standard useAppSelector hooks.
  *
- * IPC wiring is handled separately by setupTaskIpcListener() in
- * taskListenerMiddleware.ts, which must be called once after the store is
- * created.
+ * IPC wiring is handled separately in App.tsx, which registers a
+ * window.task.onEvent listener at module load time.
  */
 
 import { createSlice, createSelector } from '@reduxjs/toolkit'
