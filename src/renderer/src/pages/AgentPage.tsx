@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Bot, Play, RotateCcw, Square, Loader2 } from 'lucide-react'
 import { useTaskSubmit } from '../hooks/useTaskSubmit'
 import { subscribeToTask } from '../services/taskEventBus'
