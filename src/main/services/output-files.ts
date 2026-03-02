@@ -934,7 +934,7 @@ export class OutputFilesService implements Disposable {
     const outputType = typePart as OutputType
     const thirdSegment = parts[outputIndex + 2]
 
-    // The third segment is a date folder
+    // The third segment is a UUID (or legacy date) entry folder
     if (this.DATE_FOLDER_RE.test(thirdSegment)) {
       return { outputType, fileId: thirdSegment }
     }
