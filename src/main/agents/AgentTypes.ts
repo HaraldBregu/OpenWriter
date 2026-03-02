@@ -1,10 +1,3 @@
-/**
- * Types for the AI Agents subsystem.
- */
-
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { CompiledStateGraph } from '@langchain/langgraph'
-
 // ---------------------------------------------------------------------------
 // History message (inlined from former AIAgentsSession)
 // ---------------------------------------------------------------------------
