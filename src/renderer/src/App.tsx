@@ -8,7 +8,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingSkeleton } from "./components/LoadingSkeleton";
 import WelcomePage from "./pages/WelcomePage";
 import type { TaskEvent } from "../../shared/types";
-import { taskEventReceived } from "./store/tasksSlice";
+import { taskEventReceived } from "./store/tasks/tasksSlice";
 import "./index.css";
 
 // IPC → Redux bridge: forward every task event into the store.
