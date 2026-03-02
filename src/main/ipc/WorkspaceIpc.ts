@@ -476,6 +476,31 @@ export class WorkspaceIpc implements IpcModule {
       )
     )
 
+    ipcMain.handle(
+      WorkspaceChannels.outputTrash,
+      wrapIpcHandler(
+        async (event: IpcMainInvokeEvent, params: { type: string; id: string }): Promise<void> => {
+          const outputFiles = getWindowService<OutputFilesService>(event, container, 'outputFiles')
+
+          if (!params.type || typeof params.type !== 'string') {
+            throw new Error('Invalid type: must be a non-empty string')
+          }
+          if (!this.isValidOutputType(params.type)) {
+            throw new Error(
+              `Invalid output type "${params.type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`
+            )
+          }
+          if (!params.id || typeof params.id !== 'string') {
+            throw new Error('Invalid id: must be a non-empty string')
+          }
+
+          await outputFiles.trash(params.type as OutputType, params.id)
+          logger.info('WorkspaceIpc', `Trashed output file: ${params.type}/${params.id}`)
+        },
+        WorkspaceChannels.outputTrash
+      )
+    )
+
     console.log(`[IPC] Registered ${this.name} module`)
   }
 
