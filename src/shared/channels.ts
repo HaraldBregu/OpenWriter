@@ -241,6 +241,4 @@ export interface EventChannelMap {
   [WorkspaceChannels.outputWatcherError]: { data: WatcherError }
   [WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] }
   [AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction }
-  /** Push events from AIAgentsManager.startStreaming to the originating renderer window. */
-  [AiAgentChannels.event]: { data: AgentStreamEvent }
 }
