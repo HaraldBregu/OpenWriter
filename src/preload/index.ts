@@ -5,16 +5,13 @@ import {
     WindowChannels,
     WorkspaceChannels,
     TaskChannels,
-    AiAgentChannels,
 } from '../shared/channels'
 import type {
     AppApi,
     WindowApi,
     WorkspaceApi,
     TasksManagerApi,
-    AgentManagerAPI,
 } from './index.d'
-import type { AgentRequest, AgentSessionConfig } from '../shared/types'
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
@@ -324,48 +321,6 @@ const tasksManager: TasksManagerApi = {
 } satisfies TasksManagerApi;
 
 // ---------------------------------------------------------------------------
-// window.agentManager — AIAgentsManager session/run management + streaming events
-// ---------------------------------------------------------------------------
-const agentManager: AgentManagerAPI = {
-    listAgents: () => {
-        return typedInvokeRaw(AiAgentChannels.listAgents)
-    },
-    getAgent: (agentId: string) => {
-        return typedInvokeRaw(AiAgentChannels.getAgent, agentId)
-    },
-    getStatus: () => {
-        return typedInvokeRaw(AiAgentChannels.getStatus)
-    },
-    listSessions: () => {
-        return typedInvokeRaw(AiAgentChannels.listSessions)
-    },
-    getSession: (sessionId: string) => {
-        return typedInvokeRaw(AiAgentChannels.getSession, sessionId)
-    },
-    listActiveRuns: () => {
-        return typedInvokeRaw(AiAgentChannels.listActiveRuns)
-    },
-    createSession: (agentId: string, config?: Partial<AgentSessionConfig>) => {
-        return typedInvokeRaw(AiAgentChannels.createSession, agentId, config)
-    },
-    destroySession: (sessionId: string) => {
-        return typedInvokeRaw(AiAgentChannels.destroySession, sessionId)
-    },
-    cancelRun: (runId: string) => {
-        return typedInvokeRaw(AiAgentChannels.cancelRun, runId)
-    },
-    cancelSession: (sessionId: string) => {
-        return typedInvokeRaw(AiAgentChannels.cancelSession, sessionId)
-    },
-    startStreaming: (sessionId: string, request: AgentRequest, options?: { windowId?: number }) => {
-        return typedInvokeRaw(AiAgentChannels.startStreaming, sessionId, request, options)
-    },
-    onEvent: (callback) => {
-        return typedOn(AiAgentChannels.event, callback)
-    },
-} satisfies AgentManagerAPI;
-
-// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -374,7 +329,6 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('win', win)
         contextBridge.exposeInMainWorld('workspace', workspace)
         contextBridge.exposeInMainWorld('tasksManager', tasksManager)
-        contextBridge.exposeInMainWorld('agentManager', agentManager)
     } catch (error) {
         console.error('[preload] Failed to expose IPC APIs:', error)
     }
@@ -387,6 +341,4 @@ if (process.contextIsolated) {
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
     globalThis.tasksManager = tasksManager
-    // @ts-ignore (define in dts)
-    globalThis.agentManager = agentManager
 }
