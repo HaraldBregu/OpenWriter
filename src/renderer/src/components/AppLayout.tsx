@@ -1,4 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
+// NOTE: useState is kept for writingsOpen (pure UI state).
+// useCallback is kept for handleWritingCreated.
+// useEffect is kept for loadCurrentWorkspace.
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../hooks/useLanguage";
