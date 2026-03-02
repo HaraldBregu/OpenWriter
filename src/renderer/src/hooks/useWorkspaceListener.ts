@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useAppDispatch } from '@/store'
-import { handleWorkspaceChanged } from '@/store/workspaceSlice'
+import { handleWorkspaceChanged } from '@/store/workspace/workspaceSlice'
 import type { WorkspaceChangedEvent } from '../../../shared/types'
 
 /**
