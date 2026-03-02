@@ -36,12 +36,21 @@
 - DEPRECATED (still on window.app for compat): `getAllModelSettings`, `getModelSettings`, `setSelectedModel`, `setApiToken`, `setModelSettings`
 - `aiSettingsSlice.ts` calls the NEW API via `window.app.*`; `window.store` is fully removed from preload and type declarations
 
-## Redux Slice Conventions
-- Reference slices: `writingItemsSlice.ts` (async thunks), `aiSettingsSlice.ts` (provider settings)
-- Output system: `outputSlice.ts`; AI settings: `aiSettingsSlice.ts`
+## Redux Slice Conventions (updated Mar 2026)
+- REMOVED slices: `aiSettingsSlice` and `writingItemsSlice` — both deleted entirely (Mar 2026)
+- REMOVED hooks: `useAISettings`, `useCreateWriting`, `useWritingItems`, `useContentEditor`, `useWritingContextMenu` — all deleted (Mar 2026)
+- Remaining reducers: `workspace` and `tasks` only. Store at `src/renderer/src/store/index.ts`.
+- Slices are now SPLIT into separate files. Structure per feature folder:
+  - `state.ts` — state interface + initialState
+  - `reducer.ts` — createSlice, sync actions export, default reducer export
+  - `actions.ts` — async thunks (createAsyncThunk); NO import from reducer.ts to avoid circular deps
+  - `selectors.ts` — all createSelector functions; imports RootState from `../index`
+  - `types.ts` — types beyond the state interface (tasks only)
+  - `index.ts` — barrel re-exporting everything
+  - `tasksSlice.ts` / `workspaceSlice.ts` — compatibility facades only; prefer importing from split files
+- CIRCULAR DEP RULE: actions.ts must NOT import from reducer.ts. Sync actions live in reducer.ts; async thunks live in actions.ts. reducer.ts imports thunks from actions.ts for extraReducers.
 - Selectors use `createSelector` from `@reduxjs/toolkit` (reselect bundled)
 - Factory selectors return a new `createSelector` instance per call — safe at module level with stable args
-- Store is at `src/renderer/src/store/index.ts` — add new reducers here
 
 ## Shared Types Pattern
 - Shared types: `src/shared/types/` — no Electron/Node/React/browser imports allowed
