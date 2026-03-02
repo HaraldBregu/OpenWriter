@@ -12,18 +12,21 @@ export { ContentReviewAgent } from './ContentReview'
 export { SummarizerAgent } from './Summarizer'
 export { ToneAdjusterAgent } from './ToneAdjuster'
 
+export type { AIAgentsDefinition, AIAgentsDefinitionInfo } from './AIAgentsDefinition'
+export { toAIAgentsDefinitionInfo } from './AIAgentsDefinition'
+
 import { StoryWriterAgent } from './StoryWriter'
 import { TextCompleterAgent } from './TextCompleter'
 import { ContentReviewAgent } from './ContentReview'
 import { SummarizerAgent } from './Summarizer'
 import { ToneAdjusterAgent } from './ToneAdjuster'
-import type { AIAgentsDefinition } from '../AIAgentsDefinition'
+import type { AIAgentsDefinition } from './AIAgentsDefinition'
 
 /**
  * All built-in agent definitions in display order.
  * Pass this to AIAgentsRegistry.register() in bootstrapServices().
  */
-export const e: AIAgentsDefinition[] = [
+export const ALL_AGENT_DEFINITIONS: AIAgentsDefinition[] = [
   StoryWriterAgent,
   TextCompleterAgent,
   ContentReviewAgent,
