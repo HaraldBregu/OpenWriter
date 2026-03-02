@@ -7,7 +7,18 @@ import { AppLayout } from "./components/AppLayout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingSkeleton } from "./components/LoadingSkeleton";
 import WelcomePage from "./pages/WelcomePage";
+import type { TaskEvent } from "../../shared/types";
+import { taskEventReceived } from "./store/tasksSlice";
 import "./index.css";
+
+// IPC → Redux bridge: forward every task event into the store.
+let initialized = false;
+if (!initialized && typeof window.task?.onEvent === "function") {
+  initialized = true;
+  window.task.onEvent((event: TaskEvent) => {
+    store.dispatch(taskEventReceived(event));
+  });
+}
 
 // Lazy-loaded pages
 const HomePage = lazy(() => import("./pages/HomePage"));
