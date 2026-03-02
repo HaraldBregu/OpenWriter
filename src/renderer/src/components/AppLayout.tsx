@@ -152,6 +152,59 @@ function AppLayoutInner({ children }: AppLayoutProps) {
     dispatch(loadCurrentWorkspace());
   }, [dispatch]);
 
+  // -------------------------------------------------------------------------
+  // Writings list
+  // -------------------------------------------------------------------------
+  const [writings, setWritings] = useState<Array<{ id: string; title: string }>>([]);
+
+  const refreshWritings = useCallback(async () => {
+    try {
+      const items = await window.workspace.loadOutputsByType("writings");
+      setWritings(
+        items.map((f) => ({
+          id: f.id,
+          title: (f.metadata as Record<string, unknown>)?.title as string || "",
+        }))
+      );
+    } catch {
+      // workspace may not be ready yet
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshWritings();
+  }, [refreshWritings]);
+
+  useEffect(() => {
+    const unsubscribe = window.workspace.onOutputFileChange((event) => {
+      if (event.outputType === "writings") {
+        refreshWritings();
+      }
+    });
+    return unsubscribe;
+  }, [refreshWritings]);
+
+  // -------------------------------------------------------------------------
+  // New writing handler
+  // -------------------------------------------------------------------------
+  const [creatingWriting, setCreatingWriting] = useState(false);
+
+  const handleNewWriting = useCallback(async () => {
+    if (creatingWriting) return;
+    setCreatingWriting(true);
+    try {
+      const now = new Date().toISOString();
+      const result = await window.workspace.saveOutput({
+        type: "writings",
+        blocks: [{ name: "block-1", content: "", createdAt: now, updatedAt: now }],
+        metadata: { title: "" },
+      });
+      navigate(`/content/${result.id}`);
+    } finally {
+      setCreatingWriting(false);
+    }
+  }, [creatingWriting, navigate]);
+
   const displayWorkspaceName = workspaceNameFromPath
     ? `${workspaceNameFromPath} (workspace)`
     : "OpenWriter";
