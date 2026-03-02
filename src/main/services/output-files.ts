@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { shell } from 'electron'
 import chokidar, { type FSWatcher } from 'chokidar'
 import type { EventBus } from '../core/EventBus'
 import type { Disposable } from '../core/ServiceContainer'
