@@ -38,7 +38,8 @@
 
 ## Redux Slice Conventions (updated Mar 2026)
 - REMOVED slices: `aiSettingsSlice` and `writingItemsSlice` — both deleted entirely (Mar 2026)
-- REMOVED hooks: `useAISettings`, `useCreateWriting`, `useWritingItems`, `useContentEditor`, `useWritingContextMenu` — all deleted (Mar 2026)
+- REMOVED hooks: `useAISettings`, `useWritingItems`, `useContentEditor`, `useWritingContextMenu` — all deleted (Mar 2026)
+- RECREATED hook: `useCreateWriting` at `src/renderer/src/hooks/useCreateWriting.ts` — calls `window.workspace.saveOutput`, navigates to `/content/:id`, uses `crypto.randomUUID()` for block names, ref-based in-flight guard, exposes `{ createWriting, isCreating, error, clearError }`
 - Remaining reducers: `workspace` and `tasks` only. Store at `src/renderer/src/store/index.ts`.
 - Slices are now SPLIT into separate files. Structure per feature folder:
   - `state.ts` — state interface + initialState
