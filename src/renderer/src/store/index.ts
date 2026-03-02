@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
 import workspaceReducer from './workspace/reducer'
 import tasksReducer from './tasks/reducer'
+import writingsReducer from './writings/reducer'
 import { listenerMiddleware } from './listenerMiddleware'
 
 export const store = configureStore({
   reducer: {
     workspace: workspaceReducer,
     tasks: tasksReducer,
+    writings: writingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware)
