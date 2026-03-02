@@ -1,5 +1,5 @@
 /**
- * AIAgentsDefinition — describes a named, pre-configured agent.
+ * AgentDefinition — describes a named, pre-configured agent.
  *
  * This module is intentionally self-contained: agent definitions are generic
  * components with no dependency on AIAgentsManager or any other subsystem.
@@ -28,7 +28,7 @@ export interface AgentDefaultConfig {
 // Core definition
 // ---------------------------------------------------------------------------
 
-export interface AIAgentsDefinition {
+export interface AgentDefinition {
   /** Unique machine-readable identifier, e.g. 'story-writer' */
   id: string
   /** Human-readable display name shown in the UI */
@@ -69,12 +69,12 @@ export interface AIAgentsDefinition {
 // Serializable snapshot — safe to transmit over Electron IPC
 // ---------------------------------------------------------------------------
 
-export interface AIAgentsDefinitionInfo {
+export interface AgentDefinitionInfo {
   id: string
   name: string
   description: string
-  category: AIAgentsDefinition['category']
-  inputHints?: AIAgentsDefinition['inputHints']
+  category: AgentDefinition['category']
+  inputHints?: AgentDefinition['inputHints']
 }
 
 // ---------------------------------------------------------------------------
@@ -85,7 +85,7 @@ export interface AIAgentsDefinitionInfo {
  * Strip non-serializable / internal fields and return a plain object that is
  * safe to send from the main process to a renderer window via IPC.
  */
-export function toAIAgentsDefinitionInfo(def: AIAgentsDefinition): AIAgentsDefinitionInfo {
+export function toAgentDefinitionInfo(def: AgentDefinition): AgentDefinitionInfo {
   return {
     id: def.id,
     name: def.name,
