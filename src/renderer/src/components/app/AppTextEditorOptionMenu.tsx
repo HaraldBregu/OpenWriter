@@ -132,18 +132,57 @@ export function AppTextEditorOptionMenu({
     }
   }, [editor])
 
-  if (!menu || menu.items.length === 0) return null
+  // Computed position — null until measured via useLayoutEffect.
+  const menuElRef = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
 
-  // Position the menu below the "/" trigger character.
-  const rect = menu.clientRect?.()
-  if (!rect) return null
+  // Measure the rendered menu and flip above/below + clamp horizontally.
+  useLayoutEffect(() => {
+    if (!menu || !menuElRef.current) {
+      setPos(null)
+      return
+    }
+    const trigger = menu.clientRect?.()
+    if (!trigger) return
+
+    const { offsetHeight: h, offsetWidth: w } = menuElRef.current
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const GAP = 6
+
+    const spaceBelow = vh - trigger.bottom - GAP
+    const top =
+      spaceBelow >= h
+        ? trigger.bottom + GAP           // enough room below → open downward
+        : trigger.top - h - GAP          // not enough → open upward
+
+    // Clamp so the menu never overflows the viewport horizontally.
+    const left = Math.max(8, Math.min(trigger.left, vw - w - 8))
+
+    setPos({ top, left })
+  }, [menu])
+
+  // Prevent page scroll while the command palette is open.
+  useEffect(() => {
+    if (!menu) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [menu])
+
+  if (!menu || menu.items.length === 0) return null
 
   return createPortal(
     <div
+      ref={menuElRef}
       style={{
         position: 'fixed',
-        top: rect.bottom + 6,
-        left: rect.left,
+        // Hidden until useLayoutEffect calculates the final position.
+        visibility: pos ? 'visible' : 'hidden',
+        top: pos?.top ?? -9999,
+        left: pos?.left ?? -9999,
         zIndex: 9999,
       }}
       className="w-56 rounded-lg border border-border bg-popover shadow-lg overflow-hidden py-1"
