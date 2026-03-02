@@ -274,6 +274,9 @@ const workspace: WorkspaceApi = {
     deleteOutput: (params: { type: string; id: string }): Promise<void> => {
         return typedInvokeUnwrap(WorkspaceChannels.outputDelete, params)
     },
+    trashOutput: (params: { type: string; id: string }): Promise<void> => {
+        return typedInvokeUnwrap(WorkspaceChannels.outputTrash, params)
+    },
     onOutputFileChange: (callback: (event: {
         type: 'added' | 'changed' | 'removed'
         outputType: string
