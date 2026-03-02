@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TabGhostText } from './extensions/TabGhostText'
+import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 
 // ---------------------------------------------------------------------------
 // Constants
