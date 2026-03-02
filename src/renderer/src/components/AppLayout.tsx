@@ -187,23 +187,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   // -------------------------------------------------------------------------
   // New writing handler
   // -------------------------------------------------------------------------
-  const [creatingWriting, setCreatingWriting] = useState(false);
-
-  const handleNewWriting = useCallback(async () => {
-    if (creatingWriting) return;
-    setCreatingWriting(true);
-    try {
-      const now = new Date().toISOString();
-      const result = await window.workspace.saveOutput({
-        type: "writings",
-        blocks: [{ name: "block-1", content: "", createdAt: now, updatedAt: now }],
-        metadata: { title: "" },
-      });
-      navigate(`/content/${result.id}`);
-    } finally {
-      setCreatingWriting(false);
-    }
-  }, [creatingWriting, navigate]);
+  const { createWriting, isCreating: creatingWriting } = useCreateWriting();
 
   const displayWorkspaceName = workspaceNameFromPath
     ? `${workspaceNameFromPath} (workspace)`
