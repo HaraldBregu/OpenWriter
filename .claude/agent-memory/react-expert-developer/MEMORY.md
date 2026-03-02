@@ -175,9 +175,10 @@
   - Selectors: `selectWritingEntries`, `selectWritingEntryById(id)`, `selectWritingItemsStatus`
 - Hook: `src/renderer/src/hooks/useCreateWriting.ts`
   - Calls `window.workspace.saveOutput({ type: 'writings', blocks, metadata })` — NO Redux thunks
-  - Dispatches `addEntry` only after disk write succeeds (conservative, non-optimistic)
+  - Block name is `crypto.randomUUID()` — must be UUID not a fixed string ('block-1')
   - In-flight guard via `useRef(false)` prevents double-creation from rapid clicks
-  - Returns `{ createWriting, isLoading, error, reset }`
+  - Returns `{ createWriting, isCreating, error, clearError }`
+  - Used by both AppLayout sidebar and HomePage cards
 - Hook: `src/renderer/src/hooks/useWritingItems.ts`
   - Subscribes to `window.workspace.onChange` AND `window.workspace.onOutputFileChange` (filtered to `outputType === 'writings'`)
   - Dispatches `loadWritingItems` thunk on mount + debounced reloads (500ms)
