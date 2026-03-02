@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "@/store";
-import { updateBlockContent } from "@/store/writingItemsSlice";
+import { updateBlockContent } from "@/store/writingItems/writingItemsSlice";
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
 import { AppButton } from "@/components/app";
