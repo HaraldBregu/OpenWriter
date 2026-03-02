@@ -32,7 +32,7 @@ export const SLASH_PLUGIN_KEY = new PluginKey<SlashMenuState>('slashCommand')
 // Built-in commands
 // ---------------------------------------------------------------------------
 
-export const \: SlashCommandItem[] = [
+export const SLASH_COMMANDS: SlashCommandItem[] = [
   {
     title: 'Text',
     description: 'Plain paragraph',
