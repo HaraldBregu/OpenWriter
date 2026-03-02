@@ -150,18 +150,12 @@ const HeadingRenderer = React.memo(function HeadingRenderer({
 HeadingRenderer.displayName = 'HeadingRenderer'
 
 // ---------------------------------------------------------------------------
-// Internal: BubbleMenuToolbar
+// Internal: BubbleMenuContent  (rendered into the element owned by BubbleMenuPlugin)
 // ---------------------------------------------------------------------------
 
-interface BubbleMenuToolbarProps {
-  editor: Editor
-}
-
-function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Element | null {
-  // Position is tracked as state so it updates on every selection change.
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
-
-  // Subscribe to format active states independently of position.
+// Positioning and show/hide are fully delegated to TipTap's BubbleMenuPlugin
+// (backed by FloatingUI). This component only renders the toolbar buttons.
+function BubbleMenuContent({ editor }: { editor: Editor }): React.JSX.Element {
   const { isBold, isItalic, isStrike, isCode } = useEditorState({
     editor,
     selector: (ctx) => ({
@@ -172,44 +166,6 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
     }),
   })
 
-  // Recompute position on every selectionUpdate and scroll so the toolbar
-  // tracks the selection as it grows, shrinks, moves, or scrolls out of view.
-  useEffect(() => {
-    const computePos = () => {
-      const { selection } = editor.state
-      if (selection.empty || !editor.isEditable) {
-        setPos(null)
-        return
-      }
-      // coordsAtPos returns live viewport-relative coordinates, so it stays
-      // correct after a scroll without needing any scroll offset arithmetic.
-      const { from, to } = selection
-      const startCoords = editor.view.coordsAtPos(from)
-      const endCoords = editor.view.coordsAtPos(to)
-      setPos({
-        x: (startCoords.left + endCoords.left) / 2,
-        y: Math.min(startCoords.top, endCoords.top),
-      })
-    }
-
-    const clearPos = () => setPos(null)
-
-    editor.on('selectionUpdate', computePos)
-    editor.on('blur', clearPos)
-    // Capture phase catches scroll on any ancestor (the editor wrapper, a
-    // panel, or the window itself) without needing to locate the exact
-    // scrollable container.
-    window.addEventListener('scroll', computePos, { capture: true, passive: true })
-
-    return () => {
-      editor.off('selectionUpdate', computePos)
-      editor.off('blur', clearPos)
-      window.removeEventListener('scroll', computePos, { capture: true })
-    }
-  }, [editor])
-
-  if (!pos) return null
-
   const activeHeadingLevel = ([1, 2, 3] as HeadingLevel[]).find((l) =>
     editor.isActive('heading', { level: l }),
   )
@@ -219,18 +175,11 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
   const btnActive = 'bg-foreground text-background'
   const btnIdle = 'text-foreground hover:bg-muted'
 
-  return createPortal(
+  return (
     <div
-      style={{
-        position: 'fixed',
-        left: pos.x,
-        top: pos.y,
-        transform: 'translateX(-50%) translateY(calc(-100% - 8px))',
-        zIndex: 9999,
-      }}
       // Prevent mousedown from stealing focus away from the editor.
       onMouseDown={(e) => e.preventDefault()}
-      className="flex items-center gap-0.5 rounded-lg border border-border bg-popover shadow-lg p-1 pointer-events-auto"
+      className="flex items-center gap-0.5 rounded-lg border border-border bg-popover shadow-lg p-1"
     >
       {/* Heading toggles: H1 H2 H3 */}
       {([1, 2, 3] as HeadingLevel[]).map((level) => (
@@ -270,8 +219,7 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
       >
         {'</>'}
       </button>
-    </div>,
-    document.body,
+    </div>
   )
 }
 
