@@ -26,6 +26,7 @@ import { TaskExecutor } from './taskManager/TaskExecutor'
 import { TaskReactionRegistry } from './taskManager/TaskReactionRegistry'
 import { TaskReactionBus } from './taskManager/TaskReactionBus'
 import { DemoTaskHandler } from './taskManager/handlers/DemoTaskHandler'
+import { AgentTaskHandler } from './taskManager/handlers/AgentTaskHandler'
 import { DemoTaskReaction } from './taskManager/reactions'
 
 // IPC modules
