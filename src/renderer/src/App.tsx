@@ -28,7 +28,12 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === "fun
   writingsInitialized = true;
   store.dispatch(loadWritings());
   window.workspace.onOutputFileChange((event) => {
-    if (event.outputType === "writings") {
+    if (event.outputType !== "writings") return;
+    if (event.type === "changed") {
+      store.dispatch(refreshWriting(event.fileId));
+    } else if (event.type === "removed") {
+      store.dispatch(writingRemoved(event.fileId));
+    } else {
       store.dispatch(loadWritings());
     }
   });
