@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useEditor, EditorContent, useEditorState, type UseEditorOptions } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
-import DragHandle from '@tiptap/extension-drag-handle-react'
 import { type Editor, type AnyExtension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Heading from '@tiptap/extension-heading'
