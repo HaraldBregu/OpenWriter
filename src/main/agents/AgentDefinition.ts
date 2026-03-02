@@ -2,7 +2,7 @@
  * AgentDefinition — describes a named, pre-configured agent.
  *
  * This module is intentionally self-contained: agent definitions are generic
- * components with no dependency on AIAgentsManager or any other subsystem.
+ * components with no dependency on any other subsystem.
  */
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
