@@ -221,6 +221,22 @@ function BubbleMenuContent({ editor }: { editor: Editor }): React.JSX.Element {
       >
         {'</>'}
       </button>
+
+      <div className="w-px h-4 bg-border mx-0.5" />
+
+      {/* List buttons */}
+      <button
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        className={cn(btnBase, isBulletList ? btnActive : btnIdle)}
+      >
+        UL
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        className={cn(btnBase, isOrderedList ? btnActive : btnIdle)}
+      >
+        OL
+      </button>
     </div>
   )
 }
