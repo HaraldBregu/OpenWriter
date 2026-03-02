@@ -78,7 +78,7 @@ export interface OutputFileMetadata {
  * Complete output file structure returned to the renderer.
  */
 export interface OutputFile {
-  /** Folder name (date string: YYYY-MM-DD_HHmmss) */
+  /** Folder name (UUID v4) */
   id: string
   /** The output type (posts, writings) */
   type: OutputType
