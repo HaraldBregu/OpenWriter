@@ -1,3 +1,4 @@
+/** Workspace async thunks — IPC calls for loading, selecting, and clearing workspaces. */
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { WorkspaceInfo } from '../../../../shared/types'
 
