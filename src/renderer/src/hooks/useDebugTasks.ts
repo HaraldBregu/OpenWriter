@@ -54,8 +54,8 @@ export function useDebugTasks(): UseDebugTasksReturn {
   )
 
   const cancel = useCallback(async (taskId: string): Promise<void> => {
-    if (typeof window.tasksManager?.cancel !== 'function') return
-    await window.tasksManager.cancel(taskId)
+    if (typeof window.task?.cancel !== 'function') return
+    await window.task.cancel(taskId)
   }, [])
 
   return { tasks, queueStats, hide, cancel }
