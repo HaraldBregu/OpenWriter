@@ -67,7 +67,7 @@ const ContentPage: React.FC = () => {
           return
         }
         const loadedBlocks = output.blocks.map(toBlock)
-        setTitle(((output.metadata as Record<string, unknown>)?.title as string) || '')
+        setTitle(output.metadata.title || '')
         setBlocks(loadedBlocks.length > 0 ? loadedBlocks : [createBlock()])
         setLoaded(true)
       } catch {
