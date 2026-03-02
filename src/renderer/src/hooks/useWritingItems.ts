@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useAppDispatch } from '@/store'
-import { loadWritingItems } from '@/store/writingItemsSlice'
+import { loadWritingItems } from '@/store/writingItems/writingItemsSlice'
 
 /**
  * Loads writing items from the workspace and keeps them in sync.
