@@ -159,6 +159,7 @@ export interface WorkspaceApi {
   loadOutput: (params: { type: string; id: string }) => Promise<OutputFile | null>
   updateOutput: (params: OutputUpdateParams) => Promise<void>
   deleteOutput: (params: { type: string; id: string }) => Promise<void>
+  trashOutput: (params: { type: string; id: string }) => Promise<void>
   onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void
   onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void
 }
