@@ -231,10 +231,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
           {/* Nav */}
           <AppSidebarContent className="gap-0 py-2">
+
+            {/* New Writing */}
             <AppSidebarGroup className="py-0">
               <AppSidebarGroupContent>
                 <AppSidebarMenu>
-                  {/* New Writing */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       className="h-9 px-3"
@@ -245,42 +246,51 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       <span className="flex-1 truncate">{t("sidebar.newWriting") || "New Writing"}</span>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
+                </AppSidebarMenu>
+              </AppSidebarGroupContent>
+            </AppSidebarGroup>
 
-                  {/* Writings section header */}
-                  <li className="flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => setWritingsOpen((prev) => !prev)}
-                      className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground/60 hover:text-muted-foreground transition-colors select-none"
-                    >
-                      <ChevronRight
-                        className={`h-3 w-3 shrink-0 transition-transform duration-200 ${writingsOpen ? "rotate-90" : ""}`}
-                      />
-                      {t("sidebar.writings") || "Writings"}
-                    </button>
-                  </li>
+            {/* Writings collapsible group */}
+            <AppSidebarGroup className="py-0">
+              <AppSidebarGroupLabel
+                className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors"
+                onClick={() => setWritingsOpen((prev) => !prev)}
+              >
+                <ChevronRight
+                  className={`h-3 w-3 shrink-0 transition-transform duration-200 mr-1 ${writingsOpen ? "rotate-90" : ""}`}
+                />
+                {t("sidebar.writings") || "Writings"}
+              </AppSidebarGroupLabel>
+              {writingsOpen && (
+                <AppSidebarGroupContent>
+                  <AppSidebarMenu>
+                    {writings.map((w) => (
+                      <AppSidebarMenuItem key={w.id}>
+                        <AppSidebarMenuButton
+                          asChild
+                          className="h-9 px-3"
+                          isActive={location.pathname === `/content/${w.id}`}
+                        >
+                          <Link to={`/content/${w.id}`}>
+                            <PenLine className="h-3.5 w-3.5 shrink-0" />
+                            <span className="flex-1 truncate">
+                              {w.title || t("sidebar.untitledWriting") || "Untitled"}
+                            </span>
+                          </Link>
+                        </AppSidebarMenuButton>
+                      </AppSidebarMenuItem>
+                    ))}
+                  </AppSidebarMenu>
+                </AppSidebarGroupContent>
+              )}
+            </AppSidebarGroup>
 
-                  {/* Existing writings */}
-                  {writingsOpen && writings.map((w) => (
-                    <AppSidebarMenuItem key={w.id}>
-                      <AppSidebarMenuButton
-                        asChild
-                        className="h-9 px-3"
-                        isActive={location.pathname === `/content/${w.id}`}
-                      >
-                        <Link to={`/content/${w.id}`}>
-                          <PenLine className="h-3.5 w-3.5 shrink-0" />
-                          <span className="flex-1 truncate">
-                            {w.title || t("sidebar.untitledWriting") || "Untitled"}
-                          </span>
-                        </Link>
-                      </AppSidebarMenuButton>
-                    </AppSidebarMenuItem>
-                  ))}
+            <AppSidebarSeparator className="my-1" />
 
-                  {writings.length > 0 && <AppSidebarSeparator className="my-1" />}
-
-                  {/* Debug */}
+            {/* Debug + Agents */}
+            <AppSidebarGroup className="py-0">
+              <AppSidebarGroupContent>
+                <AppSidebarMenu>
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
@@ -294,7 +304,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  {/* Agents */}
                   <AppSidebarMenuItem>
                     <AppSidebarMenuButton
                       asChild
@@ -307,10 +316,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
-
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
+
           </AppSidebarContent>
 
           {/* Footer — Settings popover */}
