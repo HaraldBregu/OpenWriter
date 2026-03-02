@@ -171,6 +171,7 @@
     "models": {
       "title": "Modelli",
       "description": "Seleziona il modello attivo per ogni provider AI.",
+      "comingSoon": "Configurazione modelli in arrivo.",
       "apiKey": "Chiave API",
       "enterApiKey": "Inserisci la chiave API di {{provider}}…",
       "show": "Mostra",
