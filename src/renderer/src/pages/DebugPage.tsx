@@ -314,6 +314,7 @@ function ReduxStateTab() {
   // which is intentional so we always get the latest snapshot.
   const workspace = useAppSelector((s: RootState) => s.workspace)
   const tasks = useAppSelector((s: RootState) => s.tasks)
+  const writings = useAppSelector((s: RootState) => s.writings)
 
   // Suppress unused-var warning — tick is used to trigger re-renders
   void tick
@@ -321,6 +322,7 @@ function ReduxStateTab() {
   const slices: { name: SliceName; data: unknown }[] = [
     { name: 'workspace', data: workspace },
     { name: 'tasks', data: tasks },
+    { name: 'writings', data: writings },
   ]
 
   return (
