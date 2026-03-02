@@ -7,7 +7,7 @@
  * created (in store/index.ts), to replace the former ensureTaskStoreListening()
  * call from the taskStore.ts singleton.
  *
- * The subscription is lazy-guarded: if window.tasksManager.onEvent is not yet
+ * The subscription is lazy-guarded: if window.task.onEvent is not yet
  * available (e.g. preload has not run) the setup call returns without
  * registering anything — the store's initial empty state will remain until
  * the listener is wired.
@@ -20,18 +20,18 @@ import { taskEventReceived } from './tasksSlice'
 let initialized = false
 
 /**
- * Subscribe to window.tasksManager.onEvent and forward every incoming IPC
+ * Subscribe to window.task.onEvent and forward every incoming IPC
  * task event to the Redux store via taskEventReceived.
  *
  * Safe to call multiple times — only the first call registers the listener.
  */
 export function setupTaskIpcListener(store: EnhancedStore): void {
   if (initialized) return
-  if (typeof window.tasksManager?.onEvent !== 'function') return
+  if (typeof window.task?.onEvent !== 'function') return
 
   initialized = true
 
-  window.tasksManager.onEvent((event: TaskEvent) => {
+  window.task.onEvent((event: TaskEvent) => {
     store.dispatch(taskEventReceived(event))
   })
 }
