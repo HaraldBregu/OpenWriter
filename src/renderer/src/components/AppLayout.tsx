@@ -156,48 +156,28 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   }, [dispatch]);
 
   // -------------------------------------------------------------------------
-  // Writings list
+  // Writings list — sourced from Redux (loaded/watched at app startup)
   // -------------------------------------------------------------------------
-  const [writings, setWritings] = useState<
-    Array<{ id: string; title: string }>
-  >([]);
+  const writings = useAppSelector(selectAllWritings);
   const [writingsOpen, setWritingsOpen] = useState(true);
 
-  const refreshWritings = useCallback(async () => {
-    try {
-      const items = await window.workspace.loadOutputsByType("writings");
-      setWritings(
-        items.map((f) => ({
-          id: f.id,
-          title: f.metadata.title || "",
-        })),
+  // -------------------------------------------------------------------------
+  // New writing handler — optimistic Redux update
+  // -------------------------------------------------------------------------
+  const handleWritingCreated = useCallback(
+    (result: { id: string }) => {
+      dispatch(
+        writingAdded({
+          id: result.id,
+          title: "",
+          path: "",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        }),
       );
-    } catch {
-      // workspace may not be ready yet
-    }
-  }, []);
-
-  useEffect(() => {
-    refreshWritings();
-  }, [refreshWritings]);
-
-  useEffect(() => {
-    const unsubscribe = window.workspace.onOutputFileChange((event) => {
-      if (event.outputType === "writings") {
-        refreshWritings();
-      }
-    });
-    return unsubscribe;
-  }, [refreshWritings]);
-
-  // -------------------------------------------------------------------------
-  // New writing handler — optimistic sidebar update
-  // -------------------------------------------------------------------------
-  // When saveOutput resolves we immediately prepend the new entry to local
-  // state so the sidebar reflects it before the file-watcher event fires.
-  const handleWritingCreated = useCallback((result: { id: string }) => {
-    setWritings((prev) => [{ id: result.id, title: "" }, ...prev]);
-  }, []);
+    },
+    [dispatch],
+  );
 
   const { createWriting, isCreating: creatingWriting } = useCreateWriting({
     onCreated: handleWritingCreated,
