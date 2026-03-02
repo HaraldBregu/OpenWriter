@@ -24,7 +24,7 @@ const DEMO_VARIANTS: {
 ]
 
 async function submitDemoTask(variant: DemoVariant): Promise<void> {
-  const result = await window.tasksManager.submit('demo', { variant }, { priority: 'normal' })
+  const result = await window.task.submit('demo', { variant }, { priority: 'normal' })
   if (result.success && result.data?.taskId) {
     // Pre-seed the Redux store so the row appears immediately; the IPC 'queued'
     // event will arrive shortly and fill in progress / status updates.
