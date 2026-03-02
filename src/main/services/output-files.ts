@@ -907,12 +907,15 @@ export class OutputFilesService implements Disposable {
    * Extract output type and file ID from a file path.
    *
    * Handles both depth-3 paths (config.json / DATA.md / <block>.md) and
-   * depth-2 paths (the date folder itself, e.g. on unlinkDir).
+   * depth-2 paths (the entry folder itself, e.g. on unlinkDir).
    *
-   * Expected formats:
+   * Expected formats (UUID variant — new):
+   *   output/<type>/<uuid>              -> { outputType, fileId: uuid }
+   *   output/<type>/<uuid>/config.json  -> { outputType, fileId: uuid }
+   *   output/<type>/<uuid>/<uuid>.md    -> { outputType, fileId: uuid }
+   *
+   * Legacy date-folder variant is also accepted (backward compat):
    *   output/<type>/<YYYY-MM-DD_HHmmss>              -> { outputType, fileId: date-folder }
-   *   output/<type>/<YYYY-MM-DD_HHmmss>/config.json  -> { outputType, fileId: date-folder }
-   *   output/<type>/<YYYY-MM-DD_HHmmss>/<uuid>.md    -> { outputType, fileId: date-folder }
    */
   private extractIdsFromPath(filePath: string): { outputType: OutputType | null; fileId: string | null } {
     const normalized = path.normalize(filePath)
