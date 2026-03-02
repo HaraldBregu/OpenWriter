@@ -220,10 +220,11 @@ export interface WatcherError {
 
 // ---- AI Agents ------------------------------------------------------------
 
-export interface AgentStreamEvent {
-  type: 'token' | 'thinking' | 'done' | 'error'
-  [key: string]: unknown
-}
+export type AgentStreamEvent =
+  | { type: 'token'; token: string; runId: string }
+  | { type: 'thinking'; content: string; runId: string }
+  | { type: 'done'; content: string; tokenCount: number; runId: string }
+  | { type: 'error'; error: string; code: string; runId: string }
 
 export interface AgentDefinitionInfo {
   id: string
