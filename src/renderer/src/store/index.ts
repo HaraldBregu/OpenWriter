@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
-import workspaceReducer from './workspaceSlice'
-import aiSettingsReducer from './aiSettingsSlice'
-import writingItemsReducer from './writingItemsSlice'
-import tasksReducer from './tasksSlice'
+import workspaceReducer from './workspace/workspaceSlice'
+import aiSettingsReducer from './aiSettings/aiSettingsSlice'
+import writingItemsReducer from './writingItems/writingItemsSlice'
+import tasksReducer from './tasks/tasksSlice'
 import { listenerMiddleware } from './listenerMiddleware'
 
 export const store = configureStore({
