@@ -28,7 +28,7 @@ const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
 
 const DEFAULT_EXTENSIONS: AnyExtension[] = [
   StarterKit.configure({ bulletList: false, orderedList: false, listItem: false, heading: false }),
-  Heading.configure({ levels: HEADING_LEVELS }),
+  Heading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
   Markdown,
   BulletList,
   OrderedList,
