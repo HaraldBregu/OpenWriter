@@ -18,6 +18,7 @@ import {
   AppSidebarContent,
   AppSidebarGroup,
   AppSidebarGroupContent,
+  AppSidebarGroupLabel,
   AppSidebarMenu,
   AppSidebarMenuButton,
   AppSidebarMenuItem,
