@@ -340,5 +340,5 @@ if (process.contextIsolated) {
     // @ts-ignore (define in dts)
     globalThis.workspace = workspace
     // @ts-ignore (define in dts)
-    globalThis.tasksManager = tasksManager
+    globalThis.task = task
 }
