@@ -550,6 +550,7 @@ export class OutputFilesService implements Disposable {
     await fs.writeFile(configPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8')
 
     console.log(`[OutputFilesService] Updated output folder: ${folderPath} (${descriptors.length} blocks, ${removedNames.length} removed)`)
+    this.emitChangeEvent(folderPath, 'changed')
   }
 
   /**
