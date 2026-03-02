@@ -1,0 +1,25 @@
+export {
+  default,
+  workspaceSlice,
+  loadCurrentWorkspace,
+  loadRecentWorkspaces,
+  selectWorkspace,
+  openWorkspacePicker,
+  removeRecentWorkspace,
+  clearWorkspace,
+  handleWorkspaceChanged,
+  handleRecentRemoved,
+  handleWorkspaceDeleted,
+  clearDeletionReason,
+  selectWorkspaceState,
+  selectCurrentWorkspacePath,
+  selectHasWorkspace,
+  selectWorkspaceName,
+  selectRecentWorkspaces,
+  selectWorkspaceStatus,
+  selectWorkspaceError,
+  selectWorkspaceIsLoading,
+  selectWorkspaceDeletionReason,
+} from './workspaceSlice'
+
+export type { WorkspaceState } from './workspaceSlice'
