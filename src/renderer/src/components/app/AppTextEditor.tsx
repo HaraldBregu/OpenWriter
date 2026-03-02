@@ -157,11 +157,13 @@ interface BubbleMenuToolbarProps {
 }
 
 function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Element | null {
-  // Subscribe to selection changes so we re-render when selection changes.
-  const { isSelectionEmpty, isBold, isItalic, isStrike, isCode } = useEditorState({
+  // Position is tracked as state so it updates on every selection change.
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
+
+  // Subscribe to format active states independently of position.
+  const { isBold, isItalic, isStrike, isCode } = useEditorState({
     editor,
     selector: (ctx) => ({
-      isSelectionEmpty: ctx.editor.state.selection.empty,
       isBold: ctx.editor.isActive('bold'),
       isItalic: ctx.editor.isActive('italic'),
       isStrike: ctx.editor.isActive('strike'),
@@ -169,18 +171,38 @@ function BubbleMenuToolbar({ editor }: BubbleMenuToolbarProps): React.JSX.Elemen
     }),
   })
 
-  // Derive position each render from the live DOM selection.
-  const pos = useMemo<{ x: number; y: number } | null>(() => {
-    if (isSelectionEmpty) return null
-    if (typeof window === 'undefined') return null
-    const domSel = window.getSelection()
-    if (!domSel || domSel.rangeCount === 0) return null
-    const rect = domSel.getRangeAt(0).getBoundingClientRect()
-    if (!rect.width && !rect.height) return null
-    return { x: rect.left + rect.width / 2, y: rect.top }
-  }, [isSelectionEmpty])
+  // Recompute position on every selectionUpdate so the toolbar tracks the
+  // selection as it grows, shrinks, or moves.
+  useEffect(() => {
+    const computePos = () => {
+      const { selection } = editor.state
+      if (selection.empty || !editor.isEditable) {
+        setPos(null)
+        return
+      }
+      // Use coordsAtPos for reliable viewport-relative coordinates that are
+      // always in sync with ProseMirror's internal state.
+      const { from, to } = selection
+      const startCoords = editor.view.coordsAtPos(from)
+      const endCoords = editor.view.coordsAtPos(to)
+      // Horizontal: midpoint between start and end of selection.
+      // Vertical: top of the topmost line (handles multi-line selections).
+      setPos({
+        x: (startCoords.left + endCoords.left) / 2,
+        y: Math.min(startCoords.top, endCoords.top),
+      })
+    }
 
-  if (!pos || !editor.isEditable) return null
+    editor.on('selectionUpdate', computePos)
+    editor.on('blur', () => setPos(null))
+
+    return () => {
+      editor.off('selectionUpdate', computePos)
+      editor.off('blur', () => setPos(null))
+    }
+  }, [editor])
+
+  if (!pos) return null
 
   const activeHeadingLevel = ([1, 2, 3] as HeadingLevel[]).find((l) =>
     editor.isActive('heading', { level: l }),
