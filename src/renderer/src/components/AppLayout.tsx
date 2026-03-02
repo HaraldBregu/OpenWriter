@@ -8,6 +8,8 @@ import { useCreateWriting } from "../hooks/useCreateWriting";
 import { useAppDispatch, useAppSelector } from "../store";
 import { selectWorkspaceName } from "../store/workspace/selectors";
 import { loadCurrentWorkspace } from "../store/workspace/actions";
+import { selectAllWritings } from "../store/writings/selectors";
+import { writingAdded } from "../store/writings/actions";
 import { TitleBar } from "./TitleBar";
 import {
   AppPopover,
