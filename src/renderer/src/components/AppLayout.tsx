@@ -185,9 +185,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   }, [refreshWritings]);
 
   // -------------------------------------------------------------------------
-  // New writing handler
+  // New writing handler — optimistic sidebar update
   // -------------------------------------------------------------------------
-  const { createWriting, isCreating: creatingWriting } = useCreateWriting();
+  // When saveOutput resolves we immediately prepend the new entry to local
+  // state so the sidebar reflects it before the file-watcher event fires.
+  const handleWritingCreated = useCallback(
+    (result: { id: string }) => {
+      setWritings((prev) => [{ id: result.id, title: '' }, ...prev]);
+    },
+    []
+  );
+
+  const { createWriting, isCreating: creatingWriting } = useCreateWriting({
+    onCreated: handleWritingCreated,
+  });
 
   const displayWorkspaceName = workspaceNameFromPath
     ? `${workspaceNameFromPath} (workspace)`
