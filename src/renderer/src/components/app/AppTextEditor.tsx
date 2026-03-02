@@ -49,6 +49,15 @@ const DEFAULT_EXTENSIONS: AnyExtension[] = [
   ListItem,
   ListKeymap,
   TabGhostText,
+  Placeholder.configure({
+    placeholder: ({ node }) => {
+      if (node.type.name === 'heading') {
+        const level = node.attrs.level as HeadingLevel
+        return `Heading ${level}`
+      }
+      return 'Write something, or type "/" for commands…'
+    },
+  }),
 ]
 
 // ---------------------------------------------------------------------------
