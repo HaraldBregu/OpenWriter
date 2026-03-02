@@ -318,7 +318,7 @@ const task: TaskApi = {
     queueStatus: () => {
         return typedInvokeRaw(TaskChannels.queueStatus)
     }
-} satisfies TasksManagerApi;
+} satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
