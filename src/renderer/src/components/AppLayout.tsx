@@ -245,10 +245,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  <AppSidebarSeparator className="my-1" />
+                  {/* Writings section header */}
+                  <li className="flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => setWritingsOpen((prev) => !prev)}
+                      className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground/60 hover:text-muted-foreground transition-colors select-none"
+                    >
+                      <ChevronRight
+                        className={`h-3 w-3 shrink-0 transition-transform duration-200 ${writingsOpen ? "rotate-90" : ""}`}
+                      />
+                      {t("sidebar.writings") || "Writings"}
+                    </button>
+                  </li>
 
                   {/* Existing writings */}
-                  {writings.map((w) => (
+                  {writingsOpen && writings.map((w) => (
                     <AppSidebarMenuItem key={w.id}>
                       <AppSidebarMenuButton
                         asChild
