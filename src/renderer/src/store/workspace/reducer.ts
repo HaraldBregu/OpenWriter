@@ -1,3 +1,4 @@
+/** Workspace slice reducer — handles sync actions and async thunk lifecycle cases. */
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { initialState } from './state'
