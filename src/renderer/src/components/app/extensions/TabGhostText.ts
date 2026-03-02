@@ -61,7 +61,7 @@ export const TabGhostText = Extension.create<TabGhostTextOptions>({
         const { $from } = this.editor.state.selection
         const nodeFrom = $from.before($from.depth)
         const nodeTo = $from.after($from.depth)
-
+console.log("click on tab")
         this.editor.view.dispatch(
           this.editor.state.tr.setMeta(TAB_GHOST_KEY, { active: true, nodeFrom, nodeTo }),
         )
