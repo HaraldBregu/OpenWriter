@@ -21,6 +21,7 @@ import {
   Heading3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TabGhostText } from './extensions/TabGhostText'
 
 // ---------------------------------------------------------------------------
 // Constants
