@@ -159,6 +159,34 @@ const ContentPage: React.FC = () => {
     setFocusBlockId(newBlock.id)
   }, [])
 
+  // ---------------------------------------------------------------------------
+  // Move to Trash
+  // ---------------------------------------------------------------------------
+
+  const handleMoveToTrash = useCallback(async () => {
+    if (!id || isTrashing) return
+
+    setIsTrashing(true)
+
+    // Cancel any pending debounced save before navigating away.
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current)
+      saveTimerRef.current = null
+    }
+
+    try {
+      await window.workspace.trashOutput({ type: 'writings', id })
+      // Navigate to home after a successful trash.
+      // The AppLayout's onOutputFileChange listener will pick up the 'removed'
+      // event emitted by OutputFilesService and refresh the sidebar list.
+      navigate('/')
+    } catch (err) {
+      console.error('[ContentPage] Failed to trash writing:', err)
+      // Re-enable the button so the user can retry.
+      setIsTrashing(false)
+    }
+  }, [id, isTrashing, navigate])
+
   return (
     <div className="h-full flex flex-col">
 
