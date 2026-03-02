@@ -202,8 +202,13 @@ export class OutputFilesService implements Disposable {
   private readonly CLEANUP_INTERVAL_MS = 10000
   private readonly DEBOUNCE_MS = 300
 
-  /** Regex matching the date-folder naming convention: YYYY-MM-DD_HHmmss */
-  private readonly DATE_FOLDER_RE = /^\d{4}-\d{2}-\d{2}_\d{6}$/
+  /**
+   * Regex matching valid output folder names.
+   * Accepts both the current UUID v4 format and the legacy YYYY-MM-DD_HHmmss
+   * date format so that existing folders on disk continue to load correctly.
+   */
+  private readonly DATE_FOLDER_RE =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$|^\d{4}-\d{2}-\d{2}_\d{6}$/i
   /** Regex matching block filenames: <uuid>.md where uuid contains only hex/hyphens */
   private readonly BLOCK_FILE_RE = /^[0-9a-f-]+\.md$/i
 
