@@ -73,9 +73,23 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const handleNewWriting = useCallback(() => {
-    navigate('/content')
-  }, [navigate])
+  const [creatingWriting, setCreatingWriting] = useState(false)
+
+  const handleNewWriting = useCallback(async () => {
+    if (creatingWriting) return
+    setCreatingWriting(true)
+    try {
+      const now = new Date().toISOString()
+      const result = await window.workspace.saveOutput({
+        type: 'writings',
+        blocks: [{ name: 'block-1', content: '', createdAt: now, updatedAt: now }],
+        metadata: { title: '' },
+      })
+      navigate(`/content/${result.id}`)
+    } finally {
+      setCreatingWriting(false)
+    }
+  }, [creatingWriting, navigate])
 
   const hour = new Date().getHours()
   const greeting =
