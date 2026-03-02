@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAppDispatch } from "@/store";
-import { updateBlockContent } from "@/store/writingItems/writingItemsSlice";
 import { Sparkles, Trash2, Plus, Copy, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
 import { AppButton } from "@/components/app";
@@ -52,22 +50,18 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChange,
   onDelete,
   onAdd,
-  entryId,
   placeholder = "Type here...",
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
   const { t } = useTranslation();
   const dragControls = useDragControls();
-  const dispatch = useAppDispatch();
 
   // ---------------------------------------------------------------------------
   // Stable refs — updated every render so the permanent subscription closure
   // always reads the latest values without being listed as a dep.
   // ---------------------------------------------------------------------------
-  const dispatchRef = useRef(dispatch);
-  dispatchRef.current = dispatch;
-  const entryIdRef = useRef(entryId);
-  entryIdRef.current = entryId;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   // ---------------------------------------------------------------------------
   // AI Enhancement — local state per block instance.
@@ -78,7 +72,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   );
   const originalTextRef = useRef<string>("");
   const accumulatedAiContentRef = useRef<string>("");
-  // Holds the final content after completion until block.content catches up in Redux.
+  // Holds the final content after completion until block.content catches up.
   const pendingFinalContentRef = useRef<string | null>(null);
 
   // Once block.content matches the pending final content, safe to clear streamingContent.
@@ -94,8 +88,6 @@ export const ContentBlock = React.memo(function ContentBlock({
 
   // Single permanent subscription tied to block.id.
   // Receives all IPC task events and filters to those matching this block's taskId.
-  // dispatchRef / entryIdRef are read inside the closure so they never need to
-  // be deps — the ref values are always current at call time.
   useEffect(() => {
     if (typeof window.task?.onEvent !== "function") return;
 
@@ -119,17 +111,9 @@ export const ContentBlock = React.memo(function ContentBlock({
           const aiOutput =
             cd.result?.content ?? accumulatedAiContentRef.current;
           const finalContent = originalTextRef.current + aiOutput;
-          // Keep streamingContent = finalContent so TipTap doesn't revert to
-          // stale block.content before Redux propagates. pendingFinalContentRef
-          // tracks when to clear it once block.content has caught up.
+          // Propagate final content via the onChange callback so parent state is updated.
           pendingFinalContentRef.current = finalContent;
-          dispatchRef.current(
-            updateBlockContent({
-              entryId: entryIdRef.current,
-              blockId: block.id,
-              content: finalContent,
-            }),
-          );
+          onChangeRef.current(block.id, finalContent);
           accumulatedAiContentRef.current = "";
           setStreamingContent(finalContent);
           setIsEnhancing(false);
