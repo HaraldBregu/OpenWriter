@@ -223,3 +223,4 @@
 - `useDebugTasks`: `selectAllTasks` + `selectQueueStats`; `hide()` dispatches `taskRemoved`
 - TS4023 gotcha: `TasksState` must be exported from `tasksSlice.ts` or all other slice selectors break
 - `taskEventBus.ts` is for AI streaming — separate, do NOT touch
+- `TasksState.tasks` is a FLAT ARRAY `TrackedTaskState[]` (NOT a Record). Lookup = `.find(t => t.taskId === id)`, removal = `.filter(...)`, add = `.push(...)`. Changed Mar 2026.
