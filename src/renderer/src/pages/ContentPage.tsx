@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Download, Eye, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
 import { Reorder } from 'framer-motion'
