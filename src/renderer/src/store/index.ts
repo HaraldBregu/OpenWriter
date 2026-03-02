@@ -6,7 +6,6 @@ import aiSettingsReducer from './aiSettingsSlice'
 import writingItemsReducer from './writingItemsSlice'
 import tasksReducer from './tasksSlice'
 import { listenerMiddleware } from './listenerMiddleware'
-import { setupTaskIpcListener } from './taskListenerMiddleware'
 
 export const store = configureStore({
   reducer: {
