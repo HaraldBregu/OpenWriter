@@ -1,3 +1,4 @@
+/** Tasks slice type definitions — shared enums, progress state, and tracked task shape. */
 import type { TaskStatus, TaskPriority } from '../../../../shared/types'
 
 // Re-export shared types so consumers can import everything from this module.
