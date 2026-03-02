@@ -357,12 +357,14 @@ function TipTapAdapter({
           {placeholder}
         </span>
       )}
-      <DragHandle editor={editor}>
-        <GripVertical
-          size={16}
-          className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors"
-        />
-      </DragHandle>
+      {editor && (
+        <DragHandle editor={editor}>
+          <GripVertical
+            size={16}
+            className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors"
+          />
+        </DragHandle>
+      )}
       <BubbleMenu editor={editor}>
         {editor && <BubbleMenuContent editor={editor} />}
       </BubbleMenu>
