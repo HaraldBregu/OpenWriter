@@ -138,7 +138,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
   const { t } = useTranslation();
   const { toggleSidebar } = useSidebar();
   const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 
