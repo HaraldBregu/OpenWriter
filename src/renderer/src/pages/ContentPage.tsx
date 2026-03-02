@@ -234,10 +234,8 @@ const ContentPage: React.FC = () => {
               </AppDropdownMenuItem>
               <AppDropdownMenuItem
                 className="text-destructive focus:text-destructive"
-                onClick={() => {
-                  setTitle('')
-                  setBlocks([createBlock()])
-                }}
+                disabled={isTrashing}
+                onClick={handleMoveToTrash}
               >
                 <Trash2 className="h-4 w-4" />
                 {t('common.moveToTrash')}
