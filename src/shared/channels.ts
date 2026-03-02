@@ -98,22 +98,6 @@ export const TaskChannels = {
   queueStatus: 'task:queue-status',
 } as const
 
-export const AiAgentChannels = {
-  listAgents: 'aiAgent:listAgents',
-  getAgent: 'aiAgent:getAgent',
-  getStatus: 'aiAgent:getStatus',
-  listSessions: 'aiAgent:listSessions',
-  getSession: 'aiAgent:getSession',
-  listActiveRuns: 'aiAgent:listActiveRuns',
-  createSession: 'aiAgent:createSession',
-  destroySession: 'aiAgent:destroySession',
-  cancelRun: 'aiAgent:cancelRun',
-  cancelSession: 'aiAgent:cancelSession',
-  startStreaming: 'aiAgent:startStreaming',
-  /** Push channel: matches the internal channel used by AIAgentsManager.startStreaming. */
-  event: 'AIAgentsManager:event',
-} as const
-
 export const AppChannels = {
   playSound: 'play-sound',
   setTheme: 'set-theme',
