@@ -602,6 +602,71 @@ export class OutputFilesService implements Disposable {
   }
 
   /**
+   * Move an output entry to the OS Trash instead of permanently deleting it.
+   *
+   * Uses Electron's `shell.trashItem()` so the user can recover the folder
+   * from the system trash if needed.  Falls back to permanent deletion
+   * (fs.rm) on platforms where trashItem is not supported (returns false).
+   */
+  async trash(outputType: OutputType, id: string): Promise<void> {
+    const currentWorkspace = this.workspace.getCurrent()
+    if (!currentWorkspace) {
+      throw new Error('No workspace selected. Please select a workspace first.')
+    }
+
+    this.validateOutputType(outputType)
+
+    const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id)
+
+    try {
+      const stat = await fs.stat(folderPath)
+      if (!stat.isDirectory()) {
+        console.log(`[OutputFilesService] Trash target is not a directory: ${folderPath}`)
+        return
+      }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+        console.log(`[OutputFilesService] Folder already gone, nothing to trash: ${folderPath}`)
+        return
+      }
+      throw new Error(`Failed to access output folder: ${(err as Error).message}`)
+    }
+
+    // Mark the folder and its children as app-written so the watcher ignores
+    // the removal events that chokidar will fire after trashItem returns.
+    this.markFileAsWritten(folderPath)
+    this.markFileAsWritten(path.join(folderPath, this.CONFIG_FILENAME))
+    this.markFileAsWritten(path.join(folderPath, this.LEGACY_DATA_FILENAME))
+
+    try {
+      const children = await fs.readdir(folderPath)
+      for (const child of children) {
+        this.markFileAsWritten(path.join(folderPath, child))
+      }
+    } catch {
+      // Best-effort — directory may be partially readable
+    }
+
+    const trashed = await shell.trashItem(folderPath)
+
+    if (!trashed) {
+      // shell.trashItem returns false when the platform does not support trash
+      // (rare, but possible on some Linux configurations).  Fall back to
+      // permanent deletion so the operation always succeeds.
+      console.warn(
+        `[OutputFilesService] shell.trashItem returned false for ${folderPath}, falling back to permanent delete`
+      )
+      await fs.rm(folderPath, { recursive: true })
+    }
+
+    console.log(`[OutputFilesService] Trashed output folder: ${folderPath}`)
+
+    // Emit removal event directly so the renderer is notified immediately.
+    // chokidar may not fire reliable events for externally-initiated moves.
+    this.emitChangeEvent(folderPath, 'removed')
+  }
+
+  /**
    * Cleanup on shutdown.
    */
   destroy(): void {
