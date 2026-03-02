@@ -14,6 +14,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const DebugPage = lazy(() => import("./pages/DebugPage"));
+const AgentPage = lazy(() => import("./pages/AgentPage"));
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary level="route">
