@@ -1,8 +1,4 @@
 /** Writings slice type definitions. */
-import type { OutputFileBlock } from '../../../../shared/types'
-
-// Re-export so consumers can import from this module.
-export type { OutputFileBlock }
 
 // ---------------------------------------------------------------------------
 // Slice-specific types
@@ -14,7 +10,6 @@ export interface WritingItem {
   path: string
   createdAt: number
   updatedAt: number
-  blocks: OutputFileBlock[]
 }
 
 export interface WritingsState {
