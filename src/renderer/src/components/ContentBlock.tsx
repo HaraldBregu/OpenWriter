@@ -97,9 +97,9 @@ export const ContentBlock = React.memo(function ContentBlock({
   // dispatchRef / entryIdRef are read inside the closure so they never need to
   // be deps — the ref values are always current at call time.
   useEffect(() => {
-    if (typeof window.tasksManager?.onEvent !== "function") return;
+    if (typeof window.task?.onEvent !== "function") return;
 
-    const unsub = window.tasksManager.onEvent((event) => {
+    const unsub = window.task.onEvent((event) => {
       const data = event.data as { taskId?: string };
       if (data?.taskId !== block.id) return;
 
@@ -153,7 +153,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     if (isEnhancing) return;
     const text = block.content;
     if (!text.trim()) return;
-    if (typeof window.tasksManager?.submit !== "function") return;
+    if (typeof window.task?.submit !== "function") return;
 
     originalTextRef.current = text;
     accumulatedAiContentRef.current = "";
@@ -161,7 +161,7 @@ export const ContentBlock = React.memo(function ContentBlock({
     setIsEnhancing(true);
 
     try {
-      const result = await window.tasksManager.submit(
+      const result = await window.task.submit(
         "ai-enhance",
         { text },
         { taskId: block.id },
