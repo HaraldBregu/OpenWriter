@@ -18,6 +18,9 @@ export {
 } from './reducer'
 export { default } from './reducer'
 
+// Async actions
+export { loadWritings } from './actions'
+
 // Selectors
 export {
   selectAllWritings,
