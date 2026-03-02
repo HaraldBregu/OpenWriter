@@ -304,7 +304,8 @@
     "logOut": "Log out",
     "tryAgain": "Try Again",
     "goHome": "Go Home",
-    "restartApp": "Restart App"
+    "restartApp": "Restart App",
+    "agents": "Agents"
   },
   "sidebar": {
     "write": "Write",
