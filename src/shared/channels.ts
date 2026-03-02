@@ -36,7 +36,7 @@ import type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-  AIAgentsDefinitionInfo,
+  AgentDefinitionInfo,
 } from './types'
 
 // ===========================================================================
@@ -227,8 +227,8 @@ export interface InvokeChannelMap {
   [AppChannels.showWritingContextMenu]: { args: [writingId: string, writingTitle: string]; result: void }
 
   // ---- AIAgentsManager (IpcResult-wrapped) ----
-  [AiAgentChannels.listAgents]: { args: []; result: AIAgentsDefinitionInfo[] }
-  [AiAgentChannels.getAgent]: { args: [agentId: string]; result: AIAgentsDefinitionInfo | undefined }
+  [AiAgentChannels.listAgents]: { args: []; result: AgentDefinitionInfo[] }
+  [AiAgentChannels.getAgent]: { args: [agentId: string]; result: AgentDefinitionInfo | undefined }
   [AiAgentChannels.getStatus]: { args: []; result: AIAgentsManagerStatus }
   [AiAgentChannels.listSessions]: { args: []; result: AgentSessionSnapshot[] }
   [AiAgentChannels.getSession]: { args: [sessionId: string]; result: AgentSessionSnapshot | undefined }
