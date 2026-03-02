@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { useAppDispatch } from '@/store'
-import { addEntry, type WritingEntry } from '@/store/writingItemsSlice'
+import { addEntry, type WritingEntry } from '@/store/writingItems/writingItemsSlice'
 
 // ---------------------------------------------------------------------------
 // Types
