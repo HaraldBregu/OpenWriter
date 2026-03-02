@@ -6,7 +6,7 @@ import {
   setSelectedModelLocal,
   selectAISettingsStatus,
   selectAllProviderSettings
-} from '@/store/aiSettingsSlice'
+} from '@/store/aiSettings/aiSettingsSlice'
 import type { ProviderSettings } from '../../../shared/aiSettings'
 
 // ---------------------------------------------------------------------------
