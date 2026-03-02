@@ -156,13 +156,15 @@ HeadingRenderer.displayName = 'HeadingRenderer'
 // Positioning and show/hide are fully delegated to TipTap's BubbleMenuPlugin
 // (backed by FloatingUI). This component only renders the toolbar buttons.
 function BubbleMenuContent({ editor }: { editor: Editor }): React.JSX.Element {
-  const { isBold, isItalic, isStrike, isCode } = useEditorState({
+  const { isBold, isItalic, isStrike, isCode, isBulletList, isOrderedList } = useEditorState({
     editor,
     selector: (ctx) => ({
       isBold: ctx.editor.isActive('bold'),
       isItalic: ctx.editor.isActive('italic'),
       isStrike: ctx.editor.isActive('strike'),
       isCode: ctx.editor.isActive('code'),
+      isBulletList: ctx.editor.isActive('bulletList'),
+      isOrderedList: ctx.editor.isActive('orderedList'),
     }),
   })
 
