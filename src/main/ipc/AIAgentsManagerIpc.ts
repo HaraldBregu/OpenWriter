@@ -3,7 +3,7 @@ import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
 import type { AIAgentsManager } from '../AIAgentsManager/AIAgentsManager'
 import type { AIAgentsRegistry } from '../AIAgentsManager/AIAgentsRegistry'
-import { toAIAgentsDefinitionInfo } from '../agents/AIAgentsDefinition'
+import { toAgentDefinitionInfo } from '../agents/AgentDefinition'
 import type { AgentRequest, AgentSessionConfig } from '../AIAgentsManager/AIAgentsManagerTypes'
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway'
 import { AiAgentChannels } from '../../shared/channels'
@@ -54,7 +54,7 @@ export class AIAgentsManagerIpc implements IpcModule {
      */
     registerQuery(AiAgentChannels.getAgent, (agentId: string) => {
       const def = registry.get(agentId)
-      return def ? toAIAgentsDefinitionInfo(def) : undefined
+      return def ? toAgentDefinitionInfo(def) : undefined
     })
 
     /**
