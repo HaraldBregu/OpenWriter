@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Download, Eye, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
 import { Reorder } from 'framer-motion'
@@ -15,15 +16,94 @@ import { ContentBlockPlaceholder } from '@/components/ContentBlockPlaceholder'
 import { createBlock, type Block } from '@/components/block.types'
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Convert an OutputFileBlock from disk into our local Block type. */
+function toBlock(b: { name: string; content: string; createdAt: string; updatedAt: string }): Block {
+  return {
+    id: b.name,
+    type: 'paragraph',
+    content: b.content,
+    createdAt: b.createdAt,
+    updatedAt: b.updatedAt,
+  }
+}
+
+/** Convert local Block to the shape expected by workspace APIs. */
+function toOutputBlock(b: Block) {
+  return { name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt }
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation()
+  const { id } = useParams<{ id: string }>()
 
   const [title, setTitle] = useState('')
   const [blocks, setBlocks] = useState<Block[]>(() => [createBlock()])
   const [focusBlockId, setFocusBlockId] = useState<string | null>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  // Ref to track latest state for the debounced save
+  const stateRef = useRef({ title, blocks })
+  stateRef.current = { title, blocks }
+
+  // ---------------------------------------------------------------------------
+  // Load from disk
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!id) return
+    let cancelled = false
+
+    async function load() {
+      try {
+        const output = await window.workspace.loadOutput({ type: 'writings', id: id! })
+        if (cancelled || !output) {
+          if (!cancelled) setLoaded(true)
+          return
+        }
+        const loadedBlocks = output.blocks.map(toBlock)
+        setTitle(((output.metadata as Record<string, unknown>)?.title as string) || '')
+        setBlocks(loadedBlocks.length > 0 ? loadedBlocks : [createBlock()])
+        setLoaded(true)
+      } catch {
+        if (!cancelled) setLoaded(true)
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [id])
+
+  // ---------------------------------------------------------------------------
+  // Persist changes (debounced)
+  // ---------------------------------------------------------------------------
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const persistToDisk = useCallback(() => {
+    if (!id || !loaded) return
+    const { title: t, blocks: b } = stateRef.current
+    window.workspace.updateOutput({
+      type: 'writings',
+      id,
+      blocks: b.map(toOutputBlock),
+      metadata: { title: t },
+    })
+  }, [id, loaded])
+
+  // Trigger debounced save whenever title or blocks change
+  useEffect(() => {
+    if (!loaded) return
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(persistToDisk, 500)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [title, blocks, persistToDisk, loaded])
 
   // ---------------------------------------------------------------------------
   // Derived stats
