@@ -9,6 +9,7 @@ import { LoadingSkeleton } from "./components/LoadingSkeleton";
 import WelcomePage from "./pages/WelcomePage";
 import type { TaskEvent } from "../../shared/types";
 import { taskEventReceived } from "./store/tasks/actions";
+import { loadWritings } from "./store/writings/actions";
 import "./index.css";
 
 // IPC → Redux bridge: forward every task event into the store.
@@ -17,6 +18,18 @@ if (!initialized && typeof window.task?.onEvent === "function") {
   initialized = true;
   window.task.onEvent((event: TaskEvent) => {
     store.dispatch(taskEventReceived(event));
+  });
+}
+
+// IPC → Redux bridge: load writings on startup and re-load on file changes.
+let writingsInitialized = false;
+if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === "function") {
+  writingsInitialized = true;
+  store.dispatch(loadWritings());
+  window.workspace.onOutputFileChange((event) => {
+    if (event.outputType === "writings") {
+      store.dispatch(loadWritings());
+    }
   });
 }
 
