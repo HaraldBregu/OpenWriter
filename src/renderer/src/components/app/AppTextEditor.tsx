@@ -359,6 +359,7 @@ function TipTapAdapter({
       <BubbleMenu editor={editor}>
         {editor && <BubbleMenuContent editor={editor} />}
       </BubbleMenu>
+      {editor && <AppTextEditorOptionMenu editor={editor} />}
       <EditorContent editor={editor} />
     </div>
   )
