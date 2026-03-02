@@ -1,7 +1,7 @@
 
 // ---- Agent manager types --------------------------------------------------
 // Note: AIAgentsManagerTypes.ts lives in its domain folder for co-location.
-// Import directly from '../aiAgentsManager/AIAgentsManagerTypes' when needed within
+// Import directly from '../AIAgentsManager/AIAgentsManagerTypes' when needed within
 // the AIAgentsManager subtree.
 export type {
   AgentSessionConfig,
@@ -10,7 +10,7 @@ export type {
   AgentSessionSnapshot,
   AgentRunSnapshot,
   AIAgentsManagerStatus,
-} from './aiAgentsManager/AIAgentsManagerTypes'
+} from './AIAgentsManager/AIAgentsManagerTypes'
 
 // ---- Task system types ---------------------------------------------------
 // Note: Individual task type files are co-located with their domain code.
