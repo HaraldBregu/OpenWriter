@@ -72,6 +72,14 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
+                        <Route
+                          path="/agents"
+                          element={
+                            <RouteWrapper>
+                              <AgentPage />
+                            </RouteWrapper>
+                          }
+                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
