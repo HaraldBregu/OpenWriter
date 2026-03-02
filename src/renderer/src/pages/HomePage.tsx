@@ -101,7 +101,8 @@ const HomePage: React.FC = () => {
                 labelKey={cat.labelKey}
                 descriptionKey={cat.descriptionKey}
                 accent={cat.accent}
-                onClick={handleNewWriting}
+                onClick={createWriting}
+                disabled={creatingWriting}
               />
             ))}
           </div>
