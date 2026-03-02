@@ -647,14 +647,15 @@ export class OutputFilesService implements Disposable {
       // Best-effort — directory may be partially readable
     }
 
-    const trashed = await shell.trashItem(folderPath)
-
-    if (!trashed) {
-      // shell.trashItem returns false when the platform does not support trash
-      // (rare, but possible on some Linux configurations).  Fall back to
-      // permanent deletion so the operation always succeeds.
+    try {
+      await shell.trashItem(folderPath)
+    } catch (trashErr) {
+      // shell.trashItem throws on platforms where moving to trash is not
+      // supported (some Linux configurations without a trash daemon).
+      // Fall back to permanent deletion so the operation always succeeds.
       console.warn(
-        `[OutputFilesService] shell.trashItem returned false for ${folderPath}, falling back to permanent delete`
+        `[OutputFilesService] shell.trashItem failed for ${folderPath}, falling back to permanent delete:`,
+        trashErr
       )
       await fs.rm(folderPath, { recursive: true })
     }
