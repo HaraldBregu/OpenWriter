@@ -15,7 +15,6 @@ export { ToneAdjusterAgent } from './ToneAdjuster'
 export type { AgentDefinition, AgentDefinitionInfo } from './AgentDefinition'
 export { toAgentDefinitionInfo } from './AgentDefinition'
 
-// Moved from AIAgentsManager/
 export { executeAIAgentsStream } from './AgentExecutor'
 export type { ExecutorInput } from './AgentExecutor'
 export type { AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './AgentTypes'
