@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react'
-import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle, Bot } from 'lucide-react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
+import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle, Bot, Copy, Check, ChevronDown, ChevronRight, RefreshCw } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
 import type { TrackedTaskState, TaskStatus } from '@/store/tasksSlice'
 import { taskAdded } from '@/store/tasksSlice'
-import { store } from '@/store'
+import { store, useAppSelector } from '@/store'
+import type { RootState } from '@/store'
 
 // ---------------------------------------------------------------------------
 // Demo task submission
