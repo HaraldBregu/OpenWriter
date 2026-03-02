@@ -31,12 +31,7 @@ import type {
   DirectoryValidationResult,
   WritingContextMenuAction,
   WatcherError,
-  AgentSessionConfig,
-  AgentRequest,
   AgentStreamEvent,
-  AgentSessionSnapshot,
-  AgentRunSnapshot,
-  AIAgentsManagerStatus,
   AgentDefinitionInfo,
 } from '../shared/types'
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/aiSettings'
@@ -67,12 +62,7 @@ export type {
   DirectoryValidationResult,
   WritingContextMenuAction,
   WatcherError,
-  AgentSessionConfig,
-  AgentRequest,
   AgentStreamEvent,
-  AgentSessionSnapshot,
-  AgentRunSnapshot,
-  AIAgentsManagerStatus,
   AgentDefinitionInfo,
   ProviderSettings,
   InferenceDefaultsUpdate,
@@ -184,22 +174,6 @@ export interface  TasksManagerApi {
   onEvent: (callback: (event: TaskEvent) => void) => () => void
 }
 
-/** AIAgentsManager — session/run management and streaming */
-export interface AgentManagerAPI {
-  listAgents: () => Promise<IpcResult<AgentDefinitionInfo[]>>
-  getAgent: (agentId: string) => Promise<IpcResult<AgentDefinitionInfo | undefined>>
-  getStatus: () => Promise<IpcResult<AIAgentsManagerStatus>>
-  listSessions: () => Promise<IpcResult<AgentSessionSnapshot[]>>
-  getSession: (sessionId: string) => Promise<IpcResult<AgentSessionSnapshot | undefined>>
-  listActiveRuns: () => Promise<IpcResult<AgentRunSnapshot[]>>
-  createSession: (agentId: string, config?: Partial<AgentSessionConfig>) => Promise<IpcResult<string>>
-  destroySession: (sessionId: string) => Promise<IpcResult<void>>
-  cancelRun: (runId: string) => Promise<IpcResult<void>>
-  cancelSession: (sessionId: string) => Promise<IpcResult<void>>
-  startStreaming: (sessionId: string, request: AgentRequest, options?: { windowId?: number }) => Promise<IpcResult<string>>
-  onEvent: (callback: (event: AgentStreamEvent) => void) => () => void
-}
-
 // ---------------------------------------------------------------------------
 // Global Window augmentation
 // ---------------------------------------------------------------------------
@@ -214,6 +188,5 @@ declare global {
     win?: WindowApi
     workspace: WorkspaceApi
     tasksManager: TasksManagerApi
-    agentManager: AgentManagerAPI
   }
 }
