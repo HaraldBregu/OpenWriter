@@ -80,7 +80,8 @@
       "Bash(test:*)",
       "Bash(xargs sed:*)",
       "Bash(mkdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(mv:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
