@@ -79,7 +79,8 @@
       "Bash(./node_modules/.bin/jest StoreIpc|CustomIpc:*)",
       "Bash(test:*)",
       "Bash(xargs sed:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
