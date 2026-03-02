@@ -16,8 +16,8 @@ const definition: AgentDefinition = {
   defaultConfig: {
     systemPrompt:
       'You are a helpful assistant that provides concise, interesting responses. Keep answers to 2-3 short paragraphs maximum.',
-    temperature: 0.3,
-    maxTokens: 512,
+    temperature: 0.7,
+    maxTokens: 256,
     maxHistoryMessages: 6,
   },
   inputHints: {
