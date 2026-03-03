@@ -73,9 +73,9 @@ export function PromptInput({
       hide()
       return
     }
-    onSubmit(p, pos)
+    onSubmitRef.current(p, pos)
     hide()
-  }, [onSubmit, hide])
+  }, [hide])
 
   const onKeyEvent = useCallback(
     (event: KeyboardEvent): boolean => {
