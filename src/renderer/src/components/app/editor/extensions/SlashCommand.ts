@@ -170,7 +170,7 @@ const SlashCommand = Extension.create<SlashCommandOptions>({
 export function executeSlashCommand(
   editor: Editor,
   triggerPos: number,
-  query: string,
+  _query: string,
   command: (editor: Editor) => void,
 ): void {
   const { state } = editor
