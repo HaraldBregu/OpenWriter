@@ -63,7 +63,6 @@ const pluginKey = new PluginKey('optionMenu')
 
 export function OptionMenu({ editor }: OptionMenuProps): React.JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const slashPosRef = useRef<number | null>(null)
