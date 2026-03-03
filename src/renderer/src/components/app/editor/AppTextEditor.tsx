@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CustomParagraph } from './extensions/CustomParagraph'
+import { BlockItem } from './extensions/BlockItem'
 import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 
 // ---------------------------------------------------------------------------
