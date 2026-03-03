@@ -210,7 +210,7 @@ function TipTapAdapter({
       },
       editorProps: {
         attributes: {
-          class: 'focus:outline-none py-2 text-base leading-relaxed text-foreground break-words',
+          class: 'focus:outline-none py-2 text-lg leading-relaxed text-foreground break-words',
         },
       },
     }),
