@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
-import { AppTextEditor } from "@/components/app/editor/AppTextEditor";
+import { SecondTextEditor } from "@/components/app/editor/SecondTextEditor";
 import type { ContentBlockProps } from "@/components/block.types";
 
 // ---------------------------------------------------------------------------
