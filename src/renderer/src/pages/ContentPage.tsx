@@ -236,15 +236,11 @@ const ContentPage: React.FC = () => {
             onReorder={handleReorder}
             className="flex flex-col gap-0"
           >
-            {blocks.map((block, index) => (
+            {blocks.map((block) => (
               <ContentBlock
                 key={block.id}
                 block={block}
-                isOnly={blocks.length === 1}
-                isLast={index === blocks.length - 1}
                 onChange={handleChange}
-                onDelete={handleDelete}
-                onAdd={handleAddBlockAfter}
                 placeholder={t('writing.startWriting')}
                 autoFocus={focusBlockId === block.id}
               />
