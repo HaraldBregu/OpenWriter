@@ -86,7 +86,6 @@ export function BlockActions({
             variant="editor-block-actions"
             size="editor-block-icons"
             aria-label="Block options"
-            className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground"
           >
             <MoreVertical />
           </AppButton>
