@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { TextEditor } from "@/components/app/editor/TextEditor";
 import type { ContentBlockProps } from "@/components/block.types";
-import type { DragControls } from "framer-motion";
 
 // ---------------------------------------------------------------------------
 // ContentBlock Component
@@ -14,14 +13,7 @@ export const ContentBlock = React.memo(function ContentBlock({
   placeholder = "Type here...",
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
-  const dragControls: DragControls = useDragControls();
-
-  const handleDragHandlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      dragControls.start(e);
-    },
-    [dragControls],
-  );
+  const dragControls = useDragControls();
 
   // ---------------------------------------------------------------------------
   // Stable refs — updated every render so the permanent subscription closure
@@ -121,7 +113,6 @@ export const ContentBlock = React.memo(function ContentBlock({
         disabled={isEnhancing}
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
-        onDragHandlePointerDown={handleDragHandlePointerDown}
       />
     </Reorder.Item>
   );
