@@ -210,6 +210,7 @@ interface TipTapAdapterProps {
   extensions: AnyExtension[]
   forwardedRef: React.Ref<HTMLDivElement>
   streamingContent: string | undefined
+  onAddBelow: ((pos: number) => void) | undefined
 }
 
 function TipTapAdapter({
@@ -220,6 +221,7 @@ function TipTapAdapter({
   extensions,
   forwardedRef,
   streamingContent,
+  onAddBelow,
 }: TipTapAdapterProps): React.JSX.Element {
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
