@@ -180,23 +180,13 @@ export function ParagraphNodeView({
       {/* ------------------------------------------------------------------ */}
       {/* CONTENT: the editable paragraph text                               */}
       {/* ------------------------------------------------------------------ */}
-      <div className="relative flex-1 min-w-0 ml-2">
-        {isEmpty && (
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 text-lg leading-relaxed text-muted-foreground/40 pointer-events-none select-none"
-          >
-            {placeholder}
-          </span>
+      <NodeViewContent
+        className={cn(
+          'flex-1 min-w-0 block',
+          'text-lg leading-relaxed text-foreground break-words',
+          'm-0 p-0 ml-2',
         )}
-        <NodeViewContent
-          className={cn(
-            'block w-full',
-            'text-lg leading-relaxed text-foreground break-words',
-            'm-0 p-0',
-          )}
-        />
-      </div>
+      />
 
       {/* ------------------------------------------------------------------ */}
       {/* RIGHT GUTTER: ⋯ dropdown menu                                      */}
