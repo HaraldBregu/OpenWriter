@@ -20,6 +20,8 @@ export class OptionMenuView {
   public view: EditorView
 
   private visible = false
+  private dismissed = false
+  private dismissedSlashPos: number | null = null
   private slashPos: number | null = null
   private onShow: () => void
   private onHide: () => void
