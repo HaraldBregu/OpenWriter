@@ -1037,12 +1037,19 @@ const ProseEditor = memo(
     )
 
     return (
-      <div
-        id={id}
-        ref={mergedRef}
-        className={cn('prose-editor w-full', className)}
-        aria-disabled={disabled}
-      />
+      <>
+        <div
+          id={id}
+          ref={mergedRef}
+          className={cn('prose-editor w-full', className)}
+          aria-disabled={disabled}
+        />
+        <FloatingToolbar
+          editorView={viewRef.current}
+          toolbarState={toolbarState}
+          container={containerRef.current}
+        />
+      </>
     )
   }),
 )
