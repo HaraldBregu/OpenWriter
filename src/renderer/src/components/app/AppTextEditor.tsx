@@ -283,7 +283,12 @@ function TipTapAdapter({
         {editor && <BubbleMenuContent editor={editor} />}
       </BubbleMenu>
       {editor && <AppTextEditorOptionMenu editor={editor} />}
-      <EditorContent editor={editor} />
+      {/*
+        px-8 creates the horizontal gutter space the ParagraphNodeView uses for
+        its floating left/right action buttons. The NodeView uses `-mx-8` to
+        "bleed" the button columns into that padding without shifting the text.
+      */}
+      <EditorContent editor={editor} className="px-8" />
     </div>
   )
 }
