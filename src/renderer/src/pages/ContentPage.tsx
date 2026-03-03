@@ -12,7 +12,6 @@ import {
   AppDropdownMenuTrigger,
 } from '@/components/app'
 import { ContentBlock } from '@/components/ContentBlock'
-import { ContentBlockPlaceholder } from '@/components/ContentBlockPlaceholder'
 import { createBlock, type Block } from '@/components/block.types'
 
 // ---------------------------------------------------------------------------
