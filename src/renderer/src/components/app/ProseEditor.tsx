@@ -50,7 +50,6 @@ import {
   createParagraphNear,
   liftEmptyBlock,
   splitBlock,
-  joinForward,
   deleteSelection,
   selectAll,
   baseKeymap,
