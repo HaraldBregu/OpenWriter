@@ -959,6 +959,7 @@ function EditorAdapter({
   autoFocus,
   disabled,
   forwardedRef,
+  streamingContent,
 }: EditorAdapterProps): React.JSX.Element {
   // Stable ref for onChange — prevents editor re-creation when callback identity changes.
   const onChangeRef = useRef(onChange)
