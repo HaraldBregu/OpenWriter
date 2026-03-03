@@ -165,7 +165,7 @@ export function OptionMenu({ editor }: OptionMenuProps): React.JSX.Element {
       className="z-50 flex flex-col rounded-md border border-border bg-popover p-1 shadow-md"
       style={{ visibility: 'hidden', position: 'absolute', minWidth: '180px' }}
     >
-      {visible && filteredItems.length > 0
+      {filteredItems.length > 0
         ? filteredItems.map((item, index) => {
             const Icon = item.icon
             return (
@@ -187,9 +187,7 @@ export function OptionMenu({ editor }: OptionMenuProps): React.JSX.Element {
               </button>
             )
           })
-        : visible
-          ? <div className="px-2 py-1.5 text-sm text-muted-foreground">No results</div>
-          : null}
+        : <div className="px-2 py-1.5 text-sm text-muted-foreground">No results</div>}
     </div>
   )
 }
