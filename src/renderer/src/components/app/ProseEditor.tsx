@@ -180,9 +180,8 @@ const rawSchema = new Schema({
   },
 })
 
-// Convenience references into the compiled schema
+// Convenience reference into the compiled schema
 const schema = rawSchema
-type ProseSchema = typeof schema
 
 // =============================================================================
 // HTML ↔ ProseMirror helpers
