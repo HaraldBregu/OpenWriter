@@ -27,7 +27,7 @@ export class OptionMenuView {
 
   constructor(
     view: EditorView,
-    private props: OptionMenuPluginProps,
+    props: OptionMenuPluginProps,
   ) {
     this.editor = props.editor
     this.element = props.element
