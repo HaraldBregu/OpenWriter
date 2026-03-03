@@ -53,7 +53,6 @@ export function ParagraphNodeView({
   // Drag state — we highlight the handle while the row is being dragged so the
   // user gets a visible affordance even when the mouse leaves the element.
   // -------------------------------------------------------------------------
-  const wrapperRef = useRef<HTMLDivElement>(null)
 
   // -------------------------------------------------------------------------
   // Button handlers
