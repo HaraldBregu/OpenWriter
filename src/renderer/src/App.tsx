@@ -114,6 +114,14 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
+                        <Route
+                          path="/prose-editor-demo"
+                          element={
+                            <RouteWrapper>
+                              <ProseEditorDemoPage />
+                            </RouteWrapper>
+                          }
+                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
