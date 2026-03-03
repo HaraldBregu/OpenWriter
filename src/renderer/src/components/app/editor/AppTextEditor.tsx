@@ -231,6 +231,7 @@ function TipTapAdapter({
   onAddBelow,
   onDelete,
   onEnhance,
+  placeholder,
 }: TipTapAdapterProps): React.JSX.Element {
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
