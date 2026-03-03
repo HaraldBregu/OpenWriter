@@ -9,6 +9,7 @@ import History from '@tiptap/extension-history'
 import { cn } from '@/lib/utils'
 import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls'
 import { BlockActions } from './BlockActions'
+import { Placeholder } from '@tiptap/extensions'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -35,6 +36,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   Paragraph,
   Heading.configure({ levels: [1, 2, 3] }),
   History,
+  Placeholder.configure({ placeholder: "Type '/' for commands, or start writing\u2026" }),
 ]
 
 // ---------------------------------------------------------------------------
