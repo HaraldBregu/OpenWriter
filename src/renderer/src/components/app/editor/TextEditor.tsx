@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
 import type { Editor, AnyExtension } from '@tiptap/core'
 import Document from '@tiptap/extension-document'
@@ -6,17 +6,8 @@ import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
-import {
-  type DragHandlePluginProps,
-  type NestedOptions,
-  defaultComputePositionConfig,
-  DragHandlePlugin,
-  dragHandlePluginDefaultKey,
-  normalizeNestedOptions,
-} from '@tiptap/extension-drag-handle'
-import type { Node } from '@tiptap/pm/model'
-import type { Plugin } from '@tiptap/pm/state'
 import { cn } from '@/lib/utils'
+import { DragHandle } from './DragHandle'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,102 +35,6 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   Heading.configure({ levels: [1, 2, 3] }),
   History,
 ]
-
-// ---------------------------------------------------------------------------
-// DragHandle — React wrapper around DragHandlePlugin
-// ---------------------------------------------------------------------------
-
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
-
-type DragHandleProps = Omit<
-  Optional<DragHandlePluginProps, 'pluginKey'>,
-  'element' | 'nestedOptions'
-> & {
-  className?: string
-  onNodeChange?: (data: { node: Node | null; editor: Editor; pos: number }) => void
-  children: React.ReactNode
-  nested?: boolean | NestedOptions
-}
-
-function DragHandle(props: DragHandleProps): React.JSX.Element {
-  const {
-    className = 'drag-handle',
-    children,
-    editor,
-    pluginKey = dragHandlePluginDefaultKey,
-    onNodeChange,
-    onElementDragStart,
-    onElementDragEnd,
-    computePositionConfig = defaultComputePositionConfig,
-    nested = false,
-  } = props
-
-  const [element, setElement] = useState<HTMLDivElement | null>(null)
-  const plugin = useRef<Plugin | null>(null)
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const nestedOptions = useMemo(() => normalizeNestedOptions(nested), [JSON.stringify(nested)])
-
-  useEffect(() => {
-    let initPlugin: { plugin: Plugin; unbind: () => void } | null = null
-
-    if (!element) {
-      return () => { plugin.current = null }
-    }
-
-    if (editor.isDestroyed) {
-      return () => { plugin.current = null }
-    }
-
-    if (!plugin.current) {
-      initPlugin = DragHandlePlugin({
-        editor,
-        element,
-        pluginKey,
-        computePositionConfig: {
-          ...defaultComputePositionConfig,
-          ...computePositionConfig,
-        },
-        onElementDragStart,
-        onElementDragEnd,
-        onNodeChange,
-        nestedOptions,
-      })
-      plugin.current = initPlugin.plugin
-
-      editor.registerPlugin(plugin.current)
-    }
-
-    return () => {
-      editor.unregisterPlugin(pluginKey)
-      plugin.current = null
-      if (initPlugin) {
-        initPlugin.unbind()
-        initPlugin = null
-      }
-    }
-  }, [
-    element,
-    editor,
-    onNodeChange,
-    pluginKey,
-    computePositionConfig,
-    onElementDragStart,
-    onElementDragEnd,
-    nestedOptions,
-  ])
-
-  return (
-    <div
-      className={className}
-      style={{ visibility: 'hidden', position: 'absolute' }}
-      data-dragging="false"
-      ref={setElement}
-    >
-      {children}
-    </div>
-  )
-}
 
 // ---------------------------------------------------------------------------
 // EditorAdapter — owns the Tiptap editor instance.
