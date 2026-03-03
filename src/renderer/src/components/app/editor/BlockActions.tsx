@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import { cn } from '@/lib/utils'
 import type { HoveredBlock } from './BlockControls'
