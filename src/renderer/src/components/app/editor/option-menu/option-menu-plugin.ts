@@ -147,11 +147,15 @@ export const OptionMenuPlugin = (options: OptionMenuPluginProps): Plugin => {
       handleKeyDown(_view, event) {
         if (!menuView?.isVisible()) return false
 
+        if (event.key === 'Escape') {
+          menuView.dismiss()
+          return true
+        }
+
         if (
           event.key === 'ArrowUp' ||
           event.key === 'ArrowDown' ||
-          event.key === 'Enter' ||
-          event.key === 'Escape'
+          event.key === 'Enter'
         ) {
           return options.onKeyEvent(event)
         }
