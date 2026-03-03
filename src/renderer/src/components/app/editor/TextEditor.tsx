@@ -18,6 +18,7 @@ import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls'
 import { BlockActions } from './BlockActions'
 import { BubbleMenu } from './bubble-menu'
 import { OptionMenu } from './option-menu'
+import { PromptInput } from './prompt-input'
 import { Placeholder } from '@tiptap/extensions'
 
 // ---------------------------------------------------------------------------
