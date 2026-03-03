@@ -260,6 +260,7 @@ const ContentPage: React.FC = () => {
                 onChange={handleChange}
                 placeholder={t('writing.startWriting')}
                 autoFocus={focusBlockId === block.id}
+                onAddBelow={handleAddBlockAfter}
               />
             ))}
           </Reorder.Group>
