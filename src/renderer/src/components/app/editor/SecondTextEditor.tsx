@@ -1551,6 +1551,7 @@ interface EditorAdapterProps {
   disabled: boolean | undefined
   forwardedRef: React.Ref<HTMLDivElement>
   streamingContent: string | undefined
+  onAddBelow: ((pos: number) => void) | undefined
 }
 
 function EditorAdapter({
@@ -1561,13 +1562,32 @@ function EditorAdapter({
   disabled,
   forwardedRef,
   streamingContent,
+  onAddBelow,
 }: EditorAdapterProps): React.JSX.Element {
-  // Stable ref for onChange — prevents editor re-creation when callback identity changes.
+  // Stable refs for callbacks — prevents editor re-creation when identity changes.
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
+  const onAddBelowRef = useRef(onAddBelow)
+  onAddBelowRef.current = onAddBelow
 
   // Guard: skip re-syncing when the update originated from within the editor.
   const internalChangeRef = useRef(false)
+
+  // Slash command state (kept in React for the SlashCommandMenu render).
+  const [slashState, setSlashState] = useState<SlashCommandState>({
+    active: false,
+    query: '',
+    triggerPos: -1,
+    coords: { top: 0, left: 0 },
+  })
+
+  const handleSlashChange = useCallback((state: SlashCommandState) => {
+    setSlashState(state)
+  }, [])
+
+  const handleSlashClose = useCallback(() => {
+    setSlashState({ active: false, query: '', triggerPos: -1, coords: { top: 0, left: 0 } })
+  }, [])
 
   const allExtensions = useMemo<AnyExtension[]>(
     () => [
@@ -1581,7 +1601,10 @@ function EditorAdapter({
         // Show placeholder only when node is empty and has no siblings of the same type
         showOnlyCurrent: false,
       }),
+      SlashCommand.configure({ onChange: handleSlashChange }),
     ],
+    // handleSlashChange is stable (useCallback []). placeholder drives re-creation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [placeholder],
   )
 
@@ -1653,15 +1676,50 @@ function EditorAdapter({
     })
   }, [editor, autoFocus])
 
+  // Container ref for BlockControls hover tracking.
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Bubble menu should be hidden while slash menu is open.
+  const shouldShowBubble = !slashState.active
+
   return (
     <div className="relative w-full" ref={forwardedRef}>
-      {editor && (
+      {/* Bubble menu (text selection toolbar) — hidden when slash menu is active */}
+      {editor && shouldShowBubble && (
         <BubbleMenu editor={editor}>
           <BubbleMenuContent editor={editor} />
         </BubbleMenu>
       )}
 
-      <EditorContent editor={editor} />
+      {/* Editor content area with block controls gutter */}
+      <div
+        ref={containerRef}
+        className="relative"
+        style={{ paddingLeft: 56 }} // reserve space for block controls gutter
+      >
+        {/* Block controls (absolute inside this container, body-only) */}
+        {editor && (
+          <BlockControls
+            editor={editor}
+            containerRef={containerRef}
+            onAddBelow={onAddBelowRef.current}
+          />
+        )}
+
+        <EditorContent editor={editor} />
+      </div>
+
+      {/* Word count bar */}
+      {editor && <WordCount editor={editor} />}
+
+      {/* Slash command menu (portaled to fixed position) */}
+      {editor && slashState.active && (
+        <SlashCommandMenu
+          slashState={slashState}
+          editor={editor}
+          onClose={handleSlashClose}
+        />
+      )}
     </div>
   )
 }
