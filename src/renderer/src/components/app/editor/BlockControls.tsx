@@ -159,7 +159,7 @@ export function BlockControls({ editor, containerRef, hoveredBlock }: BlockContr
             'text-muted-foreground/50 transition-all duration-100',
             'hover:bg-muted hover:text-muted-foreground',
             'active:cursor-grabbing active:scale-90',
-            '[&_svg]:size-[15px]',
+            '[&_svg]:size-[10px]',
           )}
         >
           <GripVertical />

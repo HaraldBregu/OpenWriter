@@ -1,79 +1,110 @@
-import React, { useCallback, useRef, useState } from 'react'
-import type { Editor } from '@tiptap/core'
-import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { HoveredBlock } from './BlockControls'
-import { AppButton } from '../AppButton'
+import React, { useCallback, useRef, useState } from "react";
+import type { Editor } from "@tiptap/core";
+import { Copy, Trash2, Clipboard, MoreVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { HoveredBlock } from "./BlockControls";
+import { AppButton } from "../AppButton";
 import {
   AppDropdownMenu,
   AppDropdownMenuTrigger,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
-} from '../AppDropdownMenu'
+} from "../AppDropdownMenu";
 
 interface BlockActionsProps {
-  editor: Editor
-  containerRef: React.RefObject<HTMLDivElement | null>
-  hoveredBlock: HoveredBlock | null
+  editor: Editor;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  hoveredBlock: HoveredBlock | null;
 }
 
-export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React.JSX.Element {
-  const [menuOpen, setMenuOpen] = useState(false)
+export function BlockActions({
+  editor,
+  hoveredBlock,
+}: BlockActionsProps): React.JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
   // Captures the `top` value at the moment the menu opens so the container
   // does not jump when hoveredBlock updates while the dropdown is visible.
-  const lockedTopRef = useRef<number>(0)
+  const lockedTopRef = useRef<number>(0);
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    if (open) {
-      // Lock position to the current hoveredBlock top before the menu renders.
-      lockedTopRef.current = hoveredBlock?.top ?? 0
-    }
-    setMenuOpen(open)
-  }, [hoveredBlock])
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        // Lock position to the current hoveredBlock top before the menu renders.
+        lockedTopRef.current = hoveredBlock?.top ?? 0;
+      }
+      setMenuOpen(open);
+    },
+    [hoveredBlock],
+  );
 
   const duplicateBlock = useCallback(() => {
-    if (!hoveredBlock) return
-    const node = editor.state.doc.nodeAt(hoveredBlock.pos)
-    if (!node) return
-    const insertPos = hoveredBlock.pos + node.nodeSize
-    editor.chain().focus().insertContentAt(insertPos, node.toJSON()).run()
-  }, [editor, hoveredBlock])
+    if (!hoveredBlock) return;
+    const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+    if (!node) return;
+    const insertPos = hoveredBlock.pos + node.nodeSize;
+    editor.chain().focus().insertContentAt(insertPos, node.toJSON()).run();
+  }, [editor, hoveredBlock]);
 
   const deleteBlock = useCallback(() => {
-    if (!hoveredBlock) return
-    const node = editor.state.doc.nodeAt(hoveredBlock.pos)
-    if (!node) return
-    editor.chain().focus().deleteRange({ from: hoveredBlock.pos, to: hoveredBlock.pos + node.nodeSize }).run()
-  }, [editor, hoveredBlock])
+    if (!hoveredBlock) return;
+    const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+    if (!node) return;
+    editor
+      .chain()
+      .focus()
+      .deleteRange({
+        from: hoveredBlock.pos,
+        to: hoveredBlock.pos + node.nodeSize,
+      })
+      .run();
+  }, [editor, hoveredBlock]);
 
   const copyBlockText = useCallback(() => {
-    if (!hoveredBlock) return
-    const node = editor.state.doc.nodeAt(hoveredBlock.pos)
-    if (!node) return
-    navigator.clipboard.writeText(node.textContent)
-  }, [editor, hoveredBlock])
+    if (!hoveredBlock) return;
+    const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+    if (!node) return;
+    navigator.clipboard.writeText(node.textContent);
+  }, [editor, hoveredBlock]);
 
-  const visible = !!hoveredBlock || menuOpen
+  const visible = !!hoveredBlock || menuOpen;
   // While the menu is open, use the position that was locked when it opened.
   // This prevents the container from jumping as hoveredBlock changes on mouse move.
-  const topValue = menuOpen ? lockedTopRef.current : (hoveredBlock?.top ?? 0)
+  const topValue = menuOpen ? lockedTopRef.current : (hoveredBlock?.top ?? 0);
 
   return (
     <div
       className={cn(
-        'absolute right-1 z-50 flex items-center gap-0',
-        'pointer-events-none opacity-0 transition-opacity duration-100',
-        visible && 'pointer-events-auto opacity-100',
+        "absolute right-1 z-50 flex items-center gap-0",
+        "pointer-events-none opacity-0 transition-opacity duration-100",
+        visible && "pointer-events-auto opacity-100",
       )}
       style={{ top: topValue }}
     >
-      <AppButton variant="ghost" size="icon" aria-label="Duplicate block" onClick={duplicateBlock} className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
-        <Copy className="h-3.5 w-3.5" />
+      <AppButton
+        variant="ghost"
+        size="icon"
+        aria-label="Duplicate block"
+        onClick={duplicateBlock}
+          className={cn(
+            'h-4 w-4 rounded p-0',
+            'cursor-pointer',
+            'text-muted-foreground/50 transition-all duration-100',
+            'hover:bg-muted hover:text-muted-foreground',
+            'active:scale-90',
+            '[&_svg]:size-[10px]',
+          )}
+      >
+        <Copy  />
       </AppButton>
 
       <AppDropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
         <AppDropdownMenuTrigger asChild>
-          <AppButton variant="ghost" size="icon" aria-label="Block options" className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
+          <AppButton
+            variant="ghost"
+            size="icon"
+            aria-label="Block options"
+            className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground"
+          >
             <MoreVertical className="h-3.5 w-3.5" />
           </AppButton>
         </AppDropdownMenuTrigger>
@@ -93,5 +124,5 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
         </AppDropdownMenuContent>
       </AppDropdownMenu>
     </div>
-  )
+  );
 }
