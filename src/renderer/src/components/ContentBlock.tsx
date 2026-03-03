@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { TextEditor } from "@/components/app/editor/TextEditor";
 import type { ContentBlockProps } from "@/components/block.types";
+import type { DragControls } from "framer-motion";
 
 // ---------------------------------------------------------------------------
 // ContentBlock Component
