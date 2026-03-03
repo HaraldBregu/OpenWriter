@@ -26,6 +26,7 @@ const buttonVariants = cva(
         'icon-sm': 'h-7 w-7 rounded-full p-0 [&_svg]:size-[17px]',
         'icon-xm': 'h-6 w-6 rounded p-0 [&_svg]:size-[15px]',
         'editor-block-icons': 'h-6 w-6 rounded p-2 [&_svg]:size-[10px]',
+        'editor-block-icons-sm': 'h-6 w-6 rounded p-2 [&_svg]:size-[8px]',
       },
     },
     defaultVariants: {
