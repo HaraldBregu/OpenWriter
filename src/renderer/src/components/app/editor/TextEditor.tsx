@@ -49,6 +49,9 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   Italic,
   Underline,
   Strike,
+  BulletList,
+  OrderedList,
+  ListItem,
   Placeholder.configure({ placeholder: "Type '/' for commands, or start writing\u2026" }),
 ]
 
