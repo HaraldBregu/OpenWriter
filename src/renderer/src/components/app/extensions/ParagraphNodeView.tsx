@@ -90,19 +90,6 @@ export function ParagraphNodeView({
     [callbacks, editor, getPos, node.nodeSize],
   )
 
-  const handleComment = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-
-      const pos = typeof getPos === 'function' ? getPos() : undefined
-      if (pos === undefined) return
-
-      callbacks.onComment?.(pos)
-    },
-    [callbacks, getPos],
-  )
-
   // Pointer events for the drag handle — we delegate to ProseMirror's built-in
   // node drag support rather than implementing custom DnD here.
   const handleDragHandleMouseDown = useCallback(
