@@ -121,6 +121,64 @@ function EditorAdapter({
   }, [editor, autoFocus])
 
   const containerRef = useRef<HTMLDivElement>(null)
+  const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null)
+
+  // Resolve the top-level block at a given clientY.
+  const getBlock = useCallback(
+    (y: number): { dom: HTMLElement; pos: number } | null => {
+      if (!editor) return null
+      const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null
+      if (!pm) return null
+      for (const child of Array.from(pm.children) as HTMLElement[]) {
+        const r = child.getBoundingClientRect()
+        if (y >= r.top - 4 && y <= r.bottom + 4) {
+          try {
+            const p = editor.view.posAtDOM(child, 0)
+            return { dom: child, pos: editor.state.doc.resolve(p).before(1) }
+          } catch {
+            return null
+          }
+        }
+      }
+      return null
+    },
+    [editor],
+  )
+
+  // Mouse move / leave — detect hovered block.
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const onMove = (e: MouseEvent): void => {
+      const block = getBlock(e.clientY)
+      if (block) {
+        const cR = el.getBoundingClientRect()
+        const bR = block.dom.getBoundingClientRect()
+        const lh = parseFloat(getComputedStyle(block.dom).lineHeight) || 30
+        setHoveredBlock({
+          node: block.dom,
+          pos: block.pos,
+          top: bR.top - cR.top + Math.min(lh, bR.height) / 2 - 12,
+        })
+      } else {
+        setHoveredBlock(null)
+      }
+    }
+
+    const onLeave = (): void => {
+      setTimeout(() => {
+        setHoveredBlock(null)
+      }, 80)
+    }
+
+    el.addEventListener('mousemove', onMove)
+    el.addEventListener('mouseleave', onLeave)
+    return () => {
+      el.removeEventListener('mousemove', onMove)
+      el.removeEventListener('mouseleave', onLeave)
+    }
+  }, [getBlock])
 
   return (
     <div className="relative w-full" ref={forwardedRef}>
@@ -130,7 +188,10 @@ function EditorAdapter({
         style={{ paddingLeft: GUTTER_WIDTH }}
       >
         {editor && (
-          <BlockControls editor={editor} containerRef={containerRef} />
+          <>
+            <BlockControls editor={editor} containerRef={containerRef} hoveredBlock={hoveredBlock} />
+            <BlockActions editor={editor} containerRef={containerRef} hoveredBlock={hoveredBlock} />
+          </>
         )}
         <EditorContent editor={editor} />
       </div>
