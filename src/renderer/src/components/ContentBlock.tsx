@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Sparkles, Trash2, Plus, Copy, GripVertical } from "lucide-react";
+import { Sparkles, Trash2, Plus, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
 import { AppButton } from "@/components/app";
 import { AppTextEditor } from "@/components/app/AppTextEditor";
