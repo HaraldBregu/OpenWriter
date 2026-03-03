@@ -121,6 +121,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         disabled={isEnhancing}
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
+        onDragHandlePointerDown={handleDragHandlePointerDown}
       />
     </Reorder.Item>
   );
