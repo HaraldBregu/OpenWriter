@@ -119,12 +119,6 @@ export function OptionMenu({ editor }: OptionMenuProps): React.JSX.Element {
         return true
       }
 
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        // Plugin's update() will call onHide to reset state
-        return true
-      }
-
       return false
     },
     [executeCommand],
