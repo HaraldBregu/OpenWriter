@@ -7,7 +7,6 @@ import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
 import { cn } from '@/lib/utils'
-import { DragHandle } from './DragHandle'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -121,11 +120,11 @@ function EditorAdapter({
 
   return (
     <div className="relative w-full" ref={forwardedRef}>
-      {editor && (
-        <DragHandle editor={editor}>
-          <div className="custom-drag-handle" />
-        </DragHandle>
-      )}
+
+      {/* <DragHandle editor={editor} nested={false}>
+        <div className="custom-drag-handle" />
+      </DragHandle> */}
+
       <EditorContent editor={editor} />
     </div>
   )
