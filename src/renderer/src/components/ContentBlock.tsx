@@ -128,6 +128,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
         onAddBelow={handleAddBelow}
+        onDelete={handleDelete}
       />
     </Reorder.Item>
   );
