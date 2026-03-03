@@ -471,7 +471,7 @@ const FloatingToolbar = memo(
     const toggleBlockquote = run(() => {
       if (isNodeActive(editorView.state, n.blockquote)) {
         // Lift out of blockquote: use the lift command
-        import('@tiptap/pm/commands').then(({ lift }) => {
+        import('prosemirror-commands').then(({ lift }) => {
           lift(editorView.state, editorView.dispatch)
         })
       } else {
