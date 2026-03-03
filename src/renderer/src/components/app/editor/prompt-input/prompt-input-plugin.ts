@@ -33,24 +33,28 @@ export class PromptInputView {
     this.onDismiss = props.onDismiss
     this.onBeforeShow = props.onBeforeShow
 
+    this.element.style.display = 'none'
     this.element.style.visibility = 'hidden'
     this.element.style.position = 'absolute'
   }
 
   async show(pos: number): Promise<void> {
     this.triggerPos = pos
-    // Let the React component set width before we make the element visible so
-    // Floating UI can measure the correct dimensions.
+    // Sync width before measuring — element must be display:flex so Floating UI
+    // can read its dimensions, but keep it invisible until position is ready.
+    this.element.style.display = 'flex'
+    this.element.style.visibility = 'hidden'
     this.onBeforeShow?.(pos)
     this.visible = true
-    this.element.style.visibility = 'visible'
     await this.updatePosition()
+    this.element.style.visibility = 'visible'
   }
 
   hide(): void {
     if (this.visible) {
       this.visible = false
       this.triggerPos = null
+      this.element.style.display = 'none'
       this.element.style.visibility = 'hidden'
       this.onDismiss()
     }
