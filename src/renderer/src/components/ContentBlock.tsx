@@ -107,6 +107,10 @@ export const ContentBlock = React.memo(function ContentBlock({
     onAddBelow?.(block.id);
   }, [onAddBelow, block.id]);
 
+  const handleDelete = useCallback(() => {
+    onDelete?.(block.id);
+  }, [onDelete, block.id]);
+
   return (
     <Reorder.Item
       value={block}
