@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { NodeViewContent, NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
-import { GripVertical, Plus, MessageSquare } from 'lucide-react'
+import { GripVertical, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
