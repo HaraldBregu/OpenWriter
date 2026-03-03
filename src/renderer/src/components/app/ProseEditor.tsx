@@ -1,10 +1,9 @@
 /**
  * ProseEditor — A comprehensive ProseMirror editor wrapper component.
  *
- * Built directly on the ProseMirror core modules (imported via @tiptap/pm which
- * re-exports all prosemirror-* packages). This component is intentionally
- * decoupled from TipTap's extension framework to give full control over the
- * schema, plugins, keybindings, and serialization.
+ * Built directly on the ProseMirror core modules (prosemirror-*). This component
+ * is intentionally decoupled from TipTap to give full control over the schema,
+ * plugins, keybindings, and serialization.
  *
  * Features:
  *  - Rich schema: headings, paragraphs, blockquote, code_block, hr, lists,
