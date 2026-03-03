@@ -167,6 +167,18 @@ export function ParagraphNodeView({
           'select-none',
         )}
       >
+
+        {/* Add paragraph below */}
+        <button
+          type="button"
+          aria-label="Add paragraph below"
+          title="Add paragraph below"
+          onMouseDown={handleAddBelow}
+          className={gutterBtn}
+        >
+          <Plus size={17} strokeWidth={2.5} />
+        </button>
+
         {/* Drag handle */}
         <button
           type="button"
