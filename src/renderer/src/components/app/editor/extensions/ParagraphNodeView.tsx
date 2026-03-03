@@ -17,13 +17,11 @@ export interface ParagraphNodeViewCallbacks {
    * Called when the user clicks the "+" (add block below) button.
    * Receives the ProseMirror position of the paragraph's start so the
    * caller can insert a new node at the correct place.
+   *
+   * When omitted the NodeView falls back to inserting a new paragraph via a
+   * direct ProseMirror transaction and moving the cursor into it.
    */
   onAddBelow?: (pos: number) => void
-  /**
-   * Called when the user clicks the comment / options icon on the right.
-   * The host can open a sidebar panel, popover, or any UI it owns.
-   */
-  onComment?: (pos: number) => void
 }
 
 // ---------------------------------------------------------------------------
