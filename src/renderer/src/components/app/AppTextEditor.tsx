@@ -3,7 +3,7 @@ import { useEditor, EditorContent, useEditorState, type UseEditorOptions } from 
 import { BubbleMenu } from '@tiptap/react/menus'
 import { type Editor, type AnyExtension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
-import Heading from '@tiptap/extension-heading'
+import { CustomHeading } from './extensions/CustomHeading'
 import { Markdown } from '@tiptap/markdown'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'

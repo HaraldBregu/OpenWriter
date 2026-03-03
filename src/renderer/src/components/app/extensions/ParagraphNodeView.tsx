@@ -157,7 +157,7 @@ export function ParagraphNodeView({
         contentEditable={false}
         suppressContentEditableWarning
         className={cn(
-          'flex items-center gap-0.5',
+          'flex items-center gap-2',
           'w-8 shrink-0 justify-end',
           // Align buttons vertically with the first text baseline.
           // `pt-[3px]` fine-tunes against the 1.5rem line-height of the prose text.
@@ -167,21 +167,7 @@ export function ParagraphNodeView({
           'select-none',
         )}
       >
-        {/* Drag handle */}
-        <button
-          type="button"
-          aria-label="Drag paragraph"
-          title="Drag to reorder"
-          onMouseDown={handleDragHandleMouseDown}
-          className={cn(
-            gutterBtn,
-            isDragging && 'opacity-100 text-muted-foreground cursor-grabbing',
-            !isDragging && 'cursor-grab',
-          )}
-        >
-          <GripVertical size={17} strokeWidth={2} />
-        </button>
-
+    
         {/* Add paragraph below */}
         <button
           type="button"
