@@ -189,7 +189,7 @@ type ProseSchema = typeof schema
 // =============================================================================
 
 /** Serialize a ProseMirror document node to an HTML string. */
-function serializeToHTML(doc: PMNode<ProseSchema>): string {
+function serializeToHTML(doc: PMNode): string {
   const serializer = DOMSerializer.fromSchema(schema)
   const fragment = serializer.serializeFragment(doc.content)
   const div = document.createElement('div')
@@ -198,7 +198,7 @@ function serializeToHTML(doc: PMNode<ProseSchema>): string {
 }
 
 /** Parse an HTML string into a ProseMirror document node. */
-function parseFromHTML(html: string): PMNode<ProseSchema> {
+function parseFromHTML(html: string): PMNode {
   const div = document.createElement('div')
   div.innerHTML = html
   return PMDOMParser.fromSchema(schema).parse(div)
@@ -243,7 +243,7 @@ function buildPlaceholderPlugin(placeholder: string): Plugin {
  * delimiter (e.g., **bold**, `code`).
  * ProseMirror's built-in markInputRule handles this pattern.
  */
-function markInputRule(pattern: RegExp, markType: MarkType<ProseSchema>) {
+function markInputRule(pattern: RegExp, markType: MarkType) {
   return new InputRule(pattern, (state, match, start, end) => {
     const [fullMatch, content] = match
     if (!fullMatch || !content) return null
@@ -299,7 +299,7 @@ function buildCustomKeymap() {
   const { nodes: n, marks: m } = schema
 
   // List helpers need the right item type from our schema
-  const listItemType: NodeType<ProseSchema> = n.list_item
+  const listItemType: NodeType = n.list_item
 
   return keymap({
     // Formatting marks
@@ -370,7 +370,7 @@ const HIDDEN_TOOLBAR: ToolbarState = { show: false, top: 0, left: 0 }
 // Mark / node active helpers (used by the toolbar)
 // =============================================================================
 
-function isMarkActive(state: EditorState, markType: MarkType<ProseSchema>): boolean {
+function isMarkActive(state: EditorState, markType: MarkType): boolean {
   const { from, $from, to, empty } = state.selection
   if (empty) return !!markType.isInSet(state.storedMarks || $from.marks())
   return state.doc.rangeHasMark(from, to, markType)
@@ -378,7 +378,7 @@ function isMarkActive(state: EditorState, markType: MarkType<ProseSchema>): bool
 
 function isNodeActive(
   state: EditorState,
-  nodeType: NodeType<ProseSchema>,
+  nodeType: NodeType,
   attrs?: Record<string, unknown>,
 ): boolean {
   const { $from, to } = state.selection
@@ -444,7 +444,7 @@ const FloatingToolbar = memo(
       editorView.focus()
     }
 
-    const toggleMarkCmd = (markType: MarkType<ProseSchema>) =>
+    const toggleMarkCmd = (markType: MarkType) =>
       run(() => toggleMark(markType)(editorView.state, editorView.dispatch))
 
     const toggleHeading = (level: number) =>
@@ -455,7 +455,7 @@ const FloatingToolbar = memo(
         cmd(editorView.state, editorView.dispatch)
       })
 
-    const toggleList = (listType: NodeType<ProseSchema>) =>
+    const toggleList = (listType: NodeType) =>
       run(() => {
         if (isNodeActive(editorView.state, listType)) {
           // If already in this list, use setBlockType on paragraph to unwrap
