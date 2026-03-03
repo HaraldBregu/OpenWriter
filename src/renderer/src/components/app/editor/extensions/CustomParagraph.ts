@@ -1,5 +1,6 @@
 import { Paragraph } from '@tiptap/extension-paragraph'
 import { ReactNodeViewRenderer } from '@tiptap/react'
+import { TextSelection } from '@tiptap/pm/state'
 import { ParagraphNodeView, type ParagraphNodeViewCallbacks } from './ParagraphNodeView'
 
 // ---------------------------------------------------------------------------
