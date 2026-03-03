@@ -228,7 +228,7 @@ function EditorAdapter({
 
 const TextEditor = React.memo(
   React.forwardRef<HTMLDivElement, TextEditorProps>((props, ref) => {
-    const { value, onChange, autoFocus, className, disabled, id } = props
+    const { value, onChange, autoFocus, className, disabled, id, onContinueWithAI } = props
 
     const stableOnChange = useCallback(
       (html: string) => onChange(html),
@@ -244,6 +244,7 @@ const TextEditor = React.memo(
           disabled={disabled}
           forwardedRef={ref}
           streamingContent={props.streamingContent}
+          onContinueWithAI={onContinueWithAI}
         />
       </div>
     )
