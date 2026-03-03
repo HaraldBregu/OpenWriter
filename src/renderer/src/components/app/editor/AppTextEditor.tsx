@@ -21,7 +21,6 @@ import {
   Heading3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { TabGhostText } from './extensions/TabGhostText'
 import { CustomParagraph } from './extensions/CustomParagraph'
 import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 
@@ -41,7 +40,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   // Disable StarterKit's built-in paragraph — CustomParagraph replaces it with
   // a React NodeView that renders inline gutter buttons on hover.
   StarterKit.configure({
-    paragraph: false,
+    // paragraph: true,
     bulletList: false,
     orderedList: false,
     listItem: false,
@@ -52,7 +51,6 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   OrderedList,
   ListItem,
   ListKeymap,
-  TabGhostText,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === 'heading') {
@@ -253,11 +251,11 @@ function TipTapAdapter({
   const allExtensions = useMemo<AnyExtension[]>(
     () => [
       ...BASE_EXTENSIONS,
-      CustomParagraph.configure({
-        onAddBelow: (pos: number) => onAddBelowRef.current?.(pos),
-        onDelete: (pos: number) => onDeleteRef.current?.(pos),
-        onEnhance: (pos: number) => onEnhanceRef.current?.(pos),
-      }),
+      // CustomParagraph.configure({
+      //   onAddBelow: (pos: number) => onAddBelowRef.current?.(pos),
+      //   onDelete: (pos: number) => onDeleteRef.current?.(pos),
+      //   onEnhance: (pos: number) => onEnhanceRef.current?.(pos),
+      // }),
       ...extensions,
     ],
     // `extensions` is the only runtime dep. BASE_EXTENSIONS is module-level and
