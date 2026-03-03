@@ -10,7 +10,7 @@ export interface OptionMenuPluginProps {
   element: HTMLElement
   onShow: () => void
   onHide: () => void
-  onQueryChange: (query: string) => void
+  onQueryChange: (query: string, slashPos: number) => void
   onKeyEvent: (event: KeyboardEvent) => boolean
 }
 
