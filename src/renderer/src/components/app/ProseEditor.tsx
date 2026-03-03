@@ -989,13 +989,12 @@ const ProseEditor = memo(
     useEffect(() => {
       const view = viewRef.current
       if (!view || view.isDestroyed) return
-      // Rebuild plugins with new placeholder and reinstall
-      const newState = EditorState.create({
-        doc: view.state.doc,
-        schema,
-        plugins: buildPlugins(placeholder),
-        selection: view.state.selection,
-      })
+      // Swap only the placeholder plugin, keeping stable plugins intact
+      const newPlugins = [
+        ...STABLE_PLUGINS,
+        buildPlaceholderPlugin(placeholder),
+      ]
+      const newState = view.state.reconfigure({ plugins: newPlugins })
       view.updateState(newState)
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [placeholder])
