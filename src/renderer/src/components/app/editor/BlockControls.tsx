@@ -135,14 +135,6 @@ export function BlockControls({ editor, containerRef, hoveredBlock }: BlockContr
           size="icon-xm"
           aria-label="Add block below"
           onClick={handleAdd}
-          className={cn(
-            'h-6 w-6 rounded p-0',
-            'cursor-pointer',
-            'text-muted-foreground/50 transition-all duration-100',
-            'hover:bg-muted hover:text-muted-foreground',
-            'active:scale-90',
-            '[&_svg]:size-[15px]',
-          )}
         >
           <Plus />
         </AppButton>
