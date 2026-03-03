@@ -1008,9 +1008,17 @@ function EditorAdapter({
 
   const editor = useEditor(editorOptions, [])
 
-  // Sync external value into editor when it changes from outside.
+  // Sync external value / streaming content into editor.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
+
+    if (streamingContent !== undefined) {
+      const current = editor.getHTML()
+      if (current !== streamingContent) {
+        editor.commands.setContent(streamingContent, { emitUpdate: false })
+      }
+      return
+    }
 
     if (internalChangeRef.current) {
       internalChangeRef.current = false
@@ -1022,7 +1030,7 @@ function EditorAdapter({
     if (currentHTML !== targetContent) {
       editor.commands.setContent(targetContent, { emitUpdate: false })
     }
-  }, [value, editor])
+  }, [value, streamingContent, editor])
 
   // Sync disabled / editable state.
   useEffect(() => {
