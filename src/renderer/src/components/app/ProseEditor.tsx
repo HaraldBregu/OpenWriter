@@ -335,16 +335,19 @@ function buildCustomKeymap() {
 // All plugins combined
 // =============================================================================
 
+// Stable plugin instances created once at module level to avoid
+// "Adding different instances of a keyed plugin" errors.
+const STABLE_PLUGINS: Plugin[] = [
+  history(),
+  buildInputRules(),
+  buildCustomKeymap(),
+  keymap(baseKeymap),
+  dropCursor({ color: 'hsl(var(--primary))' }),
+  gapCursor(),
+]
+
 function buildPlugins(placeholder: string): Plugin[] {
-  return [
-    history(),
-    buildInputRules(),
-    buildCustomKeymap(),
-    keymap(baseKeymap),
-    dropCursor({ color: 'hsl(var(--primary))' }),
-    gapCursor(),
-    buildPlaceholderPlugin(placeholder),
-  ]
+  return [...STABLE_PLUGINS, buildPlaceholderPlugin(placeholder)]
 }
 
 // =============================================================================
