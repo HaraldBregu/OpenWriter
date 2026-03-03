@@ -228,7 +228,7 @@ export const ContentBlock = React.memo(function ContentBlock({
           <ActionButton
             title={t("contentBlock.delete")}
             onClick={() => onDelete(block.id)}
-            disabled={isOnly}
+            disabled={false}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </ActionButton>
