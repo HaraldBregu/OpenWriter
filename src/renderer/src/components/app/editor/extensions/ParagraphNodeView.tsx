@@ -160,10 +160,14 @@ export function ParagraphNodeView({
         contentEditable={false}
         suppressContentEditableWarning
         className={cn(
-          'flex items-center gap-0.5',
-          // Fixed 16px width matches the -mx-8 (2rem = 32px) parent bleed so
-          // the two gutter columns together consume exactly 32px.
-          'w-16 shrink-0 justify-end',
+          'flex items-center gap-0',
+          // w-8 (32px) matches the -mx-8 bleed so the gutter sits flush
+          // within the editor's horizontal padding. Three 24px buttons at
+          // scale would overflow, so we shrink each icon to 14px and keep
+          // the buttons at h-5 w-5 (20px) — three × 20px = 60px total,
+          // so we allow the gutter to be wider than the bleed. The excess
+          // sits in the page's own px-10 padding without clipping.
+          'w-[60px] shrink-0 justify-end',
           // Align controls with the first text baseline of a text-lg line.
           'pt-[3px]',
           'select-none',
