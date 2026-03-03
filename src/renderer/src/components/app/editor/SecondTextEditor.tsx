@@ -295,7 +295,7 @@ const CalloutNode = Node.create<CalloutOptions>({
   },
 
   addNodeView() {
-    return ({ node, HTMLAttributes, getPos, editor }) => {
+    return ({ node, getPos, editor }) => {
       const calloutType = (node.attrs['type'] as CalloutType) ?? 'info'
       const cfg = CALLOUT_CONFIG[calloutType]
 
