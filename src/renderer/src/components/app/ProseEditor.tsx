@@ -243,7 +243,7 @@ function buildPlaceholderPlugin(placeholder: string): Plugin {
  * ProseMirror's built-in markInputRule handles this pattern.
  */
 function markInputRule(pattern: RegExp, markType: MarkType) {
-  return new InputRule(pattern, (state, match, start, end) => {
+  return new InputRule(pattern, (state, match, start, _end) => {
     const [fullMatch, content] = match
     if (!fullMatch || !content) return null
     const tr = state.tr
