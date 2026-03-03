@@ -167,8 +167,11 @@ export function AppTextEditorOptionMenu({
     if (!menu) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    const prevent = (e: WheelEvent) => e.preventDefault()
+    window.addEventListener('wheel', prevent, { passive: false })
     return () => {
       document.body.style.overflow = prev
+      window.removeEventListener('wheel', prevent)
     }
   }, [menu])
 

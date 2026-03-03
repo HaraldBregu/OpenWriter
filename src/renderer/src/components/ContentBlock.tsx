@@ -204,7 +204,6 @@ export const ContentBlock = React.memo(function ContentBlock({
         {/* Content area */}
         <div className="flex-1 min-w-0">
           <AppTextEditor
-            type="PARAGRAPH"
             value={block.content}
             onChange={handleChange}
             placeholder={placeholder}

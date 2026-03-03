@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useEditor, EditorContent, useEditorState, type UseEditorOptions } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { type Editor, type AnyExtension } from '@tiptap/core'
@@ -180,7 +180,6 @@ function BubbleMenuContent({ editor }: { editor: Editor }): React.JSX.Element {
 interface TipTapAdapterProps {
   value: string
   onChange: (value: string) => void
-  placeholder: string | undefined
   autoFocus: boolean | undefined
   disabled: boolean | undefined
   extensions: AnyExtension[]
@@ -191,15 +190,12 @@ interface TipTapAdapterProps {
 function TipTapAdapter({
   value,
   onChange,
-  placeholder,
   autoFocus,
   disabled,
   extensions,
   forwardedRef,
   streamingContent,
 }: TipTapAdapterProps): React.JSX.Element {
-  const [isEmpty, setIsEmpty] = useState<boolean>(() => !value)
-
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
@@ -211,10 +207,6 @@ function TipTapAdapter({
       immediatelyRender: false,
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
         onChangeRef.current(ed.getMarkdown())
-        setIsEmpty(ed.isEmpty)
-      },
-      onCreate: ({ editor: ed }: { editor: Editor }) => {
-        setIsEmpty(ed.isEmpty)
       },
       editorProps: {
         attributes: {
@@ -234,7 +226,6 @@ function TipTapAdapter({
     const incoming = streamingContent !== undefined ? streamingContent : (value || '')
     if (current !== incoming) {
       editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
-      setIsEmpty(editor.isEmpty)
     }
   }, [value, streamingContent, editor])
 
@@ -254,14 +245,6 @@ function TipTapAdapter({
 
   return (
     <div className="relative" ref={forwardedRef}>
-      {isEmpty && placeholder && (
-        <span
-          className="absolute inset-0 py-2 pointer-events-none select-none text-base leading-relaxed text-muted-foreground/50"
-          aria-hidden="true"
-        >
-          {placeholder}
-        </span>
-      )}
       <BubbleMenu editor={editor}>
         {editor && <BubbleMenuContent editor={editor} />}
       </BubbleMenu>
@@ -298,7 +281,6 @@ const AppTextEditor = React.memo(
         <TipTapAdapter
           value={props.value}
           onChange={props.onChange}
-          placeholder={props.placeholder}
           autoFocus={props.autoFocus}
           disabled={props.disabled}
           extensions={mergedExtensions}
