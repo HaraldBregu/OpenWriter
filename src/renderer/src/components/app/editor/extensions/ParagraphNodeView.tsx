@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -41,15 +42,17 @@ export interface ParagraphNodeViewCallbacks {
 /**
  * React NodeView for the custom Paragraph extension.
  *
- * Layout:
- *   [left gutter: add-below · drag-handle] [NodeViewContent] [right gutter: ⋯ menu]
+ * Notion-style layout — all controls in the LEFT gutter:
  *
- * Both gutters are `contentEditable={false}` so ProseMirror never treats
- * clicks on buttons as text-editing interactions.
+ *   [drag ⠿] [+] [⋮] │ [NodeViewContent ...............]
  *
- * The entire row becomes a hover group (`group` Tailwind class on the wrapper)
- * so the gutter buttons use `opacity-0 group-hover:opacity-100` — invisible at
- * rest, visible on hover.
+ * The left gutter is `contentEditable={false}` so ProseMirror never treats
+ * clicks on the control buttons as text-editing interactions.
+ *
+ * The entire row is a hover group (`group` Tailwind class on the wrapper) so
+ * gutter controls use `opacity-0 group-hover:opacity-100` — invisible at rest,
+ * revealed on hover. The `⋮` trigger also stays visible while the dropdown is
+ * open via a `menuOpen` state guard.
  */
 export function ParagraphNodeView({
   node,
@@ -61,11 +64,19 @@ export function ParagraphNodeView({
   const [menuOpen, setMenuOpen] = useState(false)
 
   // -------------------------------------------------------------------------
+  // Helpers
+  // -------------------------------------------------------------------------
+
+  const getNodePos = (): number | undefined => {
+    return typeof getPos === 'function' ? getPos() : undefined
+  }
+
+  // -------------------------------------------------------------------------
   // Button handlers
   //
-  // IMPORTANT: We call `event.preventDefault()` on every mouse-down inside
-  // `contentEditable={false}` zones so ProseMirror never steals the event and
-  // collapses the selection.
+  // IMPORTANT: `onMouseDown={(e) => e.preventDefault()}` on every button inside
+  // `contentEditable={false}` zones prevents ProseMirror from stealing the
+  // mousedown event and collapsing the editor selection.
   // -------------------------------------------------------------------------
 
   const handleAddBelow = useCallback(
@@ -73,13 +84,14 @@ export function ParagraphNodeView({
       e.preventDefault()
       e.stopPropagation()
 
-      const pos = typeof getPos === 'function' ? getPos() : undefined
+      const pos = getNodePos()
       if (pos === undefined) return
 
       if (callbacks.onAddBelow) {
         callbacks.onAddBelow(pos)
       } else {
-        // Default behaviour: insert an empty paragraph immediately after this one.
+        // Default: insert an empty paragraph immediately after this one and
+        // move the cursor into it.
         const { state, dispatch } = editor.view
         const nodeEnd = pos + node.nodeSize
         const tr = state.tr.insert(nodeEnd, state.schema.nodes.paragraph.create())
@@ -88,26 +100,26 @@ export function ParagraphNodeView({
         editor.commands.setTextSelection(nodeEnd + 1)
       }
     },
-    [callbacks, editor, getPos, node.nodeSize],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [callbacks, editor, node.nodeSize],
   )
 
   const handleDelete = useCallback(() => {
-    const pos = typeof getPos === 'function' ? getPos() : undefined
+    const pos = getNodePos()
     if (pos === undefined) return
-
-    if (callbacks.onDelete) {
-      callbacks.onDelete(pos)
-    }
-  }, [callbacks, editor, getPos, node.nodeSize])
+    callbacks.onDelete?.(pos)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callbacks])
 
   const handleEnhance = useCallback(() => {
-    const pos = typeof getPos === 'function' ? getPos() : undefined
+    const pos = getNodePos()
     if (pos === undefined) return
     callbacks.onEnhance?.(pos)
-  }, [callbacks, getPos])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callbacks])
 
   // -------------------------------------------------------------------------
-  // Render
+  // Shared gutter button class
   // -------------------------------------------------------------------------
 
   const gutterBtn = cn(
@@ -117,37 +129,57 @@ export function ParagraphNodeView({
     'hover:text-muted-foreground hover:bg-muted/60',
     'transition-all duration-150',
     'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-    // Invisible by default; the wrapper's `group` makes them appear on hover.
+    // Hidden by default; the wrapper `group` reveals them on hover.
     'opacity-0 group-hover:opacity-100',
   )
 
+  // -------------------------------------------------------------------------
+  // Render
+  // -------------------------------------------------------------------------
+
   return (
     // NodeViewWrapper is the ProseMirror-managed root element.
-    // The outer div carries the `group` class for Tailwind's group-hover system.
+    // `group` enables Tailwind's group-hover system for the gutter controls.
     <NodeViewWrapper
       as="div"
       data-type="paragraph"
       className={cn(
         'group relative flex items-start gap-1',
-        // Negative horizontal margin lets the gutters "float" outside the text
-        // column without shifting the paragraph content itself.
+        // Negative horizontal margin lets the left gutter "float" outside the
+        // text column without shifting the paragraph content itself.
         '-mx-8',
         'py-0',
       )}
     >
       {/* ------------------------------------------------------------------ */}
-      {/* LEFT GUTTER: add-below button + drag handle                        */}
+      {/* LEFT GUTTER: drag handle · add-below · options menu               */}
+      {/* All Notion controls live here. contentEditable={false} is critical  */}
+      {/* — ProseMirror must not treat this zone as an editable text region.  */}
       {/* ------------------------------------------------------------------ */}
       <div
-        contentEditable={true}
+        contentEditable={false}
         suppressContentEditableWarning
         className={cn(
-          'flex items-center gap-1',
-          'w-8 shrink-0 justify-end',
+          'flex items-center gap-0.5',
+          // Fixed 16px width matches the -mx-8 (2rem = 32px) parent bleed so
+          // the two gutter columns together consume exactly 32px.
+          'w-16 shrink-0 justify-end',
+          // Align controls with the first text baseline of a text-lg line.
           'pt-[3px]',
           'select-none',
         )}
       >
+        {/* Drag handle — visual affordance for Framer Motion reorder */}
+        <button
+          type="button"
+          aria-label="Drag paragraph"
+          title="Drag to reorder"
+          onMouseDown={(e) => e.preventDefault()}
+          className={cn(gutterBtn, 'cursor-grab active:cursor-grabbing')}
+        >
+          <GripVertical size={15} strokeWidth={2} />
+        </button>
+
         {/* Add paragraph below */}
         <button
           type="button"
@@ -156,44 +188,10 @@ export function ParagraphNodeView({
           onMouseDown={handleAddBelow}
           className={gutterBtn}
         >
-          <Plus size={17} strokeWidth={2.5} />
+          <Plus size={15} strokeWidth={2.5} />
         </button>
 
-        {/* Drag handle */}
-        <button
-          type="button"
-          aria-label="Drag paragraph"
-          title="Drag to reorder"
-          className={cn(gutterBtn, 'cursor-grab')}
-        >
-          <GripVertical size={17} strokeWidth={2} />
-        </button>
-      </div>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* CONTENT: the editable paragraph text                               */}
-      {/* ------------------------------------------------------------------ */}
-      <NodeViewContent
-        // className={cn(
-        //   'flex-1 min-w-0 block',
-        //   'text-lg leading-relaxed text-foreground break-words',
-        //   'm-0 p-0 ml-2',
-        // )}
-      />
-
-      {/* ------------------------------------------------------------------ */}
-      {/* RIGHT GUTTER: ⋯ dropdown menu                                      */}
-      {/* ------------------------------------------------------------------ */}
-      {/* <div
-        contentEditable={false}
-        suppressContentEditableWarning
-        className={cn(
-          'flex items-center',
-          'w-8 shrink-0 justify-start',
-          'pt-[3px]',
-          'select-none',
-        )}
-      >
+        {/* Options menu trigger (⋮) */}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -203,11 +201,12 @@ export function ParagraphNodeView({
               onMouseDown={(e) => e.preventDefault()}
               className={cn(
                 gutterBtn,
-                // Keep visible while the menu is open even if mouse moved away.
+                // Keep the trigger visible while the menu is open even if the
+                // pointer has moved outside the paragraph row.
                 menuOpen && 'opacity-100 text-muted-foreground',
               )}
             >
-              <MoreVertical size={17} strokeWidth={2} />
+              <MoreVertical size={15} strokeWidth={2} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" className="w-40">
@@ -218,6 +217,7 @@ export function ParagraphNodeView({
               <Sparkles size={14} strokeWidth={2} />
               Enhance
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={handleDelete}
               className="gap-2 cursor-pointer text-destructive focus:text-destructive"
@@ -227,7 +227,20 @@ export function ParagraphNodeView({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div> */}
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* CONTENT: the editable paragraph text                               */}
+      {/* NodeViewContent must NOT be wrapped in contentEditable={false} —   */}
+      {/* it is the leaf that ProseMirror controls.                          */}
+      {/* ------------------------------------------------------------------ */}
+      <NodeViewContent
+        className={cn(
+          'flex-1 min-w-0 block',
+          'text-lg leading-relaxed text-foreground break-words',
+          'm-0 p-0 ml-2',
+        )}
+      />
     </NodeViewWrapper>
   )
 }
