@@ -82,7 +82,8 @@
       "Bash(mkdir:*)",
       "Bash(rm:*)",
       "Bash(mv:*)",
-      "Bash(tr ;:*)"
+      "Bash(tr ;:*)",
+      "Bash(tr {:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
