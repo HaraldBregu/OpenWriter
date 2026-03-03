@@ -111,9 +111,7 @@ export function PromptInput({
       },
     })
 
-    // Use editor.state.plugins (all current plugins, not just extension plugins)
-    // so dynamically-registered plugins from other components are preserved.
-    editor.registerPlugin(plugin, (newPlugin) => [newPlugin, ...editor.state.plugins])
+    editor.registerPlugin(plugin)
     return () => {
       editor.unregisterPlugin(pluginKey)
     }
