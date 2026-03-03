@@ -35,6 +35,23 @@ import {
 } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 
+// ===========================================================================
+// Module augmentation — register custom commands with Tiptap's type system
+// ===========================================================================
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    callout: {
+      setCallout: (attrs?: { type?: CalloutType }) => ReturnType
+      toggleCallout: (attrs?: { type?: CalloutType }) => ReturnType
+    }
+    details: {
+      setDetails: (attrs?: { summary?: string }) => ReturnType
+      toggleDetails: (attrs?: { summary?: string }) => ReturnType
+    }
+  }
+}
+
 // ── Standard extensions ────────────────────────────────────────────────────
 import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
