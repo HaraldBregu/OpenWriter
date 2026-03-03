@@ -130,7 +130,7 @@ const SlashCommand = Extension.create<SlashCommandOptions>({
             return false
           },
 
-          handleTextInput(view, _from, _to, text) {
+          handleTextInput(view, _from, _to, _text) {
             if (!isActive) return false
 
             // Update query after ProseMirror inserts the char.
