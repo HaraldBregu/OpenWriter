@@ -85,6 +85,8 @@ export class WindowFactory {
       }
     })
 
+    win.webContents.toggleDevTools() // Open dev tools by default in development
+    
     this.loadContent(win)
     return win
   }

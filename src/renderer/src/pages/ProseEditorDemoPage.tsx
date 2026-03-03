@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Type } from 'lucide-react'
 import { ProseEditor } from '@/components/app'
 
