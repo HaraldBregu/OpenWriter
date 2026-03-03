@@ -132,7 +132,7 @@ export function BlockControls({ editor, containerRef, hoveredBlock }: BlockContr
         {/* Add block below */}
         <AppButton
           variant="editor-block-actions"
-          size="editor-block-icons"
+          size="editor-block-icons-sm"
           aria-label="Add block below"
           onClick={handleAdd}
         >
