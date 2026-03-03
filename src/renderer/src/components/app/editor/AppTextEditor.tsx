@@ -45,10 +45,8 @@ const BASE_EXTENSIONS: AnyExtension[] = [
     bulletList: false,
     orderedList: false,
     listItem: false,
-    heading: false,
+    heading: { levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] },
   }),
-  // Custom heading with the same floating gutter button pattern as CustomParagraph.
-  CustomHeading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
   Markdown,
   BulletList,
   OrderedList,
