@@ -147,6 +147,14 @@ const ContentPage: React.FC = () => {
    * and move focus into it.  Called by ContentBlock's onAddBelow prop, which is
    * triggered when the user clicks the "+" gutter button inside any paragraph.
    */
+  const handleDeleteBlock = useCallback((blockId: string) => {
+    setBlocks((prev) => {
+      // Always keep at least one block so the editor is never empty.
+      if (prev.length <= 1) return prev.map((b) => b.id === blockId ? { ...b, content: '' } : b)
+      return prev.filter((b) => b.id !== blockId)
+    })
+  }, [])
+
   const handleAddBlockAfter = useCallback((afterId: string) => {
     const newBlock = createBlock()
     setBlocks((prev) => {
