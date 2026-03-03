@@ -29,6 +29,7 @@ export interface ContentBlockProps {
    * block after the block identified by `id`.
    */
   onAddBelow?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
 export function createBlock(): Block {
