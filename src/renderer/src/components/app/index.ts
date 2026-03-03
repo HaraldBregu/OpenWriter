@@ -6,7 +6,7 @@ export { AppInput } from './AppInput'
 export { AppTextarea } from './AppTextarea'
 
 export { AppTextEditor } from './editor/AppTextEditor'
-export type { AppTextEditorProps, HeadingLevel } from './editor/AppTextEditor'
+export type { AppTextEditorProps } from './editor/AppTextEditor'
 
 export { AppLabel } from './AppLabel'
 
