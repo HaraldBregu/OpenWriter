@@ -1,18 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import { cn } from '@/lib/utils'
 
 export const GUTTER_WIDTH = 54
 
+export interface HoveredBlock {
+  node: HTMLElement
+  pos: number
+  top: number
+}
+
 interface BlockControlsProps {
   editor: Editor
   containerRef: React.RefObject<HTMLDivElement | null>
+  hoveredBlock: HoveredBlock | null
 }
 
-export function BlockControls({ editor, containerRef }: BlockControlsProps): React.JSX.Element {
-  const [ctrlState, setCtrlState] = useState({ top: 0, visible: false })
+export function BlockControls({ editor, containerRef, hoveredBlock }: BlockControlsProps): React.JSX.Element {
   const [dropState, setDropState] = useState({ top: 0, visible: false })
-  const hoverRef = useRef<{ node: HTMLElement | null; pos: number | null }>({ node: null, pos: null })
   const dragRef = useRef(false)
 
   // Resolve the top-level block at a given clientY.
@@ -37,60 +42,21 @@ export function BlockControls({ editor, containerRef }: BlockControlsProps): Rea
     [editor, containerRef],
   )
 
-  // Mouse move / leave — detect hovered block.
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-
-    const onMove = (e: MouseEvent): void => {
-      if (dragRef.current) return
-      const block = getBlock(e.clientY)
-      if (block) {
-        hoverRef.current = { node: block.dom, pos: block.pos }
-        const cR = el.getBoundingClientRect()
-        const bR = block.dom.getBoundingClientRect()
-        const lh = parseFloat(getComputedStyle(block.dom).lineHeight) || 30
-        setCtrlState({
-          top: bR.top - cR.top + Math.min(lh, bR.height) / 2 - 12,
-          visible: true,
-        })
-      } else {
-        hoverRef.current = { node: null, pos: null }
-        setCtrlState((s) => ({ ...s, visible: false }))
-      }
-    }
-
-    const onLeave = (): void => {
-      if (dragRef.current) return
-      setTimeout(() => {
-        if (!dragRef.current) setCtrlState((s) => ({ ...s, visible: false }))
-      }, 80)
-    }
-
-    el.addEventListener('mousemove', onMove)
-    el.addEventListener('mouseleave', onLeave)
-    return () => {
-      el.removeEventListener('mousemove', onMove)
-      el.removeEventListener('mouseleave', onLeave)
-    }
-  }, [getBlock, containerRef])
-
   // Add a paragraph below the hovered block.
   const handleAdd = useCallback(() => {
-    const { pos } = hoverRef.current
-    if (pos === null || pos === undefined) return
+    if (!hoveredBlock) return
+    const { pos } = hoveredBlock
     const nd = editor.state.doc.nodeAt(pos)
     const ip = pos + (nd ? nd.nodeSize : 0)
     editor.chain().focus().insertContentAt(ip, { type: 'paragraph' }).run()
     editor.commands.focus(ip + 1)
-    setCtrlState((s) => ({ ...s, visible: false }))
-  }, [editor])
+  }, [editor, hoveredBlock])
 
   // Drag-to-reorder via ProseMirror transactions.
   const handleDragStart = useCallback(
     (e: React.MouseEvent) => {
-      const { node: srcDom, pos: srcPos } = hoverRef.current
-      if (!srcDom || srcPos === null || srcPos === undefined) return
+      if (!hoveredBlock) return
+      const { node: srcDom, pos: srcPos } = hoveredBlock
       e.preventDefault()
       dragRef.current = true
       srcDom.classList.add('is-dragging')
@@ -122,7 +88,6 @@ export function BlockControls({ editor, containerRef }: BlockControlsProps): Rea
         srcDom.classList.remove('is-dragging')
         setDropState({ top: 0, visible: false })
         dragRef.current = false
-        setCtrlState((s) => ({ ...s, visible: false }))
 
         if (!dropTarget || !dropDir) return
         const sn = editor.state.doc.nodeAt(srcPos)
@@ -146,8 +111,10 @@ export function BlockControls({ editor, containerRef }: BlockControlsProps): Rea
       document.addEventListener('mousemove', onMove)
       document.addEventListener('mouseup', onUp)
     },
-    [editor, getBlock, containerRef],
+    [editor, hoveredBlock, getBlock, containerRef],
   )
+
+  const visible = !!hoveredBlock && !dragRef.current
 
   return (
     <>
@@ -156,12 +123,9 @@ export function BlockControls({ editor, containerRef }: BlockControlsProps): Rea
         className={cn(
           'absolute left-0.5 z-50 flex items-center gap-0',
           'pointer-events-none opacity-0 transition-opacity duration-100',
-          ctrlState.visible && 'pointer-events-auto opacity-100',
+          visible && 'pointer-events-auto opacity-100',
         )}
-        style={{ top: ctrlState.top }}
-        onMouseLeave={() => {
-          if (!dragRef.current) setCtrlState((s) => ({ ...s, visible: false }))
-        }}
+        style={{ top: hoveredBlock?.top ?? 0 }}
       >
         {/* Add block below */}
         <button
