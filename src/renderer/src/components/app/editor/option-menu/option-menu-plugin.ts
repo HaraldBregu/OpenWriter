@@ -73,11 +73,26 @@ export class OptionMenuView {
 
     if (slashIndex === -1) {
       this.hide()
+      this.dismissed = false
+      this.dismissedSlashPos = null
       return
     }
 
+    const foundSlashPos = blockStart + slashIndex
+
+    // If user dismissed this exact slash, don't re-show
+    if (this.dismissed && this.dismissedSlashPos === foundSlashPos) {
+      return
+    }
+
+    // A new slash position means a new trigger — reset dismissed
+    if (this.dismissedSlashPos !== foundSlashPos) {
+      this.dismissed = false
+      this.dismissedSlashPos = null
+    }
+
     const query = textBefore.slice(slashIndex + 1)
-    this.slashPos = blockStart + slashIndex
+    this.slashPos = foundSlashPos
 
     this.onQueryChange(query, this.slashPos)
     void this.updatePosition()
