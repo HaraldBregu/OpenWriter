@@ -201,13 +201,14 @@ export function ParagraphNodeView({
         NodeViewContent renders the actual ProseMirror editable region.
         It MUST NOT be wrapped in contentEditable={false} — it is the leaf
         that ProseMirror controls.
-        `as="p"` makes the semantic element a <p> so block-level styles and
-        the Placeholder extension's ::before pseudo-element work correctly.
+        TipTap v3's NodeViewContent defaults to `as="div"` (NoInfer<T> prevents
+        passing "p" at the call site without an explicit cast). We keep the
+        default div and apply `display: block` via Tailwind so it behaves
+        identically to a <p> for all layout and Placeholder purposes.
       */}
       <NodeViewContent
-        as="p"
         className={cn(
-          'flex-1 min-w-0',
+          'flex-1 min-w-0 block',
           // Inherit the editor's typography so this node view looks identical
           // to the default paragraph render.
           'text-lg leading-relaxed text-foreground break-words',
