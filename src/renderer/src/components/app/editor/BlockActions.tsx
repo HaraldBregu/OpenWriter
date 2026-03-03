@@ -83,7 +83,7 @@ export function BlockActions({ editor, containerRef, hoveredBlock }: BlockAction
     navigator.clipboard.writeText(text)
   }, [editor, hoveredBlock])
 
-  const visible = !!hoveredBlock
+  const visible = !!hoveredBlock || menuOpen
 
   return (
     <div
