@@ -902,7 +902,7 @@ function EditorAdapter({
     if (streamingContent !== undefined) {
       const current = editor.getHTML()
       if (current !== streamingContent) {
-        editor.commands.setContent(streamingContent, false)
+        editor.commands.setContent(streamingContent, { emitUpdate: false })
       }
       return
     }
@@ -914,7 +914,7 @@ function EditorAdapter({
 
     const current = editor.getHTML()
     if (current !== (value || '')) {
-      editor.commands.setContent(value || '', false)
+      editor.commands.setContent(value || '', { emitUpdate: false })
     }
   }, [value, streamingContent, editor])
 
