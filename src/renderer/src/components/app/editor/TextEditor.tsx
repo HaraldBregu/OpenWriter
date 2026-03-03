@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
 import type { Editor, AnyExtension } from '@tiptap/core'
 import Document from '@tiptap/extension-document'
@@ -7,7 +7,8 @@ import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
 import { cn } from '@/lib/utils'
-import { BlockControls, GUTTER_WIDTH } from './BlockControls'
+import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls'
+import { BlockActions } from './BlockActions'
 
 // ---------------------------------------------------------------------------
 // Types
