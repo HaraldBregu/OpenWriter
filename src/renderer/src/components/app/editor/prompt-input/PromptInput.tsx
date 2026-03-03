@@ -3,6 +3,7 @@ import type { Editor } from '@tiptap/core'
 import { PluginKey } from '@tiptap/pm/state'
 import { PromptInputPlugin, type PromptInputView } from './prompt-input-plugin'
 import { GUTTER_WIDTH } from '../BlockControls'
+import { AppInput } from '@components/app/AppInput'
 
 interface PromptInputProps {
   editor: Editor
