@@ -257,7 +257,6 @@ function TipTapAdapter({
         onAddBelow: (pos: number) => onAddBelowRef.current?.(pos),
         onDelete: (pos: number) => onDeleteRef.current?.(pos),
         onEnhance: (pos: number) => onEnhanceRef.current?.(pos),
-        placeholder,
       }),
       ...extensions,
     ],
