@@ -229,9 +229,6 @@ export const ContentBlock = React.memo(function ContentBlock({
               className={`h-3.5 w-3.5${isEnhancing ? " animate-pulse" : ""}`}
             />
           </ActionButton>
-          <ActionButton title={t("contentBlock.copy")} onClick={handleCopy}>
-            <Copy className="h-3.5 w-3.5" />
-          </ActionButton>
           <ActionButton
             title={t("contentBlock.delete")}
             onClick={() => onDelete(block.id)}
