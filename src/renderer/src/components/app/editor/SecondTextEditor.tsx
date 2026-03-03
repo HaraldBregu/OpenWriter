@@ -61,10 +61,6 @@ import Typography from '@tiptap/extension-typography'
 
 // ── Lucide icons ───────────────────────────────────────────────────────────
 import {
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
   Bold as BoldIcon,
   Italic as ItalicIcon,
   Strikethrough,
