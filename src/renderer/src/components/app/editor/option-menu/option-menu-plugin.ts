@@ -77,7 +77,7 @@ export class OptionMenuView {
     const query = textBefore.slice(slashIndex + 1)
     this.slashPos = blockStart + slashIndex
 
-    this.onQueryChange(query)
+    this.onQueryChange(query, this.slashPos)
     void this.updatePosition()
     this.show()
   }
