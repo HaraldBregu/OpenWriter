@@ -47,7 +47,7 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const DebugPage = lazy(() => import("./pages/DebugPage"));
 const AgentPage = lazy(() => import("./pages/AgentPage"));
-// const ProseEditorDemoPage = lazy(() => import("./pages/ProseEditorDemoPage"));
+const ProseEditorDemoPage = lazy(() => import("./pages/ProseEditorDemoPage"));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -114,14 +114,14 @@ const App: React.FC = () => {
                             </RouteWrapper>
                           }
                         />
-                        {/* <Route
+                        <Route
                           path="/prose-editor-demo"
                           element={
                             <RouteWrapper>
                               <ProseEditorDemoPage />
                             </RouteWrapper>
                           }
-                        /> */}
+                        />
                       </Routes>
                     </Suspense>
                   </AppLayout>
