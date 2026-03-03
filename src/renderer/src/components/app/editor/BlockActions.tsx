@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import type { Editor } from '@tiptap/core'
-import { Copy, ChevronUp, ChevronDown, MoreHorizontal, Trash2, Clipboard } from 'lucide-react'
+import { Copy, ChevronUp, ChevronDown, Trash2, Clipboard, MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { HoveredBlock } from './BlockControls'
 import { AppButton } from '../AppButton'
@@ -103,7 +103,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
       <AppDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <AppDropdownMenuTrigger asChild>
           <AppButton variant="ghost" size="icon" aria-label="Block options" className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
-            <MoreHorizontal className="h-3.5 w-3.5" />
+            <MoreVertical className="h-3.5 w-3.5" />
           </AppButton>
         </AppDropdownMenuTrigger>
         <AppDropdownMenuContent align="end" sideOffset={4}>
