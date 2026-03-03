@@ -61,8 +61,6 @@ export function ParagraphNodeView({
 }: NodeViewProps): React.JSX.Element {
   const callbacks = extension.options as ParagraphNodeViewCallbacks
   const [menuOpen, setMenuOpen] = useState(false)
-  const isEmpty = node.textContent === ''
-  const placeholder = callbacks.placeholder ?? 'Write something, or type "/" for commands…'
 
   // -------------------------------------------------------------------------
   // Button handlers
