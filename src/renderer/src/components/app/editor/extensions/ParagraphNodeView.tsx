@@ -97,11 +97,6 @@ export function ParagraphNodeView({
 
     if (callbacks.onDelete) {
       callbacks.onDelete(pos)
-    } else {
-      // Default: delete this paragraph node via ProseMirror transaction.
-      const { state, dispatch } = editor.view
-      const tr = state.tr.delete(pos, pos + node.nodeSize)
-      dispatch(tr)
     }
   }, [callbacks, editor, getPos, node.nodeSize])
 
@@ -144,7 +139,7 @@ export function ParagraphNodeView({
       {/* LEFT GUTTER: add-below button + drag handle                        */}
       {/* ------------------------------------------------------------------ */}
       <div
-        contentEditable={false}
+        contentEditable={true}
         suppressContentEditableWarning
         className={cn(
           'flex items-center gap-1',
@@ -179,17 +174,17 @@ export function ParagraphNodeView({
       {/* CONTENT: the editable paragraph text                               */}
       {/* ------------------------------------------------------------------ */}
       <NodeViewContent
-        className={cn(
-          'flex-1 min-w-0 block',
-          'text-lg leading-relaxed text-foreground break-words',
-          'm-0 p-0 ml-2',
-        )}
+        // className={cn(
+        //   'flex-1 min-w-0 block',
+        //   'text-lg leading-relaxed text-foreground break-words',
+        //   'm-0 p-0 ml-2',
+        // )}
       />
 
       {/* ------------------------------------------------------------------ */}
       {/* RIGHT GUTTER: ⋯ dropdown menu                                      */}
       {/* ------------------------------------------------------------------ */}
-      <div
+      {/* <div
         contentEditable={false}
         suppressContentEditableWarning
         className={cn(
@@ -232,7 +227,7 @@ export function ParagraphNodeView({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </div> */}
     </NodeViewWrapper>
   )
 }
