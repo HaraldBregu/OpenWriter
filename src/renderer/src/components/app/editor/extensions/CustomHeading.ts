@@ -47,7 +47,7 @@ export const CustomHeading = Heading.extend<HeadingOptions & HeadingNodeViewCall
    * The renderer reads `this.options` (which includes `onAddBelow` and
    * `onComment`) via `extension.options` inside the NodeView component.
    */
-  // addNodeView() {
-  //   return ReactNodeViewRenderer(HeadingNodeView)
-  // },
+  addNodeView() {
+    return ReactNodeViewRenderer(HeadingNodeView)
+  },
 })

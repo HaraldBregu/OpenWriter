@@ -196,6 +196,20 @@ export function ParagraphNodeView({
           <Plus size={14} strokeWidth={2.5} />
         </button>
 
+        {/* ------------------------------------------------------------------ */}
+        {/* CONTENT — the editable paragraph text                              */}
+        {/*                                                                    */}
+        {/* NodeViewContent renders the ProseMirror-managed editable region.   */}
+        {/* It must NOT be wrapped in contentEditable={false}.                 */}
+        {/* ------------------------------------------------------------------ */}
+        <NodeViewContent
+          className={cn(
+            'flex-1 min-w-0 block',
+            'text-lg leading-relaxed text-foreground break-words',
+            'm-0 p-0 ml-2',
+          )}
+        />
+
         {/* Options menu (⋮) */}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
@@ -234,19 +248,7 @@ export function ParagraphNodeView({
         </DropdownMenu>
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* CONTENT — the editable paragraph text                              */}
-      {/*                                                                    */}
-      {/* NodeViewContent renders the ProseMirror-managed editable region.   */}
-      {/* It must NOT be wrapped in contentEditable={false}.                 */}
-      {/* ------------------------------------------------------------------ */}
-      <NodeViewContent
-        className={cn(
-          'flex-1 min-w-0 block',
-          'text-lg leading-relaxed text-foreground break-words',
-          'm-0 p-0 ml-2',
-        )}
-      />
+
     </NodeViewWrapper>
   )
 }
