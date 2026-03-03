@@ -154,8 +154,10 @@ export function PromptInput({
           if (e.key === 'Enter') {
             e.preventDefault()
             submit()
+            requestAnimationFrame(() => { if (!editor.isDestroyed) editor.commands.focus() })
           } else if (e.key === 'Escape') {
             hide()
+            requestAnimationFrame(() => { if (!editor.isDestroyed) editor.commands.focus() })
           }
         }}
         placeholder="Ask AI anything…"
