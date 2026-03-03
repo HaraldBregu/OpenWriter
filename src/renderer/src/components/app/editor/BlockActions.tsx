@@ -117,7 +117,7 @@ export function BlockActions({ editor, containerRef, hoveredBlock }: BlockAction
       </button>
 
       {/* 3-dot options menu */}
-      <AppDropdownMenu>
+      <AppDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <AppDropdownMenuTrigger asChild>
           <button type="button" aria-label="Block options" className={BTN_CLASS}>
             <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="currentColor" stroke="none">
