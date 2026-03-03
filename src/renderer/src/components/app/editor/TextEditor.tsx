@@ -336,11 +336,12 @@ function EditorAdapter({
       const current = tiptapDocToMarkdown(editor.state.doc);
       if (current !== streamingContent) {
         if (doc) {
-          editor.commands.setContent(doc.toJSON(), false, {
-            preserveWhitespace: "full",
+          editor.commands.setContent(doc.toJSON(), {
+            emitUpdate: false,
+            parseOptions: { preserveWhitespace: "full" },
           });
         } else {
-          editor.commands.setContent("", false);
+          editor.commands.setContent("", { emitUpdate: false });
         }
       }
       return;
@@ -357,11 +358,12 @@ function EditorAdapter({
     if (current !== incoming) {
       const doc = markdownToTiptapJSON(editor.schema, incoming);
       if (doc) {
-        editor.commands.setContent(doc.toJSON(), false, {
-          preserveWhitespace: "full",
+        editor.commands.setContent(doc.toJSON(), {
+          emitUpdate: false,
+          parseOptions: { preserveWhitespace: "full" },
         });
       } else {
-        editor.commands.setContent("", false);
+        editor.commands.setContent("", { emitUpdate: false });
       }
     }
   }, [value, streamingContent, editor]);
