@@ -419,12 +419,9 @@ const FloatingToolbar = memo(
       }
     }, [editorView, toolbarState.show])
 
-    // Listen to editor state updates to keep active states fresh
+    // Keep active states fresh when toolbar is visible
     useEffect(() => {
       if (!editorView || !toolbarState.show) return
-      const original = editorView.updateState.bind(editorView)
-      // We rely on the parent dispatching toolbar updates; React re-renders
-      // will carry updated snapshots via this effect.
       setEditorStateSnapshot(editorView.state)
     }, [editorView, toolbarState])
 
