@@ -133,6 +133,12 @@ export class OptionMenuView {
     }
   }
 
+  dismiss(): void {
+    this.dismissed = true
+    this.dismissedSlashPos = this.slashPos
+    this.hide()
+  }
+
   isVisible(): boolean {
     return this.visible
   }
