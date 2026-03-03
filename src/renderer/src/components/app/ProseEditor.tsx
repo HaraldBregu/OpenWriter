@@ -104,7 +104,7 @@ import { cn } from '@/lib/utils'
  * and link marks that are not present in the basic schema.
  */
 
-const baseNodes = {
+const baseNodes = OrderedMap.from<NodeSpec>({
   doc: basicNodes.doc,
   paragraph: basicNodes.paragraph,
   text: basicNodes.text,
@@ -114,17 +114,10 @@ const baseNodes = {
   blockquote: basicNodes.blockquote,
   heading: basicNodes.heading,
   image: basicNodes.image,
-}
+})
 
 const rawSchema = new Schema({
-  nodes: addListNodes(
-    // addListNodes expects an OrderedMap; we cast via any because the basic
-    // nodes export is already keyed correctly.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    baseNodes as any,
-    'paragraph block*',
-    'block',
-  ),
+  nodes: addListNodes(baseNodes, 'paragraph block*', 'block'),
   marks: {
     // Core marks from prosemirror-schema-basic
     link: {
