@@ -127,8 +127,7 @@ export function AppTextEditorOptionMenu({
       },
     })
 
-    // Register at the front so its handleKeyDown runs before StarterKit's Enter handler.
-    editor.registerPlugin(plugin, (newPlugin, plugins) => [newPlugin, ...plugins])
+    editor.registerPlugin(plugin)
     return () => {
       editor.unregisterPlugin(SLASH_PLUGIN_KEY)
     }
