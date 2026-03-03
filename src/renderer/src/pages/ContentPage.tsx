@@ -229,7 +229,7 @@ const ContentPage: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-        <div className="w-full px-6 py-10 flex flex-col gap-2">
+        <div className="w-full px-10 py-10 flex flex-col gap-2">
           <Reorder.Group
             axis="y"
             values={blocks}
