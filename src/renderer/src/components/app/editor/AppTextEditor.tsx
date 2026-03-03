@@ -106,6 +106,10 @@ export interface AppTextEditorProps {
    * that inserts an empty paragraph immediately after the current one.
    */
   onAddBelow?: (pos: number) => void
+  /** Called when the user selects "Delete" from the paragraph menu. */
+  onDelete?: (pos: number) => void
+  /** Called when the user selects "Enhance" from the paragraph menu. */
+  onEnhance?: (pos: number) => void
 }
 
 // ---------------------------------------------------------------------------
