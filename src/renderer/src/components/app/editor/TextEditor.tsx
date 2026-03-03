@@ -291,16 +291,24 @@ function EditorAdapter({
 
   const internalChangeRef = useRef(false);
 
+  // Capture the initial value so onCreate can parse it as markdown.
+  const initialValueRef = useRef(value);
+
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
       extensions: BASE_EXTENSIONS,
-      // Initial content: parse the incoming markdown into a PM doc fragment.
-      // Tiptap accepts a ProseMirror Node object directly as `content`.
-      content: value || "",
+      content: "",
       immediatelyRender: false,
+      onCreate: ({ editor: ed }: { editor: Editor }) => {
+        const initial = initialValueRef.current;
+        if (!initial) return;
+        const doc = markdownToTiptapJSON(ed.schema, initial);
+        if (doc) {
+          ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
+        }
+      },
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
         internalChangeRef.current = true;
-        // Emit markdown instead of HTML.
         onChangeRef.current(tiptapDocToMarkdown(ed.state.doc));
       },
       editorProps: {

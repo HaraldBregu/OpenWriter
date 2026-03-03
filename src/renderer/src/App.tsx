@@ -28,8 +28,6 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === "fun
   writingsInitialized = true;
   store.dispatch(loadWritings());
   window.workspace.onOutputFileChange((event) => {
-          console.log(`File changed: ${JSON.stringify(event)}, reloading writing...`);
-
     if (event.outputType !== "writings") return;
     if (event.type === "changed") {
       store.dispatch(refreshWriting(event.fileId));
