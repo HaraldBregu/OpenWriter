@@ -119,7 +119,7 @@ export const ContentBlock = React.memo(function ContentBlock({
       className="group relative cursor-default select-none"
       style={{ zIndex: 1 }}
     >
-      <SecondTextEditor
+      <AppTextEditor
         value={block.content}
         onChange={handleChange}
         placeholder={placeholder}
