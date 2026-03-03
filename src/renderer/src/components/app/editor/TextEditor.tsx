@@ -41,6 +41,10 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   Paragraph,
   Heading.configure({ levels: [1, 2, 3] }),
   History,
+  Bold,
+  Italic,
+  Underline,
+  Strike,
   Placeholder.configure({ placeholder: "Type '/' for commands, or start writing\u2026" }),
 ]
 
