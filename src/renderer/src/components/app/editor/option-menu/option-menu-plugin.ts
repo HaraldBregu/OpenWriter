@@ -23,7 +23,7 @@ export class OptionMenuView {
   private slashPos: number | null = null
   private onShow: () => void
   private onHide: () => void
-  private onQueryChange: (query: string) => void
+  private onQueryChange: (query: string, slashPos: number) => void
 
   constructor(
     view: EditorView,
