@@ -331,8 +331,10 @@ const CalloutNode = Node.create<CalloutOptions>({
       typeSelect.addEventListener('change', (e) => {
         const newType = (e.target as HTMLSelectElement).value as CalloutType
         if (typeof getPos === 'function') {
+          const pos = getPos()
+          if (pos === undefined) return
           editor.chain().focus().command(({ tr }) => {
-            tr.setNodeMarkup(getPos(), undefined, { type: newType })
+            tr.setNodeMarkup(pos, undefined, { type: newType })
             return true
           }).run()
         }
