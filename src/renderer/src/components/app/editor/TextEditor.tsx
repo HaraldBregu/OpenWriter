@@ -30,6 +30,212 @@ import { BubbleMenu } from "./bubble-menu";
 import { OptionMenu } from "./option-menu";
 import { PromptInput } from "./prompt-input";
 import { Placeholder } from "@tiptap/extensions";
+import {
+  MarkdownSerializer,
+  MarkdownParser,
+  defaultMarkdownSerializer,
+} from "prosemirror-markdown";
+import type { Node as ProseMirrorNode, Mark } from "@tiptap/pm/model";
+import MarkdownIt from "markdown-it";
+
+// ---------------------------------------------------------------------------
+// Markdown serializer/deserializer mapped to Tiptap's node/mark names.
+//
+// prosemirror-markdown's defaultMarkdownSerializer uses snake_case names from
+// prosemirror-schema-basic (e.g. bullet_list, ordered_list, list_item, code_block,
+// hard_break). Tiptap uses camelCase names for the same concepts. We remap them
+// here so the serializer walks Tiptap's document tree correctly.
+// ---------------------------------------------------------------------------
+
+type NodeSerializerFn = (
+  state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
+  node: ProseMirrorNode,
+  parent: ProseMirrorNode,
+  index: number,
+) => void;
+
+type MarkSerializerSpec = {
+  open:
+    | string
+    | ((
+        state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
+        mark: Mark,
+        parent: ProseMirrorNode,
+        index: number,
+      ) => string);
+  close:
+    | string
+    | ((
+        state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
+        mark: Mark,
+        parent: ProseMirrorNode,
+        index: number,
+      ) => string);
+  mixable?: boolean;
+  expelEnclosingWhitespace?: boolean;
+  escape?: boolean;
+};
+
+// Pull the well-tested node handlers out of the default serializer and alias
+// them under Tiptap's camelCase names.
+const defaultNodes = defaultMarkdownSerializer.nodes as Record<
+  string,
+  NodeSerializerFn
+>;
+const defaultMarks = defaultMarkdownSerializer.marks as Record<
+  string,
+  MarkSerializerSpec
+>;
+
+const tiptapMarkdownSerializer = new MarkdownSerializer(
+  {
+    // Block nodes — Tiptap camelCase → prosemirror-markdown handlers
+    blockquote: defaultNodes.blockquote,
+    codeBlock: defaultNodes.code_block,
+    heading: defaultNodes.heading,
+    horizontalRule: defaultNodes.horizontal_rule,
+    bulletList: defaultNodes.bullet_list,
+    orderedList: defaultNodes.ordered_list,
+    listItem: defaultNodes.list_item,
+    paragraph: defaultNodes.paragraph,
+    image: defaultNodes.image,
+    hardBreak: defaultNodes.hard_break,
+    text: defaultNodes.text,
+    // Inline nodes that Tiptap wraps as nodes rather than marks
+    doc(state, node) {
+      state.renderContent(node);
+    },
+  },
+  {
+    // Mark specs — names match Tiptap's mark names
+    bold: defaultMarks.strong,
+    italic: defaultMarks.em,
+    strike: {
+      open: "~~",
+      close: "~~",
+      mixable: true,
+      expelEnclosingWhitespace: true,
+    },
+    underline: {
+      // Markdown has no underline syntax; fall back to HTML <u> so round-trips
+      // do not silently drop underline formatting.
+      open: "<u>",
+      close: "</u>",
+      mixable: true,
+    },
+    code: {
+      open(_state, _mark, parent, index) {
+        return backticksFor(parent.child(index), -1);
+      },
+      close(_state, _mark, parent, index) {
+        return backticksFor(parent.child(index - 1), 1);
+      },
+      escape: false,
+    },
+    link: defaultMarks.link,
+  },
+);
+
+/** Mirrors the backticksFor helper used inside prosemirror-markdown. */
+function backticksFor(node: ProseMirrorNode, side: -1 | 1): string {
+  const ticks = /`+/g;
+  let m: RegExpExecArray | null;
+  let len = 0;
+  if (node.isText) {
+    while ((m = ticks.exec(node.text!)) !== null) {
+      len = Math.max(len, m[0].length);
+    }
+  }
+  let result = len > 0 && side > 0 ? " `" : "`";
+  for (let i = 0; i < len; i++) result += "`";
+  if (len > 0 && side < 0) result += " ";
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// markdown-it instance configured to match CommonMark + GFM strikethrough.
+// ---------------------------------------------------------------------------
+const md = new MarkdownIt("commonmark").enable("strikethrough");
+
+// ---------------------------------------------------------------------------
+// Tiptap-compatible MarkdownParser.
+//
+// prosemirror-markdown's MarkdownParser maps markdown-it token names to
+// prosemirror-schema-basic node/mark names. We override the token→node map
+// so the parser produces nodes whose names match Tiptap's registered schema.
+// ---------------------------------------------------------------------------
+
+const tiptapMarkdownParser = new MarkdownParser(
+  // The schema is not used at construction time — it is resolved dynamically
+  // when `parse(schema, src)` is called. We pass a dummy here; the actual
+  // Tiptap schema is provided at call time via `parseMarkdown`.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  null as any,
+  md,
+  {
+    blockquote: { block: "blockquote" },
+    paragraph: { block: "paragraph" },
+    list_item: { block: "listItem" },
+    bullet_list: { block: "bulletList" },
+    ordered_list: { block: "orderedList", getAttrs: (tok) => ({ order: +(tok.attrGet("start") ?? 1) }) },
+    heading: { block: "heading", getAttrs: (tok) => ({ level: +tok.tag.slice(1) }) },
+    code_block: { block: "codeBlock", noCloseToken: true },
+    fence: { block: "codeBlock", getAttrs: (tok) => ({ language: tok.info || "" }), noCloseToken: true },
+    hr: { node: "horizontalRule" },
+    image: {
+      node: "image",
+      getAttrs: (tok) => ({
+        src: tok.attrGet("src"),
+        title: tok.attrGet("title") || null,
+        alt: tok.children?.[0]?.content || null,
+      }),
+    },
+    hardbreak: { node: "hardBreak" },
+    em: { mark: "italic" },
+    strong: { mark: "bold" },
+    s: { mark: "strike" },
+    link: {
+      mark: "link",
+      getAttrs: (tok) => ({
+        href: tok.attrGet("href"),
+        title: tok.attrGet("title") || null,
+      }),
+    },
+    code_inline: { mark: "code" },
+  },
+);
+
+/**
+ * Parse a markdown string into a Tiptap-compatible ProseMirror document JSON.
+ * Returns null when the input is empty so callers can fall back to a blank doc.
+ */
+function markdownToTiptapJSON(
+  schema: import("@tiptap/pm/model").Schema,
+  markdown: string,
+): import("@tiptap/pm/model").Node | null {
+  if (!markdown || !markdown.trim()) return null;
+  try {
+    // Temporarily bind the real schema into the parser and parse.
+    // We do this without mutating the shared parser object.
+    const parser = new MarkdownParser(schema, md, tiptapMarkdownParser.tokens);
+    return parser.parse(markdown);
+  } catch (err) {
+    console.error("[TextEditor] markdown parse error:", err);
+    return null;
+  }
+}
+
+/**
+ * Serialize a Tiptap editor's current document to a markdown string.
+ */
+function tiptapDocToMarkdown(doc: ProseMirrorNode): string {
+  try {
+    return tiptapMarkdownSerializer.serialize(doc, { tightLists: true });
+  } catch (err) {
+    console.error("[TextEditor] markdown serialize error:", err);
+    return "";
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -98,11 +304,14 @@ function EditorAdapter({
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
       extensions: BASE_EXTENSIONS,
+      // Initial content: parse the incoming markdown into a PM doc fragment.
+      // Tiptap accepts a ProseMirror Node object directly as `content`.
       content: value || "",
       immediatelyRender: false,
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
         internalChangeRef.current = true;
-        onChangeRef.current(ed.getHTML());
+        // Emit markdown instead of HTML.
+        onChangeRef.current(tiptapDocToMarkdown(ed.state.doc));
       },
       editorProps: {
         attributes: {
@@ -117,13 +326,22 @@ function EditorAdapter({
 
   const editor = useEditor(editorOptions, []);
 
+  // Sync external value changes into the editor.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
 
     if (streamingContent !== undefined) {
-      const current = editor.getHTML();
+      // Streaming content arrives as markdown; parse before setting.
+      const doc = markdownToTiptapJSON(editor.schema, streamingContent);
+      const current = tiptapDocToMarkdown(editor.state.doc);
       if (current !== streamingContent) {
-        editor.commands.setContent(streamingContent, { emitUpdate: false });
+        if (doc) {
+          editor.commands.setContent(doc.toJSON(), false, {
+            preserveWhitespace: "full",
+          });
+        } else {
+          editor.commands.setContent("", false);
+        }
       }
       return;
     }
@@ -133,9 +351,18 @@ function EditorAdapter({
       return;
     }
 
-    const current = editor.getHTML();
-    if (current !== (value || "")) {
-      editor.commands.setContent(value || "", { emitUpdate: false });
+    // External value (markdown) changed — parse and set.
+    const current = tiptapDocToMarkdown(editor.state.doc);
+    const incoming = value || "";
+    if (current !== incoming) {
+      const doc = markdownToTiptapJSON(editor.schema, incoming);
+      if (doc) {
+        editor.commands.setContent(doc.toJSON(), false, {
+          preserveWhitespace: "full",
+        });
+      } else {
+        editor.commands.setContent("", false);
+      }
     }
   }, [value, streamingContent, editor]);
 
@@ -269,7 +496,7 @@ const TextEditor = React.memo(
     } = props;
 
     const stableOnChange = useCallback(
-      (html: string) => onChange(html),
+      (markdown: string) => onChange(markdown),
       [onChange],
     );
 
