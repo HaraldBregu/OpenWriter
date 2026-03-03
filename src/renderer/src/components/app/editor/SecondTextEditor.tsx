@@ -949,6 +949,7 @@ interface EditorAdapterProps {
   autoFocus: boolean | undefined
   disabled: boolean | undefined
   forwardedRef: React.Ref<HTMLDivElement>
+  streamingContent: string | undefined
 }
 
 function EditorAdapter({
