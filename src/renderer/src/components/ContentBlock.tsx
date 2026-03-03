@@ -162,10 +162,6 @@ export const ContentBlock = React.memo(function ContentBlock({
     [onChange, block.id],
   );
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(block.content);
-  }, [block.content]);
-
   return (
     <Reorder.Item
       value={block}
