@@ -841,7 +841,7 @@ export interface ProseEditorProps {
 
 /**
  * A comprehensive ProseMirror editor built directly on PM core packages
- * (imported via @tiptap/pm). Supports rich text with a floating toolbar,
+ * (prosemirror-* packages). Supports rich text with a floating toolbar,
  * input-rule auto-formatting, and full keyboard shortcuts.
  *
  * Props use HTML strings for `value` / `onChange` so the component is a
