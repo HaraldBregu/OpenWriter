@@ -207,7 +207,17 @@ function markdownToTiptapJSON(
 ): import("@tiptap/pm/model").Node | null {
   if (!markdown || !markdown.trim()) return null;
   try {
-    const parser = new MarkdownParser(schema, md, TIPTAP_TOKEN_MAP);
+    // Only include token entries whose target node/mark exists in this schema,
+    // so adding/removing extensions never causes "Unknown node type" errors.
+    const filteredTokenMap = Object.fromEntries(
+      Object.entries(TIPTAP_TOKEN_MAP).filter(([, spec]) => {
+        if ("block" in spec) return spec.block in schema.nodes;
+        if ("node" in spec) return spec.node in schema.nodes;
+        if ("mark" in spec) return spec.mark in schema.marks;
+        return false;
+      }),
+    );
+    const parser = new MarkdownParser(schema, md, filteredTokenMap);
     return parser.parse(markdown);
   } catch (err) {
     console.error("[TextEditor] markdown parse error:", err);
