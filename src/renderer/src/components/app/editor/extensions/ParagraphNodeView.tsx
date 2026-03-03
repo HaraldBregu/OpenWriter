@@ -32,6 +32,8 @@ export interface ParagraphNodeViewCallbacks {
   onDelete?: (pos: number) => void
   /** Called when the user selects "Enhance" from the paragraph menu. */
   onEnhance?: (pos: number) => void
+  /** Placeholder text shown when the paragraph is empty. */
+  placeholder?: string
 }
 
 // ---------------------------------------------------------------------------
