@@ -306,20 +306,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
 
-                  <AppSidebarMenuItem>
-                    <AppSidebarMenuButton
-                      asChild
-                      className="h-9 px-3"
-                      isActive={location.pathname === "/prose-editor-demo"}
-                    >
-                      <Link to="/prose-editor-demo">
-                        <Type className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">
-                          ProseEditor Demo
-                        </span>
-                      </Link>
-                    </AppSidebarMenuButton>
-                  </AppSidebarMenuItem>
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>

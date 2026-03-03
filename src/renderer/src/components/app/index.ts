@@ -8,9 +8,6 @@ export { AppTextarea } from './AppTextarea'
 export { AppTextEditor } from './AppTextEditor'
 export type { AppTextEditorProps, HeadingLevel } from './AppTextEditor'
 
-export { ProseEditor } from './ProseEditor'
-export type { ProseEditorProps } from './ProseEditor'
-
 export { AppLabel } from './AppLabel'
 
 export { AppBadge, badgeVariants } from './AppBadge'
