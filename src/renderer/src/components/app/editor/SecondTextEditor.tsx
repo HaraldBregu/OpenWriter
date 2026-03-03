@@ -18,12 +18,15 @@
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 import {
   useEditor,
   EditorContent,
+  useEditorState,
   type UseEditorOptions,
 } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
@@ -31,6 +34,7 @@ import {
   Node,
   Extension,
   type AnyExtension,
+  type Editor,
   mergeAttributes,
 } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
