@@ -9,14 +9,14 @@ import { cn } from '@/lib/utils'
 
 /**
  * Callbacks injected via the extension's `addOptions` and threaded through
- * `ReactNodeViewRenderer`. They let the host editor react to button clicks
- * without the NodeView needing to know about Redux / application state.
+ * `ReactNodeViewRenderer`. They mirror the paragraph callback shape exactly so
+ * the host editor can use the same handler functions for both node types.
  */
-export interface ParagraphNodeViewCallbacks {
+export interface HeadingNodeViewCallbacks {
   /**
    * Called when the user clicks the "+" (add block below) button.
-   * Receives the ProseMirror position of the paragraph's start so the
-   * caller can insert a new node at the correct place.
+   * Receives the ProseMirror position of the heading's start so the caller can
+   * insert a new node at the correct place.
    */
   onAddBelow?: (pos: number) => void
   /**
@@ -27,33 +27,61 @@ export interface ParagraphNodeViewCallbacks {
 }
 
 // ---------------------------------------------------------------------------
-// ParagraphNodeView
+// Heading level → Tailwind typography classes
 // ---------------------------------------------------------------------------
 
 /**
- * React NodeView for the custom Paragraph extension.
+ * Maps a heading level (1–6) to the Tailwind size + weight classes that match
+ * the project's prose scale.  Levels beyond 4 are rare in practice but
+ * included for completeness so the extension never falls back to unstyled text.
+ */
+const HEADING_CLASS_MAP: Record<number, string> = {
+  1: 'text-3xl font-bold leading-tight',
+  2: 'text-2xl font-semibold leading-snug',
+  3: 'text-xl font-semibold leading-snug',
+  4: 'text-lg font-semibold leading-normal',
+  5: 'text-base font-semibold leading-normal',
+  6: 'text-sm font-semibold leading-normal',
+}
+
+// ---------------------------------------------------------------------------
+// HeadingNodeView
+// ---------------------------------------------------------------------------
+
+/**
+ * React NodeView for the custom Heading extension.
  *
  * Layout:
  *   [left gutter: drag-handle · add-below] [NodeViewContent] [right gutter: comment]
  *
- * All three gutter columns are `contentEditable={false}` so ProseMirror never
- * treats clicks on buttons as text-editing interactions.
+ * This is structurally identical to `ParagraphNodeView` — the only differences
+ * are:
+ *   1. The `NodeViewContent` receives size + weight classes derived from
+ *      `node.attrs.level` rather than a single fixed text-lg class.
+ *   2. The wrapper carries `data-type="heading"` and `data-level={level}` for
+ *      CSS targeting and debugging.
+ *   3. The drag-handle aria-label and the add-below button label reference
+ *      "heading" instead of "paragraph".
  *
- * The entire row becomes a hover group (`group` Tailwind class on the wrapper)
- * so the gutter buttons can use `opacity-0 group-hover:opacity-100` — they are
- * invisible at rest and appear only when the cursor enters the paragraph.
+ * All gutter columns are `contentEditable={false}` so ProseMirror never treats
+ * clicks on buttons as text-editing interactions.
+ *
+ * The entire row is a hover group (`group` Tailwind class on the wrapper) so
+ * the gutter buttons can use `opacity-0 group-hover:opacity-100` — invisible
+ * at rest and revealed only when the cursor enters the heading row.
  */
-export function ParagraphNodeView({
+export function HeadingNodeView({
   node,
   getPos,
   editor,
   extension,
 }: NodeViewProps): React.JSX.Element {
-  const callbacks = extension.options as ParagraphNodeViewCallbacks
+  const callbacks = extension.options as HeadingNodeViewCallbacks
+  const level = (node.attrs.level as number) ?? 1
 
   // -------------------------------------------------------------------------
-  // Drag state — we highlight the handle while the row is being dragged so the
-  // user gets a visible affordance even when the mouse leaves the element.
+  // Drag state — highlight the handle while the row is being dragged so the
+  // user has a visible affordance even when the mouse leaves the element.
   // -------------------------------------------------------------------------
   const [isDragging, setIsDragging] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -61,9 +89,9 @@ export function ParagraphNodeView({
   // -------------------------------------------------------------------------
   // Button handlers
   //
-  // IMPORTANT: We call `event.preventDefault()` on every mouse-down inside
-  // `contentEditable={false}` zones so ProseMirror never steals the event and
-  // collapses the selection.
+  // IMPORTANT: `event.preventDefault()` on every mouse-down inside
+  // `contentEditable={false}` zones prevents ProseMirror from stealing the
+  // event and collapsing the selection.
   // -------------------------------------------------------------------------
 
   const handleAddBelow = useCallback(
@@ -77,7 +105,7 @@ export function ParagraphNodeView({
       if (callbacks.onAddBelow) {
         callbacks.onAddBelow(pos)
       } else {
-        // Default behaviour: insert an empty paragraph immediately after this one.
+        // Default behaviour: insert an empty paragraph immediately after this heading.
         const { state, dispatch } = editor.view
         const nodeEnd = pos + node.nodeSize
         const tr = state.tr.insert(nodeEnd, state.schema.nodes.paragraph.create())
@@ -105,13 +133,10 @@ export function ParagraphNodeView({
 
   // Pointer events for the drag handle — we delegate to ProseMirror's built-in
   // node drag support rather than implementing custom DnD here.
-  const handleDragHandleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      setIsDragging(true)
-    },
-    [],
-  )
+  const handleDragHandleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false)
@@ -132,19 +157,28 @@ export function ParagraphNodeView({
     'opacity-0 group-hover:opacity-100',
   )
 
+  // The typography classes are stable per heading level; no recalculation needed.
+  const contentClasses = cn(
+    'flex-1 min-w-0 block',
+    HEADING_CLASS_MAP[level] ?? HEADING_CLASS_MAP[6],
+    'text-foreground break-words',
+    // Remove browser default margins — the editor controls spacing.
+    'm-0 p-0',
+  )
+
   return (
     // NodeViewWrapper is the ProseMirror-managed root element.
-    // `as="div"` + `data-type="paragraph"` so CSS can target it if needed.
+    // `data-type="heading"` and `data-level` allow CSS to target heading rows.
     // The outer div carries the `group` class for Tailwind's group-hover system.
     <NodeViewWrapper
       as="div"
-      data-type="paragraph"
+      data-type="heading"
+      data-level={level}
       className={cn(
         'group relative flex items-start gap-1',
         // Negative horizontal margin lets the gutters "float" outside the text
-        // column without shifting the paragraph content itself.
+        // column without shifting the heading content itself.
         '-mx-8',
-        // Vertical rhythm — match the editor's line-height for single-line paragraphs.
         'py-0',
       )}
       ref={wrapperRef}
@@ -159,18 +193,17 @@ export function ParagraphNodeView({
         className={cn(
           'flex items-center gap-0.5',
           'w-8 shrink-0 justify-end',
-          // Align buttons vertically with the first text baseline.
-          // `pt-[3px]` fine-tunes against the 1.5rem line-height of the prose text.
-          'pt-[3px]',
-          // Keep gutters in the DOM flow — this prevents layout shifts when
-          // they fade in/out, unlike absolute positioning.
+          // Align buttons with the first text baseline.
+          // Headings are taller than body text, so we use a slightly larger
+          // top offset (`pt-1`) to visually centre the buttons against the cap height.
+          'pt-1',
           'select-none',
         )}
       >
         {/* Drag handle */}
         <button
           type="button"
-          aria-label="Drag paragraph"
+          aria-label="Drag heading"
           title="Drag to reorder"
           onMouseDown={handleDragHandleMouseDown}
           className={cn(
@@ -195,28 +228,47 @@ export function ParagraphNodeView({
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* CONTENT: the editable paragraph text                               */}
+      {/* CONTENT: the editable heading text                                 */}
       {/* ------------------------------------------------------------------ */}
       {/*
         NodeViewContent renders the actual ProseMirror editable region.
         It MUST NOT be wrapped in contentEditable={false} — it is the leaf
         that ProseMirror controls.
-        TipTap v3's NodeViewContent defaults to `as="div"` (NoInfer<T> prevents
-        passing "p" at the call site without an explicit cast). We keep the
-        default div and apply `display: block` via Tailwind so it behaves
-        identically to a <p> for all layout and Placeholder purposes.
+
+        We do NOT pass `as="h1"` (or any hN) here because TipTap v3's
+        NodeViewContent uses NoInfer<T> which prevents passing semantic heading
+        tags at the call site without an explicit cast.  The visual appearance
+        is driven entirely by the Tailwind size + weight classes derived from
+        `node.attrs.level`, which is sufficient for the editor context.
+        The actual DOM node type (h1/h2/…) is only relevant for document export,
+        which TipTap handles via its schema `toDOM` rules — those are unaffected
+        by the NodeView.
       */}
-      <NodeViewContent
+      <NodeViewContent className={contentClasses} />
+
+      {/* ------------------------------------------------------------------ */}
+      {/* RIGHT GUTTER: comment / options button                             */}
+      {/* ------------------------------------------------------------------ */}
+      <div
+        contentEditable={false}
+        suppressContentEditableWarning
         className={cn(
-          'flex-1 min-w-0 block',
-          // Inherit the editor's typography so this node view looks identical
-          // to the default paragraph render.
-          'text-lg leading-relaxed text-foreground break-words',
-          // Remove browser default margins — the editor controls spacing.
-          'm-0 p-0',
+          'flex items-center gap-0.5',
+          'w-8 shrink-0 justify-start',
+          'pt-1',
+          'select-none',
         )}
-      />
-      
+      >
+        <button
+          type="button"
+          aria-label="Add comment"
+          title="Add comment"
+          onMouseDown={handleComment}
+          className={gutterBtn}
+        >
+          <MessageSquare size={13} strokeWidth={2} />
+        </button>
+      </div>
     </NodeViewWrapper>
   )
 }
