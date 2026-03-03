@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react'
 import type { Editor, AnyExtension } from '@tiptap/core'
 import Document from '@tiptap/extension-document'
@@ -6,8 +6,21 @@ import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
-import { GripVertical } from 'lucide-react'
+import {
+  type DragHandlePluginProps,
+  type NestedOptions,
+  defaultComputePositionConfig,
+  DragHandlePlugin,
+  dragHandlePluginDefaultKey,
+  normalizeNestedOptions,
+} from '@tiptap/extension-drag-handle'
+import type { Node } from '@tiptap/pm/model'
+import type { Plugin } from '@tiptap/pm/state'
 import { cn } from '@/lib/utils'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 export interface TextEditorProps {
   value: string
@@ -18,13 +31,11 @@ export interface TextEditorProps {
   disabled?: boolean
   id?: string
   streamingContent?: string
-  /**
-   * Called when the user presses the pointer down on the drag handle grip.
-   * Wire this to framer-motion's `dragControls.start(event)` in the parent to
-   * initiate block reordering via `Reorder.Item`.
-   */
-  onDragHandlePointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void
 }
+
+// ---------------------------------------------------------------------------
+// Base extensions
+// ---------------------------------------------------------------------------
 
 const BASE_EXTENSIONS: AnyExtension[] = [
   Document,
@@ -35,37 +46,97 @@ const BASE_EXTENSIONS: AnyExtension[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// DragHandle — rendered only when the consumer provides a handler.
-// Sits in the left gutter, visible on group-hover.
+// DragHandle — React wrapper around DragHandlePlugin
 // ---------------------------------------------------------------------------
 
-interface DragHandleProps {
-  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
+
+type DragHandleProps = Omit<
+  Optional<DragHandlePluginProps, 'pluginKey'>,
+  'element' | 'nestedOptions'
+> & {
+  className?: string
+  onNodeChange?: (data: { node: Node | null; editor: Editor; pos: number }) => void
+  children: React.ReactNode
+  nested?: boolean | NestedOptions
 }
 
-function DragHandle({ onPointerDown }: DragHandleProps): React.JSX.Element {
+function DragHandle(props: DragHandleProps): React.JSX.Element {
+  const {
+    className = 'drag-handle',
+    children,
+    editor,
+    pluginKey = dragHandlePluginDefaultKey,
+    onNodeChange,
+    onElementDragStart,
+    onElementDragEnd,
+    computePositionConfig = defaultComputePositionConfig,
+    nested = false,
+  } = props
+
+  const [element, setElement] = useState<HTMLDivElement | null>(null)
+  const plugin = useRef<Plugin | null>(null)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const nestedOptions = useMemo(() => normalizeNestedOptions(nested), [JSON.stringify(nested)])
+
+  useEffect(() => {
+    let initPlugin: { plugin: Plugin; unbind: () => void } | null = null
+
+    if (!element) {
+      return () => { plugin.current = null }
+    }
+
+    if (editor.isDestroyed) {
+      return () => { plugin.current = null }
+    }
+
+    if (!plugin.current) {
+      initPlugin = DragHandlePlugin({
+        editor,
+        element,
+        pluginKey,
+        computePositionConfig: {
+          ...defaultComputePositionConfig,
+          ...computePositionConfig,
+        },
+        onElementDragStart,
+        onElementDragEnd,
+        onNodeChange,
+        nestedOptions,
+      })
+      plugin.current = initPlugin.plugin
+
+      editor.registerPlugin(plugin.current)
+    }
+
+    return () => {
+      editor.unregisterPlugin(pluginKey)
+      plugin.current = null
+      if (initPlugin) {
+        initPlugin.unbind()
+        initPlugin = null
+      }
+    }
+  }, [
+    element,
+    editor,
+    onNodeChange,
+    pluginKey,
+    computePositionConfig,
+    onElementDragStart,
+    onElementDragEnd,
+    nestedOptions,
+  ])
+
   return (
     <div
-      // Prevent text selection and scroll interference during drag.
-      className={cn(
-        'absolute -left-7 top-1/2 -translate-y-1/2',
-        'flex items-center justify-center',
-        'h-6 w-6 rounded',
-        'opacity-0 group-hover:opacity-100',
-        'transition-opacity duration-150',
-        'cursor-grab active:cursor-grabbing',
-        'text-muted-foreground hover:text-foreground',
-        'hover:bg-accent',
-        'touch-none select-none',
-      )}
-      onPointerDown={onPointerDown}
-      // Prevent the editor from stealing pointer events while dragging.
-      onMouseDown={(e) => e.preventDefault()}
-      aria-label="Drag to reorder block"
-      role="button"
-      tabIndex={-1}
+      className={className}
+      style={{ visibility: 'hidden', position: 'absolute' }}
+      data-dragging="false"
+      ref={setElement}
     >
-      <GripVertical className="h-4 w-4" />
+      {children}
     </div>
   )
 }
@@ -80,7 +151,6 @@ function EditorAdapter({
   autoFocus,
   disabled,
   streamingContent,
-  onDragHandlePointerDown,
   forwardedRef,
 }: {
   value: string
@@ -88,7 +158,6 @@ function EditorAdapter({
   autoFocus: boolean | undefined
   disabled: boolean | undefined
   streamingContent: string | undefined
-  onDragHandlePointerDown: ((e: React.PointerEvent<HTMLDivElement>) => void) | undefined
   forwardedRef: React.Ref<HTMLDivElement>
 }): React.JSX.Element {
   const onChangeRef = useRef(onChange)
@@ -157,8 +226,10 @@ function EditorAdapter({
 
   return (
     <div className="relative w-full" ref={forwardedRef}>
-      {onDragHandlePointerDown !== undefined && (
-        <DragHandle onPointerDown={onDragHandlePointerDown} />
+      {editor && (
+        <DragHandle editor={editor}>
+          <div className="custom-drag-handle" />
+        </DragHandle>
       )}
       <EditorContent editor={editor} />
     </div>
@@ -171,15 +242,7 @@ function EditorAdapter({
 
 const TextEditor = React.memo(
   React.forwardRef<HTMLDivElement, TextEditorProps>((props, ref) => {
-    const {
-      value,
-      onChange,
-      autoFocus,
-      className,
-      disabled,
-      id,
-      onDragHandlePointerDown,
-    } = props
+    const { value, onChange, autoFocus, className, disabled, id } = props
 
     const stableOnChange = useCallback(
       (html: string) => onChange(html),
@@ -187,7 +250,7 @@ const TextEditor = React.memo(
     )
 
     return (
-      <div id={id} className={cn('group w-full', className)}>
+      <div id={id} className={cn('w-full', className)}>
         <EditorAdapter
           value={value}
           onChange={stableOnChange}
@@ -195,7 +258,6 @@ const TextEditor = React.memo(
           disabled={disabled}
           forwardedRef={ref}
           streamingContent={props.streamingContent}
-          onDragHandlePointerDown={onDragHandlePointerDown}
         />
       </div>
     )
