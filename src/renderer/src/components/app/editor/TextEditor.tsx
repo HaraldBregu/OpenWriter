@@ -202,6 +202,7 @@ function EditorAdapter({
           <>
             <BlockControls editor={editor} containerRef={containerRef} hoveredBlock={hoveredBlock} />
             <BlockActions editor={editor} containerRef={containerRef} hoveredBlock={hoveredBlock} />
+            <BubbleMenu editor={editor} />
           </>
         )}
         <EditorContent editor={editor} />
