@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TabGhostText } from './extensions/TabGhostText'
+import { CustomParagraph } from './extensions/CustomParagraph'
 import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 
 // ---------------------------------------------------------------------------
@@ -32,7 +33,17 @@ import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
 
 const DEFAULT_EXTENSIONS: AnyExtension[] = [
-  StarterKit.configure({ bulletList: false, orderedList: false, listItem: false, heading: false }),
+  // Disable StarterKit's built-in paragraph — CustomParagraph replaces it with
+  // a React NodeView that renders inline gutter buttons on hover.
+  StarterKit.configure({
+    paragraph: false,
+    bulletList: false,
+    orderedList: false,
+    listItem: false,
+    heading: false,
+  }),
+  // Custom paragraph with floating left/right action buttons.
+  CustomParagraph,
   Heading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
   Markdown,
   BulletList,
