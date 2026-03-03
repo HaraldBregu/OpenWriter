@@ -142,6 +142,23 @@ const ContentPage: React.FC = () => {
     setFocusBlockId(newBlock.id)
   }, [])
 
+  /**
+   * Insert a new empty block immediately after the block identified by `afterId`
+   * and move focus into it.  Called by ContentBlock's onAddBelow prop, which is
+   * triggered when the user clicks the "+" gutter button inside any paragraph.
+   */
+  const handleAddBlockAfter = useCallback((afterId: string) => {
+    const newBlock = createBlock()
+    setBlocks((prev) => {
+      const idx = prev.findIndex((b) => b.id === afterId)
+      if (idx === -1) return [...prev, newBlock]
+      const next = [...prev]
+      next.splice(idx + 1, 0, newBlock)
+      return next
+    })
+    setFocusBlockId(newBlock.id)
+  }, [])
+
   // ---------------------------------------------------------------------------
   // Move to Trash
   // ---------------------------------------------------------------------------
