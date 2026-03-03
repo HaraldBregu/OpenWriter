@@ -29,7 +29,8 @@ import { createPortal } from 'react-dom'
 
 // ── ProseMirror core ──────────────────────────────────────────────────────────
 import { Schema, DOMParser as PMDOMParser, DOMSerializer } from 'prosemirror-model'
-import type { Node as PMNode, MarkType, NodeType } from 'prosemirror-model'
+import type { Node as PMNode, MarkType, NodeType, NodeSpec } from 'prosemirror-model'
+import OrderedMap from 'orderedmap'
 import {
   EditorState,
   Plugin,
