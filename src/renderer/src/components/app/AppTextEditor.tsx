@@ -199,6 +199,10 @@ function TipTapAdapter({
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
+  // Track whether the last change originated from the editor itself so the
+  // external-sync effect can skip redundant (and disruptive) setContent calls.
+  const internalChangeRef = useRef(false)
+
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
       extensions,
@@ -206,6 +210,7 @@ function TipTapAdapter({
       contentType: 'markdown',
       immediatelyRender: false,
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
+        internalChangeRef.current = true
         onChangeRef.current(ed.getMarkdown())
       },
       editorProps: {
@@ -222,10 +227,28 @@ function TipTapAdapter({
 
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
+
+    // When streaming, always push the streaming content into the editor.
+    if (streamingContent !== undefined) {
+      const current = editor.getMarkdown()
+      if (current !== streamingContent) {
+        editor.commands.setContent(streamingContent, { emitUpdate: false, contentType: 'markdown' })
+      }
+      return
+    }
+
+    // If the value change came from the editor itself (user typing), skip
+    // the setContent call — the editor already has the correct state and
+    // re-setting would disrupt cursor position and break Enter/Backspace.
+    if (internalChangeRef.current) {
+      internalChangeRef.current = false
+      return
+    }
+
+    // External value change (e.g. reset, load) — sync into the editor.
     const current = editor.getMarkdown()
-    const incoming = streamingContent !== undefined ? streamingContent : (value || '')
-    if (current !== incoming) {
-      editor.commands.setContent(incoming, { emitUpdate: false, contentType: 'markdown' })
+    if (current !== (value || '')) {
+      editor.commands.setContent(value || '', { emitUpdate: false, contentType: 'markdown' })
     }
   }, [value, streamingContent, editor])
 
