@@ -215,7 +215,7 @@ function EditorAdapter({
             <BlockActions editor={editor} containerRef={containerRef} hoveredBlock={hoveredBlock} />
             <BubbleMenu editor={editor} />
             <OptionMenu editor={editor} onContinueWithAI={onContinueWithAI} />
-            <PromptInput editor={editor} onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)} />
+            <PromptInput editor={editor} containerRef={containerRef} onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)} />
           </>
         )}
         <EditorContent editor={editor} />
