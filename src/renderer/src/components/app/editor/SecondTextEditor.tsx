@@ -90,9 +90,21 @@ import {
   Highlighter,
   Heading2,
   Quote,
+  Text as TextIcon,
+  Heading3,
+  List,
+  ListOrdered,
+  ListTodo,
+  Minus,
+  GripVertical,
+  Plus,
+  Info,
+  ChevronRight,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { SlashCommand, executeSlashCommand } from './extensions/SlashCommand'
+import type { SlashCommandState } from './extensions/SlashCommand'
 
 // ===========================================================================
 // Types
