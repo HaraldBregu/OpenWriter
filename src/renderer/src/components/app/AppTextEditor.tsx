@@ -44,7 +44,8 @@ const DEFAULT_EXTENSIONS: AnyExtension[] = [
   }),
   // Custom paragraph with floating left/right action buttons.
   CustomParagraph,
-  Heading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
+  // Custom heading with the same floating gutter button pattern as CustomParagraph.
+  CustomHeading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
   Markdown,
   BulletList,
   OrderedList,

@@ -167,17 +167,21 @@ export function ParagraphNodeView({
           'select-none',
         )}
       >
-    
-        {/* Add paragraph below */}
+        {/* Drag handle */}
         <button
           type="button"
-          aria-label="Add paragraph below"
-          title="Add paragraph below"
-          onMouseDown={handleAddBelow}
-          className={gutterBtn}
+          aria-label="Drag paragraph"
+          title="Drag to reorder"
+          onMouseDown={handleDragHandleMouseDown}
+          className={cn(
+            gutterBtn,
+            isDragging && 'opacity-100 text-muted-foreground cursor-grabbing',
+            !isDragging && 'cursor-grab',
+          )}
         >
-          <Plus size={17} strokeWidth={2.5} />
+          <GripVertical size={17} strokeWidth={2} />
         </button>
+
       </div>
 
       {/* ------------------------------------------------------------------ */}
