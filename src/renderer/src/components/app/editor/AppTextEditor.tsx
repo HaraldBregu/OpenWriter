@@ -379,6 +379,8 @@ const AppTextEditor = React.memo(
           forwardedRef={ref}
           streamingContent={props.streamingContent}
           onAddBelow={props.onAddBelow}
+          onDelete={props.onDelete}
+          onEnhance={props.onEnhance}
         />
       </div>
     )
