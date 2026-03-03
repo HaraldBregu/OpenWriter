@@ -11,6 +11,8 @@ export interface PromptInputPluginProps {
   onTrigger: (triggerPos: number) => void
   onDismiss: () => void
   onKeyEvent: (event: KeyboardEvent) => boolean
+  /** Called just before the element becomes visible so callers can adjust size. */
+  onBeforeShow?: (pos: number) => void
   onViewReady?: (view: PromptInputView) => void
 }
 
@@ -22,12 +24,14 @@ export class PromptInputView {
   private visible = false
   private triggerPos: number | null = null
   private onDismiss: () => void
+  private onBeforeShow: ((pos: number) => void) | undefined
 
   constructor(view: EditorView, props: PromptInputPluginProps) {
     this.editor = props.editor
     this.element = props.element
     this.view = view
     this.onDismiss = props.onDismiss
+    this.onBeforeShow = props.onBeforeShow
 
     this.element.style.visibility = 'hidden'
     this.element.style.position = 'absolute'
@@ -35,6 +39,9 @@ export class PromptInputView {
 
   async show(pos: number): Promise<void> {
     this.triggerPos = pos
+    // Let the React component set width before we make the element visible so
+    // Floating UI can measure the correct dimensions.
+    this.onBeforeShow?.(pos)
     this.visible = true
     this.element.style.visibility = 'visible'
     await this.updatePosition()
@@ -70,8 +77,15 @@ export class PromptInputView {
     return this.visible
   }
 
+  // No update() implementation — we intentionally never hide on editor state
+  // changes. Dismissal is handled exclusively by the React mousedown listener.
+
   destroy(): void {
-    this.hide()
+    // During plugin teardown we hide silently without calling onDismiss so we
+    // don't trigger React state updates after the component has unmounted.
+    this.visible = false
+    this.triggerPos = null
+    this.element.style.visibility = 'hidden'
   }
 }
 
