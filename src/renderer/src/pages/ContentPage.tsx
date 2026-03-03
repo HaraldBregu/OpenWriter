@@ -132,23 +132,6 @@ const ContentPage: React.FC = () => {
     )
   }, [])
 
-  const handleDelete = useCallback((blockId: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== blockId))
-  }, [])
-
-  const handleAddBlockAfter = useCallback((afterId: string) => {
-    const newBlock = createBlock()
-    setBlocks((prev) => {
-      const index = prev.findIndex((b) => b.id === afterId)
-      return [
-        ...prev.slice(0, index + 1),
-        newBlock,
-        ...prev.slice(index + 1),
-      ]
-    })
-    setFocusBlockId(newBlock.id)
-  }, [])
-
   const handleReorder = useCallback((reordered: Block[]) => {
     setBlocks(reordered)
   }, [])
