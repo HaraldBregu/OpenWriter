@@ -102,20 +102,6 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
         </svg>
       </button>
 
-      {/* Move up */}
-      <button type="button" aria-label="Move block up" onClick={moveBlockUp} className={BTN_CLASS}>
-        <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" stroke="currentColor" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="18 15 12 9 6 15" />
-        </svg>
-      </button>
-
-      {/* Move down */}
-      <button type="button" aria-label="Move block down" onClick={moveBlockDown} className={BTN_CLASS}>
-        <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" stroke="currentColor" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
-
       {/* 3-dot options menu */}
       <AppDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <AppDropdownMenuTrigger asChild>
