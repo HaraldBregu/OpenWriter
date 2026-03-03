@@ -143,7 +143,7 @@ export function PromptInput({
     <div
       ref={floatingRef}
       className="z-50 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 shadow-md"
-      style={{ visibility: 'hidden', position: 'absolute' }}
+      style={{ display: 'none', position: 'absolute' }}
     >
       <AppInput
         ref={inputRef}
