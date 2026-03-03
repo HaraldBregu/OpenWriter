@@ -53,7 +53,6 @@ export function ParagraphNodeView({
   // Drag state — we highlight the handle while the row is being dragged so the
   // user gets a visible affordance even when the mouse leaves the element.
   // -------------------------------------------------------------------------
-  const [isDragging, setIsDragging] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   // -------------------------------------------------------------------------
@@ -119,7 +118,6 @@ export function ParagraphNodeView({
         'py-0',
       )}
       ref={wrapperRef}
-      onDragEnd={handleDragEnd}
     >
       {/* ------------------------------------------------------------------ */}
       {/* LEFT GUTTER: drag handle + add-below button                        */}
@@ -155,7 +153,6 @@ export function ParagraphNodeView({
           type="button"
           aria-label="Drag paragraph"
           title="Drag to reorder"
-          onMouseDown={handleDragHandleMouseDown}
           className={cn(
             gutterBtn,
             isDragging && 'opacity-100 text-muted-foreground cursor-grabbing',
