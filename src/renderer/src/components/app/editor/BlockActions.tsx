@@ -71,7 +71,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
         <Copy className="h-3.5 w-3.5" />
       </AppButton>
 
-      <AppDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+      <AppDropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
         <AppDropdownMenuTrigger asChild>
           <AppButton variant="ghost" size="icon" aria-label="Block options" className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
             <MoreVertical className="h-3.5 w-3.5" />
