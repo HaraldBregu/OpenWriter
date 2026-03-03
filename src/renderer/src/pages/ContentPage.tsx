@@ -272,7 +272,6 @@ const ContentPage: React.FC = () => {
               />
             ))}
           </Reorder.Group>
-          <ContentBlockPlaceholder onClick={handleAppendBlock} />
         </div>
       </div>
 
