@@ -46,11 +46,27 @@ export const CustomParagraph = Paragraph.extend<ParagraphNodeViewCallbacks>({
         if (!onAddBelow) return false
 
         const { $from } = editor.state.selection
-        // Only intercept when inside a paragraph node (not inside a list, etc.)
         if ($from.parent.type.name !== 'paragraph') return false
 
         const pos = $from.before($from.depth)
         onAddBelow(pos)
+        return true
+      },
+
+      Backspace: ({ editor }) => {
+        const { onDelete } = this.options as ParagraphNodeViewCallbacks
+        if (!onDelete) return false
+
+        const { $from, empty } = editor.state.selection
+        // Only intercept when: cursor is collapsed, at the very start of the
+        // paragraph, the paragraph is empty, and we're directly in a paragraph.
+        if (!empty) return false
+        if ($from.parent.type.name !== 'paragraph') return false
+        if ($from.parent.textContent !== '') return false
+        if ($from.parentOffset !== 0) return false
+
+        const pos = $from.before($from.depth)
+        onDelete(pos)
         return true
       },
     }
