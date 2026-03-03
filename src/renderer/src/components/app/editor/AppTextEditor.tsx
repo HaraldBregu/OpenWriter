@@ -270,8 +270,10 @@ function TipTapAdapter({
         },
       },
     }),
+    // allExtensions is the only dep that should gate editor re-creation.
+    // onChangeRef is a stable ref wrapper so it is intentionally excluded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [allExtensions],
   )
 
   const editor = useEditor(editorOptions, [])
