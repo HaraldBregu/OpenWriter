@@ -382,7 +382,7 @@ function isNodeActive(
 ): boolean {
   const { $from, to } = state.selection
   let found = false
-  state.doc.nodesBetween($from.pos, to, (node) => {
+  state.doc.nodesBetween($from.pos, to, (node): boolean | undefined => {
     if (node.type === nodeType) {
       if (!attrs) {
         found = true
@@ -393,6 +393,7 @@ function isNodeActive(
       )
       if (matches) found = true
     }
+    return undefined
   })
   return found
 }
