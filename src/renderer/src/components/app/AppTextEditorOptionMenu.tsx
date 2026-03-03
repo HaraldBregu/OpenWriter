@@ -98,6 +98,7 @@ export function AppTextEditorOptionMenu({
         return true
       }
       if (event.key === 'Enter') {
+        event.preventDefault()
         current.command(current.items[selectedIndexRef.current])
         return true
       }
