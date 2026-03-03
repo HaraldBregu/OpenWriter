@@ -45,7 +45,6 @@ const ContentPage: React.FC = () => {
 
   const [title, setTitle] = useState('')
   const [blocks, setBlocks] = useState<Block[]>(() => [createBlock()])
-  const [focusBlockId, setFocusBlockId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [isTrashing, setIsTrashing] = useState(false)
 
@@ -133,37 +132,6 @@ const ContentPage: React.FC = () => {
 
   const handleReorder = useCallback((reordered: Block[]) => {
     setBlocks(reordered)
-  }, [])
-
-  const handleAppendBlock = useCallback(() => {
-    const newBlock = createBlock()
-    setBlocks((prev) => [...prev, newBlock])
-    setFocusBlockId(newBlock.id)
-  }, [])
-
-  /**
-   * Insert a new empty block immediately after the block identified by `afterId`
-   * and move focus into it.  Called by ContentBlock's onAddBelow prop, which is
-   * triggered when the user clicks the "+" gutter button inside any paragraph.
-   */
-  const handleDeleteBlock = useCallback((blockId: string) => {
-    setBlocks((prev) => {
-      // Always keep at least one block so the editor is never empty.
-      if (prev.length <= 1) return prev.map((b) => b.id === blockId ? { ...b, content: '' } : b)
-      return prev.filter((b) => b.id !== blockId)
-    })
-  }, [])
-
-  const handleAddBlockAfter = useCallback((afterId: string) => {
-    const newBlock = createBlock()
-    setBlocks((prev) => {
-      const idx = prev.findIndex((b) => b.id === afterId)
-      if (idx === -1) return [...prev, newBlock]
-      const next = [...prev]
-      next.splice(idx + 1, 0, newBlock)
-      return next
-    })
-    setFocusBlockId(newBlock.id)
   }, [])
 
   // ---------------------------------------------------------------------------
@@ -266,9 +234,6 @@ const ContentPage: React.FC = () => {
                 block={block}
                 onChange={handleChange}
                 placeholder={t('writing.startWriting')}
-                autoFocus={focusBlockId === block.id}
-                onAddBelow={handleAddBlockAfter}
-                onDelete={handleDeleteBlock}
               />
             ))}
           </Reorder.Group>

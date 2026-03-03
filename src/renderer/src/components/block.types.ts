@@ -21,15 +21,6 @@ export interface ContentBlockProps {
   /** Called when block rich-text content changes. */
   onChange: (id: string, content: string) => void
   placeholder?: string
-  /** When true the editor will grab focus immediately after mount. */
-  autoFocus?: boolean
-  /**
-   * Called when the user clicks the "+" (add paragraph below) gutter button
-   * inside this block's editor.  The parent is responsible for inserting a new
-   * block after the block identified by `id`.
-   */
-  onAddBelow?: (id: string) => void
-  onDelete?: (id: string) => void
 }
 
 export function createBlock(): Block {

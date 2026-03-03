@@ -11,7 +11,6 @@ export const ContentBlock = React.memo(function ContentBlock({
   block,
   onChange,
   placeholder = "Type here...",
-  autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
   const dragControls = useDragControls();
 
@@ -109,7 +108,6 @@ export const ContentBlock = React.memo(function ContentBlock({
         value={block.content}
         onChange={handleChange}
         placeholder={placeholder}
-        autoFocus={autoFocus}
         disabled={isEnhancing}
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
