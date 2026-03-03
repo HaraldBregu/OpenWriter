@@ -44,15 +44,21 @@ export interface ParagraphNodeViewCallbacks {
  *
  * Notion-style layout — all controls in the LEFT gutter:
  *
- *   [drag ⠿] [+] [⋮] │ [NodeViewContent ...............]
+ *   [⠿] [+] [⋮]  │  [paragraph text .................]
  *
- * The left gutter is `contentEditable={false}` so ProseMirror never treats
- * clicks on the control buttons as text-editing interactions.
+ * Width budget (left side):
+ *   - ContentPage applies `px-10` (40px) to the content container.
+ *   - AppTextEditor applies `px-8` (32px) to EditorContent.
+ *   - NodeViewWrapper uses `-mx-8` to bleed 32px into the editor padding.
+ *   - The gutter is `w-[72px]` — it spills an extra 40px into the page
+ *     padding, which is exactly what `px-10` provides. The right-aligned
+ *     buttons therefore sit flush against the paragraph text at all times.
  *
- * The entire row is a hover group (`group` Tailwind class on the wrapper) so
- * gutter controls use `opacity-0 group-hover:opacity-100` — invisible at rest,
- * revealed on hover. The `⋮` trigger also stays visible while the dropdown is
- * open via a `menuOpen` state guard.
+ * All controls are `contentEditable={false}` so ProseMirror never treats
+ * button clicks as text-editing interactions.
+ *
+ * The `group` class on NodeViewWrapper drives `opacity-0 group-hover:opacity-100`
+ * — controls are invisible at rest and appear on hover.
  */
 export function ParagraphNodeView({
   node,
@@ -74,9 +80,8 @@ export function ParagraphNodeView({
   // -------------------------------------------------------------------------
   // Button handlers
   //
-  // IMPORTANT: `onMouseDown={(e) => e.preventDefault()}` on every button inside
-  // `contentEditable={false}` zones prevents ProseMirror from stealing the
-  // mousedown event and collapsing the editor selection.
+  // `onMouseDown={(e) => e.preventDefault()}` on every control prevents
+  // ProseMirror from stealing the mousedown and collapsing the selection.
   // -------------------------------------------------------------------------
 
   const handleAddBelow = useCallback(
@@ -90,8 +95,7 @@ export function ParagraphNodeView({
       if (callbacks.onAddBelow) {
         callbacks.onAddBelow(pos)
       } else {
-        // Default: insert an empty paragraph immediately after this one and
-        // move the cursor into it.
+        // Default: insert an empty paragraph immediately after this one.
         const { state, dispatch } = editor.view
         const nodeEnd = pos + node.nodeSize
         const tr = state.tr.insert(nodeEnd, state.schema.nodes.paragraph.create())
@@ -100,6 +104,7 @@ export function ParagraphNodeView({
         editor.commands.setTextSelection(nodeEnd + 1)
       }
     },
+    // getNodePos reads getPos via closure — stable across renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [callbacks, editor, node.nodeSize],
   )
@@ -119,7 +124,7 @@ export function ParagraphNodeView({
   }, [callbacks])
 
   // -------------------------------------------------------------------------
-  // Shared gutter button class
+  // Shared gutter button style
   // -------------------------------------------------------------------------
 
   const gutterBtn = cn(
@@ -129,7 +134,7 @@ export function ParagraphNodeView({
     'hover:text-muted-foreground hover:bg-muted/60',
     'transition-all duration-150',
     'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-    // Hidden by default; the wrapper `group` reveals them on hover.
+    // Hidden at rest; the `group` on NodeViewWrapper reveals on hover.
     'opacity-0 group-hover:opacity-100',
   )
 
@@ -138,42 +143,38 @@ export function ParagraphNodeView({
   // -------------------------------------------------------------------------
 
   return (
-    // NodeViewWrapper is the ProseMirror-managed root element.
-    // `group` enables Tailwind's group-hover system for the gutter controls.
     <NodeViewWrapper
       as="div"
       data-type="paragraph"
       className={cn(
-        'group relative flex items-start gap-1',
-        // Negative horizontal margin lets the left gutter "float" outside the
-        // text column without shifting the paragraph content itself.
+        'group relative flex items-start',
+        // -mx-8 bleeds the row into the editor's px-8 padding so the gutter
+        // can occupy that space without displacing the text column.
         '-mx-8',
         'py-0',
       )}
     >
       {/* ------------------------------------------------------------------ */}
-      {/* LEFT GUTTER: drag handle · add-below · options menu               */}
-      {/* All Notion controls live here. contentEditable={false} is critical  */}
-      {/* — ProseMirror must not treat this zone as an editable text region.  */}
+      {/* LEFT GUTTER — drag handle · add-below · options (⋮)               */}
+      {/*                                                                    */}
+      {/* MUST be contentEditable={false}. ProseMirror skips mouse events    */}
+      {/* inside non-editable zones, so buttons fire normally without        */}
+      {/* disrupting the editor cursor or selection.                         */}
       {/* ------------------------------------------------------------------ */}
       <div
         contentEditable={false}
         suppressContentEditableWarning
         className={cn(
-          'flex items-center gap-0',
-          // w-8 (32px) matches the -mx-8 bleed so the gutter sits flush
-          // within the editor's horizontal padding. Three 24px buttons at
-          // scale would overflow, so we shrink each icon to 14px and keep
-          // the buttons at h-5 w-5 (20px) — three × 20px = 60px total,
-          // so we allow the gutter to be wider than the bleed. The excess
-          // sits in the page's own px-10 padding without clipping.
-          'w-[60px] shrink-0 justify-end',
-          // Align controls with the first text baseline of a text-lg line.
+          'flex items-center gap-0.5',
+          // 72px = 32px bleed (matching -mx-8) + 40px page padding (px-10).
+          // justify-end keeps the controls flush-right against the text edge.
+          'w-[72px] shrink-0 justify-end',
+          // pt aligns the icon row with the cap-height of text-lg / leading-relaxed.
           'pt-[3px]',
           'select-none',
         )}
       >
-        {/* Drag handle — visual affordance for Framer Motion reorder */}
+        {/* Drag handle */}
         <button
           type="button"
           aria-label="Drag paragraph"
@@ -181,7 +182,7 @@ export function ParagraphNodeView({
           onMouseDown={(e) => e.preventDefault()}
           className={cn(gutterBtn, 'cursor-grab active:cursor-grabbing')}
         >
-          <GripVertical size={15} strokeWidth={2} />
+          <GripVertical size={14} strokeWidth={2} />
         </button>
 
         {/* Add paragraph below */}
@@ -192,10 +193,10 @@ export function ParagraphNodeView({
           onMouseDown={handleAddBelow}
           className={gutterBtn}
         >
-          <Plus size={15} strokeWidth={2.5} />
+          <Plus size={14} strokeWidth={2.5} />
         </button>
 
-        {/* Options menu trigger (⋮) */}
+        {/* Options menu (⋮) */}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -205,12 +206,12 @@ export function ParagraphNodeView({
               onMouseDown={(e) => e.preventDefault()}
               className={cn(
                 gutterBtn,
-                // Keep the trigger visible while the menu is open even if the
-                // pointer has moved outside the paragraph row.
+                // Stay visible while the dropdown is open, even if the pointer
+                // has left the paragraph row.
                 menuOpen && 'opacity-100 text-muted-foreground',
               )}
             >
-              <MoreVertical size={15} strokeWidth={2} />
+              <MoreVertical size={14} strokeWidth={2} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" className="w-40">
@@ -234,9 +235,10 @@ export function ParagraphNodeView({
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* CONTENT: the editable paragraph text                               */}
-      {/* NodeViewContent must NOT be wrapped in contentEditable={false} —   */}
-      {/* it is the leaf that ProseMirror controls.                          */}
+      {/* CONTENT — the editable paragraph text                              */}
+      {/*                                                                    */}
+      {/* NodeViewContent renders the ProseMirror-managed editable region.   */}
+      {/* It must NOT be wrapped in contentEditable={false}.                 */}
       {/* ------------------------------------------------------------------ */}
       <NodeViewContent
         className={cn(
