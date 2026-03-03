@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { NodeViewContent, NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
-import { GripVertical, Plus, MoreHorizontal, Trash2, Sparkles } from 'lucide-react'
+import { GripVertical, Plus, MoreVertical, Trash2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
