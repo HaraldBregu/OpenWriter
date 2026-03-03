@@ -1,7 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { NodeViewContent, NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
-import { GripVertical, Plus } from 'lucide-react'
+import { GripVertical, Plus, MoreHorizontal, Trash2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -22,6 +28,10 @@ export interface ParagraphNodeViewCallbacks {
    * direct ProseMirror transaction and moving the cursor into it.
    */
   onAddBelow?: (pos: number) => void
+  /** Called when the user selects "Delete" from the paragraph menu. */
+  onDelete?: (pos: number) => void
+  /** Called when the user selects "Enhance" from the paragraph menu. */
+  onEnhance?: (pos: number) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -32,14 +42,14 @@ export interface ParagraphNodeViewCallbacks {
  * React NodeView for the custom Paragraph extension.
  *
  * Layout:
- *   [left gutter: add-below · drag-handle] [NodeViewContent]
+ *   [left gutter: add-below · drag-handle] [NodeViewContent] [right gutter: ⋯ menu]
  *
- * The left gutter is `contentEditable={false}` so ProseMirror never
- * treats clicks on buttons as text-editing interactions.
+ * Both gutters are `contentEditable={false}` so ProseMirror never treats
+ * clicks on buttons as text-editing interactions.
  *
  * The entire row becomes a hover group (`group` Tailwind class on the wrapper)
- * so the gutter buttons can use `opacity-0 group-hover:opacity-100` — they are
- * invisible at rest and appear only when the cursor enters the paragraph.
+ * so the gutter buttons use `opacity-0 group-hover:opacity-100` — invisible at
+ * rest, visible on hover.
  */
 export function ParagraphNodeView({
   node,
@@ -48,11 +58,7 @@ export function ParagraphNodeView({
   extension,
 }: NodeViewProps): React.JSX.Element {
   const callbacks = extension.options as ParagraphNodeViewCallbacks
-
-  // -------------------------------------------------------------------------
-  // Drag state — we highlight the handle while the row is being dragged so the
-  // user gets a visible affordance even when the mouse leaves the element.
-  // -------------------------------------------------------------------------
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // -------------------------------------------------------------------------
   // Button handlers
@@ -78,13 +84,32 @@ export function ParagraphNodeView({
         const nodeEnd = pos + node.nodeSize
         const tr = state.tr.insert(nodeEnd, state.schema.nodes.paragraph.create())
         dispatch(tr)
-        // Move the cursor into the new paragraph.
         editor.commands.focus()
         editor.commands.setTextSelection(nodeEnd + 1)
       }
     },
     [callbacks, editor, getPos, node.nodeSize],
   )
+
+  const handleDelete = useCallback(() => {
+    const pos = typeof getPos === 'function' ? getPos() : undefined
+    if (pos === undefined) return
+
+    if (callbacks.onDelete) {
+      callbacks.onDelete(pos)
+    } else {
+      // Default: delete this paragraph node via ProseMirror transaction.
+      const { state, dispatch } = editor.view
+      const tr = state.tr.delete(pos, pos + node.nodeSize)
+      dispatch(tr)
+    }
+  }, [callbacks, editor, getPos, node.nodeSize])
+
+  const handleEnhance = useCallback(() => {
+    const pos = typeof getPos === 'function' ? getPos() : undefined
+    if (pos === undefined) return
+    callbacks.onEnhance?.(pos)
+  }, [callbacks, getPos])
 
   // -------------------------------------------------------------------------
   // Render
@@ -103,7 +128,6 @@ export function ParagraphNodeView({
 
   return (
     // NodeViewWrapper is the ProseMirror-managed root element.
-    // `as="div"` + `data-type="paragraph"` so CSS can target it if needed.
     // The outer div carries the `group` class for Tailwind's group-hover system.
     <NodeViewWrapper
       as="div"
@@ -113,12 +137,11 @@ export function ParagraphNodeView({
         // Negative horizontal margin lets the gutters "float" outside the text
         // column without shifting the paragraph content itself.
         '-mx-8',
-        // Vertical rhythm — match the editor's line-height for single-line paragraphs.
         'py-0',
       )}
     >
       {/* ------------------------------------------------------------------ */}
-      {/* LEFT GUTTER: drag handle + add-below button                        */}
+      {/* LEFT GUTTER: add-below button + drag handle                        */}
       {/* ------------------------------------------------------------------ */}
       <div
         contentEditable={false}
@@ -126,15 +149,10 @@ export function ParagraphNodeView({
         className={cn(
           'flex items-center gap-1',
           'w-8 shrink-0 justify-end',
-          // Align buttons vertically with the first text baseline.
-          // `pt-[3px]` fine-tunes against the 1.5rem line-height of the prose text.
           'pt-[3px]',
-          // Keep gutters in the DOM flow — this prevents layout shifts when
-          // they fade in/out, unlike absolute positioning.
           'select-none',
         )}
       >
-
         {/* Add paragraph below */}
         <button
           type="button"
@@ -151,9 +169,7 @@ export function ParagraphNodeView({
           type="button"
           aria-label="Drag paragraph"
           title="Drag to reorder"
-          className={cn(
-            gutterBtn,
-          )}
+          className={cn(gutterBtn, 'cursor-grab')}
         >
           <GripVertical size={17} strokeWidth={2} />
         </button>
@@ -162,26 +178,61 @@ export function ParagraphNodeView({
       {/* ------------------------------------------------------------------ */}
       {/* CONTENT: the editable paragraph text                               */}
       {/* ------------------------------------------------------------------ */}
-      {/*
-        NodeViewContent renders the actual ProseMirror editable region.
-        It MUST NOT be wrapped in contentEditable={false} — it is the leaf
-        that ProseMirror controls.
-        TipTap v3's NodeViewContent defaults to `as="div"` (NoInfer<T> prevents
-        passing "p" at the call site without an explicit cast). We keep the
-        default div and apply `display: block` via Tailwind so it behaves
-        identically to a <p> for all layout and Placeholder purposes.
-      */}
       <NodeViewContent
         className={cn(
           'flex-1 min-w-0 block',
-          // Inherit the editor's typography so this node view looks identical
-          // to the default paragraph render.
           'text-lg leading-relaxed text-foreground break-words',
-          // Remove browser default margins — the editor controls spacing.
           'm-0 p-0 ml-2',
         )}
       />
 
+      {/* ------------------------------------------------------------------ */}
+      {/* RIGHT GUTTER: ⋯ dropdown menu                                      */}
+      {/* ------------------------------------------------------------------ */}
+      <div
+        contentEditable={false}
+        suppressContentEditableWarning
+        className={cn(
+          'flex items-center',
+          'w-8 shrink-0 justify-start',
+          'pt-[3px]',
+          'select-none',
+        )}
+      >
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Paragraph options"
+              title="Options"
+              onMouseDown={(e) => e.preventDefault()}
+              className={cn(
+                gutterBtn,
+                // Keep visible while the menu is open even if mouse moved away.
+                menuOpen && 'opacity-100 text-muted-foreground',
+              )}
+            >
+              <MoreHorizontal size={17} strokeWidth={2} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="bottom" className="w-40">
+            <DropdownMenuItem
+              onSelect={handleEnhance}
+              className="gap-2 cursor-pointer"
+            >
+              <Sparkles size={14} strokeWidth={2} />
+              Enhance
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={handleDelete}
+              className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+            >
+              <Trash2 size={14} strokeWidth={2} />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </NodeViewWrapper>
   )
 }
