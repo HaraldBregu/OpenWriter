@@ -97,6 +97,15 @@ export interface AppTextEditorProps {
    * triggering `onChange` or Redux updates.
    */
   streamingContent?: string
+  /**
+   * Called when the user clicks the "+" (add paragraph below) gutter button
+   * on any paragraph node view.  Receives the ProseMirror document position of
+   * the paragraph's start so the host can decide where to insert new content.
+   *
+   * When omitted the NodeView falls back to a built-in ProseMirror transaction
+   * that inserts an empty paragraph immediately after the current one.
+   */
+  onAddBelow?: (pos: number) => void
 }
 
 // ---------------------------------------------------------------------------
