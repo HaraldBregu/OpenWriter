@@ -155,8 +155,6 @@ export function ParagraphNodeView({
           title="Drag to reorder"
           className={cn(
             gutterBtn,
-            isDragging && 'opacity-100 text-muted-foreground cursor-grabbing',
-            !isDragging && 'cursor-grab',
           )}
         >
           <GripVertical size={17} strokeWidth={2} />

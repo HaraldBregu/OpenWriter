@@ -34,11 +34,25 @@ export const CustomParagraph = Paragraph.extend<ParagraphNodeViewCallbacks>({
   /**
    * Register the ReactNodeViewRenderer so every `<p>` in the document is
    * managed by our `ParagraphNodeView` React component.
-   *
-   * `contentDOMElementTag` is not needed because NodeViewContent handles the
-   * content DOM element internally via `as="p"`.
    */
   addNodeView() {
     return ReactNodeViewRenderer(ParagraphNodeView)
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      Enter: ({ editor }) => {
+        const { onAddBelow } = this.options as ParagraphNodeViewCallbacks
+        if (!onAddBelow) return false
+
+        const { $from } = editor.state.selection
+        // Only intercept when inside a paragraph node (not inside a list, etc.)
+        if ($from.parent.type.name !== 'paragraph') return false
+
+        const pos = $from.before($from.depth)
+        onAddBelow(pos)
+        return true
+      },
+    }
   },
 })
