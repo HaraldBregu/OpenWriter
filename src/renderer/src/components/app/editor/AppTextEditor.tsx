@@ -256,7 +256,7 @@ function TipTapAdapter({
 
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
-      extensions,
+      extensions: allExtensions,
       content: value || '',
       contentType: 'markdown',
       immediatelyRender: false,
