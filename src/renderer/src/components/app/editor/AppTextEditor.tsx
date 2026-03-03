@@ -347,11 +347,10 @@ function TipTapAdapter({
  */
 const AppTextEditor = React.memo(
   React.forwardRef<HTMLDivElement, AppTextEditorProps>((props, ref) => {
-    const mergedExtensions = useMemo(
-      () =>
-        props.extensions && props.extensions.length > 0
-          ? [...DEFAULT_EXTENSIONS, ...props.extensions]
-          : DEFAULT_EXTENSIONS,
+    // Only the caller-provided extra extensions — TipTapAdapter merges these
+    // with BASE_EXTENSIONS and the configured CustomParagraph internally.
+    const extraExtensions = useMemo(
+      () => props.extensions ?? [],
       [props.extensions],
     )
 
@@ -362,9 +361,10 @@ const AppTextEditor = React.memo(
           onChange={props.onChange}
           autoFocus={props.autoFocus}
           disabled={props.disabled}
-          extensions={mergedExtensions}
+          extensions={extraExtensions}
           forwardedRef={ref}
           streamingContent={props.streamingContent}
+          onAddBelow={props.onAddBelow}
         />
       </div>
     )
