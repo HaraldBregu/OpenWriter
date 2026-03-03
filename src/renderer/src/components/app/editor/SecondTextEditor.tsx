@@ -102,6 +102,12 @@ export interface SecondTextEditorProps {
   className?: string
   disabled?: boolean
   id?: string
+  /**
+   * Live streaming content that overrides `value` without triggering onChange.
+   */
+  streamingContent?: string
+  onAddBelow?: (pos: number) => void
+  onDelete?: (pos: number) => void
 }
 
 type CalloutType = 'info' | 'warning' | 'success' | 'error'
