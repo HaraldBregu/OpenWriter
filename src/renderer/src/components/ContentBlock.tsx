@@ -1,43 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Sparkles, Trash2, Plus, GripVertical } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
-import { AppButton } from "@/components/app";
 import { AppTextEditor } from "@/components/app/AppTextEditor";
 import type { ContentBlockProps } from "@/components/block.types";
-
-// ---------------------------------------------------------------------------
-// ActionButton
-// ---------------------------------------------------------------------------
-
-interface ActionButtonProps {
-  title: string;
-  onClick: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-}
-
-const ActionButton = React.memo(function ActionButton({
-  title,
-  onClick,
-  disabled = false,
-  children,
-}: ActionButtonProps) {
-  return (
-    <AppButton
-      type="button"
-      title={title}
-      onClick={onClick}
-      disabled={disabled}
-      variant={"ghost"}
-      size="icon"
-      className={`h-6 w-6 rounded-none`}
-    >
-      {children}
-    </AppButton>
-  );
-});
-ActionButton.displayName = "ActionButton";
 
 // ---------------------------------------------------------------------------
 // ContentBlock Component
@@ -45,15 +9,10 @@ ActionButton.displayName = "ActionButton";
 
 export const ContentBlock = React.memo(function ContentBlock({
   block,
-  isOnly,
-  isLast = false,
   onChange,
-  onDelete,
-  onAdd,
   placeholder = "Type here...",
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
-  const { t } = useTranslation();
   const dragControls = useDragControls();
 
   // ---------------------------------------------------------------------------
@@ -133,29 +92,6 @@ export const ContentBlock = React.memo(function ContentBlock({
     return unsub;
   }, [block.id]); // permanent — only re-subscribes if block gets a new UUID
 
-  const handleEnhanceClick = useCallback(async () => {
-    if (isEnhancing) return;
-    const text = block.content;
-    if (!text.trim()) return;
-    if (typeof window.task?.submit !== "function") return;
-
-    originalTextRef.current = text;
-    accumulatedAiContentRef.current = "";
-    pendingFinalContentRef.current = null;
-    setIsEnhancing(true);
-
-    try {
-      const result = await window.task.submit(
-        "ai-enhance",
-        { text },
-        { taskId: block.id },
-      );
-      if (!result.success) setIsEnhancing(false);
-    } catch {
-      setIsEnhancing(false);
-    }
-  }, [isEnhancing, block.id, block.content]);
-
   // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
     (content: string) => onChange(block.id, content),
@@ -167,82 +103,18 @@ export const ContentBlock = React.memo(function ContentBlock({
       value={block}
       dragListener={false}
       dragControls={dragControls}
-      className="group relative px-5 py-4 cursor-default select-none"
+      className="group relative cursor-default select-none"
       style={{ zIndex: 1 }}
     >
-      <div className="flex items-start gap-3">
-        {/* Left buttons group */}
-        <div className="flex items-center gap-0.5 mt-2 group/buttons">
-          {onAdd && (
-            <AppButton
-              type="button"
-              onClick={() => onAdd(block.id)}
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 shrink-0 text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 rounded-none"
-            >
-              <Plus className="h-4 w-4" />
-            </AppButton>
-          )}
-
-          {/* Drag handle */}
-          <AppButton
-            type="button"
-            onPointerDown={(e) => dragControls.start(e)}
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-muted-foreground/50 opacity-100 group-hover/buttons:opacity-100 touch-none rounded-none"
-          >
-            <GripVertical className="h-4 w-4" />
-          </AppButton>
-        </div>
-
-        {/* Content area */}
-        <div className="flex-1 min-w-0">
-          <AppTextEditor
-            value={block.content}
-            onChange={handleChange}
-            placeholder={placeholder}
-            autoFocus={autoFocus}
-            disabled={isEnhancing}
-            streamingContent={streamingContent}
-            className={isEnhancing ? "opacity-60" : undefined}
-          />
-        </div>
-
-        {/* Action bar */}
-        <div className="flex items-center gap-0.5 opacity-50 group-hover:opacity-100 shrink-0 my-2">
-          <ActionButton
-            title={
-              isEnhancing
-                ? t("contentBlock.enhancing")
-                : t("contentBlock.enhanceWithAI")
-            }
-            onClick={handleEnhanceClick}
-            disabled={isEnhancing}
-          >
-            <Sparkles
-              className={`h-3.5 w-3.5${isEnhancing ? " animate-pulse" : ""}`}
-            />
-          </ActionButton>
-          <ActionButton
-            title={t("contentBlock.delete")}
-            onClick={() => onDelete(block.id)}
-            disabled={false}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </ActionButton>
-        </div>
-      </div>
-
-      {onAdd && !isLast && (
-        <div
-          className="group/add ml-[3.4rem] h-3 hover:h-8 transition-all duration-200 flex items-center justify-center rounded cursor-pointer bg-muted/2 hover:bg-muted/30"
-          onClick={() => onAdd(block.id)}
-        >
-          <Plus className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/add:opacity-100 transition-opacity duration-150" />
-        </div>
-      )}
+      <AppTextEditor
+        value={block.content}
+        onChange={handleChange}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        disabled={isEnhancing}
+        streamingContent={streamingContent}
+        className={isEnhancing ? "opacity-60" : undefined}
+      />
     </Reorder.Item>
   );
 });
