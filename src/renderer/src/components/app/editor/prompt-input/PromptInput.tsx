@@ -30,6 +30,10 @@ export function PromptInput({
   const promptRef = useRef(prompt)
   promptRef.current = prompt
 
+  // Keep onSubmit stable via ref so changes don't retrigger the plugin effect.
+  const onSubmitRef = useRef(onSubmit)
+  onSubmitRef.current = onSubmit
+
   // ------------------------------------------------------------------
   // Sync width from the container to the floating element.
   // Called from onBeforeShow so the element is sized before Floating UI
