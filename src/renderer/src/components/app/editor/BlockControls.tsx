@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
+import { GripVertical, Plus } from 'lucide-react'
+import { AppButton } from '@components/app/AppButton'
 import { cn } from '@/lib/utils'
 
 export const GUTTER_WIDTH = 54
@@ -128,44 +130,40 @@ export function BlockControls({ editor, containerRef, hoveredBlock }: BlockContr
         style={{ top: hoveredBlock?.top ?? 0 }}
       >
         {/* Add block below */}
-        <button
+        <AppButton
           type="button"
+          variant="ghost"
           aria-label="Add block below"
           onClick={handleAdd}
           className={cn(
-            'flex h-6 w-6 items-center justify-center rounded',
-            'cursor-pointer border-none bg-transparent',
+            'h-6 w-6 rounded p-0',
+            'cursor-pointer',
             'text-muted-foreground/50 transition-all duration-100',
             'hover:bg-muted hover:text-muted-foreground',
             'active:scale-90',
+            '[&_svg]:size-[15px]',
           )}
         >
-          <svg viewBox="0 0 24 24" className="h-[15px] w-[15px]" stroke="currentColor" fill="none" strokeWidth={2} strokeLinecap="round">
-            <line x1={12} y1={5} x2={12} y2={19} />
-            <line x1={5} y1={12} x2={19} y2={12} />
-          </svg>
-        </button>
+          <Plus />
+        </AppButton>
 
         {/* Drag to reorder */}
-        <button
+        <AppButton
           type="button"
+          variant="ghost"
           aria-label="Drag to reorder"
           onMouseDown={handleDragStart}
           className={cn(
-            'flex h-6 w-6 items-center justify-center rounded',
-            'cursor-grab border-none bg-transparent',
+            'h-6 w-6 rounded p-0',
+            'cursor-grab',
             'text-muted-foreground/50 transition-all duration-100',
             'hover:bg-muted hover:text-muted-foreground',
             'active:cursor-grabbing active:scale-90',
+            '[&_svg]:size-[15px]',
           )}
         >
-          <svg viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="currentColor" stroke="none">
-            {[5, 10, 15, 20].flatMap((cy) => [
-              <circle key={`l${cy}`} cx={9} cy={cy} r={1.5} />,
-              <circle key={`r${cy}`} cx={15} cy={cy} r={1.5} />,
-            ])}
-          </svg>
-        </button>
+          <GripVertical />
+        </AppButton>
       </div>
 
       {/* Drop indicator line */}
