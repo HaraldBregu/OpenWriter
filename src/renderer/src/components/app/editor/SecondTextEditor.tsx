@@ -1765,6 +1765,7 @@ const SecondTextEditor = React.memo(
           disabled={disabled}
           forwardedRef={ref}
           streamingContent={props.streamingContent}
+          onAddBelow={props.onAddBelow}
         />
       </div>
     )
