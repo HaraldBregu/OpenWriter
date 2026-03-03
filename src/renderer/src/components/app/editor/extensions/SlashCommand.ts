@@ -78,7 +78,6 @@ const SlashCommand = Extension.create<SlashCommandOptions>({
           handleKeyDown(view, event) {
             // Open on '/'
             if (!isActive && event.key === '/') {
-              const { from } = view.state.selection
               // Schedule so ProseMirror inserts the character first, then we read the state.
               requestAnimationFrame(() => {
                 if (view.isDestroyed) return
