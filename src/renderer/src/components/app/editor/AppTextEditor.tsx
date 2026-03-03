@@ -381,7 +381,6 @@ const AppTextEditor = React.memo(
           onAddBelow={props.onAddBelow}
           onDelete={props.onDelete}
           onEnhance={props.onEnhance}
-          placeholder={props.placeholder}
         />
       </div>
     )
