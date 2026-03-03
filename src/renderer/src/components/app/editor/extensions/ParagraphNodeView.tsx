@@ -116,7 +116,6 @@ export function ParagraphNodeView({
         // Vertical rhythm — match the editor's line-height for single-line paragraphs.
         'py-0',
       )}
-      ref={wrapperRef}
     >
       {/* ------------------------------------------------------------------ */}
       {/* LEFT GUTTER: drag handle + add-below button                        */}
