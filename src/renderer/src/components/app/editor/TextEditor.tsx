@@ -196,7 +196,7 @@ function EditorAdapter({
       <div
         ref={containerRef}
         className="relative"
-        style={{ paddingLeft: GUTTER_WIDTH }}
+        style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
       >
         {editor && (
           <>
