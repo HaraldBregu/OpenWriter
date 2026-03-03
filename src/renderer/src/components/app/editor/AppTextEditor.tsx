@@ -260,10 +260,10 @@ function TipTapAdapter({
       }),
       ...extensions,
     ],
-    // `extensions` and `placeholder` are the runtime deps. BASE_EXTENSIONS is
-    // module-level and all callbacks read their refs so they never change identity.
+    // `extensions` is the only runtime dep. BASE_EXTENSIONS is module-level and
+    // all callbacks read their refs so they never change identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [extensions, placeholder],
+    [extensions],
   )
 
   const editorOptions = useMemo<UseEditorOptions>(
