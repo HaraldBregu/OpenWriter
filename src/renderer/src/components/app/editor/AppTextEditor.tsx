@@ -52,6 +52,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   OrderedList,
   ListItem,
   ListKeymap,
+  BlockItem,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === 'heading') {
