@@ -74,38 +74,21 @@ export function BlockActions({
   return (
     <div
       className={cn(
-        "absolute right-1 z-50 flex items-center gap-0",
+        "absolute right-1 z-50 flex items-center gap-1",
         "pointer-events-none opacity-0 transition-opacity duration-100",
         visible && "pointer-events-auto opacity-100",
       )}
       style={{ top: topValue }}
     >
-      <AppButton
-        variant="ghost"
-        size="icon"
-        aria-label="Duplicate block"
-        onClick={duplicateBlock}
-          className={cn(
-            'h-4 w-4 rounded p-0',
-            'cursor-pointer',
-            'text-muted-foreground/50 transition-all duration-100',
-            'hover:bg-muted hover:text-muted-foreground',
-            'active:scale-90',
-            '[&_svg]:size-[10px]',
-          )}
-      >
-        <Copy  />
-      </AppButton>
-
       <AppDropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
         <AppDropdownMenuTrigger asChild>
           <AppButton
-            variant="ghost"
-            size="icon"
+            variant="editor-block-actions"
+            size="editor-block-icons"
             aria-label="Block options"
             className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground"
           >
-            <MoreVertical className="h-3.5 w-3.5" />
+            <MoreVertical />
           </AppButton>
         </AppDropdownMenuTrigger>
         <AppDropdownMenuContent align="end" sideOffset={4}>
