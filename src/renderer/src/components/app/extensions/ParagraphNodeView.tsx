@@ -230,13 +230,6 @@ export function ParagraphNodeView({
           'select-none',
         )}
       >
-        <button
-          type="button"
-          aria-label="Add comment"
-          title="Add comment"
-          onMouseDown={handleComment}
-          className={gutterBtn}
-        >
           <MessageSquare size={13} strokeWidth={2} />
         </button>
       </div>
