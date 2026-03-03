@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/core'
 import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -19,6 +19,17 @@ interface BlockActionsProps {
 
 export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React.JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false)
+  // Captures the `top` value at the moment the menu opens so the container
+  // does not jump when hoveredBlock updates while the dropdown is visible.
+  const lockedTopRef = useRef<number>(0)
+
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (open) {
+      // Lock position to the current hoveredBlock top before the menu renders.
+      lockedTopRef.current = hoveredBlock?.top ?? 0
+    }
+    setMenuOpen(open)
+  }, [hoveredBlock])
 
   const duplicateBlock = useCallback(() => {
     if (!hoveredBlock) return
@@ -43,6 +54,9 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
   }, [editor, hoveredBlock])
 
   const visible = !!hoveredBlock || menuOpen
+  // While the menu is open, use the position that was locked when it opened.
+  // This prevents the container from jumping as hoveredBlock changes on mouse move.
+  const topValue = menuOpen ? lockedTopRef.current : (hoveredBlock?.top ?? 0)
 
   return (
     <div
@@ -51,7 +65,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
         'pointer-events-none opacity-0 transition-opacity duration-100',
         visible && 'pointer-events-auto opacity-100',
       )}
-      style={{ top: hoveredBlock?.top ?? 0 }}
+      style={{ top: topValue }}
     >
       <AppButton variant="ghost" size="icon" aria-label="Duplicate block" onClick={duplicateBlock} className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
         <Copy className="h-3.5 w-3.5" />
