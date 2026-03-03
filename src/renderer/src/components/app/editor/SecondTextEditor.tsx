@@ -466,13 +466,14 @@ const DetailsNode = Node.create<DetailsOptions>({
       summaryEl.addEventListener('click', (e) => {
         // Toggle open state in ProseMirror attrs
         if (typeof getPos === 'function') {
-          const currentOpen = dom.hasAttribute('open')
-          // Tiptap will re-render, so we update the attr after browser toggles
+          // Tiptap will re-render, so we update the attr after the browser toggles
           requestAnimationFrame(() => {
+            const pos = getPos()
+            if (pos === undefined) return
             const nowOpen = dom.hasAttribute('open')
             chevron.style.transform = nowOpen ? 'rotate(180deg)' : 'rotate(0deg)'
             editor.chain().focus().command(({ tr }) => {
-              tr.setNodeMarkup(getPos(), undefined, {
+              tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 open: nowOpen,
               })
@@ -489,8 +490,10 @@ const DetailsNode = Node.create<DetailsOptions>({
         e.preventDefault()
         const newSummary = window.prompt('Edit summary:', summaryText)
         if (newSummary !== null && newSummary !== summaryText && typeof getPos === 'function') {
+          const pos = getPos()
+          if (pos === undefined) return
           editor.chain().focus().command(({ tr }) => {
-            tr.setNodeMarkup(getPos(), undefined, {
+            tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
               summary: newSummary,
             })
