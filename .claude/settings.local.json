@@ -72,6 +72,7 @@
       "Bash(cat:*)",
       "Bash(grep TS4023:*)",
       "Bash(npm run:*)",
+<<<<<<< Updated upstream
       "Bash(yarn typecheck:*)",
       "Bash(yarn build:dev:*)",
       "Bash(git stash:*)",
@@ -85,6 +86,10 @@
       "Bash(tr ;:*)",
       "Bash(tr {:*)",
       "Bash(read f:*)"
+=======
+      "Bash(git check-ignore:*)",
+      "Bash(git reset:*)"
+>>>>>>> Stashed changes
     ],
     "deny": [
       "Bash(git push --force:*)",
