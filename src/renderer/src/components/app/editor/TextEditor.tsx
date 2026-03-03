@@ -6,6 +6,7 @@ import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
+import { GripVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface TextEditorProps {
@@ -17,6 +18,12 @@ export interface TextEditorProps {
   disabled?: boolean
   id?: string
   streamingContent?: string
+  /**
+   * Called when the user presses the pointer down on the drag handle grip.
+   * Wire this to framer-motion's `dragControls.start(event)` in the parent to
+   * initiate block reordering via `Reorder.Item`.
+   */
+  onDragHandlePointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void
 }
 
 const BASE_EXTENSIONS: AnyExtension[] = [
@@ -27,12 +34,53 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   History,
 ]
 
+// ---------------------------------------------------------------------------
+// DragHandle — rendered only when the consumer provides a handler.
+// Sits in the left gutter, visible on group-hover.
+// ---------------------------------------------------------------------------
+
+interface DragHandleProps {
+  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void
+}
+
+function DragHandle({ onPointerDown }: DragHandleProps): React.JSX.Element {
+  return (
+    <div
+      // Prevent text selection and scroll interference during drag.
+      className={cn(
+        'absolute -left-7 top-1/2 -translate-y-1/2',
+        'flex items-center justify-center',
+        'h-6 w-6 rounded',
+        'opacity-0 group-hover:opacity-100',
+        'transition-opacity duration-150',
+        'cursor-grab active:cursor-grabbing',
+        'text-muted-foreground hover:text-foreground',
+        'hover:bg-accent',
+        'touch-none select-none',
+      )}
+      onPointerDown={onPointerDown}
+      // Prevent the editor from stealing pointer events while dragging.
+      onMouseDown={(e) => e.preventDefault()}
+      aria-label="Drag to reorder block"
+      role="button"
+      tabIndex={-1}
+    >
+      <GripVertical className="h-4 w-4" />
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// EditorAdapter — owns the Tiptap editor instance.
+// ---------------------------------------------------------------------------
+
 function EditorAdapter({
   value,
   onChange,
   autoFocus,
   disabled,
   streamingContent,
+  onDragHandlePointerDown,
   forwardedRef,
 }: {
   value: string
@@ -40,6 +88,7 @@ function EditorAdapter({
   autoFocus: boolean | undefined
   disabled: boolean | undefined
   streamingContent: string | undefined
+  onDragHandlePointerDown: ((e: React.PointerEvent<HTMLDivElement>) => void) | undefined
   forwardedRef: React.Ref<HTMLDivElement>
 }): React.JSX.Element {
   const onChangeRef = useRef(onChange)
@@ -108,14 +157,29 @@ function EditorAdapter({
 
   return (
     <div className="relative w-full" ref={forwardedRef}>
+      {onDragHandlePointerDown !== undefined && (
+        <DragHandle onPointerDown={onDragHandlePointerDown} />
+      )}
       <EditorContent editor={editor} />
     </div>
   )
 }
 
+// ---------------------------------------------------------------------------
+// TextEditor — public API, memoised outer shell.
+// ---------------------------------------------------------------------------
+
 const TextEditor = React.memo(
   React.forwardRef<HTMLDivElement, TextEditorProps>((props, ref) => {
-    const { value, onChange, autoFocus, className, disabled, id } = props
+    const {
+      value,
+      onChange,
+      autoFocus,
+      className,
+      disabled,
+      id,
+      onDragHandlePointerDown,
+    } = props
 
     const stableOnChange = useCallback(
       (html: string) => onChange(html),
@@ -123,7 +187,7 @@ const TextEditor = React.memo(
     )
 
     return (
-      <div id={id} className={cn('w-full', className)}>
+      <div id={id} className={cn('group w-full', className)}>
         <EditorAdapter
           value={value}
           onChange={stableOnChange}
@@ -131,6 +195,7 @@ const TextEditor = React.memo(
           disabled={disabled}
           forwardedRef={ref}
           streamingContent={props.streamingContent}
+          onDragHandlePointerDown={onDragHandlePointerDown}
         />
       </div>
     )
