@@ -32,7 +32,13 @@ import { AppTextEditorOptionMenu } from './AppTextEditorOptionMenu'
 
 const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
 
-const DEFAULT_EXTENSIONS: AnyExtension[] = [
+/**
+ * Extensions that are independent of runtime callbacks and safe to define at
+ * module level. `CustomParagraph` is intentionally excluded here — it must be
+ * configured per-editor-instance so that `onAddBelow` can be wired up with a
+ * stable, instance-specific callback. See `buildExtensions()` below.
+ */
+const BASE_EXTENSIONS: AnyExtension[] = [
   // Disable StarterKit's built-in paragraph — CustomParagraph replaces it with
   // a React NodeView that renders inline gutter buttons on hover.
   StarterKit.configure({
@@ -42,8 +48,6 @@ const DEFAULT_EXTENSIONS: AnyExtension[] = [
     listItem: false,
     heading: false,
   }),
-  // Custom paragraph with floating left/right action buttons.
-  CustomParagraph,
   // Custom heading with the same floating gutter button pattern as CustomParagraph.
   CustomHeading.configure({ levels: HEADING_LEVELS as unknown as import('@tiptap/extension-heading').Level[] }),
   Markdown,
