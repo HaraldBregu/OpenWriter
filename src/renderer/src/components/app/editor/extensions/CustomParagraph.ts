@@ -72,20 +72,24 @@ export const CustomParagraph = Paragraph.extend<ParagraphNodeViewCallbacks>({
       },
 
       /**
-       * Backspace → delete the current ContentBlock when it is empty.
+       * Backspace → when the paragraph is empty:
        *
-       * Guards:
+       *   a) If a node exists before this one in the document, delete the
+       *      current node and move the cursor to the end of the previous node.
+       *
+       *   b) If this is the first (or only) node in the document, delegate to
+       *      `onDelete` so the host can remove the entire ContentBlock.
+       *
+       * Guards (all must hold before we intercept):
        *   1. Selection must be collapsed (no range selected).
        *   2. The immediate parent must be a paragraph node.
        *   3. The paragraph must be completely empty (no text content).
        *   4. The cursor must sit at offset 0 (very start of the node).
        *
-       * All four must hold before we hand off to `onDelete`; otherwise
-       * regular Backspace behaviour (delete the preceding character) is used.
+       * Regular Backspace behaviour is preserved for all other cases.
        */
       Backspace: ({ editor }) => {
         const { onDelete } = this.options as ParagraphNodeViewCallbacks
-        if (!onDelete) return false
 
         const { $from, empty } = editor.state.selection
         if (!empty) return false
@@ -93,8 +97,24 @@ export const CustomParagraph = Paragraph.extend<ParagraphNodeViewCallbacks>({
         if ($from.parent.textContent !== '') return false
         if ($from.parentOffset !== 0) return false
 
-        const pos = $from.before($from.depth)
-        onDelete(pos)
+        const nodeStart = $from.before($from.depth)
+
+        // nodeStart > 1 means there is at least one node before this one
+        // (position 0 is the doc open token, 1 is where the first node begins).
+        if (nodeStart > 1) {
+          const { tr } = editor.state
+          // Delete the current empty paragraph node.
+          tr.delete(nodeStart, nodeStart + $from.parent.nodeSize)
+          // Place the cursor at the end of whatever precedes this node.
+          const targetPos = nodeStart - 1
+          tr.setSelection(TextSelection.create(tr.doc, tr.doc.resolve(targetPos).pos))
+          editor.view.dispatch(tr)
+          return true
+        }
+
+        // First node in the document — delegate to the host (remove ContentBlock).
+        if (!onDelete) return false
+        onDelete(nodeStart)
         return true
       },
     }
