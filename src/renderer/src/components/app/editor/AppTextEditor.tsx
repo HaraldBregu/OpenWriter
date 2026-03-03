@@ -217,7 +217,6 @@ interface TipTapAdapterProps {
   onAddBelow: ((pos: number) => void) | undefined
   onDelete: ((pos: number) => void) | undefined
   onEnhance: ((pos: number) => void) | undefined
-  placeholder: string | undefined
 }
 
 function TipTapAdapter({
