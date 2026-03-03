@@ -12,8 +12,6 @@ export const ContentBlock = React.memo(function ContentBlock({
   onChange,
   placeholder = "Type here...",
   autoFocus = false,
-  onAddBelow,
-  onDelete,
 }: ContentBlockProps): React.JSX.Element {
   const dragControls = useDragControls();
 
