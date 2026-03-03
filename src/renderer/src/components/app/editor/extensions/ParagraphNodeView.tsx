@@ -32,9 +32,9 @@ export interface ParagraphNodeViewCallbacks {
  * React NodeView for the custom Paragraph extension.
  *
  * Layout:
- *   [left gutter: drag-handle · add-below] [NodeViewContent] [right gutter: comment]
+ *   [left gutter: add-below · drag-handle] [NodeViewContent]
  *
- * All three gutter columns are `contentEditable={false}` so ProseMirror never
+ * The left gutter is `contentEditable={false}` so ProseMirror never
  * treats clicks on buttons as text-editing interactions.
  *
  * The entire row becomes a hover group (`group` Tailwind class on the wrapper)
