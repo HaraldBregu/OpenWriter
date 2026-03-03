@@ -158,52 +158,44 @@ function backticksFor(node: ProseMirrorNode, side: -1 | 1): string {
 const md = new MarkdownIt("commonmark").enable("strikethrough");
 
 // ---------------------------------------------------------------------------
-// Tiptap-compatible MarkdownParser.
+// Token map for the Tiptap-compatible MarkdownParser.
 //
-// prosemirror-markdown's MarkdownParser maps markdown-it token names to
-// prosemirror-schema-basic node/mark names. We override the token→node map
-// so the parser produces nodes whose names match Tiptap's registered schema.
+// Defined as a plain object so it can be reused across calls without
+// constructing a MarkdownParser at module level (the constructor requires a
+// live schema and crashes when passed null).
 // ---------------------------------------------------------------------------
 
-const tiptapMarkdownParser = new MarkdownParser(
-  // The schema is not used at construction time — it is resolved dynamically
-  // when `parse(schema, src)` is called. We pass a dummy here; the actual
-  // Tiptap schema is provided at call time via `parseMarkdown`.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  null as any,
-  md,
-  {
-    blockquote: { block: "blockquote" },
-    paragraph: { block: "paragraph" },
-    list_item: { block: "listItem" },
-    bullet_list: { block: "bulletList" },
-    ordered_list: { block: "orderedList", getAttrs: (tok) => ({ order: +(tok.attrGet("start") ?? 1) }) },
-    heading: { block: "heading", getAttrs: (tok) => ({ level: +tok.tag.slice(1) }) },
-    code_block: { block: "codeBlock", noCloseToken: true },
-    fence: { block: "codeBlock", getAttrs: (tok) => ({ language: tok.info || "" }), noCloseToken: true },
-    hr: { node: "horizontalRule" },
-    image: {
-      node: "image",
-      getAttrs: (tok) => ({
-        src: tok.attrGet("src"),
-        title: tok.attrGet("title") || null,
-        alt: tok.children?.[0]?.content || null,
-      }),
-    },
-    hardbreak: { node: "hardBreak" },
-    em: { mark: "italic" },
-    strong: { mark: "bold" },
-    s: { mark: "strike" },
-    link: {
-      mark: "link",
-      getAttrs: (tok) => ({
-        href: tok.attrGet("href"),
-        title: tok.attrGet("title") || null,
-      }),
-    },
-    code_inline: { mark: "code" },
+const TIPTAP_TOKEN_MAP = {
+  blockquote: { block: "blockquote" },
+  paragraph: { block: "paragraph" },
+  list_item: { block: "listItem" },
+  bullet_list: { block: "bulletList" },
+  ordered_list: { block: "orderedList", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ order: +(tok.attrGet("start") ?? 1) }) },
+  heading: { block: "heading", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ level: +tok.tag.slice(1) }) },
+  code_block: { block: "codeBlock", noCloseToken: true },
+  fence: { block: "codeBlock", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ language: tok.info || "" }), noCloseToken: true },
+  hr: { node: "horizontalRule" },
+  image: {
+    node: "image",
+    getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({
+      src: tok.attrGet("src"),
+      title: tok.attrGet("title") || null,
+      alt: (tok.children as Array<{ content: string }> | null)?.[0]?.content || null,
+    }),
   },
-);
+  hardbreak: { node: "hardBreak" },
+  em: { mark: "italic" },
+  strong: { mark: "bold" },
+  s: { mark: "strike" },
+  link: {
+    mark: "link",
+    getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({
+      href: tok.attrGet("href"),
+      title: tok.attrGet("title") || null,
+    }),
+  },
+  code_inline: { mark: "code" },
+};
 
 /**
  * Parse a markdown string into a Tiptap-compatible ProseMirror document JSON.
@@ -215,9 +207,7 @@ function markdownToTiptapJSON(
 ): import("@tiptap/pm/model").Node | null {
   if (!markdown || !markdown.trim()) return null;
   try {
-    // Temporarily bind the real schema into the parser and parse.
-    // We do this without mutating the shared parser object.
-    const parser = new MarkdownParser(schema, md, tiptapMarkdownParser.tokens);
+    const parser = new MarkdownParser(schema, md, TIPTAP_TOKEN_MAP);
     return parser.parse(markdown);
   } catch (err) {
     console.error("[TextEditor] markdown parse error:", err);
