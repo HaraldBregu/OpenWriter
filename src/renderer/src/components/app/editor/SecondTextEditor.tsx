@@ -1105,6 +1105,7 @@ const SecondTextEditor = React.memo(
           autoFocus={autoFocus}
           disabled={disabled}
           forwardedRef={ref}
+          streamingContent={props.streamingContent}
         />
       </div>
     )
