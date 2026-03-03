@@ -179,7 +179,7 @@ export function ParagraphNodeView({
             !isDragging && 'cursor-grab',
           )}
         >
-          <GripVertical size={13} strokeWidth={2} />
+          <GripVertical size={17} strokeWidth={2} />
         </button>
 
         {/* Add paragraph below */}
@@ -190,7 +190,7 @@ export function ParagraphNodeView({
           onMouseDown={handleAddBelow}
           className={gutterBtn}
         >
-          <Plus size={13} strokeWidth={2.5} />
+          <Plus size={17} strokeWidth={2.5} />
         </button>
       </div>
 
@@ -216,7 +216,7 @@ export function ParagraphNodeView({
           'm-0 p-0',
         )}
       />
-      
+
     </NodeViewWrapper>
   )
 }
