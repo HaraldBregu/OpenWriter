@@ -138,9 +138,8 @@ export function OptionMenu({ editor }: OptionMenuProps): React.JSX.Element {
       pluginKey,
       editor,
       element: el,
-      onShow: () => setVisible(true),
+      onShow: () => {},
       onHide: () => {
-        setVisible(false)
         setQuery('')
         setSelectedIndex(0)
         slashPosRef.current = null
