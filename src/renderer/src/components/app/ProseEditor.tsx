@@ -28,17 +28,16 @@ import React, {
 import { createPortal } from 'react-dom'
 
 // ── ProseMirror core ──────────────────────────────────────────────────────────
-import { Schema, DOMParser as PMDOMParser, DOMSerializer } from '@tiptap/pm/model'
-import type { Node as PMNode, MarkType, NodeType } from '@tiptap/pm/model'
+import { Schema, DOMParser as PMDOMParser, DOMSerializer } from 'prosemirror-model'
+import type { Node as PMNode, MarkType, NodeType } from 'prosemirror-model'
 import {
   EditorState,
   Plugin,
   PluginKey,
   TextSelection,
   type Transaction,
-} from '@tiptap/pm/state'
-import { EditorView, type DecorationSet } from '@tiptap/pm/view'
-import { Decoration } from '@tiptap/pm/view'
+} from 'prosemirror-state'
+import { EditorView, Decoration, DecorationSet } from 'prosemirror-view'
 import {
   toggleMark,
   setBlockType,
@@ -54,26 +53,26 @@ import {
   joinForward,
   deleteSelection,
   selectAll,
-} from '@tiptap/pm/commands'
-import { keymap } from '@tiptap/pm/keymap'
-import { baseKeymap } from '@tiptap/pm/commands'
+  baseKeymap,
+} from 'prosemirror-commands'
+import { keymap } from 'prosemirror-keymap'
 import {
   inputRules,
   wrappingInputRule,
   textblockTypeInputRule,
   InputRule,
-} from '@tiptap/pm/inputrules'
-import { history, undo, redo } from '@tiptap/pm/history'
-import { dropCursor } from '@tiptap/pm/dropcursor'
-import { gapCursor } from '@tiptap/pm/gapcursor'
+} from 'prosemirror-inputrules'
+import { history, undo, redo } from 'prosemirror-history'
+import { dropCursor } from 'prosemirror-dropcursor'
+import { gapCursor } from 'prosemirror-gapcursor'
 import {
   addListNodes,
   wrapInList,
   splitListItem,
   liftListItem,
   sinkListItem,
-} from '@tiptap/pm/schema-list'
-import { nodes as basicNodes, marks as basicMarks } from '@tiptap/pm/schema-basic'
+} from 'prosemirror-schema-list'
+import { nodes as basicNodes, marks as basicMarks } from 'prosemirror-schema-basic'
 
 // ── Lucide icons ──────────────────────────────────────────────────────────────
 import {
