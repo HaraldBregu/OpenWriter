@@ -89,6 +89,7 @@ export class PromptInputView {
     // don't trigger React state updates after the component has unmounted.
     this.visible = false
     this.triggerPos = null
+    this.element.style.display = 'none'
     this.element.style.visibility = 'hidden'
   }
 }
