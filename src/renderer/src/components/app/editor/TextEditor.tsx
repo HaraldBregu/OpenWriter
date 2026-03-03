@@ -66,6 +66,7 @@ function EditorAdapter({
   autoFocus,
   disabled,
   streamingContent,
+  onContinueWithAI,
   forwardedRef,
 }: {
   value: string
@@ -73,6 +74,7 @@ function EditorAdapter({
   autoFocus: boolean | undefined
   disabled: boolean | undefined
   streamingContent: string | undefined
+  onContinueWithAI: ((content: string) => void) | undefined
   forwardedRef: React.Ref<HTMLDivElement>
 }): React.JSX.Element {
   const onChangeRef = useRef(onChange)
