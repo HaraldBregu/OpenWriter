@@ -99,6 +99,13 @@ export const ContentBlock = React.memo(function ContentBlock({
     [onChange, block.id],
   );
 
+  // Adapt AppTextEditor's (pos: number) => void to ContentBlock's (id: string) => void.
+  // The ProseMirror `pos` is intra-editor and not meaningful outside the editor;
+  // ContentBlock identifies itself to the parent by block.id instead.
+  const handleAddBelow = useCallback(() => {
+    onAddBelow?.(block.id);
+  }, [onAddBelow, block.id]);
+
   return (
     <Reorder.Item
       value={block}
@@ -115,6 +122,7 @@ export const ContentBlock = React.memo(function ContentBlock({
         disabled={isEnhancing}
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
+        onAddBelow={handleAddBelow}
       />
     </Reorder.Item>
   );
