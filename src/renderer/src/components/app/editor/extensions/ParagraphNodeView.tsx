@@ -212,7 +212,7 @@ export function ParagraphNodeView({
                 menuOpen && 'opacity-100 text-muted-foreground',
               )}
             >
-              <MoreHorizontal size={17} strokeWidth={2} />
+              <MoreVertical size={17} strokeWidth={2} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" className="w-40">
