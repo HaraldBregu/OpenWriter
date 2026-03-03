@@ -94,22 +94,10 @@ export const ContentBlock = React.memo(function ContentBlock({
     return unsub;
   }, [block.id]); // permanent — only re-subscribes if block gets a new UUID
 
-  // Adapt AppTextEditor's (value: string) => void to ContentBlock's (id, content) => void
   const handleChange = useCallback(
     (content: string) => onChange(block.id, content),
     [onChange, block.id],
   );
-
-  // Adapt AppTextEditor's (pos: number) => void to ContentBlock's (id: string) => void.
-  // The ProseMirror `pos` is intra-editor and not meaningful outside the editor;
-  // ContentBlock identifies itself to the parent by block.id instead.
-  const handleAddBelow = useCallback(() => {
-    onAddBelow?.(block.id);
-  }, [onAddBelow, block.id]);
-
-  const handleDelete = useCallback(() => {
-    onDelete?.(block.id);
-  }, [onDelete, block.id]);
 
   return (
     <Reorder.Item
@@ -119,7 +107,7 @@ export const ContentBlock = React.memo(function ContentBlock({
       className="group relative cursor-default select-none"
       style={{ zIndex: 1 }}
     >
-      <AppTextEditor
+      <TextEditor
         value={block.content}
         onChange={handleChange}
         placeholder={placeholder}
@@ -127,8 +115,6 @@ export const ContentBlock = React.memo(function ContentBlock({
         disabled={isEnhancing}
         streamingContent={streamingContent}
         className={isEnhancing ? "opacity-60" : undefined}
-        onAddBelow={handleAddBelow}
-        onDelete={handleDelete}
       />
     </Reorder.Item>
   );
