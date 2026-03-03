@@ -23,7 +23,7 @@ const BTN_CLASS = cn(
   'active:scale-90',
 )
 
-export function BlockActions({ editor, containerRef, hoveredBlock }: BlockActionsProps): React.JSX.Element {
+export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React.JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false)
   const duplicateBlock = useCallback(() => {
     if (!hoveredBlock) return
