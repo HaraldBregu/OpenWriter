@@ -214,7 +214,7 @@ export function ParagraphNodeView({
           // to the default paragraph render.
           'text-lg leading-relaxed text-foreground break-words',
           // Remove browser default margins — the editor controls spacing.
-          'm-0 p-0',
+          'm-0 p-0 ml-2',
         )}
       />
 
