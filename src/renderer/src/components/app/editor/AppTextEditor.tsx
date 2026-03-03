@@ -226,9 +226,33 @@ function TipTapAdapter({
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
 
+  // Stable ref for onAddBelow — updated every render so the extension callback
+  // always reads the latest value without triggering editor re-creation.
+  const onAddBelowRef = useRef(onAddBelow)
+  onAddBelowRef.current = onAddBelow
+
   // Track whether the last change originated from the editor itself so the
   // external-sync effect can skip redundant (and disruptive) setContent calls.
   const internalChangeRef = useRef(false)
+
+  // Build the full extension list once. `CustomParagraph` is configured here
+  // (not at module level) so its `onAddBelow` callback can be a stable ref
+  // wrapper — preventing editor re-creation on every parent re-render.
+  const allExtensions = useMemo<AnyExtension[]>(
+    () => [
+      ...BASE_EXTENSIONS,
+      CustomParagraph.configure({
+        onAddBelow: (pos: number) => {
+          onAddBelowRef.current?.(pos)
+        },
+      }),
+      ...extensions,
+    ],
+    // `extensions` is the only runtime dependency — BASE_EXTENSIONS is module-level
+    // and the onAddBelow wrapper reads the ref so it never changes identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [extensions],
+  )
 
   const editorOptions = useMemo<UseEditorOptions>(
     () => ({
