@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import type { Editor } from '@tiptap/core'
+import { Copy, ChevronUp, ChevronDown, MoreHorizontal, Trash2, Clipboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { HoveredBlock } from './BlockControls'
+import { AppButton } from '../AppButton'
 import {
   AppDropdownMenu,
   AppDropdownMenuTrigger,
@@ -15,16 +17,9 @@ interface BlockActionsProps {
   hoveredBlock: HoveredBlock | null
 }
 
-const BTN_CLASS = cn(
-  'flex h-6 w-6 items-center justify-center rounded',
-  'cursor-pointer border-none bg-transparent',
-  'text-muted-foreground/50 transition-all duration-100',
-  'hover:bg-muted hover:text-muted-foreground',
-  'active:scale-90',
-)
-
 export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React.JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false)
+
   const duplicateBlock = useCallback(() => {
     if (!hoveredBlock) return
     const node = editor.state.doc.nodeAt(hoveredBlock.pos)
@@ -39,7 +34,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
     const node = editor.state.doc.nodeAt(pos)
     if (!node) return
     const resolved = editor.state.doc.resolve(pos)
-    if (resolved.index(0) === 0) return // already first
+    if (resolved.index(0) === 0) return
     const prevPos = resolved.before(1) - 1
     const prevResolved = editor.state.doc.resolve(prevPos)
     const targetPos = prevResolved.before(1)
@@ -57,7 +52,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
     if (!node) return
     const resolved = editor.state.doc.resolve(pos)
     const parentChildCount = resolved.node(0).childCount
-    if (resolved.index(0) >= parentChildCount - 1) return // already last
+    if (resolved.index(0) >= parentChildCount - 1) return
     const nextPos = pos + node.nodeSize
     const nextNode = editor.state.doc.nodeAt(nextPos)
     if (!nextNode) return
@@ -79,8 +74,7 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
     if (!hoveredBlock) return
     const node = editor.state.doc.nodeAt(hoveredBlock.pos)
     if (!node) return
-    const text = node.textContent
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(node.textContent)
   }, [editor, hoveredBlock])
 
   const visible = !!hoveredBlock || menuOpen
@@ -94,29 +88,37 @@ export function BlockActions({ editor, hoveredBlock }: BlockActionsProps): React
       )}
       style={{ top: hoveredBlock?.top ?? 0 }}
     >
-      {/* Duplicate */}
-      <button type="button" aria-label="Duplicate block" onClick={duplicateBlock} className={BTN_CLASS}>
-        <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" stroke="currentColor" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <rect x={9} y={9} width={13} height={13} rx={2} ry={2} />
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-        </svg>
-      </button>
+      <AppButton variant="ghost" size="icon" aria-label="Duplicate block" onClick={duplicateBlock} className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
+        <Copy className="h-3.5 w-3.5" />
+      </AppButton>
 
-      {/* 3-dot options menu */}
+      <AppButton variant="ghost" size="icon" aria-label="Move block up" onClick={moveBlockUp} className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
+        <ChevronUp className="h-3.5 w-3.5" />
+      </AppButton>
+
+      <AppButton variant="ghost" size="icon" aria-label="Move block down" onClick={moveBlockDown} className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
+        <ChevronDown className="h-3.5 w-3.5" />
+      </AppButton>
+
       <AppDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <AppDropdownMenuTrigger asChild>
-          <button type="button" aria-label="Block options" className={BTN_CLASS}>
-            <svg viewBox="0 0 24 24" className="h-[14px] w-[14px]" fill="currentColor" stroke="none">
-              <circle cx={5} cy={12} r={2} />
-              <circle cx={12} cy={12} r={2} />
-              <circle cx={19} cy={12} r={2} />
-            </svg>
-          </button>
+          <AppButton variant="ghost" size="icon" aria-label="Block options" className="h-6 w-6 text-muted-foreground/50 hover:text-muted-foreground">
+            <MoreHorizontal className="h-3.5 w-3.5" />
+          </AppButton>
         </AppDropdownMenuTrigger>
         <AppDropdownMenuContent align="end" sideOffset={4}>
-          <AppDropdownMenuItem onClick={deleteBlock}>Delete</AppDropdownMenuItem>
-          <AppDropdownMenuItem onClick={duplicateBlock}>Duplicate</AppDropdownMenuItem>
-          <AppDropdownMenuItem onClick={copyBlockText}>Copy to clipboard</AppDropdownMenuItem>
+          <AppDropdownMenuItem onClick={deleteBlock}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </AppDropdownMenuItem>
+          <AppDropdownMenuItem onClick={duplicateBlock}>
+            <Copy className="mr-2 h-4 w-4" />
+            Duplicate
+          </AppDropdownMenuItem>
+          <AppDropdownMenuItem onClick={copyBlockText}>
+            <Clipboard className="mr-2 h-4 w-4" />
+            Copy to clipboard
+          </AppDropdownMenuItem>
         </AppDropdownMenuContent>
       </AppDropdownMenu>
     </div>
