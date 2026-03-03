@@ -33,6 +33,7 @@ export interface TextEditorProps {
   disabled?: boolean
   id?: string
   streamingContent?: string
+  onContinueWithAI?: (content: string) => void
 }
 
 // ---------------------------------------------------------------------------
