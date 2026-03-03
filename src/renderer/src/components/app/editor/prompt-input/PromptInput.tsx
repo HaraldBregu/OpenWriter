@@ -147,7 +147,7 @@ export function PromptInput({
       className="z-50 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 shadow-md"
       style={{ visibility: 'hidden', position: 'absolute' }}
     >
-      <input
+      <AppInput
         ref={inputRef}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
@@ -162,7 +162,7 @@ export function PromptInput({
           }
         }}
         placeholder="Ask AI anything…"
-        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+        className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0"
       />
     </div>
   )
