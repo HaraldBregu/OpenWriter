@@ -59,7 +59,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
         const level = node.attrs.level as HeadingLevel
         return `Heading ${level}`
       }
-      if (node.type.name === 'paragraph') {
+      if (node.type.name === 'paragraph' || node.type.name === 'blockItem') {
         return 'Write something, or type "/" for commands…'
       }
       return ''
