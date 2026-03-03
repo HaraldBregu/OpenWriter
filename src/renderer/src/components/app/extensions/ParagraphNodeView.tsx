@@ -157,7 +157,7 @@ export function ParagraphNodeView({
         contentEditable={false}
         suppressContentEditableWarning
         className={cn(
-          'flex items-center gap-2',
+          'flex items-center gap-1',
           'w-8 shrink-0 justify-end',
           // Align buttons vertically with the first text baseline.
           // `pt-[3px]` fine-tunes against the 1.5rem line-height of the prose text.
@@ -193,7 +193,6 @@ export function ParagraphNodeView({
         >
           <GripVertical size={17} strokeWidth={2} />
         </button>
-
       </div>
 
       {/* ------------------------------------------------------------------ */}
