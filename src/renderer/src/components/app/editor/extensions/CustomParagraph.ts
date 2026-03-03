@@ -21,7 +21,7 @@ import { ParagraphNodeView, type ParagraphNodeViewCallbacks } from './ParagraphN
  *
  * // Replace the default paragraph from StarterKit:
  * StarterKit.configure({ paragraph: false, ... })
- * CustomParagraph.configure({ onAddBelow: (pos) => ..., onComment: (pos) => ... })
+ * CustomParagraph.configure({ onAddBelow: (pos) => ... })
  * ```
  *
  * ### Why extend rather than create from scratch?
