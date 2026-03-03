@@ -14,7 +14,14 @@ export const ContentBlock = React.memo(function ContentBlock({
   placeholder = "Type here...",
   autoFocus = false,
 }: ContentBlockProps): React.JSX.Element {
-  const dragControls = useDragControls();
+  const dragControls: DragControls = useDragControls();
+
+  const handleDragHandlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      dragControls.start(e);
+    },
+    [dragControls],
+  );
 
   // ---------------------------------------------------------------------------
   // Stable refs — updated every render so the permanent subscription closure
