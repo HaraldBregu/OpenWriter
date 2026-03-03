@@ -21,6 +21,23 @@
 - Correct pattern: wrap in `try/catch` and fall back to `fs.rm(path, { recursive: true })` if the platform does not support trash.
 - The `trash` method in `OutputFilesService` follows this pattern and also calls `emitChangeEvent(folderPath, 'removed')` explicitly after trashing so the renderer is notified without relying on chokidar (which may not fire reliably for trashed folders).
 
+## TipTap v3 ReactNodeViewRenderer Pattern
+
+**Files:**
+- Extension: `src/renderer/src/components/app/extensions/CustomParagraph.ts`
+- NodeView React component: `src/renderer/src/components/app/extensions/ParagraphNodeView.tsx`
+
+**Key rules (v3-specific):**
+- `NodeViewContent` defaults to `as="div"` (type parameter `T` is `NoInfer<T>`). Passing `as="p"` causes TS2322 — keep the default div, apply `block` class instead.
+- `NodeViewWrapper` accepts any `React.ElementType` for `as` — use `as="div"` with Tailwind flex layout.
+- Gutter button containers MUST have `contentEditable={false}` + `suppressContentEditableWarning` so ProseMirror ignores them.
+- Call `e.preventDefault()` on every `onMouseDown` inside non-editable zones — prevents ProseMirror from collapsing the selection.
+- To replace StarterKit's paragraph: `StarterKit.configure({ paragraph: false, ... })` then add `CustomParagraph` to the extensions array.
+- Extension options (callbacks) are typed via `Paragraph.extend<TOptions>({})` — access them in the NodeView as `extension.options as TOptions`.
+- Gutter layout trick: add `px-8` to `EditorContent`, then use `-mx-8` on the NodeViewWrapper so gutters "bleed" into padding without shifting text.
+- `getPos` in NodeViewProps may be `boolean | (() => number | undefined)` in v3 — always guard: `typeof getPos === 'function' ? getPos() : undefined`.
+- Hover-reveal pattern: `group` on NodeViewWrapper + `opacity-0 group-hover:opacity-100` on button elements (CSS-only, zero JS).
+
 ## Adding a new IPC channel (workspace example)
 
 1. Add constant to `WorkspaceChannels` in `src/shared/channels.ts`
