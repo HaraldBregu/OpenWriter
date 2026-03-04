@@ -4,6 +4,7 @@ import { PluginKey } from '@tiptap/pm/state'
 import { PromptInputPlugin, type PromptInputView } from './prompt-input-plugin'
 import { GUTTER_WIDTH } from '../BlockControls'
 import { AppInput } from '@components/app/AppInput'
+import { Wand2 } from 'lucide-react'
 
 interface PromptInputProps {
   editor: Editor
