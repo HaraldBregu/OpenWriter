@@ -397,8 +397,7 @@ function EditorAdapter({
       return;
     }
 
-    if (internalChangeRef.current) {
-      internalChangeRef.current = false;
+    if (value === lastEmittedRef.current) {
       return;
     }
 
