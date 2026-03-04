@@ -200,6 +200,10 @@ const TIPTAP_TOKEN_MAP = {
     }),
   },
   code_inline: { mark: "code" },
+  html_inline: {
+    node: "text",
+    getAttrs: () => null,
+  },
 };
 
 /**
