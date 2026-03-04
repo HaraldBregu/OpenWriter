@@ -179,7 +179,7 @@ export function PromptInput({
       />
       <AppButton
         type="button"
-        size="prompt-icon"
+        size="prompt-icon-sm"
         className="shrink-0 bg-violet-500 text-white hover:bg-violet-600"
         onClick={submit}
       >
