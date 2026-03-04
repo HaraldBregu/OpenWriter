@@ -20,10 +20,10 @@ export function EditorProvider({ editor, children }: EditorProviderProps): React
   );
 }
 
-export function useEditorContext(): Editor {
+export function useEditorContext(): EditorContextValue {
   const ctx = useContext(EditorContext);
   if (!ctx) {
     throw new Error("useEditorContext must be used within an EditorProvider");
   }
-  return ctx.editor;
+  return ctx;
 }

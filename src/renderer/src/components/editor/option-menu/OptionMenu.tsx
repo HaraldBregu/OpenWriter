@@ -64,7 +64,7 @@ const MENU_ITEMS: MenuItem[] = [
 const pluginKey = new PluginKey('optionMenu')
 
 export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Element {
-  const editor = useEditorContext()
+  const { editor } = useEditorContext()
   const menuRef = useRef<HTMLDivElement>(null)
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
