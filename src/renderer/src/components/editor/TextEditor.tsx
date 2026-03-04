@@ -44,6 +44,7 @@ const TextEditor = React.memo(
       onChangeRef.current = onChange;
 
       const lastEmittedRef = useRef<string>("");
+      const skipUpdateRef = useRef(false);
       const initialValueRef = useRef(value);
 
       const editorOptions = useMemo<UseEditorOptions>(
