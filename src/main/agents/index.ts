@@ -12,6 +12,7 @@ export { ContentReviewAgent } from './ContentReview'
 export { SummarizerAgent } from './Summarizer'
 export { ToneAdjusterAgent } from './ToneAdjuster'
 export { DemoAgent } from './DemoAgent'
+export { TextContinuationAgent } from './TextContinuation'
 
 export type { AgentDefinition, AgentDefinitionInfo } from './AgentDefinition'
 export { toAgentDefinitionInfo } from './AgentDefinition'
