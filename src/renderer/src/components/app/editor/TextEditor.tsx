@@ -19,6 +19,7 @@ import Strike from "@tiptap/extension-strike";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
+import { ListKeymap } from "@tiptap/extension-list";
 import { cn } from "@/lib/utils";
 import {
   BlockControls,
