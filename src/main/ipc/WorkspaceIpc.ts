@@ -314,16 +314,8 @@ export class WorkspaceIpc implements IpcModule {
               `Invalid output type "${input.type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`
             )
           }
-          if (!Array.isArray(input.blocks) || input.blocks.length === 0) {
-            throw new Error('Invalid blocks: must be a non-empty array')
-          }
-          for (const block of input.blocks) {
-            if (!block.name || typeof block.name !== 'string') {
-              throw new Error('Each block must have a non-empty string `name` field')
-            }
-            if (typeof block.content !== 'string') {
-              throw new Error(`Block "${block.name}": content must be a string`)
-            }
+          if (typeof input.content !== 'string') {
+            throw new Error('Invalid content: must be a string')
           }
           if (!input.metadata || typeof input.metadata !== 'object' || Array.isArray(input.metadata)) {
             throw new Error('Invalid metadata: must be an object')
