@@ -154,7 +154,7 @@ export function PromptInput({
       <AppButton
         type="button"
         variant="ghost"
-        size="prompt-icon"
+        size="prompt-icon-sm"
         className="shrink-0 bg-violet-500/15 text-violet-500 hover:bg-violet-500/25 hover:text-violet-500"
         tabIndex={-1}
       >
