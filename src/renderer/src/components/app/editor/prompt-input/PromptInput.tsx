@@ -147,7 +147,7 @@ export function PromptInput({
   return (
     <div
       ref={floatingRef}
-      className="z-50 flex items-center gap-2 rounded-xl border border-border bg-popover px-3 py-2 shadow-md"
+      className="z-50 flex items-center gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md"
       style={{ display: 'none', position: 'absolute' }}
     >
       <Wand2 className="size-4 shrink-0 text-muted-foreground" />
