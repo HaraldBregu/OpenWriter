@@ -39,6 +39,27 @@ const MENU_ITEMS: MenuItem[] = [
     },
   },
   {
+    label: 'Heading 4',
+    icon: Heading,
+    command: (editor, slashPos, queryLength) => {
+      editor.chain().focus().deleteRange({ from: slashPos, to: slashPos + 1 + queryLength }).setHeading({ level: 4 }).run()
+    },
+  },
+  {
+    label: 'Heading 5',
+    icon: Heading,
+    command: (editor, slashPos, queryLength) => {
+      editor.chain().focus().deleteRange({ from: slashPos, to: slashPos + 1 + queryLength }).setHeading({ level: 5 }).run()
+    },
+  },
+  {
+    label: 'Heading 6',
+    icon: Heading,
+    command: (editor, slashPos, queryLength) => {
+      editor.chain().focus().deleteRange({ from: slashPos, to: slashPos + 1 + queryLength }).setHeading({ level: 6 }).run()
+    },
+  },
+  {
     label: 'Text',
     icon: Type,
     command: (editor, slashPos, queryLength) => {
