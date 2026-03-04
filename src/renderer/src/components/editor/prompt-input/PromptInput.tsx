@@ -16,10 +16,10 @@ interface PromptInputProps {
 const pluginKey = new PluginKey('promptInput')
 
 export function PromptInput({
-  editor,
   containerRef,
   onSubmit,
 }: PromptInputProps): React.JSX.Element {
+  const { editor } = useEditorContext()
   const floatingRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const pluginViewRef = useRef<PromptInputView | null>(null)
