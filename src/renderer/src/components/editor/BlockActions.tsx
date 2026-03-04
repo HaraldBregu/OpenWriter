@@ -3,13 +3,13 @@ import type { Editor } from "@tiptap/core";
 import { Copy, Trash2, Clipboard, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { HoveredBlock } from "./BlockControls";
-import { AppButton } from "../AppButton";
+import { AppButton } from "../app/AppButton";
 import {
   AppDropdownMenu,
   AppDropdownMenuTrigger,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
-} from "../AppDropdownMenu";
+} from "../app/AppDropdownMenu";
 
 interface BlockActionsProps {
   editor: Editor;

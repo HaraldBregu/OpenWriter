@@ -5,8 +5,8 @@ export { AppInput } from './AppInput'
 
 export { AppTextarea } from './AppTextarea'
 
-export { TextEditor } from './editor/TextEditor'
-export type { TextEditorProps } from './editor/TextEditor'
+export { TextEditor } from '../editor/TextEditor'
+export type { TextEditorProps } from '../editor/TextEditor'
 
 export { AppLabel } from './AppLabel'
 

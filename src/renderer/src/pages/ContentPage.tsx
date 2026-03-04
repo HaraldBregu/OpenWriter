@@ -24,7 +24,7 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
 } from "@/components/app";
-import { TextEditor } from "@/components/app/editor/TextEditor";
+import { TextEditor } from "@/components/editor/TextEditor";
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
