@@ -106,14 +106,6 @@ export interface DocumentFileChangeEvent {
 
 export type OutputType = 'writings'
 
-export interface BlockContentItem {
-  name: string
-  type: 'content'
-  filetype: 'markdown'
-  createdAt: string
-  updatedAt: string
-}
-
 export interface OutputFileMetadata {
   title: string
   type: OutputType
@@ -127,14 +119,6 @@ export interface OutputFileMetadata {
   reasoning?: boolean
   createdAt: string
   updatedAt: string
-  content: BlockContentItem[]
-}
-
-export interface OutputFileBlock {
-  name: string
-  content: string
-  createdAt: string
-  updatedAt: string
 }
 
 export interface OutputFile {
@@ -142,7 +126,7 @@ export interface OutputFile {
   type: OutputType
   path: string
   metadata: OutputFileMetadata
-  blocks: OutputFileBlock[]
+  content: string
   savedAt: number
 }
 
