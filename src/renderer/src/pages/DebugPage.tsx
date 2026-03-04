@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle, Bot, Copy, Check, ChevronDown, ChevronRight, RefreshCw, Play, RotateCcw, Loader2, PenLine } from 'lucide-react'
+import { Bug, X, Square, EyeOff, Zap, Clock, Radio, AlertTriangle, Bot, Copy, Check, ChevronDown, ChevronRight, RefreshCw, Play, RotateCcw, Loader2, PenLine, TextCursorInput } from 'lucide-react'
 import { useDebugTasks } from '../hooks/useDebugTasks'
 import { useTaskSubmit } from '../hooks/useTaskSubmit'
 import { subscribeToTask } from '../services/taskEventBus'
