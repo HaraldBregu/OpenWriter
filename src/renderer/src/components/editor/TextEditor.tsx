@@ -20,6 +20,7 @@ import { OptionMenu } from "./option-menu";
 import { PromptInput } from "./prompt-input";
 import { markdownToTiptapJSON, tiptapDocToMarkdown } from "./markdown";
 import { BASE_EXTENSIONS } from "./extensions";
+import { EditorProvider } from "./EditorContext";
 
 export interface TextEditorElement extends HTMLDivElement {
   insertContent: (content: string) => void;
