@@ -170,7 +170,7 @@ const TIPTAP_TOKEN_MAP = {
   paragraph: { block: "paragraph" },
   list_item: { block: "listItem" },
   bullet_list: { block: "bulletList" },
-  ordered_list: { block: "orderedList", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ order: +(tok.attrGet("start") ?? 1) }) },
+  ordered_list: { block: "orderedList", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ start: +(tok.attrGet("start") ?? 1) }) },
   heading: { block: "heading", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ level: +tok.tag.slice(1) }) },
   code_block: { block: "codeBlock", noCloseToken: true },
   fence: { block: "codeBlock", getAttrs: (tok: import("markdown-it/lib/token.mjs").default) => ({ language: tok.info || "" }), noCloseToken: true },
