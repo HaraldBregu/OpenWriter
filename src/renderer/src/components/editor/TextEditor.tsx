@@ -209,7 +209,7 @@ const TextEditor = React.memo(
 
       return (
         <div id={id} className={cn("w-full", className)}>
-          <div className="relative w-full" ref={ref}>
+          <div className="relative w-full" ref={rootRef}>
             <div
               ref={containerRef}
               className="relative"
