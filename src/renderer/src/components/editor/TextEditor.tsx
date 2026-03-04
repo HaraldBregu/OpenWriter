@@ -93,8 +93,9 @@ const TextEditor = React.memo(
               editor.commands.insertContent(doc.content.toJSON());
             }
           },
-          insertText(text: string) {
+          insertText(text: string, update: boolean = true) {
             if (!editor || editor.isDestroyed) return;
+            if (!update) skipUpdateRef.current = true;
             const { from } = editor.state.selection;
             editor.chain().focus().insertContentAt(from, text).run();
           },
