@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import type { Editor } from '@tiptap/core'
 import { PluginKey } from '@tiptap/pm/state'
+import { useEditorContext } from '../EditorContext'
 import { PromptInputPlugin, type PromptInputView } from './prompt-input-plugin'
 import { GUTTER_WIDTH } from '../BlockControls'
 import { AppInput } from '@components/app/AppInput'
