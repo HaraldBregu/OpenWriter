@@ -21,7 +21,7 @@ import { PromptInput } from "./prompt-input";
 import { markdownToTiptapJSON, tiptapDocToMarkdown } from "./markdown";
 import { BASE_EXTENSIONS } from "./extensions";
 
-export interface TextEditorHandle extends HTMLDivElement {
+export interface TextEditorElement extends HTMLDivElement {
   insertContent: (content: string) => void;
 }
 
@@ -37,7 +37,7 @@ export interface TextEditorProps {
 }
 
 const TextEditor = React.memo(
-  React.forwardRef<TextEditorHandle, TextEditorProps>(
+  React.forwardRef<TextEditorElement, TextEditorProps>(
     ({ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI }, ref) => {
       const onChangeRef = useRef(onChange);
       onChangeRef.current = onChange;
@@ -70,7 +70,6 @@ const TextEditor = React.memo(
             },
           },
         }),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
       );
 
@@ -85,13 +84,10 @@ const TextEditor = React.memo(
             if (!editor || editor.isDestroyed) return;
             const doc = markdownToTiptapJSON(editor.schema, content);
             if (doc) {
-              editor.commands.insertContentAt(
-                editor.state.doc.content.size - 1,
-                doc.content.toJSON(),
-              );
+              editor.commands.insertContent(doc.content.toJSON());
             }
           },
-        }) as TextEditorHandle;
+        }) as TextEditorElement;
       }, [editor]);
 
       useEffect(() => {
