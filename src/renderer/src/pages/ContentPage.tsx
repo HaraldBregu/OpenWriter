@@ -109,7 +109,8 @@ const ContentPage: React.FC = () => {
   }, []);
 
   const handleContentChange = useCallback((newContent: string) => {
-    setContent(newContent);
+    console.log(newContent);
+    // setContent(newContent);
   }, []);
 
   const handleMoveToTrash = useCallback(async () => {
@@ -132,7 +133,7 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback(() => {
-    editorRef.current?.insertContent("Hello from AI!");
+    editorRef.current?.insertText("Hello from AI!");
   }, []);
 
   
