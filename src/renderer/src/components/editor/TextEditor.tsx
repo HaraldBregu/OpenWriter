@@ -23,6 +23,7 @@ import { BASE_EXTENSIONS } from "./extensions";
 
 export interface TextEditorElement extends HTMLDivElement {
   insertContent: (content: string) => void;
+  insertText: (text: string) => void;
 }
 
 export interface TextEditorProps {
