@@ -61,7 +61,10 @@ const TextEditor = React.memo(
             }
           },
           onUpdate: ({ editor: ed }: { editor: Editor }) => {
-            console.log("Editor content updated");
+            if (silentInsertRef.current) {
+              silentInsertRef.current = false;
+              return;
+            }
             const md = tiptapDocToMarkdown(ed.state.doc);
             lastEmittedRef.current = md;
             onChangeRef.current(md);
