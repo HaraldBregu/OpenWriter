@@ -12,15 +12,14 @@ import {
 } from "../app/AppDropdownMenu";
 
 interface BlockActionsProps {
-  editor: Editor;
   containerRef: React.RefObject<HTMLDivElement | null>;
   hoveredBlock: HoveredBlock | null;
 }
 
 export const BlockActions = React.memo(function BlockActions({
-  editor,
   hoveredBlock,
 }: BlockActionsProps): React.JSX.Element {
+  const editor = useEditorContext();
   const [menuOpen, setMenuOpen] = useState(false);
   // Captures the `top` value at the moment the menu opens so the container
   // does not jump when hoveredBlock updates while the dropdown is visible.
