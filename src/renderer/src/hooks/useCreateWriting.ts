@@ -46,12 +46,9 @@ export function useCreateWriting(options?: UseCreateWritingOptions): UseCreateWr
     setError(null)
 
     try {
-      const now = new Date().toISOString()
-      const blockId = crypto.randomUUID()
-
       const result = await window.workspace.saveOutput({
         type: 'writings',
-        blocks: [{ name: blockId, content: '', createdAt: now, updatedAt: now }],
+        content: '',
         metadata: { title: '' },
       })
 
