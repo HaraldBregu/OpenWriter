@@ -164,7 +164,7 @@ export function PromptInput({
           }
         }}
         placeholder="Ask AI anything…"
-        className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0"
+        // className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0"
       />
     </div>
   )
