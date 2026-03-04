@@ -13,16 +13,15 @@ export interface HoveredBlock {
 }
 
 interface BlockControlsProps {
-  editor: Editor;
   containerRef: React.RefObject<HTMLDivElement | null>;
   hoveredBlock: HoveredBlock | null;
 }
 
 export const BlockControls = React.memo(function BlockControls({
-  editor,
   containerRef,
   hoveredBlock,
 }: BlockControlsProps): React.JSX.Element {
+  const editor = useEditorContext();
   const [dropState, setDropState] = useState({ top: 0, visible: false });
   const dragRef = useRef(false);
 
