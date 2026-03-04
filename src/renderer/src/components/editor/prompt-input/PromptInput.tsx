@@ -8,7 +8,6 @@ import { ArrowUp, Wand2 } from 'lucide-react'
 import { AppButton } from '@components/app/AppButton'
 
 interface PromptInputProps {
-  editor: Editor
   /** The editor container div — used to match the content area width. */
   containerRef: React.RefObject<HTMLDivElement | null>
   onSubmit: (prompt: string, triggerPos: number) => void
