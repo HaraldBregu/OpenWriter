@@ -38,6 +38,40 @@
 - `getPos` in NodeViewProps may be `boolean | (() => number | undefined)` in v3 — always guard: `typeof getPos === 'function' ? getPos() : undefined`.
 - Hover-reveal pattern: `group` on NodeViewWrapper + `opacity-0 group-hover:opacity-100` on button elements (CSS-only, zero JS).
 
+## Route-param-driven pages with async load + TipTap editor
+
+**Symptom:** First navigation to `/content/:id` shows blank content. Navigating away and back fixes it.
+
+**Root causes (two independent bugs):**
+
+1. **Stale `loaded` guard across param changes.** React Router reuses the same component instance when only the route param changes (no unmount). If `loaded` stays `true` from the previous item, the debounced save can fire with stale content before the async `loadOutput` resolves, overwriting the new file with old data. Additionally, the user briefly sees the old item's content.
+
+2. **`initialValueRef` captures empty string at mount.** TipTap's `EditorAdapter` uses `useEditor(options, [])` — editor created once. `initialValueRef.current = value` is captured at mount when `value` is still `""` (load is in-flight), so `onCreate` sets empty content. When `value` later changes, the `useEffect` sync runs, but `internalChangeRef.current` being `true` (from any TipTap internal update like `setEditable`) can silently skip the first external sync.
+
+**Fix:**
+
+1. In the load `useEffect`, reset `setLoaded(false)`, `setTitle("")`, `setContent("")` synchronously at the top (before the async call) so the save guard is disabled and stale content is cleared immediately on every `id` change.
+
+2. Add `key={id}` to `<TextEditor>` so TipTap fully unmounts/remounts for each new writing. This guarantees `initialValueRef` captures the correct initial value and `onCreate` always runs with real content, regardless of async timing.
+
+**Pattern (ContentPage.tsx):**
+```tsx
+// Load effect: reset state synchronously before async call
+useEffect(() => {
+  if (!id) return;
+  let cancelled = false;
+  setLoaded(false);
+  setTitle("");
+  setContent("");
+  async function load() { ... }
+  load();
+  return () => { cancelled = true; };
+}, [id]);
+
+// Key forces editor remount per writing
+<TextEditor key={id} value={content} ... />
+```
+
 ## Adding a new IPC channel (workspace example)
 
 1. Add constant to `WorkspaceChannels` in `src/shared/channels.ts`
