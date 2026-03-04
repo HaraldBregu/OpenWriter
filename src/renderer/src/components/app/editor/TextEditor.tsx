@@ -95,7 +95,11 @@ const tiptapMarkdownSerializer = new MarkdownSerializer(
     heading: defaultNodes.heading,
     horizontalRule: defaultNodes.horizontal_rule,
     bulletList: defaultNodes.bullet_list,
-    orderedList: defaultNodes.ordered_list,
+    orderedList(state, node) {
+      // Tiptap uses `start` attr; prosemirror-markdown's default reads `order`.
+      const start = (node.attrs.start ?? 1) as number;
+      state.renderList(node, "  ", (i) => `${start + i}. `);
+    },
     listItem: defaultNodes.list_item,
     paragraph: defaultNodes.paragraph,
     image: defaultNodes.image,
