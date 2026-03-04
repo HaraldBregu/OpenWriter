@@ -337,7 +337,7 @@ export class WorkspaceIpc implements IpcModule {
           params: {
             type: string
             id: string
-            blocks: Array<{ name: string; content: string; createdAt?: string; filetype?: 'markdown'; type?: 'content' }>
+            content: string
             metadata: Record<string, unknown>
           }
         ): Promise<void> => {
@@ -352,23 +352,15 @@ export class WorkspaceIpc implements IpcModule {
           if (!params.id || typeof params.id !== 'string') {
             throw new Error('Invalid id: must be a non-empty string')
           }
-          if (!Array.isArray(params.blocks) || params.blocks.length === 0) {
-            throw new Error('Invalid blocks: must be a non-empty array')
-          }
-          for (const block of params.blocks) {
-            if (!block.name || typeof block.name !== 'string') {
-              throw new Error('Each block must have a non-empty string `name` field')
-            }
-            if (typeof block.content !== 'string') {
-              throw new Error(`Block "${block.name}": content must be a string`)
-            }
+          if (typeof params.content !== 'string') {
+            throw new Error('Invalid content: must be a string')
           }
           if (!params.metadata || typeof params.metadata !== 'object' || Array.isArray(params.metadata)) {
             throw new Error('Invalid metadata: must be an object')
           }
 
           await outputFiles.update(params.type as OutputType, params.id, {
-            blocks: params.blocks,
+            content: params.content,
             metadata: params.metadata as Parameters<OutputFilesService['update']>[2]['metadata'],
           })
           logger.info('WorkspaceIpc', `Updated output file: ${params.type}/${params.id}`)
