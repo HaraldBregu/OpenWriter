@@ -44,7 +44,14 @@ const TextEditor = React.memo(
       onChangeRef.current = onChange;
 
       const lastEmittedRef = useRef<string>("");
+      const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
       const initialValueRef = useRef(value);
+
+      useEffect(() => {
+        return () => {
+          if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
+        };
+      }, []);
 
       const editorOptions = useMemo<UseEditorOptions>(
         () => ({
@@ -60,9 +67,12 @@ const TextEditor = React.memo(
             }
           },
           onUpdate: ({ editor: ed }: { editor: Editor }) => {
-            const md = tiptapDocToMarkdown(ed.state.doc);
-            lastEmittedRef.current = md;
-            onChangeRef.current(md);
+            if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
+            emitTimerRef.current = setTimeout(() => {
+              const md = tiptapDocToMarkdown(ed.state.doc);
+              lastEmittedRef.current = md;
+              onChangeRef.current(md);
+            }, 100);
           },
           editorProps: {
             attributes: {
