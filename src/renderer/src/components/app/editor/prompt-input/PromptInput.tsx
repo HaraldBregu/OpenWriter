@@ -172,7 +172,7 @@ export function PromptInput({
       <AppButton
         type="button"
         size="prompt-icon-sm"
-        className="shrink-0 bg-foreground text-background hover:bg-foreground/80"
+        className="shrink-0 bg-blue-500 text-white hover:bg-blue-600 [&_svg]:size-2.5"
         onClick={submit}
       >
         <ArrowUp />
