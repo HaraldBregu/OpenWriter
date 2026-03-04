@@ -915,11 +915,11 @@ export class OutputFilesService implements Disposable {
   /**
    * Load an output entry from the folder format.
    *
-   * New format: reads config.json for metadata (which contains `content` descriptor array),
-   *   then reads each `<name>.md` file listed in the array.
-   *
-   * Legacy format detection: if config.json has no `content` array but `DATA.md` exists,
-   *   migrates on-the-fly by creating a single block and rewriting both files.
+   * Handles three migration cases in order:
+   *   1. New format: content.md exists → read it directly
+   *   2. Multi-block: config.json has `content[]` array → concatenate block files, migrate
+   *   3. Legacy DATA.md: DATA.md exists → copy to content.md, migrate
+   *   4. Empty: neither → return content: ''
    */
   private async loadFolder(folderPath: string, outputType: OutputType): Promise<OutputFile> {
     const configPath = path.join(folderPath, this.CONFIG_FILENAME)
@@ -929,9 +929,9 @@ export class OutputFilesService implements Disposable {
       fs.stat(folderPath),
     ])
 
-    let metadata: OutputFileMetadata
+    let metadata: OutputFileMetadata & { content?: unknown }
     try {
-      metadata = JSON.parse(configRaw) as OutputFileMetadata
+      metadata = JSON.parse(configRaw) as OutputFileMetadata & { content?: unknown }
     } catch (err) {
       throw new Error(`Invalid config.json in ${folderPath}: ${(err as Error).message}`)
     }
@@ -943,122 +943,126 @@ export class OutputFilesService implements Disposable {
       ? new Date(metadata.createdAt).getTime() || Math.floor(folderStat.mtimeMs)
       : Math.floor(folderStat.mtimeMs)
 
+    const contentPath = path.join(folderPath, this.CONTENT_FILENAME)
+
     // -----------------------------------------------------------------------
-    // Legacy migration: DATA.md format
+    // Case 1: New format — content.md exists
     // -----------------------------------------------------------------------
-    if (!Array.isArray(metadata.content) || metadata.content.length === 0) {
-      const legacyDataPath = path.join(folderPath, this.LEGACY_DATA_FILENAME)
-      let legacyContent = ''
+    try {
+      const content = await fs.readFile(contentPath, 'utf-8')
 
-      try {
-        legacyContent = await fs.readFile(legacyDataPath, 'utf-8')
-      } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-          throw err
-        }
-        // No DATA.md either — treat as empty entry
-        console.warn(`[OutputFilesService] No content found in ${folderPath} (no content array, no DATA.md)`)
+      // Strip legacy content[] from metadata if still present
+      const cleanMetadata: OutputFileMetadata = { ...metadata }
+      delete (cleanMetadata as Record<string, unknown>).content
+
+      return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content, savedAt }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err
       }
-
-      // Create a deterministic block name from the folder id so re-loading
-      // the same folder always produces the same block name.
-      const blockName = `${folderId}-block-0`
-      const now = metadata.createdAt ?? new Date(savedAt).toISOString()
-
-      const migratedDescriptor: ContentBlockDescriptor = {
-        type: 'content',
-        filetype: 'markdown',
-        name: blockName,
-        createdAt: now,
-        updatedAt: now,
-      }
-
-      metadata = {
-        ...metadata,
-        content: [migratedDescriptor],
-        updatedAt: metadata.updatedAt ?? now,
-      }
-
-      // Persist the migration so subsequent loads use the new format
-      await this.persistMigration(folderPath, metadata, blockName, legacyContent)
-
-      const block: ContentBlock = {
-        name: blockName,
-        content: legacyContent,
-        filetype: 'markdown',
-        type: 'content',
-        createdAt: migratedDescriptor.createdAt,
-        updatedAt: migratedDescriptor.updatedAt,
-      }
-
-      return { id: folderId, type: outputType, path: folderPath, metadata, blocks: [block], savedAt }
+      // content.md doesn't exist — fall through to migration
     }
 
     // -----------------------------------------------------------------------
-    // New format: read each block file listed in the content array
+    // Case 2: Multi-block migration — config.json has content[] array
     // -----------------------------------------------------------------------
-    const blocks: ContentBlock[] = await Promise.all(
-      metadata.content.map(async (desc) => {
+    if (Array.isArray(metadata.content) && metadata.content.length > 0) {
+      const blockContents: string[] = []
+      for (const desc of metadata.content as Array<{ name: string }>) {
         const blockPath = path.join(folderPath, `${desc.name}.md`)
-        let content = ''
         try {
-          content = await fs.readFile(blockPath, 'utf-8')
+          const blockContent = await fs.readFile(blockPath, 'utf-8')
+          blockContents.push(blockContent)
         } catch (err) {
           if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
             throw err
           }
-          console.warn(`[OutputFilesService] Block file missing: ${blockPath}`)
-        }
-        return {
-          name: desc.name,
-          content,
-          filetype: desc.filetype,
-          type: desc.type,
-          createdAt: desc.createdAt,
-          updatedAt: desc.updatedAt,
-        } satisfies ContentBlock
-      })
-    )
-
-    return { id: folderId, type: outputType, path: folderPath, metadata, blocks, savedAt }
-  }
-
-  /**
-   * Persist a legacy DATA.md migration to disk:
-   *   1. Write the new block .md file.
-   *   2. Rewrite config.json with the updated metadata (including content array).
-   *   3. Remove DATA.md so the folder is fully in the new format.
-   *
-   * All writes are marked so the watcher ignores them.
-   */
-  private async persistMigration(
-    folderPath: string,
-    metadata: OutputFileMetadata,
-    blockName: string,
-    blockContent: string
-  ): Promise<void> {
-    const configPath = path.join(folderPath, this.CONFIG_FILENAME)
-    const blockFilePath = path.join(folderPath, `${blockName}.md`)
-    const legacyDataPath = path.join(folderPath, this.LEGACY_DATA_FILENAME)
-
-    this.markFileAsWritten(configPath)
-    this.markFileAsWritten(blockFilePath)
-    this.markFileAsWritten(legacyDataPath)
-
-    try {
-      await fs.writeFile(blockFilePath, blockContent, 'utf-8')
-      await fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8')
-
-      // Remove the legacy DATA.md file
-      try {
-        await fs.unlink(legacyDataPath)
-      } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-          console.warn(`[OutputFilesService] Could not remove legacy DATA.md at ${legacyDataPath}:`, err)
+          console.warn(`[OutputFilesService] Block file missing during migration: ${blockPath}`)
         }
       }
 
-      console.log(`[OutputFilesService] Migrated legacy DATA.md in ${folderPath} -> ${blockName}.md`)
+      const mergedContent = blockContents.join('\n\n')
+      const cleanMetadata: OutputFileMetadata = { ...metadata }
+      delete (cleanMetadata as Record<string, unknown>).content
+
+      // Persist the migration
+      await this.persistSingleContentMigration(
+        folderPath,
+        cleanMetadata,
+        mergedContent,
+        (metadata.content as Array<{ name: string }>).map((d) => `${d.name}.md`)
+      )
+
+      return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content: mergedContent, savedAt }
+    }
+
+    // -----------------------------------------------------------------------
+    // Case 3: Legacy DATA.md migration
+    // -----------------------------------------------------------------------
+    const legacyDataPath = path.join(folderPath, this.LEGACY_DATA_FILENAME)
+    try {
+      const legacyContent = await fs.readFile(legacyDataPath, 'utf-8')
+      const cleanMetadata: OutputFileMetadata = { ...metadata }
+      delete (cleanMetadata as Record<string, unknown>).content
+
+      await this.persistSingleContentMigration(folderPath, cleanMetadata, legacyContent, [this.LEGACY_DATA_FILENAME])
+
+      return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content: legacyContent, savedAt }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // Case 4: Empty — no content found
+    // -----------------------------------------------------------------------
+    console.warn(`[OutputFilesService] No content found in ${folderPath}`)
+    const cleanMetadata: OutputFileMetadata = { ...metadata }
+    delete (cleanMetadata as Record<string, unknown>).content
+
+    return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content: '', savedAt }
+  }
+
+  /**
+   * Persist migration to single content.md format:
+   *   1. Write content.md
+   *   2. Rewrite config.json without content[] array
+   *   3. Delete old .md files
+   *
+   * All writes are marked so the watcher ignores them.
+   */
+  private async persistSingleContentMigration(
+    folderPath: string,
+    metadata: OutputFileMetadata,
+    content: string,
+    oldFiles: string[]
+  ): Promise<void> {
+    const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const contentPath = path.join(folderPath, this.CONTENT_FILENAME)
+
+    this.markFileAsWritten(configPath)
+    this.markFileAsWritten(contentPath)
+    for (const oldFile of oldFiles) {
+      this.markFileAsWritten(path.join(folderPath, oldFile))
+    }
+
+    try {
+      await fs.writeFile(contentPath, content, 'utf-8')
+      await fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8')
+
+      // Remove old .md files
+      await Promise.all(
+        oldFiles.map((file) =>
+          fs.unlink(path.join(folderPath, file)).catch((err) => {
+            if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+              console.warn(`[OutputFilesService] Could not remove old file ${file}:`, err)
+            }
+          })
+        )
+      )
+
+      console.log(`[OutputFilesService] Migrated ${folderPath} to content.md (removed ${oldFiles.length} old files)`)
     } catch (err) {
       // Non-fatal: migration failure just means next load will re-attempt
       console.error(`[OutputFilesService] Migration failed for ${folderPath}:`, err)
