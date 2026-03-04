@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState } from "react";
-import type { Editor } from "@tiptap/core";
 import { GripVertical, Plus } from "lucide-react";
 import { AppButton } from "@components/app/AppButton";
 import { cn } from "@/lib/utils";
+import { useEditorContext } from "./EditorContext";
 
 export const GUTTER_WIDTH = 58;
 
