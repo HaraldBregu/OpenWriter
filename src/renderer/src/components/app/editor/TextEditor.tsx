@@ -278,7 +278,6 @@ function tiptapDocToMarkdown(doc: ProseMirrorNode): string {
 export interface TextEditorProps {
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
   autoFocus?: boolean;
   className?: string;
   disabled?: boolean;
@@ -380,7 +379,9 @@ function EditorAdapter({
   // Sync external value changes into the editor.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
+// console.log("TextEditor value change:", { value, streamingContent });  
 
+// return; // --- IGNORE ---
     if (streamingContent !== undefined) {
       // Streaming content arrives as markdown; parse before setting.
       const doc = markdownToTiptapJSON(editor.schema, streamingContent);
