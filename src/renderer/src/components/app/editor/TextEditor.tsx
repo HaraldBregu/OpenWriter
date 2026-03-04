@@ -160,7 +160,7 @@ function backticksFor(node: ProseMirrorNode, side: -1 | 1): string {
 // ---------------------------------------------------------------------------
 // markdown-it instance configured to match CommonMark + GFM strikethrough.
 // ---------------------------------------------------------------------------
-const md = new MarkdownIt("commonmark").enable("strikethrough");
+const md = new MarkdownIt("commonmark", { html: true }).enable("strikethrough");
 
 // ---------------------------------------------------------------------------
 // Token map for the Tiptap-compatible MarkdownParser.
