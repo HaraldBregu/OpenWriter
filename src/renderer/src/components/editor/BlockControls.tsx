@@ -168,4 +168,4 @@ export const BlockControls = React.memo(function BlockControls({
       />
     </>
   );
-}
+});
