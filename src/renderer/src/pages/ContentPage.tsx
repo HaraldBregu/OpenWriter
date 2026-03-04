@@ -44,7 +44,7 @@ const ContentPage: React.FC = () => {
   const [isTrashing, setIsTrashing] = useState(false);
 
   // Task lifecycle via Redux
-  const { taskId, submit: submitTask } = useTaskSubmit<
+  const { taskId, submit: submitTask, reset: resetTask } = useTaskSubmit<
     { prompt: string },
     { content?: string }
   >("agent-sentence-completer", { prompt: content });

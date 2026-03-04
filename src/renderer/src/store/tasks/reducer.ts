@@ -143,17 +143,20 @@ export const tasksSlice = createSlice({
           task.result = event.data.result
           task.durationMs = event.data.durationMs
           task.queuePosition = undefined
+          task.streamBuffer = ''
           break
         }
         case 'error': {
           task.status = 'error'
           task.error = event.data.message
           task.queuePosition = undefined
+          task.streamBuffer = ''
           break
         }
         case 'cancelled': {
           task.status = 'cancelled'
           task.queuePosition = undefined
+          task.streamBuffer = ''
           break
         }
         case 'priority-changed': {
