@@ -196,11 +196,11 @@ export class OutputFilesService implements Disposable {
   }
 
   /**
-   * Save a new output entry using the per-block file format.
+   * Save a new output entry.
    *
    * Creates:
    *   output/<type>/<uuid>/config.json
-   *   output/<type>/<uuid>/<block-uuid>.md   (one per block)
+   *   output/<type>/<uuid>/content.md
    *
    * The UUID folder name is the stable ID for this entry.
    */
@@ -212,8 +212,8 @@ export class OutputFilesService implements Disposable {
 
     this.validateOutputType(input.type)
 
-    if (!Array.isArray(input.blocks) || input.blocks.length === 0) {
-      throw new Error('At least one content block is required.')
+    if (typeof input.content !== 'string') {
+      throw new Error('Content must be a string.')
     }
 
     const typeDir = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, input.type)
@@ -226,28 +226,6 @@ export class OutputFilesService implements Disposable {
     await this.ensureDirectory(folderPath)
 
     const now = new Date(timestamp).toISOString()
-
-    // Build block descriptors and prepare file writes
-    const descriptors: ContentBlockDescriptor[] = []
-    const fileWrites: Array<{ filePath: string; content: string }> = []
-
-    for (const block of input.blocks) {
-      if (!block.name || typeof block.name !== 'string') {
-        throw new Error('Each block must have a non-empty string `name` field.')
-      }
-      const descriptor: ContentBlockDescriptor = {
-        type: block.type ?? 'content',
-        filetype: block.filetype ?? 'markdown',
-        name: block.name,
-        createdAt: now,
-        updatedAt: now,
-      }
-      descriptors.push(descriptor)
-      fileWrites.push({
-        filePath: path.join(folderPath, `${block.name}.md`),
-        content: block.content,
-      })
-    }
 
     const metadata: OutputFileMetadata = {
       title: input.metadata.title,
@@ -262,24 +240,24 @@ export class OutputFilesService implements Disposable {
       reasoning: input.metadata.reasoning !== undefined ? input.metadata.reasoning : APP_DEFAULTS.reasoning,
       createdAt: now,
       updatedAt: now,
-      content: descriptors,
     }
 
     const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const contentPath = path.join(folderPath, this.CONTENT_FILENAME)
 
     // Mark everything as app-written before touching disk so the watcher
     // ignores these self-triggered events.
     this.markFileAsWritten(folderPath)
     this.markFileAsWritten(configPath)
-    for (const { filePath } of fileWrites) {
-      this.markFileAsWritten(filePath)
-    }
+    this.markFileAsWritten(contentPath)
 
-    // Write block files in parallel, then write config
-    await Promise.all(fileWrites.map(({ filePath, content }) => fs.writeFile(filePath, content, 'utf-8')))
-    await fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8')
+    // Write content.md and config.json
+    await Promise.all([
+      fs.writeFile(contentPath, input.content, 'utf-8'),
+      fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8'),
+    ])
 
-    console.log(`[OutputFilesService] Saved output folder: ${folderPath} (${descriptors.length} blocks)`)
+    console.log(`[OutputFilesService] Saved output folder: ${folderPath}`)
 
     return {
       id: folderName,
