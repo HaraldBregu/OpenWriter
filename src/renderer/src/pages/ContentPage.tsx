@@ -27,13 +27,12 @@ const ContentPage: React.FC = () => {
   const [loaded, setLoaded] = useState(false)
   const [isTrashing, setIsTrashing] = useState(false)
 
-  // AI Enhancement — streaming overlay content from taskEventBus
-  const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
-
   // Task lifecycle via Redux
+  const taskOptions = useMemo(() => (id ? { taskId: id } : undefined), [id])
   const task = useTaskSubmit<{ prompt: string }, { content?: string }>(
     'agent-text-completer',
     { prompt: '' },
+    taskOptions,
   )
 
   const isEnhancing = task.isRunning || task.isQueued
@@ -42,25 +41,21 @@ const ContentPage: React.FC = () => {
   const stateRef = useRef({ title, content })
   stateRef.current = { title, content }
 
-  // Subscribe to taskEventBus for streaming content when a task is active
+  // Apply AI result to content on task completion
   useEffect(() => {
-    if (!task.taskId) return
+    if (task.isCompleted && task.result) {
+      const aiOutput = task.result.content ?? ''
+      setContent((prev) => prev + aiOutput)
+      task.reset()
+    }
+  }, [task.isCompleted, task.result, task.reset])
 
-    const unsub = subscribeToTask(task.taskId, (snap) => {
-      if (snap.status === 'running') {
-        setStreamingContent(snap.content)
-      } else if (snap.status === 'completed') {
-        const result = snap.result as { content?: string } | undefined
-        const finalContent = result?.content ?? snap.content
-        setContent(finalContent)
-        setStreamingContent(undefined)
-      } else if (snap.status === 'error' || snap.status === 'cancelled') {
-        setStreamingContent(undefined)
-      }
-    })
-
-    return unsub
-  }, [task.taskId])
+  // Reset on error/cancel so the task can be reused
+  useEffect(() => {
+    if (task.isError || task.isCancelled) {
+      task.reset()
+    }
+  }, [task.isError, task.isCancelled, task.reset])
 
   // ---------------------------------------------------------------------------
   // Load from disk
