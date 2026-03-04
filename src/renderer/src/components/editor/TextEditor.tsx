@@ -21,6 +21,10 @@ import { PromptInput } from "./prompt-input";
 import { markdownToTiptapJSON, tiptapDocToMarkdown } from "./markdown";
 import { BASE_EXTENSIONS } from "./extensions";
 
+export interface TextEditorHandle extends HTMLDivElement {
+  insertContent: (content: string) => void;
+}
+
 export interface TextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -33,7 +37,7 @@ export interface TextEditorProps {
 }
 
 const TextEditor = React.memo(
-  React.forwardRef<HTMLDivElement, TextEditorProps>(
+  React.forwardRef<TextEditorHandle, TextEditorProps>(
     ({ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI }, ref) => {
       const onChangeRef = useRef(onChange);
       onChangeRef.current = onChange;
