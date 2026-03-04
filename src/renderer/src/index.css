@@ -131,7 +131,8 @@
     all: revert;
 }
 
-.tiptap ul {
+.tiptap ul,
+.tiptap ol {
     all: revert;
 }
 
