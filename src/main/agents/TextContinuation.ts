@@ -5,13 +5,12 @@
  * document split around a marked insertion point (<<INSERT_HERE>>) and generates
  * content that connects smoothly to both the preceding and following text.
  *
- * Runs as a two-node LangGraph StateGraph:
- *   START → analyze_context → generate_insertion → END
+ * Runs as a single-node LangGraph StateGraph:
+ *   START → generate_insertion → END
  *
- * The analyze_context node extracts style metadata and structural cues from the
- * surrounding text at low temperature.
- * The generate_insertion node uses those cues to produce a faithful insertion
- * that bridges the text before and after the marker.
+ * The node splits the document at the marker, embeds both halves into a rich
+ * system prompt with inline style-matching instructions, and streams only the
+ * final insertion text — no JSON, no commentary.
  *
  * Expected prompt format (built by the caller):
  *   The prompt must contain the full document with <<INSERT_HERE>> at the
@@ -39,18 +38,6 @@ const GraphState = Annotation.Root({
     reducer: (existing, update) => existing.concat(update),
     default: () => [],
   }),
-  textBefore: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  textAfter: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  styleNotes: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
   insertion: Annotation<string>({
     reducer: (_, next) => next,
     default: () => '',
@@ -73,7 +60,6 @@ function extractUserText(state: TextContinuationState): string {
 function splitAtMarker(text: string): { before: string; after: string } {
   const idx = text.indexOf(INSERT_MARKER)
   if (idx === -1) {
-    // No marker — treat the entire text as "before" (append mode fallback)
     return { before: text.trim(), after: '' }
   }
   return {
@@ -83,94 +69,37 @@ function splitAtMarker(text: string): { before: string; after: string } {
 }
 
 // ---------------------------------------------------------------------------
-// Node: analyze_context
-// Extracts style metadata from the surrounding text at low temperature.
-// ---------------------------------------------------------------------------
-
-function makeAnalyzeContextNode(model: BaseChatModel) {
-  return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
-    const userText = extractUserText(state)
-    const { before, after } = splitAtMarker(userText)
-
-    const analysisMessages = [
-      new SystemMessage(
-        `You are a literary style analyst. Given two text fragments (BEFORE and AFTER an insertion point), analyze the writing style so another model can generate matching content.
-
-Return ONLY a valid JSON object with these exact keys:
-{
-  "vocabularyLevel": "simple | intermediate | advanced | technical",
-  "avgSentenceLength": "short | medium | long | mixed",
-  "tense": "past | present | future | mixed",
-  "person": "first | second | third",
-  "tone": "brief description of tone",
-  "voice": "active | passive | mixed",
-  "transitionHint": "brief note on how the BEFORE text ends and AFTER text begins, to help bridge them"
-}
-No explanation, no markdown fences — raw JSON only.`
-      ),
-      new HumanMessage(
-        `[TEXT BEFORE INSERTION POINT]\n${before || '(document start)'}\n\n[TEXT AFTER INSERTION POINT]\n${after || '(document end)'}`
-      ),
-    ]
-
-    const response = await model.invoke(analysisMessages)
-    const rawContent = typeof response.content === 'string' ? response.content : '{}'
-
-    let styleNotes: string
-    try {
-      JSON.parse(rawContent)
-      styleNotes = rawContent
-    } catch {
-      styleNotes = JSON.stringify({
-        vocabularyLevel: 'intermediate',
-        avgSentenceLength: 'medium',
-        tense: 'past',
-        person: 'third',
-        tone: 'neutral',
-        voice: 'active',
-        transitionHint: 'unknown',
-      })
-    }
-
-    return { textBefore: before, textAfter: after, styleNotes }
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Node: generate_insertion
-// Produces the insertion text guided by style notes and surrounding context.
+// Single node — splits the document, builds a self-contained prompt, and
+// streams only the final insertion prose.
 // ---------------------------------------------------------------------------
 
 function makeGenerateInsertionNode(model: BaseChatModel) {
   return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
-    const { textBefore, textAfter, styleNotes } = state
-
-    let styleDescription = styleNotes
-    try {
-      const parsed = JSON.parse(styleNotes) as Record<string, string>
-      styleDescription = Object.entries(parsed)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(', ')
-    } catch {
-      // Use raw string if not valid JSON
-    }
+    const userText = extractUserText(state)
+    const { before, after } = splitAtMarker(userText)
 
     const generationMessages = [
       new SystemMessage(
         `[CONTEXT BLOCK]
 You are continuing a piece of writing. Your job is to insert new content at the marked position — not rewrite, not summarize, just continue naturally.
 
-Style profile you must match: ${styleDescription}
+Before you write, silently analyze the surrounding text for:
+- Vocabulary level, sentence length, and rhythm
+- Tense, person, and voice (active/passive)
+- Tone and register
+- How the text before the marker ends and the text after begins
+Then match all of these in your output.
 
 [DOCUMENT BLOCK]
-Here is the full post. The exact insertion point is marked with ${INSERT_MARKER}:
+Here is the full document. The exact insertion point is marked with ${INSERT_MARKER}:
 
 ---
-${textBefore}
+${before}
 
 ${INSERT_MARKER}
 
-${textAfter}
+${after}
 ---
 
 [TASK BLOCK]
@@ -180,12 +109,13 @@ Requirements:
 - Match the tone, voice, and style of the surrounding text
 - Connect smoothly to the sentence/paragraph before AND after the marker
 - Do NOT repeat the existing text
-- Do NOT add a title or commentary — output only the insertion text
+- Do NOT add a title, heading, or commentary — output only the insertion text
+- Do NOT wrap your response in quotes, markdown, or code fences
 - If the marker falls mid-sentence, complete that sentence first before adding new content
 - Produce coherent prose that reads as if it was always part of the document`
       ),
       new HumanMessage(
-        `Generate the insertion text now. Output ONLY the text to be placed at the insertion point — nothing else.`
+        'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
       ),
     ]
 
@@ -205,10 +135,8 @@ Requirements:
 
 function buildTextContinuationGraph(model: BaseChatModel) {
   const graph = new StateGraph(GraphState)
-    .addNode('analyze_context', makeAnalyzeContextNode(model))
     .addNode('generate_insertion', makeGenerateInsertionNode(model))
-    .addEdge(START, 'analyze_context')
-    .addEdge('analyze_context', 'generate_insertion')
+    .addEdge(START, 'generate_insertion')
     .addEdge('generate_insertion', END)
 
   return graph.compile()
@@ -228,7 +156,8 @@ Requirements:
 - Match the tone, voice, and style of the surrounding text
 - Connect smoothly to the sentence/paragraph before AND after the marker
 - Do NOT repeat the existing text
-- Do NOT add a title or commentary — output only the insertion text
+- Do NOT add a title, heading, or commentary — output only the insertion text
+- Do NOT wrap your response in quotes, markdown, or code fences
 - If the marker falls mid-sentence, complete that sentence first before adding new content
 - Produce coherent prose that reads as if it was always part of the document`
 
