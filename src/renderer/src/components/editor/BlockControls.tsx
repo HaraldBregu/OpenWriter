@@ -18,7 +18,7 @@ interface BlockControlsProps {
   hoveredBlock: HoveredBlock | null;
 }
 
-export function BlockControls({
+export const BlockControls = React.memo(function BlockControls({
   editor,
   containerRef,
   hoveredBlock,
