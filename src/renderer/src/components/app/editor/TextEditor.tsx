@@ -261,7 +261,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   Document,
   Text,
   Paragraph,
-  Heading.configure({ levels: [1, 2, 3] }),
+  Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
   History,
   Bold,
   Italic,
