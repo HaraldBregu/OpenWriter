@@ -21,7 +21,7 @@ export const BlockControls = React.memo(function BlockControls({
   containerRef,
   hoveredBlock,
 }: BlockControlsProps): React.JSX.Element {
-  const editor = useEditorContext();
+  const { editor } = useEditorContext();
   const [dropState, setDropState] = useState({ top: 0, visible: false });
   const dragRef = useRef(false);
 
