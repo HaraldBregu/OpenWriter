@@ -42,11 +42,9 @@ const ContentPage: React.FC = () => {
   const [isTrashing, setIsTrashing] = useState(false);
 
   // Task lifecycle via Redux
-  const taskOptions = useMemo(() => (id ? { taskId: id } : undefined), [id]);
   const task = useTaskSubmit<{ prompt: string }, { content?: string }>(
     "agent-sentence-completer",
     { prompt: content },
-    taskOptions,
   );
 
   const isEnhancing = task.isRunning || task.isQueued;
