@@ -24,7 +24,10 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
 } from "@/components/app";
-import { TextEditor, type TextEditorElement } from "@/components/editor/TextEditor";
+import {
+  TextEditor,
+  type TextEditorElement,
+} from "@/components/editor/TextEditor";
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
@@ -109,8 +112,7 @@ const ContentPage: React.FC = () => {
   }, []);
 
   const handleContentChange = useCallback((newContent: string) => {
-    console.log(newContent);
-    // setContent(newContent);
+    setContent(newContent);
   }, []);
 
   const handleMoveToTrash = useCallback(async () => {
@@ -136,7 +138,6 @@ const ContentPage: React.FC = () => {
     editorRef.current?.insertText("Hello from AI!");
   }, []);
 
-  
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">

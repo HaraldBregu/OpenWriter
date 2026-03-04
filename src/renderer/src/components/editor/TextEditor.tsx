@@ -23,7 +23,7 @@ import { BASE_EXTENSIONS } from "./extensions";
 
 export interface TextEditorElement extends HTMLDivElement {
   insertContent: (content: string) => void;
-  insertText: (text: string) => void;
+  insertText: (text: string, update?: boolean) => void;
 }
 
 export interface TextEditorProps {
@@ -44,7 +44,6 @@ const TextEditor = React.memo(
       onChangeRef.current = onChange;
 
       const lastEmittedRef = useRef<string>("");
-      const silentInsertRef = useRef(false);
       const initialValueRef = useRef(value);
 
       const editorOptions = useMemo<UseEditorOptions>(
@@ -61,10 +60,6 @@ const TextEditor = React.memo(
             }
           },
           onUpdate: ({ editor: ed }: { editor: Editor }) => {
-            if (silentInsertRef.current) {
-              silentInsertRef.current = false;
-              return;
-            }
             const md = tiptapDocToMarkdown(ed.state.doc);
             lastEmittedRef.current = md;
             onChangeRef.current(md);
@@ -95,10 +90,8 @@ const TextEditor = React.memo(
           },
           insertText(text: string) {
             if (!editor || editor.isDestroyed) return;
-            silentInsertRef.current = true;
             const { from } = editor.state.selection;
-            const tr = editor.state.tr.insertText(text, from);
-            editor.view.dispatch(tr);
+            editor.chain().focus().insertContentAt(from, text).run();
           },
         }) as TextEditorElement;
       }, [editor]);
