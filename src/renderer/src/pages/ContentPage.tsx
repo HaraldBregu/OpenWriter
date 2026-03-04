@@ -229,7 +229,6 @@ const ContentPage: React.FC = () => {
             onChange={handleContentChange}
             placeholder={t('writing.startWriting')}
             disabled={isEnhancing}
-            streamingContent={streamingContent}
             onContinueWithAI={handleContinueWithAI}
             className={isEnhancing ? 'opacity-60' : undefined}
           />
