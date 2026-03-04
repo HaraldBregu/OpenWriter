@@ -271,7 +271,12 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   OrderedList,
   ListItem,
   Placeholder.configure({
-    placeholder: "Type '/' for commands, or press 'space' for AI assistance\u2026",
+    placeholder: ({ node }) => {
+      if (node.type.name === 'paragraph') {
+        return "Type '/' for commands, or press 'space' for AI assistance\u2026";
+      }
+      return '';
+    },
   }),
 ];
 
