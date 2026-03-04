@@ -165,9 +165,9 @@ const ContentPage: React.FC = () => {
   const handleContinueWithAI = useCallback(
     async (htmlContent: string) => {
       if (!id) return;
-      await task.submit({ prompt: htmlContent });
+      await submitTask({ prompt: htmlContent });
     },
-    [id, task.submit],
+    [id, submitTask],
   );
 
   // ---------------------------------------------------------------------------
