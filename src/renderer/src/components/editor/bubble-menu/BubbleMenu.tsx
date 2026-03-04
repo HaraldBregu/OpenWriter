@@ -8,7 +8,7 @@ import { useEditorContext } from '../EditorContext'
 const pluginKey = new PluginKey('bubbleMenu')
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
-  const editor = useEditorContext()
+  const { editor } = useEditorContext()
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
