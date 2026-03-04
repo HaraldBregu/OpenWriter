@@ -24,9 +24,6 @@ export interface UseCreateWritingResult {
  * Uses a ref-based in-flight guard so rapid successive clicks are ignored
  * without requiring the caller to track the loading state in their own
  * dependency array.
- *
- * Block names are stable UUIDs so the block .md filename is unique even
- * if two writings are created within the same second.
  */
 export function useCreateWriting(options?: UseCreateWritingOptions): UseCreateWritingResult {
   const navigate = useNavigate()
