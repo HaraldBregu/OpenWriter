@@ -132,10 +132,7 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback(() => {
-    // For demonstration, we'll just append some placeholder text.
-    // In a real implementation, this would call an AI service to generate content.
-    const aiGeneratedText = "\n\nThis is some AI-generated content.";
-    setContent((prev) => prev + aiGeneratedText);
+    editorRef.current?.insertContent("Hello from AI!");
   }, []);
 
   
