@@ -60,11 +60,8 @@ const TextEditor = React.memo(
               ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
             }
           },
-          onUpdate: ({ editor: ed }: { editor: Editor }) => {
-            if (skipUpdateRef.current) {
-              skipUpdateRef.current = false;
-              return;
-            }
+          onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: import("@tiptap/pm/state").Transaction }) => {
+            if (transaction.getMeta("skipUpdate")) return;
             const md = tiptapDocToMarkdown(ed.state.doc);
             lastEmittedRef.current = md;
             onChangeRef.current(md);
