@@ -79,22 +79,22 @@ const ContentPage: React.FC = () => {
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // const persistToDisk = useCallback(() => {
-  //   if (!id || !loaded) return;
-  //   const { title: t, content: c } = stateRef.current;
-  //   console.log("[ContentPage] Persisting to disk...", { id, title: t, content: c });
-  //   window.workspace.updateOutput({
-  //     type: "writings",
-  //     id,
-  //     content: c,
-  //     metadata: { title: t },
-  //   });
-  // }, [id, loaded]);
+  const persistToDisk = useCallback(() => {
+    if (!id || !loaded) return;
+    const { title: t, content: c } = stateRef.current;
+    console.log("[ContentPage] Persisting to disk...", { id, title: t, content: c });
+    window.workspace.updateOutput({
+      type: "writings",
+      id,
+      content: c,
+      metadata: { title: t },
+    });
+  }, [id, loaded]);
 
-  // const debounceSave = useCallback(() => {
-  //   if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-  //   saveTimerRef.current = setTimeout(persistToDisk, 500);
-  // }, [persistToDisk]);
+  const debounceSave = useCallback(() => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(persistToDisk, 2500);
+  }, [persistToDisk]);
 
   const { charCount, wordCount } = useMemo(() => {
     const trimmed = content.trim();
@@ -106,13 +106,13 @@ const ContentPage: React.FC = () => {
 
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
-    // debounceSave();
-  }, []);
+    debounceSave();
+  }, [debounceSave]);
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
-    // debounceSave();
-  }, []);
+    debounceSave();
+  }, [debounceSave]);
 
   const handleMoveToTrash = useCallback(async () => {
     if (!id || isTrashing) return;
