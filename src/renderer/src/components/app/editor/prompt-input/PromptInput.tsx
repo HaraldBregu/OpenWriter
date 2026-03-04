@@ -170,8 +170,9 @@ export function PromptInput({
         placeholder="Ask anything and press Enter…"
       />
       <AppButton
+        variant="prompt-submit"
         size="prompt-icon-sm"
-        className="shrink-0 bg-blue-500 text-white hover:bg-blue-600"
+        className="shrink-0"
         onClick={submit}
       >
         <ArrowUp />
