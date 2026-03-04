@@ -59,8 +59,8 @@ const TextEditor = React.memo(
               ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
             }
           },
-          onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: import("@tiptap/pm/state").Transaction }) => {
-            if (transaction.getMeta("skipUpdate")) return;
+          onTransaction: ({ editor: ed, transaction: tr }: { editor: Editor; transaction: import("@tiptap/pm/state").Transaction }) => {
+            if (!tr.docChanged || tr.getMeta("skipUpdate")) return;
             const md = tiptapDocToMarkdown(ed.state.doc);
             lastEmittedRef.current = md;
             onChangeRef.current(md);
@@ -93,7 +93,8 @@ const TextEditor = React.memo(
             if (!editor || editor.isDestroyed) return;
             const { from } = editor.state.selection;
             const tr = editor.state.tr.insertText(text, from);
-            if (!update) tr.setMeta("skipUpdate", true);
+            // if (!update) 
+              tr.setMeta("skipUpdate", true);
             editor.view.dispatch(tr);
           },
         }) as TextEditorElement;
