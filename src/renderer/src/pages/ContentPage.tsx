@@ -44,14 +44,14 @@ const ContentPage: React.FC = () => {
   const [isTrashing, setIsTrashing] = useState(false);
 
   // Task lifecycle via Redux
-  const { taskId, submit: submitTask, reset: resetTask } = useTaskSubmit<
+  const { taskId, submit: submitTask } = useTaskSubmit<
     { prompt: string },
     { content?: string }
   >("agent-sentence-completer", { prompt: content });
 
   // Read task state directly from the Redux store via selector
   const taskState = useAppSelector((state) =>
-    taskId !== null ? selectTaskById(state, taskId) : undefined
+    taskId !== null ? selectTaskById(state, taskId) : undefined,
   );
 
   const isEnhancing =
@@ -60,23 +60,6 @@ const ContentPage: React.FC = () => {
   // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
-
-  // React to task status changes from the Redux selector
-  useEffect(() => {
-    if (!taskState) return;
-
-    if (taskState.status === "completed") {
-      const aiOutput =
-        (taskState.result as { content?: string } | undefined)?.content ?? "";
-      setContent((prev) => prev + aiOutput);
-      resetTask();
-    } else if (
-      taskState.status === "error" ||
-      taskState.status === "cancelled"
-    ) {
-      resetTask();
-    }
-  }, [taskState, resetTask]);
 
   // ---------------------------------------------------------------------------
   // Load from disk
@@ -163,9 +146,10 @@ const ContentPage: React.FC = () => {
   // ---------------------------------------------------------------------------
 
   const handleContinueWithAI = useCallback(
-    async (htmlContent: string) => {
+    async (content: string) => {
       if (!id) return;
-      await submitTask({ prompt: htmlContent });
+      console.log("Submitting content to AI for enhancement:", content);
+      await submitTask({ prompt: content });
     },
     [id, submitTask],
   );

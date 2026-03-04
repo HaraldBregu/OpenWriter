@@ -80,8 +80,6 @@ export const tasksSlice = createSlice({
       const taskId = data?.taskId
       if (!taskId) return
 
-      console.log("Received task id:", taskId, "type:", event.type);
-
       // Auto-create on 'queued' when not yet tracked.
       let task = state.tasks.find((t) => t.taskId === taskId)
 
@@ -95,12 +93,11 @@ export const tasksSlice = createSlice({
             progress: { percent: 0 },
             events: [],
           }
-          console.log("Auto-creating task for queued event:", newTask);
+
           state.tasks.push(newTask)
           // Re-assign task to the Immer draft reference just pushed.
           task = state.tasks[state.tasks.length - 1]
         } else {
-          console.log("Ignoring event for unknown task:", taskId, event.type);
           return
         }
       }
@@ -111,7 +108,6 @@ export const tasksSlice = createSlice({
         receivedAt: Date.now(),
       }
 
-      console.log(`Appending event to task ${taskId}:`, record);
       appendEventToDraft(task, record)
 
       switch (event.type) {

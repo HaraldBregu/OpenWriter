@@ -88,7 +88,7 @@ export function OptionMenu({ editor, onContinueWithAI }: OptionMenuProps): React
         section: 'ai' as const,
         command: (ed, slashPos, queryLength) => {
           ed.chain().focus().deleteRange({ from: slashPos, to: slashPos + 1 + queryLength }).run()
-          onContinueWithAIRef.current?.(ed.getHTML())
+          onContinueWithAIRef.current?.(ed.getText())
         },
       },
     ],
