@@ -12,7 +12,6 @@ import {
 } from '@/components/app'
 import { TextEditor } from '@/components/app/editor/TextEditor'
 import { useTaskSubmit } from '@/hooks/useTaskSubmit'
-import { subscribeToTask, initTaskContent } from '@/services/taskEventBus'
 
 // ---------------------------------------------------------------------------
 // Page
