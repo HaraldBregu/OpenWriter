@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import type { Editor } from '@tiptap/core'
-import { Bold, Italic, Underline, Strikethrough } from 'lucide-react'
+import { Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3 } from 'lucide-react'
 import { BubbleMenuPlugin } from './bubble-menu-plugin'
 import { PluginKey } from '@tiptap/pm/state'
 import { AppButton } from '../../AppButton'
