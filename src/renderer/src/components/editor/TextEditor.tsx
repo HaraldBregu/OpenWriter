@@ -95,6 +95,7 @@ const TextEditor = React.memo(
           },
           insertText(text: string) {
             if (!editor || editor.isDestroyed) return;
+            silentInsertRef.current = true;
             const { from } = editor.state.selection;
             const tr = editor.state.tr.insertText(text, from);
             editor.view.dispatch(tr);
