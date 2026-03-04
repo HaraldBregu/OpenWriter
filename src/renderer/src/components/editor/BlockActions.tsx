@@ -107,4 +107,4 @@ export const BlockActions = React.memo(function BlockActions({
       </AppDropdownMenu>
     </div>
   );
-}
+});
