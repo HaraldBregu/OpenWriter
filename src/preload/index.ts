@@ -238,12 +238,7 @@ const workspace: WorkspaceApi = {
     // -------------------------------------------------------------------------
     saveOutput: (input: {
         type: string
-        blocks: Array<{
-            name: string
-            content: string
-            createdAt: string
-            updatedAt: string
-        }>
+        content: string
         metadata?: Record<string, unknown>
     }): Promise<{ id: string; path: string; savedAt: number }> => {
         return typedInvokeUnwrap(WorkspaceChannels.outputSave, input)
