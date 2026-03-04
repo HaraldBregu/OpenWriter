@@ -28,6 +28,7 @@ import { ContentReviewAgent } from './ContentReview'
 import { SummarizerAgent } from './Summarizer'
 import { ToneAdjusterAgent } from './ToneAdjuster'
 import { DemoAgent } from './DemoAgent'
+import { TextContinuationAgent } from './TextContinuation'
 import type { AgentDefinition } from './AgentDefinition'
 
 /**
