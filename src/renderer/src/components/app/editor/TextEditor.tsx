@@ -162,6 +162,34 @@ function backticksFor(node: ProseMirrorNode, side: -1 | 1): string {
 // ---------------------------------------------------------------------------
 const md = new MarkdownIt("commonmark", { html: true }).enable("strikethrough");
 
+// markdown-it plugin: convert <u> / </u> HTML inline tags into proper
+// open/close tokens so prosemirror-markdown can map them to the underline mark.
+md.core.ruler.after("inline", "underline_html", (state) => {
+  for (const blockToken of state.tokens) {
+    if (blockToken.type !== "inline" || !blockToken.children) continue;
+    const newChildren: import("markdown-it/lib/token.mjs").default[] = [];
+    for (const tok of blockToken.children) {
+      if (tok.type === "html_inline") {
+        const tag = tok.content.trim().toLowerCase();
+        if (tag === "<u>") {
+          const open = new state.Token("u_open", "u", 1);
+          open.markup = "<u>";
+          newChildren.push(open);
+          continue;
+        }
+        if (tag === "</u>") {
+          const close = new state.Token("u_close", "u", -1);
+          close.markup = "</u>";
+          newChildren.push(close);
+          continue;
+        }
+      }
+      newChildren.push(tok);
+    }
+    blockToken.children = newChildren;
+  }
+});
+
 // ---------------------------------------------------------------------------
 // Token map for the Tiptap-compatible MarkdownParser.
 //
