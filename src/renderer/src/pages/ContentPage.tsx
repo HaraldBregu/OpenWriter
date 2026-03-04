@@ -25,13 +25,6 @@ import {
   AppDropdownMenuTrigger,
 } from "@/components/app";
 import { TextEditor } from "@/components/app/editor/TextEditor";
-import { useTaskSubmit } from "@/hooks/useTaskSubmit";
-import { useAppSelector } from "@/store";
-import { selectTaskById } from "@/store/tasks/selectors";
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
@@ -43,58 +36,13 @@ const ContentPage: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
   const [isTrashing, setIsTrashing] = useState(false);
 
-  // Task lifecycle via Redux
-  const {
-    taskId,
-    submit: submitTask,
-    reset: resetTask,
-  } = useTaskSubmit<{ prompt: string }, { content?: string }>(
-    "agent-sentence-completer",
-    { prompt: content },
-  );
-
-  // Read task state directly from the Redux store via selector
-  const taskState = useAppSelector((state) =>
-    taskId !== null ? selectTaskById(state, taskId) : undefined,
-  );
-
-  const isEnhancing =
-    taskState?.status === "queued" || taskState?.status === "running";
-
-  // Handle task status transitions: merge on completion, discard on error/cancel
-  useEffect(() => {
-    if (!taskState) return;
-    console.log("[ContentPage] Observed task state change:", taskState);
-
-    if (taskState.status === "completed") {
-      const result = taskState.result as { content?: string } | undefined;
-      const aiContent = result?.content ?? "";
-      if (aiContent) setContent((prev) => prev + aiContent);
-      resetTask();
-    } else if (
-      taskState.status === "error" ||
-      taskState.status === "cancelled"
-    ) {
-      resetTask();
-    }
-  }, [taskState, resetTask]);
-
-  // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
 
-  // ---------------------------------------------------------------------------
-  // Load from disk
-  // ---------------------------------------------------------------------------
   useEffect(() => {
     if (!id) return;
     let cancelled = false;
 
-    // Reset display state immediately so stale content from the previous
-    // writing is never shown while the async load is in-flight, and so the
-    // debounced-save guard (`loaded`) is `false` until the real data arrives
-    // (preventing the previous item's content from being written to the new
-    // item's file).
     setLoaded(false);
     setTitle("");
     setContent("");
@@ -123,9 +71,6 @@ const ContentPage: React.FC = () => {
     };
   }, [id]);
 
-  // ---------------------------------------------------------------------------
-  // Persist changes (debounced)
-  // ---------------------------------------------------------------------------
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const persistToDisk = useCallback(() => {
@@ -139,7 +84,6 @@ const ContentPage: React.FC = () => {
     });
   }, [id, loaded]);
 
-  // Trigger debounced save whenever title or content change
   useEffect(() => {
     if (!loaded) return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -149,9 +93,6 @@ const ContentPage: React.FC = () => {
     };
   }, [title, content, persistToDisk, loaded]);
 
-  // ---------------------------------------------------------------------------
-  // Derived stats
-  // ---------------------------------------------------------------------------
   const { charCount, wordCount } = useMemo(() => {
     const trimmed = content.trim();
     const chars = trimmed.length;
@@ -159,10 +100,6 @@ const ContentPage: React.FC = () => {
       trimmed.length === 0 ? 0 : trimmed.split(/\s+/).filter(Boolean).length;
     return { charCount: chars, wordCount: words };
   }, [content]);
-
-  // ---------------------------------------------------------------------------
-  // Callbacks
-  // ---------------------------------------------------------------------------
 
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
@@ -172,28 +109,11 @@ const ContentPage: React.FC = () => {
     setContent(newContent);
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // Continue with AI
-  // ---------------------------------------------------------------------------
-
-  const handleContinueWithAI = useCallback(
-    async (content: string) => {
-      if (!id) return;
-      await submitTask({ prompt: content });
-    },
-    [id, submitTask],
-  );
-
-  // ---------------------------------------------------------------------------
-  // Move to Trash
-  // ---------------------------------------------------------------------------
-
   const handleMoveToTrash = useCallback(async () => {
     if (!id || isTrashing) return;
 
     setIsTrashing(true);
 
-    // Cancel any pending debounced save before navigating away.
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -210,7 +130,6 @@ const ContentPage: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <PenLine className="h-4 w-4 text-blue-500 shrink-0" />
@@ -269,18 +188,12 @@ const ContentPage: React.FC = () => {
         <div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
           <TextEditor
             key={id}
-            value={
-              isEnhancing ? content + (taskState?.streamBuffer ?? "") : content
-            }
+            value={content}
             onChange={handleContentChange}
-            disabled={isEnhancing}
-            onContinueWithAI={handleContinueWithAI}
-            className={isEnhancing ? "opacity-60" : undefined}
           />
         </div>
       </div>
 
-      {/* Footer */}
       <div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
         <span className="text-xs text-muted-foreground">
           {t("writing.charactersAndWords", {
