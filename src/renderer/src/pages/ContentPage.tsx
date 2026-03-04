@@ -90,6 +90,15 @@ const ContentPage: React.FC = () => {
     if (!id) return;
     let cancelled = false;
 
+    // Reset display state immediately so stale content from the previous
+    // writing is never shown while the async load is in-flight, and so the
+    // debounced-save guard (`loaded`) is `false` until the real data arrives
+    // (preventing the previous item's content from being written to the new
+    // item's file).
+    setLoaded(false);
+    setTitle("");
+    setContent("");
+
     async function load() {
       try {
         const output = await window.workspace.loadOutput({
