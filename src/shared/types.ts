@@ -153,13 +153,7 @@ export interface SaveOutputResult {
 export interface OutputUpdateParams {
   type: string
   id: string
-  blocks: Array<{
-    name: string
-    content: string
-    createdAt?: string
-    filetype?: 'markdown'
-    type?: 'content'
-  }>
+  content: string
   metadata: Record<string, unknown>
 }
 
