@@ -167,22 +167,31 @@ const TIPTAP_TOKEN_MAP = {
   u: { mark: "underline" },
 };
 
+let cachedParser: MarkdownParser | null = null;
+let cachedSchema: Schema | null = null;
+
+function getParser(schema: Schema): MarkdownParser {
+  if (cachedParser && cachedSchema === schema) return cachedParser;
+  const filteredTokenMap = Object.fromEntries(
+    Object.entries(TIPTAP_TOKEN_MAP).filter(([, spec]) => {
+      if ("block" in spec) return spec.block in schema.nodes;
+      if ("node" in spec) return spec.node in schema.nodes;
+      if ("mark" in spec) return spec.mark in schema.marks;
+      return false;
+    }),
+  );
+  cachedSchema = schema;
+  cachedParser = new MarkdownParser(schema, md, filteredTokenMap);
+  return cachedParser;
+}
+
 export function markdownToTiptapJSON(
   schema: Schema,
   markdown: string,
 ): ProseMirrorNode | null {
   if (!markdown || !markdown.trim()) return null;
   try {
-    const filteredTokenMap = Object.fromEntries(
-      Object.entries(TIPTAP_TOKEN_MAP).filter(([, spec]) => {
-        if ("block" in spec) return spec.block in schema.nodes;
-        if ("node" in spec) return spec.node in schema.nodes;
-        if ("mark" in spec) return spec.mark in schema.marks;
-        return false;
-      }),
-    );
-    const parser = new MarkdownParser(schema, md, filteredTokenMap);
-    return parser.parse(markdown);
+    return getParser(schema).parse(markdown);
   } catch (err) {
     console.error("[TextEditor] markdown parse error:", err);
     return null;
