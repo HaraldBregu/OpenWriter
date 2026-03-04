@@ -953,7 +953,7 @@ export class OutputFilesService implements Disposable {
 
       // Strip legacy content[] from metadata if still present
       const cleanMetadata: OutputFileMetadata = { ...metadata }
-      delete (cleanMetadata as Record<string, unknown>).content
+      delete (cleanMetadata as OutputFileMetadata & { content?: unknown }).content
 
       return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content, savedAt }
     } catch (err) {
@@ -983,7 +983,7 @@ export class OutputFilesService implements Disposable {
 
       const mergedContent = blockContents.join('\n\n')
       const cleanMetadata: OutputFileMetadata = { ...metadata }
-      delete (cleanMetadata as Record<string, unknown>).content
+      delete (cleanMetadata as OutputFileMetadata & { content?: unknown }).content
 
       // Persist the migration
       await this.persistSingleContentMigration(
@@ -1003,7 +1003,7 @@ export class OutputFilesService implements Disposable {
     try {
       const legacyContent = await fs.readFile(legacyDataPath, 'utf-8')
       const cleanMetadata: OutputFileMetadata = { ...metadata }
-      delete (cleanMetadata as Record<string, unknown>).content
+      delete (cleanMetadata as OutputFileMetadata & { content?: unknown }).content
 
       await this.persistSingleContentMigration(folderPath, cleanMetadata, legacyContent, [this.LEGACY_DATA_FILENAME])
 
@@ -1019,7 +1019,7 @@ export class OutputFilesService implements Disposable {
     // -----------------------------------------------------------------------
     console.warn(`[OutputFilesService] No content found in ${folderPath}`)
     const cleanMetadata: OutputFileMetadata = { ...metadata }
-    delete (cleanMetadata as Record<string, unknown>).content
+    delete (cleanMetadata as OutputFileMetadata & { content?: unknown }).content
 
     return { id: folderId, type: outputType, path: folderPath, metadata: cleanMetadata, content: '', savedAt }
   }
