@@ -57,21 +57,21 @@ type NodeSerializerFn = (
 
 type MarkSerializerSpec = {
   open:
-    | string
-    | ((
-        state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
-        mark: Mark,
-        parent: ProseMirrorNode,
-        index: number,
-      ) => string);
+  | string
+  | ((
+    state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
+    mark: Mark,
+    parent: ProseMirrorNode,
+    index: number,
+  ) => string);
   close:
-    | string
-    | ((
-        state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
-        mark: Mark,
-        parent: ProseMirrorNode,
-        index: number,
-      ) => string);
+  | string
+  | ((
+    state: InstanceType<typeof import("prosemirror-markdown").MarkdownSerializerState>,
+    mark: Mark,
+    parent: ProseMirrorNode,
+    index: number,
+  ) => string);
   mixable?: boolean;
   expelEnclosingWhitespace?: boolean;
   escape?: boolean;
@@ -487,7 +487,10 @@ function EditorAdapter({
               hoveredBlock={hoveredBlock}
             />
             <BubbleMenu editor={editor} />
-            <OptionMenu editor={editor} onContinueWithAI={onContinueWithAI} />
+            <OptionMenu
+              editor={editor}
+              onContinueWithAI={onContinueWithAI}
+            />
             <PromptInput
               editor={editor}
               containerRef={containerRef}
