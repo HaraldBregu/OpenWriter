@@ -92,9 +92,10 @@ const TextEditor = React.memo(
           },
           insertText(text: string, update: boolean = true) {
             if (!editor || editor.isDestroyed) return;
-            if (!update) skipUpdateRef.current = true;
             const { from } = editor.state.selection;
-            editor.chain().focus().insertContentAt(from, text).run();
+            const tr = editor.state.tr.insertText(text, from);
+            if (!update) tr.setMeta("skipUpdate", true);
+            editor.view.dispatch(tr);
           },
         }) as TextEditorElement;
       }, [editor]);
