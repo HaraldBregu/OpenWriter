@@ -140,12 +140,7 @@ export interface OutputFileChangeEvent {
 
 export interface SaveOutputInput {
   type: string
-  blocks: Array<{
-    name: string
-    content: string
-    createdAt: string
-    updatedAt: string
-  }>
+  content: string
   metadata?: Record<string, unknown>
 }
 
