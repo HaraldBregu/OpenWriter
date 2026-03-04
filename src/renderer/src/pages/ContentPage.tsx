@@ -11,6 +11,8 @@ import {
   AppDropdownMenuTrigger,
 } from '@/components/app'
 import { TextEditor } from '@/components/app/editor/TextEditor'
+import { useTaskSubmit } from '@/hooks/useTaskSubmit'
+import { subscribeToTask, initTaskContent } from '@/services/taskEventBus'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -26,67 +28,40 @@ const ContentPage: React.FC = () => {
   const [loaded, setLoaded] = useState(false)
   const [isTrashing, setIsTrashing] = useState(false)
 
-  // AI Enhancement state
-  const [isEnhancing, setIsEnhancing] = useState(false)
+  // AI Enhancement — streaming overlay content from taskEventBus
   const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
-  const originalTextRef = useRef<string>('')
-  const accumulatedAiContentRef = useRef<string>('')
-  const pendingFinalContentRef = useRef<string | null>(null)
+
+  // Task lifecycle via Redux
+  const task = useTaskSubmit<{ prompt: string }, { content?: string }>(
+    'agent-text-completer',
+    { prompt: '' },
+  )
+
+  const isEnhancing = task.isRunning || task.isQueued
 
   // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, content })
   stateRef.current = { title, content }
 
-  // Once content matches the pending final content, safe to clear streamingContent.
+  // Subscribe to taskEventBus for streaming content when a task is active
   useEffect(() => {
-    if (
-      pendingFinalContentRef.current !== null &&
-      content === pendingFinalContentRef.current
-    ) {
-      pendingFinalContentRef.current = null
-      setStreamingContent(undefined)
-    }
-  }, [content])
+    if (!task.taskId) return
 
-  // AI Enhancement — permanent subscription tied to writing id (used as taskId).
-  useEffect(() => {
-    if (!id || typeof window.task?.onEvent !== 'function') return
-
-    const unsub = window.task.onEvent((event) => {
-      const data = event.data as { taskId?: string }
-      if (data?.taskId !== id) return
-
-      switch (event.type) {
-        case 'stream': {
-          const sd = event.data as { data: string }
-          accumulatedAiContentRef.current += sd.data
-          setStreamingContent(originalTextRef.current + accumulatedAiContentRef.current)
-          break
-        }
-        case 'completed': {
-          const cd = event.data as { result?: { content?: string }; durationMs?: number }
-          const aiOutput = cd.result?.content ?? accumulatedAiContentRef.current
-          const finalContent = originalTextRef.current + aiOutput
-          pendingFinalContentRef.current = finalContent
-          setContent(finalContent)
-          accumulatedAiContentRef.current = ''
-          setStreamingContent(finalContent)
-          setIsEnhancing(false)
-          break
-        }
-        case 'error':
-        case 'cancelled':
-          pendingFinalContentRef.current = null
-          accumulatedAiContentRef.current = ''
-          originalTextRef.current = ''
-          setStreamingContent(undefined)
-          setIsEnhancing(false)
-          break
+    const unsub = subscribeToTask(task.taskId, (snap) => {
+      if (snap.status === 'running') {
+        setStreamingContent(snap.content)
+      } else if (snap.status === 'completed') {
+        const result = snap.result as { content?: string } | undefined
+        const finalContent = result?.content ?? snap.content
+        setContent(finalContent)
+        setStreamingContent(undefined)
+      } else if (snap.status === 'error' || snap.status === 'cancelled') {
+        setStreamingContent(undefined)
       }
     })
 
     return unsub
-  }, [id])
+  }, [task.taskId])
 
   // ---------------------------------------------------------------------------
   // Load from disk
@@ -169,20 +144,11 @@ const ContentPage: React.FC = () => {
   const handleContinueWithAI = useCallback(async (htmlContent: string) => {
     if (isEnhancing || !id) return
 
-    originalTextRef.current = htmlContent
-    accumulatedAiContentRef.current = ''
-    setIsEnhancing(true)
+    // Seed the taskEventBus so streamed tokens are appended to original content
+    initTaskContent(id, htmlContent)
 
-    const result = await window.task.submit(
-      'agent-text-completer',
-      { prompt: htmlContent },
-      { taskId: id },
-    )
-
-    if (!result.success) {
-      setIsEnhancing(false)
-    }
-  }, [isEnhancing, id])
+    await task.submit({ prompt: htmlContent }, { taskId: id })
+  }, [isEnhancing, id, task])
 
   // ---------------------------------------------------------------------------
   // Move to Trash
