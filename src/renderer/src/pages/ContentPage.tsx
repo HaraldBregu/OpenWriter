@@ -44,32 +44,39 @@ const ContentPage: React.FC = () => {
   const [isTrashing, setIsTrashing] = useState(false);
 
   // Task lifecycle via Redux
-  const task = useTaskSubmit<{ prompt: string }, { content?: string }>(
-    "agent-sentence-completer",
-    { prompt: content },
+  const { taskId, submit: submitTask, reset: resetTask } = useTaskSubmit<
+    { prompt: string },
+    { content?: string }
+  >("agent-sentence-completer", { prompt: content });
+
+  // Read task state directly from the Redux store via selector
+  const taskState = useAppSelector((state) =>
+    taskId !== null ? selectTaskById(state, taskId) : undefined
   );
 
-  const isEnhancing = task.isRunning || task.isQueued;
+  const isEnhancing =
+    taskState?.status === "queued" || taskState?.status === "running";
 
   // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
 
-  // Apply AI result to content on task completion
+  // React to task status changes from the Redux selector
   useEffect(() => {
-    if (task.isCompleted && task.result) {
-      const aiOutput = task.result.content ?? "";
-      setContent((prev) => prev + aiOutput);
-      task.reset();
-    }
-  }, [task.isCompleted, task.result, task.reset]);
+    if (!taskState) return;
 
-  // Reset on error/cancel so the task can be reused
-  useEffect(() => {
-    if (task.isError || task.isCancelled) {
-      task.reset();
+    if (taskState.status === "completed") {
+      const aiOutput =
+        (taskState.result as { content?: string } | undefined)?.content ?? "";
+      setContent((prev) => prev + aiOutput);
+      resetTask();
+    } else if (
+      taskState.status === "error" ||
+      taskState.status === "cancelled"
+    ) {
+      resetTask();
     }
-  }, [task.isError, task.isCancelled, task.reset]);
+  }, [taskState?.status, taskState?.result, resetTask]);
 
   // ---------------------------------------------------------------------------
   // Load from disk
