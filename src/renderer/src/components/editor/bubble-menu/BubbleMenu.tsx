@@ -105,4 +105,4 @@ export const BubbleMenu = React.memo(function BubbleMenu({ editor }: BubbleMenuP
       </AppButton>
     </div>
   )
-}
+})
