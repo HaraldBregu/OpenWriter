@@ -87,12 +87,12 @@ const ContentPage: React.FC = () => {
   const persistToDisk = useCallback(() => {
     if (!id || !loaded) return
     const { title: t, blocks: b } = stateRef.current
-    window.workspace.updateOutput({
-      type: 'writings',
-      id,
-      blocks: b.map(toOutputBlock),
-      metadata: { title: t },
-    })
+    // window.workspace.updateOutput({
+    //   type: 'writings',
+    //   id,
+    //   blocks: b.map(toOutputBlock),
+    //   metadata: { title: t },
+    // })
   }, [id, loaded])
 
   // Trigger debounced save whenever title or blocks change
