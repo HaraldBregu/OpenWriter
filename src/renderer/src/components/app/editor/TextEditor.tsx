@@ -341,9 +341,8 @@ function EditorAdapter({
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const internalChangeRef = useRef(false);
+  const lastEmittedRef = useRef<string>("");
 
-  // Capture the initial value so onCreate can parse it as markdown.
   const initialValueRef = useRef(value);
 
   const editorOptions = useMemo<UseEditorOptions>(
@@ -379,9 +378,7 @@ function EditorAdapter({
   // Sync external value changes into the editor.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
-// console.log("TextEditor value change:", { value, streamingContent });  
 
-// return; // --- IGNORE ---
     if (streamingContent !== undefined) {
       // Streaming content arrives as markdown; parse before setting.
       const doc = markdownToTiptapJSON(editor.schema, streamingContent);

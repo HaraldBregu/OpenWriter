@@ -57,6 +57,7 @@ const ContentPage: React.FC = () => {
           if (!cancelled) setLoaded(true);
           return;
         }
+
         setTitle(output.metadata.title || "");
         setContent(output.content || "");
         setLoaded(true);
@@ -70,6 +71,10 @@ const ContentPage: React.FC = () => {
       cancelled = true;
     };
   }, [id]);
+
+  useEffect(() => {
+    console.log("Content changed:", content);
+  }, [content]);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -106,7 +111,7 @@ const ContentPage: React.FC = () => {
   }, []);
 
   const handleContentChange = useCallback((newContent: string) => {
-    setContent(newContent);
+    // setContent(newContent);
   }, []);
 
   const handleMoveToTrash = useCallback(async () => {
@@ -186,11 +191,7 @@ const ContentPage: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
         <div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-          <TextEditor
-            key={id}
-            value={content}
-            onChange={handleContentChange}
-          />
+          <TextEditor key={id} value={content} onChange={handleContentChange} />
         </div>
       </div>
 
