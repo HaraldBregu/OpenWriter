@@ -72,10 +72,6 @@ const ContentPage: React.FC = () => {
     };
   }, [id]);
 
-  useEffect(() => {
-    console.log("Content changed:", content);
-  }, [content]);
-
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const persistToDisk = useCallback(() => {
