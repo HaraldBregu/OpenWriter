@@ -62,8 +62,6 @@ const ContentPage: React.FC = () => {
     if (!taskState) return;
 
     if (taskState.status === "completed") {
-      const buffer = taskState.streamBuffer ?? "";
-      setContent((prev) => prev + buffer);
       resetTask();
     } else if (
       taskState.status === "error" ||
