@@ -133,9 +133,8 @@ export const tasksSlice = createSlice({
           break
         }
         case 'stream': {
-          // Raw batch — do NOT accumulate here. The AI layer subscribes
-          // directly to window.task.onEvent for streaming content.
           task.status = 'running'
+          task.streamBuffer = (task.streamBuffer ?? '') + event.data.data
           break
         }
         case 'completed': {
