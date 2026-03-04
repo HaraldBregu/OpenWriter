@@ -163,6 +163,28 @@ const ContentPage: React.FC = () => {
   }, [])
 
   // ---------------------------------------------------------------------------
+  // Continue with AI
+  // ---------------------------------------------------------------------------
+
+  const handleContinueWithAI = useCallback(async (htmlContent: string) => {
+    if (isEnhancing || !id) return
+
+    originalTextRef.current = htmlContent
+    accumulatedAiContentRef.current = ''
+    setIsEnhancing(true)
+
+    const result = await window.task.submit(
+      'agent-text-completer',
+      { prompt: htmlContent },
+      { taskId: id },
+    )
+
+    if (!result.success) {
+      setIsEnhancing(false)
+    }
+  }, [isEnhancing, id])
+
+  // ---------------------------------------------------------------------------
   // Move to Trash
   // ---------------------------------------------------------------------------
 
