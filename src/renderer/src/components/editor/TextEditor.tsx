@@ -23,7 +23,7 @@ import { BASE_EXTENSIONS } from "./extensions";
 
 export interface TextEditorElement extends HTMLDivElement {
   insertContent: (content: string) => void;
-  insertText: (text: string, update?: boolean) => void;
+  insertText: (text: string) => void;
 }
 
 export interface TextEditorProps {
@@ -59,8 +59,7 @@ const TextEditor = React.memo(
               ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
             }
           },
-          onTransaction: ({ editor: ed, transaction: tr }: { editor: Editor; transaction: import("@tiptap/pm/state").Transaction }) => {
-            if (!tr.docChanged || tr.getMeta("skipUpdate")) return;
+          onUpdate: ({ editor: ed }: { editor: Editor }) => {
             const md = tiptapDocToMarkdown(ed.state.doc);
             lastEmittedRef.current = md;
             onChangeRef.current(md);
@@ -89,13 +88,10 @@ const TextEditor = React.memo(
               editor.commands.insertContent(doc.content.toJSON());
             }
           },
-          insertText(text: string, update: boolean = true) {
+          insertText(text: string) {
             if (!editor || editor.isDestroyed) return;
             const { from } = editor.state.selection;
-            const tr = editor.state.tr.insertText(text, from);
-            // if (!update) 
-              tr.setMeta("skipUpdate", true);
-            editor.view.dispatch(tr);
+            editor.chain().focus().insertContentAt(from, text).run();
           },
         }) as TextEditorElement;
       }, [editor]);

@@ -90,14 +90,10 @@ const ContentPage: React.FC = () => {
     });
   }, [id, loaded]);
 
-  useEffect(() => {
-    if (!loaded) return;
+  const debounceSave = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(persistToDisk, 500);
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    };
-  }, [title, content, persistToDisk, loaded]);
+  }, [persistToDisk]);
 
   const { charCount, wordCount } = useMemo(() => {
     const trimmed = content.trim();
@@ -109,12 +105,13 @@ const ContentPage: React.FC = () => {
 
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
-  }, []);
+    debounceSave();
+  }, [debounceSave]);
 
   const handleContentChange = useCallback((newContent: string) => {
-    // setContent(newContent);
-    console.log("Content changed, new length:", newContent);
-  }, []);
+    setContent(newContent);
+    debounceSave();
+  }, [debounceSave]);
 
   const handleMoveToTrash = useCallback(async () => {
     if (!id || isTrashing) return;
@@ -136,7 +133,7 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback(() => {
-    editorRef.current?.insertText("Hello from AI!", false);
+    editorRef.current?.insertText("Hello from AI!");
   }, []);
 
   return (
