@@ -255,13 +255,7 @@ const workspace: WorkspaceApi = {
     updateOutput: (params: {
         type: string
         id: string
-        blocks: Array<{
-            name: string
-            content: string
-            createdAt?: string
-            filetype?: 'markdown'
-            type?: 'content'
-        }>
+        content: string
         metadata: Record<string, unknown>
     }): Promise<void> => {
         return typedInvokeUnwrap(WorkspaceChannels.update, params)
