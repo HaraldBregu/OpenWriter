@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Download, Eye, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react'
-import { Reorder } from 'framer-motion'
 import {
   AppButton,
   AppDropdownMenu,
@@ -11,28 +10,7 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
 } from '@/components/app'
-import { ContentBlock } from '@/components/ContentBlock'
-import { createBlock, type Block } from '@/components/block.types'
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Convert an OutputFileBlock from disk into our local Block type. */
-function toBlock(b: { name: string; content: string; createdAt: string; updatedAt: string }): Block {
-  return {
-    id: b.name,
-    type: 'paragraph',
-    content: b.content,
-    createdAt: b.createdAt,
-    updatedAt: b.updatedAt,
-  }
-}
-
-/** Convert local Block to the shape expected by workspace APIs. */
-function toOutputBlock(b: Block) {
-  return { name: b.id, content: b.content, createdAt: b.createdAt, updatedAt: b.updatedAt }
-}
+import { TextEditor } from '@/components/app/editor/TextEditor'
 
 // ---------------------------------------------------------------------------
 // Page
@@ -44,13 +22,71 @@ const ContentPage: React.FC = () => {
   const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
-  const [blocks, setBlocks] = useState<Block[]>(() => [createBlock()])
+  const [content, setContent] = useState('')
   const [loaded, setLoaded] = useState(false)
   const [isTrashing, setIsTrashing] = useState(false)
 
+  // AI Enhancement state
+  const [isEnhancing, setIsEnhancing] = useState(false)
+  const [streamingContent, setStreamingContent] = useState<string | undefined>(undefined)
+  const originalTextRef = useRef<string>('')
+  const accumulatedAiContentRef = useRef<string>('')
+  const pendingFinalContentRef = useRef<string | null>(null)
+
   // Ref to track latest state for the debounced save
-  const stateRef = useRef({ title, blocks })
-  stateRef.current = { title, blocks }
+  const stateRef = useRef({ title, content })
+  stateRef.current = { title, content }
+
+  // Once content matches the pending final content, safe to clear streamingContent.
+  useEffect(() => {
+    if (
+      pendingFinalContentRef.current !== null &&
+      content === pendingFinalContentRef.current
+    ) {
+      pendingFinalContentRef.current = null
+      setStreamingContent(undefined)
+    }
+  }, [content])
+
+  // AI Enhancement — permanent subscription tied to writing id (used as taskId).
+  useEffect(() => {
+    if (!id || typeof window.task?.onEvent !== 'function') return
+
+    const unsub = window.task.onEvent((event) => {
+      const data = event.data as { taskId?: string }
+      if (data?.taskId !== id) return
+
+      switch (event.type) {
+        case 'stream': {
+          const sd = event.data as { data: string }
+          accumulatedAiContentRef.current += sd.data
+          setStreamingContent(originalTextRef.current + accumulatedAiContentRef.current)
+          break
+        }
+        case 'completed': {
+          const cd = event.data as { result?: { content?: string }; durationMs?: number }
+          const aiOutput = cd.result?.content ?? accumulatedAiContentRef.current
+          const finalContent = originalTextRef.current + aiOutput
+          pendingFinalContentRef.current = finalContent
+          setContent(finalContent)
+          accumulatedAiContentRef.current = ''
+          setStreamingContent(finalContent)
+          setIsEnhancing(false)
+          break
+        }
+        case 'error':
+        case 'cancelled':
+          pendingFinalContentRef.current = null
+          accumulatedAiContentRef.current = ''
+          originalTextRef.current = ''
+          setStreamingContent(undefined)
+          setIsEnhancing(false)
+          break
+      }
+    })
+
+    return unsub
+  }, [id])
 
   // ---------------------------------------------------------------------------
   // Load from disk
@@ -66,9 +102,8 @@ const ContentPage: React.FC = () => {
           if (!cancelled) setLoaded(true)
           return
         }
-        const loadedBlocks = output.blocks.map(toBlock)
         setTitle(output.metadata.title || '')
-        setBlocks(loadedBlocks.length > 0 ? loadedBlocks : [createBlock()])
+        setContent(output.content || '')
         setLoaded(true)
       } catch {
         if (!cancelled) setLoaded(true)
@@ -86,16 +121,16 @@ const ContentPage: React.FC = () => {
 
   const persistToDisk = useCallback(() => {
     if (!id || !loaded) return
-    const { title: t, blocks: b } = stateRef.current
+    const { title: t, content: c } = stateRef.current
     window.workspace.updateOutput({
       type: 'writings',
       id,
-      blocks: b.map(toOutputBlock),
+      content: c,
       metadata: { title: t },
     })
   }, [id, loaded])
 
-  // Trigger debounced save whenever title or blocks change
+  // Trigger debounced save whenever title or content change
   useEffect(() => {
     if (!loaded) return
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
@@ -103,35 +138,28 @@ const ContentPage: React.FC = () => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [title, blocks, persistToDisk, loaded])
+  }, [title, content, persistToDisk, loaded])
 
   // ---------------------------------------------------------------------------
   // Derived stats
   // ---------------------------------------------------------------------------
   const { charCount, wordCount } = useMemo(() => {
-    const joined = blocks.map((b) => b.content).join(' ').trim()
-    const chars = joined.length
-    const words = joined.length === 0 ? 0 : joined.split(/\s+/).filter(Boolean).length
+    const trimmed = content.trim()
+    const chars = trimmed.length
+    const words = trimmed.length === 0 ? 0 : trimmed.split(/\s+/).filter(Boolean).length
     return { charCount: chars, wordCount: words }
-  }, [blocks])
+  }, [content])
 
   // ---------------------------------------------------------------------------
-  // Block callbacks
+  // Callbacks
   // ---------------------------------------------------------------------------
 
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value)
   }, [])
 
-  const handleChange = useCallback((blockId: string, content: string) => {
-    const now = new Date().toISOString()
-    setBlocks((prev) =>
-      prev.map((b) => (b.id === blockId ? { ...b, content, updatedAt: now } : b))
-    )
-  }, [])
-
-  const handleReorder = useCallback((reordered: Block[]) => {
-    setBlocks(reordered)
+  const handleContentChange = useCallback((newContent: string) => {
+    setContent(newContent)
   }, [])
 
   // ---------------------------------------------------------------------------
@@ -151,13 +179,9 @@ const ContentPage: React.FC = () => {
 
     try {
       await window.workspace.trashOutput({ type: 'writings', id })
-      // Navigate to home after a successful trash.
-      // The AppLayout's onOutputFileChange listener will pick up the 'removed'
-      // event emitted by OutputFilesService and refresh the sidebar list.
       navigate('/home')
     } catch (err) {
       console.error('[ContentPage] Failed to trash writing:', err)
-      // Re-enable the button so the user can retry.
       setIsTrashing(false)
     }
   }, [id, isTrashing, navigate])
@@ -222,21 +246,14 @@ const ContentPage: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
         <div className="w-full px-10 py-10 flex flex-col gap-2">
-          <Reorder.Group
-            axis="y"
-            values={blocks}
-            onReorder={handleReorder}
-            className="flex flex-col gap-0"
-          >
-            {blocks.map((block) => (
-              <ContentBlock
-                key={block.id}
-                block={block}
-                onChange={handleChange}
-                placeholder={t('writing.startWriting')}
-              />
-            ))}
-          </Reorder.Group>
+          <TextEditor
+            value={content}
+            onChange={handleContentChange}
+            placeholder={t('writing.startWriting')}
+            disabled={isEnhancing}
+            streamingContent={streamingContent}
+            className={isEnhancing ? 'opacity-60' : undefined}
+          />
         </div>
       </div>
 
