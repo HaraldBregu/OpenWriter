@@ -374,13 +374,10 @@ export class OutputFilesService implements Disposable {
   }
 
   /**
-   * Update the blocks and/or metadata of an existing output entry.
+   * Update the content and/or metadata of an existing output entry.
    *
-   * Strategy:
-   *   1. Read existing config.json to get `createdAt` and existing block descriptors.
-   *   2. Delete block `.md` files that are no longer in the new blocks array.
-   *   3. Write new/updated block `.md` files.
-   *   4. Rewrite config.json with the updated descriptor array.
+   * Overwrites content.md and rewrites config.json with updated timestamp.
+   * On first update after migration, cleans up any leftover block `.md` files.
    *
    * Throws if the folder does not exist.
    */
@@ -392,87 +389,69 @@ export class OutputFilesService implements Disposable {
 
     this.validateOutputType(outputType)
 
-    if (!Array.isArray(input.blocks) || input.blocks.length === 0) {
-      throw new Error('At least one content block is required.')
+    if (typeof input.content !== 'string') {
+      throw new Error('Content must be a string.')
     }
 
     const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id)
     const configPath = path.join(folderPath, this.CONFIG_FILENAME)
+    const contentPath = path.join(folderPath, this.CONTENT_FILENAME)
 
-    // Read existing config to preserve createdAt and existing block timestamps
+    // Read existing config to preserve createdAt
     const configRaw = await fs.readFile(configPath, 'utf-8')
-    const existing = JSON.parse(configRaw) as OutputFileMetadata
+    const existing = JSON.parse(configRaw) as OutputFileMetadata & { content?: unknown }
 
     const now = new Date().toISOString()
-
-    // Build a map of existing block descriptors by name for timestamp preservation
-    const existingDescriptorMap = new Map<string, ContentBlockDescriptor>()
-    if (Array.isArray(existing.content)) {
-      for (const desc of existing.content) {
-        existingDescriptorMap.set(desc.name, desc)
-      }
-    }
-
-    // Determine which block names are being removed
-    const newBlockNames = new Set(input.blocks.map((b) => b.name))
-    const removedNames = [...existingDescriptorMap.keys()].filter((name) => !newBlockNames.has(name))
-
-    // Build new descriptors and write list
-    const descriptors: ContentBlockDescriptor[] = []
-    const fileWrites: Array<{ filePath: string; content: string }> = []
-
-    for (const block of input.blocks) {
-      if (!block.name || typeof block.name !== 'string') {
-        throw new Error('Each block must have a non-empty string `name` field.')
-      }
-
-      const existingDesc = existingDescriptorMap.get(block.name)
-      const descriptor: ContentBlockDescriptor = {
-        type: block.type ?? 'content',
-        filetype: block.filetype ?? 'markdown',
-        name: block.name,
-        createdAt: block.createdAt ?? existingDesc?.createdAt ?? now,
-        updatedAt: now,
-      }
-      descriptors.push(descriptor)
-      fileWrites.push({
-        filePath: path.join(folderPath, `${block.name}.md`),
-        content: block.content,
-      })
-    }
 
     const updatedMetadata: OutputFileMetadata = {
       ...input.metadata,
       type: outputType,
       createdAt: existing.createdAt,
       updatedAt: now,
-      content: descriptors,
     }
 
-    // Mark all files as app-written before touching disk
+    // Mark files as app-written before touching disk
     this.markFileAsWritten(configPath)
-    for (const { filePath } of fileWrites) {
-      this.markFileAsWritten(filePath)
-    }
-    for (const name of removedNames) {
-      this.markFileAsWritten(path.join(folderPath, `${name}.md`))
-    }
+    this.markFileAsWritten(contentPath)
 
-    // Delete removed block files, write updated block files, then rewrite config
-    await Promise.all(
-      removedNames.map((name) =>
-        fs.unlink(path.join(folderPath, `${name}.md`)).catch((err) => {
-          // File may already be gone — only throw on unexpected errors
-          if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-            throw err
+    // Write content.md and config.json
+    await Promise.all([
+      fs.writeFile(contentPath, input.content, 'utf-8'),
+      fs.writeFile(configPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8'),
+    ])
+
+    // Clean up any leftover block .md files from the old multi-block format
+    if (Array.isArray(existing.content)) {
+      try {
+        const children = await fs.readdir(folderPath)
+        const cleanups: Promise<void>[] = []
+        for (const child of children) {
+          if (
+            child.endsWith('.md') &&
+            child !== this.CONTENT_FILENAME &&
+            child !== this.LEGACY_DATA_FILENAME
+          ) {
+            const filePath = path.join(folderPath, child)
+            this.markFileAsWritten(filePath)
+            cleanups.push(
+              fs.unlink(filePath).catch((err) => {
+                if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+                  console.warn(`[OutputFilesService] Failed to clean up old block file: ${filePath}`, err)
+                }
+              })
+            )
           }
-        })
-      )
-    )
-    await Promise.all(fileWrites.map(({ filePath, content }) => fs.writeFile(filePath, content, 'utf-8')))
-    await fs.writeFile(configPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8')
+        }
+        if (cleanups.length > 0) {
+          await Promise.all(cleanups)
+          console.log(`[OutputFilesService] Cleaned up ${cleanups.length} old block files in ${folderPath}`)
+        }
+      } catch (err) {
+        console.warn(`[OutputFilesService] Failed to list folder for cleanup: ${folderPath}`, err)
+      }
+    }
 
-    console.log(`[OutputFilesService] Updated output folder: ${folderPath} (${descriptors.length} blocks, ${removedNames.length} removed)`)
+    console.log(`[OutputFilesService] Updated output folder: ${folderPath}`)
     this.emitChangeEvent(folderPath, 'changed')
   }
 
