@@ -24,7 +24,7 @@ import {
   AppDropdownMenuSeparator,
   AppDropdownMenuTrigger,
 } from "@/components/app";
-import { TextEditor } from "@/components/editor/TextEditor";
+import { TextEditor, type TextEditorElement } from "@/components/editor/TextEditor";
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
@@ -129,6 +129,14 @@ const ContentPage: React.FC = () => {
     }
   }, [id, isTrashing, navigate]);
 
+  const handleContinueWithAI = useCallback(() => {
+    // For demonstration, we'll just append some placeholder text.
+    // In a real implementation, this would call an AI service to generate content.
+    const aiGeneratedText = "\n\nThis is some AI-generated content.";
+    setContent((prev) => prev + aiGeneratedText);
+  }, []);
+
+  
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
@@ -188,7 +196,12 @@ const ContentPage: React.FC = () => {
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
         <div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
           {loaded && (
-            <TextEditor key={id} value={content} onChange={handleContentChange} />
+            <TextEditor
+              key={id}
+              value={content}
+              onChange={handleContentChange}
+              onContinueWithAI={handleContinueWithAI}
+            />
           )}
         </div>
       </div>
