@@ -150,6 +150,7 @@ export function PromptInput({
       className="z-50 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 shadow-md"
       style={{ display: 'none', position: 'absolute' }}
     >
+      <Wand2 className="size-4 shrink-0 text-muted-foreground" />
       <AppInput
         ref={inputRef}
         value={prompt}
