@@ -275,6 +275,9 @@ const BASE_EXTENSIONS: AnyExtension[] = [
       if (node.type.name === 'paragraph') {
         return "Type '/' for commands, or press 'space' for AI assistance\u2026";
       }
+      if (node.type.name === 'heading') {
+        return `Heading ${node.attrs.level}`;
+      }
       return '';
     },
   }),
