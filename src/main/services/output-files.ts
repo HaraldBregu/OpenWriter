@@ -663,7 +663,7 @@ export class OutputFilesService implements Disposable {
         },
         usePolling: true,
         interval: 500,
-        // depth=3 covers output/ -> <type>/ -> <date-folder>/ -> <block>.md
+        // depth=3 covers output/ -> <type>/ -> <date-folder>/ -> content.md
         depth: 3,
         alwaysStat: false,
         ignored: (filePath: string) => {
