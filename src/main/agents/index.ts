@@ -42,4 +42,5 @@ export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
   SummarizerAgent,
   ToneAdjusterAgent,
   DemoAgent,
+  TextContinuationAgent,
 ]
