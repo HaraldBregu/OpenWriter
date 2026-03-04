@@ -692,12 +692,12 @@ export class OutputFilesService implements Disposable {
             return !this.DATE_FOLDER_RE.test(parts[1])
           }
 
-          // Depth 3 — allow config.json, legacy DATA.md, and block .md files
+          // Depth 3 — allow config.json, content.md, and legacy DATA.md
           if (parts.length === 3) {
             const name = parts[2]
             if (name === this.CONFIG_FILENAME) return false
+            if (name === this.CONTENT_FILENAME) return false
             if (name === this.LEGACY_DATA_FILENAME) return false
-            if (this.BLOCK_FILE_RE.test(name)) return false
             return true
           }
 
