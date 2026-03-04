@@ -147,7 +147,7 @@ export function PromptInput({
   return (
     <div
       ref={floatingRef}
-      className="z-50 flex items-center gap-2 rounded-md border border-border bg-popover px-3 py-2 shadow-md"
+      className="z-50 flex items-center gap-2 rounded-lg border border-border bg-popover px-3 py-2 shadow-md"
       style={{ display: 'none', position: 'absolute' }}
     >
       <Wand2 className="size-4 shrink-0 text-muted-foreground" />
@@ -155,7 +155,7 @@ export function PromptInput({
         ref={inputRef}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
-        className="border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+        className="border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault()
@@ -167,7 +167,6 @@ export function PromptInput({
           }
         }}
         placeholder="Ask AI anything…"
-        // className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0"
       />
     </div>
   )
