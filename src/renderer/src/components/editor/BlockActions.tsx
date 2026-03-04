@@ -17,7 +17,7 @@ interface BlockActionsProps {
   hoveredBlock: HoveredBlock | null;
 }
 
-export function BlockActions({
+export const BlockActions = React.memo(function BlockActions({
   editor,
   hoveredBlock,
 }: BlockActionsProps): React.JSX.Element {
