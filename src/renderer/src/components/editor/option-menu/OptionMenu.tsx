@@ -6,7 +6,6 @@ import { PluginKey } from '@tiptap/pm/state'
 import { OptionMenuPlugin } from './option-menu-plugin'
 
 interface OptionMenuProps {
-  editor: Editor
   onContinueWithAI?: (content: string) => void
 }
 
