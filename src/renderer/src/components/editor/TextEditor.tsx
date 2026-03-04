@@ -76,6 +76,24 @@ const TextEditor = React.memo(
 
       const editor = useEditor(editorOptions, []);
 
+      const rootRef = useRef<HTMLDivElement>(null);
+
+      useImperativeHandle(ref, () => {
+        const el = rootRef.current!;
+        return Object.assign(el, {
+          insertContent(content: string) {
+            if (!editor || editor.isDestroyed) return;
+            const doc = markdownToTiptapJSON(editor.schema, content);
+            if (doc) {
+              editor.commands.insertContentAt(
+                editor.state.doc.content.size - 1,
+                doc.content.toJSON(),
+              );
+            }
+          },
+        }) as TextEditorHandle;
+      }, [editor]);
+
       useEffect(() => {
         if (!editor || editor.isDestroyed) return;
 
