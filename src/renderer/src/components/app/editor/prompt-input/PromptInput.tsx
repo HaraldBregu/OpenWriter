@@ -155,6 +155,7 @@ export function PromptInput({
         ref={inputRef}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
+        className="border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault()
