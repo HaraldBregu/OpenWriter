@@ -11,7 +11,7 @@ interface BubbleMenuProps {
 
 const pluginKey = new PluginKey('bubbleMenu')
 
-export function BubbleMenu({ editor }: BubbleMenuProps): React.JSX.Element {
+export const BubbleMenu = React.memo(function BubbleMenu({ editor }: BubbleMenuProps): React.JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
