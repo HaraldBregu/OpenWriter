@@ -36,6 +36,8 @@ const ContentPage: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
   const [isTrashing, setIsTrashing] = useState(false);
 
+  const editorRef = useRef<TextEditorElement>(null);
+
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
 
