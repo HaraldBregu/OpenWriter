@@ -275,6 +275,7 @@ const BASE_EXTENSIONS: AnyExtension[] = [
   BulletList,
   OrderedList,
   ListItem,
+  ListKeymap,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === 'paragraph') {
