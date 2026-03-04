@@ -16,6 +16,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         'editor-block-actions':
           'text-muted-foreground/50 transition-all duration-100 hover:bg-muted hover:text-muted-foreground active:scale-90',
+        'prompt-submit': 'bg-blue-500 text-white hover:bg-blue-600',
       },
       size: {
         default: 'h-10 rounded-full px-4 py-2 [&_svg]:size-4',
