@@ -166,7 +166,7 @@ export function PromptInput({
             requestAnimationFrame(() => { if (!editor.isDestroyed) editor.commands.focus() })
           }
         }}
-        placeholder="Ask AI anything…"
+        placeholder="Ask anything and press Enter…"
       />
     </div>
   )
