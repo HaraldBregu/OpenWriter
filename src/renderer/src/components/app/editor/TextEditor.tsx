@@ -359,8 +359,9 @@ function EditorAdapter({
         }
       },
       onUpdate: ({ editor: ed }: { editor: Editor }) => {
-        internalChangeRef.current = true;
-        onChangeRef.current(tiptapDocToMarkdown(ed.state.doc));
+        const md = tiptapDocToMarkdown(ed.state.doc);
+        lastEmittedRef.current = md;
+        onChangeRef.current(md);
       },
       editorProps: {
         attributes: {
