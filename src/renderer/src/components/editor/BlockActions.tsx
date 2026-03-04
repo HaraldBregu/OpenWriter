@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
-import type { Editor } from "@tiptap/core";
 import { Copy, Trash2, Clipboard, MoreVertical } from "lucide-react";
+import { useEditorContext } from "./EditorContext";
 import { cn } from "@/lib/utils";
 import type { HoveredBlock } from "./BlockControls";
 import { AppButton } from "../app/AppButton";
