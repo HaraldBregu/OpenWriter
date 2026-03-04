@@ -57,6 +57,22 @@ const ContentPage: React.FC = () => {
   const isEnhancing =
     taskState?.status === "queued" || taskState?.status === "running";
 
+  // Handle task status transitions: merge on completion, discard on error/cancel
+  useEffect(() => {
+    if (!taskState) return;
+
+    if (taskState.status === "completed") {
+      const buffer = taskState.streamBuffer ?? "";
+      setContent((prev) => prev + buffer);
+      resetTask();
+    } else if (
+      taskState.status === "error" ||
+      taskState.status === "cancelled"
+    ) {
+      resetTask();
+    }
+  }, [taskState, resetTask]);
+
   // Ref to track latest state for the debounced save
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
