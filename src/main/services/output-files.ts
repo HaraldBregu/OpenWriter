@@ -143,6 +143,7 @@ export class OutputFilesService implements Disposable {
 
   private readonly OUTPUT_DIR_NAME = 'output'
   private readonly CONFIG_FILENAME = 'config.json'
+  private readonly CONTENT_FILENAME = 'content.md'
   /** Legacy single-content file — kept for migration detection only. */
   private readonly LEGACY_DATA_FILENAME = 'DATA.md'
   private readonly IGNORE_WRITE_WINDOW_MS = 2000
@@ -156,8 +157,6 @@ export class OutputFilesService implements Disposable {
    */
   private readonly DATE_FOLDER_RE =
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$|^\d{4}-\d{2}-\d{2}_\d{6}$/i
-  /** Regex matching block filenames: <uuid>.md where uuid contains only hex/hyphens */
-  private readonly BLOCK_FILE_RE = /^[0-9a-f-]+\.md$/i
 
   private debounceTimers = new Map<string, NodeJS.Timeout>()
 
