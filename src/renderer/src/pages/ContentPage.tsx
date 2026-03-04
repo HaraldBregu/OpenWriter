@@ -196,6 +196,7 @@ const ContentPage: React.FC = () => {
         <div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
           {loaded && (
             <TextEditor
+              ref={editorRef}
               key={id}
               value={content}
               onChange={handleContentChange}
