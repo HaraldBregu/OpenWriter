@@ -44,10 +44,14 @@ const ContentPage: React.FC = () => {
   const [isTrashing, setIsTrashing] = useState(false);
 
   // Task lifecycle via Redux
-  const { taskId, submit: submitTask, reset: resetTask } = useTaskSubmit<
-    { prompt: string },
-    { content?: string }
-  >("agent-sentence-completer", { prompt: content });
+  const {
+    taskId,
+    submit: submitTask,
+    reset: resetTask,
+  } = useTaskSubmit<{ prompt: string }, { content?: string }>(
+    "agent-sentence-completer",
+    { prompt: content },
+  );
 
   // Read task state directly from the Redux store via selector
   const taskState = useAppSelector((state) =>
@@ -60,8 +64,12 @@ const ContentPage: React.FC = () => {
   // Handle task status transitions: merge on completion, discard on error/cancel
   useEffect(() => {
     if (!taskState) return;
+    console.log("[ContentPage] Observed task state change:", taskState);
 
     if (taskState.status === "completed") {
+      const result = taskState.result as { content?: string } | undefined;
+      const aiContent = result?.content ?? "";
+      if (aiContent) setContent((prev) => prev + aiContent);
       resetTask();
     } else if (
       taskState.status === "error" ||
@@ -162,7 +170,6 @@ const ContentPage: React.FC = () => {
   const handleContinueWithAI = useCallback(
     async (content: string) => {
       if (!id) return;
-      console.log("Submitting content to AI for enhancement:", content);
       await submitTask({ prompt: content });
     },
     [id, submitTask],
@@ -252,7 +259,9 @@ const ContentPage: React.FC = () => {
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
         <div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
           <TextEditor
-            value={isEnhancing ? content + (taskState?.streamBuffer ?? "") : content}
+            value={
+              isEnhancing ? content + (taskState?.streamBuffer ?? "") : content
+            }
             onChange={handleContentChange}
             disabled={isEnhancing}
             onContinueWithAI={handleContinueWithAI}
