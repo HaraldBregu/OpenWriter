@@ -5,13 +5,10 @@ import { PluginKey } from '@tiptap/pm/state'
 import { AppButton } from '../../app/AppButton'
 import { useEditorContext } from '../EditorContext'
 
-interface BubbleMenuProps {
-  editor: Editor
-}
-
 const pluginKey = new PluginKey('bubbleMenu')
 
-export const BubbleMenu = React.memo(function BubbleMenu({ editor }: BubbleMenuProps): React.JSX.Element {
+export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
+  const { editor } = useEditorContext()
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
