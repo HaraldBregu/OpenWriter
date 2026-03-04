@@ -116,25 +116,23 @@ const APP_DEFAULTS = {
  * OutputFilesService manages output content files in the workspace.
  *
  * Responsibilities:
- *   - Save output entries as folder-based format (config.json + per-block .md files)
+ *   - Save output entries as folder-based format (config.json + content.md)
  *   - Load all output files from workspace (grouped by type or flat)
  *   - Load individual files by type and ID
  *   - Delete output files / folders
  *   - Watch for external file changes
  *   - Organize files by type (output/<type>/)
  *   - Prevent infinite loops with file watcher
- *   - Transparently migrate legacy DATA.md format on first load
+ *   - Transparently migrate legacy formats on first load
  *
- * File Structure (new):
+ * File Structure:
  *   <workspace>/output/<type>/<uuid>/
- *     +-- config.json          (metadata + content descriptor array)
- *     +-- <block-uuid>.md      (one file per content block)
- *     +-- <block-uuid>.md      ...
+ *     +-- config.json          (metadata only)
+ *     +-- content.md           (single content file)
  *
- * File Structure (legacy — migrated on load):
- *   <workspace>/output/<type>/<YYYY-MM-DD_HHmmss>/
- *     +-- config.json          (old schema, no `content` array)
- *     +-- DATA.md              (single monolithic markdown file)
+ * Legacy formats (migrated on load):
+ *   - Multi-block: config.json with `content[]` array + multiple `<uuid>.md` files
+ *   - DATA.md: config.json + DATA.md (single monolithic markdown file)
  */
 export class OutputFilesService implements Disposable {
   private watcher: FSWatcher | null = null
