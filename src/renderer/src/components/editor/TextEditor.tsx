@@ -229,30 +229,24 @@ const TextEditor = React.memo(
               style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
             >
               {editor && (
-                <>
+                <EditorProvider editor={editor}>
                   <BlockControls
-                    editor={editor}
                     containerRef={containerRef}
                     hoveredBlock={hoveredBlock}
                   />
                   <BlockActions
-                    editor={editor}
                     containerRef={containerRef}
                     hoveredBlock={hoveredBlock}
                   />
-                  <BubbleMenu editor={editor} />
-                  <OptionMenu
-                    editor={editor}
-                    onContinueWithAI={onContinueWithAI}
-                  />
+                  <BubbleMenu />
+                  <OptionMenu onContinueWithAI={onContinueWithAI} />
                   <PromptInput
-                    editor={editor}
                     containerRef={containerRef}
                     onSubmit={(prompt, _pos) =>
                       console.log("PromptInput submit:", prompt)
                     }
                   />
-                </>
+                </EditorProvider>
               )}
               <EditorContent editor={editor} />
             </div>
