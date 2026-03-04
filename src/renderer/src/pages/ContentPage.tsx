@@ -136,13 +136,9 @@ const ContentPage: React.FC = () => {
   // ---------------------------------------------------------------------------
 
   const handleContinueWithAI = useCallback(async (htmlContent: string) => {
-    if (isEnhancing || !id) return
-
-    // Seed the taskEventBus so streamed tokens are appended to original content
-    initTaskContent(id, htmlContent)
-
-    await task.submit({ prompt: htmlContent }, { taskId: id })
-  }, [isEnhancing, id, task])
+    if (!id) return
+    await task.submit({ prompt: htmlContent })
+  }, [id, task.submit])
 
   // ---------------------------------------------------------------------------
   // Move to Trash
