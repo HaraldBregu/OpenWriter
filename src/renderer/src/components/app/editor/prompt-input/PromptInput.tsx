@@ -173,7 +173,11 @@ export function PromptInput({
         variant="prompt-submit"
         size="prompt-icon-sm"
         className="shrink-0"
-        onClick={submit}
+        disabled={!prompt.trim()}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          submit()
+        }}
       >
         <ArrowUp />
       </AppButton>
