@@ -76,7 +76,7 @@ const ContentPage: React.FC = () => {
     ) {
       resetTask();
     }
-  }, [taskState?.status, taskState?.result, resetTask]);
+  }, [taskState, resetTask]);
 
   // ---------------------------------------------------------------------------
   // Load from disk
