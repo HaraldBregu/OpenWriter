@@ -452,7 +452,7 @@ export class DocumentsWatcherService implements Disposable {
 
     const removed = before - this.ignoredWrites.length
     if (removed > 0) {
-      console.log(`[DocumentsWatcherService] Cleaned up ${removed} old ignored writes`)
+      this.logger?.info('DocumentsWatcherService', `Cleaned up ${removed} old ignored writes`)
     }
   }
 }
