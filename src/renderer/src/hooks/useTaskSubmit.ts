@@ -123,6 +123,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   const result: TResult | undefined = taskState?.result as TResult | undefined
   const queuePosition: number | undefined = taskState?.queuePosition
   const durationMs: number | undefined = taskState?.durationMs
+  const metadata: unknown | undefined = taskState?.metadata
 
   // Release the running guard once a terminal status is observed via Redux.
   useEffect(() => {
