@@ -824,7 +824,7 @@ export class OutputFilesService implements Disposable {
   private markFileAsWritten(filePath: string): void {
     const normalized = path.normalize(filePath)
     this.ignoredWrites.add(normalized)
-    console.log('[OutputFilesService] Marked as written:', normalized)
+    this.logger?.info('OutputFilesService', `Marked as written: ${normalized}`)
 
     setTimeout(() => {
       this.ignoredWrites.delete(normalized)
