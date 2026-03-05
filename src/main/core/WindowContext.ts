@@ -71,7 +71,6 @@ export class WindowContext {
     globalContainer: ServiceContainer,
     serviceFactory: WindowScopedServiceFactory
   ): Promise<void> {
-    const logger = globalContainer.get<any>('logger');
     try {
       const storeService = globalContainer.get<StoreService>('store');
       const workspaceService = new WorkspaceService(storeService, this.eventBus);
