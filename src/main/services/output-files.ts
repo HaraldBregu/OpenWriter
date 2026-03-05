@@ -719,7 +719,7 @@ export class OutputFilesService implements Disposable {
 
       this.currentOutputDir = outputDir
     } catch (error) {
-      console.error('[OutputFilesService] Failed to start watching:', error)
+      this.logger?.error('OutputFilesService', 'Failed to start watching', error)
       this.watcher = null
       this.currentOutputDir = null
       throw error
