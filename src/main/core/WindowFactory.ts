@@ -17,17 +17,17 @@ export class WindowFactory {
   private readonly preloadPath: string
   private readonly iconPath: string
 
-  constructor() {
+  constructor(private readonly logger?: LoggerService) {
     // Use path.resolve to ensure absolute path for preload
     // Output as .js (CommonJS) for Electron preload compatibility
     this.preloadPath = path.resolve(__dirname, '../preload/index.js')
     this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png')
-    console.log('[WindowFactory] Preload path:', this.preloadPath)
+    this.logger?.info('WindowFactory', `Preload path: ${this.preloadPath}`)
     // Verify preload file exists
     try {
       const { existsSync } = require('fs')
       const exists = existsSync(this.preloadPath)
-      console.log('[WindowFactory] Preload file exists:', exists)
+      this.logger?.info('WindowFactory', `Preload file exists: ${exists}`)
     } catch {
       // Silent fail
     }
