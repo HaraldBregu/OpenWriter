@@ -331,7 +331,7 @@ export class WorkspaceMetadataService implements Disposable {
       this.workspaceEventUnsubscribe = null
     }
     this.flush()
-    console.log('[WorkspaceMetadataService] Destroyed')
+    this.logger?.info('WorkspaceMetadataService', 'Destroyed')
   }
 
   // ---------------------------------------------------------------------------
