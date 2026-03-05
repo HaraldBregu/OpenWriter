@@ -446,7 +446,7 @@ export class OutputFilesService implements Disposable {
         }
         if (cleanups.length > 0) {
           await Promise.all(cleanups)
-          console.log(`[OutputFilesService] Cleaned up ${cleanups.length} old block files in ${folderPath}`)
+          this.logger?.info('OutputFilesService', `Cleaned up ${cleanups.length} old block files in ${folderPath}`)
         }
       } catch (err) {
         console.warn(`[OutputFilesService] Failed to list folder for cleanup: ${folderPath}`, err)
