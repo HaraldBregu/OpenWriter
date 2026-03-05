@@ -150,6 +150,10 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
 
       if (!chunk) continue
 
+      // Skip the final complete AIMessage that LangGraph emits after all
+      // streaming AIMessageChunk deltas. Only process incremental chunks.
+      if (chunk instanceof AIMessage) continue
+
       // Extract text token from the chunk content
       const token = extractTokenFromChunk(
         typeof chunk === 'object' && chunk !== null && 'content' in chunk
