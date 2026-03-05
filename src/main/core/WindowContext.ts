@@ -102,6 +102,8 @@ export class WindowContext {
    * Cleanup window-scoped services when window is closed.
    */
   async destroy(): Promise<void> {
+    const logger = this.constructor.name
+    // Note: logger not available during destroy (may be shutting down)
     console.log(`[WindowContext] Destroying context for window ${this.windowId}`)
     await this.container.shutdown()
   }
