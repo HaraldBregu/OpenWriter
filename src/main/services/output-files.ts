@@ -796,7 +796,7 @@ export class OutputFilesService implements Disposable {
    */
   private handleWatcherError(error: unknown): void {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error('[OutputFilesService] Watcher error:', error)
+    this.logger?.error('OutputFilesService', 'Watcher error', error)
 
     this.eventBus.broadcast('output:watcher-error', {
       error: errorMessage,
