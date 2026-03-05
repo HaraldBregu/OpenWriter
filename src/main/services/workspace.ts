@@ -165,7 +165,7 @@ export class WorkspaceService implements Disposable {
    */
   removeRecent(workspacePath: string): void {
     this.store.removeRecentWorkspace(workspacePath)
-    console.log('[WorkspaceService] Removed from recent workspaces:', workspacePath)
+    this.logger?.info('WorkspaceService', `Removed from recent workspaces: ${workspacePath}`)
   }
 
   /**
