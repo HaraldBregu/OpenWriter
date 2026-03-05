@@ -110,12 +110,7 @@ export class WorkspaceMetadataService implements Disposable {
 
     if (workspacePath) {
       const metadata = this.readMetadataFile(workspacePath)
-      console.log(
-        '[WorkspaceMetadataService] Initialized with',
-        metadata?.settings.directories.length ?? 0,
-        'directories from',
-        workspacePath
-      )
+      this.logger?.info('WorkspaceMetadataService', `Initialized with ${metadata?.settings.directories.length ?? 0} directories from ${workspacePath}`)
     } else {
       this.logger?.info('WorkspaceMetadataService', 'No workspace set, starting empty')
     }
