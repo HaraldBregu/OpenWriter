@@ -45,7 +45,7 @@ const ContentPage: React.FC = () => {
 
   const editorRef = useRef<TextEditorElement>(null);
 
-  const task = useTaskSubmit<{ prompt: string }>("agent-text-continuation", {
+  const task = useTaskSubmit<{ prompt: string }>("agent-sentence-completer", {
     prompt: content,
   });
 
@@ -90,7 +90,6 @@ const ContentPage: React.FC = () => {
       debounce(() => {
         if (!id || !loaded) return;
         const { title: t, content: c } = stateRef.current;
-        console.log("[ContentPage] Persisting to disk...", { id, title: t, content: c });
         window.workspace.updateOutput({
           type: "writings",
           id,
@@ -144,7 +143,7 @@ const ContentPage: React.FC = () => {
   useEffect(() => {
     if (!task.taskId) return;
     const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
-      console.log("[ContentPage] Task event:", task.taskId, snap);
+      editorRef.current?.insertText(snap.streamedContent, { preventEditorUpdate: false });
     });
     return unsub;
   }, [task.taskId]);

@@ -691,6 +691,7 @@ function SentenceCompleterTab() {
 
   const handleRun = useCallback(() => {
     setOutput('')
+    console.log('Submitting task with prompt:', documentText)
     task.submit({ prompt: documentText })
   }, [task, documentText])
 
