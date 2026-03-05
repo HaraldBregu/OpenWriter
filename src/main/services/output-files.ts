@@ -558,10 +558,7 @@ export class OutputFilesService implements Disposable {
       // shell.trashItem throws on platforms where moving to trash is not
       // supported (some Linux configurations without a trash daemon).
       // Fall back to permanent deletion so the operation always succeeds.
-      console.warn(
-        `[OutputFilesService] shell.trashItem failed for ${folderPath}, falling back to permanent delete:`,
-        trashErr
-      )
+      this.logger?.warn('OutputFilesService', `shell.trashItem failed for ${folderPath}, falling back to permanent delete`, trashErr)
       await fs.rm(folderPath, { recursive: true })
     }
 
