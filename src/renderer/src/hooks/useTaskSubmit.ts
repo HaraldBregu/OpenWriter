@@ -233,25 +233,42 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		setTaskId(null);
 	}, [dispatch]);
 
-	return {
-		taskId,
-		status,
-		progress,
-		progressMessage,
-		error,
-		result,
-		queuePosition,
-		durationMs,
-		metadata,
-		submit,
-		cancel,
-		updatePriority,
-		reset,
-		isIdle: taskId === null,
-		isQueued: status === 'queued',
-		isRunning: status === 'running',
-		isCompleted: status === 'completed',
-		isError: status === 'error',
-		isCancelled: status === 'cancelled',
-	};
+	return useMemo(
+		() => ({
+			taskId,
+			status,
+			progress,
+			progressMessage,
+			error,
+			result,
+			queuePosition,
+			durationMs,
+			metadata,
+			submit,
+			cancel,
+			updatePriority,
+			reset,
+			isIdle: taskId === null,
+			isQueued: status === 'queued',
+			isRunning: status === 'running',
+			isCompleted: status === 'completed',
+			isError: status === 'error',
+			isCancelled: status === 'cancelled',
+		}),
+		[
+			taskId,
+			status,
+			progress,
+			progressMessage,
+			error,
+			result,
+			queuePosition,
+			durationMs,
+			metadata,
+			submit,
+			cancel,
+			updatePriority,
+			reset,
+		]
+	);
 }
