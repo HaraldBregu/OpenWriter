@@ -157,14 +157,18 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			runningRef.current = true;
 
 			const mergedOptions: TaskSubmitOptions = {
-				...options,
+				...optionsRef.current,
 				...submitOptions,
 			};
 
 			let resolvedTaskId: string;
 
 			try {
-				const ipcResult = await window.task.submit(type, inputOverride ?? input, mergedOptions);
+				const ipcResult = await window.task.submit(
+					type,
+					inputOverride ?? inputRef.current,
+					mergedOptions
+				);
 
 				if (!ipcResult.success) {
 					runningRef.current = false;
@@ -185,7 +189,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 				taskAdded({
 					taskId: resolvedTaskId,
 					type,
-					priority: mergedOptions.priority ?? options?.priority ?? 'normal',
+					priority: mergedOptions.priority ?? optionsRef.current?.priority ?? 'normal',
 					metadata: submitOptions?.metadata,
 				})
 			);
@@ -193,7 +197,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			taskIdRef.current = resolvedTaskId;
 			setTaskId(resolvedTaskId);
 		},
-		[dispatch, type, input, options]
+		[dispatch, type]
 	);
 
 	const cancel = useCallback((): void => {
