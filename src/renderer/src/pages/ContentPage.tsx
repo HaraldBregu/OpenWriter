@@ -22,8 +22,8 @@ import {
 } from '@/components/app';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import { useTaskSubmit } from '../hooks/useTaskSubmit';
-import { subscribeToTask } from '../services/taskEventBus';
-import type { TaskSnapshot } from '../services/taskEventBus';
+// import { subscribeToTask } from '../services/taskEventBus';
+// import type { TaskSnapshot } from '../services/taskEventBus';
 import { debounce } from 'lodash';
 
 const ContentPage: React.FC = () => {
@@ -145,14 +145,18 @@ const ContentPage: React.FC = () => {
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
 
-	useEffect(() => {
-		if (!task.taskId) return;
-		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
-			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, { preventEditorUpdate: !completed, editable: completed });
-		});
-		return unsub;
-	}, [task.taskId]);
+  console.log('ContentPage rendered');
+	// useEffect(() => {
+	// 	if (!task.taskId) return;
+	// 	const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+	// 		// const completed = snap.status === 'completed';
+  //     console.log('Task snapshot received:', snap);
+	// 		// editorRef.current?.insertText(snap.streamedContent, {
+	// 		// 	preventEditorUpdate: !completed,
+	// 		// });
+	// 	});
+	// 	return unsub;
+	// }, [task.taskId]);
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
@@ -269,6 +273,7 @@ const ContentPage: React.FC = () => {
 				<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 					{loaded && (
 						<TextEditor
+            disabled={task.isRunning}
 							ref={editorRef}
 							key={id}
 							value={content}
