@@ -40,7 +40,8 @@ export class WorkspaceService implements Disposable {
 
   constructor(
     private readonly store: StoreService,
-    private readonly eventBus: EventBus
+    private readonly eventBus: EventBus,
+    private readonly logger?: LoggerService
   ) {}
 
   /**
