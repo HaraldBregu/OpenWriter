@@ -531,7 +531,7 @@ export class OutputFilesService implements Disposable {
       }
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.log(`[OutputFilesService] Folder already gone, nothing to trash: ${folderPath}`)
+        this.logger?.info('OutputFilesService', `Folder already gone, nothing to trash: ${folderPath}`)
         return
       }
       throw new Error(`Failed to access output folder: ${(err as Error).message}`)
