@@ -188,6 +188,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
           taskId: resolvedTaskId,
           type,
           priority: mergedOptions.priority ?? options?.priority ?? 'normal',
+          metadata: submitOptions?.metadata,
         })
       )
 
