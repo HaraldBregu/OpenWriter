@@ -60,7 +60,8 @@ export async function* executeAIAgentsStream(
   } = input;
   const { apiKey, modelName } = provider;
 
-  logger?.info(LOG_PREFIX,
+  logger?.info(
+    LOG_PREFIX,
     `run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
   );
 
@@ -111,7 +112,10 @@ export async function* executeAIAgentsStream(
       }
     }
 
-    logger?.info(LOG_PREFIX, `run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`);
+    logger?.info(
+      LOG_PREFIX,
+      `run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`
+    );
     yield { type: 'done', content: fullContent, tokenCount, runId };
   } catch (error: unknown) {
     const kind = classifyError(error);
@@ -182,7 +186,10 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
       }
     }
 
-    logger?.info(LOG_PREFIX, `run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`);
+    logger?.info(
+      LOG_PREFIX,
+      `run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`
+    );
     yield { type: 'done', content: fullContent, tokenCount, runId };
   } catch (error: unknown) {
     const kind = classifyError(error);

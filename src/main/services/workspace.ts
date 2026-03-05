@@ -246,7 +246,10 @@ export class WorkspaceService implements Disposable {
       }
 
       if (!this.isValidDirectory(this.currentPath)) {
-        this.logger?.warn('WorkspaceService', `Workspace folder no longer exists: ${this.currentPath}`);
+        this.logger?.warn(
+          'WorkspaceService',
+          `Workspace folder no longer exists: ${this.currentPath}`
+        );
         this.handleWorkspaceGone(this.currentPath);
       }
     }, WorkspaceService.VALIDATION_INTERVAL_MS);
@@ -295,6 +298,9 @@ export class WorkspaceService implements Disposable {
     // Broadcast to all renderer windows
     this.eventBus.broadcast('workspace:deleted', deletedEvent);
 
-    this.logger?.info('WorkspaceService', `Workspace gone event broadcast: ${deletedPath} (${reason})`);
+    this.logger?.info(
+      'WorkspaceService',
+      `Workspace gone event broadcast: ${deletedPath} (${reason})`
+    );
   }
 }

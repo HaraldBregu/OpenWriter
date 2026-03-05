@@ -126,7 +126,7 @@ export class WindowContextManager {
   constructor(
     private readonly globalContainer: ServiceContainer,
     private readonly eventBus: EventBus
-  ) { }
+  ) {}
 
   /**
    * Create a new window context for a BrowserWindow.
