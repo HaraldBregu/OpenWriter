@@ -589,7 +589,7 @@ export class OutputFilesService implements Disposable {
     }
 
     this.stopWatching().catch((error) => {
-      console.error('[OutputFilesService] Error during destroy:', error)
+      this.logger?.error('OutputFilesService', 'Error during destroy', error)
     })
 
     console.log('[OutputFilesService] Destroyed')
