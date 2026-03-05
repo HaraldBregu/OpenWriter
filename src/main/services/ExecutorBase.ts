@@ -31,7 +31,10 @@ export interface ExecutionRecord {
 export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposable {
   protected activeExecutions = new Map<string, T>()
 
-  constructor(protected readonly eventBus: EventBus) {}
+  constructor(
+    protected readonly eventBus: EventBus,
+    protected readonly logger?: LoggerService
+  ) {}
 
   /**
    * Start a new execution. Subclasses implement domain-specific startup.
