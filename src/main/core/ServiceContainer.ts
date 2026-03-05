@@ -53,12 +53,13 @@ export class ServiceContainer {
    * Gracefully shut down all disposable services in reverse registration order.
    */
   async shutdown(): Promise<void> {
-    console.log(`[ServiceContainer] Shutting down ${this.disposables.length} services...`);
+    const logger = this.services.get('logger') as { info(s: string, m: string, d?: unknown): void; error(s: string, m: string, d?: unknown): void } | undefined;
+    logger?.info('ServiceContainer', `Shutting down ${this.disposables.length} services...`);
     for (const disposable of [...this.disposables].reverse()) {
       try {
         disposable.destroy();
       } catch (err) {
-        console.error('[ServiceContainer] Error during shutdown:', err);
+        logger?.error('ServiceContainer', 'Error during shutdown', err);
       }
     }
     this.services.clear();
