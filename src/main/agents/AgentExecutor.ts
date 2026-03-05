@@ -139,7 +139,7 @@ interface GraphStreamInput {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
   signal?: AbortSignal;
-  log: { info: (msg: string) => void; error: (msg: string) => void };
+  logger?: LoggerService;
 }
 
 async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<AgentStreamEvent> {
