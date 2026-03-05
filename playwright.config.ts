@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test'
+import { defineConfig } from '@playwright/test';
 
 /**
  * Playwright configuration for Electron E2E tests.
@@ -15,7 +15,7 @@ export default defineConfig({
 
   /* Expect timeout for assertions */
   expect: {
-    timeout: 10_000
+    timeout: 10_000,
   },
 
   /* Retry failed tests once in CI, never locally */
@@ -28,11 +28,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   /* Reporter configuration */
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }]
-  ],
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
 
   /* Output directory for test artifacts (screenshots, traces) */
-  outputDir: 'test-results'
-})
+  outputDir: 'test-results',
+});

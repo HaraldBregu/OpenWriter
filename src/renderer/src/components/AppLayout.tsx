@@ -1,16 +1,16 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useLanguage } from "../hooks/useLanguage";
-import { useWorkspaceListener } from "../hooks/useWorkspaceListener";
-import { useWorkspaceValidation } from "../hooks/useWorkspaceValidation";
-import { useCreateWriting } from "../hooks/useCreateWriting";
-import { useAppDispatch, useAppSelector } from "../store";
-import { selectWorkspaceName } from "../store/workspace/selectors";
-import { loadCurrentWorkspace } from "../store/workspace/actions";
-import { selectAllWritings } from "../store/writings/selectors";
-import { writingAdded } from "../store/writings/actions";
-import { TitleBar } from "./TitleBar";
+import React, { useState, useCallback, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../hooks/useLanguage';
+import { useWorkspaceListener } from '../hooks/useWorkspaceListener';
+import { useWorkspaceValidation } from '../hooks/useWorkspaceValidation';
+import { useCreateWriting } from '../hooks/useCreateWriting';
+import { useAppDispatch, useAppSelector } from '../store';
+import { selectWorkspaceName } from '../store/workspace/selectors';
+import { loadCurrentWorkspace } from '../store/workspace/actions';
+import { selectAllWritings } from '../store/writings/selectors';
+import { writingAdded } from '../store/writings/actions';
+import { TitleBar } from './TitleBar';
 import {
   AppPopover,
   AppPopoverContent,
@@ -30,8 +30,8 @@ import {
   AppSidebarHeader,
   AppSidebarFooter,
   useSidebar,
-} from "./app";
-import logoIcon from "@resources/icons/icon.png";
+} from './app';
+import logoIcon from '@resources/icons/icon.png';
 import {
   Settings,
   User,
@@ -45,7 +45,7 @@ import {
   Bot,
   PenLine,
   Plus,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface AppLayoutProps {
   readonly children: React.ReactNode;
@@ -64,12 +64,12 @@ interface SettingsMenuItem {
 }
 
 const settingsMenuItems: SettingsMenuItem[] = [
-  { titleKey: "menu.account", icon: User },
-  { titleKey: "menu.settings", icon: Settings, url: "/settings" },
-  { titleKey: "menu.notifications", icon: Bell },
-  { titleKey: "menu.privacy", icon: Shield },
-  { titleKey: "menu.billing", icon: CreditCard },
-  { titleKey: "menu.helpAndSupport", icon: HelpCircle },
+  { titleKey: 'menu.account', icon: User },
+  { titleKey: 'menu.settings', icon: Settings, url: '/settings' },
+  { titleKey: 'menu.notifications', icon: Bell },
+  { titleKey: 'menu.privacy', icon: Shield },
+  { titleKey: 'menu.billing', icon: CreditCard },
+  { titleKey: 'menu.helpAndSupport', icon: HelpCircle },
 ];
 
 // ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ const settingsMenuItems: SettingsMenuItem[] = [
 // ---------------------------------------------------------------------------
 
 // Stub — replace with real auth state
-const currentUser: { name: string } | null = { name: "John Doe" };
+const currentUser: { name: string } | null = { name: 'John Doe' };
 
 const SettingsPopover = React.memo(function SettingsPopover() {
   const { t } = useTranslation();
@@ -89,7 +89,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
           className="flex w-full items-center gap-2 rounded-md px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
           <span className="flex-1 truncate text-sm text-left">
-            {currentUser ? currentUser.name : t("common.signIn")}
+            {currentUser ? currentUser.name : t('common.signIn')}
           </span>
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
         </button>
@@ -100,7 +100,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
             const Icon = item.icon;
             const label = t(item.titleKey);
             const className =
-              "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
+              'flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors';
             return item.url ? (
               <Link key={item.titleKey} to={item.url} className={className}>
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -122,7 +122,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
                 className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4 shrink-0" />
-                <span>{t("common.logOut")}</span>
+                <span>{t('common.logOut')}</span>
               </button>
             </>
           )}
@@ -131,7 +131,7 @@ const SettingsPopover = React.memo(function SettingsPopover() {
     </AppPopover>
   );
 });
-SettingsPopover.displayName = "SettingsPopover";
+SettingsPopover.displayName = 'SettingsPopover';
 
 // ---------------------------------------------------------------------------
 // AppLayoutInner — rendered inside AppSidebarProvider so it can call useSidebar
@@ -169,14 +169,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
       dispatch(
         writingAdded({
           id: result.id,
-          title: "",
-          path: "",
+          title: '',
+          path: '',
           createdAt: Date.now(),
           updatedAt: Date.now(),
-        }),
+        })
       );
     },
-    [dispatch],
+    [dispatch]
   );
 
   const { createWriting, isCreating: creatingWriting } = useCreateWriting({
@@ -185,7 +185,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
   const displayWorkspaceName = workspaceNameFromPath
     ? `${workspaceNameFromPath} (workspace)`
-    : "OpenWriter";
+    : 'OpenWriter';
 
   return (
     <>
@@ -199,14 +199,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
               to="/home"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <img
-                src={logoIcon}
-                alt="OpenWriter"
-                className="h-6 w-6 rounded-full object-cover"
-              />
-              <span className="text-md font-normal tracking-tight">
-                OpenWriter
-              </span>
+              <img src={logoIcon} alt="OpenWriter" className="h-6 w-6 rounded-full object-cover" />
+              <span className="text-md font-normal tracking-tight">OpenWriter</span>
             </Link>
           </AppSidebarHeader>
 
@@ -224,7 +218,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     >
                       <Plus className="h-3.5 w-3.5 shrink-0" />
                       <span className="flex-1 truncate">
-                        {t("sidebar.newWriting") || "New Writing"}
+                        {t('sidebar.newWriting') || 'New Writing'}
                       </span>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
@@ -240,9 +234,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                 className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors"
                 onClick={() => setWritingsOpen((prev) => !prev)}
               >
-                {t("sidebar.writings") || "Writings"}
+                {t('sidebar.writings') || 'Writings'}
                 <ChevronRight
-                  className={`h-3 w-3 shrink-0 transition-transform duration-200 mr-1 ${writingsOpen ? "rotate-90" : ""}`}
+                  className={`h-3 w-3 shrink-0 transition-transform duration-200 mr-1 ${writingsOpen ? 'rotate-90' : ''}`}
                 />
               </AppSidebarGroupLabel>
               {writingsOpen && (
@@ -258,9 +252,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                           <Link to={`/content/${w.id}`}>
                             <PenLine className="h-3.5 w-3.5 shrink-0" />
                             <span className="flex-1 truncate">
-                              {w.title ||
-                                t("sidebar.untitledWriting") ||
-                                "Untitled"}
+                              {w.title || t('sidebar.untitledWriting') || 'Untitled'}
                             </span>
                           </Link>
                         </AppSidebarMenuButton>
@@ -281,7 +273,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     <AppSidebarMenuButton
                       asChild
                       className="h-9 px-3"
-                      isActive={location.pathname === "/debug"}
+                      isActive={location.pathname === '/debug'}
                     >
                       <Link to="/debug">
                         <Bug className="h-3.5 w-3.5 shrink-0" />
@@ -294,17 +286,14 @@ function AppLayoutInner({ children }: AppLayoutProps) {
                     <AppSidebarMenuButton
                       asChild
                       className="h-9 px-3"
-                      isActive={location.pathname === "/agents"}
+                      isActive={location.pathname === '/agents'}
                     >
                       <Link to="/agents">
                         <Bot className="h-3.5 w-3.5 shrink-0" />
-                        <span className="flex-1 truncate">
-                          {t("common.agents") || "Agents"}
-                        </span>
+                        <span className="flex-1 truncate">{t('common.agents') || 'Agents'}</span>
                       </Link>
                     </AppSidebarMenuButton>
                   </AppSidebarMenuItem>
-
                 </AppSidebarMenu>
               </AppSidebarGroupContent>
             </AppSidebarGroup>
@@ -317,9 +306,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         </AppSidebar>
 
         <AppSidebarInset className="flex flex-col flex-1 min-h-0 min-w-0">
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-            {children}
-          </main>
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-background">{children}</main>
         </AppSidebarInset>
       </div>
     </>

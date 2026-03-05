@@ -1,71 +1,67 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types'
-import type { TaskStatus, TaskProgressState } from '@/store/tasks/types'
-import { taskAdded, taskRemoved } from '@/store/tasks/actions'
-import { selectTaskById } from '@/store/tasks/selectors'
-import { useAppDispatch, useAppSelector } from '@/store'
+import { useState, useEffect, useCallback, useRef } from 'react';
+import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
+import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
+import { taskAdded, taskRemoved } from '@/store/tasks/actions';
+import { selectTaskById } from '@/store/tasks/selectors';
+import { useAppDispatch, useAppSelector } from '@/store';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export type { TaskStatus, TaskProgressState }
+export type { TaskStatus, TaskProgressState };
 
 export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
   /** Task ID assigned by the main process. Null before submit() is called. */
-  taskId: string | null
+  taskId: string | null;
   /** Current lifecycle status. Null before submit() is called. */
-  status: TaskStatus | null
+  status: TaskStatus | null;
   /** Progress state — percent 0–100 and optional message. */
-  progress: TaskProgressState
+  progress: TaskProgressState;
   /** Optional human-readable progress message from the main process. */
-  progressMessage: string | undefined
+  progressMessage: string | undefined;
   /** Error message when status === 'error'. */
-  error: string | undefined
+  error: string | undefined;
   /** Result payload from the completed event, typed by TResult. */
-  result: TResult | undefined
+  result: TResult | undefined;
   /** Current queue position when status is 'queued'. */
-  queuePosition: number | undefined
+  queuePosition: number | undefined;
   /** Wall-clock duration of the task in milliseconds, set on completion. */
-  durationMs: number | undefined
+  durationMs: number | undefined;
   /** Caller-supplied metadata stored alongside the task in Redux. */
-  metadata: unknown | undefined
+  metadata: unknown | undefined;
   /** Submit the task. */
-  submit: (input: TInput, options?: TaskOptions) => Promise<void>
+  submit: (input: TInput, options?: TaskOptions) => Promise<void>;
   /** Cancel the current task. No-op if not running. */
-  cancel: () => void
+  cancel: () => void;
   /** Change the priority of the queued task. */
-  updatePriority: (priority: TaskPriority) => void
+  updatePriority: (priority: TaskPriority) => void;
   /** Reset hook back to idle state. No-op while a task is active. */
-  reset: () => void
+  reset: () => void;
   /** True when no task has been submitted yet. */
-  isIdle: boolean
+  isIdle: boolean;
   /** True when status === 'queued'. */
-  isQueued: boolean
+  isQueued: boolean;
   /** True when status === 'running'. */
-  isRunning: boolean
+  isRunning: boolean;
   /** True when status === 'completed'. */
-  isCompleted: boolean
+  isCompleted: boolean;
   /** True when status === 'error'. */
-  isError: boolean
+  isError: boolean;
   /** True when status === 'cancelled'. */
-  isCancelled: boolean
+  isCancelled: boolean;
 }
 
 export interface TaskOptions {
-  priority?: TaskPriority
-  timeoutMs?: number
-  metadata?: unknown
+  priority?: TaskPriority;
+  timeoutMs?: number;
+  metadata?: unknown;
 }
 
 // Terminal statuses — the task cannot change state again (except via a new submit).
-const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set([
-  'completed',
-  'error',
-  'cancelled',
-])
+const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set(['completed', 'error', 'cancelled']);
 
-const EMPTY_PROGRESS: TaskProgressState = { percent: 0 }
+const EMPTY_PROGRESS: TaskProgressState = { percent: 0 };
 
 // ---------------------------------------------------------------------------
 // Hook
@@ -96,89 +92,85 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
   input: TInput,
   options?: TaskSubmitOptions
 ): UseTaskSubmitReturn<TInput, TResult> {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   // The only local state is which task ID this hook instance "owns".
   // Everything else is derived from Redux via useAppSelector.
-  const [taskId, setTaskId] = useState<string | null>(null)
+  const [taskId, setTaskId] = useState<string | null>(null);
 
   // Stable ref so callbacks always see the latest taskId without needing it
   // in their dependency arrays.
-  const taskIdRef = useRef<string | null>(null)
+  const taskIdRef = useRef<string | null>(null);
 
   // Guard: prevents re-submitting while a task is still active.
-  const runningRef = useRef<boolean>(false)
+  const runningRef = useRef<boolean>(false);
 
   // Read this task's slice of Redux state. Returns undefined when taskId is
   // null (before first submit) or after the task has been removed.
   const taskState = useAppSelector((state) =>
     taskId !== null ? selectTaskById(state, taskId) : undefined
-  )
+  );
 
   // Derive all display fields from the Redux task state.
-  const status: TaskStatus | null = taskState?.status ?? null
-  const progress: TaskProgressState = taskState?.progress ?? EMPTY_PROGRESS
-  const progressMessage: string | undefined = taskState?.progress.message
-  const error: string | undefined = taskState?.error
-  const result: TResult | undefined = taskState?.result as TResult | undefined
-  const queuePosition: number | undefined = taskState?.queuePosition
-  const durationMs: number | undefined = taskState?.durationMs
-  const metadata: unknown | undefined = taskState?.metadata
+  const status: TaskStatus | null = taskState?.status ?? null;
+  const progress: TaskProgressState = taskState?.progress ?? EMPTY_PROGRESS;
+  const progressMessage: string | undefined = taskState?.progress.message;
+  const error: string | undefined = taskState?.error;
+  const result: TResult | undefined = taskState?.result as TResult | undefined;
+  const queuePosition: number | undefined = taskState?.queuePosition;
+  const durationMs: number | undefined = taskState?.durationMs;
+  const metadata: unknown | undefined = taskState?.metadata;
 
   // Release the running guard once a terminal status is observed via Redux.
   useEffect(() => {
     if (status !== null && TERMINAL_STATUSES.has(status)) {
-      runningRef.current = false
+      runningRef.current = false;
     }
-  }, [status])
+  }, [status]);
 
   // On unmount, release the running guard so re-mounting can submit again,
   // but do NOT cancel the task — it should continue running in the main process.
   useEffect(() => {
     return () => {
-      runningRef.current = false
-    }
-  }, [])
+      runningRef.current = false;
+    };
+  }, []);
 
   const submit = useCallback(
     async (inputOverride?: TInput, submitOptions?: TaskOptions): Promise<void> => {
-      if (runningRef.current) return
+      if (runningRef.current) return;
 
       if (typeof window.task?.submit !== 'function') {
         console.warn(
           '[useTaskSubmit] window.task.submit is not available. ' +
             'The main-process task IPC handlers have not been registered yet.'
-        )
-        return
+        );
+        return;
       }
 
-      runningRef.current = true
+      runningRef.current = true;
 
       const mergedOptions: TaskSubmitOptions = {
         ...options,
         ...submitOptions,
-      }
+      };
 
-      let resolvedTaskId: string
+      let resolvedTaskId: string;
 
       try {
-        const ipcResult = await window.task.submit(
-          type,
-          inputOverride ?? input,
-          mergedOptions
-        )
+        const ipcResult = await window.task.submit(type, inputOverride ?? input, mergedOptions);
 
         if (!ipcResult.success) {
-          runningRef.current = false
-          console.error('[useTaskSubmit] IPC submit rejected:', ipcResult.error.message)
-          return
+          runningRef.current = false;
+          console.error('[useTaskSubmit] IPC submit rejected:', ipcResult.error.message);
+          return;
         }
 
-        resolvedTaskId = ipcResult.data.taskId
+        resolvedTaskId = ipcResult.data.taskId;
       } catch (err) {
-        runningRef.current = false
-        console.error('[useTaskSubmit] submit threw:', err)
-        return
+        runningRef.current = false;
+        console.error('[useTaskSubmit] submit threw:', err);
+        return;
       }
 
       // Register the task in Redux before any IPC events arrive. This ensures
@@ -190,46 +182,46 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
           priority: mergedOptions.priority ?? options?.priority ?? 'normal',
           metadata: submitOptions?.metadata,
         })
-      )
+      );
 
-      taskIdRef.current = resolvedTaskId
-      setTaskId(resolvedTaskId)
+      taskIdRef.current = resolvedTaskId;
+      setTaskId(resolvedTaskId);
     },
     [dispatch, type, input, options]
-  )
+  );
 
   const cancel = useCallback((): void => {
-    const id = taskIdRef.current
-    if (!id) return
-    if (typeof window.task?.cancel !== 'function') return
+    const id = taskIdRef.current;
+    if (!id) return;
+    if (typeof window.task?.cancel !== 'function') return;
 
     window.task.cancel(id).catch(() => {
       // Best-effort — the cancelled event from the main process will update Redux.
-    })
-  }, [])
+    });
+  }, []);
 
   const updatePriority = useCallback((priority: TaskPriority): void => {
-    const id = taskIdRef.current
-    if (!id) return
-    if (typeof window.task?.updatePriority !== 'function') return
+    const id = taskIdRef.current;
+    if (!id) return;
+    if (typeof window.task?.updatePriority !== 'function') return;
 
     window.task.updatePriority(id, priority).catch(() => {
       // Best-effort — the priority-changed event from the main process will update Redux.
-    })
-  }, [])
+    });
+  }, []);
 
   const reset = useCallback((): void => {
     // Prevent resetting while a task is still active.
-    if (runningRef.current) return
+    if (runningRef.current) return;
 
-    const id = taskIdRef.current
+    const id = taskIdRef.current;
     if (id) {
-      dispatch(taskRemoved(id))
+      dispatch(taskRemoved(id));
     }
 
-    taskIdRef.current = null
-    setTaskId(null)
-  }, [dispatch])
+    taskIdRef.current = null;
+    setTaskId(null);
+  }, [dispatch]);
 
   return {
     taskId,
@@ -251,5 +243,5 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     isCompleted: status === 'completed',
     isError: status === 'error',
     isCancelled: status === 'cancelled',
-  }
+  };
 }

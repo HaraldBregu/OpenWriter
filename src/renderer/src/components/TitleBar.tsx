@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { Menu, PanelLeft, Minus, X } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useEffect } from 'react';
+import { Menu, PanelLeft, Minus, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
 const isMac =
   typeof navigator !== 'undefined' &&
-  (navigator.platform === 'MacIntel' || navigator.platform.startsWith('Mac'))
+  (navigator.platform === 'MacIntel' || navigator.platform.startsWith('Mac'));
 
 // Windows-style maximize icon
 function MaximizeIcon() {
@@ -14,7 +14,7 @@ function MaximizeIcon() {
     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 10 10" fill="none">
       <rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor" strokeWidth="1" />
     </svg>
-  )
+  );
 }
 
 // Windows-style restore icon (two overlapping squares)
@@ -23,36 +23,40 @@ function RestoreIcon() {
     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 10 10" fill="none">
       <path stroke="currentColor" strokeWidth="1" d="M3 2.5h4.5V7M0.5 0.5h6v6h-6z" />
     </svg>
-  )
+  );
 }
 
 export interface TitleBarProps {
   /** Text displayed centered in the title bar */
-  title?: string
+  title?: string;
   /** Called when the sidebar toggle button is clicked */
-  onToggleSidebar?: () => void
+  onToggleSidebar?: () => void;
   /** Extra Tailwind classes applied to the root element */
-  className?: string
+  className?: string;
 }
 
-export const TitleBar = React.memo(function TitleBar({ title = 'Application Name', onToggleSidebar, className = '' }: TitleBarProps) {
-  const { t } = useTranslation()
-  const [isMaximized, setIsMaximized] = useState(false)
-  const [isFullScreen, setIsFullScreen] = useState(false)
+export const TitleBar = React.memo(function TitleBar({
+  title = 'Application Name',
+  onToggleSidebar,
+  className = '',
+}: TitleBarProps) {
+  const { t } = useTranslation();
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
-    if (!window.win) return
+    if (!window.win) return;
 
-    window.win.isMaximized().then(setIsMaximized)
-    window.win.isFullScreen().then(setIsFullScreen)
+    window.win.isMaximized().then(setIsMaximized);
+    window.win.isFullScreen().then(setIsFullScreen);
 
-    const unsubMax = window.win.onMaximizeChange(setIsMaximized)
-    const unsubFs = window.win.onFullScreenChange(setIsFullScreen)
+    const unsubMax = window.win.onMaximizeChange(setIsMaximized);
+    const unsubFs = window.win.onFullScreenChange(setIsFullScreen);
     return () => {
-      unsubMax()
-      unsubFs()
-    }
-  }, [])
+      unsubMax();
+      unsubFs();
+    };
+  }, []);
 
   const btnBase = `
     flex items-center justify-center h-full w-[46px]
@@ -60,12 +64,12 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
     hover:bg-black/[0.07] dark:hover:bg-white/[0.12]
     active:bg-black/[0.12] dark:active:bg-white/[0.18]
     transition-colors duration-100
-  `
+  `;
 
   const btnNoHover = `
     flex items-center justify-center h-full w-[46px]
     text-neutral-600 dark:text-neutral-300
-  `
+  `;
 
   return (
     <div
@@ -167,6 +171,6 @@ export const TitleBar = React.memo(function TitleBar({ title = 'Application Name
         </div>
       )}
     </div>
-  )
-})
-TitleBar.displayName = 'TitleBar'
+  );
+});
+TitleBar.displayName = 'TitleBar';

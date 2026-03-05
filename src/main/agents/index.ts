@@ -6,32 +6,32 @@
  * pattern as TaskHandlerRegistry — visible, ordered, and test-isolation safe.
  */
 
-export { StoryWriterAgent } from './StoryWriter'
-export { TextCompleterAgent } from './TextCompleter'
-export { ContentReviewAgent } from './ContentReview'
-export { SummarizerAgent } from './Summarizer'
-export { ToneAdjusterAgent } from './ToneAdjuster'
-export { DemoAgent } from './DemoAgent'
-export { TextContinuationAgent } from './TextContinuation'
-export { SentenceCompleterAgent } from './SentenceCompleter'
+export { StoryWriterAgent } from './StoryWriter';
+export { TextCompleterAgent } from './TextCompleter';
+export { ContentReviewAgent } from './ContentReview';
+export { SummarizerAgent } from './Summarizer';
+export { ToneAdjusterAgent } from './ToneAdjuster';
+export { DemoAgent } from './DemoAgent';
+export { TextContinuationAgent } from './TextContinuation';
+export { SentenceCompleterAgent } from './SentenceCompleter';
 
-export type { AgentDefinition, AgentDefinitionInfo } from './AgentDefinition'
-export { toAgentDefinitionInfo } from './AgentDefinition'
+export type { AgentDefinition, AgentDefinitionInfo } from './AgentDefinition';
+export { toAgentDefinitionInfo } from './AgentDefinition';
 
-export { executeAIAgentsStream } from './AgentExecutor'
-export type { ExecutorInput } from './AgentExecutor'
-export type { AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './AgentTypes'
-export { AgentRegistry } from './AgentRegistry'
+export { executeAIAgentsStream } from './AgentExecutor';
+export type { ExecutorInput } from './AgentExecutor';
+export type { AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './AgentTypes';
+export { AgentRegistry } from './AgentRegistry';
 
-import { StoryWriterAgent } from './StoryWriter'
-import { TextCompleterAgent } from './TextCompleter'
-import { ContentReviewAgent } from './ContentReview'
-import { SummarizerAgent } from './Summarizer'
-import { ToneAdjusterAgent } from './ToneAdjuster'
-import { DemoAgent } from './DemoAgent'
-import { TextContinuationAgent } from './TextContinuation'
-import { SentenceCompleterAgent } from './SentenceCompleter'
-import type { AgentDefinition } from './AgentDefinition'
+import { StoryWriterAgent } from './StoryWriter';
+import { TextCompleterAgent } from './TextCompleter';
+import { ContentReviewAgent } from './ContentReview';
+import { SummarizerAgent } from './Summarizer';
+import { ToneAdjusterAgent } from './ToneAdjuster';
+import { DemoAgent } from './DemoAgent';
+import { TextContinuationAgent } from './TextContinuation';
+import { SentenceCompleterAgent } from './SentenceCompleter';
+import type { AgentDefinition } from './AgentDefinition';
 
 /**
  * All built-in agent definitions in display order.
@@ -46,4 +46,4 @@ export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
   DemoAgent,
   TextContinuationAgent,
   SentenceCompleterAgent,
-]
+];

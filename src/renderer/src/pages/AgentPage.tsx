@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Bot, Play, RotateCcw, Square, Loader2 } from 'lucide-react'
-import { useTaskSubmit } from '../hooks/useTaskSubmit'
-import { subscribeToTask } from '../services/taskEventBus'
-import type { TaskSnapshot } from '../services/taskEventBus'
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Bot, Play, RotateCcw, Square, Loader2 } from 'lucide-react';
+import { useTaskSubmit } from '../hooks/useTaskSubmit';
+import { subscribeToTask } from '../services/taskEventBus';
+import type { TaskSnapshot } from '../services/taskEventBus';
 import {
   AppCard,
   AppCardHeader,
@@ -12,50 +12,50 @@ import {
   AppCardFooter,
   AppButton,
   AppInput,
-} from '../components/app'
+} from '../components/app';
 
-const DEFAULT_PROMPT = 'Tell me an interesting fact about technology'
+const DEFAULT_PROMPT = 'Tell me an interesting fact about technology';
 
 export default function AgentPage() {
-  const [prompt, setPrompt] = useState(DEFAULT_PROMPT)
-  const [output, setOutput] = useState('')
-  const outputRef = useRef<HTMLDivElement>(null)
+  const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
+  const [output, setOutput] = useState('');
+  const outputRef = useRef<HTMLDivElement>(null);
 
-  const task = useTaskSubmit<{ prompt: string }>('agent-demo-agent', { prompt })
+  const task = useTaskSubmit<{ prompt: string }>('agent-demo-agent', { prompt });
 
   // Subscribe to streamed tokens when a task is active.
   useEffect(() => {
-    if (!task.taskId) return
+    if (!task.taskId) return;
     const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
       if (snap.content) {
-        setOutput(snap.content)
+        setOutput(snap.content);
       }
       if (snap.error) {
-        setOutput((prev) => prev) // keep existing output; error shown separately
+        setOutput((prev) => prev); // keep existing output; error shown separately
       }
-    })
-    return unsub
-  }, [task.taskId])
+    });
+    return unsub;
+  }, [task.taskId]);
 
   // Auto-scroll the output area as content streams in.
   useEffect(() => {
     if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [output])
+  }, [output]);
 
   const handleRun = useCallback(() => {
-    setOutput('')
-    task.submit({ prompt })
-  }, [task, prompt])
+    setOutput('');
+    task.submit({ prompt });
+  }, [task, prompt]);
 
   const handleReset = useCallback(() => {
-    setOutput('')
-    task.reset()
-  }, [task])
+    setOutput('');
+    task.reset();
+  }, [task]);
 
-  const isActive = task.isRunning || task.isQueued
-  const isDone = task.isCompleted || task.isError || task.isCancelled
+  const isActive = task.isRunning || task.isQueued;
+  const isDone = task.isCompleted || task.isError || task.isCancelled;
 
   return (
     <div className="flex flex-col h-full">
@@ -73,8 +73,8 @@ export default function AgentPage() {
           <AppCardHeader>
             <AppCardTitle>Demo Agent</AppCardTitle>
             <AppCardDescription>
-              A general-purpose assistant that answers questions with concise,
-              interesting responses.
+              A general-purpose assistant that answers questions with concise, interesting
+              responses.
             </AppCardDescription>
           </AppCardHeader>
 
@@ -97,9 +97,7 @@ export default function AgentPage() {
             {isActive && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>
-                  {task.isQueued ? 'Queued…' : 'Running…'}
-                </span>
+                <span>{task.isQueued ? 'Queued…' : 'Running…'}</span>
                 {task.progress.percent > 0 && (
                   <div className="flex-1 max-w-xs">
                     <div className="w-full bg-muted rounded-full h-1.5">
@@ -163,5 +161,5 @@ export default function AgentPage() {
         </AppCard>
       </div>
     </div>
-  )
+  );
 }

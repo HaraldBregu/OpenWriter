@@ -8,11 +8,11 @@
  *   START → complete_sentence → END
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -27,9 +27,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type SentenceCompleterState = typeof GraphState.State
+type SentenceCompleterState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -37,8 +37,8 @@ type SentenceCompleterState = typeof GraphState.State
 
 /** Extract the raw user text from the LangGraph message list. */
 function extractUserText(state: SentenceCompleterState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-  return userMsg ? String(userMsg.content) : ''
+  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+  return userMsg ? String(userMsg.content) : '';
 }
 
 // ---------------------------------------------------------------------------
@@ -47,7 +47,7 @@ function extractUserText(state: SentenceCompleterState): string {
 
 function makeCompleteSentenceNode(model: BaseChatModel) {
   return async (state: SentenceCompleterState): Promise<Partial<SentenceCompleterState>> => {
-    const text = extractUserText(state)
+    const text = extractUserText(state);
 
     const generationMessages = [
       new SystemMessage(
@@ -63,16 +63,16 @@ Rules:
 7. No preamble, no explanation, no meta-commentary`
       ),
       new HumanMessage(text),
-    ]
+    ];
 
-    const response = await model.invoke(generationMessages)
-    const completion = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(generationMessages);
+    const completion = typeof response.content === 'string' ? response.content : '';
 
     return {
       completion,
       messages: [new AIMessage(completion)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -83,9 +83,9 @@ function buildSentenceCompleterGraph(model: BaseChatModel) {
   const graph = new StateGraph(GraphState)
     .addNode('complete_sentence', makeCompleteSentenceNode(model))
     .addEdge(START, 'complete_sentence')
-    .addEdge('complete_sentence', END)
+    .addEdge('complete_sentence', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ Rules:
 4. Do NOT start a new sentence after finishing the current one
 5. Match the tone, formality, and vocabulary of the given text
 6. Be as brief as possible — just close the sentence
-7. No preamble, no explanation, no meta-commentary`
+7. No preamble, no explanation, no meta-commentary`;
 
 // ---------------------------------------------------------------------------
 // Agent definition
@@ -124,6 +124,6 @@ const definition: AgentDefinition = {
     multiline: true,
   },
   buildGraph: buildSentenceCompleterGraph,
-}
+};
 
-export { definition as SentenceCompleterAgent }
+export { definition as SentenceCompleterAgent };

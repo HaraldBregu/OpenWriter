@@ -1,21 +1,21 @@
-import React, { lazy, Suspense } from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "./store";
-import { AppProvider } from "./contexts";
-import { AppLayout } from "./components/AppLayout";
-import { ErrorBoundary } from "./components/ErrorBoundary";
-import { LoadingSkeleton } from "./components/LoadingSkeleton";
-import WelcomePage from "./pages/WelcomePage";
-import type { TaskEvent } from "../../shared/types";
-import { taskEventReceived } from "./store/tasks/actions";
-import { loadWritings, refreshWriting } from "./store/writings/actions";
-import { writingRemoved } from "./store/writings/actions";
-import "./index.css";
+import React, { lazy, Suspense } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { AppProvider } from './contexts';
+import { AppLayout } from './components/AppLayout';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { LoadingSkeleton } from './components/LoadingSkeleton';
+import WelcomePage from './pages/WelcomePage';
+import type { TaskEvent } from '../../shared/types';
+import { taskEventReceived } from './store/tasks/actions';
+import { loadWritings, refreshWriting } from './store/writings/actions';
+import { writingRemoved } from './store/writings/actions';
+import './index.css';
 
 // IPC → Redux bridge: forward every task event into the store.
 let initialized = false;
-if (!initialized && typeof window.task?.onEvent === "function") {
+if (!initialized && typeof window.task?.onEvent === 'function') {
   initialized = true;
   window.task.onEvent((event: TaskEvent) => {
     store.dispatch(taskEventReceived(event));
@@ -24,14 +24,14 @@ if (!initialized && typeof window.task?.onEvent === "function") {
 
 // IPC → Redux bridge: load writings on startup and re-load on file changes.
 let writingsInitialized = false;
-if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === "function") {
+if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === 'function') {
   writingsInitialized = true;
   store.dispatch(loadWritings());
   window.workspace.onOutputFileChange((event) => {
-    if (event.outputType !== "writings") return;
-    if (event.type === "changed") {
+    if (event.outputType !== 'writings') return;
+    if (event.type === 'changed') {
       store.dispatch(refreshWriting(event.fileId));
-    } else if (event.type === "removed") {
+    } else if (event.type === 'removed') {
       store.dispatch(writingRemoved(event.fileId));
     } else {
       store.dispatch(loadWritings());
@@ -40,11 +40,11 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === "fun
 }
 
 // Lazy-loaded pages
-const HomePage = lazy(() => import("./pages/HomePage"));
-const SettingsPage = lazy(() => import("./pages/SettingsPage"));
-const ContentPage = lazy(() => import("./pages/ContentPage"));
-const DebugPage = lazy(() => import("./pages/DebugPage"));
-const AgentPage = lazy(() => import("./pages/AgentPage"));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const ContentPage = lazy(() => import('./pages/ContentPage'));
+const DebugPage = lazy(() => import('./pages/DebugPage'));
+const AgentPage = lazy(() => import('./pages/AgentPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
   return (

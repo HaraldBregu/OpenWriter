@@ -81,15 +81,17 @@ Phase 1 eliminates these issues by:
 ### Shared Types
 
 #### `src/shared/types/ipc/types.ts`
+
 ```typescript
 // NEW: Event payload type
 export interface WorkspaceChangedEvent {
-  currentPath: string | null
-  previousPath: string | null
+  currentPath: string | null;
+  previousPath: string | null;
 }
 ```
 
 #### `src/shared/types/ipc/channels.ts`
+
 ```typescript
 // Added to WorkspaceChannels
 changed: 'workspace:changed'
@@ -101,24 +103,27 @@ changed: 'workspace:changed'
 ### Preload Bridge
 
 #### `src/preload/index.d.ts`
+
 ```typescript
 export interface WorkspaceApi {
   // ... existing methods ...
-  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void
+  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void;
 }
 ```
 
 #### `src/preload/index.ts`
+
 ```typescript
 const workspace: WorkspaceApi = {
   // ... existing methods ...
-  onChange: (callback) => typedOn(WorkspaceChannels.changed, callback)
-}
+  onChange: (callback) => typedOn(WorkspaceChannels.changed, callback),
+};
 ```
 
 ### Main Process
 
 #### `src/main/services/workspace.ts`
+
 ```typescript
 setCurrent(directoryPath: string): void {
   // ... validation ...
@@ -140,6 +145,7 @@ setCurrent(directoryPath: string): void {
 ```
 
 #### `src/main/services/workspace-metadata.ts` (Memory Leak Fix)
+
 ```typescript
 // ADDED: Store unsubscribe function
 private workspaceEventUnsubscribe: (() => void) | null = null
@@ -172,16 +178,18 @@ destroy(): void {
 Complete implementation with:
 
 **State Shape**:
+
 ```typescript
 interface WorkspaceState {
-  currentPath: string | null
-  recentWorkspaces: WorkspaceInfo[]
-  status: 'idle' | 'loading' | 'ready' | 'error'
-  error: string | null
+  currentPath: string | null;
+  recentWorkspaces: WorkspaceInfo[];
+  status: 'idle' | 'loading' | 'ready' | 'error';
+  error: string | null;
 }
 ```
 
 **Async Thunks**:
+
 - `loadCurrentWorkspace()` — Hydrate from main process on app startup
 - `loadRecentWorkspaces()` — Load recent workspaces list
 - `selectWorkspace(path)` — Set workspace to path
@@ -190,9 +198,11 @@ interface WorkspaceState {
 - `clearWorkspace()` — Clear current workspace
 
 **Actions**:
+
 - `handleWorkspaceChanged(event)` — Sync main process event to Redux
 
 **Selectors**:
+
 ```typescript
 selectCurrentWorkspacePath(state) → string | null
 selectHasWorkspace(state) → boolean
@@ -204,15 +214,16 @@ selectWorkspaceIsLoading(state) → boolean
 ```
 
 #### `src/renderer/src/store/index.ts`
+
 ```typescript
-import workspaceReducer from './workspaceSlice'
+import workspaceReducer from './workspaceSlice';
 
 export const store = configureStore({
   reducer: {
     // ... other reducers ...
-    workspace: workspaceReducer
-  }
-})
+    workspace: workspaceReducer,
+  },
+});
 ```
 
 ### Renderer Hooks
@@ -221,14 +232,14 @@ export const store = configureStore({
 
 ```typescript
 export function useWorkspaceListener(): void {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsubscribe = window.workspace.onChange((event) => {
-      dispatch(handleWorkspaceChanged(event))
-    })
-    return () => unsubscribe()
-  }, [dispatch])
+      dispatch(handleWorkspaceChanged(event));
+    });
+    return () => unsubscribe();
+  }, [dispatch]);
 }
 ```
 
@@ -239,6 +250,7 @@ Sets up the event listener once per component mount. Should be called from `AppL
 #### `src/renderer/src/components/AppLayout.tsx`
 
 **Changes**:
+
 1. Import workspace selectors and hooks
 2. Call `useWorkspaceListener()` to activate event listener
 3. Call `dispatch(loadCurrentWorkspace())` on mount
@@ -324,6 +336,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 ## Migration Path for Existing Components
 
 ### Before (Anti-pattern)
+
 ```typescript
 // ❌ WRONG: Multiple independent IPC calls
 function SomeComponent() {
@@ -338,6 +351,7 @@ function SomeComponent() {
 ```
 
 ### After (Best practice)
+
 ```typescript
 // ✅ CORRECT: Use Redux selector
 import { useAppSelector } from '@/store'
@@ -350,6 +364,7 @@ function SomeComponent() {
 ```
 
 ### Components to Update (Phase 2)
+
 These components currently call `window.workspace.getCurrent()` directly and should be refactored:
 
 1. **WelcomePage.tsx** — Use `selectWorkspaceName` for display
@@ -363,34 +378,37 @@ These components currently call `window.workspace.getCurrent()` directly and sho
 ## TypeScript Types
 
 ### Event Type
+
 ```typescript
 interface WorkspaceChangedEvent {
-  currentPath: string | null
-  previousPath: string | null
+  currentPath: string | null;
+  previousPath: string | null;
 }
 ```
 
 ### State Type
+
 ```typescript
 interface WorkspaceState {
-  currentPath: string | null
-  recentWorkspaces: WorkspaceInfo[]
-  status: 'idle' | 'loading' | 'ready' | 'error'
-  error: string | null
+  currentPath: string | null;
+  recentWorkspaces: WorkspaceInfo[];
+  status: 'idle' | 'loading' | 'ready' | 'error';
+  error: string | null;
 }
 ```
 
 ### Preload API Extension
+
 ```typescript
 interface WorkspaceApi {
-  selectFolder: () => Promise<string | null>
-  getCurrent: () => Promise<string | null>
-  setCurrent: (workspacePath: string) => Promise<void>
-  getRecent: () => Promise<WorkspaceInfo[]>
-  clear: () => Promise<void>
-  directoryExists: (directoryPath: string) => Promise<boolean>
-  removeRecent: (workspacePath: string) => Promise<void>
-  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void  // NEW
+  selectFolder: () => Promise<string | null>;
+  getCurrent: () => Promise<string | null>;
+  setCurrent: (workspacePath: string) => Promise<void>;
+  getRecent: () => Promise<WorkspaceInfo[]>;
+  clear: () => Promise<void>;
+  directoryExists: (directoryPath: string) => Promise<boolean>;
+  removeRecent: (workspacePath: string) => Promise<void>;
+  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void; // NEW
 }
 ```
 
@@ -399,6 +417,7 @@ interface WorkspaceApi {
 ## Testing Checklist
 
 ### Manual Testing
+
 - [ ] Open app → workspace name displays in title bar
 - [ ] Click "Open Folder" in welcome → workspace switches, title updates
 - [ ] Switch workspace → all pages reflect new workspace state
@@ -407,6 +426,7 @@ interface WorkspaceApi {
 - [ ] Add/remove indexed directories → lists update across windows
 
 ### Unit Tests (Future)
+
 - [ ] workspaceSlice reducers
 - [ ] workspaceSlice selectors
 - [ ] useWorkspaceListener hook
@@ -414,6 +434,7 @@ interface WorkspaceApi {
 - [ ] WorkspaceIpc handlers return correct types
 
 ### Integration Tests (Future)
+
 - [ ] Workspace selection → EventBus broadcast → Redux update
 - [ ] WorkspaceMetadataService cleanup on destroy
 - [ ] Multi-window workspace synchronization
@@ -423,11 +444,13 @@ interface WorkspaceApi {
 ## Breaking Changes & Migrations
 
 ### None for Phase 1
+
 - All changes are additive
 - Existing IPC calls still work (backward compatible)
 - No API signatures changed, only extended
 
 ### Deprecations (Phase 2)
+
 - Components should stop calling `window.workspace.getCurrent()` directly
 - Migrate to Redux selectors: `selectCurrentWorkspacePath`, `selectWorkspaceName`
 
@@ -469,18 +492,18 @@ interface WorkspaceApi {
 
 ## Files Summary
 
-| File | Type | Status |
-|------|------|--------|
-| `src/shared/types/ipc/types.ts` | Modified | +`WorkspaceChangedEvent` |
-| `src/shared/types/ipc/channels.ts` | Modified | +`changed` channel, event mapping |
-| `src/preload/index.d.ts` | Modified | +`onChange` method |
-| `src/preload/index.ts` | Modified | +`onChange` implementation |
-| `src/main/services/workspace.ts` | Modified | +broadcast calls |
-| `src/main/services/workspace-metadata.ts` | Modified | Memory leak fix |
-| `src/renderer/src/store/workspaceSlice.ts` | New | Complete Redux slice |
-| `src/renderer/src/store/index.ts` | Modified | +workspace reducer |
-| `src/renderer/src/hooks/useWorkspaceListener.ts` | New | Event listener hook |
-| `src/renderer/src/components/AppLayout.tsx` | Modified | Integrated workspace state |
+| File                                             | Type     | Status                            |
+| ------------------------------------------------ | -------- | --------------------------------- |
+| `src/shared/types/ipc/types.ts`                  | Modified | +`WorkspaceChangedEvent`          |
+| `src/shared/types/ipc/channels.ts`               | Modified | +`changed` channel, event mapping |
+| `src/preload/index.d.ts`                         | Modified | +`onChange` method                |
+| `src/preload/index.ts`                           | Modified | +`onChange` implementation        |
+| `src/main/services/workspace.ts`                 | Modified | +broadcast calls                  |
+| `src/main/services/workspace-metadata.ts`        | Modified | Memory leak fix                   |
+| `src/renderer/src/store/workspaceSlice.ts`       | New      | Complete Redux slice              |
+| `src/renderer/src/store/index.ts`                | Modified | +workspace reducer                |
+| `src/renderer/src/hooks/useWorkspaceListener.ts` | New      | Event listener hook               |
+| `src/renderer/src/components/AppLayout.tsx`      | Modified | Integrated workspace state        |
 
 ---
 

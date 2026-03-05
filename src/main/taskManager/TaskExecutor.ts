@@ -15,45 +15,45 @@
  * aborting any in-flight tasks.
  */
 
-import { randomUUID } from 'crypto'
-import type { Disposable } from '../core/ServiceContainer'
-import type { EventBus } from '../core/EventBus'
-import type { LoggerService } from '../services/logger'
-import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
-import type { TaskEvent } from './TaskEvents'
-import type { ProgressReporter, StreamReporter } from './TaskHandler'
-import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor'
-import type { TaskQueueStatus } from '../../shared/types'
+import { randomUUID } from 'crypto';
+import type { Disposable } from '../core/ServiceContainer';
+import type { EventBus } from '../core/EventBus';
+import type { LoggerService } from '../services/logger';
+import type { TaskHandlerRegistry } from './TaskHandlerRegistry';
+import type { TaskEvent } from './TaskEvents';
+import type { ProgressReporter, StreamReporter } from './TaskHandler';
+import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor';
+import type { TaskQueueStatus } from '../../shared/types';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
-const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000 // 5 minutes
+const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000; // 5 minutes
 
 /** Priority ordering for queue sorting (higher number = higher priority). */
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
   high: 3,
   normal: 2,
-  low: 1
-}
+  low: 1,
+};
 
 /** Queued task waiting for an execution slot. */
 interface QueuedTask {
-  taskId: string
-  type: string
-  input: unknown
-  priority: TaskPriority
-  windowId?: number
-  timeoutMs?: number
-  controller: AbortController
-  queuedAt: number
+  taskId: string;
+  type: string;
+  input: unknown;
+  priority: TaskPriority;
+  windowId?: number;
+  timeoutMs?: number;
+  controller: AbortController;
+  queuedAt: number;
 }
 
 export class TaskExecutor implements Disposable {
-  private activeTasks = new Map<string, ActiveTask>()
+  private activeTasks = new Map<string, ActiveTask>();
   /** Completed/errored/cancelled tasks retained for result retrieval until TTL expires. */
-  private completedTasks = new Map<string, { task: ActiveTask; expiresAt: number }>()
-  private queue: QueuedTask[] = []
-  private runningCount = 0
-  private gcHandle: NodeJS.Timeout | null = null
+  private completedTasks = new Map<string, { task: ActiveTask; expiresAt: number }>();
+  private queue: QueuedTask[] = [];
+  private runningCount = 0;
+  private gcHandle: NodeJS.Timeout | null = null;
 
   constructor(
     private readonly registry: TaskHandlerRegistry,
@@ -62,8 +62,8 @@ export class TaskExecutor implements Disposable {
     private readonly logger?: LoggerService
   ) {
     // Run GC every minute to evict expired completed tasks
-    this.gcHandle = setInterval(() => this.gcCompletedTasks(), 60_000)
-    this.gcHandle.unref()
+    this.gcHandle = setInterval(() => this.gcCompletedTasks(), 60_000);
+    this.gcHandle.unref();
   }
 
   // ---------------------------------------------------------------------------
@@ -77,16 +77,16 @@ export class TaskExecutor implements Disposable {
    * or placed in the priority queue.
    */
   submit<TInput>(type: string, input: TInput, options?: TaskOptions): string {
-    const handler = this.registry.get(type)
+    const handler = this.registry.get(type);
 
     // Validate input if handler supports it
     if (handler.validate) {
-      handler.validate(input)
+      handler.validate(input);
     }
 
-    const taskId = options?.taskId ?? randomUUID()
-    const priority = options?.priority ?? 'normal'
-    const controller = new AbortController()
+    const taskId = options?.taskId ?? randomUUID();
+    const priority = options?.priority ?? 'normal';
+    const controller = new AbortController();
 
     const activeTask: ActiveTask = {
       taskId,
@@ -94,13 +94,19 @@ export class TaskExecutor implements Disposable {
       status: 'queued',
       priority,
       controller,
-      windowId: options?.windowId
-    }
+      windowId: options?.windowId,
+    };
 
-    this.activeTasks.set(taskId, activeTask)
+    this.activeTasks.set(taskId, activeTask);
 
     // Notify main-process observers (e.g. TaskReactionBus) about the new submission
-    this.eventBus.emit('task:submitted', { taskId, taskType: type, input, priority, windowId: options?.windowId })
+    this.eventBus.emit('task:submitted', {
+      taskId,
+      taskType: type,
+      input,
+      priority,
+      windowId: options?.windowId,
+    });
 
     const queued: QueuedTask = {
       taskId,
@@ -110,23 +116,23 @@ export class TaskExecutor implements Disposable {
       windowId: options?.windowId,
       timeoutMs: options?.timeoutMs,
       controller,
-      queuedAt: Date.now()
-    }
+      queuedAt: Date.now(),
+    };
 
-    this.queue.push(queued)
-    this.sortQueue()
+    this.queue.push(queued);
+    this.sortQueue();
 
-    const position = this.queue.indexOf(queued) + 1
+    const position = this.queue.indexOf(queued) + 1;
     this.send(options?.windowId, 'task:event', {
       type: 'queued',
-      data: { taskId, taskType: type, position }
-    } satisfies TaskEvent)
+      data: { taskId, taskType: type, position },
+    } satisfies TaskEvent);
 
     // Task queued and added to queue
 
-    this.drainQueue()
+    this.drainQueue();
 
-    return taskId
+    return taskId;
   }
 
   /**
@@ -135,44 +141,44 @@ export class TaskExecutor implements Disposable {
    * Returns true if the task was found and cancelled.
    */
   cancel(taskId: string): boolean {
-    const task = this.activeTasks.get(taskId)
-    if (!task) return false
+    const task = this.activeTasks.get(taskId);
+    if (!task) return false;
 
     // Cancelling task
 
     // Abort the controller (signals running task or prevents queued task from starting)
-    task.controller.abort()
+    task.controller.abort();
 
     // Remove from queue if still queued
-    const queueIdx = this.queue.findIndex((q) => q.taskId === taskId)
+    const queueIdx = this.queue.findIndex((q) => q.taskId === taskId);
     if (queueIdx !== -1) {
-      this.queue.splice(queueIdx, 1)
+      this.queue.splice(queueIdx, 1);
     }
 
     // Clean up timeout
     if (task.timeoutHandle) {
-      clearTimeout(task.timeoutHandle)
+      clearTimeout(task.timeoutHandle);
     }
 
-    task.status = 'cancelled'
-    task.completedAt = Date.now()
+    task.status = 'cancelled';
+    task.completedAt = Date.now();
 
     this.send(task.windowId, 'task:event', {
       type: 'cancelled',
-      data: { taskId }
-    } satisfies TaskEvent)
+      data: { taskId },
+    } satisfies TaskEvent);
 
-    this.eventBus.emit('task:cancelled', { taskId, taskType: task.type, windowId: task.windowId })
+    this.eventBus.emit('task:cancelled', { taskId, taskType: task.type, windowId: task.windowId });
 
     // Retain in completed store for TTL-based result retrieval
     this.completedTasks.set(taskId, {
       task: { ...task, controller: undefined as unknown as AbortController },
-      expiresAt: Date.now() + COMPLETED_TASK_TTL_MS
-    })
+      expiresAt: Date.now() + COMPLETED_TASK_TTL_MS,
+    });
 
-    this.activeTasks.delete(taskId)
+    this.activeTasks.delete(taskId);
 
-    return true
+    return true;
   }
 
   /**
@@ -188,9 +194,9 @@ export class TaskExecutor implements Disposable {
         startedAt,
         completedAt,
         windowId,
-        controller: undefined as unknown as AbortController
+        controller: undefined as unknown as AbortController,
       })
-    )
+    );
   }
 
   /**
@@ -198,14 +204,14 @@ export class TaskExecutor implements Disposable {
    * Returns the number of tasks that were cancelled.
    */
   cancelByWindow(windowId: number): number {
-    let count = 0
+    let count = 0;
     for (const task of this.activeTasks.values()) {
       if (task.windowId === windowId) {
-        this.cancel(task.taskId)
-        count++
+        this.cancel(task.taskId);
+        count++;
       }
     }
-    return count
+    return count;
   }
 
   /**
@@ -214,30 +220,30 @@ export class TaskExecutor implements Disposable {
    * Returns true if the task was found and its priority updated.
    */
   updatePriority(taskId: string, newPriority: TaskPriority): boolean {
-    const task = this.activeTasks.get(taskId)
-    if (!task || task.status !== 'queued') return false
+    const task = this.activeTasks.get(taskId);
+    if (!task || task.status !== 'queued') return false;
 
-    task.priority = newPriority
+    task.priority = newPriority;
 
-    const queued = this.queue.find((q) => q.taskId === taskId)
+    const queued = this.queue.find((q) => q.taskId === taskId);
     if (queued) {
-      queued.priority = newPriority
+      queued.priority = newPriority;
     }
 
-    this.sortQueue()
+    this.sortQueue();
 
-    const position = queued ? this.queue.indexOf(queued) + 1 : 1
+    const position = queued ? this.queue.indexOf(queued) + 1 : 1;
 
     this.send(task.windowId, 'task:event', {
       type: 'priority-changed',
-      data: { taskId, priority: newPriority, position }
-    } satisfies TaskEvent)
+      data: { taskId, priority: newPriority, position },
+    } satisfies TaskEvent);
 
     // Task log
 
     // A higher priority task may now be eligible to run sooner
-    this.drainQueue()
-    return true
+    this.drainQueue();
+    return true;
   }
 
   /**
@@ -246,53 +252,53 @@ export class TaskExecutor implements Disposable {
    * Returns undefined if the task is unknown or its TTL has expired.
    */
   getTaskResult(taskId: string): ActiveTask | undefined {
-    const active = this.activeTasks.get(taskId)
-    if (active) return active
+    const active = this.activeTasks.get(taskId);
+    if (active) return active;
 
-    const entry = this.completedTasks.get(taskId)
-    if (entry && entry.expiresAt > Date.now()) return entry.task
+    const entry = this.completedTasks.get(taskId);
+    if (entry && entry.expiresAt > Date.now()) return entry.task;
 
-    return undefined
+    return undefined;
   }
 
   /**
    * Return a snapshot of queue metrics.
    */
   getQueueStatus(): TaskQueueStatus {
-    let queued = 0
-    let running = 0
-    const completed = this.completedTasks.size
+    let queued = 0;
+    let running = 0;
+    const completed = this.completedTasks.size;
 
     for (const task of this.activeTasks.values()) {
       if (task.status === 'running') {
-        running++
+        running++;
       } else {
-        queued++
+        queued++;
       }
     }
 
-    return { queued, running, completed }
+    return { queued, running, completed };
   }
 
   /**
    * Disposable -- abort every active task on shutdown.
    */
   destroy(): void {
-    this.logger?.info('TaskExecutor', `Destroying, aborting ${this.activeTasks.size} task(s)`)
+    this.logger?.info('TaskExecutor', `Destroying, aborting ${this.activeTasks.size} task(s)`);
     if (this.gcHandle) {
-      clearInterval(this.gcHandle)
-      this.gcHandle = null
+      clearInterval(this.gcHandle);
+      this.gcHandle = null;
     }
     for (const task of this.activeTasks.values()) {
-      task.controller.abort()
+      task.controller.abort();
       if (task.timeoutHandle) {
-        clearTimeout(task.timeoutHandle)
+        clearTimeout(task.timeoutHandle);
       }
     }
-    this.activeTasks.clear()
-    this.completedTasks.clear()
-    this.queue = []
-    this.runningCount = 0
+    this.activeTasks.clear();
+    this.completedTasks.clear();
+    this.queue = [];
+    this.runningCount = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -303,20 +309,20 @@ export class TaskExecutor implements Disposable {
    * Process queued tasks whenever execution slots are available.
    */
   private drainQueue(): void {
-    const idx = 0
+    const idx = 0;
     while (this.runningCount < this.maxConcurrency && idx < this.queue.length) {
-      const queued = this.queue[idx]
+      const queued = this.queue[idx];
 
       // Remove from queue
-      this.queue.splice(idx, 1)
+      this.queue.splice(idx, 1);
 
       // Skip if already cancelled while in queue
       if (queued.controller.signal.aborted) {
-        continue
+        continue;
       }
 
-      this.runningCount++
-      this.executeTask(queued)
+      this.runningCount++;
+      this.executeTask(queued);
     }
   }
 
@@ -327,142 +333,154 @@ export class TaskExecutor implements Disposable {
    * Does NOT throw -- all errors are caught and delivered as events.
    */
   private async executeTask(queued: QueuedTask): Promise<void> {
-    const { taskId, type, input, controller, windowId, timeoutMs } = queued
-    const task = this.activeTasks.get(taskId)
+    const { taskId, type, input, controller, windowId, timeoutMs } = queued;
+    const task = this.activeTasks.get(taskId);
 
     if (!task) {
-      this.runningCount--
-      this.drainQueue()
-      return
+      this.runningCount--;
+      this.drainQueue();
+      return;
     }
 
-    task.status = 'running'
-    task.startedAt = Date.now()
+    task.status = 'running';
+    task.startedAt = Date.now();
 
     // Set up timeout if specified
     if (timeoutMs !== undefined) {
       task.timeoutHandle = setTimeout(() => {
         // Task log
-        controller.abort()
-      }, timeoutMs)
+        controller.abort();
+      }, timeoutMs);
     }
 
     this.send(windowId, 'task:event', {
       type: 'started',
-      data: { taskId }
-    } satisfies TaskEvent)
+      data: { taskId },
+    } satisfies TaskEvent);
 
-    this.eventBus.emit('task:started', { taskId, taskType: type, windowId })
+    this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
 
     // Task log
 
     try {
-      const handler = this.registry.get(type)
+      const handler = this.registry.get(type);
 
       const reporter: ProgressReporter = {
         progress: (percent, message?, detail?) => {
           // Don't emit progress if task is already done
-          if (!this.activeTasks.has(taskId)) return
+          if (!this.activeTasks.has(taskId)) return;
 
           this.send(windowId, 'task:event', {
             type: 'progress',
-            data: { taskId, percent, message, detail }
-          } satisfies TaskEvent)
-        }
-      }
+            data: { taskId, percent, message, detail },
+          } satisfies TaskEvent);
+        },
+      };
 
       const streamReporter: StreamReporter = {
         stream: (data: string) => {
-          if (!this.activeTasks.has(taskId)) return
+          if (!this.activeTasks.has(taskId)) return;
           this.send(windowId, 'task:event', {
             type: 'stream',
-            data: { taskId, data }
-          } satisfies TaskEvent)
-        }
-      }
+            data: { taskId, data },
+          } satisfies TaskEvent);
+        },
+      };
 
-      const result = await handler.execute(input, controller.signal, reporter, streamReporter)
+      const result = await handler.execute(input, controller.signal, reporter, streamReporter);
 
       // Task may have been cancelled during execution
-      if (!this.activeTasks.has(taskId)) return
+      if (!this.activeTasks.has(taskId)) return;
 
-      const durationMs = Date.now() - task.startedAt!
+      const durationMs = Date.now() - task.startedAt!;
 
-      task.status = 'completed'
-      task.completedAt = Date.now()
-      task.result = result
+      task.status = 'completed';
+      task.completedAt = Date.now();
+      task.result = result;
 
       this.send(windowId, 'task:event', {
         type: 'completed',
-        data: { taskId, result, durationMs }
-      } satisfies TaskEvent)
+        data: { taskId, result, durationMs },
+      } satisfies TaskEvent);
 
-      this.eventBus.emit('task:completed', { taskId, taskType: type, result, durationMs, windowId })
+      this.eventBus.emit('task:completed', {
+        taskId,
+        taskType: type,
+        result,
+        durationMs,
+        windowId,
+      });
 
       // Task log
     } catch (err) {
       // Task may have been cancelled via cancel()
-      if (!this.activeTasks.has(taskId)) return
+      if (!this.activeTasks.has(taskId)) return;
 
       if (err instanceof Error && err.name === 'AbortError') {
         // Task log
-        task.status = 'cancelled'
-        task.completedAt = Date.now()
+        task.status = 'cancelled';
+        task.completedAt = Date.now();
 
         this.send(windowId, 'task:event', {
           type: 'cancelled',
-          data: { taskId }
-        } satisfies TaskEvent)
+          data: { taskId },
+        } satisfies TaskEvent);
 
-        this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId })
+        this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId });
       } else {
-        const message = err instanceof Error ? err.message : String(err)
-        const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR'
+        const message = err instanceof Error ? err.message : String(err);
+        const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR';
         // Task error, err)
 
-        task.status = 'error'
-        task.completedAt = Date.now()
-        task.error = message
+        task.status = 'error';
+        task.completedAt = Date.now();
+        task.error = message;
 
         this.send(windowId, 'task:event', {
           type: 'error',
-          data: { taskId, message, code }
-        } satisfies TaskEvent)
+          data: { taskId, message, code },
+        } satisfies TaskEvent);
 
-        this.eventBus.emit('task:failed', { taskId, taskType: type, error: message, code, windowId })
+        this.eventBus.emit('task:failed', {
+          taskId,
+          taskType: type,
+          error: message,
+          code,
+          windowId,
+        });
       }
     } finally {
       // Clean up timeout
       if (task.timeoutHandle) {
-        clearTimeout(task.timeoutHandle)
-        task.timeoutHandle = undefined
+        clearTimeout(task.timeoutHandle);
+        task.timeoutHandle = undefined;
       }
 
       // Move to completed store for TTL-based result retrieval
       this.completedTasks.set(taskId, {
         task: { ...task, controller: undefined as unknown as AbortController },
-        expiresAt: Date.now() + COMPLETED_TASK_TTL_MS
-      })
+        expiresAt: Date.now() + COMPLETED_TASK_TTL_MS,
+      });
 
-      this.activeTasks.delete(taskId)
-      this.runningCount--
+      this.activeTasks.delete(taskId);
+      this.runningCount--;
 
       console.log(
         `[TaskExecutor] Task ${taskId} (${type}) finished. ` +
           `Running: ${this.runningCount}, Queued: ${this.queue.length}`
-      )
+      );
 
       // Process next tasks in queue
-      this.drainQueue()
+      this.drainQueue();
     }
   }
 
   /** Evict completed tasks whose TTL has expired. */
   private gcCompletedTasks(): void {
-    const now = Date.now()
+    const now = Date.now();
     for (const [taskId, entry] of this.completedTasks) {
       if (entry.expiresAt <= now) {
-        this.completedTasks.delete(taskId)
+        this.completedTasks.delete(taskId);
       }
     }
   }
@@ -472,10 +490,10 @@ export class TaskExecutor implements Disposable {
    */
   private sortQueue(): void {
     this.queue.sort((a, b) => {
-      const priorityDiff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority]
-      if (priorityDiff !== 0) return priorityDiff
-      return a.queuedAt - b.queuedAt
-    })
+      const priorityDiff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
+      if (priorityDiff !== 0) return priorityDiff;
+      return a.queuedAt - b.queuedAt;
+    });
   }
 
   /**
@@ -483,9 +501,9 @@ export class TaskExecutor implements Disposable {
    */
   private send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
     if (windowId !== undefined) {
-      this.eventBus.sendTo(windowId, channel, ...args)
+      this.eventBus.sendTo(windowId, channel, ...args);
     } else {
-      this.eventBus.broadcast(channel, ...args)
+      this.eventBus.broadcast(channel, ...args);
     }
   }
 }

@@ -6,14 +6,18 @@
  * Definitions are registered explicitly in bootstrap — not via module side effects.
  */
 
-import { type AgentDefinition, type AgentDefinitionInfo, toAgentDefinitionInfo } from './AgentDefinition'
+import {
+  type AgentDefinition,
+  type AgentDefinitionInfo,
+  toAgentDefinitionInfo,
+} from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Registry class
 // ---------------------------------------------------------------------------
 
 export class AgentRegistry {
-  private readonly definitions = new Map<string, AgentDefinition>()
+  private readonly definitions = new Map<string, AgentDefinition>();
 
   /**
    * Register a named agent definition.
@@ -24,19 +28,19 @@ export class AgentRegistry {
     if (this.definitions.has(def.id)) {
       throw new Error(
         `[AgentRegistry] Duplicate agent id "${def.id}". Each agent must have a unique id.`
-      )
+      );
     }
-    this.definitions.set(def.id, def)
+    this.definitions.set(def.id, def);
   }
 
   /** Return the full definition for a given id, or `undefined` if not found. */
   get(id: string): AgentDefinition | undefined {
-    return this.definitions.get(id)
+    return this.definitions.get(id);
   }
 
   /** Return all registered definitions in insertion order. */
   list(): AgentDefinition[] {
-    return [...this.definitions.values()]
+    return [...this.definitions.values()];
   }
 
   /**
@@ -44,11 +48,11 @@ export class AgentRegistry {
    * Use this whenever you need to send agent metadata to the renderer.
    */
   listInfo(): AgentDefinitionInfo[] {
-    return this.list().map(toAgentDefinitionInfo)
+    return this.list().map(toAgentDefinitionInfo);
   }
 
   /** Returns true when an agent with the given id has been registered. */
   has(id: string): boolean {
-    return this.definitions.has(id)
+    return this.definitions.has(id);
   }
 }

@@ -1,12 +1,12 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow } from 'electron';
 
 /**
  * Base event structure for main process events
  */
 export interface AppEvent {
-  type: string
-  payload: unknown
-  timestamp: number
+  type: string;
+  payload: unknown;
+  timestamp: number;
 }
 
 /**
@@ -14,22 +14,49 @@ export interface AppEvent {
  * Used for analytics, logging, and monitoring.
  */
 export interface AppEvents {
-  'service:initialized': { service: string }
-  'service:destroyed': { service: string }
-  'error:critical': { error: Error; context: string }
-  'window:created': { windowId: number; type: string }
-  'window:closed': { windowId: number }
-  'workspace:changed': { currentPath: string | null; previousPath: string | null }
-  'workspace:deleted': { deletedPath: string; reason: 'deleted' | 'inaccessible' | 'renamed'; timestamp: number }
-  'documents:file-changed': { type: 'added' | 'changed' | 'removed'; fileId: string; filePath: string; timestamp: number }
-  'documents:watcher-error': { error: string; timestamp: number }
-  'theme:changed': { theme: 'light' | 'dark' | 'system' }
+  'service:initialized': { service: string };
+  'service:destroyed': { service: string };
+  'error:critical': { error: Error; context: string };
+  'window:created': { windowId: number; type: string };
+  'window:closed': { windowId: number };
+  'workspace:changed': { currentPath: string | null; previousPath: string | null };
+  'workspace:deleted': {
+    deletedPath: string;
+    reason: 'deleted' | 'inaccessible' | 'renamed';
+    timestamp: number;
+  };
+  'documents:file-changed': {
+    type: 'added' | 'changed' | 'removed';
+    fileId: string;
+    filePath: string;
+    timestamp: number;
+  };
+  'documents:watcher-error': { error: string; timestamp: number };
+  'theme:changed': { theme: 'light' | 'dark' | 'system' };
   // Task lifecycle events — emitted by TaskExecutor for main-process observers (e.g. TaskReactionBus)
-  'task:submitted':  { taskId: string; taskType: string; input: unknown; priority: string; windowId?: number }
-  'task:started':    { taskId: string; taskType: string; windowId?: number }
-  'task:completed':  { taskId: string; taskType: string; result: unknown; durationMs: number; windowId?: number }
-  'task:failed':     { taskId: string; taskType: string; error: string; code: string; windowId?: number }
-  'task:cancelled':  { taskId: string; taskType: string; windowId?: number }
+  'task:submitted': {
+    taskId: string;
+    taskType: string;
+    input: unknown;
+    priority: string;
+    windowId?: number;
+  };
+  'task:started': { taskId: string; taskType: string; windowId?: number };
+  'task:completed': {
+    taskId: string;
+    taskType: string;
+    result: unknown;
+    durationMs: number;
+    windowId?: number;
+  };
+  'task:failed': {
+    taskId: string;
+    taskType: string;
+    error: string;
+    code: string;
+    windowId?: number;
+  };
+  'task:cancelled': { taskId: string; taskType: string; windowId?: number };
 }
 
 /**
@@ -39,25 +66,25 @@ export interface AppEvents {
  * - emit() and on(): For typed Main Process events (analytics, logging, monitoring)
  */
 export class EventBus {
-  private mainProcessListeners = new Map<string, Set<(event: AppEvent) => void>>()
+  private mainProcessListeners = new Map<string, Set<(event: AppEvent) => void>>();
   /**
    * Broadcast a message to all open renderer windows.
    */
   broadcast(channel: string, ...args: unknown[]): void {
     BrowserWindow.getAllWindows().forEach((win) => {
       if (!win.isDestroyed()) {
-        win.webContents.send(channel, ...args)
+        win.webContents.send(channel, ...args);
       }
-    })
+    });
   }
 
   /**
    * Send a message to a specific window.
    */
   sendTo(windowId: number, channel: string, ...args: unknown[]): void {
-    const win = BrowserWindow.fromId(windowId)
+    const win = BrowserWindow.fromId(windowId);
     if (win && !win.isDestroyed()) {
-      win.webContents.send(channel, ...args)
+      win.webContents.send(channel, ...args);
     }
   }
 
@@ -72,16 +99,16 @@ export class EventBus {
     const event: AppEvent = {
       type,
       payload,
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    };
 
     this.mainProcessListeners.get(type)?.forEach((callback) => {
       try {
-        callback(event)
+        callback(event);
       } catch (err) {
-        console.error(`[EventBus] Listener error for ${type}:`, err)
+        console.error(`[EventBus] Listener error for ${type}:`, err);
       }
-    })
+    });
   }
 
   /**
@@ -92,18 +119,15 @@ export class EventBus {
    * @param callback - Function to call when the event is emitted
    * @returns Unsubscribe function
    */
-  on<K extends keyof AppEvents>(
-    type: K,
-    callback: (event: AppEvent) => void
-  ): () => void {
+  on<K extends keyof AppEvents>(type: K, callback: (event: AppEvent) => void): () => void {
     if (!this.mainProcessListeners.has(type)) {
-      this.mainProcessListeners.set(type, new Set())
+      this.mainProcessListeners.set(type, new Set());
     }
-    this.mainProcessListeners.get(type)!.add(callback)
+    this.mainProcessListeners.get(type)!.add(callback);
 
     return () => {
-      this.mainProcessListeners.get(type)?.delete(callback)
-    }
+      this.mainProcessListeners.get(type)?.delete(callback);
+    };
   }
 
   /**
@@ -111,7 +135,7 @@ export class EventBus {
    * Useful for cleanup during service shutdown.
    */
   off<K extends keyof AppEvents>(type: K): void {
-    this.mainProcessListeners.delete(type)
+    this.mainProcessListeners.delete(type);
   }
 
   /**
@@ -119,6 +143,6 @@ export class EventBus {
    * Should be called during application shutdown.
    */
   clearAllListeners(): void {
-    this.mainProcessListeners.clear()
+    this.mainProcessListeners.clear();
   }
 }

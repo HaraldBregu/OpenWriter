@@ -3,8 +3,8 @@
 // ---------------------------------------------------------------------------
 
 export interface AgentHistoryMessage {
-  role: 'user' | 'assistant'
-  content: string
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -13,17 +13,17 @@ export interface AgentHistoryMessage {
 
 export interface AgentRequest {
   /** User prompt text */
-  prompt: string
+  prompt: string;
   /** Optional conversation history override (bypasses session history) */
-  messages?: Array<{ role: 'user' | 'assistant'; content: string }>
+  messages?: Array<{ role: 'user' | 'assistant'; content: string }>;
   /** Override provider for this request only */
-  providerId?: string
+  providerId?: string;
   /** Override model for this request only */
-  modelId?: string
+  modelId?: string;
   /** Override temperature for this request only */
-  temperature?: number
+  temperature?: number;
   /** Override maxTokens for this request only */
-  maxTokens?: number
+  maxTokens?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -34,4 +34,4 @@ export type AgentStreamEvent =
   | { type: 'token'; token: string; runId: string }
   | { type: 'thinking'; content: string; runId: string }
   | { type: 'done'; content: string; tokenCount: number; runId: string }
-  | { type: 'error'; error: string; code: string; runId: string }
+  | { type: 'error'; error: string; code: string; runId: string };

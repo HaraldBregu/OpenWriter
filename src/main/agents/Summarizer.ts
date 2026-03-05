@@ -11,11 +11,11 @@
  * Temperature is low to maximise factual grounding.
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -38,9 +38,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type SummarizerState = typeof GraphState.State
+type SummarizerState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Node: assess
@@ -49,11 +49,11 @@ type SummarizerState = typeof GraphState.State
 
 function makeAssessNode() {
   return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const text = userMsg ? String(userMsg.content) : ''
-    const wordCount = text.trim().split(/\s+/).filter(Boolean).length
-    return { wordCount }
-  }
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const text = userMsg ? String(userMsg.content) : '';
+    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+    return { wordCount };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -63,18 +63,18 @@ function makeAssessNode() {
 
 function makeSummarizeNode(model: BaseChatModel) {
   return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const text = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const text = userMsg ? String(userMsg.content) : '';
 
     // Derive bullet target from word count
-    const wc = state.wordCount
-    let bulletGuidance: string
+    const wc = state.wordCount;
+    let bulletGuidance: string;
     if (wc < 500) {
-      bulletGuidance = 'Use 2–4 bullet points.'
+      bulletGuidance = 'Use 2–4 bullet points.';
     } else if (wc <= 2000) {
-      bulletGuidance = 'Use 4–8 bullet points.'
+      bulletGuidance = 'Use 4–8 bullet points.';
     } else {
-      bulletGuidance = 'Use 8–15 bullet points, grouped by theme if appropriate.'
+      bulletGuidance = 'Use 8–15 bullet points, grouped by theme if appropriate.';
     }
 
     const response = await model.invoke([
@@ -95,10 +95,10 @@ Format rules:
 5. Do not add a heading like "Summary:" — begin directly with the opening sentence.`
       ),
       new HumanMessage(text),
-    ])
+    ]);
 
-    return { rawSummary: typeof response.content === 'string' ? response.content : '' }
-  }
+    return { rawSummary: typeof response.content === 'string' ? response.content : '' };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -108,8 +108,8 @@ Format rules:
 
 function makeRefineNode(model: BaseChatModel) {
   return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const originalText = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const originalText = userMsg ? String(userMsg.content) : '';
 
     const response = await model.invoke([
       new SystemMessage(
@@ -123,15 +123,16 @@ Return only the refined summary — no explanation, no preamble.`
       new HumanMessage(
         `Original text:\n${originalText}\n\nSummary to refine:\n${state.rawSummary}`
       ),
-    ])
+    ]);
 
-    const refinedSummary = typeof response.content === 'string' ? response.content : state.rawSummary
+    const refinedSummary =
+      typeof response.content === 'string' ? response.content : state.rawSummary;
 
     return {
       refinedSummary,
       messages: [new AIMessage(refinedSummary)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -146,9 +147,9 @@ function buildSummarizerGraph(model: BaseChatModel) {
     .addEdge(START, 'assess')
     .addEdge('assess', 'summarize')
     .addEdge('summarize', 'refine')
-    .addEdge('refine', END)
+    .addEdge('refine', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -191,6 +192,6 @@ Length calibration:
     multiline: true,
   },
   buildGraph: buildSummarizerGraph,
-}
+};
 
-export { definition as SummarizerAgent }
+export { definition as SummarizerAgent };

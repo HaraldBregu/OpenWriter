@@ -1,116 +1,123 @@
-import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu } from 'electron'
-import path from 'node:path'
-import { Main } from './main'
-import { Tray } from './tray'
-import { Menu } from './menu'
-import { WorkspaceProcessManager } from './workspace-process'
+import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu } from 'electron';
+import path from 'node:path';
+import { Main } from './main';
+import { Tray } from './tray';
+import { Menu } from './menu';
+import { WorkspaceProcessManager } from './workspace-process';
 
-import type { WorkspaceService } from './services/workspace'
-import type { WorkspaceMetadataService } from './services/workspace-metadata'
-import { bootstrapServices, bootstrapIpcModules, setupAppLifecycle, setupEventLogging, cleanup } from './bootstrap'
-import { TSRCT_EXT } from './constants'
+import type { WorkspaceService } from './services/workspace';
+import type { WorkspaceMetadataService } from './services/workspace-metadata';
+import {
+  bootstrapServices,
+  bootstrapIpcModules,
+  setupAppLifecycle,
+  setupEventLogging,
+  cleanup,
+} from './bootstrap';
+import { TSRCT_EXT } from './constants';
 
 // Check if running in workspace mode
-const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode()
-const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs()
+const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode();
+const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs();
 
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
-const { container, eventBus, appState, windowFactory, logger, windowContextManager } = bootstrapServices()
-logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`)
+const { container, eventBus, appState, windowFactory, logger, windowContextManager } =
+  bootstrapServices();
+logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`);
 if (isWorkspaceMode && workspacePath) {
-  logger.info('Main', `Workspace path: ${workspacePath}`)
+  logger.info('Main', `Workspace path: ${workspacePath}`);
 }
-logger.info('Main', 'Enabling IPC modules...')
-bootstrapIpcModules(container, eventBus)
-setupAppLifecycle(appState, logger)
-setupEventLogging(logger)
+logger.info('Main', 'Enabling IPC modules...');
+bootstrapIpcModules(container, eventBus);
+setupAppLifecycle(appState, logger);
+setupEventLogging(logger);
 
 function isTsrctFile(filePath: string): boolean {
-  return path.extname(filePath).toLowerCase() === TSRCT_EXT
+  return path.extname(filePath).toLowerCase() === TSRCT_EXT;
 }
 
 function extractFilePathFromArgs(args: string[]): string | null {
   for (const arg of args) {
     if (isTsrctFile(arg)) {
-      return arg
+      return arg;
     }
   }
-  return null
+  return null;
 }
 
-const mainWindow = new Main(appState, windowFactory, windowContextManager)
+const mainWindow = new Main(appState, windowFactory, windowContextManager);
 
 const trayManager = new Tray({
   onShowApp: () => mainWindow.showOrCreate(),
   onHideApp: () => mainWindow.hide(),
   onToggleApp: () => mainWindow.toggleVisibility(),
   onQuit: () => {
-    appState.setQuitting()
-    app.quit()
+    appState.setQuitting();
+    app.quit();
   },
-  isAppVisible: () => mainWindow.isVisible()
-})
+  isAppVisible: () => mainWindow.isVisible(),
+});
 
 const menuManager = new Menu({
   onLanguageChange: (lng) => {
-    trayManager.updateLanguage(lng)
+    trayManager.updateLanguage(lng);
     BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.send('change-language', lng)
-    })
+      win.webContents.send('change-language', lng);
+    });
   },
   onThemeChange: (theme) => {
-    nativeTheme.themeSource = theme as 'light' | 'dark' | 'system'
+    nativeTheme.themeSource = theme as 'light' | 'dark' | 'system';
     BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.send('change-theme', theme)
-    })
+      win.webContents.send('change-theme', theme);
+    });
   },
   onNewWorkspace: async () => {
     // Show folder selection dialog
     const result = await dialog.showOpenDialog({
       properties: ['openDirectory', 'createDirectory'],
       title: 'Select Workspace Folder',
-      buttonLabel: 'Select Workspace'
-    })
+      buttonLabel: 'Select Workspace',
+    });
 
     // If user selected a folder, spawn a new Electron instance
     if (!result.canceled && result.filePaths.length > 0) {
-      const workspacePath = result.filePaths[0]
+      const workspacePath = result.filePaths[0];
 
-      logger.info('Menu', `Spawning separate process for workspace: ${workspacePath}`)
+      logger.info('Menu', `Spawning separate process for workspace: ${workspacePath}`);
 
       // Create WorkspaceProcessManager instance
-      const workspaceProcessManager = new WorkspaceProcessManager(logger)
+      const workspaceProcessManager = new WorkspaceProcessManager(logger);
 
       // Spawn a new Electron instance for this workspace
       const pid = workspaceProcessManager.spawnWorkspaceProcess({
         workspacePath,
-        logger
-      })
+        logger,
+      });
 
-      logger.info('Menu', `Workspace process spawned with PID: ${pid}`)
+      logger.info('Menu', `Workspace process spawned with PID: ${pid}`);
     }
-  }
-})
+  },
+});
 
 // macOS: handle file open via Finder / double-click (before and after ready)
-let pendingFilePath: string | null = null
+let pendingFilePath: string | null = null;
 
 app.on('open-file', (event, filePath) => {
-  event.preventDefault()
-  logger.debug('App', `File open request: ${filePath}`)
-  if (!isTsrctFile(filePath)) return
+  event.preventDefault();
+  logger.debug('App', `File open request: ${filePath}`);
+  if (!isTsrctFile(filePath)) return;
 
   if (app.isReady()) {
-    mainWindow.createWindowForFile(filePath)
+    mainWindow.createWindowForFile(filePath);
   } else {
-    pendingFilePath = filePath
+    pendingFilePath = filePath;
   }
-})
+});
 
 app.whenReady().then(async () => {
   // WORKSPACE MODE: Open workspace directly without launcher UI
   if (isWorkspaceMode && workspacePath) {
-    logger.info('App', `Opening workspace in isolated process: ${workspacePath}`)
+    logger.info('App', `Opening workspace in isolated process: ${workspacePath}`);
 
     // On Windows/Linux, set a minimal application menu then hide the bar.
     // setApplicationMenu(null) would remove keyboard accelerators (Ctrl+C/V/Z).
@@ -128,7 +135,7 @@ app.whenReady().then(async () => {
             { role: 'copy' as const },
             { role: 'paste' as const },
             { role: 'selectAll' as const },
-          ]
+          ],
         },
         {
           label: 'View',
@@ -139,83 +146,86 @@ app.whenReady().then(async () => {
             { role: 'zoomIn' as const },
             { role: 'zoomOut' as const },
             { role: 'resetZoom' as const },
-          ]
-        }
-      ])
-      ElectronMenu.setApplicationMenu(minimalMenu)
+          ],
+        },
+      ]);
+      ElectronMenu.setApplicationMenu(minimalMenu);
       // Note: frame:false already hides the menu bar, but the accelerators
       // from the application menu remain active for keyboard shortcuts.
     }
 
     // Create workspace window directly - no tray
-    const workspaceWindow = mainWindow.createWorkspaceWindow()
+    const workspaceWindow = mainWindow.createWorkspaceWindow();
 
     // Set the workspace path immediately
-    const context = windowContextManager.get(workspaceWindow.id)
-    const workspaceService = context.getService<WorkspaceService>('workspace', container)
-    workspaceService.setCurrent(workspacePath)
+    const context = windowContextManager.get(workspaceWindow.id);
+    const workspaceService = context.getService<WorkspaceService>('workspace', container);
+    workspaceService.setCurrent(workspacePath);
 
     // CRITICAL: Reinitialize WorkspaceMetadataService after workspace path is set
     // This ensures the service reads from the correct workspace.tsrct file
     // and doesn't have stale cache from initialization
-    const metadataService = context.getService<WorkspaceMetadataService>('workspaceMetadata', container)
+    const metadataService = context.getService<WorkspaceMetadataService>(
+      'workspaceMetadata',
+      container
+    );
 
     // Force cache clear and re-read from file
-    logger.info('App', `Reinitializing WorkspaceMetadataService for workspace: ${workspacePath}`)
-    metadataService.initialize()
+    logger.info('App', `Reinitializing WorkspaceMetadataService for workspace: ${workspacePath}`);
+    metadataService.initialize();
 
-    logger.info('App', `Workspace process ready with PID: ${process.pid}`)
+    logger.info('App', `Workspace process ready with PID: ${process.pid}`);
 
     // Handle window close: quit app when workspace window closes
     workspaceWindow.on('closed', () => {
-      logger.info('App', 'Workspace window closed, quitting process')
-      app.quit()
-    })
+      logger.info('App', 'Workspace window closed, quitting process');
+      app.quit();
+    });
 
-    return
+    return;
   }
 
   // LAUNCHER MODE: Normal startup with menu, tray, and workspace selector
-  menuManager.create()
-  trayManager.create()
+  menuManager.create();
+  trayManager.create();
 
   // Sync menu radio buttons when theme changes from renderer
   eventBus.on('theme:changed', (event) => {
-    const { theme } = event.payload as { theme: string }
-    menuManager.updateTheme(theme)
-  })
+    const { theme } = event.payload as { theme: string };
+    menuManager.updateTheme(theme);
+  });
 
   // Create main window
-  mainWindow.create()
+  mainWindow.create();
 
   // Update tray menu when window visibility changes
   mainWindow.setOnWindowVisibilityChange(() => {
-    trayManager.updateContextMenu()
-  })
+    trayManager.updateContextMenu();
+  });
 
   // Handle file from macOS open-file event that arrived before ready
   if (pendingFilePath) {
-    logger.info('App', `Opening pending file from macOS: ${pendingFilePath}`)
-    mainWindow.createWindowForFile(pendingFilePath)
-    pendingFilePath = null
+    logger.info('App', `Opening pending file from macOS: ${pendingFilePath}`);
+    mainWindow.createWindowForFile(pendingFilePath);
+    pendingFilePath = null;
   }
 
   // Windows/Linux: handle file passed as command-line argument on first launch
-  const fileFromArgs = extractFilePathFromArgs(process.argv.slice(1))
+  const fileFromArgs = extractFilePathFromArgs(process.argv.slice(1));
   if (fileFromArgs) {
-    logger.info('App', `Opening file from command line: ${fileFromArgs}`)
-    mainWindow.createWindowForFile(fileFromArgs)
+    logger.info('App', `Opening file from command line: ${fileFromArgs}`);
+    mainWindow.createWindowForFile(fileFromArgs);
   }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      mainWindow.create()
+      mainWindow.create();
     }
-  })
-})
+  });
+});
 
 // Note: window-all-closed and before-quit handlers are now managed by setupAppLifecycle
 
 app.on('quit', () => {
-  cleanup(container)
-})
+  cleanup(container);
+});

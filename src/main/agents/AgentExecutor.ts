@@ -7,34 +7,34 @@
  *    The graph is streamed with streamMode:"messages" to yield tokens.
  */
 
-import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { CompiledStateGraph } from '@langchain/langgraph'
-import type { ResolvedProvider } from '../shared/ProviderResolver'
-import { extractTokenFromChunk, classifyError, toUserMessage } from '../shared/aiUtils'
-import { createChatModel } from '../shared/ChatModelFactory'
-import type { AgentStreamEvent } from './AgentTypes'
-import type { AgentHistoryMessage } from './AgentTypes'
-import type { LoggerService } from '../services/logger'
+import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { CompiledStateGraph } from '@langchain/langgraph';
+import type { ResolvedProvider } from '../shared/ProviderResolver';
+import { extractTokenFromChunk, classifyError, toUserMessage } from '../shared/aiUtils';
+import { createChatModel } from '../shared/ChatModelFactory';
+import type { AgentStreamEvent } from './AgentTypes';
+import type { AgentHistoryMessage } from './AgentTypes';
+import type { LoggerService } from '../services/logger';
 
-const LOG_PREFIX = 'AgentExecutor'
+const LOG_PREFIX = 'AgentExecutor';
 
 export interface ExecutorInput {
-  runId: string
-  provider: ResolvedProvider
-  systemPrompt: string
-  temperature: number
-  maxTokens: number | undefined
-  history: AgentHistoryMessage[]
-  prompt: string
-  signal?: AbortSignal
-  logger?: LoggerService
+  runId: string;
+  provider: ResolvedProvider;
+  systemPrompt: string;
+  temperature: number;
+  maxTokens: number | undefined;
+  history: AgentHistoryMessage[];
+  prompt: string;
+  signal?: AbortSignal;
+  logger?: LoggerService;
   /**
    * LangGraph factory — when supplied the executor runs the graph path.
    * The factory receives the already-configured streaming model.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
 }
 
 /**
@@ -46,17 +46,30 @@ export interface ExecutorInput {
 export async function* executeAIAgentsStream(
   input: ExecutorInput
 ): AsyncGenerator<AgentStreamEvent> {
-  const { runId, provider, systemPrompt, temperature, maxTokens, history, prompt, signal, buildGraph, logger } = input
-  const { apiKey, modelName } = provider
+  const {
+    runId,
+    provider,
+    systemPrompt,
+    temperature,
+    maxTokens,
+    history,
+    prompt,
+    signal,
+    buildGraph,
+    logger,
+  } = input;
+  const { apiKey, modelName } = provider;
 
   const log = {
-    info: (msg: string) => logger ? logger.info(LOG_PREFIX, msg) : console.log(`[${LOG_PREFIX}] ${msg}`),
-    error: (msg: string) => logger ? logger.error(LOG_PREFIX, msg) : console.error(`[${LOG_PREFIX}] ${msg}`),
-  }
+    info: (msg: string) =>
+      logger ? logger.info(LOG_PREFIX, msg) : console.log(`[${LOG_PREFIX}] ${msg}`),
+    error: (msg: string) =>
+      logger ? logger.error(LOG_PREFIX, msg) : console.error(`[${LOG_PREFIX}] ${msg}`),
+  };
 
   log.info(
     `run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
-  )
+  );
 
   // --- Build LangChain model ------------------------------------------------
 
@@ -67,7 +80,7 @@ export async function* executeAIAgentsStream(
     streaming: true,
     temperature,
     maxTokens,
-  })
+  });
 
   // --- Build message chain (shared by both paths) ---------------------------
 
@@ -77,48 +90,48 @@ export async function* executeAIAgentsStream(
       m.role === 'user' ? new HumanMessage(m.content) : new AIMessage(m.content)
     ),
     new HumanMessage(prompt),
-  ]
+  ];
 
   // --- LangGraph path --------------------------------------------------------
 
   if (buildGraph) {
-    yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, log })
-    return
+    yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, log });
+    return;
   }
 
   // --- Plain chat completion path -------------------------------------------
 
-  let fullContent = ''
-  let tokenCount = 0
+  let fullContent = '';
+  let tokenCount = 0;
 
   try {
-    const stream = await model.stream(langchainMessages, { signal })
+    const stream = await model.stream(langchainMessages, { signal });
 
     for await (const chunk of stream) {
-      if (signal?.aborted) break
+      if (signal?.aborted) break;
 
-      const token = extractTokenFromChunk(chunk.content)
+      const token = extractTokenFromChunk(chunk.content);
       if (token) {
-        fullContent += token
-        tokenCount++
-        yield { type: 'token', token, runId }
+        fullContent += token;
+        tokenCount++;
+        yield { type: 'token', token, runId };
       }
     }
 
-    log.info(`run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`)
-    yield { type: 'done', content: fullContent, tokenCount, runId }
+    log.info(`run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`);
+    yield { type: 'done', content: fullContent, tokenCount, runId };
   } catch (error: unknown) {
-    const kind = classifyError(error)
+    const kind = classifyError(error);
 
     if (kind === 'abort') {
-      yield { type: 'error', error: 'Cancelled', code: 'abort', runId }
-      return
+      yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
+      return;
     }
 
-    const rawMessage = error instanceof Error ? error.message : String(error)
-    log.error(`run=${runId} error (${kind}): ${rawMessage}`)
+    const rawMessage = error instanceof Error ? error.message : String(error);
+    log.error(`run=${runId} error (${kind}): ${rawMessage}`);
 
-    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId }
+    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
   }
 }
 
@@ -127,68 +140,68 @@ export async function* executeAIAgentsStream(
 // ---------------------------------------------------------------------------
 
 interface GraphStreamInput {
-  runId: string
-  model: BaseChatModel
-  langchainMessages: (HumanMessage | AIMessage | SystemMessage)[]
+  runId: string;
+  model: BaseChatModel;
+  langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
-  signal?: AbortSignal
-  log: { info: (msg: string) => void; error: (msg: string) => void }
+  buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+  signal?: AbortSignal;
+  log: { info: (msg: string) => void; error: (msg: string) => void };
 }
 
 async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<AgentStreamEvent> {
-  const { runId, model, langchainMessages, buildGraph, signal, log } = input
+  const { runId, model, langchainMessages, buildGraph, signal, log } = input;
 
-  let fullContent = ''
-  let tokenCount = 0
+  let fullContent = '';
+  let tokenCount = 0;
 
   try {
-    const graph = buildGraph(model)
+    const graph = buildGraph(model);
 
     const stream = await graph.stream(
       { messages: langchainMessages },
       { streamMode: 'messages', signal: signal as AbortSignal | undefined }
-    )
+    );
 
     for await (const item of stream) {
-      if (signal?.aborted) break
-      
-      // streamMode:"messages" yields [chunk, metadata] tuples
-      const [chunk] = Array.isArray(item) ? item : [item, {}]
+      if (signal?.aborted) break;
 
-      if (!chunk) continue
+      // streamMode:"messages" yields [chunk, metadata] tuples
+      const [chunk] = Array.isArray(item) ? item : [item, {}];
+
+      if (!chunk) continue;
 
       // Skip the final complete AIMessage that LangGraph emits after all
       // streaming AIMessageChunk deltas. Only process incremental chunks.
-      if (chunk instanceof AIMessage) continue
+      if (chunk instanceof AIMessage) continue;
 
       // Extract text token from the chunk content
       const token = extractTokenFromChunk(
         typeof chunk === 'object' && chunk !== null && 'content' in chunk
           ? (chunk as { content: unknown }).content
           : ''
-      )
+      );
 
       if (token) {
-        fullContent += token
-        tokenCount++
-        yield { type: 'token', token, runId }
+        fullContent += token;
+        tokenCount++;
+        yield { type: 'token', token, runId };
       }
     }
 
-    log.info(`run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`)
-    yield { type: 'done', content: fullContent, tokenCount, runId }
+    log.info(`run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`);
+    yield { type: 'done', content: fullContent, tokenCount, runId };
   } catch (error: unknown) {
-    const kind = classifyError(error)
+    const kind = classifyError(error);
 
     if (kind === 'abort') {
-      yield { type: 'error', error: 'Cancelled', code: 'abort', runId }
-      return
+      yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
+      return;
     }
 
-    const rawMessage = error instanceof Error ? error.message : String(error)
-    log.error(`run=${runId} graph error (${kind}): ${rawMessage}`)
+    const rawMessage = error instanceof Error ? error.message : String(error);
+    log.error(`run=${runId} graph error (${kind}): ${rawMessage}`);
 
-    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId }
+    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
   }
 }

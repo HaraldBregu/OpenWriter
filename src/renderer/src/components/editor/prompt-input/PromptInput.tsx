@@ -1,39 +1,36 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { PluginKey } from '@tiptap/pm/state'
-import { useEditorContext } from '../EditorContext'
-import { PromptInputPlugin, type PromptInputView } from './prompt-input-plugin'
-import { GUTTER_WIDTH } from '../BlockControls'
-import { AppInput } from '@components/app/AppInput'
-import { ArrowUp, Wand2 } from 'lucide-react'
-import { AppButton } from '@components/app/AppButton'
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { PluginKey } from '@tiptap/pm/state';
+import { useEditorContext } from '../EditorContext';
+import { PromptInputPlugin, type PromptInputView } from './prompt-input-plugin';
+import { GUTTER_WIDTH } from '../BlockControls';
+import { AppInput } from '@components/app/AppInput';
+import { ArrowUp, Wand2 } from 'lucide-react';
+import { AppButton } from '@components/app/AppButton';
 
 interface PromptInputProps {
   /** The editor container div — used to match the content area width. */
-  containerRef: React.RefObject<HTMLDivElement | null>
-  onSubmit: (prompt: string, triggerPos: number) => void
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  onSubmit: (prompt: string, triggerPos: number) => void;
 }
 
-const pluginKey = new PluginKey('promptInput')
+const pluginKey = new PluginKey('promptInput');
 
-export function PromptInput({
-  containerRef,
-  onSubmit,
-}: PromptInputProps): React.JSX.Element {
-  const { editor } = useEditorContext()
-  const floatingRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const pluginViewRef = useRef<PromptInputView | null>(null)
-  const [prompt, setPrompt] = useState('')
-  const triggerPosRef = useRef<number | null>(null)
+export function PromptInput({ containerRef, onSubmit }: PromptInputProps): React.JSX.Element {
+  const { editor } = useEditorContext();
+  const floatingRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const pluginViewRef = useRef<PromptInputView | null>(null);
+  const [prompt, setPrompt] = useState('');
+  const triggerPosRef = useRef<number | null>(null);
   // Track visibility so the mousedown listener knows whether to act.
-  const visibleRef = useRef(false)
+  const visibleRef = useRef(false);
 
-  const promptRef = useRef(prompt)
-  promptRef.current = prompt
+  const promptRef = useRef(prompt);
+  promptRef.current = prompt;
 
   // Keep onSubmit stable via ref so changes don't retrigger the plugin effect.
-  const onSubmitRef = useRef(onSubmit)
-  onSubmitRef.current = onSubmit
+  const onSubmitRef = useRef(onSubmit);
+  onSubmitRef.current = onSubmit;
 
   // ------------------------------------------------------------------
   // Sync width from the container to the floating element.
@@ -41,86 +38,86 @@ export function PromptInput({
   // computes its position.
   // ------------------------------------------------------------------
   const syncWidth = useCallback(() => {
-    const container = containerRef.current
-    const floating = floatingRef.current
-    if (!container || !floating) return
-    const contentWidth = container.getBoundingClientRect().width - GUTTER_WIDTH * 2
-    floating.style.width = `${Math.max(contentWidth, 200)}px`
-  }, [containerRef])
+    const container = containerRef.current;
+    const floating = floatingRef.current;
+    if (!container || !floating) return;
+    const contentWidth = container.getBoundingClientRect().width - GUTTER_WIDTH * 2;
+    floating.style.width = `${Math.max(contentWidth, 200)}px`;
+  }, [containerRef]);
 
   // ------------------------------------------------------------------
   // dismiss — clears React state only (called by the plugin's onDismiss)
   // ------------------------------------------------------------------
   const dismiss = useCallback(() => {
-    visibleRef.current = false
-    setPrompt('')
-    triggerPosRef.current = null
-  }, [])
+    visibleRef.current = false;
+    setPrompt('');
+    triggerPosRef.current = null;
+  }, []);
 
   // ------------------------------------------------------------------
   // hide — tells the plugin view to hide (triggers dismiss via onDismiss)
   // ------------------------------------------------------------------
   const hide = useCallback(() => {
-    pluginViewRef.current?.hide()
-  }, [])
+    pluginViewRef.current?.hide();
+  }, []);
 
   // ------------------------------------------------------------------
   // submit
   // ------------------------------------------------------------------
   const submit = useCallback(() => {
-    const p = promptRef.current.trim()
-    const pos = triggerPosRef.current
+    const p = promptRef.current.trim();
+    const pos = triggerPosRef.current;
     if (!p || pos === null) {
-      hide()
-      return
+      hide();
+      return;
     }
-    onSubmitRef.current(p, pos)
-    hide()
-  }, [hide])
+    onSubmitRef.current(p, pos);
+    hide();
+  }, [hide]);
 
   const onKeyEvent = useCallback(
     (event: KeyboardEvent): boolean => {
       if (event.key === 'Enter') {
-        event.preventDefault()
-        submit()
-        return true
+        event.preventDefault();
+        submit();
+        return true;
       }
-      return false
+      return false;
     },
-    [submit],
-  )
+    [submit]
+  );
 
   // ------------------------------------------------------------------
   // Register the ProseMirror plugin once on mount.
   // ------------------------------------------------------------------
   useEffect(() => {
-    const el = floatingRef.current
-    if (!el || editor.isDestroyed) return
+    const el = floatingRef.current;
+    if (!el || editor.isDestroyed) return;
 
     const plugin = PromptInputPlugin({
       pluginKey,
       editor,
       element: el,
       onTrigger: (pos) => {
-        triggerPosRef.current = pos
-        visibleRef.current = true
-        requestAnimationFrame(() => inputRef.current?.focus())
+        triggerPosRef.current = pos;
+        visibleRef.current = true;
+        requestAnimationFrame(() => inputRef.current?.focus());
       },
       onDismiss: dismiss,
       onKeyEvent,
       onBeforeShow: () => {
-        syncWidth()
+        syncWidth();
       },
       onViewReady: (view) => {
-        pluginViewRef.current = view
+        pluginViewRef.current = view;
       },
-    })
+    });
 
-    editor.registerPlugin(plugin)
+    editor.registerPlugin(plugin);
     return () => {
-      editor.unregisterPlugin(pluginKey)
-    }
-  }, [editor, dismiss, onKeyEvent, syncWidth])
+      editor.unregisterPlugin(pluginKey);
+    };
+  }, [editor, dismiss, onKeyEvent, syncWidth]);
 
   // ------------------------------------------------------------------
   // Click-outside dismissal — attach once, check visibleRef at runtime.
@@ -129,20 +126,20 @@ export function PromptInput({
   // ------------------------------------------------------------------
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent): void => {
-      if (!visibleRef.current) return
-      const floating = floatingRef.current
-      if (!floating) return
+      if (!visibleRef.current) return;
+      const floating = floatingRef.current;
+      if (!floating) return;
       // If the click is inside the floating element, do nothing.
-      if (floating.contains(e.target as Node)) return
+      if (floating.contains(e.target as Node)) return;
       // Otherwise dismiss.
-      pluginViewRef.current?.hide()
-    }
+      pluginViewRef.current?.hide();
+    };
 
-    document.addEventListener('mousedown', handleMouseDown, true)
+    document.addEventListener('mousedown', handleMouseDown, true);
     return () => {
-      document.removeEventListener('mousedown', handleMouseDown, true)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleMouseDown, true);
+    };
+  }, []);
 
   return (
     <div
@@ -158,12 +155,16 @@ export function PromptInput({
         className="border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            e.preventDefault()
-            submit()
-            requestAnimationFrame(() => { if (!editor.isDestroyed) editor.commands.focus() })
+            e.preventDefault();
+            submit();
+            requestAnimationFrame(() => {
+              if (!editor.isDestroyed) editor.commands.focus();
+            });
           } else if (e.key === 'Escape') {
-            hide()
-            requestAnimationFrame(() => { if (!editor.isDestroyed) editor.commands.focus() })
+            hide();
+            requestAnimationFrame(() => {
+              if (!editor.isDestroyed) editor.commands.focus();
+            });
           }
         }}
         placeholder="Ask anything and press Enter…"
@@ -174,12 +175,12 @@ export function PromptInput({
         className="shrink-0"
         disabled={!prompt.trim()}
         onMouseDown={(e) => {
-          e.preventDefault()
-          submit()
+          e.preventDefault();
+          submit();
         }}
       >
         <ArrowUp />
       </AppButton>
     </div>
-  )
+  );
 }

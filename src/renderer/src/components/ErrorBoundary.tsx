@@ -1,60 +1,60 @@
-import React from 'react'
-import { AlertCircle } from 'lucide-react'
-import i18next from 'i18next'
+import React from 'react';
+import { AlertCircle } from 'lucide-react';
+import i18next from 'i18next';
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode
-  fallback?: React.ReactNode
-  onReset?: () => void
-  level?: 'root' | 'route' | 'feature'
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+  onReset?: () => void;
+  level?: 'root' | 'route' | 'feature';
 }
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false, error: null }
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error('[ErrorBoundary]', error, errorInfo)
+    console.error('[ErrorBoundary]', error, errorInfo);
   }
 
   handleReset = (): void => {
-    this.setState({ hasError: false, error: null })
-    this.props.onReset?.()
-  }
+    this.setState({ hasError: false, error: null });
+    this.props.onReset?.();
+  };
 
   render(): React.ReactNode {
     if (!this.state.hasError) {
-      return this.props.children
+      return this.props.children;
     }
 
     if (this.props.fallback) {
-      return this.props.fallback
+      return this.props.fallback;
     }
 
-    const { level = 'feature' } = this.props
+    const { level = 'feature' } = this.props;
 
-    const t = (key: string): string => i18next.t(key)
+    const t = (key: string): string => i18next.t(key);
 
     if (level === 'root') {
       return (
         <div className="flex h-screen items-center justify-center bg-background p-6">
           <div className="max-w-md text-center space-y-4">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
-            <h1 className="text-lg font-semibold text-foreground">{t('errorBoundary.rootTitle')}</h1>
-            <p className="text-sm text-muted-foreground">
-              {t('errorBoundary.rootMessage')}
-            </p>
+            <h1 className="text-lg font-semibold text-foreground">
+              {t('errorBoundary.rootTitle')}
+            </h1>
+            <p className="text-sm text-muted-foreground">{t('errorBoundary.rootMessage')}</p>
             <p className="text-xs text-muted-foreground/60 font-mono break-all">
               {this.state.error?.message}
             </p>
@@ -67,7 +67,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </button>
           </div>
         </div>
-      )
+      );
     }
 
     if (level === 'route') {
@@ -75,10 +75,10 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="max-w-md text-center space-y-4">
             <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
-            <h2 className="text-base font-semibold text-foreground">{t('errorBoundary.routeTitle')}</h2>
-            <p className="text-sm text-muted-foreground">
-              {t('errorBoundary.routeMessage')}
-            </p>
+            <h2 className="text-base font-semibold text-foreground">
+              {t('errorBoundary.routeTitle')}
+            </h2>
+            <p className="text-sm text-muted-foreground">{t('errorBoundary.routeMessage')}</p>
             <p className="text-xs text-muted-foreground/60 font-mono break-all">
               {this.state.error?.message}
             </p>
@@ -92,7 +92,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               </button>
               <button
                 type="button"
-                onClick={() => { window.location.hash = '#/home' }}
+                onClick={() => {
+                  window.location.hash = '#/home';
+                }}
                 className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-muted transition-colors"
               >
                 {t('errorBoundary.goHome')}
@@ -100,7 +102,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </div>
           </div>
         </div>
-      )
+      );
     }
 
     // feature level
@@ -121,6 +123,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
           {t('errorBoundary.tryAgain')}
         </button>
       </div>
-    )
+    );
   }
 }

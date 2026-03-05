@@ -1,4 +1,4 @@
-import type { StoreService } from '../services/store'
+import type { StoreService } from '../services/store';
 
 /**
  * Resolved provider configuration.
@@ -6,11 +6,11 @@ import type { StoreService } from '../services/store'
  */
 export interface ResolvedProvider {
   /** API key for authentication with the provider */
-  apiKey: string
+  apiKey: string;
   /** Model name/ID to use */
-  modelName: string
+  modelName: string;
   /** Provider ID (e.g., 'openai', 'anthropic', etc.) */
-  providerId: string
+  providerId: string;
 }
 
 /**
@@ -35,9 +35,9 @@ export interface ResolvedProvider {
  *   - Eliminates ~70 lines of duplicate code across 4 files
  */
 export class ProviderResolver {
-  private readonly DEFAULT_PROVIDER = 'openai'
-  private readonly DEFAULT_MODEL = 'gpt-4o-mini'
-  private readonly PLACEHOLDER_API_KEY = 'your-openai-api-key-here'
+  private readonly DEFAULT_PROVIDER = 'openai';
+  private readonly DEFAULT_MODEL = 'gpt-4o-mini';
+  private readonly PLACEHOLDER_API_KEY = 'your-openai-api-key-here';
 
   constructor(private readonly storeService: StoreService) {}
 
@@ -50,20 +50,20 @@ export class ProviderResolver {
    */
   resolve(options?: { providerId?: string; modelId?: string }): ResolvedProvider {
     // Resolve provider ID
-    const providerId = options?.providerId || this.DEFAULT_PROVIDER
+    const providerId = options?.providerId || this.DEFAULT_PROVIDER;
 
     // Fetch settings for this provider
-    const settings = this.storeService.getModelSettings(providerId)
+    const settings = this.storeService.getModelSettings(providerId);
 
     // Resolve API key with fallback to environment variable
-    const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY
+    const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY;
 
     // Validate API key
     if (!apiKey || apiKey === this.PLACEHOLDER_API_KEY) {
       throw new Error(
         `No API key configured for provider "${providerId}". ` +
           'Please configure your API key in Settings or set the VITE_OPENAI_API_KEY environment variable.'
-      )
+      );
     }
 
     // Resolve model name with fallback to environment variable and default
@@ -71,22 +71,22 @@ export class ProviderResolver {
       options?.modelId ||
       settings?.selectedModel ||
       import.meta.env.VITE_OPENAI_MODEL ||
-      this.DEFAULT_MODEL
+      this.DEFAULT_MODEL;
 
-    return { apiKey, modelName, providerId }
+    return { apiKey, modelName, providerId };
   }
 
   /**
    * Get the default provider ID.
    */
   getDefaultProviderId(): string {
-    return this.DEFAULT_PROVIDER
+    return this.DEFAULT_PROVIDER;
   }
 
   /**
    * Get the default model name.
    */
   getDefaultModelName(): string {
-    return this.DEFAULT_MODEL
+    return this.DEFAULT_MODEL;
   }
 }

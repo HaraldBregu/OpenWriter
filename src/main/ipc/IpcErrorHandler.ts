@@ -1,10 +1,10 @@
-import type { IpcMainInvokeEvent } from 'electron'
+import type { IpcMainInvokeEvent } from 'electron';
 
 // Re-export shared IPC result types for backward compatibility
-export type { IpcError, IpcSuccess, IpcResult } from '../../shared/ipc-result'
+export type { IpcError, IpcSuccess, IpcResult } from '../../shared/ipc-result';
 
 // Import the types we need locally
-import type { IpcResult } from '../../shared/ipc-result'
+import type { IpcResult } from '../../shared/ipc-result';
 
 /**
  * Wraps an IPC handler with standardized error handling
@@ -30,21 +30,21 @@ export function wrapIpcHandler<TArgs extends unknown[], TResult>(
 ): (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<IpcResult<TResult>> {
   return async (event: IpcMainInvokeEvent, ...args: TArgs): Promise<IpcResult<TResult>> => {
     try {
-      const result = await handler(event, ...args)
-      return { success: true, data: result }
+      const result = await handler(event, ...args);
+      return { success: true, data: result };
     } catch (err) {
-      console.error(`[IPC Error] ${handlerName}:`, err)
-      const error = err instanceof Error ? err : new Error(String(err))
+      console.error(`[IPC Error] ${handlerName}:`, err);
+      const error = err instanceof Error ? err : new Error(String(err));
       return {
         success: false,
         error: {
           code: error.name || 'UnknownError',
           message: error.message,
-          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-        }
-      }
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        },
+      };
     }
-  }
+  };
 }
 
 /**
@@ -69,5 +69,5 @@ export function wrapSimpleHandler<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => Promise<TResult> | TResult,
   handlerName: string
 ): (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<IpcResult<TResult>> {
-  return wrapIpcHandler((_event, ...args) => handler(...args), handlerName)
+  return wrapIpcHandler((_event, ...args) => handler(...args), handlerName);
 }

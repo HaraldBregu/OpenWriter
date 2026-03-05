@@ -8,19 +8,19 @@
  * window.task.onEvent listener at module load time.
  */
 
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import type { TaskEvent, TaskPriority } from '../../../../shared/types'
-import { initialState } from './state'
-import type { TrackedTaskState, TaskEventRecord, TasksState } from './types'
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import type { TaskEvent, TaskPriority } from '../../../../shared/types';
+import { initialState } from './state';
+import type { TrackedTaskState, TaskEventRecord, TasksState } from './types';
 
-export type { TasksState }
+export type { TasksState };
 
 // ---------------------------------------------------------------------------
 // Helpers (run inside Immer-wrapped reducers, so mutations are safe here)
 // ---------------------------------------------------------------------------
 
-const MAX_EVENT_HISTORY = 50
+const MAX_EVENT_HISTORY = 50;
 
 /**
  * Append an event record to a task's ring buffer. Operates on the draft task
@@ -28,9 +28,9 @@ const MAX_EVENT_HISTORY = 50
  */
 function appendEventToDraft(task: TrackedTaskState, record: TaskEventRecord): void {
   if (task.events.length >= MAX_EVENT_HISTORY) {
-    task.events.shift()
+    task.events.shift();
   }
-  task.events.push(record)
+  task.events.push(record);
 }
 
 // ---------------------------------------------------------------------------
@@ -47,12 +47,17 @@ export const tasksSlice = createSlice({
      */
     taskAdded(
       state,
-      action: PayloadAction<{ taskId: string; type: string; priority?: TaskPriority; metadata?: unknown }>
+      action: PayloadAction<{
+        taskId: string;
+        type: string;
+        priority?: TaskPriority;
+        metadata?: unknown;
+      }>
     ) {
-      const { taskId, type, priority = 'normal', metadata } = action.payload
+      const { taskId, type, priority = 'normal', metadata } = action.payload;
 
       // No-op if already tracked.
-      if (state.tasks.some((t) => t.taskId === taskId)) return
+      if (state.tasks.some((t) => t.taskId === taskId)) return;
 
       state.tasks.push({
         taskId,
@@ -63,7 +68,7 @@ export const tasksSlice = createSlice({
         metadata,
         streamBuffer: '',
         events: [],
-      })
+      });
     },
 
     /**
@@ -76,13 +81,13 @@ export const tasksSlice = createSlice({
      * ignored.
      */
     taskEventReceived(state, action: PayloadAction<TaskEvent>) {
-      const event = action.payload
-      const data = event.data as { taskId: string }
-      const taskId = data?.taskId
-      if (!taskId) return
+      const event = action.payload;
+      const data = event.data as { taskId: string };
+      const taskId = data?.taskId;
+      if (!taskId) return;
 
       // Auto-create on 'queued' when not yet tracked.
-      let task = state.tasks.find((t) => t.taskId === taskId)
+      let task = state.tasks.find((t) => t.taskId === taskId);
 
       if (!task) {
         if (event.type === 'queued') {
@@ -94,13 +99,13 @@ export const tasksSlice = createSlice({
             progress: { percent: 0 },
             streamBuffer: '',
             events: [],
-          }
+          };
 
-          state.tasks.push(newTask)
+          state.tasks.push(newTask);
           // Re-assign task to the Immer draft reference just pushed.
-          task = state.tasks[state.tasks.length - 1]
+          task = state.tasks[state.tasks.length - 1];
         } else {
-          return
+          return;
         }
       }
 
@@ -108,65 +113,65 @@ export const tasksSlice = createSlice({
         type: event.type,
         data: event.data,
         receivedAt: Date.now(),
-      }
+      };
 
-      appendEventToDraft(task, record)
+      appendEventToDraft(task, record);
 
       switch (event.type) {
         case 'queued': {
-          task.status = 'queued'
-          task.queuePosition = event.data.position
-          break
+          task.status = 'queued';
+          task.queuePosition = event.data.position;
+          break;
         }
         case 'started': {
-          task.status = 'running'
-          task.queuePosition = undefined
-          break
+          task.status = 'running';
+          task.queuePosition = undefined;
+          break;
         }
         case 'progress': {
-          task.status = 'running'
+          task.status = 'running';
           task.progress = {
             percent: event.data.percent,
             message: event.data.message,
             detail: event.data.detail,
-          }
-          break
+          };
+          break;
         }
         case 'stream': {
-          task.status = 'running'
-          task.streamBuffer = (task.streamBuffer ?? '') + event.data.data
-          break
+          task.status = 'running';
+          task.streamBuffer = (task.streamBuffer ?? '') + event.data.data;
+          break;
         }
         case 'completed': {
-          task.status = 'completed'
-          task.progress = { percent: 100 }
-          task.result = event.data.result
-          task.durationMs = event.data.durationMs
-          task.queuePosition = undefined
-          task.streamBuffer = ''
-          break
+          task.status = 'completed';
+          task.progress = { percent: 100 };
+          task.result = event.data.result;
+          task.durationMs = event.data.durationMs;
+          task.queuePosition = undefined;
+          task.streamBuffer = '';
+          break;
         }
         case 'error': {
-          task.status = 'error'
-          task.error = event.data.message
-          task.queuePosition = undefined
-          task.streamBuffer = ''
-          break
+          task.status = 'error';
+          task.error = event.data.message;
+          task.queuePosition = undefined;
+          task.streamBuffer = '';
+          break;
         }
         case 'cancelled': {
-          task.status = 'cancelled'
-          task.queuePosition = undefined
-          task.streamBuffer = ''
-          break
+          task.status = 'cancelled';
+          task.queuePosition = undefined;
+          task.streamBuffer = '';
+          break;
         }
         case 'priority-changed': {
-          task.priority = event.data.priority
-          task.queuePosition = event.data.position
-          break
+          task.priority = event.data.priority;
+          task.queuePosition = event.data.position;
+          break;
         }
         case 'queue-position': {
-          task.queuePosition = event.data.position
-          break
+          task.queuePosition = event.data.position;
+          break;
         }
       }
     },
@@ -175,11 +180,11 @@ export const tasksSlice = createSlice({
      * Remove a task from the store entirely (e.g. after user dismisses it).
      */
     taskRemoved(state, action: PayloadAction<string>) {
-      state.tasks = state.tasks.filter((t) => t.taskId !== action.payload)
+      state.tasks = state.tasks.filter((t) => t.taskId !== action.payload);
     },
   },
-})
+});
 
-export const { taskAdded, taskEventReceived, taskRemoved } = tasksSlice.actions
+export const { taskAdded, taskEventReceived, taskRemoved } = tasksSlice.actions;
 
-export default tasksSlice.reducer
+export default tasksSlice.reducer;

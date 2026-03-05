@@ -9,11 +9,11 @@
  * the full narrative.  Temperature is set high to encourage creative variation.
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -32,9 +32,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type StoryState = typeof GraphState.State
+type StoryState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Node: plan
@@ -43,8 +43,8 @@ type StoryState = typeof GraphState.State
 
 function makePlanNode(model: BaseChatModel) {
   return async (state: StoryState): Promise<Partial<StoryState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userPrompt = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userPrompt = userMsg ? String(userMsg.content) : '';
 
     const planMessages = [
       new SystemMessage(
@@ -59,30 +59,30 @@ Return ONLY a valid JSON object with this exact shape:
 No prose, no markdown fences — raw JSON only.`
       ),
       new HumanMessage(userPrompt),
-    ]
+    ];
 
-    const response = await model.invoke(planMessages)
-    const rawContent = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(planMessages);
+    const rawContent = typeof response.content === 'string' ? response.content : '';
 
     // Parse JSON, falling back to a minimal outline if parsing fails
-    let outline: string
+    let outline: string;
     try {
-      JSON.parse(rawContent)
-      outline = rawContent
+      JSON.parse(rawContent);
+      outline = rawContent;
     } catch {
       outline = JSON.stringify({
         title: 'Untitled Story',
         setting: 'To be determined',
         characters: [],
         beats: [userPrompt],
-      })
+      });
     }
 
     return {
       outline,
       messages: [new AIMessage(`[Story outline]\n${outline}`)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -92,23 +92,23 @@ No prose, no markdown fences — raw JSON only.`
 
 function makeWriteNode(model: BaseChatModel) {
   return async (state: StoryState): Promise<Partial<StoryState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userPrompt = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userPrompt = userMsg ? String(userMsg.content) : '';
 
-    let outlineText = state.outline
+    let outlineText = state.outline;
     try {
       const parsed = JSON.parse(state.outline) as {
-        title?: string
-        setting?: string
-        characters?: string[]
-        beats?: string[]
-      }
+        title?: string;
+        setting?: string;
+        characters?: string[];
+        beats?: string[];
+      };
       outlineText = [
         `Title: ${parsed.title ?? ''}`,
         `Setting: ${parsed.setting ?? ''}`,
         `Characters: ${(parsed.characters ?? []).join(', ')}`,
         `Story beats:\n${(parsed.beats ?? []).map((b, i) => `  ${i + 1}. ${b}`).join('\n')}`,
-      ].join('\n')
+      ].join('\n');
     } catch {
       // Outline wasn't JSON — use raw string
     }
@@ -133,16 +133,16 @@ How to behave:
       new HumanMessage(
         `Write the full story based on this prompt and outline.\n\nPrompt: ${userPrompt}\n\nOutline:\n${outlineText}`
       ),
-    ]
+    ];
 
-    const response = await model.invoke(writeMessages)
-    const draft = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(writeMessages);
+    const draft = typeof response.content === 'string' ? response.content : '';
 
     return {
       draft,
       messages: [new AIMessage(draft)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -155,9 +155,9 @@ function buildStoryWriterGraph(model: BaseChatModel) {
     .addNode('write', makeWriteNode(model))
     .addEdge(START, 'plan')
     .addEdge('plan', 'write')
-    .addEdge('write', END)
+    .addEdge('write', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -198,6 +198,6 @@ How to behave:
     multiline: true,
   },
   buildGraph: buildStoryWriterGraph,
-}
+};
 
-export { definition as StoryWriterAgent }
+export { definition as StoryWriterAgent };

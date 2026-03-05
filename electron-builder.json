@@ -2,19 +2,14 @@
   "productName": "OpenWriter",
   "appId": "com.openwriter.openwriter",
   "copyright": "© 2026 OpenWriter Project. All rights reserved.",
-  "files": [
-    "out/**",
-    "resources/**"
-  ],
+  "files": ["out/**", "resources/**"],
   "icon": "./resources/icons/icon.ico",
   "extraResources": [
     "out/preload/preload.mjs",
     {
       "from": "./resources",
       "to": "resources",
-      "filter": [
-        "icons/**"
-      ]
+      "filter": ["icons/**"]
     }
   ],
   "fileAssociations": [

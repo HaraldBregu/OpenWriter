@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export const LoadingSkeleton = React.memo(function LoadingSkeleton() {
   return (
@@ -8,6 +8,6 @@ export const LoadingSkeleton = React.memo(function LoadingSkeleton() {
         <p className="text-sm text-muted-foreground">Loading…</p>
       </div>
     </div>
-  )
-})
-LoadingSkeleton.displayName = 'LoadingSkeleton'
+  );
+});
+LoadingSkeleton.displayName = 'LoadingSkeleton';

@@ -11,11 +11,11 @@
  * If verification fails and no retry has been used yet, routes back to rewrite.
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -46,9 +46,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => 0,
   }),
-})
+});
 
-type ToneAdjusterState = typeof GraphState.State
+type ToneAdjusterState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Node: detect_tone
@@ -58,8 +58,8 @@ type ToneAdjusterState = typeof GraphState.State
 
 function makeDetectToneNode(model: BaseChatModel) {
   return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userRequest = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userRequest = userMsg ? String(userMsg.content) : '';
 
     const response = await model.invoke([
       new SystemMessage(
@@ -72,23 +72,23 @@ Return ONLY a valid JSON object with these exact keys:
 No explanation, no markdown fences — raw JSON only.`
       ),
       new HumanMessage(userRequest),
-    ])
+    ]);
 
-    const rawContent = typeof response.content === 'string' ? response.content : '{}'
+    const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let currentTone = 'neutral'
-    let targetTone = 'formal'
+    let currentTone = 'neutral';
+    let targetTone = 'formal';
 
     try {
-      const parsed = JSON.parse(rawContent) as { currentTone?: string; targetTone?: string }
-      currentTone = parsed.currentTone ?? currentTone
-      targetTone = parsed.targetTone ?? targetTone
+      const parsed = JSON.parse(rawContent) as { currentTone?: string; targetTone?: string };
+      currentTone = parsed.currentTone ?? currentTone;
+      targetTone = parsed.targetTone ?? targetTone;
     } catch {
       // Use defaults if parse fails
     }
 
-    return { currentTone, targetTone }
-  }
+    return { currentTone, targetTone };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -99,13 +99,13 @@ No explanation, no markdown fences — raw JSON only.`
 
 function makeRewriteNode(model: BaseChatModel) {
   return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userRequest = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userRequest = userMsg ? String(userMsg.content) : '';
 
     const retryPrefix =
       state.retryCount > 0
         ? `IMPORTANT: The previous rewrite did not fully achieve the target tone. Pay extra attention to matching "${state.targetTone}" throughout.\n\n`
-        : ''
+        : '';
 
     const response = await model.invoke([
       new SystemMessage(
@@ -134,12 +134,12 @@ Rules you follow without exception:
 5. After the rewrite, add a single line in parentheses briefly explaining the most significant changes made.`
       ),
       new HumanMessage(userRequest),
-    ])
+    ]);
 
-    const rewrittenText = typeof response.content === 'string' ? response.content : ''
+    const rewrittenText = typeof response.content === 'string' ? response.content : '';
 
-    return { rewrittenText }
-  }
+    return { rewrittenText };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -150,8 +150,8 @@ Rules you follow without exception:
 
 function makeVerifyNode(model: BaseChatModel) {
   return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const originalRequest = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const originalRequest = userMsg ? String(userMsg.content) : '';
 
     const response = await model.invoke([
       new SystemMessage(
@@ -165,33 +165,33 @@ No explanation outside the JSON, no markdown fences — raw JSON only.`
       ),
       new HumanMessage(
         `Original request (contains source text + tone instruction):\n${originalRequest}\n\n` +
-        `Target tone: ${state.targetTone}\n\n` +
-        `Rewritten text:\n${state.rewrittenText}\n\n` +
-        `Does this rewrite successfully match the target tone "${state.targetTone}" without losing any factual content from the original?`
+          `Target tone: ${state.targetTone}\n\n` +
+          `Rewritten text:\n${state.rewrittenText}\n\n` +
+          `Does this rewrite successfully match the target tone "${state.targetTone}" without losing any factual content from the original?`
       ),
-    ])
+    ]);
 
-    const rawContent = typeof response.content === 'string' ? response.content : '{}'
+    const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let verificationPassed = true
+    let verificationPassed = true;
     try {
-      const parsed = JSON.parse(rawContent) as { passed?: boolean }
-      verificationPassed = parsed.passed ?? true
+      const parsed = JSON.parse(rawContent) as { passed?: boolean };
+      verificationPassed = parsed.passed ?? true;
     } catch {
       // Default to passed if we can't parse — avoid infinite loops
     }
 
     // If passed (or this is already a retry), emit the final answer
-    const isLastAttempt = !verificationPassed && state.retryCount >= 1
+    const isLastAttempt = !verificationPassed && state.retryCount >= 1;
     if (verificationPassed || isLastAttempt) {
       return {
         verificationPassed: true, // treat last attempt as terminal
         messages: [new AIMessage(state.rewrittenText)],
-      }
+      };
     }
 
-    return { verificationPassed: false }
-  }
+    return { verificationPassed: false };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -200,9 +200,9 @@ No explanation outside the JSON, no markdown fences — raw JSON only.`
 
 function routeAfterVerify(state: ToneAdjusterState): 'rewrite' | typeof END {
   if (!state.verificationPassed && state.retryCount < 1) {
-    return 'rewrite'
+    return 'rewrite';
   }
-  return END
+  return END;
 }
 
 // ---------------------------------------------------------------------------
@@ -220,9 +220,9 @@ function buildToneAdjusterGraph(model: BaseChatModel) {
     .addConditionalEdges('verify', routeAfterVerify, {
       rewrite: 'rewrite',
       [END]: END,
-    })
+    });
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -268,6 +268,6 @@ Rules you follow without exception:
     multiline: true,
   },
   buildGraph: buildToneAdjusterGraph,
-}
+};
 
-export { definition as ToneAdjusterAgent }
+export { definition as ToneAdjusterAgent };

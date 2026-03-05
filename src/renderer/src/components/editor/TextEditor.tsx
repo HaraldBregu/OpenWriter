@@ -5,22 +5,18 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useEditor, EditorContent, type UseEditorOptions } from "@tiptap/react";
-import type { Editor } from "@tiptap/core";
-import { cn } from "@/lib/utils";
-import {
-  BlockControls,
-  GUTTER_WIDTH,
-  type HoveredBlock,
-} from "./BlockControls";
-import { BlockActions } from "./BlockActions";
-import { BubbleMenu } from "./bubble-menu";
-import { OptionMenu } from "./option-menu";
-import { PromptInput } from "./prompt-input";
-import { markdownToTiptapJSON, tiptapDocToMarkdown } from "./markdown";
-import { BASE_EXTENSIONS } from "./extensions";
-import { EditorProvider } from "./EditorContext";
+} from 'react';
+import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
+import type { Editor } from '@tiptap/core';
+import { cn } from '@/lib/utils';
+import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls';
+import { BlockActions } from './BlockActions';
+import { BubbleMenu } from './bubble-menu';
+import { OptionMenu } from './option-menu';
+import { PromptInput } from './prompt-input';
+import { markdownToTiptapJSON, tiptapDocToMarkdown } from './markdown';
+import { BASE_EXTENSIONS } from './extensions';
+import { EditorProvider } from './EditorContext';
 
 export interface TextEditorElement extends HTMLDivElement {
   insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
@@ -39,11 +35,14 @@ export interface TextEditorProps {
 
 const TextEditor = React.memo(
   React.forwardRef<TextEditorElement, TextEditorProps>(
-    ({ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI }, ref) => {
+    (
+      { value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI },
+      ref
+    ) => {
       const onChangeRef = useRef(onChange);
       onChangeRef.current = onChange;
 
-      const lastEmittedRef = useRef<string>("");
+      const lastEmittedRef = useRef<string>('');
       const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
       const initialValueRef = useRef(value);
 
@@ -56,7 +55,7 @@ const TextEditor = React.memo(
       const editorOptions = useMemo<UseEditorOptions>(
         () => ({
           extensions: BASE_EXTENSIONS,
-          content: "",
+          content: '',
           immediatelyRender: false,
           onCreate: ({ editor: ed }: { editor: Editor }) => {
             const initial = initialValueRef.current;
@@ -67,7 +66,7 @@ const TextEditor = React.memo(
             }
           },
           onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
-            if (transaction.getMeta("preventEditorUpdate")) return;
+            if (transaction.getMeta('preventEditorUpdate')) return;
             if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
             emitTimerRef.current = setTimeout(() => {
               const md = tiptapDocToMarkdown(ed.state.doc);
@@ -78,11 +77,11 @@ const TextEditor = React.memo(
           editorProps: {
             attributes: {
               class:
-                "focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0",
+                'focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0',
             },
           },
         }),
-        [],
+        []
       );
 
       const editor = useEditor(editorOptions, []);
@@ -92,12 +91,15 @@ const TextEditor = React.memo(
       useImperativeHandle(ref, () => {
         const el = rootRef.current!;
         return Object.assign(el, {
-          insertText(text: string, options: { preventEditorUpdate?: boolean } = { preventEditorUpdate: false }) {
+          insertText(
+            text: string,
+            options: { preventEditorUpdate?: boolean } = { preventEditorUpdate: false }
+          ) {
             if (!editor || editor.isDestroyed) return;
             const { from } = editor.state.selection;
             const tr = editor.state.tr
               .insertText(text, from)
-              .setMeta("preventEditorUpdate", options?.preventEditorUpdate ?? false);
+              .setMeta('preventEditorUpdate', options?.preventEditorUpdate ?? false);
             editor.view.dispatch(tr);
           },
         }) as TextEditorElement;
@@ -113,10 +115,10 @@ const TextEditor = React.memo(
             if (doc) {
               editor.commands.setContent(doc.toJSON(), {
                 emitUpdate: false,
-                parseOptions: { preserveWhitespace: "full" },
+                parseOptions: { preserveWhitespace: 'full' },
               });
             } else {
-              editor.commands.setContent("", { emitUpdate: false });
+              editor.commands.setContent('', { emitUpdate: false });
             }
           }
           return;
@@ -127,16 +129,16 @@ const TextEditor = React.memo(
         }
 
         const current = tiptapDocToMarkdown(editor.state.doc);
-        const incoming = value || "";
+        const incoming = value || '';
         if (current !== incoming) {
           const doc = markdownToTiptapJSON(editor.schema, incoming);
           if (doc) {
             editor.commands.setContent(doc.toJSON(), {
               emitUpdate: false,
-              parseOptions: { preserveWhitespace: "full" },
+              parseOptions: { preserveWhitespace: 'full' },
             });
           } else {
-            editor.commands.setContent("", { emitUpdate: false });
+            editor.commands.setContent('', { emitUpdate: false });
           }
         }
       }, [value, streamingContent, editor]);
@@ -148,11 +150,10 @@ const TextEditor = React.memo(
 
       const didAutoFocus = useRef(false);
       useEffect(() => {
-        if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed)
-          return;
+        if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed) return;
         didAutoFocus.current = true;
         Promise.resolve().then(() => {
-          if (!editor.isDestroyed) editor.commands.focus("start");
+          if (!editor.isDestroyed) editor.commands.focus('start');
         });
       }, [editor, autoFocus]);
 
@@ -162,9 +163,7 @@ const TextEditor = React.memo(
       const getBlock = useCallback(
         (y: number): { dom: HTMLElement; pos: number } | null => {
           if (!editor) return null;
-          const pm = containerRef.current?.querySelector(
-            ".ProseMirror",
-          ) as HTMLElement | null;
+          const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null;
           if (!pm) return null;
           for (const child of Array.from(pm.children) as HTMLElement[]) {
             const r = child.getBoundingClientRect();
@@ -179,7 +178,7 @@ const TextEditor = React.memo(
           }
           return null;
         },
-        [editor],
+        [editor]
       );
 
       useEffect(() => {
@@ -208,16 +207,16 @@ const TextEditor = React.memo(
           }, 80);
         };
 
-        el.addEventListener("mousemove", onMove);
-        el.addEventListener("mouseleave", onLeave);
+        el.addEventListener('mousemove', onMove);
+        el.addEventListener('mouseleave', onLeave);
         return () => {
-          el.removeEventListener("mousemove", onMove);
-          el.removeEventListener("mouseleave", onLeave);
+          el.removeEventListener('mousemove', onMove);
+          el.removeEventListener('mouseleave', onLeave);
         };
       }, [getBlock]);
 
       return (
-        <div id={id} className={cn("w-full", className)}>
+        <div id={id} className={cn('w-full', className)}>
           <div className="relative w-full" ref={rootRef}>
             <div
               ref={containerRef}
@@ -226,34 +225,24 @@ const TextEditor = React.memo(
             >
               {editor && (
                 <EditorProvider editor={editor}>
-                  <BlockControls
-                    containerRef={containerRef}
-                    hoveredBlock={hoveredBlock}
-                  />
-                  <BlockActions
-                    containerRef={containerRef}
-                    hoveredBlock={hoveredBlock}
-                  />
+                  <BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
+                  <BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
                   <BubbleMenu />
                   <OptionMenu onContinueWithAI={onContinueWithAI} />
                   <PromptInput
                     containerRef={containerRef}
-                    onSubmit={(prompt, _pos) =>
-                      console.log("PromptInput submit:", prompt)
-                    }
+                    onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)}
                   />
                 </EditorProvider>
               )}
-              <EditorContent
-                editor={editor}
-              />
+              <EditorContent editor={editor} />
             </div>
           </div>
         </div>
       );
-    },
-  ),
+    }
+  )
 );
-TextEditor.displayName = "TextEditor";
+TextEditor.displayName = 'TextEditor';
 
 export { TextEditor };

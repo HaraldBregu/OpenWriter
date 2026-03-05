@@ -1,32 +1,32 @@
-import React, { useEffect, useRef } from 'react'
-import { Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3 } from 'lucide-react'
-import { BubbleMenuPlugin } from './bubble-menu-plugin'
-import { PluginKey } from '@tiptap/pm/state'
-import { AppButton } from '../../app/AppButton'
-import { useEditorContext } from '../EditorContext'
+import React, { useEffect, useRef } from 'react';
+import { Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3 } from 'lucide-react';
+import { BubbleMenuPlugin } from './bubble-menu-plugin';
+import { PluginKey } from '@tiptap/pm/state';
+import { AppButton } from '../../app/AppButton';
+import { useEditorContext } from '../EditorContext';
 
-const pluginKey = new PluginKey('bubbleMenu')
+const pluginKey = new PluginKey('bubbleMenu');
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
-  const { editor } = useEditorContext()
-  const menuRef = useRef<HTMLDivElement>(null)
+  const { editor } = useEditorContext();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = menuRef.current
-    if (!el || editor.isDestroyed) return
+    const el = menuRef.current;
+    if (!el || editor.isDestroyed) return;
 
     const plugin = BubbleMenuPlugin({
       pluginKey,
       editor,
       element: el,
       updateDelay: 250,
-    })
+    });
 
-    editor.registerPlugin(plugin)
+    editor.registerPlugin(plugin);
     return () => {
-      editor.unregisterPlugin(pluginKey)
-    }
-  }, [editor])
+      editor.unregisterPlugin(pluginKey);
+    };
+  }, [editor]);
 
   return (
     <div
@@ -101,5 +101,5 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
         <Heading3 className="h-3.5 w-3.5" />
       </AppButton>
     </div>
-  )
-})
+  );
+});

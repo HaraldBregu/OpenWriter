@@ -1,50 +1,50 @@
-import { app, BrowserWindow, Menu as ElectronMenu } from 'electron'
-import { loadTranslations } from './i18n'
+import { app, BrowserWindow, Menu as ElectronMenu } from 'electron';
+import { loadTranslations } from './i18n';
 
 interface MenuManagerCallbacks {
-  onLanguageChange: (lng: string) => void
-  onThemeChange: (theme: string) => void
-  onNewWorkspace: () => void
+  onLanguageChange: (lng: string) => void;
+  onThemeChange: (theme: string) => void;
+  onNewWorkspace: () => void;
 }
 
 export class Menu {
-  private currentLanguage = 'en'
-  private currentTheme = 'system'
-  private callbacks: MenuManagerCallbacks
+  private currentLanguage = 'en';
+  private currentTheme = 'system';
+  private callbacks: MenuManagerCallbacks;
 
   constructor(callbacks: MenuManagerCallbacks) {
-    this.callbacks = callbacks
+    this.callbacks = callbacks;
   }
 
   create(): void {
-    this.buildMenu()
+    this.buildMenu();
   }
 
   updateLanguage(lng: string): void {
-    this.currentLanguage = lng
-    this.buildMenu()
+    this.currentLanguage = lng;
+    this.buildMenu();
   }
 
   updateTheme(theme: string): void {
-    this.currentTheme = theme
-    this.buildMenu()
+    this.currentTheme = theme;
+    this.buildMenu();
   }
 
   private buildMenu(): void {
-    const isMac = process.platform === 'darwin'
-    const m = loadTranslations(this.currentLanguage, 'menu')
+    const isMac = process.platform === 'darwin';
+    const m = loadTranslations(this.currentLanguage, 'menu');
 
     const switchLanguage = (lng: string): void => {
-      this.currentLanguage = lng
-      this.buildMenu()
-      this.callbacks.onLanguageChange(lng)
-    }
+      this.currentLanguage = lng;
+      this.buildMenu();
+      this.callbacks.onLanguageChange(lng);
+    };
 
     const switchTheme = (theme: string): void => {
-      this.currentTheme = theme
-      this.buildMenu()
-      this.callbacks.onThemeChange(theme)
-    }
+      this.currentTheme = theme;
+      this.buildMenu();
+      this.callbacks.onThemeChange(theme);
+    };
 
     const template: Electron.MenuItemConstructorOptions[] = [
       ...(isMac
@@ -60,9 +60,9 @@ export class Menu {
                 { label: m.hideOthers, role: 'hideOthers' as const },
                 { label: m.unhide, role: 'unhide' as const },
                 { type: 'separator' as const },
-                { label: m.quit, role: 'quit' as const }
-              ]
-            }
+                { label: m.quit, role: 'quit' as const },
+              ],
+            },
           ]
         : []),
       {
@@ -72,14 +72,14 @@ export class Menu {
             label: m.newWorkspace,
             accelerator: 'CmdOrCtrl+Shift+N',
             click: (): void => {
-              this.callbacks.onNewWorkspace()
-            }
+              this.callbacks.onNewWorkspace();
+            },
           },
           { type: 'separator' as const },
           isMac
             ? { label: m.close, role: 'close' as const }
-            : { label: m.quit, role: 'quit' as const }
-        ]
+            : { label: m.quit, role: 'quit' as const },
+        ],
       },
       {
         label: m.edit,
@@ -90,8 +90,8 @@ export class Menu {
           { label: m.cut, role: 'cut' as const },
           { label: m.copy, role: 'copy' as const },
           { label: m.paste, role: 'paste' as const },
-          { label: m.selectAll, role: 'selectAll' as const }
-        ]
+          { label: m.selectAll, role: 'selectAll' as const },
+        ],
       },
       {
         label: m.view,
@@ -103,8 +103,8 @@ export class Menu {
           { label: m.zoomIn, role: 'zoomIn' as const },
           { label: m.zoomOut, role: 'zoomOut' as const },
           { type: 'separator' as const },
-          { label: m.toggleFullscreen, role: 'togglefullscreen' as const }
-        ]
+          { label: m.toggleFullscreen, role: 'togglefullscreen' as const },
+        ],
       },
       {
         label: m.window,
@@ -113,8 +113,8 @@ export class Menu {
           { label: m.zoom, role: 'zoom' as const },
           ...(isMac
             ? [{ type: 'separator' as const }, { label: m.front, role: 'front' as const }]
-            : [{ label: m.close, role: 'close' as const }])
-        ]
+            : [{ label: m.close, role: 'close' as const }]),
+        ],
       },
       {
         label: m.developer,
@@ -126,15 +126,15 @@ export class Menu {
                 label: 'English',
                 type: 'radio' as const,
                 checked: this.currentLanguage === 'en',
-                click: (): void => switchLanguage('en')
+                click: (): void => switchLanguage('en'),
               },
               {
                 label: 'Italiano',
                 type: 'radio' as const,
                 checked: this.currentLanguage === 'it',
-                click: (): void => switchLanguage('it')
-              }
-            ]
+                click: (): void => switchLanguage('it'),
+              },
+            ],
           },
           {
             label: m.theme,
@@ -143,58 +143,58 @@ export class Menu {
                 label: m.light,
                 type: 'radio' as const,
                 checked: this.currentTheme === 'light',
-                click: (): void => switchTheme('light')
+                click: (): void => switchTheme('light'),
               },
               {
                 label: m.dark,
                 type: 'radio' as const,
                 checked: this.currentTheme === 'dark',
-                click: (): void => switchTheme('dark')
+                click: (): void => switchTheme('dark'),
               },
               {
                 label: m.system,
                 type: 'radio' as const,
                 checked: this.currentTheme === 'system',
-                click: (): void => switchTheme('system')
-              }
-            ]
+                click: (): void => switchTheme('system'),
+              },
+            ],
           },
           { type: 'separator' as const },
           {
             label: m.showConsole,
             accelerator: 'CmdOrCtrl+Shift+I',
             click: (): void => {
-              const win = BrowserWindow.getFocusedWindow()
-              if (win) win.webContents.toggleDevTools()
-            }
+              const win = BrowserWindow.getFocusedWindow();
+              if (win) win.webContents.toggleDevTools();
+            },
           },
           {
             label: m.refresh,
             accelerator: 'CmdOrCtrl+R',
             click: (): void => {
-              const win = BrowserWindow.getFocusedWindow()
-              if (win) win.webContents.reload()
-            }
-          }
-        ]
-      }
-    ]
+              const win = BrowserWindow.getFocusedWindow();
+              if (win) win.webContents.reload();
+            },
+          },
+        ],
+      },
+    ];
 
     if (!isMac) {
       // On Windows/Linux the custom React TitleBar handles all menu actions.
       // Setting the menu and then hiding the bar keeps keyboard accelerators
       // (Ctrl+C/V/X/Z etc.) working while removing the native menu bar
       // (including the Alt-key overlay).
-      const menu = ElectronMenu.buildFromTemplate(template)
-      ElectronMenu.setApplicationMenu(menu)
+      const menu = ElectronMenu.buildFromTemplate(template);
+      ElectronMenu.setApplicationMenu(menu);
       BrowserWindow.getAllWindows().forEach((win) => {
-        win.setMenuBarVisibility(false)
-        win.autoHideMenuBar = true
-      })
-      return
+        win.setMenuBarVisibility(false);
+        win.autoHideMenuBar = true;
+      });
+      return;
     }
 
-    const menu = ElectronMenu.buildFromTemplate(template)
-    ElectronMenu.setApplicationMenu(menu)
+    const menu = ElectronMenu.buildFromTemplate(template);
+    ElectronMenu.setApplicationMenu(menu);
   }
 }

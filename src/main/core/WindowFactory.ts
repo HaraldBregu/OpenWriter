@@ -1,11 +1,11 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
-import path from 'node:path'
-import { is } from '@electron-toolkit/utils'
-import type { LoggerService } from '../services/logger'
+import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import path from 'node:path';
+import { is } from '@electron-toolkit/utils';
+import type { LoggerService } from '../services/logger';
 
 export interface WindowPreset {
-  name: string
-  options: Partial<BrowserWindowConstructorOptions>
+  name: string;
+  options: Partial<BrowserWindowConstructorOptions>;
 }
 
 /**
@@ -14,20 +14,20 @@ export interface WindowPreset {
  * and WindowManagerService.
  */
 export class WindowFactory {
-  private readonly preloadPath: string
-  private readonly iconPath: string
+  private readonly preloadPath: string;
+  private readonly iconPath: string;
 
   constructor(private readonly logger?: LoggerService) {
     // Use path.resolve to ensure absolute path for preload
     // Output as .js (CommonJS) for Electron preload compatibility
-    this.preloadPath = path.resolve(__dirname, '../preload/index.js')
-    this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png')
-    this.logger?.info('WindowFactory', `Preload path: ${this.preloadPath}`)
+    this.preloadPath = path.resolve(__dirname, '../preload/index.js');
+    this.iconPath = path.resolve(__dirname, '../../resources/icons/icon.png');
+    this.logger?.info('WindowFactory', `Preload path: ${this.preloadPath}`);
     // Verify preload file exists
     try {
-      const { existsSync } = require('fs')
-      const exists = existsSync(this.preloadPath)
-      this.logger?.info('WindowFactory', `Preload file exists: ${exists}`)
+      const { existsSync } = require('fs');
+      const exists = existsSync(this.preloadPath);
+      this.logger?.info('WindowFactory', `Preload file exists: ${exists}`);
     } catch {
       // Silent fail
     }
@@ -41,8 +41,8 @@ export class WindowFactory {
       contextIsolation: true,
       devTools: is.dev,
       webSecurity: true,
-      allowRunningInsecureContent: false
-    }
+      allowRunningInsecureContent: false,
+    };
   }
 
   /**
@@ -59,37 +59,37 @@ export class WindowFactory {
       ...overrides,
       webPreferences: {
         ...this.getBaseWebPreferences(),
-        ...overrides.webPreferences
-      }
-    }
+        ...overrides.webPreferences,
+      },
+    };
 
-    const win = new BrowserWindow(options)
+    const win = new BrowserWindow(options);
 
     // Prevent arbitrary window.open() calls from creating unrestricted windows
     win.webContents.setWindowOpenHandler(() => {
-      return { action: 'deny' }
-    })
+      return { action: 'deny' };
+    });
 
     // Prevent navigation to external URLs
     win.webContents.on('will-navigate', (event, url) => {
-      const appUrl = process.env['ELECTRON_RENDERER_URL'] || 'file://'
+      const appUrl = process.env['ELECTRON_RENDERER_URL'] || 'file://';
       if (is.dev) {
         // In dev mode, only allow navigation within the dev server
         if (!url.startsWith(appUrl) && !url.startsWith('file://')) {
-          event.preventDefault()
+          event.preventDefault();
         }
       } else {
         // In production, only allow file:// URLs (local files)
         if (!url.startsWith('file://')) {
-          event.preventDefault()
+          event.preventDefault();
         }
       }
-    })
+    });
 
-    win.webContents.toggleDevTools() // Open dev tools by default in development
-    
-    this.loadContent(win)
-    return win
+    win.webContents.toggleDevTools(); // Open dev tools by default in development
+
+    this.loadContent(win);
+    return win;
   }
 
   /**
@@ -99,11 +99,11 @@ export class WindowFactory {
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       const url = hash
         ? `${process.env['ELECTRON_RENDERER_URL']}#/${hash}`
-        : process.env['ELECTRON_RENDERER_URL']
-      win.loadURL(url)
+        : process.env['ELECTRON_RENDERER_URL'];
+      win.loadURL(url);
     } else {
-      const loadOptions = hash ? { hash } : undefined
-      win.loadFile(path.join(__dirname, '../renderer/index.html'), loadOptions)
+      const loadOptions = hash ? { hash } : undefined;
+      win.loadFile(path.join(__dirname, '../renderer/index.html'), loadOptions);
     }
   }
 }

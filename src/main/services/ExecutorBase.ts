@@ -1,15 +1,15 @@
-import type { Disposable } from '../core/ServiceContainer'
-import type { EventBus } from '../core/EventBus'
-import type { LoggerService } from './logger'
+import type { Disposable } from '../core/ServiceContainer';
+import type { EventBus } from '../core/EventBus';
+import type { LoggerService } from './logger';
 
 /**
  * Execution record: minimal interface that all execution types must implement.
  * Stores the AbortController and basic metadata for a run/task.
  */
 export interface ExecutionRecord {
-  id: string
-  controller: AbortController
-  startedAt: number
+  id: string;
+  controller: AbortController;
+  startedAt: number;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface ExecutionRecord {
  * flexibility for Pipeline-specific vs Task-specific behavior.
  */
 export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposable {
-  protected activeExecutions = new Map<string, T>()
+  protected activeExecutions = new Map<string, T>();
 
   constructor(
     protected readonly eventBus: EventBus,
@@ -40,46 +40,46 @@ export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposa
    * Start a new execution. Subclasses implement domain-specific startup.
    * @returns The execution ID
    */
-  abstract start(...args: any[]): Promise<string>
+  abstract start(...args: any[]): Promise<string>;
 
   /**
    * Cancel an in-flight execution by its ID.
    * Returns true if found and cancelled, false otherwise.
    */
   cancel(executionId: string): boolean {
-    const execution = this.activeExecutions.get(executionId)
-    if (!execution) return false
+    const execution = this.activeExecutions.get(executionId);
+    if (!execution) return false;
 
-    this.logger?.info(this.constructor.name, `Cancelling execution ${executionId}`)
-    execution.controller.abort()
-    this.activeExecutions.delete(executionId)
-    return true
+    this.logger?.info(this.constructor.name, `Cancelling execution ${executionId}`);
+    execution.controller.abort();
+    this.activeExecutions.delete(executionId);
+    return true;
   }
 
   /**
    * Check if an execution is currently active.
    */
   isRunning(executionId: string): boolean {
-    return this.activeExecutions.has(executionId)
+    return this.activeExecutions.has(executionId);
   }
 
   /**
    * Get count of active executions.
    */
   getActiveCount(): number {
-    return this.activeExecutions.size
+    return this.activeExecutions.size;
   }
 
   /**
    * List all active executions (metadata only, no controller).
    */
   listActive(): Array<{ id: string; startedAt: number; duration: number }> {
-    const now = Date.now()
+    const now = Date.now();
     return Array.from(this.activeExecutions.values()).map(({ id, startedAt }) => ({
       id,
       startedAt,
-      duration: now - startedAt
-    }))
+      duration: now - startedAt,
+    }));
   }
 
   /**
@@ -89,25 +89,25 @@ export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposa
     this.logger?.info(
       this.constructor.name,
       `Destroying, aborting ${this.activeExecutions.size} active execution(s)`
-    )
+    );
     for (const execution of this.activeExecutions.values()) {
-      execution.controller.abort()
+      execution.controller.abort();
     }
-    this.activeExecutions.clear()
+    this.activeExecutions.clear();
   }
 
   /**
    * Register an execution record (called by subclasses during start).
    */
   protected registerExecution(execution: T): void {
-    this.activeExecutions.set(execution.id, execution)
+    this.activeExecutions.set(execution.id, execution);
   }
 
   /**
    * Unregister an execution record (called by subclasses on completion).
    */
   protected unregisterExecution(executionId: string): void {
-    this.activeExecutions.delete(executionId)
+    this.activeExecutions.delete(executionId);
   }
 
   /**
@@ -116,9 +116,9 @@ export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposa
    */
   protected send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
     if (windowId !== undefined) {
-      this.eventBus.sendTo(windowId, channel, ...args)
+      this.eventBus.sendTo(windowId, channel, ...args);
     } else {
-      this.eventBus.broadcast(channel, ...args)
+      this.eventBus.broadcast(channel, ...args);
     }
   }
 }

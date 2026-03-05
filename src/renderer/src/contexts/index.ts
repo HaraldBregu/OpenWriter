@@ -28,8 +28,8 @@ export {
   useOnlineStatus,
   useLastSyncTime,
   AppStateContext,
-  AppActionsContext
-} from './AppContext'
+  AppActionsContext,
+} from './AppContext';
 
 export type {
   ThemeMode,
@@ -39,5 +39,5 @@ export type {
   ModalState,
   AppState,
   AppContextValue,
-  AppActionsContextValue
-} from './AppContext'
+  AppActionsContextValue,
+} from './AppContext';

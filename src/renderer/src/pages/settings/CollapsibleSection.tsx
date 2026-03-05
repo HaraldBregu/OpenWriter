@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-export function CollapsibleSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+export function CollapsibleSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
 
   return (
     <div>
@@ -14,5 +20,5 @@ export function CollapsibleSection({ title, children }: { title: string; childre
       </button>
       {open && <div className="border-t">{children}</div>}
     </div>
-  )
+  );
 }

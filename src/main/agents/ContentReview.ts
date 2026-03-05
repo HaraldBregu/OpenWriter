@@ -11,11 +11,11 @@
  * Temperature is low throughout to ensure consistent, reliable analysis.
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -46,14 +46,14 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type ContentReviewState = typeof GraphState.State
+type ContentReviewState = typeof GraphState.State;
 
 // Shared helper to extract user text from state messages
 function getUserText(state: ContentReviewState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-  return userMsg ? String(userMsg.content) : ''
+  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+  return userMsg ? String(userMsg.content) : '';
 }
 
 // ---------------------------------------------------------------------------
@@ -62,7 +62,7 @@ function getUserText(state: ContentReviewState): string {
 
 function makeClarityCheckNode(model: BaseChatModel) {
   return async (state: ContentReviewState): Promise<Partial<ContentReviewState>> => {
-    const text = getUserText(state)
+    const text = getUserText(state);
 
     const response = await model.invoke([
       new SystemMessage(
@@ -72,10 +72,10 @@ Quote the specific text, then explain the problem and suggest a concrete rewrite
 If the writing is clear throughout, say so briefly. Be direct and specific.`
       ),
       new HumanMessage(text),
-    ])
+    ]);
 
-    return { clarityFeedback: typeof response.content === 'string' ? response.content : '' }
-  }
+    return { clarityFeedback: typeof response.content === 'string' ? response.content : '' };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -84,7 +84,7 @@ If the writing is clear throughout, say so briefly. Be direct and specific.`
 
 function makeGrammarCheckNode(model: BaseChatModel) {
   return async (state: ContentReviewState): Promise<Partial<ContentReviewState>> => {
-    const text = getUserText(state)
+    const text = getUserText(state);
 
     const response = await model.invoke([
       new SystemMessage(
@@ -94,10 +94,10 @@ Distinguish between clear errors and stylistic choices (e.g. intentional fragmen
 Provide the corrected form for each flagged issue. Be direct and specific.`
       ),
       new HumanMessage(text),
-    ])
+    ]);
 
-    return { grammarFeedback: typeof response.content === 'string' ? response.content : '' }
-  }
+    return { grammarFeedback: typeof response.content === 'string' ? response.content : '' };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ Provide the corrected form for each flagged issue. Be direct and specific.`
 
 function makeToneCheckNode(model: BaseChatModel) {
   return async (state: ContentReviewState): Promise<Partial<ContentReviewState>> => {
-    const text = getUserText(state)
+    const text = getUserText(state);
 
     const response = await model.invoke([
       new SystemMessage(
@@ -116,10 +116,10 @@ Identify tonal inconsistencies — places where the register shifts unexpectedly
 If a particular audience or purpose is implied, assess whether the tone serves it. Be direct and specific.`
       ),
       new HumanMessage(text),
-    ])
+    ]);
 
-    return { toneFeedback: typeof response.content === 'string' ? response.content : '' }
-  }
+    return { toneFeedback: typeof response.content === 'string' ? response.content : '' };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -128,7 +128,7 @@ If a particular audience or purpose is implied, assess whether the tone serves i
 
 function makeStructureCheckNode(model: BaseChatModel) {
   return async (state: ContentReviewState): Promise<Partial<ContentReviewState>> => {
-    const text = getUserText(state)
+    const text = getUserText(state);
 
     const response = await model.invoke([
       new SystemMessage(
@@ -138,10 +138,10 @@ Identify pacing problems: sections that drag, jumps that feel abrupt, or ideas w
 Suggest structural changes where needed, with a rationale. Be direct and specific.`
       ),
       new HumanMessage(text),
-    ])
+    ]);
 
-    return { structureFeedback: typeof response.content === 'string' ? response.content : '' }
-  }
+    return { structureFeedback: typeof response.content === 'string' ? response.content : '' };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -173,20 +173,20 @@ Behaviour rules:
       ),
       new HumanMessage(
         `Clarity assessment:\n${state.clarityFeedback}\n\n` +
-        `Grammar & Mechanics assessment:\n${state.grammarFeedback}\n\n` +
-        `Tone assessment:\n${state.toneFeedback}\n\n` +
-        `Structure assessment:\n${state.structureFeedback}`
+          `Grammar & Mechanics assessment:\n${state.grammarFeedback}\n\n` +
+          `Tone assessment:\n${state.toneFeedback}\n\n` +
+          `Structure assessment:\n${state.structureFeedback}`
       ),
-    ]
+    ];
 
-    const response = await model.invoke(synthesisMessages)
-    const finalReview = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(synthesisMessages);
+    const finalReview = typeof response.content === 'string' ? response.content : '';
 
     return {
       finalReview,
       messages: [new AIMessage(finalReview)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -205,9 +205,9 @@ function buildContentReviewGraph(model: BaseChatModel) {
     .addEdge('grammar_check', 'tone_check')
     .addEdge('tone_check', 'structure_check')
     .addEdge('structure_check', 'synthesize')
-    .addEdge('synthesize', END)
+    .addEdge('synthesize', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +264,6 @@ Behaviour rules:
     multiline: true,
   },
   buildGraph: buildContentReviewGraph,
-}
+};
 
-export { definition as ContentReviewAgent }
+export { definition as ContentReviewAgent };

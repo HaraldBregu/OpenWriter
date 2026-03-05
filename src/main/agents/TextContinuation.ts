@@ -17,17 +17,17 @@
  *   insertion point, plus optional constraints (word count, topic, perspective).
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const INSERT_MARKER = '<<INSERT_HERE>>'
+const INSERT_MARKER = '<<INSERT_HERE>>';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -42,9 +42,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type TextContinuationState = typeof GraphState.State
+type TextContinuationState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -52,20 +52,20 @@ type TextContinuationState = typeof GraphState.State
 
 /** Extract the raw user text from the LangGraph message list. */
 function extractUserText(state: TextContinuationState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-  return userMsg ? String(userMsg.content) : ''
+  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+  return userMsg ? String(userMsg.content) : '';
 }
 
 /** Split the user prompt around the <<INSERT_HERE>> marker. */
 function splitAtMarker(text: string): { before: string; after: string } {
-  const idx = text.indexOf(INSERT_MARKER)
+  const idx = text.indexOf(INSERT_MARKER);
   if (idx === -1) {
-    return { before: text.trim(), after: '' }
+    return { before: text.trim(), after: '' };
   }
   return {
     before: text.slice(0, idx).trim(),
     after: text.slice(idx + INSERT_MARKER.length).trim(),
-  }
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -76,8 +76,8 @@ function splitAtMarker(text: string): { before: string; after: string } {
 
 function makeGenerateInsertionNode(model: BaseChatModel) {
   return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
-    const userText = extractUserText(state)
-    const { before, after } = splitAtMarker(userText)
+    const userText = extractUserText(state);
+    const { before, after } = splitAtMarker(userText);
 
     const generationMessages = [
       new SystemMessage(
@@ -117,16 +117,16 @@ Requirements:
       new HumanMessage(
         'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
       ),
-    ]
+    ];
 
-    const response = await model.invoke(generationMessages)
-    const insertion = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(generationMessages);
+    const insertion = typeof response.content === 'string' ? response.content : '';
 
     return {
       insertion,
       messages: [new AIMessage(insertion)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -137,9 +137,9 @@ function buildTextContinuationGraph(model: BaseChatModel) {
   const graph = new StateGraph(GraphState)
     .addNode('generate_insertion', makeGenerateInsertionNode(model))
     .addEdge(START, 'generate_insertion')
-    .addEdge('generate_insertion', END)
+    .addEdge('generate_insertion', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -159,7 +159,7 @@ Requirements:
 - Do NOT add a title, heading, or commentary — output only the insertion text
 - Do NOT wrap your response in quotes, markdown, or code fences
 - If the marker falls mid-sentence, complete that sentence first before adding new content
-- Produce coherent prose that reads as if it was always part of the document`
+- Produce coherent prose that reads as if it was always part of the document`;
 
 // ---------------------------------------------------------------------------
 // Agent definition
@@ -183,6 +183,6 @@ const definition: AgentDefinition = {
     multiline: true,
   },
   buildGraph: buildTextContinuationGraph,
-}
+};
 
-export { definition as TextContinuationAgent }
+export { definition as TextContinuationAgent };

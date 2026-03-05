@@ -12,20 +12,20 @@
  * - Each child process is fully independent
  */
 
-import { spawn } from 'node:child_process'
-import { app } from 'electron'
-import type { LoggerService } from './services/logger'
+import { spawn } from 'node:child_process';
+import { app } from 'electron';
+import type { LoggerService } from './services/logger';
 
 export interface WorkspaceProcessOptions {
-  workspacePath: string
-  logger?: LoggerService
+  workspacePath: string;
+  logger?: LoggerService;
 }
 
 export class WorkspaceProcessManager {
-  private logger?: LoggerService
+  private logger?: LoggerService;
 
   constructor(logger?: LoggerService) {
-    this.logger = logger
+    this.logger = logger;
   }
 
   /**
@@ -41,29 +41,29 @@ export class WorkspaceProcessManager {
    * @returns Process ID of spawned process
    */
   spawnWorkspaceProcess(options: WorkspaceProcessOptions): number {
-    const { workspacePath } = options
+    const { workspacePath } = options;
 
-    this.logger?.info('WorkspaceProcess', `Spawning new process for workspace: ${workspacePath}`)
+    this.logger?.info('WorkspaceProcess', `Spawning new process for workspace: ${workspacePath}`);
 
     // Get Electron executable path
-    const electronPath = process.execPath
+    const electronPath = process.execPath;
 
     // Get app path - this is the path to the app's main entry point
-    const appPath = app.getAppPath()
+    const appPath = app.getAppPath();
 
     // Arguments to pass to the new Electron instance
     const args = [
       appPath, // Path to the app
       '--workspace', // Flag to indicate workspace mode
       workspacePath, // The workspace directory path
-      '--process-type=workspace' // Mark as workspace process (not launcher)
-    ]
+      '--process-type=workspace', // Mark as workspace process (not launcher)
+    ];
 
     this.logger?.debug('WorkspaceProcess', 'Spawn args:', {
       electronPath,
       appPath,
-      args
-    })
+      args,
+    });
 
     // Spawn new Electron process
     const child = spawn(electronPath, args, {
@@ -77,16 +77,16 @@ export class WorkspaceProcessManager {
       env: {
         ...process.env,
         ELECTRON_WORKSPACE_MODE: 'true',
-        ELECTRON_WORKSPACE_PATH: workspacePath
-      }
-    })
+        ELECTRON_WORKSPACE_PATH: workspacePath,
+      },
+    });
 
     // Unref allows parent to exit without waiting for child
-    child.unref()
+    child.unref();
 
-    this.logger?.info('WorkspaceProcess', `Spawned workspace process with PID: ${child.pid}`)
+    this.logger?.info('WorkspaceProcess', `Spawned workspace process with PID: ${child.pid}`);
 
-    return child.pid!
+    return child.pid!;
   }
 
   /**
@@ -96,10 +96,7 @@ export class WorkspaceProcessManager {
    * workspace, not the main launcher.
    */
   static isWorkspaceMode(): boolean {
-    return (
-      process.argv.includes('--workspace') ||
-      process.env.ELECTRON_WORKSPACE_MODE === 'true'
-    )
+    return process.argv.includes('--workspace') || process.env.ELECTRON_WORKSPACE_MODE === 'true';
   }
 
   /**
@@ -112,22 +109,22 @@ export class WorkspaceProcessManager {
   static getWorkspacePathFromArgs(): string | null {
     // Check environment variable first
     if (process.env.ELECTRON_WORKSPACE_PATH) {
-      return process.env.ELECTRON_WORKSPACE_PATH
+      return process.env.ELECTRON_WORKSPACE_PATH;
     }
 
     // Check command line arguments
-    const workspaceIndex = process.argv.indexOf('--workspace')
+    const workspaceIndex = process.argv.indexOf('--workspace');
     if (workspaceIndex !== -1 && workspaceIndex + 1 < process.argv.length) {
-      return process.argv[workspaceIndex + 1]
+      return process.argv[workspaceIndex + 1];
     }
 
-    return null
+    return null;
   }
 
   /**
    * Check if this is the launcher process (not a workspace process).
    */
   static isLauncherMode(): boolean {
-    return !WorkspaceProcessManager.isWorkspaceMode()
+    return !WorkspaceProcessManager.isWorkspaceMode();
   }
 }

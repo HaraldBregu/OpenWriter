@@ -9,7 +9,7 @@ export interface ProgressReporter {
    * @param message - Optional human-readable progress message
    * @param detail - Optional additional detail data
    */
-  progress(percent: number, message?: string, detail?: unknown): void
+  progress(percent: number, message?: string, detail?: unknown): void;
 }
 
 /**
@@ -18,7 +18,7 @@ export interface ProgressReporter {
  */
 export interface StreamReporter {
   /** Emit a raw data batch. Each call delivers one chunk to the renderer. */
-  stream(data: string): void
+  stream(data: string): void;
 }
 
 /**
@@ -33,7 +33,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
    * Unique identifier for this task type.
    * Used for handler registration and lookup.
    */
-  readonly type: string
+  readonly type: string;
 
   /**
    * Optional validation before queueing the task.
@@ -42,7 +42,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
    * @param input - Task input to validate
    * @throws Error if validation fails
    */
-  validate?(input: TInput): void
+  validate?(input: TInput): void;
 
   /**
    * Execute the task operation.
@@ -59,5 +59,5 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
     signal: AbortSignal,
     reporter: ProgressReporter,
     streamReporter?: StreamReporter
-  ): Promise<TOutput>
+  ): Promise<TOutput>;
 }

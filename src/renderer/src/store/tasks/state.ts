@@ -1,8 +1,8 @@
 /** Tasks slice initial state. */
-import type { TasksState } from './types'
+import type { TasksState } from './types';
 
-export type { TasksState }
+export type { TasksState };
 
 export const initialState: TasksState = {
   tasks: [],
-}
+};

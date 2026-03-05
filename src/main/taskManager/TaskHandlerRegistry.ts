@@ -1,4 +1,4 @@
-import type { TaskHandler } from './TaskHandler'
+import type { TaskHandler } from './TaskHandler';
 
 /**
  * Registry for task handlers.
@@ -6,7 +6,7 @@ import type { TaskHandler } from './TaskHandler'
  * Mirrors AgentRegistry pattern for consistency.
  */
 export class TaskHandlerRegistry {
-  private handlers = new Map<string, TaskHandler>()
+  private handlers = new Map<string, TaskHandler>();
 
   /**
    * Register a task handler.
@@ -15,9 +15,9 @@ export class TaskHandlerRegistry {
    */
   register(handler: TaskHandler): void {
     if (this.handlers.has(handler.type)) {
-      throw new Error(`Task handler already registered: ${handler.type}`)
+      throw new Error(`Task handler already registered: ${handler.type}`);
     }
-    this.handlers.set(handler.type, handler)
+    this.handlers.set(handler.type, handler);
   }
 
   /**
@@ -27,11 +27,11 @@ export class TaskHandlerRegistry {
    * @throws Error if handler not found
    */
   get(type: string): TaskHandler {
-    const handler = this.handlers.get(type)
+    const handler = this.handlers.get(type);
     if (!handler) {
-      throw new Error(`Unknown task type: ${type}`)
+      throw new Error(`Unknown task type: ${type}`);
     }
-    return handler
+    return handler;
   }
 
   /**
@@ -40,7 +40,7 @@ export class TaskHandlerRegistry {
    * @returns True if handler is registered
    */
   has(type: string): boolean {
-    return this.handlers.has(type)
+    return this.handlers.has(type);
   }
 
   /**
@@ -48,7 +48,7 @@ export class TaskHandlerRegistry {
    * @returns Array of task type identifiers
    */
   listTypes(): string[] {
-    return Array.from(this.handlers.keys())
+    return Array.from(this.handlers.keys());
   }
 
   /**
@@ -56,6 +56,6 @@ export class TaskHandlerRegistry {
    * Useful for testing.
    */
   clear(): void {
-    this.handlers.clear()
+    this.handlers.clear();
   }
 }

@@ -1,6 +1,6 @@
-import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import react from '@vitejs/plugin-react'
+import { resolve } from 'path';
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
+import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -10,10 +10,10 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, "src/main/index.ts"),
+          index: resolve(__dirname, 'src/main/index.ts'),
         },
         output: {
-          entryFileNames: "[name].js",
+          entryFileNames: '[name].js',
         },
       },
     },
@@ -25,10 +25,10 @@ export default defineConfig({
       rollupOptions: {
         output: {
           format: 'cjs',
-          entryFileNames: '[name].js'
-        }
-      }
-    }
+          entryFileNames: '[name].js',
+        },
+      },
+    },
   },
   renderer: {
     publicDir: resolve(__dirname, './src/renderer/public'),
@@ -40,12 +40,9 @@ export default defineConfig({
         '@store': resolve(__dirname, './src/renderer/src/store'),
         '@components': resolve(__dirname, './src/renderer/src/components'),
         '@icons': resolve(__dirname, './src/renderer/src/components/icons'),
-        "@resources": resolve(__dirname, "resources"),
-      }
+        '@resources': resolve(__dirname, 'resources'),
+      },
     },
-    plugins: [
-      react(),
-      tsconfigPaths({ ignoreConfigErrors: true })
-    ]
-  }
-})
+    plugins: [react(), tsconfigPaths({ ignoreConfigErrors: true })],
+  },
+});

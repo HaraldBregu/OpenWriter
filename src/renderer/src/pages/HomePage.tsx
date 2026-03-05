@@ -1,14 +1,9 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import {
-  PenLine,
-  Puzzle,
-  ArrowRight,
-  Star
-} from 'lucide-react'
-import { AppSeparator } from '@/components/app'
-import { useCreateWriting } from '@/hooks/useCreateWriting'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { PenLine, Puzzle, ArrowRight, Star } from 'lucide-react';
+import { AppSeparator } from '@/components/app';
+import { useCreateWriting } from '@/hooks/useCreateWriting';
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
@@ -21,19 +16,19 @@ const categoryDefs = [
     descriptionKey: 'home.writingDescription',
     accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
   },
-]
+];
 
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
 interface CategoryCardProps {
-  icon: React.ElementType
-  labelKey: string
-  descriptionKey: string
-  accent: string
-  onClick: () => void
-  disabled?: boolean
+  icon: React.ElementType;
+  labelKey: string;
+  descriptionKey: string;
+  accent: string;
+  onClick: () => void;
+  disabled?: boolean;
 }
 
 const CategoryCard = React.memo(function CategoryCard({
@@ -44,7 +39,7 @@ const CategoryCard = React.memo(function CategoryCard({
   onClick,
   disabled,
 }: CategoryCardProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <button
@@ -62,35 +57,30 @@ const CategoryCard = React.memo(function CategoryCard({
       </div>
       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all mt-auto self-end" />
     </button>
-  )
-})
-CategoryCard.displayName = 'CategoryCard'
+  );
+});
+CategoryCard.displayName = 'CategoryCard';
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 const HomePage: React.FC = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { createWriting, isCreating: creatingWriting } = useCreateWriting()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { createWriting, isCreating: creatingWriting } = useCreateWriting();
 
-  const hour = new Date().getHours()
+  const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? t('home.goodMorning') : hour < 18 ? t('home.goodAfternoon') : t('home.goodEvening')
+    hour < 12 ? t('home.goodMorning') : hour < 18 ? t('home.goodAfternoon') : t('home.goodEvening');
 
   return (
     <div className="h-full overflow-y-auto">
       <div className="max-w-3xl mx-auto px-8 py-12 space-y-10">
-
         {/* Hero */}
         <div>
-          <h1 className="text-2xl font-medium text-foreground tracking-tight">
-            {greeting}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t('home.workOnToday')}
-          </p>
+          <h1 className="text-2xl font-medium text-foreground tracking-tight">{greeting}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('home.workOnToday')}</p>
         </div>
 
         {/* Categories */}
@@ -125,7 +115,9 @@ const HomePage: React.FC = () => {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">{t('home.integrations')}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{t('home.integrationsDescription')}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t('home.integrationsDescription')}
+                </p>
               </div>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
             </button>
@@ -144,10 +136,9 @@ const HomePage: React.FC = () => {
             </p>
           </div>
         </section>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

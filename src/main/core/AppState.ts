@@ -3,13 +3,13 @@
  * Replaces the unsafe `(app as { isQuitting?: boolean }).isQuitting` pattern.
  */
 export class AppState {
-  private _isQuitting = false
+  private _isQuitting = false;
 
   get isQuitting(): boolean {
-    return this._isQuitting
+    return this._isQuitting;
   }
 
   setQuitting(): void {
-    this._isQuitting = true
+    this._isQuitting = true;
   }
 }

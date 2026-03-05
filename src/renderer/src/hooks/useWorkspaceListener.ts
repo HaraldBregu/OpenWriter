@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
-import { useAppDispatch } from '@/store'
-import { handleWorkspaceChanged } from '@/store/workspace/reducer'
-import type { WorkspaceChangedEvent } from '../../../shared/types'
+import { useEffect } from 'react';
+import { useAppDispatch } from '@/store';
+import { handleWorkspaceChanged } from '@/store/workspace/reducer';
+import type { WorkspaceChangedEvent } from '../../../shared/types';
 
 /**
  * Hook to listen for workspace change events from the main process.
@@ -11,16 +11,16 @@ import type { WorkspaceChangedEvent } from '../../../shared/types'
  * the listener is active for the entire app session.
  */
 export function useWorkspaceListener(): void {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsubscribe = window.workspace.onChange((event: WorkspaceChangedEvent) => {
-      console.log('[useWorkspaceListener] Workspace changed:', event.currentPath)
-      dispatch(handleWorkspaceChanged(event))
-    })
+      console.log('[useWorkspaceListener] Workspace changed:', event.currentPath);
+      dispatch(handleWorkspaceChanged(event));
+    });
 
     return () => {
-      unsubscribe()
-    }
-  }, [dispatch])
+      unsubscribe();
+    };
+  }, [dispatch]);
 }

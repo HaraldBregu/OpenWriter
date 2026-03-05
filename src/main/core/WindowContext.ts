@@ -13,17 +13,20 @@
  * - Window-scoped services (isolated per window): Workspace, WorkspaceMetadata, FileWatcher, etc.
  */
 
-import { BrowserWindow } from 'electron'
-import { ServiceContainer, type EventBus } from './index'
-import { StoreService } from '../services/store'
-import { WorkspaceService } from '../services/workspace'
-import { createDefaultWindowScopedServiceFactory, type WindowScopedServiceFactory } from './WindowScopedServiceFactory'
+import { BrowserWindow } from 'electron';
+import { ServiceContainer, type EventBus } from './index';
+import { StoreService } from '../services/store';
+import { WorkspaceService } from '../services/workspace';
+import {
+  createDefaultWindowScopedServiceFactory,
+  type WindowScopedServiceFactory,
+} from './WindowScopedServiceFactory';
 
 export interface WindowContextConfig {
-  window: BrowserWindow
-  globalContainer: ServiceContainer
-  eventBus: EventBus
-  serviceFactory?: WindowScopedServiceFactory
+  window: BrowserWindow;
+  globalContainer: ServiceContainer;
+  eventBus: EventBus;
+  serviceFactory?: WindowScopedServiceFactory;
 }
 
 /**
@@ -31,28 +34,28 @@ export interface WindowContextConfig {
  * Each BrowserWindow gets its own WindowContext instance.
  */
 export class WindowContext {
-  public readonly windowId: number
-  public readonly window: BrowserWindow
-  public readonly container: ServiceContainer
-  public readonly eventBus: EventBus
+  public readonly windowId: number;
+  public readonly window: BrowserWindow;
+  public readonly container: ServiceContainer;
+  public readonly eventBus: EventBus;
 
   constructor(config: WindowContextConfig) {
-    this.window = config.window
-    this.windowId = config.window.id
-    this.container = new ServiceContainer()
-    this.eventBus = config.eventBus
+    this.window = config.window;
+    this.windowId = config.window.id;
+    this.container = new ServiceContainer();
+    this.eventBus = config.eventBus;
 
-    const logger = config.globalContainer.get<any>('logger')
-    logger?.info('WindowContext', `Creating context for window ${this.windowId}`)
+    const logger = config.globalContainer.get<any>('logger');
+    logger?.info('WindowContext', `Creating context for window ${this.windowId}`);
 
     // Initialize window-scoped services using the factory
-    const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory()
-    this.initializeServices(config.globalContainer, factory)
+    const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory();
+    this.initializeServices(config.globalContainer, factory);
 
     // Cleanup when window is closed
     this.window.on('closed', () => {
-      this.destroy()
-    })
+      this.destroy();
+    });
   }
 
   /**
@@ -65,25 +68,29 @@ export class WindowContext {
     globalContainer: ServiceContainer,
     serviceFactory: WindowScopedServiceFactory
   ): Promise<void> {
-    const logger = globalContainer.get<any>('logger')
+    const logger = globalContainer.get<any>('logger');
     try {
-      const storeService = globalContainer.get<StoreService>('store')
-      const workspaceService = new WorkspaceService(storeService, this.eventBus)
-      workspaceService.initialize()
-      this.container.register('workspace', workspaceService)
+      const storeService = globalContainer.get<StoreService>('store');
+      const workspaceService = new WorkspaceService(storeService, this.eventBus);
+      workspaceService.initialize();
+      this.container.register('workspace', workspaceService);
 
       // Use factory to create and register remaining services
       await serviceFactory.createAndRegisterAll(this.container, {
         globalContainer,
         eventBus: this.eventBus,
         storeService,
-        workspaceService
-      })
+        workspaceService,
+      });
 
-      logger?.info('WindowContext', `Initialized all services for window ${this.windowId}`)
+      logger?.info('WindowContext', `Initialized all services for window ${this.windowId}`);
     } catch (error) {
-      logger?.error('WindowContext', `Failed to initialize services for window ${this.windowId}`, error)
-      throw error
+      logger?.error(
+        'WindowContext',
+        `Failed to initialize services for window ${this.windowId}`,
+        error
+      );
+      throw error;
     }
   }
 
@@ -93,19 +100,19 @@ export class WindowContext {
    */
   getService<T>(key: string, globalContainer: ServiceContainer): T {
     if (this.container.has(key)) {
-      return this.container.get<T>(key)
+      return this.container.get<T>(key);
     }
-    return globalContainer.get<T>(key)
+    return globalContainer.get<T>(key);
   }
 
   /**
    * Cleanup window-scoped services when window is closed.
    */
   async destroy(): Promise<void> {
-    const logger = this.constructor.name
+    const logger = this.constructor.name;
     // Note: logger not available during destroy (may be shutting down)
-    console.log(`[WindowContext] Destroying context for window ${this.windowId}`)
-    await this.container.shutdown()
+    console.log(`[WindowContext] Destroying context for window ${this.windowId}`);
+    await this.container.shutdown();
   }
 }
 
@@ -114,7 +121,7 @@ export class WindowContext {
  * Provides a centralized registry to look up contexts by window ID.
  */
 export class WindowContextManager {
-  private contexts = new Map<number, WindowContext>()
+  private contexts = new Map<number, WindowContext>();
 
   constructor(
     private readonly globalContainer: ServiceContainer,
@@ -128,17 +135,17 @@ export class WindowContextManager {
     const context = new WindowContext({
       window,
       globalContainer: this.globalContainer,
-      eventBus: this.eventBus
-    })
+      eventBus: this.eventBus,
+    });
 
-    this.contexts.set(window.id, context)
+    this.contexts.set(window.id, context);
 
     // Auto-cleanup when window is closed
     window.on('closed', () => {
-      this.contexts.delete(window.id)
-    })
+      this.contexts.delete(window.id);
+    });
 
-    return context
+    return context;
   }
 
   /**
@@ -146,36 +153,36 @@ export class WindowContextManager {
    * Throws if the context doesn't exist.
    */
   get(windowId: number): WindowContext {
-    const context = this.contexts.get(windowId)
+    const context = this.contexts.get(windowId);
     if (!context) {
-      throw new Error(`No window context found for window ID ${windowId}`)
+      throw new Error(`No window context found for window ID ${windowId}`);
     }
-    return context
+    return context;
   }
 
   /**
    * Get the context for a specific window ID, or undefined if not found.
    */
   tryGet(windowId: number): WindowContext | undefined {
-    return this.contexts.get(windowId)
+    return this.contexts.get(windowId);
   }
 
   /**
    * Check if a context exists for a window ID.
    */
   has(windowId: number): boolean {
-    return this.contexts.has(windowId)
+    return this.contexts.has(windowId);
   }
 
   /**
    * Destroy all window contexts.
    */
   async destroyAll(): Promise<void> {
-    const logger = this.globalContainer.get<any>('logger')
-    logger?.info('WindowContextManager', `Destroying ${this.contexts.size} window contexts`)
+    const logger = this.globalContainer.get<any>('logger');
+    logger?.info('WindowContextManager', `Destroying ${this.contexts.size} window contexts`);
     for (const context of this.contexts.values()) {
-      await context.destroy()
+      await context.destroy();
     }
-    this.contexts.clear()
+    this.contexts.clear();
   }
 }

@@ -1,10 +1,10 @@
-import { Extension } from '@tiptap/core'
-import { PluginKey } from '@tiptap/pm/state'
-import { OptionMenuPlugin, type OptionMenuPluginProps } from './option-menu-plugin'
+import { Extension } from '@tiptap/core';
+import { PluginKey } from '@tiptap/pm/state';
+import { OptionMenuPlugin, type OptionMenuPluginProps } from './option-menu-plugin';
 
 export type OptionMenuExtensionOptions = Omit<OptionMenuPluginProps, 'editor' | 'element'> & {
-  element: HTMLElement | null
-}
+  element: HTMLElement | null;
+};
 
 export const OptionMenuExtension = Extension.create<OptionMenuExtensionOptions>({
   name: 'optionMenu',
@@ -17,12 +17,12 @@ export const OptionMenuExtension = Extension.create<OptionMenuExtensionOptions>(
       onHide: () => {},
       onQueryChange: () => {},
       onKeyEvent: () => false,
-    }
+    };
   },
 
   addProseMirrorPlugins() {
     if (!this.options.element) {
-      return []
+      return [];
     }
 
     return [
@@ -38,6 +38,6 @@ export const OptionMenuExtension = Extension.create<OptionMenuExtensionOptions>(
         onQueryChange: this.options.onQueryChange,
         onKeyEvent: this.options.onKeyEvent,
       }),
-    ]
+    ];
   },
-})
+});

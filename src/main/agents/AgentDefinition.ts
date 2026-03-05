@@ -5,23 +5,23 @@
  * components with no dependency on any other subsystem.
  */
 
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { CompiledStateGraph } from '@langchain/langgraph'
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { CompiledStateGraph } from '@langchain/langgraph';
 
 // ---------------------------------------------------------------------------
 // Default configuration — standalone shape for agent definitions
 // ---------------------------------------------------------------------------
 
 export interface AgentDefaultConfig {
-  providerId?: string
-  modelId?: string
-  systemPrompt?: string
-  temperature?: number
-  maxTokens?: number
-  maxHistoryMessages?: number
-  metadata?: Record<string, unknown>
+  providerId?: string;
+  modelId?: string;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  maxHistoryMessages?: number;
+  metadata?: Record<string, unknown>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
 }
 
 // ---------------------------------------------------------------------------
@@ -30,13 +30,13 @@ export interface AgentDefaultConfig {
 
 export interface AgentDefinition {
   /** Unique machine-readable identifier, e.g. 'story-writer' */
-  id: string
+  id: string;
   /** Human-readable display name shown in the UI */
-  name: string
+  name: string;
   /** Short description of the agent's purpose and behaviour */
-  description: string
+  description: string;
   /** Category used for grouping / filtering in the UI */
-  category: 'writing' | 'editing' | 'analysis' | 'utility'
+  category: 'writing' | 'editing' | 'analysis' | 'utility';
   /**
    * Default session configuration.
    *
@@ -44,13 +44,13 @@ export interface AgentDefinition {
    * concrete `providerId` (e.g. resolved from the user's active provider
    * setting) when creating a live session from this definition.
    */
-  defaultConfig: AgentDefaultConfig
+  defaultConfig: AgentDefaultConfig;
   /** Optional hints consumed by the UI to render the input form correctly. */
   inputHints?: {
-    label: string
-    placeholder: string
-    multiline?: boolean
-  }
+    label: string;
+    placeholder: string;
+    multiline?: boolean;
+  };
   /**
    * Optional LangGraph factory. When present, the agent runs as a full
    * LangGraph StateGraph instead of a plain chat completion.
@@ -62,7 +62,7 @@ export interface AgentDefinition {
    * @param model - The resolved LangChain chat model (streaming enabled).
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>
+  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
 }
 
 // ---------------------------------------------------------------------------
@@ -70,11 +70,11 @@ export interface AgentDefinition {
 // ---------------------------------------------------------------------------
 
 export interface AgentDefinitionInfo {
-  id: string
-  name: string
-  description: string
-  category: AgentDefinition['category']
-  inputHints?: AgentDefinition['inputHints']
+  id: string;
+  name: string;
+  description: string;
+  category: AgentDefinition['category'];
+  inputHints?: AgentDefinition['inputHints'];
 }
 
 // ---------------------------------------------------------------------------
@@ -92,5 +92,5 @@ export function toAgentDefinitionInfo(def: AgentDefinition): AgentDefinitionInfo
     description: def.description,
     category: def.category,
     inputHints: def.inputHints,
-  }
+  };
 }

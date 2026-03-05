@@ -1,7 +1,7 @@
 /**
  * Unsubscribe function returned by Observable.subscribe()
  */
-export type Unsubscribe = () => void
+export type Unsubscribe = () => void;
 
 /**
  * Base class for services that emit events to subscribers.
@@ -26,7 +26,7 @@ export type Unsubscribe = () => void
  * ```
  */
 export class Observable<TEvent> {
-  private subscribers: Array<(event: TEvent) => void> = []
+  private subscribers: Array<(event: TEvent) => void> = [];
 
   /**
    * Subscribe to events from this observable.
@@ -36,10 +36,10 @@ export class Observable<TEvent> {
    * @returns Unsubscribe function
    */
   protected subscribe(callback: (event: TEvent) => void): Unsubscribe {
-    this.subscribers.push(callback)
+    this.subscribers.push(callback);
     return () => {
-      this.subscribers = this.subscribers.filter((cb) => cb !== callback)
-    }
+      this.subscribers = this.subscribers.filter((cb) => cb !== callback);
+    };
   }
 
   /**
@@ -51,11 +51,11 @@ export class Observable<TEvent> {
   protected notify(event: TEvent): void {
     this.subscribers.forEach((callback) => {
       try {
-        callback(event)
+        callback(event);
       } catch (err) {
-        console.error('[Observable] Subscriber error:', err)
+        console.error('[Observable] Subscriber error:', err);
       }
-    })
+    });
   }
 
   /**
@@ -63,13 +63,13 @@ export class Observable<TEvent> {
    * Should be called during service cleanup to prevent memory leaks.
    */
   protected clearSubscribers(): void {
-    this.subscribers = []
+    this.subscribers = [];
   }
 
   /**
    * Get the current number of subscribers (useful for debugging)
    */
   protected getSubscriberCount(): number {
-    return this.subscribers.length
+    return this.subscribers.length;
   }
 }

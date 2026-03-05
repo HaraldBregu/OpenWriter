@@ -1,16 +1,16 @@
-import React, { useState, lazy, Suspense } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLanguage } from '../hooks/useLanguage'
-import { LoadingSkeleton } from '../components/LoadingSkeleton'
+import React, { useState, lazy, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../hooks/useLanguage';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
-const GeneralSettings = lazy(() => import('./settings/GeneralSettings'))
-const ModelsSettings = lazy(() => import('./settings/ModelsSettings'))
-const MediaSettings = lazy(() => import('./settings/MediaSettings'))
-const DevicesSettings = lazy(() => import('./settings/DevicesSettings'))
-const ToolsSettings = lazy(() => import('./settings/ToolsSettings'))
-const SystemSettings = lazy(() => import('./settings/SystemSettings'))
+const GeneralSettings = lazy(() => import('./settings/GeneralSettings'));
+const ModelsSettings = lazy(() => import('./settings/ModelsSettings'));
+const MediaSettings = lazy(() => import('./settings/MediaSettings'));
+const DevicesSettings = lazy(() => import('./settings/DevicesSettings'));
+const ToolsSettings = lazy(() => import('./settings/ToolsSettings'));
+const SystemSettings = lazy(() => import('./settings/SystemSettings'));
 
-type Tab = 'general' | 'models' | 'media' | 'devices' | 'tools' | 'system'
+type Tab = 'general' | 'models' | 'media' | 'devices' | 'tools' | 'system';
 
 const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
   general: GeneralSettings,
@@ -18,13 +18,13 @@ const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
   media: MediaSettings,
   devices: DevicesSettings,
   tools: ToolsSettings,
-  system: SystemSettings
-}
+  system: SystemSettings,
+};
 
 const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('general')
-  const { t } = useTranslation()
-  useLanguage()
+  const [activeTab, setActiveTab] = useState<Tab>('general');
+  const { t } = useTranslation();
+  useLanguage();
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'general', label: t('settings.tabs.general') },
@@ -33,9 +33,9 @@ const SettingsPage: React.FC = () => {
     { id: 'devices', label: t('settings.tabs.devices') },
     { id: 'tools', label: t('settings.tabs.tools') },
     { id: 'system', label: t('settings.tabs.system') },
-  ]
+  ];
 
-  const ActiveComponent = tabComponents[activeTab]
+  const ActiveComponent = tabComponents[activeTab];
 
   return (
     <div className="flex flex-col h-full">
@@ -65,7 +65,7 @@ const SettingsPage: React.FC = () => {
         </Suspense>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SettingsPage
+export default SettingsPage;

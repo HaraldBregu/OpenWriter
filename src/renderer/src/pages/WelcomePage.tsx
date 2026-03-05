@@ -1,137 +1,140 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react'
-import { AppButton } from '@/components/app'
-import { TitleBar } from '@/components/TitleBar'
-import { useWorkspaceDeletionReason, useClearDeletionReason } from '@/hooks/useWorkspaceValidation'
-import logoIcon from '@resources/icons/icon.png'
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
+import { AppButton } from '@/components/app';
+import { TitleBar } from '@/components/TitleBar';
+import { useWorkspaceDeletionReason, useClearDeletionReason } from '@/hooks/useWorkspaceValidation';
+import logoIcon from '@resources/icons/icon.png';
 
 interface RecentProject {
-  path: string
-  lastOpened: number
-  exists?: boolean
+  path: string;
+  lastOpened: number;
+  exists?: boolean;
 }
 
 const WelcomePage: React.FC = () => {
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const [recentProjects, setRecentProjects] = useState<RecentProject[]>([])
-  const deletionReason = useWorkspaceDeletionReason()
-  const clearDeletion = useClearDeletionReason()
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+  const deletionReason = useWorkspaceDeletionReason();
+  const clearDeletion = useClearDeletionReason();
 
   useEffect(() => {
-    loadRecentProjects()
-  }, [])
+    loadRecentProjects();
+  }, []);
 
   const loadRecentProjects = async () => {
     try {
-      const projects = await window.workspace.getRecent()
+      const projects = await window.workspace.getRecent();
 
       // Filter out entries with missing path, then check if each directory exists
-      const validProjects = projects.filter((p) => typeof p.path === 'string')
+      const validProjects = projects.filter((p) => typeof p.path === 'string');
       const projectsWithExistence = await Promise.all(
         validProjects.map(async (project) => {
           try {
-            const exists = await window.workspace.directoryExists(project.path)
-            return { ...project, exists }
+            const exists = await window.workspace.directoryExists(project.path);
+            return { ...project, exists };
           } catch {
-            return { ...project, exists: false }
+            return { ...project, exists: false };
           }
         })
-      )
+      );
 
-      setRecentProjects(projectsWithExistence)
+      setRecentProjects(projectsWithExistence);
     } catch (error) {
-      console.error('Failed to load recent projects:', error)
-      setRecentProjects([])
+      console.error('Failed to load recent projects:', error);
+      setRecentProjects([]);
     }
-  }
+  };
 
   const handleOpenProject = useCallback(async () => {
     try {
-      const folderPath = await window.workspace.selectFolder()
+      const folderPath = await window.workspace.selectFolder();
 
       if (folderPath) {
         // Set workspace in current window.
         // useOutputFiles (mounted in AppLayout) listens to workspace.onChange
         // and will reload output items automatically when this fires.
-        await window.workspace.setCurrent(folderPath)
+        await window.workspace.setCurrent(folderPath);
 
         // Navigate current window to home
-        navigate('/home')
+        navigate('/home');
       }
     } catch (error) {
-      console.error('Failed to open project:', error)
+      console.error('Failed to open project:', error);
     }
-  }, [navigate])
+  }, [navigate]);
 
-  const handleOpenRecentProject = useCallback(async (path: string, exists: boolean) => {
-    // Don't allow opening non-existent directories
-    if (!exists) {
-      return
-    }
+  const handleOpenRecentProject = useCallback(
+    async (path: string, exists: boolean) => {
+      // Don't allow opening non-existent directories
+      if (!exists) {
+        return;
+      }
 
-    try {
-      // Set workspace in current window.
-      // useOutputFiles (mounted in AppLayout) listens to workspace.onChange
-      // and will reload output items automatically when this fires.
-      await window.workspace.setCurrent(path)
+      try {
+        // Set workspace in current window.
+        // useOutputFiles (mounted in AppLayout) listens to workspace.onChange
+        // and will reload output items automatically when this fires.
+        await window.workspace.setCurrent(path);
 
-      // Navigate current window to home
-      navigate('/home')
-    } catch (error) {
-      console.error('Failed to open recent project:', error)
-    }
-  }, [navigate])
+        // Navigate current window to home
+        navigate('/home');
+      } catch (error) {
+        console.error('Failed to open recent project:', error);
+      }
+    },
+    [navigate]
+  );
 
   const handleRemoveRecentProject = useCallback(async (path: string, event: React.MouseEvent) => {
     // Prevent opening the project when clicking the remove button
-    event.stopPropagation()
+    event.stopPropagation();
 
     try {
-      await window.workspace.removeRecent(path)
+      await window.workspace.removeRecent(path);
       // Reload the recent projects list
-      loadRecentProjects()
+      loadRecentProjects();
     } catch (error) {
-      console.error('Failed to remove recent project:', error)
+      console.error('Failed to remove recent project:', error);
     }
-  }, [])
+  }, []);
 
   const formatPath = (path: string) => {
-    if (typeof path !== 'string') return ''
+    if (typeof path !== 'string') return '';
     if (path.includes('/Users/')) {
-      const parts = path.split('/Users/')
-      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/')
+      const parts = path.split('/Users/');
+      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/');
     }
     if (path.includes('/home/')) {
-      const parts = path.split('/home/')
-      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/')
+      const parts = path.split('/home/');
+      if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/');
     }
     if (path.includes('\\Users\\')) {
-      const parts = path.split('\\Users\\')
-      if (parts[1]) return '~\\' + parts[1].split('\\').slice(1).join('\\')
+      const parts = path.split('\\Users\\');
+      if (parts[1]) return '~\\' + parts[1].split('\\').slice(1).join('\\');
     }
-    return path
-  }
+    return path;
+  };
 
   const getProjectName = (path: string) => {
-    if (typeof path !== 'string') return ''
-    return path.split(/[/\\]/).pop() || path
-  }
+    if (typeof path !== 'string') return '';
+    return path.split(/[/\\]/).pop() || path;
+  };
 
   const formatRelativeTime = (timestamp: number) => {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000)
-    if (seconds < 60) return 'just now'
-    const minutes = Math.floor(seconds / 60)
-    if (minutes < 60) return `${minutes}m ago`
-    const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours}h ago`
-    const days = Math.floor(hours / 24)
-    if (days === 1) return 'yesterday'
-    if (days < 7) return `${days}d ago`
-    return `${Math.floor(days / 7)}w ago`
-  }
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days === 1) return 'yesterday';
+    if (days < 7) return `${days}d ago`;
+    return `${Math.floor(days / 7)}w ago`;
+  };
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -157,7 +160,6 @@ const WelcomePage: React.FC = () => {
 
       {/* Main content — vertically centered, not scrollable */}
       <div className="flex flex-col items-center flex-1 px-8 py-12 overflow-hidden">
-
         {/* ── Hero ── */}
         <div className="flex flex-col items-center mb-10">
           <img
@@ -172,10 +174,7 @@ const WelcomePage: React.FC = () => {
             {t('welcome.tagline')}
           </p>
           <p className="mt-3 text-xs text-muted-foreground">
-            {t('welcome.freePlan')}
-            {' '}
-            &bull;
-            {' '}
+            {t('welcome.freePlan')} &bull;{' '}
             <span className="text-primary cursor-pointer hover:underline">
               {t('welcome.upgradeToPro')}
             </span>
@@ -220,74 +219,70 @@ const WelcomePage: React.FC = () => {
             </div>
 
             <div className="rounded-xl border border-border overflow-y-auto max-h-96">
-            {recentProjects.slice(0, 5).map((project, index) => {
-              const exists = project.exists !== false // Default to true if not checked yet
+              {recentProjects.slice(0, 5).map((project, index) => {
+                const exists = project.exists !== false; // Default to true if not checked yet
 
-              return (
-                <div
-                  key={index}
-                  className={`
+                return (
+                  <div
+                    key={index}
+                    className={`
                     flex items-center justify-between px-4 py-3
                     transition-colors
                     ${index !== 0 ? 'border-t border-border' : ''}
-                    ${exists
-                      ? 'hover:bg-accent opacity-100'
-                      : 'opacity-40'
-                    }
+                    ${exists ? 'hover:bg-accent opacity-100' : 'opacity-40'}
                   `}
-                >
-                  {/* Left: Folder icon and content */}
-                  <button
-                    onClick={() => handleOpenRecentProject(project.path, exists)}
-                    disabled={!exists}
-                    className={`
+                  >
+                    {/* Left: Folder icon and content */}
+                    <button
+                      onClick={() => handleOpenRecentProject(project.path, exists)}
+                      disabled={!exists}
+                      className={`
                       flex items-center gap-4 flex-1 min-w-0
                       ${exists ? 'cursor-pointer' : 'cursor-not-allowed'}
                     `}
-                  >
-                    {/* Folder color indicator */}
-                    <div className="h-8 w-8 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
-                      <FolderOpen className="h-4 w-4 text-primary" />
-                    </div>
-
-                    {/* Name + path */}
-                    <div className="flex flex-col items-start min-w-0">
-                      <span className="text-sm font-medium truncate text-foreground text-left">
-                        {getProjectName(project.path)}
-                        {!exists && ` ${t('welcome.notFound')}`}
-                      </span>
-                      <span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
-                        {formatPath(project.path)}
-                      </span>
-                    </div>
-                  </button>
-
-                  {/* Right: Timestamp and remove button */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      <span>{formatRelativeTime(project.lastOpened)}</span>
-                    </div>
-
-                    {/* Remove button */}
-                    <button
-                      onClick={(e) => handleRemoveRecentProject(project.path, e)}
-                      className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
-                      title={t('welcome.removeFromRecent')}
                     >
-                      <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                      {/* Folder color indicator */}
+                      <div className="h-8 w-8 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
+                        <FolderOpen className="h-4 w-4 text-primary" />
+                      </div>
+
+                      {/* Name + path */}
+                      <div className="flex flex-col items-start min-w-0">
+                        <span className="text-sm font-medium truncate text-foreground text-left">
+                          {getProjectName(project.path)}
+                          {!exists && ` ${t('welcome.notFound')}`}
+                        </span>
+                        <span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
+                          {formatPath(project.path)}
+                        </span>
+                      </div>
                     </button>
+
+                    {/* Right: Timestamp and remove button */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span>{formatRelativeTime(project.lastOpened)}</span>
+                      </div>
+
+                      {/* Remove button */}
+                      <button
+                        onClick={(e) => handleRemoveRecentProject(project.path, e)}
+                        className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
+                        title={t('welcome.removeFromRecent')}
+                      >
+                        <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                );
+              })}
             </div>
           </div>
         )}
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WelcomePage
+export default WelcomePage;

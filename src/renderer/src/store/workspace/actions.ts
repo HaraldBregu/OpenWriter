@@ -1,6 +1,6 @@
 /** Workspace async thunks — IPC calls for loading, selecting, and clearing workspaces. */
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { WorkspaceInfo } from '../../../../shared/types'
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import type { WorkspaceInfo } from '../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Async thunks
@@ -10,13 +10,10 @@ import type { WorkspaceInfo } from '../../../../shared/types'
  * Load the current workspace path from the main process.
  * Called once on app startup to hydrate the Redux store.
  */
-export const loadCurrentWorkspace = createAsyncThunk(
-  'workspace/loadCurrent',
-  async () => {
-    const currentPath = await window.workspace.getCurrent()
-    return currentPath
-  }
-)
+export const loadCurrentWorkspace = createAsyncThunk('workspace/loadCurrent', async () => {
+  const currentPath = await window.workspace.getCurrent();
+  return currentPath;
+});
 
 /**
  * Load the list of recent workspaces from the main process.
@@ -24,10 +21,10 @@ export const loadCurrentWorkspace = createAsyncThunk(
 export const loadRecentWorkspaces = createAsyncThunk<WorkspaceInfo[]>(
   'workspace/loadRecent',
   async () => {
-    const recent = await window.workspace.getRecent()
-    return recent
+    const recent = await window.workspace.getRecent();
+    return recent;
   }
-)
+);
 
 /**
  * Set the current workspace by path.
@@ -36,24 +33,21 @@ export const loadRecentWorkspaces = createAsyncThunk<WorkspaceInfo[]>(
 export const selectWorkspace = createAsyncThunk(
   'workspace/select',
   async (workspacePath: string) => {
-    await window.workspace.setCurrent(workspacePath)
-    return workspacePath
+    await window.workspace.setCurrent(workspacePath);
+    return workspacePath;
   }
-)
+);
 
 /**
  * Open a folder picker and select a workspace.
  */
-export const openWorkspacePicker = createAsyncThunk(
-  'workspace/openPicker',
-  async () => {
-    const selectedPath = await window.workspace.selectFolder()
-    if (selectedPath) {
-      await window.workspace.setCurrent(selectedPath)
-    }
-    return selectedPath
+export const openWorkspacePicker = createAsyncThunk('workspace/openPicker', async () => {
+  const selectedPath = await window.workspace.selectFolder();
+  if (selectedPath) {
+    await window.workspace.setCurrent(selectedPath);
   }
-)
+  return selectedPath;
+});
 
 /**
  * Remove a workspace from the recent workspaces list.
@@ -61,18 +55,15 @@ export const openWorkspacePicker = createAsyncThunk(
 export const removeRecentWorkspace = createAsyncThunk(
   'workspace/removeRecent',
   async (workspacePath: string) => {
-    await window.workspace.removeRecent(workspacePath)
-    return workspacePath
+    await window.workspace.removeRecent(workspacePath);
+    return workspacePath;
   }
-)
+);
 
 /**
  * Clear the current workspace.
  */
-export const clearWorkspace = createAsyncThunk(
-  'workspace/clear',
-  async () => {
-    await window.workspace.clear()
-    return null
-  }
-)
+export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
+  await window.workspace.clear();
+  return null;
+});

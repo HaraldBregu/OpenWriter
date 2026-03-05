@@ -1,7 +1,7 @@
 // env.d.ts
 /// <reference types="vite/client" />
 
-type AppEnvironment = 'development' | 'staging' | 'production'
+type AppEnvironment = 'development' | 'staging' | 'production';
 
 interface ImportMetaEnv {
   // Environment

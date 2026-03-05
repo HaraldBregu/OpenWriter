@@ -7,12 +7,12 @@
  */
 
 export interface Disposable {
-  destroy(): void
+  destroy(): void;
 }
 
 export class ServiceContainer {
-  private services = new Map<string, unknown>()
-  private disposables: Disposable[] = []
+  private services = new Map<string, unknown>();
+  private disposables: Disposable[] = [];
 
   /**
    * Register a service instance. If it has a destroy() method,
@@ -20,49 +20,49 @@ export class ServiceContainer {
    */
   register<T>(key: string, instance: T): T {
     if (this.services.has(key)) {
-      throw new Error(`Service "${key}" is already registered`)
+      throw new Error(`Service "${key}" is already registered`);
     }
-    this.services.set(key, instance)
+    this.services.set(key, instance);
 
     if (this.isDisposable(instance)) {
-      this.disposables.push(instance)
+      this.disposables.push(instance);
     }
 
-    return instance
+    return instance;
   }
 
   /**
    * Retrieve a service by key. Throws if not found.
    */
   get<T>(key: string): T {
-    const service = this.services.get(key)
+    const service = this.services.get(key);
     if (!service) {
-      throw new Error(`Service "${key}" not found. Was it registered?`)
+      throw new Error(`Service "${key}" not found. Was it registered?`);
     }
-    return service as T
+    return service as T;
   }
 
   /**
    * Check if a service is registered.
    */
   has(key: string): boolean {
-    return this.services.has(key)
+    return this.services.has(key);
   }
 
   /**
    * Gracefully shut down all disposable services in reverse registration order.
    */
   async shutdown(): Promise<void> {
-    console.log(`[ServiceContainer] Shutting down ${this.disposables.length} services...`)
+    console.log(`[ServiceContainer] Shutting down ${this.disposables.length} services...`);
     for (const disposable of [...this.disposables].reverse()) {
       try {
-        disposable.destroy()
+        disposable.destroy();
       } catch (err) {
-        console.error('[ServiceContainer] Error during shutdown:', err)
+        console.error('[ServiceContainer] Error during shutdown:', err);
       }
     }
-    this.services.clear()
-    this.disposables = []
+    this.services.clear();
+    this.disposables = [];
   }
 
   private isDisposable(obj: unknown): obj is Disposable {
@@ -71,6 +71,6 @@ export class ServiceContainer {
       obj !== null &&
       'destroy' in obj &&
       typeof (obj as Disposable).destroy === 'function'
-    )
+    );
   }
 }

@@ -1,8 +1,8 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import type { FileMetadata, FileManagementService } from './FileManagementService'
-import type { DocumentsWatcherService } from './documents-watcher'
-import { validateTextFiles, getAllTextExtensions } from '../utils/file-type-validator'
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import type { FileMetadata, FileManagementService } from './FileManagementService';
+import type { DocumentsWatcherService } from './documents-watcher';
+import { validateTextFiles, getAllTextExtensions } from '../utils/file-type-validator';
 
 /**
  * DocumentsService manages document files within a workspace.
@@ -18,7 +18,7 @@ import { validateTextFiles, getAllTextExtensions } from '../utils/file-type-vali
  * and coordinates with DocumentsWatcherService to prevent false change events.
  */
 export class DocumentsService {
-  private readonly DOCS_DIR_NAME = 'documents'
+  private readonly DOCS_DIR_NAME = 'documents';
 
   constructor(
     private fileManagement: FileManagementService,
@@ -32,7 +32,7 @@ export class DocumentsService {
    * @returns Path to the documents subdirectory
    */
   getDocumentsDir(workspacePath: string): string {
-    return path.join(workspacePath, this.DOCS_DIR_NAME)
+    return path.join(workspacePath, this.DOCS_DIR_NAME);
   }
 
   /**
@@ -41,8 +41,8 @@ export class DocumentsService {
    * @param workspacePath - Path to the workspace
    */
   async ensureDocumentsDirectory(workspacePath: string): Promise<void> {
-    const docsDir = this.getDocumentsDir(workspacePath)
-    await this.fileManagement.ensureDirectory(docsDir)
+    const docsDir = this.getDocumentsDir(workspacePath);
+    await this.fileManagement.ensureDirectory(docsDir);
   }
 
   /**
@@ -53,23 +53,23 @@ export class DocumentsService {
    * @returns Array of file metadata for imported files
    */
   async importFiles(workspacePath: string, filePaths: string[]): Promise<FileMetadata[]> {
-    await this.ensureDocumentsDirectory(workspacePath)
+    await this.ensureDocumentsDirectory(workspacePath);
 
     // Validate file types
-    const { validFiles, invalidFiles } = validateTextFiles(filePaths)
+    const { validFiles, invalidFiles } = validateTextFiles(filePaths);
 
     if (invalidFiles.length > 0) {
       const fileList = invalidFiles
         .map(({ path: filePath, reason }) => `• ${path.basename(filePath)}: ${reason}`)
-        .join('\n')
+        .join('\n');
 
       throw new Error(
         `Some files are not supported:\n${fileList}\n\nSupported formats: ${getAllTextExtensions().join(', ')}`
-      )
+      );
     }
 
-    const docsDir = this.getDocumentsDir(workspacePath)
-    const importedFiles: FileMetadata[] = []
+    const docsDir = this.getDocumentsDir(workspacePath);
+    const importedFiles: FileMetadata[] = [];
 
     for (const filePath of validFiles) {
       try {
@@ -77,14 +77,16 @@ export class DocumentsService {
           filePath,
           docsDir,
           this.watcher ? (destPath) => this.watcher!.markFileAsWritten(destPath) : undefined
-        )
-        importedFiles.push(metadata)
+        );
+        importedFiles.push(metadata);
       } catch (err) {
-        throw new Error(`Failed to import file ${path.basename(filePath)}: ${(err as Error).message}`)
+        throw new Error(
+          `Failed to import file ${path.basename(filePath)}: ${(err as Error).message}`
+        );
       }
     }
 
-    return importedFiles
+    return importedFiles;
   }
 
   /**
@@ -95,14 +97,14 @@ export class DocumentsService {
    * @returns File metadata for the downloaded file
    */
   async downloadFromUrl(workspacePath: string, url: string): Promise<FileMetadata> {
-    await this.ensureDocumentsDirectory(workspacePath)
+    await this.ensureDocumentsDirectory(workspacePath);
 
-    const docsDir = this.getDocumentsDir(workspacePath)
+    const docsDir = this.getDocumentsDir(workspacePath);
     return this.fileManagement.downloadFile(
       url,
       docsDir,
       this.watcher ? (destPath) => this.watcher!.markFileAsWritten(destPath) : undefined
-    )
+    );
   }
 
   /**
@@ -112,51 +114,51 @@ export class DocumentsService {
    * @returns Array of file metadata for all documents
    */
   async loadAll(workspacePath: string): Promise<FileMetadata[]> {
-    const docsDir = this.getDocumentsDir(workspacePath)
+    const docsDir = this.getDocumentsDir(workspacePath);
 
     // Check if documents directory exists
     try {
-      await fs.access(docsDir)
+      await fs.access(docsDir);
     } catch {
       // Documents directory doesn't exist yet, return empty array
-      return []
+      return [];
     }
 
     // Read all files in the documents directory
-    let files: string[]
+    let files: string[];
     try {
-      files = await fs.readdir(docsDir)
+      files = await fs.readdir(docsDir);
     } catch (err) {
-      const error = err as NodeJS.ErrnoException
+      const error = err as NodeJS.ErrnoException;
       if (error.code === 'EACCES') {
-        throw new Error(`Permission denied reading documents directory: ${docsDir}`)
+        throw new Error(`Permission denied reading documents directory: ${docsDir}`);
       }
-      throw new Error(`Failed to read documents directory: ${error.message}`)
+      throw new Error(`Failed to read documents directory: ${error.message}`);
     }
 
     // Filter out hidden files and directories
-    const validFiles = files.filter((file) => !file.startsWith('.'))
-    const documents: FileMetadata[] = []
+    const validFiles = files.filter((file) => !file.startsWith('.'));
+    const documents: FileMetadata[] = [];
 
     for (const file of validFiles) {
       try {
-        const filePath = path.join(docsDir, file)
-        const stats = await fs.stat(filePath)
+        const filePath = path.join(docsDir, file);
+        const stats = await fs.stat(filePath);
 
         // Skip directories
         if (stats.isDirectory()) {
-          continue
+          continue;
         }
 
-        const metadata = this.fileManagement.createFileMetadata(file, filePath, stats)
-        documents.push(metadata)
+        const metadata = this.fileManagement.createFileMetadata(file, filePath, stats);
+        documents.push(metadata);
       } catch (err) {
         // Log and skip files that can't be read
-        console.warn(`[DocumentsService] Failed to load file ${file}:`, (err as Error).message)
+        console.warn(`[DocumentsService] Failed to load file ${file}:`, (err as Error).message);
       }
     }
 
-    return documents
+    return documents;
   }
 
   /**
@@ -166,23 +168,23 @@ export class DocumentsService {
    * @param workspacePath - Path to the workspace
    */
   async deleteFile(fileId: string, workspacePath: string): Promise<void> {
-    const docsDir = this.getDocumentsDir(workspacePath)
-    const filePath = path.join(docsDir, fileId)
+    const docsDir = this.getDocumentsDir(workspacePath);
+    const filePath = path.join(docsDir, fileId);
 
     // Security: ensure the file is actually in the documents directory
-    const realPath = await fs.realpath(filePath)
-    const realDocsDir = await fs.realpath(docsDir)
+    const realPath = await fs.realpath(filePath);
+    const realDocsDir = await fs.realpath(docsDir);
 
     if (!realPath.startsWith(realDocsDir)) {
-      throw new Error('Cannot delete files outside the documents directory')
+      throw new Error('Cannot delete files outside the documents directory');
     }
 
     try {
       // Mark file as app-written before deleting (prevents watcher events)
-      this.watcher?.markFileAsWritten(filePath)
-      await this.fileManagement.deleteFile(filePath)
+      this.watcher?.markFileAsWritten(filePath);
+      await this.fileManagement.deleteFile(filePath);
     } catch (err) {
-      throw new Error(`Failed to delete file ${fileId}: ${(err as Error).message}`)
+      throw new Error(`Failed to delete file ${fileId}: ${(err as Error).message}`);
     }
   }
 }

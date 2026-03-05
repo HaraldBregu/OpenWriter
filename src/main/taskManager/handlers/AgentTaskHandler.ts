@@ -7,30 +7,30 @@
  * fully decoupled from each other.
  */
 
-import { randomUUID } from 'node:crypto'
-import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler'
-import type { AgentRegistry } from '../../agents/AgentRegistry'
-import { executeAIAgentsStream } from '../../agents/AgentExecutor'
-import type { AgentStreamEvent } from '../../agents/AgentTypes'
-import type { ProviderResolver } from '../../shared/ProviderResolver'
-import type { LoggerService } from '../../services/logger'
+import { randomUUID } from 'node:crypto';
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler';
+import type { AgentRegistry } from '../../agents/AgentRegistry';
+import { executeAIAgentsStream } from '../../agents/AgentExecutor';
+import type { AgentStreamEvent } from '../../agents/AgentTypes';
+import type { ProviderResolver } from '../../shared/ProviderResolver';
+import type { LoggerService } from '../../services/logger';
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)
 // ---------------------------------------------------------------------------
 
 export interface AgentTaskInput {
-  prompt: string
-  providerId?: string
-  modelId?: string
-  temperature?: number
-  maxTokens?: number
+  prompt: string;
+  providerId?: string;
+  modelId?: string;
+  temperature?: number;
+  maxTokens?: number;
 }
 
 export interface AgentTaskOutput {
-  content: string
-  tokenCount: number
-  agentId: string
+  content: string;
+  tokenCount: number;
+  agentId: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -38,15 +38,15 @@ export interface AgentTaskOutput {
 // ---------------------------------------------------------------------------
 
 export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOutput> {
-  readonly type: string
+  readonly type: string;
 
   constructor(
     private readonly agentId: string,
     private readonly agentsRegistry: AgentRegistry,
     private readonly providerResolver: ProviderResolver,
-    private readonly logger?: LoggerService,
+    private readonly logger?: LoggerService
   ) {
-    this.type = `agent-${agentId}`
+    this.type = `agent-${agentId}`;
   }
 
   // -------------------------------------------------------------------------
@@ -55,10 +55,10 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
   validate(input: AgentTaskInput): void {
     if (!this.agentsRegistry.has(this.agentId)) {
-      throw new Error(`Agent "${this.agentId}" is not registered`)
+      throw new Error(`Agent "${this.agentId}" is not registered`);
     }
     if (!input?.prompt || typeof input.prompt !== 'string' || input.prompt.trim().length === 0) {
-      throw new Error('AgentTaskInput.prompt must be a non-empty string')
+      throw new Error('AgentTaskInput.prompt must be a non-empty string');
     }
   }
 
@@ -70,28 +70,28 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
     input: AgentTaskInput,
     signal: AbortSignal,
     reporter: ProgressReporter,
-    streamReporter?: StreamReporter,
+    streamReporter?: StreamReporter
   ): Promise<AgentTaskOutput> {
     // 1. Resolve agent definition
-    const def = this.agentsRegistry.get(this.agentId)
+    const def = this.agentsRegistry.get(this.agentId);
     if (!def) {
-      throw new Error(`Agent "${this.agentId}" not found in registry`)
+      throw new Error(`Agent "${this.agentId}" not found in registry`);
     }
-    reporter.progress(5, 'Resolved agent definition')
+    reporter.progress(5, 'Resolved agent definition');
 
     // 2. Resolve provider
-    const providerId = input.providerId ?? def.defaultConfig.providerId
+    const providerId = input.providerId ?? def.defaultConfig.providerId;
     const provider = this.providerResolver.resolve({
       providerId,
       modelId: input.modelId ?? def.defaultConfig.modelId,
-    })
-    reporter.progress(10, 'Provider resolved')
+    });
+    reporter.progress(10, 'Provider resolved');
 
     // 3. Stream via executor directly
-    let content = ''
-    let tokenCount = 0
-    let tokensSinceLastProgress = 0
-    let currentProgress = 10
+    let content = '';
+    let tokenCount = 0;
+    let tokensSinceLastProgress = 0;
+    let currentProgress = 10;
 
     const gen = executeAIAgentsStream({
       runId: randomUUID(),
@@ -104,27 +104,31 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
       signal,
       buildGraph: def.buildGraph,
       logger: this.logger,
-    })
+    });
 
     for await (const event of gen) {
       this.handleStreamEvent(
         event,
         streamReporter,
         () => {
-          tokensSinceLastProgress++
+          tokensSinceLastProgress++;
           if (tokensSinceLastProgress >= 20 && currentProgress < 90) {
-            currentProgress = Math.min(currentProgress + 2, 90)
-            tokensSinceLastProgress = 0
-            reporter.progress(currentProgress, 'Streaming…')
+            currentProgress = Math.min(currentProgress + 2, 90);
+            tokensSinceLastProgress = 0;
+            reporter.progress(currentProgress, 'Streaming…');
           }
         },
-        (tc) => { tokenCount = tc },
-        (c) => { content = c },
-      )
+        (tc) => {
+          tokenCount = tc;
+        },
+        (c) => {
+          content = c;
+        }
+      );
     }
 
-    reporter.progress(100, 'Complete')
-    return { content, tokenCount, agentId: this.agentId }
+    reporter.progress(100, 'Complete');
+    return { content, tokenCount, agentId: this.agentId };
   }
 
   // -------------------------------------------------------------------------
@@ -136,24 +140,24 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
     streamReporter: StreamReporter | undefined,
     onToken: () => void,
     setTokenCount: (n: number) => void,
-    setContent: (s: string) => void,
+    setContent: (s: string) => void
   ): void {
     switch (event.type) {
       case 'token':
-        streamReporter?.stream(event.token)
-        onToken()
-        break
+        streamReporter?.stream(event.token);
+        onToken();
+        break;
 
       case 'done':
-        setContent(event.content)
-        setTokenCount(event.tokenCount)
-        break
+        setContent(event.content);
+        setTokenCount(event.tokenCount);
+        break;
 
       case 'error':
         if (event.code === 'abort') {
-          throw new DOMException('Aborted', 'AbortError')
+          throw new DOMException('Aborted', 'AbortError');
         }
-        throw new Error(event.error)
+        throw new Error(event.error);
 
       // 'thinking' events are informational — no action needed
     }

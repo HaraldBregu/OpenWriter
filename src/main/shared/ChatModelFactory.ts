@@ -5,8 +5,8 @@
  * `baseURL` and `apiKey`.
  */
 
-import { ChatOpenAI } from '@langchain/openai'
-import { isReasoningModel } from './aiUtils'
+import { ChatOpenAI } from '@langchain/openai';
+import { isReasoningModel } from './aiUtils';
 
 const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
   openai: undefined,
@@ -14,20 +14,20 @@ const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
   google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
   meta: 'https://api.llama.com/compat/v1/',
   mistral: 'https://api.mistral.ai/v1/',
-}
+};
 
 export interface ChatModelOptions {
-  providerId: string
-  apiKey: string
-  modelName: string
-  streaming: boolean
-  temperature?: number
-  maxTokens?: number
+  providerId: string;
+  apiKey: string;
+  modelName: string;
+  streaming: boolean;
+  temperature?: number;
+  maxTokens?: number;
 }
 
 export function createChatModel(opts: ChatModelOptions): ChatOpenAI {
-  const { providerId, apiKey, modelName, streaming, temperature, maxTokens } = opts
-  const baseURL = PROVIDER_BASE_URLS[providerId]
+  const { providerId, apiKey, modelName, streaming, temperature, maxTokens } = opts;
+  const baseURL = PROVIDER_BASE_URLS[providerId];
 
   return new ChatOpenAI({
     apiKey,
@@ -36,5 +36,5 @@ export function createChatModel(opts: ChatModelOptions): ChatOpenAI {
     ...(isReasoningModel(modelName) ? {} : { temperature }),
     ...(maxTokens ? { maxTokens } : {}),
     ...(baseURL ? { configuration: { baseURL } } : {}),
-  })
+  });
 }

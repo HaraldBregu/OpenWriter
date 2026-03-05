@@ -1,8 +1,8 @@
-import React, { useCallback, useRef, useState } from "react";
-import { GripVertical, Plus } from "lucide-react";
-import { AppButton } from "@components/app/AppButton";
-import { cn } from "@/lib/utils";
-import { useEditorContext } from "./EditorContext";
+import React, { useCallback, useRef, useState } from 'react';
+import { GripVertical, Plus } from 'lucide-react';
+import { AppButton } from '@components/app/AppButton';
+import { cn } from '@/lib/utils';
+import { useEditorContext } from './EditorContext';
 
 export const GUTTER_WIDTH = 58;
 
@@ -29,9 +29,7 @@ export const BlockControls = React.memo(function BlockControls({
   const getBlock = useCallback(
     (y: number): { dom: HTMLElement; pos: number } | null => {
       if (!editor) return null;
-      const pm = containerRef.current?.querySelector(
-        ".ProseMirror",
-      ) as HTMLElement | null;
+      const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null;
       if (!pm) return null;
       for (const child of Array.from(pm.children) as HTMLElement[]) {
         const r = child.getBoundingClientRect();
@@ -46,7 +44,7 @@ export const BlockControls = React.memo(function BlockControls({
       }
       return null;
     },
-    [editor, containerRef],
+    [editor, containerRef]
   );
 
   // Add a paragraph below the hovered block.
@@ -55,7 +53,7 @@ export const BlockControls = React.memo(function BlockControls({
     const { pos } = hoveredBlock;
     const nd = editor.state.doc.nodeAt(pos);
     const ip = pos + (nd ? nd.nodeSize : 0);
-    editor.chain().focus().insertContentAt(ip, { type: "paragraph" }).run();
+    editor.chain().focus().insertContentAt(ip, { type: 'paragraph' }).run();
     editor.commands.focus(ip + 1);
   }, [editor, hoveredBlock]);
 
@@ -66,10 +64,10 @@ export const BlockControls = React.memo(function BlockControls({
       const { node: srcDom, pos: srcPos } = hoveredBlock;
       e.preventDefault();
       dragRef.current = true;
-      srcDom.classList.add("is-dragging");
+      srcDom.classList.add('is-dragging');
 
       let dropTarget: { dom: HTMLElement; pos: number } | null = null;
-      let dropDir: "above" | "below" | null = null;
+      let dropDir: 'above' | 'below' | null = null;
 
       const onMove = (me: MouseEvent): void => {
         const block = getBlock(me.clientY);
@@ -77,10 +75,9 @@ export const BlockControls = React.memo(function BlockControls({
           dropTarget = block;
           const r = block.dom.getBoundingClientRect();
           const cr = containerRef.current!.getBoundingClientRect();
-          dropDir = me.clientY < r.top + r.height / 2 ? "above" : "below";
+          dropDir = me.clientY < r.top + r.height / 2 ? 'above' : 'below';
           setDropState({
-            top:
-              dropDir === "above" ? r.top - cr.top - 2 : r.bottom - cr.top - 1,
+            top: dropDir === 'above' ? r.top - cr.top - 2 : r.bottom - cr.top - 1,
             visible: true,
           });
         } else {
@@ -91,9 +88,9 @@ export const BlockControls = React.memo(function BlockControls({
       };
 
       const onUp = (): void => {
-        document.removeEventListener("mousemove", onMove);
-        document.removeEventListener("mouseup", onUp);
-        srcDom.classList.remove("is-dragging");
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        srcDom.classList.remove('is-dragging');
         setDropState({ top: 0, visible: false });
         dragRef.current = false;
 
@@ -103,8 +100,7 @@ export const BlockControls = React.memo(function BlockControls({
         if (!sn || !tn) return;
 
         const { tr } = editor.state;
-        const insertPos =
-          dropDir === "above" ? dropTarget.pos : dropTarget.pos + tn.nodeSize;
+        const insertPos = dropDir === 'above' ? dropTarget.pos : dropTarget.pos + tn.nodeSize;
         const srcEnd = srcPos + sn.nodeSize;
 
         if (srcPos < insertPos) {
@@ -117,10 +113,10 @@ export const BlockControls = React.memo(function BlockControls({
         editor.view.dispatch(tr);
       };
 
-      document.addEventListener("mousemove", onMove);
-      document.addEventListener("mouseup", onUp);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     },
-    [editor, hoveredBlock, getBlock, containerRef],
+    [editor, hoveredBlock, getBlock, containerRef]
   );
 
   const visible = !!hoveredBlock && !dragRef.current;
@@ -130,9 +126,9 @@ export const BlockControls = React.memo(function BlockControls({
       {/* + and drag-handle buttons */}
       <div
         className={cn(
-          "absolute left-0.5 z-50 flex items-center gap-1",
-          "pointer-events-none opacity-0 transition-opacity duration-100",
-          visible && "pointer-events-auto opacity-100",
+          'absolute left-0.5 z-50 flex items-center gap-1',
+          'pointer-events-none opacity-0 transition-opacity duration-100',
+          visible && 'pointer-events-auto opacity-100'
         )}
         style={{ top: hoveredBlock?.top ?? 0 }}
       >
@@ -160,8 +156,8 @@ export const BlockControls = React.memo(function BlockControls({
       {/* Drop indicator line */}
       <div
         className={cn(
-          "pointer-events-none absolute z-[100] h-[2.5px] rounded-sm bg-primary opacity-0 transition-opacity duration-75",
-          dropState.visible && "opacity-100",
+          'pointer-events-none absolute z-[100] h-[2.5px] rounded-sm bg-primary opacity-0 transition-opacity duration-75',
+          dropState.visible && 'opacity-100'
         )}
         style={{ top: dropState.top, left: GUTTER_WIDTH, right: 0 }}
       />

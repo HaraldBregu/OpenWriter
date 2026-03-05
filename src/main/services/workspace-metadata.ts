@@ -1,9 +1,9 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import type { WorkspaceService } from './workspace'
-import type { EventBus } from '../core/EventBus'
-import type { Disposable } from '../core/ServiceContainer'
-import type { LoggerService } from './logger'
+import fs from 'node:fs';
+import path from 'node:path';
+import type { WorkspaceService } from './workspace';
+import type { EventBus } from '../core/EventBus';
+import type { Disposable } from '../core/ServiceContainer';
+import type { LoggerService } from './logger';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,22 +14,22 @@ import type { LoggerService } from './logger'
  */
 export interface IndexedDirectory {
   /** Unique identifier for this directory entry */
-  id: string
+  id: string;
   /** Absolute path to the directory */
-  path: string
+  path: string;
   /** Timestamp when the directory was added */
-  addedAt: number
+  addedAt: number;
   /** Whether the directory has been indexed by the RAG pipeline */
-  isIndexed: boolean
+  isIndexed: boolean;
   /** Timestamp of the last successful indexing, if any */
-  lastIndexedAt?: number
+  lastIndexedAt?: number;
 }
 
 /**
  * Settings block in the workspace.tsrct metadata file.
  */
 export interface WorkspaceSettings {
-  directories: IndexedDirectory[]
+  directories: IndexedDirectory[];
 }
 
 /**
@@ -37,28 +37,28 @@ export interface WorkspaceSettings {
  */
 export interface WorkspaceMetadata {
   metadata: {
-    version: number
-    createdAt: number
-    updatedAt: number
-  }
-  settings: WorkspaceSettings
+    version: number;
+    createdAt: number;
+    updatedAt: number;
+  };
+  settings: WorkspaceSettings;
 }
 
 /**
  * Result of a directory validation check.
  */
 export interface DirectoryValidationResult {
-  valid: boolean
-  error?: string
+  valid: boolean;
+  error?: string;
 }
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const METADATA_FILENAME = 'workspace.tsrct'
-const METADATA_VERSION = 1
-const DEBOUNCE_MS = 800
+const METADATA_FILENAME = 'workspace.tsrct';
+const METADATA_VERSION = 1;
+const DEBOUNCE_MS = 800;
 
 // ---------------------------------------------------------------------------
 // Service
@@ -83,10 +83,10 @@ const DEBOUNCE_MS = 800
  * - Atomic reads: Always reads the full file, never partial updates
  */
 export class WorkspaceMetadataService implements Disposable {
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null
-  private pendingWrite: { metadata: WorkspaceMetadata; workspacePath: string } | null = null
-  private cache: { metadata: WorkspaceMetadata; workspacePath: string } | null = null
-  private workspaceEventUnsubscribe: (() => void) | null = null
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private pendingWrite: { metadata: WorkspaceMetadata; workspacePath: string } | null = null;
+  private cache: { metadata: WorkspaceMetadata; workspacePath: string } | null = null;
+  private workspaceEventUnsubscribe: (() => void) | null = null;
 
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -100,27 +100,30 @@ export class WorkspaceMetadataService implements Disposable {
    * If the workspace.tsrct file does not exist, it will be created on the first write.
    */
   initialize(): void {
-    const workspacePath = this.workspaceService.getCurrent()
+    const workspacePath = this.workspaceService.getCurrent();
 
     // CRITICAL: Always clear cache on initialization to ensure fresh data
     // This is especially important in workspace mode where the service is initialized
     // before the workspace path is set, then reinitialized after
-    this.logger?.info('WorkspaceMetadataService', 'Clearing cache before initialization')
-    this.cache = null
+    this.logger?.info('WorkspaceMetadataService', 'Clearing cache before initialization');
+    this.cache = null;
 
     if (workspacePath) {
-      const metadata = this.readMetadataFile(workspacePath)
-      this.logger?.info('WorkspaceMetadataService', `Initialized with ${metadata?.settings.directories.length ?? 0} directories from ${workspacePath}`)
+      const metadata = this.readMetadataFile(workspacePath);
+      this.logger?.info(
+        'WorkspaceMetadataService',
+        `Initialized with ${metadata?.settings.directories.length ?? 0} directories from ${workspacePath}`
+      );
     } else {
-      this.logger?.info('WorkspaceMetadataService', 'No workspace set, starting empty')
+      this.logger?.info('WorkspaceMetadataService', 'No workspace set, starting empty');
     }
 
     // Listen for workspace changes to re-initialize
     // Store the unsubscribe function for cleanup in destroy()
     this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
-      const payload = event.payload as { currentPath: string | null; previousPath: string | null }
-      this.handleWorkspaceChanged(payload.currentPath)
-    })
+      const payload = event.payload as { currentPath: string | null; previousPath: string | null };
+      this.handleWorkspaceChanged(payload.currentPath);
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -132,10 +135,13 @@ export class WorkspaceMetadataService implements Disposable {
    * Returns an empty array if no workspace is set or no directories exist.
    */
   getDirectories(): IndexedDirectory[] {
-    const workspacePath = this.workspaceService.getCurrent()
-    const directories = this.getMetadata().settings.directories
-    this.logger?.debug('WorkspaceMetadataService', `getDirectories called: PID=${process.pid} workspace=${workspacePath} count=${directories.length} cached=${this.cache !== null && this.cache.workspacePath === workspacePath} paths=${directories.map(d => d.path).join(', ')}`)
-    return directories
+    const workspacePath = this.workspaceService.getCurrent();
+    const directories = this.getMetadata().settings.directories;
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `getDirectories called: PID=${process.pid} workspace=${workspacePath} count=${directories.length} cached=${this.cache !== null && this.cache.workspacePath === workspacePath} paths=${directories.map((d) => d.path).join(', ')}`
+    );
+    return directories;
   }
 
   /**
@@ -152,42 +158,40 @@ export class WorkspaceMetadataService implements Disposable {
    * @throws Error if validation fails or no workspace is set
    */
   addDirectory(dirPath: string): IndexedDirectory {
-    this.requireWorkspace()
+    this.requireWorkspace();
 
-    const normalized = path.resolve(dirPath)
-    const validation = this.validateDirectory(normalized)
+    const normalized = path.resolve(dirPath);
+    const validation = this.validateDirectory(normalized);
     if (!validation.valid) {
-      throw new Error(validation.error)
+      throw new Error(validation.error);
     }
 
-    const metadata = this.getMetadata()
+    const metadata = this.getMetadata();
 
     // Resolve symlinks for duplicate detection
-    const realPath = this.resolveRealPath(normalized)
+    const realPath = this.resolveRealPath(normalized);
     const duplicate = metadata.settings.directories.find((d) => {
-      return this.resolveRealPath(d.path) === realPath
-    })
+      return this.resolveRealPath(d.path) === realPath;
+    });
     if (duplicate) {
-      throw new Error(
-        `Directory already tracked: "${duplicate.path}" (resolves to same location)`
-      )
+      throw new Error(`Directory already tracked: "${duplicate.path}" (resolves to same location)`);
     }
 
     const entry: IndexedDirectory = {
       id: `dir-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       path: normalized,
       addedAt: Date.now(),
-      isIndexed: false
-    }
+      isIndexed: false,
+    };
 
-    metadata.settings.directories.push(entry)
-    metadata.metadata.updatedAt = Date.now()
+    metadata.settings.directories.push(entry);
+    metadata.metadata.updatedAt = Date.now();
 
-    this.scheduleSave(metadata)
-    this.emitDirectoriesChanged()
+    this.scheduleSave(metadata);
+    this.emitDirectoriesChanged();
 
-    this.logger?.info('WorkspaceMetadataService', `Added directory: ${normalized}`)
-    return entry
+    this.logger?.info('WorkspaceMetadataService', `Added directory: ${normalized}`);
+    return entry;
   }
 
   /**
@@ -197,27 +201,27 @@ export class WorkspaceMetadataService implements Disposable {
    * @returns Object with added entries and any errors encountered
    */
   addDirectories(dirPaths: string[]): {
-    added: IndexedDirectory[]
-    errors: Array<{ path: string; error: string }>
+    added: IndexedDirectory[];
+    errors: Array<{ path: string; error: string }>;
   } {
-    this.requireWorkspace()
+    this.requireWorkspace();
 
-    const added: IndexedDirectory[] = []
-    const errors: Array<{ path: string; error: string }> = []
+    const added: IndexedDirectory[] = [];
+    const errors: Array<{ path: string; error: string }> = [];
 
     for (const dirPath of dirPaths) {
       try {
-        const entry = this.addDirectory(dirPath)
-        added.push(entry)
+        const entry = this.addDirectory(dirPath);
+        added.push(entry);
       } catch (err) {
         errors.push({
           path: dirPath,
-          error: err instanceof Error ? err.message : String(err)
-        })
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     }
 
-    return { added, errors }
+    return { added, errors };
   }
 
   /**
@@ -225,20 +229,20 @@ export class WorkspaceMetadataService implements Disposable {
    * @returns true if the directory was found and removed, false otherwise
    */
   removeDirectory(id: string): boolean {
-    const metadata = this.getMetadata()
-    const index = metadata.settings.directories.findIndex((d) => d.id === id)
+    const metadata = this.getMetadata();
+    const index = metadata.settings.directories.findIndex((d) => d.id === id);
     if (index === -1) {
-      return false
+      return false;
     }
 
-    const removed = metadata.settings.directories.splice(index, 1)[0]
-    metadata.metadata.updatedAt = Date.now()
+    const removed = metadata.settings.directories.splice(index, 1)[0];
+    metadata.metadata.updatedAt = Date.now();
 
-    this.scheduleSave(metadata)
-    this.emitDirectoriesChanged()
+    this.scheduleSave(metadata);
+    this.emitDirectoriesChanged();
 
-    this.logger?.info('WorkspaceMetadataService', `Removed directory: ${removed.path}`)
-    return true
+    this.logger?.info('WorkspaceMetadataService', `Removed directory: ${removed.path}`);
+    return true;
   }
 
   /**
@@ -246,20 +250,20 @@ export class WorkspaceMetadataService implements Disposable {
    * Called by the RAG pipeline after indexing completes.
    */
   markDirectoryIndexed(id: string, isIndexed: boolean): boolean {
-    const metadata = this.getMetadata()
-    const entry = metadata.settings.directories.find((d) => d.id === id)
+    const metadata = this.getMetadata();
+    const entry = metadata.settings.directories.find((d) => d.id === id);
     if (!entry) {
-      return false
+      return false;
     }
 
-    entry.isIndexed = isIndexed
+    entry.isIndexed = isIndexed;
     if (isIndexed) {
-      entry.lastIndexedAt = Date.now()
+      entry.lastIndexedAt = Date.now();
     }
-    metadata.metadata.updatedAt = Date.now()
+    metadata.metadata.updatedAt = Date.now();
 
-    this.scheduleSave(metadata)
-    return true
+    this.scheduleSave(metadata);
+    return true;
   }
 
   /**
@@ -268,41 +272,41 @@ export class WorkspaceMetadataService implements Disposable {
    */
   validateDirectory(dirPath: string): DirectoryValidationResult {
     if (!dirPath || typeof dirPath !== 'string') {
-      return { valid: false, error: 'Directory path must be a non-empty string' }
+      return { valid: false, error: 'Directory path must be a non-empty string' };
     }
 
-    const normalized = path.resolve(dirPath)
+    const normalized = path.resolve(dirPath);
 
     if (!path.isAbsolute(normalized)) {
-      return { valid: false, error: `Path must be absolute, got: ${dirPath}` }
+      return { valid: false, error: `Path must be absolute, got: ${dirPath}` };
     }
 
     if (!fs.existsSync(normalized)) {
-      return { valid: false, error: `Directory does not exist: ${normalized}` }
+      return { valid: false, error: `Directory does not exist: ${normalized}` };
     }
 
-    let stat: fs.Stats
+    let stat: fs.Stats;
     try {
-      stat = fs.statSync(normalized)
+      stat = fs.statSync(normalized);
     } catch (err) {
       return {
         valid: false,
-        error: `Cannot stat path: ${err instanceof Error ? err.message : String(err)}`
-      }
+        error: `Cannot stat path: ${err instanceof Error ? err.message : String(err)}`,
+      };
     }
 
     if (!stat.isDirectory()) {
-      return { valid: false, error: `Path is not a directory: ${normalized}` }
+      return { valid: false, error: `Path is not a directory: ${normalized}` };
     }
 
     // Check read permission
     try {
-      fs.accessSync(normalized, fs.constants.R_OK)
+      fs.accessSync(normalized, fs.constants.R_OK);
     } catch {
-      return { valid: false, error: `No read permission for directory: ${normalized}` }
+      return { valid: false, error: `No read permission for directory: ${normalized}` };
     }
 
-    return { valid: true }
+    return { valid: true };
   }
 
   /**
@@ -311,13 +315,13 @@ export class WorkspaceMetadataService implements Disposable {
    */
   flush(): void {
     if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer)
-      this.debounceTimer = null
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
     }
 
     if (this.pendingWrite) {
-      this.writeMetadataFile(this.pendingWrite.metadata, this.pendingWrite.workspacePath)
-      this.pendingWrite = null
+      this.writeMetadataFile(this.pendingWrite.metadata, this.pendingWrite.workspacePath);
+      this.pendingWrite = null;
     }
   }
 
@@ -327,11 +331,11 @@ export class WorkspaceMetadataService implements Disposable {
    */
   destroy(): void {
     if (this.workspaceEventUnsubscribe) {
-      this.workspaceEventUnsubscribe()
-      this.workspaceEventUnsubscribe = null
+      this.workspaceEventUnsubscribe();
+      this.workspaceEventUnsubscribe = null;
     }
-    this.flush()
-    this.logger?.info('WorkspaceMetadataService', 'Destroyed')
+    this.flush();
+    this.logger?.info('WorkspaceMetadataService', 'Destroyed');
   }
 
   // ---------------------------------------------------------------------------
@@ -347,26 +351,35 @@ export class WorkspaceMetadataService implements Disposable {
    * Cache is invalidated when workspace changes.
    */
   private getMetadata(): WorkspaceMetadata {
-    const workspacePath = this.workspaceService.getCurrent()
+    const workspacePath = this.workspaceService.getCurrent();
     if (!workspacePath) {
-      this.logger?.info('WorkspaceMetadataService', 'getMetadata: No workspace set, returning defaults')
-      return this.createDefaultMetadata()
+      this.logger?.info(
+        'WorkspaceMetadataService',
+        'getMetadata: No workspace set, returning defaults'
+      );
+      return this.createDefaultMetadata();
     }
 
     // Return cached metadata if it's for the current workspace
     if (this.cache && this.cache.workspacePath === workspacePath) {
-      this.logger?.info('WorkspaceMetadataService', `getMetadata: Using cache for ${workspacePath}`)
-      return this.cache.metadata
+      this.logger?.info(
+        'WorkspaceMetadataService',
+        `getMetadata: Using cache for ${workspacePath}`
+      );
+      return this.cache.metadata;
     }
 
     // Cache miss or workspace changed - read from file
-    this.logger?.info('WorkspaceMetadataService', `getMetadata: Reading from file for ${workspacePath}`)
-    const metadata = this.readMetadataFile(workspacePath) ?? this.createDefaultMetadata()
+    this.logger?.info(
+      'WorkspaceMetadataService',
+      `getMetadata: Reading from file for ${workspacePath}`
+    );
+    const metadata = this.readMetadataFile(workspacePath) ?? this.createDefaultMetadata();
 
     // Update cache
-    this.cache = { metadata, workspacePath }
+    this.cache = { metadata, workspacePath };
 
-    return metadata
+    return metadata;
   }
 
   /**
@@ -374,7 +387,7 @@ export class WorkspaceMetadataService implements Disposable {
    */
   private requireWorkspace(): void {
     if (!this.workspaceService.getCurrent()) {
-      throw new Error('No workspace is currently set. Please select a workspace first.')
+      throw new Error('No workspace is currently set. Please select a workspace first.');
     }
   }
 
@@ -382,7 +395,7 @@ export class WorkspaceMetadataService implements Disposable {
    * Get the full path to the workspace.tsrct file in the given workspace.
    */
   private getMetadataFilePath(workspacePath: string): string {
-    return path.join(workspacePath, METADATA_FILENAME)
+    return path.join(workspacePath, METADATA_FILENAME);
   }
 
   /**
@@ -390,35 +403,44 @@ export class WorkspaceMetadataService implements Disposable {
    * Returns null if the file does not exist or is invalid.
    */
   private readMetadataFile(workspacePath: string): WorkspaceMetadata | null {
-    const filePath = this.getMetadataFilePath(workspacePath)
+    const filePath = this.getMetadataFilePath(workspacePath);
 
-    this.logger?.debug('WorkspaceMetadataService', `readMetadataFile: PID=${process.pid} file=${filePath} exists=${fs.existsSync(filePath)}`)
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `readMetadataFile: PID=${process.pid} file=${filePath} exists=${fs.existsSync(filePath)}`
+    );
 
     if (!fs.existsSync(filePath)) {
-      return null
+      return null;
     }
 
     try {
-      const raw = fs.readFileSync(filePath, 'utf-8')
-      const parsed = JSON.parse(raw) as WorkspaceMetadata
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const parsed = JSON.parse(raw) as WorkspaceMetadata;
 
       // Basic schema validation
       if (!parsed.metadata || !parsed.settings) {
-        this.logger?.warn('WorkspaceMetadataService', 'Invalid metadata file schema, using defaults')
-        return null
+        this.logger?.warn(
+          'WorkspaceMetadataService',
+          'Invalid metadata file schema, using defaults'
+        );
+        return null;
       }
 
       // Ensure directories array exists
       if (!Array.isArray(parsed.settings.directories)) {
-        parsed.settings.directories = []
+        parsed.settings.directories = [];
       }
 
-      this.logger?.info('WorkspaceMetadataService', `Read ${parsed.settings.directories.length} directories from ${filePath} paths=${parsed.settings.directories.map(d => d.path).join(', ')}`)
+      this.logger?.info(
+        'WorkspaceMetadataService',
+        `Read ${parsed.settings.directories.length} directories from ${filePath} paths=${parsed.settings.directories.map((d) => d.path).join(', ')}`
+      );
 
-      return parsed
+      return parsed;
     } catch (err) {
-      this.logger?.error('WorkspaceMetadataService', 'Failed to read metadata file', err)
-      return null
+      this.logger?.error('WorkspaceMetadataService', 'Failed to read metadata file', err);
+      return null;
     }
   }
 
@@ -429,21 +451,24 @@ export class WorkspaceMetadataService implements Disposable {
    */
   private writeMetadataFile(metadata: WorkspaceMetadata, workspacePath: string): void {
     if (!workspacePath) {
-      this.logger?.warn('WorkspaceMetadataService', 'No workspace path provided, cannot save metadata')
-      return
+      this.logger?.warn(
+        'WorkspaceMetadataService',
+        'No workspace path provided, cannot save metadata'
+      );
+      return;
     }
 
-    const filePath = this.getMetadataFilePath(workspacePath)
+    const filePath = this.getMetadataFilePath(workspacePath);
 
     try {
-      const content = JSON.stringify(metadata, null, 2)
-      fs.writeFileSync(filePath, content, 'utf-8')
-      this.logger?.info('WorkspaceMetadataService', `Saved metadata to: ${filePath}`)
+      const content = JSON.stringify(metadata, null, 2);
+      fs.writeFileSync(filePath, content, 'utf-8');
+      this.logger?.info('WorkspaceMetadataService', `Saved metadata to: ${filePath}`);
     } catch (err) {
-      this.logger?.error('WorkspaceMetadataService', 'Failed to write metadata file', err)
+      this.logger?.error('WorkspaceMetadataService', 'Failed to write metadata file', err);
       throw new Error(
         `Failed to save workspace metadata: ${err instanceof Error ? err.message : String(err)}`
-      )
+      );
     }
   }
 
@@ -456,45 +481,45 @@ export class WorkspaceMetadataService implements Disposable {
    * Also updates the cache to ensure pending changes are visible immediately.
    */
   private scheduleSave(metadata: WorkspaceMetadata): void {
-    const workspacePath = this.workspaceService.getCurrent()
+    const workspacePath = this.workspaceService.getCurrent();
     if (!workspacePath) {
-      this.logger?.warn('WorkspaceMetadataService', 'No workspace set, cannot schedule save')
-      return
+      this.logger?.warn('WorkspaceMetadataService', 'No workspace set, cannot schedule save');
+      return;
     }
 
-    this.pendingWrite = { metadata, workspacePath }
+    this.pendingWrite = { metadata, workspacePath };
 
     // Update cache so pending changes are immediately visible
-    this.cache = { metadata, workspacePath }
+    this.cache = { metadata, workspacePath };
 
     if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer)
+      clearTimeout(this.debounceTimer);
     }
 
     this.debounceTimer = setTimeout(() => {
-      this.debounceTimer = null
+      this.debounceTimer = null;
       if (this.pendingWrite) {
-        this.writeMetadataFile(this.pendingWrite.metadata, this.pendingWrite.workspacePath)
-        this.pendingWrite = null
+        this.writeMetadataFile(this.pendingWrite.metadata, this.pendingWrite.workspacePath);
+        this.pendingWrite = null;
       }
-    }, DEBOUNCE_MS)
+    }, DEBOUNCE_MS);
   }
 
   /**
    * Create a fresh default metadata structure.
    */
   private createDefaultMetadata(): WorkspaceMetadata {
-    const now = Date.now()
+    const now = Date.now();
     return {
       metadata: {
         version: METADATA_VERSION,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       },
       settings: {
-        directories: []
-      }
-    }
+        directories: [],
+      },
+    };
   }
 
   /**
@@ -503,9 +528,9 @@ export class WorkspaceMetadataService implements Disposable {
    */
   private resolveRealPath(dirPath: string): string {
     try {
-      return fs.realpathSync(dirPath)
+      return fs.realpathSync(dirPath);
     } catch {
-      return dirPath
+      return dirPath;
     }
   }
 
@@ -514,31 +539,43 @@ export class WorkspaceMetadataService implements Disposable {
    * Flushes any pending writes for the old workspace, clears cache, then emits directory changes.
    */
   private handleWorkspaceChanged(newPath: string | null): void {
-    this.logger?.info('WorkspaceMetadataService', '========== WORKSPACE CHANGED ==========')
-    this.logger?.info('WorkspaceMetadataService', `New workspace: ${newPath}`)
-    this.logger?.debug('WorkspaceMetadataService', `Cache before clear: ${this.cache?.workspacePath} dirs=${this.cache?.metadata.settings.directories.length}`)
-    this.logger?.debug('WorkspaceMetadataService', `Pending write: ${this.pendingWrite?.workspacePath} dirs=${this.pendingWrite?.metadata.settings.directories.length}`)
+    this.logger?.info('WorkspaceMetadataService', '========== WORKSPACE CHANGED ==========');
+    this.logger?.info('WorkspaceMetadataService', `New workspace: ${newPath}`);
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `Cache before clear: ${this.cache?.workspacePath} dirs=${this.cache?.metadata.settings.directories.length}`
+    );
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `Pending write: ${this.pendingWrite?.workspacePath} dirs=${this.pendingWrite?.metadata.settings.directories.length}`
+    );
 
     // Flush pending writes for the previous workspace
     // The flush() method will write to the correct workspace path because
     // we captured it in scheduleSave()
-    this.flush()
+    this.flush();
 
     // Clear cache to force fresh read from new workspace
-    const oldCache = this.cache
-    this.cache = null
-    this.logger?.debug('WorkspaceMetadataService', `Cache cleared (was for workspace: ${oldCache?.workspacePath})`)
+    const oldCache = this.cache;
+    this.cache = null;
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `Cache cleared (was for workspace: ${oldCache?.workspacePath})`
+    );
 
     if (newPath) {
-      const metadata = this.readMetadataFile(newPath)
-      this.logger?.info('WorkspaceMetadataService', `Switched workspace, loaded ${metadata?.settings.directories.length ?? 0} directories from ${newPath}`)
+      const metadata = this.readMetadataFile(newPath);
+      this.logger?.info(
+        'WorkspaceMetadataService',
+        `Switched workspace, loaded ${metadata?.settings.directories.length ?? 0} directories from ${newPath}`
+      );
     } else {
-      this.logger?.info('WorkspaceMetadataService', 'Workspace cleared, metadata reset')
+      this.logger?.info('WorkspaceMetadataService', 'Workspace cleared, metadata reset');
     }
 
-    this.logger?.debug('WorkspaceMetadataService', 'About to emit directories:changed event')
-    this.emitDirectoriesChanged()
-    this.logger?.info('WorkspaceMetadataService', '========== END WORKSPACE CHANGED ==========')
+    this.logger?.debug('WorkspaceMetadataService', 'About to emit directories:changed event');
+    this.emitDirectoriesChanged();
+    this.logger?.info('WorkspaceMetadataService', '========== END WORKSPACE CHANGED ==========');
   }
 
   /**
@@ -546,9 +583,12 @@ export class WorkspaceMetadataService implements Disposable {
    * Always reads fresh data from file.
    */
   private emitDirectoriesChanged(): void {
-    const workspacePath = this.workspaceService.getCurrent()
-    const directories = this.getDirectories()
-    this.logger?.debug('WorkspaceMetadataService', `emitDirectoriesChanged: PID=${process.pid} workspace=${workspacePath} broadcasting ${directories.length} directories paths=${directories.map(d => d.path).join(', ')}`)
-    this.eventBus.broadcast('directories:changed', directories)
+    const workspacePath = this.workspaceService.getCurrent();
+    const directories = this.getDirectories();
+    this.logger?.debug(
+      'WorkspaceMetadataService',
+      `emitDirectoriesChanged: PID=${process.pid} workspace=${workspacePath} broadcasting ${directories.length} directories paths=${directories.map((d) => d.path).join(', ')}`
+    );
+    this.eventBus.broadcast('directories:changed', directories);
   }
 }

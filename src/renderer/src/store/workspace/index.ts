@@ -1,7 +1,7 @@
 /** Workspace slice public barrel — re-exports state, actions, reducer, and selectors. */
 // State
-export type { WorkspaceState } from './state'
-export { initialState } from './state'
+export type { WorkspaceState } from './state';
+export { initialState } from './state';
 
 // Async thunks
 export {
@@ -11,7 +11,7 @@ export {
   openWorkspacePicker,
   removeRecentWorkspace,
   clearWorkspace,
-} from './actions'
+} from './actions';
 
 // Reducer, slice, and synchronous actions
 export {
@@ -20,8 +20,8 @@ export {
   handleRecentRemoved,
   handleWorkspaceDeleted,
   clearDeletionReason,
-} from './reducer'
-export { default } from './reducer'
+} from './reducer';
+export { default } from './reducer';
 
 // Selectors
 export {
@@ -34,4 +34,4 @@ export {
   selectWorkspaceError,
   selectWorkspaceIsLoading,
   selectWorkspaceDeletionReason,
-} from './selectors'
+} from './selectors';

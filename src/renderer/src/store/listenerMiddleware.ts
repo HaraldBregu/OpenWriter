@@ -1,5 +1,5 @@
-import { createListenerMiddleware, addListener } from '@reduxjs/toolkit'
-import type { TypedAddListener, TypedStartListening } from '@reduxjs/toolkit'
+import { createListenerMiddleware, addListener } from '@reduxjs/toolkit';
+import type { TypedAddListener, TypedStartListening } from '@reduxjs/toolkit';
 
 /**
  * Shared RTK listener middleware instance.
@@ -18,14 +18,13 @@ import type { TypedAddListener, TypedStartListening } from '@reduxjs/toolkit'
  * RootState/AppDispatch generics can cast via the typed helpers exported
  * from store/index.ts.
  */
-export const listenerMiddleware = createListenerMiddleware()
+export const listenerMiddleware = createListenerMiddleware();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AppStartListening = TypedStartListening<any, any>
+export type AppStartListening = TypedStartListening<any, any>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AppAddListener = TypedAddListener<any, any>
+export type AppAddListener = TypedAddListener<any, any>;
 
-export const startAppListening =
-  listenerMiddleware.startListening as AppStartListening
+export const startAppListening = listenerMiddleware.startListening as AppStartListening;
 
-export const addAppListener = addListener as AppAddListener
+export const addAppListener = addListener as AppAddListener;

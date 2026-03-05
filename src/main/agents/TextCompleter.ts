@@ -9,11 +9,11 @@
  * The complete node uses those style notes to produce a faithful continuation.
  */
 
-import { StateGraph, Annotation, START, END } from '@langchain/langgraph'
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages'
-import type { BaseMessage } from '@langchain/core/messages'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type { AgentDefinition } from './AgentDefinition'
+import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
+import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { AgentDefinition } from './AgentDefinition';
 
 // ---------------------------------------------------------------------------
 // Graph state
@@ -32,9 +32,9 @@ const GraphState = Annotation.Root({
     reducer: (_, next) => next,
     default: () => '',
   }),
-})
+});
 
-type TextCompleterState = typeof GraphState.State
+type TextCompleterState = typeof GraphState.State;
 
 // ---------------------------------------------------------------------------
 // Node: analyze_style
@@ -43,8 +43,8 @@ type TextCompleterState = typeof GraphState.State
 
 function makeAnalyzeStyleNode(model: BaseChatModel) {
   return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userText = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userText = userMsg ? String(userMsg.content) : '';
 
     const analysisMessages = [
       new SystemMessage(
@@ -60,15 +60,15 @@ function makeAnalyzeStyleNode(model: BaseChatModel) {
 No explanation, no markdown fences — raw JSON only.`
       ),
       new HumanMessage(userText),
-    ]
+    ];
 
-    const response = await model.invoke(analysisMessages)
-    const rawContent = typeof response.content === 'string' ? response.content : '{}'
+    const response = await model.invoke(analysisMessages);
+    const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let styleNotes: string
+    let styleNotes: string;
     try {
-      JSON.parse(rawContent)
-      styleNotes = rawContent
+      JSON.parse(rawContent);
+      styleNotes = rawContent;
     } catch {
       styleNotes = JSON.stringify({
         vocabularyLevel: 'intermediate',
@@ -77,11 +77,11 @@ No explanation, no markdown fences — raw JSON only.`
         person: 'third',
         tone: 'neutral',
         voice: 'active',
-      })
+      });
     }
 
-    return { styleNotes }
-  }
+    return { styleNotes };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -91,15 +91,15 @@ No explanation, no markdown fences — raw JSON only.`
 
 function makeCompleteNode(model: BaseChatModel) {
   return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human')
-    const userText = userMsg ? String(userMsg.content) : ''
+    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+    const userText = userMsg ? String(userMsg.content) : '';
 
-    let styleDescription = state.styleNotes
+    let styleDescription = state.styleNotes;
     try {
-      const parsed = JSON.parse(state.styleNotes) as Record<string, string>
+      const parsed = JSON.parse(state.styleNotes) as Record<string, string>;
       styleDescription = Object.entries(parsed)
         .map(([k, v]) => `${k}: ${v}`)
-        .join(', ')
+        .join(', ');
     } catch {
       // Use raw string if not JSON
     }
@@ -121,16 +121,16 @@ Rules you follow without exception:
 6. Keep the completion proportionate: a single sentence yields one or two sentences; a paragraph yields a similar-length continuation.`
       ),
       new HumanMessage(userText),
-    ]
+    ];
 
-    const response = await model.invoke(completionMessages)
-    const completion = typeof response.content === 'string' ? response.content : ''
+    const response = await model.invoke(completionMessages);
+    const completion = typeof response.content === 'string' ? response.content : '';
 
     return {
       completion,
       messages: [new AIMessage(completion)],
-    }
-  }
+    };
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -143,9 +143,9 @@ function buildTextCompleterGraph(model: BaseChatModel) {
     .addNode('complete', makeCompleteNode(model))
     .addEdge(START, 'analyze_style')
     .addEdge('analyze_style', 'complete')
-    .addEdge('complete', END)
+    .addEdge('complete', END);
 
-  return graph.compile()
+  return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -183,6 +183,6 @@ Rules you follow without exception:
     multiline: true,
   },
   buildGraph: buildTextCompleterGraph,
-}
+};
 
-export { definition as TextCompleterAgent }
+export { definition as TextCompleterAgent };

@@ -3,8 +3,8 @@
  * Each module is responsible for registering its own IPC handlers.
  */
 
-export type { IpcModule } from './IpcModule'
-export { AppIpc } from './AppIpc'
-export { TaskManagerIpc } from './TaskManagerIpc'
-export { WorkspaceIpc } from './WorkspaceIpc'
-export { WindowIpc } from './WindowIpc'
+export type { IpcModule } from './IpcModule';
+export { AppIpc } from './AppIpc';
+export { TaskManagerIpc } from './TaskManagerIpc';
+export { WorkspaceIpc } from './WorkspaceIpc';
+export { WindowIpc } from './WindowIpc';

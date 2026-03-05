@@ -5,7 +5,7 @@
  * Uses the default AgentExecutor chat completion path since no buildGraph is provided.
  */
 
-import type { AgentDefinition } from './AgentDefinition'
+import type { AgentDefinition } from './AgentDefinition';
 
 const definition: AgentDefinition = {
   id: 'demo-agent',
@@ -22,9 +22,8 @@ const definition: AgentDefinition = {
   },
   inputHints: {
     label: 'Your question',
-    placeholder:
-      'Ask anything, or leave the default prompt to see a quick demo…',
+    placeholder: 'Ask anything, or leave the default prompt to see a quick demo…',
   },
-}
+};
 
-export { definition as DemoAgent }
+export { definition as DemoAgent };

@@ -37,49 +37,105 @@ export const TEXT_FILE_EXTENSIONS = {
   data: ['.csv', '.tsv', '.sql'],
 
   // Other text formats
-  other: ['.gitignore', '.editorconfig', '.prettierrc', '.eslintrc']
-} as const
+  other: ['.gitignore', '.editorconfig', '.prettierrc', '.eslintrc'],
+} as const;
 
 /**
  * Image file extensions (to be rejected).
  */
 export const IMAGE_FILE_EXTENSIONS = [
-  '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg',
-  '.ico', '.tiff', '.tif', '.psd', '.raw', '.heic', '.heif',
-  '.avif', '.jfif', '.svgz'
-] as const
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.bmp',
+  '.webp',
+  '.svg',
+  '.ico',
+  '.tiff',
+  '.tif',
+  '.psd',
+  '.raw',
+  '.heic',
+  '.heif',
+  '.avif',
+  '.jfif',
+  '.svgz',
+] as const;
 
 /**
  * Video file extensions (to be rejected).
  */
 export const VIDEO_FILE_EXTENSIONS = [
-  '.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.webm',
-  '.m4v', '.mpg', '.mpeg', '.3gp', '.ogv', '.f4v', '.vob',
-  '.m2ts', '.mts', '.ts'
-] as const
+  '.mp4',
+  '.avi',
+  '.mov',
+  '.wmv',
+  '.flv',
+  '.mkv',
+  '.webm',
+  '.m4v',
+  '.mpg',
+  '.mpeg',
+  '.3gp',
+  '.ogv',
+  '.f4v',
+  '.vob',
+  '.m2ts',
+  '.mts',
+  '.ts',
+] as const;
 
 /**
  * Audio file extensions (to be rejected).
  */
 export const AUDIO_FILE_EXTENSIONS = [
-  '.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a', '.wma',
-  '.opus', '.oga', '.mid', '.midi', '.ape', '.alac'
-] as const
+  '.mp3',
+  '.wav',
+  '.ogg',
+  '.flac',
+  '.aac',
+  '.m4a',
+  '.wma',
+  '.opus',
+  '.oga',
+  '.mid',
+  '.midi',
+  '.ape',
+  '.alac',
+] as const;
 
 /**
  * Binary/archive file extensions (to be rejected).
  */
 export const BINARY_FILE_EXTENSIONS = [
-  '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
-  '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2', '.xz',
-  '.exe', '.dll', '.so', '.dylib', '.bin', '.iso'
-] as const
+  '.pdf',
+  '.doc',
+  '.docx',
+  '.xls',
+  '.xlsx',
+  '.ppt',
+  '.pptx',
+  '.zip',
+  '.rar',
+  '.7z',
+  '.tar',
+  '.gz',
+  '.bz2',
+  '.xz',
+  '.exe',
+  '.dll',
+  '.so',
+  '.dylib',
+  '.bin',
+  '.iso',
+] as const;
 
 /**
  * Get all supported text file extensions as a flat array.
  */
 export function getAllTextExtensions(): string[] {
-  return Object.values(TEXT_FILE_EXTENSIONS).flat()
+  return Object.values(TEXT_FILE_EXTENSIONS).flat();
 }
 
 /**
@@ -90,18 +146,18 @@ export function getRejectedExtensions(): string[] {
     ...IMAGE_FILE_EXTENSIONS,
     ...VIDEO_FILE_EXTENSIONS,
     ...AUDIO_FILE_EXTENSIONS,
-    ...BINARY_FILE_EXTENSIONS
-  ]
+    ...BINARY_FILE_EXTENSIONS,
+  ];
 }
 
 /**
  * Validation result for file type checking.
  */
 export interface FileTypeValidationResult {
-  isValid: boolean
-  fileType?: 'text' | 'image' | 'video' | 'audio' | 'binary'
-  extension: string
-  reason?: string
+  isValid: boolean;
+  fileType?: 'text' | 'image' | 'video' | 'audio' | 'binary';
+  extension: string;
+  reason?: string;
 }
 
 /**
@@ -112,75 +168,75 @@ export interface FileTypeValidationResult {
  */
 export function validateTextFile(filePath: string): FileTypeValidationResult {
   // Extract extension (handle files with multiple dots)
-  const ext = getFileExtension(filePath)
+  const ext = getFileExtension(filePath);
 
   if (!ext) {
     return {
       isValid: false,
       extension: '',
-      reason: 'File has no extension'
-    }
+      reason: 'File has no extension',
+    };
   }
 
-  const lowerExt = ext.toLowerCase()
+  const lowerExt = ext.toLowerCase();
 
   // IMPORTANT: Check text files FIRST to handle conflicts
   // (e.g., .ts is both TypeScript and MPEG Transport Stream video format)
-  const allTextExtensions = getAllTextExtensions()
+  const allTextExtensions = getAllTextExtensions();
   if (allTextExtensions.includes(lowerExt)) {
     return {
       isValid: true,
       fileType: 'text',
-      extension: lowerExt
-    }
+      extension: lowerExt,
+    };
   }
 
   // Check if it's an image
-  if (IMAGE_FILE_EXTENSIONS.includes(lowerExt as typeof IMAGE_FILE_EXTENSIONS[number])) {
+  if (IMAGE_FILE_EXTENSIONS.includes(lowerExt as (typeof IMAGE_FILE_EXTENSIONS)[number])) {
     return {
       isValid: false,
       fileType: 'image',
       extension: lowerExt,
-      reason: `Image files (${lowerExt}) are not supported. Only text-based files are allowed.`
-    }
+      reason: `Image files (${lowerExt}) are not supported. Only text-based files are allowed.`,
+    };
   }
 
   // Check if it's a video
-  if (VIDEO_FILE_EXTENSIONS.includes(lowerExt as typeof VIDEO_FILE_EXTENSIONS[number])) {
+  if (VIDEO_FILE_EXTENSIONS.includes(lowerExt as (typeof VIDEO_FILE_EXTENSIONS)[number])) {
     return {
       isValid: false,
       fileType: 'video',
       extension: lowerExt,
-      reason: `Video files (${lowerExt}) are not supported. Only text-based files are allowed.`
-    }
+      reason: `Video files (${lowerExt}) are not supported. Only text-based files are allowed.`,
+    };
   }
 
   // Check if it's audio
-  if (AUDIO_FILE_EXTENSIONS.includes(lowerExt as typeof AUDIO_FILE_EXTENSIONS[number])) {
+  if (AUDIO_FILE_EXTENSIONS.includes(lowerExt as (typeof AUDIO_FILE_EXTENSIONS)[number])) {
     return {
       isValid: false,
       fileType: 'audio',
       extension: lowerExt,
-      reason: `Audio files (${lowerExt}) are not supported. Only text-based files are allowed.`
-    }
+      reason: `Audio files (${lowerExt}) are not supported. Only text-based files are allowed.`,
+    };
   }
 
   // Check if it's a binary file
-  if (BINARY_FILE_EXTENSIONS.includes(lowerExt as typeof BINARY_FILE_EXTENSIONS[number])) {
+  if (BINARY_FILE_EXTENSIONS.includes(lowerExt as (typeof BINARY_FILE_EXTENSIONS)[number])) {
     return {
       isValid: false,
       fileType: 'binary',
       extension: lowerExt,
-      reason: `Binary files (${lowerExt}) are not supported. Only text-based files are allowed.`
-    }
+      reason: `Binary files (${lowerExt}) are not supported. Only text-based files are allowed.`,
+    };
   }
 
   // Unknown extension - reject by default for safety
   return {
     isValid: false,
     extension: lowerExt,
-    reason: `Unknown file type (${lowerExt}). Only recognized text-based files are supported.`
-  }
+    reason: `Unknown file type (${lowerExt}). Only recognized text-based files are supported.`,
+  };
 }
 
 /**
@@ -190,27 +246,27 @@ export function validateTextFile(filePath: string): FileTypeValidationResult {
  * @returns Object containing valid files and validation errors
  */
 export function validateTextFiles(filePaths: string[]): {
-  validFiles: string[]
-  invalidFiles: Array<{ path: string; reason: string; fileType?: string }>
+  validFiles: string[];
+  invalidFiles: Array<{ path: string; reason: string; fileType?: string }>;
 } {
-  const validFiles: string[] = []
-  const invalidFiles: Array<{ path: string; reason: string; fileType?: string }> = []
+  const validFiles: string[] = [];
+  const invalidFiles: Array<{ path: string; reason: string; fileType?: string }> = [];
 
   for (const filePath of filePaths) {
-    const result = validateTextFile(filePath)
+    const result = validateTextFile(filePath);
 
     if (result.isValid) {
-      validFiles.push(filePath)
+      validFiles.push(filePath);
     } else {
       invalidFiles.push({
         path: filePath,
         reason: result.reason || 'Invalid file type',
-        fileType: result.fileType
-      })
+        fileType: result.fileType,
+      });
     }
   }
 
-  return { validFiles, invalidFiles }
+  return { validFiles, invalidFiles };
 }
 
 /**
@@ -222,35 +278,35 @@ export function validateTextFiles(filePaths: string[]): {
  */
 export function getFileExtension(filePath: string): string {
   // Get the filename without path
-  const fileName = filePath.split('/').pop() || filePath.split('\\').pop() || filePath
+  const fileName = filePath.split('/').pop() || filePath.split('\\').pop() || filePath;
 
   // Handle hidden files (e.g., .gitignore)
   if (fileName.startsWith('.') && fileName.lastIndexOf('.') === 0) {
-    return fileName // Return the whole name as extension
+    return fileName; // Return the whole name as extension
   }
 
   // Find last dot
-  const lastDotIndex = fileName.lastIndexOf('.')
+  const lastDotIndex = fileName.lastIndexOf('.');
 
   if (lastDotIndex === -1 || lastDotIndex === 0) {
-    return '' // No extension or hidden file
+    return ''; // No extension or hidden file
   }
 
-  return fileName.substring(lastDotIndex)
+  return fileName.substring(lastDotIndex);
 }
 
 /**
  * Get a human-readable description of supported file types.
  */
 export function getSupportedFileTypesDescription(): string {
-  return 'Text files (.txt, .md), code files (.js, .ts, .py, .html, .css, .json, etc.)'
+  return 'Text files (.txt, .md), code files (.js, .ts, .py, .html, .css, .json, etc.)';
 }
 
 /**
  * Get a human-readable list of rejected file types.
  */
 export function getRejectedFileTypesDescription(): string {
-  return 'Images, videos, audio files, and binary documents (PDF, Word, etc.) are not supported'
+  return 'Images, videos, audio files, and binary documents (PDF, Word, etc.) are not supported';
 }
 
 /**
@@ -261,8 +317,8 @@ export function getRejectedFileTypesDescription(): string {
  * @returns True if the extension is for a text file
  */
 export function isTextFileExtension(extension: string): boolean {
-  const ext = extension.startsWith('.') ? extension : `.${extension}`
-  return getAllTextExtensions().includes(ext.toLowerCase())
+  const ext = extension.startsWith('.') ? extension : `.${extension}`;
+  return getAllTextExtensions().includes(ext.toLowerCase());
 }
 
 /**
@@ -272,20 +328,20 @@ export function isTextFileExtension(extension: string): boolean {
  * @returns Human-readable file type category
  */
 export function getFileTypeCategory(filePath: string): string {
-  const result = validateTextFile(filePath)
+  const result = validateTextFile(filePath);
 
   if (!result.isValid) {
-    return result.fileType || 'unknown'
+    return result.fileType || 'unknown';
   }
 
-  const ext = result.extension
+  const ext = result.extension;
 
   // Find which category this extension belongs to
   for (const [category, extensions] of Object.entries(TEXT_FILE_EXTENSIONS)) {
     if (extensions.includes(ext as never)) {
-      return category
+      return category;
     }
   }
 
-  return 'text'
+  return 'text';
 }

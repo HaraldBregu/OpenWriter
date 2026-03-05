@@ -1,10 +1,10 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import type { StoreService } from './store'
-import type { EventBus } from '../core/EventBus'
-import type { Disposable } from '../core/ServiceContainer'
-import type { LoggerService } from './logger'
-import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants'
+import fs from 'node:fs';
+import path from 'node:path';
+import type { StoreService } from './store';
+import type { EventBus } from '../core/EventBus';
+import type { Disposable } from '../core/ServiceContainer';
+import type { LoggerService } from './logger';
+import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
 
 /**
  * Snapshot of the current workspace state.
@@ -12,9 +12,9 @@ import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants'
  */
 export interface WorkspaceState {
   /** Absolute path to the current project directory, or null if none is set. */
-  currentPath: string | null
+  currentPath: string | null;
   /** Timestamp (ms) when the current workspace was set. 0 if no workspace. */
-  openedAt: number
+  openedAt: number;
 }
 
 /**
@@ -31,12 +31,12 @@ export interface WorkspaceState {
  * It does NOT use the Singleton pattern -- the container enforces single-instance.
  */
 export class WorkspaceService implements Disposable {
-  private currentPath: string | null = null
-  private openedAt: number = 0
-  private validationTimer: ReturnType<typeof setInterval> | null = null
+  private currentPath: string | null = null;
+  private openedAt: number = 0;
+  private validationTimer: ReturnType<typeof setInterval> | null = null;
 
   /** How often (ms) to check if the workspace folder still exists. */
-  private static readonly VALIDATION_INTERVAL_MS = WORKSPACE_VALIDATION_INTERVAL_MS
+  private static readonly VALIDATION_INTERVAL_MS = WORKSPACE_VALIDATION_INTERVAL_MS;
 
   constructor(
     private readonly store: StoreService,
@@ -53,17 +53,20 @@ export class WorkspaceService implements Disposable {
    * If the path no longer exists, it is silently discarded.
    */
   initialize(): void {
-    const persisted = this.store.getCurrentWorkspace()
+    const persisted = this.store.getCurrentWorkspace();
     if (persisted && this.isValidDirectory(persisted)) {
-      this.currentPath = persisted
-      this.openedAt = Date.now()
-      this.startValidationTimer()
-      this.logger?.info('WorkspaceService', `Restored workspace from store: ${persisted}`)
+      this.currentPath = persisted;
+      this.openedAt = Date.now();
+      this.startValidationTimer();
+      this.logger?.info('WorkspaceService', `Restored workspace from store: ${persisted}`);
     } else if (persisted) {
-      this.logger?.info('WorkspaceService', `Persisted workspace no longer exists, clearing: ${persisted}`)
-      this.store.clearCurrentWorkspace()
+      this.logger?.info(
+        'WorkspaceService',
+        `Persisted workspace no longer exists, clearing: ${persisted}`
+      );
+      this.store.clearCurrentWorkspace();
     } else {
-      this.logger?.info('WorkspaceService', 'No persisted workspace, starting with null')
+      this.logger?.info('WorkspaceService', 'No persisted workspace, starting with null');
     }
   }
 
@@ -72,7 +75,7 @@ export class WorkspaceService implements Disposable {
    * Returns null if no workspace is set.
    */
   getCurrent(): string | null {
-    return this.currentPath
+    return this.currentPath;
   }
 
   /**
@@ -81,8 +84,8 @@ export class WorkspaceService implements Disposable {
   getState(): WorkspaceState {
     return {
       currentPath: this.currentPath,
-      openedAt: this.openedAt
-    }
+      openedAt: this.openedAt,
+    };
   }
 
   /**
@@ -99,88 +102,88 @@ export class WorkspaceService implements Disposable {
    */
   setCurrent(directoryPath: string): void {
     // Normalize the path to resolve .. and trailing slashes
-    const normalized = path.resolve(directoryPath)
+    const normalized = path.resolve(directoryPath);
 
-    this.validatePath(normalized)
+    this.validatePath(normalized);
 
-    const previousPath = this.currentPath
-    this.currentPath = normalized
-    this.openedAt = Date.now()
+    const previousPath = this.currentPath;
+    this.currentPath = normalized;
+    this.openedAt = Date.now();
 
     // Persist to store (adds to recent workspaces automatically)
-    this.store.setCurrentWorkspace(normalized)
+    this.store.setCurrentWorkspace(normalized);
 
-    this.logger?.info('WorkspaceService', `Workspace changed: ${previousPath} -> ${normalized}`)
+    this.logger?.info('WorkspaceService', `Workspace changed: ${previousPath} -> ${normalized}`);
 
     // Start periodic validation for the new workspace
-    this.startValidationTimer()
+    this.startValidationTimer();
 
     // Notify other services via EventBus (main-process listeners)
     this.eventBus.emit('workspace:changed', {
       currentPath: normalized,
-      previousPath
-    })
+      previousPath,
+    });
 
     // Broadcast to all renderer windows
     this.eventBus.broadcast('workspace:changed', {
       currentPath: normalized,
-      previousPath
-    })
+      previousPath,
+    });
   }
 
   /**
    * Clear the current workspace. Resets to the initial null state.
    */
   clear(): void {
-    const previousPath = this.currentPath
-    this.currentPath = null
-    this.openedAt = 0
+    const previousPath = this.currentPath;
+    this.currentPath = null;
+    this.openedAt = 0;
 
-    this.stopValidationTimer()
-    this.store.clearCurrentWorkspace()
+    this.stopValidationTimer();
+    this.store.clearCurrentWorkspace();
 
-    this.logger?.info('WorkspaceService', `Workspace cleared, was: ${previousPath}`)
+    this.logger?.info('WorkspaceService', `Workspace cleared, was: ${previousPath}`);
 
     this.eventBus.emit('workspace:changed', {
       currentPath: null,
-      previousPath
-    })
+      previousPath,
+    });
 
     // Broadcast to all renderer windows
     this.eventBus.broadcast('workspace:changed', {
       currentPath: null,
-      previousPath
-    })
+      previousPath,
+    });
   }
 
   /**
    * Get the list of recently opened workspaces from the persistent store.
    */
   getRecent(): Array<{ path: string; lastOpened: number }> {
-    return this.store.getRecentWorkspaces()
+    return this.store.getRecentWorkspaces();
   }
 
   /**
    * Remove a workspace from the recent workspaces list.
    */
   removeRecent(workspacePath: string): void {
-    this.store.removeRecentWorkspace(workspacePath)
-    this.logger?.info('WorkspaceService', `Removed from recent workspaces: ${workspacePath}`)
+    this.store.removeRecentWorkspace(workspacePath);
+    this.logger?.info('WorkspaceService', `Removed from recent workspaces: ${workspacePath}`);
   }
 
   /**
    * Check whether a workspace is currently set.
    */
   hasWorkspace(): boolean {
-    return this.currentPath !== null
+    return this.currentPath !== null;
   }
 
   /**
    * Cleanup on shutdown.
    */
   destroy(): void {
-    this.stopValidationTimer()
-    this.logger?.info('WorkspaceService', 'Destroyed')
+    this.stopValidationTimer();
+    this.logger?.info('WorkspaceService', 'Destroyed');
   }
 
   // ---------------------------------------------------------------------------
@@ -193,20 +196,20 @@ export class WorkspaceService implements Disposable {
    */
   private validatePath(absolutePath: string): void {
     if (!absolutePath || typeof absolutePath !== 'string') {
-      throw new Error('Workspace path must be a non-empty string')
+      throw new Error('Workspace path must be a non-empty string');
     }
 
     if (!path.isAbsolute(absolutePath)) {
-      throw new Error(`Workspace path must be absolute, got: ${absolutePath}`)
+      throw new Error(`Workspace path must be absolute, got: ${absolutePath}`);
     }
 
     if (!fs.existsSync(absolutePath)) {
-      throw new Error(`Workspace path does not exist: ${absolutePath}`)
+      throw new Error(`Workspace path does not exist: ${absolutePath}`);
     }
 
-    const stat = fs.statSync(absolutePath)
+    const stat = fs.statSync(absolutePath);
     if (!stat.isDirectory()) {
-      throw new Error(`Workspace path is not a directory: ${absolutePath}`)
+      throw new Error(`Workspace path is not a directory: ${absolutePath}`);
     }
   }
 
@@ -216,10 +219,10 @@ export class WorkspaceService implements Disposable {
    */
   private isValidDirectory(dirPath: string): boolean {
     try {
-      const stat = fs.statSync(dirPath)
-      return stat.isDirectory()
+      const stat = fs.statSync(dirPath);
+      return stat.isDirectory();
     } catch {
-      return false
+      return false;
     }
   }
 
@@ -234,22 +237,19 @@ export class WorkspaceService implements Disposable {
    * the renderer can redirect the user.
    */
   private startValidationTimer(): void {
-    this.stopValidationTimer()
+    this.stopValidationTimer();
 
     this.validationTimer = setInterval(() => {
       if (!this.currentPath) {
-        this.stopValidationTimer()
-        return
+        this.stopValidationTimer();
+        return;
       }
 
       if (!this.isValidDirectory(this.currentPath)) {
-        console.warn(
-          '[WorkspaceService] Workspace folder no longer exists:',
-          this.currentPath
-        )
-        this.handleWorkspaceGone(this.currentPath)
+        console.warn('[WorkspaceService] Workspace folder no longer exists:', this.currentPath);
+        this.handleWorkspaceGone(this.currentPath);
       }
-    }, WorkspaceService.VALIDATION_INTERVAL_MS)
+    }, WorkspaceService.VALIDATION_INTERVAL_MS);
   }
 
   /**
@@ -257,8 +257,8 @@ export class WorkspaceService implements Disposable {
    */
   private stopValidationTimer(): void {
     if (this.validationTimer) {
-      clearInterval(this.validationTimer)
-      this.validationTimer = null
+      clearInterval(this.validationTimer);
+      this.validationTimer = null;
     }
   }
 
@@ -270,35 +270,31 @@ export class WorkspaceService implements Disposable {
   private handleWorkspaceGone(deletedPath: string): void {
     // Determine reason: if parent directory exists but the folder does not
     // it was likely deleted or renamed. Otherwise treat as inaccessible.
-    let reason: 'deleted' | 'inaccessible' | 'renamed' = 'deleted'
+    let reason: 'deleted' | 'inaccessible' | 'renamed' = 'deleted';
     try {
-      const parentDir = path.dirname(deletedPath)
+      const parentDir = path.dirname(deletedPath);
       if (!fs.existsSync(parentDir)) {
-        reason = 'inaccessible'
+        reason = 'inaccessible';
       }
     } catch {
-      reason = 'inaccessible'
+      reason = 'inaccessible';
     }
 
     // Clear workspace state (this also stops the timer via clear())
-    this.clear()
+    this.clear();
 
     const deletedEvent = {
       deletedPath,
       reason,
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    };
 
     // Emit typed main-process event
-    this.eventBus.emit('workspace:deleted', deletedEvent)
+    this.eventBus.emit('workspace:deleted', deletedEvent);
 
     // Broadcast to all renderer windows
-    this.eventBus.broadcast('workspace:deleted', deletedEvent)
+    this.eventBus.broadcast('workspace:deleted', deletedEvent);
 
-    console.log(
-      '[WorkspaceService] Workspace gone event broadcast:',
-      deletedPath,
-      reason
-    )
+    console.log('[WorkspaceService] Workspace gone event broadcast:', deletedPath, reason);
   }
 }

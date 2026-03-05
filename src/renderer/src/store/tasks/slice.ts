@@ -15,14 +15,9 @@ export type {
   TaskEventRecord,
   TrackedTaskState,
   TasksState,
-} from './types'
+} from './types';
 
-export { tasksSlice, taskAdded, taskEventReceived, taskRemoved } from './reducer'
-export { default } from './reducer'
+export { tasksSlice, taskAdded, taskEventReceived, taskRemoved } from './reducer';
+export { default } from './reducer';
 
-export {
-  selectAllTasks,
-  selectTaskById,
-  selectTasksByStatus,
-  selectQueueStats,
-} from './selectors'
+export { selectAllTasks, selectTaskById, selectTasksByStatus, selectQueueStats } from './selectors';

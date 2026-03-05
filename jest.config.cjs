@@ -29,9 +29,9 @@ module.exports = {
           'ts-jest',
           {
             tsconfig: '<rootDir>/tsconfig.node.json',
-            useESM: false
-          }
-        ]
+            useESM: false,
+          },
+        ],
       },
       moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       moduleNameMapper: {
@@ -39,12 +39,12 @@ module.exports = {
         // chokidar v5 is pure ESM; substitute a CJS-compatible mock so that
         // main-process tests can import source modules that depend on it without
         // hitting "Cannot use import statement outside a module".
-        '^chokidar$': '<rootDir>/tests/mocks/chokidar.ts'
+        '^chokidar$': '<rootDir>/tests/mocks/chokidar.ts',
       },
       // Seed globalThis.__VITE_ENV__ before modules are loaded so that the
       // rewritten import.meta.env accesses resolve to defined (not undefined) objects.
       setupFiles: ['<rootDir>/tests/setup/main.ts'],
-      testMatch: ['**/*.test.ts']
+      testMatch: ['**/*.test.ts'],
     },
 
     // ---- Renderer process tests (jsdom env) ----
@@ -61,9 +61,9 @@ module.exports = {
           'ts-jest',
           {
             tsconfig: '<rootDir>/tsconfig.web.json',
-            useESM: false
-          }
-        ]
+            useESM: false,
+          },
+        ],
       },
       moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
       moduleNameMapper: {
@@ -79,12 +79,12 @@ module.exports = {
         '^src/renderer/src/(.*)$': '<rootDir>/src/renderer/src/$1',
         // Static asset stubs
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-        '\\.(png|jpg|jpeg|gif|svg|webp|ico)$': '<rootDir>/tests/mocks/fileMock.ts'
+        '\\.(png|jpg|jpeg|gif|svg|webp|ico)$': '<rootDir>/tests/mocks/fileMock.ts',
       },
       setupFiles: ['<rootDir>/tests/setup/polyfills.ts'],
       setupFilesAfterEnv: ['<rootDir>/tests/setup/renderer.ts'],
-      testMatch: ['**/*.test.ts', '**/*.test.tsx']
-    }
+      testMatch: ['**/*.test.ts', '**/*.test.tsx'],
+    },
   ],
 
   // Automatically clear, reset, and restore mocks between tests
@@ -100,7 +100,7 @@ module.exports = {
     '!src/main/index.ts',
     '!src/renderer/src/main.tsx',
     '!src/env.d.ts',
-    '!src/types.d.ts'
+    '!src/types.d.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'text-summary', 'lcov', 'clover'],
@@ -109,7 +109,7 @@ module.exports = {
       branches: 50,
       functions: 50,
       lines: 50,
-      statements: 50
-    }
-  }
-}
+      statements: 50,
+    },
+  },
+};

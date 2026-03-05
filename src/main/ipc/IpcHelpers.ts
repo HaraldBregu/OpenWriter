@@ -2,10 +2,10 @@
  * Helper utilities for IPC handlers to access window-scoped services.
  */
 
-import { BrowserWindow } from 'electron'
-import type { IpcMainInvokeEvent } from 'electron'
-import type { ServiceContainer } from '../core/ServiceContainer'
-import type { WindowContextManager } from '../core/WindowContext'
+import { BrowserWindow } from 'electron';
+import type { IpcMainInvokeEvent } from 'electron';
+import type { ServiceContainer } from '../core/ServiceContainer';
+import type { WindowContextManager } from '../core/WindowContext';
 
 /**
  * Get the window context for an IPC event.
@@ -19,35 +19,35 @@ import type { WindowContextManager } from '../core/WindowContext'
 export function getWindowContext(event: IpcMainInvokeEvent, container: ServiceContainer) {
   // Validate event and sender
   if (!event) {
-    throw new Error('[IpcHelpers] IPC event is null or undefined')
+    throw new Error('[IpcHelpers] IPC event is null or undefined');
   }
 
   if (!event.sender) {
-    throw new Error('[IpcHelpers] IPC event.sender is null or undefined')
+    throw new Error('[IpcHelpers] IPC event.sender is null or undefined');
   }
 
   // Get WindowContextManager from global container
-  const windowContextManager = container.get<WindowContextManager>('windowContextManager')
+  const windowContextManager = container.get<WindowContextManager>('windowContextManager');
 
   // Get BrowserWindow from WebContents
-  const window = BrowserWindow.fromWebContents(event.sender)
+  const window = BrowserWindow.fromWebContents(event.sender);
 
   if (!window) {
     throw new Error(
       `[IpcHelpers] Cannot get BrowserWindow from WebContents (sender ID: ${event.sender.id}). ` +
-      'Window may have been destroyed or WebContents is detached.'
-    )
+        'Window may have been destroyed or WebContents is detached.'
+    );
   }
 
   // Get WindowContext for this window
   try {
-    return windowContextManager.get(window.id)
+    return windowContextManager.get(window.id);
   } catch (error) {
     throw new Error(
       `[IpcHelpers] No WindowContext found for window ID ${window.id}. ` +
-      'Window context may not have been created. ' +
-      `Original error: ${error instanceof Error ? error.message : String(error)}`
-    )
+        'Window context may not have been created. ' +
+        `Original error: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -64,6 +64,6 @@ export function getWindowService<T>(
   container: ServiceContainer,
   serviceKey: string
 ): T {
-  const windowContext = getWindowContext(event, container)
-  return windowContext.getService<T>(serviceKey, container)
+  const windowContext = getWindowContext(event, container);
+  return windowContext.getService<T>(serviceKey, container);
 }

@@ -1,15 +1,15 @@
-import { BrowserWindow, nativeTheme } from 'electron'
-import type { AppState } from './core/AppState'
-import type { WindowFactory } from './core/WindowFactory'
-import type { WindowContextManager } from './core/WindowContext'
+import { BrowserWindow, nativeTheme } from 'electron';
+import type { AppState } from './core/AppState';
+import type { WindowFactory } from './core/WindowFactory';
+import type { WindowContextManager } from './core/WindowContext';
 
 function getBackgroundColor(): string {
-  return nativeTheme.shouldUseDarkColors ? '#1A1A1A' : '#F7F7F7'
+  return nativeTheme.shouldUseDarkColors ? '#1A1A1A' : '#F7F7F7';
 }
 
 export class Main {
-  private window: BrowserWindow | null = null
-  private onWindowVisibilityChange?: () => void
+  private window: BrowserWindow | null = null;
+  private onWindowVisibilityChange?: () => void;
 
   constructor(
     private appState: AppState,
@@ -32,29 +32,29 @@ export class Main {
    */
   private attachCommonWindowHandlers(win: BrowserWindow): void {
     // Suppress native Chromium URL bubble on link hover
-    win.webContents.on('update-target-url', () => {})
+    win.webContents.on('update-target-url', () => {});
 
     // Notify renderer when window is maximized/unmaximized
     win.on('maximize', () => {
-      win.webContents.send('window:maximize-change', true)
-    })
+      win.webContents.send('window:maximize-change', true);
+    });
 
     win.on('unmaximize', () => {
-      win.webContents.send('window:maximize-change', false)
-    })
+      win.webContents.send('window:maximize-change', false);
+    });
 
     // Notify renderer when entering/leaving fullscreen
     win.on('enter-full-screen', () => {
-      win.webContents.send('window:fullscreen-change', true)
-    })
+      win.webContents.send('window:fullscreen-change', true);
+    });
 
     win.on('leave-full-screen', () => {
-      win.webContents.send('window:fullscreen-change', false)
-    })
+      win.webContents.send('window:fullscreen-change', false);
+    });
   }
 
   create(): BrowserWindow {
-    const isMac = process.platform === 'darwin'
+    const isMac = process.platform === 'darwin';
     this.window = this.windowFactory.create({
       width: 1200,
       height: 800,
@@ -65,89 +65,89 @@ export class Main {
       // Only use it on macOS where it hides the title bar while keeping traffic lights.
       ...(isMac && {
         titleBarStyle: 'hidden' as const,
-        trafficLightPosition: { x: 16, y: 16 }
+        trafficLightPosition: { x: 16, y: 16 },
       }),
-      backgroundColor: getBackgroundColor()
-    })
+      backgroundColor: getBackgroundColor(),
+    });
 
     // Create window context for isolated services
-    this.windowContextManager.create(this.window)
+    this.windowContextManager.create(this.window);
 
     // Attach common window handlers (shared with workspace windows)
-    this.attachCommonWindowHandlers(this.window)
+    this.attachCommonWindowHandlers(this.window);
 
     this.window.once('ready-to-show', () => {
-      this.window?.show()
-    })
+      this.window?.show();
+    });
 
     // Minimize to tray instead of closing
     this.window.on('close', (event) => {
       if (!this.appState.isQuitting) {
-        event.preventDefault()
-        this.window?.hide()
-        this.onWindowVisibilityChange?.()
+        event.preventDefault();
+        this.window?.hide();
+        this.onWindowVisibilityChange?.();
       }
-    })
+    });
 
     // Update tray menu when window is shown/hidden
     this.window.on('show', () => {
-      this.onWindowVisibilityChange?.()
-    })
+      this.onWindowVisibilityChange?.();
+    });
 
     this.window.on('hide', () => {
-      this.onWindowVisibilityChange?.()
-    })
+      this.onWindowVisibilityChange?.();
+    });
 
     this.window.on('closed', () => {
-      this.window = null
-    })
+      this.window = null;
+    });
 
-    return this.window
+    return this.window;
   }
 
   showOrCreate(): void {
-    const windows = BrowserWindow.getAllWindows()
+    const windows = BrowserWindow.getAllWindows();
     if (windows.length > 0) {
-      windows[0].show()
-      windows[0].focus()
+      windows[0].show();
+      windows[0].focus();
     } else {
-      this.create()
+      this.create();
     }
   }
 
   hide(): void {
-    const windows = BrowserWindow.getAllWindows()
+    const windows = BrowserWindow.getAllWindows();
     if (windows.length > 0) {
-      windows[0].hide()
+      windows[0].hide();
     }
   }
 
   toggleVisibility(): void {
-    const windows = BrowserWindow.getAllWindows()
+    const windows = BrowserWindow.getAllWindows();
     if (windows.length > 0) {
-      const mainWindow = windows[0]
+      const mainWindow = windows[0];
       if (mainWindow.isVisible()) {
-        mainWindow.hide()
+        mainWindow.hide();
       } else {
-        mainWindow.show()
-        mainWindow.focus()
+        mainWindow.show();
+        mainWindow.focus();
       }
     } else {
-      this.create()
+      this.create();
     }
   }
 
   isVisible(): boolean {
-    const windows = BrowserWindow.getAllWindows()
-    return windows.length > 0 && windows[0].isVisible()
+    const windows = BrowserWindow.getAllWindows();
+    return windows.length > 0 && windows[0].isVisible();
   }
 
   setOnWindowVisibilityChange(callback: () => void): void {
-    this.onWindowVisibilityChange = callback
+    this.onWindowVisibilityChange = callback;
   }
 
   createWindowForFile(filePath: string): BrowserWindow {
-    const isMac = process.platform === 'darwin'
+    const isMac = process.platform === 'darwin';
     const win = this.windowFactory.create({
       width: 1600,
       height: 1000,
@@ -156,35 +156,35 @@ export class Main {
       frame: false,
       ...(isMac && {
         titleBarStyle: 'hidden' as const,
-        trafficLightPosition: { x: 9, y: 9 }
+        trafficLightPosition: { x: 9, y: 9 },
       }),
-      backgroundColor: getBackgroundColor()
-    })
+      backgroundColor: getBackgroundColor(),
+    });
 
     // Create window context for isolated services
-    this.windowContextManager.create(win)
+    this.windowContextManager.create(win);
 
     win.once('ready-to-show', () => {
-      win.show()
-      win.webContents.send('file-opened', filePath)
-    })
+      win.show();
+      win.webContents.send('file-opened', filePath);
+    });
 
-    return win
+    return win;
   }
 
   createWorkspaceWindow(): BrowserWindow {
     // Get the main window dimensions to calculate 10% smaller size
-    const mainWindow = this.window
-    let width = 1080 // 1200 * 0.9
-    let height = 720 // 800 * 0.9
+    const mainWindow = this.window;
+    let width = 1080; // 1200 * 0.9
+    let height = 720; // 800 * 0.9
 
     if (mainWindow) {
-      const [mainWidth, mainHeight] = mainWindow.getSize()
-      width = Math.floor(mainWidth * 0.9)
-      height = Math.floor(mainHeight * 0.9)
+      const [mainWidth, mainHeight] = mainWindow.getSize();
+      width = Math.floor(mainWidth * 0.9);
+      height = Math.floor(mainHeight * 0.9);
     }
 
-    const isMac = process.platform === 'darwin'
+    const isMac = process.platform === 'darwin';
     const workspaceWindow = this.windowFactory.create({
       width,
       height,
@@ -193,27 +193,27 @@ export class Main {
       frame: false,
       ...(isMac && {
         titleBarStyle: 'hidden' as const,
-        trafficLightPosition: { x: 16, y: 16 }
+        trafficLightPosition: { x: 16, y: 16 },
       }),
-      backgroundColor: getBackgroundColor()
-    })
+      backgroundColor: getBackgroundColor(),
+    });
 
     // Create window context for isolated services
     // CRITICAL: This ensures each workspace window has its own WorkspaceService
     // and WorkspaceMetadataService instances, preventing data leakage
-    this.windowContextManager.create(workspaceWindow)
+    this.windowContextManager.create(workspaceWindow);
 
     // Attach common window handlers (shared with main window)
-    this.attachCommonWindowHandlers(workspaceWindow)
+    this.attachCommonWindowHandlers(workspaceWindow);
 
     workspaceWindow.once('ready-to-show', () => {
-      workspaceWindow.show()
-    })
+      workspaceWindow.show();
+    });
 
-    return workspaceWindow
+    return workspaceWindow;
   }
 
   getWindow(): BrowserWindow | null {
-    return this.window
+    return this.window;
   }
 }

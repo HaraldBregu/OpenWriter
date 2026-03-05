@@ -1,18 +1,18 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import https from 'node:https'
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import https from 'node:https';
 
 /**
  * File metadata structure used across document and file operations.
  */
 export interface FileMetadata {
-  id: string
-  name: string
-  path: string
-  size: number
-  mimeType: string
-  importedAt: number
-  lastModified: number
+  id: string;
+  name: string;
+  path: string;
+  size: number;
+  mimeType: string;
+  importedAt: number;
+  lastModified: number;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface FileMetadata {
  */
 export class FileManagementService {
   // Maximum download size: 500 MB
-  private readonly MAX_DOWNLOAD_SIZE = 500 * 1024 * 1024
+  private readonly MAX_DOWNLOAD_SIZE = 500 * 1024 * 1024;
 
   /**
    * Copy a file from source to destination directory.
@@ -47,19 +47,19 @@ export class FileManagementService {
     destDir: string,
     onFileWritten?: (filePath: string) => void
   ): Promise<FileMetadata> {
-    const fileName = path.basename(sourceFilePath)
-    const destFilePath = await this.getUniqueFilePath(destDir, fileName)
+    const fileName = path.basename(sourceFilePath);
+    const destFilePath = await this.getUniqueFilePath(destDir, fileName);
 
     try {
       // Notify watcher before writing (prevents false change events)
-      onFileWritten?.(destFilePath)
+      onFileWritten?.(destFilePath);
 
-      await fs.copyFile(sourceFilePath, destFilePath)
+      await fs.copyFile(sourceFilePath, destFilePath);
 
-      const stats = await fs.stat(destFilePath)
-      return this.createFileMetadata(path.basename(destFilePath), destFilePath, stats)
+      const stats = await fs.stat(destFilePath);
+      return this.createFileMetadata(path.basename(destFilePath), destFilePath, stats);
     } catch (err) {
-      throw new Error(`Failed to copy file ${fileName}: ${(err as Error).message}`)
+      throw new Error(`Failed to copy file ${fileName}: ${(err as Error).message}`);
     }
   }
 
@@ -79,99 +79,105 @@ export class FileManagementService {
   ): Promise<FileMetadata> {
     return new Promise((resolve, reject) => {
       // Extract filename from URL or generate one
-      const urlObj = new URL(url)
-      let fileName = path.basename(urlObj.pathname) || `download-${Date.now()}`
+      const urlObj = new URL(url);
+      let fileName = path.basename(urlObj.pathname) || `download-${Date.now()}`;
 
       // If no extension, add a placeholder
       if (!path.extname(fileName)) {
-        fileName = `${fileName}.download`
+        fileName = `${fileName}.download`;
       }
 
-      this.getUniqueFilePath(destDir, fileName).then((destFilePath) => {
-        const file = fs.open(destFilePath, 'w')
+      this.getUniqueFilePath(destDir, fileName)
+        .then((destFilePath) => {
+          const file = fs.open(destFilePath, 'w');
 
-        const request = https.get(url, (response) => {
-          if (response.statusCode !== 200) {
-            reject(new Error(`Failed to download file: HTTP ${response.statusCode}`))
-            return
-          }
+          const request = https.get(url, (response) => {
+            if (response.statusCode !== 200) {
+              reject(new Error(`Failed to download file: HTTP ${response.statusCode}`));
+              return;
+            }
 
-          // Check Content-Length header
-          const contentLength = response.headers['content-length']
-          if (contentLength && parseInt(contentLength, 10) > this.MAX_DOWNLOAD_SIZE) {
-            reject(
-              new Error(
-                `File size (${contentLength} bytes) exceeds maximum allowed (${this.MAX_DOWNLOAD_SIZE} bytes)`
-              )
-            )
-            response.destroy()
-            return
-          }
+            // Check Content-Length header
+            const contentLength = response.headers['content-length'];
+            if (contentLength && parseInt(contentLength, 10) > this.MAX_DOWNLOAD_SIZE) {
+              reject(
+                new Error(
+                  `File size (${contentLength} bytes) exceeds maximum allowed (${this.MAX_DOWNLOAD_SIZE} bytes)`
+                )
+              );
+              response.destroy();
+              return;
+            }
 
-          file
-            .then(async (fileHandle) => {
-              // Notify watcher before writing
-              onFileWritten?.(destFilePath)
+            file
+              .then(async (fileHandle) => {
+                // Notify watcher before writing
+                onFileWritten?.(destFilePath);
 
-              const writeStream = fileHandle.createWriteStream()
-              let downloadedSize = 0
+                const writeStream = fileHandle.createWriteStream();
+                let downloadedSize = 0;
 
-              // Monitor download progress to enforce size limit
-              response.on('data', (chunk: Buffer) => {
-                downloadedSize += chunk.length
-                if (downloadedSize > this.MAX_DOWNLOAD_SIZE) {
-                  response.destroy()
-                  writeStream.destroy()
-                  reject(
-                    new Error(
-                      `Download exceeded maximum allowed size of ${this.MAX_DOWNLOAD_SIZE} bytes`
-                    )
-                  )
-                }
+                // Monitor download progress to enforce size limit
+                response.on('data', (chunk: Buffer) => {
+                  downloadedSize += chunk.length;
+                  if (downloadedSize > this.MAX_DOWNLOAD_SIZE) {
+                    response.destroy();
+                    writeStream.destroy();
+                    reject(
+                      new Error(
+                        `Download exceeded maximum allowed size of ${this.MAX_DOWNLOAD_SIZE} bytes`
+                      )
+                    );
+                  }
+                });
+
+                response.pipe(writeStream);
+
+                writeStream.on('finish', async () => {
+                  await fileHandle.close();
+
+                  try {
+                    const stats = await fs.stat(destFilePath);
+                    const metadata = this.createFileMetadata(
+                      path.basename(destFilePath),
+                      destFilePath,
+                      stats
+                    );
+                    resolve(metadata);
+                  } catch (err) {
+                    reject(new Error(`Failed to get file stats: ${(err as Error).message}`));
+                  }
+                });
+
+                writeStream.on('error', async (err) => {
+                  await fileHandle.close();
+                  // Clean up partial download
+                  try {
+                    await fs.unlink(destFilePath);
+                  } catch {
+                    // Ignore cleanup errors
+                  }
+                  reject(new Error(`Failed to write downloaded file: ${err.message}`));
+                });
               })
+              .catch((err) => {
+                reject(new Error(`Failed to create file: ${err.message}`));
+              });
+          });
 
-              response.pipe(writeStream)
+          request.on('error', (err) => {
+            reject(new Error(`Failed to download file: ${err.message}`));
+          });
 
-              writeStream.on('finish', async () => {
-                await fileHandle.close()
+          request.setTimeout(30000, () => {
+            request.destroy();
+            reject(new Error('Download timeout: request took longer than 30 seconds'));
+          });
 
-                try {
-                  const stats = await fs.stat(destFilePath)
-                  const metadata = this.createFileMetadata(path.basename(destFilePath), destFilePath, stats)
-                  resolve(metadata)
-                } catch (err) {
-                  reject(new Error(`Failed to get file stats: ${(err as Error).message}`))
-                }
-              })
-
-              writeStream.on('error', async (err) => {
-                await fileHandle.close()
-                // Clean up partial download
-                try {
-                  await fs.unlink(destFilePath)
-                } catch {
-                  // Ignore cleanup errors
-                }
-                reject(new Error(`Failed to write downloaded file: ${err.message}`))
-              })
-            })
-            .catch((err) => {
-              reject(new Error(`Failed to create file: ${err.message}`))
-            })
+          request.end();
         })
-
-        request.on('error', (err) => {
-          reject(new Error(`Failed to download file: ${err.message}`))
-        })
-
-        request.setTimeout(30000, () => {
-          request.destroy()
-          reject(new Error('Download timeout: request took longer than 30 seconds'))
-        })
-
-        request.end()
-      }).catch(reject)
-    })
+        .catch(reject);
+    });
   }
 
   /**
@@ -181,9 +187,9 @@ export class FileManagementService {
    */
   async deleteFile(filePath: string): Promise<void> {
     try {
-      await fs.unlink(filePath)
+      await fs.unlink(filePath);
     } catch (err) {
-      throw new Error(`Failed to delete file: ${(err as Error).message}`)
+      throw new Error(`Failed to delete file: ${(err as Error).message}`);
     }
   }
 
@@ -196,20 +202,20 @@ export class FileManagementService {
    * @returns Unique file path that doesn't exist
    */
   async getUniqueFilePath(dir: string, fileName: string): Promise<string> {
-    const ext = path.extname(fileName)
-    const baseName = path.basename(fileName, ext)
-    let counter = 0
-    let filePath = path.join(dir, fileName)
+    const ext = path.extname(fileName);
+    const baseName = path.basename(fileName, ext);
+    let counter = 0;
+    let filePath = path.join(dir, fileName);
 
     while (true) {
       try {
-        await fs.access(filePath)
+        await fs.access(filePath);
         // File exists, try next counter
-        counter++
-        filePath = path.join(dir, `${baseName} (${counter})${ext}`)
+        counter++;
+        filePath = path.join(dir, `${baseName} (${counter})${ext}`);
       } catch {
         // File doesn't exist, we can use this path
-        return filePath
+        return filePath;
       }
     }
   }
@@ -221,13 +227,13 @@ export class FileManagementService {
    */
   async ensureDirectory(dirPath: string): Promise<void> {
     try {
-      await fs.mkdir(dirPath, { recursive: true })
+      await fs.mkdir(dirPath, { recursive: true });
     } catch (err) {
-      const error = err as NodeJS.ErrnoException
+      const error = err as NodeJS.ErrnoException;
       if (error.code === 'EACCES') {
-        throw new Error(`Permission denied creating directory: ${dirPath}`)
+        throw new Error(`Permission denied creating directory: ${dirPath}`);
       }
-      throw new Error(`Failed to create directory: ${error.message}`)
+      throw new Error(`Failed to create directory: ${error.message}`);
     }
   }
 
@@ -244,9 +250,9 @@ export class FileManagementService {
     filePath: string,
     stats: { size: number; mtimeMs: number }
   ): FileMetadata {
-    const name = path.basename(filePath)
-    const mimeType = this.getMimeType(filePath)
-    const now = Date.now()
+    const name = path.basename(filePath);
+    const mimeType = this.getMimeType(filePath);
+    const now = Date.now();
 
     return {
       id,
@@ -255,8 +261,8 @@ export class FileManagementService {
       size: stats.size,
       mimeType,
       importedAt: now,
-      lastModified: Math.floor(stats.mtimeMs)
-    }
+      lastModified: Math.floor(stats.mtimeMs),
+    };
   }
 
   /**
@@ -266,7 +272,7 @@ export class FileManagementService {
    * @returns MIME type string
    */
   getMimeType(filePath: string): string {
-    const ext = path.extname(filePath).toLowerCase()
+    const ext = path.extname(filePath).toLowerCase();
     const mimeTypes: Record<string, string> = {
       // Documents
       '.pdf': 'application/pdf',
@@ -330,9 +336,9 @@ export class FileManagementService {
 
       // Presentations
       '.ppt': 'application/vnd.ms-powerpoint',
-      '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-    }
+      '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    };
 
-    return mimeTypes[ext] || 'application/octet-stream'
+    return mimeTypes[ext] || 'application/octet-stream';
   }
 }

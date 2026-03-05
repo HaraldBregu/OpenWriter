@@ -1,5 +1,5 @@
-import path from 'node:path'
-import { app } from 'electron'
+import path from 'node:path';
+import { app } from 'electron';
 
 /**
  * PathValidator provides security validation for file system operations
@@ -16,8 +16,8 @@ export class PathValidator {
     app.getPath('documents'),
     app.getPath('downloads'),
     app.getPath('desktop'),
-    app.getPath('userData')
-  ]
+    app.getPath('userData'),
+  ];
 
   /**
    * Checks if a file path is within allowed directories
@@ -25,10 +25,10 @@ export class PathValidator {
    * @returns true if the path is safe, false otherwise
    */
   static isPathSafe(filePath: string): boolean {
-    const normalized = path.normalize(path.resolve(filePath))
+    const normalized = path.normalize(path.resolve(filePath));
     return this.ALLOWED_BASE_PATHS.some((basePath) =>
       normalized.startsWith(path.resolve(basePath))
-    )
+    );
   }
 
   /**
@@ -38,7 +38,7 @@ export class PathValidator {
    */
   static assertPathSafe(filePath: string): void {
     if (!this.isPathSafe(filePath)) {
-      throw new Error(`Path "${filePath}" is outside allowed directories`)
+      throw new Error(`Path "${filePath}" is outside allowed directories`);
     }
   }
 
@@ -47,6 +47,6 @@ export class PathValidator {
    * @returns Array of allowed base directory paths
    */
   static getAllowedPaths(): string[] {
-    return [...this.ALLOWED_BASE_PATHS]
+    return [...this.ALLOWED_BASE_PATHS];
   }
 }

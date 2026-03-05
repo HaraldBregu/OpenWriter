@@ -129,7 +129,7 @@
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-    all: revert;
+  all: revert;
 }
 
 .tiptap h1,
@@ -138,17 +138,17 @@
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-    font-family: inherit;
+  font-family: inherit;
 }
 
 .tiptap ul,
 .tiptap ol {
-    all: revert;
+  all: revert;
 }
 
 .tiptap ul,
 .tiptap ol {
-    font-family: inherit;
+  font-family: inherit;
 }
 
 /* Placeholder extension --------------------------------------------------- */

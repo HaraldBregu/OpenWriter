@@ -1,15 +1,15 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Copy, Trash2, Clipboard, MoreVertical } from "lucide-react";
-import { useEditorContext } from "./EditorContext";
-import { cn } from "@/lib/utils";
-import type { HoveredBlock } from "./BlockControls";
-import { AppButton } from "../app/AppButton";
+import React, { useCallback, useRef, useState } from 'react';
+import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react';
+import { useEditorContext } from './EditorContext';
+import { cn } from '@/lib/utils';
+import type { HoveredBlock } from './BlockControls';
+import { AppButton } from '../app/AppButton';
 import {
   AppDropdownMenu,
   AppDropdownMenuTrigger,
   AppDropdownMenuContent,
   AppDropdownMenuItem,
-} from "../app/AppDropdownMenu";
+} from '../app/AppDropdownMenu';
 
 interface BlockActionsProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -33,7 +33,7 @@ export const BlockActions = React.memo(function BlockActions({
       }
       setMenuOpen(open);
     },
-    [hoveredBlock],
+    [hoveredBlock]
   );
 
   const duplicateBlock = useCallback(() => {
@@ -73,9 +73,9 @@ export const BlockActions = React.memo(function BlockActions({
   return (
     <div
       className={cn(
-        "absolute right-1 z-50 flex items-center gap-1",
-        "pointer-events-none opacity-0 transition-opacity duration-100",
-        visible && "pointer-events-auto opacity-100",
+        'absolute right-1 z-50 flex items-center gap-1',
+        'pointer-events-none opacity-0 transition-opacity duration-100',
+        visible && 'pointer-events-auto opacity-100'
       )}
       style={{ top: topValue }}
     >

@@ -9,19 +9,19 @@
  * This avoids the need for a React context to distribute task events.
  */
 
-import type { TaskEvent } from '../../../shared/types'
+import type { TaskEvent } from '../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Snapshot shape delivered to per-task subscribers
 // ---------------------------------------------------------------------------
 
 export interface TaskSnapshot {
-  status: string
-  streamedContent: string  // latest delta token only
-  content: string          // seedContent + all AI tokens (full display text)
-  seedContent: string      // original text before AI enhancement (set by initTaskContent)
-  error?: string
-  result?: unknown
+  status: string;
+  streamedContent: string; // latest delta token only
+  content: string; // seedContent + all AI tokens (full display text)
+  seedContent: string; // original text before AI enhancement (set by initTaskContent)
+  error?: string;
+  result?: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -29,83 +29,88 @@ export interface TaskSnapshot {
 // ---------------------------------------------------------------------------
 
 /** Per-task subscriber sets: taskId → Set<callback> */
-const subscribers = new Map<string, Set<(snap: TaskSnapshot) => void>>()
+const subscribers = new Map<string, Set<(snap: TaskSnapshot) => void>>();
 
 /** Accumulated snapshots per task so late subscribers can replay. */
-const snapshots = new Map<string, TaskSnapshot>()
+const snapshots = new Map<string, TaskSnapshot>();
 
 /** The single unsub handle from window.task.onEvent. */
-let globalUnsub: (() => void) | null = null
+let globalUnsub: (() => void) | null = null;
 
 // ---------------------------------------------------------------------------
 // Lazy-init: subscribe to the global IPC event stream once on first use.
 // ---------------------------------------------------------------------------
 
 function ensureListening(): void {
-  if (globalUnsub !== null) return
-  if (typeof window.task?.onEvent !== 'function') return
+  if (globalUnsub !== null) return;
+  if (typeof window.task?.onEvent !== 'function') return;
 
   globalUnsub = window.task.onEvent((event: TaskEvent) => {
-    const data = event.data as { taskId?: string }
-    const taskId = data?.taskId
-    if (!taskId) return
+    const data = event.data as { taskId?: string };
+    const taskId = data?.taskId;
+    if (!taskId) return;
 
     // Build or update snapshot for this task.
-    const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '', seedContent: '' }
-    let next: TaskSnapshot
+    const prev = snapshots.get(taskId) ?? {
+      status: 'queued',
+      streamedContent: '',
+      content: '',
+      seedContent: '',
+    };
+    let next: TaskSnapshot;
 
     switch (event.type) {
       case 'queued':
-        next = { ...prev, status: 'queued' }
-        break
+        next = { ...prev, status: 'queued' };
+        break;
       case 'started':
-        next = { ...prev, status: 'running' }
-        break
+        next = { ...prev, status: 'running' };
+        break;
       case 'progress':
-        next = { ...prev, status: 'running' }
-        break
+        next = { ...prev, status: 'running' };
+        break;
       case 'stream': {
-        const sd = event.data as { data?: string }
+        const sd = event.data as { data?: string };
         next = {
           ...prev,
           status: 'running',
           streamedContent: sd.data ?? '',
           content: (prev.seedContent ?? '') + (prev.content + (sd.data ?? '')),
-        }
-        break
+        };
+        break;
       }
       case 'completed': {
-        const cd = event.data as { result?: unknown }
-        next = { ...prev, status: 'completed', result: cd.result }
-        snapshots.set(taskId, next)
-        subscribers.get(taskId)?.forEach((cb) => cb(next))
+        const cd = event.data as { result?: unknown };
+        next = { ...prev, status: 'completed', result: cd.result };
+        snapshots.set(taskId, next);
+        subscribers.get(taskId)?.forEach((cb) => cb(next));
         // Clear snapshot after all subscribers have processed the terminal event.
-        setTimeout(() => snapshots.delete(taskId), 0)
-        return
+        setTimeout(() => snapshots.delete(taskId), 0);
+        return;
       }
       case 'error': {
-        const ed = event.data as { message?: string }
-        next = { ...prev, status: 'error', error: ed.message }
-        snapshots.set(taskId, next)
-        subscribers.get(taskId)?.forEach((cb) => cb(next))
-        setTimeout(() => snapshots.delete(taskId), 0)
-        return
+        const ed = event.data as { message?: string };
+        next = { ...prev, status: 'error', error: ed.message };
+        snapshots.set(taskId, next);
+        subscribers.get(taskId)?.forEach((cb) => cb(next));
+        setTimeout(() => snapshots.delete(taskId), 0);
+        return;
       }
       case 'cancelled':
-        next = { ...prev, status: 'cancelled' }
-        snapshots.set(taskId, next)
-        subscribers.get(taskId)?.forEach((cb) => cb(next))
-        setTimeout(() => snapshots.delete(taskId), 0)
-        return
+        next = { ...prev, status: 'cancelled' };
+        snapshots.set(taskId, next);
+        subscribers.get(taskId)?.forEach((cb) => cb(next));
+        setTimeout(() => snapshots.delete(taskId), 0);
+        return;
       default:
-        next = prev
+        next = prev;
     }
 
-    snapshots.set(taskId, next)
+    snapshots.set(taskId, next);
 
     // Notify subscribers for this specific task.
-    subscribers.get(taskId)?.forEach((cb) => cb(next))
-  })
+    subscribers.get(taskId)?.forEach((cb) => cb(next));
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -122,29 +127,26 @@ function ensureListening(): void {
  * @param cb      Called with the latest TaskSnapshot on every event.
  * @returns       Unsubscribe function.
  */
-export function subscribeToTask(
-  taskId: string,
-  cb: (snap: TaskSnapshot) => void,
-): () => void {
-  ensureListening()
+export function subscribeToTask(taskId: string, cb: (snap: TaskSnapshot) => void): () => void {
+  ensureListening();
 
-  let set = subscribers.get(taskId)
+  let set = subscribers.get(taskId);
   if (!set) {
-    set = new Set()
-    subscribers.set(taskId, set)
+    set = new Set();
+    subscribers.set(taskId, set);
   }
-  set.add(cb)
+  set.add(cb);
 
   return () => {
-    const s = subscribers.get(taskId)
-    if (!s) return
-    s.delete(cb)
+    const s = subscribers.get(taskId);
+    if (!s) return;
+    s.delete(cb);
     if (s.size === 0) {
-      subscribers.delete(taskId)
+      subscribers.delete(taskId);
       // Do NOT delete the snapshot here — it must survive re-mounts mid-stream.
       // Snapshots are cleared after terminal events (completed/error/cancelled).
     }
-  }
+  };
 }
 
 /**
@@ -152,7 +154,7 @@ export function subscribeToTask(
  * Useful for reading current state on mount without waiting for the next event.
  */
 export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
-  return snapshots.get(taskId)
+  return snapshots.get(taskId);
 }
 
 /**
@@ -160,9 +162,14 @@ export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
  * Call this with the original text so that streamed tokens are appended to it.
  */
 export function initTaskContent(taskId: string, initialContent: string): void {
-  const prev = snapshots.get(taskId) ?? { status: 'queued', streamedContent: '', content: '', seedContent: '' }
-  const next: TaskSnapshot = { ...prev, seedContent: initialContent, content: initialContent }
-  snapshots.set(taskId, next)
+  const prev = snapshots.get(taskId) ?? {
+    status: 'queued',
+    streamedContent: '',
+    content: '',
+    seedContent: '',
+  };
+  const next: TaskSnapshot = { ...prev, seedContent: initialContent, content: initialContent };
+  snapshots.set(taskId, next);
 }
 
-export const taskEventBus = { subscribeToTask, getTaskSnapshot, initTaskContent }
+export const taskEventBus = { subscribeToTask, getTaskSnapshot, initTaskContent };

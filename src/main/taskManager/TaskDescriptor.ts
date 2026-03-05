@@ -1,10 +1,10 @@
-import type { TaskPriority } from '../../shared/types'
-export type { TaskPriority }
+import type { TaskPriority } from '../../shared/types';
+export type { TaskPriority };
 
 /**
  * Task status enumeration.
  */
-export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled'
+export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
 
 /**
  * Options for task submission.
@@ -13,24 +13,24 @@ export interface TaskOptions {
   /**
    * Custom task ID. If provided, the executor will use this instead of generating a UUID.
    */
-  taskId?: string
+  taskId?: string;
 
   /**
    * Task priority (default: 'normal')
    */
-  priority?: TaskPriority
+  priority?: TaskPriority;
 
   /**
    * Timeout in milliseconds (optional)
    * If specified, task will be cancelled after timeout
    */
-  timeoutMs?: number
+  timeoutMs?: number;
 
   /**
    * Window ID for window-specific event routing (optional)
    * If not provided, events will be broadcast to all windows
    */
-  windowId?: number
+  windowId?: number;
 }
 
 /**
@@ -40,56 +40,55 @@ export interface ActiveTask {
   /**
    * Unique task identifier (UUID)
    */
-  taskId: string
+  taskId: string;
 
   /**
    * Task type (handler identifier)
    */
-  type: string
+  type: string;
 
   /**
    * Current task status
    */
-  status: TaskStatus
+  status: TaskStatus;
 
   /**
    * Task priority
    */
-  priority: TaskPriority
+  priority: TaskPriority;
 
   /**
    * Task start timestamp
    */
-  startedAt?: number
+  startedAt?: number;
 
   /**
    * Task completion timestamp
    */
-  completedAt?: number
+  completedAt?: number;
 
   /**
    * Abort controller for cancellation
    */
-  controller: AbortController
+  controller: AbortController;
 
   /**
    * Timeout handle (if timeout specified)
    */
-  timeoutHandle?: NodeJS.Timeout
+  timeoutHandle?: NodeJS.Timeout;
 
   /**
    * Window ID for event routing
    */
-  windowId?: number
+  windowId?: number;
 
   /**
    * Task result (set on completion)
    */
-  result?: unknown
+  result?: unknown;
 
   /**
    * Error message (set on error)
    */
-  error?: string
-
+  error?: string;
 }
