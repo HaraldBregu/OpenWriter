@@ -124,7 +124,7 @@ export class DocumentsWatcherService implements Disposable {
 
     // Don't restart if already watching the same directory
     if (this.currentDirectory === docsDir && this.watcher !== null) {
-      console.log('[DocumentsWatcherService] Already watching:', docsDir)
+      this.logger?.info('DocumentsWatcherService', `Already watching: ${docsDir}`)
       return
     }
 
