@@ -56,7 +56,7 @@ export class TaskReactionBus implements Disposable {
       )
     );
 
-    console.log('[TaskReactionBus] Initialized — listening to task lifecycle events');
+    this.logger?.info('TaskReactionBus', 'Initialized — listening to task lifecycle events');
   }
 
   /** Remove all EventBus listeners. Called by ServiceContainer on shutdown. */
