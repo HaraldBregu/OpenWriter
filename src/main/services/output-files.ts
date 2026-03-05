@@ -438,7 +438,7 @@ export class OutputFilesService implements Disposable {
             cleanups.push(
               fs.unlink(filePath).catch((err) => {
                 if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-                  console.warn(`[OutputFilesService] Failed to clean up old block file: ${filePath}`, err)
+                  this.logger?.warn('OutputFilesService', `Failed to clean up old block file: ${filePath}`, err)
                 }
               })
             )
