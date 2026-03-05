@@ -177,7 +177,7 @@ export class DocumentsWatcherService implements Disposable {
 
       this.currentDirectory = docsDir
     } catch (error) {
-      console.error('[DocumentsWatcherService] Failed to start watching:', error)
+      this.logger?.error('DocumentsWatcherService', 'Failed to start watching', error)
       this.watcher = null
       this.currentDirectory = null
       throw error
