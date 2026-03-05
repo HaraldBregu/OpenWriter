@@ -225,6 +225,6 @@ export class AppIpc implements IpcModule {
       }, AppChannels.setModelSettings)
     )
 
-    console.log(`[IPC] Registered ${this.name} module`)
+    logger.info('AppIpc', `Registered ${this.name} module`)
   }
 }
