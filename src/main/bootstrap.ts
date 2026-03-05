@@ -52,8 +52,6 @@ export interface BootstrapResult {
  * Returns the initialized components for use in the main process.
  */
 export function bootstrapServices(): BootstrapResult {
-  console.log('[Bootstrap] Initializing core infrastructure...')
-
   // Initialize core infrastructure
   const appState = new AppState()
   const container = new ServiceContainer()
@@ -64,8 +62,6 @@ export function bootstrapServices(): BootstrapResult {
   container.register('appState', appState)
   container.register('eventBus', eventBus)
   container.register('windowFactory', windowFactory)
-
-  console.log('[Bootstrap] Registering services...')
 
   // Register services (order matters for dependencies)
   const storeService = container.register('store', new StoreService())
