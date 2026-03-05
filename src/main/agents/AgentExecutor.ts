@@ -46,11 +46,16 @@ export interface ExecutorInput {
 export async function* executeAIAgentsStream(
   input: ExecutorInput
 ): AsyncGenerator<AgentStreamEvent> {
-  const { runId, provider, systemPrompt, temperature, maxTokens, history, prompt, signal, buildGraph } = input
+  const { runId, provider, systemPrompt, temperature, maxTokens, history, prompt, signal, buildGraph, logger } = input
   const { apiKey, modelName } = provider
 
-  console.log(
-    `${LOG_PREFIX} run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
+  const log = {
+    info: (msg: string) => logger ? logger.info(LOG_PREFIX, msg) : console.log(`[${LOG_PREFIX}] ${msg}`),
+    error: (msg: string) => logger ? logger.error(LOG_PREFIX, msg) : console.error(`[${LOG_PREFIX}] ${msg}`),
+  }
+
+  log.info(
+    `run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
   )
 
   // --- Build LangChain model ------------------------------------------------
