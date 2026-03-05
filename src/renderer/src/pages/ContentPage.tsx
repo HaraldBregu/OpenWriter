@@ -140,7 +140,7 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate, debouncedSave]);
 
   const handleContinueWithAI = useCallback((content: string) => {
-    task.submit({ prompt: content }, { metadata: { cursorPosition: content.length } });
+    task.submit({ prompt: content }, { metadata: { positionFrom: content.length } });
   }, [task]);
 
   return (

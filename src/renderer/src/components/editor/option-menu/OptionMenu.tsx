@@ -6,7 +6,7 @@ import { PluginKey } from '@tiptap/pm/state'
 import { OptionMenuPlugin } from './option-menu-plugin'
 
 interface OptionMenuProps {
-  onContinueWithAI?: (content: string) => void
+  onContinueWithAI?: (content: string, positionFrom: number) => void
 }
 
 interface MenuItem {
@@ -95,6 +95,7 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
             .setMeta("preventEditorUpdate", true)
             .run()
           const textBeforeCursor = ed.state.doc.textBetween(0, slashPos, '\n')
+          const { from } = ed.state.selection;
           onContinueWithAIRef.current?.(textBeforeCursor)
         },
       },
