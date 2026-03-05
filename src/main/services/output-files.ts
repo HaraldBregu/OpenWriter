@@ -175,7 +175,7 @@ export class OutputFilesService implements Disposable {
    * Initialize the service by starting to watch the current workspace.
    */
   async initialize(): Promise<void> {
-    console.log('[OutputFilesService] Initializing...')
+    this.logger?.info('OutputFilesService', 'Initializing')
 
     // Listen for workspace changes
     this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
