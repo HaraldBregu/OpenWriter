@@ -458,7 +458,7 @@ export class WorkspaceMetadataService implements Disposable {
   private scheduleSave(metadata: WorkspaceMetadata): void {
     const workspacePath = this.workspaceService.getCurrent()
     if (!workspacePath) {
-      console.warn('[WorkspaceMetadataService] No workspace set, cannot schedule save')
+      this.logger?.warn('WorkspaceMetadataService', 'No workspace set, cannot schedule save')
       return
     }
 
