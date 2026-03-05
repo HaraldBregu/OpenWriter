@@ -104,6 +104,14 @@ const TextEditor = React.memo(
 							.setMeta('preventEditorUpdate', options?.preventEditorUpdate ?? false);
 						editor.view.dispatch(tr);
 					},
+					setSearch(query: string) {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.setSearch(query);
+					},
+					clearSearch() {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.clearSearch();
+					},
 				}) as TextEditorElement;
 			}, [editor]);
 
