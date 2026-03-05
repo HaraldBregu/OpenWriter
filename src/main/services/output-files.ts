@@ -1058,7 +1058,7 @@ export class OutputFilesService implements Disposable {
         oldFiles.map((file) =>
           fs.unlink(path.join(folderPath, file)).catch((err) => {
             if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-              console.warn(`[OutputFilesService] Could not remove old file ${file}:`, err)
+              this.logger?.warn('OutputFilesService', `Could not remove old file ${file}`, err)
             }
           })
         )
