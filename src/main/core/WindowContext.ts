@@ -42,7 +42,8 @@ export class WindowContext {
     this.container = new ServiceContainer()
     this.eventBus = config.eventBus
 
-    console.log(`[WindowContext] Creating context for window ${this.windowId}`)
+    const logger = config.globalContainer.get<any>('logger')
+    logger?.info('WindowContext', `Creating context for window ${this.windowId}`)
 
     // Initialize window-scoped services using the factory
     const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory()
