@@ -1,6 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 import path from 'node:path'
 import { is } from '@electron-toolkit/utils'
+import type { LoggerService } from '../services/logger'
 
 export interface WindowPreset {
   name: string
