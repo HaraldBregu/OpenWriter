@@ -440,7 +440,7 @@ export class WorkspaceMetadataService implements Disposable {
       fs.writeFileSync(filePath, content, 'utf-8')
       this.logger?.info('WorkspaceMetadataService', `Saved metadata to: ${filePath}`)
     } catch (err) {
-      console.error('[WorkspaceMetadataService] Failed to write metadata file:', err)
+      this.logger?.error('WorkspaceMetadataService', 'Failed to write metadata file', err)
       throw new Error(
         `Failed to save workspace metadata: ${err instanceof Error ? err.message : String(err)}`
       )
