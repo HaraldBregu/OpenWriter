@@ -171,7 +171,8 @@ export class WindowContextManager {
    * Destroy all window contexts.
    */
   async destroyAll(): Promise<void> {
-    console.log(`[WindowContextManager] Destroying ${this.contexts.size} window contexts`)
+    const logger = this.globalContainer.get<any>('logger')
+    logger?.info('WindowContextManager', `Destroying ${this.contexts.size} window contexts`)
     for (const context of this.contexts.values()) {
       await context.destroy()
     }
