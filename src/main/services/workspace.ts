@@ -63,7 +63,7 @@ export class WorkspaceService implements Disposable {
       this.logger?.info('WorkspaceService', `Persisted workspace no longer exists, clearing: ${persisted}`)
       this.store.clearCurrentWorkspace()
     } else {
-      console.log('[WorkspaceService] No persisted workspace, starting with null')
+      this.logger?.info('WorkspaceService', 'No persisted workspace, starting with null')
     }
   }
 
