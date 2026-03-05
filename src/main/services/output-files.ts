@@ -194,7 +194,7 @@ export class OutputFilesService implements Disposable {
       await this.startWatching(currentWorkspace)
     }
 
-    console.log('[OutputFilesService] Initialized')
+    this.logger?.info('OutputFilesService', 'Initialized')
   }
 
   /**
