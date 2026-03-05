@@ -728,7 +728,7 @@ function SentenceCompleterTab() {
             disabled={isActive}
             rows={10}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm font-mono leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
-            placeholder="Type your text and place █ where you want the sentence completed…"
+            placeholder="Type your text and the AI will continue writing from where you left off…"
           />
           {!hasCursor && documentText.trim() && (
             <p className="text-xs text-amber-600 dark:text-amber-400">
