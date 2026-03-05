@@ -60,7 +60,7 @@ export class WorkspaceService implements Disposable {
       this.startValidationTimer()
       this.logger?.info('WorkspaceService', `Restored workspace from store: ${persisted}`)
     } else if (persisted) {
-      console.log('[WorkspaceService] Persisted workspace no longer exists, clearing:', persisted)
+      this.logger?.info('WorkspaceService', `Persisted workspace no longer exists, clearing: ${persisted}`)
       this.store.clearCurrentWorkspace()
     } else {
       console.log('[WorkspaceService] No persisted workspace, starting with null')
