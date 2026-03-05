@@ -730,12 +730,6 @@ function SentenceCompleterTab() {
             className="w-full rounded-md border bg-background px-3 py-2 text-sm font-mono leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             placeholder="Type your text and the AI will continue writing from where you left off…"
           />
-          {!hasCursor && documentText.trim() && (
-            <p className="text-xs text-amber-600 dark:text-amber-400">
-              No <code className="font-mono">█</code> cursor marker found — the agent needs it to know where to
-              complete.
-            </p>
-          )}
         </div>
 
         {/* Action buttons */}
