@@ -13,6 +13,10 @@ export const selectAllTasks = selectTasksArray;
 export const selectTaskById = (state: RootState, taskId: string): TrackedTaskState | undefined =>
 	state.tasks.tasks.find((t) => t.taskId === taskId);
 
+/** Memoized selector factory — returns a stable selector instance per taskId. */
+export const makeSelectTaskById = (taskId: string) =>
+	createSelector(selectTasksArray, (tasks) => tasks.find((t) => t.taskId === taskId));
+
 /** All tasks with a given status. */
 export const selectTasksByStatus = createSelector(
 	selectTasksArray,
