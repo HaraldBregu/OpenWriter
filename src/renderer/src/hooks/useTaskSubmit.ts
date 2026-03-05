@@ -128,15 +128,11 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
     }
   }, [status])
 
-  // Best-effort cancel on unmount if the task is still active.
+  // On unmount, release the running guard so re-mounting can submit again,
+  // but do NOT cancel the task — it should continue running in the main process.
   useEffect(() => {
     return () => {
-      const id = taskIdRef.current
-      if (id && runningRef.current) {
-        window.task?.cancel(id).catch(() => {
-          // Best-effort — no recovery needed.
-        })
-      }
+      runningRef.current = false
     }
   }, [])
 

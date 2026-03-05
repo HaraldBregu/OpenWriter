@@ -138,8 +138,8 @@ const ContentPage: React.FC = () => {
     }
   }, [id, isTrashing, navigate]);
 
-  const handleContinueWithAI = useCallback(() => {
-    task.submit({ prompt: stateRef.current.content });
+  const handleContinueWithAI = useCallback((content) => {
+    task.submit({ prompt: content });
   }, [task]);
 
   return (
