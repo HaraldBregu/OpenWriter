@@ -82,14 +82,15 @@ export class TaskReactionBus implements Disposable {
         const result = invoke(handler, payload);
         if (result instanceof Promise) {
           result.catch((err) =>
-            console.error(
-              `[TaskReactionBus] Async error in handler for type="${payload.taskType}":`,
+            this.logger?.error(
+              'TaskReactionBus',
+              `Async error in handler for type="${payload.taskType}"`,
               err
             )
           );
         }
       } catch (err) {
-        console.error(`[TaskReactionBus] Error in handler for type="${payload.taskType}":`, err);
+        this.logger?.error('TaskReactionBus', `Error in handler for type="${payload.taskType}"`, err);
       }
     }
   }
