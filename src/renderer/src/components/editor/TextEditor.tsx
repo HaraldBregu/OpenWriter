@@ -19,10 +19,7 @@ import { BASE_EXTENSIONS } from './extensions';
 import { EditorProvider } from './EditorContext';
 
 export interface TextEditorElement extends HTMLDivElement {
-	insertText: (
-		text: string,
-		options?: { preventEditorUpdate?: boolean; }
-	) => void;
+	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 }
@@ -98,7 +95,7 @@ const TextEditor = React.memo(
 				return Object.assign(el, {
 					insertText(
 						text: string,
-						options: { preventEditorUpdate: boolean; } = {
+						options: { preventEditorUpdate: boolean } = {
 							preventEditorUpdate: false,
 						}
 					) {

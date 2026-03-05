@@ -145,12 +145,12 @@ const ContentPage: React.FC = () => {
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
 
-  console.log('ContentPage rendered');
+	// console.log('ContentPage rendered');
 	// useEffect(() => {
 	// 	if (!task.taskId) return;
 	// 	const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
 	// 		// const completed = snap.status === 'completed';
-  //     console.log('Task snapshot received:', snap);
+	//     console.log('Task snapshot received:', snap);
 	// 		// editorRef.current?.insertText(snap.streamedContent, {
 	// 		// 	preventEditorUpdate: !completed,
 	// 		// });
@@ -273,7 +273,7 @@ const ContentPage: React.FC = () => {
 				<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 					{loaded && (
 						<TextEditor
-            disabled={task.isRunning}
+							disabled={task.isRunning}
 							ref={editorRef}
 							key={id}
 							value={content}

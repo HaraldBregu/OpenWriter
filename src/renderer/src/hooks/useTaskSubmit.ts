@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
 import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
 import { taskAdded, taskRemoved } from '@/store/tasks/actions';
