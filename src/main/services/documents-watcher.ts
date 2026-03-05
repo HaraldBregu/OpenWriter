@@ -344,7 +344,7 @@ export class DocumentsWatcherService implements Disposable {
    */
   private handleWatcherError(error: unknown): void {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error('[DocumentsWatcherService] Watcher error:', error)
+    this.logger?.error('DocumentsWatcherService', 'Watcher error', error)
 
     // Broadcast error to renderer for user notification
     this.eventBus.broadcast('documents:watcher-error', {
