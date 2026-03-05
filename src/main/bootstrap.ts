@@ -115,7 +115,7 @@ export function bootstrapServices(): BootstrapResult {
  * This should be called after services are registered and before app is ready.
  */
 export function bootstrapIpcModules(container: ServiceContainer, eventBus: EventBus): void {
-  console.log('[Bootstrap] Registering IPC modules...')
+  const logger = container.get('logger') as LoggerService
 
   const ipcModules: IpcModule[] = [
     new AppIpc(),
@@ -128,11 +128,11 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
     try {
       module.register(container, eventBus)
     } catch (error) {
-      console.error(`[Bootstrap] Failed to register IPC module: ${module.name}`, error)
+      logger.error('Bootstrap', `Failed to register IPC module: ${module.name}`, error)
     }
   }
 
-  console.log(`[Bootstrap] Registered ${ipcModules.length} IPC modules`)
+  logger.info('Bootstrap', `Registered ${ipcModules.length} IPC modules`)
 }
 
 /**
