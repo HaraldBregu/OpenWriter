@@ -154,6 +154,35 @@ By evening, the lamplighters had given up trying. The old gas lamps flickered on
 		[task]
 	);
 
+	const handleSearchChange = useCallback(
+		(query: string) => {
+			setSearchQuery(query);
+			editorRef.current?.setSearch(query);
+		},
+		[]
+	);
+
+	const closeSearch = useCallback(() => {
+		setSearchOpen(false);
+		setSearchQuery('');
+		editorRef.current?.clearSearch();
+	}, []);
+
+	useEffect(() => {
+		const onKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+				e.preventDefault();
+				setSearchOpen(true);
+				requestAnimationFrame(() => searchInputRef.current?.focus());
+			}
+			if (e.key === 'Escape' && searchOpen) {
+				closeSearch();
+			}
+		};
+		window.addEventListener('keydown', onKeyDown);
+		return () => window.removeEventListener('keydown', onKeyDown);
+	}, [searchOpen, closeSearch]);
+
 	return (
 		<div className="h-full flex flex-col">
 			<div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
