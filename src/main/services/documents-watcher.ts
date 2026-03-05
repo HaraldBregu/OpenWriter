@@ -107,7 +107,7 @@ export class DocumentsWatcherService implements Disposable {
    * @param workspacePath - Current workspace path, or null if no workspace
    */
   async initialize(workspacePath: string | null): Promise<void> {
-    console.log('[DocumentsWatcherService] Initializing with workspace:', workspacePath)
+    this.logger?.info('DocumentsWatcherService', `Initializing with workspace: ${workspacePath}`)
 
     if (workspacePath) {
       await this.startWatching(workspacePath)
