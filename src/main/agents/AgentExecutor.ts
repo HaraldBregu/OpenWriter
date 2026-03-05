@@ -105,7 +105,7 @@ export async function* executeAIAgentsStream(
       }
     }
 
-    console.log(`${LOG_PREFIX} run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`)
+    log.info(`run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`)
     yield { type: 'done', content: fullContent, tokenCount, runId }
   } catch (error: unknown) {
     const kind = classifyError(error)
@@ -116,7 +116,7 @@ export async function* executeAIAgentsStream(
     }
 
     const rawMessage = error instanceof Error ? error.message : String(error)
-    console.error(`${LOG_PREFIX} run=${runId} error (${kind}):`, rawMessage)
+    log.error(`run=${runId} error (${kind}): ${rawMessage}`)
 
     yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId }
   }
