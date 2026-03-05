@@ -739,7 +739,7 @@ export class OutputFilesService implements Disposable {
     try {
       await this.watcher.close()
     } catch (error) {
-      console.error('[OutputFilesService] Error closing watcher:', error)
+      this.logger?.error('OutputFilesService', 'Error closing watcher', error)
     } finally {
       this.watcher = null
       this.currentOutputDir = null
