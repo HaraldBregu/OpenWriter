@@ -193,7 +193,7 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
     }
 
     const rawMessage = error instanceof Error ? error.message : String(error);
-    log.error(`run=${runId} graph error (${kind}): ${rawMessage}`);
+    logger?.error(LOG_PREFIX, `run=${runId} graph error (${kind}): ${rawMessage}`);
 
     yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
   }
