@@ -30,7 +30,7 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	ListItem,
 	ListKeymap,
 	InlinePlaceholder.configure({
-		placeholder: "thinking...",
+		placeholder: 'thinking...',
 	}),
 	Placeholder.configure({
 		placeholder: ({ node }) => {
