@@ -438,7 +438,7 @@ export class WorkspaceMetadataService implements Disposable {
     try {
       const content = JSON.stringify(metadata, null, 2)
       fs.writeFileSync(filePath, content, 'utf-8')
-      console.log('[WorkspaceMetadataService] Saved metadata to:', filePath)
+      this.logger?.info('WorkspaceMetadataService', `Saved metadata to: ${filePath}`)
     } catch (err) {
       console.error('[WorkspaceMetadataService] Failed to write metadata file:', err)
       throw new Error(
