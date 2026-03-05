@@ -141,6 +141,14 @@ const ContentPage: React.FC = () => {
     }
   }, [id, isTrashing, navigate, debouncedSave]);
 
+  useEffect(() => {
+    if (!task.taskId) return;
+    const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+      console.log("[ContentPage] Task event:", task.taskId, snap);
+    });
+    return unsub;
+  }, [task.taskId]);
+
   const handleContinueWithAI = useCallback((content: string, positionFrom: number) => {
     task.submit({ prompt: content }, { metadata: { positionFrom } });
   }, [task]);
