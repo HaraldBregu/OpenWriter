@@ -1080,7 +1080,7 @@ export class OutputFilesService implements Disposable {
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         await fs.mkdir(dirPath, { recursive: true })
-        console.log(`[OutputFilesService] Created directory: ${dirPath}`)
+        this.logger?.info('OutputFilesService', `Created directory: ${dirPath}`)
       } else {
         throw new Error(`Failed to access directory: ${(err as Error).message}`)
       }
