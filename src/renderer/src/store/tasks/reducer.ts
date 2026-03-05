@@ -11,7 +11,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { TaskEvent, TaskPriority } from '../../../../shared/types'
-import { TASK_MAX_EVENT_HISTORY } from '@/constants'
 import { initialState } from './state'
 import type { TrackedTaskState, TaskEventRecord, TasksState } from './types'
 
@@ -21,7 +20,7 @@ export type { TasksState }
 // Helpers (run inside Immer-wrapped reducers, so mutations are safe here)
 // ---------------------------------------------------------------------------
 
-const MAX_EVENT_HISTORY = TASK_MAX_EVENT_HISTORY
+const MAX_EVENT_HISTORY = 50
 
 /**
  * Append an event record to a task's ring buffer. Operates on the draft task

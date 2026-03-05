@@ -99,7 +99,17 @@ const ContentPage: React.FC = () => {
   const debounceSave = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(persistToDisk, 2500);
+    console.log("[ContentPage] Scheduled save in 2.5s");
   }, [persistToDisk]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const { charCount, wordCount } = useMemo(() => {
     const trimmed = content.trim();
