@@ -979,7 +979,7 @@ export class OutputFilesService implements Disposable {
           if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
             throw err
           }
-          console.warn(`[OutputFilesService] Block file missing during migration: ${blockPath}`)
+          this.logger?.warn('OutputFilesService', `Block file missing during migration: ${blockPath}`)
         }
       }
 
