@@ -1064,7 +1064,7 @@ export class OutputFilesService implements Disposable {
         )
       )
 
-      console.log(`[OutputFilesService] Migrated ${folderPath} to content.md (removed ${oldFiles.length} old files)`)
+      this.logger?.info('OutputFilesService', `Migrated ${folderPath} to content.md (removed ${oldFiles.length} old files)`)
     } catch (err) {
       // Non-fatal: migration failure just means next load will re-attempt
       console.error(`[OutputFilesService] Migration failed for ${folderPath}:`, err)
