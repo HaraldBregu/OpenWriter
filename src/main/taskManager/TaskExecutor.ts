@@ -58,7 +58,8 @@ export class TaskExecutor implements Disposable {
   constructor(
     private readonly registry: TaskHandlerRegistry,
     private readonly eventBus: EventBus,
-    private readonly maxConcurrency: number = 5
+    private readonly maxConcurrency: number = 5,
+    private readonly logger?: LoggerService
   ) {
     // Run GC every minute to evict expired completed tasks
     this.gcHandle = setInterval(() => this.gcCompletedTasks(), 60_000)
