@@ -88,7 +88,12 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
         icon: Sparkles,
         section: 'ai' as const,
         command: (ed, slashPos, queryLength) => {
-          ed.chain().focus().deleteRange({ from: slashPos, to: slashPos + 1 + queryLength }).run()
+          ed
+            .chain()
+            .focus()
+            .deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+            .setMeta("preventEditorUpdate", true)
+            .run()
           const textBeforeCursor = ed.state.doc.textBetween(0, slashPos, '\n')
           onContinueWithAIRef.current?.(textBeforeCursor)
         },
@@ -159,7 +164,7 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
       pluginKey,
       editor,
       element: el,
-      onShow: () => {},
+      onShow: () => { },
       onHide: () => {
         setQuery('')
         setSelectedIndex(0)
@@ -192,35 +197,34 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
     >
       {filteredItems.length > 0
         ? filteredItems.map((item, index) => {
-            const Icon = item.icon
-            const isAiItem = item.section === 'ai'
-            // Show the separator immediately before the first AI item, but only
-            // when there are regular items above it.
-            const isFirstAiItem = isAiItem && showSeparator && index === filteredItems.findIndex((i) => i.section === 'ai')
+          const Icon = item.icon
+          const isAiItem = item.section === 'ai'
+          // Show the separator immediately before the first AI item, but only
+          // when there are regular items above it.
+          const isFirstAiItem = isAiItem && showSeparator && index === filteredItems.findIndex((i) => i.section === 'ai')
 
-            return (
-              <React.Fragment key={item.label}>
-                {isFirstAiItem && <hr className="my-1 border-border" />}
-                <button
-                  className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors ${
-                    index === selectedIndex
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-popover-foreground hover:bg-accent hover:text-accent-foreground'
+          return (
+            <React.Fragment key={item.label}>
+              {isFirstAiItem && <hr className="my-1 border-border" />}
+              <button
+                className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors ${index === selectedIndex
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-popover-foreground hover:bg-accent hover:text-accent-foreground'
                   }`}
-                  onMouseEnter={() => setSelectedIndex(index)}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    executeCommand(item)
-                  }}
-                >
-                  <Icon
-                    className={`h-4 w-4 shrink-0 ${isAiItem ? 'text-violet-500' : 'text-muted-foreground'}`}
-                  />
-                  <span>{item.label}</span>
-                </button>
-              </React.Fragment>
-            )
-          })
+                onMouseEnter={() => setSelectedIndex(index)}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  executeCommand(item)
+                }}
+              >
+                <Icon
+                  className={`h-4 w-4 shrink-0 ${isAiItem ? 'text-violet-500' : 'text-muted-foreground'}`}
+                />
+                <span>{item.label}</span>
+              </button>
+            </React.Fragment>
+          )
+        })
         : <div className="px-2 py-1.5 text-sm text-muted-foreground">No results</div>}
     </div>
   )

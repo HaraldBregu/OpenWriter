@@ -23,8 +23,7 @@ import { BASE_EXTENSIONS } from "./extensions";
 import { EditorProvider } from "./EditorContext";
 
 export interface TextEditorElement extends HTMLDivElement {
-  insertContent: (content: string) => void;
-  insertText: (text: string) => void;
+  insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 }
 
 export interface TextEditorProps {
@@ -67,8 +66,8 @@ const TextEditor = React.memo(
               ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
             }
           },
-          onUpdate: ({ editor: ed }: { editor: Editor }) => {
-            if (ed.storage.transactionFilter?.silent) return;
+          onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
+            if (transaction.getMeta("preventEditorUpdate")) return;
             if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
             emitTimerRef.current = setTimeout(() => {
               const md = tiptapDocToMarkdown(ed.state.doc);
@@ -93,21 +92,13 @@ const TextEditor = React.memo(
       useImperativeHandle(ref, () => {
         const el = rootRef.current!;
         return Object.assign(el, {
-          insertContent(content: string) {
+          insertText(text: string, options: { preventEditorUpdate?: boolean } = { preventEditorUpdate: false }) {
             if (!editor || editor.isDestroyed) return;
-            editor.storage.transactionFilter.silent = true;
-            const doc = markdownToTiptapJSON(editor.schema, content);
-            if (doc) {
-              editor.commands.insertContent(doc.content.toJSON());
-            }
-            editor.storage.transactionFilter.silent = false;
-          },
-          insertText(text: string) {
-            if (!editor || editor.isDestroyed) return;
-            editor.storage.transactionFilter.silent = true;
             const { from } = editor.state.selection;
-            editor.chain().focus().insertContentAt(from, text).run();
-            editor.storage.transactionFilter.silent = false;
+            const tr = editor.state.tr
+              .insertText(text, from)
+              .setMeta("preventEditorUpdate", options?.preventEditorUpdate ?? false);
+            editor.view.dispatch(tr);
           },
         }) as TextEditorElement;
       }, [editor]);

@@ -120,7 +120,6 @@ const ContentPage: React.FC = () => {
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
-    console.log("[ContentPage] Content changed, scheduling save...", { newContent });
     debouncedSave();
   }, [debouncedSave]);
 
@@ -141,9 +140,7 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate, debouncedSave]);
 
   const handleContinueWithAI = useCallback((content) => {
-    console.log("[ContentPage] Continuing with AI...", { content });
-    // task.submit({ prompt: content });
-    editorRef.current?.insertText("a new text here")
+    task.submit({ prompt: content });
   }, [task]);
 
   return (
