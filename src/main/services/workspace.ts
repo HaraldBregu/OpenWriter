@@ -180,7 +180,7 @@ export class WorkspaceService implements Disposable {
    */
   destroy(): void {
     this.stopValidationTimer()
-    console.log('[WorkspaceService] Destroyed')
+    this.logger?.info('WorkspaceService', 'Destroyed')
   }
 
   // ---------------------------------------------------------------------------
