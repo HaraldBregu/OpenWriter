@@ -19,7 +19,10 @@ import { BASE_EXTENSIONS } from './extensions';
 import { EditorProvider } from './EditorContext';
 
 export interface TextEditorElement extends HTMLDivElement {
-	insertText: (text: string, options?: { preventEditorUpdate?: boolean, editable?: boolean }) => void;
+	insertText: (
+		text: string,
+		options?: { preventEditorUpdate?: boolean; editable: boolean }
+	) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 }
@@ -95,15 +98,21 @@ const TextEditor = React.memo(
 				return Object.assign(el, {
 					insertText(
 						text: string,
-						options: { preventEditorUpdate?: boolean, editable?: boolean } = { preventEditorUpdate: false, editable: true }
+						options: { preventEditorUpdate: boolean; editable: boolean } = {
+							preventEditorUpdate: false,
+							editable: true,
+						}
 					) {
 						if (!editor || editor.isDestroyed) return;
+						editor.setEditable(true);
 						const { from } = editor.state.selection;
 						const tr = editor.state.tr
 							.insertText(text, from)
-							.setMeta('preventEditorUpdate', options?.preventEditorUpdate ?? false);
+							.setMeta('preventEditorUpdate', options?.preventEditorUpdate);
 						editor.view.dispatch(tr);
-						editor.setEditable(options?.editable ?? true);
+						if (!options.editable) {
+							editor.setEditable(false);
+						}
 					},
 					setSearch(query: string) {
 						if (!editor || editor.isDestroyed) return;

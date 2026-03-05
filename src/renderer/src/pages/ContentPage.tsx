@@ -149,7 +149,7 @@ const ContentPage: React.FC = () => {
 		if (!task.taskId) return;
 		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
 			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, { preventEditorUpdate: !completed });
+			editorRef.current?.insertText(snap.streamedContent, { preventEditorUpdate: !completed, editable: completed });
 		});
 		return unsub;
 	}, [task.taskId]);
