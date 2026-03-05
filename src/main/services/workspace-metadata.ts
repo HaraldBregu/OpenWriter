@@ -531,12 +531,7 @@ export class WorkspaceMetadataService implements Disposable {
 
     if (newPath) {
       const metadata = this.readMetadataFile(newPath)
-      console.log(
-        '[WorkspaceMetadataService] Switched workspace, loaded',
-        metadata?.settings.directories.length ?? 0,
-        'directories from',
-        newPath
-      )
+      this.logger?.info('WorkspaceMetadataService', `Switched workspace, loaded ${metadata?.settings.directories.length ?? 0} directories from ${newPath}`)
     } else {
       console.log('[WorkspaceMetadataService] Workspace cleared, metadata reset')
     }
