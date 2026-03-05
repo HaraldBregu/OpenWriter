@@ -68,6 +68,7 @@ const TextEditor = React.memo(
             }
           },
           onUpdate: ({ editor: ed }: { editor: Editor }) => {
+            if (ed.storage.transactionFilter?.silent) return;
             if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
             emitTimerRef.current = setTimeout(() => {
               const md = tiptapDocToMarkdown(ed.state.doc);
