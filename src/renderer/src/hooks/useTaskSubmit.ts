@@ -105,6 +105,12 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 	// Guard: prevents re-submitting while a task is still active.
 	const runningRef = useRef<boolean>(false);
 
+	// Keep input/options in refs so submit doesn't depend on their identity.
+	const inputRef = useRef(input);
+	inputRef.current = input;
+	const optionsRef = useRef(options);
+	optionsRef.current = options;
+
 	// Read this task's slice of Redux state. Returns undefined when taskId is
 	// null (before first submit) or after the task has been removed.
 	const taskState = useAppSelector((state) =>
