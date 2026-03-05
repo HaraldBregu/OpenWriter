@@ -95,15 +95,19 @@ const TextEditor = React.memo(
         return Object.assign(el, {
           insertContent(content: string) {
             if (!editor || editor.isDestroyed) return;
+            editor.storage.transactionFilter.silent = true;
             const doc = markdownToTiptapJSON(editor.schema, content);
             if (doc) {
               editor.commands.insertContent(doc.content.toJSON());
             }
+            editor.storage.transactionFilter.silent = false;
           },
           insertText(text: string) {
             if (!editor || editor.isDestroyed) return;
+            editor.storage.transactionFilter.silent = true;
             const { from } = editor.state.selection;
             editor.chain().focus().insertContentAt(from, text).run();
+            editor.storage.transactionFilter.silent = false;
           },
         }) as TextEditorElement;
       }, [editor]);
