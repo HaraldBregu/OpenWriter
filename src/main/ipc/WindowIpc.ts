@@ -27,7 +27,8 @@ import { WindowChannels } from '../../shared/channels'
 export class WindowIpc implements IpcModule {
   readonly name = 'window'
 
-  register(_container: ServiceContainer, _eventBus: EventBus): void {
+  register(container: ServiceContainer, _eventBus: EventBus): void {
+    const logger = container.get<LoggerService>('logger')
     // --- Send handlers (fire-and-forget) ---
 
     ipcMain.on(WindowChannels.minimize, (event) => {
