@@ -162,7 +162,7 @@ const ContentPage: React.FC = () => {
 		(content: string, positionFrom: number) => {
 			task.submit({ prompt: content + '<<INSERT_HERE>>' }, { metadata: { positionFrom } });
 		},
-		[task]
+		[task.submit]
 	);
 
 	const handleSearchChange = useCallback((query: string) => {
