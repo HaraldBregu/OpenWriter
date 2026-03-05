@@ -146,15 +146,26 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
       if (signal?.aborted) break
 
       // streamMode:"messages" yields [chunk, metadata] tuples
-      const [chunk] = Array.isArray(item) ? item : [item, {}]
+      const [chunk, metadata] = Array.isArray(item) ? item : [item, {}]
 
       if (!chunk) continue
 
+      // Skip non-streaming chunks. LangGraph emits the complete AIMessage
+      // at the end of the stream — we only want the incremental AIMessageChunk
+      // deltas. The metadata flag `langgraph_triggered_start` marks the first
+      // chunk of a new message; complete messages lack it entirely OR the chunk
+      // itself is an AIMessage (not AIMessageChunk).
+      const isStreamingChunk =
+        typeof chunk === 'object' &&
+        chunk !== null &&
+        'lc_type' in chunk &&
+        (chunk as { lc_type?: string }).lc_type !== 'AIMessage'
+
+      if (!isStreamingChunk) continue
+
       // Extract text token from the chunk content
       const token = extractTokenFromChunk(
-        typeof chunk === 'object' && chunk !== null && 'content' in chunk
-          ? (chunk as { content: unknown }).content
-          : ''
+        'content' in chunk ? (chunk as { content: unknown }).content : ''
       )
 
       if (token) {
