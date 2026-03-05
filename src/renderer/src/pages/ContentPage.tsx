@@ -95,7 +95,7 @@ const ContentPage: React.FC = () => {
           content: c,
           metadata: { title: t },
         });
-      }, 1500),
+      }, 1500, { leading: false, trailing: true }),
     [id, loaded]
   );
 
