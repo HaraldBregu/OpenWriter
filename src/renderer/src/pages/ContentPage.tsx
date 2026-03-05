@@ -88,7 +88,7 @@ const ContentPage: React.FC = () => {
 		() =>
 			debounce(
 				() => {
-					if (!id || !loaded) return;
+					if (!id || !loadedRef.current) return;
 					const { title: t, content: c } = stateRef.current;
 					window.workspace.updateOutput({
 						type: 'writings',
@@ -100,7 +100,7 @@ const ContentPage: React.FC = () => {
 				1500,
 				{ leading: false, trailing: true }
 			),
-		[id, loaded]
+		[id]
 	);
 
 	useEffect(() => {
