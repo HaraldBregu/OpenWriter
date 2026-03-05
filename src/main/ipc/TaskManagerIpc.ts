@@ -121,10 +121,10 @@ export class TaskManagerIpc implements IpcModule {
       const { windowId } = event.payload as { windowId: number }
       const cancelledCount = executor.cancelByWindow(windowId)
       if (cancelledCount > 0) {
-        console.log(`[TaskManagerIpc] Cancelled ${cancelledCount} task(s) for closed window ${windowId}`)
+        logger.info('TaskManagerIpc', `Cancelled ${cancelledCount} task(s) for closed window ${windowId}`)
       }
     })
 
-    console.log(`[IPC] Registered ${this.name} module`)
+    logger.info('TaskManagerIpc', `Registered ${this.name} module`)
   }
 }
