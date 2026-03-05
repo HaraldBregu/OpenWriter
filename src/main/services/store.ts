@@ -113,7 +113,6 @@ export class StoreService {
   }
 
   setSelectedModel(providerId: string, modelId: string): void {
-    console.log(`[Store] setSelectedModel: provider=${providerId} model=${modelId}`)
     const existing = this.data.modelSettings[providerId] ?? this.migrateProviderSettings({})
     this.data.modelSettings[providerId] = {
       ...existing,
