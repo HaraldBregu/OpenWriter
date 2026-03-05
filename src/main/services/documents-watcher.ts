@@ -402,7 +402,7 @@ export class DocumentsWatcherService implements Disposable {
     const fileId = this.extractFileIdFromFilePath(filePath)
 
     if (!fileId) {
-      console.warn('[DocumentsWatcherService] Could not extract file ID from:', filePath)
+      this.logger?.warn('DocumentsWatcherService', `Could not extract file ID from: ${filePath}`)
       return
     }
 
