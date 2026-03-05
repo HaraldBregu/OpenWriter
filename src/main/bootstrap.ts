@@ -51,7 +51,6 @@ export function bootstrapServices(): BootstrapResult {
   const appState = new AppState();
   const container = new ServiceContainer();
   const eventBus = new EventBus();
-  const windowFactory = new WindowFactory();
 
   // Register core infrastructure
   container.register('appState', appState);
