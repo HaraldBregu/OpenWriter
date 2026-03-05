@@ -413,8 +413,7 @@ export class WorkspaceMetadataService implements Disposable {
         parsed.settings.directories = []
       }
 
-      console.log('[WorkspaceMetadataService] Read', parsed.settings.directories.length, 'directories from', filePath,
-        'paths=', parsed.settings.directories.map(d => d.path).join(', '))
+      this.logger?.info('WorkspaceMetadataService', `Read ${parsed.settings.directories.length} directories from ${filePath} paths=${parsed.settings.directories.map(d => d.path).join(', ')}`)
 
       return parsed
     } catch (err) {
