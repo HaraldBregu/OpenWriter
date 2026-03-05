@@ -172,7 +172,7 @@ export class DocumentsWatcherService implements Disposable {
         .on('unlink', (filePath) => this.handleFileRemoved(filePath))
         .on('error', (error) => this.handleWatcherError(error))
         .on('ready', () => {
-          console.log('[DocumentsWatcherService] Watcher ready, monitoring:', docsDir)
+          this.logger?.info('DocumentsWatcherService', `Watcher ready, monitoring: ${docsDir}`)
         })
 
       this.currentDirectory = docsDir
