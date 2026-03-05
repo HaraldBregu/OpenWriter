@@ -29,6 +29,7 @@ import {
   type TextEditorElement,
 } from "@/components/editor/TextEditor";
 import { useTaskSubmit } from "../hooks/useTaskSubmit";
+import { debounce } from "lodash";
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
@@ -96,7 +97,7 @@ const ContentPage: React.FC = () => {
     });
   }, [id, loaded]);
 
-  const debounceSave = useCallback((delayMs = 500) => {
+  const debounceSave = useCallback((delayMs = 1500) => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(persistToDisk, delayMs);
   }, [persistToDisk]);
@@ -148,9 +149,8 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback((content) => {
-    debounceSave(1500);
     task.submit({ prompt: content });
-  }, [task, debounceSave]);
+  }, [task]);
 
   return (
     <div className="h-full flex flex-col">
