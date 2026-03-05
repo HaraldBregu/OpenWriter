@@ -20,6 +20,8 @@ import { EditorProvider } from './EditorContext';
 
 export interface TextEditorElement extends HTMLDivElement {
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
+	setSearch: (query: string) => void;
+	clearSearch: () => void;
 }
 
 export interface TextEditorProps {
