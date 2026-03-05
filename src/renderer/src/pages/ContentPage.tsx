@@ -28,6 +28,7 @@ import {
   TextEditor,
   type TextEditorElement,
 } from "@/components/editor/TextEditor";
+import { useTaskSubmit } from "../hooks/useTaskSubmit";
 
 const ContentPage: React.FC = () => {
   const { t } = useTranslation();
