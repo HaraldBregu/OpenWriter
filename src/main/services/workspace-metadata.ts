@@ -404,7 +404,7 @@ export class WorkspaceMetadataService implements Disposable {
 
       // Basic schema validation
       if (!parsed.metadata || !parsed.settings) {
-        console.warn('[WorkspaceMetadataService] Invalid metadata file schema, using defaults')
+        this.logger?.warn('WorkspaceMetadataService', 'Invalid metadata file schema, using defaults')
         return null
       }
 
