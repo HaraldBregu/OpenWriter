@@ -111,7 +111,7 @@ const definition: AgentDefinition = {
   id: 'sentence-completer',
   name: 'Sentence Completer',
   description:
-    'Continues writing from the end of the given text, matching the tone and style of the surrounding content.',
+    'Finishes the current unfinished sentence and stops, matching the tone and style of the text.',
   category: 'writing',
   defaultConfig: {
     systemPrompt: SYSTEM_PROMPT,
