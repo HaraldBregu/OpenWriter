@@ -231,7 +231,7 @@ export class TaskExecutor implements Disposable {
       data: { taskId, priority: newPriority, position }
     } satisfies TaskEvent)
 
-    console.log(`[TaskExecutor] Task ${taskId} priority updated to "${newPriority}"`)
+    // Task log
 
     // A higher priority task may now be eligible to run sooner
     this.drainQueue()
@@ -342,7 +342,7 @@ export class TaskExecutor implements Disposable {
     // Set up timeout if specified
     if (timeoutMs !== undefined) {
       task.timeoutHandle = setTimeout(() => {
-        console.log(`[TaskExecutor] Task ${taskId} timed out after ${timeoutMs}ms`)
+        // Task log
         controller.abort()
       }, timeoutMs)
     }
@@ -354,7 +354,7 @@ export class TaskExecutor implements Disposable {
 
     this.eventBus.emit('task:started', { taskId, taskType: type, windowId })
 
-    console.log(`[TaskExecutor] Task ${taskId} started (type="${type}")`)
+    // Task log
 
     try {
       const handler = this.registry.get(type)
@@ -399,13 +399,13 @@ export class TaskExecutor implements Disposable {
 
       this.eventBus.emit('task:completed', { taskId, taskType: type, result, durationMs, windowId })
 
-      console.log(`[TaskExecutor] Task ${taskId} completed in ${durationMs}ms`)
+      // Task log
     } catch (err) {
       // Task may have been cancelled via cancel()
       if (!this.activeTasks.has(taskId)) return
 
       if (err instanceof Error && err.name === 'AbortError') {
-        console.log(`[TaskExecutor] Task ${taskId} aborted`)
+        // Task log
         task.status = 'cancelled'
         task.completedAt = Date.now()
 
@@ -418,7 +418,7 @@ export class TaskExecutor implements Disposable {
       } else {
         const message = err instanceof Error ? err.message : String(err)
         const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR'
-        console.error(`[TaskExecutor] Task ${taskId} failed:`, err)
+        // Task error, err)
 
         task.status = 'error'
         task.completedAt = Date.now()
