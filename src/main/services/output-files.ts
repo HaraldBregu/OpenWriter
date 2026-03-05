@@ -336,7 +336,7 @@ export class OutputFilesService implements Disposable {
           const file = await this.loadFolder(folderPath, outputType)
           outputFiles.push(file)
         } catch (err) {
-          console.warn(`[OutputFilesService] Failed to load folder ${entry.name}:`, err)
+          this.logger?.warn('OutputFilesService', `Failed to load folder ${entry.name}`, err)
         }
       }
     }
