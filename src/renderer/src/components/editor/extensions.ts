@@ -13,6 +13,7 @@ import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import { ListKeymap } from '@tiptap/extension-list';
 import { Placeholder } from '@tiptap/extensions';
+import { SearchExtension } from './search-extension';
 // import { InlinePlaceholder } from './inline-placeholder';
 
 export const BASE_EXTENSIONS: AnyExtension[] = [
