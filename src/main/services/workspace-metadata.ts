@@ -117,7 +117,7 @@ export class WorkspaceMetadataService implements Disposable {
         workspacePath
       )
     } else {
-      console.log('[WorkspaceMetadataService] No workspace set, starting empty')
+      this.logger?.info('WorkspaceMetadataService', 'No workspace set, starting empty')
     }
 
     // Listen for workspace changes to re-initialize
