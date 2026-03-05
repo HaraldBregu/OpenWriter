@@ -137,7 +137,7 @@ const ContentPage: React.FC = () => {
       console.error("[ContentPage] Failed to trash writing:", err);
       setIsTrashing(false);
     }
-  }, [id, isTrashing, navigate]);
+  }, [id, isTrashing, navigate, debouncedSave]);
 
   const handleContinueWithAI = useCallback((content) => {
     task.submit({ prompt: content });
