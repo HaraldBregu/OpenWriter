@@ -15,8 +15,9 @@ import { extractTokenFromChunk, classifyError, toUserMessage } from '../shared/a
 import { createChatModel } from '../shared/ChatModelFactory'
 import type { AgentStreamEvent } from './AgentTypes'
 import type { AgentHistoryMessage } from './AgentTypes'
+import type { LoggerService } from '../services/logger'
 
-const LOG_PREFIX = '[AgentExecutor]'
+const LOG_PREFIX = 'AgentExecutor'
 
 export interface ExecutorInput {
   runId: string
@@ -27,6 +28,7 @@ export interface ExecutorInput {
   history: AgentHistoryMessage[]
   prompt: string
   signal?: AbortSignal
+  logger?: LoggerService
   /**
    * LangGraph factory — when supplied the executor runs the graph path.
    * The factory receives the already-configured streaming model.
