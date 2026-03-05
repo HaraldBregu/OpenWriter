@@ -42,6 +42,10 @@ const ContentPage: React.FC = () => {
 
   const editorRef = useRef<TextEditorElement>(null);
 
+  const task = useTaskSubmit<{ prompt: string }>("agent-text-continuation", {
+    prompt: content,
+  });
+
   const stateRef = useRef({ title, content });
   stateRef.current = { title, content };
 
