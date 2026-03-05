@@ -82,7 +82,7 @@
 .ProseMirror {
   outline: none;
   min-height: 1em;
-  font-family: 'Alegreya', serif;
+  font-family: 'Merriweather', serif;
 }
 
 .ProseMirror > * + * {
