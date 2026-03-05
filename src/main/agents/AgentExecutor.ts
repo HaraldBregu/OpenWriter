@@ -60,14 +60,7 @@ export async function* executeAIAgentsStream(
   } = input;
   const { apiKey, modelName } = provider;
 
-  const log = {
-    info: (msg: string) =>
-      logger ? logger.info(LOG_PREFIX, msg) : console.log(`[${LOG_PREFIX}] ${msg}`),
-    error: (msg: string) =>
-      logger ? logger.error(LOG_PREFIX, msg) : console.error(`[${LOG_PREFIX}] ${msg}`),
-  };
-
-  log.info(
+  logger?.info(LOG_PREFIX,
     `run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
   );
 
