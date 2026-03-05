@@ -341,7 +341,7 @@ export class OutputFilesService implements Disposable {
       }
     }
 
-    console.log(`[OutputFilesService] Loaded ${outputFiles.length} files for type "${outputType}"`)
+    this.logger?.info('OutputFilesService', `Loaded ${outputFiles.length} files for type "${outputType}"`)
 
     return outputFiles
   }
