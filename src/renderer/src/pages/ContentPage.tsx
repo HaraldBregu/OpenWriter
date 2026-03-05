@@ -139,8 +139,8 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback(() => {
-    editorRef.current?.insertText("Hello from AI!");
-  }, []);
+    task.submit({ prompt: stateRef.current.content });
+  }, [task]);
 
   return (
     <div className="h-full flex flex-col">
