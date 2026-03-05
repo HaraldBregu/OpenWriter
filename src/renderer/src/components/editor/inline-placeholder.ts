@@ -69,3 +69,8 @@
 //   user-select: none;
 //   font-style: italic;
 // }
+// Key details:
+
+// side: 1 — This is the critical option. It tells ProseMirror to render the widget after the cursor, not before it. Use side: -1 if you ever want it before.
+// $cursor.pos === $cursor.end() — This checks that the cursor is at the very end of its parent node (e.g., a paragraph). You can relax this condition if you want the placeholder to show anywhere, not just at the end of a block.
+// contenteditable="false" — Prevents the user from accidentally placing their cursor inside the decoration span.
