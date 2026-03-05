@@ -6,6 +6,7 @@
  * chained tasks, analytics, etc.) without coupling to the executor itself.
  */
 
+import type { LoggerService } from '../../services/logger';
 import type {
   TaskReactionHandler,
   TaskSubmittedEvent,
