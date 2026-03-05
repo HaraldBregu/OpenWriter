@@ -197,7 +197,7 @@ export class DocumentsWatcherService implements Disposable {
     try {
       await this.watcher.close()
     } catch (error) {
-      console.error('[DocumentsWatcherService] Error closing watcher:', error)
+      this.logger?.error('DocumentsWatcherService', 'Error closing watcher', error)
     } finally {
       this.watcher = null
       this.currentDirectory = null
