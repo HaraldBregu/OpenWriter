@@ -72,7 +72,6 @@ export class Main {
 
     // Create window context for isolated services
     this.windowContextManager.create(this.window)
-    console.log(`[Main] Created window context for window ${this.window.id}`)
 
     // Attach common window handlers (shared with workspace windows)
     this.attachCommonWindowHandlers(this.window)
