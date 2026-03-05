@@ -262,7 +262,7 @@ export class DocumentsWatcherService implements Disposable {
    * Cleanup on shutdown.
    */
   destroy(): void {
-    console.log('[DocumentsWatcherService] Destroying...')
+    this.logger?.info('DocumentsWatcherService', 'Destroying')
 
     // Unsubscribe from workspace events
     if (this.workspaceEventUnsubscribe) {
@@ -278,10 +278,10 @@ export class DocumentsWatcherService implements Disposable {
 
     // Stop watching (async, but we don't await in destroy)
     this.stopWatching().catch((error) => {
-      console.error('[DocumentsWatcherService] Error during destroy:', error)
+      this.logger?.error('DocumentsWatcherService', 'Error during destroy', error)
     })
 
-    console.log('[DocumentsWatcherService] Destroyed')
+    this.logger?.info('DocumentsWatcherService', 'Destroyed')
   }
 
   // ---------------------------------------------------------------------------
