@@ -120,7 +120,7 @@ export class TaskExecutor implements Disposable {
       data: { taskId, taskType: type, position }
     } satisfies TaskEvent)
 
-    console.log(`[TaskExecutor] Task ${taskId} queued (type="${type}", priority=${priority})`)
+    // Task queued and added to queue
 
     this.drainQueue()
 
