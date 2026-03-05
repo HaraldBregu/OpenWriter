@@ -413,7 +413,7 @@ export class DocumentsWatcherService implements Disposable {
       timestamp: Date.now()
     }
 
-    console.log('[DocumentsWatcherService] Document file', type, ':', fileId)
+    this.logger?.info('DocumentsWatcherService', `Document file ${type}: ${fileId}`)
 
     // Broadcast to all renderer windows
     this.eventBus.broadcast('documents:file-changed', event)
