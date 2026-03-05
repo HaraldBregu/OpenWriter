@@ -496,6 +496,7 @@ function TextContinuationTab() {
   useEffect(() => {
     if (!task.taskId) return
     const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+      console.log('Received task snapshot:', snap)
       if (snap.content) {
         setOutput(snap.content)
       }
