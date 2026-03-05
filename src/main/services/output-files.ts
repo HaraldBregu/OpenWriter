@@ -259,7 +259,7 @@ export class OutputFilesService implements Disposable {
       fs.writeFile(configPath, JSON.stringify(metadata, null, 2), 'utf-8'),
     ])
 
-    console.log(`[OutputFilesService] Saved output folder: ${folderPath}`)
+    this.logger?.info('OutputFilesService', `Saved output folder: ${folderPath}`)
 
     return {
       id: folderName,
