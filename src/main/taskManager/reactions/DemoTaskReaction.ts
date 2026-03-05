@@ -24,6 +24,8 @@ function variant(input: unknown): string {
 export class DemoTaskReaction implements TaskReactionHandler {
   readonly taskType = 'demo';
 
+  constructor(private readonly logger?: LoggerService) {}
+
   onSubmitted(event: TaskSubmittedEvent): void {
     console.log(
       `[DemoTaskReaction] ▶ submitted  id=${event.taskId.slice(0, 8)} variant=${variant(event.input)} priority=${event.priority}`
