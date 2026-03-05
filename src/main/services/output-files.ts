@@ -649,7 +649,7 @@ export class OutputFilesService implements Disposable {
     try {
       await fs.mkdir(outputDir, { recursive: true })
     } catch (err) {
-      console.error('[OutputFilesService] Failed to create output directory:', err)
+      this.logger?.error('OutputFilesService', 'Failed to create output directory', err)
       return
     }
 
