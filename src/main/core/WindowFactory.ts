@@ -42,6 +42,7 @@ export class WindowFactory {
 			devTools: is.dev,
 			webSecurity: true,
 			allowRunningInsecureContent: false,
+			spellcheck: false,
 		};
 	}
 
