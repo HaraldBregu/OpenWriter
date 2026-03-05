@@ -139,8 +139,8 @@ const ContentPage: React.FC = () => {
     }
   }, [id, isTrashing, navigate, debouncedSave]);
 
-  const handleContinueWithAI = useCallback((content: string) => {
-    task.submit({ prompt: content }, { metadata: { positionFrom: content.length } });
+  const handleContinueWithAI = useCallback((content: string, positionFrom: number) => {
+    task.submit({ prompt: content }, { metadata: { positionFrom } });
   }, [task]);
 
   return (
