@@ -18,6 +18,7 @@ let initialized = false;
 if (!initialized && typeof window.task?.onEvent === "function") {
   initialized = true;
   window.task.onEvent((event: TaskEvent) => {
+    console.log("Received task event:", event);
     store.dispatch(taskEventReceived(event));
   });
 }

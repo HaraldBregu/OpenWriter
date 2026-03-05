@@ -45,8 +45,13 @@ const ContentPage: React.FC = () => {
 
   const editorRef = useRef<TextEditorElement>(null);
 
-  const task = useTaskSubmit<{ prompt: string }>("agent-sentence-completer", {
-    prompt: content,
+  const task = useTaskSubmit<{ prompt: string }>("agent-text-continuation", {
+    prompt: `The city had changed in ways no one expected. Buildings that once stood tall now leaned awkwardly against the sky, their facades cracked like ancient pottery. People still walked the streets, but their steps carried a different weight.
+
+<<INSERT_HERE>>
+
+By evening, the lamplighters had given up trying. The old gas lamps flickered once, twice, then surrendered to the dark. Only the moon remained reliable, casting its indifferent glow over the rooftops.`
+,
   });
 
   const stateRef = useRef({ title, content });
@@ -149,7 +154,7 @@ const ContentPage: React.FC = () => {
   }, [task.taskId]);
 
   const handleContinueWithAI = useCallback((content: string, positionFrom: number) => {
-    task.submit({ prompt: content }, { metadata: { positionFrom } });
+    task.submit({ prompt: content + "<<INSERT_HERE>>" }, { metadata: { positionFrom } });
   }, [task]);
 
   return (

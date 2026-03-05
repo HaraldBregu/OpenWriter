@@ -498,7 +498,6 @@ function TextContinuationTab() {
     const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
       if (snap.content) {
         setOutput(snap.content)
-        console.log('Received content update:', snap.content)
       }
     })
     return unsub
