@@ -858,7 +858,7 @@ export class OutputFilesService implements Disposable {
     const { outputType, fileId } = this.extractIdsFromPath(filePath)
 
     if (!outputType || !fileId) {
-      console.warn('[OutputFilesService] Could not extract IDs from path:', filePath)
+      this.logger?.warn('OutputFilesService', `Could not extract IDs from path: ${filePath}`)
       return
     }
 
