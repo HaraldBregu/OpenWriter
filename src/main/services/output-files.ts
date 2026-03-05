@@ -526,7 +526,7 @@ export class OutputFilesService implements Disposable {
     try {
       const stat = await fs.stat(folderPath)
       if (!stat.isDirectory()) {
-        console.log(`[OutputFilesService] Trash target is not a directory: ${folderPath}`)
+        this.logger?.info('OutputFilesService', `Trash target is not a directory: ${folderPath}`)
         return
       }
     } catch (err) {
