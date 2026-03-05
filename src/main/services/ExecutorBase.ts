@@ -50,7 +50,7 @@ export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposa
     const execution = this.activeExecutions.get(executionId)
     if (!execution) return false
 
-    console.log(`[${this.constructor.name}] Cancelling execution ${executionId}`)
+    this.logger?.info(this.constructor.name, `Cancelling execution ${executionId}`)
     execution.controller.abort()
     this.activeExecutions.delete(executionId)
     return true
