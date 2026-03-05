@@ -392,10 +392,7 @@ export class WorkspaceMetadataService implements Disposable {
   private readMetadataFile(workspacePath: string): WorkspaceMetadata | null {
     const filePath = this.getMetadataFilePath(workspacePath)
 
-    console.log('[WorkspaceMetadataService] readMetadataFile:',
-      'PID=', process.pid,
-      'file=', filePath,
-      'exists=', fs.existsSync(filePath))
+    this.logger?.debug('WorkspaceMetadataService', `readMetadataFile: PID=${process.pid} file=${filePath} exists=${fs.existsSync(filePath)}`)
 
     if (!fs.existsSync(filePath)) {
       return null
