@@ -30,6 +30,7 @@ export class AppIpc implements IpcModule {
 
   register(container: ServiceContainer, eventBus: EventBus): void {
     const store = container.get<StoreService>('store')
+    const logger = container.get<LoggerService>('logger')
 
     // Theme handler
     ipcMain.on(AppChannels.setTheme, (event, theme: string) => {
