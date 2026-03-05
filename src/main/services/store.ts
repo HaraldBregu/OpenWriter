@@ -122,7 +122,6 @@ export class StoreService {
   }
 
   setApiToken(providerId: string, token: string): void {
-    console.log(`[Store] setApiToken: provider=${providerId} token=${token ? '(set)' : '(cleared)'}`)
     const existing = this.data.modelSettings[providerId] ?? this.migrateProviderSettings({})
     this.data.modelSettings[providerId] = {
       ...existing,
