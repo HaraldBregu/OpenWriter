@@ -1,5 +1,6 @@
 import type { Disposable } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { LoggerService } from './logger'
 
 /**
  * Execution record: minimal interface that all execution types must implement.
