@@ -148,8 +148,9 @@ const ContentPage: React.FC = () => {
   }, [id, isTrashing, navigate]);
 
   const handleContinueWithAI = useCallback((content) => {
+    debounceSave(1500);
     task.submit({ prompt: content });
-  }, [task]);
+  }, [task, debounceSave]);
 
   return (
     <div className="h-full flex flex-col">
