@@ -57,6 +57,7 @@ export class TaskManagerIpc implements IpcModule {
 
   register(container: ServiceContainer, eventBus: EventBus): void {
     const executor = container.get<TaskExecutor>('taskExecutor')
+    const logger = container.get<LoggerService>('logger')
 
     /**
      * Submit a new task for background execution.
