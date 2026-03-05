@@ -134,14 +134,7 @@ export class WorkspaceMetadataService implements Disposable {
   getDirectories(): IndexedDirectory[] {
     const workspacePath = this.workspaceService.getCurrent()
     const directories = this.getMetadata().settings.directories
-    console.log(
-      '[WorkspaceMetadataService] getDirectories called:',
-      'PID=', process.pid,
-      'workspace=', workspacePath,
-      'count=', directories.length,
-      'cached=', this.cache !== null && this.cache.workspacePath === workspacePath,
-      'paths=', directories.map(d => d.path).join(', ')
-    )
+    this.logger?.debug('WorkspaceMetadataService', `getDirectories called: PID=${process.pid} workspace=${workspacePath} count=${directories.length} cached=${this.cache !== null && this.cache.workspacePath === workspacePath} paths=${directories.map(d => d.path).join(', ')}`)
     return directories
   }
 
