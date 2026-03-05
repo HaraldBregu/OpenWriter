@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
 import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
 import { taskAdded, taskRemoved } from '@/store/tasks/actions';
-import { selectTaskById } from '@/store/tasks/selectors';
+import { makeSelectTaskById } from '@/store/tasks/selectors';
 import { useAppDispatch, useAppSelector } from '@/store';
 
 // ---------------------------------------------------------------------------
@@ -94,6 +94,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 ): UseTaskSubmitReturn<TInput, TResult> {
 	const dispatch = useAppDispatch();
 
+	console.log(`[useTaskSubmit] rendered`);
 	// The only local state is which task ID this hook instance "owns".
 	// Everything else is derived from Redux via useAppSelector.
 	const [taskId, setTaskId] = useState<string | null>(null);
