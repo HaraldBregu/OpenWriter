@@ -32,7 +32,8 @@ export class TaskReactionBus implements Disposable {
 
   constructor(
     private readonly registry: TaskReactionRegistry,
-    private readonly eventBus: EventBus
+    private readonly eventBus: EventBus,
+    private readonly logger?: LoggerService
   ) {}
 
   /** Wire up all EventBus subscriptions. Call once after bootstrap. */
