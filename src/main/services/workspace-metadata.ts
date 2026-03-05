@@ -516,7 +516,7 @@ export class WorkspaceMetadataService implements Disposable {
   private handleWorkspaceChanged(newPath: string | null): void {
     this.logger?.info('WorkspaceMetadataService', '========== WORKSPACE CHANGED ==========')
     this.logger?.info('WorkspaceMetadataService', `New workspace: ${newPath}`)
-    console.log('[WorkspaceMetadataService] Cache before clear:', this.cache?.workspacePath, 'dirs=', this.cache?.metadata.settings.directories.length)
+    this.logger?.debug('WorkspaceMetadataService', `Cache before clear: ${this.cache?.workspacePath} dirs=${this.cache?.metadata.settings.directories.length}`)
     console.log('[WorkspaceMetadataService] Pending write:', this.pendingWrite?.workspacePath, 'dirs=', this.pendingWrite?.metadata.settings.directories.length)
 
     // Flush pending writes for the previous workspace
