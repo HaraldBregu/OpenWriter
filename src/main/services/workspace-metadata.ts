@@ -536,7 +536,7 @@ export class WorkspaceMetadataService implements Disposable {
       this.logger?.info('WorkspaceMetadataService', 'Workspace cleared, metadata reset')
     }
 
-    console.log('[WorkspaceMetadataService] About to emit directories:changed event')
+    this.logger?.debug('WorkspaceMetadataService', 'About to emit directories:changed event')
     this.emitDirectoriesChanged()
     console.log('[WorkspaceMetadataService] ========== END WORKSPACE CHANGED ==========')
   }
