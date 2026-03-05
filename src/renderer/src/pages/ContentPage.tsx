@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Download, Eye, Share2, MoreHorizontal, Copy, Trash2, PenLine } from 'lucide-react';
+import { Download, Eye, Share2, MoreHorizontal, Copy, Trash2, PenLine, Search, X } from 'lucide-react';
 import {
 	AppButton,
 	AppDropdownMenu,
