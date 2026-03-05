@@ -92,7 +92,7 @@ export function bootstrapServices(): BootstrapResult {
   const providerResolver = new ProviderResolver(storeService)
   for (const def of agentRegistry.list()) {
     taskHandlerRegistry.register(
-      new AgentTaskHandler(def.id, agentRegistry, providerResolver)
+      new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger)
     )
   }
 
