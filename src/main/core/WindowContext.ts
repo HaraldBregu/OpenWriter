@@ -85,9 +85,9 @@ export class WindowContext {
         workspaceService,
       });
 
-      logger?.info('WindowContext', `Initialized all services for window ${this.windowId}`);
+      this.logger?.info('WindowContext', `Initialized all services for window ${this.windowId}`);
     } catch (error) {
-      logger?.error(
+      this.logger?.error(
         'WindowContext',
         `Failed to initialize services for window ${this.windowId}`,
         error
