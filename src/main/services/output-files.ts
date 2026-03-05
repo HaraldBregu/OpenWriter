@@ -592,7 +592,7 @@ export class OutputFilesService implements Disposable {
       this.logger?.error('OutputFilesService', 'Error during destroy', error)
     })
 
-    console.log('[OutputFilesService] Destroyed')
+    this.logger?.info('OutputFilesService', 'Destroyed')
   }
 
   // ---------------------------------------------------------------------------
