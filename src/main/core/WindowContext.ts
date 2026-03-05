@@ -38,6 +38,7 @@ export class WindowContext {
   public readonly window: BrowserWindow;
   public readonly container: ServiceContainer;
   public readonly eventBus: EventBus;
+  private readonly logger: any;
 
   constructor(config: WindowContextConfig) {
     this.window = config.window;
@@ -45,8 +46,10 @@ export class WindowContext {
     this.container = new ServiceContainer();
     this.eventBus = config.eventBus;
 
-    const logger = config.globalContainer.get<any>('logger');
-    logger?.info('WindowContext', `Creating context for window ${this.windowId}`);
+    this.logger = config.globalContainer.has('logger')
+      ? config.globalContainer.get<any>('logger')
+      : undefined;
+    this.logger?.info('WindowContext', `Creating context for window ${this.windowId}`);
 
     // Initialize window-scoped services using the factory
     const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory();
