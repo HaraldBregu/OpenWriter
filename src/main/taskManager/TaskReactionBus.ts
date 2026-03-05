@@ -63,7 +63,7 @@ export class TaskReactionBus implements Disposable {
   destroy(): void {
     for (const unsub of this.unsubs) unsub();
     this.unsubs.length = 0;
-    console.log('[TaskReactionBus] Destroyed');
+    this.logger?.info('TaskReactionBus', 'Destroyed');
   }
 
   // ---------------------------------------------------------------------------
