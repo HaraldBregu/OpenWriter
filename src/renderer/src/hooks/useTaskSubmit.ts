@@ -53,6 +53,7 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 export interface TaskOptions {
   priority?: TaskPriority
   timeoutMs?: number
+  metadata?: unknown
 }
 
 // Terminal statuses — the task cannot change state again (except via a new submit).
