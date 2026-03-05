@@ -653,7 +653,7 @@ export class OutputFilesService implements Disposable {
       return
     }
 
-    console.log('[OutputFilesService] Starting to watch:', outputDir)
+    this.logger?.info('OutputFilesService', `Starting to watch: ${outputDir}`)
 
     try {
       this.watcher = chokidar.watch(outputDir, {
