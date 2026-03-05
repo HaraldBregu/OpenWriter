@@ -41,14 +41,14 @@ export const SearchExtension = Extension.create({
 	},
 
 	addProseMirrorPlugins() {
-		const editor = this.editor;
+		const storage = this.storage;
 
 		return [
 			new Plugin({
 				key: searchPluginKey,
 				props: {
 					decorations(state) {
-						const query = editor.storage.search?.query as string;
+						const query = storage.query as string;
 
 						if (!query || query.length === 0) return DecorationSet.empty;
 
