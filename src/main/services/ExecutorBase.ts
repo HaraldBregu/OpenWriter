@@ -86,8 +86,9 @@ export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposa
    * Disposable -- abort all active executions on shutdown.
    */
   destroy(): void {
-    console.log(
-      `[${this.constructor.name}] Destroying, aborting ${this.activeExecutions.size} active execution(s)`
+    this.logger?.info(
+      this.constructor.name,
+      `Destroying, aborting ${this.activeExecutions.size} active execution(s)`
     )
     for (const execution of this.activeExecutions.values()) {
       execution.controller.abort()
