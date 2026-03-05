@@ -1,23 +1,23 @@
 {
-  "extends": "./node_modules/@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": [
-    "electron.vite.config.*",
-    "src/main/**/*",
-    "src/preload/**/*",
-    "src/shared/**/*",
-    "package.json",
-    "resources/*.json",
-    "src/env.d.ts"
-  ],
-  "compilerOptions": {
-    "composite": true,
-    "outDir": "./dist",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "removeComments": false,
-    "types": ["./src/types", "electron-vite/node", "node"]
-  },
-  "exclude": ["node_modules"]
+	"extends": "./node_modules/@electron-toolkit/tsconfig/tsconfig.node.json",
+	"include": [
+		"electron.vite.config.*",
+		"src/main/**/*",
+		"src/preload/**/*",
+		"src/shared/**/*",
+		"package.json",
+		"resources/*.json",
+		"src/env.d.ts"
+	],
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "./dist",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"allowSyntheticDefaultImports": true,
+		"sourceMap": true,
+		"removeComments": false,
+		"types": ["./src/types", "electron-vite/node", "node"]
+	},
+	"exclude": ["node_modules"]
 }

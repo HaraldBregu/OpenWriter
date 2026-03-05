@@ -19,83 +19,83 @@ import type { EventBus, AppEvent } from '../core/EventBus';
 import type { LoggerService } from '../services/logger';
 import type { TaskReactionRegistry } from './TaskReactionRegistry';
 import type {
-  TaskReactionHandler,
-  TaskSubmittedEvent,
-  TaskStartedEvent,
-  TaskCompletedEvent,
-  TaskFailedEvent,
-  TaskCancelledEvent,
+	TaskReactionHandler,
+	TaskSubmittedEvent,
+	TaskStartedEvent,
+	TaskCompletedEvent,
+	TaskFailedEvent,
+	TaskCancelledEvent,
 } from './TaskReactionHandler';
 
 export class TaskReactionBus implements Disposable {
-  private readonly unsubs: Array<() => void> = [];
+	private readonly unsubs: Array<() => void> = [];
 
-  constructor(
-    private readonly registry: TaskReactionRegistry,
-    private readonly eventBus: EventBus,
-    private readonly logger?: LoggerService
-  ) {}
+	constructor(
+		private readonly registry: TaskReactionRegistry,
+		private readonly eventBus: EventBus,
+		private readonly logger?: LoggerService
+	) {}
 
-  /** Wire up all EventBus subscriptions. Call once after bootstrap. */
-  initialize(): void {
-    this.unsubs.push(
-      this.eventBus.on('task:submitted', (e) =>
-        this.dispatch(e, (h, p) => h.onSubmitted?.(p as TaskSubmittedEvent))
-      ),
-      this.eventBus.on('task:started', (e) =>
-        this.dispatch(e, (h, p) => h.onStarted?.(p as TaskStartedEvent))
-      ),
-      this.eventBus.on('task:completed', (e) =>
-        this.dispatch(e, (h, p) => h.onCompleted?.(p as TaskCompletedEvent))
-      ),
-      this.eventBus.on('task:failed', (e) =>
-        this.dispatch(e, (h, p) => h.onFailed?.(p as TaskFailedEvent))
-      ),
-      this.eventBus.on('task:cancelled', (e) =>
-        this.dispatch(e, (h, p) => h.onCancelled?.(p as TaskCancelledEvent))
-      )
-    );
+	/** Wire up all EventBus subscriptions. Call once after bootstrap. */
+	initialize(): void {
+		this.unsubs.push(
+			this.eventBus.on('task:submitted', (e) =>
+				this.dispatch(e, (h, p) => h.onSubmitted?.(p as TaskSubmittedEvent))
+			),
+			this.eventBus.on('task:started', (e) =>
+				this.dispatch(e, (h, p) => h.onStarted?.(p as TaskStartedEvent))
+			),
+			this.eventBus.on('task:completed', (e) =>
+				this.dispatch(e, (h, p) => h.onCompleted?.(p as TaskCompletedEvent))
+			),
+			this.eventBus.on('task:failed', (e) =>
+				this.dispatch(e, (h, p) => h.onFailed?.(p as TaskFailedEvent))
+			),
+			this.eventBus.on('task:cancelled', (e) =>
+				this.dispatch(e, (h, p) => h.onCancelled?.(p as TaskCancelledEvent))
+			)
+		);
 
-    this.logger?.info('TaskReactionBus', 'Initialized — listening to task lifecycle events');
-  }
+		this.logger?.info('TaskReactionBus', 'Initialized — listening to task lifecycle events');
+	}
 
-  /** Remove all EventBus listeners. Called by ServiceContainer on shutdown. */
-  destroy(): void {
-    for (const unsub of this.unsubs) unsub();
-    this.unsubs.length = 0;
-    this.logger?.info('TaskReactionBus', 'Destroyed');
-  }
+	/** Remove all EventBus listeners. Called by ServiceContainer on shutdown. */
+	destroy(): void {
+		for (const unsub of this.unsubs) unsub();
+		this.unsubs.length = 0;
+		this.logger?.info('TaskReactionBus', 'Destroyed');
+	}
 
-  // ---------------------------------------------------------------------------
-  // Internal
-  // ---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
+	// Internal
+	// ---------------------------------------------------------------------------
 
-  private dispatch(
-    appEvent: AppEvent,
-    invoke: (handler: TaskReactionHandler, payload: unknown) => void | Promise<void>
-  ): void {
-    const payload = appEvent.payload as { taskType: string };
-    const handlers = this.registry.getForType(payload.taskType);
+	private dispatch(
+		appEvent: AppEvent,
+		invoke: (handler: TaskReactionHandler, payload: unknown) => void | Promise<void>
+	): void {
+		const payload = appEvent.payload as { taskType: string };
+		const handlers = this.registry.getForType(payload.taskType);
 
-    for (const handler of handlers) {
-      try {
-        const result = invoke(handler, payload);
-        if (result instanceof Promise) {
-          result.catch((err) =>
-            this.logger?.error(
-              'TaskReactionBus',
-              `Async error in handler for type="${payload.taskType}"`,
-              err
-            )
-          );
-        }
-      } catch (err) {
-        this.logger?.error(
-          'TaskReactionBus',
-          `Error in handler for type="${payload.taskType}"`,
-          err
-        );
-      }
-    }
-  }
+		for (const handler of handlers) {
+			try {
+				const result = invoke(handler, payload);
+				if (result instanceof Promise) {
+					result.catch((err) =>
+						this.logger?.error(
+							'TaskReactionBus',
+							`Async error in handler for type="${payload.taskType}"`,
+							err
+						)
+					);
+				}
+			} catch (err) {
+				this.logger?.error(
+					'TaskReactionBus',
+					`Error in handler for type="${payload.taskType}"`,
+					err
+				);
+			}
+		}
+	}
 }

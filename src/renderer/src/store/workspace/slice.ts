@@ -11,31 +11,31 @@
 export type { WorkspaceState } from './state';
 
 export {
-  loadCurrentWorkspace,
-  loadRecentWorkspaces,
-  selectWorkspace,
-  openWorkspacePicker,
-  removeRecentWorkspace,
-  clearWorkspace,
+	loadCurrentWorkspace,
+	loadRecentWorkspaces,
+	selectWorkspace,
+	openWorkspacePicker,
+	removeRecentWorkspace,
+	clearWorkspace,
 } from './actions';
 
 export {
-  workspaceSlice,
-  handleWorkspaceChanged,
-  handleRecentRemoved,
-  handleWorkspaceDeleted,
-  clearDeletionReason,
+	workspaceSlice,
+	handleWorkspaceChanged,
+	handleRecentRemoved,
+	handleWorkspaceDeleted,
+	clearDeletionReason,
 } from './reducer';
 export { default } from './reducer';
 
 export {
-  selectWorkspaceState,
-  selectCurrentWorkspacePath,
-  selectHasWorkspace,
-  selectWorkspaceName,
-  selectRecentWorkspaces,
-  selectWorkspaceStatus,
-  selectWorkspaceError,
-  selectWorkspaceIsLoading,
-  selectWorkspaceDeletionReason,
+	selectWorkspaceState,
+	selectCurrentWorkspacePath,
+	selectHasWorkspace,
+	selectWorkspaceName,
+	selectRecentWorkspaces,
+	selectWorkspaceStatus,
+	selectWorkspaceError,
+	selectWorkspaceIsLoading,
+	selectWorkspaceDeletionReason,
 } from './selectors';

@@ -15,11 +15,11 @@ import './index.css';
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
-  throw new Error('Impossible to find the root element');
+	throw new Error('Impossible to find the root element');
 }
 
 createRoot(rootElement).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+	<StrictMode>
+		<App />
+	</StrictMode>
 );

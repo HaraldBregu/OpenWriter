@@ -34,12 +34,12 @@ import type { IpcModule } from './ipc';
 import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
 
 export interface BootstrapResult {
-  container: ServiceContainer;
-  eventBus: EventBus;
-  windowFactory: WindowFactory;
-  appState: AppState;
-  logger: LoggerService;
-  windowContextManager: WindowContextManager;
+	container: ServiceContainer;
+	eventBus: EventBus;
+	windowFactory: WindowFactory;
+	appState: AppState;
+	logger: LoggerService;
+	windowContextManager: WindowContextManager;
 }
 
 /**
@@ -47,67 +47,67 @@ export interface BootstrapResult {
  * Returns the initialized components for use in the main process.
  */
 export function bootstrapServices(): BootstrapResult {
-  // Initialize core infrastructure
-  const appState = new AppState();
-  const container = new ServiceContainer();
-  const eventBus = new EventBus();
+	// Initialize core infrastructure
+	const appState = new AppState();
+	const container = new ServiceContainer();
+	const eventBus = new EventBus();
 
-  // Register core infrastructure
-  container.register('appState', appState);
-  container.register('eventBus', eventBus);
+	// Register core infrastructure
+	container.register('appState', appState);
+	container.register('eventBus', eventBus);
 
-  // Register services (order matters for dependencies)
-  const storeService = container.register('store', new StoreService());
+	// Register services (order matters for dependencies)
+	const storeService = container.register('store', new StoreService());
 
-  container.register('fileManagement', new FileManagementService());
+	container.register('fileManagement', new FileManagementService());
 
-  // REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
-  // These services are now window-scoped and created per-window by WindowContextManager
-  // This ensures complete isolation between different workspace windows
+	// REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
+	// These services are now window-scoped and created per-window by WindowContextManager
+	// This ensures complete isolation between different workspace windows
 
-  // Initialize logger with event bus for automatic event logging
-  const logger = new LoggerService(eventBus);
-  container.register('logger', logger);
+	// Initialize logger with event bus for automatic event logging
+	const logger = new LoggerService(eventBus);
+	container.register('logger', logger);
 
-  // Create WindowFactory with logger access
-  const windowFactory = new WindowFactory(logger);
-  container.register('windowFactory', windowFactory);
+	// Create WindowFactory with logger access
+	const windowFactory = new WindowFactory(logger);
+	container.register('windowFactory', windowFactory);
 
-  // Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
-  const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
-  for (const def of ALL_AGENT_DEFINITIONS) {
-    agentRegistry.register(def);
-  }
+	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
+	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
+	for (const def of ALL_AGENT_DEFINITIONS) {
+		agentRegistry.register(def);
+	}
 
-  // Task system -- handler registry + executor
-  const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
-  taskHandlerRegistry.register(new DemoTaskHandler());
-  const providerResolver = new ProviderResolver(storeService);
-  for (const def of agentRegistry.list()) {
-    taskHandlerRegistry.register(
-      new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger)
-    );
-  }
+	// Task system -- handler registry + executor
+	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
+	taskHandlerRegistry.register(new DemoTaskHandler());
+	const providerResolver = new ProviderResolver(storeService);
+	for (const def of agentRegistry.list()) {
+		taskHandlerRegistry.register(
+			new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger)
+		);
+	}
 
-  container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
+	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
-  // Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
-  // AppEvents and fan-outs to registered TaskReactionHandlers by task type.
-  const taskReactionRegistry = new TaskReactionRegistry(logger);
-  taskReactionRegistry.register(new DemoTaskReaction(logger));
-  const taskReactionBus = container.register(
-    'taskReactionBus',
-    new TaskReactionBus(taskReactionRegistry, eventBus, logger)
-  );
-  taskReactionBus.initialize();
+	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
+	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
+	const taskReactionRegistry = new TaskReactionRegistry(logger);
+	taskReactionRegistry.register(new DemoTaskReaction(logger));
+	const taskReactionBus = container.register(
+		'taskReactionBus',
+		new TaskReactionBus(taskReactionRegistry, eventBus, logger)
+	);
+	taskReactionBus.initialize();
 
-  // Create WindowContextManager for managing per-window service instances
-  const windowContextManager = new WindowContextManager(container, eventBus);
-  container.register('windowContextManager', windowContextManager);
+	// Create WindowContextManager for managing per-window service instances
+	const windowContextManager = new WindowContextManager(container, eventBus);
+	container.register('windowContextManager', windowContextManager);
 
-  logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
+	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
-  return { container, eventBus, windowFactory, appState, logger, windowContextManager };
+	return { container, eventBus, windowFactory, appState, logger, windowContextManager };
 }
 
 /**
@@ -115,24 +115,24 @@ export function bootstrapServices(): BootstrapResult {
  * This should be called after services are registered and before app is ready.
  */
 export function bootstrapIpcModules(container: ServiceContainer, eventBus: EventBus): void {
-  const logger = container.get('logger') as LoggerService;
+	const logger = container.get('logger') as LoggerService;
 
-  const ipcModules: IpcModule[] = [
-    new AppIpc(),
-    new WorkspaceIpc(),
-    new TaskManagerIpc(),
-    new WindowIpc(),
-  ];
+	const ipcModules: IpcModule[] = [
+		new AppIpc(),
+		new WorkspaceIpc(),
+		new TaskManagerIpc(),
+		new WindowIpc(),
+	];
 
-  for (const module of ipcModules) {
-    try {
-      module.register(container, eventBus);
-    } catch (error) {
-      logger.error('Bootstrap', `Failed to register IPC module: ${module.name}`, error);
-    }
-  }
+	for (const module of ipcModules) {
+		try {
+			module.register(container, eventBus);
+		} catch (error) {
+			logger.error('Bootstrap', `Failed to register IPC module: ${module.name}`, error);
+		}
+	}
 
-  logger.info('Bootstrap', `Registered ${ipcModules.length} IPC modules`);
+	logger.info('Bootstrap', `Registered ${ipcModules.length} IPC modules`);
 }
 
 /**
@@ -140,29 +140,29 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
  * Replaces the unsafe (app as { isQuitting?: boolean }).isQuitting pattern.
  */
 export function setupAppLifecycle(appState: AppState, logger?: LoggerService): void {
-  app.on('before-quit', () => {
-    appState.setQuitting();
-    logger?.info('App', 'Application is quitting');
-  });
+	app.on('before-quit', () => {
+		appState.setQuitting();
+		logger?.info('App', 'Application is quitting');
+	});
 
-  app.on('window-all-closed', () => {
-    logger?.info('App', 'All windows closed');
-    if (process.platform !== 'darwin' && appState.isQuitting) {
-      app.quit();
-    }
-  });
+	app.on('window-all-closed', () => {
+		logger?.info('App', 'All windows closed');
+		if (process.platform !== 'darwin' && appState.isQuitting) {
+			app.quit();
+		}
+	});
 
-  app.on('activate', () => {
-    logger?.debug('App', 'Application activated');
-  });
+	app.on('activate', () => {
+		logger?.debug('App', 'Application activated');
+	});
 
-  app.on('will-quit', () => {
-    logger?.info('App', 'Application will quit');
-  });
+	app.on('will-quit', () => {
+		logger?.info('App', 'Application will quit');
+	});
 
-  app.on('quit', (_event, exitCode) => {
-    logger?.info('App', `Application quit with exit code: ${exitCode}`);
-  });
+	app.on('quit', (_event, exitCode) => {
+		logger?.info('App', `Application quit with exit code: ${exitCode}`);
+	});
 }
 
 /**
@@ -170,131 +170,131 @@ export function setupAppLifecycle(appState: AppState, logger?: LoggerService): v
  * Captures various Electron lifecycle and window events for debugging.
  */
 export function setupEventLogging(logger: LoggerService): void {
-  // App lifecycle events
-  app.on('ready', () => {
-    logger.info('App', 'Application ready', {
-      version: app.getVersion(),
-      platform: process.platform,
-      arch: process.arch,
-      electron: process.versions.electron,
-      chrome: process.versions.chrome,
-      node: process.versions.node,
-    });
-  });
+	// App lifecycle events
+	app.on('ready', () => {
+		logger.info('App', 'Application ready', {
+			version: app.getVersion(),
+			platform: process.platform,
+			arch: process.arch,
+			electron: process.versions.electron,
+			chrome: process.versions.chrome,
+			node: process.versions.node,
+		});
+	});
 
-  app.on('browser-window-created', (_event, window) => {
-    logger.debug('App', `Browser window created: ID ${window.id}`);
+	app.on('browser-window-created', (_event, window) => {
+		logger.debug('App', `Browser window created: ID ${window.id}`);
 
-    // Window-specific events
-    window.on('ready-to-show', () => {
-      logger.debug('Window', `Window ready to show: ID ${window.id}`);
-    });
+		// Window-specific events
+		window.on('ready-to-show', () => {
+			logger.debug('Window', `Window ready to show: ID ${window.id}`);
+		});
 
-    window.on('show', () => {
-      logger.debug('Window', `Window shown: ID ${window.id}`);
-    });
+		window.on('show', () => {
+			logger.debug('Window', `Window shown: ID ${window.id}`);
+		});
 
-    window.on('hide', () => {
-      logger.debug('Window', `Window hidden: ID ${window.id}`);
-    });
+		window.on('hide', () => {
+			logger.debug('Window', `Window hidden: ID ${window.id}`);
+		});
 
-    window.on('focus', () => {
-      logger.debug('Window', `Window focused: ID ${window.id}`);
-    });
+		window.on('focus', () => {
+			logger.debug('Window', `Window focused: ID ${window.id}`);
+		});
 
-    window.on('blur', () => {
-      logger.debug('Window', `Window blurred: ID ${window.id}`);
-    });
+		window.on('blur', () => {
+			logger.debug('Window', `Window blurred: ID ${window.id}`);
+		});
 
-    window.on('maximize', () => {
-      logger.debug('Window', `Window maximized: ID ${window.id}`);
-    });
+		window.on('maximize', () => {
+			logger.debug('Window', `Window maximized: ID ${window.id}`);
+		});
 
-    window.on('unmaximize', () => {
-      logger.debug('Window', `Window unmaximized: ID ${window.id}`);
-    });
+		window.on('unmaximize', () => {
+			logger.debug('Window', `Window unmaximized: ID ${window.id}`);
+		});
 
-    window.on('minimize', () => {
-      logger.debug('Window', `Window minimized: ID ${window.id}`);
-    });
+		window.on('minimize', () => {
+			logger.debug('Window', `Window minimized: ID ${window.id}`);
+		});
 
-    window.on('restore', () => {
-      logger.debug('Window', `Window restored: ID ${window.id}`);
-    });
+		window.on('restore', () => {
+			logger.debug('Window', `Window restored: ID ${window.id}`);
+		});
 
-    window.on('close', () => {
-      logger.debug('Window', `Window closing: ID ${window.id}`);
-    });
+		window.on('close', () => {
+			logger.debug('Window', `Window closing: ID ${window.id}`);
+		});
 
-    window.on('closed', () => {
-      logger.debug('Window', `Window closed: ID ${window.id}`);
-    });
+		window.on('closed', () => {
+			logger.debug('Window', `Window closed: ID ${window.id}`);
+		});
 
-    window.webContents.on('did-finish-load', () => {
-      logger.debug('WebContents', `Page loaded: Window ID ${window.id}`);
-    });
+		window.webContents.on('did-finish-load', () => {
+			logger.debug('WebContents', `Page loaded: Window ID ${window.id}`);
+		});
 
-    window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
-      logger.error('WebContents', `Page failed to load: ${validatedURL}`, {
-        windowId: window.id,
-        errorCode,
-        errorDescription,
-      });
-    });
+		window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+			logger.error('WebContents', `Page failed to load: ${validatedURL}`, {
+				windowId: window.id,
+				errorCode,
+				errorDescription,
+			});
+		});
 
-    window.webContents.on('render-process-gone', (_event, details) => {
-      logger.error('WebContents', `Renderer process gone: Window ID ${window.id}`, {
-        reason: details.reason,
-        exitCode: details.exitCode,
-      });
-    });
+		window.webContents.on('render-process-gone', (_event, details) => {
+			logger.error('WebContents', `Renderer process gone: Window ID ${window.id}`, {
+				reason: details.reason,
+				exitCode: details.exitCode,
+			});
+		});
 
-    window.webContents.on('unresponsive', () => {
-      logger.warn('WebContents', `Renderer process unresponsive: Window ID ${window.id}`);
-    });
+		window.webContents.on('unresponsive', () => {
+			logger.warn('WebContents', `Renderer process unresponsive: Window ID ${window.id}`);
+		});
 
-    window.webContents.on('responsive', () => {
-      logger.info('WebContents', `Renderer process responsive again: Window ID ${window.id}`);
-    });
-  });
+		window.webContents.on('responsive', () => {
+			logger.info('WebContents', `Renderer process responsive again: Window ID ${window.id}`);
+		});
+	});
 
-  app.on('browser-window-focus', (_event, window) => {
-    logger.debug('App', `Browser window focused: ID ${window.id}`);
-  });
+	app.on('browser-window-focus', (_event, window) => {
+		logger.debug('App', `Browser window focused: ID ${window.id}`);
+	});
 
-  app.on('browser-window-blur', (_event, window) => {
-    logger.debug('App', `Browser window blurred: ID ${window.id}`);
-  });
+	app.on('browser-window-blur', (_event, window) => {
+		logger.debug('App', `Browser window blurred: ID ${window.id}`);
+	});
 
-  app.on('child-process-gone', (_event, details) => {
-    logger.error('App', 'Child process gone', {
-      type: details.type,
-      reason: details.reason,
-      exitCode: details.exitCode,
-    });
-  });
+	app.on('child-process-gone', (_event, details) => {
+		logger.error('App', 'Child process gone', {
+			type: details.type,
+			reason: details.reason,
+			exitCode: details.exitCode,
+		});
+	});
 
-  // Certificate errors
-  app.on('certificate-error', (_event, _webContents, url, error, certificate) => {
-    logger.error('App', 'Certificate error', {
-      url,
-      error,
-      issuer: certificate.issuerName,
-    });
-  });
+	// Certificate errors
+	app.on('certificate-error', (_event, _webContents, url, error, certificate) => {
+		logger.error('App', 'Certificate error', {
+			url,
+			error,
+			issuer: certificate.issuerName,
+		});
+	});
 
-  // Session events
-  app.on('web-contents-created', (_event, webContents) => {
-    logger.debug('App', `WebContents created: ID ${webContents.id}`);
-  });
+	// Session events
+	app.on('web-contents-created', (_event, webContents) => {
+		logger.debug('App', `WebContents created: ID ${webContents.id}`);
+	});
 
-  // Accessibility support
-  app.on('accessibility-support-changed', (_event, accessibilitySupportEnabled) => {
-    logger.info(
-      'App',
-      `Accessibility support: ${accessibilitySupportEnabled ? 'enabled' : 'disabled'}`
-    );
-  });
+	// Accessibility support
+	app.on('accessibility-support-changed', (_event, accessibilitySupportEnabled) => {
+		logger.info(
+			'App',
+			`Accessibility support: ${accessibilitySupportEnabled ? 'enabled' : 'disabled'}`
+		);
+	});
 }
 
 /**
@@ -302,8 +302,8 @@ export function setupEventLogging(logger: LoggerService): void {
  * Ensures all services are properly disposed.
  */
 export async function cleanup(container: ServiceContainer): Promise<void> {
-  const logger = container.get('logger') as LoggerService;
-  logger.info('Bootstrap', 'Starting cleanup');
-  await container.shutdown();
-  logger.info('Bootstrap', 'Cleanup complete');
+	const logger = container.get('logger') as LoggerService;
+	logger.info('Bootstrap', 'Starting cleanup');
+	await container.shutdown();
+	logger.info('Bootstrap', 'Cleanup complete');
 }

@@ -1,188 +1,188 @@
 {
-  "productName": "OpenWriter",
-  "appId": "com.openwriter.openwriter",
-  "copyright": "© 2026 OpenWriter Project. All rights reserved.",
-  "files": ["out/**", "resources/**"],
-  "icon": "./resources/icons/icon.ico",
-  "extraResources": [
-    "out/preload/preload.mjs",
-    {
-      "from": "./resources",
-      "to": "resources",
-      "filter": ["icons/**"]
-    }
-  ],
-  "fileAssociations": [
-    {
-      "ext": "tsrct",
-      "name": "OpenWriter Document",
-      "description": "OpenWriter Document File",
-      "mimeType": "application/x-openwriter-document",
-      "role": "Manager",
-      "icon": "./resources/icons/icon.png"
-    }
-  ],
-  "asar": true,
-  "asarUnpack": [],
-  "nodeGypRebuild": false,
-  "buildDependenciesFromSource": false,
-  "npmRebuild": false,
-  "mac": {
-    "target": [
-      {
-        "target": "pkg",
-        "arch": ["x64", "arm64"]
-      },
-      {
-        "target": "dmg",
-        "arch": ["x64", "arm64"]
-      }
-    ],
-    "icon": "./resources/icons/mac/icon.icns",
-    "extendInfo": {
-      "LSApplicationCategoryType": "public.app-category.utilities",
-      "NSMicrophoneUsageDescription": "OpenWriter needs access to your microphone for audio recording features.",
-      "NSCameraUsageDescription": "OpenWriter needs access to your camera for video recording features.",
-      "NSBluetoothAlwaysUsageDescription": "OpenWriter needs access to Bluetooth to connect and manage Bluetooth devices.",
-      "NSBluetoothPeripheralUsageDescription": "OpenWriter needs access to Bluetooth peripherals for device connectivity.",
-      "CFBundleDocumentTypes": [
-        {
-          "CFBundleTypeName": "OpenWriter File",
-          "CFBundleTypeIconFile": "fileIcon.icns",
-          "CFBundleTypeExtensions": ["tsrct"],
-          "CFBundleTypeRole": "Manager",
-          "LSHandlerRank": "Owner",
-          "LSItemContentTypes": ["com.openwriter.openwriter.document"]
-        }
-      ],
-      "UTExportedTypeDeclarations": [
-        {
-          "UTTypeIdentifier": "com.openwriter.openwriter.document",
-          "UTTypeDescription": "OpenWriter File",
-          "UTTypeConformsTo": ["public.data"],
-          "UTTypeTagSpecification": {
-            "public.filename-extension": ["tsrct"],
-            "public.mime-type": ["application/x-openwriter-document"]
-          }
-        }
-      ]
-    },
-    "artifactName": "${productName}-${version}-${arch}.${ext}",
-    "darkModeSupport": true,
-    "hardenedRuntime": true,
-    "gatekeeperAssess": false,
-    "entitlements": "./resources/entitlements.mac.plist",
-    "entitlementsInherit": "./resources/entitlements.mac.plist",
-    "identity": null,
-    "type": "distribution",
-    "extraResources": [
-      {
-        "from": "./resources",
-        "to": "resources",
-        "filter": []
-      }
-    ]
-  },
-  "pkg": {
-    "allowAnywhere": true,
-    "allowCurrentUserHome": true,
-    "allowRootDirectory": true,
-    "isRelocatable": false,
-    "isVersionChecked": true,
-    "hasStrictIdentifier": true,
-    "overwriteAction": "upgrade",
-    "artifactName": "${productName}-installer-${version}-${arch}.${ext}"
-  },
-  "linux": {
-    "target": [{ "target": "deb" }, { "target": "AppImage" }],
-    "category": "Utility",
-    "artifactName": "${productName}-${version}.${ext}",
-    "icon": "./resources/icons/linux",
-    "maintainer": "OpenWriter Project",
-    "synopsis": "OpenWriter",
-    "description": "OpenWriter - Advanced AI manager",
-    "vendor": "OpenWriter Project",
-    "executableName": "openwriter",
-    "desktop": {
-      "entry": {
-        "Type": "Application",
-        "Name": "OpenWriter",
-        "Comment": "Advanced AI manager",
-        "Icon": "openwriter",
-        "Terminal": false,
-        "Categories": "Office;WordProcessor;AI;",
-        "MimeType": "application/x-openwriter-document;",
-        "StartupNotify": true,
-        "StartupWMClass": "OpenWriter"
-      }
-    },
-    "extraResources": [
-      {
-        "from": "./resources",
-        "to": "resources",
-        "filter": []
-      }
-    ]
-  },
-  "deb": {
-    "packageCategory": "utils",
-    "maintainer": "OpenWriter Project <contact@openwriter.org>",
-    "afterInstall": "./scripts/postinstall.sh",
-    "depends": [
-      "libgtk-3-0",
-      "libnss3",
-      "libxss1",
-      "libasound2",
-      "libatk-bridge2.0-0",
-      "libgdk-pixbuf2.0-0",
-      "libx11-xcb1",
-      "libxcomposite1",
-      "libxdamage1",
-      "libxrandr2",
-      "libxcursor1",
-      "libxext6",
-      "libxcb1",
-      "libnspr4",
-      "libdrm2",
-      "libcups2",
-      "libexpat1",
-      "libpulse0",
-      "libv4l-0"
-    ]
-  },
-  "win": {
-    "icon": "./resources/icons/win/icon.ico",
-    "target": "nsis",
-    "signAndEditExecutable": true,
-    "artifactName": "${productName}.${ext}",
-    "forceCodeSigning": false,
-    "signtoolOptions": {
-      "publisherName": "OpenWriter Project"
-    },
-    "requestedExecutionLevel": "asInvoker",
-    "extraResources": [
-      {
-        "from": "./resources",
-        "to": "resources",
-        "filter": []
-      }
-    ]
-  },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": true,
-    "shortcutName": "OpenWriter",
-    "multiLanguageInstaller": true,
-    "warningsAsErrors": false,
-    "deleteAppDataOnUninstall": false,
-    "installerIcon": "./resources/icons/win/icon.ico",
-    "uninstallerIcon": "./resources/icons/win/icon.ico",
-    "perMachine": false,
-    "artifactName": "${productName}-${version}.${ext}",
-    "displayLanguageSelector": true,
-    "runAfterFinish": false,
-    "language": "1040",
-    "installerLanguages": ["it-IT", "en-US", "es-ES", "fr-FR", "de-DE"]
-  }
+	"productName": "OpenWriter",
+	"appId": "com.openwriter.openwriter",
+	"copyright": "© 2026 OpenWriter Project. All rights reserved.",
+	"files": ["out/**", "resources/**"],
+	"icon": "./resources/icons/icon.ico",
+	"extraResources": [
+		"out/preload/preload.mjs",
+		{
+			"from": "./resources",
+			"to": "resources",
+			"filter": ["icons/**"]
+		}
+	],
+	"fileAssociations": [
+		{
+			"ext": "tsrct",
+			"name": "OpenWriter Document",
+			"description": "OpenWriter Document File",
+			"mimeType": "application/x-openwriter-document",
+			"role": "Manager",
+			"icon": "./resources/icons/icon.png"
+		}
+	],
+	"asar": true,
+	"asarUnpack": [],
+	"nodeGypRebuild": false,
+	"buildDependenciesFromSource": false,
+	"npmRebuild": false,
+	"mac": {
+		"target": [
+			{
+				"target": "pkg",
+				"arch": ["x64", "arm64"]
+			},
+			{
+				"target": "dmg",
+				"arch": ["x64", "arm64"]
+			}
+		],
+		"icon": "./resources/icons/mac/icon.icns",
+		"extendInfo": {
+			"LSApplicationCategoryType": "public.app-category.utilities",
+			"NSMicrophoneUsageDescription": "OpenWriter needs access to your microphone for audio recording features.",
+			"NSCameraUsageDescription": "OpenWriter needs access to your camera for video recording features.",
+			"NSBluetoothAlwaysUsageDescription": "OpenWriter needs access to Bluetooth to connect and manage Bluetooth devices.",
+			"NSBluetoothPeripheralUsageDescription": "OpenWriter needs access to Bluetooth peripherals for device connectivity.",
+			"CFBundleDocumentTypes": [
+				{
+					"CFBundleTypeName": "OpenWriter File",
+					"CFBundleTypeIconFile": "fileIcon.icns",
+					"CFBundleTypeExtensions": ["tsrct"],
+					"CFBundleTypeRole": "Manager",
+					"LSHandlerRank": "Owner",
+					"LSItemContentTypes": ["com.openwriter.openwriter.document"]
+				}
+			],
+			"UTExportedTypeDeclarations": [
+				{
+					"UTTypeIdentifier": "com.openwriter.openwriter.document",
+					"UTTypeDescription": "OpenWriter File",
+					"UTTypeConformsTo": ["public.data"],
+					"UTTypeTagSpecification": {
+						"public.filename-extension": ["tsrct"],
+						"public.mime-type": ["application/x-openwriter-document"]
+					}
+				}
+			]
+		},
+		"artifactName": "${productName}-${version}-${arch}.${ext}",
+		"darkModeSupport": true,
+		"hardenedRuntime": true,
+		"gatekeeperAssess": false,
+		"entitlements": "./resources/entitlements.mac.plist",
+		"entitlementsInherit": "./resources/entitlements.mac.plist",
+		"identity": null,
+		"type": "distribution",
+		"extraResources": [
+			{
+				"from": "./resources",
+				"to": "resources",
+				"filter": []
+			}
+		]
+	},
+	"pkg": {
+		"allowAnywhere": true,
+		"allowCurrentUserHome": true,
+		"allowRootDirectory": true,
+		"isRelocatable": false,
+		"isVersionChecked": true,
+		"hasStrictIdentifier": true,
+		"overwriteAction": "upgrade",
+		"artifactName": "${productName}-installer-${version}-${arch}.${ext}"
+	},
+	"linux": {
+		"target": [{ "target": "deb" }, { "target": "AppImage" }],
+		"category": "Utility",
+		"artifactName": "${productName}-${version}.${ext}",
+		"icon": "./resources/icons/linux",
+		"maintainer": "OpenWriter Project",
+		"synopsis": "OpenWriter",
+		"description": "OpenWriter - Advanced AI manager",
+		"vendor": "OpenWriter Project",
+		"executableName": "openwriter",
+		"desktop": {
+			"entry": {
+				"Type": "Application",
+				"Name": "OpenWriter",
+				"Comment": "Advanced AI manager",
+				"Icon": "openwriter",
+				"Terminal": false,
+				"Categories": "Office;WordProcessor;AI;",
+				"MimeType": "application/x-openwriter-document;",
+				"StartupNotify": true,
+				"StartupWMClass": "OpenWriter"
+			}
+		},
+		"extraResources": [
+			{
+				"from": "./resources",
+				"to": "resources",
+				"filter": []
+			}
+		]
+	},
+	"deb": {
+		"packageCategory": "utils",
+		"maintainer": "OpenWriter Project <contact@openwriter.org>",
+		"afterInstall": "./scripts/postinstall.sh",
+		"depends": [
+			"libgtk-3-0",
+			"libnss3",
+			"libxss1",
+			"libasound2",
+			"libatk-bridge2.0-0",
+			"libgdk-pixbuf2.0-0",
+			"libx11-xcb1",
+			"libxcomposite1",
+			"libxdamage1",
+			"libxrandr2",
+			"libxcursor1",
+			"libxext6",
+			"libxcb1",
+			"libnspr4",
+			"libdrm2",
+			"libcups2",
+			"libexpat1",
+			"libpulse0",
+			"libv4l-0"
+		]
+	},
+	"win": {
+		"icon": "./resources/icons/win/icon.ico",
+		"target": "nsis",
+		"signAndEditExecutable": true,
+		"artifactName": "${productName}.${ext}",
+		"forceCodeSigning": false,
+		"signtoolOptions": {
+			"publisherName": "OpenWriter Project"
+		},
+		"requestedExecutionLevel": "asInvoker",
+		"extraResources": [
+			{
+				"from": "./resources",
+				"to": "resources",
+				"filter": []
+			}
+		]
+	},
+	"nsis": {
+		"oneClick": false,
+		"allowToChangeInstallationDirectory": true,
+		"createDesktopShortcut": true,
+		"shortcutName": "OpenWriter",
+		"multiLanguageInstaller": true,
+		"warningsAsErrors": false,
+		"deleteAppDataOnUninstall": false,
+		"installerIcon": "./resources/icons/win/icon.ico",
+		"uninstallerIcon": "./resources/icons/win/icon.ico",
+		"perMachine": false,
+		"artifactName": "${productName}-${version}.${ext}",
+		"displayLanguageSelector": true,
+		"runAfterFinish": false,
+		"language": "1040",
+		"installerLanguages": ["it-IT", "en-US", "es-ES", "fr-FR", "de-DE"]
+	}
 }

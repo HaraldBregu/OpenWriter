@@ -19,14 +19,14 @@ import type { AgentDefinition } from './AgentDefinition';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  completion: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	completion: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
 });
 
 type SentenceCompleterState = typeof GraphState.State;
@@ -37,8 +37,8 @@ type SentenceCompleterState = typeof GraphState.State;
 
 /** Extract the raw user text from the LangGraph message list. */
 function extractUserText(state: SentenceCompleterState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-  return userMsg ? String(userMsg.content) : '';
+	const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+	return userMsg ? String(userMsg.content) : '';
 }
 
 // ---------------------------------------------------------------------------
@@ -46,12 +46,12 @@ function extractUserText(state: SentenceCompleterState): string {
 // ---------------------------------------------------------------------------
 
 function makeCompleteSentenceNode(model: BaseChatModel) {
-  return async (state: SentenceCompleterState): Promise<Partial<SentenceCompleterState>> => {
-    const text = extractUserText(state);
+	return async (state: SentenceCompleterState): Promise<Partial<SentenceCompleterState>> => {
+		const text = extractUserText(state);
 
-    const generationMessages = [
-      new SystemMessage(
-        `You are a sentence completion engine. Given an unfinished sentence, you finish it and stop.
+		const generationMessages = [
+			new SystemMessage(
+				`You are a sentence completion engine. Given an unfinished sentence, you finish it and stop.
 
 Rules:
 1. Output ONLY the few words needed to finish the current sentence — nothing more
@@ -61,18 +61,18 @@ Rules:
 5. Match the tone, formality, and vocabulary of the given text
 6. Be as brief as possible — just close the sentence
 7. No preamble, no explanation, no meta-commentary`
-      ),
-      new HumanMessage(text),
-    ];
+			),
+			new HumanMessage(text),
+		];
 
-    const response = await model.invoke(generationMessages);
-    const completion = typeof response.content === 'string' ? response.content : '';
+		const response = await model.invoke(generationMessages);
+		const completion = typeof response.content === 'string' ? response.content : '';
 
-    return {
-      completion,
-      messages: [new AIMessage(completion)],
-    };
-  };
+		return {
+			completion,
+			messages: [new AIMessage(completion)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -80,12 +80,12 @@ Rules:
 // ---------------------------------------------------------------------------
 
 function buildSentenceCompleterGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('complete_sentence', makeCompleteSentenceNode(model))
-    .addEdge(START, 'complete_sentence')
-    .addEdge('complete_sentence', END);
+	const graph = new StateGraph(GraphState)
+		.addNode('complete_sentence', makeCompleteSentenceNode(model))
+		.addEdge(START, 'complete_sentence')
+		.addEdge('complete_sentence', END);
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -108,22 +108,22 @@ Rules:
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'sentence-completer',
-  name: 'Sentence Completer',
-  description:
-    'Finishes the current unfinished sentence and stops, matching the tone and style of the text.',
-  category: 'writing',
-  defaultConfig: {
-    systemPrompt: SYSTEM_PROMPT,
-    temperature: 0.3,
-    maxHistoryMessages: 4,
-  },
-  inputHints: {
-    label: 'Text to continue',
-    placeholder: 'Type your text and the AI will continue writing from where you left off…',
-    multiline: true,
-  },
-  buildGraph: buildSentenceCompleterGraph,
+	id: 'sentence-completer',
+	name: 'Sentence Completer',
+	description:
+		'Finishes the current unfinished sentence and stops, matching the tone and style of the text.',
+	category: 'writing',
+	defaultConfig: {
+		systemPrompt: SYSTEM_PROMPT,
+		temperature: 0.3,
+		maxHistoryMessages: 4,
+	},
+	inputHints: {
+		label: 'Text to continue',
+		placeholder: 'Type your text and the AI will continue writing from where you left off…',
+		multiline: true,
+	},
+	buildGraph: buildSentenceCompleterGraph,
 };
 
 export { definition as SentenceCompleterAgent };

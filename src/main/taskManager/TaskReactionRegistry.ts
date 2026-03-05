@@ -10,35 +10,35 @@ import type { LoggerService } from '../services/logger';
 import type { TaskReactionHandler } from './TaskReactionHandler';
 
 export class TaskReactionRegistry {
-  private readonly handlers = new Map<string, TaskReactionHandler[]>();
+	private readonly handlers = new Map<string, TaskReactionHandler[]>();
 
-  constructor(private readonly logger?: LoggerService) {}
+	constructor(private readonly logger?: LoggerService) {}
 
-  /**
-   * Register a reaction handler.
-   * Multiple handlers for the same taskType are accumulated (fan-out dispatch).
-   */
-  register(handler: TaskReactionHandler): void {
-    const existing = this.handlers.get(handler.taskType) ?? [];
-    existing.push(handler);
-    this.handlers.set(handler.taskType, existing);
-    this.logger?.info('TaskReactionRegistry', `Registered reaction for type="${handler.taskType}"`);
-  }
+	/**
+	 * Register a reaction handler.
+	 * Multiple handlers for the same taskType are accumulated (fan-out dispatch).
+	 */
+	register(handler: TaskReactionHandler): void {
+		const existing = this.handlers.get(handler.taskType) ?? [];
+		existing.push(handler);
+		this.handlers.set(handler.taskType, existing);
+		this.logger?.info('TaskReactionRegistry', `Registered reaction for type="${handler.taskType}"`);
+	}
 
-  /**
-   * Return all handlers that should be called for a given task type.
-   * Includes both type-specific handlers and wildcard ('*') handlers.
-   */
-  getForType(taskType: string): TaskReactionHandler[] {
-    const specific = this.handlers.get(taskType) ?? [];
-    const wildcard = this.handlers.get('*') ?? [];
-    return [...specific, ...wildcard];
-  }
+	/**
+	 * Return all handlers that should be called for a given task type.
+	 * Includes both type-specific handlers and wildcard ('*') handlers.
+	 */
+	getForType(taskType: string): TaskReactionHandler[] {
+		const specific = this.handlers.get(taskType) ?? [];
+		const wildcard = this.handlers.get('*') ?? [];
+		return [...specific, ...wildcard];
+	}
 
-  /**
-   * List all registered task types (including '*' if any wildcard handlers exist).
-   */
-  listTypes(): string[] {
-    return Array.from(this.handlers.keys());
-  }
+	/**
+	 * List all registered task types (including '*' if any wildcard handlers exist).
+	 */
+	listTypes(): string[] {
+		return Array.from(this.handlers.keys());
+	}
 }

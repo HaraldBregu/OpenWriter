@@ -11,22 +11,22 @@
 export type { WritingItem, WritingsState } from './types';
 
 export {
-  writingsSlice,
-  writingsLoaded,
-  writingAdded,
-  writingUpdated,
-  writingRemoved,
-  writingSelected,
-  writingsLoadingStarted,
-  writingsLoadingFailed,
+	writingsSlice,
+	writingsLoaded,
+	writingAdded,
+	writingUpdated,
+	writingRemoved,
+	writingSelected,
+	writingsLoadingStarted,
+	writingsLoadingFailed,
 } from './reducer';
 export { default } from './reducer';
 
 export {
-  selectAllWritings,
-  selectSelectedWriting,
-  selectSelectedWritingId,
-  selectWritingsStatus,
-  selectWritingsError,
-  selectWritingById,
+	selectAllWritings,
+	selectSelectedWriting,
+	selectSelectedWritingId,
+	selectWritingsStatus,
+	selectWritingsError,
+	selectWritingById,
 } from './selectors';

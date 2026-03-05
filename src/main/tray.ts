@@ -4,75 +4,75 @@ import { is } from '@electron-toolkit/utils';
 import { loadTranslations } from './i18n';
 
 interface TrayManagerCallbacks {
-  onShowApp: () => void;
-  onHideApp: () => void;
-  onToggleApp: () => void;
-  onQuit: () => void;
-  isAppVisible: () => boolean;
+	onShowApp: () => void;
+	onHideApp: () => void;
+	onToggleApp: () => void;
+	onQuit: () => void;
+	isAppVisible: () => boolean;
 }
 
 export class Tray {
-  private tray: ElectronTray | null = null;
-  private currentLanguage = 'en';
-  private callbacks: TrayManagerCallbacks;
+	private tray: ElectronTray | null = null;
+	private currentLanguage = 'en';
+	private callbacks: TrayManagerCallbacks;
 
-  constructor(callbacks: TrayManagerCallbacks) {
-    this.callbacks = callbacks;
-  }
+	constructor(callbacks: TrayManagerCallbacks) {
+		this.callbacks = callbacks;
+	}
 
-  create(): void {
-    const icon = nativeImage.createFromPath(
-      is.dev
-        ? path.join(__dirname, '../../resources/icons/icon.png')
-        : path.join(process.resourcesPath, 'resources/icons/icon.png')
-    );
+	create(): void {
+		const icon = nativeImage.createFromPath(
+			is.dev
+				? path.join(__dirname, '../../resources/icons/icon.png')
+				: path.join(process.resourcesPath, 'resources/icons/icon.png')
+		);
 
-    this.tray = new ElectronTray(icon.resize({ width: 16, height: 16 }));
-    this.tray.setToolTip('OpenWriter');
+		this.tray = new ElectronTray(icon.resize({ width: 16, height: 16 }));
+		this.tray.setToolTip('OpenWriter');
 
-    // Double-click to show/hide app
-    this.tray.on('double-click', () => {
-      this.callbacks.onToggleApp();
-      // Rebuild menu to update show/hide label
-      this.buildContextMenu();
-    });
+		// Double-click to show/hide app
+		this.tray.on('double-click', () => {
+			this.callbacks.onToggleApp();
+			// Rebuild menu to update show/hide label
+			this.buildContextMenu();
+		});
 
-    this.buildContextMenu();
-  }
+		this.buildContextMenu();
+	}
 
-  updateLanguage(lng: string): void {
-    this.currentLanguage = lng;
-    this.buildContextMenu();
-  }
+	updateLanguage(lng: string): void {
+		this.currentLanguage = lng;
+		this.buildContextMenu();
+	}
 
-  /**
-   * Rebuild the context menu (useful for updating dynamic labels)
-   */
-  updateContextMenu(): void {
-    this.buildContextMenu();
-  }
+	/**
+	 * Rebuild the context menu (useful for updating dynamic labels)
+	 */
+	updateContextMenu(): void {
+		this.buildContextMenu();
+	}
 
-  private buildContextMenu(): void {
-    if (!this.tray) return;
-    const m = loadTranslations(this.currentLanguage, 'tray');
-    const isVisible = this.callbacks.isAppVisible();
+	private buildContextMenu(): void {
+		if (!this.tray) return;
+		const m = loadTranslations(this.currentLanguage, 'tray');
+		const isVisible = this.callbacks.isAppVisible();
 
-    const contextMenu = Menu.buildFromTemplate([
-      {
-        label: isVisible ? m.hideOpenWriter || 'Hide OpenWriter' : m.showOpenWriter,
-        click: () => {
-          this.callbacks.onToggleApp();
-          // Rebuild menu after toggle to update the label
-          setTimeout(() => this.buildContextMenu(), 100);
-        },
-      },
-      { type: 'separator' },
-      {
-        label: m.quit,
-        click: () => this.callbacks.onQuit(),
-      },
-    ]);
+		const contextMenu = Menu.buildFromTemplate([
+			{
+				label: isVisible ? m.hideOpenWriter || 'Hide OpenWriter' : m.showOpenWriter,
+				click: () => {
+					this.callbacks.onToggleApp();
+					// Rebuild menu after toggle to update the label
+					setTimeout(() => this.buildContextMenu(), 100);
+				},
+			},
+			{ type: 'separator' },
+			{
+				label: m.quit,
+				click: () => this.callbacks.onQuit(),
+			},
+		]);
 
-    this.tray.setContextMenu(contextMenu);
-  }
+		this.tray.setContextMenu(contextMenu);
+	}
 }

@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import type { SaveOutputResult } from '../../../shared/types';
 
 export interface UseCreateWritingOptions {
-  /** Called immediately after the workspace IPC resolves, before navigation. */
-  onCreated?: (result: SaveOutputResult) => void;
+	/** Called immediately after the workspace IPC resolves, before navigation. */
+	onCreated?: (result: SaveOutputResult) => void;
 }
 
 export interface UseCreateWritingResult {
-  createWriting: () => Promise<void>;
-  isCreating: boolean;
-  error: string | null;
-  clearError: () => void;
+	createWriting: () => Promise<void>;
+	isCreating: boolean;
+	error: string | null;
+	clearError: () => void;
 }
 
 /**
@@ -26,46 +26,46 @@ export interface UseCreateWritingResult {
  * dependency array.
  */
 export function useCreateWriting(options?: UseCreateWritingOptions): UseCreateWritingResult {
-  const navigate = useNavigate();
-  const inFlightRef = useRef(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+	const navigate = useNavigate();
+	const inFlightRef = useRef(false);
+	const [isCreating, setIsCreating] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-  // Keep options in a ref so the createWriting callback never needs to be
-  // recreated when the caller's onCreated identity changes.
-  const optionsRef = useRef(options);
-  optionsRef.current = options;
+	// Keep options in a ref so the createWriting callback never needs to be
+	// recreated when the caller's onCreated identity changes.
+	const optionsRef = useRef(options);
+	optionsRef.current = options;
 
-  const createWriting = useCallback(async () => {
-    if (inFlightRef.current) return;
-    inFlightRef.current = true;
-    setIsCreating(true);
-    setError(null);
+	const createWriting = useCallback(async () => {
+		if (inFlightRef.current) return;
+		inFlightRef.current = true;
+		setIsCreating(true);
+		setError(null);
 
-    try {
-      const result = await window.workspace.saveOutput({
-        type: 'writings',
-        content: '',
-        metadata: { title: '' },
-      });
+		try {
+			const result = await window.workspace.saveOutput({
+				type: 'writings',
+				content: '',
+				metadata: { title: '' },
+			});
 
-      // Notify caller immediately — before navigation — so the sidebar list
-      // can be updated optimistically without waiting for the file watcher.
-      optionsRef.current?.onCreated?.(result);
+			// Notify caller immediately — before navigation — so the sidebar list
+			// can be updated optimistically without waiting for the file watcher.
+			optionsRef.current?.onCreated?.(result);
 
-      navigate(`/content/${result.id}`);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create writing.';
-      setError(message);
-    } finally {
-      setIsCreating(false);
-      inFlightRef.current = false;
-    }
-  }, [navigate]);
+			navigate(`/content/${result.id}`);
+		} catch (err) {
+			const message = err instanceof Error ? err.message : 'Failed to create writing.';
+			setError(message);
+		} finally {
+			setIsCreating(false);
+			inFlightRef.current = false;
+		}
+	}, [navigate]);
 
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
+	const clearError = useCallback(() => {
+		setError(null);
+	}, []);
 
-  return { createWriting, isCreating, error, clearError };
+	return { createWriting, isCreating, error, clearError };
 }

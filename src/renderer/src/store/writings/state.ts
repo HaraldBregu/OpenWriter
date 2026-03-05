@@ -4,8 +4,8 @@ import type { WritingsState } from './types';
 export type { WritingsState };
 
 export const initialState: WritingsState = {
-  items: [],
-  selectedId: null,
-  status: 'idle',
-  error: null,
+	items: [],
+	selectedId: null,
+	status: 'idle',
+	error: null,
 };

@@ -34,14 +34,14 @@ const INSERT_MARKER = '<<INSERT_HERE>>';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  insertion: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	insertion: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
 });
 
 type TextContinuationState = typeof GraphState.State;
@@ -52,20 +52,20 @@ type TextContinuationState = typeof GraphState.State;
 
 /** Extract the raw user text from the LangGraph message list. */
 function extractUserText(state: TextContinuationState): string {
-  const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-  return userMsg ? String(userMsg.content) : '';
+	const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+	return userMsg ? String(userMsg.content) : '';
 }
 
 /** Split the user prompt around the <<INSERT_HERE>> marker. */
 function splitAtMarker(text: string): { before: string; after: string } {
-  const idx = text.indexOf(INSERT_MARKER);
-  if (idx === -1) {
-    return { before: text.trim(), after: '' };
-  }
-  return {
-    before: text.slice(0, idx).trim(),
-    after: text.slice(idx + INSERT_MARKER.length).trim(),
-  };
+	const idx = text.indexOf(INSERT_MARKER);
+	if (idx === -1) {
+		return { before: text.trim(), after: '' };
+	}
+	return {
+		before: text.slice(0, idx).trim(),
+		after: text.slice(idx + INSERT_MARKER.length).trim(),
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -75,13 +75,13 @@ function splitAtMarker(text: string): { before: string; after: string } {
 // ---------------------------------------------------------------------------
 
 function makeGenerateInsertionNode(model: BaseChatModel) {
-  return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
-    const userText = extractUserText(state);
-    const { before, after } = splitAtMarker(userText);
+	return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
+		const userText = extractUserText(state);
+		const { before, after } = splitAtMarker(userText);
 
-    const generationMessages = [
-      new SystemMessage(
-        `[CONTEXT BLOCK]
+		const generationMessages = [
+			new SystemMessage(
+				`[CONTEXT BLOCK]
 You are continuing a piece of writing. Your job is to insert new content at the marked position — not rewrite, not summarize, just continue naturally.
 
 Before you write, silently analyze the surrounding text for:
@@ -113,20 +113,20 @@ Requirements:
 - Do NOT wrap your response in quotes, markdown, or code fences
 - If the marker falls mid-sentence, complete that sentence first before adding new content
 - Produce coherent prose that reads as if it was always part of the document`
-      ),
-      new HumanMessage(
-        'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
-      ),
-    ];
+			),
+			new HumanMessage(
+				'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
+			),
+		];
 
-    const response = await model.invoke(generationMessages);
-    const insertion = typeof response.content === 'string' ? response.content : '';
+		const response = await model.invoke(generationMessages);
+		const insertion = typeof response.content === 'string' ? response.content : '';
 
-    return {
-      insertion,
-      messages: [new AIMessage(insertion)],
-    };
-  };
+		return {
+			insertion,
+			messages: [new AIMessage(insertion)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -134,12 +134,12 @@ Requirements:
 // ---------------------------------------------------------------------------
 
 function buildTextContinuationGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('generate_insertion', makeGenerateInsertionNode(model))
-    .addEdge(START, 'generate_insertion')
-    .addEdge('generate_insertion', END);
+	const graph = new StateGraph(GraphState)
+		.addNode('generate_insertion', makeGenerateInsertionNode(model))
+		.addEdge(START, 'generate_insertion')
+		.addEdge('generate_insertion', END);
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -166,23 +166,23 @@ Requirements:
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'text-continuation',
-  name: 'Text Continuation',
-  description:
-    'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
-  category: 'writing',
-  defaultConfig: {
-    systemPrompt: SYSTEM_PROMPT,
-    temperature: 0.4,
-    maxHistoryMessages: 4,
-  },
-  inputHints: {
-    label: 'Document with insertion point',
-    placeholder:
-      'Paste your full text with <<INSERT_HERE>> at the insertion point, followed by any constraints (word count, topic, perspective)…',
-    multiline: true,
-  },
-  buildGraph: buildTextContinuationGraph,
+	id: 'text-continuation',
+	name: 'Text Continuation',
+	description:
+		'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
+	category: 'writing',
+	defaultConfig: {
+		systemPrompt: SYSTEM_PROMPT,
+		temperature: 0.4,
+		maxHistoryMessages: 4,
+	},
+	inputHints: {
+		label: 'Document with insertion point',
+		placeholder:
+			'Paste your full text with <<INSERT_HERE>> at the insertion point, followed by any constraints (word count, topic, perspective)…',
+		multiline: true,
+	},
+	buildGraph: buildTextContinuationGraph,
 };
 
 export { definition as TextContinuationAgent };

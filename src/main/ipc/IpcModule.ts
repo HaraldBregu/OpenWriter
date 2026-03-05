@@ -7,14 +7,14 @@ import type { EventBus } from '../core/EventBus';
  * and has access to the service container and event bus.
  */
 export interface IpcModule {
-  /**
-   * Unique name for this IPC module (used for logging).
-   */
-  readonly name: string;
+	/**
+	 * Unique name for this IPC module (used for logging).
+	 */
+	readonly name: string;
 
-  /**
-   * Register all IPC handlers for this domain.
-   * Called once during app initialization.
-   */
-  register(container: ServiceContainer, eventBus: EventBus): void;
+	/**
+	 * Register all IPC handlers for this domain.
+	 * Called once during app initialization.
+	 */
+	register(container: ServiceContainer, eventBus: EventBus): void;
 }

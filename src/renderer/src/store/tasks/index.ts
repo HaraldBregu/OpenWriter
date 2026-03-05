@@ -1,12 +1,12 @@
 /** Tasks slice public barrel — re-exports types, state, reducer, and selectors. */
 // Types
 export type {
-  TaskStatus,
-  TaskPriority,
-  TaskProgressState,
-  TaskEventRecord,
-  TrackedTaskState,
-  TasksState,
+	TaskStatus,
+	TaskPriority,
+	TaskProgressState,
+	TaskEventRecord,
+	TrackedTaskState,
+	TasksState,
 } from './types';
 
 // State

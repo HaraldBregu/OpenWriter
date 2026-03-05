@@ -38,12 +38,12 @@ import type { AgentDefinition } from './AgentDefinition';
  * Pass this to AgentRegistry.register() in bootstrapServices().
  */
 export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
-  StoryWriterAgent,
-  TextCompleterAgent,
-  ContentReviewAgent,
-  SummarizerAgent,
-  ToneAdjusterAgent,
-  DemoAgent,
-  TextContinuationAgent,
-  SentenceCompleterAgent,
+	StoryWriterAgent,
+	TextCompleterAgent,
+	ContentReviewAgent,
+	SummarizerAgent,
+	ToneAdjusterAgent,
+	DemoAgent,
+	TextContinuationAgent,
+	SentenceCompleterAgent,
 ];

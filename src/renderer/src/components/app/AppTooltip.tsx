@@ -7,16 +7,16 @@ const AppTooltipTrigger = TooltipTrigger;
 const AppTooltipProvider = TooltipProvider;
 
 const AppTooltipContent = React.memo(
-  React.forwardRef<
-    React.ElementRef<typeof TooltipContent>,
-    React.ComponentPropsWithoutRef<typeof TooltipContent>
-  >(({ className, ...props }, ref) => (
-    <TooltipContent
-      ref={ref}
-      className={cn('border-border bg-popover text-popover-foreground', className)}
-      {...props}
-    />
-  ))
+	React.forwardRef<
+		React.ElementRef<typeof TooltipContent>,
+		React.ComponentPropsWithoutRef<typeof TooltipContent>
+	>(({ className, ...props }, ref) => (
+		<TooltipContent
+			ref={ref}
+			className={cn('border-border bg-popover text-popover-foreground', className)}
+			{...props}
+		/>
+	))
 );
 AppTooltipContent.displayName = 'AppTooltipContent';
 

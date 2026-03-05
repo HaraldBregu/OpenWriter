@@ -25,18 +25,18 @@ import type { InvokeChannelMap } from '../../shared/channels';
  * The handler does **not** receive the raw IpcMainInvokeEvent.
  */
 export function registerQuery<C extends keyof InvokeChannelMap>(
-  channel: C,
-  handler: (
-    ...args: InvokeChannelMap[C]['args']
-  ) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
+	channel: C,
+	handler: (
+		...args: InvokeChannelMap[C]['args']
+	) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
 ): void;
 /** Fallback overload for channels not yet in the registry. */
 export function registerQuery<TArgs extends unknown[], TResult>(
-  channel: string,
-  handler: (...args: TArgs) => Promise<TResult> | TResult
+	channel: string,
+	handler: (...args: TArgs) => Promise<TResult> | TResult
 ): void;
 export function registerQuery(channel: string, handler: (...args: unknown[]) => unknown): void {
-  ipcMain.handle(channel, wrapSimpleHandler(handler, channel));
+	ipcMain.handle(channel, wrapSimpleHandler(handler, channel));
 }
 
 // ---- registerCommand ------------------------------------------------------
@@ -46,18 +46,18 @@ export function registerQuery(channel: string, handler: (...args: unknown[]) => 
  * The handler does **not** receive the raw IpcMainInvokeEvent.
  */
 export function registerCommand<C extends keyof InvokeChannelMap>(
-  channel: C,
-  handler: (
-    ...args: InvokeChannelMap[C]['args']
-  ) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
+	channel: C,
+	handler: (
+		...args: InvokeChannelMap[C]['args']
+	) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
 ): void;
 /** Fallback overload for channels not yet in the registry. */
 export function registerCommand<TArgs extends unknown[], TResult>(
-  channel: string,
-  handler: (...args: TArgs) => Promise<TResult> | TResult
+	channel: string,
+	handler: (...args: TArgs) => Promise<TResult> | TResult
 ): void;
 export function registerCommand(channel: string, handler: (...args: unknown[]) => unknown): void {
-  ipcMain.handle(channel, wrapSimpleHandler(handler, channel));
+	ipcMain.handle(channel, wrapSimpleHandler(handler, channel));
 }
 
 // ---- registerCommandWithEvent ---------------------------------------------
@@ -67,20 +67,20 @@ export function registerCommand(channel: string, handler: (...args: unknown[]) =
  * IpcMainInvokeEvent (e.g. to read `event.sender`).
  */
 export function registerCommandWithEvent<C extends keyof InvokeChannelMap>(
-  channel: C,
-  handler: (
-    event: IpcMainInvokeEvent,
-    ...args: InvokeChannelMap[C]['args']
-  ) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
+	channel: C,
+	handler: (
+		event: IpcMainInvokeEvent,
+		...args: InvokeChannelMap[C]['args']
+	) => Promise<InvokeChannelMap[C]['result']> | InvokeChannelMap[C]['result']
 ): void;
 /** Fallback overload for channels not yet in the registry. */
 export function registerCommandWithEvent<TArgs extends unknown[], TResult>(
-  channel: string,
-  handler: (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<TResult> | TResult
+	channel: string,
+	handler: (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<TResult> | TResult
 ): void;
 export function registerCommandWithEvent(
-  channel: string,
-  handler: (event: IpcMainInvokeEvent, ...args: unknown[]) => unknown
+	channel: string,
+	handler: (event: IpcMainInvokeEvent, ...args: unknown[]) => unknown
 ): void {
-  ipcMain.handle(channel, wrapIpcHandler(handler, channel));
+	ipcMain.handle(channel, wrapIpcHandler(handler, channel));
 }

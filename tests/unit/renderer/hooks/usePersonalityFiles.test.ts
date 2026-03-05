@@ -33,30 +33,30 @@ const mockPersonalityLoadAll = jest.fn();
 const mockUnsubscribeFileChange = jest.fn();
 
 type PersonalityFileChangeCallback = (event: {
-  type: 'added' | 'changed' | 'removed';
-  sectionId: string;
-  fileId: string;
-  filePath: string;
-  timestamp: number;
+	type: 'added' | 'changed' | 'removed';
+	sectionId: string;
+	fileId: string;
+	filePath: string;
+	timestamp: number;
 }) => void;
 
 let capturedFileChangeCallback: PersonalityFileChangeCallback | null = null;
 
 function installWindowMocks(): void {
-  Object.defineProperty(window, 'workspace', {
-    value: {
-      getCurrent: mockWorkspaceGetCurrent,
-      personality: {
-        loadAll: mockPersonalityLoadAll,
-        onFileChange: jest.fn().mockImplementation((cb: PersonalityFileChangeCallback) => {
-          capturedFileChangeCallback = cb;
-          return mockUnsubscribeFileChange;
-        }),
-      },
-    },
-    writable: true,
-    configurable: true,
-  });
+	Object.defineProperty(window, 'workspace', {
+		value: {
+			getCurrent: mockWorkspaceGetCurrent,
+			personality: {
+				loadAll: mockPersonalityLoadAll,
+				onFileChange: jest.fn().mockImplementation((cb: PersonalityFileChangeCallback) => {
+					capturedFileChangeCallback = cb;
+					return mockUnsubscribeFileChange;
+				}),
+			},
+		},
+		writable: true,
+		configurable: true,
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -64,12 +64,12 @@ function installWindowMocks(): void {
 // ---------------------------------------------------------------------------
 
 function createWrapper() {
-  const store = configureStore({
-    reducer: { personalityFiles: personalityFilesReducer },
-  });
-  const wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(Provider, { store }, children);
-  return { store, wrapper };
+	const store = configureStore({
+		reducer: { personalityFiles: personalityFilesReducer },
+	});
+	const wrapper = ({ children }: { children: React.ReactNode }) =>
+		React.createElement(Provider, { store }, children);
+	return { store, wrapper };
 }
 
 // ---------------------------------------------------------------------------
@@ -77,17 +77,17 @@ function createWrapper() {
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  capturedFileChangeCallback = null;
-  mockWorkspaceGetCurrent.mockResolvedValue(null);
-  mockPersonalityLoadAll.mockResolvedValue([]);
-  mockUnsubscribeFileChange.mockClear();
+	capturedFileChangeCallback = null;
+	mockWorkspaceGetCurrent.mockResolvedValue(null);
+	mockPersonalityLoadAll.mockResolvedValue([]);
+	mockUnsubscribeFileChange.mockClear();
 
-  installWindowMocks();
+	installWindowMocks();
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
-  jest.useRealTimers();
+	jest.clearAllMocks();
+	jest.useRealTimers();
 });
 
 // ---------------------------------------------------------------------------
@@ -95,216 +95,216 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('usePersonalityFiles — initial load', () => {
-  it('calls window.workspace.personality.loadAll when a workspace is present', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+	it('calls window.workspace.personality.loadAll when a workspace is present', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      expect(mockPersonalityLoadAll).toHaveBeenCalledTimes(1);
-    });
-  });
+		await waitFor(() => {
+			expect(mockPersonalityLoadAll).toHaveBeenCalledTimes(1);
+		});
+	});
 
-  it('does not call window.workspace.personality.loadAll when no workspace is set', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue(null);
+	it('does not call window.workspace.personality.loadAll when no workspace is set', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue(null);
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      expect(mockWorkspaceGetCurrent).toHaveBeenCalled();
-    });
+		await waitFor(() => {
+			expect(mockWorkspaceGetCurrent).toHaveBeenCalled();
+		});
 
-    expect(mockPersonalityLoadAll).not.toHaveBeenCalled();
-  });
+		expect(mockPersonalityLoadAll).not.toHaveBeenCalled();
+	});
 
-  it('distributes loaded files into the correct store sections', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
-    mockPersonalityLoadAll.mockResolvedValue([
-      {
-        id: 'file-001',
-        sectionId: 'emotional-depth',
-        path: '/workspace/personality/emotional-depth/file-001',
-        metadata: { title: 'Depth 1', provider: 'openai', model: 'gpt-4' },
-        content: 'Some content',
-        savedAt: Date.now(),
-      },
-      {
-        id: 'file-002',
-        sectionId: 'consciousness',
-        path: '/workspace/personality/consciousness/file-002',
-        metadata: { title: 'Consciousness 1', provider: 'openai', model: 'gpt-4' },
-        content: 'Other content',
-        savedAt: Date.now(),
-      },
-    ]);
+	it('distributes loaded files into the correct store sections', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+		mockPersonalityLoadAll.mockResolvedValue([
+			{
+				id: 'file-001',
+				sectionId: 'emotional-depth',
+				path: '/workspace/personality/emotional-depth/file-001',
+				metadata: { title: 'Depth 1', provider: 'openai', model: 'gpt-4' },
+				content: 'Some content',
+				savedAt: Date.now(),
+			},
+			{
+				id: 'file-002',
+				sectionId: 'consciousness',
+				path: '/workspace/personality/consciousness/file-002',
+				metadata: { title: 'Consciousness 1', provider: 'openai', model: 'gpt-4' },
+				content: 'Other content',
+				savedAt: Date.now(),
+			},
+		]);
 
-    const { store, wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { store, wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      const state = store.getState() as {
-        personalityFiles: { files: Record<string, unknown[]> };
-      };
-      expect(state.personalityFiles.files['emotional-depth']).toHaveLength(1);
-      expect(state.personalityFiles.files['consciousness']).toHaveLength(1);
-    });
-  });
+		await waitFor(() => {
+			const state = store.getState() as {
+				personalityFiles: { files: Record<string, unknown[]> };
+			};
+			expect(state.personalityFiles.files['emotional-depth']).toHaveLength(1);
+			expect(state.personalityFiles.files['consciousness']).toHaveLength(1);
+		});
+	});
 
-  it('logs an error and does not throw when window.workspace.personality.loadAll rejects', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
-    mockPersonalityLoadAll.mockRejectedValue(new Error('Network error'));
+	it('logs an error and does not throw when window.workspace.personality.loadAll rejects', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+		mockPersonalityLoadAll.mockRejectedValue(new Error('Network error'));
 
-    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+		const consoleError = jest.spyOn(console, 'error').mockImplementation();
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      expect(consoleError).toHaveBeenCalled();
-    });
+		await waitFor(() => {
+			expect(consoleError).toHaveBeenCalled();
+		});
 
-    consoleError.mockRestore();
-  });
+		consoleError.mockRestore();
+	});
 });
 
 describe('usePersonalityFiles — file-change subscription', () => {
-  it('subscribes to window.workspace.personality.onFileChange on mount', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+	it('subscribes to window.workspace.personality.onFileChange on mount', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      expect(window.workspace.personality.onFileChange).toHaveBeenCalledTimes(1);
-    });
-  });
+		await waitFor(() => {
+			expect(window.workspace.personality.onFileChange).toHaveBeenCalledTimes(1);
+		});
+	});
 
-  it('triggers a debounced reload after a file-change event', async () => {
-    jest.useFakeTimers();
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+	it('triggers a debounced reload after a file-change event', async () => {
+		jest.useFakeTimers();
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await act(async () => {
-      await Promise.resolve();
-    });
+		await act(async () => {
+			await Promise.resolve();
+		});
 
-    const callsBefore = mockPersonalityLoadAll.mock.calls.length;
+		const callsBefore = mockPersonalityLoadAll.mock.calls.length;
 
-    // Emit a file-change event
-    act(() => {
-      capturedFileChangeCallback?.({
-        type: 'added',
-        sectionId: 'creativity',
-        fileId: 'new-file',
-        filePath: '/workspace/personality/creativity/new-file/DATA.md',
-        timestamp: Date.now(),
-      });
-    });
+		// Emit a file-change event
+		act(() => {
+			capturedFileChangeCallback?.({
+				type: 'added',
+				sectionId: 'creativity',
+				fileId: 'new-file',
+				filePath: '/workspace/personality/creativity/new-file/DATA.md',
+				timestamp: Date.now(),
+			});
+		});
 
-    // Debounce has not fired yet
-    expect(mockPersonalityLoadAll.mock.calls.length).toBe(callsBefore);
+		// Debounce has not fired yet
+		expect(mockPersonalityLoadAll.mock.calls.length).toBe(callsBefore);
 
-    // Advance past the 500 ms window
-    act(() => {
-      jest.advanceTimersByTime(600);
-    });
-    await act(async () => {
-      await Promise.resolve();
-    });
+		// Advance past the 500 ms window
+		act(() => {
+			jest.advanceTimersByTime(600);
+		});
+		await act(async () => {
+			await Promise.resolve();
+		});
 
-    expect(mockPersonalityLoadAll.mock.calls.length).toBeGreaterThan(callsBefore);
-  });
+		expect(mockPersonalityLoadAll.mock.calls.length).toBeGreaterThan(callsBefore);
+	});
 
-  it('coalesces multiple rapid file-change events into a single reload', async () => {
-    jest.useFakeTimers();
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+	it('coalesces multiple rapid file-change events into a single reload', async () => {
+		jest.useFakeTimers();
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await act(async () => {
-      await Promise.resolve();
-    });
+		await act(async () => {
+			await Promise.resolve();
+		});
 
-    const callsBefore = mockPersonalityLoadAll.mock.calls.length;
+		const callsBefore = mockPersonalityLoadAll.mock.calls.length;
 
-    // Fire 4 events within the debounce window (100 ms apart)
-    for (let i = 0; i < 4; i++) {
-      act(() => {
-        capturedFileChangeCallback?.({
-          type: 'changed',
-          sectionId: 'motivation',
-          fileId: `file-${i}`,
-          filePath: `/workspace/personality/motivation/file-${i}/DATA.md`,
-          timestamp: Date.now(),
-        });
-      });
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
-    }
+		// Fire 4 events within the debounce window (100 ms apart)
+		for (let i = 0; i < 4; i++) {
+			act(() => {
+				capturedFileChangeCallback?.({
+					type: 'changed',
+					sectionId: 'motivation',
+					fileId: `file-${i}`,
+					filePath: `/workspace/personality/motivation/file-${i}/DATA.md`,
+					timestamp: Date.now(),
+				});
+			});
+			act(() => {
+				jest.advanceTimersByTime(100);
+			});
+		}
 
-    // Advance fully past the debounce window
-    act(() => {
-      jest.advanceTimersByTime(600);
-    });
-    await act(async () => {
-      await Promise.resolve();
-    });
+		// Advance fully past the debounce window
+		act(() => {
+			jest.advanceTimersByTime(600);
+		});
+		await act(async () => {
+			await Promise.resolve();
+		});
 
-    // Only one reload despite four events
-    expect(mockPersonalityLoadAll.mock.calls.length).toBe(callsBefore + 1);
-  });
+		// Only one reload despite four events
+		expect(mockPersonalityLoadAll.mock.calls.length).toBe(callsBefore + 1);
+	});
 });
 
 describe('usePersonalityFiles — cleanup on unmount', () => {
-  it('calls the unsubscribe function on unmount', async () => {
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+	it('calls the unsubscribe function on unmount', async () => {
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await waitFor(() => {
-      expect(window.workspace.personality.onFileChange).toHaveBeenCalled();
-    });
+		await waitFor(() => {
+			expect(window.workspace.personality.onFileChange).toHaveBeenCalled();
+		});
 
-    unmount();
+		unmount();
 
-    expect(mockUnsubscribeFileChange).toHaveBeenCalledTimes(1);
-  });
+		expect(mockUnsubscribeFileChange).toHaveBeenCalledTimes(1);
+	});
 
-  it('cancels a pending debounce timer on unmount', async () => {
-    jest.useFakeTimers();
-    const clearTimeoutSpy = jest.spyOn(globalThis, 'clearTimeout');
+	it('cancels a pending debounce timer on unmount', async () => {
+		jest.useFakeTimers();
+		const clearTimeoutSpy = jest.spyOn(globalThis, 'clearTimeout');
 
-    mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
+		mockWorkspaceGetCurrent.mockResolvedValue('/workspace/path');
 
-    const { wrapper } = createWrapper();
-    const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper });
+		const { wrapper } = createWrapper();
+		const { unmount } = renderHook(() => usePersonalityFiles(), { wrapper });
 
-    await act(async () => {
-      await Promise.resolve();
-    });
+		await act(async () => {
+			await Promise.resolve();
+		});
 
-    // Arm the debounce timer via a file-change event
-    act(() => {
-      capturedFileChangeCallback?.({
-        type: 'removed',
-        sectionId: 'growth',
-        fileId: 'deleted-file',
-        filePath: '/workspace/personality/growth/deleted-file/DATA.md',
-        timestamp: Date.now(),
-      });
-    });
+		// Arm the debounce timer via a file-change event
+		act(() => {
+			capturedFileChangeCallback?.({
+				type: 'removed',
+				sectionId: 'growth',
+				fileId: 'deleted-file',
+				filePath: '/workspace/personality/growth/deleted-file/DATA.md',
+				timestamp: Date.now(),
+			});
+		});
 
-    // Unmount before the debounce fires
-    unmount();
+		// Unmount before the debounce fires
+		unmount();
 
-    expect(clearTimeoutSpy).toHaveBeenCalled();
-    clearTimeoutSpy.mockRestore();
-  });
+		expect(clearTimeoutSpy).toHaveBeenCalled();
+		clearTimeoutSpy.mockRestore();
+	});
 });

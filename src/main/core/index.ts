@@ -9,7 +9,7 @@ export { WindowFactory } from './WindowFactory';
 export { ServiceContainer, type Disposable } from './ServiceContainer';
 export { WindowContext, WindowContextManager, type WindowContextConfig } from './WindowContext';
 export {
-  WindowScopedServiceFactory,
-  createDefaultWindowScopedServiceFactory,
-  type WindowScopedServiceDefinition,
+	WindowScopedServiceFactory,
+	createDefaultWindowScopedServiceFactory,
+	type WindowScopedServiceDefinition,
 } from './WindowScopedServiceFactory';

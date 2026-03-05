@@ -1,7 +1,7 @@
 import React from 'react';
 
 const MediaSettings: React.FC = () => {
-  return null;
+	return null;
 };
 
 export default MediaSettings;

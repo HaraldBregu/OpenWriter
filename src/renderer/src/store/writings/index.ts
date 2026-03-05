@@ -7,14 +7,14 @@ export { initialState } from './state';
 
 // Reducer, slice, and synchronous actions
 export {
-  writingsSlice,
-  writingsLoaded,
-  writingAdded,
-  writingUpdated,
-  writingRemoved,
-  writingSelected,
-  writingsLoadingStarted,
-  writingsLoadingFailed,
+	writingsSlice,
+	writingsLoaded,
+	writingAdded,
+	writingUpdated,
+	writingRemoved,
+	writingSelected,
+	writingsLoadingStarted,
+	writingsLoadingFailed,
 } from './reducer';
 export { default } from './reducer';
 
@@ -23,10 +23,10 @@ export { loadWritings, refreshWriting } from './actions';
 
 // Selectors
 export {
-  selectAllWritings,
-  selectSelectedWriting,
-  selectSelectedWritingId,
-  selectWritingsStatus,
-  selectWritingsError,
-  selectWritingById,
+	selectAllWritings,
+	selectSelectedWriting,
+	selectSelectedWritingId,
+	selectWritingsStatus,
+	selectWritingsError,
+	selectWritingById,
 } from './selectors';

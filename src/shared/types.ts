@@ -11,13 +11,13 @@
 // ---- Workspace ------------------------------------------------------------
 
 export interface WorkspaceInfo {
-  path: string;
-  lastOpened: number;
+	path: string;
+	lastOpened: number;
 }
 
 export interface WorkspaceChangedEvent {
-  currentPath: string | null;
-  previousPath: string | null;
+	currentPath: string | null;
+	previousPath: string | null;
 }
 
 /**
@@ -25,12 +25,12 @@ export interface WorkspaceChangedEvent {
  * renamed, or otherwise inaccessible while the application is running.
  */
 export interface WorkspaceDeletedEvent {
-  /** The path that was previously set as the workspace */
-  deletedPath: string;
-  /** Human-readable reason for the event */
-  reason: 'deleted' | 'inaccessible' | 'renamed';
-  /** Timestamp when the deletion was detected */
-  timestamp: number;
+	/** The path that was previously set as the workspace */
+	deletedPath: string;
+	/** Human-readable reason for the event */
+	reason: 'deleted' | 'inaccessible' | 'renamed';
+	/** Timestamp when the deletion was detected */
+	timestamp: number;
 }
 
 // ---- Task -----------------------------------------------------------------
@@ -38,71 +38,71 @@ export interface WorkspaceDeletedEvent {
 export type TaskPriority = 'low' | 'normal' | 'high';
 
 export interface TaskSubmitOptions {
-  taskId?: string;
-  priority?: TaskPriority;
-  timeoutMs?: number;
-  windowId?: number;
+	taskId?: string;
+	priority?: TaskPriority;
+	timeoutMs?: number;
+	windowId?: number;
 }
 
 export interface TaskSubmitPayload<TInput = unknown> {
-  type: string;
-  input: TInput;
-  options?: TaskSubmitOptions;
+	type: string;
+	input: TInput;
+	options?: TaskSubmitOptions;
 }
 
 export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
 
 export interface TaskInfo {
-  taskId: string;
-  type: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  startedAt?: number;
-  completedAt?: number;
-  windowId?: number;
-  error?: string;
-  queuePosition?: number;
-  durationMs?: number;
+	taskId: string;
+	type: string;
+	status: TaskStatus;
+	priority: TaskPriority;
+	startedAt?: number;
+	completedAt?: number;
+	windowId?: number;
+	error?: string;
+	queuePosition?: number;
+	durationMs?: number;
 }
 
 /** Queue metrics returned by task:queue-status */
 export interface TaskQueueStatus {
-  queued: number;
-  running: number;
-  completed: number;
+	queued: number;
+	running: number;
+	completed: number;
 }
 
 export type TaskEvent =
-  | { type: 'queued'; data: { taskId: string; taskType: string; position: number } }
-  | { type: 'started'; data: { taskId: string } }
-  | {
-      type: 'progress';
-      data: { taskId: string; percent: number; message?: string; detail?: unknown };
-    }
-  | { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
-  | { type: 'error'; data: { taskId: string; message: string; code: string } }
-  | { type: 'cancelled'; data: { taskId: string } }
-  | { type: 'stream'; data: { taskId: string; data: string } }
-  | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
-  | { type: 'queue-position'; data: { taskId: string; position: number } };
+	| { type: 'queued'; data: { taskId: string; taskType: string; position: number } }
+	| { type: 'started'; data: { taskId: string } }
+	| {
+			type: 'progress';
+			data: { taskId: string; percent: number; message?: string; detail?: unknown };
+	  }
+	| { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
+	| { type: 'error'; data: { taskId: string; message: string; code: string } }
+	| { type: 'cancelled'; data: { taskId: string } }
+	| { type: 'stream'; data: { taskId: string; data: string } }
+	| { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
+	| { type: 'queue-position'; data: { taskId: string; position: number } };
 
 // ---- Documents ------------------------------------------------------------
 
 export interface DocumentInfo {
-  id: string;
-  name: string;
-  path: string;
-  size: number;
-  mimeType: string;
-  importedAt: number;
-  lastModified: number;
+	id: string;
+	name: string;
+	path: string;
+	size: number;
+	mimeType: string;
+	importedAt: number;
+	lastModified: number;
 }
 
 export interface DocumentFileChangeEvent {
-  type: 'added' | 'changed' | 'removed';
-  fileId: string;
-  filePath: string;
-  timestamp: number;
+	type: 'added' | 'changed' | 'removed';
+	fileId: string;
+	filePath: string;
+	timestamp: number;
 }
 
 // ---- Output ---------------------------------------------------------------
@@ -110,106 +110,106 @@ export interface DocumentFileChangeEvent {
 export type OutputType = 'writings';
 
 export interface OutputFileMetadata {
-  title: string;
-  type: OutputType;
-  category: string;
-  tags: string[];
-  visibility: string;
-  provider: string;
-  model: string;
-  temperature?: number;
-  maxTokens?: number | null;
-  reasoning?: boolean;
-  createdAt: string;
-  updatedAt: string;
+	title: string;
+	type: OutputType;
+	category: string;
+	tags: string[];
+	visibility: string;
+	provider: string;
+	model: string;
+	temperature?: number;
+	maxTokens?: number | null;
+	reasoning?: boolean;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface OutputFile {
-  id: string;
-  type: OutputType;
-  path: string;
-  metadata: OutputFileMetadata;
-  content: string;
-  savedAt: number;
+	id: string;
+	type: OutputType;
+	path: string;
+	metadata: OutputFileMetadata;
+	content: string;
+	savedAt: number;
 }
 
 export interface OutputFileChangeEvent {
-  type: 'added' | 'changed' | 'removed';
-  outputType: string;
-  fileId: string;
-  filePath: string;
-  timestamp: number;
+	type: 'added' | 'changed' | 'removed';
+	outputType: string;
+	fileId: string;
+	filePath: string;
+	timestamp: number;
 }
 
 export interface SaveOutputInput {
-  type: string;
-  content: string;
-  metadata?: Record<string, unknown>;
+	type: string;
+	content: string;
+	metadata?: Record<string, unknown>;
 }
 
 export interface SaveOutputResult {
-  id: string;
-  path: string;
-  savedAt: number;
+	id: string;
+	path: string;
+	savedAt: number;
 }
 
 export interface OutputUpdateParams {
-  type: string;
-  id: string;
-  content: string;
-  metadata: Record<string, unknown>;
+	type: string;
+	id: string;
+	content: string;
+	metadata: Record<string, unknown>;
 }
 
 // ---- Directories ----------------------------------------------------------
 
 export interface DirectoryEntry {
-  id: string;
-  path: string;
-  addedAt: number;
-  isIndexed: boolean;
-  lastIndexedAt?: number;
+	id: string;
+	path: string;
+	addedAt: number;
+	isIndexed: boolean;
+	lastIndexedAt?: number;
 }
 
 export interface DirectoryAddManyResult {
-  added: DirectoryEntry[];
-  errors: Array<{ path: string; error: string }>;
+	added: DirectoryEntry[];
+	errors: Array<{ path: string; error: string }>;
 }
 
 export interface DirectoryValidationResult {
-  valid: boolean;
-  error?: string;
+	valid: boolean;
+	error?: string;
 }
 
 // ---- Context Menu ---------------------------------------------------------
 
 export interface WritingContextMenuAction {
-  action: string;
-  writingId: string;
+	action: string;
+	writingId: string;
 }
 
 // ---- Common ---------------------------------------------------------------
 
 export interface WatcherError {
-  error: string;
-  timestamp: number;
+	error: string;
+	timestamp: number;
 }
 
 // ---- AI Agents ------------------------------------------------------------
 
 export type AgentStreamEvent =
-  | { type: 'token'; token: string; runId: string }
-  | { type: 'thinking'; content: string; runId: string }
-  | { type: 'done'; content: string; tokenCount: number; runId: string }
-  | { type: 'error'; error: string; code: string; runId: string };
+	| { type: 'token'; token: string; runId: string }
+	| { type: 'thinking'; content: string; runId: string }
+	| { type: 'done'; content: string; tokenCount: number; runId: string }
+	| { type: 'error'; error: string; code: string; runId: string };
 
 export interface AgentDefinitionInfo {
-  id: string;
-  name: string;
-  description: string;
-  category: 'writing' | 'editing' | 'analysis' | 'utility';
-  inputHints?: {
-    label: string;
-    placeholder: string;
-    multiline?: boolean;
-  };
+	id: string;
+	name: string;
+	description: string;
+	category: 'writing' | 'editing' | 'analysis' | 'utility';
+	inputHints?: {
+		label: string;
+		placeholder: string;
+		multiline?: boolean;
+	};
 }

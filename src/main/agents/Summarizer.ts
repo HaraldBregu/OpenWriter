@@ -22,22 +22,22 @@ import type { AgentDefinition } from './AgentDefinition';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  wordCount: Annotation<number>({
-    reducer: (_, next) => next,
-    default: () => 0,
-  }),
-  rawSummary: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  refinedSummary: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	wordCount: Annotation<number>({
+		reducer: (_, next) => next,
+		default: () => 0,
+	}),
+	rawSummary: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	refinedSummary: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
 });
 
 type SummarizerState = typeof GraphState.State;
@@ -48,12 +48,12 @@ type SummarizerState = typeof GraphState.State;
 // ---------------------------------------------------------------------------
 
 function makeAssessNode() {
-  return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const text = userMsg ? String(userMsg.content) : '';
-    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-    return { wordCount };
-  };
+	return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const text = userMsg ? String(userMsg.content) : '';
+		const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+		return { wordCount };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -62,24 +62,24 @@ function makeAssessNode() {
 // ---------------------------------------------------------------------------
 
 function makeSummarizeNode(model: BaseChatModel) {
-  return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const text = userMsg ? String(userMsg.content) : '';
+	return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const text = userMsg ? String(userMsg.content) : '';
 
-    // Derive bullet target from word count
-    const wc = state.wordCount;
-    let bulletGuidance: string;
-    if (wc < 500) {
-      bulletGuidance = 'Use 2–4 bullet points.';
-    } else if (wc <= 2000) {
-      bulletGuidance = 'Use 4–8 bullet points.';
-    } else {
-      bulletGuidance = 'Use 8–15 bullet points, grouped by theme if appropriate.';
-    }
+		// Derive bullet target from word count
+		const wc = state.wordCount;
+		let bulletGuidance: string;
+		if (wc < 500) {
+			bulletGuidance = 'Use 2–4 bullet points.';
+		} else if (wc <= 2000) {
+			bulletGuidance = 'Use 4–8 bullet points.';
+		} else {
+			bulletGuidance = 'Use 8–15 bullet points, grouped by theme if appropriate.';
+		}
 
-    const response = await model.invoke([
-      new SystemMessage(
-        `You are an expert research analyst trained to distil long documents into precise, faithful summaries.
+		const response = await model.invoke([
+			new SystemMessage(
+				`You are an expert research analyst trained to distil long documents into precise, faithful summaries.
 
 Core principles:
 - Fidelity above all. Never include information not present in the source text. Do not infer, extrapolate, or add context from general knowledge.
@@ -93,12 +93,12 @@ Format rules:
 3. If the document has a clear structure, mirror it in the bullets.
 4. Close with a one-sentence note on significant caveats or open questions — only if present in the source.
 5. Do not add a heading like "Summary:" — begin directly with the opening sentence.`
-      ),
-      new HumanMessage(text),
-    ]);
+			),
+			new HumanMessage(text),
+		]);
 
-    return { rawSummary: typeof response.content === 'string' ? response.content : '' };
-  };
+		return { rawSummary: typeof response.content === 'string' ? response.content : '' };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -107,32 +107,32 @@ Format rules:
 // ---------------------------------------------------------------------------
 
 function makeRefineNode(model: BaseChatModel) {
-  return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const originalText = userMsg ? String(userMsg.content) : '';
+	return async (state: SummarizerState): Promise<Partial<SummarizerState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const originalText = userMsg ? String(userMsg.content) : '';
 
-    const response = await model.invoke([
-      new SystemMessage(
-        `You are a meticulous fact-checker for summaries. Review the provided summary against the original text.
+		const response = await model.invoke([
+			new SystemMessage(
+				`You are a meticulous fact-checker for summaries. Review the provided summary against the original text.
 Tasks:
 1. Remove any inferences, extrapolations, or details not directly stated in the original.
 2. Ensure hedging language from the source is preserved (do not flatten qualifications).
 3. Verify bullet count calibration matches the source length.
 Return only the refined summary — no explanation, no preamble.`
-      ),
-      new HumanMessage(
-        `Original text:\n${originalText}\n\nSummary to refine:\n${state.rawSummary}`
-      ),
-    ]);
+			),
+			new HumanMessage(
+				`Original text:\n${originalText}\n\nSummary to refine:\n${state.rawSummary}`
+			),
+		]);
 
-    const refinedSummary =
-      typeof response.content === 'string' ? response.content : state.rawSummary;
+		const refinedSummary =
+			typeof response.content === 'string' ? response.content : state.rawSummary;
 
-    return {
-      refinedSummary,
-      messages: [new AIMessage(refinedSummary)],
-    };
-  };
+		return {
+			refinedSummary,
+			messages: [new AIMessage(refinedSummary)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -140,16 +140,16 @@ Return only the refined summary — no explanation, no preamble.`
 // ---------------------------------------------------------------------------
 
 function buildSummarizerGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('assess', makeAssessNode())
-    .addNode('summarize', makeSummarizeNode(model))
-    .addNode('refine', makeRefineNode(model))
-    .addEdge(START, 'assess')
-    .addEdge('assess', 'summarize')
-    .addEdge('summarize', 'refine')
-    .addEdge('refine', END);
+	const graph = new StateGraph(GraphState)
+		.addNode('assess', makeAssessNode())
+		.addNode('summarize', makeSummarizeNode(model))
+		.addNode('refine', makeRefineNode(model))
+		.addEdge(START, 'assess')
+		.addEdge('assess', 'summarize')
+		.addEdge('summarize', 'refine')
+		.addEdge('refine', END);
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -157,13 +157,13 @@ function buildSummarizerGraph(model: BaseChatModel) {
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'summarizer',
-  name: 'Summarizer',
-  description:
-    'Condenses long-form content into clear, faithful summaries that preserve the key arguments, facts, and conclusions — without adding anything not present in the source.',
-  category: 'analysis',
-  defaultConfig: {
-    systemPrompt: `You are an expert research analyst trained to distil long documents into precise, faithful summaries.
+	id: 'summarizer',
+	name: 'Summarizer',
+	description:
+		'Condenses long-form content into clear, faithful summaries that preserve the key arguments, facts, and conclusions — without adding anything not present in the source.',
+	category: 'analysis',
+	defaultConfig: {
+		systemPrompt: `You are an expert research analyst trained to distil long documents into precise, faithful summaries.
 
 Core principles:
 - **Fidelity above all.** Never include information that is not present in the source text.  Do not infer, extrapolate, or add context from general knowledge.
@@ -183,15 +183,15 @@ Length calibration:
 - Input < 500 words → 2–4 bullet points
 - Input 500–2000 words → 4–8 bullet points
 - Input > 2000 words → 8–15 bullet points, grouped by theme if appropriate`,
-    temperature: 0.3,
-    maxHistoryMessages: 6,
-  },
-  inputHints: {
-    label: 'Content to summarise',
-    placeholder: 'Paste the article, document, or passage you want summarised…',
-    multiline: true,
-  },
-  buildGraph: buildSummarizerGraph,
+		temperature: 0.3,
+		maxHistoryMessages: 6,
+	},
+	inputHints: {
+		label: 'Content to summarise',
+		placeholder: 'Paste the article, document, or passage you want summarised…',
+		multiline: true,
+	},
+	buildGraph: buildSummarizerGraph,
 };
 
 export { definition as SummarizerAgent };

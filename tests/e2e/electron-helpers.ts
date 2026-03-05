@@ -17,10 +17,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export interface AppContext {
-  /** The Playwright ElectronApplication handle */
-  app: ElectronApplication;
-  /** The first (main) renderer window page */
-  page: Page;
+	/** The Playwright ElectronApplication handle */
+	app: ElectronApplication;
+	/** The first (main) renderer window page */
+	page: Page;
 }
 
 /**
@@ -30,33 +30,33 @@ export interface AppContext {
  * `electron-vite build`) so that `out/main/index.js` exists.
  */
 export async function launchApp(): Promise<AppContext> {
-  const mainPath = path.resolve(__dirname, '../../out/main/index.js');
+	const mainPath = path.resolve(__dirname, '../../out/main/index.js');
 
-  const app = await electron.launch({
-    args: [mainPath],
-    // Suppress GPU sandbox errors on CI / headless Windows
-    env: {
-      ...process.env,
-      NODE_ENV: 'production',
-    },
-  });
+	const app = await electron.launch({
+		args: [mainPath],
+		// Suppress GPU sandbox errors on CI / headless Windows
+		env: {
+			...process.env,
+			NODE_ENV: 'production',
+		},
+	});
 
-  // Wait for the first BrowserWindow to appear
-  const page = await app.firstWindow();
+	// Wait for the first BrowserWindow to appear
+	const page = await app.firstWindow();
 
-  // Wait for the renderer to finish initial loading
-  await page.waitForLoadState('domcontentloaded');
+	// Wait for the renderer to finish initial loading
+	await page.waitForLoadState('domcontentloaded');
 
-  return { app, page };
+	return { app, page };
 }
 
 /**
  * Gracefully close the Electron application.
  */
 export async function closeApp(ctx: AppContext): Promise<void> {
-  if (ctx.app) {
-    await ctx.app.close();
-  }
+	if (ctx.app) {
+		await ctx.app.close();
+	}
 }
 
 /**
@@ -64,11 +64,11 @@ export async function closeApp(ctx: AppContext): Promise<void> {
  * The WelcomePage always renders a TitleBar, so we wait for that.
  */
 export async function waitForAppReady(page: Page): Promise<void> {
-  // Wait for any meaningful content to appear in the DOM
-  // The app always has a root element that React mounts into
-  await page.waitForSelector('#root', { state: 'attached', timeout: 15_000 });
-  // Give React a moment to hydrate
-  await page.waitForTimeout(500);
+	// Wait for any meaningful content to appear in the DOM
+	// The app always has a root element that React mounts into
+	await page.waitForSelector('#root', { state: 'attached', timeout: 15_000 });
+	// Give React a moment to hydrate
+	await page.waitForTimeout(500);
 }
 
 /**
@@ -76,24 +76,24 @@ export async function waitForAppReady(page: Page): Promise<void> {
  * Since the app uses HashRouter, we evaluate navigation in the renderer.
  */
 export async function navigateTo(page: Page, hashPath: string): Promise<void> {
-  await page.evaluate((path) => {
-    window.location.hash = `#${path}`;
-  }, hashPath);
-  // Wait for the route change to settle
-  await page.waitForTimeout(500);
+	await page.evaluate((path) => {
+		window.location.hash = `#${path}`;
+	}, hashPath);
+	// Wait for the route change to settle
+	await page.waitForTimeout(500);
 }
 
 /**
  * Get the current hash route from the renderer.
  */
 export async function getCurrentRoute(page: Page): Promise<string> {
-  return page.evaluate(() => window.location.hash);
+	return page.evaluate(() => window.location.hash);
 }
 
 /**
  * Get the title of the Electron BrowserWindow (not the page title).
  */
 export async function getWindowTitle(app: ElectronApplication): Promise<string> {
-  const page = await app.firstWindow();
-  return page.title();
+	const page = await app.firstWindow();
+	return page.title();
 }

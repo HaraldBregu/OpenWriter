@@ -4,123 +4,123 @@
 
 /* Tailwind CSS variables for theme support */
 @layer base {
-  :root {
-    --background: 0 0% 97%;
-    --foreground: 0 0% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 94%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 94%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 0 0% 10%;
-    --radius: 0.5rem;
-    --success: 142.1 76.2% 36.3%;
-    --success-foreground: 0 0% 98%;
-    --warning: 32.1 94.6% 43.7%;
-    --warning-foreground: 0 0% 98%;
-    --info: 221.2 83.2% 53.3%;
-    --info-foreground: 0 0% 98%;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+	:root {
+		--background: 0 0% 97%;
+		--foreground: 0 0% 10%;
+		--card: 0 0% 100%;
+		--card-foreground: 0 0% 10%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 0 0% 10%;
+		--primary: 0 0% 9%;
+		--primary-foreground: 0 0% 98%;
+		--secondary: 0 0% 94%;
+		--secondary-foreground: 0 0% 9%;
+		--muted: 0 0% 94%;
+		--muted-foreground: 0 0% 45%;
+		--accent: 0 0% 94%;
+		--accent-foreground: 0 0% 9%;
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 0 0% 98%;
+		--border: 0 0% 88%;
+		--input: 0 0% 88%;
+		--ring: 0 0% 10%;
+		--radius: 0.5rem;
+		--success: 142.1 76.2% 36.3%;
+		--success-foreground: 0 0% 98%;
+		--warning: 32.1 94.6% 43.7%;
+		--warning-foreground: 0 0% 98%;
+		--info: 221.2 83.2% 53.3%;
+		--info-foreground: 0 0% 98%;
+		--sidebar-background: 0 0% 98%;
+		--sidebar-foreground: 240 5.3% 26.1%;
+		--sidebar-primary: 240 5.9% 10%;
+		--sidebar-primary-foreground: 0 0% 98%;
+		--sidebar-accent: 240 4.8% 95.9%;
+		--sidebar-accent-foreground: 240 5.9% 10%;
+		--sidebar-border: 220 13% 91%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
+	}
 
-  .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 13%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 13%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 16%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 95%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 0% 80%;
-    --success: 141.9 69.2% 58%;
-    --success-foreground: 0 0% 9%;
-    --warning: 37.7 92.1% 50.2%;
-    --warning-foreground: 0 0% 9%;
-    --info: 213.1 93.9% 67.8%;
-    --info-foreground: 0 0% 9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+	.dark {
+		--background: 0 0% 10%;
+		--foreground: 0 0% 95%;
+		--card: 0 0% 13%;
+		--card-foreground: 0 0% 95%;
+		--popover: 0 0% 13%;
+		--popover-foreground: 0 0% 95%;
+		--primary: 0 0% 95%;
+		--primary-foreground: 0 0% 10%;
+		--secondary: 0 0% 16%;
+		--secondary-foreground: 0 0% 95%;
+		--muted: 0 0% 16%;
+		--muted-foreground: 0 0% 60%;
+		--accent: 0 0% 16%;
+		--accent-foreground: 0 0% 95%;
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 0 0% 95%;
+		--border: 0 0% 18%;
+		--input: 0 0% 18%;
+		--ring: 0 0% 80%;
+		--success: 141.9 69.2% 58%;
+		--success-foreground: 0 0% 9%;
+		--warning: 37.7 92.1% 50.2%;
+		--warning-foreground: 0 0% 9%;
+		--info: 213.1 93.9% 67.8%;
+		--info-foreground: 0 0% 9%;
+		--sidebar-background: 240 5.9% 10%;
+		--sidebar-foreground: 240 4.8% 95.9%;
+		--sidebar-primary: 224.3 76.3% 48%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 240 3.7% 15.9%;
+		--sidebar-accent-foreground: 240 4.8% 95.9%;
+		--sidebar-border: 240 3.7% 15.9%;
+		--sidebar-ring: 217.2 91.2% 59.8%;
+	}
 }
 
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {
-  outline: none;
-  min-height: 1em;
-  font-family: 'Merriweather', serif;
+	outline: none;
+	min-height: 1em;
+	font-family: 'Merriweather', serif;
 }
 
 .ProseMirror > * + * {
-  margin-top: 0.5em;
+	margin-top: 0.5em;
 }
 
 .ProseMirror p {
-  margin: 0;
+	margin: 0;
 }
 
 @layer base {
-  html {
-    font-size: 15px;
-  }
-  * {
-    border-color: hsl(var(--border));
-    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
-    scrollbar-width: thin;
-  }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
+	html {
+		font-size: 15px;
+	}
+	* {
+		border-color: hsl(var(--border));
+		scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+		scrollbar-width: thin;
+	}
+	body {
+		background-color: hsl(var(--background));
+		color: hsl(var(--foreground));
+	}
 
-  *::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  *::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  *::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 3px;
-  }
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
+	*::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	*::-webkit-scrollbar-thumb {
+		background-color: hsl(var(--muted-foreground) / 0.3);
+		border-radius: 3px;
+	}
+	*::-webkit-scrollbar-thumb:hover {
+		background-color: hsl(var(--muted-foreground) / 0.5);
+	}
 }
 
 .tiptap h1,
@@ -129,7 +129,7 @@
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-  all: revert;
+	all: revert;
 }
 
 .tiptap h1,
@@ -138,17 +138,17 @@
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-  font-family: inherit;
+	font-family: inherit;
 }
 
 .tiptap ul,
 .tiptap ol {
-  all: revert;
+	all: revert;
 }
 
 .tiptap ul,
 .tiptap ol {
-  font-family: inherit;
+	font-family: inherit;
 }
 
 /* Placeholder extension --------------------------------------------------- */
@@ -159,18 +159,18 @@
 .tiptap h4.is-empty::before,
 .tiptap h5.is-empty::before,
 .tiptap h6.is-empty::before {
-  content: attr(data-placeholder);
-  color: hsl(var(--muted-foreground) / 0.4);
-  pointer-events: none;
-  float: left;
-  height: 0;
+	content: attr(data-placeholder);
+	color: hsl(var(--muted-foreground) / 0.4);
+	pointer-events: none;
+	float: left;
+	height: 0;
 }
 
 /* TabGhostText extension -------------------------------------------------- */
 .tiptap-ghost-active::after {
-  content: attr(data-ghost-text);
-  color: hsl(var(--muted-foreground) / 0.45);
-  font-style: italic;
-  pointer-events: none;
-  user-select: none;
+	content: attr(data-ghost-text);
+	color: hsl(var(--muted-foreground) / 0.45);
+	font-style: italic;
+	pointer-events: none;
+	user-select: none;
 }

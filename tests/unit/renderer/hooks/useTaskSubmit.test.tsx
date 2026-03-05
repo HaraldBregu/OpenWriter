@@ -25,31 +25,31 @@ import type { TaskEvent } from '../../../../src/shared/types/ipc/types';
 type TaskEventCallback = (event: TaskEvent) => void;
 
 function buildTaskMock(
-  overrides: Partial<{
-    submitResult:
-      | { success: true; data: { taskId: string } }
-      | { success: false; error: { message: string } };
-    cancelResult: { success: true; data: boolean } | { success: false; error: { message: string } };
-  }> = {}
+	overrides: Partial<{
+		submitResult:
+			| { success: true; data: { taskId: string } }
+			| { success: false; error: { message: string } };
+		cancelResult: { success: true; data: boolean } | { success: false; error: { message: string } };
+	}> = {}
 ) {
-  let eventCallback: TaskEventCallback | null = null;
+	let eventCallback: TaskEventCallback | null = null;
 
-  const mock = {
-    submit: jest
-      .fn()
-      .mockResolvedValue(overrides.submitResult ?? { success: true, data: { taskId: 'task-001' } }),
-    cancel: jest.fn().mockResolvedValue(overrides.cancelResult ?? { success: true, data: true }),
-    list: jest.fn().mockResolvedValue({ success: true, data: [] }),
-    onEvent: jest.fn().mockImplementation((cb: TaskEventCallback) => {
-      eventCallback = cb;
-      return () => {
-        eventCallback = null;
-      };
-    }),
-    emit: (event: TaskEvent) => eventCallback?.(event),
-  };
+	const mock = {
+		submit: jest
+			.fn()
+			.mockResolvedValue(overrides.submitResult ?? { success: true, data: { taskId: 'task-001' } }),
+		cancel: jest.fn().mockResolvedValue(overrides.cancelResult ?? { success: true, data: true }),
+		list: jest.fn().mockResolvedValue({ success: true, data: [] }),
+		onEvent: jest.fn().mockImplementation((cb: TaskEventCallback) => {
+			eventCallback = cb;
+			return () => {
+				eventCallback = null;
+			};
+		}),
+		emit: (event: TaskEvent) => eventCallback?.(event),
+	};
 
-  return mock;
+	return mock;
 }
 
 // ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ function buildTaskMock(
 // ---------------------------------------------------------------------------
 
 function Wrapper({ children }: { children: React.ReactNode }) {
-  return <TaskProvider>{children}</TaskProvider>;
+	return <TaskProvider>{children}</TaskProvider>;
 }
 
 // ---------------------------------------------------------------------------
@@ -65,316 +65,316 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 // ---------------------------------------------------------------------------
 
 describe('useTaskSubmit — initial state', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('starts in idle state with null taskId', () => {
-    const { result } = renderHook(() => useTaskSubmit('test-task', { value: 1 }), {
-      wrapper: Wrapper,
-    });
+	it('starts in idle state with null taskId', () => {
+		const { result } = renderHook(() => useTaskSubmit('test-task', { value: 1 }), {
+			wrapper: Wrapper,
+		});
 
-    expect(result.current.status).toBe('idle');
-    expect(result.current.taskId).toBeNull();
-    expect(result.current.progress).toBe(0);
-    expect(result.current.error).toBeNull();
-    expect(result.current.result).toBeNull();
-    expect(result.current.streamedContent).toBe('');
-  });
+		expect(result.current.status).toBe('idle');
+		expect(result.current.taskId).toBeNull();
+		expect(result.current.progress).toBe(0);
+		expect(result.current.error).toBeNull();
+		expect(result.current.result).toBeNull();
+		expect(result.current.streamedContent).toBe('');
+	});
 });
 
 describe('useTaskSubmit — API unavailable', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('sets error status when window.tasksManager is not available', async () => {
-    delete (window as Window & { task?: unknown }).task;
+	it('sets error status when window.tasksManager is not available', async () => {
+		delete (window as Window & { task?: unknown }).task;
 
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), {
-      wrapper: Wrapper,
-    });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), {
+			wrapper: Wrapper,
+		});
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    expect(result.current.status).toBe('error');
-    expect(result.current.error).toContain('not available');
+		expect(result.current.status).toBe('error');
+		expect(result.current.error).toContain('not available');
 
-    consoleSpy.mockRestore();
-  });
+		consoleSpy.mockRestore();
+	});
 });
 
 describe('useTaskSubmit — successful submit', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('transitions to queued and returns taskId on success', async () => {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	it('transitions to queued and returns taskId on success', async () => {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', { payload: 'data' }), {
-      wrapper: Wrapper,
-    });
+		const { result } = renderHook(() => useTaskSubmit('test-task', { payload: 'data' }), {
+			wrapper: Wrapper,
+		});
 
-    let returnedId: string | null = null;
+		let returnedId: string | null = null;
 
-    await act(async () => {
-      returnedId = await result.current.submit();
-    });
+		await act(async () => {
+			returnedId = await result.current.submit();
+		});
 
-    expect(returnedId).toBe('task-001');
-    expect(result.current.taskId).toBe('task-001');
-    // After submit + queued, status is at minimum 'queued'
-    expect(['queued', 'running', 'completed']).toContain(result.current.status);
-    expect(mock.submit).toHaveBeenCalledWith('test-task', { payload: 'data' }, undefined);
-  });
+		expect(returnedId).toBe('task-001');
+		expect(result.current.taskId).toBe('task-001');
+		// After submit + queued, status is at minimum 'queued'
+		expect(['queued', 'running', 'completed']).toContain(result.current.status);
+		expect(mock.submit).toHaveBeenCalledWith('test-task', { payload: 'data' }, undefined);
+	});
 
-  it('prevents double-submission while running', async () => {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	it('prevents double-submission while running', async () => {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    // Emit started to put task in running state
-    act(() => {
-      mock.emit({ type: 'started', data: { taskId: 'task-001' } });
-    });
+		// Emit started to put task in running state
+		act(() => {
+			mock.emit({ type: 'started', data: { taskId: 'task-001' } });
+		});
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    // submit() was called twice but IPC submit should have been called once
-    expect(mock.submit).toHaveBeenCalledTimes(1);
-  });
+		// submit() was called twice but IPC submit should have been called once
+		expect(mock.submit).toHaveBeenCalledTimes(1);
+	});
 });
 
 describe('useTaskSubmit — IPC failure', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('sets error when submit returns a failure IpcResult', async () => {
-    const mock = buildTaskMock({
-      submitResult: { success: false, error: { message: 'Queue full' } },
-    });
-    (window as Window & { task?: unknown }).task = mock;
+	it('sets error when submit returns a failure IpcResult', async () => {
+		const mock = buildTaskMock({
+			submitResult: { success: false, error: { message: 'Queue full' } },
+		});
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    expect(result.current.status).toBe('error');
-    expect(result.current.error).toBe('Queue full');
-    expect(result.current.taskId).toBeNull();
-  });
+		expect(result.current.status).toBe('error');
+		expect(result.current.error).toBe('Queue full');
+		expect(result.current.taskId).toBeNull();
+	});
 
-  it('sets error when submit throws', async () => {
-    const mock = buildTaskMock();
-    mock.submit.mockRejectedValueOnce(new Error('IPC channel closed'));
-    (window as Window & { task?: unknown }).task = mock;
+	it('sets error when submit throws', async () => {
+		const mock = buildTaskMock();
+		mock.submit.mockRejectedValueOnce(new Error('IPC channel closed'));
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    expect(result.current.status).toBe('error');
-    expect(result.current.error).toBe('IPC channel closed');
-  });
+		expect(result.current.status).toBe('error');
+		expect(result.current.error).toBe('IPC channel closed');
+	});
 });
 
 describe('useTaskSubmit — event-driven lifecycle', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  async function submitAndGetMock() {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	async function submitAndGetMock() {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    return { mock, result };
-  }
+		return { mock, result };
+	}
 
-  it('transitions to running on started event', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('transitions to running on started event', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({ type: 'started', data: { taskId: 'task-001' } });
-    });
+		act(() => {
+			mock.emit({ type: 'started', data: { taskId: 'task-001' } });
+		});
 
-    expect(result.current.status).toBe('running');
-  });
+		expect(result.current.status).toBe('running');
+	});
 
-  it('updates progress on progress event', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('updates progress on progress event', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({
-        type: 'progress',
-        data: { taskId: 'task-001', percent: 42, message: 'Processing...' },
-      });
-    });
+		act(() => {
+			mock.emit({
+				type: 'progress',
+				data: { taskId: 'task-001', percent: 42, message: 'Processing...' },
+			});
+		});
 
-    expect(result.current.progress).toBe(42);
-    expect(result.current.progressMessage).toBe('Processing...');
-  });
+		expect(result.current.progress).toBe(42);
+		expect(result.current.progressMessage).toBe('Processing...');
+	});
 
-  it('transitions to completed with result', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('transitions to completed with result', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({
-        type: 'completed',
-        data: { taskId: 'task-001', result: { output: 'done' }, durationMs: 100 },
-      });
-    });
+		act(() => {
+			mock.emit({
+				type: 'completed',
+				data: { taskId: 'task-001', result: { output: 'done' }, durationMs: 100 },
+			});
+		});
 
-    expect(result.current.status).toBe('completed');
-    expect(result.current.progress).toBe(100);
-    expect(result.current.result).toEqual({ output: 'done' });
-  });
+		expect(result.current.status).toBe('completed');
+		expect(result.current.progress).toBe(100);
+		expect(result.current.result).toEqual({ output: 'done' });
+	});
 
-  it('transitions to error on error event', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('transitions to error on error event', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({
-        type: 'error',
-        data: { taskId: 'task-001', message: 'Something failed', code: 'ERR_001' },
-      });
-    });
+		act(() => {
+			mock.emit({
+				type: 'error',
+				data: { taskId: 'task-001', message: 'Something failed', code: 'ERR_001' },
+			});
+		});
 
-    expect(result.current.status).toBe('error');
-    expect(result.current.error).toBe('Something failed');
-  });
+		expect(result.current.status).toBe('error');
+		expect(result.current.error).toBe('Something failed');
+	});
 
-  it('transitions to cancelled on cancelled event', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('transitions to cancelled on cancelled event', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({ type: 'cancelled', data: { taskId: 'task-001' } });
-    });
+		act(() => {
+			mock.emit({ type: 'cancelled', data: { taskId: 'task-001' } });
+		});
 
-    expect(result.current.status).toBe('cancelled');
-  });
+		expect(result.current.status).toBe('cancelled');
+	});
 
-  it('accumulates streamed content', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('accumulates streamed content', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({ type: 'stream', data: { taskId: 'task-001', token: 'Hello ' } });
-      mock.emit({ type: 'stream', data: { taskId: 'task-001', token: 'world' } });
-    });
+		act(() => {
+			mock.emit({ type: 'stream', data: { taskId: 'task-001', token: 'Hello ' } });
+			mock.emit({ type: 'stream', data: { taskId: 'task-001', token: 'world' } });
+		});
 
-    expect(result.current.streamedContent).toBe('Hello world');
-  });
+		expect(result.current.streamedContent).toBe('Hello world');
+	});
 
-  it('ignores events for a different taskId', async () => {
-    const { mock, result } = await submitAndGetMock();
+	it('ignores events for a different taskId', async () => {
+		const { mock, result } = await submitAndGetMock();
 
-    act(() => {
-      mock.emit({ type: 'started', data: { taskId: 'other-task-999' } });
-    });
+		act(() => {
+			mock.emit({ type: 'started', data: { taskId: 'other-task-999' } });
+		});
 
-    // Should remain in queued state, not running
-    expect(result.current.status).toBe('queued');
-  });
+		// Should remain in queued state, not running
+		expect(result.current.status).toBe('queued');
+	});
 });
 
 describe('useTaskSubmit — cancel', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('calls window.tasksManager.cancel with the correct taskId', async () => {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	it('calls window.tasksManager.cancel with the correct taskId', async () => {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), {
-      wrapper: Wrapper,
-    });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), {
+			wrapper: Wrapper,
+		});
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    await act(async () => {
-      await result.current.cancel();
-    });
+		await act(async () => {
+			await result.current.cancel();
+		});
 
-    expect(mock.cancel).toHaveBeenCalledWith('task-001');
-  });
+		expect(mock.cancel).toHaveBeenCalledWith('task-001');
+	});
 
-  it('is a no-op when no task has been submitted', async () => {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	it('is a no-op when no task has been submitted', async () => {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.cancel();
-    });
+		await act(async () => {
+			await result.current.cancel();
+		});
 
-    expect(mock.cancel).not.toHaveBeenCalled();
-  });
+		expect(mock.cancel).not.toHaveBeenCalled();
+	});
 });
 
 describe('useTaskSubmit — reset', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    delete (window as Window & { task?: unknown }).task;
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+		delete (window as Window & { task?: unknown }).task;
+	});
 
-  it('resets state back to idle after a completed task', async () => {
-    const mock = buildTaskMock();
-    (window as Window & { task?: unknown }).task = mock;
+	it('resets state back to idle after a completed task', async () => {
+		const mock = buildTaskMock();
+		(window as Window & { task?: unknown }).task = mock;
 
-    const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
+		const { result } = renderHook(() => useTaskSubmit('test-task', {}), { wrapper: Wrapper });
 
-    await act(async () => {
-      await result.current.submit();
-    });
+		await act(async () => {
+			await result.current.submit();
+		});
 
-    act(() => {
-      mock.emit({
-        type: 'completed',
-        data: { taskId: 'task-001', result: null, durationMs: 10 },
-      });
-    });
+		act(() => {
+			mock.emit({
+				type: 'completed',
+				data: { taskId: 'task-001', result: null, durationMs: 10 },
+			});
+		});
 
-    act(() => {
-      result.current.reset();
-    });
+		act(() => {
+			result.current.reset();
+		});
 
-    expect(result.current.status).toBe('idle');
-    expect(result.current.taskId).toBeNull();
-    expect(result.current.progress).toBe(0);
-    expect(result.current.error).toBeNull();
-    expect(result.current.result).toBeNull();
-  });
+		expect(result.current.status).toBe('idle');
+		expect(result.current.taskId).toBeNull();
+		expect(result.current.progress).toBe(0);
+		expect(result.current.error).toBeNull();
+		expect(result.current.result).toBeNull();
+	});
 });

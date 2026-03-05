@@ -7,9 +7,9 @@ import type { LoggerService } from './logger';
  * Stores the AbortController and basic metadata for a run/task.
  */
 export interface ExecutionRecord {
-  id: string;
-  controller: AbortController;
-  startedAt: number;
+	id: string;
+	controller: AbortController;
+	startedAt: number;
 }
 
 /**
@@ -29,96 +29,96 @@ export interface ExecutionRecord {
  * flexibility for Pipeline-specific vs Task-specific behavior.
  */
 export abstract class ExecutorBase<T extends ExecutionRecord> implements Disposable {
-  protected activeExecutions = new Map<string, T>();
+	protected activeExecutions = new Map<string, T>();
 
-  constructor(
-    protected readonly eventBus: EventBus,
-    protected readonly logger?: LoggerService
-  ) {}
+	constructor(
+		protected readonly eventBus: EventBus,
+		protected readonly logger?: LoggerService
+	) {}
 
-  /**
-   * Start a new execution. Subclasses implement domain-specific startup.
-   * @returns The execution ID
-   */
-  abstract start(...args: any[]): Promise<string>;
+	/**
+	 * Start a new execution. Subclasses implement domain-specific startup.
+	 * @returns The execution ID
+	 */
+	abstract start(...args: any[]): Promise<string>;
 
-  /**
-   * Cancel an in-flight execution by its ID.
-   * Returns true if found and cancelled, false otherwise.
-   */
-  cancel(executionId: string): boolean {
-    const execution = this.activeExecutions.get(executionId);
-    if (!execution) return false;
+	/**
+	 * Cancel an in-flight execution by its ID.
+	 * Returns true if found and cancelled, false otherwise.
+	 */
+	cancel(executionId: string): boolean {
+		const execution = this.activeExecutions.get(executionId);
+		if (!execution) return false;
 
-    this.logger?.info(this.constructor.name, `Cancelling execution ${executionId}`);
-    execution.controller.abort();
-    this.activeExecutions.delete(executionId);
-    return true;
-  }
+		this.logger?.info(this.constructor.name, `Cancelling execution ${executionId}`);
+		execution.controller.abort();
+		this.activeExecutions.delete(executionId);
+		return true;
+	}
 
-  /**
-   * Check if an execution is currently active.
-   */
-  isRunning(executionId: string): boolean {
-    return this.activeExecutions.has(executionId);
-  }
+	/**
+	 * Check if an execution is currently active.
+	 */
+	isRunning(executionId: string): boolean {
+		return this.activeExecutions.has(executionId);
+	}
 
-  /**
-   * Get count of active executions.
-   */
-  getActiveCount(): number {
-    return this.activeExecutions.size;
-  }
+	/**
+	 * Get count of active executions.
+	 */
+	getActiveCount(): number {
+		return this.activeExecutions.size;
+	}
 
-  /**
-   * List all active executions (metadata only, no controller).
-   */
-  listActive(): Array<{ id: string; startedAt: number; duration: number }> {
-    const now = Date.now();
-    return Array.from(this.activeExecutions.values()).map(({ id, startedAt }) => ({
-      id,
-      startedAt,
-      duration: now - startedAt,
-    }));
-  }
+	/**
+	 * List all active executions (metadata only, no controller).
+	 */
+	listActive(): Array<{ id: string; startedAt: number; duration: number }> {
+		const now = Date.now();
+		return Array.from(this.activeExecutions.values()).map(({ id, startedAt }) => ({
+			id,
+			startedAt,
+			duration: now - startedAt,
+		}));
+	}
 
-  /**
-   * Disposable -- abort all active executions on shutdown.
-   */
-  destroy(): void {
-    this.logger?.info(
-      this.constructor.name,
-      `Destroying, aborting ${this.activeExecutions.size} active execution(s)`
-    );
-    for (const execution of this.activeExecutions.values()) {
-      execution.controller.abort();
-    }
-    this.activeExecutions.clear();
-  }
+	/**
+	 * Disposable -- abort all active executions on shutdown.
+	 */
+	destroy(): void {
+		this.logger?.info(
+			this.constructor.name,
+			`Destroying, aborting ${this.activeExecutions.size} active execution(s)`
+		);
+		for (const execution of this.activeExecutions.values()) {
+			execution.controller.abort();
+		}
+		this.activeExecutions.clear();
+	}
 
-  /**
-   * Register an execution record (called by subclasses during start).
-   */
-  protected registerExecution(execution: T): void {
-    this.activeExecutions.set(execution.id, execution);
-  }
+	/**
+	 * Register an execution record (called by subclasses during start).
+	 */
+	protected registerExecution(execution: T): void {
+		this.activeExecutions.set(execution.id, execution);
+	}
 
-  /**
-   * Unregister an execution record (called by subclasses on completion).
-   */
-  protected unregisterExecution(executionId: string): void {
-    this.activeExecutions.delete(executionId);
-  }
+	/**
+	 * Unregister an execution record (called by subclasses on completion).
+	 */
+	protected unregisterExecution(executionId: string): void {
+		this.activeExecutions.delete(executionId);
+	}
 
-  /**
-   * Send an event to a specific window or broadcast to all windows.
-   * (Called by subclasses to emit domain-specific events)
-   */
-  protected send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
-    if (windowId !== undefined) {
-      this.eventBus.sendTo(windowId, channel, ...args);
-    } else {
-      this.eventBus.broadcast(channel, ...args);
-    }
-  }
+	/**
+	 * Send an event to a specific window or broadcast to all windows.
+	 * (Called by subclasses to emit domain-specific events)
+	 */
+	protected send(windowId: number | undefined, channel: string, ...args: unknown[]): void {
+		if (windowId !== undefined) {
+			this.eventBus.sendTo(windowId, channel, ...args);
+		} else {
+			this.eventBus.broadcast(channel, ...args);
+		}
+	}
 }

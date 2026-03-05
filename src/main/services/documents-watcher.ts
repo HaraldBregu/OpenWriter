@@ -9,30 +9,30 @@ import type { LoggerService } from './logger';
  * Event payload for file system changes in the documents directory
  */
 export interface DocumentFileChangeEvent {
-  type: 'added' | 'changed' | 'removed';
-  fileId: string;
-  filePath: string;
-  timestamp: number;
+	type: 'added' | 'changed' | 'removed';
+	fileId: string;
+	filePath: string;
+	timestamp: number;
 }
 
 /**
  * Configuration for the documents watcher
  */
 interface WatcherConfig {
-  /** Directory to watch (e.g., workspace/documents) */
-  directory: string;
-  /** Debounce delay in milliseconds (default: 300ms) */
-  debounceMs?: number;
-  /** How long to ignore a file after we write it (default: 2000ms) */
-  ignoreWriteWindowMs?: number;
+	/** Directory to watch (e.g., workspace/documents) */
+	directory: string;
+	/** Debounce delay in milliseconds (default: 300ms) */
+	debounceMs?: number;
+	/** How long to ignore a file after we write it (default: 2000ms) */
+	ignoreWriteWindowMs?: number;
 }
 
 /**
  * Track recently written files to prevent infinite loops
  */
 interface IgnoredWrite {
-  filePath: string;
-  timestamp: number;
+	filePath: string;
+	timestamp: number;
 }
 
 /**
@@ -65,409 +65,409 @@ interface IgnoredWrite {
  *   // ... write file ...
  */
 export class DocumentsWatcherService implements Disposable {
-  private watcher: FSWatcher | null = null;
-  private currentDirectory: string | null = null;
-  private ignoredWrites: IgnoredWrite[] = [];
-  private debounceTimers = new Map<string, NodeJS.Timeout>();
-  private config: Required<Omit<WatcherConfig, 'directory'>>;
-  private workspaceEventUnsubscribe: (() => void) | null = null;
+	private watcher: FSWatcher | null = null;
+	private currentDirectory: string | null = null;
+	private ignoredWrites: IgnoredWrite[] = [];
+	private debounceTimers = new Map<string, NodeJS.Timeout>();
+	private config: Required<Omit<WatcherConfig, 'directory'>>;
+	private workspaceEventUnsubscribe: (() => void) | null = null;
 
-  // Constants
-  private readonly DOCS_DIR_NAME = 'documents';
-  private readonly DEFAULT_DEBOUNCE_MS = 300;
-  private readonly DEFAULT_IGNORE_WINDOW_MS = 2000;
-  private readonly CLEANUP_INTERVAL_MS = 10000; // Clean up ignored writes every 10s
+	// Constants
+	private readonly DOCS_DIR_NAME = 'documents';
+	private readonly DEFAULT_DEBOUNCE_MS = 300;
+	private readonly DEFAULT_IGNORE_WINDOW_MS = 2000;
+	private readonly CLEANUP_INTERVAL_MS = 10000; // Clean up ignored writes every 10s
 
-  private cleanupInterval: NodeJS.Timeout | null = null;
+	private cleanupInterval: NodeJS.Timeout | null = null;
 
-  constructor(
-    private readonly eventBus: EventBus,
-    private readonly logger?: LoggerService
-  ) {
-    this.config = {
-      debounceMs: this.DEFAULT_DEBOUNCE_MS,
-      ignoreWriteWindowMs: this.DEFAULT_IGNORE_WINDOW_MS,
-    };
+	constructor(
+		private readonly eventBus: EventBus,
+		private readonly logger?: LoggerService
+	) {
+		this.config = {
+			debounceMs: this.DEFAULT_DEBOUNCE_MS,
+			ignoreWriteWindowMs: this.DEFAULT_IGNORE_WINDOW_MS,
+		};
 
-    // Listen for workspace changes
-    this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
-      const payload = event.payload as { currentPath: string | null; previousPath: string | null };
-      this.handleWorkspaceChange(payload.currentPath);
-    });
+		// Listen for workspace changes
+		this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
+			const payload = event.payload as { currentPath: string | null; previousPath: string | null };
+			this.handleWorkspaceChange(payload.currentPath);
+		});
 
-    // Start periodic cleanup of old ignored writes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanupIgnoredWrites();
-    }, this.CLEANUP_INTERVAL_MS);
+		// Start periodic cleanup of old ignored writes
+		this.cleanupInterval = setInterval(() => {
+			this.cleanupIgnoredWrites();
+		}, this.CLEANUP_INTERVAL_MS);
 
-    this.logger?.info('DocumentsWatcherService', 'Initialized');
-  }
+		this.logger?.info('DocumentsWatcherService', 'Initialized');
+	}
 
-  /**
-   * Initialize the file watcher with the current workspace path.
-   * This should be called after the service is constructed and workspace is loaded.
-   *
-   * @param workspacePath - Current workspace path, or null if no workspace
-   */
-  async initialize(workspacePath: string | null): Promise<void> {
-    this.logger?.info('DocumentsWatcherService', `Initializing with workspace: ${workspacePath}`);
+	/**
+	 * Initialize the file watcher with the current workspace path.
+	 * This should be called after the service is constructed and workspace is loaded.
+	 *
+	 * @param workspacePath - Current workspace path, or null if no workspace
+	 */
+	async initialize(workspacePath: string | null): Promise<void> {
+		this.logger?.info('DocumentsWatcherService', `Initializing with workspace: ${workspacePath}`);
 
-    if (workspacePath) {
-      await this.startWatching(workspacePath);
-    }
-  }
+		if (workspacePath) {
+			await this.startWatching(workspacePath);
+		}
+	}
 
-  /**
-   * Start watching a directory.
-   * Automatically determines the documents directory from workspace path.
-   * Creates the directory if it doesn't exist.
-   */
-  async startWatching(workspacePath: string): Promise<void> {
-    const docsDir = path.join(workspacePath, this.DOCS_DIR_NAME);
+	/**
+	 * Start watching a directory.
+	 * Automatically determines the documents directory from workspace path.
+	 * Creates the directory if it doesn't exist.
+	 */
+	async startWatching(workspacePath: string): Promise<void> {
+		const docsDir = path.join(workspacePath, this.DOCS_DIR_NAME);
 
-    // Don't restart if already watching the same directory
-    if (this.currentDirectory === docsDir && this.watcher !== null) {
-      this.logger?.info('DocumentsWatcherService', `Already watching: ${docsDir}`);
-      return;
-    }
+		// Don't restart if already watching the same directory
+		if (this.currentDirectory === docsDir && this.watcher !== null) {
+			this.logger?.info('DocumentsWatcherService', `Already watching: ${docsDir}`);
+			return;
+		}
 
-    // Stop any existing watcher
-    await this.stopWatching();
+		// Stop any existing watcher
+		await this.stopWatching();
 
-    // Ensure the documents directory exists before watching
-    // chokidar cannot watch a non-existent directory
-    try {
-      await fs.mkdir(docsDir, { recursive: true });
-    } catch (err) {
-      this.logger?.error('DocumentsWatcherService', 'Failed to create documents directory', err);
-      return;
-    }
+		// Ensure the documents directory exists before watching
+		// chokidar cannot watch a non-existent directory
+		try {
+			await fs.mkdir(docsDir, { recursive: true });
+		} catch (err) {
+			this.logger?.error('DocumentsWatcherService', 'Failed to create documents directory', err);
+			return;
+		}
 
-    this.logger?.info('DocumentsWatcherService', `Starting to watch: ${docsDir}`);
+		this.logger?.info('DocumentsWatcherService', `Starting to watch: ${docsDir}`);
 
-    try {
-      this.watcher = chokidar.watch(docsDir, {
-        ignoreInitial: true,
-        persistent: true,
-        awaitWriteFinish: {
-          stabilityThreshold: 200,
-          pollInterval: 50,
-        },
-        usePolling: true,
-        interval: 500,
-        depth: 0,
-        alwaysStat: false,
-        ignored: (filePath: string) => {
-          // Chokidar v5 normalizes paths to forward slashes; normalize
-          // here so the comparison works on Windows (backslashes).
-          const normalized = path.normalize(filePath);
-          if (normalized === docsDir) return false;
-          // Ignore dotfiles and temp files
-          const base = path.basename(normalized);
-          if (base.startsWith('.') || base.endsWith('.tmp')) return true;
-          return false;
-        },
-      });
+		try {
+			this.watcher = chokidar.watch(docsDir, {
+				ignoreInitial: true,
+				persistent: true,
+				awaitWriteFinish: {
+					stabilityThreshold: 200,
+					pollInterval: 50,
+				},
+				usePolling: true,
+				interval: 500,
+				depth: 0,
+				alwaysStat: false,
+				ignored: (filePath: string) => {
+					// Chokidar v5 normalizes paths to forward slashes; normalize
+					// here so the comparison works on Windows (backslashes).
+					const normalized = path.normalize(filePath);
+					if (normalized === docsDir) return false;
+					// Ignore dotfiles and temp files
+					const base = path.basename(normalized);
+					if (base.startsWith('.') || base.endsWith('.tmp')) return true;
+					return false;
+				},
+			});
 
-      this.watcher
-        .on('add', (filePath) => this.handleFileAdded(filePath))
-        .on('change', (filePath) => this.handleFileChanged(filePath))
-        .on('unlink', (filePath) => this.handleFileRemoved(filePath))
-        .on('error', (error) => this.handleWatcherError(error))
-        .on('ready', () => {
-          this.logger?.info('DocumentsWatcherService', `Watcher ready, monitoring: ${docsDir}`);
-        });
+			this.watcher
+				.on('add', (filePath) => this.handleFileAdded(filePath))
+				.on('change', (filePath) => this.handleFileChanged(filePath))
+				.on('unlink', (filePath) => this.handleFileRemoved(filePath))
+				.on('error', (error) => this.handleWatcherError(error))
+				.on('ready', () => {
+					this.logger?.info('DocumentsWatcherService', `Watcher ready, monitoring: ${docsDir}`);
+				});
 
-      this.currentDirectory = docsDir;
-    } catch (error) {
-      this.logger?.error('DocumentsWatcherService', 'Failed to start watching', error);
-      this.watcher = null;
-      this.currentDirectory = null;
-      throw error;
-    }
-  }
+			this.currentDirectory = docsDir;
+		} catch (error) {
+			this.logger?.error('DocumentsWatcherService', 'Failed to start watching', error);
+			this.watcher = null;
+			this.currentDirectory = null;
+			throw error;
+		}
+	}
 
-  /**
-   * Stop watching the current directory.
-   */
-  async stopWatching(): Promise<void> {
-    if (!this.watcher) {
-      return;
-    }
+	/**
+	 * Stop watching the current directory.
+	 */
+	async stopWatching(): Promise<void> {
+		if (!this.watcher) {
+			return;
+		}
 
-    this.logger?.info('DocumentsWatcherService', `Stopping watcher for: ${this.currentDirectory}`);
+		this.logger?.info('DocumentsWatcherService', `Stopping watcher for: ${this.currentDirectory}`);
 
-    try {
-      await this.watcher.close();
-    } catch (error) {
-      this.logger?.error('DocumentsWatcherService', 'Error closing watcher', error);
-    } finally {
-      this.watcher = null;
-      this.currentDirectory = null;
-      this.clearAllDebounceTimers();
-      this.ignoredWrites = [];
-    }
-  }
+		try {
+			await this.watcher.close();
+		} catch (error) {
+			this.logger?.error('DocumentsWatcherService', 'Error closing watcher', error);
+		} finally {
+			this.watcher = null;
+			this.currentDirectory = null;
+			this.clearAllDebounceTimers();
+			this.ignoredWrites = [];
+		}
+	}
 
-  /**
-   * Check if currently watching a directory.
-   */
-  isWatching(): boolean {
-    return this.watcher !== null && this.currentDirectory !== null;
-  }
+	/**
+	 * Check if currently watching a directory.
+	 */
+	isWatching(): boolean {
+		return this.watcher !== null && this.currentDirectory !== null;
+	}
 
-  /**
-   * Get the currently watched directory.
-   */
-  getWatchedDirectory(): string | null {
-    return this.currentDirectory;
-  }
+	/**
+	 * Get the currently watched directory.
+	 */
+	getWatchedDirectory(): string | null {
+		return this.currentDirectory;
+	}
 
-  /**
-   * Mark a file as recently written by the app.
-   * This prevents the watcher from emitting a change event for this file.
-   *
-   * Call this BEFORE writing a file to prevent infinite loops.
-   *
-   * @param filePath - Absolute path to the file being written
-   */
-  markFileAsWritten(filePath: string): void {
-    const normalized = path.normalize(filePath);
-    this.ignoredWrites.push({
-      filePath: normalized,
-      timestamp: Date.now(),
-    });
+	/**
+	 * Mark a file as recently written by the app.
+	 * This prevents the watcher from emitting a change event for this file.
+	 *
+	 * Call this BEFORE writing a file to prevent infinite loops.
+	 *
+	 * @param filePath - Absolute path to the file being written
+	 */
+	markFileAsWritten(filePath: string): void {
+		const normalized = path.normalize(filePath);
+		this.ignoredWrites.push({
+			filePath: normalized,
+			timestamp: Date.now(),
+		});
 
-    this.logger?.info(
-      'DocumentsWatcherService',
-      `Marked file as written (will ignore changes): ${normalized}`
-    );
-  }
+		this.logger?.info(
+			'DocumentsWatcherService',
+			`Marked file as written (will ignore changes): ${normalized}`
+		);
+	}
 
-  /**
-   * Update watcher configuration.
-   * Restarts the watcher if currently watching.
-   */
-  async updateConfig(config: Partial<Omit<WatcherConfig, 'directory'>>): Promise<void> {
-    this.config = {
-      ...this.config,
-      ...config,
-    };
+	/**
+	 * Update watcher configuration.
+	 * Restarts the watcher if currently watching.
+	 */
+	async updateConfig(config: Partial<Omit<WatcherConfig, 'directory'>>): Promise<void> {
+		this.config = {
+			...this.config,
+			...config,
+		};
 
-    // Restart watcher if active
-    if (this.currentDirectory) {
-      const currentDir = this.currentDirectory;
-      await this.stopWatching();
-      // Extract workspace path from documents directory
-      const workspacePath = path.dirname(currentDir);
-      await this.startWatching(workspacePath);
-    }
-  }
+		// Restart watcher if active
+		if (this.currentDirectory) {
+			const currentDir = this.currentDirectory;
+			await this.stopWatching();
+			// Extract workspace path from documents directory
+			const workspacePath = path.dirname(currentDir);
+			await this.startWatching(workspacePath);
+		}
+	}
 
-  /**
-   * Cleanup on shutdown.
-   */
-  destroy(): void {
-    this.logger?.info('DocumentsWatcherService', 'Destroying');
+	/**
+	 * Cleanup on shutdown.
+	 */
+	destroy(): void {
+		this.logger?.info('DocumentsWatcherService', 'Destroying');
 
-    // Unsubscribe from workspace events
-    if (this.workspaceEventUnsubscribe) {
-      this.workspaceEventUnsubscribe();
-      this.workspaceEventUnsubscribe = null;
-    }
+		// Unsubscribe from workspace events
+		if (this.workspaceEventUnsubscribe) {
+			this.workspaceEventUnsubscribe();
+			this.workspaceEventUnsubscribe = null;
+		}
 
-    // Stop cleanup interval
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-      this.cleanupInterval = null;
-    }
+		// Stop cleanup interval
+		if (this.cleanupInterval) {
+			clearInterval(this.cleanupInterval);
+			this.cleanupInterval = null;
+		}
 
-    // Stop watching (async, but we don't await in destroy)
-    this.stopWatching().catch((error) => {
-      this.logger?.error('DocumentsWatcherService', 'Error during destroy', error);
-    });
+		// Stop watching (async, but we don't await in destroy)
+		this.stopWatching().catch((error) => {
+			this.logger?.error('DocumentsWatcherService', 'Error during destroy', error);
+		});
 
-    this.logger?.info('DocumentsWatcherService', 'Destroyed');
-  }
+		this.logger?.info('DocumentsWatcherService', 'Destroyed');
+	}
 
-  // ---------------------------------------------------------------------------
-  // Private methods
-  // ---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
+	// Private methods
+	// ---------------------------------------------------------------------------
 
-  /**
-   * Handle workspace change events.
-   * Starts or stops watching based on the new workspace.
-   */
-  private handleWorkspaceChange(newWorkspacePath: string | null): void {
-    if (newWorkspacePath) {
-      this.logger?.info(
-        'DocumentsWatcherService',
-        `Workspace changed, starting watcher for: ${newWorkspacePath}`
-      );
-      this.startWatching(newWorkspacePath).catch((error) => {
-        this.logger?.error(
-          'DocumentsWatcherService',
-          'Failed to start watching new workspace',
-          error
-        );
-      });
-    } else {
-      this.logger?.info('DocumentsWatcherService', 'Workspace cleared, stopping watcher');
-      this.stopWatching().catch((error) => {
-        this.logger?.error('DocumentsWatcherService', 'Failed to stop watcher', error);
-      });
-    }
-  }
+	/**
+	 * Handle workspace change events.
+	 * Starts or stops watching based on the new workspace.
+	 */
+	private handleWorkspaceChange(newWorkspacePath: string | null): void {
+		if (newWorkspacePath) {
+			this.logger?.info(
+				'DocumentsWatcherService',
+				`Workspace changed, starting watcher for: ${newWorkspacePath}`
+			);
+			this.startWatching(newWorkspacePath).catch((error) => {
+				this.logger?.error(
+					'DocumentsWatcherService',
+					'Failed to start watching new workspace',
+					error
+				);
+			});
+		} else {
+			this.logger?.info('DocumentsWatcherService', 'Workspace cleared, stopping watcher');
+			this.stopWatching().catch((error) => {
+				this.logger?.error('DocumentsWatcherService', 'Failed to stop watcher', error);
+			});
+		}
+	}
 
-  /**
-   * Handle file added event.
-   */
-  private handleFileAdded(filePath: string): void {
-    if (this.shouldIgnoreFile(filePath)) {
-      return;
-    }
+	/**
+	 * Handle file added event.
+	 */
+	private handleFileAdded(filePath: string): void {
+		if (this.shouldIgnoreFile(filePath)) {
+			return;
+		}
 
-    this.debouncedEmit(filePath, 'added');
-  }
+		this.debouncedEmit(filePath, 'added');
+	}
 
-  /**
-   * Handle file changed event.
-   */
-  private handleFileChanged(filePath: string): void {
-    if (this.shouldIgnoreFile(filePath)) {
-      return;
-    }
+	/**
+	 * Handle file changed event.
+	 */
+	private handleFileChanged(filePath: string): void {
+		if (this.shouldIgnoreFile(filePath)) {
+			return;
+		}
 
-    this.debouncedEmit(filePath, 'changed');
-  }
+		this.debouncedEmit(filePath, 'changed');
+	}
 
-  /**
-   * Handle file removed event.
-   */
-  private handleFileRemoved(filePath: string): void {
-    if (this.shouldIgnoreFile(filePath)) {
-      return;
-    }
+	/**
+	 * Handle file removed event.
+	 */
+	private handleFileRemoved(filePath: string): void {
+		if (this.shouldIgnoreFile(filePath)) {
+			return;
+		}
 
-    this.debouncedEmit(filePath, 'removed');
-  }
+		this.debouncedEmit(filePath, 'removed');
+	}
 
-  /**
-   * Handle watcher errors.
-   */
-  private handleWatcherError(error: unknown): void {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    this.logger?.error('DocumentsWatcherService', 'Watcher error', error);
+	/**
+	 * Handle watcher errors.
+	 */
+	private handleWatcherError(error: unknown): void {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		this.logger?.error('DocumentsWatcherService', 'Watcher error', error);
 
-    // Broadcast error to renderer for user notification
-    this.eventBus.broadcast('documents:watcher-error', {
-      error: errorMessage,
-      timestamp: Date.now(),
-    });
-  }
+		// Broadcast error to renderer for user notification
+		this.eventBus.broadcast('documents:watcher-error', {
+			error: errorMessage,
+			timestamp: Date.now(),
+		});
+	}
 
-  /**
-   * Check if a file should be ignored based on recent writes.
-   */
-  private shouldIgnoreFile(filePath: string): boolean {
-    const normalized = path.normalize(filePath);
-    const now = Date.now();
+	/**
+	 * Check if a file should be ignored based on recent writes.
+	 */
+	private shouldIgnoreFile(filePath: string): boolean {
+		const normalized = path.normalize(filePath);
+		const now = Date.now();
 
-    // Check if this file was recently written by the app
-    const recentWrite = this.ignoredWrites.find(
-      (ignored) =>
-        ignored.filePath === normalized && now - ignored.timestamp < this.config.ignoreWriteWindowMs
-    );
+		// Check if this file was recently written by the app
+		const recentWrite = this.ignoredWrites.find(
+			(ignored) =>
+				ignored.filePath === normalized && now - ignored.timestamp < this.config.ignoreWriteWindowMs
+		);
 
-    if (recentWrite) {
-      this.logger?.info(
-        'DocumentsWatcherService',
-        `Ignoring app-generated change for: ${normalized}`
-      );
-      return true;
-    }
+		if (recentWrite) {
+			this.logger?.info(
+				'DocumentsWatcherService',
+				`Ignoring app-generated change for: ${normalized}`
+			);
+			return true;
+		}
 
-    return false;
-  }
+		return false;
+	}
 
-  /**
-   * Emit a file change event with debouncing.
-   * Multiple rapid changes to the same file are batched.
-   */
-  private debouncedEmit(filePath: string, type: DocumentFileChangeEvent['type']): void {
-    // Clear existing timer for this file
-    const existingTimer = this.debounceTimers.get(filePath);
-    if (existingTimer) {
-      clearTimeout(existingTimer);
-    }
+	/**
+	 * Emit a file change event with debouncing.
+	 * Multiple rapid changes to the same file are batched.
+	 */
+	private debouncedEmit(filePath: string, type: DocumentFileChangeEvent['type']): void {
+		// Clear existing timer for this file
+		const existingTimer = this.debounceTimers.get(filePath);
+		if (existingTimer) {
+			clearTimeout(existingTimer);
+		}
 
-    // Set new timer
-    const timer = setTimeout(() => {
-      this.emitChangeEvent(filePath, type);
-      this.debounceTimers.delete(filePath);
-    }, this.config.debounceMs);
+		// Set new timer
+		const timer = setTimeout(() => {
+			this.emitChangeEvent(filePath, type);
+			this.debounceTimers.delete(filePath);
+		}, this.config.debounceMs);
 
-    this.debounceTimers.set(filePath, timer);
-  }
+		this.debounceTimers.set(filePath, timer);
+	}
 
-  /**
-   * Emit a file change event to the renderer.
-   */
-  private emitChangeEvent(filePath: string, type: DocumentFileChangeEvent['type']): void {
-    const fileId = this.extractFileIdFromFilePath(filePath);
+	/**
+	 * Emit a file change event to the renderer.
+	 */
+	private emitChangeEvent(filePath: string, type: DocumentFileChangeEvent['type']): void {
+		const fileId = this.extractFileIdFromFilePath(filePath);
 
-    if (!fileId) {
-      this.logger?.warn('DocumentsWatcherService', `Could not extract file ID from: ${filePath}`);
-      return;
-    }
+		if (!fileId) {
+			this.logger?.warn('DocumentsWatcherService', `Could not extract file ID from: ${filePath}`);
+			return;
+		}
 
-    const event: DocumentFileChangeEvent = {
-      type,
-      fileId,
-      filePath,
-      timestamp: Date.now(),
-    };
+		const event: DocumentFileChangeEvent = {
+			type,
+			fileId,
+			filePath,
+			timestamp: Date.now(),
+		};
 
-    this.logger?.info('DocumentsWatcherService', `Document file ${type}: ${fileId}`);
+		this.logger?.info('DocumentsWatcherService', `Document file ${type}: ${fileId}`);
 
-    // Broadcast to all renderer windows
-    this.eventBus.broadcast('documents:file-changed', event);
-  }
+		// Broadcast to all renderer windows
+		this.eventBus.broadcast('documents:file-changed', event);
+	}
 
-  /**
-   * Extract file ID from file path.
-   * Example: /workspace/documents/report.pdf -> report.pdf
-   */
-  private extractFileIdFromFilePath(filePath: string): string | null {
-    const fileName = path.basename(filePath);
-    // Basic validation - file IDs should not be empty
-    return fileName || null;
-  }
+	/**
+	 * Extract file ID from file path.
+	 * Example: /workspace/documents/report.pdf -> report.pdf
+	 */
+	private extractFileIdFromFilePath(filePath: string): string | null {
+		const fileName = path.basename(filePath);
+		// Basic validation - file IDs should not be empty
+		return fileName || null;
+	}
 
-  /**
-   * Clear all pending debounce timers.
-   */
-  private clearAllDebounceTimers(): void {
-    for (const timer of this.debounceTimers.values()) {
-      clearTimeout(timer);
-    }
-    this.debounceTimers.clear();
-  }
+	/**
+	 * Clear all pending debounce timers.
+	 */
+	private clearAllDebounceTimers(): void {
+		for (const timer of this.debounceTimers.values()) {
+			clearTimeout(timer);
+		}
+		this.debounceTimers.clear();
+	}
 
-  /**
-   * Clean up old ignored writes to prevent memory leaks.
-   */
-  private cleanupIgnoredWrites(): void {
-    const now = Date.now();
-    const before = this.ignoredWrites.length;
+	/**
+	 * Clean up old ignored writes to prevent memory leaks.
+	 */
+	private cleanupIgnoredWrites(): void {
+		const now = Date.now();
+		const before = this.ignoredWrites.length;
 
-    this.ignoredWrites = this.ignoredWrites.filter(
-      (ignored) => now - ignored.timestamp < this.config.ignoreWriteWindowMs
-    );
+		this.ignoredWrites = this.ignoredWrites.filter(
+			(ignored) => now - ignored.timestamp < this.config.ignoreWriteWindowMs
+		);
 
-    const removed = before - this.ignoredWrites.length;
-    if (removed > 0) {
-      this.logger?.info('DocumentsWatcherService', `Cleaned up ${removed} old ignored writes`);
-    }
-  }
+		const removed = before - this.ignoredWrites.length;
+		if (removed > 0) {
+			this.logger?.info('DocumentsWatcherService', `Cleaned up ${removed} old ignored writes`);
+		}
+	}
 }

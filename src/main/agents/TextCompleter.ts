@@ -20,18 +20,18 @@ import type { AgentDefinition } from './AgentDefinition';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  styleNotes: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  completion: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	styleNotes: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	completion: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
 });
 
 type TextCompleterState = typeof GraphState.State;
@@ -42,13 +42,13 @@ type TextCompleterState = typeof GraphState.State;
 // ---------------------------------------------------------------------------
 
 function makeAnalyzeStyleNode(model: BaseChatModel) {
-  return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userText = userMsg ? String(userMsg.content) : '';
+	return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userText = userMsg ? String(userMsg.content) : '';
 
-    const analysisMessages = [
-      new SystemMessage(
-        `Analyze the style of the following text. Return ONLY a valid JSON object with these exact keys:
+		const analysisMessages = [
+			new SystemMessage(
+				`Analyze the style of the following text. Return ONLY a valid JSON object with these exact keys:
 {
   "vocabularyLevel": "simple | intermediate | advanced | technical",
   "avgSentenceLength": "short | medium | long | mixed",
@@ -58,30 +58,30 @@ function makeAnalyzeStyleNode(model: BaseChatModel) {
   "voice": "active | passive | mixed"
 }
 No explanation, no markdown fences — raw JSON only.`
-      ),
-      new HumanMessage(userText),
-    ];
+			),
+			new HumanMessage(userText),
+		];
 
-    const response = await model.invoke(analysisMessages);
-    const rawContent = typeof response.content === 'string' ? response.content : '{}';
+		const response = await model.invoke(analysisMessages);
+		const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let styleNotes: string;
-    try {
-      JSON.parse(rawContent);
-      styleNotes = rawContent;
-    } catch {
-      styleNotes = JSON.stringify({
-        vocabularyLevel: 'intermediate',
-        avgSentenceLength: 'medium',
-        tense: 'past',
-        person: 'third',
-        tone: 'neutral',
-        voice: 'active',
-      });
-    }
+		let styleNotes: string;
+		try {
+			JSON.parse(rawContent);
+			styleNotes = rawContent;
+		} catch {
+			styleNotes = JSON.stringify({
+				vocabularyLevel: 'intermediate',
+				avgSentenceLength: 'medium',
+				tense: 'past',
+				person: 'third',
+				tone: 'neutral',
+				voice: 'active',
+			});
+		}
 
-    return { styleNotes };
-  };
+		return { styleNotes };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -90,23 +90,23 @@ No explanation, no markdown fences — raw JSON only.`
 // ---------------------------------------------------------------------------
 
 function makeCompleteNode(model: BaseChatModel) {
-  return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userText = userMsg ? String(userMsg.content) : '';
+	return async (state: TextCompleterState): Promise<Partial<TextCompleterState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userText = userMsg ? String(userMsg.content) : '';
 
-    let styleDescription = state.styleNotes;
-    try {
-      const parsed = JSON.parse(state.styleNotes) as Record<string, string>;
-      styleDescription = Object.entries(parsed)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(', ');
-    } catch {
-      // Use raw string if not JSON
-    }
+		let styleDescription = state.styleNotes;
+		try {
+			const parsed = JSON.parse(state.styleNotes) as Record<string, string>;
+			styleDescription = Object.entries(parsed)
+				.map(([k, v]) => `${k}: ${v}`)
+				.join(', ');
+		} catch {
+			// Use raw string if not JSON
+		}
 
-    const completionMessages = [
-      new SystemMessage(
-        `You are a precise text-completion engine — not a conversational assistant.
+		const completionMessages = [
+			new SystemMessage(
+				`You are a precise text-completion engine — not a conversational assistant.
 
 Your sole job is to continue the text the user provides, as if you were the same author picking up mid-thought.
 
@@ -119,18 +119,18 @@ Rules you follow without exception:
 4. Do not add a heading, label, or preamble. Your response begins immediately where the user's text ends.
 5. Complete to a natural stopping point (end of sentence, paragraph, or scene beat) — do not trail off mid-thought.
 6. Keep the completion proportionate: a single sentence yields one or two sentences; a paragraph yields a similar-length continuation.`
-      ),
-      new HumanMessage(userText),
-    ];
+			),
+			new HumanMessage(userText),
+		];
 
-    const response = await model.invoke(completionMessages);
-    const completion = typeof response.content === 'string' ? response.content : '';
+		const response = await model.invoke(completionMessages);
+		const completion = typeof response.content === 'string' ? response.content : '';
 
-    return {
-      completion,
-      messages: [new AIMessage(completion)],
-    };
-  };
+		return {
+			completion,
+			messages: [new AIMessage(completion)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -138,14 +138,14 @@ Rules you follow without exception:
 // ---------------------------------------------------------------------------
 
 function buildTextCompleterGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('analyze_style', makeAnalyzeStyleNode(model))
-    .addNode('complete', makeCompleteNode(model))
-    .addEdge(START, 'analyze_style')
-    .addEdge('analyze_style', 'complete')
-    .addEdge('complete', END);
+	const graph = new StateGraph(GraphState)
+		.addNode('analyze_style', makeAnalyzeStyleNode(model))
+		.addNode('complete', makeCompleteNode(model))
+		.addEdge(START, 'analyze_style')
+		.addEdge('analyze_style', 'complete')
+		.addEdge('complete', END);
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -153,13 +153,13 @@ function buildTextCompleterGraph(model: BaseChatModel) {
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'text-completer',
-  name: 'Text Completer',
-  description:
-    'Continues text naturally from where the user stopped, matching their vocabulary, sentence length, tone, and register without introducing new topics unprompted.',
-  category: 'writing',
-  defaultConfig: {
-    systemPrompt: `You are a precise text-completion engine — not a conversational assistant.
+	id: 'text-completer',
+	name: 'Text Completer',
+	description:
+		'Continues text naturally from where the user stopped, matching their vocabulary, sentence length, tone, and register without introducing new topics unprompted.',
+	category: 'writing',
+	defaultConfig: {
+		systemPrompt: `You are a precise text-completion engine — not a conversational assistant.
 
 Your sole job is to continue the text the user provides, as if you were the same author picking up mid-thought.
 
@@ -174,15 +174,15 @@ Rules you follow without exception:
 8. If the text is clearly incomplete mid-sentence, finish that sentence first before adding anything new.
 9. Keep the completion proportionate to what was provided: a single sentence should yield one or two sentences; a paragraph should yield a similar-length continuation.
 10. When the context is ambiguous, choose the most conservative, coherent interpretation.`,
-    temperature: 0.4,
-    maxHistoryMessages: 10,
-  },
-  inputHints: {
-    label: 'Text to continue',
-    placeholder: 'Paste the text you want completed…',
-    multiline: true,
-  },
-  buildGraph: buildTextCompleterGraph,
+		temperature: 0.4,
+		maxHistoryMessages: 10,
+	},
+	inputHints: {
+		label: 'Text to continue',
+		placeholder: 'Paste the text you want completed…',
+		multiline: true,
+	},
+	buildGraph: buildTextCompleterGraph,
 };
 
 export { definition as TextCompleterAgent };

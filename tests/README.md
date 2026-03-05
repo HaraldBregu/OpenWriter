@@ -93,10 +93,10 @@ import { MyService } from '../../../../src/main/services/MyService';
 import { BrowserWindow } from 'electron';
 
 describe('MyService', () => {
-  it('should do something', () => {
-    const service = new MyService();
-    expect(service.doSomething()).toBe(true);
-  });
+	it('should do something', () => {
+		const service = new MyService();
+		expect(service.doSomething()).toBe(true);
+	});
 });
 ```
 
@@ -154,13 +154,13 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { useMyHook } from '@/hooks/useMyHook';
 
 it('should update state', async () => {
-  (window.api.someMethod as jest.Mock).mockResolvedValue('result');
+	(window.api.someMethod as jest.Mock).mockResolvedValue('result');
 
-  const { result } = renderHook(() => useMyHook());
+	const { result } = renderHook(() => useMyHook());
 
-  await waitFor(() => {
-    expect(result.current.value).toBe('result');
-  });
+	await waitFor(() => {
+		expect(result.current.value).toBe('result');
+	});
 });
 ```
 
@@ -211,16 +211,16 @@ import { launchApp, closeApp, type AppContext } from './electron-helpers';
 let ctx: AppContext;
 
 test.beforeAll(async () => {
-  ctx = await launchApp();
+	ctx = await launchApp();
 });
 
 test.afterAll(async () => {
-  await closeApp(ctx);
+	await closeApp(ctx);
 });
 
 test('app should display the title', async () => {
-  const title = await ctx.page.title();
-  expect(title).toContain('Tesseract');
+	const title = await ctx.page.title();
+	expect(title).toContain('Tesseract');
 });
 ```
 
@@ -263,7 +263,7 @@ All `window.api` methods are pre-mocked as `jest.fn()`. Set return values per te
 (window.api.clipboardWriteText as jest.Mock).mockResolvedValue(undefined);
 (window.api.getPlatform as jest.Mock).mockResolvedValue('win32');
 (window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
-  { path: '/projects/my-app', lastOpened: Date.now() },
+	{ path: '/projects/my-app', lastOpened: Date.now() },
 ]);
 ```
 
@@ -274,12 +274,12 @@ Always wrap async state changes with `act()` or use `waitFor()`:
 ```typescript
 // Option 1: act() for direct async calls
 await act(async () => {
-  await result.current.doAsyncThing();
+	await result.current.doAsyncThing();
 });
 
 // Option 2: waitFor() for state that settles asynchronously
 await waitFor(() => {
-  expect(result.current.isReady).toBe(true);
+	expect(result.current.isReady).toBe(true);
 });
 ```
 
@@ -289,10 +289,10 @@ Components using lucide-react icons need them mocked to avoid SVG rendering comp
 
 ```typescript
 jest.mock('lucide-react', () => ({
-  Send: (props: Record<string, unknown>) =>
-    React.createElement('svg', { ...props, 'data-testid': 'icon-send' }),
-  Copy: (props: Record<string, unknown>) =>
-    React.createElement('svg', { ...props, 'data-testid': 'icon-copy' }),
+	Send: (props: Record<string, unknown>) =>
+		React.createElement('svg', { ...props, 'data-testid': 'icon-send' }),
+	Copy: (props: Record<string, unknown>) =>
+		React.createElement('svg', { ...props, 'data-testid': 'icon-copy' }),
 }));
 ```
 

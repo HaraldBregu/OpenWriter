@@ -10,12 +10,12 @@ export const selectAllWritings = (state: RootState): WritingItem[] => state.writ
 
 /** The currently selected writing item, or undefined if none. */
 export const selectSelectedWriting = createSelector(selectWritingsSlice, (writings) =>
-  writings.items.find((w) => w.id === writings.selectedId)
+	writings.items.find((w) => w.id === writings.selectedId)
 );
 
 /** The id of the currently selected writing. */
 export const selectSelectedWritingId = (state: RootState): string | null =>
-  state.writings.selectedId;
+	state.writings.selectedId;
 
 /** Writings loading status. */
 export const selectWritingsStatus = (state: RootState) => state.writings.status;
@@ -25,4 +25,4 @@ export const selectWritingsError = (state: RootState) => state.writings.error;
 
 /** A single writing item by id, or undefined. */
 export const selectWritingById = (state: RootState, id: string): WritingItem | undefined =>
-  state.writings.items.find((w) => w.id === id);
+	state.writings.items.find((w) => w.id === id);

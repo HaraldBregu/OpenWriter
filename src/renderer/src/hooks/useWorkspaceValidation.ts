@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { handleWorkspaceDeleted, clearDeletionReason } from '@/store/workspace/reducer';
 import {
-  selectCurrentWorkspacePath,
-  selectWorkspaceDeletionReason,
+	selectCurrentWorkspacePath,
+	selectWorkspaceDeletionReason,
 } from '@/store/workspace/selectors';
 import type { WorkspaceDeletedEvent } from '../../../shared/types';
 
@@ -20,60 +20,60 @@ import type { WorkspaceDeletedEvent } from '../../../shared/types';
  * Should be mounted once in a top-level component like AppLayout.
  */
 export function useWorkspaceValidation(): void {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const currentPath = useAppSelector(selectCurrentWorkspacePath);
-  const deletionReason = useAppSelector(selectWorkspaceDeletionReason);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+	const currentPath = useAppSelector(selectCurrentWorkspacePath);
+	const deletionReason = useAppSelector(selectWorkspaceDeletionReason);
 
-  // Use a ref to track if we have already handled a deletion event
-  // to prevent duplicate navigation.
-  const hasHandledDeletion = useRef(false);
+	// Use a ref to track if we have already handled a deletion event
+	// to prevent duplicate navigation.
+	const hasHandledDeletion = useRef(false);
 
-  // Subscribe to workspace deletion events from the main process
-  useEffect(() => {
-    const unsubscribe = window.workspace.onDeleted((event: WorkspaceDeletedEvent) => {
-      console.warn(
-        '[useWorkspaceValidation] Workspace deleted:',
-        event.deletedPath,
-        'reason:',
-        event.reason
-      );
-      dispatch(
-        handleWorkspaceDeleted({
-          deletedPath: event.deletedPath,
-          reason: event.reason,
-        })
-      );
-    });
+	// Subscribe to workspace deletion events from the main process
+	useEffect(() => {
+		const unsubscribe = window.workspace.onDeleted((event: WorkspaceDeletedEvent) => {
+			console.warn(
+				'[useWorkspaceValidation] Workspace deleted:',
+				event.deletedPath,
+				'reason:',
+				event.reason
+			);
+			dispatch(
+				handleWorkspaceDeleted({
+					deletedPath: event.deletedPath,
+					reason: event.reason,
+				})
+			);
+		});
 
-    return () => {
-      unsubscribe();
-    };
-  }, [dispatch]);
+		return () => {
+			unsubscribe();
+		};
+	}, [dispatch]);
 
-  // Navigate to welcome page when deletion is detected
-  useEffect(() => {
-    if (deletionReason && !hasHandledDeletion.current) {
-      hasHandledDeletion.current = true;
-      navigate('/', { replace: true });
-    }
+	// Navigate to welcome page when deletion is detected
+	useEffect(() => {
+		if (deletionReason && !hasHandledDeletion.current) {
+			hasHandledDeletion.current = true;
+			navigate('/', { replace: true });
+		}
 
-    // Reset the flag when the deletion reason is cleared
-    // (i.e., user has opened a new workspace)
-    if (!deletionReason) {
-      hasHandledDeletion.current = false;
-    }
-  }, [deletionReason, navigate]);
+		// Reset the flag when the deletion reason is cleared
+		// (i.e., user has opened a new workspace)
+		if (!deletionReason) {
+			hasHandledDeletion.current = false;
+		}
+	}, [deletionReason, navigate]);
 
-  // When a new workspace is selected (currentPath becomes non-null),
-  // clear any lingering deletion reason.
-  const previousPath = useRef(currentPath);
-  useEffect(() => {
-    if (currentPath && !previousPath.current && deletionReason) {
-      dispatch(clearDeletionReason());
-    }
-    previousPath.current = currentPath;
-  }, [currentPath, deletionReason, dispatch]);
+	// When a new workspace is selected (currentPath becomes non-null),
+	// clear any lingering deletion reason.
+	const previousPath = useRef(currentPath);
+	useEffect(() => {
+		if (currentPath && !previousPath.current && deletionReason) {
+			dispatch(clearDeletionReason());
+		}
+		previousPath.current = currentPath;
+	}, [currentPath, deletionReason, dispatch]);
 }
 
 /**
@@ -81,7 +81,7 @@ export function useWorkspaceValidation(): void {
  * Returns null when no deletion has occurred.
  */
 export function useWorkspaceDeletionReason(): string | null {
-  return useAppSelector(selectWorkspaceDeletionReason);
+	return useAppSelector(selectWorkspaceDeletionReason);
 }
 
 /**
@@ -89,8 +89,8 @@ export function useWorkspaceDeletionReason(): string | null {
  * e.g., after the user has acknowledged a notification.
  */
 export function useClearDeletionReason(): () => void {
-  const dispatch = useAppDispatch();
-  return useCallback(() => {
-    dispatch(clearDeletionReason());
-  }, [dispatch]);
+	const dispatch = useAppDispatch();
+	return useCallback(() => {
+		dispatch(clearDeletionReason());
+	}, [dispatch]);
 }

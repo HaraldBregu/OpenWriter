@@ -1,10 +1,10 @@
 import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useRef,
+	useState,
 } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
@@ -19,229 +19,229 @@ import { BASE_EXTENSIONS } from './extensions';
 import { EditorProvider } from './EditorContext';
 
 export interface TextEditorElement extends HTMLDivElement {
-  insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
+	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 }
 
 export interface TextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  autoFocus?: boolean;
-  className?: string;
-  disabled?: boolean;
-  id?: string;
-  streamingContent?: string;
-  onContinueWithAI?: (content: string, positionFrom: number) => void;
+	value: string;
+	onChange: (value: string) => void;
+	autoFocus?: boolean;
+	className?: string;
+	disabled?: boolean;
+	id?: string;
+	streamingContent?: string;
+	onContinueWithAI?: (content: string, positionFrom: number) => void;
 }
 
 const TextEditor = React.memo(
-  React.forwardRef<TextEditorElement, TextEditorProps>(
-    (
-      { value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI },
-      ref
-    ) => {
-      const onChangeRef = useRef(onChange);
-      onChangeRef.current = onChange;
+	React.forwardRef<TextEditorElement, TextEditorProps>(
+		(
+			{ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI },
+			ref
+		) => {
+			const onChangeRef = useRef(onChange);
+			onChangeRef.current = onChange;
 
-      const lastEmittedRef = useRef<string>('');
-      const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-      const initialValueRef = useRef(value);
+			const lastEmittedRef = useRef<string>('');
+			const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+			const initialValueRef = useRef(value);
 
-      useEffect(() => {
-        return () => {
-          if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
-        };
-      }, []);
+			useEffect(() => {
+				return () => {
+					if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
+				};
+			}, []);
 
-      const editorOptions = useMemo<UseEditorOptions>(
-        () => ({
-          extensions: BASE_EXTENSIONS,
-          content: '',
-          immediatelyRender: false,
-          onCreate: ({ editor: ed }: { editor: Editor }) => {
-            const initial = initialValueRef.current;
-            if (!initial) return;
-            const doc = markdownToTiptapJSON(ed.schema, initial);
-            if (doc) {
-              ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
-            }
-          },
-          onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
-            if (transaction.getMeta('preventEditorUpdate')) return;
-            if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
-            emitTimerRef.current = setTimeout(() => {
-              const md = tiptapDocToMarkdown(ed.state.doc);
-              lastEmittedRef.current = md;
-              onChangeRef.current(md);
-            }, 100);
-          },
-          editorProps: {
-            attributes: {
-              class:
-                'focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0',
-            },
-          },
-        }),
-        []
-      );
+			const editorOptions = useMemo<UseEditorOptions>(
+				() => ({
+					extensions: BASE_EXTENSIONS,
+					content: '',
+					immediatelyRender: false,
+					onCreate: ({ editor: ed }: { editor: Editor }) => {
+						const initial = initialValueRef.current;
+						if (!initial) return;
+						const doc = markdownToTiptapJSON(ed.schema, initial);
+						if (doc) {
+							ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
+						}
+					},
+					onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
+						if (transaction.getMeta('preventEditorUpdate')) return;
+						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
+						emitTimerRef.current = setTimeout(() => {
+							const md = tiptapDocToMarkdown(ed.state.doc);
+							lastEmittedRef.current = md;
+							onChangeRef.current(md);
+						}, 100);
+					},
+					editorProps: {
+						attributes: {
+							class:
+								'focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0',
+						},
+					},
+				}),
+				[]
+			);
 
-      const editor = useEditor(editorOptions, []);
+			const editor = useEditor(editorOptions, []);
 
-      const rootRef = useRef<HTMLDivElement>(null);
+			const rootRef = useRef<HTMLDivElement>(null);
 
-      useImperativeHandle(ref, () => {
-        const el = rootRef.current!;
-        return Object.assign(el, {
-          insertText(
-            text: string,
-            options: { preventEditorUpdate?: boolean } = { preventEditorUpdate: false }
-          ) {
-            if (!editor || editor.isDestroyed) return;
-            const { from } = editor.state.selection;
-            const tr = editor.state.tr
-              .insertText(text, from)
-              .setMeta('preventEditorUpdate', options?.preventEditorUpdate ?? false);
-            editor.view.dispatch(tr);
-          },
-        }) as TextEditorElement;
-      }, [editor]);
+			useImperativeHandle(ref, () => {
+				const el = rootRef.current!;
+				return Object.assign(el, {
+					insertText(
+						text: string,
+						options: { preventEditorUpdate?: boolean } = { preventEditorUpdate: false }
+					) {
+						if (!editor || editor.isDestroyed) return;
+						const { from } = editor.state.selection;
+						const tr = editor.state.tr
+							.insertText(text, from)
+							.setMeta('preventEditorUpdate', options?.preventEditorUpdate ?? false);
+						editor.view.dispatch(tr);
+					},
+				}) as TextEditorElement;
+			}, [editor]);
 
-      useEffect(() => {
-        if (!editor || editor.isDestroyed) return;
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
 
-        if (streamingContent !== undefined) {
-          const doc = markdownToTiptapJSON(editor.schema, streamingContent);
-          const current = tiptapDocToMarkdown(editor.state.doc);
-          if (current !== streamingContent) {
-            if (doc) {
-              editor.commands.setContent(doc.toJSON(), {
-                emitUpdate: false,
-                parseOptions: { preserveWhitespace: 'full' },
-              });
-            } else {
-              editor.commands.setContent('', { emitUpdate: false });
-            }
-          }
-          return;
-        }
+				if (streamingContent !== undefined) {
+					const doc = markdownToTiptapJSON(editor.schema, streamingContent);
+					const current = tiptapDocToMarkdown(editor.state.doc);
+					if (current !== streamingContent) {
+						if (doc) {
+							editor.commands.setContent(doc.toJSON(), {
+								emitUpdate: false,
+								parseOptions: { preserveWhitespace: 'full' },
+							});
+						} else {
+							editor.commands.setContent('', { emitUpdate: false });
+						}
+					}
+					return;
+				}
 
-        if (value === lastEmittedRef.current) {
-          return;
-        }
+				if (value === lastEmittedRef.current) {
+					return;
+				}
 
-        const current = tiptapDocToMarkdown(editor.state.doc);
-        const incoming = value || '';
-        if (current !== incoming) {
-          const doc = markdownToTiptapJSON(editor.schema, incoming);
-          if (doc) {
-            editor.commands.setContent(doc.toJSON(), {
-              emitUpdate: false,
-              parseOptions: { preserveWhitespace: 'full' },
-            });
-          } else {
-            editor.commands.setContent('', { emitUpdate: false });
-          }
-        }
-      }, [value, streamingContent, editor]);
+				const current = tiptapDocToMarkdown(editor.state.doc);
+				const incoming = value || '';
+				if (current !== incoming) {
+					const doc = markdownToTiptapJSON(editor.schema, incoming);
+					if (doc) {
+						editor.commands.setContent(doc.toJSON(), {
+							emitUpdate: false,
+							parseOptions: { preserveWhitespace: 'full' },
+						});
+					} else {
+						editor.commands.setContent('', { emitUpdate: false });
+					}
+				}
+			}, [value, streamingContent, editor]);
 
-      useEffect(() => {
-        if (!editor || editor.isDestroyed) return;
-        editor.setEditable(!disabled);
-      }, [editor, disabled]);
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+				editor.setEditable(!disabled);
+			}, [editor, disabled]);
 
-      const didAutoFocus = useRef(false);
-      useEffect(() => {
-        if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed) return;
-        didAutoFocus.current = true;
-        Promise.resolve().then(() => {
-          if (!editor.isDestroyed) editor.commands.focus('start');
-        });
-      }, [editor, autoFocus]);
+			const didAutoFocus = useRef(false);
+			useEffect(() => {
+				if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed) return;
+				didAutoFocus.current = true;
+				Promise.resolve().then(() => {
+					if (!editor.isDestroyed) editor.commands.focus('start');
+				});
+			}, [editor, autoFocus]);
 
-      const containerRef = useRef<HTMLDivElement>(null);
-      const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null);
+			const containerRef = useRef<HTMLDivElement>(null);
+			const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null);
 
-      const getBlock = useCallback(
-        (y: number): { dom: HTMLElement; pos: number } | null => {
-          if (!editor) return null;
-          const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null;
-          if (!pm) return null;
-          for (const child of Array.from(pm.children) as HTMLElement[]) {
-            const r = child.getBoundingClientRect();
-            if (y >= r.top - 4 && y <= r.bottom + 4) {
-              try {
-                const p = editor.view.posAtDOM(child, 0);
-                return { dom: child, pos: editor.state.doc.resolve(p).before(1) };
-              } catch {
-                return null;
-              }
-            }
-          }
-          return null;
-        },
-        [editor]
-      );
+			const getBlock = useCallback(
+				(y: number): { dom: HTMLElement; pos: number } | null => {
+					if (!editor) return null;
+					const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null;
+					if (!pm) return null;
+					for (const child of Array.from(pm.children) as HTMLElement[]) {
+						const r = child.getBoundingClientRect();
+						if (y >= r.top - 4 && y <= r.bottom + 4) {
+							try {
+								const p = editor.view.posAtDOM(child, 0);
+								return { dom: child, pos: editor.state.doc.resolve(p).before(1) };
+							} catch {
+								return null;
+							}
+						}
+					}
+					return null;
+				},
+				[editor]
+			);
 
-      useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
+			useEffect(() => {
+				const el = containerRef.current;
+				if (!el) return;
 
-        const onMove = (e: MouseEvent): void => {
-          const block = getBlock(e.clientY);
-          if (block) {
-            const cR = el.getBoundingClientRect();
-            const bR = block.dom.getBoundingClientRect();
-            const lh = parseFloat(getComputedStyle(block.dom).lineHeight) || 30;
-            setHoveredBlock({
-              node: block.dom,
-              pos: block.pos,
-              top: bR.top - cR.top + Math.min(lh, bR.height) / 2 - 12,
-            });
-          } else {
-            setHoveredBlock(null);
-          }
-        };
+				const onMove = (e: MouseEvent): void => {
+					const block = getBlock(e.clientY);
+					if (block) {
+						const cR = el.getBoundingClientRect();
+						const bR = block.dom.getBoundingClientRect();
+						const lh = parseFloat(getComputedStyle(block.dom).lineHeight) || 30;
+						setHoveredBlock({
+							node: block.dom,
+							pos: block.pos,
+							top: bR.top - cR.top + Math.min(lh, bR.height) / 2 - 12,
+						});
+					} else {
+						setHoveredBlock(null);
+					}
+				};
 
-        const onLeave = (): void => {
-          setTimeout(() => {
-            setHoveredBlock(null);
-          }, 80);
-        };
+				const onLeave = (): void => {
+					setTimeout(() => {
+						setHoveredBlock(null);
+					}, 80);
+				};
 
-        el.addEventListener('mousemove', onMove);
-        el.addEventListener('mouseleave', onLeave);
-        return () => {
-          el.removeEventListener('mousemove', onMove);
-          el.removeEventListener('mouseleave', onLeave);
-        };
-      }, [getBlock]);
+				el.addEventListener('mousemove', onMove);
+				el.addEventListener('mouseleave', onLeave);
+				return () => {
+					el.removeEventListener('mousemove', onMove);
+					el.removeEventListener('mouseleave', onLeave);
+				};
+			}, [getBlock]);
 
-      return (
-        <div id={id} className={cn('w-full', className)}>
-          <div className="relative w-full" ref={rootRef}>
-            <div
-              ref={containerRef}
-              className="relative"
-              style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
-            >
-              {editor && (
-                <EditorProvider editor={editor}>
-                  <BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
-                  <BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
-                  <BubbleMenu />
-                  <OptionMenu onContinueWithAI={onContinueWithAI} />
-                  <PromptInput
-                    containerRef={containerRef}
-                    onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)}
-                  />
-                </EditorProvider>
-              )}
-              <EditorContent editor={editor} />
-            </div>
-          </div>
-        </div>
-      );
-    }
-  )
+			return (
+				<div id={id} className={cn('w-full', className)}>
+					<div className="relative w-full" ref={rootRef}>
+						<div
+							ref={containerRef}
+							className="relative"
+							style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
+						>
+							{editor && (
+								<EditorProvider editor={editor}>
+									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
+									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
+									<BubbleMenu />
+									<OptionMenu onContinueWithAI={onContinueWithAI} />
+									<PromptInput
+										containerRef={containerRef}
+										onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)}
+									/>
+								</EditorProvider>
+							)}
+							<EditorContent editor={editor} />
+						</div>
+					</div>
+				</div>
+			);
+		}
+	)
 );
 TextEditor.displayName = 'TextEditor';
 

@@ -8,13 +8,13 @@ import writingsReducer from './writings/reducer';
 import { listenerMiddleware } from './listenerMiddleware';
 
 export const store = configureStore({
-  reducer: {
-    workspace: workspaceReducer,
-    tasks: tasksReducer,
-    writings: writingsReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+	reducer: {
+		workspace: workspaceReducer,
+		tasks: tasksReducer,
+		writings: writingsReducer,
+	},
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

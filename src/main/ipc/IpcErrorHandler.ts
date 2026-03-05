@@ -25,26 +25,26 @@ import type { IpcResult } from '../../shared/ipc-result';
  * ```
  */
 export function wrapIpcHandler<TArgs extends unknown[], TResult>(
-  handler: (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<TResult> | TResult,
-  handlerName: string
+	handler: (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<TResult> | TResult,
+	handlerName: string
 ): (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<IpcResult<TResult>> {
-  return async (event: IpcMainInvokeEvent, ...args: TArgs): Promise<IpcResult<TResult>> => {
-    try {
-      const result = await handler(event, ...args);
-      return { success: true, data: result };
-    } catch (err) {
-      console.error(`[IPC Error] ${handlerName}:`, err);
-      const error = err instanceof Error ? err : new Error(String(err));
-      return {
-        success: false,
-        error: {
-          code: error.name || 'UnknownError',
-          message: error.message,
-          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-        },
-      };
-    }
-  };
+	return async (event: IpcMainInvokeEvent, ...args: TArgs): Promise<IpcResult<TResult>> => {
+		try {
+			const result = await handler(event, ...args);
+			return { success: true, data: result };
+		} catch (err) {
+			console.error(`[IPC Error] ${handlerName}:`, err);
+			const error = err instanceof Error ? err : new Error(String(err));
+			return {
+				success: false,
+				error: {
+					code: error.name || 'UnknownError',
+					message: error.message,
+					stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+				},
+			};
+		}
+	};
 }
 
 /**
@@ -66,8 +66,8 @@ export function wrapIpcHandler<TArgs extends unknown[], TResult>(
  * ```
  */
 export function wrapSimpleHandler<TArgs extends unknown[], TResult>(
-  handler: (...args: TArgs) => Promise<TResult> | TResult,
-  handlerName: string
+	handler: (...args: TArgs) => Promise<TResult> | TResult,
+	handlerName: string
 ): (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<IpcResult<TResult>> {
-  return wrapIpcHandler((_event, ...args) => handler(...args), handlerName);
+	return wrapIpcHandler((_event, ...args) => handler(...args), handlerName);
 }

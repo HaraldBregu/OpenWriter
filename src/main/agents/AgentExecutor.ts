@@ -20,21 +20,21 @@ import type { LoggerService } from '../services/logger';
 const LOG_PREFIX = 'AgentExecutor';
 
 export interface ExecutorInput {
-  runId: string;
-  provider: ResolvedProvider;
-  systemPrompt: string;
-  temperature: number;
-  maxTokens: number | undefined;
-  history: AgentHistoryMessage[];
-  prompt: string;
-  signal?: AbortSignal;
-  logger?: LoggerService;
-  /**
-   * LangGraph factory — when supplied the executor runs the graph path.
-   * The factory receives the already-configured streaming model.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	runId: string;
+	provider: ResolvedProvider;
+	systemPrompt: string;
+	temperature: number;
+	maxTokens: number | undefined;
+	history: AgentHistoryMessage[];
+	prompt: string;
+	signal?: AbortSignal;
+	logger?: LoggerService;
+	/**
+	 * LangGraph factory — when supplied the executor runs the graph path.
+	 * The factory receives the already-configured streaming model.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
 }
 
 /**
@@ -44,92 +44,92 @@ export interface ExecutorInput {
  * appending it to session history.
  */
 export async function* executeAIAgentsStream(
-  input: ExecutorInput
+	input: ExecutorInput
 ): AsyncGenerator<AgentStreamEvent> {
-  const {
-    runId,
-    provider,
-    systemPrompt,
-    temperature,
-    maxTokens,
-    history,
-    prompt,
-    signal,
-    buildGraph,
-    logger,
-  } = input;
-  const { apiKey, modelName } = provider;
+	const {
+		runId,
+		provider,
+		systemPrompt,
+		temperature,
+		maxTokens,
+		history,
+		prompt,
+		signal,
+		buildGraph,
+		logger,
+	} = input;
+	const { apiKey, modelName } = provider;
 
-  logger?.info(
-    LOG_PREFIX,
-    `run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
-  );
+	logger?.info(
+		LOG_PREFIX,
+		`run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${buildGraph ? 'yes' : 'no'}`
+	);
 
-  // --- Build LangChain model ------------------------------------------------
+	// --- Build LangChain model ------------------------------------------------
 
-  const model = createChatModel({
-    providerId: provider.providerId,
-    apiKey,
-    modelName,
-    streaming: true,
-    temperature,
-    maxTokens,
-  });
+	const model = createChatModel({
+		providerId: provider.providerId,
+		apiKey,
+		modelName,
+		streaming: true,
+		temperature,
+		maxTokens,
+	});
 
-  // --- Build message chain (shared by both paths) ---------------------------
+	// --- Build message chain (shared by both paths) ---------------------------
 
-  const langchainMessages = [
-    new SystemMessage(systemPrompt),
-    ...history.map((m) =>
-      m.role === 'user' ? new HumanMessage(m.content) : new AIMessage(m.content)
-    ),
-    new HumanMessage(prompt),
-  ];
+	const langchainMessages = [
+		new SystemMessage(systemPrompt),
+		...history.map((m) =>
+			m.role === 'user' ? new HumanMessage(m.content) : new AIMessage(m.content)
+		),
+		new HumanMessage(prompt),
+	];
 
-  // --- LangGraph path --------------------------------------------------------
+	// --- LangGraph path --------------------------------------------------------
 
-  if (buildGraph) {
-    yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, logger });
-    return;
-  }
+	if (buildGraph) {
+		yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, logger });
+		return;
+	}
 
-  // --- Plain chat completion path -------------------------------------------
+	// --- Plain chat completion path -------------------------------------------
 
-  let fullContent = '';
-  let tokenCount = 0;
+	let fullContent = '';
+	let tokenCount = 0;
 
-  try {
-    const stream = await model.stream(langchainMessages, { signal });
+	try {
+		const stream = await model.stream(langchainMessages, { signal });
 
-    for await (const chunk of stream) {
-      if (signal?.aborted) break;
+		for await (const chunk of stream) {
+			if (signal?.aborted) break;
 
-      const token = extractTokenFromChunk(chunk.content);
-      if (token) {
-        fullContent += token;
-        tokenCount++;
-        yield { type: 'token', token, runId };
-      }
-    }
+			const token = extractTokenFromChunk(chunk.content);
+			if (token) {
+				fullContent += token;
+				tokenCount++;
+				yield { type: 'token', token, runId };
+			}
+		}
 
-    logger?.info(
-      LOG_PREFIX,
-      `run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`
-    );
-    yield { type: 'done', content: fullContent, tokenCount, runId };
-  } catch (error: unknown) {
-    const kind = classifyError(error);
+		logger?.info(
+			LOG_PREFIX,
+			`run=${runId} completed: ${tokenCount} tokens, ${fullContent.length} chars`
+		);
+		yield { type: 'done', content: fullContent, tokenCount, runId };
+	} catch (error: unknown) {
+		const kind = classifyError(error);
 
-    if (kind === 'abort') {
-      yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
-      return;
-    }
+		if (kind === 'abort') {
+			yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
+			return;
+		}
 
-    const rawMessage = error instanceof Error ? error.message : String(error);
-    logger?.error(LOG_PREFIX, `run=${runId} error (${kind}): ${rawMessage}`);
+		const rawMessage = error instanceof Error ? error.message : String(error);
+		logger?.error(LOG_PREFIX, `run=${runId} error (${kind}): ${rawMessage}`);
 
-    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
-  }
+		yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -137,71 +137,71 @@ export async function* executeAIAgentsStream(
 // ---------------------------------------------------------------------------
 
 interface GraphStreamInput {
-  runId: string;
-  model: BaseChatModel;
-  langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
-  signal?: AbortSignal;
-  logger?: LoggerService;
+	runId: string;
+	model: BaseChatModel;
+	langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	signal?: AbortSignal;
+	logger?: LoggerService;
 }
 
 async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<AgentStreamEvent> {
-  const { runId, model, langchainMessages, buildGraph, signal, logger } = input;
+	const { runId, model, langchainMessages, buildGraph, signal, logger } = input;
 
-  let fullContent = '';
-  let tokenCount = 0;
+	let fullContent = '';
+	let tokenCount = 0;
 
-  try {
-    const graph = buildGraph(model);
+	try {
+		const graph = buildGraph(model);
 
-    const stream = await graph.stream(
-      { messages: langchainMessages },
-      { streamMode: 'messages', signal: signal as AbortSignal | undefined }
-    );
+		const stream = await graph.stream(
+			{ messages: langchainMessages },
+			{ streamMode: 'messages', signal: signal as AbortSignal | undefined }
+		);
 
-    for await (const item of stream) {
-      if (signal?.aborted) break;
+		for await (const item of stream) {
+			if (signal?.aborted) break;
 
-      // streamMode:"messages" yields [chunk, metadata] tuples
-      const [chunk] = Array.isArray(item) ? item : [item, {}];
+			// streamMode:"messages" yields [chunk, metadata] tuples
+			const [chunk] = Array.isArray(item) ? item : [item, {}];
 
-      if (!chunk) continue;
+			if (!chunk) continue;
 
-      // Skip the final complete AIMessage that LangGraph emits after all
-      // streaming AIMessageChunk deltas. Only process incremental chunks.
-      if (chunk instanceof AIMessage) continue;
+			// Skip the final complete AIMessage that LangGraph emits after all
+			// streaming AIMessageChunk deltas. Only process incremental chunks.
+			if (chunk instanceof AIMessage) continue;
 
-      // Extract text token from the chunk content
-      const token = extractTokenFromChunk(
-        typeof chunk === 'object' && chunk !== null && 'content' in chunk
-          ? (chunk as { content: unknown }).content
-          : ''
-      );
+			// Extract text token from the chunk content
+			const token = extractTokenFromChunk(
+				typeof chunk === 'object' && chunk !== null && 'content' in chunk
+					? (chunk as { content: unknown }).content
+					: ''
+			);
 
-      if (token) {
-        fullContent += token;
-        tokenCount++;
-        yield { type: 'token', token, runId };
-      }
-    }
+			if (token) {
+				fullContent += token;
+				tokenCount++;
+				yield { type: 'token', token, runId };
+			}
+		}
 
-    logger?.info(
-      LOG_PREFIX,
-      `run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`
-    );
-    yield { type: 'done', content: fullContent, tokenCount, runId };
-  } catch (error: unknown) {
-    const kind = classifyError(error);
+		logger?.info(
+			LOG_PREFIX,
+			`run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`
+		);
+		yield { type: 'done', content: fullContent, tokenCount, runId };
+	} catch (error: unknown) {
+		const kind = classifyError(error);
 
-    if (kind === 'abort') {
-      yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
-      return;
-    }
+		if (kind === 'abort') {
+			yield { type: 'error', error: 'Cancelled', code: 'abort', runId };
+			return;
+		}
 
-    const rawMessage = error instanceof Error ? error.message : String(error);
-    logger?.error(LOG_PREFIX, `run=${runId} graph error (${kind}): ${rawMessage}`);
+		const rawMessage = error instanceof Error ? error.message : String(error);
+		logger?.error(LOG_PREFIX, `run=${runId} graph error (${kind}): ${rawMessage}`);
 
-    yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
-  }
+		yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
+	}
 }

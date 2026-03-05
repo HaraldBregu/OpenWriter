@@ -11,16 +11,16 @@ import type { WorkspaceChangedEvent } from '../../../shared/types';
  * the listener is active for the entire app session.
  */
 export function useWorkspaceListener(): void {
-  const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const unsubscribe = window.workspace.onChange((event: WorkspaceChangedEvent) => {
-      console.log('[useWorkspaceListener] Workspace changed:', event.currentPath);
-      dispatch(handleWorkspaceChanged(event));
-    });
+	useEffect(() => {
+		const unsubscribe = window.workspace.onChange((event: WorkspaceChangedEvent) => {
+			console.log('[useWorkspaceListener] Workspace changed:', event.currentPath);
+			dispatch(handleWorkspaceChanged(event));
+		});
 
-    return () => {
-      unsubscribe();
-    };
-  }, [dispatch]);
+		return () => {
+			unsubscribe();
+		};
+	}, [dispatch]);
 }

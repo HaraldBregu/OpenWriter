@@ -19,9 +19,9 @@ import chatReducer from '../../src/renderer/src/store/chatSlice';
 import type { RootState } from '../../src/renderer/src/store';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
-  preloadedState?: Partial<RootState>;
-  store?: EnhancedStore;
-  withRouter?: boolean;
+	preloadedState?: Partial<RootState>;
+	store?: EnhancedStore;
+	withRouter?: boolean;
 }
 
 /**
@@ -29,12 +29,12 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
  * Useful for tests that need to assert on store state directly.
  */
 export function createTestStore(preloadedState?: Partial<RootState>): EnhancedStore {
-  return configureStore({
-    reducer: {
-      chat: chatReducer,
-    },
-    preloadedState,
-  });
+	return configureStore({
+		reducer: {
+			chat: chatReducer,
+		},
+		preloadedState,
+	});
 }
 
 /**
@@ -43,24 +43,24 @@ export function createTestStore(preloadedState?: Partial<RootState>): EnhancedSt
  * for direct state assertions.
  */
 export function renderWithProviders(
-  ui: React.ReactElement,
-  {
-    preloadedState,
-    store = createTestStore(preloadedState),
-    withRouter = true,
-    ...renderOptions
-  }: ExtendedRenderOptions = {}
+	ui: React.ReactElement,
+	{
+		preloadedState,
+		store = createTestStore(preloadedState),
+		withRouter = true,
+		...renderOptions
+	}: ExtendedRenderOptions = {}
 ): RenderResult & { store: EnhancedStore } {
-  function Wrapper({ children }: { children: React.ReactNode }): React.ReactElement {
-    const content = <Provider store={store}>{children}</Provider>;
-    if (withRouter) {
-      return <HashRouter>{content}</HashRouter>;
-    }
-    return content;
-  }
+	function Wrapper({ children }: { children: React.ReactNode }): React.ReactElement {
+		const content = <Provider store={store}>{children}</Provider>;
+		if (withRouter) {
+			return <HashRouter>{content}</HashRouter>;
+		}
+		return content;
+	}
 
-  return {
-    store,
-    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
-  };
+	return {
+		store,
+		...render(ui, { wrapper: Wrapper, ...renderOptions }),
+	};
 }

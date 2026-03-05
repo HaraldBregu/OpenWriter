@@ -26,10 +26,10 @@ import type { InvokeChannelMap, SendChannelMap, EventChannelMap } from '../share
  * The return type is inferred from InvokeChannelMap.
  */
 export function typedInvoke<C extends keyof InvokeChannelMap>(
-  channel: C,
-  ...args: InvokeChannelMap[C]['args']
+	channel: C,
+	...args: InvokeChannelMap[C]['args']
 ): Promise<InvokeChannelMap[C]['result']> {
-  return ipcRenderer.invoke(channel, ...args) as Promise<InvokeChannelMap[C]['result']>;
+	return ipcRenderer.invoke(channel, ...args) as Promise<InvokeChannelMap[C]['result']>;
 }
 
 // ---------------------------------------------------------------------------
@@ -41,16 +41,16 @@ export function typedInvoke<C extends keyof InvokeChannelMap>(
  * Unwraps to T on success, or throws an Error with the IpcError message.
  */
 export async function typedInvokeUnwrap<C extends keyof InvokeChannelMap>(
-  channel: C,
-  ...args: InvokeChannelMap[C]['args']
+	channel: C,
+	...args: InvokeChannelMap[C]['args']
 ): Promise<InvokeChannelMap[C]['result']> {
-  const result = (await ipcRenderer.invoke(channel, ...args)) as IpcResult<
-    InvokeChannelMap[C]['result']
-  >;
-  if (!result.success) {
-    throw new Error(result.error.message);
-  }
-  return result.data;
+	const result = (await ipcRenderer.invoke(channel, ...args)) as IpcResult<
+		InvokeChannelMap[C]['result']
+	>;
+	if (!result.success) {
+		throw new Error(result.error.message);
+	}
+	return result.data;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,10 +63,10 @@ export async function typedInvokeUnwrap<C extends keyof InvokeChannelMap>(
  * `result.success` themselves (useful when error details are needed in the UI).
  */
 export function typedInvokeRaw<C extends keyof InvokeChannelMap>(
-  channel: C,
-  ...args: InvokeChannelMap[C]['args']
+	channel: C,
+	...args: InvokeChannelMap[C]['args']
 ): Promise<IpcResult<InvokeChannelMap[C]['result']>> {
-  return ipcRenderer.invoke(channel, ...args) as Promise<IpcResult<InvokeChannelMap[C]['result']>>;
+	return ipcRenderer.invoke(channel, ...args) as Promise<IpcResult<InvokeChannelMap[C]['result']>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -78,10 +78,10 @@ export function typedInvokeRaw<C extends keyof InvokeChannelMap>(
  * Channel and argument types are enforced by SendChannelMap.
  */
 export function typedSend<C extends keyof SendChannelMap>(
-  channel: C,
-  ...args: SendChannelMap[C]['args']
+	channel: C,
+	...args: SendChannelMap[C]['args']
 ): void {
-  ipcRenderer.send(channel, ...args);
+	ipcRenderer.send(channel, ...args);
 }
 
 // ---------------------------------------------------------------------------
@@ -94,14 +94,14 @@ export function typedSend<C extends keyof SendChannelMap>(
  * Event payload type is inferred from EventChannelMap.
  */
 export function typedOn<C extends keyof EventChannelMap>(
-  channel: C,
-  callback: (data: EventChannelMap[C]['data']) => void
+	channel: C,
+	callback: (data: EventChannelMap[C]['data']) => void
 ): () => void {
-  const handler = (_event: Electron.IpcRendererEvent, data: EventChannelMap[C]['data']): void => {
-    callback(data);
-  };
-  ipcRenderer.on(channel, handler as Parameters<typeof ipcRenderer.on>[1]);
-  return (): void => {
-    ipcRenderer.removeListener(channel, handler as Parameters<typeof ipcRenderer.on>[1]);
-  };
+	const handler = (_event: Electron.IpcRendererEvent, data: EventChannelMap[C]['data']): void => {
+		callback(data);
+	};
+	ipcRenderer.on(channel, handler as Parameters<typeof ipcRenderer.on>[1]);
+	return (): void => {
+		ipcRenderer.removeListener(channel, handler as Parameters<typeof ipcRenderer.on>[1]);
+	};
 }

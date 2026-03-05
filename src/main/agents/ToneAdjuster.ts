@@ -22,30 +22,30 @@ import type { AgentDefinition } from './AgentDefinition';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  targetTone: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  currentTone: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  rewrittenText: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  verificationPassed: Annotation<boolean>({
-    reducer: (_, next) => next,
-    default: () => false,
-  }),
-  retryCount: Annotation<number>({
-    reducer: (_, next) => next,
-    default: () => 0,
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	targetTone: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	currentTone: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	rewrittenText: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	verificationPassed: Annotation<boolean>({
+		reducer: (_, next) => next,
+		default: () => false,
+	}),
+	retryCount: Annotation<number>({
+		reducer: (_, next) => next,
+		default: () => 0,
+	}),
 });
 
 type ToneAdjusterState = typeof GraphState.State;
@@ -57,38 +57,38 @@ type ToneAdjusterState = typeof GraphState.State;
 // ---------------------------------------------------------------------------
 
 function makeDetectToneNode(model: BaseChatModel) {
-  return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userRequest = userMsg ? String(userMsg.content) : '';
+	return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userRequest = userMsg ? String(userMsg.content) : '';
 
-    const response = await model.invoke([
-      new SystemMessage(
-        `Analyse the following user request which contains a text to rewrite and a target tone instruction.
+		const response = await model.invoke([
+			new SystemMessage(
+				`Analyse the following user request which contains a text to rewrite and a target tone instruction.
 Return ONLY a valid JSON object with these exact keys:
 {
   "currentTone": "brief description of the current tone of the source text",
   "targetTone": "the tone the user wants the rewrite to use"
 }
 No explanation, no markdown fences — raw JSON only.`
-      ),
-      new HumanMessage(userRequest),
-    ]);
+			),
+			new HumanMessage(userRequest),
+		]);
 
-    const rawContent = typeof response.content === 'string' ? response.content : '{}';
+		const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let currentTone = 'neutral';
-    let targetTone = 'formal';
+		let currentTone = 'neutral';
+		let targetTone = 'formal';
 
-    try {
-      const parsed = JSON.parse(rawContent) as { currentTone?: string; targetTone?: string };
-      currentTone = parsed.currentTone ?? currentTone;
-      targetTone = parsed.targetTone ?? targetTone;
-    } catch {
-      // Use defaults if parse fails
-    }
+		try {
+			const parsed = JSON.parse(rawContent) as { currentTone?: string; targetTone?: string };
+			currentTone = parsed.currentTone ?? currentTone;
+			targetTone = parsed.targetTone ?? targetTone;
+		} catch {
+			// Use defaults if parse fails
+		}
 
-    return { currentTone, targetTone };
-  };
+		return { currentTone, targetTone };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -98,18 +98,18 @@ No explanation, no markdown fences — raw JSON only.`
 // ---------------------------------------------------------------------------
 
 function makeRewriteNode(model: BaseChatModel) {
-  return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userRequest = userMsg ? String(userMsg.content) : '';
+	return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userRequest = userMsg ? String(userMsg.content) : '';
 
-    const retryPrefix =
-      state.retryCount > 0
-        ? `IMPORTANT: The previous rewrite did not fully achieve the target tone. Pay extra attention to matching "${state.targetTone}" throughout.\n\n`
-        : '';
+		const retryPrefix =
+			state.retryCount > 0
+				? `IMPORTANT: The previous rewrite did not fully achieve the target tone. Pay extra attention to matching "${state.targetTone}" throughout.\n\n`
+				: '';
 
-    const response = await model.invoke([
-      new SystemMessage(
-        `You are a versatile professional editor specialising in register and tone transformation.
+		const response = await model.invoke([
+			new SystemMessage(
+				`You are a versatile professional editor specialising in register and tone transformation.
 
 ${retryPrefix}Current tone detected: ${state.currentTone}
 Target tone requested: ${state.targetTone}
@@ -132,14 +132,14 @@ Rules you follow without exception:
 3. Adjust vocabulary, sentence structure, rhythm, and phrasing — do not just change a few words.
 4. Do not add new opinions, examples, or statistics not present in the source.
 5. After the rewrite, add a single line in parentheses briefly explaining the most significant changes made.`
-      ),
-      new HumanMessage(userRequest),
-    ]);
+			),
+			new HumanMessage(userRequest),
+		]);
 
-    const rewrittenText = typeof response.content === 'string' ? response.content : '';
+		const rewrittenText = typeof response.content === 'string' ? response.content : '';
 
-    return { rewrittenText };
-  };
+		return { rewrittenText };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -149,49 +149,49 @@ Rules you follow without exception:
 // ---------------------------------------------------------------------------
 
 function makeVerifyNode(model: BaseChatModel) {
-  return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const originalRequest = userMsg ? String(userMsg.content) : '';
+	return async (state: ToneAdjusterState): Promise<Partial<ToneAdjusterState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const originalRequest = userMsg ? String(userMsg.content) : '';
 
-    const response = await model.invoke([
-      new SystemMessage(
-        `You are a quality-assurance editor. Evaluate whether a tone rewrite successfully achieved its goal.
+		const response = await model.invoke([
+			new SystemMessage(
+				`You are a quality-assurance editor. Evaluate whether a tone rewrite successfully achieved its goal.
 Return ONLY a valid JSON object:
 {
   "passed": true or false,
   "reason": "brief explanation"
 }
 No explanation outside the JSON, no markdown fences — raw JSON only.`
-      ),
-      new HumanMessage(
-        `Original request (contains source text + tone instruction):\n${originalRequest}\n\n` +
-          `Target tone: ${state.targetTone}\n\n` +
-          `Rewritten text:\n${state.rewrittenText}\n\n` +
-          `Does this rewrite successfully match the target tone "${state.targetTone}" without losing any factual content from the original?`
-      ),
-    ]);
+			),
+			new HumanMessage(
+				`Original request (contains source text + tone instruction):\n${originalRequest}\n\n` +
+					`Target tone: ${state.targetTone}\n\n` +
+					`Rewritten text:\n${state.rewrittenText}\n\n` +
+					`Does this rewrite successfully match the target tone "${state.targetTone}" without losing any factual content from the original?`
+			),
+		]);
 
-    const rawContent = typeof response.content === 'string' ? response.content : '{}';
+		const rawContent = typeof response.content === 'string' ? response.content : '{}';
 
-    let verificationPassed = true;
-    try {
-      const parsed = JSON.parse(rawContent) as { passed?: boolean };
-      verificationPassed = parsed.passed ?? true;
-    } catch {
-      // Default to passed if we can't parse — avoid infinite loops
-    }
+		let verificationPassed = true;
+		try {
+			const parsed = JSON.parse(rawContent) as { passed?: boolean };
+			verificationPassed = parsed.passed ?? true;
+		} catch {
+			// Default to passed if we can't parse — avoid infinite loops
+		}
 
-    // If passed (or this is already a retry), emit the final answer
-    const isLastAttempt = !verificationPassed && state.retryCount >= 1;
-    if (verificationPassed || isLastAttempt) {
-      return {
-        verificationPassed: true, // treat last attempt as terminal
-        messages: [new AIMessage(state.rewrittenText)],
-      };
-    }
+		// If passed (or this is already a retry), emit the final answer
+		const isLastAttempt = !verificationPassed && state.retryCount >= 1;
+		if (verificationPassed || isLastAttempt) {
+			return {
+				verificationPassed: true, // treat last attempt as terminal
+				messages: [new AIMessage(state.rewrittenText)],
+			};
+		}
 
-    return { verificationPassed: false };
-  };
+		return { verificationPassed: false };
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -199,10 +199,10 @@ No explanation outside the JSON, no markdown fences — raw JSON only.`
 // ---------------------------------------------------------------------------
 
 function routeAfterVerify(state: ToneAdjusterState): 'rewrite' | typeof END {
-  if (!state.verificationPassed && state.retryCount < 1) {
-    return 'rewrite';
-  }
-  return END;
+	if (!state.verificationPassed && state.retryCount < 1) {
+		return 'rewrite';
+	}
+	return END;
 }
 
 // ---------------------------------------------------------------------------
@@ -210,19 +210,19 @@ function routeAfterVerify(state: ToneAdjusterState): 'rewrite' | typeof END {
 // ---------------------------------------------------------------------------
 
 function buildToneAdjusterGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('detect_tone', makeDetectToneNode(model))
-    .addNode('rewrite', makeRewriteNode(model))
-    .addNode('verify', makeVerifyNode(model))
-    .addEdge(START, 'detect_tone')
-    .addEdge('detect_tone', 'rewrite')
-    .addEdge('rewrite', 'verify')
-    .addConditionalEdges('verify', routeAfterVerify, {
-      rewrite: 'rewrite',
-      [END]: END,
-    });
+	const graph = new StateGraph(GraphState)
+		.addNode('detect_tone', makeDetectToneNode(model))
+		.addNode('rewrite', makeRewriteNode(model))
+		.addNode('verify', makeVerifyNode(model))
+		.addEdge(START, 'detect_tone')
+		.addEdge('detect_tone', 'rewrite')
+		.addEdge('rewrite', 'verify')
+		.addConditionalEdges('verify', routeAfterVerify, {
+			rewrite: 'rewrite',
+			[END]: END,
+		});
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -230,13 +230,13 @@ function buildToneAdjusterGraph(model: BaseChatModel) {
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'tone-adjuster',
-  name: 'Tone Adjuster',
-  description:
-    'Rewrites content to match a specified tone — formal, casual, persuasive, empathetic, authoritative, and more — while preserving the original meaning and all key facts.',
-  category: 'editing',
-  defaultConfig: {
-    systemPrompt: `You are a versatile professional editor specialising in register and tone transformation.
+	id: 'tone-adjuster',
+	name: 'Tone Adjuster',
+	description:
+		'Rewrites content to match a specified tone — formal, casual, persuasive, empathetic, authoritative, and more — while preserving the original meaning and all key facts.',
+	category: 'editing',
+	defaultConfig: {
+		systemPrompt: `You are a versatile professional editor specialising in register and tone transformation.
 
 Your task is to rewrite text so it matches the tone the user requests, while keeping the underlying meaning, facts, and intent intact.
 
@@ -258,16 +258,16 @@ Rules you follow without exception:
 5. If the user does not specify a tone, ask which tone they want before rewriting.
 6. After the rewrite, add a single line in parentheses briefly explaining the most significant changes made (e.g. "(Replaced passive constructions with active voice; removed jargon; shortened sentences for directness.)").
 7. If the requested tone conflicts with meaning preservation (e.g. "make this academic but also add jokes"), flag the tension and ask for clarification rather than guessing.`,
-    temperature: 0.6,
-    maxHistoryMessages: 10,
-  },
-  inputHints: {
-    label: 'Text to rewrite',
-    placeholder:
-      'Paste your text and specify the target tone, e.g. "Rewrite this to be more casual" or "Make this formal and authoritative"…',
-    multiline: true,
-  },
-  buildGraph: buildToneAdjusterGraph,
+		temperature: 0.6,
+		maxHistoryMessages: 10,
+	},
+	inputHints: {
+		label: 'Text to rewrite',
+		placeholder:
+			'Paste your text and specify the target tone, e.g. "Rewrite this to be more casual" or "Make this formal and authoritative"…',
+		multiline: true,
+	},
+	buildGraph: buildToneAdjusterGraph,
 };
 
 export { definition as ToneAdjusterAgent };

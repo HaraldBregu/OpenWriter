@@ -14,12 +14,12 @@
  */
 
 const mockWatcher = {
-  on: jest.fn().mockReturnThis(),
-  close: jest.fn().mockResolvedValue(undefined),
+	on: jest.fn().mockReturnThis(),
+	close: jest.fn().mockResolvedValue(undefined),
 };
 
 const chokidar = {
-  watch: jest.fn().mockReturnValue(mockWatcher),
+	watch: jest.fn().mockReturnValue(mockWatcher),
 };
 
 export default chokidar;

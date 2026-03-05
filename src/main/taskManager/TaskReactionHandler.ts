@@ -26,39 +26,39 @@
 // ---------------------------------------------------------------------------
 
 export interface TaskSubmittedEvent {
-  readonly taskId: string;
-  readonly taskType: string;
-  readonly input: unknown;
-  readonly priority: string;
-  readonly windowId?: number;
+	readonly taskId: string;
+	readonly taskType: string;
+	readonly input: unknown;
+	readonly priority: string;
+	readonly windowId?: number;
 }
 
 export interface TaskStartedEvent {
-  readonly taskId: string;
-  readonly taskType: string;
-  readonly windowId?: number;
+	readonly taskId: string;
+	readonly taskType: string;
+	readonly windowId?: number;
 }
 
 export interface TaskCompletedEvent {
-  readonly taskId: string;
-  readonly taskType: string;
-  readonly result: unknown;
-  readonly durationMs: number;
-  readonly windowId?: number;
+	readonly taskId: string;
+	readonly taskType: string;
+	readonly result: unknown;
+	readonly durationMs: number;
+	readonly windowId?: number;
 }
 
 export interface TaskFailedEvent {
-  readonly taskId: string;
-  readonly taskType: string;
-  readonly error: string;
-  readonly code: string;
-  readonly windowId?: number;
+	readonly taskId: string;
+	readonly taskType: string;
+	readonly error: string;
+	readonly code: string;
+	readonly windowId?: number;
 }
 
 export interface TaskCancelledEvent {
-  readonly taskId: string;
-  readonly taskType: string;
-  readonly windowId?: number;
+	readonly taskId: string;
+	readonly taskType: string;
+	readonly windowId?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -66,24 +66,24 @@ export interface TaskCancelledEvent {
 // ---------------------------------------------------------------------------
 
 export interface TaskReactionHandler {
-  /**
-   * The task type this handler reacts to.
-   * Use '*' to subscribe to every task type.
-   */
-  readonly taskType: string;
+	/**
+	 * The task type this handler reacts to.
+	 * Use '*' to subscribe to every task type.
+	 */
+	readonly taskType: string;
 
-  /** Called when a task has been validated and added to the queue. */
-  onSubmitted?(event: TaskSubmittedEvent): void | Promise<void>;
+	/** Called when a task has been validated and added to the queue. */
+	onSubmitted?(event: TaskSubmittedEvent): void | Promise<void>;
 
-  /** Called when a task slot becomes available and execution begins. */
-  onStarted?(event: TaskStartedEvent): void | Promise<void>;
+	/** Called when a task slot becomes available and execution begins. */
+	onStarted?(event: TaskStartedEvent): void | Promise<void>;
 
-  /** Called when a task finishes successfully. */
-  onCompleted?(event: TaskCompletedEvent): void | Promise<void>;
+	/** Called when a task finishes successfully. */
+	onCompleted?(event: TaskCompletedEvent): void | Promise<void>;
 
-  /** Called when a task throws an unhandled (non-abort) error. */
-  onFailed?(event: TaskFailedEvent): void | Promise<void>;
+	/** Called when a task throws an unhandled (non-abort) error. */
+	onFailed?(event: TaskFailedEvent): void | Promise<void>;
 
-  /** Called when a task is explicitly cancelled or aborted via timeout. */
-  onCancelled?(event: TaskCancelledEvent): void | Promise<void>;
+	/** Called when a task is explicitly cancelled or aborted via timeout. */
+	onCancelled?(event: TaskCancelledEvent): void | Promise<void>;
 }

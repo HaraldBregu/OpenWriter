@@ -13,30 +13,34 @@ import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import { ListKeymap } from '@tiptap/extension-list';
 import { Placeholder } from '@tiptap/extensions';
+import { InlinePlaceholder } from './inline-placeholder';
 
 export const BASE_EXTENSIONS: AnyExtension[] = [
-  Document,
-  Text,
-  Paragraph,
-  Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
-  History,
-  Bold,
-  Italic,
-  Underline,
-  Strike,
-  BulletList,
-  OrderedList,
-  ListItem,
-  ListKeymap,
-  Placeholder.configure({
-    placeholder: ({ node }) => {
-      if (node.type.name === 'paragraph') {
-        return "Type '/' for commands, or press 'space' for AI assistance\u2026";
-      }
-      if (node.type.name === 'heading') {
-        return `Heading ${node.attrs.level}`;
-      }
-      return '';
-    },
-  }),
+	Document,
+	Text,
+	Paragraph,
+	Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
+	History,
+	Bold,
+	Italic,
+	Underline,
+	Strike,
+	BulletList,
+	OrderedList,
+	ListItem,
+	ListKeymap,
+	InlinePlaceholder.configure({
+		placeholder: "type '/' for options",
+	}),
+	Placeholder.configure({
+		placeholder: ({ node }) => {
+			if (node.type.name === 'paragraph') {
+				return "Type '/' for commands, or press 'space' for AI assistance\u2026";
+			}
+			if (node.type.name === 'heading') {
+				return `Heading ${node.attrs.level}`;
+			}
+			return '';
+		},
+	}),
 ];

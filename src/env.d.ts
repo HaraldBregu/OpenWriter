@@ -4,13 +4,13 @@
 type AppEnvironment = 'development' | 'staging' | 'production';
 
 interface ImportMetaEnv {
-  // Environment
-  readonly VITE_APP_ENV: AppEnvironment;
+	// Environment
+	readonly VITE_APP_ENV: AppEnvironment;
 
-  readonly VITE_OPENAI_API_KEY: string;
-  readonly VITE_OPENAI_MODEL: string;
+	readonly VITE_OPENAI_API_KEY: string;
+	readonly VITE_OPENAI_MODEL: string;
 }
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv;
+	readonly env: ImportMetaEnv;
 }

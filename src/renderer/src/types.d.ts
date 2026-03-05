@@ -20,8 +20,8 @@
  * src/renderer/src/types.ts; this declaration mirrors it for ambient access.
  */
 interface AIMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: number;
+	id: string;
+	role: 'user' | 'assistant';
+	content: string;
+	timestamp: number;
 }

@@ -13,6 +13,6 @@
  * `globalThis.__VITE_ENV__` in their beforeEach / test body.
  */
 (globalThis as any).__VITE_ENV__ = {
-  VITE_OPENAI_API_KEY: undefined,
-  VITE_OPENAI_MODEL: undefined,
+	VITE_OPENAI_API_KEY: undefined,
+	VITE_OPENAI_MODEL: undefined,
 };

@@ -8,56 +8,56 @@ import { launchApp, closeApp, waitForAppReady, type AppContext } from './electro
 let ctx: AppContext;
 
 test.beforeAll(async () => {
-  ctx = await launchApp();
-  await waitForAppReady(ctx.page);
+	ctx = await launchApp();
+	await waitForAppReady(ctx.page);
 });
 
 test.afterAll(async () => {
-  await closeApp(ctx);
+	await closeApp(ctx);
 });
 
 test.describe('Theme', () => {
-  test('should start with dark theme', async () => {
-    // The app sets nativeTheme.themeSource = 'dark' on ready
-    const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
-      return nativeTheme.themeSource;
-    });
-    expect(themeSource).toBe('dark');
-  });
+	test('should start with dark theme', async () => {
+		// The app sets nativeTheme.themeSource = 'dark' on ready
+		const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
+			return nativeTheme.themeSource;
+		});
+		expect(themeSource).toBe('dark');
+	});
 
-  test('should report dark mode active', async () => {
-    const shouldUseDark = await ctx.app.evaluate(({ nativeTheme }) => {
-      return nativeTheme.shouldUseDarkColors;
-    });
-    expect(shouldUseDark).toBe(true);
-  });
+	test('should report dark mode active', async () => {
+		const shouldUseDark = await ctx.app.evaluate(({ nativeTheme }) => {
+			return nativeTheme.shouldUseDarkColors;
+		});
+		expect(shouldUseDark).toBe(true);
+	});
 
-  test('should switch to light theme via nativeTheme', async () => {
-    await ctx.app.evaluate(({ nativeTheme }) => {
-      nativeTheme.themeSource = 'light';
-    });
-    await ctx.page.waitForTimeout(500);
+	test('should switch to light theme via nativeTheme', async () => {
+		await ctx.app.evaluate(({ nativeTheme }) => {
+			nativeTheme.themeSource = 'light';
+		});
+		await ctx.page.waitForTimeout(500);
 
-    const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
-      return nativeTheme.themeSource;
-    });
-    expect(themeSource).toBe('light');
+		const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
+			return nativeTheme.themeSource;
+		});
+		expect(themeSource).toBe('light');
 
-    const shouldUseDark = await ctx.app.evaluate(({ nativeTheme }) => {
-      return nativeTheme.shouldUseDarkColors;
-    });
-    expect(shouldUseDark).toBe(false);
-  });
+		const shouldUseDark = await ctx.app.evaluate(({ nativeTheme }) => {
+			return nativeTheme.shouldUseDarkColors;
+		});
+		expect(shouldUseDark).toBe(false);
+	});
 
-  test('should switch back to dark theme', async () => {
-    await ctx.app.evaluate(({ nativeTheme }) => {
-      nativeTheme.themeSource = 'dark';
-    });
-    await ctx.page.waitForTimeout(500);
+	test('should switch back to dark theme', async () => {
+		await ctx.app.evaluate(({ nativeTheme }) => {
+			nativeTheme.themeSource = 'dark';
+		});
+		await ctx.page.waitForTimeout(500);
 
-    const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
-      return nativeTheme.themeSource;
-    });
-    expect(themeSource).toBe('dark');
-  });
+		const themeSource = await ctx.app.evaluate(({ nativeTheme }) => {
+			return nativeTheme.themeSource;
+		});
+		expect(themeSource).toBe('dark');
+	});
 });

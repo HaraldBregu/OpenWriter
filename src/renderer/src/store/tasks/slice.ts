@@ -9,12 +9,12 @@
  */
 
 export type {
-  TaskStatus,
-  TaskPriority,
-  TaskProgressState,
-  TaskEventRecord,
-  TrackedTaskState,
-  TasksState,
+	TaskStatus,
+	TaskPriority,
+	TaskProgressState,
+	TaskEventRecord,
+	TrackedTaskState,
+	TasksState,
 } from './types';
 
 export { tasksSlice, taskAdded, taskEventReceived, taskRemoved } from './reducer';

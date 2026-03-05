@@ -23,113 +23,113 @@ import directoriesReducer from '../../../../src/renderer/src/store/directoriesSl
 
 // Mock lucide-react to avoid SVG rendering complexity
 jest.mock('lucide-react', () => {
-  const icons = [
-    'PenLine',
-    'FolderOpen',
-    'Puzzle',
-    'ArrowRight',
-    'Clock',
-    'Star',
-    'Loader2',
-    'Square',
-  ];
-  const mocks: Record<string, (props: Record<string, unknown>) => React.ReactElement> = {};
-  for (const name of icons) {
-    mocks[name] = (props: Record<string, unknown>) =>
-      React.createElement('svg', { ...props, 'data-testid': `icon-${name}` });
-  }
-  return mocks;
+	const icons = [
+		'PenLine',
+		'FolderOpen',
+		'Puzzle',
+		'ArrowRight',
+		'Clock',
+		'Star',
+		'Loader2',
+		'Square',
+	];
+	const mocks: Record<string, (props: Record<string, unknown>) => React.ReactElement> = {};
+	for (const name of icons) {
+		mocks[name] = (props: Record<string, unknown>) =>
+			React.createElement('svg', { ...props, 'data-testid': `icon-${name}` });
+	}
+	return mocks;
 });
 
 import HomePage from '../../../../src/renderer/src/pages/HomePage';
 
 function renderHomePage() {
-  const store = configureStore({
-    reducer: {
-      chat: chatReducer,
-      directories: directoriesReducer,
-    },
-  });
+	const store = configureStore({
+		reducer: {
+			chat: chatReducer,
+			directories: directoriesReducer,
+		},
+	});
 
-  return render(
-    <Provider store={store}>
-      <HashRouter>
-        <HomePage />
-      </HashRouter>
-    </Provider>
-  );
+	return render(
+		<Provider store={store}>
+			<HashRouter>
+				<HomePage />
+			</HashRouter>
+		</Provider>
+	);
 }
 
 describe('HomePage', () => {
-  // ---- Greeting section ---------------------------------------------------
+	// ---- Greeting section ---------------------------------------------------
 
-  it('should render a time-based greeting heading', () => {
-    renderHomePage();
+	it('should render a time-based greeting heading', () => {
+		renderHomePage();
 
-    const greetings = ['Good morning', 'Good afternoon', 'Good evening'];
-    const found = greetings.some((g) => screen.queryByText(g) !== null);
-    expect(found).toBe(true);
-  });
+		const greetings = ['Good morning', 'Good afternoon', 'Good evening'];
+		const found = greetings.some((g) => screen.queryByText(g) !== null);
+		expect(found).toBe(true);
+	});
 
-  it('should render the subtitle', () => {
-    renderHomePage();
+	it('should render the subtitle', () => {
+		renderHomePage();
 
-    expect(screen.getByText('What would you like to work on today?')).toBeInTheDocument();
-  });
+		expect(screen.getByText('What would you like to work on today?')).toBeInTheDocument();
+	});
 
-  // ---- Category cards -----------------------------------------------------
+	// ---- Category cards -----------------------------------------------------
 
-  it('should render the Writing category card', () => {
-    renderHomePage();
+	it('should render the Writing category card', () => {
+		renderHomePage();
 
-    expect(screen.getByText('Writing')).toBeInTheDocument();
-    expect(screen.getByText('Start a blank document')).toBeInTheDocument();
-  });
+		expect(screen.getByText('Writing')).toBeInTheDocument();
+		expect(screen.getByText('Start a blank document')).toBeInTheDocument();
+	});
 
-  // ---- Recent items section -----------------------------------------------
+	// ---- Recent items section -----------------------------------------------
 
-  it('should render the Recent section label', () => {
-    renderHomePage();
+	it('should render the Recent section label', () => {
+		renderHomePage();
 
-    expect(screen.getByText('Recent')).toBeInTheDocument();
-  });
+		expect(screen.getByText('Recent')).toBeInTheDocument();
+	});
 
-  it('should render placeholder recent items', () => {
-    renderHomePage();
+	it('should render placeholder recent items', () => {
+		renderHomePage();
 
-    // Titles from the static recentItems array in HomePage
-    expect(screen.getByText('Q1 Strategy Brief')).toBeInTheDocument();
-    expect(screen.getByText('Design Assets')).toBeInTheDocument();
-  });
+		// Titles from the static recentItems array in HomePage
+		expect(screen.getByText('Q1 Strategy Brief')).toBeInTheDocument();
+		expect(screen.getByText('Design Assets')).toBeInTheDocument();
+	});
 
-  it('should render "View all" link in the Recent section', () => {
-    renderHomePage();
+	it('should render "View all" link in the Recent section', () => {
+		renderHomePage();
 
-    expect(screen.getByText('View all')).toBeInTheDocument();
-  });
+		expect(screen.getByText('View all')).toBeInTheDocument();
+	});
 
-  // ---- Documents & Integrations section -----------------------------------
+	// ---- Documents & Integrations section -----------------------------------
 
-  it('should render the Documents navigation card', () => {
-    renderHomePage();
+	it('should render the Documents navigation card', () => {
+		renderHomePage();
 
-    expect(screen.getByText('Documents')).toBeInTheDocument();
-    expect(screen.getByText('Browse your files')).toBeInTheDocument();
-  });
+		expect(screen.getByText('Documents')).toBeInTheDocument();
+		expect(screen.getByText('Browse your files')).toBeInTheDocument();
+	});
 
-  it('should render the Integrations navigation card', () => {
-    renderHomePage();
+	it('should render the Integrations navigation card', () => {
+		renderHomePage();
 
-    expect(screen.getByText('Integrations')).toBeInTheDocument();
-    expect(screen.getByText('Connect your tools')).toBeInTheDocument();
-  });
+		expect(screen.getByText('Integrations')).toBeInTheDocument();
+		expect(screen.getByText('Connect your tools')).toBeInTheDocument();
+	});
 
-  // ---- Tip section --------------------------------------------------------
+	// ---- Tip section --------------------------------------------------------
 
-  it('should render the tip section', () => {
-    renderHomePage();
+	it('should render the tip section', () => {
+		renderHomePage();
 
-    expect(screen.getByText('Tip')).toBeInTheDocument();
-    expect(screen.getByText(/Use the sidebar to navigate/)).toBeInTheDocument();
-  });
+		expect(screen.getByText('Tip')).toBeInTheDocument();
+		expect(screen.getByText(/Use the sidebar to navigate/)).toBeInTheDocument();
+	});
 });

@@ -20,18 +20,18 @@ import type { AgentDefinition } from './AgentDefinition';
 // ---------------------------------------------------------------------------
 
 const GraphState = Annotation.Root({
-  messages: Annotation<BaseMessage[]>({
-    reducer: (existing, update) => existing.concat(update),
-    default: () => [],
-  }),
-  outline: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
-  draft: Annotation<string>({
-    reducer: (_, next) => next,
-    default: () => '',
-  }),
+	messages: Annotation<BaseMessage[]>({
+		reducer: (existing, update) => existing.concat(update),
+		default: () => [],
+	}),
+	outline: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
+	draft: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
+	}),
 });
 
 type StoryState = typeof GraphState.State;
@@ -42,13 +42,13 @@ type StoryState = typeof GraphState.State;
 // ---------------------------------------------------------------------------
 
 function makePlanNode(model: BaseChatModel) {
-  return async (state: StoryState): Promise<Partial<StoryState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userPrompt = userMsg ? String(userMsg.content) : '';
+	return async (state: StoryState): Promise<Partial<StoryState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userPrompt = userMsg ? String(userMsg.content) : '';
 
-    const planMessages = [
-      new SystemMessage(
-        `You are a story planning assistant. Given a story prompt, produce a concise JSON outline.
+		const planMessages = [
+			new SystemMessage(
+				`You are a story planning assistant. Given a story prompt, produce a concise JSON outline.
 Return ONLY a valid JSON object with this exact shape:
 {
   "title": "Story title",
@@ -57,32 +57,32 @@ Return ONLY a valid JSON object with this exact shape:
   "beats": ["Opening beat", "Rising action beat", "Climax beat", "Resolution beat"]
 }
 No prose, no markdown fences — raw JSON only.`
-      ),
-      new HumanMessage(userPrompt),
-    ];
+			),
+			new HumanMessage(userPrompt),
+		];
 
-    const response = await model.invoke(planMessages);
-    const rawContent = typeof response.content === 'string' ? response.content : '';
+		const response = await model.invoke(planMessages);
+		const rawContent = typeof response.content === 'string' ? response.content : '';
 
-    // Parse JSON, falling back to a minimal outline if parsing fails
-    let outline: string;
-    try {
-      JSON.parse(rawContent);
-      outline = rawContent;
-    } catch {
-      outline = JSON.stringify({
-        title: 'Untitled Story',
-        setting: 'To be determined',
-        characters: [],
-        beats: [userPrompt],
-      });
-    }
+		// Parse JSON, falling back to a minimal outline if parsing fails
+		let outline: string;
+		try {
+			JSON.parse(rawContent);
+			outline = rawContent;
+		} catch {
+			outline = JSON.stringify({
+				title: 'Untitled Story',
+				setting: 'To be determined',
+				characters: [],
+				beats: [userPrompt],
+			});
+		}
 
-    return {
-      outline,
-      messages: [new AIMessage(`[Story outline]\n${outline}`)],
-    };
-  };
+		return {
+			outline,
+			messages: [new AIMessage(`[Story outline]\n${outline}`)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -91,31 +91,31 @@ No prose, no markdown fences — raw JSON only.`
 // ---------------------------------------------------------------------------
 
 function makeWriteNode(model: BaseChatModel) {
-  return async (state: StoryState): Promise<Partial<StoryState>> => {
-    const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
-    const userPrompt = userMsg ? String(userMsg.content) : '';
+	return async (state: StoryState): Promise<Partial<StoryState>> => {
+		const userMsg = state.messages.find((m): m is HumanMessage => m._getType() === 'human');
+		const userPrompt = userMsg ? String(userMsg.content) : '';
 
-    let outlineText = state.outline;
-    try {
-      const parsed = JSON.parse(state.outline) as {
-        title?: string;
-        setting?: string;
-        characters?: string[];
-        beats?: string[];
-      };
-      outlineText = [
-        `Title: ${parsed.title ?? ''}`,
-        `Setting: ${parsed.setting ?? ''}`,
-        `Characters: ${(parsed.characters ?? []).join(', ')}`,
-        `Story beats:\n${(parsed.beats ?? []).map((b, i) => `  ${i + 1}. ${b}`).join('\n')}`,
-      ].join('\n');
-    } catch {
-      // Outline wasn't JSON — use raw string
-    }
+		let outlineText = state.outline;
+		try {
+			const parsed = JSON.parse(state.outline) as {
+				title?: string;
+				setting?: string;
+				characters?: string[];
+				beats?: string[];
+			};
+			outlineText = [
+				`Title: ${parsed.title ?? ''}`,
+				`Setting: ${parsed.setting ?? ''}`,
+				`Characters: ${(parsed.characters ?? []).join(', ')}`,
+				`Story beats:\n${(parsed.beats ?? []).map((b, i) => `  ${i + 1}. ${b}`).join('\n')}`,
+			].join('\n');
+		} catch {
+			// Outline wasn't JSON — use raw string
+		}
 
-    const writeMessages = [
-      new SystemMessage(
-        `You are an expert creative fiction writer with decades of experience across genres.
+		const writeMessages = [
+			new SystemMessage(
+				`You are an expert creative fiction writer with decades of experience across genres.
 
 Your strengths:
 - You write with vivid, concrete sensory detail that puts the reader inside the scene.
@@ -129,20 +129,20 @@ How to behave:
 - Treat every prompt as the seed of a real story worth telling.
 - Never summarise the story in meta-commentary — stay in the narrative voice.
 - Do not apologise for content choices or hedge with phrases like "Certainly!" or "Of course!".`
-      ),
-      new HumanMessage(
-        `Write the full story based on this prompt and outline.\n\nPrompt: ${userPrompt}\n\nOutline:\n${outlineText}`
-      ),
-    ];
+			),
+			new HumanMessage(
+				`Write the full story based on this prompt and outline.\n\nPrompt: ${userPrompt}\n\nOutline:\n${outlineText}`
+			),
+		];
 
-    const response = await model.invoke(writeMessages);
-    const draft = typeof response.content === 'string' ? response.content : '';
+		const response = await model.invoke(writeMessages);
+		const draft = typeof response.content === 'string' ? response.content : '';
 
-    return {
-      draft,
-      messages: [new AIMessage(draft)],
-    };
-  };
+		return {
+			draft,
+			messages: [new AIMessage(draft)],
+		};
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -150,14 +150,14 @@ How to behave:
 // ---------------------------------------------------------------------------
 
 function buildStoryWriterGraph(model: BaseChatModel) {
-  const graph = new StateGraph(GraphState)
-    .addNode('plan', makePlanNode(model))
-    .addNode('write', makeWriteNode(model))
-    .addEdge(START, 'plan')
-    .addEdge('plan', 'write')
-    .addEdge('write', END);
+	const graph = new StateGraph(GraphState)
+		.addNode('plan', makePlanNode(model))
+		.addNode('write', makeWriteNode(model))
+		.addEdge(START, 'plan')
+		.addEdge('plan', 'write')
+		.addEdge('write', END);
 
-  return graph.compile();
+	return graph.compile();
 }
 
 // ---------------------------------------------------------------------------
@@ -165,13 +165,13 @@ function buildStoryWriterGraph(model: BaseChatModel) {
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-  id: 'story-writer',
-  name: 'Story Writer',
-  description:
-    'Crafts engaging narrative fiction — short stories, scenes, or multi-chapter drafts — with strong character voice, vivid imagery, and purposeful pacing.',
-  category: 'writing',
-  defaultConfig: {
-    systemPrompt: `You are an expert creative fiction writer with decades of experience across genres.
+	id: 'story-writer',
+	name: 'Story Writer',
+	description:
+		'Crafts engaging narrative fiction — short stories, scenes, or multi-chapter drafts — with strong character voice, vivid imagery, and purposeful pacing.',
+	category: 'writing',
+	defaultConfig: {
+		systemPrompt: `You are an expert creative fiction writer with decades of experience across genres.
 
 Your strengths:
 - You write with vivid, concrete sensory detail that puts the reader inside the scene.
@@ -188,16 +188,16 @@ How to behave:
 - Never summarise the story in meta-commentary — stay in the narrative voice.
 - If asked to continue a draft, match the existing style and tone precisely before adding your own texture.
 - Do not apologise for content choices or hedge with phrases like "Certainly!" or "Of course!".`,
-    temperature: 0.9,
-    maxHistoryMessages: 20,
-  },
-  inputHints: {
-    label: 'Story prompt',
-    placeholder:
-      'Describe your story idea, genre, setting, or characters — or paste a draft to continue…',
-    multiline: true,
-  },
-  buildGraph: buildStoryWriterGraph,
+		temperature: 0.9,
+		maxHistoryMessages: 20,
+	},
+	inputHints: {
+		label: 'Story prompt',
+		placeholder:
+			'Describe your story idea, genre, setting, or characters — or paste a draft to continue…',
+		multiline: true,
+	},
+	buildGraph: buildStoryWriterGraph,
 };
 
 export { definition as StoryWriterAgent };

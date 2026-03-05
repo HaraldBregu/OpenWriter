@@ -85,8 +85,8 @@ Phase 1 eliminates these issues by:
 ```typescript
 // NEW: Event payload type
 export interface WorkspaceChangedEvent {
-  currentPath: string | null;
-  previousPath: string | null;
+	currentPath: string | null;
+	previousPath: string | null;
 }
 ```
 
@@ -106,8 +106,8 @@ changed: 'workspace:changed'
 
 ```typescript
 export interface WorkspaceApi {
-  // ... existing methods ...
-  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void;
+	// ... existing methods ...
+	onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void;
 }
 ```
 
@@ -115,8 +115,8 @@ export interface WorkspaceApi {
 
 ```typescript
 const workspace: WorkspaceApi = {
-  // ... existing methods ...
-  onChange: (callback) => typedOn(WorkspaceChannels.changed, callback),
+	// ... existing methods ...
+	onChange: (callback) => typedOn(WorkspaceChannels.changed, callback),
 };
 ```
 
@@ -181,10 +181,10 @@ Complete implementation with:
 
 ```typescript
 interface WorkspaceState {
-  currentPath: string | null;
-  recentWorkspaces: WorkspaceInfo[];
-  status: 'idle' | 'loading' | 'ready' | 'error';
-  error: string | null;
+	currentPath: string | null;
+	recentWorkspaces: WorkspaceInfo[];
+	status: 'idle' | 'loading' | 'ready' | 'error';
+	error: string | null;
 }
 ```
 
@@ -219,10 +219,10 @@ selectWorkspaceIsLoading(state) → boolean
 import workspaceReducer from './workspaceSlice';
 
 export const store = configureStore({
-  reducer: {
-    // ... other reducers ...
-    workspace: workspaceReducer,
-  },
+	reducer: {
+		// ... other reducers ...
+		workspace: workspaceReducer,
+	},
 });
 ```
 
@@ -232,14 +232,14 @@ export const store = configureStore({
 
 ```typescript
 export function useWorkspaceListener(): void {
-  const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const unsubscribe = window.workspace.onChange((event) => {
-      dispatch(handleWorkspaceChanged(event));
-    });
-    return () => unsubscribe();
-  }, [dispatch]);
+	useEffect(() => {
+		const unsubscribe = window.workspace.onChange((event) => {
+			dispatch(handleWorkspaceChanged(event));
+		});
+		return () => unsubscribe();
+	}, [dispatch]);
 }
 ```
 
@@ -381,8 +381,8 @@ These components currently call `window.workspace.getCurrent()` directly and sho
 
 ```typescript
 interface WorkspaceChangedEvent {
-  currentPath: string | null;
-  previousPath: string | null;
+	currentPath: string | null;
+	previousPath: string | null;
 }
 ```
 
@@ -390,10 +390,10 @@ interface WorkspaceChangedEvent {
 
 ```typescript
 interface WorkspaceState {
-  currentPath: string | null;
-  recentWorkspaces: WorkspaceInfo[];
-  status: 'idle' | 'loading' | 'ready' | 'error';
-  error: string | null;
+	currentPath: string | null;
+	recentWorkspaces: WorkspaceInfo[];
+	status: 'idle' | 'loading' | 'ready' | 'error';
+	error: string | null;
 }
 ```
 
@@ -401,14 +401,14 @@ interface WorkspaceState {
 
 ```typescript
 interface WorkspaceApi {
-  selectFolder: () => Promise<string | null>;
-  getCurrent: () => Promise<string | null>;
-  setCurrent: (workspacePath: string) => Promise<void>;
-  getRecent: () => Promise<WorkspaceInfo[]>;
-  clear: () => Promise<void>;
-  directoryExists: (directoryPath: string) => Promise<boolean>;
-  removeRecent: (workspacePath: string) => Promise<void>;
-  onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void; // NEW
+	selectFolder: () => Promise<string | null>;
+	getCurrent: () => Promise<string | null>;
+	setCurrent: (workspacePath: string) => Promise<void>;
+	getRecent: () => Promise<WorkspaceInfo[]>;
+	clear: () => Promise<void>;
+	directoryExists: (directoryPath: string) => Promise<boolean>;
+	removeRecent: (workspacePath: string) => Promise<void>;
+	onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void; // NEW
 }
 ```
 

@@ -21,36 +21,36 @@ const tsJestTransformer = require('ts-jest').default;
 let transformer = null;
 
 function getTransformer(config) {
-  if (!transformer) {
-    transformer = tsJestTransformer.createTransformer();
-  }
-  return transformer;
+	if (!transformer) {
+		transformer = tsJestTransformer.createTransformer();
+	}
+	return transformer;
 }
 
 module.exports = {
-  process(sourceText, sourcePath, options) {
-    // Replace import.meta.env.VITE_* with global.__VITE_ENV__ equivalents
-    let processed = sourceText
-      // import.meta.env.VITE_FOO_BAR → (globalThis.__VITE_ENV__?.VITE_FOO_BAR)
-      .replace(
-        /import\.meta\.env\.([A-Z_][A-Z0-9_]*)/g,
-        '(globalThis.__VITE_ENV__ && globalThis.__VITE_ENV__.$1)'
-      )
-      // import.meta.env → (globalThis.__VITE_ENV__ || {})
-      .replace(/import\.meta\.env/g, '(globalThis.__VITE_ENV__ || {})')
-      // Any remaining import.meta references → ({})
-      .replace(/import\.meta/g, '({})');
+	process(sourceText, sourcePath, options) {
+		// Replace import.meta.env.VITE_* with global.__VITE_ENV__ equivalents
+		let processed = sourceText
+			// import.meta.env.VITE_FOO_BAR → (globalThis.__VITE_ENV__?.VITE_FOO_BAR)
+			.replace(
+				/import\.meta\.env\.([A-Z_][A-Z0-9_]*)/g,
+				'(globalThis.__VITE_ENV__ && globalThis.__VITE_ENV__.$1)'
+			)
+			// import.meta.env → (globalThis.__VITE_ENV__ || {})
+			.replace(/import\.meta\.env/g, '(globalThis.__VITE_ENV__ || {})')
+			// Any remaining import.meta references → ({})
+			.replace(/import\.meta/g, '({})');
 
-    // Delegate to ts-jest for actual TypeScript compilation
-    return getTransformer(options).process(processed, sourcePath, options);
-  },
+		// Delegate to ts-jest for actual TypeScript compilation
+		return getTransformer(options).process(processed, sourcePath, options);
+	},
 
-  getCacheKey(sourceText, sourcePath, options) {
-    return require('crypto')
-      .createHash('sha256')
-      .update(sourceText)
-      .update(sourcePath)
-      .update(JSON.stringify(options?.config?.globals ?? {}))
-      .digest('hex');
-  },
+	getCacheKey(sourceText, sourcePath, options) {
+		return require('crypto')
+			.createHash('sha256')
+			.update(sourceText)
+			.update(sourcePath)
+			.update(JSON.stringify(options?.config?.globals ?? {}))
+			.digest('hex');
+	},
 };

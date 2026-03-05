@@ -11,13 +11,13 @@ export const selectAllTasks = selectTasksArray;
 
 /** A single task by ID, or undefined if not tracked. */
 export const selectTaskById = (state: RootState, taskId: string): TrackedTaskState | undefined =>
-  state.tasks.tasks.find((t) => t.taskId === taskId);
+	state.tasks.tasks.find((t) => t.taskId === taskId);
 
 /** All tasks with a given status. */
 export const selectTasksByStatus = createSelector(
-  selectTasksArray,
-  (_: RootState, status: TaskStatus) => status,
-  (tasks, status): TrackedTaskState[] => tasks.filter((t) => t.status === status)
+	selectTasksArray,
+	(_: RootState, status: TaskStatus) => status,
+	(tasks, status): TrackedTaskState[] => tasks.filter((t) => t.status === status)
 );
 
 /**
@@ -25,11 +25,11 @@ export const selectTasksByStatus = createSelector(
  * Re-computes only when the tasks array reference changes.
  */
 export const selectQueueStats = createSelector(selectTasksArray, (tasks) => {
-  const stats = { queued: 0, running: 0, completed: 0, error: 0, cancelled: 0 };
-  for (const task of tasks) {
-    if (task.status in stats) {
-      stats[task.status as keyof typeof stats]++;
-    }
-  }
-  return stats;
+	const stats = { queued: 0, running: 0, completed: 0, error: 0, cancelled: 0 };
+	for (const task of tasks) {
+		if (task.status in stats) {
+			stats[task.status as keyof typeof stats]++;
+		}
+	}
+	return stats;
 });

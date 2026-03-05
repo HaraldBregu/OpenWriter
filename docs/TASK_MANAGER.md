@@ -278,53 +278,53 @@ Located at `src/main/taskManager/TaskExecutor.ts`.
 
 ```typescript
 class TaskExecutor implements Disposable {
-  /**
-   * Submit a task for execution. Returns the taskId immediately.
-   * The task is queued by priority and started when a slot is available.
-   */
-  submit<TInput>(type: string, input: TInput, options?: TaskOptions): string;
+	/**
+	 * Submit a task for execution. Returns the taskId immediately.
+	 * The task is queued by priority and started when a slot is available.
+	 */
+	submit<TInput>(type: string, input: TInput, options?: TaskOptions): string;
 
-  /**
-   * Cancel a task by ID. Works for both queued and running tasks.
-   * Aborts the controller and removes from queue if still queued.
-   * Returns true if the task was found and cancelled.
-   */
-  cancel(taskId: string): boolean;
+	/**
+	 * Cancel a task by ID. Works for both queued and running tasks.
+	 * Aborts the controller and removes from queue if still queued.
+	 * Returns true if the task was found and cancelled.
+	 */
+	cancel(taskId: string): boolean;
 
-  /**
-   * Update the priority of a queued task.
-   * The queue is re-sorted immediately.
-   * Returns true if the task was found and its priority updated.
-   */
-  updatePriority(taskId: string, newPriority: TaskPriority): boolean;
+	/**
+	 * Update the priority of a queued task.
+	 * The queue is re-sorted immediately.
+	 * Returns true if the task was found and its priority updated.
+	 */
+	updatePriority(taskId: string, newPriority: TaskPriority): boolean;
 
-  /**
-   * Retrieve a task by ID. Checks active tasks first, then TTL store.
-   * Returns undefined if unknown or expired.
-   */
-  getTaskResult(taskId: string): ActiveTask | undefined;
+	/**
+	 * Retrieve a task by ID. Checks active tasks first, then TTL store.
+	 * Returns undefined if unknown or expired.
+	 */
+	getTaskResult(taskId: string): ActiveTask | undefined;
 
-  /**
-   * Return queue metrics: queued, running, completed counts.
-   */
-  getQueueStatus(): TaskQueueStatus;
+	/**
+	 * Return queue metrics: queued, running, completed counts.
+	 */
+	getQueueStatus(): TaskQueueStatus;
 
-  /**
-   * List all active tasks (queued + running).
-   * Does NOT include completed tasks from the TTL store.
-   */
-  listTasks(): ActiveTask[];
+	/**
+	 * List all active tasks (queued + running).
+	 * Does NOT include completed tasks from the TTL store.
+	 */
+	listTasks(): ActiveTask[];
 
-  /**
-   * Cancel all tasks owned by a specific window.
-   * Returns the count of cancelled tasks.
-   */
-  cancelByWindow(windowId: number): number;
+	/**
+	 * Cancel all tasks owned by a specific window.
+	 * Returns the count of cancelled tasks.
+	 */
+	cancelByWindow(windowId: number): number;
 
-  /**
-   * Abort all active tasks and clean up. Called by ServiceContainer on shutdown.
-   */
-  destroy(): void;
+	/**
+	 * Abort all active tasks and clean up. Called by ServiceContainer on shutdown.
+	 */
+	destroy(): void;
 }
 ```
 
@@ -332,9 +332,9 @@ class TaskExecutor implements Disposable {
 
 ```typescript
 interface TaskOptions {
-  priority?: TaskPriority; // 'low' | 'normal' | 'high' (default: 'normal')
-  timeoutMs?: number; // Auto-cancel after N milliseconds (optional)
-  windowId?: number; // Set by TaskManagerIpc, not by callers
+	priority?: TaskPriority; // 'low' | 'normal' | 'high' (default: 'normal')
+	timeoutMs?: number; // Auto-cancel after N milliseconds (optional)
+	windowId?: number; // Set by TaskManagerIpc, not by callers
 }
 ```
 
@@ -346,39 +346,39 @@ All methods return `Promise<IpcResult<T>>` (except `onEvent`) where `IpcResult` 
 
 ```typescript
 type IpcResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: { message: string; code?: string } };
+	| { success: true; data: T }
+	| { success: false; error: { message: string; code?: string } };
 ```
 
 ```typescript
 interface TasksManagerApi {
-  /** Submit a task. Returns { taskId: string } on success. */
-  submit(
-    type: string,
-    input: unknown,
-    options?: TaskSubmitOptions
-  ): Promise<IpcResult<{ taskId: string }>>;
+	/** Submit a task. Returns { taskId: string } on success. */
+	submit(
+		type: string,
+		input: unknown,
+		options?: TaskSubmitOptions
+	): Promise<IpcResult<{ taskId: string }>>;
 
-  /** Cancel a running or queued task. Returns boolean. */
-  cancel(taskId: string): Promise<IpcResult<boolean>>;
+	/** Cancel a running or queued task. Returns boolean. */
+	cancel(taskId: string): Promise<IpcResult<boolean>>;
 
-  /** List all active tasks. Returns TaskInfo[]. */
-  list(): Promise<IpcResult<TaskInfo[]>>;
+	/** List all active tasks. Returns TaskInfo[]. */
+	list(): Promise<IpcResult<TaskInfo[]>>;
 
-  /** Update priority of a queued task. Returns boolean. */
-  updatePriority(taskId: string, priority: 'low' | 'normal' | 'high'): Promise<IpcResult<boolean>>;
+	/** Update priority of a queued task. Returns boolean. */
+	updatePriority(taskId: string, priority: 'low' | 'normal' | 'high'): Promise<IpcResult<boolean>>;
 
-  /** Retrieve a completed/errored/cancelled task by ID. Returns TaskInfo or null. */
-  getResult(taskId: string): Promise<IpcResult<TaskInfo | null>>;
+	/** Retrieve a completed/errored/cancelled task by ID. Returns TaskInfo or null. */
+	getResult(taskId: string): Promise<IpcResult<TaskInfo | null>>;
 
-  /** Get queue metrics. Returns { queued, running, completed }. */
-  queueStatus(): Promise<IpcResult<TaskQueueStatus>>;
+	/** Get queue metrics. Returns { queued, running, completed }. */
+	queueStatus(): Promise<IpcResult<TaskQueueStatus>>;
 
-  /**
-   * Subscribe to task events pushed from the main process.
-   * Returns an unsubscribe function.
-   */
-  onEvent(callback: (event: TaskEvent) => void): () => void;
+	/**
+	 * Subscribe to task events pushed from the main process.
+	 * Returns an unsubscribe function.
+	 */
+	onEvent(callback: (event: TaskEvent) => void): () => void;
 }
 ```
 
@@ -394,23 +394,23 @@ Internally calls `taskStore.ensureListening()` on mount, so no `TaskProvider` or
 
 ```typescript
 function useTaskSubmit<TInput = unknown, TResult = unknown>(
-  type: string,
-  input: TInput,
-  options?: TaskSubmitOptions
+	type: string,
+	input: TInput,
+	options?: TaskSubmitOptions
 ): UseTaskSubmitReturn<TInput, TResult>;
 
 interface UseTaskSubmitReturn<TInput, TResult> {
-  taskId: string | null;
-  status: TaskStatus | 'idle';
-  progress: number; // 0–100
-  progressMessage: string | undefined;
-  error: string | null;
-  result: TResult | null;
-  queuePosition: number | undefined;
-  submit: (inputOverride?: TInput) => Promise<string | null>;
-  cancel: () => Promise<void>;
-  updatePriority: (priority: TaskPriority) => Promise<void>;
-  reset: () => void;
+	taskId: string | null;
+	status: TaskStatus | 'idle';
+	progress: number; // 0–100
+	progressMessage: string | undefined;
+	error: string | null;
+	result: TResult | null;
+	queuePosition: number | undefined;
+	submit: (inputOverride?: TInput) => Promise<string | null>;
+	cancel: () => Promise<void>;
+	updatePriority: (priority: TaskPriority) => Promise<void>;
+	reset: () => void;
 }
 ```
 
@@ -422,18 +422,18 @@ Subscribes to all tasks tracked by the `taskStore` for the debug page. Located a
 function useDebugTasks(): UseDebugTasksReturn;
 
 interface UseDebugTasksReturn {
-  tasks: TrackedTaskState[]; // Visible (non-hidden) tasks
-  queueStats: DebugQueueStats;
-  hide: (taskId: string) => void;
-  cancel: (taskId: string) => Promise<void>;
+	tasks: TrackedTaskState[]; // Visible (non-hidden) tasks
+	queueStats: DebugQueueStats;
+	hide: (taskId: string) => void;
+	cancel: (taskId: string) => Promise<void>;
 }
 
 interface DebugQueueStats {
-  queued: number;
-  running: number;
-  completed: number;
-  error: number;
-  cancelled: number;
+	queued: number;
+	running: number;
+	completed: number;
+	error: number;
+	cancelled: number;
 }
 ```
 
@@ -544,18 +544,18 @@ type TaskPriority = 'low' | 'normal' | 'high';
 
 ```typescript
 type TaskEvent =
-  | { type: 'queued'; data: { taskId: string; position: number } }
-  | { type: 'started'; data: { taskId: string } }
-  | {
-      type: 'progress';
-      data: { taskId: string; percent: number; message?: string; detail?: unknown };
-    }
-  | { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
-  | { type: 'error'; data: { taskId: string; message: string; code: string } }
-  | { type: 'cancelled'; data: { taskId: string } }
-  | { type: 'stream'; data: { taskId: string; data: string } }
-  | { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
-  | { type: 'queue-position'; data: { taskId: string; position: number } };
+	| { type: 'queued'; data: { taskId: string; position: number } }
+	| { type: 'started'; data: { taskId: string } }
+	| {
+			type: 'progress';
+			data: { taskId: string; percent: number; message?: string; detail?: unknown };
+	  }
+	| { type: 'completed'; data: { taskId: string; result: unknown; durationMs: number } }
+	| { type: 'error'; data: { taskId: string; message: string; code: string } }
+	| { type: 'cancelled'; data: { taskId: string } }
+	| { type: 'stream'; data: { taskId: string; data: string } }
+	| { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
+	| { type: 'queue-position'; data: { taskId: string; position: number } };
 ```
 
 ### TaskInfo
@@ -564,16 +564,16 @@ The serializable representation of a task sent over IPC (strips non-serializable
 
 ```typescript
 interface TaskInfo {
-  taskId: string;
-  type: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  startedAt?: number;
-  completedAt?: number;
-  windowId?: number;
-  error?: string;
-  queuePosition?: number;
-  durationMs?: number;
+	taskId: string;
+	type: string;
+	status: TaskStatus;
+	priority: TaskPriority;
+	startedAt?: number;
+	completedAt?: number;
+	windowId?: number;
+	error?: string;
+	queuePosition?: number;
+	durationMs?: number;
 }
 ```
 
@@ -583,17 +583,17 @@ The full internal task descriptor maintained by `TaskExecutor`. Contains non-ser
 
 ```typescript
 interface ActiveTask {
-  taskId: string;
-  type: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  startedAt?: number;
-  completedAt?: number;
-  controller: AbortController;
-  timeoutHandle?: NodeJS.Timeout;
-  windowId?: number;
-  result?: unknown;
-  error?: string;
+	taskId: string;
+	type: string;
+	status: TaskStatus;
+	priority: TaskPriority;
+	startedAt?: number;
+	completedAt?: number;
+	controller: AbortController;
+	timeoutHandle?: NodeJS.Timeout;
+	windowId?: number;
+	result?: unknown;
+	error?: string;
 }
 ```
 
@@ -601,9 +601,9 @@ interface ActiveTask {
 
 ```typescript
 interface TaskQueueStatus {
-  queued: number; // Tasks waiting in queue
-  running: number; // Tasks currently executing
-  completed: number; // Tasks in TTL store
+	queued: number; // Tasks waiting in queue
+	running: number; // Tasks currently executing
+	completed: number; // Tasks in TTL store
 }
 ```
 
@@ -613,16 +613,16 @@ The renderer-side representation maintained by `taskStore`.
 
 ```typescript
 interface TrackedTaskState {
-  taskId: string;
-  type: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  progress: TaskProgressState;
-  queuePosition?: number;
-  durationMs?: number;
-  error?: string;
-  result?: unknown;
-  events: TaskEventRecord[]; // Bounded ring, max 50
+	taskId: string;
+	type: string;
+	status: TaskStatus;
+	priority: TaskPriority;
+	progress: TaskProgressState;
+	queuePosition?: number;
+	durationMs?: number;
+	error?: string;
+	result?: unknown;
+	events: TaskEventRecord[]; // Bounded ring, max 50
 }
 ```
 
@@ -630,14 +630,14 @@ interface TrackedTaskState {
 
 ```typescript
 interface TaskHandler<TInput = unknown, TOutput = unknown> {
-  readonly type: string;
-  validate?(input: TInput): void;
-  execute(
-    input: TInput,
-    signal: AbortSignal,
-    reporter: ProgressReporter,
-    streamReporter?: StreamReporter
-  ): Promise<TOutput>;
+	readonly type: string;
+	validate?(input: TInput): void;
+	execute(
+		input: TInput,
+		signal: AbortSignal,
+		reporter: ProgressReporter,
+		streamReporter?: StreamReporter
+	): Promise<TOutput>;
 }
 ```
 
@@ -645,12 +645,12 @@ interface TaskHandler<TInput = unknown, TOutput = unknown> {
 
 ```typescript
 interface ProgressReporter {
-  progress(percent: number, message?: string, detail?: unknown): void;
+	progress(percent: number, message?: string, detail?: unknown): void;
 }
 
 interface StreamReporter {
-  /** Emit a raw data batch. Each call delivers one chunk to the renderer. No accumulation. */
-  stream(data: string): void;
+	/** Emit a raw data batch. Each call delivers one chunk to the renderer. No accumulation. */
+	stream(data: string): void;
 }
 ```
 
@@ -664,33 +664,33 @@ interface StreamReporter {
 import { useTaskSubmit } from '@/hooks/useTaskSubmit';
 
 function DownloadButton({ url }: { url: string }) {
-  const { submit, status, progress, progressMessage, error, result, cancel } = useTaskSubmit<
-    { url: string },
-    { filePath: string }
-  >('file-download', { url }, { priority: 'normal' });
+	const { submit, status, progress, progressMessage, error, result, cancel } = useTaskSubmit<
+		{ url: string },
+		{ filePath: string }
+	>('file-download', { url }, { priority: 'normal' });
 
-  return (
-    <div>
-      <button onClick={submit} disabled={status === 'running' || status === 'queued'}>
-        {status === 'idle' && 'Download'}
-        {status === 'queued' && 'Queued...'}
-        {status === 'running' && `${progress}%`}
-        {status === 'completed' && 'Done'}
-        {status === 'error' && 'Retry'}
-      </button>
+	return (
+		<div>
+			<button onClick={submit} disabled={status === 'running' || status === 'queued'}>
+				{status === 'idle' && 'Download'}
+				{status === 'queued' && 'Queued...'}
+				{status === 'running' && `${progress}%`}
+				{status === 'completed' && 'Done'}
+				{status === 'error' && 'Retry'}
+			</button>
 
-      {status === 'running' && (
-        <>
-          <progress value={progress} max={100} />
-          <span>{progressMessage}</span>
-          <button onClick={cancel}>Cancel</button>
-        </>
-      )}
+			{status === 'running' && (
+				<>
+					<progress value={progress} max={100} />
+					<span>{progressMessage}</span>
+					<button onClick={cancel}>Cancel</button>
+				</>
+			)}
 
-      {status === 'error' && <p className="error">{error}</p>}
-      {status === 'completed' && <p>Saved to {result?.filePath}</p>}
-    </div>
-  );
+			{status === 'error' && <p className="error">{error}</p>}
+			{status === 'completed' && <p>Saved to {result?.filePath}</p>}
+		</div>
+	);
 }
 ```
 
@@ -701,37 +701,37 @@ For tasks that emit data chunks in real time, consume `stream` events via `windo
 ```typescript
 // Handler side (main process)
 export class DataProcessorHandler implements TaskHandler<Input, string> {
-  readonly type = 'data:process';
+	readonly type = 'data:process';
 
-  async execute(
-    input: Input,
-    signal: AbortSignal,
-    reporter: ProgressReporter,
-    stream?: StreamReporter
-  ): Promise<string> {
-    let output = '';
-    for await (const chunk of processStream(input, signal)) {
-      stream?.stream(chunk); // emit raw batch — no accumulation
-      output += chunk;
-      reporter.progress(/* ... */);
-    }
-    return output; // full result available on completion
-  }
+	async execute(
+		input: Input,
+		signal: AbortSignal,
+		reporter: ProgressReporter,
+		stream?: StreamReporter
+	): Promise<string> {
+		let output = '';
+		for await (const chunk of processStream(input, signal)) {
+			stream?.stream(chunk); // emit raw batch — no accumulation
+			output += chunk;
+			reporter.progress(/* ... */);
+		}
+		return output; // full result available on completion
+	}
 }
 ```
 
 ```typescript
 // Renderer side — subscribe to stream events for a known taskId
 useEffect(() => {
-  const unsub = window.tasksManager.onEvent((event) => {
-    if (event.type === 'stream') {
-      const { taskId, data } = event.data as { taskId: string; data: string };
-      if (taskId === myTaskId) {
-        setOutput((prev) => prev + data); // accumulate in component
-      }
-    }
-  });
-  return unsub;
+	const unsub = window.tasksManager.onEvent((event) => {
+		if (event.type === 'stream') {
+			const { taskId, data } = event.data as { taskId: string; data: string };
+			if (taskId === myTaskId) {
+				setOutput((prev) => prev + data); // accumulate in component
+			}
+		}
+	});
+	return unsub;
 }, [myTaskId]);
 ```
 
@@ -741,21 +741,21 @@ useEffect(() => {
 import { withTaskTracking, WithTaskTrackingInjectedProps } from '@/components/withTaskTracking';
 
 interface ExportButtonProps extends WithTaskTrackingInjectedProps {
-  filePath: string;
+	filePath: string;
 }
 
 function ExportButton({ filePath, taskTracking }: ExportButtonProps) {
-  return (
-    <button onClick={taskTracking.submit} disabled={taskTracking.status === 'running'}>
-      {taskTracking.status === 'running' ? `Exporting... ${taskTracking.progress}%` : 'Export PDF'}
-    </button>
-  );
+	return (
+		<button onClick={taskTracking.submit} disabled={taskTracking.status === 'running'}>
+			{taskTracking.status === 'running' ? `Exporting... ${taskTracking.progress}%` : 'Export PDF'}
+		</button>
+	);
 }
 
 export default withTaskTracking(ExportButton, {
-  type: 'file-export',
-  input: (props) => ({ path: props.filePath, format: 'pdf' }),
-  options: { priority: 'high' },
+	type: 'file-export',
+	input: (props) => ({ path: props.filePath, format: 'pdf' }),
+	options: { priority: 'high' },
 });
 ```
 
@@ -766,14 +766,14 @@ For non-React code or one-off operations, call `window.tasksManager` directly:
 ```typescript
 // Submit without a hook
 const result = await window.tasksManager.submit(
-  'feature:process-file',
-  { filePath },
-  { priority: 'high' }
+	'feature:process-file',
+	{ filePath },
+	{ priority: 'high' }
 );
 if (result.success) {
-  const { taskId } = result.data;
-  // Seed the local taskStore so it appears in the debug page immediately
-  taskStore.addTask(taskId, 'feature:process-file');
+	const { taskId } = result.data;
+	// Seed the local taskStore so it appears in the debug page immediately
+	taskStore.addTask(taskId, 'feature:process-file');
 }
 
 // List all active tasks
@@ -786,7 +786,7 @@ console.log(statusResult.data); // { queued: 2, running: 5, completed: 12 }
 
 // Subscribe to all task events globally
 const unsub = window.tasksManager.onEvent((event) => {
-  console.log(event.type, event.data);
+	console.log(event.type, event.data);
 });
 // Later:
 unsub();
@@ -803,15 +803,15 @@ The queue is maintained as a sorted array in `TaskExecutor`. The sort key is:
 ```typescript
 // Higher priority weight = earlier in queue; FIFO within same priority
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
-  high: 3,
-  normal: 2,
-  low: 1,
+	high: 3,
+	normal: 2,
+	low: 1,
 };
 
 queue.sort((a, b) => {
-  const priorityDiff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
-  if (priorityDiff !== 0) return priorityDiff;
-  return a.queuedAt - b.queuedAt; // Earlier first
+	const priorityDiff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
+	if (priorityDiff !== 0) return priorityDiff;
+	return a.queuedAt - b.queuedAt; // Earlier first
 });
 ```
 
@@ -916,8 +916,8 @@ All preload methods return an `IpcResult` envelope. The renderer must always che
 ```typescript
 const result = await window.tasksManager.submit('file-download', { url: '...' });
 if (!result.success) {
-  console.error('Submit failed:', result.error.message);
-  return;
+	console.error('Submit failed:', result.error.message);
+	return;
 }
 const taskId = result.data.taskId;
 ```
@@ -986,13 +986,13 @@ To add a new task type, implement the `TaskHandler` interface and register it.
 // src/main/taskManager/handlers/MyCustomHandler.ts
 
 export interface MyCustomInput {
-  documentId: string;
-  format: 'pdf' | 'docx';
+	documentId: string;
+	format: 'pdf' | 'docx';
 }
 
 export interface MyCustomOutput {
-  filePath: string;
-  pageCount: number;
+	filePath: string;
+	pageCount: number;
 }
 ```
 
@@ -1002,37 +1002,37 @@ export interface MyCustomOutput {
 import type { TaskHandler, ProgressReporter } from '../TaskHandler';
 
 export class MyCustomHandler implements TaskHandler<MyCustomInput, MyCustomOutput> {
-  readonly type = 'my-custom-export';
+	readonly type = 'my-custom-export';
 
-  validate(input: MyCustomInput): void {
-    if (!input.documentId) {
-      throw new Error('documentId is required');
-    }
-    if (!['pdf', 'docx'].includes(input.format)) {
-      throw new Error(`Unsupported format: ${input.format}`);
-    }
-  }
+	validate(input: MyCustomInput): void {
+		if (!input.documentId) {
+			throw new Error('documentId is required');
+		}
+		if (!['pdf', 'docx'].includes(input.format)) {
+			throw new Error(`Unsupported format: ${input.format}`);
+		}
+	}
 
-  async execute(
-    input: MyCustomInput,
-    signal: AbortSignal,
-    reporter: ProgressReporter
-  ): Promise<MyCustomOutput> {
-    reporter.progress(0, 'Preparing export...');
+	async execute(
+		input: MyCustomInput,
+		signal: AbortSignal,
+		reporter: ProgressReporter
+	): Promise<MyCustomOutput> {
+		reporter.progress(0, 'Preparing export...');
 
-    if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+		if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
 
-    reporter.progress(50, 'Converting document...');
+		reporter.progress(50, 'Converting document...');
 
-    const result = await convertDocument(input.documentId, input.format, signal);
+		const result = await convertDocument(input.documentId, input.format, signal);
 
-    reporter.progress(100, 'Export complete');
+		reporter.progress(100, 'Export complete');
 
-    return {
-      filePath: result.path,
-      pageCount: result.pages,
-    };
-  }
+		return {
+			filePath: result.path,
+			pageCount: result.pages,
+		};
+	}
 }
 ```
 
@@ -1092,15 +1092,15 @@ For renderer tests, mock `window.tasksManager` to avoid IPC:
 
 ```typescript
 const mockTasksManager = {
-  submit: jest.fn().mockResolvedValue({ success: true, data: { taskId: 'test-123' } }),
-  cancel: jest.fn().mockResolvedValue({ success: true, data: true }),
-  list: jest.fn().mockResolvedValue({ success: true, data: [] }),
-  updatePriority: jest.fn().mockResolvedValue({ success: true, data: true }),
-  getResult: jest.fn().mockResolvedValue({ success: true, data: null }),
-  queueStatus: jest
-    .fn()
-    .mockResolvedValue({ success: true, data: { queued: 0, running: 0, completed: 0 } }),
-  onEvent: jest.fn().mockReturnValue(() => {}),
+	submit: jest.fn().mockResolvedValue({ success: true, data: { taskId: 'test-123' } }),
+	cancel: jest.fn().mockResolvedValue({ success: true, data: true }),
+	list: jest.fn().mockResolvedValue({ success: true, data: [] }),
+	updatePriority: jest.fn().mockResolvedValue({ success: true, data: true }),
+	getResult: jest.fn().mockResolvedValue({ success: true, data: null }),
+	queueStatus: jest
+		.fn()
+		.mockResolvedValue({ success: true, data: { queued: 0, running: 0, completed: 0 } }),
+	onEvent: jest.fn().mockReturnValue(() => {}),
 };
 
 Object.defineProperty(window, 'tasksManager', { value: mockTasksManager });
@@ -1116,10 +1116,10 @@ Object.defineProperty(window, 'tasksManager', { value: mockTasksManager });
 const task = useTaskSubmit('export', { path }, { priority: 'high' });
 
 const handleExport = async () => {
-  const taskId = await task.submit();
-  if (taskId) {
-    console.log('Task submitted:', taskId);
-  }
+	const taskId = await task.submit();
+	if (taskId) {
+		console.log('Task submitted:', taskId);
+	}
 };
 ```
 
@@ -1127,18 +1127,18 @@ const handleExport = async () => {
 
 ```tsx
 function TaskErrorBoundary({ children }: { children: React.ReactNode }) {
-  const task = useTaskSubmit('critical-operation', input);
+	const task = useTaskSubmit('critical-operation', input);
 
-  if (task.status === 'error') {
-    return (
-      <div className="error-panel">
-        <p>Operation failed: {task.error}</p>
-        <button onClick={task.reset}>Try Again</button>
-      </div>
-    );
-  }
+	if (task.status === 'error') {
+		return (
+			<div className="error-panel">
+				<p>Operation failed: {task.error}</p>
+				<button onClick={task.reset}>Try Again</button>
+			</div>
+		);
+	}
 
-  return <>{children}</>;
+	return <>{children}</>;
 }
 ```
 
@@ -1148,10 +1148,10 @@ When using `window.tasksManager.onEvent` directly (outside of hooks), always cle
 
 ```typescript
 useEffect(() => {
-  const unsub = window.tasksManager.onEvent((event) => {
-    // handle event
-  });
-  return () => unsub();
+	const unsub = window.tasksManager.onEvent((event) => {
+		// handle event
+	});
+	return () => unsub();
 }, []);
 ```
 
@@ -1160,9 +1160,9 @@ useEffect(() => {
 ```typescript
 const result = await window.tasksManager.submit('my-task', input);
 if (result.success) {
-  // Seed taskStore so the task appears in the debug page immediately.
-  // If the 'queued' IPC event arrives first, addTask is a no-op.
-  taskStore.addTask(result.data.taskId, 'my-task');
+	// Seed taskStore so the task appears in the debug page immediately.
+	// If the 'queued' IPC event arrives first, addTask is a no-op.
+	taskStore.addTask(result.data.taskId, 'my-task');
 }
 ```
 
@@ -1181,35 +1181,35 @@ A `TaskHandler` performs the actual background work. It runs in the main process
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler';
 
 export interface MyFeatureInput {
-  filePath: string;
-  options?: { compress: boolean };
+	filePath: string;
+	options?: { compress: boolean };
 }
 
 export class MyFeatureHandler implements TaskHandler<MyFeatureInput, string> {
-  readonly type = 'feature:process-file';
+	readonly type = 'feature:process-file';
 
-  validate(input: MyFeatureInput): void {
-    if (!input?.filePath) throw new Error('filePath is required');
-  }
+	validate(input: MyFeatureInput): void {
+		if (!input?.filePath) throw new Error('filePath is required');
+	}
 
-  async execute(
-    input: MyFeatureInput,
-    signal: AbortSignal,
-    reporter: ProgressReporter,
-    stream?: StreamReporter
-  ): Promise<string> {
-    reporter.progress(10, 'Reading file…');
-    if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+	async execute(
+		input: MyFeatureInput,
+		signal: AbortSignal,
+		reporter: ProgressReporter,
+		stream?: StreamReporter
+	): Promise<string> {
+		reporter.progress(10, 'Reading file…');
+		if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
 
-    // Emit raw output batches as they arrive
-    for await (const chunk of readChunks(input.filePath, signal)) {
-      stream?.stream(chunk); // raw batch — renderer accumulates if needed
-      reporter.progress(/* ... */);
-    }
+		// Emit raw output batches as they arrive
+		for await (const chunk of readChunks(input.filePath, signal)) {
+			stream?.stream(chunk); // raw batch — renderer accumulates if needed
+			reporter.progress(/* ... */);
+		}
 
-    reporter.progress(100, 'Done');
-    return 'output-path';
-  }
+		reporter.progress(100, 'Done');
+		return 'output-path';
+	}
 }
 ```
 
@@ -1240,13 +1240,13 @@ The main process can submit tasks directly via `TaskExecutor` without going thro
 const executor = container.get<TaskExecutor>('taskExecutor');
 
 const taskId = executor.submit(
-  'feature:process-file',
-  { filePath: '/path/to/file' },
-  {
-    priority: 'high',
-    timeoutMs: 30_000,
-    // windowId: omit to broadcast events to all windows
-  }
+	'feature:process-file',
+	{ filePath: '/path/to/file' },
+	{
+		priority: 'high',
+		timeoutMs: 30_000,
+		// windowId: omit to broadcast events to all windows
+	}
 );
 ```
 
@@ -1259,27 +1259,27 @@ A `TaskReactionHandler` runs **side-effects** in the main process when a task re
 ```typescript
 // src/main/taskManager/reactions/MyFeatureTaskReaction.ts
 import type {
-  TaskReactionHandler,
-  TaskSubmittedEvent,
-  TaskCompletedEvent,
-  TaskFailedEvent,
+	TaskReactionHandler,
+	TaskSubmittedEvent,
+	TaskCompletedEvent,
+	TaskFailedEvent,
 } from '../TaskReactionHandler';
 
 export class MyFeatureTaskReaction implements TaskReactionHandler {
-  readonly taskType = 'feature:process-file';
+	readonly taskType = 'feature:process-file';
 
-  onSubmitted(event: TaskSubmittedEvent): void {
-    console.log(`[MyFeature] Task queued: ${event.taskId}`);
-  }
+	onSubmitted(event: TaskSubmittedEvent): void {
+		console.log(`[MyFeature] Task queued: ${event.taskId}`);
+	}
 
-  async onCompleted(event: TaskCompletedEvent): Promise<void> {
-    await notifyUser(event.result as string);
-    console.log(`[MyFeature] Processed in ${event.durationMs}ms`);
-  }
+	async onCompleted(event: TaskCompletedEvent): Promise<void> {
+		await notifyUser(event.result as string);
+		console.log(`[MyFeature] Processed in ${event.durationMs}ms`);
+	}
 
-  onFailed(event: TaskFailedEvent): void {
-    console.error(`[MyFeature] Failed: ${event.error}`);
-  }
+	onFailed(event: TaskFailedEvent): void {
+		console.error(`[MyFeature] Failed: ${event.error}`);
+	}
 }
 ```
 
@@ -1287,11 +1287,11 @@ Use `taskType = '*'` to receive lifecycle events for **every** task type (useful
 
 ```typescript
 export class TaskAuditReaction implements TaskReactionHandler {
-  readonly taskType = '*';
+	readonly taskType = '*';
 
-  onCompleted(event: TaskCompletedEvent): void {
-    auditLog.record({ taskId: event.taskId, type: event.taskType, ms: event.durationMs });
-  }
+	onCompleted(event: TaskCompletedEvent): void {
+		auditLog.record({ taskId: event.taskId, type: event.taskType, ms: event.durationMs });
+	}
 }
 ```
 
@@ -1305,8 +1305,8 @@ import { MyFeatureTaskReaction } from './taskManager/reactions/MyFeatureTaskReac
 const taskReactionRegistry = new TaskReactionRegistry();
 taskReactionRegistry.register(new MyFeatureTaskReaction());
 const taskReactionBus = container.register(
-  'taskReactionBus',
-  new TaskReactionBus(taskReactionRegistry, eventBus)
+	'taskReactionBus',
+	new TaskReactionBus(taskReactionRegistry, eventBus)
 );
 taskReactionBus.initialize();
 ```
@@ -1409,13 +1409,13 @@ For non-React code or one-off operations, call `window.tasksManager` directly:
 
 ```typescript
 const result = await window.tasksManager.submit(
-  'feature:process-file',
-  { filePath },
-  { priority: 'high' }
+	'feature:process-file',
+	{ filePath },
+	{ priority: 'high' }
 );
 if (result.success) {
-  const { taskId } = result.data;
-  taskStore.addTask(taskId, 'feature:process-file');
+	const { taskId } = result.data;
+	taskStore.addTask(taskId, 'feature:process-file');
 }
 ```
 
@@ -1445,13 +1445,13 @@ TaskExecutor
 
 ```typescript
 interface TaskReactionHandler {
-  readonly taskType: string; // specific type string or '*' for wildcard
+	readonly taskType: string; // specific type string or '*' for wildcard
 
-  onSubmitted?(event: TaskSubmittedEvent): void | Promise<void>;
-  onStarted?(event: TaskStartedEvent): void | Promise<void>;
-  onCompleted?(event: TaskCompletedEvent): void | Promise<void>;
-  onFailed?(event: TaskFailedEvent): void | Promise<void>;
-  onCancelled?(event: TaskCancelledEvent): void | Promise<void>;
+	onSubmitted?(event: TaskSubmittedEvent): void | Promise<void>;
+	onStarted?(event: TaskStartedEvent): void | Promise<void>;
+	onCompleted?(event: TaskCompletedEvent): void | Promise<void>;
+	onFailed?(event: TaskFailedEvent): void | Promise<void>;
+	onCancelled?(event: TaskCancelledEvent): void | Promise<void>;
 }
 ```
 
@@ -1461,35 +1461,35 @@ All lifecycle methods are optional. Implement only the ones you need.
 
 ```typescript
 interface TaskSubmittedEvent {
-  taskId: string;
-  taskType: string;
-  input: unknown;
-  priority: string;
-  windowId?: number;
+	taskId: string;
+	taskType: string;
+	input: unknown;
+	priority: string;
+	windowId?: number;
 }
 interface TaskStartedEvent {
-  taskId: string;
-  taskType: string;
-  windowId?: number;
+	taskId: string;
+	taskType: string;
+	windowId?: number;
 }
 interface TaskCompletedEvent {
-  taskId: string;
-  taskType: string;
-  result: unknown;
-  durationMs: number;
-  windowId?: number;
+	taskId: string;
+	taskType: string;
+	result: unknown;
+	durationMs: number;
+	windowId?: number;
 }
 interface TaskFailedEvent {
-  taskId: string;
-  taskType: string;
-  error: string;
-  code: string;
-  windowId?: number;
+	taskId: string;
+	taskType: string;
+	error: string;
+	code: string;
+	windowId?: number;
 }
 interface TaskCancelledEvent {
-  taskId: string;
-  taskType: string;
-  windowId?: number;
+	taskId: string;
+	taskType: string;
+	windowId?: number;
 }
 ```
 
