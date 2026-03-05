@@ -712,9 +712,7 @@ function SentenceCompleterTab() {
             Sentence Completer Agent
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Place <code className="px-1 py-0.5 rounded bg-muted text-[11px] font-mono">█</code> (cursor marker) at
-            the end of an unfinished sentence. The agent will complete just that sentence, matching the surrounding
-            style.
+            Write your text and the agent will continue writing from where you left off, matching the surrounding style.
           </p>
         </div>
 
