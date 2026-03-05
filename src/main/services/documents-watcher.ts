@@ -80,7 +80,7 @@ export class DocumentsWatcherService implements Disposable {
 
   private cleanupInterval: NodeJS.Timeout | null = null
 
-  constructor(private readonly eventBus: EventBus) {
+  constructor(private readonly eventBus: EventBus, private readonly logger?: LoggerService) {
     this.config = {
       debounceMs: this.DEFAULT_DEBOUNCE_MS,
       ignoreWriteWindowMs: this.DEFAULT_IGNORE_WINDOW_MS
@@ -97,7 +97,7 @@ export class DocumentsWatcherService implements Disposable {
       this.cleanupIgnoredWrites()
     }, this.CLEANUP_INTERVAL_MS)
 
-    console.log('[DocumentsWatcherService] Initialized')
+    this.logger?.info('DocumentsWatcherService', 'Initialized')
   }
 
   /**
