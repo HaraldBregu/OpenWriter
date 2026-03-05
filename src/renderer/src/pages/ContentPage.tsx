@@ -29,6 +29,8 @@ import {
   type TextEditorElement,
 } from "@/components/editor/TextEditor";
 import { useTaskSubmit } from "../hooks/useTaskSubmit";
+import { subscribeToTask } from "../services/taskEventBus";
+import type { TaskSnapshot } from "../services/taskEventBus";
 import { debounce } from "lodash";
 
 const ContentPage: React.FC = () => {
