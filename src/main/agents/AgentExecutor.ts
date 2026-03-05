@@ -182,7 +182,7 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
       }
     }
 
-    log.info(`run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`);
+    logger?.info(LOG_PREFIX, `run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`);
     yield { type: 'done', content: fullContent, tokenCount, runId };
   } catch (error: unknown) {
     const kind = classifyError(error);
