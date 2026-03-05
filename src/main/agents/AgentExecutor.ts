@@ -146,7 +146,7 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
       if (signal?.aborted) break
 
       // streamMode:"messages" yields [chunk, metadata] tuples
-      const [chunk, metadata] = Array.isArray(item) ? item : [item, {}]
+      const [chunk] = Array.isArray(item) ? item : [item, {}]
 
       if (!chunk) continue
 
