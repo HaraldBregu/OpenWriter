@@ -122,7 +122,7 @@ export async function* executeAIAgentsStream(
     }
 
     const rawMessage = error instanceof Error ? error.message : String(error);
-    log.error(`run=${runId} error (${kind}): ${rawMessage}`);
+    logger?.error(LOG_PREFIX, `run=${runId} error (${kind}): ${rawMessage}`);
 
     yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId };
   }
