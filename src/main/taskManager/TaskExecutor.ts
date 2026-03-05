@@ -136,7 +136,7 @@ export class TaskExecutor implements Disposable {
     const task = this.activeTasks.get(taskId)
     if (!task) return false
 
-    console.log(`[TaskExecutor] Cancelling task ${taskId}`)
+    // Cancelling task
 
     // Abort the controller (signals running task or prevents queued task from starting)
     task.controller.abort()
