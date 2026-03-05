@@ -368,7 +368,7 @@ export class DocumentsWatcherService implements Disposable {
     )
 
     if (recentWrite) {
-      console.log('[DocumentsWatcherService] Ignoring app-generated change for:', normalized)
+      this.logger?.info('DocumentsWatcherService', `Ignoring app-generated change for: ${normalized}`)
       return true
     }
 
