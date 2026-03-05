@@ -84,6 +84,6 @@ export class WindowIpc implements IpcModule {
       return process.platform
     }, 'window:get-platform'))
 
-    console.log(`[IPC] Registered ${this.name} module`)
+    logger.info('WindowIpc', `Registered ${this.name} module`)
   }
 }
