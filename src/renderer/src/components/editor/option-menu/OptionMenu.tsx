@@ -94,9 +94,9 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
             .deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
             .setMeta("preventEditorUpdate", true)
             .run()
-          const textBeforeCursor = ed.state.doc.textBetween(0, slashPos, '\n')
-          const { from } = ed.state.selection;
-          onContinueWithAIRef.current?.(textBeforeCursor)
+          const { from } = ed.state.selection
+          const textBeforeCursor = ed.state.doc.textBetween(0, from, '\n')
+          onContinueWithAIRef.current?.(textBeforeCursor, from)
         },
       },
     ],
