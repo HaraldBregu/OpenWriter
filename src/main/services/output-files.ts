@@ -812,7 +812,7 @@ export class OutputFilesService implements Disposable {
     const shouldIgnore = this.ignoredWrites.has(normalized)
 
     if (shouldIgnore) {
-      console.log('[OutputFilesService] Ignoring app-generated change for:', normalized)
+      this.logger?.info('OutputFilesService', `Ignoring app-generated change for: ${normalized}`)
     }
 
     return shouldIgnore
