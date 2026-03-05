@@ -622,7 +622,7 @@ export class OutputFilesService implements Disposable {
     } else {
       this.logger?.info('OutputFilesService', 'Workspace cleared, stopping watcher')
       this.stopWatching().catch((error) => {
-        console.error('[OutputFilesService] Failed to stop watcher:', error)
+        this.logger?.error('OutputFilesService', 'Failed to stop watcher', error)
       })
     }
   }
