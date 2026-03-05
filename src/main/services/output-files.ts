@@ -453,7 +453,7 @@ export class OutputFilesService implements Disposable {
       }
     }
 
-    console.log(`[OutputFilesService] Updated output folder: ${folderPath}`)
+    this.logger?.info('OutputFilesService', `Updated output folder: ${folderPath}`)
     this.emitChangeEvent(folderPath, 'changed')
   }
 
