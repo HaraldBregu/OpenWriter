@@ -136,7 +136,7 @@ export class DocumentsWatcherService implements Disposable {
     try {
       await fs.mkdir(docsDir, { recursive: true })
     } catch (err) {
-      console.error('[DocumentsWatcherService] Failed to create documents directory:', err)
+      this.logger?.error('DocumentsWatcherService', 'Failed to create documents directory', err)
       return
     }
 
