@@ -870,7 +870,7 @@ export class OutputFilesService implements Disposable {
       timestamp: Date.now(),
     }
 
-    console.log(`[OutputFilesService] Output file ${type}:`, outputType, fileId)
+    this.logger?.info('OutputFilesService', `Output file ${type}: ${outputType} ${fileId}`)
 
     this.eventBus.broadcast('output:file-changed', event)
   }
