@@ -140,7 +140,7 @@ export class DocumentsWatcherService implements Disposable {
       return
     }
 
-    console.log('[DocumentsWatcherService] Starting to watch:', docsDir)
+    this.logger?.info('DocumentsWatcherService', `Starting to watch: ${docsDir}`)
 
     try {
       this.watcher = chokidar.watch(docsDir, {
