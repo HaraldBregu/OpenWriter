@@ -19,7 +19,6 @@ export class Main {
     // Constructor is now minimal
     // All services are managed by ServiceContainer in bootstrap
     // All IPC handlers are registered in IPC modules via bootstrap
-    console.log('[Main] Main class initialized')
   }
 
   /**
