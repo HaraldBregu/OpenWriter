@@ -30,6 +30,7 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	OrderedList,
 	ListItem,
 	ListKeymap,
+	SearchExtension,
 	// InlinePlaceholder.configure({
 	// 	placeholder: 'thinking...',
 	// }),
