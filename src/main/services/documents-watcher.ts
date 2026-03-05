@@ -294,14 +294,14 @@ export class DocumentsWatcherService implements Disposable {
    */
   private handleWorkspaceChange(newWorkspacePath: string | null): void {
     if (newWorkspacePath) {
-      console.log('[DocumentsWatcherService] Workspace changed, starting watcher for:', newWorkspacePath)
+      this.logger?.info('DocumentsWatcherService', `Workspace changed, starting watcher for: ${newWorkspacePath}`)
       this.startWatching(newWorkspacePath).catch((error) => {
-        console.error('[DocumentsWatcherService] Failed to start watching new workspace:', error)
+        this.logger?.error('DocumentsWatcherService', 'Failed to start watching new workspace', error)
       })
     } else {
-      console.log('[DocumentsWatcherService] Workspace cleared, stopping watcher')
+      this.logger?.info('DocumentsWatcherService', 'Workspace cleared, stopping watcher')
       this.stopWatching().catch((error) => {
-        console.error('[DocumentsWatcherService] Failed to stop watcher:', error)
+        this.logger?.error('DocumentsWatcherService', 'Failed to stop watcher', error)
       })
     }
   }
