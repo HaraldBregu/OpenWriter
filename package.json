@@ -41,7 +41,9 @@
     "test:coverage": "jest --config jest.config.cjs --coverage",
     "test:e2e": "npx playwright test --config playwright.config.ts",
     "generate-icons": "electron-icon-builder --input=resources/icons/icon.png --output=./resources",
-    "shadcn": "shadcn-ui"
+    "shadcn": "shadcn-ui",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

@@ -65,6 +65,7 @@ export class WindowContext {
     globalContainer: ServiceContainer,
     serviceFactory: WindowScopedServiceFactory
   ): Promise<void> {
+    const logger = globalContainer.get<any>('logger')
     try {
       const storeService = globalContainer.get<StoreService>('store')
       const workspaceService = new WorkspaceService(storeService, this.eventBus)
@@ -79,12 +80,9 @@ export class WindowContext {
         workspaceService
       })
 
-      console.log(`[WindowContext] Initialized all services for window ${this.windowId}`)
+      logger?.info('WindowContext', `Initialized all services for window ${this.windowId}`)
     } catch (error) {
-      console.error(
-        `[WindowContext] Failed to initialize services for window ${this.windowId}:`,
-        error instanceof Error ? error.message : String(error)
-      )
+      logger?.error('WindowContext', `Failed to initialize services for window ${this.windowId}`, error)
       throw error
     }
   }
