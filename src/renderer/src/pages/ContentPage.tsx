@@ -115,13 +115,13 @@ const ContentPage: React.FC = () => {
 
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
-    debounceSave();
-  }, [debounceSave]);
+    debouncedSave();
+  }, [debouncedSave]);
 
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent);
-    debounceSave();
-  }, [debounceSave]);
+    debouncedSave();
+  }, [debouncedSave]);
 
   const handleMoveToTrash = useCallback(async () => {
     if (!id || isTrashing) return;
