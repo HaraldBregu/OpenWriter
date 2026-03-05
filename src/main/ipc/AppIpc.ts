@@ -70,7 +70,7 @@ export class AppIpc implements IpcModule {
           await execFileAsync('aplay', [soundPath])
         }
       } catch (err) {
-        console.error('[AppIpc] Sound playback failed:', err)
+        logger.error('AppIpc', 'Sound playback failed', err)
       }
     })
 
