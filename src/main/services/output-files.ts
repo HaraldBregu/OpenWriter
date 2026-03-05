@@ -366,7 +366,7 @@ export class OutputFilesService implements Disposable {
       }
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.log(`[OutputFilesService] File not found for id "${id}" in type "${outputType}"`)
+        this.logger?.info('OutputFilesService', `File not found for id "${id}" in type "${outputType}"`)
         return null
       }
       throw err
