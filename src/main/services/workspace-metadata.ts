@@ -349,7 +349,7 @@ export class WorkspaceMetadataService implements Disposable {
   private getMetadata(): WorkspaceMetadata {
     const workspacePath = this.workspaceService.getCurrent()
     if (!workspacePath) {
-      console.log('[WorkspaceMetadataService] getMetadata: No workspace set, returning defaults')
+      this.logger?.info('WorkspaceMetadataService', 'getMetadata: No workspace set, returning defaults')
       return this.createDefaultMetadata()
     }
 
