@@ -18,6 +18,7 @@
 import { randomUUID } from 'crypto'
 import type { Disposable } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { LoggerService } from '../services/logger'
 import type { TaskHandlerRegistry } from './TaskHandlerRegistry'
 import type { TaskEvent } from './TaskEvents'
 import type { ProgressReporter, StreamReporter } from './TaskHandler'
