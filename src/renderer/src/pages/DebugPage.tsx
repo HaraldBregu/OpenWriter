@@ -658,9 +658,7 @@ function TextContinuationTab() {
 // SentenceCompleterTab — interactive test harness for the sentence-completer agent
 // ---------------------------------------------------------------------------
 
-const DEFAULT_SENTENCE_TEXT = `The old professor had spent decades studying the migration patterns of Arctic terns. His research had taken him to every continent, and he had published over forty papers on the subject. But last winter, he noticed something that█
-
-The discovery would later be cited in over two hundred journals, fundamentally changing how ornithologists understood avian navigation.`
+const DEFAULT_SENTENCE_TEXT = `The old professor had spent decades studying the migration patterns of Arctic terns. His research had taken him to every continent, and he had published over forty papers on the subject. But last winter, he noticed something that`
 
 function SentenceCompleterTab() {
   const [documentText, setDocumentText] = useState(DEFAULT_SENTENCE_TEXT)
