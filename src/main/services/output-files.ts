@@ -283,7 +283,7 @@ export class OutputFilesService implements Disposable {
     try {
       await fs.access(outputDir)
     } catch {
-      console.log('[OutputFilesService] Output directory does not exist, returning empty array')
+      this.logger?.info('OutputFilesService', 'Output directory does not exist, returning empty array')
       return []
     }
 
