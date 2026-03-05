@@ -105,7 +105,7 @@ export class WorkspaceMetadataService implements Disposable {
     // CRITICAL: Always clear cache on initialization to ensure fresh data
     // This is especially important in workspace mode where the service is initialized
     // before the workspace path is set, then reinitialized after
-    console.log('[WorkspaceMetadataService] Clearing cache before initialization')
+    this.logger?.info('WorkspaceMetadataService', 'Clearing cache before initialization')
     this.cache = null
 
     if (workspacePath) {
