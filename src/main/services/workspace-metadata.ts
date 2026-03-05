@@ -186,7 +186,7 @@ export class WorkspaceMetadataService implements Disposable {
     this.scheduleSave(metadata)
     this.emitDirectoriesChanged()
 
-    console.log('[WorkspaceMetadataService] Added directory:', normalized)
+    this.logger?.info('WorkspaceMetadataService', `Added directory: ${normalized}`)
     return entry
   }
 
