@@ -294,7 +294,7 @@ export class OutputFilesService implements Disposable {
         const files = await this.loadByType(outputType)
         allFiles.push(...files)
       } catch (err) {
-        console.warn(`[OutputFilesService] Failed to load files for type ${outputType}:`, err)
+        this.logger?.warn('OutputFilesService', `Failed to load files for type ${outputType}`, err)
       }
     }
 
