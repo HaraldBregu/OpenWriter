@@ -417,7 +417,7 @@ export class WorkspaceMetadataService implements Disposable {
 
       return parsed
     } catch (err) {
-      console.error('[WorkspaceMetadataService] Failed to read metadata file:', err)
+      this.logger?.error('WorkspaceMetadataService', 'Failed to read metadata file', err)
       return null
     }
   }
