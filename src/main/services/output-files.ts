@@ -502,7 +502,7 @@ export class OutputFilesService implements Disposable {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw new Error(`Failed to delete output folder: ${(err as Error).message}`)
       }
-      console.log(`[OutputFilesService] Folder already deleted: ${folderPath}`)
+      this.logger?.info('OutputFilesService', `Folder already deleted: ${folderPath}`)
     }
   }
 
