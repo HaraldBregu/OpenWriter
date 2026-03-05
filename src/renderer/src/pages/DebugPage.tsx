@@ -719,7 +719,7 @@ function SentenceCompleterTab() {
         {/* Document input */}
         <div className="space-y-1.5">
           <label htmlFor="sentence-input" className="text-xs font-medium">
-            Document with cursor marker
+            Text to continue
           </label>
           <textarea
             id="sentence-input"
