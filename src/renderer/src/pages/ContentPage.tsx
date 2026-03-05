@@ -96,10 +96,9 @@ const ContentPage: React.FC = () => {
     });
   }, [id, loaded]);
 
-  const debounceSave = useCallback(() => {
+  const debounceSave = useCallback((delayMs = 500) => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(persistToDisk, 2500);
-    console.log("[ContentPage] Scheduled save in 2.5s");
+    saveTimerRef.current = setTimeout(persistToDisk, delayMs);
   }, [persistToDisk]);
 
   useEffect(() => {
