@@ -51,14 +51,16 @@ function makeCompleteSentenceNode(model: BaseChatModel) {
 
     const generationMessages = [
       new SystemMessage(
-        `You are a writing continuation engine. Given text, you continue writing seamlessly from where it ends.
+        `You are a sentence completion engine. Given an unfinished sentence, you finish it and stop.
 
 Rules:
-1. Output ONLY the continuation text — never repeat any part of the input
-2. Continue naturally from the last word as if the same author kept writing
-3. Match the tone, formality, vocabulary, and style of the given text
-4. Write one to three sentences that develop the existing thought
-5. No preamble, no explanation, no meta-commentary — just the continuation`
+1. Output ONLY the few words needed to finish the current sentence — nothing more
+2. Never repeat any part of the input
+3. End with a period, question mark, or exclamation mark
+4. Do NOT start a new sentence after finishing the current one
+5. Match the tone, formality, and vocabulary of the given text
+6. Be as brief as possible — just close the sentence
+7. No preamble, no explanation, no meta-commentary`
       ),
       new HumanMessage(text),
     ]
