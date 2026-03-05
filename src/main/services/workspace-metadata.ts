@@ -3,6 +3,7 @@ import path from 'node:path'
 import type { WorkspaceService } from './workspace'
 import type { EventBus } from '../core/EventBus'
 import type { Disposable } from '../core/ServiceContainer'
+import type { LoggerService } from './logger'
 
 // ---------------------------------------------------------------------------
 // Types
