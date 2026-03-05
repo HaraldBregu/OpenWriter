@@ -21,11 +21,12 @@ export const SearchExtension = Extension.create({
 	},
 
 	addCommands() {
+		const storage = this.storage;
 		return {
 			setSearch:
 				(query: string) =>
 				({ editor }) => {
-					editor.storage.search.query = query;
+					storage.query = query;
 					// Force a decoration update by dispatching an empty transaction
 					editor.view.dispatch(editor.state.tr);
 					return true;
@@ -69,7 +70,7 @@ export const SearchExtension = Extension.create({
 								decorations.push(
 									Decoration.inline(from, to, {
 										class: 'bg-yellow-200 text-yellow-900 rounded',
-									}),
+									})
 								);
 
 								index += searchText.length;
