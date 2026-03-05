@@ -128,10 +128,7 @@ const ContentPage: React.FC = () => {
 
     setIsTrashing(true);
 
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = null;
-    }
+    debouncedSave.cancel();
 
     try {
       await window.workspace.trashOutput({ type: "writings", id });
