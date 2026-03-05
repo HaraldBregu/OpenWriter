@@ -163,7 +163,6 @@ export class Main {
 
     // Create window context for isolated services
     this.windowContextManager.create(win)
-    console.log(`[Main] Created window context for file window ${win.id}`)
 
     win.once('ready-to-show', () => {
       win.show()
