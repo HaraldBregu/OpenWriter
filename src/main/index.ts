@@ -14,15 +14,13 @@ import { TSRCT_EXT } from './constants'
 const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode()
 const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs()
 
-console.log(`[Main] Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`)
-if (isWorkspaceMode && workspacePath) {
-  console.log(`[Main] Workspace path: ${workspacePath}`)
-}
-
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
-console.log('[Main] Bootstrapping core infrastructure...')
 const { container, eventBus, appState, windowFactory, logger, windowContextManager } = bootstrapServices()
-console.log('[Main] Enabling IPC modules...')
+logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`)
+if (isWorkspaceMode && workspacePath) {
+  logger.info('Main', `Workspace path: ${workspacePath}`)
+}
+logger.info('Main', 'Enabling IPC modules...')
 bootstrapIpcModules(container, eventBus)
 setupAppLifecycle(appState, logger)
 setupEventLogging(logger)
