@@ -137,7 +137,7 @@ interface GraphStreamInput {
 }
 
 async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<AgentStreamEvent> {
-  const { runId, model, langchainMessages, buildGraph, signal } = input
+  const { runId, model, langchainMessages, buildGraph, signal, log } = input
 
   let fullContent = ''
   let tokenCount = 0
