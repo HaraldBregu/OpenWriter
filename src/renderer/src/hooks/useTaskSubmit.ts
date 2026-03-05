@@ -93,7 +93,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 ): UseTaskSubmitReturn<TInput, TResult> {
 	const dispatch = useAppDispatch();
 
-	console.log(`[useTaskSubmit] rendered`);
 	// The only local state is which task ID this hook instance "owns".
 	// Everything else is derived from Redux via useAppSelector.
 	const [taskId, setTaskId] = useState<string | null>(null);
