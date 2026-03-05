@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import type { EventBus } from '../core/EventBus'
 import type { Disposable } from '../core/ServiceContainer'
+import type { LoggerService } from './logger'
 
 /**
  * Event payload for file system changes in the documents directory
