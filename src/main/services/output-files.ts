@@ -490,7 +490,7 @@ export class OutputFilesService implements Disposable {
         }
 
         await fs.rm(folderPath, { recursive: true })
-        console.log(`[OutputFilesService] Deleted output folder: ${folderPath}`)
+        this.logger?.info('OutputFilesService', `Deleted output folder: ${folderPath}`)
 
         // Emit removal event directly to guarantee renderer notification.
         // On Windows, chokidar polling may not fire unlink/unlinkDir reliably
