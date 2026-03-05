@@ -429,7 +429,7 @@ export class WorkspaceMetadataService implements Disposable {
    */
   private writeMetadataFile(metadata: WorkspaceMetadata, workspacePath: string): void {
     if (!workspacePath) {
-      console.warn('[WorkspaceMetadataService] No workspace path provided, cannot save metadata')
+      this.logger?.warn('WorkspaceMetadataService', 'No workspace path provided, cannot save metadata')
       return
     }
 
