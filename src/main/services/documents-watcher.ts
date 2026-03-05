@@ -235,7 +235,7 @@ export class DocumentsWatcherService implements Disposable {
       timestamp: Date.now()
     })
 
-    console.log('[DocumentsWatcherService] Marked file as written (will ignore changes):', normalized)
+    this.logger?.info('DocumentsWatcherService', `Marked file as written (will ignore changes): ${normalized}`)
   }
 
   /**
