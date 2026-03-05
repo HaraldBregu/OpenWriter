@@ -163,7 +163,8 @@ export class OutputFilesService implements Disposable {
 
   constructor(
     private readonly workspace: WorkspaceService,
-    private readonly eventBus: EventBus
+    private readonly eventBus: EventBus,
+    private readonly logger?: LoggerService
   ) {}
 
   // ---------------------------------------------------------------------------
