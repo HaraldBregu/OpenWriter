@@ -90,7 +90,11 @@ export class TaskReactionBus implements Disposable {
           );
         }
       } catch (err) {
-        this.logger?.error('TaskReactionBus', `Error in handler for type="${payload.taskType}"`, err);
+        this.logger?.error(
+          'TaskReactionBus',
+          `Error in handler for type="${payload.taskType}"`,
+          err
+        );
       }
     }
   }

@@ -106,14 +106,12 @@ Object.defineProperty(window, 'network', {
 
 Object.defineProperty(window, 'lifecycle', {
   value: {
-    getState: jest
-      .fn()
-      .mockResolvedValue({
-        events: [],
-        appReadyAt: Date.now(),
-        platform: 'win32',
-        isSingleInstance: true,
-      }),
+    getState: jest.fn().mockResolvedValue({
+      events: [],
+      appReadyAt: Date.now(),
+      platform: 'win32',
+      isSingleInstance: true,
+    }),
     getEvents: jest.fn().mockResolvedValue([]),
     restart: jest.fn().mockResolvedValue(undefined),
     onEvent: jest.fn().mockReturnValue(jest.fn()),
@@ -148,15 +146,13 @@ Object.defineProperty(window, 'wm', {
 Object.defineProperty(window, 'fs', {
   value: {
     openFile: jest.fn().mockResolvedValue(null),
-    readFile: jest
-      .fn()
-      .mockResolvedValue({
-        filePath: '/test/file.txt',
-        fileName: 'file.txt',
-        content: '',
-        size: 0,
-        lastModified: Date.now(),
-      }),
+    readFile: jest.fn().mockResolvedValue({
+      filePath: '/test/file.txt',
+      fileName: 'file.txt',
+      content: '',
+      size: 0,
+      lastModified: Date.now(),
+    }),
     saveFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
     writeFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
     selectDirectory: jest.fn().mockResolvedValue(null),
@@ -277,17 +273,15 @@ Object.defineProperty(window, 'agent', {
     run: jest.fn().mockResolvedValue(undefined),
     cancel: jest.fn(),
     onEvent: jest.fn().mockReturnValue(jest.fn()),
-    createSession: jest
-      .fn()
-      .mockResolvedValue({
-        sessionId: 'test',
-        providerId: 'openai',
-        modelId: 'gpt-4',
-        createdAt: Date.now(),
-        lastActivity: Date.now(),
-        isActive: true,
-        messageCount: 0,
-      }),
+    createSession: jest.fn().mockResolvedValue({
+      sessionId: 'test',
+      providerId: 'openai',
+      modelId: 'gpt-4',
+      createdAt: Date.now(),
+      lastActivity: Date.now(),
+      isActive: true,
+      messageCount: 0,
+    }),
     destroySession: jest.fn().mockResolvedValue(true),
     getSession: jest.fn().mockResolvedValue(null),
     listSessions: jest.fn().mockResolvedValue([]),

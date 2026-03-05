@@ -147,13 +147,11 @@ const clipboard = {
   writeHTML: jest.fn(),
   readHTML: jest.fn().mockReturnValue(''),
   writeImage: jest.fn(),
-  readImage: jest
-    .fn()
-    .mockReturnValue({
-      isEmpty: () => true,
-      getSize: () => ({ width: 0, height: 0 }),
-      toDataURL: () => '',
-    }),
+  readImage: jest.fn().mockReturnValue({
+    isEmpty: () => true,
+    getSize: () => ({ width: 0, height: 0 }),
+    toDataURL: () => '',
+  }),
   clear: jest.fn(),
   availableFormats: jest.fn().mockReturnValue([]),
 };

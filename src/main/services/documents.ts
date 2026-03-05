@@ -23,7 +23,8 @@ export class DocumentsService {
 
   constructor(
     private fileManagement: FileManagementService,
-    private watcher: DocumentsWatcherService | null
+    private watcher: DocumentsWatcherService | null,
+    private logger?: LoggerService
   ) {}
 
   /**
