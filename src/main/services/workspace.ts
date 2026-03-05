@@ -110,7 +110,7 @@ export class WorkspaceService implements Disposable {
     // Persist to store (adds to recent workspaces automatically)
     this.store.setCurrentWorkspace(normalized)
 
-    console.log('[WorkspaceService] Workspace changed:', previousPath, '->', normalized)
+    this.logger?.info('WorkspaceService', `Workspace changed: ${previousPath} -> ${normalized}`)
 
     // Start periodic validation for the new workspace
     this.startValidationTimer()
