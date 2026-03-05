@@ -274,7 +274,7 @@ export class OutputFilesService implements Disposable {
   async loadAll(): Promise<OutputFile[]> {
     const currentWorkspace = this.workspace.getCurrent()
     if (!currentWorkspace) {
-      console.warn('[OutputFilesService] Load attempt with no workspace selected')
+      this.logger?.warn('OutputFilesService', 'Load attempt with no workspace selected')
       return []
     }
 
@@ -309,7 +309,7 @@ export class OutputFilesService implements Disposable {
   async loadByType(outputType: OutputType): Promise<OutputFile[]> {
     const currentWorkspace = this.workspace.getCurrent()
     if (!currentWorkspace) {
-      console.warn('[OutputFilesService] Load attempt with no workspace selected')
+      this.logger?.warn('OutputFilesService', 'Load attempt with no workspace selected')
       return []
     }
 
