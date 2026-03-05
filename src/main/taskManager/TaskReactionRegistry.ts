@@ -6,10 +6,13 @@
  * Wildcard handlers (taskType = '*') receive every lifecycle event.
  */
 
+import type { LoggerService } from '../services/logger';
 import type { TaskReactionHandler } from './TaskReactionHandler';
 
 export class TaskReactionRegistry {
   private readonly handlers = new Map<string, TaskReactionHandler[]>();
+
+  constructor(private readonly logger?: LoggerService) {}
 
   /**
    * Register a reaction handler.
