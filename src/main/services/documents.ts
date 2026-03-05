@@ -156,7 +156,7 @@ export class DocumentsService {
         documents.push(metadata);
       } catch (err) {
         // Log and skip files that can't be read
-        console.warn(`[DocumentsService] Failed to load file ${file}:`, (err as Error).message);
+        this.logger?.warn('DocumentsService', `Failed to load file ${file}`, err);
       }
     }
 
