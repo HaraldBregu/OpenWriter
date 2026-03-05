@@ -44,6 +44,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
     private readonly agentId: string,
     private readonly agentsRegistry: AgentRegistry,
     private readonly providerResolver: ProviderResolver,
+    private readonly logger?: LoggerService,
   ) {
     this.type = `agent-${agentId}`
   }
