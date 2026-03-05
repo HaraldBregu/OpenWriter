@@ -90,7 +90,8 @@ export class WorkspaceMetadataService implements Disposable {
 
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly eventBus: EventBus
+    private readonly eventBus: EventBus,
+    private readonly logger?: LoggerService
   ) {}
 
   /**
