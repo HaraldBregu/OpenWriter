@@ -295,6 +295,6 @@ export class WorkspaceService implements Disposable {
     // Broadcast to all renderer windows
     this.eventBus.broadcast('workspace:deleted', deletedEvent);
 
-    console.log('[WorkspaceService] Workspace gone event broadcast:', deletedPath, reason);
+    this.logger?.info('WorkspaceService', `Workspace gone event broadcast: ${deletedPath} (${reason})`);
   }
 }
