@@ -246,7 +246,7 @@ export class WorkspaceService implements Disposable {
       }
 
       if (!this.isValidDirectory(this.currentPath)) {
-        console.warn('[WorkspaceService] Workspace folder no longer exists:', this.currentPath);
+        this.logger?.warn('WorkspaceService', `Workspace folder no longer exists: ${this.currentPath}`);
         this.handleWorkspaceGone(this.currentPath);
       }
     }, WorkspaceService.VALIDATION_INTERVAL_MS);
