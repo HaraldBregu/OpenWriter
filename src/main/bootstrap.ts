@@ -55,7 +55,6 @@ export function bootstrapServices(): BootstrapResult {
   // Register core infrastructure
   container.register('appState', appState);
   container.register('eventBus', eventBus);
-  container.register('windowFactory', windowFactory);
 
   // Register services (order matters for dependencies)
   const storeService = container.register('store', new StoreService());
