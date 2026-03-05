@@ -47,9 +47,9 @@ export const tasksSlice = createSlice({
      */
     taskAdded(
       state,
-      action: PayloadAction<{ taskId: string; type: string; priority?: TaskPriority }>
+      action: PayloadAction<{ taskId: string; type: string; priority?: TaskPriority; metadata?: unknown }>
     ) {
-      const { taskId, type, priority = 'normal' } = action.payload
+      const { taskId, type, priority = 'normal', metadata } = action.payload
 
       // No-op if already tracked.
       if (state.tasks.some((t) => t.taskId === taskId)) return
@@ -60,6 +60,7 @@ export const tasksSlice = createSlice({
         status: 'queued',
         priority,
         progress: { percent: 0 },
+        metadata,
         streamBuffer: '',
         events: [],
       })
