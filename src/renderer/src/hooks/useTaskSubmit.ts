@@ -256,7 +256,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		() => ({
 			taskId,
 			status,
-			progress,
+			progress: { percent: progressPercent, message: progressMessage } as TaskProgressState,
 			progressMessage,
 			error,
 			result,
@@ -277,7 +277,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		[
 			taskId,
 			status,
-			progress,
+			progressPercent,
 			progressMessage,
 			error,
 			result,
