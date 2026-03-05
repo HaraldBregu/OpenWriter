@@ -244,10 +244,9 @@ const TextEditor = React.memo(
                   />
                 </EditorProvider>
               )}
-              <EditorContent 
-                style={{ 'zoom': 150 / 100 }}
-
-              editor={editor} />
+              <EditorContent
+                editor={editor}
+              />
             </div>
           </div>
         </div>
