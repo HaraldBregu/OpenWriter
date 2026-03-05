@@ -112,15 +112,33 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 	const optionsRef = useRef(options);
 	optionsRef.current = options;
 
-	// Read this task's slice of Redux state. Returns undefined when taskId is
-	// null (before first submit) or after the task has been removed.
-	const taskState = useAppSelector((state) =>
-		taskId !== null ? selectTaskById(state, taskId) : undefined
+	// Stable memoized selector — only recreated when taskId changes.
+	const selectTask = useMemo(
+		() => (taskId !== null ? makeSelectTaskById(taskId) : () => undefined),
+		[taskId]
 	);
+
+	// Custom equality comparator: only re-render when fields the hook
+	// exposes actually change. Excludes streamBuffer and events which
+	// change on every stream token but are not consumed by callers.
+	const taskState = useAppSelector(selectTask, (prev, next) => {
+		if (prev === next) return true;
+		if (prev == null || next == null) return prev === next;
+		return (
+			prev.status === next.status &&
+			prev.progress.percent === next.progress.percent &&
+			prev.progress.message === next.progress.message &&
+			prev.error === next.error &&
+			prev.result === next.result &&
+			prev.queuePosition === next.queuePosition &&
+			prev.durationMs === next.durationMs &&
+			prev.metadata === next.metadata
+		);
+	});
 
 	// Derive all display fields from the Redux task state.
 	const status: TaskStatus | null = taskState?.status ?? null;
-	const progress: TaskProgressState = taskState?.progress ?? EMPTY_PROGRESS;
+	const progressPercent: number = taskState?.progress.percent ?? 0;
 	const progressMessage: string | undefined = taskState?.progress.message;
 	const error: string | undefined = taskState?.error;
 	const result: TResult | undefined = taskState?.result as TResult | undefined;
