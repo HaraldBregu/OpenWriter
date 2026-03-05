@@ -5,7 +5,7 @@ export interface TransactionFilterStorage {
 }
 
 declare module "@tiptap/core" {
-  interface ExtensionStorage {
+  interface Storage {
     transactionFilter: TransactionFilterStorage;
   }
 }
