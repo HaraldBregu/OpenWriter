@@ -565,7 +565,7 @@ export class OutputFilesService implements Disposable {
       await fs.rm(folderPath, { recursive: true })
     }
 
-    console.log(`[OutputFilesService] Trashed output folder: ${folderPath}`)
+    this.logger?.info('OutputFilesService', `Trashed output folder: ${folderPath}`)
 
     // Emit removal event directly so the renderer is notified immediately.
     // chokidar may not fire reliable events for externally-initiated moves.
