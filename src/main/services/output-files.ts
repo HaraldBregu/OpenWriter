@@ -320,7 +320,7 @@ export class OutputFilesService implements Disposable {
     try {
       await fs.access(typeDir)
     } catch {
-      console.log(`[OutputFilesService] Type directory does not exist for "${outputType}", returning empty array`)
+      this.logger?.info('OutputFilesService', `Type directory does not exist for "${outputType}", returning empty array`)
       return []
     }
 
