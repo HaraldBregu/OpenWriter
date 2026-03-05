@@ -640,7 +640,7 @@ export class OutputFilesService implements Disposable {
     const outputDir = path.join(workspacePath, this.OUTPUT_DIR_NAME)
 
     if (this.currentOutputDir === outputDir && this.watcher !== null) {
-      console.log('[OutputFilesService] Already watching:', outputDir)
+      this.logger?.info('OutputFilesService', `Already watching: ${outputDir}`)
       return
     }
 
