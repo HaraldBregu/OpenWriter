@@ -192,7 +192,7 @@ export class DocumentsWatcherService implements Disposable {
       return
     }
 
-    console.log('[DocumentsWatcherService] Stopping watcher for:', this.currentDirectory)
+    this.logger?.info('DocumentsWatcherService', `Stopping watcher for: ${this.currentDirectory}`)
 
     try {
       await this.watcher.close()
