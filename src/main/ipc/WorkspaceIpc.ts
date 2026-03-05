@@ -485,7 +485,7 @@ export class WorkspaceIpc implements IpcModule {
       )
     )
 
-    console.log(`[IPC] Registered ${this.name} module`)
+    logger.info('WorkspaceIpc', `Registered ${this.name} module`)
   }
 
   // ---------------------------------------------------------------------------
