@@ -22,7 +22,7 @@ export class TaskReactionRegistry {
     const existing = this.handlers.get(handler.taskType) ?? [];
     existing.push(handler);
     this.handlers.set(handler.taskType, existing);
-    console.log(`[TaskReactionRegistry] Registered reaction for type="${handler.taskType}"`);
+    this.logger?.info('TaskReactionRegistry', `Registered reaction for type="${handler.taskType}"`);
   }
 
   /**
