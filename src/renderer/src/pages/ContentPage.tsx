@@ -48,6 +48,9 @@ const ContentPage: React.FC = () => {
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
 
+	const loadedRef = useRef(false);
+	loadedRef.current = loaded;
+
 	useEffect(() => {
 		if (!id) return;
 		let cancelled = false;
