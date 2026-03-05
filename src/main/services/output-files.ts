@@ -298,7 +298,7 @@ export class OutputFilesService implements Disposable {
       }
     }
 
-    console.log(`[OutputFilesService] Loaded ${allFiles.length} output files from workspace`)
+    this.logger?.info('OutputFilesService', `Loaded ${allFiles.length} output files from workspace`)
 
     return allFiles
   }
