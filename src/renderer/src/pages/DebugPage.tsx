@@ -698,7 +698,6 @@ function SentenceCompleterTab() {
     task.reset()
   }, [task])
 
-  const hasCursor = documentText.includes('█')
   const isActive = task.isRunning || task.isQueued
   const isDone = task.isCompleted || task.isError || task.isCancelled
 
