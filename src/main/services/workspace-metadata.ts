@@ -360,7 +360,7 @@ export class WorkspaceMetadataService implements Disposable {
     }
 
     // Cache miss or workspace changed - read from file
-    console.log('[WorkspaceMetadataService] getMetadata: Reading from file for', workspacePath)
+    this.logger?.info('WorkspaceMetadataService', `getMetadata: Reading from file for ${workspacePath}`)
     const metadata = this.readMetadataFile(workspacePath) ?? this.createDefaultMetadata()
 
     // Update cache
