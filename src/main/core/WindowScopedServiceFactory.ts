@@ -73,21 +73,21 @@ export class WindowScopedServiceFactory {
       workspaceService: WorkspaceService
     }
   ): Promise<void> {
-    console.log(`[WindowScopedServiceFactory] Creating ${this.definitions.size} window-scoped services`)
+    const logger = context.globalContainer.get<any>('logger')
+    logger?.info('WindowScopedServiceFactory', `Creating ${this.definitions.size} window-scoped services`)
 
     for (const definition of this.definitions.values()) {
       try {
         const service = await definition.factory(context)
         container.register(definition.key, service)
-        console.log(`[WindowScopedServiceFactory] Registered service: ${definition.key}`)
+        logger?.info('WindowScopedServiceFactory', `Registered service: ${definition.key}`)
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error)
-        console.error(`[WindowScopedServiceFactory] Failed to register service "${definition.key}": ${errorMessage}`)
+        logger?.error('WindowScopedServiceFactory', `Failed to register service "${definition.key}"`, error)
         throw error
       }
     }
 
-    console.log(`[WindowScopedServiceFactory] Successfully registered all window-scoped services`)
+    logger?.info('WindowScopedServiceFactory', 'Successfully registered all window-scoped services')
   }
 
   /**
