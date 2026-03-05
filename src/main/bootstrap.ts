@@ -299,7 +299,8 @@ export function setupEventLogging(logger: LoggerService): void {
  * Ensures all services are properly disposed.
  */
 export async function cleanup(container: ServiceContainer): Promise<void> {
-  console.log('[Bootstrap] Starting cleanup...')
+  const logger = container.get('logger') as LoggerService
+  logger.info('Bootstrap', 'Starting cleanup')
   await container.shutdown()
-  console.log('[Bootstrap] Cleanup complete')
+  logger.info('Bootstrap', 'Cleanup complete')
 }
