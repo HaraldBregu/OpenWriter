@@ -103,6 +103,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
       prompt: input.prompt,
       signal,
       buildGraph: def.buildGraph,
+      logger: this.logger,
     })
 
     for await (const event of gen) {
