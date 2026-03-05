@@ -88,7 +88,7 @@ export async function* executeAIAgentsStream(
   // --- LangGraph path --------------------------------------------------------
 
   if (buildGraph) {
-    yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, log });
+    yield* executeGraphStream({ runId, model, langchainMessages, buildGraph, signal, logger });
     return;
   }
 
