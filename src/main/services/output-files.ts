@@ -617,7 +617,7 @@ export class OutputFilesService implements Disposable {
     if (newWorkspacePath) {
       this.logger?.info('OutputFilesService', 'Workspace changed, starting watcher')
       this.startWatching(newWorkspacePath).catch((error) => {
-        console.error('[OutputFilesService] Failed to start watching new workspace:', error)
+        this.logger?.error('OutputFilesService', 'Failed to start watching new workspace', error)
       })
     } else {
       console.log('[OutputFilesService] Workspace cleared, stopping watcher')
