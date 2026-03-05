@@ -14,7 +14,7 @@
  *   class DemoTaskReaction implements TaskReactionHandler {
  *     readonly taskType = 'demo'
  *     onCompleted({ taskId }, result) {
- *       console.log('demo task done', taskId, result)
+ *       logger.info('DemoTaskReaction', `demo task done ${taskId}`, result)
  *     }
  *   }
  *
