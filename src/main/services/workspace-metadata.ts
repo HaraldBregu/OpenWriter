@@ -527,7 +527,7 @@ export class WorkspaceMetadataService implements Disposable {
     // Clear cache to force fresh read from new workspace
     const oldCache = this.cache
     this.cache = null
-    console.log('[WorkspaceMetadataService] Cache cleared (was for workspace:', oldCache?.workspacePath, ')')
+    this.logger?.debug('WorkspaceMetadataService', `Cache cleared (was for workspace: ${oldCache?.workspacePath})`)
 
     if (newPath) {
       const metadata = this.readMetadataFile(newPath)
