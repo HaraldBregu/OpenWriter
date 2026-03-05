@@ -734,7 +734,7 @@ export class OutputFilesService implements Disposable {
       return
     }
 
-    console.log('[OutputFilesService] Stopping watcher for:', this.currentOutputDir)
+    this.logger?.info('OutputFilesService', `Stopping watcher for: ${this.currentOutputDir}`)
 
     try {
       await this.watcher.close()
