@@ -185,6 +185,28 @@ By evening, the lamplighters had given up trying. The old gas lamps flickered on
 
 	return (
 		<div className="h-full flex flex-col">
+			{searchOpen && (
+				<div className="flex items-center gap-2 px-8 py-2 border-b border-border bg-muted/50 shrink-0">
+					<Search className="h-4 w-4 text-muted-foreground shrink-0" />
+					<input
+						ref={searchInputRef}
+						type="text"
+						value={searchQuery}
+						onChange={(e) => handleSearchChange(e.target.value)}
+						placeholder={t('common.search')}
+						className="flex-1 text-sm bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+					/>
+					<AppButton
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={closeSearch}
+					>
+						<X className="h-3.5 w-3.5" />
+					</AppButton>
+				</div>
+			)}
 			<div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
 					<PenLine className="h-4 w-4 text-blue-500 shrink-0" />
