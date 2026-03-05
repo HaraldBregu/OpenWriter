@@ -20,8 +20,8 @@ const mockWebContents = {
   on: jest.fn(),
   once: jest.fn(),
   openDevTools: jest.fn(),
-  closeDevTools: jest.fn()
-}
+  closeDevTools: jest.fn(),
+};
 
 const mockBrowserWindowInstance = {
   loadURL: jest.fn(),
@@ -50,19 +50,19 @@ const mockBrowserWindowInstance = {
   once: jest.fn(),
   removeListener: jest.fn(),
   webContents: mockWebContents,
-  id: 1
-}
+  id: 1,
+};
 
 const BrowserWindow = jest.fn(() => mockBrowserWindowInstance) as unknown as jest.Mock & {
-  getAllWindows: jest.Mock
-  fromId: jest.Mock
-  getFocusedWindow: jest.Mock
-  fromWebContents: jest.Mock
-}
-BrowserWindow.getAllWindows = jest.fn().mockReturnValue([mockBrowserWindowInstance])
-BrowserWindow.fromId = jest.fn().mockReturnValue(mockBrowserWindowInstance)
-BrowserWindow.getFocusedWindow = jest.fn().mockReturnValue(mockBrowserWindowInstance)
-BrowserWindow.fromWebContents = jest.fn().mockReturnValue(mockBrowserWindowInstance)
+  getAllWindows: jest.Mock;
+  fromId: jest.Mock;
+  getFocusedWindow: jest.Mock;
+  fromWebContents: jest.Mock;
+};
+BrowserWindow.getAllWindows = jest.fn().mockReturnValue([mockBrowserWindowInstance]);
+BrowserWindow.fromId = jest.fn().mockReturnValue(mockBrowserWindowInstance);
+BrowserWindow.getFocusedWindow = jest.fn().mockReturnValue(mockBrowserWindowInstance);
+BrowserWindow.fromWebContents = jest.fn().mockReturnValue(mockBrowserWindowInstance);
 
 // ---------------------------------------------------------------------------
 // app
@@ -77,9 +77,9 @@ const app = {
       desktop: '/fake/desktop',
       home: '/fake/home',
       temp: '/fake/temp',
-      appData: '/fake/appData'
-    }
-    return paths[name] ?? `/fake/${name}`
+      appData: '/fake/appData',
+    };
+    return paths[name] ?? `/fake/${name}`;
   }),
   getVersion: jest.fn().mockReturnValue('1.0.0'),
   getName: jest.fn().mockReturnValue('OpenWriter'),
@@ -96,9 +96,9 @@ const app = {
   dock: {
     bounce: jest.fn(),
     setBadge: jest.fn(),
-    getBadge: jest.fn().mockReturnValue('')
-  }
-}
+    getBadge: jest.fn().mockReturnValue(''),
+  },
+};
 
 // ---------------------------------------------------------------------------
 // ipcMain
@@ -110,8 +110,8 @@ const ipcMain = {
   on: jest.fn(),
   once: jest.fn(),
   removeHandler: jest.fn(),
-  removeAllListeners: jest.fn()
-}
+  removeAllListeners: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // ipcRenderer
@@ -123,8 +123,8 @@ const ipcRenderer = {
   on: jest.fn(),
   once: jest.fn(),
   removeListener: jest.fn(),
-  removeAllListeners: jest.fn()
-}
+  removeAllListeners: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // dialog
@@ -134,8 +134,8 @@ const dialog = {
   showOpenDialog: jest.fn().mockResolvedValue({ canceled: false, filePaths: ['/fake/file.txt'] }),
   showSaveDialog: jest.fn().mockResolvedValue({ canceled: false, filePath: '/fake/file.txt' }),
   showMessageBox: jest.fn().mockResolvedValue({ response: 0 }),
-  showErrorBox: jest.fn()
-}
+  showErrorBox: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // clipboard
@@ -147,10 +147,16 @@ const clipboard = {
   writeHTML: jest.fn(),
   readHTML: jest.fn().mockReturnValue(''),
   writeImage: jest.fn(),
-  readImage: jest.fn().mockReturnValue({ isEmpty: () => true, getSize: () => ({ width: 0, height: 0 }), toDataURL: () => '' }),
+  readImage: jest
+    .fn()
+    .mockReturnValue({
+      isEmpty: () => true,
+      getSize: () => ({ width: 0, height: 0 }),
+      toDataURL: () => '',
+    }),
   clear: jest.fn(),
-  availableFormats: jest.fn().mockReturnValue([])
-}
+  availableFormats: jest.fn().mockReturnValue([]),
+};
 
 // ---------------------------------------------------------------------------
 // nativeImage
@@ -160,10 +166,10 @@ const nativeImage = {
   createFromDataURL: jest.fn().mockReturnValue({
     isEmpty: () => false,
     getSize: () => ({ width: 100, height: 100 }),
-    toDataURL: () => 'data:image/png;base64,fake'
+    toDataURL: () => 'data:image/png;base64,fake',
   }),
-  createFromPath: jest.fn()
-}
+  createFromPath: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // Menu & Tray
@@ -172,15 +178,15 @@ const nativeImage = {
 const Menu = {
   buildFromTemplate: jest.fn().mockReturnValue({}),
   setApplicationMenu: jest.fn(),
-  getApplicationMenu: jest.fn().mockReturnValue(null)
-}
+  getApplicationMenu: jest.fn().mockReturnValue(null),
+};
 
 const Tray = jest.fn(() => ({
   setToolTip: jest.fn(),
   setContextMenu: jest.fn(),
   on: jest.fn(),
-  destroy: jest.fn()
-}))
+  destroy: jest.fn(),
+}));
 
 // ---------------------------------------------------------------------------
 // Notification
@@ -189,9 +195,9 @@ const Tray = jest.fn(() => ({
 const Notification = jest.fn(() => ({
   show: jest.fn(),
   close: jest.fn(),
-  on: jest.fn()
-})) as unknown as jest.Mock & { isSupported: jest.Mock }
-Notification.isSupported = jest.fn().mockReturnValue(true)
+  on: jest.fn(),
+})) as unknown as jest.Mock & { isSupported: jest.Mock };
+Notification.isSupported = jest.fn().mockReturnValue(true);
 
 // ---------------------------------------------------------------------------
 // nativeTheme
@@ -204,16 +210,16 @@ const nativeTheme = {
   shouldUseInvertedColorScheme: false,
   on: jest.fn(),
   once: jest.fn(),
-  removeListener: jest.fn()
-}
+  removeListener: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // contextBridge
 // ---------------------------------------------------------------------------
 
 const contextBridge = {
-  exposeInMainWorld: jest.fn()
-}
+  exposeInMainWorld: jest.fn(),
+};
 
 // ---------------------------------------------------------------------------
 // shell & systemPreferences
@@ -222,13 +228,13 @@ const contextBridge = {
 const shell = {
   openExternal: jest.fn().mockResolvedValue(undefined),
   openPath: jest.fn().mockResolvedValue(''),
-  showItemInFolder: jest.fn()
-}
+  showItemInFolder: jest.fn(),
+};
 
 const systemPreferences = {
   getMediaAccessStatus: jest.fn().mockReturnValue('granted'),
-  askForMediaAccess: jest.fn().mockResolvedValue(true)
-}
+  askForMediaAccess: jest.fn().mockResolvedValue(true),
+};
 
 // ---------------------------------------------------------------------------
 // Export (matches the real 'electron' module's named exports)
@@ -251,5 +257,5 @@ export {
   systemPreferences,
   // Re-export for direct access to the mock instance
   mockBrowserWindowInstance,
-  mockWebContents
-}
+  mockWebContents,
+};

@@ -18,11 +18,11 @@
  * Superset of the old ModelSettings interface -- adds inference defaults.
  */
 export interface ProviderSettings {
-  selectedModel: string
-  apiToken: string
-  temperature: number
-  maxTokens: number | null
-  reasoning: boolean
+  selectedModel: string;
+  apiToken: string;
+  temperature: number;
+  maxTokens: number | null;
+  reasoning: boolean;
 }
 
 /**
@@ -31,11 +31,11 @@ export interface ProviderSettings {
  * conversation metadata. Does NOT include apiToken.
  */
 export interface InferenceSettings {
-  providerId: string
-  modelId: string
-  temperature: number
-  maxTokens: number | null
-  reasoning: boolean
+  providerId: string;
+  modelId: string;
+  temperature: number;
+  maxTokens: number | null;
+  reasoning: boolean;
 }
 
 /**
@@ -43,9 +43,9 @@ export interface InferenceSettings {
  * Only fields present in the object will be written to the store.
  */
 export interface InferenceDefaultsUpdate {
-  temperature?: number
-  maxTokens?: number | null
-  reasoning?: boolean
+  temperature?: number;
+  maxTokens?: number | null;
+  reasoning?: boolean;
 }
 
 /**
@@ -57,16 +57,19 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
   modelId: 'gpt-4o',
   temperature: 0.7,
   maxTokens: 2048,
-  reasoning: false
-}
+  reasoning: false,
+};
 
 /**
  * Default values for the inference fields of a ProviderSettings record.
  * Used by migrateProviderSettings() when reading existing settings.json
  * entries that predate this schema version.
  */
-export const DEFAULT_PROVIDER_INFERENCE: Pick<ProviderSettings, 'temperature' | 'maxTokens' | 'reasoning'> = {
+export const DEFAULT_PROVIDER_INFERENCE: Pick<
+  ProviderSettings,
+  'temperature' | 'maxTokens' | 'reasoning'
+> = {
   temperature: 0.7,
   maxTokens: 2048,
-  reasoning: false
-}
+  reasoning: false,
+};

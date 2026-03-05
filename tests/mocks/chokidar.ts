@@ -16,11 +16,11 @@
 const mockWatcher = {
   on: jest.fn().mockReturnThis(),
   close: jest.fn().mockResolvedValue(undefined),
-}
+};
 
 const chokidar = {
   watch: jest.fn().mockReturnValue(mockWatcher),
-}
+};
 
-export default chokidar
-export { mockWatcher }
+export default chokidar;
+export { mockWatcher };

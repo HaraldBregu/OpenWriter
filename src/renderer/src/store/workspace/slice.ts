@@ -8,7 +8,7 @@
  *   - Barrel:    '@/store/workspace'
  */
 
-export type { WorkspaceState } from './state'
+export type { WorkspaceState } from './state';
 
 export {
   loadCurrentWorkspace,
@@ -17,7 +17,7 @@ export {
   openWorkspacePicker,
   removeRecentWorkspace,
   clearWorkspace,
-} from './actions'
+} from './actions';
 
 export {
   workspaceSlice,
@@ -25,8 +25,8 @@ export {
   handleRecentRemoved,
   handleWorkspaceDeleted,
   clearDeletionReason,
-} from './reducer'
-export { default } from './reducer'
+} from './reducer';
+export { default } from './reducer';
 
 export {
   selectWorkspaceState,
@@ -38,4 +38,4 @@ export {
   selectWorkspaceError,
   selectWorkspaceIsLoading,
   selectWorkspaceDeletionReason,
-} from './selectors'
+} from './selectors';

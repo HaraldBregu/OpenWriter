@@ -12,7 +12,7 @@
  * Tests that need a specific API key value should override
  * `globalThis.__VITE_ENV__` in their beforeEach / test body.
  */
-;(globalThis as any).__VITE_ENV__ = {
+(globalThis as any).__VITE_ENV__ = {
   VITE_OPENAI_API_KEY: undefined,
-  VITE_OPENAI_MODEL: undefined
-}
+  VITE_OPENAI_MODEL: undefined,
+};

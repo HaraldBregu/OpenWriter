@@ -26,14 +26,14 @@
  *   - savePersonality: delegates to window.workspace.personality.save
  */
 
-import { ElectronPersonalityTaskService } from '../../../../src/renderer/src/services/ElectronPersonalityTaskService'
+import { ElectronPersonalityTaskService } from '../../../../src/renderer/src/services/ElectronPersonalityTaskService';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function createService() {
-  return new ElectronPersonalityTaskService()
+  return new ElectronPersonalityTaskService();
 }
 
 // Save a reference to the original window.tasksManager installed by renderer.ts setup.
@@ -42,8 +42,8 @@ function removeTaskBridge() {
   Object.defineProperty(window, 'task', {
     value: undefined,
     writable: true,
-    configurable: true
-  })
+    configurable: true,
+  });
 }
 
 function restoreTaskBridge() {
@@ -52,11 +52,11 @@ function restoreTaskBridge() {
       submit: jest.fn().mockResolvedValue({ success: true, data: { taskId: 'task-1' } }),
       cancel: jest.fn().mockResolvedValue({ success: true, data: true }),
       list: jest.fn().mockResolvedValue({ success: true, data: [] }),
-      onEvent: jest.fn().mockReturnValue(jest.fn())
+      onEvent: jest.fn().mockReturnValue(jest.fn()),
     },
     writable: true,
-    configurable: true
-  })
+    configurable: true,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -65,34 +65,34 @@ function restoreTaskBridge() {
 
 describe('ElectronPersonalityTaskService — assertBridge() when bridge is missing', () => {
   beforeEach(() => {
-    removeTaskBridge()
-  })
+    removeTaskBridge();
+  });
 
   afterEach(() => {
-    restoreTaskBridge()
-  })
+    restoreTaskBridge();
+  });
 
   it('submitTask throws when window.tasksManager is undefined', async () => {
-    const service = createService()
+    const service = createService();
 
     await expect(
       service.submitTask({
         prompt: 'hello',
         providerId: 'openai',
         systemPrompt: 'sys',
-        messages: []
+        messages: [],
       })
-    ).rejects.toThrow('[ElectronPersonalityTaskService] window.tasksManager is undefined.')
-  })
+    ).rejects.toThrow('[ElectronPersonalityTaskService] window.tasksManager is undefined.');
+  });
 
   it('cancelTask is a no-op (does not throw) when window.tasksManager is undefined', () => {
-    const service = createService()
+    const service = createService();
 
     // cancelTask has an explicit guard: `if (!window.tasksManager) return`
     // This ensures fire-and-forget cancels never crash the UI.
-    expect(() => service.cancelTask('any-task-id')).not.toThrow()
-  })
-})
+    expect(() => service.cancelTask('any-task-id')).not.toThrow();
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Suite 2: submitTask
@@ -100,21 +100,21 @@ describe('ElectronPersonalityTaskService — assertBridge() when bridge is missi
 
 describe('ElectronPersonalityTaskService — submitTask', () => {
   beforeEach(() => {
-    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
+    (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: true,
-      data: { taskId: 'new-task' }
-    })
-  })
+      data: { taskId: 'new-task' },
+    });
+  });
 
   it('calls window.tasksManager.submit with the required fields', async () => {
-    const service = createService()
+    const service = createService();
 
     await service.submitTask({
       prompt: 'test prompt',
       providerId: 'openai',
       systemPrompt: 'You are helpful.',
-      messages: [{ role: 'user', content: 'hello' }]
-    })
+      messages: [{ role: 'user', content: 'hello' }],
+    });
 
     expect(window.tasksManager.submit).toHaveBeenCalledWith(
       'ai-chat',
@@ -122,157 +122,162 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
         prompt: 'test prompt',
         providerId: 'openai',
         systemPrompt: 'You are helpful.',
-        messages: [{ role: 'user', content: 'hello' }]
+        messages: [{ role: 'user', content: 'hello' }],
       })
-    )
-  })
+    );
+  });
 
   it('includes modelId in the payload when provided', async () => {
-    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } });
     Object.defineProperty(window, 'task', {
       value: { ...window.tasksManager, submit: submitMock },
-      writable: true, configurable: true
-    })
+      writable: true,
+      configurable: true,
+    });
 
-    const service = createService()
+    const service = createService();
 
     await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
       messages: [],
-      modelId: 'gpt-4o'
-    })
+      modelId: 'gpt-4o',
+    });
 
     expect(submitMock).toHaveBeenCalledWith(
       'ai-chat',
       expect.objectContaining({ modelId: 'gpt-4o' })
-    )
-  })
+    );
+  });
 
   it('omits modelId from the payload when not provided', async () => {
-    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } });
     Object.defineProperty(window, 'task', {
       value: { ...window.tasksManager, submit: submitMock },
-      writable: true, configurable: true
-    })
+      writable: true,
+      configurable: true,
+    });
 
-    const service = createService()
-
-    await service.submitTask({
-      prompt: 'p',
-      providerId: 'openai',
-      systemPrompt: 's',
-      messages: []
-    })
-
-    const payload = submitMock.mock.calls[0][1]
-    expect(payload).not.toHaveProperty('modelId')
-  })
-
-  it('includes temperature in the payload when provided', async () => {
-    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
-    Object.defineProperty(window, 'task', {
-      value: { ...window.tasksManager, submit: submitMock },
-      writable: true, configurable: true
-    })
-
-    const service = createService()
+    const service = createService();
 
     await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
       messages: [],
-      temperature: 0.7
-    })
+    });
+
+    const payload = submitMock.mock.calls[0][1];
+    expect(payload).not.toHaveProperty('modelId');
+  });
+
+  it('includes temperature in the payload when provided', async () => {
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } });
+    Object.defineProperty(window, 'task', {
+      value: { ...window.tasksManager, submit: submitMock },
+      writable: true,
+      configurable: true,
+    });
+
+    const service = createService();
+
+    await service.submitTask({
+      prompt: 'p',
+      providerId: 'openai',
+      systemPrompt: 's',
+      messages: [],
+      temperature: 0.7,
+    });
 
     expect(submitMock).toHaveBeenCalledWith(
       'ai-chat',
       expect.objectContaining({ temperature: 0.7 })
-    )
-  })
+    );
+  });
 
   it('omits temperature from the payload when undefined', async () => {
-    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } });
     Object.defineProperty(window, 'task', {
       value: { ...window.tasksManager, submit: submitMock },
-      writable: true, configurable: true
-    })
+      writable: true,
+      configurable: true,
+    });
 
-    const service = createService()
+    const service = createService();
 
     await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
       messages: [],
-      temperature: undefined
-    })
+      temperature: undefined,
+    });
 
-    const payload = submitMock.mock.calls[0][1]
-    expect(payload).not.toHaveProperty('temperature')
-  })
+    const payload = submitMock.mock.calls[0][1];
+    expect(payload).not.toHaveProperty('temperature');
+  });
 
   it('includes maxTokens in the payload when provided', async () => {
-    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } })
+    const submitMock = jest.fn().mockResolvedValue({ success: true, data: { taskId: 't' } });
     Object.defineProperty(window, 'task', {
       value: { ...window.tasksManager, submit: submitMock },
-      writable: true, configurable: true
-    })
+      writable: true,
+      configurable: true,
+    });
 
-    const service = createService()
+    const service = createService();
 
     await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
       messages: [],
-      maxTokens: 2048
-    })
+      maxTokens: 2048,
+    });
 
     expect(submitMock).toHaveBeenCalledWith(
       'ai-chat',
       expect.objectContaining({ maxTokens: 2048 })
-    )
-  })
+    );
+  });
 
   it('returns the result envelope from window.tasksManager.submit', async () => {
-    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
+    (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: true,
-      data: { taskId: 'new-task' }
-    })
+      data: { taskId: 'new-task' },
+    });
 
-    const service = createService()
+    const service = createService();
 
     const result = await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
-      messages: []
-    })
+      messages: [],
+    });
 
-    expect(result).toEqual({ success: true, data: { taskId: 'new-task' } })
-  })
+    expect(result).toEqual({ success: true, data: { taskId: 'new-task' } });
+  });
 
   it('forwards a failure result from window.tasksManager.submit unchanged', async () => {
-    ; (window.tasksManager.submit as jest.Mock).mockResolvedValue({
+    (window.tasksManager.submit as jest.Mock).mockResolvedValue({
       success: false,
-      error: { message: 'Provider not configured' }
-    })
+      error: { message: 'Provider not configured' },
+    });
 
-    const service = createService()
+    const service = createService();
 
     const result = await service.submitTask({
       prompt: 'p',
       providerId: 'openai',
       systemPrompt: 's',
-      messages: []
-    })
+      messages: [],
+    });
 
-    expect(result).toEqual({ success: false, error: { message: 'Provider not configured' } })
-  })
-})
+    expect(result).toEqual({ success: false, error: { message: 'Provider not configured' } });
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Suite 3: cancelTask
@@ -280,12 +285,12 @@ describe('ElectronPersonalityTaskService — submitTask', () => {
 
 describe('ElectronPersonalityTaskService — cancelTask', () => {
   it('calls window.tasksManager.cancel with the task ID', () => {
-    const service = createService()
-    service.cancelTask('task-xyz')
+    const service = createService();
+    service.cancelTask('task-xyz');
 
-    expect(window.tasksManager.cancel).toHaveBeenCalledWith('task-xyz')
-  })
-})
+    expect(window.tasksManager.cancel).toHaveBeenCalledWith('task-xyz');
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Suite 4: getModelSettings
@@ -293,37 +298,35 @@ describe('ElectronPersonalityTaskService — cancelTask', () => {
 
 describe('ElectronPersonalityTaskService — getModelSettings', () => {
   it('returns the model settings from window.app.getModelSettings', async () => {
-    ;(window.app.getModelSettings as jest.Mock).mockResolvedValue({
-      selectedModel: 'gpt-4o'
-    })
+    (window.app.getModelSettings as jest.Mock).mockResolvedValue({
+      selectedModel: 'gpt-4o',
+    });
 
-    const service = createService()
-    const result = await service.getModelSettings('openai')
+    const service = createService();
+    const result = await service.getModelSettings('openai');
 
-    expect(result).toEqual({ selectedModel: 'gpt-4o' })
-    expect(window.app.getModelSettings).toHaveBeenCalledWith('openai')
-  })
+    expect(result).toEqual({ selectedModel: 'gpt-4o' });
+    expect(window.app.getModelSettings).toHaveBeenCalledWith('openai');
+  });
 
   it('returns null when window.app.getModelSettings throws', async () => {
-    ;(window.app.getModelSettings as jest.Mock).mockRejectedValue(
-      new Error('Store unavailable')
-    )
+    (window.app.getModelSettings as jest.Mock).mockRejectedValue(new Error('Store unavailable'));
 
-    const service = createService()
-    const result = await service.getModelSettings('openai')
+    const service = createService();
+    const result = await service.getModelSettings('openai');
 
-    expect(result).toBeNull()
-  })
+    expect(result).toBeNull();
+  });
 
   it('returns null when window.app.getModelSettings returns null', async () => {
-    ;(window.app.getModelSettings as jest.Mock).mockResolvedValue(null)
+    (window.app.getModelSettings as jest.Mock).mockResolvedValue(null);
 
-    const service = createService()
-    const result = await service.getModelSettings('openai')
+    const service = createService();
+    const result = await service.getModelSettings('openai');
 
-    expect(result).toBeNull()
-  })
-})
+    expect(result).toBeNull();
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Suite 5: save
@@ -331,10 +334,10 @@ describe('ElectronPersonalityTaskService — getModelSettings', () => {
 
 describe('ElectronPersonalityTaskService — save', () => {
   it('delegates to window.workspace.savePersonality with the provided options', async () => {
-    const savedResult = { id: 'saved-123' }
-    ;(window.workspace.savePersonality as jest.Mock).mockResolvedValue(savedResult)
+    const savedResult = { id: 'saved-123' };
+    (window.workspace.savePersonality as jest.Mock).mockResolvedValue(savedResult);
 
-    const service = createService()
+    const service = createService();
 
     const result = await service.save({
       sectionId: 'consciousness',
@@ -343,9 +346,9 @@ describe('ElectronPersonalityTaskService — save', () => {
         title: 'consciousness',
         provider: 'openai',
         model: 'gpt-4o',
-        temperature: 0.7
-      }
-    })
+        temperature: 0.7,
+      },
+    });
 
     expect(window.workspace.savePersonality).toHaveBeenCalledWith({
       sectionId: 'consciousness',
@@ -354,22 +357,22 @@ describe('ElectronPersonalityTaskService — save', () => {
         title: 'consciousness',
         provider: 'openai',
         model: 'gpt-4o',
-        temperature: 0.7
-      }
-    })
-    expect(result).toEqual(savedResult)
-  })
+        temperature: 0.7,
+      },
+    });
+    expect(result).toEqual(savedResult);
+  });
 
   it('returns the id from the save result', async () => {
-    ;(window.workspace.savePersonality as jest.Mock).mockResolvedValue({ id: 'file-abc' })
+    (window.workspace.savePersonality as jest.Mock).mockResolvedValue({ id: 'file-abc' });
 
-    const service = createService()
+    const service = createService();
     const result = await service.save({
       sectionId: 'motivation',
       content: 'Driven by purpose',
-      metadata: { title: 'motivation', provider: 'openai', model: 'gpt-4o' }
-    })
+      metadata: { title: 'motivation', provider: 'openai', model: 'gpt-4o' },
+    });
 
-    expect(result.id).toBe('file-abc')
-  })
-})
+    expect(result.id).toBe('file-abc');
+  });
+});

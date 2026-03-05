@@ -36,7 +36,7 @@ export const mockApi = {
   bluetoothGetInfo: jest.fn().mockResolvedValue({
     platform: 'win32',
     supported: true,
-    apiAvailable: true
+    apiAvailable: true,
   }),
 
   // Network
@@ -47,7 +47,7 @@ export const mockApi = {
     platform: 'win32',
     supported: true,
     isOnline: true,
-    interfaceCount: 2
+    interfaceCount: 2,
   }),
   onNetworkStatusChange: jest.fn().mockReturnValue(jest.fn()),
 
@@ -55,7 +55,7 @@ export const mockApi = {
   lifecycleGetState: jest.fn().mockResolvedValue({
     events: [],
     appReadyAt: Date.now(),
-    platform: 'win32'
+    platform: 'win32',
   }),
   lifecycleGetEvents: jest.fn().mockResolvedValue([]),
   lifecycleRestart: jest.fn().mockResolvedValue(undefined),
@@ -63,10 +63,18 @@ export const mockApi = {
 
   // Window Manager
   wmGetState: jest.fn().mockResolvedValue({ windows: [] }),
-  wmCreateChild: jest.fn().mockResolvedValue({ id: 2, type: 'child', title: 'Child', createdAt: Date.now() }),
-  wmCreateModal: jest.fn().mockResolvedValue({ id: 3, type: 'modal', title: 'Modal', createdAt: Date.now() }),
-  wmCreateFrameless: jest.fn().mockResolvedValue({ id: 4, type: 'frameless', title: 'Frameless', createdAt: Date.now() }),
-  wmCreateWidget: jest.fn().mockResolvedValue({ id: 5, type: 'widget', title: 'Widget', createdAt: Date.now() }),
+  wmCreateChild: jest
+    .fn()
+    .mockResolvedValue({ id: 2, type: 'child', title: 'Child', createdAt: Date.now() }),
+  wmCreateModal: jest
+    .fn()
+    .mockResolvedValue({ id: 3, type: 'modal', title: 'Modal', createdAt: Date.now() }),
+  wmCreateFrameless: jest
+    .fn()
+    .mockResolvedValue({ id: 4, type: 'frameless', title: 'Frameless', createdAt: Date.now() }),
+  wmCreateWidget: jest
+    .fn()
+    .mockResolvedValue({ id: 5, type: 'widget', title: 'Widget', createdAt: Date.now() }),
   wmCloseWindow: jest.fn().mockResolvedValue(true),
   wmCloseAll: jest.fn().mockResolvedValue(undefined),
   onWmStateChange: jest.fn().mockReturnValue(jest.fn()),
@@ -78,7 +86,7 @@ export const mockApi = {
     fileName: 'file.txt',
     content: 'test content',
     size: 12,
-    lastModified: Date.now()
+    lastModified: Date.now(),
   }),
   fsSaveFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
   fsWriteFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
@@ -138,7 +146,7 @@ export const mockApi = {
     createdAt: Date.now(),
     lastActivity: Date.now(),
     isActive: true,
-    messageCount: 0
+    messageCount: 0,
   }),
   agentDestroySession: jest.fn().mockResolvedValue(true),
   agentGetSession: jest.fn().mockResolvedValue(null),
@@ -149,7 +157,7 @@ export const mockApi = {
   agentGetStatus: jest.fn().mockResolvedValue({
     totalSessions: 0,
     activeSessions: 0,
-    totalMessages: 0
+    totalMessages: 0,
   }),
   agentIsRunning: jest.fn().mockResolvedValue(false),
 
@@ -177,8 +185,8 @@ export const mockApi = {
   windowIsFullScreen: jest.fn().mockResolvedValue(false),
   getPlatform: jest.fn().mockResolvedValue('win32'),
   onMaximizeChange: jest.fn().mockReturnValue(jest.fn()),
-  onFullScreenChange: jest.fn().mockReturnValue(jest.fn())
-}
+  onFullScreenChange: jest.fn().mockReturnValue(jest.fn()),
+};
 
 /**
  * Reset all mock functions to their default implementations.
@@ -187,7 +195,7 @@ export const mockApi = {
 export function resetMockApi(): void {
   for (const fn of Object.values(mockApi)) {
     if (typeof fn === 'function' && 'mockClear' in fn) {
-      ;(fn as jest.Mock).mockClear()
+      (fn as jest.Mock).mockClear();
     }
   }
 }
@@ -200,6 +208,6 @@ export function installMockApi(): void {
   Object.defineProperty(window, 'api', {
     value: mockApi,
     writable: true,
-    configurable: true
-  })
+    configurable: true,
+  });
 }

@@ -465,9 +465,9 @@ export class TaskExecutor implements Disposable {
       this.activeTasks.delete(taskId);
       this.runningCount--;
 
-      console.log(
-        `[TaskExecutor] Task ${taskId} (${type}) finished. ` +
-          `Running: ${this.runningCount}, Queued: ${this.queue.length}`
+      this.logger?.info(
+        'TaskExecutor',
+        `Task ${taskId} (${type}) finished. Running: ${this.runningCount}, Queued: ${this.queue.length}`
       );
 
       // Process next tasks in queue

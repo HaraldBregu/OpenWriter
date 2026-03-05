@@ -7,7 +7,7 @@
  * Useful for tests that need to wait for async operations.
  */
 export function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -18,14 +18,14 @@ export function createMockIpcEvent(senderId = 1) {
   return {
     sender: {
       id: senderId,
-      send: jest.fn()
+      send: jest.fn(),
     },
     frameId: 1,
     processId: 1,
     returnValue: undefined,
     defaultPrevented: false,
-    preventDefault: jest.fn()
-  }
+    preventDefault: jest.fn(),
+  };
 }
 
 /**
@@ -33,7 +33,7 @@ export function createMockIpcEvent(senderId = 1) {
  * Useful after dispatching actions or triggering async operations.
  */
 export function flushPromises(): Promise<void> {
-  return new Promise((resolve) => setImmediate(resolve))
+  return new Promise((resolve) => setImmediate(resolve));
 }
 
 /**
@@ -47,8 +47,8 @@ export function createMockThread(overrides: Record<string, unknown> = {}) {
     providerId: 'openai',
     createdAt: 1700000000000,
     updatedAt: 1700000000000,
-    ...overrides
-  }
+    ...overrides,
+  };
 }
 
 /**
@@ -60,6 +60,6 @@ export function createMockMessage(overrides: Record<string, unknown> = {}) {
     role: 'user' as const,
     content: 'Hello, AI!',
     timestamp: 1700000000000,
-    ...overrides
-  }
+    ...overrides,
+  };
 }

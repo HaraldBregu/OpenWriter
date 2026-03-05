@@ -20,13 +20,13 @@ npx electron-vite build && yarn test:e2e
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm test` | Run all Jest unit and integration tests |
-| `npm run test:main` | Run only main process tests |
-| `npm run test:renderer` | Run only renderer process tests |
-| `npm run test:coverage` | Run all tests with coverage report |
-| `yarn test:e2e` | Run Playwright E2E tests |
+| Command                 | Description                             |
+| ----------------------- | --------------------------------------- |
+| `npm test`              | Run all Jest unit and integration tests |
+| `npm run test:main`     | Run only main process tests             |
+| `npm run test:renderer` | Run only renderer process tests         |
+| `npm run test:coverage` | Run all tests with coverage report      |
+| `yarn test:e2e`         | Run Playwright E2E tests                |
 
 ## Test Architecture
 
@@ -68,10 +68,10 @@ tests/
 
 ## Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `jest.config.cjs` | Multi-project Jest config (main = Node env, renderer = jsdom env) |
-| `playwright.config.ts` | Playwright config for Electron E2E tests |
+| File                   | Purpose                                                           |
+| ---------------------- | ----------------------------------------------------------------- |
+| `jest.config.cjs`      | Multi-project Jest config (main = Node env, renderer = jsdom env) |
+| `playwright.config.ts` | Playwright config for Electron E2E tests                          |
 
 ## Unit Tests (Jest)
 
@@ -88,16 +88,16 @@ Main process tests go in `tests/unit/main/` and have access to the full Electron
 
 ```typescript
 // tests/unit/main/services/MyService.test.ts
-import { MyService } from '../../../../src/main/services/MyService'
+import { MyService } from '../../../../src/main/services/MyService';
 // 'electron' is auto-mocked — no jest.mock() needed
-import { BrowserWindow } from 'electron'
+import { BrowserWindow } from 'electron';
 
 describe('MyService', () => {
   it('should do something', () => {
-    const service = new MyService()
-    expect(service.doSomething()).toBe(true)
-  })
-})
+    const service = new MyService();
+    expect(service.doSomething()).toBe(true);
+  });
+});
 ```
 
 The Electron mock (`tests/mocks/electron.ts`) provides stubs for: `BrowserWindow`, `app`, `ipcMain`, `ipcRenderer`, `dialog`, `clipboard`, `nativeImage`, `Menu`, `Tray`, `Notification`, `contextBridge`, `shell`, `systemPreferences`.
@@ -150,18 +150,18 @@ it('should render with store and router', () => {
 #### Testing Custom Hooks
 
 ```typescript
-import { renderHook, act, waitFor } from '@testing-library/react'
-import { useMyHook } from '@/hooks/useMyHook'
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { useMyHook } from '@/hooks/useMyHook';
 
 it('should update state', async () => {
-  ;(window.api.someMethod as jest.Mock).mockResolvedValue('result')
+  (window.api.someMethod as jest.Mock).mockResolvedValue('result');
 
-  const { result } = renderHook(() => useMyHook())
+  const { result } = renderHook(() => useMyHook());
 
   await waitFor(() => {
-    expect(result.current.value).toBe('result')
-  })
-})
+    expect(result.current.value).toBe('result');
+  });
+});
 ```
 
 ### Resetting Mocks
@@ -205,37 +205,37 @@ npx playwright test --config playwright.config.ts --debug
 E2E tests go in `tests/e2e/` with a `.spec.ts` extension:
 
 ```typescript
-import { test, expect } from '@playwright/test'
-import { launchApp, closeApp, type AppContext } from './electron-helpers'
+import { test, expect } from '@playwright/test';
+import { launchApp, closeApp, type AppContext } from './electron-helpers';
 
-let ctx: AppContext
+let ctx: AppContext;
 
 test.beforeAll(async () => {
-  ctx = await launchApp()
-})
+  ctx = await launchApp();
+});
 
 test.afterAll(async () => {
-  await closeApp(ctx)
-})
+  await closeApp(ctx);
+});
 
 test('app should display the title', async () => {
-  const title = await ctx.page.title()
-  expect(title).toContain('Tesseract')
-})
+  const title = await ctx.page.title();
+  expect(title).toContain('Tesseract');
+});
 ```
 
 ### E2E Helpers
 
 The `electron-helpers.ts` module provides:
 
-| Helper | Description |
-|--------|-------------|
-| `launchApp()` | Launch the Electron app and return `{ app, page }` |
-| `closeApp(ctx)` | Gracefully close the app |
-| `waitForAppReady(page)` | Wait for `#root` and React hydration |
-| `navigateTo(page, path)` | Navigate to a hash route (e.g., `/home`) |
-| `getCurrentRoute(page)` | Get the current `window.location.hash` |
-| `getWindowTitle(app)` | Get the BrowserWindow title |
+| Helper                   | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `launchApp()`            | Launch the Electron app and return `{ app, page }` |
+| `closeApp(ctx)`          | Gracefully close the app                           |
+| `waitForAppReady(page)`  | Wait for `#root` and React hydration               |
+| `navigateTo(page, path)` | Navigate to a hash route (e.g., `/home`)           |
+| `getCurrentRoute(page)`  | Get the current `window.location.hash`             |
+| `getWindowTitle(app)`    | Get the BrowserWindow title                        |
 
 ### E2E Configuration
 
@@ -260,11 +260,11 @@ Key settings in `playwright.config.ts`:
 All `window.api` methods are pre-mocked as `jest.fn()`. Set return values per test:
 
 ```typescript
-;(window.api.clipboardWriteText as jest.Mock).mockResolvedValue(undefined)
-;(window.api.getPlatform as jest.Mock).mockResolvedValue('win32')
-;(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
-  { path: '/projects/my-app', lastOpened: Date.now() }
-])
+(window.api.clipboardWriteText as jest.Mock).mockResolvedValue(undefined);
+(window.api.getPlatform as jest.Mock).mockResolvedValue('win32');
+(window.api.workspaceGetRecent as jest.Mock).mockResolvedValue([
+  { path: '/projects/my-app', lastOpened: Date.now() },
+]);
 ```
 
 ### Handling Async State Updates
@@ -274,13 +274,13 @@ Always wrap async state changes with `act()` or use `waitFor()`:
 ```typescript
 // Option 1: act() for direct async calls
 await act(async () => {
-  await result.current.doAsyncThing()
-})
+  await result.current.doAsyncThing();
+});
 
 // Option 2: waitFor() for state that settles asynchronously
 await waitFor(() => {
-  expect(result.current.isReady).toBe(true)
-})
+  expect(result.current.isReady).toBe(true);
+});
 ```
 
 ### Mocking lucide-react Icons
@@ -292,8 +292,8 @@ jest.mock('lucide-react', () => ({
   Send: (props: Record<string, unknown>) =>
     React.createElement('svg', { ...props, 'data-testid': 'icon-send' }),
   Copy: (props: Record<string, unknown>) =>
-    React.createElement('svg', { ...props, 'data-testid': 'icon-copy' })
-}))
+    React.createElement('svg', { ...props, 'data-testid': 'icon-copy' }),
+}));
 ```
 
 ### Testing with Fake Timers
@@ -321,16 +321,21 @@ it('should update after delay', async () => {
 ## Troubleshooting
 
 ### `TextEncoder is not defined`
+
 The `tests/setup/polyfills.ts` file handles this. If you see this error, ensure the renderer project in `jest.config.cjs` has `setupFiles: ['<rootDir>/tests/setup/polyfills.ts']`.
 
 ### `Invalid hook call` in hook tests
+
 This usually means duplicate React instances. Avoid `jest.resetModules()` in renderer tests. If you need to reset module-level state, mock the specific values instead.
 
 ### `scrollIntoView is not a function`
+
 jsdom doesn't implement `scrollIntoView`. It's stubbed in `tests/setup/renderer.ts`. If you see this in a new test, ensure the test is in the `renderer` project (under `tests/unit/renderer/`).
 
 ### E2E tests fail with "Cannot find module"
+
 The app must be built before running E2E tests. Run `npx electron-vite build` first.
 
 ### E2E window size assertions off by a few pixels
+
 Windows DPI scaling can cause small deviations. Use tolerance: `expect(width).toBeGreaterThan(896)` instead of exact equality.

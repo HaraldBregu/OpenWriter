@@ -14,17 +14,17 @@
  * tests/setup/main.ts, which runs before any module is imported.
  */
 
-'use strict'
+'use strict';
 
-const tsJestTransformer = require('ts-jest').default
+const tsJestTransformer = require('ts-jest').default;
 
-let transformer = null
+let transformer = null;
 
 function getTransformer(config) {
   if (!transformer) {
-    transformer = tsJestTransformer.createTransformer()
+    transformer = tsJestTransformer.createTransformer();
   }
-  return transformer
+  return transformer;
 }
 
 module.exports = {
@@ -39,10 +39,10 @@ module.exports = {
       // import.meta.env → (globalThis.__VITE_ENV__ || {})
       .replace(/import\.meta\.env/g, '(globalThis.__VITE_ENV__ || {})')
       // Any remaining import.meta references → ({})
-      .replace(/import\.meta/g, '({})')
+      .replace(/import\.meta/g, '({})');
 
     // Delegate to ts-jest for actual TypeScript compilation
-    return getTransformer(options).process(processed, sourcePath, options)
+    return getTransformer(options).process(processed, sourcePath, options);
   },
 
   getCacheKey(sourceText, sourcePath, options) {
@@ -51,6 +51,6 @@ module.exports = {
       .update(sourceText)
       .update(sourcePath)
       .update(JSON.stringify(options?.config?.globals ?? {}))
-      .digest('hex')
-  }
-}
+      .digest('hex');
+  },
+};

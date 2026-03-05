@@ -12,18 +12,18 @@
  *   - window.win and window.app are installed by tests/setup/renderer.ts.
  *     Individual tests override specific methods as needed.
  */
-import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 // Must come before the component import
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
-    i18n: { changeLanguage: jest.fn() }
+    i18n: { changeLanguage: jest.fn() },
   }),
-  initReactI18next: { type: '3rdParty', init: jest.fn() }
-}))
+  initReactI18next: { type: '3rdParty', init: jest.fn() },
+}));
 
 jest.mock('lucide-react', () => ({
   Menu: (props: Record<string, unknown>) =>
@@ -33,10 +33,10 @@ jest.mock('lucide-react', () => ({
   Minus: (props: Record<string, unknown>) =>
     React.createElement('svg', { ...props, 'data-testid': 'minus-icon' }),
   X: (props: Record<string, unknown>) =>
-    React.createElement('svg', { ...props, 'data-testid': 'x-icon' })
-}))
+    React.createElement('svg', { ...props, 'data-testid': 'x-icon' }),
+}));
 
-import { TitleBar } from '../../../../src/renderer/src/components/TitleBar'
+import { TitleBar } from '../../../../src/renderer/src/components/TitleBar';
 
 // ---------------------------------------------------------------------------
 // i18n key constants — must match what TitleBar passes to t()
@@ -47,8 +47,8 @@ const KEYS = {
   minimize: 'titleBar.minimize',
   maximize: 'titleBar.maximize',
   restore: 'titleBar.restore',
-  close: 'titleBar.close'
-} as const
+  close: 'titleBar.close',
+} as const;
 
 // ---------------------------------------------------------------------------
 // Helper: simulate the component being mounted on a non-Mac platform so the
@@ -58,7 +58,7 @@ const KEYS = {
 function renderOnWindows(props: Parameters<typeof TitleBar>[0] = {}) {
   // The isMac check reads navigator.platform once at module load, so we
   // manipulate it before each test via spyOn where needed.
-  return render(<TitleBar {...props} />)
+  return render(<TitleBar {...props} />);
 }
 
 // ---------------------------------------------------------------------------
@@ -67,206 +67,206 @@ function renderOnWindows(props: Parameters<typeof TitleBar>[0] = {}) {
 
 describe('TitleBar — default title', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('renders with the default title text', () => {
-    renderOnWindows()
-    expect(screen.getByText('Application Name')).toBeInTheDocument()
-  })
+    renderOnWindows();
+    expect(screen.getByText('Application Name')).toBeInTheDocument();
+  });
 
   it('renders with a custom title', () => {
-    renderOnWindows({ title: 'My Document' })
-    expect(screen.getByText('My Document')).toBeInTheDocument()
-  })
+    renderOnWindows({ title: 'My Document' });
+    expect(screen.getByText('My Document')).toBeInTheDocument();
+  });
 
   it('applies a custom className to the root element', () => {
-    const { container } = renderOnWindows({ className: 'extra-class' })
-    expect(container.firstChild).toHaveClass('extra-class')
-  })
-})
+    const { container } = renderOnWindows({ className: 'extra-class' });
+    expect(container.firstChild).toHaveClass('extra-class');
+  });
+});
 
 describe('TitleBar — window state subscription', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('calls window.win.isMaximized on mount', () => {
-    renderOnWindows()
-    expect(window.win.isMaximized).toHaveBeenCalled()
-  })
+    renderOnWindows();
+    expect(window.win.isMaximized).toHaveBeenCalled();
+  });
 
   it('calls window.win.isFullScreen on mount', () => {
-    renderOnWindows()
-    expect(window.win.isFullScreen).toHaveBeenCalled()
-  })
+    renderOnWindows();
+    expect(window.win.isFullScreen).toHaveBeenCalled();
+  });
 
   it('subscribes to onMaximizeChange on mount', () => {
-    renderOnWindows()
-    expect(window.win.onMaximizeChange).toHaveBeenCalled()
-  })
+    renderOnWindows();
+    expect(window.win.onMaximizeChange).toHaveBeenCalled();
+  });
 
   it('subscribes to onFullScreenChange on mount', () => {
-    renderOnWindows()
-    expect(window.win.onFullScreenChange).toHaveBeenCalled()
-  })
+    renderOnWindows();
+    expect(window.win.onFullScreenChange).toHaveBeenCalled();
+  });
 
   it('unsubscribes from onMaximizeChange on unmount', () => {
-    const unsubscribeMax = jest.fn()
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(unsubscribeMax)
+    const unsubscribeMax = jest.fn();
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(unsubscribeMax);
 
-    const { unmount } = renderOnWindows()
-    unmount()
+    const { unmount } = renderOnWindows();
+    unmount();
 
-    expect(unsubscribeMax).toHaveBeenCalledTimes(1)
-  })
+    expect(unsubscribeMax).toHaveBeenCalledTimes(1);
+  });
 
   it('unsubscribes from onFullScreenChange on unmount', () => {
-    const unsubscribeFs = jest.fn()
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(unsubscribeFs)
+    const unsubscribeFs = jest.fn();
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(unsubscribeFs);
 
-    const { unmount } = renderOnWindows()
-    unmount()
+    const { unmount } = renderOnWindows();
+    unmount();
 
-    expect(unsubscribeFs).toHaveBeenCalledTimes(1)
-  })
-})
+    expect(unsubscribeFs).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe('TitleBar — window controls (non-Mac)', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('calls window.win.minimize when the minimize button is clicked', async () => {
-    const user = userEvent.setup()
-    renderOnWindows()
+    const user = userEvent.setup();
+    renderOnWindows();
 
-    await user.click(screen.getByTitle(KEYS.minimize))
+    await user.click(screen.getByTitle(KEYS.minimize));
 
-    expect(window.win.minimize).toHaveBeenCalledTimes(1)
-  })
+    expect(window.win.minimize).toHaveBeenCalledTimes(1);
+  });
 
   it('calls window.win.close when the close button is clicked', async () => {
-    const user = userEvent.setup()
-    renderOnWindows()
+    const user = userEvent.setup();
+    renderOnWindows();
 
-    await user.click(screen.getByTitle(KEYS.close))
+    await user.click(screen.getByTitle(KEYS.close));
 
-    expect(window.win.close).toHaveBeenCalledTimes(1)
-  })
+    expect(window.win.close).toHaveBeenCalledTimes(1);
+  });
 
   it('calls window.win.maximize when the maximize button is clicked (not maximized)', async () => {
-    const user = userEvent.setup()
-    renderOnWindows()
+    const user = userEvent.setup();
+    renderOnWindows();
 
     // Not maximized → button title is 'titleBar.maximize'
-    await user.click(screen.getByTitle(KEYS.maximize))
+    await user.click(screen.getByTitle(KEYS.maximize));
 
-    expect(window.win.maximize).toHaveBeenCalledTimes(1)
-  })
+    expect(window.win.maximize).toHaveBeenCalledTimes(1);
+  });
 
   it('shows the restore button title when the window is already maximized', async () => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(true)
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(true);
 
-    renderOnWindows()
+    renderOnWindows();
 
     await waitFor(() => {
-      expect(screen.getByTitle(KEYS.restore)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByTitle(KEYS.restore)).toBeInTheDocument();
+    });
+  });
 
   it('calls window.win.maximize exactly once when the restore button is clicked', async () => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(true)
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(true);
     // Create a fresh spy on maximize for this isolated assertion
-    const maximizeSpy = jest.fn()
-    ;(window.win.maximize as jest.Mock).mockImplementation(maximizeSpy)
+    const maximizeSpy = jest.fn();
+    (window.win.maximize as jest.Mock).mockImplementation(maximizeSpy);
 
-    const user = userEvent.setup()
-    renderOnWindows()
+    const user = userEvent.setup();
+    renderOnWindows();
 
-    const restoreBtn = await screen.findByTitle(KEYS.restore)
-    await user.click(restoreBtn)
+    const restoreBtn = await screen.findByTitle(KEYS.restore);
+    await user.click(restoreBtn);
 
-    expect(maximizeSpy).toHaveBeenCalledTimes(1)
-  })
-})
+    expect(maximizeSpy).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe('TitleBar — application menu (non-Mac)', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('calls window.app.popupMenu when the application menu button is clicked', async () => {
-    const user = userEvent.setup()
-    renderOnWindows()
+    const user = userEvent.setup();
+    renderOnWindows();
 
-    await user.click(screen.getByTitle(KEYS.applicationMenu))
+    await user.click(screen.getByTitle(KEYS.applicationMenu));
 
-    expect(window.app.popupMenu).toHaveBeenCalledTimes(1)
-  })
-})
+    expect(window.app.popupMenu).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe('TitleBar — sidebar toggle', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('does not render the toggle button when onToggleSidebar is not provided', () => {
-    renderOnWindows()
-    expect(screen.queryByTitle(KEYS.toggleSidebar)).not.toBeInTheDocument()
-  })
+    renderOnWindows();
+    expect(screen.queryByTitle(KEYS.toggleSidebar)).not.toBeInTheDocument();
+  });
 
   it('renders the toggle button when onToggleSidebar is provided', () => {
-    renderOnWindows({ onToggleSidebar: jest.fn() })
-    expect(screen.getByTitle(KEYS.toggleSidebar)).toBeInTheDocument()
-  })
+    renderOnWindows({ onToggleSidebar: jest.fn() });
+    expect(screen.getByTitle(KEYS.toggleSidebar)).toBeInTheDocument();
+  });
 
   it('calls onToggleSidebar when the sidebar toggle button is clicked', async () => {
-    const onToggle = jest.fn()
-    const user = userEvent.setup()
+    const onToggle = jest.fn();
+    const user = userEvent.setup();
 
-    renderOnWindows({ onToggleSidebar: onToggle })
+    renderOnWindows({ onToggleSidebar: onToggle });
 
-    await user.click(screen.getByTitle(KEYS.toggleSidebar))
+    await user.click(screen.getByTitle(KEYS.toggleSidebar));
 
-    expect(onToggle).toHaveBeenCalledTimes(1)
-  })
+    expect(onToggle).toHaveBeenCalledTimes(1);
+  });
 
   it('does not call window.win.minimize or close when toggling the sidebar', async () => {
-    const onToggle = jest.fn()
-    const user = userEvent.setup()
+    const onToggle = jest.fn();
+    const user = userEvent.setup();
 
     // Use fresh mock references captured here to avoid any state from
     // prior tests even though clearMocks:true resets call history globally.
-    const minimizeSpy = jest.fn()
-    const closeSpy = jest.fn()
-    ;(window.win.minimize as jest.Mock).mockImplementation(minimizeSpy)
-    ;(window.win.close as jest.Mock).mockImplementation(closeSpy)
+    const minimizeSpy = jest.fn();
+    const closeSpy = jest.fn();
+    (window.win.minimize as jest.Mock).mockImplementation(minimizeSpy);
+    (window.win.close as jest.Mock).mockImplementation(closeSpy);
 
-    renderOnWindows({ onToggleSidebar: onToggle })
+    renderOnWindows({ onToggleSidebar: onToggle });
 
-    await user.click(screen.getByTitle(KEYS.toggleSidebar))
+    await user.click(screen.getByTitle(KEYS.toggleSidebar));
 
-    expect(onToggle).toHaveBeenCalledTimes(1)
-    expect(minimizeSpy).not.toHaveBeenCalled()
-    expect(closeSpy).not.toHaveBeenCalled()
-  })
-})
+    expect(onToggle).toHaveBeenCalledTimes(1);
+    expect(minimizeSpy).not.toHaveBeenCalled();
+    expect(closeSpy).not.toHaveBeenCalled();
+  });
+});
 
 describe('TitleBar — window.win unavailable (graceful degradation)', () => {
   beforeEach(() => {
@@ -274,9 +274,9 @@ describe('TitleBar — window.win unavailable (graceful degradation)', () => {
     Object.defineProperty(window, 'win', {
       value: undefined,
       writable: true,
-      configurable: true
-    })
-  })
+      configurable: true,
+    });
+  });
 
   afterEach(() => {
     // Restore the mock installed by tests/setup/renderer.ts
@@ -288,12 +288,12 @@ describe('TitleBar — window.win unavailable (graceful degradation)', () => {
         isMaximized: jest.fn().mockResolvedValue(false),
         isFullScreen: jest.fn().mockResolvedValue(false),
         onMaximizeChange: jest.fn().mockReturnValue(jest.fn()),
-        onFullScreenChange: jest.fn().mockReturnValue(jest.fn())
+        onFullScreenChange: jest.fn().mockReturnValue(jest.fn()),
       },
       writable: true,
-      configurable: true
-    })
-  })
+      configurable: true,
+    });
+  });
 
   it('renders the title bar markup before the effect fires (no immediate crash)', () => {
     // TitleBar calls window.win.isMaximized() inside useEffect, which runs
@@ -304,30 +304,30 @@ describe('TitleBar — window.win unavailable (graceful degradation)', () => {
     // The effect will subsequently throw a TypeError when it fires, which in
     // a real Electron window would be caught by an ErrorBoundary. This test
     // confirms the component survives the synchronous render phase with no bridge.
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     // Does NOT throw synchronously
-    expect(() => render(<TitleBar title="No Bridge" />)).not.toThrow()
-    expect(screen.getByText('No Bridge')).toBeInTheDocument()
+    expect(() => render(<TitleBar title="No Bridge" />)).not.toThrow();
+    expect(screen.getByText('No Bridge')).toBeInTheDocument();
 
-    consoleSpy.mockRestore()
-  })
-})
+    consoleSpy.mockRestore();
+  });
+});
 
 describe('TitleBar — window.win available (bridge present)', () => {
   beforeEach(() => {
-    ;(window.win.isMaximized as jest.Mock).mockResolvedValue(false)
-    ;(window.win.isFullScreen as jest.Mock).mockResolvedValue(false)
-    ;(window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn())
-    ;(window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn())
-  })
+    (window.win.isMaximized as jest.Mock).mockResolvedValue(false);
+    (window.win.isFullScreen as jest.Mock).mockResolvedValue(false);
+    (window.win.onMaximizeChange as jest.Mock).mockReturnValue(jest.fn());
+    (window.win.onFullScreenChange as jest.Mock).mockReturnValue(jest.fn());
+  });
 
   it('mounts without error when all bridge methods are present', () => {
-    expect(() => renderOnWindows()).not.toThrow()
-  })
+    expect(() => renderOnWindows()).not.toThrow();
+  });
 
   it('renders the title bar root element', () => {
-    const { container } = renderOnWindows({ title: 'Test App' })
-    expect(container.firstChild).toBeInTheDocument()
-  })
-})
+    const { container } = renderOnWindows({ title: 'Test App' });
+    expect(container.firstChild).toBeInTheDocument();
+  });
+});

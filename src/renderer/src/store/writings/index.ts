@@ -1,9 +1,9 @@
 /** Writings slice public barrel — re-exports types, state, reducer, and selectors. */
 // Types
-export type { WritingItem, WritingsState } from './types'
+export type { WritingItem, WritingsState } from './types';
 
 // State
-export { initialState } from './state'
+export { initialState } from './state';
 
 // Reducer, slice, and synchronous actions
 export {
@@ -15,11 +15,11 @@ export {
   writingSelected,
   writingsLoadingStarted,
   writingsLoadingFailed,
-} from './reducer'
-export { default } from './reducer'
+} from './reducer';
+export { default } from './reducer';
 
 // Async actions
-export { loadWritings, refreshWriting } from './actions'
+export { loadWritings, refreshWriting } from './actions';
 
 // Selectors
 export {
@@ -29,4 +29,4 @@ export {
   selectWritingsStatus,
   selectWritingsError,
   selectWritingById,
-} from './selectors'
+} from './selectors';

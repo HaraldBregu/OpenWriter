@@ -12,23 +12,23 @@
  * Standardized IPC error response.
  */
 export interface IpcError {
-  success: false
+  success: false;
   error: {
-    code: string
-    message: string
-    stack?: string
-  }
+    code: string;
+    message: string;
+    stack?: string;
+  };
 }
 
 /**
  * Standardized IPC success response.
  */
 export interface IpcSuccess<T> {
-  success: true
-  data: T
+  success: true;
+  data: T;
 }
 
 /**
  * Union type for IPC responses.
  */
-export type IpcResult<T> = IpcSuccess<T> | IpcError
+export type IpcResult<T> = IpcSuccess<T> | IpcError;

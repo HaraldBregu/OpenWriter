@@ -2,8 +2,8 @@
  * Tests for Menu class.
  * Validates menu creation, language switching, and platform behavior.
  */
-import { Menu as ElectronMenu } from 'electron'
-import { Menu } from '../../../../src/main/menu'
+import { Menu as ElectronMenu } from 'electron';
+import { Menu } from '../../../../src/main/menu';
 
 // Mock i18n module
 jest.mock('../../../../src/main/i18n', () => ({
@@ -38,49 +38,49 @@ jest.mock('../../../../src/main/i18n', () => ({
     language: 'Language',
     theme: 'Theme',
     light: 'Light',
-    dark: 'Dark'
-  })
-}))
+    dark: 'Dark',
+  }),
+}));
 
 describe('Menu', () => {
-  let menu: Menu
-  let callbacks: { onLanguageChange: jest.Mock; onThemeChange: jest.Mock }
-  const originalPlatform = process.platform
+  let menu: Menu;
+  let callbacks: { onLanguageChange: jest.Mock; onThemeChange: jest.Mock };
+  const originalPlatform = process.platform;
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.clearAllMocks();
     callbacks = {
       onLanguageChange: jest.fn(),
-      onThemeChange: jest.fn()
-    }
-    menu = new Menu(callbacks)
-  })
+      onThemeChange: jest.fn(),
+    };
+    menu = new Menu(callbacks);
+  });
 
   afterEach(() => {
-    Object.defineProperty(process, 'platform', { value: originalPlatform })
-  })
+    Object.defineProperty(process, 'platform', { value: originalPlatform });
+  });
 
   describe('create', () => {
     it('should set application menu to null on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' })
-      menu.create()
-      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalledWith(null)
-    })
+      Object.defineProperty(process, 'platform', { value: 'win32' });
+      menu.create();
+      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalledWith(null);
+    });
 
     it('should build and set application menu on macOS', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' })
-      menu.create()
-      expect(ElectronMenu.buildFromTemplate).toHaveBeenCalled()
-      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalledWith(expect.anything())
-    })
-  })
+      Object.defineProperty(process, 'platform', { value: 'darwin' });
+      menu.create();
+      expect(ElectronMenu.buildFromTemplate).toHaveBeenCalled();
+      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalledWith(expect.anything());
+    });
+  });
 
   describe('updateLanguage', () => {
     it('should rebuild menu with new language', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' })
-      menu.updateLanguage('it')
+      Object.defineProperty(process, 'platform', { value: 'win32' });
+      menu.updateLanguage('it');
       // Should call setApplicationMenu (null on win32)
-      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalled()
-    })
-  })
-})
+      expect(ElectronMenu.setApplicationMenu).toHaveBeenCalled();
+    });
+  });
+});

@@ -10,18 +10,18 @@
  *     preloadedState: { chat: { threads: [], activeThreadId: null, isAgentRunning: false, runningThreadId: null } }
  *   })
  */
-import React from 'react'
-import { render, type RenderOptions, type RenderResult } from '@testing-library/react'
-import { configureStore, type EnhancedStore } from '@reduxjs/toolkit'
-import { Provider } from 'react-redux'
-import { HashRouter } from 'react-router-dom'
-import chatReducer from '../../src/renderer/src/store/chatSlice'
-import type { RootState } from '../../src/renderer/src/store'
+import React from 'react';
+import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
+import { configureStore, type EnhancedStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { HashRouter } from 'react-router-dom';
+import chatReducer from '../../src/renderer/src/store/chatSlice';
+import type { RootState } from '../../src/renderer/src/store';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
-  preloadedState?: Partial<RootState>
-  store?: EnhancedStore
-  withRouter?: boolean
+  preloadedState?: Partial<RootState>;
+  store?: EnhancedStore;
+  withRouter?: boolean;
 }
 
 /**
@@ -31,10 +31,10 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
 export function createTestStore(preloadedState?: Partial<RootState>): EnhancedStore {
   return configureStore({
     reducer: {
-      chat: chatReducer
+      chat: chatReducer,
     },
-    preloadedState
-  })
+    preloadedState,
+  });
 }
 
 /**
@@ -52,15 +52,15 @@ export function renderWithProviders(
   }: ExtendedRenderOptions = {}
 ): RenderResult & { store: EnhancedStore } {
   function Wrapper({ children }: { children: React.ReactNode }): React.ReactElement {
-    const content = <Provider store={store}>{children}</Provider>
+    const content = <Provider store={store}>{children}</Provider>;
     if (withRouter) {
-      return <HashRouter>{content}</HashRouter>
+      return <HashRouter>{content}</HashRouter>;
     }
-    return content
+    return content;
   }
 
   return {
     store,
-    ...render(ui, { wrapper: Wrapper, ...renderOptions })
-  }
+    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
+  };
 }

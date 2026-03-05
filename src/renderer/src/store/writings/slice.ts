@@ -8,7 +8,7 @@
  *   - Barrel:    '@/store/writings'
  */
 
-export type { WritingItem, WritingsState } from './types'
+export type { WritingItem, WritingsState } from './types';
 
 export {
   writingsSlice,
@@ -19,8 +19,8 @@ export {
   writingSelected,
   writingsLoadingStarted,
   writingsLoadingFailed,
-} from './reducer'
-export { default } from './reducer'
+} from './reducer';
+export { default } from './reducer';
 
 export {
   selectAllWritings,
@@ -29,4 +29,4 @@ export {
   selectWritingsStatus,
   selectWritingsError,
   selectWritingById,
-} from './selectors'
+} from './selectors';
