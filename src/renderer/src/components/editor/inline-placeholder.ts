@@ -54,6 +54,8 @@ const InlinePlaceholder = Extension.create({
 						const $cursor = selection.$cursor;
 						if (!$cursor) return DecorationSet.empty;
 
+						if ($cursor.parent.content.size === 0) return DecorationSet.empty;
+
 						const isAtEnd = $cursor.pos === $cursor.end();
 						if (!isAtEnd) return DecorationSet.empty;
 
