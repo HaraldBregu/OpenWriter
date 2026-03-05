@@ -237,7 +237,7 @@ export class WorkspaceMetadataService implements Disposable {
     this.scheduleSave(metadata)
     this.emitDirectoriesChanged()
 
-    console.log('[WorkspaceMetadataService] Removed directory:', removed.path)
+    this.logger?.info('WorkspaceMetadataService', `Removed directory: ${removed.path}`)
     return true
   }
 
