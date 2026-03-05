@@ -449,7 +449,7 @@ export class OutputFilesService implements Disposable {
           this.logger?.info('OutputFilesService', `Cleaned up ${cleanups.length} old block files in ${folderPath}`)
         }
       } catch (err) {
-        console.warn(`[OutputFilesService] Failed to list folder for cleanup: ${folderPath}`, err)
+        this.logger?.warn('OutputFilesService', `Failed to list folder for cleanup: ${folderPath}`, err)
       }
     }
 
