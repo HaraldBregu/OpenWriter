@@ -278,9 +278,7 @@ export class TaskExecutor implements Disposable {
    * Disposable -- abort every active task on shutdown.
    */
   destroy(): void {
-    console.log(
-      `[TaskExecutor] Destroying, aborting ${this.activeTasks.size} task(s)`
-    )
+    this.logger?.info('TaskExecutor', `Destroying, aborting ${this.activeTasks.size} task(s)`)
     if (this.gcHandle) {
       clearInterval(this.gcHandle)
       this.gcHandle = null
