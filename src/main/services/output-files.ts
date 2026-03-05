@@ -1019,7 +1019,7 @@ export class OutputFilesService implements Disposable {
     // -----------------------------------------------------------------------
     // Case 4: Empty — no content found
     // -----------------------------------------------------------------------
-    console.warn(`[OutputFilesService] No content found in ${folderPath}`)
+    this.logger?.warn('OutputFilesService', `No content found in ${folderPath}`)
     const cleanMetadata: OutputFileMetadata = { ...metadata }
     delete (cleanMetadata as OutputFileMetadata & { content?: unknown }).content
 
