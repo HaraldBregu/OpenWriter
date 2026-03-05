@@ -1,5 +1,12 @@
 # AppTextEditor Architecture (Mar 2026)
 
+## Font System
+- Font package: `@fontsource/merriweather` (replaced `@fontsource/alegreya`, Mar 2026)
+- Imports in `src/renderer/src/main.tsx`: weights 300, 400, 700, 900 — each in normal + italic variant
+- Applied to editor via `.ProseMirror { font-family: 'Merriweather', serif; }` in `src/renderer/src/index.css`
+- Heading/list font-family inherits from `.ProseMirror` via `.tiptap h1–h6 { font-family: inherit }` and `.tiptap ul, ol { font-family: inherit }` rules already in place
+- CSP in `src/renderer/index.html` allows `'self'` only — @fontsource ships woff/woff2 files bundled locally, so no external font CDN is needed and no CSP changes are required
+
 ## Files
 - `src/renderer/src/components/app/editor/AppTextEditor.tsx` — main editor component
 - `src/renderer/src/components/app/editor/extensions/SlashCommand.ts` — slash command PM plugin

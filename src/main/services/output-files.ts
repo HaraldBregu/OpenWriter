@@ -576,7 +576,7 @@ export class OutputFilesService implements Disposable {
    * Cleanup on shutdown.
    */
   destroy(): void {
-    console.log('[OutputFilesService] Destroying...')
+    this.logger?.info('OutputFilesService', 'Destroying')
 
     if (this.workspaceEventUnsubscribe) {
       this.workspaceEventUnsubscribe()
