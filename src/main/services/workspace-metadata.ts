@@ -548,11 +548,7 @@ export class WorkspaceMetadataService implements Disposable {
   private emitDirectoriesChanged(): void {
     const workspacePath = this.workspaceService.getCurrent()
     const directories = this.getDirectories()
-    console.log('[WorkspaceMetadataService] emitDirectoriesChanged:',
-      'PID=', process.pid,
-      'workspace=', workspacePath,
-      'broadcasting', directories.length, 'directories',
-      'paths=', directories.map(d => d.path).join(', '))
+    this.logger?.debug('WorkspaceMetadataService', `emitDirectoriesChanged: PID=${process.pid} workspace=${workspacePath} broadcasting ${directories.length} directories paths=${directories.map(d => d.path).join(', ')}`)
     this.eventBus.broadcast('directories:changed', directories)
   }
 }
