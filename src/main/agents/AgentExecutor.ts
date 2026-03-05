@@ -176,7 +176,7 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
       }
     }
 
-    console.log(`${LOG_PREFIX} run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`)
+    log.info(`run=${runId} graph completed: ${tokenCount} tokens, ${fullContent.length} chars`)
     yield { type: 'done', content: fullContent, tokenCount, runId }
   } catch (error: unknown) {
     const kind = classifyError(error)
@@ -187,7 +187,7 @@ async function* executeGraphStream(input: GraphStreamInput): AsyncGenerator<Agen
     }
 
     const rawMessage = error instanceof Error ? error.message : String(error)
-    console.error(`${LOG_PREFIX} run=${runId} graph error (${kind}):`, rawMessage)
+    log.error(`run=${runId} graph error (${kind}): ${rawMessage}`)
 
     yield { type: 'error', error: toUserMessage(kind, rawMessage), code: kind, runId }
   }
