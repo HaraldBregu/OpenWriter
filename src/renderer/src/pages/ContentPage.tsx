@@ -83,33 +83,27 @@ const ContentPage: React.FC = () => {
     };
   }, [id]);
 
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const persistToDisk = useCallback(() => {
-    if (!id || !loaded) return;
-    const { title: t, content: c } = stateRef.current;
-    console.log("[ContentPage] Persisting to disk...", { id, title: t, content: c });
-    window.workspace.updateOutput({
-      type: "writings",
-      id,
-      content: c,
-      metadata: { title: t },
-    });
-  }, [id, loaded]);
-
-  const debounceSave = useCallback((delayMs = 1500) => {
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(persistToDisk, delayMs);
-  }, [persistToDisk]);
+  const debouncedSave = useMemo(
+    () =>
+      debounce(() => {
+        if (!id || !loaded) return;
+        const { title: t, content: c } = stateRef.current;
+        console.log("[ContentPage] Persisting to disk...", { id, title: t, content: c });
+        window.workspace.updateOutput({
+          type: "writings",
+          id,
+          content: c,
+          metadata: { title: t },
+        });
+      }, 1500),
+    [id, loaded]
+  );
 
   useEffect(() => {
     return () => {
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-        saveTimerRef.current = null;
-      }
+      debouncedSave.cancel();
     };
-  }, []);
+  }, [debouncedSave]);
 
   const { charCount, wordCount } = useMemo(() => {
     const trimmed = content.trim();
