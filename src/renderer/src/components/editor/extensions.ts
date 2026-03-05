@@ -13,7 +13,7 @@ import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import { ListKeymap } from '@tiptap/extension-list';
 import { Placeholder } from '@tiptap/extensions';
-import { InlinePlaceholder } from './inline-placeholder';
+// import { InlinePlaceholder } from './inline-placeholder';
 
 export const BASE_EXTENSIONS: AnyExtension[] = [
 	Document,
@@ -29,9 +29,9 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	OrderedList,
 	ListItem,
 	ListKeymap,
-	InlinePlaceholder.configure({
-		placeholder: 'thinking...',
-	}),
+	// InlinePlaceholder.configure({
+	// 	placeholder: 'thinking...',
+	// }),
 	Placeholder.configure({
 		placeholder: ({ node }) => {
 			if (node.type.name === 'paragraph') {
