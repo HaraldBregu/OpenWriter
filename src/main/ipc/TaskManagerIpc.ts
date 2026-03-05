@@ -1,6 +1,7 @@
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { LoggerService } from '../services/logger'
 import type { TaskExecutor } from '../taskManager/TaskExecutor'
 import type { TaskOptions, ActiveTask } from '../taskManager/TaskDescriptor'
 import type { TaskInfo, TaskPriority } from '../../shared/types'
