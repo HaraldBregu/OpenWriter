@@ -61,7 +61,6 @@ export interface TaskOptions {
 // Terminal statuses — the task cannot change state again (except via a new submit).
 const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set(['completed', 'error', 'cancelled']);
 
-
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------

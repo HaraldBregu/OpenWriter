@@ -44,6 +44,7 @@ const ContentPage: React.FC = () => {
 	const task = useTaskSubmit<{ prompt: string }>('agent-text-continuation', {
 		prompt: '',
 	});
+       console.log(`[ContentPage] rendered`);                                                                                                                                           
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
