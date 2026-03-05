@@ -202,7 +202,6 @@ export class Main {
     // CRITICAL: This ensures each workspace window has its own WorkspaceService
     // and WorkspaceMetadataService instances, preventing data leakage
     this.windowContextManager.create(workspaceWindow)
-    console.log(`[Main] Created window context for workspace window ${workspaceWindow.id}`)
 
     // Attach common window handlers (shared with main window)
     this.attachCommonWindowHandlers(workspaceWindow)
