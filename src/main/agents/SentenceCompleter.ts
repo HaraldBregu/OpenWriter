@@ -1,8 +1,8 @@
 /**
- * SentenceCompleter — continues writing from the end of the given text.
+ * SentenceCompleter — finishes the current unfinished sentence and stops.
  *
- * Receives plain text and outputs only the continuation — no preamble,
- * no explanation, no repeated input.
+ * Receives plain text ending mid-sentence and outputs only the few words
+ * needed to close that sentence — no new sentences, no preamble.
  *
  * Runs as a single-node LangGraph StateGraph:
  *   START → complete_sentence → END
