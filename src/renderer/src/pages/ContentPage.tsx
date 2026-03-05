@@ -25,6 +25,9 @@ const ContentPage: React.FC = () => {
 	const [content, setContent] = useState('');
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
+	const [searchOpen, setSearchOpen] = useState(false);
+	const [searchQuery, setSearchQuery] = useState('');
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const editorRef = useRef<TextEditorElement>(null);
 
