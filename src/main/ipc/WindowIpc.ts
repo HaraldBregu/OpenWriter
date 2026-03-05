@@ -2,6 +2,7 @@ import { ipcMain, BrowserWindow, Menu as ElectronMenu, type IpcMainInvokeEvent }
 import type { IpcModule } from './IpcModule'
 import type { ServiceContainer } from '../core/ServiceContainer'
 import type { EventBus } from '../core/EventBus'
+import type { LoggerService } from '../services/logger'
 import { wrapIpcHandler } from './IpcErrorHandler'
 import { WindowChannels } from '../../shared/channels'
 
