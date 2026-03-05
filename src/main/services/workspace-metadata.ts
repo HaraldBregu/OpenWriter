@@ -355,7 +355,7 @@ export class WorkspaceMetadataService implements Disposable {
 
     // Return cached metadata if it's for the current workspace
     if (this.cache && this.cache.workspacePath === workspacePath) {
-      console.log('[WorkspaceMetadataService] getMetadata: Using cache for', workspacePath)
+      this.logger?.info('WorkspaceMetadataService', `getMetadata: Using cache for ${workspacePath}`)
       return this.cache.metadata
     }
 
