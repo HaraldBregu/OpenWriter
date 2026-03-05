@@ -714,7 +714,7 @@ export class OutputFilesService implements Disposable {
         .on('unlinkDir', (dirPath) => this.handleDirRemoved(dirPath))
         .on('error', (error) => this.handleWatcherError(error))
         .on('ready', () => {
-          console.log('[OutputFilesService] Watcher ready, monitoring:', outputDir)
+          this.logger?.info('OutputFilesService', `Watcher ready, monitoring: ${outputDir}`)
         })
 
       this.currentOutputDir = outputDir
