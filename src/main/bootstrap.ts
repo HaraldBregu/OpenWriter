@@ -69,6 +69,10 @@ export function bootstrapServices(): BootstrapResult {
   const logger = new LoggerService(eventBus);
   container.register('logger', logger);
 
+  // Create WindowFactory with logger access
+  const windowFactory = new WindowFactory(logger);
+  container.register('windowFactory', windowFactory);
+
   // Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
   const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
   for (const def of ALL_AGENT_DEFINITIONS) {
@@ -85,15 +89,15 @@ export function bootstrapServices(): BootstrapResult {
     );
   }
 
-  container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10));
+  container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
   // Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
   // AppEvents and fan-outs to registered TaskReactionHandlers by task type.
-  const taskReactionRegistry = new TaskReactionRegistry();
-  taskReactionRegistry.register(new DemoTaskReaction());
+  const taskReactionRegistry = new TaskReactionRegistry(logger);
+  taskReactionRegistry.register(new DemoTaskReaction(logger));
   const taskReactionBus = container.register(
     'taskReactionBus',
-    new TaskReactionBus(taskReactionRegistry, eventBus)
+    new TaskReactionBus(taskReactionRegistry, eventBus, logger)
   );
   taskReactionBus.initialize();
 
