@@ -113,6 +113,7 @@ const definition: AgentDefinition = {
 	description:
 		'Finishes the current unfinished sentence and stops, matching the tone and style of the text.',
 	category: 'writing',
+	role: 'completer',
 	defaultConfig: {
 		systemPrompt: SYSTEM_PROMPT,
 		temperature: 0.3,
