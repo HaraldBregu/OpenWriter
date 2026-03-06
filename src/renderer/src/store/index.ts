@@ -5,7 +5,7 @@ import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
 import tasksReducer from './tasks/reducer';
 import writingsReducer from './writings/reducer';
-import { listenerMiddleware } from './listenerMiddleware';
+import { listenerMiddleware } from './listener-middleware';
 
 export const store = configureStore({
 	reducer: {
