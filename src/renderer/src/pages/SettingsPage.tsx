@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguage } from '../hooks/use-language';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
 const GeneralSettings = lazy(() => import('./settings/GeneralSettings'));
