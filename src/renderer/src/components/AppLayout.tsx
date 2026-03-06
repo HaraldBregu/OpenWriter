@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../hooks/useLanguage';
-import { useWorkspaceListener } from '../hooks/useWorkspaceListener';
-import { useWorkspaceValidation } from '../hooks/useWorkspaceValidation';
-import { useCreateWriting } from '../hooks/useCreateWriting';
+import { useLanguage } from '../hooks/use-language';
+import { useWorkspaceListener } from '../hooks/use-workspace-listener';
+import { useWorkspaceValidation } from '../hooks/use-workspace-validation';
+import { useCreateWriting } from '../hooks/use-create-writing';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectWorkspaceName } from '../store/workspace/selectors';
 import { loadCurrentWorkspace } from '../store/workspace/actions';
