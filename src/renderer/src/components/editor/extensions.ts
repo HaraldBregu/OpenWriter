@@ -34,6 +34,7 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	ListItem,
 	ListKeymap,
 	SearchExtension,
+	AgentPromptExtension,
 	// InlinePlaceholder.configure({
 	// 	placeholder: 'thinking...',
 	// }),
