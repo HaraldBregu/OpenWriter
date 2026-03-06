@@ -122,5 +122,25 @@
 - Generic service: `ElectronAIAgentTaskService` in `src/renderer/src/services/ElectronAIAgentTaskService.ts`; constructed via `createAIAgentTaskService(agentId)` factory
 - `window.tasksManager` is declared `?` (optional) — always call `assertBridge()` before `window.tasksManager!`
 
+## FileSystemManager + FileSystemIpc (confirmed design)
+- `src/main/shared/FileSystemManager.ts` — operations: readFile, writeFile, createFile, createFolder, renameEntry
+- Constructor takes `(logger?, extraAllowedRoots[])` — workspace path must be injected by the IPC layer as an extra root; class has no WorkspaceService dependency
+- `PathValidator` only covers 4 static Electron dirs (documents, downloads, desktop, userData) — workspace path is NOT in it; always inject workspace via extraAllowedRoots
+- Path safety: checks PathValidator first, then extraRoots with `root + path.sep` suffix guard to prevent "/workspace" matching "/workspace2"
+- `FileEncoding` is `'utf-8' | 'utf8' | 'ascii' | 'latin1'` — base64/hex deliberately excluded (binary encodings, wrong for a text editor)
+- `writeFile` defaults to atomic (temp-sibling + rename); `renameEntry` defaults `failIfExists: true` (safe default for text editors)
+- `assertValidName` blocks: empty, >255 chars, null bytes, path separators, dot-only names, Windows reserved names (CON, PRN, AUX, NUL, COM1-9, LPT1-9)
+- `createFile`/`createFolder` are idempotent by default (failIfExists defaults to false); opt in to exclusive creation with `failIfExists: true`
+- IPC module: `src/main/ipc/FileSystemIpc.ts` — registered as `'fs'` in bootstrap.ts ipcModules array
+- IPC validates payload is a plain object with required string keys before delegating to FileSystemManager
+- `buildManager()` in FileSystemIpc: gets workspace path from window-scoped WorkspaceService; passes as extraRoots; falls back to static-only allowlist if no workspace is set
+- Channels: `FsChannels` in `src/shared/channels.ts` — `fs:read-file`, `fs:write-file`, `fs:create-file`, `fs:create-folder`, `fs:rename`
+- Shared param/result types in `src/shared/types.ts`: FsReadFileParams, FsWriteFileParams, FsCreateFileParams, FsCreateFolderParams, FsRenameParams, FsRenameResult
+- All 5 channels registered in InvokeChannelMap; preload uses `typedInvokeUnwrap` (IpcResult-wrapped)
+- `window.fs` declared as required (not optional) in index.d.ts Window augmentation
+- `writeFile` has `createParents` option (default false) to auto-create missing parent dirs
+- `createFile` has `createParents` option (default false) for the same reason
+- readFile has 64 MB size cap enforced via `fs.stat` before allocating the read buffer
+
 ## Details Files
 - See `patterns.md` for extended code patterns
