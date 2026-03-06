@@ -20,7 +20,7 @@ export type { WindowPreset } from './core/window-factory';
 export type { WindowScopedServiceDefinition } from './core/window-scoped-service-factory';
 
 // ---- IPC types -----------------------------------------------------------
-export type { IpcModule } from './ipc/IpcModule';
+export type { IpcModule } from './ipc/ipc-module';
 
 // ---- Service types -------------------------------------------------------
 export type { WorkspaceState } from './services/workspace';
