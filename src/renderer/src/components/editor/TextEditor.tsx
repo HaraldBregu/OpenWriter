@@ -198,7 +198,11 @@ const TextEditor = React.memo(
 						if (y >= r.top - 4 && y <= r.bottom + 4) {
 							try {
 								const p = editor.view.posAtDOM(child, 0);
-								return { dom: child, pos: editor.state.doc.resolve(p).before(1) };
+								const pos = editor.state.doc.resolve(p).before(1);
+								const node = editor.state.doc.nodeAt(pos);
+								// Skip transient UI-only nodes (not part of markdown output).
+								if (node && node.type.name === 'agentPrompt') return null;
+								return { dom: child, pos };
 							} catch {
 								return null;
 							}

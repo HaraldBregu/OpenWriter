@@ -4,7 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
 import { AppButton } from '@/components/app';
 import { TitleBar } from '@/components/TitleBar';
-import { useWorkspaceDeletionReason, useClearDeletionReason } from '@/hooks/use-workspace-validation';
+import {
+	useWorkspaceDeletionReason,
+	useClearDeletionReason,
+} from '@/hooks/use-workspace-validation';
 import logoIcon from '@resources/icons/icon.png';
 
 interface RecentProject {
