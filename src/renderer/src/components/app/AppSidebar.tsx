@@ -24,7 +24,7 @@ import {
 	SidebarSeparator,
 	SidebarTrigger,
 	useSidebar,
-} from '../ui/sidebar';
+} from '../ui/Sidebar';
 import { cn } from '@/lib/utils';
 
 const AppSidebarProvider = React.memo(
