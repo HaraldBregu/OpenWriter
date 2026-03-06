@@ -20,7 +20,7 @@ import { WorkspaceService } from '../services/workspace';
 import {
 	createDefaultWindowScopedServiceFactory,
 	type WindowScopedServiceFactory,
-} from './WindowScopedServiceFactory';
+} from './window-scoped-service-factory';
 
 export interface WindowContextConfig {
 	window: BrowserWindow;
