@@ -41,7 +41,7 @@ jest.mock('@langchain/core/messages', () => ({
 
 import { AIEnhanceHandler } from '../../../../../src/main/tasks/handlers/AIEnhanceHandler';
 import type { AIEnhanceInput } from '../../../../../src/main/tasks/handlers/AIEnhanceHandler';
-import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/TaskHandler';
+import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/task-handler';
 
 // ---------------------------------------------------------------------------
 // Helpers

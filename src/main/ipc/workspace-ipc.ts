@@ -22,8 +22,8 @@ import {
 	getAllTextExtensions,
 	getSupportedFileTypesDescription,
 } from '../utils/file-type-validator';
-import { wrapSimpleHandler, wrapIpcHandler } from './IpcErrorHandler';
-import { getWindowService } from './IpcHelpers';
+import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
+import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
 
 /**
