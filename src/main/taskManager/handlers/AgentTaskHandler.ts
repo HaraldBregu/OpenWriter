@@ -88,8 +88,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				? this.modelRegistry.resolve(def.role)
 				: undefined;
 
-		const providerId =
-			input.providerId ?? def.defaultConfig.providerId ?? roleConfig?.providerId;
+		const providerId = input.providerId ?? def.defaultConfig.providerId ?? roleConfig?.providerId;
 		const modelId = input.modelId ?? def.defaultConfig.modelId ?? roleConfig?.modelId;
 
 		const provider = this.providerResolver.resolve({ providerId, modelId });

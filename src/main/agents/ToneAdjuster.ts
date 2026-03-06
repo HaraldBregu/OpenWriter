@@ -235,6 +235,7 @@ const definition: AgentDefinition = {
 	description:
 		'Rewrites content to match a specified tone — formal, casual, persuasive, empathetic, authoritative, and more — while preserving the original meaning and all key facts.',
 	category: 'editing',
+	role: 'editor',
 	defaultConfig: {
 		systemPrompt: `You are a versatile professional editor specialising in register and tone transformation.
 
