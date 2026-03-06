@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { StoreService } from './store';
-import type { EventBus } from '../core/EventBus';
-import type { Disposable } from '../core/ServiceContainer';
+import type { EventBus } from '../core/event-bus';
+import type { Disposable } from '../core/service-container';
 import type { LoggerService } from './logger';
 import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
 

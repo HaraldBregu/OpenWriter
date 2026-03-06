@@ -9,7 +9,7 @@ import {
 	wrapIpcHandler,
 	wrapSimpleHandler,
 	type IpcResult,
-} from '../../../../src/main/ipc/IpcErrorHandler';
+} from '../../../../src/main/ipc/ipc-error-handler';
 import { createMockIpcEvent } from '../../../helpers/test-utils';
 
 describe('IpcErrorHandler', () => {
