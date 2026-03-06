@@ -3,7 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { WorkspaceMetadataService } from '../../../../src/main/services/workspace-metadata';
 import type { WorkspaceService } from '../../../../src/main/services/workspace';
-import type { EventBus } from '../../../../src/main/core/EventBus';
+import type { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('WorkspaceMetadataService - Workspace Isolation', () => {
 	let tempDir: string;
