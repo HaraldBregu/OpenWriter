@@ -13,6 +13,7 @@ import type { AgentRegistry } from '../../agents/AgentRegistry';
 import { executeAIAgentsStream } from '../../agents/AgentExecutor';
 import type { AgentStreamEvent } from '../../agents/AgentTypes';
 import type { ProviderResolver } from '../../shared/ProviderResolver';
+import type { ModelRegistry } from '../../agents/ModelRegistry';
 import type { LoggerService } from '../../services/logger';
 
 // ---------------------------------------------------------------------------
