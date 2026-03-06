@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { PathValidator } from './PathValidator';
+import { PathValidator } from './path-validator';
 import type { LoggerService } from '../services/logger';
 
 // ---------------------------------------------------------------------------

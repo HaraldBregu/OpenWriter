@@ -19,7 +19,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { PersonalityFilesService } from '../../../../src/main/services/personality-files';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 // ---------------------------------------------------------------------------
 // Module mocks
