@@ -73,6 +73,12 @@ export type {
 	ProviderSettings,
 	InferenceDefaultsUpdate,
 	IpcResult,
+	FsReadFileParams,
+	FsWriteFileParams,
+	FsCreateFileParams,
+	FsCreateFolderParams,
+	FsRenameParams,
+	FsRenameResult,
 };
 
 // ---------------------------------------------------------------------------
