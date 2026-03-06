@@ -19,6 +19,8 @@ import {
   Loader2,
   PenLine,
   TextCursorInput,
+  MessageCircle,
+  Send,
 } from 'lucide-react';
 import { useDebugTasks } from '../hooks/useDebugTasks';
 import { useTaskSubmit } from '../hooks/useTaskSubmit';
