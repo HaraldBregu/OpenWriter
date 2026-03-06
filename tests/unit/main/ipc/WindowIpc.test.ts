@@ -3,9 +3,9 @@
  * Verifies window management IPC handlers and control operations.
  */
 import { ipcMain } from 'electron';
-import { WindowIpc } from '../../../../src/main/ipc/WindowIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { WindowIpc } from '../../../../src/main/ipc/window-ipc';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('WindowIpc', () => {
 	let module: WindowIpc;
