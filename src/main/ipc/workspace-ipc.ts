@@ -7,7 +7,7 @@ import type { EventBus } from '../core/event-bus';
 import type { WorkspaceService } from '../services/workspace';
 import type { LoggerService } from '../services/logger';
 import type { DocumentsWatcherService } from '../services/documents-watcher';
-import type { FileManagementService } from '../services/FileManagementService';
+import type { FileManagementService } from '../services/file-management-service';
 import type { WorkspaceMetadataService } from '../services/workspace-metadata';
 import type {
 	OutputFilesService,

@@ -12,8 +12,8 @@
  */
 import { ipcMain } from 'electron';
 import { TaskIpc } from '../../../../src/main/ipc/TaskIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 // ---------------------------------------------------------------------------
 // Helpers
