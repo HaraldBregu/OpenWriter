@@ -1086,6 +1086,13 @@ export default function DebugPage() {
 						</button>
 						<button
 							type="button"
+							onClick={() => setActiveTab('chatbot')}
+							className={tabClass('chatbot')}
+						>
+							Chat Bot
+						</button>
+						<button
+							type="button"
 							onClick={() => setActiveTab('redux')}
 							className={tabClass('redux')}
 						>
