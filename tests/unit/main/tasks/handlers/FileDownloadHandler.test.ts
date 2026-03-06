@@ -72,7 +72,7 @@ jest.mock('electron', () => {
 
 import { FileDownloadHandler } from '../../../../../src/main/tasks/handlers/FileDownloadHandler';
 import type { FileDownloadInput } from '../../../../../src/main/tasks/handlers/FileDownloadHandler';
-import type { ProgressReporter } from '../../../../../src/main/tasks/TaskHandler';
+import type { ProgressReporter } from '../../../../../src/main/tasks/task-handler';
 
 // ---------------------------------------------------------------------------
 // Helpers
