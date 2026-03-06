@@ -10,7 +10,7 @@ import {
 	SheetFooter,
 	SheetTitle,
 	SheetDescription,
-} from '../ui/sheet';
+} from '../ui/Sheet';
 import { cn } from '@/lib/utils';
 
 const AppSheet = Sheet;
