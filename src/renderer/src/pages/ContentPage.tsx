@@ -21,10 +21,10 @@ import {
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import { subscribeToTask } from '../services/taskEventBus';
-import type { TaskSnapshot } from '../services/taskEventBus';
+import { subscribeToTask } from '../services/task-event-bus';
+import type { TaskSnapshot } from '../services/task-event-bus';
 import { debounce } from 'lodash';
-import { useTask } from '@/hooks/useTask';
+import { useTask } from '@/hooks/use-task';
 
 const ContentPage: React.FC = () => {
 	const { t } = useTranslation();
