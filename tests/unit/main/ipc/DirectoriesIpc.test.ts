@@ -5,8 +5,8 @@
  */
 import { ipcMain } from 'electron';
 import { DirectoriesIpc } from '../../../../src/main/ipc/DirectoriesIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('DirectoriesIpc', () => {
 	let module: DirectoriesIpc;
