@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, badgeVariants, type BadgeProps } from '../ui/badge';
+import { Badge, badgeVariants, type BadgeProps } from '../ui/Badge';
 import { cn } from '@/lib/utils';
 
 const AppBadge = React.memo(function AppBadge({ className, ...props }: BadgeProps) {
