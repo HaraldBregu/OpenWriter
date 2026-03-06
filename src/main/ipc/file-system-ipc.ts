@@ -5,8 +5,8 @@ import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../services/workspace';
 import { FileSystemManager } from '../shared/file-system-manager';
-import { wrapIpcHandler } from './IpcErrorHandler';
-import { getWindowService } from './IpcHelpers';
+import { wrapIpcHandler } from './ipc-error-handler';
+import { getWindowService } from './ipc-helpers';
 import { FsChannels } from '../../shared/channels';
 import type {
 	FsReadFileParams,

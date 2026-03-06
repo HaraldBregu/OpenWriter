@@ -5,7 +5,7 @@
  * It manages service lifecycle, including ordered shutdown of disposable services.
  */
 
-import { ServiceContainer, type Disposable } from '../../../../src/main/core/ServiceContainer';
+import { ServiceContainer, type Disposable } from '../../../../src/main/core/service-container';
 
 describe('ServiceContainer', () => {
 	let container: ServiceContainer;

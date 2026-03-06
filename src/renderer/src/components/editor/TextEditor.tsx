@@ -101,7 +101,7 @@ const TextEditor = React.memo(
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
-				editor.storage.agentPrompt.onSubmit = onAskAIAgent ?? (() => {});
+				editor.storage.agentPrompt.onSubmit = onAskAIAgent ?? (() => { });
 			}, [editor, onAskAIAgent]);
 
 			const rootRef = useRef<HTMLDivElement>(null);
