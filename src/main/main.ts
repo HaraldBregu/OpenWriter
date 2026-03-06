@@ -1,7 +1,7 @@
 import { BrowserWindow, nativeTheme } from 'electron';
-import type { AppState } from './core/AppState';
-import type { WindowFactory } from './core/WindowFactory';
-import type { WindowContextManager } from './core/WindowContext';
+import type { AppState } from './core/app-state';
+import type { WindowFactory } from './core/window-factory';
+import type { WindowContextManager } from './core/window-context';
 
 function getBackgroundColor(): string {
 	return nativeTheme.shouldUseDarkColors ? '#1A1A1A' : '#F7F7F7';
