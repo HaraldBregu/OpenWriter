@@ -2,7 +2,7 @@
  * Tests for PathValidator.
  * Validates security path validation to prevent traversal attacks.
  */
-import { PathValidator } from '../../../../src/main/shared/PathValidator';
+import { PathValidator } from '../../../../src/main/shared/path-validator';
 import 'electron';
 
 describe('PathValidator', () => {
