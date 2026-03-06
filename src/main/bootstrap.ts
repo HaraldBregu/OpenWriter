@@ -20,14 +20,14 @@ import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { FileManagementService } from './services/file-management-service';
 import { AgentRegistry, ModelRegistry, ALL_AGENT_DEFINITIONS } from './ai';
-import { TaskHandlerRegistry } from './taskManager/TaskHandlerRegistry';
-import { TaskExecutor } from './taskManager/TaskExecutor';
-import { TaskReactionRegistry } from './taskManager/TaskReactionRegistry';
-import { TaskReactionBus } from './taskManager/TaskReactionBus';
-import { DemoTaskHandler } from './taskManager/handlers/DemoTaskHandler';
-import { AgentTaskHandler } from './taskManager/handlers/AgentTaskHandler';
-import { ProviderResolver } from './shared/ProviderResolver';
-import { DemoTaskReaction } from './taskManager/reactions';
+import { TaskHandlerRegistry } from './task-manager/task-handler-registry';
+import { TaskExecutor } from './task-manager/task-executor';
+import { TaskReactionRegistry } from './task-manager/task-reaction-registry';
+import { TaskReactionBus } from './task-manager/task-reaction-bus';
+import { DemoTaskHandler } from './task-manager/handlers/demo-task-handler';
+import { AgentTaskHandler } from './task-manager/handlers/agent-task-handler';
+import { ProviderResolver } from './shared/provider-resolver';
+import { DemoTaskReaction } from './task-manager/reactions';
 
 // IPC modules
 import type { IpcModule } from './ipc';
