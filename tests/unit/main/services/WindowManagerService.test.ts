@@ -4,7 +4,7 @@
  */
 import { BrowserWindow } from 'electron';
 import { WindowManagerService } from '../../../../src/main/services/window-manager';
-import type { WindowFactory } from '../../../../src/main/core/WindowFactory';
+import type { WindowFactory } from '../../../../src/main/core/window-factory';
 
 describe('WindowManagerService', () => {
 	let service: WindowManagerService;
