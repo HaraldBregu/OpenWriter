@@ -27,6 +27,7 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	Italic,
 	Underline,
 	Strike,
+	HorizontalRule,
 	BulletList,
 	OrderedList,
 	ListItem,
