@@ -16,13 +16,13 @@
  */
 
 import { randomUUID } from 'crypto';
-import type { Disposable } from '../core/ServiceContainer';
-import type { EventBus } from '../core/EventBus';
+import type { Disposable } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { TaskHandlerRegistry } from './TaskHandlerRegistry';
-import type { TaskEvent } from './TaskEvents';
-import type { ProgressReporter, StreamReporter } from './TaskHandler';
-import type { ActiveTask, TaskOptions, TaskPriority } from './TaskDescriptor';
+import type { TaskHandlerRegistry } from './task-handler-registry';
+import type { TaskEvent } from './task-events';
+import type { ProgressReporter, StreamReporter } from './task-handler';
+import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
