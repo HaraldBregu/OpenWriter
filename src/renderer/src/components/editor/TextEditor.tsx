@@ -33,6 +33,7 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAI?: (content: string, positionFrom: number) => void;
+	onAskAIAgent?: (prompt: string) => void;
 }
 
 const TextEditor = React.memo(
