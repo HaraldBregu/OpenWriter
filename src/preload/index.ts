@@ -400,6 +400,17 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
+// window.fs — Sandboxed filesystem operations
+// ---------------------------------------------------------------------------
+const fs: FsApi = {
+	readFile: (params) => typedInvokeUnwrap(FsChannels.readFile, params),
+	writeFile: (params) => typedInvokeUnwrap(FsChannels.writeFile, params),
+	createFile: (params) => typedInvokeUnwrap(FsChannels.createFile, params),
+	createFolder: (params) => typedInvokeUnwrap(FsChannels.createFolder, params),
+	rename: (params) => typedInvokeUnwrap(FsChannels.rename, params),
+} satisfies FsApi;
+
+// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -408,6 +419,7 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('win', win);
 		contextBridge.exposeInMainWorld('workspace', workspace);
 		contextBridge.exposeInMainWorld('task', task);
+		contextBridge.exposeInMainWorld('fs', fs);
 	} catch (error) {
 		console.error('[preload] Failed to expose IPC APIs:', error);
 	}
@@ -420,4 +432,6 @@ if (process.contextIsolated) {
 	globalThis.workspace = workspace;
 	// @ts-ignore (define in dts)
 	globalThis.task = task;
+	// @ts-ignore (define in dts)
+	globalThis.fs = fs;
 }
