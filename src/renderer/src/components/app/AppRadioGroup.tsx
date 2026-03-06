@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '../ui/RadioGroup';
 import { cn } from '@/lib/utils';
 
 const AppRadioGroup = React.memo(
