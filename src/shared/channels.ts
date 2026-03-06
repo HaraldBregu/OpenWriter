@@ -30,6 +30,12 @@ import type {
 	DirectoryValidationResult,
 	WritingContextMenuAction,
 	WatcherError,
+	FsReadFileParams,
+	FsWriteFileParams,
+	FsCreateFileParams,
+	FsCreateFolderParams,
+	FsRenameParams,
+	FsRenameResult,
 } from './types';
 
 // ===========================================================================

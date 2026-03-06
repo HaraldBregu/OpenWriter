@@ -321,8 +321,12 @@ export class FileSystemManager {
 	 * @throws {Error} If the process lacks write permission.
 	 */
 	async createFile(filePath: string, options: CreateFileOptions = {}): Promise<void> {
-		const { content = '', encoding = 'utf-8', failIfExists = false, createParents = false } =
-			options;
+		const {
+			content = '',
+			encoding = 'utf-8',
+			failIfExists = false,
+			createParents = false,
+		} = options;
 		this.assertValidEncoding(encoding);
 		const resolved = this.assertPathSafe(filePath);
 		this.assertValidName(path.basename(resolved));
@@ -514,9 +518,7 @@ export class FileSystemManager {
 				throw new Error(`Source path does not exist: ${resolvedOld}`);
 			}
 			if (error.code === 'EACCES' || error.code === 'EPERM') {
-				throw new Error(
-					`Permission denied renaming "${resolvedOld}" to "${resolvedNew}"`
-				);
+				throw new Error(`Permission denied renaming "${resolvedOld}" to "${resolvedNew}"`);
 			}
 			if (error.code === 'EXDEV') {
 				throw new Error(
@@ -528,9 +530,7 @@ export class FileSystemManager {
 			if (error.code === 'ENOTEMPTY' || error.code === 'EEXIST') {
 				throw new Error(`Destination already exists and is not empty: ${resolvedNew}`);
 			}
-			throw new Error(
-				`Failed to rename "${resolvedOld}" to "${resolvedNew}": ${error.message}`
-			);
+			throw new Error(`Failed to rename "${resolvedOld}" to "${resolvedNew}": ${error.message}`);
 		}
 	}
 
@@ -606,9 +606,7 @@ export class FileSystemManager {
 		}
 		// Windows reserved device names — block on all platforms for portability.
 		if (WINDOWS_RESERVED_NAME.test(name)) {
-			throw new Error(
-				`FileSystemManager: "${name}" is a reserved filesystem name on Windows`
-			);
+			throw new Error(`FileSystemManager: "${name}" is a reserved filesystem name on Windows`);
 		}
 	}
 
@@ -638,14 +636,10 @@ export class FileSystemManager {
 		} catch (err) {
 			const error = asErrno(err);
 			if (error.code === 'EACCES') {
-				throw new Error(
-					`Permission denied creating parent directory "${dir}" for "${filePath}"`
-				);
+				throw new Error(`Permission denied creating parent directory "${dir}" for "${filePath}"`);
 			}
 			// Any other error from mkdir({recursive:true}) is unexpected.
-			throw new Error(
-				`Failed to create parent directory "${dir}": ${error.message}`
-			);
+			throw new Error(`Failed to create parent directory "${dir}": ${error.message}`);
 		}
 	}
 
