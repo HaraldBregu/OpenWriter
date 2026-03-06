@@ -5,7 +5,7 @@
  * pattern with a type-safe class.
  */
 
-import { AppState } from '../../../../src/main/core/AppState';
+import { AppState } from '../../../../src/main/core/app-state';
 
 describe('AppState', () => {
 	let appState: AppState;
