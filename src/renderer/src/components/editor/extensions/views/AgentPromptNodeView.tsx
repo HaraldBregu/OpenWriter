@@ -35,6 +35,8 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 	const deleteNodeRef = useRef(deleteNode);
 	deleteNodeRef.current = deleteNode;
 
+	const wrapperRef = useRef<HTMLDivElement>(null);
+
 	// Use a native DOM listener so stopPropagation fires before ProseMirror's
 	// keydown handler (React 18 delegates events at the root, which is too late).
 	useEffect(() => {
@@ -55,6 +57,19 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 
 		input.addEventListener('keydown', handleKeyDown);
 		return () => input.removeEventListener('keydown', handleKeyDown);
+	}, []);
+
+	// Click outside → remove the node.
+	useEffect(() => {
+		const handleMouseDown = (e: MouseEvent): void => {
+			const wrapper = wrapperRef.current;
+			if (!wrapper) return;
+			if (wrapper.contains(e.target as Node)) return;
+			deleteNodeRef.current();
+		};
+
+		document.addEventListener('mousedown', handleMouseDown, true);
+		return () => document.removeEventListener('mousedown', handleMouseDown, true);
 	}, []);
 
 	return (
