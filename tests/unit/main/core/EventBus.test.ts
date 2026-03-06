@@ -9,7 +9,7 @@
 jest.mock('electron');
 
 import { BrowserWindow } from 'electron';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('EventBus', () => {
 	let eventBus: EventBus;

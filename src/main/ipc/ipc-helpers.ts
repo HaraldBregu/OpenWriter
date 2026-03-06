@@ -4,8 +4,8 @@
 
 import { BrowserWindow } from 'electron';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { ServiceContainer } from '../core/ServiceContainer';
-import type { WindowContextManager } from '../core/WindowContext';
+import type { ServiceContainer } from '../core/service-container';
+import type { WindowContextManager } from '../core/window-context';
 
 /**
  * Get the window context for an IPC event.
