@@ -49,3 +49,14 @@ Key files created:
 - `tsconfig.node.json` uses `"types": ["./src/types", ...]` (no .d.ts suffix)
 - `tsconfig.web.json` uses `"types": ["./src/types.d.ts", ...]` (with suffix)
 - Renderer's `types.d.ts` loaded via `include: ["src/renderer/src/**/*"]` glob
+
+## File System Patterns (established 2026-03-06)
+- All async I/O: `import fs from 'node:fs/promises'` — never sync except logger/workspace validation
+- Sync `fs` (node:fs) only in `workspace.ts` (statSync) and `logger.ts` (appendFileSync)
+- Error narrowing: `(err as NodeJS.ErrnoException).code` for ENOENT/EACCES/EISDIR/EXDEV/EPERM
+- Re-throw pattern: `throw new Error(\`Failed to X "${path}": ${(err as Error).message}\`)`
+- Encoding: always the string literal `'utf-8'` (not 'utf8')
+- `PathValidator.assertPathSafe()` called before every fs operation in shared modules
+- Atomic writes: write to `.<basename>.<uuid>.tmp` sibling, then `fs.rename` into place
+- `FileSystemManager` at `src/main/shared/FileSystemManager.ts` — class-based, optional LoggerService ctor arg
+- `shared/` modules are stateless or take only LoggerService (no Electron APIs, no EventBus)
