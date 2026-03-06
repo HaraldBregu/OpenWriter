@@ -5,7 +5,7 @@
 import { PipelineService } from '../../../../src/main/pipeline/PipelineService';
 import { AgentRegistry } from '../../../../src/main/pipeline/AgentRegistry';
 import type { Agent, AgentInput, AgentEvent } from '../../../../src/main/pipeline/AgentBase';
-import type { EventBus } from '../../../../src/main/core/EventBus';
+import type { EventBus } from '../../../../src/main/core/event-bus';
 
 // Mock agent that yields events
 class MockAgent implements Agent {
