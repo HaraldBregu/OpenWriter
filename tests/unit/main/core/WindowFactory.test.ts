@@ -3,7 +3,7 @@
  * Validates BrowserWindow creation with consistent security defaults.
  */
 import { BrowserWindow } from 'electron';
-import { WindowFactory } from '../../../../src/main/core/WindowFactory';
+import { WindowFactory } from '../../../../src/main/core/window-factory';
 
 // Mock @electron-toolkit/utils
 jest.mock('@electron-toolkit/utils', () => ({
