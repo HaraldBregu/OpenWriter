@@ -170,6 +170,7 @@ const definition: AgentDefinition = {
 	description:
 		'Crafts engaging narrative fiction — short stories, scenes, or multi-chapter drafts — with strong character voice, vivid imagery, and purposeful pacing.',
 	category: 'writing',
+	role: 'writer',
 	defaultConfig: {
 		systemPrompt: `You are an expert creative fiction writer with decades of experience across genres.
 
