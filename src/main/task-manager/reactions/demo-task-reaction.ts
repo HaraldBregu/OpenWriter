@@ -14,8 +14,8 @@ import type {
 	TaskCompletedEvent,
 	TaskFailedEvent,
 	TaskCancelledEvent,
-} from '../TaskReactionHandler';
-import type { DemoTaskInput } from '../handlers/DemoTaskHandler';
+} from '../task-reaction-handler';
+import type { DemoTaskInput } from '../handlers/demo-task-handler';
 
 function variant(input: unknown): string {
 	return (input as DemoTaskInput)?.variant ?? 'unknown';
