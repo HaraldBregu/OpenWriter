@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '../ui/card';
+import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '../ui/Card';
 import { cn } from '@/lib/utils';
 
 const AppCard = React.memo(
