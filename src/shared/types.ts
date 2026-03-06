@@ -194,6 +194,103 @@ export interface WatcherError {
 	timestamp: number;
 }
 
+// ---- FileSystem -----------------------------------------------------------
+
+/**
+ * Payload for fs:read-file. The result is the raw string content of the file.
+ */
+export interface FsReadFileParams {
+	/** Absolute path to the file to read. */
+	filePath: string;
+	/** Text encoding (default: 'utf-8'). */
+	encoding?: 'utf-8' | 'utf8' | 'ascii' | 'latin1';
+}
+
+/**
+ * Payload for fs:write-file.
+ */
+export interface FsWriteFileParams {
+	/** Absolute path of the destination file. */
+	filePath: string;
+	/** String content to write. */
+	content: string;
+	/** Text encoding (default: 'utf-8'). */
+	encoding?: 'utf-8' | 'utf8' | 'ascii' | 'latin1';
+	/**
+	 * When `true` (default), uses an atomic write-then-rename strategy.
+	 * Set to `false` only on filesystems that do not support sibling renames.
+	 */
+	atomic?: boolean;
+	/**
+	 * When `true`, creates missing parent directories before writing.
+	 * Default: `false`.
+	 */
+	createParents?: boolean;
+}
+
+/**
+ * Payload for fs:create-file.
+ */
+export interface FsCreateFileParams {
+	/** Absolute path of the file to create. */
+	filePath: string;
+	/** Initial text content (default: empty string). */
+	content?: string;
+	/** Text encoding (default: 'utf-8'). */
+	encoding?: 'utf-8' | 'utf8' | 'ascii' | 'latin1';
+	/**
+	 * When `true`, throws if the file already exists.
+	 * Default: `false` (idempotent — silently succeeds if the file exists).
+	 */
+	failIfExists?: boolean;
+	/**
+	 * When `true`, creates missing parent directories before creating the file.
+	 * Default: `false`.
+	 */
+	createParents?: boolean;
+}
+
+/**
+ * Payload for fs:create-folder.
+ */
+export interface FsCreateFolderParams {
+	/** Absolute path of the directory to create. */
+	folderPath: string;
+	/**
+	 * When `true` (default), creates all intermediate ancestors (mkdir -p).
+	 * When `false`, throws if the parent does not exist.
+	 */
+	recursive?: boolean;
+	/**
+	 * When `true`, throws if the directory already exists.
+	 * Default: `false` (idempotent).
+	 */
+	failIfExists?: boolean;
+}
+
+/**
+ * Payload for fs:rename.
+ */
+export interface FsRenameParams {
+	/** Current absolute path of the file or directory. */
+	oldPath: string;
+	/** Desired absolute destination path. */
+	newPath: string;
+	/**
+	 * When `true` (default), throws if `newPath` already exists.
+	 * Set to `false` to restore POSIX rename semantics (atomically replaces destination).
+	 */
+	failIfExists?: boolean;
+}
+
+/**
+ * Result returned by fs:rename.
+ */
+export interface FsRenameResult {
+	/** The resolved absolute path after the rename. */
+	newPath: string;
+}
+
 // ---- AI Agents ------------------------------------------------------------
 
 export type AgentStreamEvent =
