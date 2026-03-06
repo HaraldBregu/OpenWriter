@@ -10,9 +10,9 @@
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
-import type { ResolvedProvider } from '../../shared/ProviderResolver';
-import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/aiUtils';
-import { createChatModel } from '../../shared/ChatModelFactory';
+import type { ResolvedProvider } from '../../shared/provider-resolver';
+import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/ai-utils';
+import { createChatModel } from '../../shared/chat-model-factory';
 import type { AgentStreamEvent } from './types';
 import type { AgentHistoryMessage } from './types';
 import type { LoggerService } from '../../services/logger';
