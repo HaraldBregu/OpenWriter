@@ -9,10 +9,6 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [prompt, setPrompt] = useState('');
 
-	useEffect(() => {
-		requestAnimationFrame(() => inputRef.current?.focus());
-	}, []);
-
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
 		if (typeof pos !== 'number') return;
@@ -34,6 +30,33 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 		deleteNode();
 	}, [prompt, editor, deleteNode]);
 
+	const submitRef = useRef(submit);
+	submitRef.current = submit;
+	const deleteNodeRef = useRef(deleteNode);
+	deleteNodeRef.current = deleteNode;
+
+	// Use a native DOM listener so stopPropagation fires before ProseMirror's
+	// keydown handler (React 18 delegates events at the root, which is too late).
+	useEffect(() => {
+		const input = inputRef.current;
+		if (!input) return;
+
+		requestAnimationFrame(() => input.focus());
+
+		const handleKeyDown = (e: KeyboardEvent): void => {
+			e.stopPropagation();
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				submitRef.current();
+			} else if (e.key === 'Escape') {
+				deleteNodeRef.current();
+			}
+		};
+
+		input.addEventListener('keydown', handleKeyDown);
+		return () => input.removeEventListener('keydown', handleKeyDown);
+	}, []);
+
 	return (
 		<NodeViewWrapper contentEditable={false}>
 			<div className="my-2 flex items-center gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md">
@@ -43,15 +66,6 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					value={prompt}
 					onChange={(e) => setPrompt(e.target.value)}
 					className="border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					onKeyDown={(e) => {
-						e.stopPropagation();
-						if (e.key === 'Enter') {
-							e.preventDefault();
-							submit();
-						} else if (e.key === 'Escape') {
-							deleteNode();
-						}
-					}}
 					placeholder="Ask the AI Agent and press Enter…"
 				/>
 				<AppButton
@@ -61,7 +75,7 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					disabled={!prompt.trim()}
 					onMouseDown={(e) => {
 						e.preventDefault();
-						submit();
+						submitRef.current();
 					}}
 				>
 					<ArrowUp />

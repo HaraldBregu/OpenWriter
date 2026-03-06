@@ -24,8 +24,8 @@
  *  - clear(): is a no-op on an empty registry
  */
 
-import { TaskHandlerRegistry } from '../../../../src/main/taskManager/TaskHandlerRegistry';
-import type { TaskHandler } from '../../../../src/main/taskManager/TaskHandler';
+import { TaskHandlerRegistry } from '../../../../src/main/task-manager/task-handler-registry';
+import type { TaskHandler } from '../../../../src/main/task-manager/task-handler';
 
 // ---------------------------------------------------------------------------
 // Helpers
