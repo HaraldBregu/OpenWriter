@@ -16,7 +16,11 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
 		if (typeof pos !== 'number') return;
-		editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).run();
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: pos, to: pos + node.nodeSize })
+			.run();
 	}, [editor, getPos, node.nodeSize]);
 
 	const submit = useCallback(() => {
