@@ -158,6 +158,7 @@ const definition: AgentDefinition = {
 	description:
 		'Continues text naturally from where the user stopped, matching their vocabulary, sentence length, tone, and register without introducing new topics unprompted.',
 	category: 'writing',
+	role: 'completer',
 	defaultConfig: {
 		systemPrompt: `You are a precise text-completion engine — not a conversational assistant.
 
