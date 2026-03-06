@@ -1,9 +1,9 @@
 import { ipcMain, dialog } from 'electron';
 import type { IpcMainInvokeEvent } from 'electron';
 import fs from 'node:fs';
-import type { IpcModule } from './IpcModule';
-import type { ServiceContainer } from '../core/ServiceContainer';
-import type { EventBus } from '../core/EventBus';
+import type { IpcModule } from './ipc-module';
+import type { ServiceContainer } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
 import type { WorkspaceService } from '../services/workspace';
 import type { LoggerService } from '../services/logger';
 import type { DocumentsWatcherService } from '../services/documents-watcher';
