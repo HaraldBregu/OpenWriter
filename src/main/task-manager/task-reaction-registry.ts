@@ -7,7 +7,7 @@
  */
 
 import type { LoggerService } from '../services/logger';
-import type { TaskReactionHandler } from './TaskReactionHandler';
+import type { TaskReactionHandler } from './task-reaction-handler';
 
 export class TaskReactionRegistry {
 	private readonly handlers = new Map<string, TaskReactionHandler[]>();
