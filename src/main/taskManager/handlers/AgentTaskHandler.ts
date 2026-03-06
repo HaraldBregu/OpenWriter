@@ -9,11 +9,11 @@
 
 import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler';
-import type { AgentRegistry } from '../../agents/AgentRegistry';
-import { executeAIAgentsStream } from '../../agents/AgentExecutor';
-import type { AgentStreamEvent } from '../../agents/AgentTypes';
+import type { AgentRegistry } from '../../ai/core/registry';
+import { executeAIAgentsStream } from '../../ai/core/executor';
+import type { AgentStreamEvent } from '../../ai/core/types';
 import type { ProviderResolver } from '../../shared/ProviderResolver';
-import type { ModelRegistry } from '../../agents/ModelRegistry';
+import type { ModelRegistry } from '../../ai/registry/model-registry';
 import type { LoggerService } from '../../services/logger';
 
 // ---------------------------------------------------------------------------
