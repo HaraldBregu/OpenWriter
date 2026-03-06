@@ -1,5 +1,5 @@
 import React from 'react';
-import { Textarea } from '../ui/textarea';
+import { Textarea } from '../ui/Textarea';
 import { cn } from '@/lib/utils';
 
 const AppTextarea = React.memo(
