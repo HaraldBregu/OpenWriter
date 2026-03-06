@@ -1099,6 +1099,7 @@ export default function DebugPage() {
 			{activeTab === 'tasks' && <TasksTab />}
 			{activeTab === 'text-continuation' && <TextContinuationTab />}
 			{activeTab === 'sentence-completer' && <SentenceCompleterTab />}
+			{activeTab === 'chatbot' && <ChatBotTab />}
 			{activeTab === 'redux' && <ReduxStateTab />}
 		</div>
 	);
