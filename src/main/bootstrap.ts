@@ -31,7 +31,7 @@ import { DemoTaskReaction } from './taskManager/reactions';
 
 // IPC modules
 import type { IpcModule } from './ipc';
-import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
+import { AppIpc, FileSystemIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
 
 export interface BootstrapResult {
 	container: ServiceContainer;
