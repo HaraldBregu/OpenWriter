@@ -60,7 +60,7 @@ Object.defineProperty(global, 'import', {
 
 import { AIChatHandler } from '../../../../../src/main/tasks/handlers/AIChatHandler';
 import type { AIChatInput } from '../../../../../src/main/tasks/handlers/AIChatHandler';
-import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/TaskHandler';
+import type { ProgressReporter, StreamReporter } from '../../../../../src/main/tasks/task-handler';
 
 // ---------------------------------------------------------------------------
 // Helpers

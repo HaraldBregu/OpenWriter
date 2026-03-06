@@ -1,9 +1,9 @@
-import type { IpcModule } from './IpcModule';
-import type { ServiceContainer } from '../core/ServiceContainer';
-import type { EventBus } from '../core/EventBus';
+import type { IpcModule } from './ipc-module';
+import type { ServiceContainer } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { TaskExecutor } from '../taskManager/TaskExecutor';
-import type { TaskOptions, ActiveTask } from '../taskManager/TaskDescriptor';
+import type { TaskExecutor } from '../task-manager/task-executor';
+import type { TaskOptions, ActiveTask } from '../task-manager/task-descriptor';
 import type { TaskInfo, TaskPriority } from '../../shared/types';
 import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway';
 import { TaskChannels } from '../../shared/channels';
