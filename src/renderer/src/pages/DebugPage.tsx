@@ -22,10 +22,10 @@ import {
 	MessageCircle,
 	Send,
 } from 'lucide-react';
-import { useDebugTasks } from '../hooks/useDebugTasks';
-import { useTaskSubmit } from '../hooks/useTaskSubmit';
-import { subscribeToTask } from '../services/taskEventBus';
-import type { TaskSnapshot } from '../services/taskEventBus';
+import { useDebugTasks } from '../hooks/use-debug-tasks';
+import { useTaskSubmit } from '../hooks/use-task-submit';
+import { subscribeToTask } from '../services/task-event-bus';
+import type { TaskSnapshot } from '../services/task-event-bus';
 import type { TrackedTaskState, TaskStatus } from '@/store/tasks/types';
 import { taskAdded } from '@/store/tasks/actions';
 import { store, useAppSelector } from '@/store';
