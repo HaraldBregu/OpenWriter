@@ -24,7 +24,7 @@ jest.mock('chokidar', () => ({
 
 import chokidar from 'chokidar';
 import { FileWatcherService } from '../../../../src/main/services/file-watcher';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 const mockChokidarWatch = chokidar.watch as jest.Mock;
 

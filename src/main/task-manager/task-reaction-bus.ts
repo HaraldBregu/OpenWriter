@@ -14,10 +14,10 @@
  *   blocks other handlers or the task system itself.
  */
 
-import type { Disposable } from '../core/ServiceContainer';
-import type { EventBus, AppEvent } from '../core/EventBus';
+import type { Disposable } from '../core/service-container';
+import type { EventBus, AppEvent } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { TaskReactionRegistry } from './TaskReactionRegistry';
+import type { TaskReactionRegistry } from './task-reaction-registry';
 import type {
 	TaskReactionHandler,
 	TaskSubmittedEvent,
@@ -25,7 +25,7 @@ import type {
 	TaskCompletedEvent,
 	TaskFailedEvent,
 	TaskCancelledEvent,
-} from './TaskReactionHandler';
+} from './task-reaction-handler';
 
 export class TaskReactionBus implements Disposable {
 	private readonly unsubs: Array<() => void> = [];
