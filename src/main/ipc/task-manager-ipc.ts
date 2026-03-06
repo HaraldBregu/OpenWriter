@@ -5,7 +5,7 @@ import type { LoggerService } from '../services/logger';
 import type { TaskExecutor } from '../task-manager/task-executor';
 import type { TaskOptions, ActiveTask } from '../task-manager/task-descriptor';
 import type { TaskInfo, TaskPriority } from '../../shared/types';
-import { registerQuery, registerCommand, registerCommandWithEvent } from './IpcGateway';
+import { registerQuery, registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { TaskChannels } from '../../shared/channels';
 
 /**
