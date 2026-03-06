@@ -1,5 +1,5 @@
-import type { Disposable } from '../core/ServiceContainer';
-import type { EventBus } from '../core/EventBus';
+import type { Disposable } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from './logger';
 
 /**

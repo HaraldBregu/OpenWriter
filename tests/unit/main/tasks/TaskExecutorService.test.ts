@@ -20,9 +20,9 @@
  *  - progress(): reporter emits progress event while task is active
  */
 import { TaskExecutorService } from '../../../../src/main/tasks/TaskExecutorService';
-import { TaskHandlerRegistry } from '../../../../src/main/tasks/TaskHandlerRegistry';
-import type { TaskHandler, ProgressReporter } from '../../../../src/main/tasks/TaskHandler';
-import type { EventBus } from '../../../../src/main/core/EventBus';
+import { TaskHandlerRegistry } from '../../../../src/main/tasks/task-handler-registry';
+import type { TaskHandler, ProgressReporter } from '../../../../src/main/tasks/task-handler';
+import type { EventBus } from '../../../../src/main/core/event-bus';
 
 // ---------------------------------------------------------------------------
 // Helpers
