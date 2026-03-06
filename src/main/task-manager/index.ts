@@ -1,7 +1,7 @@
-export { TaskExecutor } from './TaskExecutor';
-export { TaskHandlerRegistry } from './TaskHandlerRegistry';
-export { TaskReactionRegistry } from './TaskReactionRegistry';
-export { TaskReactionBus } from './TaskReactionBus';
-export type { TaskHandler, ProgressReporter, StreamReporter } from './TaskHandler';
-export type { ActiveTask, TaskOptions, TaskStatus, TaskPriority } from './TaskDescriptor';
-export type { TaskReactionHandler } from './TaskReactionHandler';
+export { TaskExecutor } from './task-executor';
+export { TaskHandlerRegistry } from './task-handler-registry';
+export { TaskReactionRegistry } from './task-reaction-registry';
+export { TaskReactionBus } from './task-reaction-bus';
+export type { TaskHandler, ProgressReporter, StreamReporter } from './task-handler';
+export type { ActiveTask, TaskOptions, TaskStatus, TaskPriority } from './task-descriptor';
+export type { TaskReactionHandler } from './task-reaction-handler';

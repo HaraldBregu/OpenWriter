@@ -3,9 +3,9 @@
  * Verifies workspace management IPC handlers.
  */
 import { ipcMain, dialog } from 'electron';
-import { WorkspaceIpc } from '../../../../src/main/ipc/WorkspaceIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { WorkspaceIpc } from '../../../../src/main/ipc/workspace-ipc';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('WorkspaceIpc', () => {
 	let module: WorkspaceIpc;
