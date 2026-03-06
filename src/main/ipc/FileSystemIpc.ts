@@ -197,4 +197,3 @@ export class FileSystemIpc implements IpcModule {
 		}
 	}
 }
-

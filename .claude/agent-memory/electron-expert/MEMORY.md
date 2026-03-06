@@ -35,7 +35,7 @@
 - `window.cron` — getAll, getJob, start, stop, delete, create, updateSchedule, validateExpression, onJobResult
 - `window.lifecycle` — getState, getEvents, restart, onEvent
 - `window.wm` — getState, createChild, createModal, createFrameless, createWidget, closeWindow, closeAll, onStateChange
-- `window.fs` — openFile, readFile, saveFile, writeFile, selectDirectory, watchDirectory, unwatchDirectory, getWatched, onWatchEvent
+- `window.fs` — readFile, writeFile, createFile, createFolder, rename (sandboxed text-file ops via FileSystemManager + PathValidator)
 - `window.dialog` — open, openDirectory, save, message, error
 - `window.notification` — isSupported, show, onEvent
 - `window.clipboard` — writeText, readText, writeHTML, readHTML, writeImage, readImage, clear, getContent, getFormats, hasText, hasImage, hasHTML
