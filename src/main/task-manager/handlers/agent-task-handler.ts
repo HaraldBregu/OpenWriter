@@ -8,10 +8,10 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler';
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
 import type { AgentRegistry, AgentStreamEvent, ModelRegistry } from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
-import type { ProviderResolver } from '../../shared/ProviderResolver';
+import type { ProviderResolver } from '../../shared/provider-resolver';
 import type { LoggerService } from '../../services/logger';
 
 // ---------------------------------------------------------------------------
