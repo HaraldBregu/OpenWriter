@@ -9,8 +9,8 @@
 import { ipcMain, dialog } from 'electron';
 import fs from 'node:fs/promises';
 import { DocumentsIpc } from '../../../../src/main/ipc/DocumentsIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 // Mock fs/promises so no real I/O occurs
 jest.mock('node:fs/promises');

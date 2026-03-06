@@ -1,7 +1,7 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
-import type { IpcModule } from './IpcModule';
-import type { ServiceContainer } from '../core/ServiceContainer';
-import type { EventBus } from '../core/EventBus';
+import type { IpcModule } from './ipc-module';
+import type { ServiceContainer } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../services/workspace';
 import { FileSystemManager } from '../shared/file-system-manager';
