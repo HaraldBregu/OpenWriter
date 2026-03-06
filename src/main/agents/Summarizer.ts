@@ -162,6 +162,7 @@ const definition: AgentDefinition = {
 	description:
 		'Condenses long-form content into clear, faithful summaries that preserve the key arguments, facts, and conclusions — without adding anything not present in the source.',
 	category: 'analysis',
+	role: 'analyzer',
 	defaultConfig: {
 		systemPrompt: `You are an expert research analyst trained to distil long documents into precise, faithful summaries.
 

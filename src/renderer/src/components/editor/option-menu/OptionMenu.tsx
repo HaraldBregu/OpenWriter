@@ -89,6 +89,18 @@ const MENU_ITEMS: MenuItem[] = [
 				.run();
 		},
 	},
+	{
+		label: 'Horizontal Rule',
+		icon: Minus,
+		command: (editor, slashPos, queryLength) => {
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+				.setHorizontalRule()
+				.run();
+		},
+	},
 ];
 
 const pluginKey = new PluginKey('optionMenu');
