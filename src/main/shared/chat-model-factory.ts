@@ -6,7 +6,7 @@
  */
 
 import { ChatOpenAI } from '@langchain/openai';
-import { isReasoningModel } from './aiUtils';
+import { isReasoningModel } from './ai-utils';
 
 const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
 	openai: undefined,

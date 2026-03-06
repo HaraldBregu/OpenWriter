@@ -43,7 +43,7 @@ jest.mock('chokidar', () => ({
 import fs from 'node:fs/promises';
 import chokidar from 'chokidar';
 import { PersonalityFilesService } from '../../../../src/main/services/personality-files';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 const mockAccess = fs.access as jest.Mock;
 const _mockMkdir = fs.mkdir as jest.Mock;
