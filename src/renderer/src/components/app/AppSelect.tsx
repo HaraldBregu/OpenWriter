@@ -10,7 +10,7 @@ import {
 	SelectSeparator,
 	SelectScrollUpButton,
 	SelectScrollDownButton,
-} from '../ui/select';
+} from '../ui/Select';
 import { cn } from '@/lib/utils';
 
 const AppSelect = Select;
