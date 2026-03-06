@@ -13,11 +13,11 @@ export type { ProgressReporter, StreamReporter, TaskHandler } from './task-manag
 // ---- Core types ----------------------------------------------------------
 // Note: Core types are co-located with their implementation files.
 // Export them here for convenience when importing from outside the core subtree.
-export type { Disposable } from './core/ServiceContainer';
-export type { AppEvent, AppEvents } from './core/EventBus';
-export type { WindowContextConfig } from './core/WindowContext';
-export type { WindowPreset } from './core/WindowFactory';
-export type { WindowScopedServiceDefinition } from './core/WindowScopedServiceFactory';
+export type { Disposable } from './core/service-container';
+export type { AppEvent, AppEvents } from './core/event-bus';
+export type { WindowContextConfig } from './core/window-context';
+export type { WindowPreset } from './core/window-factory';
+export type { WindowScopedServiceDefinition } from './core/window-scoped-service-factory';
 
 // ---- IPC types -----------------------------------------------------------
 export type { IpcModule } from './ipc/IpcModule';
