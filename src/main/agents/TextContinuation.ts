@@ -171,6 +171,7 @@ const definition: AgentDefinition = {
 	description:
 		'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
 	category: 'writing',
+	role: 'completer',
 	defaultConfig: {
 		systemPrompt: SYSTEM_PROMPT,
 		temperature: 0.4,
