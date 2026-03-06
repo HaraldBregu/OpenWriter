@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PenLine, Puzzle, ArrowRight, Star } from 'lucide-react';
 import { AppSeparator } from '@/components/app';
-import { useCreateWriting } from '@/hooks/useCreateWriting';
+import { useCreateWriting } from '@/hooks/use-create-writing';
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
