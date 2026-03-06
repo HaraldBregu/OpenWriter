@@ -33,6 +33,12 @@ import type {
 	WatcherError,
 	AgentStreamEvent,
 	AgentDefinitionInfo,
+	FsReadFileParams,
+	FsWriteFileParams,
+	FsCreateFileParams,
+	FsCreateFolderParams,
+	FsRenameParams,
+	FsRenameResult,
 } from '../shared/types';
 import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/aiSettings';
 import type { IpcResult } from '../shared/ipc-result';
