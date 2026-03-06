@@ -37,14 +37,14 @@
  *  - abort error: emits cancelled event when handler throws AbortError
  */
 
-import { TaskExecutor } from '../../../../src/main/taskManager/TaskExecutor';
-import { TaskHandlerRegistry } from '../../../../src/main/taskManager/TaskHandlerRegistry';
+import { TaskExecutor } from '../../../../src/main/task-manager/task-executor';
+import { TaskHandlerRegistry } from '../../../../src/main/task-manager/task-handler-registry';
 import type {
 	TaskHandler,
 	ProgressReporter,
 	StreamReporter,
-} from '../../../../src/main/taskManager/TaskHandler';
-import type { EventBus } from '../../../../src/main/core/EventBus';
+} from '../../../../src/main/task-manager/task-handler';
+import type { EventBus } from '../../../../src/main/core/event-bus';
 
 // ---------------------------------------------------------------------------
 // Mock EventBus
