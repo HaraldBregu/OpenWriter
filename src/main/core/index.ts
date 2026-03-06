@@ -3,13 +3,13 @@
  * These utilities provide the foundation for the refactored architecture.
  */
 
-export { AppState } from './AppState';
-export { EventBus, type AppEvent, type AppEvents } from './EventBus';
-export { WindowFactory } from './WindowFactory';
-export { ServiceContainer, type Disposable } from './ServiceContainer';
-export { WindowContext, WindowContextManager, type WindowContextConfig } from './WindowContext';
+export { AppState } from './app-state';
+export { EventBus, type AppEvent, type AppEvents } from './event-bus';
+export { WindowFactory } from './window-factory';
+export { ServiceContainer, type Disposable } from './service-container';
+export { WindowContext, WindowContextManager, type WindowContextConfig } from './window-context';
 export {
 	WindowScopedServiceFactory,
 	createDefaultWindowScopedServiceFactory,
 	type WindowScopedServiceDefinition,
-} from './WindowScopedServiceFactory';
+} from './window-scoped-service-factory';
