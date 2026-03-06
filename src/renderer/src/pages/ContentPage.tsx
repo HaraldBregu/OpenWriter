@@ -21,10 +21,10 @@ import {
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import { useTaskSubmit } from '../hooks/useTaskSubmit';
-// import { subscribeToTask } from '../services/taskEventBus';
-// import type { TaskSnapshot } from '../services/taskEventBus';
+import { subscribeToTask } from '../services/taskEventBus';
+import type { TaskSnapshot } from '../services/taskEventBus';
 import { debounce } from 'lodash';
+import { useTask } from '@/hooks/useTask';
 
 const ContentPage: React.FC = () => {
 	const { t } = useTranslation();
@@ -41,10 +41,10 @@ const ContentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	const task = useTaskSubmit<{ prompt: string }>('agent-text-continuation', {
+	const task = useTask<{ prompt: string }>('agent-text-continuation', {
 		prompt: '',
 	});
-       console.log(`[ContentPage] rendered`);                                                                                                                                           
+	console.log(`[ContentPage] rendered`);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -149,18 +149,16 @@ const ContentPage: React.FC = () => {
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
 
-	// console.log('ContentPage rendered');
-	// useEffect(() => {
-	// 	if (!task.taskId) return;
-	// 	const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
-	// 		// const completed = snap.status === 'completed';
-	//     console.log('Task snapshot received:', snap);
-	// 		// editorRef.current?.insertText(snap.streamedContent, {
-	// 		// 	preventEditorUpdate: !completed,
-	// 		// });
-	// 	});
-	// 	return unsub;
-	// }, [task.taskId]);
+	useEffect(() => {
+		if (!task.taskId) return;
+		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+			const completed = snap.status === 'completed';
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
+		});
+		return unsub;
+	}, [task.taskId]);
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
