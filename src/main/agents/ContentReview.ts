@@ -220,6 +220,7 @@ const definition: AgentDefinition = {
 	description:
 		'Provides detailed editorial feedback on clarity, grammar, tone, and structure — with specific line-level suggestions and an overall assessment.',
 	category: 'editing',
+	role: 'heavy-editor',
 	defaultConfig: {
 		systemPrompt: `You are a senior editor at a respected publishing house with expertise in both fiction and non-fiction.
 
