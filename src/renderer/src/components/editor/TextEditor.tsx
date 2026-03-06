@@ -99,6 +99,11 @@ const TextEditor = React.memo(
 
 			const editor = useEditor(editorOptions, []);
 
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+				editor.storage.agentPrompt.onSubmit = onAskAIAgent ?? (() => {});
+			}, [editor, onAskAIAgent]);
+
 			const rootRef = useRef<HTMLDivElement>(null);
 
 			useImperativeHandle(ref, () => {
