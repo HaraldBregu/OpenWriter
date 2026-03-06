@@ -181,6 +181,49 @@ export interface WorkspaceApi {
 	onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void;
 }
 
+/**
+ * Sandboxed filesystem operations.
+ *
+ * All paths are validated in the main process against:
+ *   - The four standard Electron directories (Documents, Downloads, Desktop, userData).
+ *   - The currently active workspace path (if one is set).
+ *
+ * Paths outside these roots are rejected with a descriptive error before any
+ * I/O is attempted.
+ */
+export interface FsApi {
+	/**
+	 * Read a text file and return its content as a string.
+	 * Files larger than 64 MB are rejected before any buffer is allocated.
+	 */
+	readFile: (params: FsReadFileParams) => Promise<string>;
+
+	/**
+	 * Write (or atomically overwrite) a text file.
+	 * By default uses a write-to-temp-then-rename strategy to prevent
+	 * half-written files if the process crashes mid-write.
+	 */
+	writeFile: (params: FsWriteFileParams) => Promise<void>;
+
+	/**
+	 * Create a new file, optionally pre-populated with content.
+	 * Idempotent by default; pass `failIfExists: true` for exclusive creation.
+	 */
+	createFile: (params: FsCreateFileParams) => Promise<void>;
+
+	/**
+	 * Create a directory, optionally with recursive ancestor creation (mkdir -p).
+	 * Idempotent by default; pass `failIfExists: true` for exclusive creation.
+	 */
+	createFolder: (params: FsCreateFolderParams) => Promise<void>;
+
+	/**
+	 * Rename or move a file or directory within allowed directories.
+	 * Throws by default if the destination already exists.
+	 */
+	rename: (params: FsRenameParams) => Promise<FsRenameResult>;
+}
+
 /** Background task queue */
 export interface TaskApi {
 	submit: (
