@@ -398,10 +398,7 @@ export class FileSystemManager {
 		PathValidator.assertPathSafe(oldPath);
 		PathValidator.assertPathSafe(newPath);
 
-		this.logger?.debug(
-			FileSystemManager.LOG_SOURCE,
-			`Renaming: "${oldPath}" -> "${newPath}"`
-		);
+		this.logger?.debug(FileSystemManager.LOG_SOURCE, `Renaming: "${oldPath}" -> "${newPath}"`);
 
 		// Verify the source exists before attempting the rename so that the
 		// error message is actionable rather than a raw system error string.
@@ -438,10 +435,7 @@ export class FileSystemManager {
 
 		try {
 			await fs.rename(oldPath, newPath);
-			this.logger?.debug(
-				FileSystemManager.LOG_SOURCE,
-				`Renamed: "${oldPath}" -> "${newPath}"`
-			);
+			this.logger?.debug(FileSystemManager.LOG_SOURCE, `Renamed: "${oldPath}" -> "${newPath}"`);
 			return { newPath };
 		} catch (err) {
 			const error = asErrno(err);
@@ -449,9 +443,7 @@ export class FileSystemManager {
 				throw new Error(`Source path does not exist: ${oldPath}`);
 			}
 			if (error.code === 'EACCES' || error.code === 'EPERM') {
-				throw new Error(
-					`Permission denied renaming "${oldPath}" to "${newPath}"`
-				);
+				throw new Error(`Permission denied renaming "${oldPath}" to "${newPath}"`);
 			}
 			if (error.code === 'EXDEV') {
 				throw new Error(
@@ -459,13 +451,9 @@ export class FileSystemManager {
 				);
 			}
 			if (error.code === 'ENOTEMPTY' || error.code === 'EEXIST') {
-				throw new Error(
-					`Destination already exists and is not empty: ${newPath}`
-				);
+				throw new Error(`Destination already exists and is not empty: ${newPath}`);
 			}
-			throw new Error(
-				`Failed to rename "${oldPath}" to "${newPath}": ${error.message}`
-			);
+			throw new Error(`Failed to rename "${oldPath}" to "${newPath}": ${error.message}`);
 		}
 	}
 
