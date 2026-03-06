@@ -79,13 +79,16 @@ export function bootstrapServices(): BootstrapResult {
 		agentRegistry.register(def);
 	}
 
+	// Model registry — role-based model/provider assignments
+	const modelRegistry = container.register('modelRegistry', new ModelRegistry());
+
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
 	taskHandlerRegistry.register(new DemoTaskHandler());
 	const providerResolver = new ProviderResolver(storeService);
 	for (const def of agentRegistry.list()) {
 		taskHandlerRegistry.register(
-			new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger)
+			new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger, modelRegistry)
 		);
 	}
 
