@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bot, Play, RotateCcw, Square, Loader2 } from 'lucide-react';
-import { useTaskSubmit } from '../hooks/useTaskSubmit';
-import { subscribeToTask } from '../services/taskEventBus';
-import type { TaskSnapshot } from '../services/taskEventBus';
+import { useTaskSubmit } from '../hooks/use-task-submit';
+import { subscribeToTask } from '../services/task-event-bus';
+import type { TaskSnapshot } from '../services/task-event-bus';
 import {
 	AppCard,
 	AppCardHeader,
