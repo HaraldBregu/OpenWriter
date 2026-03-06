@@ -15,7 +15,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuRadioGroup,
-} from '../ui/dropdown-menu';
+} from '../ui/DropdownMenu';
 import { cn } from '@/lib/utils';
 
 const AppDropdownMenu = DropdownMenu;
