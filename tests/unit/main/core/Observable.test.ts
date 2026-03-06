@@ -2,7 +2,7 @@
  * Tests for Observable base class.
  * Provides pub/sub pattern for services that emit events.
  */
-import { Observable, type Unsubscribe } from '../../../../src/main/core/Observable';
+import { Observable, type Unsubscribe } from '../../../../src/main/core/observable';
 
 // Create a concrete subclass to test protected methods
 class TestObservable extends Observable<string> {
