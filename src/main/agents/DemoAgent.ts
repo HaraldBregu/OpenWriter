@@ -13,6 +13,7 @@ const definition: AgentDefinition = {
 	description:
 		'A general-purpose assistant that answers questions with concise, interesting responses. Great for testing the agent pipeline.',
 	category: 'utility',
+	role: 'general',
 	defaultConfig: {
 		systemPrompt:
 			'You are a helpful assistant that provides concise, interesting responses. Keep answers to 2-3 short paragraphs maximum.',
