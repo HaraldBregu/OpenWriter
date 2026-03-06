@@ -1,4 +1,4 @@
-import type { IpcMainInvokeEvent } from 'electron';
+import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 import type { IpcModule } from './IpcModule';
 import type { ServiceContainer } from '../core/ServiceContainer';
 import type { EventBus } from '../core/EventBus';
