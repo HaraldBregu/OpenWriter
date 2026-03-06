@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from '../ui/input';
+import { Input } from '../ui/Input';
 import { cn } from '@/lib/utils';
 
 const AppInput = React.memo(
