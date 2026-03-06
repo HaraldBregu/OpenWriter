@@ -5,6 +5,7 @@
 
 export type { IpcModule } from './IpcModule';
 export { AppIpc } from './AppIpc';
+export { FileSystemIpc } from './FileSystemIpc';
 export { TaskManagerIpc } from './TaskManagerIpc';
 export { WorkspaceIpc } from './WorkspaceIpc';
 export { WindowIpc } from './WindowIpc';
