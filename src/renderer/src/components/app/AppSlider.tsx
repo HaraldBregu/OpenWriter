@@ -1,7 +1,7 @@
 import React from 'react';
-import { Slider } from '../ui/slider';
+import { Slider } from '../ui/Slider';
 import { cn } from '@/lib/utils';
-import type { SliderProps } from '../ui/slider';
+import type { SliderProps } from '../ui/Slider';
 
 const AppSlider = React.memo(
 	React.forwardRef<HTMLInputElement, SliderProps>(({ className, ...props }, ref) => (
