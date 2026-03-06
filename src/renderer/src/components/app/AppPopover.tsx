@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
+import { Popover, PopoverTrigger, PopoverContent } from '../ui/Popover';
 import { cn } from '@/lib/utils';
 
 const AppPopover = Popover;
