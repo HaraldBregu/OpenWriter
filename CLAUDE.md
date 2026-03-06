@@ -8,5 +8,5 @@ After each file edit, run `yarn format` to format the code with Prettier.
 
 - **`.ts`** files: lowercase kebab-case (e.g., `my-component.ts`)
 - **`.tsx`** files: PascalCase (e.g., `MyComponent.tsx`)
-- **`.md`** files: UPPERCASE (e.g., `README.md`)
+- **`.md`** files: UPPERCASE or UPPER_SNAKE_CASE (e.g., `README.md`, `GETTING_STARTED.md`)
 - **`.json`** files: kebab-case, or lowercase if a single word (e.g., `tsconfig.json`, `my-config.json`)
