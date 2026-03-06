@@ -3,8 +3,8 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { shell } from 'electron';
 import chokidar, { type FSWatcher } from 'chokidar';
-import type { EventBus } from '../core/EventBus';
-import type { Disposable } from '../core/ServiceContainer';
+import type { EventBus } from '../core/event-bus';
+import type { Disposable } from '../core/service-container';
 import type { WorkspaceService } from './workspace';
 import type { LoggerService } from './logger';
 

@@ -18,8 +18,8 @@
  */
 import { ipcMain, BrowserWindow, nativeTheme, mockBrowserWindowInstance } from 'electron';
 import { ThemeIpc } from '../../../../src/main/ipc/ThemeIpc';
-import { ServiceContainer } from '../../../../src/main/core/ServiceContainer';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { ServiceContainer } from '../../../../src/main/core/service-container';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 // ---------------------------------------------------------------------------
 // Helpers
