@@ -6,4 +6,4 @@
  * ordered, and safe to tree-shake in tests.
  */
 
-export { DemoTaskReaction } from './DemoTaskReaction';
+export { DemoTaskReaction } from './demo-task-reaction';
