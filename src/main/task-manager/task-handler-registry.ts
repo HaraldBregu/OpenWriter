@@ -1,4 +1,4 @@
-import type { TaskHandler } from './TaskHandler';
+import type { TaskHandler } from './task-handler';
 
 /**
  * Registry for task handlers.

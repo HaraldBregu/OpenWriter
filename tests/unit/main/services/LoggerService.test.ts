@@ -31,7 +31,7 @@ jest.mock('node:fs', () => ({
 
 import fs from 'node:fs';
 import { LoggerService, LogLevel } from '../../../../src/main/services/logger';
-import { EventBus } from '../../../../src/main/core/EventBus';
+import { EventBus } from '../../../../src/main/core/event-bus';
 
 const mockMkdirSync = fs.mkdirSync as jest.Mock;
 const mockAppendFileSync = fs.appendFileSync as jest.Mock;
