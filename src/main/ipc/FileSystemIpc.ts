@@ -198,6 +198,3 @@ export class FileSystemIpc implements IpcModule {
 	}
 }
 
-// Re-export ipcMain so the file is self-contained without requiring callers
-// to inject it — consistent with how AppIpc, WorkspaceIpc etc. are written.
-import { ipcMain } from 'electron';
