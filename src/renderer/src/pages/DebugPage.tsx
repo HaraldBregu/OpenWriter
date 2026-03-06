@@ -939,25 +939,4 @@ export default function DebugPage() {
       {activeTab === 'redux' && <ReduxStateTab />}
     </div>
   );
-  </button>
-            <button type="button" onClick={() => setActiveTab('text-continuation')} className={tabClass('text-continuation')}>
-              Text Continuation
-            </button>
-            <button type="button" onClick={() => setActiveTab('sentence-completer')} className={tabClass('sentence-completer')}>
-              Sentence Completer
-            </button>
-            <button type="button" onClick={() => setActiveTab('redux')} className={tabClass('redux')}>
-              Redux State
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab content */}
-      {activeTab === 'tasks' && <TasksTab />}
-      {activeTab === 'text-continuation' && <TextContinuationTab />}
-      {activeTab === 'sentence-completer' && <SentenceCompleterTab />}
-      {activeTab === 'redux' && <ReduxStateTab />}
-    </div>
-  )
 }
