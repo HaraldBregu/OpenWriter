@@ -22,6 +22,8 @@ export { executeAIAgentsStream } from './AgentExecutor';
 export type { ExecutorInput } from './AgentExecutor';
 export type { AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './AgentTypes';
 export { AgentRegistry } from './AgentRegistry';
+export { ModelRegistry } from './ModelRegistry';
+export type { ModelRole, ModelRoleConfig, CostTier } from './ModelRegistry';
 
 import { StoryWriterAgent } from './StoryWriter';
 import { TextCompleterAgent } from './TextCompleter';
