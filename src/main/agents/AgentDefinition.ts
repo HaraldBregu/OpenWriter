@@ -39,6 +39,13 @@ export interface AgentDefinition {
 	/** Category used for grouping / filtering in the UI */
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 	/**
+	 * Optional functional role for model selection via ModelRegistry.
+	 * When set, the registry's provider/model/temperature for this role
+	 * are used as fallbacks when the agent's own defaultConfig does not
+	 * specify them.
+	 */
+	role?: ModelRole;
+	/**
 	 * Default session configuration.
 	 *
 	 * `providerId` is intentionally optional here: callers must supply a
