@@ -7,6 +7,7 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
+import type { ModelRole } from './ModelRegistry';
 
 // ---------------------------------------------------------------------------
 // Default configuration — standalone shape for agent definitions
