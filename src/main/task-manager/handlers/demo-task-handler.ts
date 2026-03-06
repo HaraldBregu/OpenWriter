@@ -11,7 +11,7 @@
  * All variants respect AbortSignal so cancel works correctly mid-run.
  */
 
-import type { TaskHandler, ProgressReporter, StreamReporter } from '../TaskHandler';
+import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
 
 export type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error';
 
