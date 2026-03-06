@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label } from '../ui/label';
+import { Label } from '../ui/Label';
 import { cn } from '@/lib/utils';
 
 const AppLabel = React.memo(
