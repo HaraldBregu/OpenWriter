@@ -251,6 +251,13 @@ export interface InvokeChannelMap {
 		args: [writingId: string, writingTitle: string];
 		result: void;
 	};
+
+	// ---- FileSystem (IpcResult-wrapped) ----
+	[FsChannels.readFile]: { args: [params: FsReadFileParams]; result: string };
+	[FsChannels.writeFile]: { args: [params: FsWriteFileParams]; result: void };
+	[FsChannels.createFile]: { args: [params: FsCreateFileParams]; result: void };
+	[FsChannels.createFolder]: { args: [params: FsCreateFolderParams]; result: void };
+	[FsChannels.rename]: { args: [params: FsRenameParams]; result: FsRenameResult };
 }
 
 /**
