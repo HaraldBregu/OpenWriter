@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skeleton } from '../ui/skeleton';
+import { Skeleton } from '../ui/Skeleton';
 import { cn } from '@/lib/utils';
 
 const AppSkeleton = React.memo(function AppSkeleton({
