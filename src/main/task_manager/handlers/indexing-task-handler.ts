@@ -87,7 +87,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			throw new Error('No workspace is open for this window');
 		}
 
-		const resourcesPath = path.join(workspacePath, DOCUMENTS_DIR);
+		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
 		const vectorStorePath = path.join(workspacePath, VECTOR_STORE_DIR, VECTOR_STORE_SUBDIR);
 
 		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
