@@ -1,14 +1,233 @@
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { FileWarning, Loader2 } from 'lucide-react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
+import xml from 'react-syntax-highlighter/dist/esm/languages/hljs/xml';
+import css from 'react-syntax-highlighter/dist/esm/languages/hljs/css';
+import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import typescript from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
+import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
 	AppSheet,
 	AppSheetContent,
 	AppSheetHeader,
 	AppSheetTitle,
 	AppSheetDescription,
+	AppTable,
+	AppTableHeader,
+	AppTableBody,
+	AppTableHead,
+	AppTableRow,
+	AppTableCell,
 } from '../../components/app';
 import type { DocumentInfo } from '../../../../shared/types';
 import { formatBytes } from './constants';
+
+SyntaxHighlighter.registerLanguage('json', json);
+SyntaxHighlighter.registerLanguage('xml', xml);
+SyntaxHighlighter.registerLanguage('css', css);
+SyntaxHighlighter.registerLanguage('javascript', javascript);
+SyntaxHighlighter.registerLanguage('typescript', typescript);
+SyntaxHighlighter.registerLanguage('python', python);
+
+const MIME_TO_LANGUAGE: Record<string, string> = {
+	'application/json': 'json',
+	'application/xml': 'xml',
+	'text/css': 'css',
+	'text/javascript': 'javascript',
+	'text/typescript': 'typescript',
+	'text/jsx': 'javascript',
+	'text/tsx': 'typescript',
+	'text/x-python': 'python',
+};
+
+const BINARY_MIME_TYPES = new Set([
+	'application/pdf',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	'application/msword',
+	'application/rtf',
+]);
+
+function parseCsv(text: string): string[][] {
+	const rows: string[][] = [];
+	let current = '';
+	let inQuotes = false;
+	let row: string[] = [];
+
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i];
+		if (inQuotes) {
+			if (char === '"' && text[i + 1] === '"') {
+				current += '"';
+				i++;
+			} else if (char === '"') {
+				inQuotes = false;
+			} else {
+				current += char;
+			}
+		} else if (char === '"') {
+			inQuotes = true;
+		} else if (char === ',') {
+			row.push(current);
+			current = '';
+		} else if (char === '\n' || (char === '\r' && text[i + 1] === '\n')) {
+			row.push(current);
+			current = '';
+			rows.push(row);
+			row = [];
+			if (char === '\r') i++;
+		} else {
+			current += char;
+		}
+	}
+	if (current || row.length > 0) {
+		row.push(current);
+		rows.push(row);
+	}
+	return rows;
+}
+
+function PdfPreview({ path }: { path: string }) {
+	const src = `file://${path.replace(/\\/g, '/')}`;
+	return <iframe title="PDF preview" src={src} className="h-full w-full border-0" />;
+}
+
+function CsvPreview({ content }: { content: string }) {
+	const rows = useMemo(() => parseCsv(content), [content]);
+	const [header, ...body] = rows;
+
+	if (rows.length === 0) {
+		return <p className="text-sm text-muted-foreground">Empty CSV file</p>;
+	}
+
+	return (
+		<div className="rounded-md border overflow-auto">
+			<AppTable>
+				{header && (
+					<AppTableHeader>
+						<AppTableRow>
+							{header.map((cell, i) => (
+								<AppTableHead key={i}>{cell}</AppTableHead>
+							))}
+						</AppTableRow>
+					</AppTableHeader>
+				)}
+				<AppTableBody>
+					{body.map((row, ri) => (
+						<AppTableRow key={ri}>
+							{row.map((cell, ci) => (
+								<AppTableCell key={ci} className="text-sm">
+									{cell}
+								</AppTableCell>
+							))}
+						</AppTableRow>
+					))}
+				</AppTableBody>
+			</AppTable>
+		</div>
+	);
+}
+
+function HtmlPreview({ content }: { content: string }) {
+	return (
+		<iframe
+			title="HTML preview"
+			srcDoc={content}
+			className="h-full w-full border-0 bg-white rounded"
+			sandbox="allow-same-origin"
+		/>
+	);
+}
+
+function MarkdownPreview({ content }: { content: string }) {
+	return (
+		<div className="prose prose-sm dark:prose-invert max-w-none">
+			<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+		</div>
+	);
+}
+
+function CodePreview({ content, language }: { content: string; language: string }) {
+	return (
+		<SyntaxHighlighter
+			language={language}
+			style={vs2015}
+			customStyle={{ margin: 0, borderRadius: '0.375rem', fontSize: '0.875rem' }}
+			wrapLongLines
+		>
+			{content}
+		</SyntaxHighlighter>
+	);
+}
+
+function JsonPreview({ content }: { content: string }) {
+	const formatted = useMemo(() => {
+		try {
+			return JSON.stringify(JSON.parse(content), null, 2);
+		} catch {
+			return content;
+		}
+	}, [content]);
+
+	return <CodePreview content={formatted} language="json" />;
+}
+
+function PlainTextPreview({ content }: { content: string }) {
+	return (
+		<pre className="whitespace-pre-wrap break-words text-sm font-mono text-foreground">
+			{content}
+		</pre>
+	);
+}
+
+function UnsupportedPreview({ mimeType }: { mimeType: string }) {
+	return (
+		<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
+			<FileWarning className="h-10 w-10" />
+			<p className="text-sm">Preview is not available for {mimeType} files</p>
+		</div>
+	);
+}
+
+function FileContentView({ doc, content }: { doc: DocumentInfo; content: string | null }) {
+	const { mimeType } = doc;
+
+	if (mimeType === 'application/pdf') {
+		return <PdfPreview path={doc.path} />;
+	}
+
+	if (BINARY_MIME_TYPES.has(mimeType)) {
+		return <UnsupportedPreview mimeType={mimeType} />;
+	}
+
+	if (content === null) return null;
+
+	if (mimeType === 'text/csv') {
+		return <CsvPreview content={content} />;
+	}
+
+	if (mimeType === 'text/html') {
+		return <HtmlPreview content={content} />;
+	}
+
+	if (mimeType === 'text/markdown') {
+		return <MarkdownPreview content={content} />;
+	}
+
+	if (mimeType === 'application/json') {
+		return <JsonPreview content={content} />;
+	}
+
+	const language = MIME_TO_LANGUAGE[mimeType];
+	if (language) {
+		return <CodePreview content={content} language={language} />;
+	}
+
+	return <PlainTextPreview content={content} />;
+}
 
 interface ResourcePreviewSheetProps {
 	doc: DocumentInfo | null;
@@ -20,8 +239,10 @@ export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
+	const isBinary = doc !== null && BINARY_MIME_TYPES.has(doc.mimeType);
+
 	useEffect(() => {
-		if (!doc) {
+		if (!doc || isBinary) {
 			setContent(null);
 			setError(null);
 			return;
@@ -49,7 +270,7 @@ export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps
 		return () => {
 			cancelled = true;
 		};
-	}, [doc]);
+	}, [doc, isBinary]);
 
 	return (
 		<AppSheet
@@ -77,11 +298,7 @@ export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps
 							{error}
 						</div>
 					)}
-					{content !== null && (
-						<pre className="whitespace-pre-wrap break-words text-sm font-mono text-foreground">
-							{content}
-						</pre>
-					)}
+					{!loading && !error && doc && <FileContentView doc={doc} content={content} />}
 				</div>
 			</AppSheetContent>
 		</AppSheet>
