@@ -108,7 +108,7 @@ export default function ResourcesPage() {
 		const documentIds = documents.map((d) => d.id);
 
 		try {
-			const result = await window.task.submit('index-documents', {
+			const result = await window.task.submit('index-resources', {
 				documentIds,
 				workspacePath,
 			});
