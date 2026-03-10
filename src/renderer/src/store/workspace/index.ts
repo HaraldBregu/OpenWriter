@@ -13,6 +13,7 @@ export {
 	clearWorkspace,
 	loadDocuments,
 	removeDocuments,
+	indexResources,
 } from './actions';
 
 // Reducer, slice, and synchronous actions
