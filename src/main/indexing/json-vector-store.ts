@@ -116,10 +116,7 @@ export class JsonVectorStore {
 	 * @param k - Number of results to return
 	 * @returns Array of [Document, score] pairs, sorted by descending similarity
 	 */
-	async similaritySearchWithScore(
-		query: string,
-		k: number
-	): Promise<Array<[Document, number]>> {
+	async similaritySearchWithScore(query: string, k: number): Promise<Array<[Document, number]>> {
 		if (this.entries.length === 0) return [];
 
 		const queryVector = await this.embeddings.embedQuery(query);

@@ -31,12 +31,7 @@ import { ProviderResolver } from './shared/provider-resolver';
 import { DemoTaskReaction } from './task_manager/reactions';
 
 // Indexing infrastructure
-import {
-	ExtractorRegistry,
-	PlainTextExtractor,
-	PdfExtractor,
-	DocxExtractor,
-} from './indexing';
+import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './indexing';
 
 // IPC modules
 import type { IpcModule } from './ipc';

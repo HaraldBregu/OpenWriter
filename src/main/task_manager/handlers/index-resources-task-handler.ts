@@ -51,9 +51,10 @@ export interface IndexResourcesOutput {
 	totalChunks: number;
 }
 
-export class IndexResourcesTaskHandler
-	implements TaskHandler<IndexResourcesInput, IndexResourcesOutput>
-{
+export class IndexResourcesTaskHandler implements TaskHandler<
+	IndexResourcesInput,
+	IndexResourcesOutput
+> {
 	readonly type = 'index-resources';
 
 	constructor(
@@ -114,9 +115,8 @@ export class IndexResourcesTaskHandler
 		const manifest = await IndexingManifest.load(vectorStorePath);
 
 		// Resolve embedding model via ProviderResolver
-		const storeService = this.globalContainer.get<import('../../services/store').StoreService>(
-			'store'
-		);
+		const storeService =
+			this.globalContainer.get<import('../../services/store').StoreService>('store');
 		const providerResolver = new ProviderResolver(storeService);
 		const resolved = providerResolver.resolve({ providerId: 'openai' });
 		const embeddingModel = createEmbeddingModel({
@@ -234,8 +234,7 @@ export class IndexResourcesTaskHandler
 
 					indexedCount++;
 					const percent =
-						PHASE_EXTRACT +
-						Math.round(((i + 1) / pendingChunks.length) * PHASE_EMBED);
+						PHASE_EXTRACT + Math.round(((i + 1) / pendingChunks.length) * PHASE_EMBED);
 					reporter.progress(percent, `Embedded: ${path.basename(pending.filePath)}`);
 				} catch (err) {
 					if (err instanceof Error && err.name === 'AbortError') {

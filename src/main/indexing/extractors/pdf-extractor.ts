@@ -5,7 +5,9 @@
  */
 
 import fs from 'node:fs/promises';
-import pdfParse from 'pdf-parse';
+import * as pdfParseModule from 'pdf-parse';
+
+const pdfParse = (pdfParseModule as { default?: typeof pdfParseModule }).default ?? pdfParseModule;
 import type { DocumentExtractor, ExtractedContent } from '../document-extractor';
 
 export class PdfExtractor implements DocumentExtractor {
