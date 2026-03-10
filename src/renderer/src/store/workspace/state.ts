@@ -20,6 +20,8 @@ export interface WorkspaceState {
 	documentsError: string | null;
 	/** Whether a file import operation is in progress */
 	importing: boolean;
+	/** Task ID of the currently running document indexing task (null when idle) */
+	documentIndexingTaskId: string | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
