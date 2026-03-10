@@ -21,7 +21,7 @@ const Checkbox = React.forwardRef<
 	>
 		<CheckboxPrimitive.Indicator
 			data-slot="checkbox-indicator"
-			className="[&>svg]:size-3.5 grid place-content-center text-current transition-none"
+			className="[&>svg]:h-3.5 [&>svg]:w-3.5 grid place-content-center text-current transition-none"
 		>
 			<CheckIcon />
 		</CheckboxPrimitive.Indicator>
