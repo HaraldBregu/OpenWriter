@@ -26,9 +26,7 @@ export class PdfExtractor implements DocumentExtractor {
 		try {
 			const textResult = await parser.getText();
 			const content = textResult.text;
-
-			const info = await parser.getInfo();
-			const pageCount = info.numPages ?? 0;
+			const pageCount = textResult.pages.length;
 
 			return {
 				content,
