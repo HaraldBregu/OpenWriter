@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
@@ -13,7 +14,7 @@ interface ResourcesHeaderProps {
 	onIndex: () => void;
 }
 
-export function ResourcesHeader({
+export const ResourcesHeader = memo(function ResourcesHeader({
 	uploading,
 	onUpload,
 	editing,
