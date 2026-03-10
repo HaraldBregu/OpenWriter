@@ -25,6 +25,7 @@ import { TaskExecutor } from './task_manager/task-executor';
 import { TaskReactionRegistry } from './task_manager/task-reaction-registry';
 import { TaskReactionBus } from './task_manager/task-reaction-bus';
 import { DemoTaskHandler } from './task_manager/handlers/demo-task-handler';
+import { IndexDocumentsTaskHandler } from './task_manager/handlers/index-documents-task-handler';
 import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 import { DemoTaskReaction } from './task_manager/reactions';
