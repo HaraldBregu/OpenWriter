@@ -41,29 +41,29 @@ export const selectWorkspaceDeletionReason = createSelector(
 );
 
 // ---------------------------------------------------------------------------
-// Document selectors
+// Resource selectors
 // ---------------------------------------------------------------------------
 
-export const selectDocuments = createSelector(selectWorkspaceState, (state) => state.documents);
+export const selectResources = createSelector(selectWorkspaceState, (state) => state.resources);
 
-export const selectDocumentsStatus = createSelector(
+export const selectResourcesStatus = createSelector(
 	selectWorkspaceState,
-	(state) => state.documentsStatus
+	(state) => state.resourcesStatus
 );
 
-export const selectDocumentsError = createSelector(
+export const selectResourcesError = createSelector(
 	selectWorkspaceState,
-	(state) => state.documentsError
+	(state) => state.resourcesError
 );
 
-export const selectDocumentsIsLoading = createSelector(
-	selectDocumentsStatus,
+export const selectResourcesIsLoading = createSelector(
+	selectResourcesStatus,
 	(status) => status === 'loading'
 );
 
 export const selectImporting = createSelector(selectWorkspaceState, (state) => state.importing);
 
-export const selectDocumentIndexingTaskId = createSelector(
+export const selectResourceIndexingTaskId = createSelector(
 	selectWorkspaceState,
-	(state) => state.documentIndexingTaskId
+	(state) => state.resourceIndexingTaskId
 );
