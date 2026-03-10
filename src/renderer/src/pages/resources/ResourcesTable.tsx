@@ -95,7 +95,10 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 			if (query && !doc.name.toLowerCase().includes(query)) return false;
 			return true;
 		});
-		return result.sort((a, b) => compareDocs(a, b, sortKey, sortDir));
+		if (sortDir !== 'none') {
+			result.sort((a, b) => compareDocs(a, b, sortKey, sortDir));
+		}
+		return result;
 	}, [documents, search, typeFilter, sortKey, sortDir]);
 
 	return (
