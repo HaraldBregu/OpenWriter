@@ -67,4 +67,4 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 			</div>
 		</div>
 	);
-}
+});
