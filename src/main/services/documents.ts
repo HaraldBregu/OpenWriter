@@ -3,7 +3,11 @@ import path from 'node:path';
 import type { FileMetadata, FileManagementService } from './file-management-service';
 import type { DocumentsWatcherService } from './documents-watcher';
 import type { LoggerService } from './logger';
-import { validateTextFiles, getAllTextExtensions, getFileExtension } from '../utils/file-type-validator';
+import {
+	validateTextFiles,
+	getAllTextExtensions,
+	getFileExtension,
+} from '../utils/file-type-validator';
 
 /**
  * DocumentsService manages document files within a workspace.
@@ -96,7 +100,7 @@ export class DocumentsService {
 		const docsDir = this.getDocumentsDir(workspacePath);
 		const importedFiles: FileMetadata[] = [];
 
-		for (const filePath of validFiles) {
+		for (const filePath of filePaths) {
 			try {
 				const metadata = await this.fileManagement.copyFile(
 					filePath,
