@@ -11,6 +11,7 @@ import {
 	PenLine,
 	Search,
 	X,
+	PanelRight,
 } from 'lucide-react';
 import {
 	AppButton,
