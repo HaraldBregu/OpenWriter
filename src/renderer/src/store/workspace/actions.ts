@@ -101,16 +101,13 @@ export const removeDocuments = createAsyncThunk<DocumentInfo[], string[]>(
 export const indexResources = createAsyncThunk<
 	string,
 	{ workspacePath: string; resourcesPath: string }
->(
-	'workspace/indexResources',
-	async ({ workspacePath, resourcesPath }, { rejectWithValue }) => {
-		const result = await window.task.submit('index-resources', {
-			workspacePath,
-			resourcesPath,
-		});
-		if (!result.success) {
-			return rejectWithValue(result.error.message);
-		}
-		return result.data.taskId;
+>('workspace/indexResources', async ({ workspacePath, resourcesPath }, { rejectWithValue }) => {
+	const result = await window.task.submit('index-resources', {
+		workspacePath,
+		resourcesPath,
+	});
+	if (!result.success) {
+		return rejectWithValue(result.error.message);
 	}
-);
+	return result.data.taskId;
+});

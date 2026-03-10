@@ -62,7 +62,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 	): Promise<IndexResourcesOutput> {
 		const { windowId, workspacePath, resourcesPath } = input;
 
-		// Load documents from the renderer-supplied resources path
+		// Load documents using the renderer-supplied paths
 		const windowContext = this.windowContextManager.get(windowId);
 		const fileManagement = this.globalContainer.get<FileManagementService>('fileManagement');
 		const watcher = windowContext.container.has('documentsWatcher')
@@ -70,6 +70,10 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			: null;
 		const documentsService = new DocumentsService(fileManagement, watcher);
 		const documents = await documentsService.loadAll(workspacePath);
+
+		// resourcesPath is the full path to the documents directory,
+		// available for downstream indexing / embedding logic.
+		void resourcesPath;
 
 		const total = documents.length;
 
