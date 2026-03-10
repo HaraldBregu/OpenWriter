@@ -40,6 +40,14 @@ export default function ResourcesPage() {
 		}
 	}, []);
 
+	const handleRemove = useCallback(
+		async (id: string) => {
+			await window.workspace.deleteDocument(id);
+			await loadDocuments();
+		},
+		[loadDocuments]
+	);
+
 	// Listen for real-time document changes
 	useEffect(() => {
 		const unsub = window.workspace.onDocumentFileChange(() => {
