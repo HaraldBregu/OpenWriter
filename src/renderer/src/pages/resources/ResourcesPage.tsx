@@ -100,9 +100,7 @@ export default function ResourcesPage() {
 				<div className="px-6 py-3 border-b shrink-0">
 					<div className="flex items-center gap-2">
 						<Loader2 className="h-4 w-4 animate-spin text-primary" />
-						<span className="text-sm text-muted-foreground">
-							Indexing resources&hellip;
-						</span>
+						<span className="text-sm text-muted-foreground">Indexing resources&hellip;</span>
 					</div>
 				</div>
 			)}

@@ -88,7 +88,6 @@ export const workspaceSlice = createSlice({
 		importResourcesCompleted: (state) => {
 			state.importing = false;
 		},
-
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
@@ -195,7 +194,6 @@ export const workspaceSlice = createSlice({
 				state.resourcesStatus = 'error';
 				state.resourcesError = action.error.message || 'Failed to remove resources';
 			});
-
 	},
 });
 

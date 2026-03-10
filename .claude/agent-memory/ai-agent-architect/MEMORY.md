@@ -46,3 +46,16 @@ The `agents/index.ts` barrel imports all files as side effects then re-exports n
 - `AgentDefinitionInfo` is the IPC-safe projection — use `listInfo()` or `toAgentDefinitionInfo()` before sending to renderer
 - `AgentRegistry.register()` throws on duplicate ids — this is intentional (catches copy-paste errors early)
 - `buildSessionConfig()` override precedence: `overrides` > `defaultConfig` > `AgentSession` class defaults; `providerId` arg always wins
+
+## Resource Indexing Pipeline (designed 2026-03)
+- Vector store: HNSWLib (`@langchain/community/vectorstores/hnswlib` + `hnswlib-node`)
+  - Chosen over FAISS: FAISS native binaries break on macOS/ARM during electron-builder packaging
+  - `asarUnpack: ["**/node_modules/hnswlib-node/**"]` required in electron-builder config
+- Embedding model: `text-embedding-3-small` via `OpenAIEmbeddings`; API key resolved via `ProviderResolver`
+- Incremental indexing: SHA-256 content hashing via `IndexManifest` (JSON at `targetPath/index-manifest.json`)
+- Chunking: `RecursiveCharacterTextSplitter` — chunkSize 1000, overlap 200
+- Loaders: TextLoader (.txt/.md), PDFLoader (splitPages:false), DocxLoader
+- Pipeline files: `src/main/services/resource-indexing/` + `src/main/services/embedding-factory.ts`
+- Pattern: `runIndexingPipeline()` is a pure async function — handler is thin orchestrator
+- Save-per-file: vectorStore.save() called after each file to avoid total loss on abort
+- Error handling: per-file try/catch continues on individual failures; AbortError re-thrown
