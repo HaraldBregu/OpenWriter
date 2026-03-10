@@ -25,7 +25,6 @@ export {
 	resourceRemoved,
 	importResourcesRequested,
 	importResourcesCompleted,
-	resourceIndexingFinished,
 } from './reducer';
 export { default } from './reducer';
 
