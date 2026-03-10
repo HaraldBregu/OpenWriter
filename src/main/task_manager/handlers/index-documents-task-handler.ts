@@ -29,7 +29,7 @@ export class IndexDocumentsTaskHandler implements TaskHandler<
 	IndexDocumentsInput,
 	IndexDocumentsOutput
 > {
-	readonly type = 'index-documents';
+	readonly type = 'index-resources';
 
 	validate(input: IndexDocumentsInput): void {
 		if (!input?.workspacePath) {
