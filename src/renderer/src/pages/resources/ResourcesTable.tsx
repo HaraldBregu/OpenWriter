@@ -90,12 +90,8 @@ const ResourceRow = memo(function ResourceRow({
 			<AppTableCell className="text-right text-muted-foreground tabular-nums">
 				{formatBytes(doc.size)}
 			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
-				{formatDate(doc.importedAt)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
-				{formatDate(doc.lastModified)}
-			</AppTableCell>
+			<AppTableCell className="text-muted-foreground">{formatDate(doc.importedAt)}</AppTableCell>
+			<AppTableCell className="text-muted-foreground">{formatDate(doc.lastModified)}</AppTableCell>
 			<AppTableCell>
 				<AppButton
 					type="button"

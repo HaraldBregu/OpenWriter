@@ -98,7 +98,13 @@ export const removeDocuments = createAsyncThunk<DocumentInfo[], string[]>(
  * The main process resolves workspace path and documents server-side.
  * Returns the task ID for progress tracking.
  */
-export const indexResources = createAsyncThunk<string>('workspace/indexResources', async () => {
-	const result = await window.task.submit('index-resources', {});
-	return result.taskId;
-});
+export const indexResources = createAsyncThunk<string>(
+	'workspace/indexResources',
+	async (_, { rejectWithValue }) => {
+		const result = await window.task.submit('index-resources', {});
+		if (!result.success) {
+			return rejectWithValue(result.error.message);
+		}
+		return result.data.taskId;
+	}
+);
