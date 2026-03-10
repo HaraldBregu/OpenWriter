@@ -26,16 +26,16 @@ export function ResourcesHeader({
 				<Library className="h-5 w-5 text-muted-foreground" />
 				<h1 className="text-lg font-semibold">Resources</h1>
 				<div className="ml-auto flex items-center gap-2">
+					<AppButton size="sm" onClick={onUpload} disabled={uploading || editing}>
+						<Upload className="h-3.5 w-3.5 mr-1.5" />
+						{uploading ? 'Uploading\u2026' : 'Upload'}
+					</AppButton>
 					{editing && selectedCount > 0 && (
 						<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
 							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
 							Remove ({selectedCount})
 						</AppButton>
 					)}
-					<AppButton size="sm" onClick={onUpload} disabled={uploading || editing}>
-						<Upload className="h-3.5 w-3.5 mr-1.5" />
-						{uploading ? 'Uploading\u2026' : 'Upload'}
-					</AppButton>
 					<AppButton
 						size="icon"
 						variant={editing ? 'secondary' : 'outline'}
