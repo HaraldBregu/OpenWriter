@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search } from 'lucide-react';
 import {
 	AppButton,
