@@ -59,17 +59,21 @@ function SortIcon({
 
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
-	onRemove: (ids: string[]) => Promise<void>;
+	editing: boolean;
+	selected: Set<string>;
+	onSelectedChange: (selected: Set<string>) => void;
 }
 
-export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
+export function ResourcesTable({
+	documents,
+	editing,
+	selected,
+	onSelectedChange,
+}: ResourcesTableProps) {
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDir, setSortDir] = useState<SortDirection>('none');
-	const [selected, setSelected] = useState<Set<string>>(new Set());
-	const [removing, setRemoving] = useState(false);
-	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
