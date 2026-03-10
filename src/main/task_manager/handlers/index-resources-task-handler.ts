@@ -26,10 +26,9 @@ const DOCUMENTS_DIR = 'documents';
 const VECTOR_STORE_DIR = '.openwriter';
 const VECTOR_STORE_SUBDIR = 'vector_store';
 
-/** Progress weight allocation for each pipeline phase (must sum to 100). */
+/** Progress weight allocation for each pipeline phase. */
 const PHASE_EXTRACT = 40;
 const PHASE_EMBED = 50;
-const PHASE_SAVE = 10;
 
 export interface IndexResourcesInput {
 	/** Injected server-side by task-manager-ipc. */
