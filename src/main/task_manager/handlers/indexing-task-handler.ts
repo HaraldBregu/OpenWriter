@@ -22,7 +22,7 @@ import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, IndexingManifest, JsonVectorStore, chunkText } from '../../indexing';
 
-const DOCUMENTS_DIR = 'documents';
+const RESOURCES_DIR = 'resources';
 const VECTOR_STORE_DIR = '.openwriter';
 const VECTOR_STORE_SUBDIR = 'vector_store';
 
