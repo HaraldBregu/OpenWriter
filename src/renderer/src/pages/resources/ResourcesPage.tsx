@@ -35,7 +35,6 @@ export default function ResourcesPage() {
 	const status = useAppSelector(selectDocumentsStatus);
 	const error = useAppSelector(selectDocumentsError);
 	const uploading = useAppSelector(selectImporting);
-	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 	const indexingTaskId = useAppSelector(selectDocumentIndexingTaskId);
 
 	const loading = status === 'idle' || status === 'loading';
