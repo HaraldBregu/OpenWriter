@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FileText, Loader2, FolderOpen } from 'lucide-react';
+import { Library, Loader2, FolderOpen } from 'lucide-react';
 import type { DocumentInfo } from '../../../shared/types';
 
 function formatBytes(bytes: number): string {
@@ -100,9 +100,7 @@ export default function DocumentsPage() {
 										key={doc.id}
 										className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
 									>
-										<td className="px-4 py-2.5 font-medium truncate max-w-[300px]">
-											{doc.name}
-										</td>
+										<td className="px-4 py-2.5 font-medium truncate max-w-[300px]">{doc.name}</td>
 										<td className="px-4 py-2.5 text-muted-foreground">{doc.mimeType}</td>
 										<td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
 											{formatBytes(doc.size)}
