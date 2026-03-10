@@ -78,7 +78,9 @@ export default function ResourcesPage() {
 					<ResourcesEmptyState uploading={uploading} onUpload={handleUpload} />
 				)}
 
-				{!loading && !error && documents.length > 0 && <ResourcesTable documents={documents} />}
+				{!loading && !error && documents.length > 0 && (
+					<ResourcesTable documents={documents} onRemove={handleRemove} />
+				)}
 			</div>
 		</div>
 	);
