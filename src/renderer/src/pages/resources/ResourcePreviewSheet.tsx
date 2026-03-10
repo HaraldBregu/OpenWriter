@@ -91,8 +91,56 @@ function parseCsv(text: string): string[][] {
 }
 
 function PdfPreview({ path }: { path: string }) {
-	const src = `file://${path.replace(/\\/g, '/')}`;
-	return <iframe title="PDF preview" src={src} className="h-full w-full border-0" />;
+	const [dataUrl, setDataUrl] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		window.fs
+			.readFile({ filePath: path, encoding: 'latin1' })
+			.then((raw) => {
+				if (cancelled) return;
+				const bytes = new Uint8Array(raw.length);
+				for (let i = 0; i < raw.length; i++) {
+					bytes[i] = raw.charCodeAt(i);
+				}
+				const blob = new Blob([bytes], { type: 'application/pdf' });
+				setDataUrl(URL.createObjectURL(blob));
+			})
+			.catch((err: unknown) => {
+				if (!cancelled) {
+					setError(err instanceof Error ? err.message : 'Failed to load PDF');
+				}
+			});
+
+		return () => {
+			cancelled = true;
+			setDataUrl((prev) => {
+				if (prev) URL.revokeObjectURL(prev);
+				return null;
+			});
+		};
+	}, [path]);
+
+	if (error) {
+		return (
+			<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+				{error}
+			</div>
+		);
+	}
+
+	if (!dataUrl) {
+		return (
+			<div className="flex items-center gap-2 text-sm text-muted-foreground">
+				<Loader2 className="h-4 w-4 animate-spin" />
+				Loading PDF&hellip;
+			</div>
+		);
+	}
+
+	return <iframe title="PDF preview" src={dataUrl} className="h-full w-full border-0" />;
 }
 
 function CsvPreview({ content }: { content: string }) {
