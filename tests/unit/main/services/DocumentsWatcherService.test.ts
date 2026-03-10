@@ -178,7 +178,7 @@ describe('DocumentsWatcherService', () => {
 			triggerWatcherEvent('change', filePath);
 			jest.advanceTimersByTime(500);
 
-			expect(broadcastSpy).not.toHaveBeenCalledWith('documents:file-changed', expect.anything());
+			expect(broadcastSpy).not.toHaveBeenCalledWith('resources:file-changed', expect.anything());
 		});
 
 		it('should NOT suppress events for files that were NOT marked', async () => {
@@ -190,7 +190,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			expect(broadcastSpy).toHaveBeenCalledWith(
-				'documents:file-changed',
+				'resources:file-changed',
 				expect.objectContaining({
 					type: 'added',
 					filePath,
@@ -208,7 +208,7 @@ describe('DocumentsWatcherService', () => {
 			await service.startWatching(WORKSPACE);
 		});
 
-		it('should broadcast "documents:file-changed" for add events', () => {
+		it('should broadcast "resources:file-changed" for add events', () => {
 			const broadcastSpy = jest.spyOn(eventBus, 'broadcast');
 			const filePath = `${DOCS_DIR}/doc.pdf`;
 
@@ -216,7 +216,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			expect(broadcastSpy).toHaveBeenCalledWith(
-				'documents:file-changed',
+				'resources:file-changed',
 				expect.objectContaining({
 					type: 'added',
 					fileId: 'doc.pdf',
@@ -225,7 +225,7 @@ describe('DocumentsWatcherService', () => {
 			);
 		});
 
-		it('should broadcast "documents:file-changed" for change events', () => {
+		it('should broadcast "resources:file-changed" for change events', () => {
 			const broadcastSpy = jest.spyOn(eventBus, 'broadcast');
 			const filePath = `${DOCS_DIR}/updated.pdf`;
 
@@ -233,7 +233,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			expect(broadcastSpy).toHaveBeenCalledWith(
-				'documents:file-changed',
+				'resources:file-changed',
 				expect.objectContaining({
 					type: 'changed',
 					fileId: 'updated.pdf',
@@ -241,7 +241,7 @@ describe('DocumentsWatcherService', () => {
 			);
 		});
 
-		it('should broadcast "documents:file-changed" for unlink events', () => {
+		it('should broadcast "resources:file-changed" for unlink events', () => {
 			const broadcastSpy = jest.spyOn(eventBus, 'broadcast');
 			const filePath = `${DOCS_DIR}/deleted.pdf`;
 
@@ -249,7 +249,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			expect(broadcastSpy).toHaveBeenCalledWith(
-				'documents:file-changed',
+				'resources:file-changed',
 				expect.objectContaining({
 					type: 'removed',
 					fileId: 'deleted.pdf',
@@ -335,7 +335,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			const fileChangedCalls = broadcastSpy.mock.calls.filter(
-				(c: unknown[]) => c[0] === 'documents:file-changed'
+				(c: unknown[]) => c[0] === 'resources:file-changed'
 			);
 			expect(fileChangedCalls).toHaveLength(1);
 		});
@@ -349,7 +349,7 @@ describe('DocumentsWatcherService', () => {
 			jest.advanceTimersByTime(500);
 
 			const fileChangedCalls = broadcastSpy.mock.calls.filter(
-				(c: unknown[]) => c[0] === 'documents:file-changed'
+				(c: unknown[]) => c[0] === 'resources:file-changed'
 			);
 			expect(fileChangedCalls).toHaveLength(2);
 		});
