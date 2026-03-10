@@ -81,7 +81,7 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 					</AppTableRow>
 				</AppTableHeader>
 				<AppTableBody>
-					{documents.map((doc) => (
+					{filtered.map((doc) => (
 						<AppTableRow key={doc.id}>
 							<AppTableCell className="font-medium truncate max-w-[300px]">{doc.name}</AppTableCell>
 							<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
