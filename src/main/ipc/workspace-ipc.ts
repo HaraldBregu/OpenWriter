@@ -134,24 +134,21 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected. Please select a workspace first.');
 				}
 
-				const filterExtensions =
-					extensions && extensions.length > 0
-						? extensions.map((ext) => ext.replace(/^\./, ''))
-						: getAllTextExtensions().map((ext) => ext.replace('.', ''));
-				const filterName =
-					extensions && extensions.length > 0
-						? `Supported Files (${extensions.join(', ')})`
-						: 'Text Files';
+				const hasFilter = extensions && extensions.length > 0;
+				const filters: Electron.FileFilter[] = hasFilter
+					? [
+							{
+								name: `Supported Files (${extensions.join(', ')})`,
+								extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+							},
+						]
+					: [{ name: 'All Files', extensions: ['*'] }];
 				const result = await dialog.showOpenDialog({
 					properties: ['openFile', 'multiSelections'],
-					filters: [
-						{ name: filterName, extensions: filterExtensions },
-						{ name: 'All Files', extensions: ['*'] },
-					],
-					message:
-						extensions && extensions.length > 0
-							? `Supported formats: ${extensions.join(', ')}`
-							: getSupportedFileTypesDescription(),
+					filters,
+					message: hasFilter
+						? `Supported formats: ${extensions.join(', ')}`
+						: undefined,
 				});
 
 				if (result.canceled || result.filePaths.length === 0) {

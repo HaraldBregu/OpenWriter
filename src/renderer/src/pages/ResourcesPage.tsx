@@ -139,9 +139,7 @@ export default function ResourcesPage() {
 										<AppTableCell className="font-medium truncate max-w-[300px]">
 											{doc.name}
 										</AppTableCell>
-										<AppTableCell className="text-muted-foreground">
-											{doc.mimeType}
-										</AppTableCell>
+										<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
 										<AppTableCell className="text-right text-muted-foreground tabular-nums">
 											{formatBytes(doc.size)}
 										</AppTableCell>

@@ -76,9 +76,7 @@ const AppTableCaption = React.memo(
 	React.forwardRef<
 		React.ElementRef<typeof TableCaption>,
 		React.ComponentPropsWithoutRef<typeof TableCaption>
-	>(({ className, ...props }, ref) => (
-		<TableCaption ref={ref} className={className} {...props} />
-	))
+	>(({ className, ...props }, ref) => <TableCaption ref={ref} className={className} {...props} />)
 );
 AppTableCaption.displayName = 'AppTableCaption';
 
