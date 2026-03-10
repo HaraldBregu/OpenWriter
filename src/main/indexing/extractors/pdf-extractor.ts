@@ -1,13 +1,11 @@
 /**
- * PdfExtractor — extracts text content from PDF files using pdf-parse.
+ * PdfExtractor — extracts text content from PDF files using pdf-parse v2.
  *
  * pdf-parse is a pure-JS library, so it works in Electron without native modules.
  */
 
 import fs from 'node:fs/promises';
-import * as pdfParseModule from 'pdf-parse';
-
-const pdfParse = (pdfParseModule as { default?: typeof pdfParseModule }).default ?? pdfParseModule;
+import { PDFParse } from 'pdf-parse';
 import type { DocumentExtractor, ExtractedContent } from '../document-extractor';
 
 export class PdfExtractor implements DocumentExtractor {
@@ -18,21 +16,30 @@ export class PdfExtractor implements DocumentExtractor {
 			throw new DOMException('Aborted', 'AbortError');
 		}
 
-		const buffer = await fs.readFile(filePath);
+		const data = await fs.readFile(filePath);
 
 		if (signal.aborted) {
 			throw new DOMException('Aborted', 'AbortError');
 		}
 
-		const result = await pdfParse(buffer);
+		const parser = new PDFParse({ data });
+		try {
+			const textResult = await parser.getText();
+			const content = textResult.text;
 
-		return {
-			content: result.text,
-			metadata: {
-				pageCount: result.numpages,
-				charCount: result.text.length,
-				format: 'pdf',
-			},
-		};
+			const info = await parser.getInfo();
+			const pageCount = info.numPages ?? 0;
+
+			return {
+				content,
+				metadata: {
+					pageCount,
+					charCount: content.length,
+					format: 'pdf',
+				},
+			};
+		} finally {
+			await parser.destroy();
+		}
 	}
 }
