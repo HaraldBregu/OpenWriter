@@ -1,6 +1,6 @@
 /** Workspace async thunks — IPC calls for loading, selecting, and clearing workspaces. */
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { DocumentInfo, WorkspaceInfo } from '../../../../shared/types';
+import type { ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Async thunks
@@ -75,7 +75,7 @@ export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
 /**
  * Load all resources from the current workspace.
  */
-export const loadResources = createAsyncThunk<DocumentInfo[]>(
+export const loadResources = createAsyncThunk<ResourceInfo[]>(
 	'workspace/loadResources',
 	async () => {
 		return await window.workspace.loadDocuments();
@@ -85,7 +85,7 @@ export const loadResources = createAsyncThunk<DocumentInfo[]>(
 /**
  * Remove resources by their IDs, then reload the full list.
  */
-export const removeResources = createAsyncThunk<DocumentInfo[], string[]>(
+export const removeResources = createAsyncThunk<ResourceInfo[], string[]>(
 	'workspace/removeResources',
 	async (ids) => {
 		await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
