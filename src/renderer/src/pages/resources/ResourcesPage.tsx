@@ -26,7 +26,7 @@ import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
 
-const RESOURCES_DIR = 'documents';
+const RESOURCES_DIR = 'resources';
 
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
