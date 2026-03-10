@@ -20,7 +20,7 @@ function formatDate(timestamp: number): string {
 	});
 }
 
-export default function DocumentsPage() {
+export default function ResourcesPage() {
 	const [documents, setDocuments] = useState<DocumentInfo[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
