@@ -1,9 +1,8 @@
 /**
  * IndexResourcesTaskHandler — indexes workspace resources for search/retrieval.
  *
- * Resolves the current workspace path and document list from main-process
- * services (via WindowContextManager), reports per-document progress, and
- * respects AbortSignal for cancellation.
+ * Receives workspace root path and resources path from the renderer,
+ * reports per-document progress, and respects AbortSignal for cancellation.
  *
  * The execute() body currently performs a simulated indexing pass; replace
  * it with real embedding / vector-store logic once that infrastructure
@@ -13,7 +12,6 @@
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { ServiceContainer } from '../../core/service-container';
-import type { WorkspaceService } from '../../services/workspace';
 import type { FileManagementService } from '../../services/file-management-service';
 import type { DocumentsWatcherService } from '../../services/documents-watcher';
 import { DocumentsService } from '../../services/documents';
