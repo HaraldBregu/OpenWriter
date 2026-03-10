@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
@@ -16,9 +16,11 @@ import {
 	selectDocumentsStatus,
 	selectDocumentsError,
 	selectImporting,
+	selectCurrentWorkspacePath,
 	removeDocuments,
 	importDocumentsRequested,
 } from '../../store/workspace';
+import { subscribeToTask } from '../../services/task-event-bus';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
@@ -30,6 +32,7 @@ export default function ResourcesPage() {
 	const status = useAppSelector(selectDocumentsStatus);
 	const error = useAppSelector(selectDocumentsError);
 	const uploading = useAppSelector(selectImporting);
+	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	const loading = status === 'idle' || status === 'loading';
 	const [editing, setEditing] = useState(false);
@@ -38,27 +41,100 @@ export default function ResourcesPage() {
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [indexing, setIndexing] = useState(false);
 	const [indexingProgress, setIndexingProgress] = useState(0);
+	const [indexingMessage, setIndexingMessage] = useState('');
 
-	const indexTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const taskIdRef = useRef<string | null>(null);
+	const unsubRef = useRef<(() => void) | null>(null);
 
-	const handleIndex = useCallback(() => {
-		if (indexing) return;
+	// Clean up task subscription on unmount
+	useEffect(() => {
+		return () => {
+			unsubRef.current?.();
+		};
+	}, []);
+
+	const handleIndex = useCallback(async () => {
+		if (indexing || !workspacePath) return;
+
 		setIndexing(true);
 		setIndexingProgress(0);
+		setIndexingMessage('Submitting indexing task…');
 
-		let progress = 0;
-		indexTimerRef.current = setInterval(() => {
-			const increment = Math.floor(Math.random() * 10) + 1;
-			progress = Math.min(progress + increment, 100);
-			setIndexingProgress(progress);
+		const documentIds = documents.map((d) => d.id);
 
-			if (progress >= 100) {
-				if (!indexTimerRef.current) return;
-				clearInterval(indexTimerRef.current);
-				setIndexing(false);
-			}
-		}, 300);
-	}, [indexing]);
+		try {
+			const result = await window.task.submit('index-documents', {
+				documentIds,
+				workspacePath,
+			});
+
+			const taskId = result.taskId;
+			taskIdRef.current = taskId;
+
+			// Subscribe to progress events for this task
+			unsubRef.current?.();
+			unsubRef.current = subscribeToTask(taskId, (snapshot) => {
+				if (snapshot.status === 'running') {
+					// Progress detail is forwarded from the handler
+				}
+
+				if (snapshot.status === 'completed') {
+					setIndexing(false);
+					setIndexingProgress(100);
+					setIndexingMessage('Indexing complete');
+					taskIdRef.current = null;
+					unsubRef.current?.();
+					unsubRef.current = null;
+				}
+
+				if (snapshot.status === 'error') {
+					setIndexing(false);
+					setIndexingProgress(0);
+					setIndexingMessage('');
+					taskIdRef.current = null;
+					unsubRef.current?.();
+					unsubRef.current = null;
+				}
+
+				if (snapshot.status === 'cancelled') {
+					setIndexing(false);
+					setIndexingProgress(0);
+					setIndexingMessage('');
+					taskIdRef.current = null;
+					unsubRef.current?.();
+					unsubRef.current = null;
+				}
+			});
+
+			// Also listen for progress events via the raw task event bus
+			// The subscribeToTask snapshot doesn't include percent, so we
+			// use the global onEvent for progress granularity.
+			const progressUnsub = window.task.onEvent((event) => {
+				if (event.type === 'progress') {
+					const data = event.data as {
+						taskId: string;
+						percent: number;
+						message?: string;
+					};
+					if (data.taskId === taskId) {
+						setIndexingProgress(data.percent);
+						if (data.message) setIndexingMessage(data.message);
+					}
+				}
+			});
+
+			// Chain the progress unsub to the main unsub
+			const originalUnsub = unsubRef.current;
+			unsubRef.current = () => {
+				originalUnsub?.();
+				progressUnsub();
+			};
+		} catch {
+			setIndexing(false);
+			setIndexingProgress(0);
+			setIndexingMessage('');
+		}
+	}, [indexing, workspacePath, documents]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
