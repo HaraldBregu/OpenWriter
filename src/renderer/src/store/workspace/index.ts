@@ -43,4 +43,5 @@ export {
 	selectDocumentsStatus,
 	selectDocumentsError,
 	selectDocumentsIsLoading,
+	selectImporting,
 } from './selectors';
