@@ -76,6 +76,17 @@ export {
 	AppDropdownMenuRadioGroup,
 } from './AppDropdownMenu';
 
+export {
+	AppTable,
+	AppTableHeader,
+	AppTableBody,
+	AppTableFooter,
+	AppTableHead,
+	AppTableRow,
+	AppTableCell,
+	AppTableCaption,
+} from './AppTable';
+
 export { AppSlider } from './AppSlider';
 
 export { AppSwitch } from './AppSwitch';
