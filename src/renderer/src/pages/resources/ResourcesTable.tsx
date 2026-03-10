@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
 import {
+	AppCheckbox,
 	AppTable,
 	AppTableHeader,
 	AppTableBody,
