@@ -25,13 +25,13 @@ export interface AppEvents {
 		reason: 'deleted' | 'inaccessible' | 'renamed';
 		timestamp: number;
 	};
-	'documents:file-changed': {
+	'resources:file-changed': {
 		type: 'added' | 'changed' | 'removed';
 		fileId: string;
 		filePath: string;
 		timestamp: number;
 	};
-	'documents:watcher-error': { error: string; timestamp: number };
+	'resources:watcher-error': { error: string; timestamp: number };
 	'theme:changed': { theme: 'light' | 'dark' | 'system' };
 	// Task lifecycle events — emitted by TaskExecutor for main-process observers (e.g. TaskReactionBus)
 	'task:submitted': {
