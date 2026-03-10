@@ -73,36 +73,25 @@ export default function ResourcesPage() {
 
 			// Subscribe to progress events for this task
 			unsubRef.current?.();
-			unsubRef.current = subscribeToTask(taskId, (snapshot) => {
-				if (snapshot.status === 'running') {
-					// Progress detail is forwarded from the handler
-				}
+			const cleanupTask = () => {
+				taskIdRef.current = null;
+				unsubRef.current?.();
+				unsubRef.current = null;
+			};
 
+			unsubRef.current = subscribeToTask(taskId, (snapshot) => {
 				if (snapshot.status === 'completed') {
 					setIndexing(false);
 					setIndexingProgress(100);
 					setIndexingMessage('Indexing complete');
-					taskIdRef.current = null;
-					unsubRef.current?.();
-					unsubRef.current = null;
+					cleanupTask();
 				}
 
-				if (snapshot.status === 'error') {
+				if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
 					setIndexing(false);
 					setIndexingProgress(0);
 					setIndexingMessage('');
-					taskIdRef.current = null;
-					unsubRef.current?.();
-					unsubRef.current = null;
-				}
-
-				if (snapshot.status === 'cancelled') {
-					setIndexing(false);
-					setIndexingProgress(0);
-					setIndexingMessage('');
-					taskIdRef.current = null;
-					unsubRef.current?.();
-					unsubRef.current = null;
+					cleanupTask();
 				}
 			});
 

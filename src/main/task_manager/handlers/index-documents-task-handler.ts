@@ -25,9 +25,10 @@ export interface IndexDocumentsOutput {
 	failedIds: string[];
 }
 
-export class IndexDocumentsTaskHandler
-	implements TaskHandler<IndexDocumentsInput, IndexDocumentsOutput>
-{
+export class IndexDocumentsTaskHandler implements TaskHandler<
+	IndexDocumentsInput,
+	IndexDocumentsOutput
+> {
 	readonly type = 'index-documents';
 
 	validate(input: IndexDocumentsInput): void {
