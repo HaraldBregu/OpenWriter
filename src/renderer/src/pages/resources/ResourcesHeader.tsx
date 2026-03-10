@@ -9,6 +9,8 @@ interface ResourcesHeaderProps {
 	selectedCount: number;
 	removing: boolean;
 	onRemove: () => void;
+	indexing: boolean;
+	onIndex: () => void;
 }
 
 export function ResourcesHeader({
