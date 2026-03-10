@@ -86,9 +86,9 @@ export type TaskEvent =
 	| { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
 	| { type: 'queue-position'; data: { taskId: string; position: number } };
 
-// ---- Documents ------------------------------------------------------------
+// ---- Resources ------------------------------------------------------------
 
-export interface DocumentInfo {
+export interface ResourceInfo {
 	id: string;
 	name: string;
 	path: string;
