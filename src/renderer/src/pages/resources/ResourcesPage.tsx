@@ -37,9 +37,11 @@ export default function ResourcesPage() {
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [indexing, setIndexing] = useState(false);
+	const [indexingProgress, setIndexingProgress] = useState(0);
 
 	const handleIndex = useCallback(() => {
 		setIndexing(true);
+		setIndexingProgress(0);
 		// TODO: implement indexing logic
 		setIndexing(false);
 	}, []);
