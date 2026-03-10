@@ -1,5 +1,5 @@
 /** Workspace slice initial state and state type definition. */
-import type { DocumentInfo, WorkspaceInfo } from '../../../../shared/types';
+import type { ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // State type
@@ -15,7 +15,7 @@ export interface WorkspaceState {
 	/** Set when the workspace folder is externally deleted/moved while the app is open */
 	deletionReason: string | null;
 	/** Resources imported into the workspace */
-	resources: DocumentInfo[];
+	resources: ResourceInfo[];
 	resourcesStatus: ResourcesStatus;
 	resourcesError: string | null;
 	/** Whether a file import operation is in progress */
