@@ -1,6 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Library, Loader2, FolderOpen, Upload } from 'lucide-react';
-import { AppButton } from '../components/app';
+import {
+	AppButton,
+	AppTable,
+	AppTableHeader,
+	AppTableBody,
+	AppTableHead,
+	AppTableRow,
+	AppTableCell,
+} from '../components/app';
 import type { DocumentInfo } from '../../../shared/types';
 
 const SUPPORTED_EXTENSIONS = ['.pdf', '.docx', '.txt', '.md', '.html', '.csv', '.json'];
