@@ -283,28 +283,37 @@ const ContentPage: React.FC = () => {
 				</div>
 			</div>
 
-			<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-				<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-					{loaded && (
-						<TextEditor
-							disabled={task.isRunning}
-							ref={editorRef}
-							key={id}
-							value={content}
-							onChange={handleContentChange}
-							onContinueWithAI={handleContinueWithAI}
-						/>
-					)}
-				</div>
-			</div>
+			<div className="flex-1 flex min-h-0">
+				<div className="flex-1 flex flex-col min-w-0">
+					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
+							{loaded && (
+								<TextEditor
+									disabled={task.isRunning}
+									ref={editorRef}
+									key={id}
+									value={content}
+									onChange={handleContentChange}
+									onContinueWithAI={handleContinueWithAI}
+								/>
+							)}
+						</div>
+					</div>
 
-			<div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
-				<span className="text-xs text-muted-foreground">
-					{t('writing.charactersAndWords', {
-						chars: charCount,
-						words: wordCount,
-					})}
-				</span>
+					<div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
+						<span className="text-xs text-muted-foreground">
+							{t('writing.charactersAndWords', {
+								chars: charCount,
+								words: wordCount,
+							})}
+						</span>
+					</div>
+				</div>
+
+				<ContentPageSidebar
+					open={sidebarOpen}
+					onClose={() => setSidebarOpen(false)}
+				/>
 			</div>
 		</div>
 	);
