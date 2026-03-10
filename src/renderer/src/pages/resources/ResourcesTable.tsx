@@ -1,7 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Loader2, Search } from 'lucide-react';
 import {
+	AppButton,
 	AppCheckbox,
+	AppSheet,
+	AppSheetContent,
+	AppSheetHeader,
+	AppSheetTitle,
+	AppSheetDescription,
 	AppTable,
 	AppTableHeader,
 	AppTableBody,
@@ -58,6 +64,80 @@ function SortIcon({
 	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
 }
 
+function ResourcePreviewSheet({
+	doc,
+	onClose,
+}: {
+	doc: DocumentInfo | null;
+	onClose: () => void;
+}) {
+	const [content, setContent] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!doc) {
+			setContent(null);
+			setError(null);
+			return;
+		}
+
+		let cancelled = false;
+		setLoading(true);
+		setError(null);
+		setContent(null);
+
+		window.fs
+			.readFile({ filePath: doc.path })
+			.then((text) => {
+				if (!cancelled) setContent(text);
+			})
+			.catch((err: unknown) => {
+				if (!cancelled) {
+					setError(err instanceof Error ? err.message : 'Failed to read file');
+				}
+			})
+			.finally(() => {
+				if (!cancelled) setLoading(false);
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [doc]);
+
+	return (
+		<AppSheet open={doc !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+			<AppSheetContent className="sm:max-w-xl flex flex-col">
+				<AppSheetHeader>
+					<AppSheetTitle className="truncate">{doc?.name}</AppSheetTitle>
+					<AppSheetDescription>
+						{doc?.mimeType} &middot; {doc ? formatBytes(doc.size) : ''}
+					</AppSheetDescription>
+				</AppSheetHeader>
+				<div className="flex-1 min-h-0 overflow-auto mt-4">
+					{loading && (
+						<div className="flex items-center gap-2 text-sm text-muted-foreground">
+							<Loader2 className="h-4 w-4 animate-spin" />
+							Loading&hellip;
+						</div>
+					)}
+					{error && (
+						<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+							{error}
+						</div>
+					)}
+					{content !== null && (
+						<pre className="whitespace-pre-wrap break-words text-sm font-mono text-foreground">
+							{content}
+						</pre>
+					)}
+				</div>
+			</AppSheetContent>
+		</AppSheet>
+	);
+}
+
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
 	editing: boolean;
@@ -75,6 +155,7 @@ export function ResourcesTable({
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDir, setSortDir] = useState<SortDirection>('none');
+	const [previewDoc, setPreviewDoc] = useState<DocumentInfo | null>(null);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
@@ -186,6 +267,7 @@ export function ResourcesTable({
 									</button>
 								</AppTableHead>
 							))}
+							<AppTableHead className="w-[50px]" />
 						</AppTableRow>
 					</AppTableHeader>
 					<AppTableBody>
@@ -215,11 +297,24 @@ export function ResourcesTable({
 								<AppTableCell className="text-muted-foreground">
 									{formatDate(doc.lastModified)}
 								</AppTableCell>
+								<AppTableCell>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon"
+										className="h-7 w-7"
+										onClick={() => setPreviewDoc(doc)}
+									>
+										<Eye className="h-4 w-4" />
+									</AppButton>
+								</AppTableCell>
 							</AppTableRow>
 						))}
 					</AppTableBody>
 				</AppTable>
 			</div>
+
+			<ResourcePreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
 		</div>
 	);
 }
