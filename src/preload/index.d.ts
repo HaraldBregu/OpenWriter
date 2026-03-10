@@ -14,7 +14,7 @@ import type {
 	WorkspaceInfo,
 	WorkspaceChangedEvent,
 	WorkspaceDeletedEvent,
-	DocumentInfo,
+	ResourceInfo,
 	DocumentFileChangeEvent,
 	TaskSubmitPayload,
 	TaskInfo,
@@ -51,7 +51,7 @@ export type {
 	WorkspaceInfo,
 	WorkspaceChangedEvent,
 	WorkspaceDeletedEvent,
-	DocumentInfo,
+	ResourceInfo,
 	DocumentFileChangeEvent,
 	TaskSubmitPayload,
 	TaskInfo,
@@ -150,10 +150,10 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	// Document import, download, and file-watch events
 	// -------------------------------------------------------------------------
-	importFiles: (extensions?: string[]) => Promise<DocumentInfo[]>;
-	importByPaths: (paths: string[]) => Promise<DocumentInfo[]>;
-	downloadFromUrl: (url: string) => Promise<DocumentInfo>;
-	loadDocuments: () => Promise<DocumentInfo[]>;
+	importFiles: (extensions?: string[]) => Promise<ResourceInfo[]>;
+	importByPaths: (paths: string[]) => Promise<ResourceInfo[]>;
+	downloadFromUrl: (url: string) => Promise<ResourceInfo>;
+	loadDocuments: () => Promise<ResourceInfo[]>;
 	deleteDocument: (id: string) => Promise<void>;
 	onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void;
 	onDocumentWatcherError: (callback: (error: WatcherError) => void) => () => void;
