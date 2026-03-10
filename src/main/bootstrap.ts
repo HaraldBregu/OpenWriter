@@ -117,8 +117,16 @@ export function bootstrapServices(): BootstrapResult {
 	const windowContextManager = new WindowContextManager(container, eventBus);
 	container.register('windowContextManager', windowContextManager);
 
+	// Document extractor registry — Strategy pattern for file-type-specific text extraction
+	const extractorRegistry = container.register('extractorRegistry', new ExtractorRegistry());
+	extractorRegistry.register(new PlainTextExtractor());
+	extractorRegistry.register(new PdfExtractor());
+	extractorRegistry.register(new DocxExtractor());
+
 	// Register handlers that depend on WindowContextManager
-	taskHandlerRegistry.register(new IndexResourcesTaskHandler(windowContextManager, container));
+	taskHandlerRegistry.register(
+		new IndexResourcesTaskHandler(windowContextManager, container, extractorRegistry)
+	);
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
