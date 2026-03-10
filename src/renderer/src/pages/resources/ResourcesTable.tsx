@@ -227,26 +227,6 @@ export function ResourcesTable({
 				</AppTable>
 			</div>
 
-			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-				<AppAlertDialogContent>
-					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>Remove resources</AppAlertDialogTitle>
-						<AppAlertDialogDescription>
-							Are you sure you want to remove {selectedCount}{' '}
-							{selectedCount === 1 ? 'resource' : 'resources'}? This action cannot be undone.
-						</AppAlertDialogDescription>
-					</AppAlertDialogHeader>
-					<AppAlertDialogFooter>
-						<AppAlertDialogCancel>Cancel</AppAlertDialogCancel>
-						<AppAlertDialogAction
-							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-							onClick={handleConfirmRemove}
-						>
-							Remove
-						</AppAlertDialogAction>
-					</AppAlertDialogFooter>
-				</AppAlertDialogContent>
-			</AppAlertDialog>
 		</div>
 	);
 }
