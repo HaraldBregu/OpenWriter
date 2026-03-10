@@ -66,6 +66,13 @@ export const workspaceSlice = createSlice({
 		clearDeletionReason: (state) => {
 			state.deletionReason = null;
 		},
+
+		/**
+		 * Remove a single document from the store (e.g., when the watcher fires a 'removed' event).
+		 */
+		documentRemoved: (state, action: PayloadAction<string>) => {
+			state.documents = state.documents.filter((d) => d.id !== action.payload);
+		},
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
