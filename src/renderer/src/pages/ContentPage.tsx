@@ -20,6 +20,9 @@ import {
 	AppDropdownMenuItem,
 	AppDropdownMenuSeparator,
 	AppDropdownMenuTrigger,
+	AppSidebarProvider,
+	AppSidebarInset,
+	useSidebar,
 } from '@/components/app';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import { subscribeToTask } from '../services/task-event-bus';
@@ -28,10 +31,15 @@ import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import ContentPageSidebar from './ContentPageSidebar';
 
-const ContentPage: React.FC = () => {
+// ---------------------------------------------------------------------------
+// Inner component — rendered inside AppSidebarProvider so useSidebar works
+// ---------------------------------------------------------------------------
+
+function ContentPageInner() {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+	const { open: sidebarOpen, toggleSidebar } = useSidebar();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
@@ -39,7 +47,6 @@ const ContentPage: React.FC = () => {
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const editorRef = useRef<TextEditorElement>(null);
@@ -197,122 +204,132 @@ const ContentPage: React.FC = () => {
 	}, [searchOpen, closeSearch]);
 
 	return (
-		<div className="h-full flex flex-col">
-			{searchOpen && (
-				<div className="flex items-center gap-2 px-8 py-2 border-b border-border bg-muted/50 shrink-0">
-					<Search className="h-4 w-4 text-muted-foreground shrink-0" />
-					<input
-						ref={searchInputRef}
-						type="text"
-						value={searchQuery}
-						onChange={(e) => handleSearchChange(e.target.value)}
-						placeholder={t('common.search')}
-						className="flex-1 text-sm bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
-					/>
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						className="h-6 w-6"
-						onClick={closeSearch}
-					>
-						<X className="h-3.5 w-3.5" />
-					</AppButton>
-				</div>
-			)}
-			<div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
-				<div className="flex items-center gap-3 flex-1 min-w-0">
-					<PenLine className="h-4 w-4 text-blue-500 shrink-0" />
-					<input
-						type="text"
-						value={title}
-						onChange={(e) => handleTitleChange(e.target.value)}
-						placeholder={t('writing.titlePlaceholder')}
-						className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
-					/>
-				</div>
-				<div className="flex items-center gap-3 ml-4 shrink-0">
-					<AppButton
-						type="button"
-						variant={sidebarOpen ? 'secondary' : 'outline'}
-						size="icon"
-						title="Toggle sidebar"
-						onClick={() => setSidebarOpen((prev) => !prev)}
-					>
-						<PanelRight className="h-4 w-4" />
-					</AppButton>
-					<AppDropdownMenu>
-						<AppDropdownMenuTrigger asChild>
-							<AppButton
-								type="button"
-								variant="outline"
-								size="icon"
-								title={t('common.moreOptions')}
-							>
-								<MoreHorizontal className="h-4 w-4" />
-							</AppButton>
-						</AppDropdownMenuTrigger>
-						<AppDropdownMenuContent align="end">
-							<AppDropdownMenuItem>
-								<Eye className="h-4 w-4" />
-								{t('common.preview')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem>
-								<Download className="h-4 w-4" />
-								{t('common.download')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem>
-								<Share2 className="h-4 w-4" />
-								{t('common.share')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuSeparator />
-							<AppDropdownMenuItem>
-								<Copy className="h-4 w-4" />
-								{t('common.duplicate')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem
-								className="text-destructive focus:text-destructive"
-								disabled={isTrashing}
-								onClick={handleMoveToTrash}
-							>
-								<Trash2 className="h-4 w-4" />
-								{t('common.moveToTrash')}
-							</AppDropdownMenuItem>
-						</AppDropdownMenuContent>
-					</AppDropdownMenu>
-				</div>
-			</div>
-
-			<div className="flex-1 flex min-h-0">
-				<div className="flex-1 flex flex-col min-w-0">
-					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-							{loaded && (
-								<TextEditor
-									disabled={task.isRunning}
-									ref={editorRef}
-									key={id}
-									value={content}
-									onChange={handleContentChange}
-									onContinueWithAI={handleContinueWithAI}
-								/>
-							)}
-						</div>
+		<>
+			<AppSidebarInset className="flex flex-col min-h-0 min-w-0">
+				{searchOpen && (
+					<div className="flex items-center gap-2 px-8 py-2 border-b border-border bg-muted/50 shrink-0">
+						<Search className="h-4 w-4 text-muted-foreground shrink-0" />
+						<input
+							ref={searchInputRef}
+							type="text"
+							value={searchQuery}
+							onChange={(e) => handleSearchChange(e.target.value)}
+							placeholder={t('common.search')}
+							className="flex-1 text-sm bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+						/>
+						<AppButton
+							type="button"
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							onClick={closeSearch}
+						>
+							<X className="h-3.5 w-3.5" />
+						</AppButton>
 					</div>
-
-					<div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
-						<span className="text-xs text-muted-foreground">
-							{t('writing.charactersAndWords', {
-								chars: charCount,
-								words: wordCount,
-							})}
-						</span>
+				)}
+				<div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
+					<div className="flex items-center gap-3 flex-1 min-w-0">
+						<PenLine className="h-4 w-4 text-blue-500 shrink-0" />
+						<input
+							type="text"
+							value={title}
+							onChange={(e) => handleTitleChange(e.target.value)}
+							placeholder={t('writing.titlePlaceholder')}
+							className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
+						/>
+					</div>
+					<div className="flex items-center gap-3 ml-4 shrink-0">
+						<AppButton
+							type="button"
+							variant={sidebarOpen ? 'secondary' : 'outline'}
+							size="icon"
+							title="Toggle sidebar"
+							onClick={toggleSidebar}
+						>
+							<PanelRight className="h-4 w-4" />
+						</AppButton>
+						<AppDropdownMenu>
+							<AppDropdownMenuTrigger asChild>
+								<AppButton
+									type="button"
+									variant="outline"
+									size="icon"
+									title={t('common.moreOptions')}
+								>
+									<MoreHorizontal className="h-4 w-4" />
+								</AppButton>
+							</AppDropdownMenuTrigger>
+							<AppDropdownMenuContent align="end">
+								<AppDropdownMenuItem>
+									<Eye className="h-4 w-4" />
+									{t('common.preview')}
+								</AppDropdownMenuItem>
+								<AppDropdownMenuItem>
+									<Download className="h-4 w-4" />
+									{t('common.download')}
+								</AppDropdownMenuItem>
+								<AppDropdownMenuItem>
+									<Share2 className="h-4 w-4" />
+									{t('common.share')}
+								</AppDropdownMenuItem>
+								<AppDropdownMenuSeparator />
+								<AppDropdownMenuItem>
+									<Copy className="h-4 w-4" />
+									{t('common.duplicate')}
+								</AppDropdownMenuItem>
+								<AppDropdownMenuItem
+									className="text-destructive focus:text-destructive"
+									disabled={isTrashing}
+									onClick={handleMoveToTrash}
+								>
+									<Trash2 className="h-4 w-4" />
+									{t('common.moveToTrash')}
+								</AppDropdownMenuItem>
+							</AppDropdownMenuContent>
+						</AppDropdownMenu>
 					</div>
 				</div>
 
-				<ContentPageSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-			</div>
-		</div>
+				<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+					<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
+						{loaded && (
+							<TextEditor
+								disabled={task.isRunning}
+								ref={editorRef}
+								key={id}
+								value={content}
+								onChange={handleContentChange}
+								onContinueWithAI={handleContinueWithAI}
+							/>
+						)}
+					</div>
+				</div>
+
+				<div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
+					<span className="text-xs text-muted-foreground">
+						{t('writing.charactersAndWords', {
+							chars: charCount,
+							words: wordCount,
+						})}
+					</span>
+				</div>
+			</AppSidebarInset>
+
+			<ContentPageSidebar />
+		</>
+	);
+}
+
+// ---------------------------------------------------------------------------
+// ContentPage — wraps with its own SidebarProvider for the right sidebar
+// ---------------------------------------------------------------------------
+
+const ContentPage: React.FC = () => {
+	return (
+		<AppSidebarProvider defaultOpen={false} className="h-full min-h-0">
+			<ContentPageInner />
+		</AppSidebarProvider>
 	);
 };
 
