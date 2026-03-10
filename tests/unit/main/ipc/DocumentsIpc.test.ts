@@ -33,11 +33,11 @@ describe('DocumentsIpc', () => {
 
 	// All channels registered by DocumentsIpc
 	const EXPECTED_CHANNELS = [
-		'documents:import-files',
-		'documents:import-by-paths',
-		'documents:download-from-url',
-		'documents:load-all',
-		'documents:delete-file',
+		'resources:import-files',
+		'resources:import-by-paths',
+		'resources:download-from-url',
+		'resources:load-all',
+		'resources:delete-file',
 	];
 
 	// Shared mock IPC event — wired through windowContextManager chain.
@@ -112,7 +112,7 @@ describe('DocumentsIpc', () => {
 	// documents:import-files
 	// ---------------------------------------------------------------------------
 
-	describe('documents:import-files handler', () => {
+	describe('resources:import-files handler', () => {
 		it('should return an empty array when the file dialog is canceled', async () => {
 			(dialog.showOpenDialog as jest.Mock).mockResolvedValueOnce({
 				canceled: true,
@@ -121,7 +121,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-files'
+				(c: unknown[]) => c[0] === 'resources:import-files'
 			)?.[1];
 			expect(handler).toBeDefined();
 
@@ -136,7 +136,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-files'
+				(c: unknown[]) => c[0] === 'resources:import-files'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -159,7 +159,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-files'
+				(c: unknown[]) => c[0] === 'resources:import-files'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -183,7 +183,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-files'
+				(c: unknown[]) => c[0] === 'resources:import-files'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -199,13 +199,13 @@ describe('DocumentsIpc', () => {
 	// documents:import-by-paths
 	// ---------------------------------------------------------------------------
 
-	describe('documents:import-by-paths handler', () => {
+	describe('resources:import-by-paths handler', () => {
 		it('should return success:false when no workspace is selected', async () => {
 			mockWorkspace.getCurrent.mockReturnValue(null);
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-by-paths'
+				(c: unknown[]) => c[0] === 'resources:import-by-paths'
 			)?.[1];
 
 			const result = await handler(mockEvent, ['/some/file.txt']);
@@ -224,7 +224,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-by-paths'
+				(c: unknown[]) => c[0] === 'resources:import-by-paths'
 			)?.[1];
 
 			const result = await handler(mockEvent, ['/file.bin']);
@@ -247,7 +247,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:import-by-paths'
+				(c: unknown[]) => c[0] === 'resources:import-by-paths'
 			)?.[1];
 
 			const result = await handler(mockEvent, ['/source/notes.md']);
@@ -264,13 +264,13 @@ describe('DocumentsIpc', () => {
 	// documents:load-all
 	// ---------------------------------------------------------------------------
 
-	describe('documents:load-all handler', () => {
+	describe('resources:load-all handler', () => {
 		it('should return success:false when no workspace is selected', async () => {
 			mockWorkspace.getCurrent.mockReturnValue(null);
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:load-all'
+				(c: unknown[]) => c[0] === 'resources:load-all'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -286,7 +286,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:load-all'
+				(c: unknown[]) => c[0] === 'resources:load-all'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -308,7 +308,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:load-all'
+				(c: unknown[]) => c[0] === 'resources:load-all'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -337,7 +337,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:load-all'
+				(c: unknown[]) => c[0] === 'resources:load-all'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -366,7 +366,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:load-all'
+				(c: unknown[]) => c[0] === 'resources:load-all'
 			)?.[1];
 
 			const result = await handler(mockEvent);
@@ -381,13 +381,13 @@ describe('DocumentsIpc', () => {
 	// documents:delete-file
 	// ---------------------------------------------------------------------------
 
-	describe('documents:delete-file handler', () => {
+	describe('resources:delete-file handler', () => {
 		it('should return success:false when no workspace is selected', async () => {
 			mockWorkspace.getCurrent.mockReturnValue(null);
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:delete-file'
+				(c: unknown[]) => c[0] === 'resources:delete-file'
 			)?.[1];
 
 			const result = await handler(mockEvent, 'file.txt');
@@ -401,7 +401,7 @@ describe('DocumentsIpc', () => {
 		it('should call fs.unlink with the correct file path', async () => {
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:delete-file'
+				(c: unknown[]) => c[0] === 'resources:delete-file'
 			)?.[1];
 
 			const result = await handler(mockEvent, 'notes.txt');
@@ -417,7 +417,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:delete-file'
+				(c: unknown[]) => c[0] === 'resources:delete-file'
 			)?.[1];
 
 			const result = await handler(mockEvent, 'missing.txt');
@@ -433,7 +433,7 @@ describe('DocumentsIpc', () => {
 
 			module.register(container, eventBus);
 			const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-				(c: unknown[]) => c[0] === 'documents:delete-file'
+				(c: unknown[]) => c[0] === 'resources:delete-file'
 			)?.[1];
 
 			const result = await handler(mockEvent, 'locked.txt');
