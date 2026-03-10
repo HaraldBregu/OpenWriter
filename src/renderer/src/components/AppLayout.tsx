@@ -317,7 +317,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
