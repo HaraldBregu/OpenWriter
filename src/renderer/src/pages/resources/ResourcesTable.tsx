@@ -115,11 +115,18 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 				<AppTable>
 					<AppTableHeader className="sticky top-0 z-10 bg-muted">
 						<AppTableRow>
-							<AppTableHead>Name</AppTableHead>
-							<AppTableHead>Type</AppTableHead>
-							<AppTableHead className="text-right">Size</AppTableHead>
-							<AppTableHead>Imported</AppTableHead>
-							<AppTableHead>Last Modified</AppTableHead>
+							{COLUMNS.map((col) => (
+								<AppTableHead key={col.key} className={col.className}>
+									<button
+										type="button"
+										className="inline-flex items-center hover:text-foreground transition-colors"
+										onClick={() => handleSort(col.key)}
+									>
+										{col.label}
+										<SortIcon column={col.key} sortKey={sortKey} sortDir={sortDir} />
+									</button>
+								</AppTableHead>
+							))}
 						</AppTableRow>
 					</AppTableHeader>
 					<AppTableBody>
