@@ -55,8 +55,8 @@ export default function ResourcesPage() {
 			{/* Header */}
 			<div className="px-6 py-3 border-b shrink-0">
 				<div className="flex items-center gap-2">
-					<FileText className="h-5 w-5 text-muted-foreground" />
-					<h1 className="text-lg font-semibold">Documents</h1>
+					<Library className="h-5 w-5 text-muted-foreground" />
+					<h1 className="text-lg font-semibold">Resources</h1>
 				</div>
 			</div>
 
