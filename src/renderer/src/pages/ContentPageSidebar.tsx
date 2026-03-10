@@ -63,22 +63,14 @@ const ContentPageSidebar: React.FC = () => {
 								<AppLabel className="text-xs text-muted-foreground">Font Size</AppLabel>
 								<span className="text-xs text-muted-foreground">{fontSize[0]}px</span>
 							</div>
-							<AppSlider
-								value={fontSize}
-								onValueChange={setFontSize}
-								min={12}
-								max={24}
-								step={1}
-							/>
+							<AppSlider value={fontSize} onValueChange={setFontSize} min={12} max={24} step={1} />
 						</div>
 
 						{/* Line Height */}
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								<AppLabel className="text-xs text-muted-foreground">Line Height</AppLabel>
-								<span className="text-xs text-muted-foreground">
-									{lineHeight[0].toFixed(1)}
-								</span>
+								<span className="text-xs text-muted-foreground">{lineHeight[0].toFixed(1)}</span>
 							</div>
 							<AppSlider
 								value={lineHeight}
