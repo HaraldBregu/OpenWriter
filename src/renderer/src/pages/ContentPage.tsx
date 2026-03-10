@@ -39,6 +39,7 @@ const ContentPage: React.FC = () => {
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const editorRef = useRef<TextEditorElement>(null);
