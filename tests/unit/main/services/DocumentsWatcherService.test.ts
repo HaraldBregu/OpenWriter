@@ -274,14 +274,14 @@ describe('DocumentsWatcherService', () => {
 	// -------------------------------------------------------------------------
 
 	describe('watcher error events', () => {
-		it('should broadcast "documents:watcher-error" when watcher emits an error', async () => {
+		it('should broadcast "resources:watcher-error" when watcher emits an error', async () => {
 			await service.startWatching(WORKSPACE);
 			const broadcastSpy = jest.spyOn(eventBus, 'broadcast');
 
 			triggerWatcherEvent('error', '', new Error('EACCES: permission denied'));
 
 			expect(broadcastSpy).toHaveBeenCalledWith(
-				'documents:watcher-error',
+				'resources:watcher-error',
 				expect.objectContaining({
 					error: expect.stringContaining('EACCES'),
 				})
