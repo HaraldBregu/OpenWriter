@@ -150,7 +150,7 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	// Document import, download, and file-watch events
 	// -------------------------------------------------------------------------
-	importFiles: () => Promise<DocumentInfo[]>;
+	importFiles: (extensions?: string[]) => Promise<DocumentInfo[]>;
 	importByPaths: (paths: string[]) => Promise<DocumentInfo[]>;
 	downloadFromUrl: (url: string) => Promise<DocumentInfo>;
 	loadDocuments: () => Promise<DocumentInfo[]>;
