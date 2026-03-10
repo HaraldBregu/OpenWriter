@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { FileMetadata, FileManagementService } from './file-management-service';
 import type { DocumentsWatcherService } from './documents-watcher';
 import type { LoggerService } from './logger';
-import { validateTextFiles, getAllTextExtensions } from '../utils/file-type-validator';
+import { validateTextFiles, getAllTextExtensions, getFileExtension } from '../utils/file-type-validator';
 
 /**
  * DocumentsService manages document files within a workspace.
