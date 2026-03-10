@@ -5,7 +5,7 @@ import type { DocumentInfo, WorkspaceInfo } from '../../../../shared/types';
 // State type
 // ---------------------------------------------------------------------------
 
-export type DocumentsStatus = 'idle' | 'loading' | 'ready' | 'error';
+export type ResourcesStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface WorkspaceState {
 	currentPath: string | null;
@@ -14,14 +14,14 @@ export interface WorkspaceState {
 	error: string | null;
 	/** Set when the workspace folder is externally deleted/moved while the app is open */
 	deletionReason: string | null;
-	/** Documents imported into the workspace */
-	documents: DocumentInfo[];
-	documentsStatus: DocumentsStatus;
-	documentsError: string | null;
+	/** Resources imported into the workspace */
+	resources: DocumentInfo[];
+	resourcesStatus: ResourcesStatus;
+	resourcesError: string | null;
 	/** Whether a file import operation is in progress */
 	importing: boolean;
-	/** Task ID of the currently running document indexing task (null when idle) */
-	documentIndexingTaskId: string | null;
+	/** Task ID of the currently running resource indexing task (null when idle) */
+	resourceIndexingTaskId: string | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
@@ -36,9 +36,9 @@ export const initialState: WorkspaceState = {
 	status: 'idle',
 	error: null,
 	deletionReason: null,
-	documents: [],
-	documentsStatus: 'idle',
-	documentsError: null,
+	resources: [],
+	resourcesStatus: 'idle',
+	resourcesError: null,
 	importing: false,
-	documentIndexingTaskId: null,
+	resourceIndexingTaskId: null,
 };
