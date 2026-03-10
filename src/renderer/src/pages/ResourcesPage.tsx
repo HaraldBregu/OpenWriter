@@ -44,6 +44,17 @@ export default function ResourcesPage() {
 		loadDocuments();
 	}, [loadDocuments]);
 
+	const handleUpload = useCallback(async () => {
+		try {
+			setUploading(true);
+			await window.workspace.importFiles();
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'Failed to upload resources');
+		} finally {
+			setUploading(false);
+		}
+	}, []);
+
 	// Listen for real-time document changes
 	useEffect(() => {
 		const unsub = window.workspace.onDocumentFileChange(() => {
