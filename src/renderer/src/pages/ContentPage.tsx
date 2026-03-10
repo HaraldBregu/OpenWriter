@@ -40,7 +40,13 @@ import { useTask } from '@/hooks/use-task';
 // Right sidebar — configuration demo
 // ---------------------------------------------------------------------------
 
-function ConfigSidebar({ open, onClose }: { readonly open: boolean; readonly onClose: () => void }) {
+function ConfigSidebar({
+	open,
+	onClose,
+}: {
+	readonly open: boolean;
+	readonly onClose: () => void;
+}) {
 	const [fontFamily, setFontFamily] = useState('sans');
 	const [spellCheck, setSpellCheck] = useState(true);
 	const [autoSave, setAutoSave] = useState(true);
