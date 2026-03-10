@@ -73,7 +73,7 @@ export class DocumentsWatcherService implements Disposable {
 	private workspaceEventUnsubscribe: (() => void) | null = null;
 
 	// Constants
-	private readonly DOCS_DIR_NAME = 'documents';
+	private readonly DOCS_DIR_NAME = 'resources';
 	private readonly DEFAULT_DEBOUNCE_MS = 300;
 	private readonly DEFAULT_IGNORE_WINDOW_MS = 2000;
 	private readonly CLEANUP_INTERVAL_MS = 10000; // Clean up ignored writes every 10s
