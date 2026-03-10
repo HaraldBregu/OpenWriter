@@ -40,6 +40,20 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === 'fun
 	});
 }
 
+// IPC → Redux bridge: load documents on startup and re-load on file changes.
+let documentsInitialized = false;
+if (!documentsInitialized && typeof window.workspace?.onDocumentFileChange === 'function') {
+	documentsInitialized = true;
+	store.dispatch(loadDocuments());
+	window.workspace.onDocumentFileChange((event) => {
+		if (event.type === 'removed') {
+			store.dispatch(documentRemoved(event.fileId));
+		} else {
+			store.dispatch(loadDocuments());
+		}
+	});
+}
+
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
