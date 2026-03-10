@@ -1,4 +1,4 @@
-import { Library, Pencil, Trash2, Upload } from 'lucide-react';
+import { Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
 interface ResourcesHeaderProps {
