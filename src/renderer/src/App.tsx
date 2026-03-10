@@ -112,6 +112,14 @@ const App: React.FC = () => {
 														</RouteWrapper>
 													}
 												/>
+												<Route
+													path="/documents"
+													element={
+														<RouteWrapper>
+															<DocumentsPage />
+														</RouteWrapper>
+													}
+												/>
 											</Routes>
 										</Suspense>
 									</AppLayout>
