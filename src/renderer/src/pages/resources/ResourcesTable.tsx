@@ -51,7 +51,7 @@ function SortIcon({
 	sortKey: SortKey;
 	sortDir: SortDirection;
 }) {
-	if (column !== sortKey)
+	if (column !== sortKey || sortDir === 'none')
 		return <ArrowUpDown className="ml-1 inline h-3.5 w-3.5 text-muted-foreground/50" />;
 	if (sortDir === 'asc') return <ArrowUp className="ml-1 inline h-3.5 w-3.5" />;
 	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
