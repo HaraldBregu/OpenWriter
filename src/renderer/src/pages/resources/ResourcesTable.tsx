@@ -28,12 +28,8 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 				<AppTableBody>
 					{documents.map((doc) => (
 						<AppTableRow key={doc.id}>
-							<AppTableCell className="font-medium truncate max-w-[300px]">
-								{doc.name}
-							</AppTableCell>
-							<AppTableCell className="text-muted-foreground">
-								{doc.mimeType}
-							</AppTableCell>
+							<AppTableCell className="font-medium truncate max-w-[300px]">{doc.name}</AppTableCell>
+							<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
 							<AppTableCell className="text-right text-muted-foreground tabular-nums">
 								{formatBytes(doc.size)}
 							</AppTableCell>
