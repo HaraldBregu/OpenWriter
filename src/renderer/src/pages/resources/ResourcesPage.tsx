@@ -39,12 +39,25 @@ export default function ResourcesPage() {
 	const [indexing, setIndexing] = useState(false);
 	const [indexingProgress, setIndexingProgress] = useState(0);
 
+	const indexTimerRef = useRef<ReturnType<typeof setInterval>>();
+
 	const handleIndex = useCallback(() => {
+		if (indexing) return;
 		setIndexing(true);
 		setIndexingProgress(0);
-		// TODO: implement indexing logic
-		setIndexing(false);
-	}, []);
+
+		let progress = 0;
+		indexTimerRef.current = setInterval(() => {
+			const increment = Math.floor(Math.random() * 10) + 1;
+			progress = Math.min(progress + increment, 100);
+			setIndexingProgress(progress);
+
+			if (progress >= 100) {
+				clearInterval(indexTimerRef.current);
+				setIndexing(false);
+			}
+		}, 300);
+	}, [indexing]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
