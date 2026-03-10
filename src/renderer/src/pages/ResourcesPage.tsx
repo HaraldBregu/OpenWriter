@@ -49,7 +49,7 @@ export default function ResourcesPage() {
 	const handleUpload = useCallback(async () => {
 		try {
 			setUploading(true);
-			await window.workspace.importFiles();
+			await window.workspace.importFiles(SUPPORTED_EXTENSIONS);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Failed to upload resources');
 		} finally {
