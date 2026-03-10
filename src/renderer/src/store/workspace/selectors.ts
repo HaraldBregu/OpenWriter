@@ -62,8 +62,3 @@ export const selectResourcesIsLoading = createSelector(
 );
 
 export const selectImporting = createSelector(selectWorkspaceState, (state) => state.importing);
-
-export const selectResourceIndexingTaskId = createSelector(
-	selectWorkspaceState,
-	(state) => state.resourceIndexingTaskId
-);
