@@ -194,15 +194,20 @@ export function ResourcesTable({
 					</AppTableHeader>
 					<AppTableBody>
 						{filtered.map((doc) => (
-							<AppTableRow key={doc.id} data-state={selected.has(doc.id) ? 'selected' : undefined}>
-								<AppTableCell className="w-[40px]">
-									<input
-										type="checkbox"
-										className="h-4 w-4 accent-primary cursor-pointer"
-										checked={selected.has(doc.id)}
-										onChange={() => toggleOne(doc.id)}
-									/>
-								</AppTableCell>
+							<AppTableRow
+								key={doc.id}
+								data-state={editing && selected.has(doc.id) ? 'selected' : undefined}
+							>
+								{editing && (
+									<AppTableCell className="w-[40px]">
+										<input
+											type="checkbox"
+											className="h-4 w-4 accent-primary cursor-pointer"
+											checked={selected.has(doc.id)}
+											onChange={() => toggleOne(doc.id)}
+										/>
+									</AppTableCell>
+								)}
 								<AppTableCell className="font-medium truncate max-w-[300px]">
 									{doc.name}
 								</AppTableCell>
