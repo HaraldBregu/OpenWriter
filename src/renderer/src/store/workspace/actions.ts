@@ -92,3 +92,13 @@ export const removeDocuments = createAsyncThunk<DocumentInfo[], string[]>(
 		return await window.workspace.loadDocuments();
 	}
 );
+
+/**
+ * Submit an index-resources task to the main process.
+ * The main process resolves workspace path and documents server-side.
+ * Returns the task ID for progress tracking.
+ */
+export const indexResources = createAsyncThunk<string>('workspace/indexResources', async () => {
+	const result = await window.task.submit('index-resources', {});
+	return result.taskId;
+});
