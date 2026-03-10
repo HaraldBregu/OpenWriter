@@ -18,6 +18,8 @@ export interface WorkspaceState {
 	documents: DocumentInfo[];
 	documentsStatus: DocumentsStatus;
 	documentsError: string | null;
+	/** Whether a file import operation is in progress */
+	importing: boolean;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
