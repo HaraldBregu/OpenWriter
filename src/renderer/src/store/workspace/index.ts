@@ -11,6 +11,8 @@ export {
 	openWorkspacePicker,
 	removeRecentWorkspace,
 	clearWorkspace,
+	loadDocuments,
+	removeDocuments,
 } from './actions';
 
 // Reducer, slice, and synchronous actions
@@ -20,6 +22,7 @@ export {
 	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
+	documentRemoved,
 } from './reducer';
 export { default } from './reducer';
 
@@ -34,4 +37,8 @@ export {
 	selectWorkspaceError,
 	selectWorkspaceIsLoading,
 	selectWorkspaceDeletionReason,
+	selectDocuments,
+	selectDocumentsStatus,
+	selectDocumentsError,
+	selectDocumentsIsLoading,
 } from './selectors';
