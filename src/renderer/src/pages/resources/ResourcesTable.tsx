@@ -18,7 +18,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../../components/ui/Select';
-import type { DocumentInfo } from '../../../../shared/types';
+import type { ResourceInfo } from '../../../../shared/types';
 import { formatBytes, formatDate } from './constants';
 
 const ResourcePreviewSheet = lazy(() =>
@@ -38,7 +38,7 @@ const COLUMNS: { key: SortKey; label: string; className?: string }[] = [
 	{ key: 'lastModified', label: 'Last Modified' },
 ];
 
-function compareDocs(a: DocumentInfo, b: DocumentInfo, key: SortKey, dir: SortDirection): number {
+function compareDocs(a: ResourceInfo, b: ResourceInfo, key: SortKey, dir: SortDirection): number {
 	let result: number;
 	if (key === 'name' || key === 'mimeType') {
 		result = a[key].localeCompare(b[key]);
@@ -64,11 +64,11 @@ function SortIcon({
 }
 
 interface ResourceRowProps {
-	doc: DocumentInfo;
+	doc: ResourceInfo;
 	editing: boolean;
 	isSelected: boolean;
 	onToggle: (id: string) => void;
-	onPreview: (doc: DocumentInfo) => void;
+	onPreview: (doc: ResourceInfo) => void;
 }
 
 const ResourceRow = memo(function ResourceRow({
@@ -108,7 +108,7 @@ const ResourceRow = memo(function ResourceRow({
 });
 
 interface ResourcesTableProps {
-	documents: DocumentInfo[];
+	documents: ResourceInfo[];
 	editing: boolean;
 	selected: Set<string>;
 	onSelectedChange: (selected: Set<string>) => void;
@@ -124,7 +124,7 @@ export const ResourcesTable = memo(function ResourcesTable({
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDir, setSortDir] = useState<SortDirection>('none');
-	const [previewDoc, setPreviewDoc] = useState<DocumentInfo | null>(null);
+	const [previewDoc, setPreviewDoc] = useState<ResourceInfo | null>(null);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
