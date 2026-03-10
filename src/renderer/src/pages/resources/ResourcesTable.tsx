@@ -1,4 +1,5 @@
 import {
+	AppTable,
 	AppTableHeader,
 	AppTableBody,
 	AppTableHead,
@@ -15,7 +16,7 @@ interface ResourcesTableProps {
 export function ResourcesTable({ documents }: ResourcesTableProps) {
 	return (
 		<div className="rounded-md border flex-1 min-h-0 overflow-auto">
-			<table className="w-full caption-bottom text-sm text-foreground">
+			<AppTable wrapperClassName="overflow-visible">
 				<AppTableHeader className="sticky top-0 z-10 bg-muted">
 					<AppTableRow>
 						<AppTableHead>Name</AppTableHead>
@@ -28,8 +29,12 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 				<AppTableBody>
 					{documents.map((doc) => (
 						<AppTableRow key={doc.id}>
-							<AppTableCell className="font-medium truncate max-w-[300px]">{doc.name}</AppTableCell>
-							<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
+							<AppTableCell className="font-medium truncate max-w-[300px]">
+								{doc.name}
+							</AppTableCell>
+							<AppTableCell className="text-muted-foreground">
+								{doc.mimeType}
+							</AppTableCell>
 							<AppTableCell className="text-right text-muted-foreground tabular-nums">
 								{formatBytes(doc.size)}
 							</AppTableCell>
@@ -42,7 +47,7 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 						</AppTableRow>
 					))}
 				</AppTableBody>
-			</table>
+			</AppTable>
 		</div>
 	);
 }
