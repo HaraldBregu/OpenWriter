@@ -187,28 +187,16 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 									{formatDate(doc.lastModified)}
 								</AppTableCell>
 								<AppTableCell>
-									<AppDropdownMenu>
-										<AppDropdownMenuTrigger asChild>
-											<AppButton
-												type="button"
-												variant="ghost"
-												size="icon"
-												className="h-8 w-8"
-												disabled={removingId === doc.id}
-											>
-												<MoreHorizontal className="h-4 w-4" />
-											</AppButton>
-										</AppDropdownMenuTrigger>
-										<AppDropdownMenuContent align="end">
-											<AppDropdownMenuItem
-												className="text-destructive focus:text-destructive"
-												onClick={() => setConfirmDoc(doc)}
-											>
-												<Trash2 className="h-4 w-4" />
-												Remove
-											</AppDropdownMenuItem>
-										</AppDropdownMenuContent>
-									</AppDropdownMenu>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon"
+										className="h-8 w-8 text-muted-foreground hover:text-destructive"
+										disabled={removingId === doc.id}
+										onClick={() => setConfirmDoc(doc)}
+									>
+										<Trash2 className="h-4 w-4" />
+									</AppButton>
 								</AppTableCell>
 							</AppTableRow>
 						))}
