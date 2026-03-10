@@ -219,6 +219,8 @@ export const {
 	documentRemoved,
 	importDocumentsRequested,
 	importDocumentsCompleted,
+	documentIndexingStarted,
+	documentIndexingFinished,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
