@@ -116,9 +116,13 @@ export default function ResourcesPage() {
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
+	const DOCUMENTS_DIR = 'documents';
+
 	const handleIndex = useCallback(() => {
-		dispatch(indexResources());
-	}, [dispatch]);
+		if (!workspacePath) return;
+		const resourcesPath = `${workspacePath}/${DOCUMENTS_DIR}`;
+		dispatch(indexResources({ workspacePath, resourcesPath }));
+	}, [dispatch, workspacePath]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
