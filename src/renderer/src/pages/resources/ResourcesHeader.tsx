@@ -21,6 +21,8 @@ export function ResourcesHeader({
 	selectedCount,
 	removing,
 	onRemove,
+	indexing,
+	onIndex,
 }: ResourcesHeaderProps) {
 	return (
 		<div className="px-6 py-3 border-b shrink-0">
