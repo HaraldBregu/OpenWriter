@@ -29,10 +29,9 @@ export default function ResourcesPage() {
 	const documents = useAppSelector(selectDocuments);
 	const status = useAppSelector(selectDocumentsStatus);
 	const error = useAppSelector(selectDocumentsError);
+	const uploading = useAppSelector(selectImporting);
 
 	const loading = status === 'idle' || status === 'loading';
-
-	const [uploading, setUploading] = useState(false);
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
