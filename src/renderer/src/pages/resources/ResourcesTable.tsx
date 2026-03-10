@@ -109,52 +109,31 @@ export function ResourcesTable({
 		return result;
 	}, [documents, search, typeFilter, sortKey, sortDir]);
 
-	const filteredIds = useMemo(() => new Set(filtered.map((d) => d.id)), [filtered]);
-
 	const allChecked = filtered.length > 0 && filtered.every((d) => selected.has(d.id));
 	const someChecked = !allChecked && filtered.some((d) => selected.has(d.id));
-	const selectedCount = [...selected].filter((id) => filteredIds.has(id)).length;
 
 	const toggleAll = useCallback(() => {
-		setSelected((prev) => {
-			const next = new Set(prev);
-			if (allChecked) {
-				for (const doc of filtered) next.delete(doc.id);
-			} else {
-				for (const doc of filtered) next.add(doc.id);
-			}
-			return next;
-		});
-	}, [allChecked, filtered]);
+		const next = new Set(selected);
+		if (allChecked) {
+			for (const doc of filtered) next.delete(doc.id);
+		} else {
+			for (const doc of filtered) next.add(doc.id);
+		}
+		onSelectedChange(next);
+	}, [allChecked, filtered, selected, onSelectedChange]);
 
-	const toggleOne = useCallback((id: string) => {
-		setSelected((prev) => {
-			const next = new Set(prev);
+	const toggleOne = useCallback(
+		(id: string) => {
+			const next = new Set(selected);
 			if (next.has(id)) {
 				next.delete(id);
 			} else {
 				next.add(id);
 			}
-			return next;
-		});
-	}, []);
-
-	const handleConfirmRemove = useCallback(async () => {
-		setConfirmOpen(false);
-		const ids = [...selected].filter((id) => filteredIds.has(id));
-		if (ids.length === 0) return;
-		setRemoving(true);
-		try {
-			await onRemove(ids);
-			setSelected((prev) => {
-				const next = new Set(prev);
-				for (const id of ids) next.delete(id);
-				return next;
-			});
-		} finally {
-			setRemoving(false);
-		}
-	}, [selected, filteredIds, onRemove]);
+			onSelectedChange(next);
+		},
+		[selected, onSelectedChange]
+	);
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col gap-3">
