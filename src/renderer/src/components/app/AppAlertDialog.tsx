@@ -66,11 +66,7 @@ const AppAlertDialogDescription = React.forwardRef<
 	React.ElementRef<typeof AlertDialogDescription>,
 	React.ComponentPropsWithoutRef<typeof AlertDialogDescription>
 >(({ className, ...props }, ref) => (
-	<AlertDialogDescription
-		ref={ref}
-		className={cn('text-muted-foreground', className)}
-		{...props}
-	/>
+	<AlertDialogDescription ref={ref} className={cn('text-muted-foreground', className)} {...props} />
 ));
 AppAlertDialogDescription.displayName = 'AppAlertDialogDescription';
 

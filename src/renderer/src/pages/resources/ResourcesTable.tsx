@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Search, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Search, Trash2 } from 'lucide-react';
 import {
 	AppAlertDialog,
 	AppAlertDialogAction,
@@ -10,10 +10,6 @@ import {
 	AppAlertDialogHeader,
 	AppAlertDialogTitle,
 	AppButton,
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-	AppDropdownMenuTrigger,
 	AppTable,
 	AppTableHeader,
 	AppTableBody,
@@ -180,9 +176,7 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 								<AppTableCell className="font-medium truncate max-w-[300px]">
 									{doc.name}
 								</AppTableCell>
-								<AppTableCell className="text-muted-foreground">
-									{doc.mimeType}
-								</AppTableCell>
+								<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
 								<AppTableCell className="text-right text-muted-foreground tabular-nums">
 									{formatBytes(doc.size)}
 								</AppTableCell>
@@ -222,13 +216,18 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 				</AppTable>
 			</div>
 
-			<AppAlertDialog open={confirmDoc !== null} onOpenChange={(open) => { if (!open) setConfirmDoc(null); }}>
+			<AppAlertDialog
+				open={confirmDoc !== null}
+				onOpenChange={(open) => {
+					if (!open) setConfirmDoc(null);
+				}}
+			>
 				<AppAlertDialogContent>
 					<AppAlertDialogHeader>
 						<AppAlertDialogTitle>Remove resource</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
-							Are you sure you want to remove &ldquo;{confirmDoc?.name}&rdquo;? This
-							action cannot be undone.
+							Are you sure you want to remove &ldquo;{confirmDoc?.name}&rdquo;? This action cannot
+							be undone.
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
