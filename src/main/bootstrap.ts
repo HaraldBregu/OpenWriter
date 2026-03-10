@@ -109,6 +109,9 @@ export function bootstrapServices(): BootstrapResult {
 	const windowContextManager = new WindowContextManager(container, eventBus);
 	container.register('windowContextManager', windowContextManager);
 
+	// Register handlers that depend on WindowContextManager
+	taskHandlerRegistry.register(new IndexResourcesTaskHandler(windowContextManager, container));
+
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
 	return { container, eventBus, windowFactory, appState, logger, windowContextManager };
