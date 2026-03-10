@@ -52,22 +52,45 @@ export class DocumentsService {
 	 *
 	 * @param workspacePath - Path to the workspace
 	 * @param filePaths - Array of file paths to import
+	 * @param allowedExtensions - Optional list of allowed extensions (e.g. ['.pdf', '.docx']).
+	 *   When provided, files are validated against this list instead of the default text-only check.
 	 * @returns Array of file metadata for imported files
 	 */
-	async importFiles(workspacePath: string, filePaths: string[]): Promise<FileMetadata[]> {
+	async importFiles(
+		workspacePath: string,
+		filePaths: string[],
+		allowedExtensions?: string[]
+	): Promise<FileMetadata[]> {
 		await this.ensureDocumentsDirectory(workspacePath);
 
-		// Validate file types
-		const { validFiles, invalidFiles } = validateTextFiles(filePaths);
+		if (allowedExtensions && allowedExtensions.length > 0) {
+			const normalized = allowedExtensions.map((ext) => ext.toLowerCase());
+			const invalidFiles = filePaths.filter((filePath) => {
+				const ext = getFileExtension(filePath).toLowerCase();
+				return !normalized.includes(ext);
+			});
 
-		if (invalidFiles.length > 0) {
-			const fileList = invalidFiles
-				.map(({ path: filePath, reason }) => `• ${path.basename(filePath)}: ${reason}`)
-				.join('\n');
+			if (invalidFiles.length > 0) {
+				const fileList = invalidFiles
+					.map((filePath) => `• ${path.basename(filePath)}: Extension not supported`)
+					.join('\n');
 
-			throw new Error(
-				`Some files are not supported:\n${fileList}\n\nSupported formats: ${getAllTextExtensions().join(', ')}`
-			);
+				throw new Error(
+					`Some files are not supported:\n${fileList}\n\nSupported formats: ${allowedExtensions.join(', ')}`
+				);
+			}
+		} else {
+			const { invalidFiles } = validateTextFiles(filePaths);
+
+			if (invalidFiles.length > 0) {
+				const fileList = invalidFiles
+					.map(({ path: filePath, reason }) => `• ${path.basename(filePath)}: ${reason}`)
+					.join('\n');
+
+				throw new Error(
+					`Some files are not supported:\n${fileList}\n\nSupported formats: ${getAllTextExtensions().join(', ')}`
+				);
+			}
 		}
 
 		const docsDir = this.getDocumentsDir(workspacePath);
