@@ -62,3 +62,8 @@ export const selectDocumentsIsLoading = createSelector(
 );
 
 export const selectImporting = createSelector(selectWorkspaceState, (state) => state.importing);
+
+export const selectDocumentIndexingTaskId = createSelector(
+	selectWorkspaceState,
+	(state) => state.documentIndexingTaskId
+);
