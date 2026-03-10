@@ -11,3 +11,22 @@ After each file edit, run `yarn format` to format the code with Prettier.
 - **`.md`** files: UPPERCASE or UPPER_SNAKE_CASE (e.g., `README.md`, `GETTING_STARTED.md`)
 - **`.json`** files: kebab-case, or lowercase if a single word (e.g., `tsconfig.json`, `my-config.json`)
 - **Folders**: lowercase snake_case (e.g., `my_folder`, `user_settings`)
+
+## SonarQube Best Practices
+
+After implementing or modifying code, verify it follows SonarQube best practices:
+
+- **No code smells**: Avoid duplicated code, overly complex functions, and dead code. Keep cognitive complexity low.
+- **No bugs**: Ensure no null pointer dereferences, incorrect type comparisons, or unreachable code paths.
+- **No vulnerabilities**: Avoid hardcoded credentials, SQL injection, XSS, and insecure randomness. Sanitize all user inputs.
+- **No security hotspots**: Review usage of cryptography, file system access, HTTP requests, and dynamic code execution.
+- **Maintainability**: Keep functions short and focused (single responsibility). Limit function parameters (max ~4). Avoid deeply nested control flow (max 3 levels).
+- **Reliability**: Handle all error cases explicitly. Avoid empty catch blocks. Do not ignore return values.
+- **Test coverage**: New or modified code should have corresponding tests. Aim for meaningful coverage, not just line coverage.
+- **Code quality rules**:
+  - Do not use `any` type in TypeScript — use proper types or `unknown`.
+  - Prefer `const` over `let`; never use `var`.
+  - Do not leave `console.log` statements in production code.
+  - Remove commented-out code instead of leaving it in.
+  - Do not use magic numbers — extract them into named constants.
+  - Avoid non-null assertions (`!`) — use proper null checks instead.
