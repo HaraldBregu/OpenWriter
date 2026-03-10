@@ -84,6 +84,21 @@ export default function ResourcesPage() {
 				onIndex={handleIndex}
 			/>
 
+			{indexing && (
+				<div className="px-6 py-3 border-b shrink-0">
+					<div className="flex items-center justify-between mb-1.5">
+						<span className="text-sm text-muted-foreground">Indexing resources&hellip;</span>
+						<span className="text-sm text-muted-foreground">{indexingProgress}%</span>
+					</div>
+					<div className="h-2 w-full rounded-full bg-secondary">
+						<div
+							className="h-full rounded-full bg-primary transition-all duration-300"
+							style={{ width: `${indexingProgress}%` }}
+						/>
+					</div>
+				</div>
+			)}
+
 			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
