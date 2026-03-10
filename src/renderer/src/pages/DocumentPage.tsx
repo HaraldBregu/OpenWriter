@@ -145,10 +145,10 @@ function ConfigSidebar({
 }
 
 // ---------------------------------------------------------------------------
-// ContentPage
+// DocumentPage
 // ---------------------------------------------------------------------------
 
-const ContentPage: React.FC = () => {
+const DocumentPage: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
@@ -167,7 +167,7 @@ const ContentPage: React.FC = () => {
 	const task = useTask<{ prompt: string }>('agent-text-continuation', {
 		prompt: '',
 	});
-	console.log(`[ContentPage] rendered`);
+	console.log(`[DocumentPage] rendered`);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -267,7 +267,7 @@ const ContentPage: React.FC = () => {
 			await window.workspace.trashOutput({ type: 'writings', id });
 			navigate('/home');
 		} catch (err) {
-			console.error('[ContentPage] Failed to trash writing:', err);
+			console.error('[DocumentPage] Failed to trash writing:', err);
 			setIsTrashing(false);
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
@@ -440,4 +440,4 @@ const ContentPage: React.FC = () => {
 	);
 };
 
-export default ContentPage;
+export default DocumentPage;
