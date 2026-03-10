@@ -168,14 +168,9 @@ export function ResourcesTable({
 						<AppTableRow>
 							{editing && (
 								<AppTableHead className="w-[40px]">
-									<input
-										type="checkbox"
-										className="h-4 w-4 accent-primary cursor-pointer"
-										checked={allChecked}
-										ref={(el) => {
-											if (el) el.indeterminate = someChecked;
-										}}
-										onChange={toggleAll}
+									<AppCheckbox
+										checked={someChecked ? 'indeterminate' : allChecked}
+										onCheckedChange={toggleAll}
 									/>
 								</AppTableHead>
 							)}
