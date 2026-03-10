@@ -38,7 +38,7 @@ export default function ResourcesPage() {
 
 	const indexingTask = useTask<
 		{ workspacePath: string; resourcesPath: string },
-		{ indexedCount: number; failedIds: string[] }
+		{ indexedCount: number; failedIds: string[]; skippedCount: number; totalChunks: number }
 	>('index-resources', { workspacePath: workspacePath ?? '', resourcesPath: '' });
 
 	const loading = status === 'idle' || status === 'loading';
