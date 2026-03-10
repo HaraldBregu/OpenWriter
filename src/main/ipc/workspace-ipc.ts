@@ -152,7 +152,7 @@ export class WorkspaceIpc implements IpcModule {
 
 				const documentsService = new DocumentsService(fileManagement, watcher);
 				try {
-					return await documentsService.importFiles(currentWorkspace, result.filePaths);
+					return await documentsService.importFiles(currentWorkspace, result.filePaths, extensions);
 				} catch (err) {
 					const error = err as Error;
 					if (error.message.includes('not supported')) {
