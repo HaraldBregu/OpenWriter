@@ -7,6 +7,9 @@ import tasksReducer from './tasks/reducer';
 import writingsReducer from './writings/reducer';
 import { listenerMiddleware } from './listener-middleware';
 
+// Side-effect imports: register listener effects
+import './workspace/listeners';
+
 export const store = configureStore({
 	reducer: {
 		workspace: workspaceReducer,
