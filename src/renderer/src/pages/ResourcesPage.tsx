@@ -32,7 +32,7 @@ export default function ResourcesPage() {
 			const docs = await window.workspace.loadDocuments();
 			setDocuments(docs);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load documents');
+			setError(err instanceof Error ? err.message : 'Failed to load resources');
 		} finally {
 			setLoading(false);
 		}
