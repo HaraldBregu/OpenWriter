@@ -143,9 +143,7 @@ export class WorkspaceIpc implements IpcModule {
 				const result = await dialog.showOpenDialog({
 					properties: ['openFile', 'multiSelections'],
 					filters,
-					message: hasFilter
-						? `Supported formats: ${extensions.join(', ')}`
-						: undefined,
+					message: hasFilter ? `Supported formats: ${extensions.join(', ')}` : undefined,
 				});
 
 				if (result.canceled || result.filePaths.length === 0) {
