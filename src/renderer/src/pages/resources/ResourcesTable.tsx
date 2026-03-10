@@ -99,5 +99,6 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 				</AppTableBody>
 			</AppTable>
 		</div>
+		</div>
 	);
 }
