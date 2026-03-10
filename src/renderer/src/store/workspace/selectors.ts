@@ -39,3 +39,24 @@ export const selectWorkspaceDeletionReason = createSelector(
 	selectWorkspaceState,
 	(state) => state.deletionReason
 );
+
+// ---------------------------------------------------------------------------
+// Document selectors
+// ---------------------------------------------------------------------------
+
+export const selectDocuments = createSelector(selectWorkspaceState, (state) => state.documents);
+
+export const selectDocumentsStatus = createSelector(
+	selectWorkspaceState,
+	(state) => state.documentsStatus
+);
+
+export const selectDocumentsError = createSelector(
+	selectWorkspaceState,
+	(state) => state.documentsError
+);
+
+export const selectDocumentsIsLoading = createSelector(
+	selectDocumentsStatus,
+	(status) => status === 'loading'
+);
