@@ -25,6 +25,8 @@ export {
 	documentRemoved,
 	importDocumentsRequested,
 	importDocumentsCompleted,
+	documentIndexingStarted,
+	documentIndexingFinished,
 } from './reducer';
 export { default } from './reducer';
 
