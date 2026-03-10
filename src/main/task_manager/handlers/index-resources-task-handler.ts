@@ -49,6 +49,12 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		if (!input?.windowId) {
 			throw new Error('windowId is required (injected server-side)');
 		}
+		if (!input.workspacePath) {
+			throw new Error('workspacePath is required');
+		}
+		if (!input.resourcesPath) {
+			throw new Error('resourcesPath is required');
+		}
 	}
 
 	async execute(
