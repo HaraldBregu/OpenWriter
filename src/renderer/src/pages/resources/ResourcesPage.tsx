@@ -36,6 +36,13 @@ export default function ResourcesPage() {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
+	const [indexing, setIndexing] = useState(false);
+
+	const handleIndex = useCallback(() => {
+		setIndexing(true);
+		// TODO: implement indexing logic
+		setIndexing(false);
+	}, []);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
