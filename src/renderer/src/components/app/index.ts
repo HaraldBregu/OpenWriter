@@ -87,6 +87,20 @@ export {
 	AppTableCaption,
 } from './AppTable';
 
+export {
+	AppAlertDialog,
+	AppAlertDialogPortal,
+	AppAlertDialogOverlay,
+	AppAlertDialogTrigger,
+	AppAlertDialogContent,
+	AppAlertDialogHeader,
+	AppAlertDialogFooter,
+	AppAlertDialogTitle,
+	AppAlertDialogDescription,
+	AppAlertDialogAction,
+	AppAlertDialogCancel,
+} from './AppAlertDialog';
+
 export { AppSlider } from './AppSlider';
 
 export { AppSwitch } from './AppSwitch';
