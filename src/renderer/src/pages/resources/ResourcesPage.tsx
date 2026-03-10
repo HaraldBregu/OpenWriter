@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, memo } from 'react';
+import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
@@ -16,89 +16,15 @@ import {
 	selectResourcesStatus,
 	selectResourcesError,
 	selectImporting,
-	selectResourceIndexingTaskId,
 	selectCurrentWorkspacePath,
 	removeResources,
 	importResourcesRequested,
-	indexResources,
-	resourceIndexingFinished,
 } from '../../store/workspace';
-import { subscribeToTask } from '../../services/task-event-bus';
+import { useTask } from '../../hooks/use-task';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
-import type { TaskEvent } from '../../../../shared/types';
-
-/**
- * Isolated progress bar component – its frequent state updates
- * (indexingProgress / indexingMessage) no longer cause the parent
- * or sibling components to re-render.
- */
-const IndexingProgressBar = memo(function IndexingProgressBar({
-	indexingTaskId,
-}: {
-	indexingTaskId: string;
-}) {
-	const dispatch = useAppDispatch();
-	const [progress, setProgress] = useState(0);
-	const [message, setMessage] = useState('Submitting indexing task\u2026');
-	const unsubRef = useRef<(() => void) | null>(null);
-
-	useEffect(() => {
-		unsubRef.current?.();
-		unsubRef.current = null;
-
-		const snapshotUnsub = subscribeToTask(indexingTaskId, (snapshot) => {
-			if (snapshot.status === 'completed') {
-				setProgress(100);
-				setMessage('Indexing complete');
-				dispatch(resourceIndexingFinished());
-			}
-			if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
-				setProgress(0);
-				setMessage('');
-				dispatch(resourceIndexingFinished());
-			}
-		});
-
-		const taskId = indexingTaskId;
-		const progressUnsub = window.task.onEvent((event: TaskEvent) => {
-			if (event.type !== 'progress') return;
-			const data = event.data as { taskId: string; percent: number; message?: string };
-			if (data.taskId !== taskId) return;
-			setProgress(data.percent);
-			if (data.message) setMessage(data.message);
-		});
-
-		unsubRef.current = () => {
-			snapshotUnsub();
-			progressUnsub();
-		};
-
-		return () => {
-			unsubRef.current?.();
-			unsubRef.current = null;
-		};
-	}, [indexingTaskId, dispatch]);
-
-	return (
-		<div className="px-6 py-3 border-b shrink-0">
-			<div className="flex items-center justify-between mb-1.5">
-				<span className="text-sm text-muted-foreground">
-					{message || 'Indexing resources\u2026'}
-				</span>
-				<span className="text-sm text-muted-foreground">{progress}%</span>
-			</div>
-			<div className="h-2 w-full rounded-full bg-secondary">
-				<div
-					className="h-full rounded-full bg-primary transition-all duration-300"
-					style={{ width: `${progress}%` }}
-				/>
-			</div>
-		</div>
-	);
-});
 
 const RESOURCES_DIR = 'documents';
 
@@ -108,11 +34,15 @@ export default function ResourcesPage() {
 	const status = useAppSelector(selectResourcesStatus);
 	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
-	const indexingTaskId = useAppSelector(selectResourceIndexingTaskId);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
+	const indexingTask = useTask<
+		{ workspacePath: string; resourcesPath: string },
+		{ indexedCount: number; failedIds: string[] }
+	>('index-resources', { workspacePath: workspacePath ?? '', resourcesPath: '' });
+
 	const loading = status === 'idle' || status === 'loading';
-	const indexing = indexingTaskId !== null;
+	const indexing = indexingTask.isRunning || indexingTask.isQueued;
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
@@ -121,8 +51,8 @@ export default function ResourcesPage() {
 	const handleIndex = useCallback(() => {
 		if (!workspacePath) return;
 		const resourcesPath = `${workspacePath}/${RESOURCES_DIR}`;
-		dispatch(indexResources({ workspacePath, resourcesPath }));
-	}, [dispatch, workspacePath]);
+		indexingTask.submit({ workspacePath, resourcesPath });
+	}, [workspacePath, indexingTask]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importResourcesRequested(SUPPORTED_EXTENSIONS));
@@ -166,7 +96,16 @@ export default function ResourcesPage() {
 				onIndex={handleIndex}
 			/>
 
-			{indexingTaskId && <IndexingProgressBar indexingTaskId={indexingTaskId} />}
+			{indexing && (
+				<div className="px-6 py-3 border-b shrink-0">
+					<div className="flex items-center gap-2">
+						<Loader2 className="h-4 w-4 animate-spin text-primary" />
+						<span className="text-sm text-muted-foreground">
+							Indexing resources&hellip;
+						</span>
+					</div>
+				</div>
+			)}
 
 			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
 				{loading && (
