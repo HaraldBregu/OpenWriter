@@ -23,7 +23,6 @@ import {
 	AppDropdownMenuTrigger,
 	AppLabel,
 	AppSeparator,
-	AppSlider,
 	AppSwitch,
 	AppSelect,
 	AppSelectTrigger,
@@ -41,9 +40,7 @@ import { useTask } from '@/hooks/use-task';
 // Right sidebar — configuration demo
 // ---------------------------------------------------------------------------
 
-function ConfigSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-	const [fontSize, setFontSize] = useState([16]);
-	const [lineHeight, setLineHeight] = useState([1.6]);
+function ConfigSidebar({ open, onClose }: { readonly open: boolean; readonly onClose: () => void }) {
 	const [fontFamily, setFontFamily] = useState('sans');
 	const [spellCheck, setSpellCheck] = useState(true);
 	const [autoSave, setAutoSave] = useState(true);
@@ -86,28 +83,6 @@ function ConfigSidebar({ open, onClose }: { open: boolean; onClose: () => void }
 								<AppSelectItem value="mono">Monospace</AppSelectItem>
 							</AppSelectContent>
 						</AppSelect>
-					</div>
-
-					<div className="space-y-2">
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-xs text-muted-foreground">Font Size</AppLabel>
-							<span className="text-xs text-muted-foreground">{fontSize[0]}px</span>
-						</div>
-						<AppSlider value={fontSize} onValueChange={setFontSize} min={12} max={24} step={1} />
-					</div>
-
-					<div className="space-y-2">
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-xs text-muted-foreground">Line Height</AppLabel>
-							<span className="text-xs text-muted-foreground">{lineHeight[0].toFixed(1)}</span>
-						</div>
-						<AppSlider
-							value={lineHeight}
-							onValueChange={setLineHeight}
-							min={1.0}
-							max={2.5}
-							step={0.1}
-						/>
 					</div>
 				</div>
 
