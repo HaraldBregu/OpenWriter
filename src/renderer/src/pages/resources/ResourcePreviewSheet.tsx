@@ -23,7 +23,7 @@ import {
 	AppTableRow,
 	AppTableCell,
 } from '../../components/app';
-import type { DocumentInfo } from '../../../../shared/types';
+import type { ResourceInfo } from '../../../../shared/types';
 import { formatBytes } from './constants';
 
 SyntaxHighlighter.registerLanguage('json', json);
@@ -240,7 +240,7 @@ function UnsupportedPreview({ mimeType }: { mimeType: string }) {
 	);
 }
 
-function FileContentView({ doc, content }: { doc: DocumentInfo; content: string | null }) {
+function FileContentView({ doc, content }: { doc: ResourceInfo; content: string | null }) {
 	const { mimeType } = doc;
 
 	if (mimeType === 'application/pdf') {
@@ -278,7 +278,7 @@ function FileContentView({ doc, content }: { doc: DocumentInfo; content: string 
 }
 
 interface ResourcePreviewSheetProps {
-	doc: DocumentInfo | null;
+	doc: ResourceInfo | null;
 	onClose: () => void;
 }
 
