@@ -207,7 +207,6 @@ export const {
 	resourceRemoved,
 	importResourcesRequested,
 	importResourcesCompleted,
-	resourceIndexingFinished,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
