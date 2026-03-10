@@ -68,7 +68,7 @@ function SortIcon({
 
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
-	onRemove: (id: string) => Promise<void>;
+	onRemove: (ids: string[]) => Promise<void>;
 }
 
 export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
@@ -76,8 +76,9 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDir, setSortDir] = useState<SortDirection>('none');
-	const [removingId, setRemovingId] = useState<string | null>(null);
-	const [confirmDoc, setConfirmDoc] = useState<DocumentInfo | null>(null);
+	const [selected, setSelected] = useState<Set<string>>(new Set());
+	const [removing, setRemoving] = useState(false);
+	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
@@ -94,18 +95,6 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 		},
 		[sortKey]
 	);
-
-	const handleConfirmRemove = useCallback(async () => {
-		if (!confirmDoc) return;
-		const docId = confirmDoc.id;
-		setConfirmDoc(null);
-		setRemovingId(docId);
-		try {
-			await onRemove(docId);
-		} finally {
-			setRemovingId(null);
-		}
-	}, [confirmDoc, onRemove]);
 
 	const mimeTypes = useMemo(() => {
 		const types = new Set(documents.map((d) => d.mimeType));
@@ -124,6 +113,53 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 		}
 		return result;
 	}, [documents, search, typeFilter, sortKey, sortDir]);
+
+	const filteredIds = useMemo(() => new Set(filtered.map((d) => d.id)), [filtered]);
+
+	const allChecked = filtered.length > 0 && filtered.every((d) => selected.has(d.id));
+	const someChecked = !allChecked && filtered.some((d) => selected.has(d.id));
+	const selectedCount = [...selected].filter((id) => filteredIds.has(id)).length;
+
+	const toggleAll = useCallback(() => {
+		setSelected((prev) => {
+			const next = new Set(prev);
+			if (allChecked) {
+				for (const doc of filtered) next.delete(doc.id);
+			} else {
+				for (const doc of filtered) next.add(doc.id);
+			}
+			return next;
+		});
+	}, [allChecked, filtered]);
+
+	const toggleOne = useCallback((id: string) => {
+		setSelected((prev) => {
+			const next = new Set(prev);
+			if (next.has(id)) {
+				next.delete(id);
+			} else {
+				next.add(id);
+			}
+			return next;
+		});
+	}, []);
+
+	const handleConfirmRemove = useCallback(async () => {
+		setConfirmOpen(false);
+		const ids = [...selected].filter((id) => filteredIds.has(id));
+		if (ids.length === 0) return;
+		setRemoving(true);
+		try {
+			await onRemove(ids);
+			setSelected((prev) => {
+				const next = new Set(prev);
+				for (const id of ids) next.delete(id);
+				return next;
+			});
+		} finally {
+			setRemoving(false);
+		}
+	}, [selected, filteredIds, onRemove]);
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col gap-3">
@@ -155,6 +191,30 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 				<AppTable>
 					<AppTableHeader className="sticky top-0 z-10 bg-muted">
 						<AppTableRow>
+							<AppTableHead className="w-[40px]">
+								{selectedCount > 0 ? (
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon"
+										className="h-8 w-8 text-muted-foreground hover:text-destructive"
+										disabled={removing}
+										onClick={() => setConfirmOpen(true)}
+									>
+										<Trash2 className="h-4 w-4" />
+									</AppButton>
+								) : (
+									<input
+										type="checkbox"
+										className="h-4 w-4 accent-primary cursor-pointer"
+										checked={allChecked}
+										ref={(el) => {
+											if (el) el.indeterminate = someChecked;
+										}}
+										onChange={toggleAll}
+									/>
+								)}
+							</AppTableHead>
 							{COLUMNS.map((col) => (
 								<AppTableHead key={col.key} className={col.className}>
 									<button
@@ -167,12 +227,19 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 									</button>
 								</AppTableHead>
 							))}
-							<AppTableHead className="w-[50px]" />
 						</AppTableRow>
 					</AppTableHeader>
 					<AppTableBody>
 						{filtered.map((doc) => (
-							<AppTableRow key={doc.id}>
+							<AppTableRow key={doc.id} data-state={selected.has(doc.id) ? 'selected' : undefined}>
+								<AppTableCell className="w-[40px]">
+									<input
+										type="checkbox"
+										className="h-4 w-4 accent-primary cursor-pointer"
+										checked={selected.has(doc.id)}
+										onChange={() => toggleOne(doc.id)}
+									/>
+								</AppTableCell>
 								<AppTableCell className="font-medium truncate max-w-[300px]">
 									{doc.name}
 								</AppTableCell>
@@ -186,36 +253,19 @@ export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 								<AppTableCell className="text-muted-foreground">
 									{formatDate(doc.lastModified)}
 								</AppTableCell>
-								<AppTableCell>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon"
-										className="h-8 w-8 text-muted-foreground hover:text-destructive"
-										disabled={removingId === doc.id}
-										onClick={() => setConfirmDoc(doc)}
-									>
-										<Trash2 className="h-4 w-4" />
-									</AppButton>
-								</AppTableCell>
 							</AppTableRow>
 						))}
 					</AppTableBody>
 				</AppTable>
 			</div>
 
-			<AppAlertDialog
-				open={confirmDoc !== null}
-				onOpenChange={(open) => {
-					if (!open) setConfirmDoc(null);
-				}}
-			>
+			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AppAlertDialogContent>
 					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>Remove resource</AppAlertDialogTitle>
+						<AppAlertDialogTitle>Remove resources</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
-							Are you sure you want to remove &ldquo;{confirmDoc?.name}&rdquo;? This action cannot
-							be undone.
+							Are you sure you want to remove {selectedCount}{' '}
+							{selectedCount === 1 ? 'resource' : 'resources'}? This action cannot be undone.
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
