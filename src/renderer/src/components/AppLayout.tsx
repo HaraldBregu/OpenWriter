@@ -266,6 +266,28 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 						<AppSidebarSeparator className="my-1" />
 
+						{/* Documents */}
+						<AppSidebarGroup className="py-0">
+							<AppSidebarGroupContent>
+								<AppSidebarMenu>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton
+											asChild
+											className="h-9 px-3"
+											isActive={location.pathname === '/documents'}
+										>
+											<Link to="/documents">
+												<FileText className="h-3.5 w-3.5 shrink-0" />
+												<span className="flex-1 truncate">Documents</span>
+											</Link>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+								</AppSidebarMenu>
+							</AppSidebarGroupContent>
+						</AppSidebarGroup>
+
+						<AppSidebarSeparator className="my-1" />
+
 						{/* Debug + Agents */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
