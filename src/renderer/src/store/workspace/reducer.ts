@@ -89,12 +89,6 @@ export const workspaceSlice = createSlice({
 			state.importing = false;
 		},
 
-		/**
-		 * Clear the indexing task ID when the task finishes (completed, error, or cancelled).
-		 */
-		resourceIndexingFinished: (state) => {
-			state.resourceIndexingTaskId = null;
-		},
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
