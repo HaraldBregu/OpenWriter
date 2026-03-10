@@ -88,6 +88,20 @@ export const workspaceSlice = createSlice({
 		importDocumentsCompleted: (state) => {
 			state.importing = false;
 		},
+
+		/**
+		 * Store the task ID for a running document indexing task.
+		 */
+		documentIndexingStarted: (state, action: PayloadAction<string>) => {
+			state.documentIndexingTaskId = action.payload;
+		},
+
+		/**
+		 * Clear the indexing task ID when the task finishes (completed, error, or cancelled).
+		 */
+		documentIndexingFinished: (state) => {
+			state.documentIndexingTaskId = null;
+		},
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
