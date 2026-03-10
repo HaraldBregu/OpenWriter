@@ -132,7 +132,7 @@ export class WorkspaceIpc implements IpcModule {
 				}
 
 				const hasFilter = extensions && extensions.length > 0;
-				const filters: Electron.FileFilter[] = hasFilter
+				const filters: FileFilter[] = hasFilter
 					? [
 							{
 								name: `Supported Files (${extensions.join(', ')})`,
