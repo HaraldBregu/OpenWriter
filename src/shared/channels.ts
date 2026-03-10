@@ -219,11 +219,11 @@ export interface InvokeChannelMap {
 	[TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null };
 	[TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus };
 
-	// ---- Documents (IpcResult-wrapped) ----
-	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: DocumentInfo[] };
-	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] };
-	[WorkspaceChannels.downloadFromUrl]: { args: [url: string]; result: DocumentInfo };
-	[WorkspaceChannels.documentsLoadAll]: { args: []; result: DocumentInfo[] };
+	// ---- Resources (IpcResult-wrapped) ----
+	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: ResourceInfo[] };
+	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: ResourceInfo[] };
+	[WorkspaceChannels.downloadFromUrl]: { args: [url: string]; result: ResourceInfo };
+	[WorkspaceChannels.documentsLoadAll]: { args: []; result: ResourceInfo[] };
 	[WorkspaceChannels.deleteFile]: { args: [id: string]; result: void };
 
 	// ---- Output (IpcResult-wrapped) ----
