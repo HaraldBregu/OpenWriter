@@ -120,7 +120,7 @@ export class WorkspaceIpc implements IpcModule {
 
 		ipcMain.handle(
 			WorkspaceChannels.importFiles,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, extensions?: string[]) => {
 				const workspace = getWindowService<WorkspaceService>(event, container, 'workspace');
 				const fileManagement = container.get<FileManagementService>('fileManagement');
 				const watcher = this.tryGetWindowService<DocumentsWatcherService>(
@@ -134,14 +134,24 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected. Please select a workspace first.');
 				}
 
-				const textExtensions = getAllTextExtensions().map((ext) => ext.replace('.', ''));
+				const filterExtensions =
+					extensions && extensions.length > 0
+						? extensions.map((ext) => ext.replace(/^\./, ''))
+						: getAllTextExtensions().map((ext) => ext.replace('.', ''));
+				const filterName =
+					extensions && extensions.length > 0
+						? `Supported Files (${extensions.join(', ')})`
+						: 'Text Files';
 				const result = await dialog.showOpenDialog({
 					properties: ['openFile', 'multiSelections'],
 					filters: [
-						{ name: 'Text Files', extensions: textExtensions },
+						{ name: filterName, extensions: filterExtensions },
 						{ name: 'All Files', extensions: ['*'] },
 					],
-					message: getSupportedFileTypesDescription(),
+					message:
+						extensions && extensions.length > 0
+							? `Supported formats: ${extensions.join(', ')}`
+							: getSupportedFileTypesDescription(),
 				});
 
 				if (result.canceled || result.filePaths.length === 0) {
