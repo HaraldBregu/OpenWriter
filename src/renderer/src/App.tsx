@@ -42,7 +42,7 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === 'fun
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
-const DocumentPage = lazy(() => import('./pages/DocumentPage'));
+const DocumentPage = lazy(() => import('./pages/document/DocumentPage'));
 const DebugPage = lazy(() => import('./pages/DebugPage'));
 const AgentPage = lazy(() => import('./pages/AgentPage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
