@@ -46,7 +46,7 @@ describe('DocumentsIpc', () => {
 	let mockEvent: { sender: { id: number } };
 
 	const FAKE_WORKSPACE = '/fake/workspace';
-	const FAKE_DOCS_DIR = `${FAKE_WORKSPACE}/documents`;
+	const FAKE_DOCS_DIR = `${FAKE_WORKSPACE}/resources`;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
