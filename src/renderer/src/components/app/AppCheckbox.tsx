@@ -7,9 +7,7 @@ const AppCheckbox = React.memo(
 	React.forwardRef<
 		React.ElementRef<typeof CheckboxPrimitive.Root>,
 		React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
-	>(({ className, ...props }, ref) => (
-		<Checkbox ref={ref} className={cn(className)} {...props} />
-	))
+	>(({ className, ...props }, ref) => <Checkbox ref={ref} className={cn(className)} {...props} />)
 );
 AppCheckbox.displayName = 'AppCheckbox';
 
