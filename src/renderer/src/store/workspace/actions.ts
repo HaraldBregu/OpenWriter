@@ -67,3 +67,25 @@ export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
 	await window.workspace.clear();
 	return null;
 });
+
+// ---------------------------------------------------------------------------
+// Document thunks
+// ---------------------------------------------------------------------------
+
+/**
+ * Load all documents from the current workspace.
+ */
+export const loadDocuments = createAsyncThunk<DocumentInfo[]>('workspace/loadDocuments', async () => {
+	return await window.workspace.loadDocuments();
+});
+
+/**
+ * Remove documents by their IDs, then reload the full list.
+ */
+export const removeDocuments = createAsyncThunk<DocumentInfo[], string[]>(
+	'workspace/removeDocuments',
+	async (ids) => {
+		await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
+		return await window.workspace.loadDocuments();
+	}
+);
