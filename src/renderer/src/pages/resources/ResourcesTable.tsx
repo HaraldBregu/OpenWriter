@@ -64,13 +64,7 @@ function SortIcon({
 	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
 }
 
-function ResourcePreviewSheet({
-	doc,
-	onClose,
-}: {
-	doc: DocumentInfo | null;
-	onClose: () => void;
-}) {
+function ResourcePreviewSheet({ doc, onClose }: { doc: DocumentInfo | null; onClose: () => void }) {
 	const [content, setContent] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -107,7 +101,12 @@ function ResourcePreviewSheet({
 	}, [doc]);
 
 	return (
-		<AppSheet open={doc !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+		<AppSheet
+			open={doc !== null}
+			onOpenChange={(open) => {
+				if (!open) onClose();
+			}}
+		>
 			<AppSheetContent className="sm:max-w-xl flex flex-col">
 				<AppSheetHeader>
 					<AppSheetTitle className="truncate">{doc?.name}</AppSheetTitle>
