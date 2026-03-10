@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Library, Loader2, FolderOpen } from 'lucide-react';
+import { Library, Loader2, FolderOpen, Upload } from 'lucide-react';
+import { AppButton } from '../components/app';
 import type { DocumentInfo } from '../../../shared/types';
 
 function formatBytes(bytes: number): string {
