@@ -245,43 +245,14 @@ export const ResourcesTable = memo(function ResourcesTable({
 					</AppTableHeader>
 					<AppTableBody>
 						{filtered.map((doc) => (
-							<AppTableRow
+							<ResourceRow
 								key={doc.id}
-								data-state={editing && selected.has(doc.id) ? 'selected' : undefined}
-							>
-								{editing && (
-									<AppTableCell className="w-[40px]">
-										<AppCheckbox
-											checked={selected.has(doc.id)}
-											onCheckedChange={() => toggleOne(doc.id)}
-										/>
-									</AppTableCell>
-								)}
-								<AppTableCell className="font-medium truncate max-w-[300px]">
-									{doc.name}
-								</AppTableCell>
-								<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
-								<AppTableCell className="text-right text-muted-foreground tabular-nums">
-									{formatBytes(doc.size)}
-								</AppTableCell>
-								<AppTableCell className="text-muted-foreground">
-									{formatDate(doc.importedAt)}
-								</AppTableCell>
-								<AppTableCell className="text-muted-foreground">
-									{formatDate(doc.lastModified)}
-								</AppTableCell>
-								<AppTableCell>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon"
-										className="h-7 w-7"
-										onClick={() => setPreviewDoc(doc)}
-									>
-										<Eye className="h-4 w-4" />
-									</AppButton>
-								</AppTableCell>
-							</AppTableRow>
+								doc={doc}
+								editing={editing}
+								isSelected={selected.has(doc.id)}
+								onToggle={toggleOne}
+								onPreview={setPreviewDoc}
+							/>
 						))}
 					</AppTableBody>
 				</AppTable>
