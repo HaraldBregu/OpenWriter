@@ -39,7 +39,7 @@ export default function ResourcesPage() {
 	const [indexing, setIndexing] = useState(false);
 	const [indexingProgress, setIndexingProgress] = useState(0);
 
-	const indexTimerRef = useRef<ReturnType<typeof setInterval>>();
+	const indexTimerRef = useRef<ReturnType<typeof setInterval>>(null);
 
 	const handleIndex = useCallback(() => {
 		if (indexing) return;
