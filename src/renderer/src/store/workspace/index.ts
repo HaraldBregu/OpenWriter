@@ -44,5 +44,4 @@ export {
 	selectResourcesError,
 	selectResourcesIsLoading,
 	selectImporting,
-	selectResourceIndexingTaskId,
 } from './selectors';
