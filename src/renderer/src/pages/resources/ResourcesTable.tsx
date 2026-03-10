@@ -15,9 +15,9 @@ interface ResourcesTableProps {
 
 export function ResourcesTable({ documents }: ResourcesTableProps) {
 	return (
-		<div className="rounded-md border">
+		<div className="rounded-md border flex-1 min-h-0 overflow-auto">
 			<AppTable>
-				<AppTableHeader>
+				<AppTableHeader className="sticky top-0 z-10 bg-muted">
 					<AppTableRow>
 						<AppTableHead>Name</AppTableHead>
 						<AppTableHead>Type</AppTableHead>
