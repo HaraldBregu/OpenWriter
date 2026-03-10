@@ -70,6 +70,12 @@ export default function ResourcesPage() {
 				<div className="flex items-center gap-2">
 					<Library className="h-5 w-5 text-muted-foreground" />
 					<h1 className="text-lg font-semibold">Resources</h1>
+					<div className="ml-auto">
+						<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
+							<Upload className="h-3.5 w-3.5 mr-1.5" />
+							{uploading ? 'Uploading…' : 'Upload'}
+						</AppButton>
+					</div>
 				</div>
 			</div>
 
