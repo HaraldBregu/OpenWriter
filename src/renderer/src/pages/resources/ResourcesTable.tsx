@@ -196,11 +196,9 @@ export function ResourcesTable({
 							>
 								{editing && (
 									<AppTableCell className="w-[40px]">
-										<input
-											type="checkbox"
-											className="h-4 w-4 accent-primary cursor-pointer"
+										<AppCheckbox
 											checked={selected.has(doc.id)}
-											onChange={() => toggleOne(doc.id)}
+											onCheckedChange={() => toggleOne(doc.id)}
 										/>
 									</AppTableCell>
 								)}
