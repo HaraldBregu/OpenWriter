@@ -30,6 +30,14 @@ import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 import { DemoTaskReaction } from './task_manager/reactions';
 
+// Indexing infrastructure
+import {
+	ExtractorRegistry,
+	PlainTextExtractor,
+	PdfExtractor,
+	DocxExtractor,
+} from './indexing';
+
 // IPC modules
 import type { IpcModule } from './ipc';
 import { AppIpc, FileSystemIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
