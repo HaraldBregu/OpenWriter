@@ -187,6 +187,7 @@ export const {
 	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
+	documentRemoved,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
