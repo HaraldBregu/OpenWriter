@@ -1,9 +1,11 @@
 /** Workspace slice initial state and state type definition. */
-import type { WorkspaceInfo } from '../../../../shared/types';
+import type { DocumentInfo, WorkspaceInfo } from '../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // State type
 // ---------------------------------------------------------------------------
+
+export type DocumentsStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface WorkspaceState {
 	currentPath: string | null;
@@ -12,6 +14,10 @@ export interface WorkspaceState {
 	error: string | null;
 	/** Set when the workspace folder is externally deleted/moved while the app is open */
 	deletionReason: string | null;
+	/** Documents imported into the workspace */
+	documents: DocumentInfo[];
+	documentsStatus: DocumentsStatus;
+	documentsError: string | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
@@ -26,4 +32,7 @@ export const initialState: WorkspaceState = {
 	status: 'idle',
 	error: null,
 	deletionReason: null,
+	documents: [],
+	documentsStatus: 'idle',
+	documentsError: null,
 };
