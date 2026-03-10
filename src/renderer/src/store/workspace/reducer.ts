@@ -10,6 +10,8 @@ import {
 	openWorkspacePicker,
 	removeRecentWorkspace,
 	clearWorkspace,
+	loadDocuments,
+	removeDocuments,
 } from './actions';
 
 export type { WorkspaceState };
