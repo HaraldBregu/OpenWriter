@@ -37,4 +37,5 @@ export const initialState: WorkspaceState = {
 	documents: [],
 	documentsStatus: 'idle',
 	documentsError: null,
+	importing: false,
 };
