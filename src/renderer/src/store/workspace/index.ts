@@ -11,8 +11,8 @@ export {
 	openWorkspacePicker,
 	removeRecentWorkspace,
 	clearWorkspace,
-	loadDocuments,
-	removeDocuments,
+	loadResources,
+	removeResources,
 	indexResources,
 } from './actions';
 
@@ -23,10 +23,10 @@ export {
 	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
-	documentRemoved,
-	importDocumentsRequested,
-	importDocumentsCompleted,
-	documentIndexingFinished,
+	resourceRemoved,
+	importResourcesRequested,
+	importResourcesCompleted,
+	resourceIndexingFinished,
 } from './reducer';
 export { default } from './reducer';
 
@@ -41,10 +41,10 @@ export {
 	selectWorkspaceError,
 	selectWorkspaceIsLoading,
 	selectWorkspaceDeletionReason,
-	selectDocuments,
-	selectDocumentsStatus,
-	selectDocumentsError,
-	selectDocumentsIsLoading,
+	selectResources,
+	selectResourcesStatus,
+	selectResourcesError,
+	selectResourcesIsLoading,
 	selectImporting,
-	selectDocumentIndexingTaskId,
+	selectResourceIndexingTaskId,
 } from './selectors';
