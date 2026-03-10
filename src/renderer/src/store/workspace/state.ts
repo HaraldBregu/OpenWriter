@@ -40,4 +40,5 @@ export const initialState: WorkspaceState = {
 	documentsStatus: 'idle',
 	documentsError: null,
 	importing: false,
+	documentIndexingTaskId: null,
 };
