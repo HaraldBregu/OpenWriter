@@ -232,6 +232,15 @@ const ContentPage: React.FC = () => {
 					/>
 				</div>
 				<div className="flex items-center gap-3 ml-4 shrink-0">
+					<AppButton
+						type="button"
+						variant={sidebarOpen ? 'secondary' : 'outline'}
+						size="icon"
+						title="Toggle sidebar"
+						onClick={() => setSidebarOpen((prev) => !prev)}
+					>
+						<PanelRight className="h-4 w-4" />
+					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
 							<AppButton
