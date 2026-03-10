@@ -113,10 +113,10 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/documents"
+													path="/resources"
 													element={
 														<RouteWrapper>
-															<DocumentsPage />
+															<ResourcesPage />
 														</RouteWrapper>
 													}
 												/>
