@@ -45,7 +45,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const ContentPage = lazy(() => import('./pages/ContentPage'));
 const DebugPage = lazy(() => import('./pages/DebugPage'));
 const AgentPage = lazy(() => import('./pages/AgentPage'));
-const DocumentsPage = lazy(() => import('./pages/DocumentsPage'));
+const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
