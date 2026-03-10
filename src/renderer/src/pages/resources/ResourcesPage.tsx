@@ -53,6 +53,7 @@ export default function ResourcesPage() {
 			setIndexingProgress(progress);
 
 			if (progress >= 100) {
+				if (!indexTimerRef.current) return;
 				clearInterval(indexTimerRef.current);
 				setIndexing(false);
 			}
