@@ -37,16 +37,9 @@ export default function ResourcesPage() {
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
-	const handleUpload = useCallback(async () => {
-		try {
-			setUploading(true);
-			await window.workspace.importFiles(SUPPORTED_EXTENSIONS);
-		} catch {
-			// Upload errors are handled by the watcher triggering a reload
-		} finally {
-			setUploading(false);
-		}
-	}, []);
+	const handleUpload = useCallback(() => {
+		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
+	}, [dispatch]);
 
 	const handleToggleEdit = useCallback(() => {
 		setEditing((prev) => {
