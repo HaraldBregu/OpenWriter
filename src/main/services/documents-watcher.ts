@@ -360,7 +360,7 @@ export class DocumentsWatcherService implements Disposable {
 		this.logger?.error('DocumentsWatcherService', 'Watcher error', error);
 
 		// Broadcast error to renderer for user notification
-		this.eventBus.broadcast('documents:watcher-error', {
+		this.eventBus.broadcast('resources:watcher-error', {
 			error: errorMessage,
 			timestamp: Date.now(),
 		});
