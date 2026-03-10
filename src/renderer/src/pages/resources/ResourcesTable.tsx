@@ -63,6 +63,54 @@ function SortIcon({
 	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
 }
 
+interface ResourceRowProps {
+	doc: DocumentInfo;
+	editing: boolean;
+	isSelected: boolean;
+	onToggle: (id: string) => void;
+	onPreview: (doc: DocumentInfo) => void;
+}
+
+const ResourceRow = memo(function ResourceRow({
+	doc,
+	editing,
+	isSelected,
+	onToggle,
+	onPreview,
+}: ResourceRowProps) {
+	return (
+		<AppTableRow data-state={editing && isSelected ? 'selected' : undefined}>
+			{editing && (
+				<AppTableCell className="w-[40px]">
+					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(doc.id)} />
+				</AppTableCell>
+			)}
+			<AppTableCell className="font-medium truncate max-w-[300px]">{doc.name}</AppTableCell>
+			<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
+			<AppTableCell className="text-right text-muted-foreground tabular-nums">
+				{formatBytes(doc.size)}
+			</AppTableCell>
+			<AppTableCell className="text-muted-foreground">
+				{formatDate(doc.importedAt)}
+			</AppTableCell>
+			<AppTableCell className="text-muted-foreground">
+				{formatDate(doc.lastModified)}
+			</AppTableCell>
+			<AppTableCell>
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon"
+					className="h-7 w-7"
+					onClick={() => onPreview(doc)}
+				>
+					<Eye className="h-4 w-4" />
+				</AppButton>
+			</AppTableCell>
+		</AppTableRow>
+	);
+});
+
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
 	editing: boolean;
