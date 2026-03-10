@@ -97,25 +97,12 @@ export default function ResourcesPage() {
 		};
 	}, [indexingTaskId, dispatch]);
 
-	const handleIndex = useCallback(async () => {
-		if (indexing || !workspacePath) return;
-
+	const handleIndex = useCallback(() => {
+		if (indexing) return;
 		setIndexingProgress(0);
 		setIndexingMessage('Submitting indexing task\u2026');
-
-		const documentIds = documents.map((d) => d.id);
-
-		try {
-			const result = await window.task.submit('index-resources', {
-				documentIds,
-				workspacePath,
-			});
-			dispatch(documentIndexingStarted(result.taskId));
-		} catch {
-			setIndexingProgress(0);
-			setIndexingMessage('');
-		}
-	}, [indexing, workspacePath, documents, dispatch]);
+		dispatch(indexResources());
+	}, [indexing, dispatch]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
