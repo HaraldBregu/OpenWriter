@@ -165,19 +165,8 @@ export function ResourcesTable({
 				<AppTable>
 					<AppTableHeader className="sticky top-0 z-10 bg-muted">
 						<AppTableRow>
-							<AppTableHead className="w-[40px]">
-								{selectedCount > 0 ? (
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon"
-										className="h-8 w-8 text-muted-foreground hover:text-destructive"
-										disabled={removing}
-										onClick={() => setConfirmOpen(true)}
-									>
-										<Trash2 className="h-4 w-4" />
-									</AppButton>
-								) : (
+							{editing && (
+								<AppTableHead className="w-[40px]">
 									<input
 										type="checkbox"
 										className="h-4 w-4 accent-primary cursor-pointer"
@@ -187,8 +176,8 @@ export function ResourcesTable({
 										}}
 										onChange={toggleAll}
 									/>
-								)}
-							</AppTableHead>
+								</AppTableHead>
+							)}
 							{COLUMNS.map((col) => (
 								<AppTableHead key={col.key} className={col.className}>
 									<button
