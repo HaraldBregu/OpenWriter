@@ -222,7 +222,6 @@ export const {
 	documentRemoved,
 	importDocumentsRequested,
 	importDocumentsCompleted,
-	documentIndexingStarted,
 	documentIndexingFinished,
 } = workspaceSlice.actions;
 
