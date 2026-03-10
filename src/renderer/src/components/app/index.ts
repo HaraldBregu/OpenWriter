@@ -103,6 +103,8 @@ export {
 
 export { AppSlider } from './AppSlider';
 
+export { AppCheckbox } from './AppCheckbox';
+
 export { AppSwitch } from './AppSwitch';
 
 export {
