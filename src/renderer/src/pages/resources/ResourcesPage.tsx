@@ -41,8 +41,8 @@ export default function ResourcesPage() {
 	}, []);
 
 	const handleRemove = useCallback(
-		async (id: string) => {
-			await window.workspace.deleteDocument(id);
+		async (ids: string[]) => {
+			await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
 			await loadDocuments();
 		},
 		[loadDocuments]
