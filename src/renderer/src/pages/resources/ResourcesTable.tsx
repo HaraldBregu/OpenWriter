@@ -1,6 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal, Search, Trash2 } from 'lucide-react';
 import {
+	AppAlertDialog,
+	AppAlertDialogAction,
+	AppAlertDialogCancel,
+	AppAlertDialogContent,
+	AppAlertDialogDescription,
+	AppAlertDialogFooter,
+	AppAlertDialogHeader,
+	AppAlertDialogTitle,
+	AppButton,
+	AppDropdownMenu,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+	AppDropdownMenuTrigger,
 	AppTable,
 	AppTableHeader,
 	AppTableBody,
@@ -59,13 +72,16 @@ function SortIcon({
 
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
+	onRemove: (id: string) => Promise<void>;
 }
 
-export function ResourcesTable({ documents }: ResourcesTableProps) {
+export function ResourcesTable({ documents, onRemove }: ResourcesTableProps) {
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDir, setSortDir] = useState<SortDirection>('none');
+	const [removingId, setRemovingId] = useState<string | null>(null);
+	const [confirmDoc, setConfirmDoc] = useState<DocumentInfo | null>(null);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
@@ -82,6 +98,18 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 		},
 		[sortKey]
 	);
+
+	const handleConfirmRemove = useCallback(async () => {
+		if (!confirmDoc) return;
+		const docId = confirmDoc.id;
+		setConfirmDoc(null);
+		setRemovingId(docId);
+		try {
+			await onRemove(docId);
+		} finally {
+			setRemovingId(null);
+		}
+	}, [confirmDoc, onRemove]);
 
 	const mimeTypes = useMemo(() => {
 		const types = new Set(documents.map((d) => d.mimeType));
@@ -143,6 +171,7 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 									</button>
 								</AppTableHead>
 							))}
+							<AppTableHead className="w-[50px]" />
 						</AppTableRow>
 					</AppTableHeader>
 					<AppTableBody>
@@ -151,7 +180,9 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 								<AppTableCell className="font-medium truncate max-w-[300px]">
 									{doc.name}
 								</AppTableCell>
-								<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
+								<AppTableCell className="text-muted-foreground">
+									{doc.mimeType}
+								</AppTableCell>
 								<AppTableCell className="text-right text-muted-foreground tabular-nums">
 									{formatBytes(doc.size)}
 								</AppTableCell>
@@ -161,11 +192,56 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 								<AppTableCell className="text-muted-foreground">
 									{formatDate(doc.lastModified)}
 								</AppTableCell>
+								<AppTableCell>
+									<AppDropdownMenu>
+										<AppDropdownMenuTrigger asChild>
+											<AppButton
+												type="button"
+												variant="ghost"
+												size="icon"
+												className="h-8 w-8"
+												disabled={removingId === doc.id}
+											>
+												<MoreHorizontal className="h-4 w-4" />
+											</AppButton>
+										</AppDropdownMenuTrigger>
+										<AppDropdownMenuContent align="end">
+											<AppDropdownMenuItem
+												className="text-destructive focus:text-destructive"
+												onClick={() => setConfirmDoc(doc)}
+											>
+												<Trash2 className="h-4 w-4" />
+												Remove
+											</AppDropdownMenuItem>
+										</AppDropdownMenuContent>
+									</AppDropdownMenu>
+								</AppTableCell>
 							</AppTableRow>
 						))}
 					</AppTableBody>
 				</AppTable>
 			</div>
+
+			<AppAlertDialog open={confirmDoc !== null} onOpenChange={(open) => { if (!open) setConfirmDoc(null); }}>
+				<AppAlertDialogContent>
+					<AppAlertDialogHeader>
+						<AppAlertDialogTitle>Remove resource</AppAlertDialogTitle>
+						<AppAlertDialogDescription>
+							Are you sure you want to remove &ldquo;{confirmDoc?.name}&rdquo;? This
+							action cannot be undone.
+						</AppAlertDialogDescription>
+					</AppAlertDialogHeader>
+					<AppAlertDialogFooter>
+						<AppAlertDialogCancel>Cancel</AppAlertDialogCancel>
+						<AppAlertDialogAction
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+							onClick={handleConfirmRemove}
+						>
+							Remove
+						</AppAlertDialogAction>
+					</AppAlertDialogFooter>
+				</AppAlertDialogContent>
+			</AppAlertDialog>
 		</div>
 	);
 }
