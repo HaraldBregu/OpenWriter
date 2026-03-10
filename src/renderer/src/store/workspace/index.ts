@@ -46,4 +46,5 @@ export {
 	selectDocumentsError,
 	selectDocumentsIsLoading,
 	selectImporting,
+	selectDocumentIndexingTaskId,
 } from './selectors';
