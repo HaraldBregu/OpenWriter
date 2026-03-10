@@ -23,7 +23,7 @@ import {
  * and coordinates with DocumentsWatcherService to prevent false change events.
  */
 export class DocumentsService {
-	private readonly DOCS_DIR_NAME = 'documents';
+	private readonly DOCS_DIR_NAME = 'resources';
 
 	constructor(
 		private fileManagement: FileManagementService,
