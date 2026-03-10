@@ -239,7 +239,11 @@ export const ResourcesTable = memo(function ResourcesTable({
 				</AppTable>
 			</div>
 
-			<ResourcePreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+			{previewDoc && (
+				<Suspense fallback={null}>
+					<ResourcePreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+				</Suspense>
+			)}
 		</div>
 	);
 });
