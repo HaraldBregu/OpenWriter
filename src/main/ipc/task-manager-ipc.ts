@@ -67,7 +67,15 @@ export class TaskManagerIpc implements IpcModule {
 			const options: TaskOptions = { ...payload.options };
 			// Security: always use the sender's webContents ID, never the renderer-supplied windowId.
 			options.windowId = event.sender.id;
-			const taskId = await executor.submit(payload.type, payload.input, options);
+
+			// Inject server-stamped windowId into object inputs so handlers can
+			// resolve window-scoped services (e.g. workspace, documents).
+			const input =
+				typeof payload.input === 'object' && payload.input !== null
+					? { ...(payload.input as Record<string, unknown>), windowId: event.sender.id }
+					: payload.input;
+
+			const taskId = await executor.submit(payload.type, input, options);
 			return { taskId };
 		});
 
