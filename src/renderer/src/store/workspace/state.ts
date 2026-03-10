@@ -20,8 +20,6 @@ export interface WorkspaceState {
 	resourcesError: string | null;
 	/** Whether a file import operation is in progress */
 	importing: boolean;
-	/** Task ID of the currently running resource indexing task (null when idle) */
-	resourceIndexingTaskId: string | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
