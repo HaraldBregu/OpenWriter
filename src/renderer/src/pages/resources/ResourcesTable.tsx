@@ -67,7 +67,7 @@ interface ResourcesTableProps {
 	onSelectedChange: (selected: Set<string>) => void;
 }
 
-export function ResourcesTable({
+export const ResourcesTable = memo(function ResourcesTable({
 	documents,
 	editing,
 	selected,
