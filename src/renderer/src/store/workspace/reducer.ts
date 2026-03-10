@@ -73,6 +73,21 @@ export const workspaceSlice = createSlice({
 		documentRemoved: (state, action: PayloadAction<string>) => {
 			state.documents = state.documents.filter((d) => d.id !== action.payload);
 		},
+
+		/**
+		 * Triggered to start a file import operation.
+		 * The listener middleware picks this up and calls the IPC method.
+		 */
+		importDocumentsRequested: (state, _action: PayloadAction<string[]>) => {
+			state.importing = true;
+		},
+
+		/**
+		 * Called when the import operation completes (success or failure).
+		 */
+		importDocumentsCompleted: (state) => {
+			state.importing = false;
+		},
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
