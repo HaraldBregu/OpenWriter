@@ -17,6 +17,7 @@ import {
 	selectDocumentsError,
 	selectImporting,
 	selectDocumentIndexingTaskId,
+	selectCurrentWorkspacePath,
 	removeDocuments,
 	importDocumentsRequested,
 	indexResources,
