@@ -55,6 +55,20 @@ interface ResourcesTableProps {
 export function ResourcesTable({ documents }: ResourcesTableProps) {
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
+	const [sortKey, setSortKey] = useState<SortKey>('name');
+	const [sortDir, setSortDir] = useState<SortDirection>('asc');
+
+	const handleSort = useCallback(
+		(key: SortKey) => {
+			if (key === sortKey) {
+				setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+			} else {
+				setSortKey(key);
+				setSortDir('asc');
+			}
+		},
+		[sortKey],
+	);
 
 	const mimeTypes = useMemo(() => {
 		const types = new Set(documents.map((d) => d.mimeType));
@@ -63,12 +77,13 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 
 	const filtered = useMemo(() => {
 		const query = search.toLowerCase().trim();
-		return documents.filter((doc) => {
+		const result = documents.filter((doc) => {
 			if (typeFilter !== ALL_TYPES_VALUE && doc.mimeType !== typeFilter) return false;
 			if (query && !doc.name.toLowerCase().includes(query)) return false;
 			return true;
 		});
-	}, [documents, search, typeFilter]);
+		return result.sort((a, b) => compareDocs(a, b, sortKey, sortDir));
+	}, [documents, search, typeFilter, sortKey, sortDir]);
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col gap-3">
