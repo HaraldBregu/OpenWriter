@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
@@ -10,45 +10,38 @@ import {
 	AppAlertDialogHeader,
 	AppAlertDialogTitle,
 } from '../../components/app';
-import type { DocumentInfo } from '../../../../shared/types';
+import { useAppDispatch, useAppSelector } from '../../store';
+import {
+	selectDocuments,
+	selectDocumentsStatus,
+	selectDocumentsError,
+	removeDocuments,
+} from '../../store/workspace';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
 
 export default function ResourcesPage() {
-	const [documents, setDocuments] = useState<DocumentInfo[]>([]);
-	const [loading, setLoading] = useState(true);
+	const dispatch = useAppDispatch();
+	const documents = useAppSelector(selectDocuments);
+	const status = useAppSelector(selectDocumentsStatus);
+	const error = useAppSelector(selectDocumentsError);
+
+	const loading = status === 'idle' || status === 'loading';
+
 	const [uploading, setUploading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
-	const loadDocuments = useCallback(async () => {
-		try {
-			setLoading(true);
-			setError(null);
-			const docs = await window.workspace.loadDocuments();
-			setDocuments(docs);
-		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load resources');
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		loadDocuments();
-	}, [loadDocuments]);
-
 	const handleUpload = useCallback(async () => {
 		try {
 			setUploading(true);
 			await window.workspace.importFiles(SUPPORTED_EXTENSIONS);
-		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to upload resources');
+		} catch {
+			// Upload errors are handled by the watcher triggering a reload
 		} finally {
 			setUploading(false);
 		}
@@ -67,21 +60,12 @@ export default function ResourcesPage() {
 		if (ids.length === 0) return;
 		setRemoving(true);
 		try {
-			await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
+			await dispatch(removeDocuments(ids)).unwrap();
 			setSelected(new Set());
-			await loadDocuments();
 		} finally {
 			setRemoving(false);
 		}
-	}, [selected, loadDocuments]);
-
-	// Listen for real-time document changes
-	useEffect(() => {
-		const unsub = window.workspace.onDocumentFileChange(() => {
-			loadDocuments();
-		});
-		return unsub;
-	}, [loadDocuments]);
+	}, [selected, dispatch]);
 
 	return (
 		<div className="flex flex-col h-full">
