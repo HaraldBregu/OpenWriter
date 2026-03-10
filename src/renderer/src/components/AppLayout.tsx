@@ -266,7 +266,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 						<AppSidebarSeparator className="my-1" />
 
-						{/* Documents */}
+						{/* Resources */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
@@ -274,11 +274,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<AppSidebarMenuButton
 											asChild
 											className="h-9 px-3"
-											isActive={location.pathname === '/documents'}
+											isActive={location.pathname === '/resources'}
 										>
-											<Link to="/documents">
-												<FileText className="h-3.5 w-3.5 shrink-0" />
-												<span className="flex-1 truncate">Documents</span>
+											<Link to="/resources">
+												<Library className="h-3.5 w-3.5 shrink-0" />
+												<span className="flex-1 truncate">Resources</span>
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
