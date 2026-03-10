@@ -3,6 +3,8 @@ import { Library, Loader2, FolderOpen, Upload } from 'lucide-react';
 import { AppButton } from '../components/app';
 import type { DocumentInfo } from '../../../shared/types';
 
+const SUPPORTED_EXTENSIONS = ['.pdf', '.docx', '.txt', '.md', '.html', '.csv', '.json'];
+
 function formatBytes(bytes: number): string {
 	if (bytes === 0) return '0 B';
 	const units = ['B', 'KB', 'MB', 'GB'];
