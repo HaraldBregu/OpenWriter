@@ -22,7 +22,7 @@ import { formatBytes, formatDate } from './constants';
 const ALL_TYPES_VALUE = 'all';
 
 type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
-type SortDirection = 'asc' | 'desc';
+type SortDirection = 'none' | 'asc' | 'desc';
 
 const COLUMNS: { key: SortKey; label: string; className?: string }[] = [
 	{ key: 'name', label: 'Name' },
@@ -42,8 +42,17 @@ function compareDocs(a: DocumentInfo, b: DocumentInfo, key: SortKey, dir: SortDi
 	return dir === 'asc' ? result : -result;
 }
 
-function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey; sortDir: SortDirection }) {
-	if (column !== sortKey) return <ArrowUpDown className="ml-1 inline h-3.5 w-3.5 text-muted-foreground/50" />;
+function SortIcon({
+	column,
+	sortKey,
+	sortDir,
+}: {
+	column: SortKey;
+	sortKey: SortKey;
+	sortDir: SortDirection;
+}) {
+	if (column !== sortKey)
+		return <ArrowUpDown className="ml-1 inline h-3.5 w-3.5 text-muted-foreground/50" />;
 	if (sortDir === 'asc') return <ArrowUp className="ml-1 inline h-3.5 w-3.5" />;
 	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
 }
@@ -67,7 +76,7 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 				setSortDir('asc');
 			}
 		},
-		[sortKey],
+		[sortKey]
 	);
 
 	const mimeTypes = useMemo(() => {
