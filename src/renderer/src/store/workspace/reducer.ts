@@ -134,10 +134,43 @@ export const workspaceSlice = createSlice({
 			.addCase(clearWorkspace.fulfilled, (state) => {
 				state.currentPath = null;
 				state.status = 'ready';
+				state.documents = [];
+				state.documentsStatus = 'idle';
+				state.documentsError = null;
 			})
 			.addCase(clearWorkspace.rejected, (state, action) => {
 				state.status = 'error';
 				state.error = action.error.message || 'Failed to clear workspace';
+			});
+
+		// loadDocuments
+		builder
+			.addCase(loadDocuments.pending, (state) => {
+				state.documentsStatus = 'loading';
+				state.documentsError = null;
+			})
+			.addCase(loadDocuments.fulfilled, (state, action) => {
+				state.documents = action.payload;
+				state.documentsStatus = 'ready';
+			})
+			.addCase(loadDocuments.rejected, (state, action) => {
+				state.documentsStatus = 'error';
+				state.documentsError = action.error.message || 'Failed to load resources';
+			});
+
+		// removeDocuments
+		builder
+			.addCase(removeDocuments.pending, (state) => {
+				state.documentsStatus = 'loading';
+				state.documentsError = null;
+			})
+			.addCase(removeDocuments.fulfilled, (state, action) => {
+				state.documents = action.payload;
+				state.documentsStatus = 'ready';
+			})
+			.addCase(removeDocuments.rejected, (state, action) => {
+				state.documentsStatus = 'error';
+				state.documentsError = action.error.message || 'Failed to remove resources';
 			});
 	},
 });
