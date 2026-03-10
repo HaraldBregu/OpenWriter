@@ -52,7 +52,7 @@ export default function ResourcesPage() {
 		<div className="flex flex-col h-full">
 			<ResourcesHeader uploading={uploading} onUpload={handleUpload} />
 
-			<div className="flex-1 overflow-y-auto p-6">
+			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<Loader2 className="h-4 w-4 animate-spin" />
