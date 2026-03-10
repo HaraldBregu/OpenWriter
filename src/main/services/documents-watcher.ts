@@ -431,7 +431,7 @@ export class DocumentsWatcherService implements Disposable {
 		this.logger?.info('DocumentsWatcherService', `Document file ${type}: ${fileId}`);
 
 		// Broadcast to all renderer windows
-		this.eventBus.broadcast('documents:file-changed', event);
+		this.eventBus.broadcast('resources:file-changed', event);
 	}
 
 	/**
