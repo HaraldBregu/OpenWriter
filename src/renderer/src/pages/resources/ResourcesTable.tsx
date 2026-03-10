@@ -239,4 +239,4 @@ export const ResourcesTable = memo(function ResourcesTable({
 			<ResourcePreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
 		</div>
 	);
-}
+});
