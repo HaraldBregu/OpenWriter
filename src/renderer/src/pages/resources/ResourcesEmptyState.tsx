@@ -27,4 +27,4 @@ export const ResourcesEmptyState = memo(function ResourcesEmptyState({
 			</AppButton>
 		</div>
 	);
-}
+});
