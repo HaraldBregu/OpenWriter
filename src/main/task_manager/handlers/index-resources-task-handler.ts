@@ -21,6 +21,10 @@ import { DocumentsService } from '../../services/documents';
 export interface IndexResourcesInput {
 	/** Injected server-side by task-manager-ipc. */
 	windowId: number;
+	/** Workspace root path supplied by the renderer. */
+	workspacePath: string;
+	/** Path to the workspace resources (documents) directory. */
+	resourcesPath: string;
 }
 
 export interface IndexResourcesOutput {
