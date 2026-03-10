@@ -65,12 +65,16 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
-	const [sortDir, setSortDir] = useState<SortDirection>('asc');
+	const [sortDir, setSortDir] = useState<SortDirection>('none');
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
 			if (key === sortKey) {
-				setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+				setSortDir((prev) => {
+					if (prev === 'none') return 'asc';
+					if (prev === 'asc') return 'desc';
+					return 'none';
+				});
 			} else {
 				setSortKey(key);
 				setSortDir('asc');
