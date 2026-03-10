@@ -186,7 +186,9 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	// Document import, download, and file-watch events
 	// -------------------------------------------------------------------------
-	importFiles: (): Promise<
+	importFiles: (
+		extensions?: string[]
+	): Promise<
 		Array<{
 			id: string;
 			name: string;
@@ -197,7 +199,7 @@ const workspace: WorkspaceApi = {
 			lastModified: number;
 		}>
 	> => {
-		return typedInvokeUnwrap(WorkspaceChannels.importFiles);
+		return typedInvokeUnwrap(WorkspaceChannels.importFiles, extensions);
 	},
 	importByPaths: (
 		paths: string[]
