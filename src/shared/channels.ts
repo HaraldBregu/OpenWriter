@@ -220,7 +220,7 @@ export interface InvokeChannelMap {
 	[TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus };
 
 	// ---- Documents (IpcResult-wrapped) ----
-	[WorkspaceChannels.importFiles]: { args: []; result: DocumentInfo[] };
+	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: DocumentInfo[] };
 	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: DocumentInfo[] };
 	[WorkspaceChannels.downloadFromUrl]: { args: [url: string]; result: DocumentInfo };
 	[WorkspaceChannels.documentsLoadAll]: { args: []; result: DocumentInfo[] };
