@@ -15,7 +15,9 @@ import {
 	selectDocuments,
 	selectDocumentsStatus,
 	selectDocumentsError,
+	selectImporting,
 	removeDocuments,
+	importDocumentsRequested,
 } from '../../store/workspace';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
