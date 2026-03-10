@@ -177,7 +177,9 @@ export default function ResourcesPage() {
 			{indexing && (
 				<div className="px-6 py-3 border-b shrink-0">
 					<div className="flex items-center justify-between mb-1.5">
-						<span className="text-sm text-muted-foreground">Indexing resources&hellip;</span>
+						<span className="text-sm text-muted-foreground">
+							{indexingMessage || 'Indexing resources\u2026'}
+						</span>
 						<span className="text-sm text-muted-foreground">{indexingProgress}%</span>
 					</div>
 					<div className="h-2 w-full rounded-full bg-secondary">
