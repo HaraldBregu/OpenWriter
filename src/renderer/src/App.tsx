@@ -11,7 +11,7 @@ import type { TaskEvent } from '../../shared/types';
 import { taskEventReceived } from './store/tasks/actions';
 import { loadWritings, refreshWriting } from './store/writings/actions';
 import { writingRemoved } from './store/writings/actions';
-import { loadDocuments, documentRemoved } from './store/workspace';
+import { loadResources, resourceRemoved } from './store/workspace';
 import './index.css';
 
 // IPC → Redux bridge: forward every task event into the store.
