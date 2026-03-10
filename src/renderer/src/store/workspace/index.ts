@@ -23,6 +23,8 @@ export {
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 	documentRemoved,
+	importDocumentsRequested,
+	importDocumentsCompleted,
 } from './reducer';
 export { default } from './reducer';
 
