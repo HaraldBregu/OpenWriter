@@ -62,24 +62,16 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		signal: AbortSignal,
 		reporter: ProgressReporter
 	): Promise<IndexResourcesOutput> {
-		const { windowId } = input;
+		const { windowId, workspacePath, resourcesPath } = input;
 
-		// Resolve workspace path from the window's scoped WorkspaceService
+		// Load documents from the renderer-supplied resources path
 		const windowContext = this.windowContextManager.get(windowId);
-		const workspace = windowContext.getService<WorkspaceService>('workspace', this.globalContainer);
-		const currentWorkspace = workspace.getCurrent();
-
-		if (!currentWorkspace) {
-			throw new Error('No workspace selected');
-		}
-
-		// Load documents from workspace
 		const fileManagement = this.globalContainer.get<FileManagementService>('fileManagement');
 		const watcher = windowContext.container.has('documentsWatcher')
 			? windowContext.container.get<DocumentsWatcherService>('documentsWatcher')
 			: null;
 		const documentsService = new DocumentsService(fileManagement, watcher);
-		const documents = await documentsService.loadAll(currentWorkspace);
+		const documents = await documentsService.loadAll(workspacePath);
 
 		const total = documents.length;
 
