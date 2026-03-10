@@ -12,7 +12,6 @@ import {
 	clearWorkspace,
 	loadResources,
 	removeResources,
-	indexResources,
 } from './actions';
 
 export type { WorkspaceState };
