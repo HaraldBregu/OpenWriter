@@ -17,14 +17,18 @@ import {
 	selectDocumentsError,
 	selectImporting,
 	selectCurrentWorkspacePath,
+	selectDocumentIndexingTaskId,
 	removeDocuments,
 	importDocumentsRequested,
+	documentIndexingStarted,
+	documentIndexingFinished,
 } from '../../store/workspace';
 import { subscribeToTask } from '../../services/task-event-bus';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
+import type { TaskEvent } from '../../../../shared/types';
 
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
@@ -33,32 +37,73 @@ export default function ResourcesPage() {
 	const error = useAppSelector(selectDocumentsError);
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
+	const indexingTaskId = useAppSelector(selectDocumentIndexingTaskId);
 
 	const loading = status === 'idle' || status === 'loading';
+	const indexing = indexingTaskId !== null;
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
-	const [indexing, setIndexing] = useState(false);
 	const [indexingProgress, setIndexingProgress] = useState(0);
 	const [indexingMessage, setIndexingMessage] = useState('');
 
-	const taskIdRef = useRef<string | null>(null);
 	const unsubRef = useRef<(() => void) | null>(null);
 
-	// Clean up task subscription on unmount
+	// Subscribe to task events whenever indexingTaskId changes (including on mount
+	// if a task was already running before this component rendered).
 	useEffect(() => {
+		// Clean up any previous subscription
+		unsubRef.current?.();
+		unsubRef.current = null;
+
+		if (!indexingTaskId) {
+			setIndexingProgress(0);
+			setIndexingMessage('');
+			return;
+		}
+
+		// Subscribe for terminal states (completed / error / cancelled)
+		const snapshotUnsub = subscribeToTask(indexingTaskId, (snapshot) => {
+			if (snapshot.status === 'completed') {
+				setIndexingProgress(100);
+				setIndexingMessage('Indexing complete');
+				dispatch(documentIndexingFinished());
+			}
+
+			if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
+				setIndexingProgress(0);
+				setIndexingMessage('');
+				dispatch(documentIndexingFinished());
+			}
+		});
+
+		// Subscribe for granular progress updates (percent + message)
+		const taskId = indexingTaskId;
+		const progressUnsub = window.task.onEvent((event: TaskEvent) => {
+			if (event.type !== 'progress') return;
+			const data = event.data as { taskId: string; percent: number; message?: string };
+			if (data.taskId !== taskId) return;
+			setIndexingProgress(data.percent);
+			if (data.message) setIndexingMessage(data.message);
+		});
+
+		unsubRef.current = () => {
+			snapshotUnsub();
+			progressUnsub();
+		};
+
 		return () => {
 			unsubRef.current?.();
+			unsubRef.current = null;
 		};
-	}, []);
+	}, [indexingTaskId, dispatch]);
 
 	const handleIndex = useCallback(async () => {
 		if (indexing || !workspacePath) return;
 
-		setIndexing(true);
 		setIndexingProgress(0);
-		setIndexingMessage('Submitting indexing task…');
+		setIndexingMessage('Submitting indexing task\u2026');
 
 		const documentIds = documents.map((d) => d.id);
 
@@ -67,63 +112,12 @@ export default function ResourcesPage() {
 				documentIds,
 				workspacePath,
 			});
-
-			const taskId = result.taskId;
-			taskIdRef.current = taskId;
-
-			// Subscribe to progress events for this task
-			unsubRef.current?.();
-			const cleanupTask = () => {
-				taskIdRef.current = null;
-				unsubRef.current?.();
-				unsubRef.current = null;
-			};
-
-			unsubRef.current = subscribeToTask(taskId, (snapshot) => {
-				if (snapshot.status === 'completed') {
-					setIndexing(false);
-					setIndexingProgress(100);
-					setIndexingMessage('Indexing complete');
-					cleanupTask();
-				}
-
-				if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
-					setIndexing(false);
-					setIndexingProgress(0);
-					setIndexingMessage('');
-					cleanupTask();
-				}
-			});
-
-			// Also listen for progress events via the raw task event bus
-			// The subscribeToTask snapshot doesn't include percent, so we
-			// use the global onEvent for progress granularity.
-			const progressUnsub = window.task.onEvent((event) => {
-				if (event.type === 'progress') {
-					const data = event.data as {
-						taskId: string;
-						percent: number;
-						message?: string;
-					};
-					if (data.taskId === taskId) {
-						setIndexingProgress(data.percent);
-						if (data.message) setIndexingMessage(data.message);
-					}
-				}
-			});
-
-			// Chain the progress unsub to the main unsub
-			const originalUnsub = unsubRef.current;
-			unsubRef.current = () => {
-				originalUnsub?.();
-				progressUnsub();
-			};
+			dispatch(documentIndexingStarted(result.taskId));
 		} catch {
-			setIndexing(false);
 			setIndexingProgress(0);
 			setIndexingMessage('');
 		}
-	}, [indexing, workspacePath, documents]);
+	}, [indexing, workspacePath, documents, dispatch]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
