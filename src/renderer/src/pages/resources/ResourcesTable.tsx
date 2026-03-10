@@ -226,7 +226,6 @@ export function ResourcesTable({
 					</AppTableBody>
 				</AppTable>
 			</div>
-
 		</div>
 	);
 }

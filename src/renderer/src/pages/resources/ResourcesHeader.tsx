@@ -27,21 +27,12 @@ export function ResourcesHeader({
 				<h1 className="text-lg font-semibold">Resources</h1>
 				<div className="ml-auto flex items-center gap-2">
 					{editing && selectedCount > 0 && (
-						<AppButton
-							size="sm"
-							variant="destructive"
-							disabled={removing}
-							onClick={onRemove}
-						>
+						<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
 							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
 							Remove ({selectedCount})
 						</AppButton>
 					)}
-					<AppButton
-						size="sm"
-						variant={editing ? 'secondary' : 'outline'}
-						onClick={onToggleEdit}
-					>
+					<AppButton size="sm" variant={editing ? 'secondary' : 'outline'} onClick={onToggleEdit}>
 						<Pencil className="h-3.5 w-3.5 mr-1.5" />
 						{editing ? 'Done' : 'Edit'}
 					</AppButton>
