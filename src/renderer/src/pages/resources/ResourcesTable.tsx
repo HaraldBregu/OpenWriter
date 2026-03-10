@@ -20,6 +20,7 @@ import {
 } from '../../components/ui/Select';
 import type { DocumentInfo } from '../../../../shared/types';
 import { formatBytes, formatDate } from './constants';
+import { ResourcePreviewSheet } from './ResourcePreviewSheet';
 
 const ALL_TYPES_VALUE = 'all';
 
