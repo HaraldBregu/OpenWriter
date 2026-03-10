@@ -45,7 +45,7 @@ import {
 	Bot,
 	PenLine,
 	Plus,
-	FileText,
+	Library,
 } from 'lucide-react';
 
 interface AppLayoutProps {
