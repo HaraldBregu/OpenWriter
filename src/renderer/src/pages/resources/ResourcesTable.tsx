@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
 import {
 	AppTable,
 	AppTableHeader,
@@ -20,6 +20,33 @@ import type { DocumentInfo } from '../../../../shared/types';
 import { formatBytes, formatDate } from './constants';
 
 const ALL_TYPES_VALUE = 'all';
+
+type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
+type SortDirection = 'asc' | 'desc';
+
+const COLUMNS: { key: SortKey; label: string; className?: string }[] = [
+	{ key: 'name', label: 'Name' },
+	{ key: 'mimeType', label: 'Type' },
+	{ key: 'size', label: 'Size', className: 'text-right' },
+	{ key: 'importedAt', label: 'Imported' },
+	{ key: 'lastModified', label: 'Last Modified' },
+];
+
+function compareDocs(a: DocumentInfo, b: DocumentInfo, key: SortKey, dir: SortDirection): number {
+	let result: number;
+	if (key === 'name' || key === 'mimeType') {
+		result = a[key].localeCompare(b[key]);
+	} else {
+		result = a[key] - b[key];
+	}
+	return dir === 'asc' ? result : -result;
+}
+
+function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey; sortDir: SortDirection }) {
+	if (column !== sortKey) return <ArrowUpDown className="ml-1 inline h-3.5 w-3.5 text-muted-foreground/50" />;
+	if (sortDir === 'asc') return <ArrowUp className="ml-1 inline h-3.5 w-3.5" />;
+	return <ArrowDown className="ml-1 inline h-3.5 w-3.5" />;
+}
 
 interface ResourcesTableProps {
 	documents: DocumentInfo[];
@@ -71,34 +98,36 @@ export function ResourcesTable({ documents }: ResourcesTableProps) {
 			</div>
 			<div className="rounded-md border flex-1 min-h-0 overflow-auto">
 				<AppTable>
-				<AppTableHeader className="sticky top-0 z-10 bg-muted">
-					<AppTableRow>
-						<AppTableHead>Name</AppTableHead>
-						<AppTableHead>Type</AppTableHead>
-						<AppTableHead className="text-right">Size</AppTableHead>
-						<AppTableHead>Imported</AppTableHead>
-						<AppTableHead>Last Modified</AppTableHead>
-					</AppTableRow>
-				</AppTableHeader>
-				<AppTableBody>
-					{filtered.map((doc) => (
-						<AppTableRow key={doc.id}>
-							<AppTableCell className="font-medium truncate max-w-[300px]">{doc.name}</AppTableCell>
-							<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
-							<AppTableCell className="text-right text-muted-foreground tabular-nums">
-								{formatBytes(doc.size)}
-							</AppTableCell>
-							<AppTableCell className="text-muted-foreground">
-								{formatDate(doc.importedAt)}
-							</AppTableCell>
-							<AppTableCell className="text-muted-foreground">
-								{formatDate(doc.lastModified)}
-							</AppTableCell>
+					<AppTableHeader className="sticky top-0 z-10 bg-muted">
+						<AppTableRow>
+							<AppTableHead>Name</AppTableHead>
+							<AppTableHead>Type</AppTableHead>
+							<AppTableHead className="text-right">Size</AppTableHead>
+							<AppTableHead>Imported</AppTableHead>
+							<AppTableHead>Last Modified</AppTableHead>
 						</AppTableRow>
-					))}
-				</AppTableBody>
-			</AppTable>
-		</div>
+					</AppTableHeader>
+					<AppTableBody>
+						{filtered.map((doc) => (
+							<AppTableRow key={doc.id}>
+								<AppTableCell className="font-medium truncate max-w-[300px]">
+									{doc.name}
+								</AppTableCell>
+								<AppTableCell className="text-muted-foreground">{doc.mimeType}</AppTableCell>
+								<AppTableCell className="text-right text-muted-foreground tabular-nums">
+									{formatBytes(doc.size)}
+								</AppTableCell>
+								<AppTableCell className="text-muted-foreground">
+									{formatDate(doc.importedAt)}
+								</AppTableCell>
+								<AppTableCell className="text-muted-foreground">
+									{formatDate(doc.lastModified)}
+								</AppTableCell>
+							</AppTableRow>
+						))}
+					</AppTableBody>
+				</AppTable>
+			</div>
 		</div>
 	);
 }
