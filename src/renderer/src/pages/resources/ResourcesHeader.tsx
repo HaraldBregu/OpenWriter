@@ -32,15 +32,18 @@ export function ResourcesHeader({
 							Remove ({selectedCount})
 						</AppButton>
 					)}
-					<AppButton size="icon" variant={editing ? 'secondary' : 'outline'} className="h-8 w-8" onClick={onToggleEdit}>
+					<AppButton size="sm" onClick={onUpload} disabled={uploading || editing}>
+						<Upload className="h-3.5 w-3.5 mr-1.5" />
+						{uploading ? 'Uploading\u2026' : 'Upload'}
+					</AppButton>
+					<AppButton
+						size="icon"
+						variant={editing ? 'secondary' : 'outline'}
+						className="h-8 w-8"
+						onClick={onToggleEdit}
+					>
 						<Pencil className="h-3.5 w-3.5" />
 					</AppButton>
-					{!editing && (
-						<AppButton size="sm" onClick={onUpload} disabled={uploading}>
-							<Upload className="h-3.5 w-3.5 mr-1.5" />
-							{uploading ? 'Uploading\u2026' : 'Upload'}
-						</AppButton>
-					)}
 				</div>
 			</div>
 		</div>
