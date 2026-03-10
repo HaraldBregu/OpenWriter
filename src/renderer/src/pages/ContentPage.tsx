@@ -310,10 +310,7 @@ const ContentPage: React.FC = () => {
 					</div>
 				</div>
 
-				<ContentPageSidebar
-					open={sidebarOpen}
-					onClose={() => setSidebarOpen(false)}
-				/>
+				<ContentPageSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 			</div>
 		</div>
 	);
