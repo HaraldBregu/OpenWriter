@@ -60,3 +60,5 @@ export const selectDocumentsIsLoading = createSelector(
 	selectDocumentsStatus,
 	(status) => status === 'loading'
 );
+
+export const selectImporting = createSelector(selectWorkspaceState, (state) => state.importing);
