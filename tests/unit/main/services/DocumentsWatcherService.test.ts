@@ -61,7 +61,7 @@ describe('DocumentsWatcherService', () => {
 	let service: DocumentsWatcherService;
 	let eventBus: EventBus;
 	const WORKSPACE = '/fake/workspace';
-	const DOCS_DIR = `${WORKSPACE}/documents`;
+	const DOCS_DIR = `${WORKSPACE}/resources`;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
