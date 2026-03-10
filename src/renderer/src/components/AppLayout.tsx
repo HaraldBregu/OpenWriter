@@ -237,7 +237,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							>
 								{t('sidebar.writings') || 'Documents'}
 								<ChevronRight
-									className={`h-3 w-3 shrink-0 transition-transform duration-200 mr-1 ${writingsOpen ? 'rotate-90' : ''}`}
+									className={`h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 ${writingsOpen ? 'rotate-90' : ''}`}
 								/>
 							</AppSidebarGroupLabel>
 							{writingsOpen && (
