@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { FolderOpen, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
@@ -6,7 +7,10 @@ interface ResourcesEmptyStateProps {
 	onUpload: () => void;
 }
 
-export function ResourcesEmptyState({ uploading, onUpload }: ResourcesEmptyStateProps) {
+export const ResourcesEmptyState = memo(function ResourcesEmptyState({
+	uploading,
+	onUpload,
+}: ResourcesEmptyStateProps) {
 	return (
 		<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
 			<FolderOpen className="h-10 w-10 mb-3 opacity-40" />
