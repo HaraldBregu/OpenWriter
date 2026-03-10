@@ -18,7 +18,7 @@ import type {
 	TaskEvent,
 	TaskQueueStatus,
 	TaskPriority,
-	DocumentInfo,
+	ResourceInfo,
 	DocumentFileChangeEvent,
 	OutputFile,
 	OutputFileChangeEvent,
