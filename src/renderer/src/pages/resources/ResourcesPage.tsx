@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, memo } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
@@ -29,6 +29,76 @@ import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
 import type { TaskEvent } from '../../../../shared/types';
 
+/**
+ * Isolated progress bar component – its frequent state updates
+ * (indexingProgress / indexingMessage) no longer cause the parent
+ * or sibling components to re-render.
+ */
+const IndexingProgressBar = memo(function IndexingProgressBar({
+	indexingTaskId,
+}: {
+	indexingTaskId: string;
+}) {
+	const dispatch = useAppDispatch();
+	const [progress, setProgress] = useState(0);
+	const [message, setMessage] = useState('Submitting indexing task\u2026');
+	const unsubRef = useRef<(() => void) | null>(null);
+
+	useEffect(() => {
+		unsubRef.current?.();
+		unsubRef.current = null;
+
+		const snapshotUnsub = subscribeToTask(indexingTaskId, (snapshot) => {
+			if (snapshot.status === 'completed') {
+				setProgress(100);
+				setMessage('Indexing complete');
+				dispatch(documentIndexingFinished());
+			}
+			if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
+				setProgress(0);
+				setMessage('');
+				dispatch(documentIndexingFinished());
+			}
+		});
+
+		const taskId = indexingTaskId;
+		const progressUnsub = window.task.onEvent((event: TaskEvent) => {
+			if (event.type !== 'progress') return;
+			const data = event.data as { taskId: string; percent: number; message?: string };
+			if (data.taskId !== taskId) return;
+			setProgress(data.percent);
+			if (data.message) setMessage(data.message);
+		});
+
+		unsubRef.current = () => {
+			snapshotUnsub();
+			progressUnsub();
+		};
+
+		return () => {
+			unsubRef.current?.();
+			unsubRef.current = null;
+		};
+	}, [indexingTaskId, dispatch]);
+
+	return (
+		<div className="px-6 py-3 border-b shrink-0">
+			<div className="flex items-center justify-between mb-1.5">
+				<span className="text-sm text-muted-foreground">
+					{message || 'Indexing resources\u2026'}
+				</span>
+				<span className="text-sm text-muted-foreground">{progress}%</span>
+			</div>
+			<div className="h-2 w-full rounded-full bg-secondary">
+				<div
+					className="h-full rounded-full bg-primary transition-all duration-300"
+					style={{ width: `${progress}%` }}
+				/>
+			</div>
+		</div>
+	);
+});
+
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
 	const documents = useAppSelector(selectDocuments);
@@ -43,66 +113,10 @@ export default function ResourcesPage() {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
-	const [indexingProgress, setIndexingProgress] = useState(0);
-	const [indexingMessage, setIndexingMessage] = useState('');
-
-	const unsubRef = useRef<(() => void) | null>(null);
-
-	// Subscribe to task events whenever indexingTaskId changes (including on mount
-	// if a task was already running before this component rendered).
-	useEffect(() => {
-		// Clean up any previous subscription
-		unsubRef.current?.();
-		unsubRef.current = null;
-
-		if (!indexingTaskId) {
-			setIndexingProgress(0);
-			setIndexingMessage('');
-			return;
-		}
-
-		// Subscribe for terminal states (completed / error / cancelled)
-		const snapshotUnsub = subscribeToTask(indexingTaskId, (snapshot) => {
-			if (snapshot.status === 'completed') {
-				setIndexingProgress(100);
-				setIndexingMessage('Indexing complete');
-				dispatch(documentIndexingFinished());
-			}
-
-			if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
-				setIndexingProgress(0);
-				setIndexingMessage('');
-				dispatch(documentIndexingFinished());
-			}
-		});
-
-		// Subscribe for granular progress updates (percent + message)
-		const taskId = indexingTaskId;
-		const progressUnsub = window.task.onEvent((event: TaskEvent) => {
-			if (event.type !== 'progress') return;
-			const data = event.data as { taskId: string; percent: number; message?: string };
-			if (data.taskId !== taskId) return;
-			setIndexingProgress(data.percent);
-			if (data.message) setIndexingMessage(data.message);
-		});
-
-		unsubRef.current = () => {
-			snapshotUnsub();
-			progressUnsub();
-		};
-
-		return () => {
-			unsubRef.current?.();
-			unsubRef.current = null;
-		};
-	}, [indexingTaskId, dispatch]);
 
 	const handleIndex = useCallback(() => {
-		if (indexing) return;
-		setIndexingProgress(0);
-		setIndexingMessage('Submitting indexing task\u2026');
 		dispatch(indexResources());
-	}, [indexing, dispatch]);
+	}, [dispatch]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
@@ -113,6 +127,10 @@ export default function ResourcesPage() {
 			if (prev) setSelected(new Set());
 			return !prev;
 		});
+	}, []);
+
+	const handleOpenConfirm = useCallback(() => {
+		setConfirmOpen(true);
 	}, []);
 
 	const handleConfirmRemove = useCallback(async () => {
@@ -137,27 +155,12 @@ export default function ResourcesPage() {
 				onToggleEdit={handleToggleEdit}
 				selectedCount={selected.size}
 				removing={removing}
-				onRemove={() => setConfirmOpen(true)}
+				onRemove={handleOpenConfirm}
 				indexing={indexing}
 				onIndex={handleIndex}
 			/>
 
-			{indexing && (
-				<div className="px-6 py-3 border-b shrink-0">
-					<div className="flex items-center justify-between mb-1.5">
-						<span className="text-sm text-muted-foreground">
-							{indexingMessage || 'Indexing resources\u2026'}
-						</span>
-						<span className="text-sm text-muted-foreground">{indexingProgress}%</span>
-					</div>
-					<div className="h-2 w-full rounded-full bg-secondary">
-						<div
-							className="h-full rounded-full bg-primary transition-all duration-300"
-							style={{ width: `${indexingProgress}%` }}
-						/>
-					</div>
-				</div>
-			)}
+			{indexingTaskId && <IndexingProgressBar indexingTaskId={indexingTaskId} />}
 
 			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
 				{loading && (
@@ -193,7 +196,8 @@ export default function ResourcesPage() {
 						<AppAlertDialogTitle>Remove resources</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
 							Are you sure you want to remove {selected.size}{' '}
-							{selected.size === 1 ? 'resource' : 'resources'}? This action cannot be undone.
+							{selected.size === 1 ? 'resource' : 'resources'}? This action cannot be
+							undone.
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
