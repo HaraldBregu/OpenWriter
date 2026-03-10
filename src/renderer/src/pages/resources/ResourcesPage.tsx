@@ -16,11 +16,10 @@ import {
 	selectDocumentsStatus,
 	selectDocumentsError,
 	selectImporting,
-	selectCurrentWorkspacePath,
 	selectDocumentIndexingTaskId,
 	removeDocuments,
 	importDocumentsRequested,
-	documentIndexingStarted,
+	indexResources,
 	documentIndexingFinished,
 } from '../../store/workspace';
 import { subscribeToTask } from '../../services/task-event-bus';
