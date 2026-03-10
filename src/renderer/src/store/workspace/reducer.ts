@@ -10,8 +10,8 @@ import {
 	openWorkspacePicker,
 	removeRecentWorkspace,
 	clearWorkspace,
-	loadDocuments,
-	removeDocuments,
+	loadResources,
+	removeResources,
 	indexResources,
 } from './actions';
 
@@ -69,32 +69,32 @@ export const workspaceSlice = createSlice({
 		},
 
 		/**
-		 * Remove a single document from the store (e.g., when the watcher fires a 'removed' event).
+		 * Remove a single resource from the store (e.g., when the watcher fires a 'removed' event).
 		 */
-		documentRemoved: (state, action: PayloadAction<string>) => {
-			state.documents = state.documents.filter((d) => d.id !== action.payload);
+		resourceRemoved: (state, action: PayloadAction<string>) => {
+			state.resources = state.resources.filter((d) => d.id !== action.payload);
 		},
 
 		/**
 		 * Triggered to start a file import operation.
 		 * The listener middleware picks this up and calls the IPC method.
 		 */
-		importDocumentsRequested: (state, _action: PayloadAction<string[]>) => {
+		importResourcesRequested: (state, _action: PayloadAction<string[]>) => {
 			state.importing = true;
 		},
 
 		/**
 		 * Called when the import operation completes (success or failure).
 		 */
-		importDocumentsCompleted: (state) => {
+		importResourcesCompleted: (state) => {
 			state.importing = false;
 		},
 
 		/**
 		 * Clear the indexing task ID when the task finishes (completed, error, or cancelled).
 		 */
-		documentIndexingFinished: (state) => {
-			state.documentIndexingTaskId = null;
+		resourceIndexingFinished: (state) => {
+			state.resourceIndexingTaskId = null;
 		},
 	},
 	extraReducers: (builder) => {
@@ -164,52 +164,52 @@ export const workspaceSlice = createSlice({
 			.addCase(clearWorkspace.fulfilled, (state) => {
 				state.currentPath = null;
 				state.status = 'ready';
-				state.documents = [];
-				state.documentsStatus = 'idle';
-				state.documentsError = null;
+				state.resources = [];
+				state.resourcesStatus = 'idle';
+				state.resourcesError = null;
 			})
 			.addCase(clearWorkspace.rejected, (state, action) => {
 				state.status = 'error';
 				state.error = action.error.message || 'Failed to clear workspace';
 			});
 
-		// loadDocuments
+		// loadResources
 		builder
-			.addCase(loadDocuments.pending, (state) => {
-				state.documentsStatus = 'loading';
-				state.documentsError = null;
+			.addCase(loadResources.pending, (state) => {
+				state.resourcesStatus = 'loading';
+				state.resourcesError = null;
 			})
-			.addCase(loadDocuments.fulfilled, (state, action) => {
-				state.documents = action.payload;
-				state.documentsStatus = 'ready';
+			.addCase(loadResources.fulfilled, (state, action) => {
+				state.resources = action.payload;
+				state.resourcesStatus = 'ready';
 			})
-			.addCase(loadDocuments.rejected, (state, action) => {
-				state.documentsStatus = 'error';
-				state.documentsError = action.error.message || 'Failed to load resources';
+			.addCase(loadResources.rejected, (state, action) => {
+				state.resourcesStatus = 'error';
+				state.resourcesError = action.error.message || 'Failed to load resources';
 			});
 
-		// removeDocuments
+		// removeResources
 		builder
-			.addCase(removeDocuments.pending, (state) => {
-				state.documentsStatus = 'loading';
-				state.documentsError = null;
+			.addCase(removeResources.pending, (state) => {
+				state.resourcesStatus = 'loading';
+				state.resourcesError = null;
 			})
-			.addCase(removeDocuments.fulfilled, (state, action) => {
-				state.documents = action.payload;
-				state.documentsStatus = 'ready';
+			.addCase(removeResources.fulfilled, (state, action) => {
+				state.resources = action.payload;
+				state.resourcesStatus = 'ready';
 			})
-			.addCase(removeDocuments.rejected, (state, action) => {
-				state.documentsStatus = 'error';
-				state.documentsError = action.error.message || 'Failed to remove resources';
+			.addCase(removeResources.rejected, (state, action) => {
+				state.resourcesStatus = 'error';
+				state.resourcesError = action.error.message || 'Failed to remove resources';
 			});
 
 		// indexResources
 		builder
 			.addCase(indexResources.fulfilled, (state, action) => {
-				state.documentIndexingTaskId = action.payload;
+				state.resourceIndexingTaskId = action.payload;
 			})
 			.addCase(indexResources.rejected, (state) => {
-				state.documentIndexingTaskId = null;
+				state.resourceIndexingTaskId = null;
 			});
 	},
 });
@@ -219,10 +219,10 @@ export const {
 	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
-	documentRemoved,
-	importDocumentsRequested,
-	importDocumentsCompleted,
-	documentIndexingFinished,
+	resourceRemoved,
+	importResourcesRequested,
+	importResourcesCompleted,
+	resourceIndexingFinished,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
