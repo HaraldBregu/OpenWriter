@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search } from 'lucide-react';
 import {
 	AppButton,
@@ -20,7 +20,10 @@ import {
 } from '../../components/ui/Select';
 import type { DocumentInfo } from '../../../../shared/types';
 import { formatBytes, formatDate } from './constants';
-import { ResourcePreviewSheet } from './ResourcePreviewSheet';
+
+const ResourcePreviewSheet = lazy(() =>
+	import('./ResourcePreviewSheet').then((m) => ({ default: m.ResourcePreviewSheet }))
+);
 
 const ALL_TYPES_VALUE = 'all';
 

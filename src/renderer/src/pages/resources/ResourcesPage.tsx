@@ -196,8 +196,7 @@ export default function ResourcesPage() {
 						<AppAlertDialogTitle>Remove resources</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
 							Are you sure you want to remove {selected.size}{' '}
-							{selected.size === 1 ? 'resource' : 'resources'}? This action cannot be
-							undone.
+							{selected.size === 1 ? 'resource' : 'resources'}? This action cannot be undone.
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
