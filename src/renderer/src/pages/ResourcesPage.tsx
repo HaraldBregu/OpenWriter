@@ -24,6 +24,7 @@ function formatDate(timestamp: number): string {
 export default function ResourcesPage() {
 	const [documents, setDocuments] = useState<DocumentInfo[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const loadDocuments = useCallback(async () => {
