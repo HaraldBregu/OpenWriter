@@ -12,16 +12,16 @@ import {
 } from '../../components/app';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
-	selectDocuments,
-	selectDocumentsStatus,
-	selectDocumentsError,
+	selectResources,
+	selectResourcesStatus,
+	selectResourcesError,
 	selectImporting,
-	selectDocumentIndexingTaskId,
+	selectResourceIndexingTaskId,
 	selectCurrentWorkspacePath,
-	removeDocuments,
-	importDocumentsRequested,
+	removeResources,
+	importResourcesRequested,
 	indexResources,
-	documentIndexingFinished,
+	resourceIndexingFinished,
 } from '../../store/workspace';
 import { subscribeToTask } from '../../services/task-event-bus';
 import { SUPPORTED_EXTENSIONS } from './constants';
@@ -53,12 +53,12 @@ const IndexingProgressBar = memo(function IndexingProgressBar({
 			if (snapshot.status === 'completed') {
 				setProgress(100);
 				setMessage('Indexing complete');
-				dispatch(documentIndexingFinished());
+				dispatch(resourceIndexingFinished());
 			}
 			if (snapshot.status === 'error' || snapshot.status === 'cancelled') {
 				setProgress(0);
 				setMessage('');
-				dispatch(documentIndexingFinished());
+				dispatch(resourceIndexingFinished());
 			}
 		});
 
@@ -100,13 +100,15 @@ const IndexingProgressBar = memo(function IndexingProgressBar({
 	);
 });
 
+const RESOURCES_DIR = 'documents';
+
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
-	const documents = useAppSelector(selectDocuments);
-	const status = useAppSelector(selectDocumentsStatus);
-	const error = useAppSelector(selectDocumentsError);
+	const resources = useAppSelector(selectResources);
+	const status = useAppSelector(selectResourcesStatus);
+	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
-	const indexingTaskId = useAppSelector(selectDocumentIndexingTaskId);
+	const indexingTaskId = useAppSelector(selectResourceIndexingTaskId);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	const loading = status === 'idle' || status === 'loading';
@@ -116,16 +118,14 @@ export default function ResourcesPage() {
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
-	const DOCUMENTS_DIR = 'documents';
-
 	const handleIndex = useCallback(() => {
 		if (!workspacePath) return;
-		const resourcesPath = `${workspacePath}/${DOCUMENTS_DIR}`;
+		const resourcesPath = `${workspacePath}/${RESOURCES_DIR}`;
 		dispatch(indexResources({ workspacePath, resourcesPath }));
 	}, [dispatch, workspacePath]);
 
 	const handleUpload = useCallback(() => {
-		dispatch(importDocumentsRequested(SUPPORTED_EXTENSIONS));
+		dispatch(importResourcesRequested(SUPPORTED_EXTENSIONS));
 	}, [dispatch]);
 
 	const handleToggleEdit = useCallback(() => {
@@ -145,7 +145,7 @@ export default function ResourcesPage() {
 		if (ids.length === 0) return;
 		setRemoving(true);
 		try {
-			await dispatch(removeDocuments(ids)).unwrap();
+			await dispatch(removeResources(ids)).unwrap();
 			setSelected(new Set());
 		} finally {
 			setRemoving(false);
@@ -182,13 +182,13 @@ export default function ResourcesPage() {
 					</div>
 				)}
 
-				{!loading && !error && documents.length === 0 && (
+				{!loading && !error && resources.length === 0 && (
 					<ResourcesEmptyState uploading={uploading} onUpload={handleUpload} />
 				)}
 
-				{!loading && !error && documents.length > 0 && (
+				{!loading && !error && resources.length > 0 && (
 					<ResourcesTable
-						documents={documents}
+						documents={resources}
 						editing={editing}
 						selected={selected}
 						onSelectedChange={setSelected}
