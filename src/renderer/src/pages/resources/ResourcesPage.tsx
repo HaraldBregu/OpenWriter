@@ -78,6 +78,8 @@ export default function ResourcesPage() {
 				selectedCount={selected.size}
 				removing={removing}
 				onRemove={() => setConfirmOpen(true)}
+				indexing={indexing}
+				onIndex={handleIndex}
 			/>
 
 			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
