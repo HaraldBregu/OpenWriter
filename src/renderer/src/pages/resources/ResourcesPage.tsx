@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
