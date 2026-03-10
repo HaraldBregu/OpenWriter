@@ -123,37 +123,38 @@ export default function ResourcesPage() {
 
 				{!loading && !error && documents.length > 0 && (
 					<div className="rounded-md border">
-						<table className="w-full text-sm">
-							<thead>
-								<tr className="border-b bg-muted/50">
-									<th className="text-left font-medium px-4 py-2.5">Name</th>
-									<th className="text-left font-medium px-4 py-2.5">Type</th>
-									<th className="text-right font-medium px-4 py-2.5">Size</th>
-									<th className="text-left font-medium px-4 py-2.5">Imported</th>
-									<th className="text-left font-medium px-4 py-2.5">Last Modified</th>
-								</tr>
-							</thead>
-							<tbody>
+						<AppTable>
+							<AppTableHeader>
+								<AppTableRow>
+									<AppTableHead>Name</AppTableHead>
+									<AppTableHead>Type</AppTableHead>
+									<AppTableHead className="text-right">Size</AppTableHead>
+									<AppTableHead>Imported</AppTableHead>
+									<AppTableHead>Last Modified</AppTableHead>
+								</AppTableRow>
+							</AppTableHeader>
+							<AppTableBody>
 								{documents.map((doc) => (
-									<tr
-										key={doc.id}
-										className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
-									>
-										<td className="px-4 py-2.5 font-medium truncate max-w-[300px]">{doc.name}</td>
-										<td className="px-4 py-2.5 text-muted-foreground">{doc.mimeType}</td>
-										<td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
+									<AppTableRow key={doc.id}>
+										<AppTableCell className="font-medium truncate max-w-[300px]">
+											{doc.name}
+										</AppTableCell>
+										<AppTableCell className="text-muted-foreground">
+											{doc.mimeType}
+										</AppTableCell>
+										<AppTableCell className="text-right text-muted-foreground tabular-nums">
 											{formatBytes(doc.size)}
-										</td>
-										<td className="px-4 py-2.5 text-muted-foreground">
+										</AppTableCell>
+										<AppTableCell className="text-muted-foreground">
 											{formatDate(doc.importedAt)}
-										</td>
-										<td className="px-4 py-2.5 text-muted-foreground">
+										</AppTableCell>
+										<AppTableCell className="text-muted-foreground">
 											{formatDate(doc.lastModified)}
-										</td>
-									</tr>
+										</AppTableCell>
+									</AppTableRow>
 								))}
-							</tbody>
-						</table>
+							</AppTableBody>
+						</AppTable>
 					</div>
 				)}
 			</div>
