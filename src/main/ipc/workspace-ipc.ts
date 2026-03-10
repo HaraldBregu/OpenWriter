@@ -18,10 +18,7 @@ import type {
 } from '../services/output-files';
 import { VALID_OUTPUT_TYPES } from '../services/output-files';
 import { DocumentsService } from '../services/documents';
-import {
-	getAllTextExtensions,
-	getSupportedFileTypesDescription,
-} from '../utils/file-type-validator';
+import type { FileFilter } from 'electron';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
