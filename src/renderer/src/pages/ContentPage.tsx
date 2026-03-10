@@ -22,6 +22,7 @@ import {
 	AppDropdownMenuSeparator,
 	AppDropdownMenuTrigger,
 	AppLabel,
+	AppSeparator,
 	AppSlider,
 	AppSwitch,
 	AppSelect,
@@ -29,15 +30,6 @@ import {
 	AppSelectValue,
 	AppSelectContent,
 	AppSelectItem,
-	AppSidebar,
-	AppSidebarContent,
-	AppSidebarGroup,
-	AppSidebarGroupLabel,
-	AppSidebarGroupContent,
-	AppSidebarHeader,
-	AppSidebarSeparator,
-	AppSidebarProvider,
-	AppSidebarInset,
 } from '@/components/app';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import { subscribeToTask } from '../services/task-event-bus';
@@ -49,7 +41,7 @@ import { useTask } from '@/hooks/use-task';
 // Right sidebar — configuration demo
 // ---------------------------------------------------------------------------
 
-function ConfigSidebar() {
+function ConfigSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
 	const [fontSize, setFontSize] = useState([16]);
 	const [lineHeight, setLineHeight] = useState([1.6]);
 	const [fontFamily, setFontFamily] = useState('sans');
@@ -60,106 +52,114 @@ function ConfigSidebar() {
 	const [editorWidth, setEditorWidth] = useState('normal');
 
 	return (
-		<AppSidebar side="right" className="top-12 h-[calc(100svh-3rem)]">
-			<AppSidebarHeader className="border-b px-4 py-3">
-				<div className="flex items-center gap-2">
-					<Settings className="h-4 w-4 text-muted-foreground" />
-					<span className="text-sm font-semibold">Configuration</span>
+		<div
+			className={`shrink-0 border-l border-border bg-muted/30 overflow-y-auto transition-all duration-300 ease-in-out ${open ? 'w-72' : 'w-0'}`}
+		>
+			<div className="w-72 p-4">
+				{/* Header */}
+				<div className="flex items-center justify-between mb-4">
+					<div className="flex items-center gap-2">
+						<Settings className="h-4 w-4 text-muted-foreground" />
+						<span className="text-sm font-semibold text-foreground">Configuration</span>
+					</div>
+					<AppButton variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
+						<X className="h-3.5 w-3.5" />
+					</AppButton>
 				</div>
-			</AppSidebarHeader>
 
-			<AppSidebarContent>
+				<AppSeparator className="mb-4" />
+
 				{/* Typography */}
-				<AppSidebarGroup>
-					<AppSidebarGroupLabel>Typography</AppSidebarGroupLabel>
-					<AppSidebarGroupContent className="space-y-4 px-2">
-						<div className="space-y-2">
-							<AppLabel className="text-xs text-muted-foreground">Font Family</AppLabel>
-							<AppSelect value={fontFamily} onValueChange={setFontFamily}>
-								<AppSelectTrigger className="h-8 text-sm">
-									<AppSelectValue />
-								</AppSelectTrigger>
-								<AppSelectContent>
-									<AppSelectItem value="sans">Sans Serif</AppSelectItem>
-									<AppSelectItem value="serif">Serif</AppSelectItem>
-									<AppSelectItem value="mono">Monospace</AppSelectItem>
-								</AppSelectContent>
-							</AppSelect>
-						</div>
+				<div className="mb-1">
+					<span className="text-xs font-medium text-muted-foreground/70">Typography</span>
+				</div>
+				<div className="space-y-4 mb-5">
+					<div className="space-y-2">
+						<AppLabel className="text-xs text-muted-foreground">Font Family</AppLabel>
+						<AppSelect value={fontFamily} onValueChange={setFontFamily}>
+							<AppSelectTrigger className="h-8 text-sm">
+								<AppSelectValue />
+							</AppSelectTrigger>
+							<AppSelectContent>
+								<AppSelectItem value="sans">Sans Serif</AppSelectItem>
+								<AppSelectItem value="serif">Serif</AppSelectItem>
+								<AppSelectItem value="mono">Monospace</AppSelectItem>
+							</AppSelectContent>
+						</AppSelect>
+					</div>
 
-						<div className="space-y-2">
-							<div className="flex items-center justify-between">
-								<AppLabel className="text-xs text-muted-foreground">Font Size</AppLabel>
-								<span className="text-xs text-muted-foreground">{fontSize[0]}px</span>
-							</div>
-							<AppSlider value={fontSize} onValueChange={setFontSize} min={12} max={24} step={1} />
+					<div className="space-y-2">
+						<div className="flex items-center justify-between">
+							<AppLabel className="text-xs text-muted-foreground">Font Size</AppLabel>
+							<span className="text-xs text-muted-foreground">{fontSize[0]}px</span>
 						</div>
+						<AppSlider value={fontSize} onValueChange={setFontSize} min={12} max={24} step={1} />
+					</div>
 
-						<div className="space-y-2">
-							<div className="flex items-center justify-between">
-								<AppLabel className="text-xs text-muted-foreground">Line Height</AppLabel>
-								<span className="text-xs text-muted-foreground">{lineHeight[0].toFixed(1)}</span>
-							</div>
-							<AppSlider
-								value={lineHeight}
-								onValueChange={setLineHeight}
-								min={1.0}
-								max={2.5}
-								step={0.1}
-							/>
+					<div className="space-y-2">
+						<div className="flex items-center justify-between">
+							<AppLabel className="text-xs text-muted-foreground">Line Height</AppLabel>
+							<span className="text-xs text-muted-foreground">{lineHeight[0].toFixed(1)}</span>
 						</div>
-					</AppSidebarGroupContent>
-				</AppSidebarGroup>
+						<AppSlider
+							value={lineHeight}
+							onValueChange={setLineHeight}
+							min={1.0}
+							max={2.5}
+							step={0.1}
+						/>
+					</div>
+				</div>
 
-				<AppSidebarSeparator />
+				<AppSeparator className="mb-4" />
 
 				{/* Layout */}
-				<AppSidebarGroup>
-					<AppSidebarGroupLabel>Layout</AppSidebarGroupLabel>
-					<AppSidebarGroupContent className="space-y-4 px-2">
-						<div className="space-y-2">
-							<AppLabel className="text-xs text-muted-foreground">Editor Width</AppLabel>
-							<AppSelect value={editorWidth} onValueChange={setEditorWidth}>
-								<AppSelectTrigger className="h-8 text-sm">
-									<AppSelectValue />
-								</AppSelectTrigger>
-								<AppSelectContent>
-									<AppSelectItem value="narrow">Narrow</AppSelectItem>
-									<AppSelectItem value="normal">Normal</AppSelectItem>
-									<AppSelectItem value="wide">Wide</AppSelectItem>
-									<AppSelectItem value="full">Full Width</AppSelectItem>
-								</AppSelectContent>
-							</AppSelect>
-						</div>
-					</AppSidebarGroupContent>
-				</AppSidebarGroup>
+				<div className="mb-1">
+					<span className="text-xs font-medium text-muted-foreground/70">Layout</span>
+				</div>
+				<div className="space-y-4 mb-5">
+					<div className="space-y-2">
+						<AppLabel className="text-xs text-muted-foreground">Editor Width</AppLabel>
+						<AppSelect value={editorWidth} onValueChange={setEditorWidth}>
+							<AppSelectTrigger className="h-8 text-sm">
+								<AppSelectValue />
+							</AppSelectTrigger>
+							<AppSelectContent>
+								<AppSelectItem value="narrow">Narrow</AppSelectItem>
+								<AppSelectItem value="normal">Normal</AppSelectItem>
+								<AppSelectItem value="wide">Wide</AppSelectItem>
+								<AppSelectItem value="full">Full Width</AppSelectItem>
+							</AppSelectContent>
+						</AppSelect>
+					</div>
+				</div>
 
-				<AppSidebarSeparator />
+				<AppSeparator className="mb-4" />
 
 				{/* Preferences */}
-				<AppSidebarGroup>
-					<AppSidebarGroupLabel>Preferences</AppSidebarGroupLabel>
-					<AppSidebarGroupContent className="space-y-3 px-2">
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-sm">Spell Check</AppLabel>
-							<AppSwitch checked={spellCheck} onCheckedChange={setSpellCheck} />
-						</div>
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-sm">Auto Save</AppLabel>
-							<AppSwitch checked={autoSave} onCheckedChange={setAutoSave} />
-						</div>
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-sm">Focus Mode</AppLabel>
-							<AppSwitch checked={focusMode} onCheckedChange={setFocusMode} />
-						</div>
-						<div className="flex items-center justify-between">
-							<AppLabel className="text-sm">Line Numbers</AppLabel>
-							<AppSwitch checked={showLineNumbers} onCheckedChange={setShowLineNumbers} />
-						</div>
-					</AppSidebarGroupContent>
-				</AppSidebarGroup>
-			</AppSidebarContent>
-		</AppSidebar>
+				<div className="mb-1">
+					<span className="text-xs font-medium text-muted-foreground/70">Preferences</span>
+				</div>
+				<div className="space-y-3">
+					<div className="flex items-center justify-between">
+						<AppLabel className="text-sm">Spell Check</AppLabel>
+						<AppSwitch checked={spellCheck} onCheckedChange={setSpellCheck} />
+					</div>
+					<div className="flex items-center justify-between">
+						<AppLabel className="text-sm">Auto Save</AppLabel>
+						<AppSwitch checked={autoSave} onCheckedChange={setAutoSave} />
+					</div>
+					<div className="flex items-center justify-between">
+						<AppLabel className="text-sm">Focus Mode</AppLabel>
+						<AppSwitch checked={focusMode} onCheckedChange={setFocusMode} />
+					</div>
+					<div className="flex items-center justify-between">
+						<AppLabel className="text-sm">Line Numbers</AppLabel>
+						<AppSwitch checked={showLineNumbers} onCheckedChange={setShowLineNumbers} />
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }
 
@@ -426,12 +426,8 @@ const ContentPage: React.FC = () => {
 			</div>
 
 			{/* Editor + Right Sidebar */}
-			<AppSidebarProvider
-				open={sidebarOpen}
-				onOpenChange={setSidebarOpen}
-				className="flex-1 min-h-0"
-			>
-				<AppSidebarInset className="flex flex-col min-h-0 min-w-0">
+			<div className="flex-1 flex min-h-0">
+				<div className="flex-1 flex flex-col min-w-0">
 					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
@@ -455,10 +451,10 @@ const ContentPage: React.FC = () => {
 							})}
 						</span>
 					</div>
-				</AppSidebarInset>
+				</div>
 
-				<ConfigSidebar />
-			</AppSidebarProvider>
+				<ConfigSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+			</div>
 		</div>
 	);
 };
