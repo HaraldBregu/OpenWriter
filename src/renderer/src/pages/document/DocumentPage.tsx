@@ -148,6 +148,11 @@ const DocumentPage: React.FC = () => {
 		[task.submit]
 	);
 
+	const handleOpenFolder = useCallback(() => {
+		if (!id) return;
+		window.workspace.openDocumentFolder(id);
+	}, [id]);
+
 	const handleSearch = useCallback((query: string) => {
 		editorRef.current?.setSearch(query);
 	}, []);
