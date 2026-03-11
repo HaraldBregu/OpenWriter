@@ -16,13 +16,4 @@ export { ModelRegistry } from './registry';
 export type { ModelRole, ModelRoleConfig, CostTier } from './registry';
 
 // Agents
-export {
-	StoryWriterAgent,
-	TextCompleterAgent,
-	ContentReviewAgent,
-	SummarizerAgent,
-	ToneAdjusterAgent,
-	DemoAgent,
-	TextContinuationAgent,
-	SentenceCompleterAgent,
-} from './agents';
+export { TextContinuationAgent } from './agents';
