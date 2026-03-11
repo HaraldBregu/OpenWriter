@@ -1,0 +1,318 @@
+import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
+import type { Disposable } from '../core/service-container';
+import type { WorkspaceService } from './workspace';
+import type { FileManagementService, FileMetadata } from './file-management-service';
+import type { WorkspaceMetadataService } from './workspace-metadata';
+import type { DocumentsWatcherService } from './documents-watcher';
+import type {
+	OutputFilesService,
+	OutputFile,
+	OutputType,
+	SaveOutputFileInput,
+	SaveOutputFileResult,
+	UpdateOutputFileInput,
+} from './output-files';
+import { VALID_OUTPUT_TYPES } from './output-files';
+import { DocumentsService } from './documents';
+import type { LoggerService } from './logger';
+import type {
+	DirectoryEntry,
+	DirectoryAddManyResult,
+	DirectoryValidationResult,
+	IndexingInfo,
+} from '../../shared/types';
+
+const DATA_DIR = 'data';
+const INDEXING_INFO_FILE = 'indexing-info.json';
+
+/**
+ * WorkspaceManager is a Facade over all workspace domain services.
+ *
+ * It centralizes workspace operations so that the IPC layer becomes a thin
+ * pass-through with no business logic. Electron-specific APIs (dialog, shell)
+ * remain in the IPC layer; this class has no Electron dependency.
+ */
+export class WorkspaceManager implements Disposable {
+	private readonly documents: DocumentsService;
+
+	constructor(
+		private readonly workspace: WorkspaceService,
+		private readonly fileManagement: FileManagementService,
+		private readonly metadata: WorkspaceMetadataService,
+		private readonly watcher: DocumentsWatcherService | null,
+		private readonly outputFiles: OutputFilesService,
+		private readonly logger: LoggerService,
+	) {
+		this.documents = new DocumentsService(fileManagement, watcher);
+	}
+
+	destroy(): void {
+		// No-op: sub-services manage their own lifecycle via ServiceContainer
+	}
+
+	// -------------------------------------------------------------------------
+	// Workspace state
+	// -------------------------------------------------------------------------
+
+	getCurrent(): string | null {
+		return this.workspace.getCurrent();
+	}
+
+	setCurrent(workspacePath: string): void {
+		this.logger.info('WorkspaceManager', `Setting workspace: ${workspacePath}`);
+		this.workspace.setCurrent(workspacePath);
+	}
+
+	getRecent(): Array<{ path: string; lastOpened: number }> {
+		return this.workspace.getRecent();
+	}
+
+	clear(): void {
+		this.workspace.clear();
+	}
+
+	removeRecent(workspacePath: string): void {
+		this.workspace.removeRecent(workspacePath);
+		this.logger.info('WorkspaceManager', `Removed from recent: ${workspacePath}`);
+	}
+
+	// -------------------------------------------------------------------------
+	// Indexing info
+	// -------------------------------------------------------------------------
+
+	async getIndexingInfo(): Promise<IndexingInfo | null> {
+		const currentWorkspace = this.requireWorkspace();
+		const infoPath = path.join(currentWorkspace, DATA_DIR, INDEXING_INFO_FILE);
+		try {
+			const content = await fsPromises.readFile(infoPath, 'utf-8');
+			return JSON.parse(content);
+		} catch {
+			return null;
+		}
+	}
+
+	getDataFolderPath(): string {
+		const currentWorkspace = this.requireWorkspace();
+		const dataDir = path.join(currentWorkspace, DATA_DIR);
+		if (!fs.existsSync(dataDir) || !fs.statSync(dataDir).isDirectory()) {
+			throw new Error('Data folder does not exist. Run indexing first.');
+		}
+		return dataDir;
+	}
+
+	// -------------------------------------------------------------------------
+	// Documents
+	// -------------------------------------------------------------------------
+
+	async importFiles(
+		filePaths: string[],
+		extensions?: string[],
+	): Promise<FileMetadata[]> {
+		const currentWorkspace = this.requireWorkspace();
+		return this.documents.importFiles(currentWorkspace, filePaths, extensions);
+	}
+
+	async importByPaths(paths: string[]): Promise<FileMetadata[]> {
+		const currentWorkspace = this.requireWorkspace();
+		return this.documents.importFiles(currentWorkspace, paths);
+	}
+
+	async downloadFromUrl(url: string): Promise<FileMetadata> {
+		this.validateDownloadUrl(url);
+		const currentWorkspace = this.requireWorkspace();
+		return this.documents.downloadFromUrl(currentWorkspace, url);
+	}
+
+	async loadDocuments(): Promise<FileMetadata[]> {
+		const currentWorkspace = this.requireWorkspace();
+		return this.documents.loadAll(currentWorkspace);
+	}
+
+	async deleteDocument(id: string): Promise<void> {
+		const currentWorkspace = this.requireWorkspace();
+		await this.documents.deleteFile(id, currentWorkspace);
+	}
+
+	// -------------------------------------------------------------------------
+	// Directories
+	// -------------------------------------------------------------------------
+
+	getDirectories(): DirectoryEntry[] {
+		return this.metadata.getDirectories();
+	}
+
+	addDirectory(dirPath: string): DirectoryEntry {
+		return this.metadata.addDirectory(dirPath);
+	}
+
+	addDirectories(dirPaths: string[]): DirectoryAddManyResult {
+		return this.metadata.addDirectories(dirPaths);
+	}
+
+	removeDirectory(id: string): boolean {
+		return this.metadata.removeDirectory(id);
+	}
+
+	validateDirectory(dirPath: string): DirectoryValidationResult {
+		return this.metadata.validateDirectory(dirPath);
+	}
+
+	markDirectoryIndexed(id: string, isIndexed: boolean): boolean {
+		return this.metadata.markDirectoryIndexed(id, isIndexed);
+	}
+
+	// -------------------------------------------------------------------------
+	// Output files
+	// -------------------------------------------------------------------------
+
+	async saveOutput(input: SaveOutputFileInput): Promise<SaveOutputFileResult> {
+		this.validateOutputInput(input);
+		const result = await this.outputFiles.save(input);
+		this.logger.info('WorkspaceManager', `Saved output file for type ${input.type}: ${result.id}`);
+		return result;
+	}
+
+	async loadOutputs(): Promise<OutputFile[]> {
+		const files = await this.outputFiles.loadAll();
+		this.logger.info('WorkspaceManager', `Loaded ${files.length} output files`);
+		return files;
+	}
+
+	async loadOutputsByType(outputType: string): Promise<OutputFile[]> {
+		this.validateOutputType(outputType);
+		const files = await this.outputFiles.loadByType(outputType as OutputType);
+		this.logger.info('WorkspaceManager', `Loaded ${files.length} output files for type "${outputType}"`);
+		return files;
+	}
+
+	async loadOutput(params: { type: string; id: string }): Promise<OutputFile | null> {
+		this.validateOutputTypeAndId(params);
+		const file = await this.outputFiles.loadOne(params.type as OutputType, params.id);
+		this.logger.info(
+			'WorkspaceManager',
+			file
+				? `Loaded output file: ${params.type}/${params.id}`
+				: `Output file not found: ${params.type}/${params.id}`,
+		);
+		return file;
+	}
+
+	async updateOutput(params: {
+		type: string;
+		id: string;
+		content: string;
+		metadata: Record<string, unknown>;
+	}): Promise<void> {
+		this.validateOutputUpdateParams(params);
+		await this.outputFiles.update(params.type as OutputType, params.id, {
+			content: params.content,
+			metadata: params.metadata as UpdateOutputFileInput['metadata'],
+		});
+		this.logger.info('WorkspaceManager', `Updated output file: ${params.type}/${params.id}`);
+	}
+
+	async deleteOutput(params: { type: string; id: string }): Promise<void> {
+		this.validateOutputTypeAndId(params);
+		await this.outputFiles.delete(params.type as OutputType, params.id);
+		this.logger.info('WorkspaceManager', `Deleted output file: ${params.type}/${params.id}`);
+	}
+
+	async trashOutput(params: { type: string; id: string }): Promise<void> {
+		this.validateOutputTypeAndId(params);
+		await this.outputFiles.trash(params.type as OutputType, params.id);
+		this.logger.info('WorkspaceManager', `Trashed output file: ${params.type}/${params.id}`);
+	}
+
+	// -------------------------------------------------------------------------
+	// Private helpers
+	// -------------------------------------------------------------------------
+
+	private requireWorkspace(): string {
+		const current = this.workspace.getCurrent();
+		if (!current) {
+			throw new Error('No workspace selected. Please select a workspace first.');
+		}
+		return current;
+	}
+
+	private validateDownloadUrl(url: string): void {
+		const urlObj = new URL(url);
+
+		if (urlObj.protocol !== 'https:') {
+			throw new Error(`Invalid protocol "${urlObj.protocol}". Only HTTPS downloads are allowed.`);
+		}
+
+		const hostname = urlObj.hostname;
+		const privatePatterns = [
+			/^localhost$/i,
+			/^127\./,
+			/^192\.168\./,
+			/^10\./,
+			/^172\.(1[6-9]|2\d|3[01])\./,
+			/^::1$/,
+			/^fc00:/,
+			/^fd00:/,
+		];
+
+		if (privatePatterns.some((pattern) => pattern.test(hostname))) {
+			throw new Error(`Downloads from private networks are not allowed: ${hostname}`);
+		}
+	}
+
+	private isValidOutputType(type: string): type is OutputType {
+		return (VALID_OUTPUT_TYPES as readonly string[]).includes(type);
+	}
+
+	private validateOutputType(type: string): void {
+		if (!type || typeof type !== 'string') {
+			throw new Error('Invalid type: must be a non-empty string');
+		}
+		if (!this.isValidOutputType(type)) {
+			throw new Error(
+				`Invalid output type "${type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`,
+			);
+		}
+	}
+
+	private validateOutputTypeAndId(params: { type: string; id: string }): void {
+		this.validateOutputType(params.type);
+		if (!params.id || typeof params.id !== 'string') {
+			throw new Error('Invalid id: must be a non-empty string');
+		}
+	}
+
+	private validateOutputInput(input: SaveOutputFileInput): void {
+		this.validateOutputType(input.type);
+		if (typeof input.content !== 'string') {
+			throw new Error('Invalid content: must be a string');
+		}
+		if (
+			!input.metadata ||
+			typeof input.metadata !== 'object' ||
+			Array.isArray(input.metadata)
+		) {
+			throw new Error('Invalid metadata: must be an object');
+		}
+	}
+
+	private validateOutputUpdateParams(params: {
+		type: string;
+		id: string;
+		content: string;
+		metadata: Record<string, unknown>;
+	}): void {
+		this.validateOutputTypeAndId(params);
+		if (typeof params.content !== 'string') {
+			throw new Error('Invalid content: must be a string');
+		}
+		if (
+			!params.metadata ||
+			typeof params.metadata !== 'object' ||
+			Array.isArray(params.metadata)
+		) {
+			throw new Error('Invalid metadata: must be an object');
+		}
+	}
+}
