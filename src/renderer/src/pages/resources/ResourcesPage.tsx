@@ -17,8 +17,10 @@ import {
 	selectResourcesError,
 	selectImporting,
 	selectCurrentWorkspacePath,
+	selectIndexingInfo,
 	removeResources,
 	importResourcesRequested,
+	loadIndexingInfo,
 } from '../../store/workspace';
 import { useTaskListener } from '../../hooks/use-task-listener';
 import { SUPPORTED_EXTENSIONS } from './constants';
