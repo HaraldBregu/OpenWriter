@@ -191,6 +191,21 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
 			const slashPos = slashPosRef.current;
 			if (slashPos === null) return;
 			item.command(editor, slashPos, queryRef.current.length);
+			if (item.opensDialog && item.label === 'Image') {
+				setImageDialogOpen(true);
+			}
+		},
+		[editor]
+	);
+
+	const handleImageInsert = useCallback(
+		(result: { src: string; alt: string; title: string }) => {
+			if (editor.isDestroyed) return;
+			editor.commands.setImage({
+				src: result.src,
+				alt: result.alt || undefined,
+				title: result.title || undefined,
+			});
 		},
 		[editor]
 	);
