@@ -301,7 +301,7 @@ export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps
 		setError(null);
 		setContent(null);
 
-		window.fs
+		window.workspace
 			.readFile({ filePath: doc.path })
 			.then((text) => {
 				if (!cancelled) setContent(text);

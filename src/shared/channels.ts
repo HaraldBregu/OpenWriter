@@ -84,6 +84,12 @@ export const WorkspaceChannels = {
 	outputTrash: 'output:trash',
 	outputFileChanged: 'output:file-changed',
 	outputWatcherError: 'output:watcher-error',
+	// Filesystem
+	fsReadFile: 'fs:read-file',
+	fsWriteFile: 'fs:write-file',
+	fsCreateFile: 'fs:create-file',
+	fsCreateFolder: 'fs:create-folder',
+	fsRename: 'fs:rename',
 } as const;
 
 export const WindowChannels = {
