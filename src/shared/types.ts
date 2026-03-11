@@ -86,6 +86,19 @@ export type TaskEvent =
 	| { type: 'priority-changed'; data: { taskId: string; priority: TaskPriority; position: number } }
 	| { type: 'queue-position'; data: { taskId: string; position: number } };
 
+// ---- Indexing -------------------------------------------------------------
+
+export interface IndexingInfo {
+	/** Timestamp of the last successful indexing run. */
+	lastIndexedAt: number;
+	/** Number of documents successfully indexed. */
+	indexedCount: number;
+	/** Number of documents that failed during indexing. */
+	failedCount: number;
+	/** Total chunks stored in the vector store. */
+	totalChunks: number;
+}
+
 // ---- Resources ------------------------------------------------------------
 
 export interface ResourceInfo {

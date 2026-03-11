@@ -51,9 +51,10 @@ export interface IndexResourcesOutput {
 	totalChunks: number;
 }
 
-export class IndexResourcesTaskHandler
-	implements TaskHandler<IndexResourcesInput, IndexResourcesOutput>
-{
+export class IndexResourcesTaskHandler implements TaskHandler<
+	IndexResourcesInput,
+	IndexResourcesOutput
+> {
 	readonly type = 'index-resources';
 
 	constructor(
