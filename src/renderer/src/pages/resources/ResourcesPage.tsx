@@ -137,7 +137,7 @@ export default function ResourcesPage() {
 						)}
 						<AppButton
 							variant="ghost"
-							size="icon-micro"
+							size="icon-xs"
 							className="ml-auto"
 							onClick={handleOpenDataFolder}
 						>
