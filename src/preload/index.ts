@@ -376,6 +376,14 @@ const workspace: WorkspaceApi = {
 	): (() => void) => {
 		return typedOn(WorkspaceChannels.outputWatcherError, callback);
 	},
+	// -------------------------------------------------------------------------
+	// Filesystem
+	// -------------------------------------------------------------------------
+	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
+	writeFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsWriteFile, params),
+	createFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFile, params),
+	createFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFolder, params),
+	rename: (params) => typedInvokeUnwrap(WorkspaceChannels.fsRename, params),
 } satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
