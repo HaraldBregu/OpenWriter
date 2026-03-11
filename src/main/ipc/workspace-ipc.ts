@@ -9,6 +9,13 @@ import type { WorkspaceManager } from '../services/workspace-manager';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
+import type {
+	FsReadFileParams,
+	FsWriteFileParams,
+	FsCreateFileParams,
+	FsCreateFolderParams,
+	FsRenameParams,
+} from '../../shared/types';
 
 /**
  * IPC handlers for all workspace-related concerns.
