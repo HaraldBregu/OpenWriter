@@ -331,6 +331,55 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		// -------------------------------------------------------------------------
+		// Filesystem
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.fsReadFile,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsReadFileParams) =>
+					this.mgr(event, container).readFile(params),
+				WorkspaceChannels.fsReadFile
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.fsWriteFile,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsWriteFileParams) =>
+					this.mgr(event, container).writeFile(params),
+				WorkspaceChannels.fsWriteFile
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.fsCreateFile,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsCreateFileParams) =>
+					this.mgr(event, container).createFile(params),
+				WorkspaceChannels.fsCreateFile
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.fsCreateFolder,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsCreateFolderParams) =>
+					this.mgr(event, container).createFolder(params),
+				WorkspaceChannels.fsCreateFolder
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.fsRename,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsRenameParams) =>
+					this.mgr(event, container).rename(params),
+				WorkspaceChannels.fsRename
+			)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
