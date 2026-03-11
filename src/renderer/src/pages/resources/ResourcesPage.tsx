@@ -135,13 +135,14 @@ export default function ResourcesPage() {
 						{indexingInfo.failedCount > 0 && (
 							<span className="text-destructive">{indexingInfo.failedCount} failed</span>
 						)}
-						<button
-							type="button"
-							className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+						<AppButton
+							variant="ghost"
+							size="icon-xm"
+							className="ml-auto"
 							onClick={handleOpenDataFolder}
 						>
-							<FolderOpen className="h-3.5 w-3.5" />
-						</button>
+							<FolderOpen />
+						</AppButton>
 					</div>
 				</div>
 			)}
