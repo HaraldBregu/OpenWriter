@@ -32,6 +32,7 @@ import type {
 import { FileManager } from '../file_manager';
 
 const DATA_DIR = 'data';
+const RESOURCES_DIR = 'resources';
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /**
