@@ -232,7 +232,7 @@ async function* executeCustomStateGraphStream(
 		// We accumulate them and use the last one as the final state.
 		let finalState: Record<string, unknown> = {};
 
-		const stream = graph.stream(initialState, {
+		const stream = await graph.stream(initialState, {
 			streamMode: 'values',
 			signal: signal as AbortSignal | undefined,
 		});
