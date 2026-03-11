@@ -1,9 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import {
-	subscribeToTask,
-	subscribeToTaskType,
-	getTaskSnapshot,
-} from '@/services/task-event-bus';
+import { subscribeToTask, subscribeToTaskType, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
 import type { TaskStatus } from '../../../shared/types';
 
@@ -28,7 +24,7 @@ export interface UseTaskListenerReturn<TResult = unknown> {
  * and subscribes to the event bus for new tasks of that type.
  */
 export function useTaskListener<TResult = unknown>(
-	taskType: string,
+	taskType: string
 ): UseTaskListenerReturn<TResult> {
 	const [taskId, setTaskId] = useState<string | null>(null);
 	const [status, setStatus] = useState<TaskStatus | null>(null);
@@ -42,7 +38,7 @@ export function useTaskListener<TResult = unknown>(
 		window.task.list().then((res) => {
 			if (!res.success) return;
 			const active = res.data.find(
-				(t) => t.type === taskType && (t.status === 'queued' || t.status === 'running'),
+				(t) => t.type === taskType && (t.status === 'queued' || t.status === 'running')
 			);
 			if (active) {
 				setTaskId(active.taskId);
@@ -92,6 +88,6 @@ export function useTaskListener<TResult = unknown>(
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
 		}),
-		[taskId, status, error, result],
+		[taskId, status, error, result]
 	);
 }
