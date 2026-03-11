@@ -317,9 +317,4 @@ export interface AgentDefinitionInfo {
 	name: string;
 	description: string;
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
-	inputHints?: {
-		label: string;
-		placeholder: string;
-		multiline?: boolean;
-	};
 }
