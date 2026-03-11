@@ -20,7 +20,7 @@ import {
 	removeResources,
 	importResourcesRequested,
 } from '../../store/workspace';
-import { useTask } from '../../hooks/use-task';
+import { useTaskListener } from '../../hooks/use-task-listener';
 import { SUPPORTED_EXTENSIONS } from './constants';
 import { ResourcesHeader } from './ResourcesHeader';
 import { ResourcesEmptyState } from './ResourcesEmptyState';
