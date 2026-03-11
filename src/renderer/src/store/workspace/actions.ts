@@ -69,6 +69,20 @@ export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
 });
 
 // ---------------------------------------------------------------------------
+// Indexing thunks
+// ---------------------------------------------------------------------------
+
+/**
+ * Load the indexing info (last indexed timestamp, counts) from the workspace.
+ */
+export const loadIndexingInfo = createAsyncThunk<IndexingInfo | null>(
+	'workspace/loadIndexingInfo',
+	async () => {
+		return await window.workspace.getIndexingInfo();
+	}
+);
+
+// ---------------------------------------------------------------------------
 // Resource thunks
 // ---------------------------------------------------------------------------
 
