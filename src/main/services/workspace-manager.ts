@@ -238,7 +238,7 @@ export class WorkspaceManager implements Disposable {
 
 	async readFile(params: FsReadFileParams): Promise<string> {
 		this.validateFsParams(params, ['filePath']);
-		const manager = this.buildFileSystemManager();
+		const manager = this.buildFileManager();
 		return manager.readFile(params.filePath, { encoding: params.encoding });
 	}
 
@@ -247,7 +247,7 @@ export class WorkspaceManager implements Disposable {
 		if (typeof params.content !== 'string') {
 			throw new Error('fs:write-file: content must be a string');
 		}
-		const manager = this.buildFileSystemManager();
+		const manager = this.buildFileManager();
 		await manager.writeFile(params.filePath, params.content, {
 			encoding: params.encoding,
 			atomic: params.atomic,
@@ -260,7 +260,7 @@ export class WorkspaceManager implements Disposable {
 		if (params.content !== undefined && typeof params.content !== 'string') {
 			throw new Error('fs:create-file: content must be a string when provided');
 		}
-		const manager = this.buildFileSystemManager();
+		const manager = this.buildFileManager();
 		await manager.createFile(params.filePath, {
 			content: params.content,
 			encoding: params.encoding,
@@ -271,7 +271,7 @@ export class WorkspaceManager implements Disposable {
 
 	async createFolder(params: FsCreateFolderParams): Promise<void> {
 		this.validateFsParams(params, ['folderPath']);
-		const manager = this.buildFileSystemManager();
+		const manager = this.buildFileManager();
 		await manager.createFolder(params.folderPath, {
 			recursive: params.recursive,
 			failIfExists: params.failIfExists,
@@ -280,7 +280,7 @@ export class WorkspaceManager implements Disposable {
 
 	async rename(params: FsRenameParams): Promise<FsRenameResult> {
 		this.validateFsParams(params, ['oldPath', 'newPath']);
-		const manager = this.buildFileSystemManager();
+		const manager = this.buildFileManager();
 		return manager.renameEntry(params.oldPath, params.newPath, {
 			failIfExists: params.failIfExists,
 		});
@@ -369,7 +369,7 @@ export class WorkspaceManager implements Disposable {
 		}
 	}
 
-	private buildFileSystemManager(): FileSystemManager {
+	private buildFileManager(): FileSystemManager {
 		const extraRoots: string[] = [];
 		const workspacePath = this.workspace.getCurrent();
 		if (workspacePath) {
