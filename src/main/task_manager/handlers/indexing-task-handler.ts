@@ -227,11 +227,27 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		throwIfAborted(signal);
 
-		// Phase 3: Save vector store to disk
+		// Phase 3: Save vector store and indexing info to disk
 		reporter.progress(PHASE_EXTRACT + PHASE_EMBED, 'Saving vector store');
 		await vectorStore.save(vectorStorePath);
 
 		const totalChunks = vectorStore.size;
+
+		// Write indexing info JSON alongside the vector store
+		const dataDir = path.join(workspacePath, DATA_DIR);
+		const indexingInfo: IndexingInfo = {
+			lastIndexedAt: Date.now(),
+			indexedCount,
+			failedCount: failedIds.length,
+			totalChunks,
+		};
+		await fs.mkdir(dataDir, { recursive: true });
+		await fs.writeFile(
+			path.join(dataDir, INDEXING_INFO_FILE),
+			JSON.stringify(indexingInfo, null, 2),
+			'utf-8'
+		);
+
 		reporter.progress(100, 'Indexing complete');
 
 		logger?.info(
