@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Editor } from '@tiptap/core';
-import { Heading, Type, List, ListOrdered, Sparkles, Minus, Bot } from 'lucide-react';
+import { Heading, Type, List, ListOrdered, Sparkles, Minus, Bot, ImagePlus } from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { OptionMenuPlugin } from './option-menu-plugin';
+import { InsertImageDialog } from '../InsertImageDialog';
 
 interface OptionMenuProps {
 	onContinueWithAI?: (content: string, positionFrom: number) => void;
