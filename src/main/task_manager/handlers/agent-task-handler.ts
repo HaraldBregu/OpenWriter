@@ -80,14 +80,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		reporter.progress(5, 'Resolved agent definition');
 
 		// 2. Resolve model config via role (if available), then provider
-		//    Priority: task input → agent defaultConfig → ModelRegistry role → ProviderResolver fallback
+		//    Priority: task input → ModelRegistry role → ProviderResolver fallback
 		const roleConfig =
 			def.role && this.modelRegistry?.has(def.role)
 				? this.modelRegistry.resolve(def.role)
 				: undefined;
 
-		const providerId = input.providerId ?? def.defaultConfig.providerId ?? roleConfig?.providerId;
-		const modelId = input.modelId ?? def.defaultConfig.modelId ?? roleConfig?.modelId;
+		const providerId = input.providerId ?? roleConfig?.providerId;
+		const modelId = input.modelId ?? roleConfig?.modelId;
 
 		const provider = this.providerResolver.resolve({ providerId, modelId });
 		reporter.progress(10, 'Provider resolved');
@@ -98,15 +98,13 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		let tokensSinceLastProgress = 0;
 		let currentProgress = 10;
 
-		const resolvedTemperature =
-			input.temperature ?? def.defaultConfig.temperature ?? roleConfig?.temperature ?? 0.7;
-		const resolvedMaxTokens =
-			input.maxTokens ?? def.defaultConfig.maxTokens ?? roleConfig?.maxTokens;
+		const resolvedTemperature = input.temperature ?? roleConfig?.temperature ?? 0.7;
+		const resolvedMaxTokens = input.maxTokens ?? roleConfig?.maxTokens;
 
 		const gen = executeAIAgentsStream({
 			runId: randomUUID(),
 			provider,
-			systemPrompt: def.defaultConfig.systemPrompt ?? '',
+			systemPrompt: '',
 			temperature: resolvedTemperature,
 			maxTokens: resolvedMaxTokens,
 			history: [],
