@@ -7,4 +7,4 @@ export type {
 	RenameOptions,
 	RenameResult,
 } from './types';
-export { FileSystemManager } from './file-system-manager';
+export { FileManager } from './file-manager';
