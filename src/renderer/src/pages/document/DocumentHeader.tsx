@@ -31,6 +31,7 @@ interface DocumentHeaderProps {
 	readonly onMoveToTrash: () => void;
 	readonly onSearch: (query: string) => void;
 	readonly onClearSearch: () => void;
+	readonly onOpenFolder: () => void;
 }
 
 const DocumentHeader: React.FC<DocumentHeaderProps> = ({
