@@ -127,7 +127,7 @@ describe('useOutputFiles — initial load', () => {
 			{
 				id: 'item-001',
 				type: 'documents',
-				path: '/workspace/output/writings/item-001',
+				path: '/workspace/output/documents/item-001',
 				metadata: {
 					title: 'Hello World',
 					type: 'documents',
@@ -223,7 +223,7 @@ describe('useOutputFiles — file-change subscription', () => {
 				type: 'added',
 				outputType: 'documents',
 				fileId: 'new-item',
-				filePath: '/workspace/output/writings/new-item/DATA.md',
+				filePath: '/workspace/output/documents/new-item/DATA.md',
 				timestamp: Date.now(),
 			});
 		});
@@ -263,7 +263,7 @@ describe('useOutputFiles — file-change subscription', () => {
 					type: 'changed',
 					outputType: 'documents',
 					fileId: `item-${i}`,
-					filePath: `/workspace/output/writings/item-${i}/DATA.md`,
+					filePath: `/workspace/output/documents/item-${i}/DATA.md`,
 					timestamp: Date.now(),
 				});
 			});
@@ -321,7 +321,7 @@ describe('useOutputFiles — cleanup on unmount', () => {
 				type: 'removed',
 				outputType: 'documents',
 				fileId: 'deleted-item',
-				filePath: '/workspace/output/writings/deleted-item/DATA.md',
+				filePath: '/workspace/output/documents/deleted-item/DATA.md',
 				timestamp: Date.now(),
 			});
 		});
