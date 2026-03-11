@@ -72,6 +72,8 @@ export const WorkspaceChannels = {
 	directoriesChanged: 'directories:changed',
 	// Indexing
 	getIndexingInfo: 'indexing:get-info',
+	// Shell
+	openFolder: 'workspace:open-folder',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
