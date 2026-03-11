@@ -79,7 +79,8 @@
       "Bash(do echo:*)",
       "Bash(mkdir:*)",
       "Bash(gh api:*)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit; echo \"Exit code: $?\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
