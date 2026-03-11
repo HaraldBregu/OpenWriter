@@ -1,5 +1,5 @@
 /**
- * Maximum file size accepted by {@link FileSystemManager.readFile} (64 MB).
+ * Maximum file size accepted by {@link FileManager.readFile} (64 MB).
  *
  * Loading very large files into a JS string can exhaust the V8 heap and freeze
  * the UI thread. Callers that need larger files should use a streaming service.
