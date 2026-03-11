@@ -6,7 +6,7 @@ import type { LoggerService } from '../services/logger';
 import { WorkspaceMetadataService } from '../services/workspace-metadata';
 import { DocumentsWatcherService } from '../services/documents-watcher';
 import { OutputFilesService } from '../services/output-files';
-import { WorkspaceManager } from '../services/workspace/workspace';
+import { WorkspaceManager } from '../workspace/workspace';
 
 /**
  * Context available to every window-scoped service factory function.
