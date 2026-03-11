@@ -67,6 +67,5 @@ export function toAgentDefinitionInfo(def: AgentDefinition): AgentDefinitionInfo
 		name: def.name,
 		description: def.description,
 		category: def.category,
-		inputHints: def.inputHints,
 	};
 }
