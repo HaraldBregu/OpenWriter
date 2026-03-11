@@ -36,10 +36,12 @@ export default function ResourcesPage() {
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
-	const indexingTask = useTask<
-		{ workspacePath: string; resourcesPath: string },
-		{ indexedCount: number; failedIds: string[]; skippedCount: number; totalChunks: number }
-	>('index-resources', { workspacePath: workspacePath ?? '', resourcesPath: '' });
+	const indexingTask = useTaskListener<{
+		indexedCount: number;
+		failedIds: string[];
+		skippedCount: number;
+		totalChunks: number;
+	}>('index-resources');
 
 	const loading = status === 'idle' || status === 'loading';
 	const indexing = indexingTask.isRunning || indexingTask.isQueued;
