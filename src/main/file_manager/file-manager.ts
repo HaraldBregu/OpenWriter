@@ -414,6 +414,264 @@ export class FileManager {
 	}
 
 	// -------------------------------------------------------------------------
+	// Copy
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Copy a file from source to destination directory.
+	 * Generates a unique name if the file already exists.
+	 *
+	 * @param sourceFilePath - Path to the source file
+	 * @param destDir - Destination directory
+	 * @param onFileWritten - Optional callback when file is about to be written (used by watchers)
+	 * @returns File metadata for the copied file
+	 */
+	async copyFile(
+		sourceFilePath: string,
+		destDir: string,
+		onFileWritten?: (filePath: string) => void
+	): Promise<FileMetadata> {
+		const fileName = path.basename(sourceFilePath);
+		const destFilePath = await this.getUniqueFilePath(destDir, fileName);
+
+		try {
+			onFileWritten?.(destFilePath);
+			await fs.copyFile(sourceFilePath, destFilePath);
+			const stats = await fs.stat(destFilePath);
+			return this.createFileMetadata(path.basename(destFilePath), destFilePath, stats);
+		} catch (err) {
+			throw new Error(`Failed to copy file ${fileName}: ${(err as Error).message}`);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// Download
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Download a file from an HTTPS URL to a destination directory.
+	 * Enforces maximum file size limit to prevent disk space exhaustion.
+	 *
+	 * @param url - HTTPS URL to download from (must already be validated)
+	 * @param destDir - Destination directory
+	 * @param onFileWritten - Optional callback when file is about to be written
+	 * @returns File metadata for the downloaded file
+	 */
+	async downloadFile(
+		url: string,
+		destDir: string,
+		onFileWritten?: (filePath: string) => void
+	): Promise<FileMetadata> {
+		return new Promise((resolve, reject) => {
+			const urlObj = new URL(url);
+			let fileName = path.basename(urlObj.pathname) || `download-${Date.now()}`;
+
+			if (!path.extname(fileName)) {
+				fileName = `${fileName}.download`;
+			}
+
+			this.getUniqueFilePath(destDir, fileName)
+				.then((destFilePath) => {
+					const file = fs.open(destFilePath, 'w');
+
+					const request = https.get(url, (response) => {
+						if (response.statusCode !== 200) {
+							reject(new Error(`Failed to download file: HTTP ${response.statusCode}`));
+							return;
+						}
+
+						const contentLength = response.headers['content-length'];
+						if (contentLength && parseInt(contentLength, 10) > MAX_DOWNLOAD_SIZE_BYTES) {
+							reject(
+								new Error(
+									`File size (${contentLength} bytes) exceeds maximum allowed (${MAX_DOWNLOAD_SIZE_BYTES} bytes)`
+								)
+							);
+							response.destroy();
+							return;
+						}
+
+						file
+							.then(async (fileHandle) => {
+								onFileWritten?.(destFilePath);
+
+								const writeStream = fileHandle.createWriteStream();
+								let downloadedSize = 0;
+
+								response.on('data', (chunk: Buffer) => {
+									downloadedSize += chunk.length;
+									if (downloadedSize > MAX_DOWNLOAD_SIZE_BYTES) {
+										response.destroy();
+										writeStream.destroy();
+										reject(
+											new Error(
+												`Download exceeded maximum allowed size of ${MAX_DOWNLOAD_SIZE_BYTES} bytes`
+											)
+										);
+									}
+								});
+
+								response.pipe(writeStream);
+
+								writeStream.on('finish', async () => {
+									await fileHandle.close();
+
+									try {
+										const stats = await fs.stat(destFilePath);
+										const metadata = this.createFileMetadata(
+											path.basename(destFilePath),
+											destFilePath,
+											stats
+										);
+										resolve(metadata);
+									} catch (err) {
+										reject(
+											new Error(`Failed to get file stats: ${(err as Error).message}`)
+										);
+									}
+								});
+
+								writeStream.on('error', async (err) => {
+									await fileHandle.close();
+									try {
+										await fs.unlink(destFilePath);
+									} catch {
+										// Ignore cleanup errors
+									}
+									reject(new Error(`Failed to write downloaded file: ${err.message}`));
+								});
+							})
+							.catch((err) => {
+								reject(new Error(`Failed to create file: ${err.message}`));
+							});
+					});
+
+					request.on('error', (err) => {
+						reject(new Error(`Failed to download file: ${err.message}`));
+					});
+
+					request.setTimeout(DOWNLOAD_TIMEOUT_MS, () => {
+						request.destroy();
+						reject(new Error('Download timeout: request took longer than 30 seconds'));
+					});
+
+					request.end();
+				})
+				.catch(reject);
+		});
+	}
+
+	// -------------------------------------------------------------------------
+	// Delete
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Delete a file from disk.
+	 *
+	 * @param filePath - Path to the file to delete
+	 */
+	async deleteFile(filePath: string): Promise<void> {
+		try {
+			await fs.unlink(filePath);
+		} catch (err) {
+			throw new Error(`Failed to delete file: ${(err as Error).message}`);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// Unique path
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Get a unique file path by appending a counter if the file already exists.
+	 * Example: file.txt -> file (1).txt -> file (2).txt
+	 *
+	 * @param dir - Directory path
+	 * @param fileName - Desired file name
+	 * @returns Unique file path that doesn't exist
+	 */
+	async getUniqueFilePath(dir: string, fileName: string): Promise<string> {
+		const ext = path.extname(fileName);
+		const baseName = path.basename(fileName, ext);
+		let counter = 0;
+		let filePath = path.join(dir, fileName);
+
+		while (true) {
+			try {
+				await fs.access(filePath);
+				counter++;
+				filePath = path.join(dir, `${baseName} (${counter})${ext}`);
+			} catch {
+				return filePath;
+			}
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// Ensure directory
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Ensure a directory exists, creating it if necessary.
+	 *
+	 * @param dirPath - Directory path to ensure
+	 */
+	async ensureDirectory(dirPath: string): Promise<void> {
+		try {
+			await fs.mkdir(dirPath, { recursive: true });
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'EACCES') {
+				throw new Error(`Permission denied creating directory: ${dirPath}`);
+			}
+			throw new Error(`Failed to create directory: ${error.message}`);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// File metadata
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Create file metadata from filesystem stats.
+	 *
+	 * @param id - File ID (typically the basename)
+	 * @param filePath - Full path to the file
+	 * @param stats - Filesystem stats object
+	 * @returns File metadata
+	 */
+	createFileMetadata(
+		id: string,
+		filePath: string,
+		stats: { size: number; mtimeMs: number }
+	): FileMetadata {
+		const name = path.basename(filePath);
+		const mimeType = this.getMimeType(filePath);
+		const now = Date.now();
+
+		return {
+			id,
+			name,
+			path: filePath,
+			size: stats.size,
+			mimeType,
+			importedAt: now,
+			lastModified: Math.floor(stats.mtimeMs),
+		};
+	}
+
+	/**
+	 * Get MIME type from file extension.
+	 *
+	 * @param filePath - Path to the file
+	 * @returns MIME type string
+	 */
+	getMimeType(filePath: string): string {
+		const ext = path.extname(filePath).toLowerCase();
+		return MIME_TYPES[ext] || 'application/octet-stream';
+	}
+
+	// -------------------------------------------------------------------------
 	// Private filesystem helpers
 	// -------------------------------------------------------------------------
 
