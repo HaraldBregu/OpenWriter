@@ -43,6 +43,7 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 	onMoveToTrash,
 	onSearch,
 	onClearSearch,
+	onOpenFolder,
 }) => {
 	const { t } = useTranslation();
 	const [searchOpen, setSearchOpen] = useState(false);
