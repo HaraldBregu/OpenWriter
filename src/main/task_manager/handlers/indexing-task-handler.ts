@@ -1,7 +1,10 @@
 /**
  * IndexResourcesTaskHandler — indexes workspace resources into a vector store.
  *
- * Pipeline: load documents → extract text → chunk → embed → store.
+ * Pipeline: delete old store → load documents → extract text → chunk → embed → store.
+ *
+ * Every invocation performs a full re-index: the existing vector store folder
+ * is deleted before processing begins.
  *
  * All file paths are derived server-side from WorkspaceService to prevent
  * path traversal attacks from the renderer. The renderer only needs to
@@ -9,6 +12,7 @@
  * to resolve everything.
  */
 
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
@@ -20,10 +24,9 @@ import type { WorkspaceService } from '../../services/workspace';
 import { DocumentsService } from '../../services/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import { ExtractorRegistry, IndexingManifest, JsonVectorStore, chunkText } from '../../indexing';
+import { ExtractorRegistry, JsonVectorStore, chunkText } from '../../indexing';
 
 const RESOURCES_DIR = 'resources';
-// const VECTOR_STORE_DIR = '.openwriter';
 const VECTOR_STORE_SUBDIR = 'vector_store';
 
 /** Progress weight allocation for each pipeline phase. */
@@ -44,16 +47,13 @@ export interface IndexResourcesOutput {
 	indexedCount: number;
 	/** IDs that failed (if any). */
 	failedIds: string[];
-	/** Number of documents skipped (unchanged since last index). */
-	skippedCount: number;
 	/** Total chunks stored in the vector store. */
 	totalChunks: number;
 }
 
-export class IndexResourcesTaskHandler implements TaskHandler<
-	IndexResourcesInput,
-	IndexResourcesOutput
-> {
+export class IndexResourcesTaskHandler
+	implements TaskHandler<IndexResourcesInput, IndexResourcesOutput>
+{
 	readonly type = 'index-resources';
 
 	constructor(
@@ -105,13 +105,19 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		if (documents.length === 0) {
 			reporter.progress(100, 'No documents to index');
-			return { indexedCount: 0, failedIds: [], skippedCount: 0, totalChunks: 0 };
+			return { indexedCount: 0, failedIds: [], totalChunks: 0 };
 		}
 
 		throwIfAborted(signal);
 
-		// Load manifest and vector store
-		const manifest = await IndexingManifest.load(vectorStorePath);
+		// Delete existing vector store folder for a clean re-index
+		const resolvedStorePath = path.resolve(vectorStorePath);
+		const resolvedWorkspace = path.resolve(workspacePath);
+		if (!resolvedStorePath.startsWith(resolvedWorkspace + path.sep)) {
+			throw new Error('Vector store path is outside the workspace');
+		}
+		await fs.rm(vectorStorePath, { recursive: true, force: true });
+		logger?.info('IndexResources', 'Cleared existing vector store');
 
 		// Resolve embedding model via ProviderResolver
 		const storeService =
@@ -123,19 +129,11 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			apiKey: resolved.apiKey,
 		});
 
-		const vectorStore = await JsonVectorStore.load(vectorStorePath, embeddingModel);
-
-		// Clean up stale entries (files that no longer exist)
-		const currentFileIds = new Set(documents.map((d) => d.id));
-		const staleIds = manifest.getStaleEntries(currentFileIds);
-		for (const staleId of staleIds) {
-			vectorStore.removeByMetadata('fileId', staleId);
-			manifest.removeEntry(staleId);
-		}
+		// Fresh in-memory vector store (no loading from disk)
+		const vectorStore = new JsonVectorStore(embeddingModel);
 
 		const failedIds: string[] = [];
 		let indexedCount = 0;
-		let skippedCount = 0;
 		const total = documents.length;
 
 		// Phase 1: Extract text and chunk documents
@@ -143,9 +141,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		const pendingChunks: Array<{
 			fileId: string;
 			filePath: string;
-			lastModified: number;
 			chunks: import('@langchain/core/documents').Document[];
-			contentHash: string;
 		}> = [];
 
 		for (let i = 0; i < total; i++) {
@@ -153,14 +149,6 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 			const doc = documents[i];
 			const ext = path.extname(doc.name).toLowerCase();
-
-			// Check if document needs re-indexing
-			if (!manifest.needsReindex(doc.id, doc.lastModified)) {
-				skippedCount++;
-				const percent = Math.round(((i + 1) / total) * PHASE_EXTRACT);
-				reporter.progress(percent, `Skipped unchanged: ${doc.name}`);
-				continue;
-			}
 
 			const extractor = this.extractorRegistry.resolve(ext);
 			if (!extractor) {
@@ -184,14 +172,10 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 					source: doc.path,
 				});
 
-				const contentHash = await IndexingManifest.hashFile(doc.path);
-
 				pendingChunks.push({
 					fileId: doc.id,
 					filePath: doc.path,
-					lastModified: doc.lastModified,
 					chunks,
-					contentHash,
 				});
 
 				const percent = Math.round(((i + 1) / total) * PHASE_EXTRACT);
@@ -217,19 +201,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 				const pending = pendingChunks[i];
 
 				try {
-					// Remove old chunks for this file before adding new ones
-					vectorStore.removeByMetadata('fileId', pending.fileId);
-
-					// Add new chunks with embeddings
 					await vectorStore.addDocuments(pending.chunks);
-
-					// Update manifest
-					manifest.setIndexed(
-						pending.fileId,
-						pending.lastModified,
-						pending.contentHash,
-						pending.chunks.length
-					);
 
 					indexedCount++;
 					const percent =
@@ -251,20 +223,19 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		throwIfAborted(signal);
 
-		// Phase 3: Save vector store and manifest to disk
+		// Phase 3: Save vector store to disk
 		reporter.progress(PHASE_EXTRACT + PHASE_EMBED, 'Saving vector store');
 		await vectorStore.save(vectorStorePath);
-		await manifest.save(vectorStorePath);
 
 		const totalChunks = vectorStore.size;
 		reporter.progress(100, 'Indexing complete');
 
 		logger?.info(
 			'IndexResources',
-			`Indexing complete: ${indexedCount} indexed, ${skippedCount} skipped, ${failedIds.length} failed, ${totalChunks} total chunks`
+			`Indexing complete: ${indexedCount} indexed, ${failedIds.length} failed, ${totalChunks} total chunks`
 		);
 
-		return { indexedCount, failedIds, skippedCount, totalChunks };
+		return { indexedCount, failedIds, totalChunks };
 	}
 }
 
