@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { WorkspaceService } from './workspace';
+import type { WorkspaceService } from './workspace-service';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
-import type { LoggerService } from './logger';
+import type { LoggerService } from '../services/logger';
 
 // ---------------------------------------------------------------------------
 // Types
