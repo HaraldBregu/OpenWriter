@@ -306,7 +306,9 @@
 		"tryAgain": "Try Again",
 		"goHome": "Go Home",
 		"restartApp": "Restart App",
-		"agents": "Agents"
+		"agents": "Agents",
+		"openFolder": "Open folder",
+		"search": "Search"
 	},
 	"sidebar": {
 		"write": "Write",
