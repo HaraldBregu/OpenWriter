@@ -233,6 +233,60 @@ export class WorkspaceManager implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Filesystem
+	// -------------------------------------------------------------------------
+
+	async readFile(params: FsReadFileParams): Promise<string> {
+		this.validateFsParams(params, ['filePath']);
+		const manager = this.buildFileSystemManager();
+		return manager.readFile(params.filePath, { encoding: params.encoding });
+	}
+
+	async writeFile(params: FsWriteFileParams): Promise<void> {
+		this.validateFsParams(params, ['filePath', 'content']);
+		if (typeof params.content !== 'string') {
+			throw new Error('fs:write-file: content must be a string');
+		}
+		const manager = this.buildFileSystemManager();
+		await manager.writeFile(params.filePath, params.content, {
+			encoding: params.encoding,
+			atomic: params.atomic,
+			createParents: params.createParents,
+		});
+	}
+
+	async createFile(params: FsCreateFileParams): Promise<void> {
+		this.validateFsParams(params, ['filePath']);
+		if (params.content !== undefined && typeof params.content !== 'string') {
+			throw new Error('fs:create-file: content must be a string when provided');
+		}
+		const manager = this.buildFileSystemManager();
+		await manager.createFile(params.filePath, {
+			content: params.content,
+			encoding: params.encoding,
+			failIfExists: params.failIfExists,
+			createParents: params.createParents,
+		});
+	}
+
+	async createFolder(params: FsCreateFolderParams): Promise<void> {
+		this.validateFsParams(params, ['folderPath']);
+		const manager = this.buildFileSystemManager();
+		await manager.createFolder(params.folderPath, {
+			recursive: params.recursive,
+			failIfExists: params.failIfExists,
+		});
+	}
+
+	async rename(params: FsRenameParams): Promise<FsRenameResult> {
+		this.validateFsParams(params, ['oldPath', 'newPath']);
+		const manager = this.buildFileSystemManager();
+		return manager.renameEntry(params.oldPath, params.newPath, {
+			failIfExists: params.failIfExists,
+		});
+	}
+
+	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
 
