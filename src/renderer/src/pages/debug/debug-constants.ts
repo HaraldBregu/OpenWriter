@@ -16,8 +16,6 @@ export const DEMO_VARIANTS: {
 	{ variant: 'error', label: 'Error', icon: AlertTriangle, description: 'Fails at 60 %' },
 ];
 
-export const AGENT_DEMO_PROMPT = 'Tell me an interesting fact about technology';
-
 export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = {
 	queued: {
 		label: 'Queued',
