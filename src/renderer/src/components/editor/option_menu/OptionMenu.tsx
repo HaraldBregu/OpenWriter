@@ -126,6 +126,7 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const slashPosRef = useRef<number | null>(null);
+	const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
 	const queryRef = useRef(query);
 	queryRef.current = query;
