@@ -37,6 +37,7 @@ export default function ResourcesPage() {
 	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
+	const indexingInfo = useAppSelector(selectIndexingInfo);
 
 	const indexingTask = useTaskListener<{
 		indexedCount: number;
