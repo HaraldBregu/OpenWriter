@@ -44,7 +44,7 @@ export function useCreateWriting(options?: UseCreateWritingOptions): UseCreateWr
 
 		try {
 			const result = await window.workspace.saveOutput({
-				type: 'writings',
+				type: 'documents',
 				content: '',
 				metadata: { title: '' },
 			});
