@@ -124,13 +124,9 @@ export class WorkspaceIpc implements IpcModule {
 				const currentWorkspace = workspace.getCurrent();
 				if (!currentWorkspace) return null;
 
-				const infoPath = require('node:path').join(
-					currentWorkspace,
-					'data',
-					'indexing-info.json'
-				);
+				const infoPath = path.join(currentWorkspace, 'data', 'indexing-info.json');
 				try {
-					const content = await require('node:fs/promises').readFile(infoPath, 'utf-8');
+					const content = await fsPromises.readFile(infoPath, 'utf-8');
 					return JSON.parse(content);
 				} catch {
 					return null;
