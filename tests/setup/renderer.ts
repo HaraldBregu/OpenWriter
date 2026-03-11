@@ -143,28 +143,6 @@ Object.defineProperty(window, 'wm', {
 	configurable: true,
 });
 
-Object.defineProperty(window, 'fs', {
-	value: {
-		openFile: jest.fn().mockResolvedValue(null),
-		readFile: jest.fn().mockResolvedValue({
-			filePath: '/test/file.txt',
-			fileName: 'file.txt',
-			content: '',
-			size: 0,
-			lastModified: Date.now(),
-		}),
-		saveFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
-		writeFile: jest.fn().mockResolvedValue({ success: true, filePath: '/test/file.txt' }),
-		selectDirectory: jest.fn().mockResolvedValue(null),
-		watchDirectory: jest.fn().mockResolvedValue(true),
-		unwatchDirectory: jest.fn().mockResolvedValue(true),
-		getWatched: jest.fn().mockResolvedValue([]),
-		onWatchEvent: jest.fn().mockReturnValue(jest.fn()),
-	},
-	writable: true,
-	configurable: true,
-});
-
 Object.defineProperty(window, 'dialog', {
 	value: {
 		open: jest.fn().mockResolvedValue({ type: 'open', timestamp: Date.now(), data: {} }),

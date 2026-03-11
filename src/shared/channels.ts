@@ -114,24 +114,6 @@ export const TaskChannels = {
 	queueStatus: 'task:queue-status',
 } as const;
 
-/**
- * IPC channel names for sandboxed filesystem operations.
- * All paths are validated in the main process against the PathValidator allowlist
- * plus the current workspace root before any I/O is performed.
- */
-export const FsChannels = {
-	/** Read a text file and return its content as a string. */
-	readFile: 'fs:read-file',
-	/** Write (or atomically overwrite) a text file. */
-	writeFile: 'fs:write-file',
-	/** Create a new file, optionally with initial content. */
-	createFile: 'fs:create-file',
-	/** Create a directory, optionally with recursive ancestor creation. */
-	createFolder: 'fs:create-folder',
-	/** Rename or move a file or directory within allowed directories. */
-	rename: 'fs:rename',
-} as const;
-
 export const AppChannels = {
 	playSound: 'play-sound',
 	setTheme: 'set-theme',
