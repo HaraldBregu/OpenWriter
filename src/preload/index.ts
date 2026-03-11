@@ -322,6 +322,12 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.directoriesChanged, callback);
 	},
 	// -------------------------------------------------------------------------
+	// Indexing info
+	// -------------------------------------------------------------------------
+	getIndexingInfo: () => {
+		return typedInvokeUnwrap(WorkspaceChannels.getIndexingInfo);
+	},
+	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
 	// -------------------------------------------------------------------------
 	saveOutput: (input: {
