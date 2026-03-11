@@ -25,9 +25,12 @@ import { DocumentsService } from '../../services/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, JsonVectorStore, chunkText } from '../../indexing';
+import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';
-const VECTOR_STORE_SUBDIR = 'vector_store';
+const DATA_DIR = 'data';
+const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');
+const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /** Progress weight allocation for each pipeline phase. */
 const PHASE_EXTRACT = 40;
