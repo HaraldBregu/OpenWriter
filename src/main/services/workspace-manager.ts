@@ -368,4 +368,26 @@ export class WorkspaceManager implements Disposable {
 			throw new Error('Invalid metadata: must be an object');
 		}
 	}
+
+	private buildFileSystemManager(): FileSystemManager {
+		const extraRoots: string[] = [];
+		const workspacePath = this.workspace.getCurrent();
+		if (workspacePath) {
+			extraRoots.push(workspacePath);
+		}
+		return new FileSystemManager(this.logger, extraRoots);
+	}
+
+	private validateFsParams(params: unknown, required: string[]): void {
+		if (params === null || typeof params !== 'object' || Array.isArray(params)) {
+			throw new Error('Invalid payload: expected a plain object');
+		}
+		const record = params as Record<string, unknown>;
+		for (const key of required) {
+			const value = record[key];
+			if (typeof value !== 'string' || value.trim().length === 0) {
+				throw new Error(`Invalid payload: "${key}" must be a non-empty string`);
+			}
+		}
+	}
 }
