@@ -79,14 +79,7 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
-	agentRegistry.register(StoryWriterAgent);
-	agentRegistry.register(TextCompleterAgent);
-	agentRegistry.register(ContentReviewAgent);
-	agentRegistry.register(SummarizerAgent);
-	agentRegistry.register(ToneAdjusterAgent);
-	agentRegistry.register(DemoAgent);
 	agentRegistry.register(TextContinuationAgent);
-	agentRegistry.register(SentenceCompleterAgent);
 
 	// Model registry — role-based model/provider assignments
 	const modelRegistry = container.register('modelRegistry', new ModelRegistry());
