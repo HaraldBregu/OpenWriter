@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
-import type { WorkspaceService } from '../services/workspace';
+import type { WorkspaceService } from './workspace-service';
 import type { FileMetadata } from '../file_manager';
-import type { WorkspaceMetadataService } from '../services/workspace-metadata';
-import type { DocumentsWatcherService } from '../services/documents-watcher';
+import type { WorkspaceMetadataService } from './workspace-metadata';
+import type { DocumentsWatcherService } from './documents-watcher';
 import type {
 	OutputFilesService,
 	OutputFile,
@@ -13,9 +13,9 @@ import type {
 	SaveOutputFileInput,
 	SaveOutputFileResult,
 	UpdateOutputFileInput,
-} from '../services/output-files';
-import { VALID_OUTPUT_TYPES } from '../services/output-files';
-import { DocumentsService } from '../services/documents';
+} from './output-files';
+import { VALID_OUTPUT_TYPES } from './output-files';
+import { DocumentsService } from './documents';
 import type { LoggerService } from '../services/logger';
 import type {
 	DirectoryEntry,
