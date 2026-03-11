@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	Download,
 	Eye,
+	FolderOpen,
 	Share2,
 	MoreHorizontal,
 	Copy,
