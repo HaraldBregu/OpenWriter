@@ -60,8 +60,7 @@ export function TasksTab() {
 							</button>
 						))}
 					</div>
-
-					</div>
+				</div>
 
 				<div className="flex-1 overflow-auto">
 					{tasks.length === 0 ? (

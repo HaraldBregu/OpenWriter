@@ -29,4 +29,3 @@ export async function submitDemoTask(variant: DemoVariant): Promise<void> {
 		store.dispatch(taskAdded({ taskId: result.data.taskId, type: 'demo' }));
 	}
 }
-
