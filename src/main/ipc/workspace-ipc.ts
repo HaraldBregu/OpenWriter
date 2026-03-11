@@ -132,6 +132,14 @@ export class WorkspaceIpc implements IpcModule {
 			}, WorkspaceChannels.openDataFolder)
 		);
 
+		ipcMain.handle(
+			WorkspaceChannels.openResourcesFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const resourcesDir = this.mgr(event, container).getResourcesFolderPath();
+				await shell.openPath(resourcesDir);
+			}, WorkspaceChannels.openResourcesFolder)
+		);
+
 		// -------------------------------------------------------------------------
 		// Documents — dialog stays here, import logic in manager
 		// -------------------------------------------------------------------------
