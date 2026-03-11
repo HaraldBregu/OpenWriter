@@ -19,14 +19,14 @@ import {
  *   - Ensure documents directory exists
  *   - Validate file types
  *
- * This service delegates actual file operations to FileManagementService
+ * This service delegates actual file operations to FileManager
  * and coordinates with DocumentsWatcherService to prevent false change events.
  */
 export class DocumentsService {
 	private readonly DOCS_DIR_NAME = 'resources';
 
 	constructor(
-		private fileManagement: FileManagementService,
+		private fileManagement: FileManager,
 		private watcher: DocumentsWatcherService | null,
 		private logger?: LoggerService
 	) {}
