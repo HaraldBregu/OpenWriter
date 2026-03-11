@@ -35,13 +35,13 @@ const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /**
- * WorkspaceManager is a Facade over all workspace domain services.
+ * Workspace is a Facade over all workspace domain services.
  *
  * It centralizes workspace operations so that the IPC layer becomes a thin
  * pass-through with no business logic. Electron-specific APIs (dialog, shell)
  * remain in the IPC layer; this class has no Electron dependency.
  */
-export class WorkspaceManager implements Disposable {
+export class Workspace implements Disposable {
 	private readonly documents: DocumentsService;
 
 	constructor(
@@ -68,7 +68,7 @@ export class WorkspaceManager implements Disposable {
 	}
 
 	setCurrent(workspacePath: string): void {
-		this.logger.info('WorkspaceManager', `Setting workspace: ${workspacePath}`);
+		this.logger.info('Workspace', `Setting workspace: ${workspacePath}`);
 		this.workspace.setCurrent(workspacePath);
 	}
 
@@ -82,7 +82,7 @@ export class WorkspaceManager implements Disposable {
 
 	removeRecent(workspacePath: string): void {
 		this.workspace.removeRecent(workspacePath);
-		this.logger.info('WorkspaceManager', `Removed from recent: ${workspacePath}`);
+		this.logger.info('Workspace', `Removed from recent: ${workspacePath}`);
 	}
 
 	// -------------------------------------------------------------------------
@@ -174,13 +174,13 @@ export class WorkspaceManager implements Disposable {
 	async saveOutput(input: SaveOutputFileInput): Promise<SaveOutputFileResult> {
 		this.validateOutputInput(input);
 		const result = await this.outputFiles.save(input);
-		this.logger.info('WorkspaceManager', `Saved output file for type ${input.type}: ${result.id}`);
+		this.logger.info('Workspace', `Saved output file for type ${input.type}: ${result.id}`);
 		return result;
 	}
 
 	async loadOutputs(): Promise<OutputFile[]> {
 		const files = await this.outputFiles.loadAll();
-		this.logger.info('WorkspaceManager', `Loaded ${files.length} output files`);
+		this.logger.info('Workspace', `Loaded ${files.length} output files`);
 		return files;
 	}
 
@@ -188,7 +188,7 @@ export class WorkspaceManager implements Disposable {
 		this.validateOutputType(outputType);
 		const files = await this.outputFiles.loadByType(outputType as OutputType);
 		this.logger.info(
-			'WorkspaceManager',
+			'Workspace',
 			`Loaded ${files.length} output files for type "${outputType}"`
 		);
 		return files;
@@ -198,7 +198,7 @@ export class WorkspaceManager implements Disposable {
 		this.validateOutputTypeAndId(params);
 		const file = await this.outputFiles.loadOne(params.type as OutputType, params.id);
 		this.logger.info(
-			'WorkspaceManager',
+			'Workspace',
 			file
 				? `Loaded output file: ${params.type}/${params.id}`
 				: `Output file not found: ${params.type}/${params.id}`
@@ -217,19 +217,19 @@ export class WorkspaceManager implements Disposable {
 			content: params.content,
 			metadata: params.metadata as UpdateOutputFileInput['metadata'],
 		});
-		this.logger.info('WorkspaceManager', `Updated output file: ${params.type}/${params.id}`);
+		this.logger.info('Workspace', `Updated output file: ${params.type}/${params.id}`);
 	}
 
 	async deleteOutput(params: { type: string; id: string }): Promise<void> {
 		this.validateOutputTypeAndId(params);
 		await this.outputFiles.delete(params.type as OutputType, params.id);
-		this.logger.info('WorkspaceManager', `Deleted output file: ${params.type}/${params.id}`);
+		this.logger.info('Workspace', `Deleted output file: ${params.type}/${params.id}`);
 	}
 
 	async trashOutput(params: { type: string; id: string }): Promise<void> {
 		this.validateOutputTypeAndId(params);
 		await this.outputFiles.trash(params.type as OutputType, params.id);
-		this.logger.info('WorkspaceManager', `Trashed output file: ${params.type}/${params.id}`);
+		this.logger.info('Workspace', `Trashed output file: ${params.type}/${params.id}`);
 	}
 
 	// -------------------------------------------------------------------------
