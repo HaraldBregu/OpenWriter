@@ -170,6 +170,10 @@ export interface WorkspaceApi {
 	markDirectoryIndexed: (id: string, isIndexed: boolean) => Promise<boolean>;
 	onDirectoriesChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void;
 	// -------------------------------------------------------------------------
+	// Indexing info
+	// -------------------------------------------------------------------------
+	getIndexingInfo: () => Promise<IndexingInfo | null>;
+	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
 	// -------------------------------------------------------------------------
 	saveOutput: (input: SaveOutputInput) => Promise<SaveOutputResult>;
