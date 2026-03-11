@@ -9,6 +9,7 @@ import {
 	AppAlertDialogFooter,
 	AppAlertDialogHeader,
 	AppAlertDialogTitle,
+	AppButton,
 } from '../../components/app';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
@@ -140,7 +141,6 @@ export default function ResourcesPage() {
 							onClick={handleOpenDataFolder}
 						>
 							<FolderOpen className="h-3.5 w-3.5" />
-							Open data folder
 						</button>
 					</div>
 				</div>

@@ -147,7 +147,7 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected.');
 				}
 
-				const dataDir = path.join(currentWorkspace, 'data', 'vector_store');
+				const dataDir = path.join(currentWorkspace, 'data');
 				if (!fs.existsSync(dataDir) || !fs.statSync(dataDir).isDirectory()) {
 					throw new Error('Data folder does not exist. Run indexing first.');
 				}
