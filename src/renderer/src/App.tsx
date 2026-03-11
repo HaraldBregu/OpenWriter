@@ -58,7 +58,7 @@ if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === '
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const DocumentPage = lazy(() => import('./pages/document/DocumentPage'));
-const DebugPage = lazy(() => import('./pages/DebugPage'));
+const DebugPage = lazy(() => import('./pages/debug/DebugPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
