@@ -23,7 +23,7 @@ export type { WindowScopedServiceDefinition } from './core/window-scoped-service
 export type { IpcModule } from './ipc/ipc-module';
 
 // ---- Service types -------------------------------------------------------
-export type { WorkspaceState } from './services/workspace';
+export type { WorkspaceState } from './workspace/workspace-service';
 export type { LogLevel, LoggerOptions } from './services/logger';
 export type { WorkspaceInfo, StoreSchema } from './services/store';
 
