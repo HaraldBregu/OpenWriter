@@ -29,7 +29,7 @@ if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === 'fun
 	writingsInitialized = true;
 	store.dispatch(loadWritings());
 	window.workspace.onOutputFileChange((event) => {
-		if (event.outputType !== 'writings') return;
+		if (event.outputType !== 'documents') return;
 		if (event.type === 'changed') {
 			store.dispatch(refreshWriting(event.fileId));
 		} else if (event.type === 'removed') {
