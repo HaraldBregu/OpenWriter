@@ -10,27 +10,11 @@ import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { ModelRole } from '../registry/model-registry';
 
 // ---------------------------------------------------------------------------
-// Default configuration — standalone shape for agent definitions
-// ---------------------------------------------------------------------------
-
-export interface AgentDefaultConfig {
-	providerId?: string;
-	modelId?: string;
-	systemPrompt?: string;
-	temperature?: number;
-	maxTokens?: number;
-	maxHistoryMessages?: number;
-	metadata?: Record<string, unknown>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
-}
-
-// ---------------------------------------------------------------------------
 // Core definition
 // ---------------------------------------------------------------------------
 
 export interface AgentDefinition {
-	/** Unique machine-readable identifier, e.g. 'story-writer' */
+	/** Unique machine-readable identifier, e.g. 'text-continuation' */
 	id: string;
 	/** Human-readable display name shown in the UI */
 	name: string;
@@ -41,18 +25,9 @@ export interface AgentDefinition {
 	/**
 	 * Optional functional role for model selection via ModelRegistry.
 	 * When set, the registry's provider/model/temperature for this role
-	 * are used as fallbacks when the agent's own defaultConfig does not
-	 * specify them.
+	 * are used as fallbacks.
 	 */
 	role?: ModelRole;
-	/**
-	 * Default session configuration.
-	 *
-	 * `providerId` is intentionally optional here: callers must supply a
-	 * concrete `providerId` (e.g. resolved from the user's active provider
-	 * setting) when creating a live session from this definition.
-	 */
-	defaultConfig: AgentDefaultConfig;
 	/** Optional hints consumed by the UI to render the input form correctly. */
 	inputHints?: {
 		label: string;

@@ -18,7 +18,7 @@
  */
 
 import type { AgentDefinition } from '../../core/definition';
-import { buildTextContinuationGraph } from './graph';
+import { buildGraph } from './graph';
 
 // ---------------------------------------------------------------------------
 // System prompt (used as fallback by AgentExecutor plain-chat path)
@@ -45,7 +45,7 @@ Requirements:
 
 const definition: AgentDefinition = {
 	id: 'text-continuation',
-	name: 'Text Continuation',
+	name: 'Writer Assistant',
 	description:
 		'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
 	category: 'writing',
@@ -61,7 +61,7 @@ const definition: AgentDefinition = {
 			'Paste your full text with <<INSERT_HERE>> at the insertion point, followed by any constraints (word count, topic, perspective)…',
 		multiline: true,
 	},
-	buildGraph: buildTextContinuationGraph,
+	buildGraph,
 };
 
 export { definition as TextContinuationAgent };

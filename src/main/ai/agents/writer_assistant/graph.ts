@@ -16,7 +16,7 @@ import { makeGenerateInsertionNode } from './nodes';
 // Graph factory
 // ---------------------------------------------------------------------------
 
-export function buildTextContinuationGraph(model: BaseChatModel) {
+export function buildGraph(model: BaseChatModel) {
 	const graph = new StateGraph(GraphState)
 		.addNode('generate_insertion', makeGenerateInsertionNode(model))
 		.addEdge(START, 'generate_insertion')
