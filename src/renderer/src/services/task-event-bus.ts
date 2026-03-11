@@ -166,6 +166,30 @@ export function getTaskSnapshot(taskId: string): TaskSnapshot | undefined {
 }
 
 /**
+ * subscribeToTaskType — register a callback that fires when a task of a given
+ * type is queued. Returns an unsubscribe function.
+ */
+export function subscribeToTaskType(taskType: string, cb: (taskId: string) => void): () => void {
+	ensureListening();
+
+	let set = typeSubscribers.get(taskType);
+	if (!set) {
+		set = new Set();
+		typeSubscribers.set(taskType, set);
+	}
+	set.add(cb);
+
+	return () => {
+		const s = typeSubscribers.get(taskType);
+		if (!s) return;
+		s.delete(cb);
+		if (s.size === 0) {
+			typeSubscribers.delete(taskType);
+		}
+	};
+}
+
+/**
  * Seed the cumulative `content` field for a task before streaming begins.
  * Call this with the original text so that streamed tokens are appended to it.
  */
