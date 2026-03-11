@@ -81,6 +81,16 @@
   workspace-get-current both exist; subtle semantic difference (global store vs window-scoped service)
   but confusing at the call site
 
+## WorkspaceManager Facade (designed, not yet implemented)
+- Pattern: Facade — NOT Mediator (services don't communicate through IPC; there's no cross-coupling to untangle)
+- File: `src/main/services/workspace-manager.ts` — window-scoped, no Electron/IPC imports, fully testable
+- Registered in `WindowScopedServiceFactory` as 'workspaceManager' AFTER all deps (metadata, outputFiles, documentsWatcher)
+- Requires extending `WindowScopedServiceDefinition.factory` context with `windowContainer: ServiceContainer`
+- `WindowContext.createAndRegisterAll` passes `{ ...context, windowContainer: container }` to factory functions
+- `DocumentsService` is still created ad-hoc inside `buildDocumentsService()` — it is not window-scoped
+- `WorkspaceIpc` becomes ~100 lines: every handler is `return this.mgr(event, container).method(args)`
+- Private `mgr()` helper in `WorkspaceIpc` wraps the `getWindowService<WorkspaceManager>` call
+
 ## Links to Detail Files
 - `theme-pattern.md` — full analysis of theme system pattern decision
 - `main-process-patterns.md` — detailed pattern analysis of src/main/ (see analysis in conversation)
