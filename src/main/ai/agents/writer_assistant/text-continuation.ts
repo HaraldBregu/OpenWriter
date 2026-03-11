@@ -31,12 +31,6 @@ const definition: AgentDefinition = {
 		'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
 	category: 'writing',
 	role: 'completer',
-	inputHints: {
-		label: 'Document with insertion point',
-		placeholder:
-			'Paste your full text with <<INSERT_HERE>> at the insertion point, followed by any constraints (word count, topic, perspective)…',
-		multiline: true,
-	},
 	buildGraph,
 };
 
