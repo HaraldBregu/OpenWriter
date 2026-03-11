@@ -16,7 +16,7 @@
 import { BrowserWindow } from 'electron';
 import { ServiceContainer, type EventBus } from './index';
 import { StoreService } from '../services/store';
-import { WorkspaceService } from '../services/workspace';
+import { WorkspaceService } from '../workspace/workspace-service';
 import {
 	createDefaultWindowScopedServiceFactory,
 	type WindowScopedServiceFactory,
