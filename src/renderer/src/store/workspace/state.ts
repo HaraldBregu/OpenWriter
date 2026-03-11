@@ -20,6 +20,8 @@ export interface WorkspaceState {
 	resourcesError: string | null;
 	/** Whether a file import operation is in progress */
 	importing: boolean;
+	/** Indexing metadata from the last successful indexing run */
+	indexingInfo: IndexingInfo | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
