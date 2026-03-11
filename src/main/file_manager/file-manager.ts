@@ -13,7 +13,12 @@ import type {
 	RenameOptions,
 	RenameResult,
 } from './types';
-import { MAX_READ_SIZE_BYTES, MAX_DOWNLOAD_SIZE_BYTES, DOWNLOAD_TIMEOUT_MS, MIME_TYPES } from './constants';
+import {
+	MAX_READ_SIZE_BYTES,
+	MAX_DOWNLOAD_SIZE_BYTES,
+	DOWNLOAD_TIMEOUT_MS,
+	MIME_TYPES,
+} from './constants';
 import { asErrno } from './errors';
 import { assertPathSafe, assertValidName, assertValidEncoding } from './validators';
 
@@ -525,9 +530,7 @@ export class FileManager {
 										);
 										resolve(metadata);
 									} catch (err) {
-										reject(
-											new Error(`Failed to get file stats: ${(err as Error).message}`)
-										);
+										reject(new Error(`Failed to get file stats: ${(err as Error).message}`));
 									}
 								});
 
