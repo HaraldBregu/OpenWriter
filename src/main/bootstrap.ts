@@ -63,7 +63,7 @@ export function bootstrapServices(): BootstrapResult {
 	// Register services (order matters for dependencies)
 	const storeService = container.register('store', new StoreService());
 
-	container.register('fileManagement', new FileManagementService());
+	container.register('fileManagement', new FileManager());
 
 	// REMOVED: WorkspaceService, WorkspaceMetadataService, FileWatcherService, DocumentsWatcherService
 	// These services are now window-scoped and created per-window by WindowContextManager
