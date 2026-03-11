@@ -22,7 +22,14 @@ import type {
 	DirectoryAddManyResult,
 	DirectoryValidationResult,
 	IndexingInfo,
+	FsReadFileParams,
+	FsWriteFileParams,
+	FsCreateFileParams,
+	FsCreateFolderParams,
+	FsRenameParams,
+	FsRenameResult,
 } from '../../shared/types';
+import { FileSystemManager } from '../shared/file-system-manager';
 
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
