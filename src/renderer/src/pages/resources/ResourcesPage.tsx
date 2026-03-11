@@ -29,7 +29,6 @@ import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
 
 const RESOURCES_DIR = 'resources';
-const VECTOR_STORE_SUBDIR = 'data/vector_store';
 
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
