@@ -103,7 +103,7 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 			)}
 
 			{/* Header */}
-			<div className="flex items-center justify-between px-8 py-5 border-b border-border shrink-0">
+			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
 					<PenLine className="h-4 w-4 text-blue-500 shrink-0" />
 					<input
