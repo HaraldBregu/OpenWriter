@@ -1,22 +1,19 @@
 /**
- * Graph nodes for the TextContinuation agent.
+ * Graph nodes for the Writer Assistant agent.
  *
- * Each exported factory receives the LLM model and returns a LangGraph-compatible
- * node function.  Keeping nodes in their own file makes the graph definition
- * (graph.ts) a pure wiring concern.
+ * Each exported node function receives the current graph state and returns
+ * a partial state update. Keeping nodes in their own file makes the graph
+ * definition (graph.ts) a pure wiring concern.
  */
 
-import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { TextContinuationState } from './state';
+import { ChatOpenAI } from '@langchain/openai';
+import type { WriterState } from './state';
 
 // ---------------------------------------------------------------------------
-// Constants
+// Prompts
 // ---------------------------------------------------------------------------
 
-const INSERT_MARKER = '<<INSERT_HERE>>';
-
-const systemPromptBase = new SystemMessage(`
+const SYSTEM_PROMPT = `
 You are a writing continuation assistant.
 
 # Role
@@ -42,65 +39,49 @@ Your job is to continue writing from where the user's text left off. You receive
 - Do not add titles, headers, labels, or commentary.
 - Do not explain what you are doing.
 - Your response must start exactly where the input text left off — output only the new continuation, nothing else.
-`);
+`;
 
-const shortContinuationPrompt = new SystemMessage(`
+const SHORT_CONTINUATION_PROMPT = `
 # Length constraint
 Write a maximum of 10–15 words to continue the text. Be concise and precise.
-`);
+`;
+
+const MEDIUM_CONTINUATION_PROMPT = `
+# Length constraint
+Write a maximum of 25–30 words to continue the text. Provide more detail and depth while staying focused.
+`;
+
+const LONG_CONTINUATION_PROMPT = `
+# Length constraint
+Write a maximum of 50–60 words to continue the text. Provide rich detail, depth, and nuance while staying focused.
+`;
+
+const LENGTH_PROMPTS: Record<string, string> = {
+	short: SHORT_CONTINUATION_PROMPT,
+	medium: MEDIUM_CONTINUATION_PROMPT,
+	long: LONG_CONTINUATION_PROMPT,
+};
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Node: continue_writing
 // ---------------------------------------------------------------------------
 
-/** Extract the raw user text from the LangGraph message list. */
-function extractUserText(state: TextContinuationState): string {
-	const userMsg = state.messages.find(
-		(m) => 'getType' in m && typeof m.getType === 'function' && m.getType() === 'human'
-	) as HumanMessage | undefined;
-	return userMsg ? String(userMsg.content) : '';
-}
+export async function continueWritingNode(
+	state: typeof WriterState.State
+): Promise<Partial<typeof WriterState.State>> {
+	const model = new ChatOpenAI({
+		model: 'gpt-4o',
+		temperature: 0.7,
+	});
 
-/** Split the user prompt around the <<INSERT_HERE>> marker. */
-function splitAtMarker(text: string): { before: string; after: string } {
-	const idx = text.indexOf(INSERT_MARKER);
-	if (idx === -1) {
-		return { before: text.trim(), after: '' };
-	}
-	return {
-		before: text.slice(0, idx).trim(),
-		after: text.slice(idx + INSERT_MARKER.length).trim(),
-	};
-}
+	const messages: { role: 'system' | 'user'; content: string }[] = [
+		{ role: 'system', content: SYSTEM_PROMPT },
+		{ role: 'system', content: LENGTH_PROMPTS[state.contentLength] ?? SHORT_CONTINUATION_PROMPT },
+		{ role: 'user', content: `<content>${state.content}</content>` },
+	];
 
-// ---------------------------------------------------------------------------
-// Node: generate_insertion
-// ---------------------------------------------------------------------------
+	const response = await model.invoke(messages);
+	const completion = typeof response.content === 'string' ? response.content : '';
 
-/**
- * Splits the document at the marker, builds a self-contained prompt, and
- * returns only the final insertion prose.
- */
-export function makeGenerateInsertionNode(model: BaseChatModel) {
-	return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
-
-		const userText = extractUserText(state);
-		const { before, after } = splitAtMarker(userText);
-
-		const generationMessages = [
-			systemPromptBase,
-			shortContinuationPrompt,
-			new HumanMessage(
-				'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
-			),
-		];
-
-		const response = await model.invoke(generationMessages);
-		const insertion = typeof response.content === 'string' ? response.content : '';
-
-		return {
-			insertion,
-			messages: [new AIMessage(insertion)],
-		};
-	};
+	return { completion };
 }
