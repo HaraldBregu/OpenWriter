@@ -51,7 +51,6 @@ export interface AgentDefinitionInfo {
 	name: string;
 	description: string;
 	category: AgentDefinition['category'];
-	inputHints?: AgentDefinition['inputHints'];
 }
 
 // ---------------------------------------------------------------------------
