@@ -187,10 +187,7 @@ export class Workspace implements Disposable {
 	async loadOutputsByType(outputType: string): Promise<OutputFile[]> {
 		this.validateOutputType(outputType);
 		const files = await this.outputFiles.loadByType(outputType as OutputType);
-		this.logger.info(
-			'Workspace',
-			`Loaded ${files.length} output files for type "${outputType}"`
-		);
+		this.logger.info('Workspace', `Loaded ${files.length} output files for type "${outputType}"`);
 		return files;
 	}
 
