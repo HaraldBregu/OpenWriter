@@ -1,9 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import https from 'node:https';
 import { randomUUID } from 'node:crypto';
 import type { LoggerService } from '../services/logger';
 import type {
 	FileEncoding,
+	FileMetadata,
 	ReadFileOptions,
 	WriteFileOptions,
 	CreateFileOptions,
@@ -11,7 +13,7 @@ import type {
 	RenameOptions,
 	RenameResult,
 } from './types';
-import { MAX_READ_SIZE_BYTES } from './constants';
+import { MAX_READ_SIZE_BYTES, MAX_DOWNLOAD_SIZE_BYTES, DOWNLOAD_TIMEOUT_MS, MIME_TYPES } from './constants';
 import { asErrno } from './errors';
 import { assertPathSafe, assertValidName, assertValidEncoding } from './validators';
 
