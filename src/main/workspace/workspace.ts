@@ -46,7 +46,7 @@ export class WorkspaceManager implements Disposable {
 
 	constructor(
 		private readonly workspace: WorkspaceService,
-		private readonly fileManagement: FileManagementService,
+		private readonly fileManagement: FileManager,
 		private readonly metadata: WorkspaceMetadataService,
 		private readonly watcher: DocumentsWatcherService | null,
 		private readonly outputFiles: OutputFilesService,
