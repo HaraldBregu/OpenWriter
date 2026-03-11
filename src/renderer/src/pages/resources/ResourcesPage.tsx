@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { FolderOpen, Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
 	AppAlertDialogAction,
