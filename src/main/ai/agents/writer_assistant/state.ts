@@ -4,19 +4,25 @@
 
 import { Annotation } from '@langchain/langgraph';
 
-export type ContentLength = 'short' | 'medium' | 'long';
-
 export const WriterState = Annotation.Root({
-	content: Annotation<string>({
-		reducer: (_, next) => next,
+	inputText: Annotation<string>({
+		reducer: (_a, b) => b,
 		default: () => '',
 	}),
-	contentLength: Annotation<ContentLength>({
-		reducer: (_, next) => next,
-		default: () => 'short' as ContentLength,
+	type: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => 'continue_writing',
+	}),
+	content: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+	contentLength: Annotation<'short' | 'medium' | 'long'>({
+		reducer: (_a, b) => b,
+		default: () => 'short',
 	}),
 	completion: Annotation<string>({
-		reducer: (_, next) => next,
+		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 });
