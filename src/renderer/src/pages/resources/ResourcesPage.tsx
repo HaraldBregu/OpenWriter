@@ -99,10 +99,8 @@ export default function ResourcesPage() {
 	}, [selected, dispatch]);
 
 	const handleOpenDataFolder = useCallback(() => {
-		if (workspacePath) {
-			window.workspace.openFolder(`${workspacePath}/${VECTOR_STORE_SUBDIR}`);
-		}
-	}, [workspacePath]);
+		window.workspace.openDataFolder();
+	}, []);
 
 	return (
 		<div className="flex flex-col h-full">
