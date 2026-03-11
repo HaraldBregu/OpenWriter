@@ -45,4 +45,5 @@ export {
 	selectResourcesError,
 	selectResourcesIsLoading,
 	selectImporting,
+	selectIndexingInfo,
 } from './selectors';
