@@ -29,7 +29,7 @@ import type {
 	FsRenameParams,
 	FsRenameResult,
 } from '../../shared/types';
-import { FileSystemManager } from '../shared/file_manager';
+import { FileSystemManager } from '../file_manager';
 
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';

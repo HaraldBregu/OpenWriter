@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { PathValidator } from '../path-validator';
+import { PathValidator } from '../shared/path-validator';
 import { MAX_NAME_LENGTH, WINDOWS_RESERVED_NAME } from './constants';
 
 /**
