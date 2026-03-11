@@ -4,10 +4,20 @@
  * Each exported node function receives the current graph state and returns
  * a partial state update. Keeping nodes in their own file makes the graph
  * definition (graph.ts) a pure wiring concern.
+ *
+ * The LLM is instantiated from `state.apiKey` and `state.modelName` — both
+ * fields are injected by the executor via `buildGraphInput`. Nodes never
+ * hardcode provider credentials.
  */
 
 import { ChatOpenAI } from '@langchain/openai';
 import type { WriterState } from './state';
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const INSERTION_MARKER = '<<INSERT_HERE>>';
 
 // ---------------------------------------------------------------------------
 // Prompts
@@ -63,6 +73,32 @@ const LENGTH_PROMPTS: Record<string, string> = {
 };
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the content passage to send to the model.
+ *
+ * When `inputText` contains the `<<INSERT_HERE>>` marker the text is split at
+ * the marker and only the preceding half is used — the model must produce text
+ * that connects from that point onward. When no marker is present the full
+ * `inputText` is used verbatim.
+ *
+ * Falls back to `state.content` when `inputText` is empty, for cases where
+ * the caller pre-processed the content before building graph state.
+ */
+function resolveContent(state: typeof WriterState.State): string {
+	if (state.inputText) {
+		const markerIndex = state.inputText.indexOf(INSERTION_MARKER);
+		if (markerIndex !== -1) {
+			return state.inputText.slice(0, markerIndex).trimEnd();
+		}
+		return state.inputText;
+	}
+	return state.content;
+}
+
+// ---------------------------------------------------------------------------
 // Node: continue_writing
 // ---------------------------------------------------------------------------
 
@@ -70,14 +106,17 @@ export async function continueWritingNode(
 	state: typeof WriterState.State
 ): Promise<Partial<typeof WriterState.State>> {
 	const model = new ChatOpenAI({
-		model: 'gpt-4o',
+		openAIApiKey: state.apiKey,
+		model: state.modelName,
 		temperature: 0.7,
 	});
+
+	const content = resolveContent(state);
 
 	const messages: { role: 'system' | 'user'; content: string }[] = [
 		{ role: 'system', content: SYSTEM_PROMPT },
 		{ role: 'system', content: LENGTH_PROMPTS[state.contentLength] ?? SHORT_CONTINUATION_PROMPT },
-		{ role: 'user', content: `<content>${state.content}</content>` },
+		{ role: 'user', content: `<content>${content}</content>` },
 	];
 
 	const response = await model.invoke(messages);
