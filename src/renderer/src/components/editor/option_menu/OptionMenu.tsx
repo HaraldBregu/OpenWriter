@@ -15,6 +15,7 @@ interface MenuItem {
 	icon: React.ElementType;
 	command: (editor: Editor, slashPos: number, queryLength: number) => void;
 	section?: 'ai';
+	opensDialog?: boolean;
 }
 
 const MENU_ITEMS: MenuItem[] = [
