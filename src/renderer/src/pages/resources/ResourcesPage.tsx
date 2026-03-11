@@ -115,6 +115,7 @@ export default function ResourcesPage() {
 				onRemove={handleOpenConfirm}
 				indexing={indexing}
 				onIndex={handleIndex}
+				onOpenFolder={handleOpenResourcesFolder}
 			/>
 
 			{indexing && (
