@@ -28,12 +28,6 @@ export interface AgentDefinition {
 	 * are used as fallbacks.
 	 */
 	role?: ModelRole;
-	/** Optional hints consumed by the UI to render the input form correctly. */
-	inputHints?: {
-		label: string;
-		placeholder: string;
-		multiline?: boolean;
-	};
 	/**
 	 * Optional LangGraph factory. When present, the agent runs as a full
 	 * LangGraph StateGraph instead of a plain chat completion.
