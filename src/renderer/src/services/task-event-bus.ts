@@ -31,6 +31,9 @@ export interface TaskSnapshot {
 /** Per-task subscriber sets: taskId → Set<callback> */
 const subscribers = new Map<string, Set<(snap: TaskSnapshot) => void>>();
 
+/** Per-type subscriber sets: taskType → Set<callback(taskId)> */
+const typeSubscribers = new Map<string, Set<(taskId: string) => void>>();
+
 /** Accumulated snapshots per task so late subscribers can replay. */
 const snapshots = new Map<string, TaskSnapshot>();
 

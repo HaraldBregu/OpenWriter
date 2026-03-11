@@ -23,7 +23,7 @@ import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, IndexingManifest, JsonVectorStore, chunkText } from '../../indexing';
 
 const RESOURCES_DIR = 'resources';
-const VECTOR_STORE_DIR = '.openwriter';
+// const VECTOR_STORE_DIR = '.openwriter';
 const VECTOR_STORE_SUBDIR = 'vector_store';
 
 /** Progress weight allocation for each pipeline phase. */
@@ -88,7 +88,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		}
 
 		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
-		const vectorStorePath = path.join(workspacePath, VECTOR_STORE_DIR, VECTOR_STORE_SUBDIR);
+		const vectorStorePath = path.join(workspacePath, VECTOR_STORE_SUBDIR);
 
 		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
 		logger?.info('IndexResources', `Resources: ${resourcesPath}`);
