@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Bug } from 'lucide-react';
 import { TasksTab } from './TasksTab';
 import { TextContinuationTab } from './TextContinuationTab';
-import { SentenceCompleterTab } from './SentenceCompleterTab';
-import { ChatBotTab } from './ChatBotTab';
 import { ReduxStateTab } from './ReduxStateTab';
 
-type DebugTab = 'tasks' | 'redux' | 'text-continuation' | 'sentence-completer' | 'chatbot';
+type DebugTab = 'tasks' | 'redux' | 'text-continuation';
 
 export default function DebugPage() {
 	const [activeTab, setActiveTab] = useState<DebugTab>('tasks');
