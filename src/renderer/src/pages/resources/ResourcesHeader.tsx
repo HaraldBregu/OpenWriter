@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
+import { FolderOpen, Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
 interface ResourcesHeaderProps {
