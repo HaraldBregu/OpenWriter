@@ -252,7 +252,5 @@ declare global {
 		win?: WindowApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
-		/** Sandboxed filesystem operations (read, write, create, rename). */
-		fs: FsApi;
 	}
 }

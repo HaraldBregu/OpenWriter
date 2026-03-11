@@ -109,7 +109,10 @@ describe('useFilesystem', () => {
 	describe('writeFile', () => {
 		it('should write to a specific path', async () => {
 			(window.workspace.getWatched as jest.Mock).mockResolvedValue([]);
-			(window.workspace.writeFile as jest.Mock).mockResolvedValue({ success: true, filePath: '/a.txt' });
+			(window.workspace.writeFile as jest.Mock).mockResolvedValue({
+				success: true,
+				filePath: '/a.txt',
+			});
 
 			const { result } = renderHook(() => useFilesystem());
 
