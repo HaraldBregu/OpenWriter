@@ -177,6 +177,7 @@ export interface WorkspaceApi {
 	// Shell
 	// -------------------------------------------------------------------------
 	openDataFolder: () => Promise<void>;
+	openResourcesFolder: () => Promise<void>;
 	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
 	// -------------------------------------------------------------------------
