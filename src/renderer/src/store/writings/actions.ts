@@ -51,7 +51,7 @@ export const refreshWriting = createAsyncThunk<void, string, { dispatch: AppDisp
 	'writings/refresh',
 	async (id, { dispatch }) => {
 		try {
-			const file = await window.workspace.loadOutput({ type: 'writings', id });
+			const file = await window.workspace.loadOutput({ type: 'documents', id });
 			if (file) dispatch(writingUpdated(toWritingItem(file)));
 		} catch {
 			// silently ignore — stale state is acceptable for a single refresh
