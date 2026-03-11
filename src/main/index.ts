@@ -5,8 +5,8 @@ import { Tray } from './tray';
 import { Menu } from './menu';
 import { WorkspaceProcessManager } from './workspace-process';
 
-import type { WorkspaceService } from './services/workspace';
-import type { WorkspaceMetadataService } from './services/workspace-metadata';
+import type { WorkspaceService } from './workspace/workspace-service';
+import type { WorkspaceMetadataService } from './workspace/workspace-metadata';
 import {
 	bootstrapServices,
 	bootstrapIpcModules,
