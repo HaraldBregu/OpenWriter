@@ -716,7 +716,7 @@ export class OutputFilesService implements Disposable {
 					const rel = path.relative(outputDir, normalized);
 					const parts = rel.split(path.sep);
 
-					// Depth 1 — allow valid type directories (posts, writings)
+					// Depth 1 — allow valid type directories (e.g. documents)
 					if (parts.length === 1) {
 						return !(VALID_OUTPUT_TYPES as readonly string[]).includes(parts[0]);
 					}
