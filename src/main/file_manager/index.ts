@@ -1,5 +1,6 @@
 export type {
 	FileEncoding,
+	FileMetadata,
 	ReadFileOptions,
 	WriteFileOptions,
 	CreateFileOptions,
