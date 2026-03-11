@@ -19,7 +19,18 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { FileManager } from './file_manager';
-import { AgentRegistry, ModelRegistry, ALL_AGENT_DEFINITIONS } from './ai';
+import {
+	AgentRegistry,
+	ModelRegistry,
+	StoryWriterAgent,
+	TextCompleterAgent,
+	ContentReviewAgent,
+	SummarizerAgent,
+	ToneAdjusterAgent,
+	DemoAgent,
+	TextContinuationAgent,
+	SentenceCompleterAgent,
+} from './ai';
 import { TaskHandlerRegistry } from './task_manager/task-handler-registry';
 import { TaskExecutor } from './task_manager/task-executor';
 import { TaskReactionRegistry } from './task_manager/task-reaction-registry';
