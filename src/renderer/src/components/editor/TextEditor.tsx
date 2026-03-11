@@ -18,8 +18,15 @@ import { markdownToTiptapJSON, tiptapDocToMarkdown } from './markdown';
 import { BASE_EXTENSIONS } from './extensions';
 import { EditorProvider } from './EditorContext';
 
+export interface ImageInsertOptions {
+	src: string;
+	alt?: string;
+	title?: string;
+}
+
 export interface TextEditorElement extends HTMLDivElement {
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
+	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 }
