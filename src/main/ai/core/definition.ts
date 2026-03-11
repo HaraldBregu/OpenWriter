@@ -10,6 +10,31 @@ import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { ModelRole } from '../registry/model-registry';
 
 // ---------------------------------------------------------------------------
+// Graph input context
+// ---------------------------------------------------------------------------
+
+/**
+ * All executor-resolved context that a graph's `buildGraphInput` hook may use
+ * when constructing the graph's initial state.
+ *
+ * Agents with a custom state shape (i.e. not `{ messages }`) use this context
+ * to populate their domain-specific input fields, including the API key and
+ * model name so nodes do not need to hardcode provider details.
+ */
+export interface GraphInputContext {
+	/** The user-facing prompt / raw input text sent by the caller. */
+	prompt: string;
+	/** Resolved API key for the agent's provider. */
+	apiKey: string;
+	/** Resolved model name (e.g. 'gpt-4o'). */
+	modelName: string;
+	/** Resolved provider identifier (e.g. 'openai'). */
+	providerId: string;
+	/** Effective sampling temperature for this run. */
+	temperature: number;
+}
+
+// ---------------------------------------------------------------------------
 // Core definition
 // ---------------------------------------------------------------------------
 
@@ -32,14 +57,43 @@ export interface AgentDefinition {
 	 * Optional LangGraph factory. When present, the agent runs as a full
 	 * LangGraph StateGraph instead of a plain chat completion.
 	 *
-	 * Called once per run with the resolved model (streaming enabled). Returns
-	 * a compiled graph whose final node's output is collected as the assistant
-	 * response via streamMode: "messages".
+	 * Two execution contracts are supported depending on whether the companion
+	 * hooks `buildGraphInput` and `extractGraphOutput` are also provided:
+	 *
+	 * **Messages protocol** (default — no companion hooks):
+	 *   The executor passes `{ messages: [SystemMessage, ...history, HumanMessage] }`
+	 *   as initial state and streams tokens via `streamMode: 'messages'`.
+	 *   Use this for graphs whose state includes a `messages` channel.
+	 *
+	 * **Custom state protocol** (companion hooks required):
+	 *   The executor calls `buildGraphInput(ctx)` to construct the initial state,
+	 *   runs the graph to completion with `streamMode: 'values'`, then calls
+	 *   `extractGraphOutput(finalState)` to pull the content string.
+	 *   Use this for graphs with domain-specific state shapes (e.g. WriterState).
 	 *
 	 * @param model - The resolved LangChain chat model (streaming enabled).
+	 *               Graphs that manage their own model internally may ignore this.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	/**
+	 * Maps executor-resolved context to the graph's initial state object.
+	 *
+	 * Required when the graph uses a custom state shape (not `{ messages }`).
+	 * Must be provided together with `extractGraphOutput`; the executor treats
+	 * both hooks as a pair and will use the custom-state path only when both
+	 * are present.
+	 */
+	buildGraphInput?: (ctx: GraphInputContext) => Record<string, unknown>;
+	/**
+	 * Extracts the text content string from the graph's final state snapshot.
+	 *
+	 * Called once after the graph run completes. Should return the primary
+	 * content field (e.g. `state.completion` for WriterState).
+	 *
+	 * Required when `buildGraphInput` is provided.
+	 */
+	extractGraphOutput?: (state: Record<string, unknown>) => string;
 }
 
 // ---------------------------------------------------------------------------

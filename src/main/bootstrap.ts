@@ -24,7 +24,6 @@ import { TaskHandlerRegistry } from './task_manager/task-handler-registry';
 import { TaskExecutor } from './task_manager/task-executor';
 import { TaskReactionRegistry } from './task_manager/task-reaction-registry';
 import { TaskReactionBus } from './task_manager/task-reaction-bus';
-import { DemoTaskHandler } from './task_manager/handlers/demo-task-handler';
 import { IndexResourcesTaskHandler } from './task_manager/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
@@ -86,7 +85,6 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
-	taskHandlerRegistry.register(new DemoTaskHandler());
 	const providerResolver = new ProviderResolver(storeService);
 	for (const def of agentRegistry.list()) {
 		taskHandlerRegistry.register(
