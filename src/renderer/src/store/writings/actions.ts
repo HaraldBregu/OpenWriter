@@ -39,7 +39,7 @@ export const loadWritings = createAsyncThunk<void, void, { dispatch: AppDispatch
 	async (_, { dispatch }) => {
 		dispatch(writingsLoadingStarted());
 		try {
-			const files = await window.workspace.loadOutputsByType('writings');
+			const files = await window.workspace.loadOutputsByType('documents');
 			dispatch(writingsLoaded(files.map(toWritingItem)));
 		} catch (err) {
 			dispatch(writingsLoadingFailed(err instanceof Error ? err.message : String(err)));
