@@ -252,11 +252,11 @@ export interface InvokeChannelMap {
 	};
 
 	// ---- FileSystem (IpcResult-wrapped) ----
-	[FsChannels.readFile]: { args: [params: FsReadFileParams]; result: string };
-	[FsChannels.writeFile]: { args: [params: FsWriteFileParams]; result: void };
-	[FsChannels.createFile]: { args: [params: FsCreateFileParams]; result: void };
-	[FsChannels.createFolder]: { args: [params: FsCreateFolderParams]; result: void };
-	[FsChannels.rename]: { args: [params: FsRenameParams]; result: FsRenameResult };
+	[WorkspaceChannels.fsReadFile]: { args: [params: FsReadFileParams]; result: string };
+	[WorkspaceChannels.fsWriteFile]: { args: [params: FsWriteFileParams]; result: void };
+	[WorkspaceChannels.fsCreateFile]: { args: [params: FsCreateFileParams]; result: void };
+	[WorkspaceChannels.fsCreateFolder]: { args: [params: FsCreateFolderParams]; result: void };
+	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
 }
 
 /**

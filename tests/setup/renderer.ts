@@ -186,6 +186,11 @@ Object.defineProperty(window, 'clipboard', {
 
 Object.defineProperty(window, 'workspace', {
 	value: {
+		readFile: jest.fn().mockResolvedValue(''),
+		writeFile: jest.fn().mockResolvedValue(undefined),
+		createFile: jest.fn().mockResolvedValue(undefined),
+		createFolder: jest.fn().mockResolvedValue(undefined),
+		rename: jest.fn().mockResolvedValue({ newPath: '/test/renamed' }),
 		selectFolder: jest.fn().mockResolvedValue(null),
 		getCurrent: jest.fn().mockResolvedValue(null),
 		setCurrent: jest.fn().mockResolvedValue(undefined),
