@@ -120,6 +120,16 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 				<div className="flex items-center gap-3 ml-4 shrink-0">
 					<AppButton
 						type="button"
+						variant="outline"
+						size="icon"
+						className="h-8 w-8 shrink-0"
+						title={t('common.openFolder')}
+						onClick={onOpenFolder}
+					>
+						<FolderOpen className="h-3.5 w-3.5" />
+					</AppButton>
+					<AppButton
+						type="button"
 						variant={sidebarOpen ? 'secondary' : 'outline'}
 						size="icon"
 						title="Toggle sidebar"
