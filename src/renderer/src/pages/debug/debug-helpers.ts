@@ -1,7 +1,6 @@
 import { store } from '@/store';
 import { taskAdded } from '@/store/tasks/actions';
 import type { DemoVariant } from './debug-constants';
-import { AGENT_DEMO_PROMPT } from './debug-constants';
 
 export function formatDuration(ms?: number): string {
 	if (!ms) return '—';
