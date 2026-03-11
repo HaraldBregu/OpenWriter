@@ -119,14 +119,6 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/agents"
-													element={
-														<RouteWrapper>
-															<AgentPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
 													path="/resources"
 													element={
 														<RouteWrapper>
