@@ -102,6 +102,19 @@ const MENU_ITEMS: MenuItem[] = [
 				.run();
 		},
 	},
+	{
+		label: 'Image',
+		icon: ImagePlus,
+		command: (editor, slashPos, queryLength) => {
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+				.run();
+			// The actual dialog opening is handled via the openImageDialogRef
+		},
+		opensDialog: true,
+	},
 ];
 
 const pluginKey = new PluginKey('optionMenu');
