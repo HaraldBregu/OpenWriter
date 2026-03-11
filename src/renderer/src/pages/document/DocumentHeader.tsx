@@ -108,16 +108,6 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 			{/* Header */}
 			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
-					<AppButton
-						type="button"
-						variant="outline"
-						size="icon"
-						className="h-8 w-8 shrink-0"
-						title={t('common.openFolder')}
-						onClick={onOpenFolder}
-					>
-						<FolderOpen className="h-3.5 w-3.5" />
-					</AppButton>
 					<PenLine className="h-4 w-4 text-blue-500 shrink-0" />
 					<input
 						type="text"
