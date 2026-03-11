@@ -10,13 +10,7 @@ import {
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
 import { ImagePlus, Upload } from 'lucide-react';
 import { fileToDataUri } from './extensions/image-drop-paste-plugin';
 
@@ -66,15 +60,12 @@ export function InsertImageDialog({
 		[onOpenChange, reset]
 	);
 
-	const handleSourceChange = useCallback(
-		(value: string) => {
-			setSource(value as ImageSource);
-			setUrl('');
-			setPreview(null);
-			setError(null);
-		},
-		[]
-	);
+	const handleSourceChange = useCallback((value: string) => {
+		setSource(value as ImageSource);
+		setUrl('');
+		setPreview(null);
+		setError(null);
+	}, []);
 
 	const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
@@ -89,25 +80,28 @@ export function InsertImageDialog({
 		input.click();
 	}, []);
 
-	const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
+	const handleFileChange = useCallback(
+		async (e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
+			if (!file) return;
 
-		try {
-			const dataUri = await fileToDataUri(file);
-			setUrl(dataUri);
-			setPreview(dataUri);
-			setError(null);
-			if (!alt) {
-				setAlt(file.name.replace(/\.[^.]+$/, ''));
+			try {
+				const dataUri = await fileToDataUri(file);
+				setUrl(dataUri);
+				setPreview(dataUri);
+				setError(null);
+				if (!alt) {
+					setAlt(file.name.replace(/\.[^.]+$/, ''));
+				}
+			} catch {
+				setError('Failed to read the selected file.');
 			}
-		} catch {
-			setError('Failed to read the selected file.');
-		}
 
-		// Reset file input so the same file can be re-selected
-		e.target.value = '';
-	}, [alt]);
+			// Reset file input so the same file can be re-selected
+			e.target.value = '';
+		},
+		[alt]
+	);
 
 	const handleInsert = useCallback(() => {
 		const trimmedUrl = url.trim();
