@@ -25,6 +25,7 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 	onRemove,
 	indexing,
 	onIndex,
+	onOpenFolder,
 }: ResourcesHeaderProps) {
 	return (
 		<div className="px-6 py-3 border-b shrink-0">
