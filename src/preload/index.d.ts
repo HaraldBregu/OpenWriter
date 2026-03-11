@@ -178,6 +178,8 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	openDataFolder: () => Promise<void>;
 	openResourcesFolder: () => Promise<void>;
+	/** Open the folder for a specific document by its ID in the system file explorer. */
+	openDocumentFolder: (documentId: string) => Promise<void>;
 	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
 	// -------------------------------------------------------------------------
