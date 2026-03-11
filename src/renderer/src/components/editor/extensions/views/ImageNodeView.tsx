@@ -63,7 +63,7 @@ export function ImageNodeView({
 			document.addEventListener('pointermove', onPointerMove);
 			document.addEventListener('pointerup', onPointerUp);
 		},
-		[updateAttributes],
+		[updateAttributes]
 	);
 
 	const imgStyle: React.CSSProperties = {
@@ -105,11 +105,6 @@ export function ImageNodeView({
 							/>
 						)}
 					</div>
-				)}
-				{alt && !loadError && (
-					<figcaption className="mt-1 text-center text-xs italic text-muted-foreground">
-						{alt}
-					</figcaption>
 				)}
 			</figure>
 		</NodeViewWrapper>
