@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { FileMetadata, FileManager } from '../file_manager';
 import type { DocumentsWatcherService } from './documents-watcher';
-import type { LoggerService } from './logger';
+import type { LoggerService } from '../services/logger';
 import {
 	validateTextFiles,
 	getAllTextExtensions,
