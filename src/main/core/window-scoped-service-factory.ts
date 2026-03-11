@@ -1,12 +1,14 @@
 import type { ServiceContainer, EventBus } from './index';
 import type { StoreService } from '../services/store';
-import type { WorkspaceService } from '../services/workspace';
 import type { FileManager } from '../file_manager';
 import type { LoggerService } from '../services/logger';
-import { WorkspaceMetadataService } from '../services/workspace-metadata';
-import { DocumentsWatcherService } from '../services/documents-watcher';
-import { OutputFilesService } from '../services/output-files';
-import { Workspace } from '../workspace/workspace';
+import {
+	Workspace,
+	WorkspaceMetadataService,
+	DocumentsWatcherService,
+	OutputFilesService,
+} from '../workspace';
+import type { WorkspaceService } from '../workspace';
 
 /**
  * Context available to every window-scoped service factory function.
