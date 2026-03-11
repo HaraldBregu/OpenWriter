@@ -73,7 +73,7 @@ export const WorkspaceChannels = {
 	// Indexing
 	getIndexingInfo: 'indexing:get-info',
 	// Shell
-	openFolder: 'workspace:open-folder',
+	openDataFolder: 'workspace:open-data-folder',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',

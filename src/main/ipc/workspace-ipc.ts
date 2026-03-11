@@ -155,8 +155,7 @@ export class WorkspaceIpc implements IpcModule {
 				}
 
 				// Ensure the directory exists before opening
-				const exists =
-					fs.existsSync(resolved) && fs.statSync(resolved).isDirectory();
+				const exists = fs.existsSync(resolved) && fs.statSync(resolved).isDirectory();
 				if (!exists) {
 					throw new Error(`Folder does not exist: ${folderPath}`);
 				}
