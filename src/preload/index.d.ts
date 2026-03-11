@@ -52,6 +52,7 @@ export type {
 	WorkspaceInfo,
 	WorkspaceChangedEvent,
 	WorkspaceDeletedEvent,
+	IndexingInfo,
 	ResourceInfo,
 	DocumentFileChangeEvent,
 	TaskSubmitPayload,
