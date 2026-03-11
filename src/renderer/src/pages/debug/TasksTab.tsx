@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { Bug, Bot } from 'lucide-react';
+import { Bug } from 'lucide-react';
 import { useDebugTasks } from '../../hooks/use-debug-tasks';
-import { DEMO_VARIANTS, AGENT_DEMO_PROMPT } from './debug-constants';
-import { submitDemoTask, submitAgentTask } from './debug-helpers';
+import { DEMO_VARIANTS } from './debug-constants';
+import { submitDemoTask } from './debug-helpers';
 import { TaskRow } from './TaskRow';
 import { LogPanel } from './LogPanel';
 
