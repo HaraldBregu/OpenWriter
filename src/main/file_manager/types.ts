@@ -7,13 +7,13 @@
  */
 export type FileEncoding = 'utf-8' | 'utf8' | 'ascii' | 'latin1';
 
-/** Options for {@link FileSystemManager.readFile}. */
+/** Options for {@link FileManager.readFile}. */
 export interface ReadFileOptions {
 	/** Character encoding. Defaults to `'utf-8'`. */
 	encoding?: FileEncoding;
 }
 
-/** Options for {@link FileSystemManager.writeFile}. */
+/** Options for {@link FileManager.writeFile}. */
 export interface WriteFileOptions {
 	/** Character encoding. Defaults to `'utf-8'`. */
 	encoding?: FileEncoding;
@@ -33,7 +33,7 @@ export interface WriteFileOptions {
 	createParents?: boolean;
 }
 
-/** Options for {@link FileSystemManager.createFile}. */
+/** Options for {@link FileManager.createFile}. */
 export interface CreateFileOptions {
 	/** Initial text content for the new file. Defaults to an empty string. */
 	content?: string;
@@ -51,7 +51,7 @@ export interface CreateFileOptions {
 	createParents?: boolean;
 }
 
-/** Options for {@link FileSystemManager.createFolder}. */
+/** Options for {@link FileManager.createFolder}. */
 export interface CreateFolderOptions {
 	/**
 	 * When `true` (default), creates all intermediate directories, like `mkdir -p`.
@@ -65,7 +65,7 @@ export interface CreateFolderOptions {
 	failIfExists?: boolean;
 }
 
-/** Options for {@link FileSystemManager.renameEntry}. */
+/** Options for {@link FileManager.renameEntry}. */
 export interface RenameOptions {
 	/**
 	 * When `true` (default), throws if something already exists at `newPath`.
@@ -77,7 +77,7 @@ export interface RenameOptions {
 	failIfExists?: boolean;
 }
 
-/** Result returned by {@link FileSystemManager.renameEntry}. */
+/** Result returned by {@link FileManager.renameEntry}. */
 export interface RenameResult {
 	/** The resolved absolute path the entry now lives at. */
 	newPath: string;
