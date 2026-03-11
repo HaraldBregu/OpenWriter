@@ -1,9 +1,23 @@
 import type { ServiceContainer, EventBus } from './index';
 import type { StoreService } from '../services/store';
 import type { WorkspaceService } from '../services/workspace';
+import type { FileManagementService } from '../services/file-management-service';
+import type { LoggerService } from '../services/logger';
 import { WorkspaceMetadataService } from '../services/workspace-metadata';
 import { DocumentsWatcherService } from '../services/documents-watcher';
 import { OutputFilesService } from '../services/output-files';
+import { WorkspaceManager } from '../services/workspace-manager';
+
+/**
+ * Context available to every window-scoped service factory function.
+ */
+export interface WindowScopedFactoryContext {
+	globalContainer: ServiceContainer;
+	eventBus: EventBus;
+	storeService: StoreService;
+	workspaceService: WorkspaceService;
+	windowContainer: ServiceContainer;
+}
 
 /**
  * Interface for window-scoped service definitions.
@@ -17,14 +31,10 @@ export interface WindowScopedServiceDefinition {
 
 	/**
 	 * Factory function to create the service instance
-	 * Has access to global container, event bus, and workspace service
+	 * Has access to global container, event bus, workspace service,
+	 * and the in-progress window container for resolving prior services.
 	 */
-	factory: (context: {
-		globalContainer: ServiceContainer;
-		eventBus: EventBus;
-		storeService: StoreService;
-		workspaceService: WorkspaceService;
-	}) => Promise<any> | any;
+	factory: (context: WindowScopedFactoryContext) => Promise<unknown> | unknown;
 }
 
 /**
@@ -71,24 +81,29 @@ export class WindowScopedServiceFactory {
 			eventBus: EventBus;
 			storeService: StoreService;
 			workspaceService: WorkspaceService;
-		}
+		},
 	): Promise<void> {
-		const logger = context.globalContainer.get<any>('logger');
+		const logger = context.globalContainer.get<LoggerService>('logger');
 		logger?.info(
 			'WindowScopedServiceFactory',
-			`Creating ${this.definitions.size} window-scoped services`
+			`Creating ${this.definitions.size} window-scoped services`,
 		);
+
+		const enrichedContext: WindowScopedFactoryContext = {
+			...context,
+			windowContainer: container,
+		};
 
 		for (const definition of this.definitions.values()) {
 			try {
-				const service = await definition.factory(context);
+				const service = await definition.factory(enrichedContext);
 				container.register(definition.key, service);
 				logger?.info('WindowScopedServiceFactory', `Registered service: ${definition.key}`);
 			} catch (error) {
 				logger?.error(
 					'WindowScopedServiceFactory',
 					`Failed to register service "${definition.key}"`,
-					error
+					error,
 				);
 				throw error;
 			}
@@ -96,7 +111,7 @@ export class WindowScopedServiceFactory {
 
 		logger?.info(
 			'WindowScopedServiceFactory',
-			'Successfully registered all window-scoped services'
+			'Successfully registered all window-scoped services',
 		);
 	}
 
@@ -153,6 +168,28 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 			const service = new OutputFilesService(workspaceService, eventBus);
 			service.initialize();
 			return service;
+		},
+	});
+
+	// Register workspace manager (Facade over all workspace services)
+	factory.register({
+		key: 'workspaceManager',
+		factory: ({ globalContainer, windowContainer, workspaceService }) => {
+			const fileManagement = globalContainer.get<FileManagementService>('fileManagement');
+			const logger = globalContainer.get<LoggerService>('logger');
+			const metadata = windowContainer.get<WorkspaceMetadataService>('workspaceMetadata');
+			const watcher = windowContainer.has('documentsWatcher')
+				? windowContainer.get<DocumentsWatcherService>('documentsWatcher')
+				: null;
+			const outputFiles = windowContainer.get<OutputFilesService>('outputFiles');
+			return new WorkspaceManager(
+				workspaceService,
+				fileManagement,
+				metadata,
+				watcher,
+				outputFiles,
+				logger,
+			);
 		},
 	});
 
