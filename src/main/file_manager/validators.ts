@@ -72,8 +72,7 @@ export function assertValidEncoding(encoding: string): void {
 	const allowed: readonly string[] = ['utf-8', 'utf8', 'ascii', 'latin1'];
 	if (!allowed.includes(encoding)) {
 		throw new Error(
-			`FileManager: unsupported encoding "${encoding}". ` +
-				`Allowed values: ${allowed.join(', ')}`
+			`FileManager: unsupported encoding "${encoding}". ` + `Allowed values: ${allowed.join(', ')}`
 		);
 	}
 }

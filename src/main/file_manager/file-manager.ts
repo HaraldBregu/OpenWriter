@@ -344,10 +344,7 @@ export class FileManager {
 		const resolvedNew = assertPathSafe(newPath, this.extraRoots);
 		assertValidName(path.basename(resolvedNew));
 
-		this.logger?.debug(
-			FileManager.LOG_SOURCE,
-			`renameEntry: "${resolvedOld}" -> "${resolvedNew}"`
-		);
+		this.logger?.debug(FileManager.LOG_SOURCE, `renameEntry: "${resolvedOld}" -> "${resolvedNew}"`);
 
 		try {
 			await fs.access(resolvedOld);

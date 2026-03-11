@@ -82,3 +82,14 @@ export interface RenameResult {
 	/** The resolved absolute path the entry now lives at. */
 	newPath: string;
 }
+
+/** File metadata structure used across document and file operations. */
+export interface FileMetadata {
+	id: string;
+	name: string;
+	path: string;
+	size: number;
+	mimeType: string;
+	importedAt: number;
+	lastModified: number;
+}
