@@ -5,7 +5,7 @@ import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { WorkspaceManager } from '../services/workspace-manager';
+import type { WorkspaceManager } from '../services/workspace/workspace';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
