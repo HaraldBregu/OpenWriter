@@ -16,6 +16,39 @@ import type { TextContinuationState } from './state';
 
 const INSERT_MARKER = '<<INSERT_HERE>>';
 
+const systemPromptBase = new SystemMessage(`
+You are a writing continuation assistant.
+
+# Role
+
+Your job is to continue writing from where the user's text left off. You receive text and seamlessly extend it — whether the text ends mid-word, mid-sentence, or after a complete sentence.
+
+# How to continue
+
+- The text ends mid-word (e.g. "The tele") → complete the word, finish the sentence, and continue writing.
+- The text ends mid-sentence (e.g. "She opened the door and") → finish the sentence and continue writing.
+- The text ends with a complete sentence (e.g. "The Roman Empire fell in 476 AD.") → continue writing new sentences that naturally follow.
+
+# Style and tone
+
+- Match the exact tone, voice, style, and pacing of the original text.
+- If the text is formal, continue formally. If casual, continue casually.
+- Preserve the original language — if the text is in Italian, continue in Italian. If in English, continue in English.
+- Do not shift register, vocabulary level, or point of view.
+
+# Output rules
+
+- NEVER repeat or include any part of the input text in your response.
+- Do not add titles, headers, labels, or commentary.
+- Do not explain what you are doing.
+- Your response must start exactly where the input text left off — output only the new continuation, nothing else.
+`);
+
+const shortContinuationPrompt = new SystemMessage(`
+# Length constraint
+Write a maximum of 10–15 words to continue the text. Be concise and precise.
+`);
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -50,44 +83,13 @@ function splitAtMarker(text: string): { before: string; after: string } {
  */
 export function makeGenerateInsertionNode(model: BaseChatModel) {
 	return async (state: TextContinuationState): Promise<Partial<TextContinuationState>> => {
+
 		const userText = extractUserText(state);
 		const { before, after } = splitAtMarker(userText);
 
 		const generationMessages = [
-			new SystemMessage(
-				`[CONTEXT BLOCK]
-You are continuing a piece of writing. Your job is to insert new content at the marked position — not rewrite, not summarize, just continue naturally.
-
-Before you write, silently analyze the surrounding text for:
-- Vocabulary level, sentence length, and rhythm
-- Tense, person, and voice (active/passive)
-- Tone and register
-- How the text before the marker ends and the text after begins
-Then match all of these in your output.
-
-[DOCUMENT BLOCK]
-Here is the full document. The exact insertion point is marked with ${INSERT_MARKER}:
-
----
-${before}
-
-${INSERT_MARKER}
-
-${after}
----
-
-[TASK BLOCK]
-Write the continuation that fits at ${INSERT_MARKER}.
-
-Requirements:
-- Match the tone, voice, and style of the surrounding text
-- Connect smoothly to the sentence/paragraph before AND after the marker
-- Do NOT repeat the existing text
-- Do NOT add a title, heading, or commentary — output only the insertion text
-- Do NOT wrap your response in quotes, markdown, or code fences
-- If the marker falls mid-sentence, complete that sentence first before adding new content
-- Produce coherent prose that reads as if it was always part of the document`
-			),
+			systemPromptBase,
+			shortContinuationPrompt,
 			new HumanMessage(
 				'Generate the insertion text now. Output ONLY the prose to be placed at the insertion point — nothing else.'
 			),

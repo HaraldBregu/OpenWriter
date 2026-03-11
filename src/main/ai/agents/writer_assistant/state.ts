@@ -1,19 +1,22 @@
 /**
- * Graph state annotation for the TextContinuation agent.
+ * Graph state annotation for the Writer Assistant agent.
  */
 
 import { Annotation } from '@langchain/langgraph';
-import type { BaseMessage } from '@langchain/core/messages';
 
-export const GraphState = Annotation.Root({
-	messages: Annotation<BaseMessage[]>({
-		reducer: (existing, update) => existing.concat(update),
-		default: () => [],
+export type ContentLength = 'short' | 'medium' | 'long';
+
+export const WriterState = Annotation.Root({
+	content: Annotation<string>({
+		reducer: (_, next) => next,
+		default: () => '',
 	}),
-	insertion: Annotation<string>({
+	contentLength: Annotation<ContentLength>({
+		reducer: (_, next) => next,
+		default: () => 'short' as ContentLength,
+	}),
+	completion: Annotation<string>({
 		reducer: (_, next) => next,
 		default: () => '',
 	}),
 });
-
-export type TextContinuationState = typeof GraphState.State;
