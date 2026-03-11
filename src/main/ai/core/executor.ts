@@ -143,8 +143,7 @@ export async function* executeAIAgentsStream(
 			runId,
 			model,
 			langchainMessages,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			buildGraph: buildGraph!,
+			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
 			signal,
 			logger,
 		});
