@@ -70,6 +70,8 @@ export const WorkspaceChannels = {
 	validate: 'directories:validate',
 	markIndexed: 'directories:mark-indexed',
 	directoriesChanged: 'directories:changed',
+	// Indexing
+	getIndexingInfo: 'indexing:get-info',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
