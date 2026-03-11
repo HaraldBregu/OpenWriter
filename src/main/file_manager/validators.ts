@@ -17,7 +17,7 @@ import { MAX_NAME_LENGTH, WINDOWS_RESERVED_NAME } from './constants';
  */
 export function assertPathSafe(inputPath: string, extraRoots: readonly string[]): string {
 	if (typeof inputPath !== 'string' || inputPath.trim().length === 0) {
-		throw new Error('FileSystemManager: path must be a non-empty string');
+		throw new Error('FileManager: path must be a non-empty string');
 	}
 
 	const resolved = path.normalize(path.resolve(inputPath));
@@ -34,7 +34,7 @@ export function assertPathSafe(inputPath: string, extraRoots: readonly string[])
 	}
 
 	throw new Error(
-		`FileSystemManager: path "${resolved}" is outside the allowed directories. ` +
+		`FileManager: path "${resolved}" is outside the allowed directories. ` +
 			`Allowed roots: [${[...PathValidator.getAllowedPaths(), ...extraRoots].join(', ')}]`
 	);
 }
@@ -46,24 +46,24 @@ export function assertPathSafe(inputPath: string, extraRoots: readonly string[])
  */
 export function assertValidName(name: string): void {
 	if (!name || name.trim().length === 0) {
-		throw new Error('FileSystemManager: file/folder name must not be empty');
+		throw new Error('FileManager: file/folder name must not be empty');
 	}
 	if (name.length > MAX_NAME_LENGTH) {
 		throw new Error(
-			`FileSystemManager: name "${name}" exceeds the maximum length of ${MAX_NAME_LENGTH} characters`
+			`FileManager: name "${name}" exceeds the maximum length of ${MAX_NAME_LENGTH} characters`
 		);
 	}
 	if (name.includes('\0')) {
-		throw new Error('FileSystemManager: file/folder name must not contain null bytes');
+		throw new Error('FileManager: file/folder name must not contain null bytes');
 	}
 	if (name.includes('/') || name.includes('\\')) {
-		throw new Error('FileSystemManager: file/folder name must not contain path separators');
+		throw new Error('FileManager: file/folder name must not contain path separators');
 	}
 	if (/^\.+$/.test(name)) {
-		throw new Error('FileSystemManager: file/folder name must not be "." or ".."');
+		throw new Error('FileManager: file/folder name must not be "." or ".."');
 	}
 	if (WINDOWS_RESERVED_NAME.test(name)) {
-		throw new Error(`FileSystemManager: "${name}" is a reserved filesystem name on Windows`);
+		throw new Error(`FileManager: "${name}" is a reserved filesystem name on Windows`);
 	}
 }
 
@@ -72,7 +72,7 @@ export function assertValidEncoding(encoding: string): void {
 	const allowed: readonly string[] = ['utf-8', 'utf8', 'ascii', 'latin1'];
 	if (!allowed.includes(encoding)) {
 		throw new Error(
-			`FileSystemManager: unsupported encoding "${encoding}". ` +
+			`FileManager: unsupported encoding "${encoding}". ` +
 				`Allowed values: ${allowed.join(', ')}`
 		);
 	}
