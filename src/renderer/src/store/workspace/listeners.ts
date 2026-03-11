@@ -1,21 +1,30 @@
 /** Workspace RTK listener effects — side-effect handlers for workspace actions. */
 import { startAppListening } from '../listener-middleware';
 import { importResourcesRequested, importResourcesCompleted } from './reducer';
+import { loadResources } from './actions';
 
 /**
  * Listener: when `importResourcesRequested` is dispatched, call the IPC
  * method to open the file picker and import files into the workspace.
- * The resource list is reloaded automatically by the file watcher bridge
- * in App.tsx, so we only need to manage the `importing` flag here.
+ *
+ * After the import resolves we explicitly reload the resources list.
+ * We cannot rely on the file watcher bridge in App.tsx for this because
+ * DocumentsService calls watcher.markFileAsWritten() before each copy,
+ * which causes DocumentsWatcherService to suppress the resulting 'add'
+ * event and never broadcast it to the renderer.
  */
 startAppListening({
 	actionCreator: importResourcesRequested,
 	effect: async (action, listenerApi) => {
 		const extensions = action.payload;
 		try {
-			await window.workspace.importFiles(extensions);
+			const imported = await window.workspace.importFiles(extensions);
+			if (imported.length > 0) {
+				await listenerApi.dispatch(loadResources());
+			}
 		} catch {
-			// Import errors are handled by the watcher triggering a reload
+			// Swallow picker-cancellation and validation errors; the UI
+			// already shows an Electron dialog for validation failures.
 		} finally {
 			listenerApi.dispatch(importResourcesCompleted());
 		}
