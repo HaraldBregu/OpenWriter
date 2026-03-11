@@ -26,7 +26,7 @@ const mockEventBus = {
 	on: jest.fn().mockReturnValue(jest.fn()),
 };
 
-import { WorkspaceService } from '../../../../src/main/services/workspace';
+import { WorkspaceService } from '../../../../src/main/workspace/workspace-service';
 
 describe('WorkspaceService', () => {
 	let service: WorkspaceService;
