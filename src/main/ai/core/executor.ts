@@ -119,12 +119,9 @@ export async function* executeAIAgentsStream(
 			runId,
 			model,
 			ctx,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			buildGraph: buildGraph!,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			buildGraphInput: buildGraphInput!,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			extractGraphOutput: extractGraphOutput!,
+			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
+			buildGraphInput: buildGraphInput as NonNullable<typeof buildGraphInput>,
+			extractGraphOutput: extractGraphOutput as NonNullable<typeof extractGraphOutput>,
 			signal,
 			logger,
 		});
@@ -250,10 +247,7 @@ async function* executeCustomStateGraphStream(
 
 		const content = extractGraphOutput(finalState);
 
-		logger?.info(
-			LOG_PREFIX,
-			`run=${runId} custom-state graph completed: ${content.length} chars`
-		);
+		logger?.info(LOG_PREFIX, `run=${runId} custom-state graph completed: ${content.length} chars`);
 
 		// tokenCount is not meaningful for a non-streaming node execution;
 		// report 0 so the contract is satisfied without fabricating a number.

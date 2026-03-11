@@ -82,7 +82,8 @@
       "WebFetch(domain:api.github.com)",
       "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit; echo \"Exit code: $?\")",
       "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && yarn format 2>&1 | grep -E \"types\\\\.ts|error|warn\" && npx tsc --noEmit; echo \"TSC Exit: $?\")",
-      "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit 2>&1; echo \"TSC Exit: $?\")"
+      "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit 2>&1; echo \"TSC Exit: $?\")",
+      "Bash(git stash:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
