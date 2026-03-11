@@ -172,6 +172,7 @@ const DocumentPage: React.FC = () => {
 				onMoveToTrash={handleMoveToTrash}
 				onSearch={handleSearch}
 				onClearSearch={handleClearSearch}
+				onOpenFolder={handleOpenFolder}
 			/>
 
 			{/* Editor + Right Sidebar */}
