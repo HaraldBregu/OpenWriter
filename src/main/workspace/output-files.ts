@@ -46,7 +46,7 @@ export interface OutputFileMetadata {
 export interface OutputFile {
 	/** Folder name (UUID v4) */
 	id: string;
-	/** The output type (posts, writings) */
+	/** The output type (e.g. documents) */
 	type: OutputType;
 	/** Absolute folder path on disk */
 	path: string;
