@@ -1,4 +1,4 @@
-export type { AgentDefinition, AgentDefinitionInfo, AgentDefaultConfig } from './definition';
+export type { AgentDefinition, AgentDefinitionInfo } from './definition';
 export { toAgentDefinitionInfo } from './definition';
 export { AgentRegistry } from './agent-registry';
 export { executeAIAgentsStream } from './executor';
