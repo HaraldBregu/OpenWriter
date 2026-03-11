@@ -99,6 +99,10 @@ export default function ResourcesPage() {
 		}
 	}, [selected, dispatch]);
 
+	const handleOpenDataFolder = useCallback(() => {
+		window.workspace.openDataFolder();
+	}, []);
+
 	const handleOpenResourcesFolder = useCallback(() => {
 		window.workspace.openResourcesFolder();
 	}, []);
