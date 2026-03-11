@@ -195,6 +195,11 @@ export const workspaceSlice = createSlice({
 				state.resourcesStatus = 'error';
 				state.resourcesError = action.error.message || 'Failed to remove resources';
 			});
+
+		// loadIndexingInfo
+		builder.addCase(loadIndexingInfo.fulfilled, (state, action) => {
+			state.indexingInfo = action.payload;
+		});
 	},
 });
 
