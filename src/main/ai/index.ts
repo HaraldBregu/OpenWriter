@@ -27,27 +27,3 @@ export {
 	SentenceCompleterAgent,
 } from './agents';
 
-import { StoryWriterAgent } from './agents';
-import { TextCompleterAgent } from './agents';
-import { ContentReviewAgent } from './agents';
-import { SummarizerAgent } from './agents';
-import { ToneAdjusterAgent } from './agents';
-import { DemoAgent } from './agents';
-import { TextContinuationAgent } from './agents';
-import { SentenceCompleterAgent } from './agents';
-import type { AgentDefinition } from './core';
-
-/**
- * All built-in agent definitions in display order.
- * Pass this to AgentRegistry.register() in bootstrapServices().
- */
-export const ALL_AGENT_DEFINITIONS: AgentDefinition[] = [
-	StoryWriterAgent,
-	TextCompleterAgent,
-	ContentReviewAgent,
-	SummarizerAgent,
-	ToneAdjusterAgent,
-	DemoAgent,
-	TextContinuationAgent,
-	SentenceCompleterAgent,
-];
