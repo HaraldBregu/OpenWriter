@@ -330,8 +330,8 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	// Shell
 	// -------------------------------------------------------------------------
-	openFolder: (folderPath: string): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openFolder, folderPath);
+	openDataFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openDataFolder);
 	},
 	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
