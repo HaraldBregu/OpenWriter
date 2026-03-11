@@ -12,6 +12,7 @@ interface ResourcesHeaderProps {
 	onRemove: () => void;
 	indexing: boolean;
 	onIndex: () => void;
+	onOpenFolder: () => void;
 }
 
 export const ResourcesHeader = memo(function ResourcesHeader({
