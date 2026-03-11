@@ -100,7 +100,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		// Load documents metadata
 		reporter.progress(0, 'Loading documents');
-		const fileManagement = this.globalContainer.get<FileManagementService>('fileManagement');
+		const fileManagement = this.globalContainer.get<FileManager>('fileManagement');
 		const watcher = windowContext.container.has('documentsWatcher')
 			? windowContext.container.get<DocumentsWatcherService>('documentsWatcher')
 			: null;
