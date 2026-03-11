@@ -61,19 +61,7 @@ export function TasksTab() {
 						))}
 					</div>
 
-					<div className="flex items-center gap-2 pb-1">
-						<span className="text-xs text-muted-foreground shrink-0">Agent task:</span>
-						<button
-							type="button"
-							title={`Prompt: "${AGENT_DEMO_PROMPT}"`}
-							onClick={submitAgentTask}
-							className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-						>
-							<Bot className="h-3 w-3 shrink-0" />
-							Demo Agent
-						</button>
 					</div>
-				</div>
 
 				<div className="flex-1 overflow-auto">
 					{tasks.length === 0 ? (
