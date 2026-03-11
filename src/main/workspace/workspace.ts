@@ -3,7 +3,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
 import type { WorkspaceService } from '../services/workspace';
-import type { FileManagementService, FileMetadata } from '../services/file-management-service';
+import type { FileMetadata } from '../file_manager';
 import type { WorkspaceMetadataService } from '../services/workspace-metadata';
 import type { DocumentsWatcherService } from '../services/documents-watcher';
 import type {
