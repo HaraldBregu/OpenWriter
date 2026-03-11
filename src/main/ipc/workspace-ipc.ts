@@ -112,6 +112,31 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		// -------------------------------------------------------------------------
+		// Indexing info
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getIndexingInfo,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const workspace = getWindowService<WorkspaceService>(event, container, 'workspace');
+				const currentWorkspace = workspace.getCurrent();
+				if (!currentWorkspace) return null;
+
+				const infoPath = require('node:path').join(
+					currentWorkspace,
+					'data',
+					'indexing-info.json'
+				);
+				try {
+					const content = await require('node:fs/promises').readFile(infoPath, 'utf-8');
+					return JSON.parse(content);
+				} catch {
+					return null;
+				}
+			}, WorkspaceChannels.getIndexingInfo)
+		);
+
+		// -------------------------------------------------------------------------
 		// Documents
 		// -------------------------------------------------------------------------
 
