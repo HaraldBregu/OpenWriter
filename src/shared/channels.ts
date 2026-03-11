@@ -227,6 +227,9 @@ export interface InvokeChannelMap {
 	// ---- Indexing (IpcResult-wrapped) ----
 	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
 
+	// ---- Shell (IpcResult-wrapped) ----
+	[WorkspaceChannels.openFolder]: { args: [folderPath: string]; result: void };
+
 	// ---- Resources (IpcResult-wrapped) ----
 	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: ResourceInfo[] };
 	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: ResourceInfo[] };
