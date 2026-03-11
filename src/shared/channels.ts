@@ -222,6 +222,9 @@ export interface InvokeChannelMap {
 	[TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null };
 	[TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus };
 
+	// ---- Indexing (IpcResult-wrapped) ----
+	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
+
 	// ---- Resources (IpcResult-wrapped) ----
 	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: ResourceInfo[] };
 	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: ResourceInfo[] };
