@@ -13,10 +13,12 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import { ListKeymap } from '@tiptap/extension-list';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/agent-prompt-extension';
-// import { InlinePlaceholder } from './inline-placeholder';
+import { ImageExtension } from './extensions/image-extension';
 
 export const BASE_EXTENSIONS: AnyExtension[] = [
 	Document,
@@ -33,11 +35,11 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	OrderedList,
 	ListItem,
 	ListKeymap,
+	Dropcursor,
+	Gapcursor,
+	ImageExtension,
 	SearchExtension,
 	AgentPromptExtension,
-	// InlinePlaceholder.configure({
-	// 	placeholder: 'thinking...',
-	// }),
 	Placeholder.configure({
 		placeholder: ({ node }) => {
 			if (node.type.name === 'paragraph') {
