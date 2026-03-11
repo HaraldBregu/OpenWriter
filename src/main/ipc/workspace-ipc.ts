@@ -5,7 +5,7 @@ import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { WorkspaceManager } from '../workspace/workspace';
+import type { Workspace } from '../workspace/workspace';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
@@ -20,14 +20,14 @@ import type {
 /**
  * IPC handlers for all workspace-related concerns.
  *
- * This is a thin pass-through layer: all business logic lives in WorkspaceManager.
+ * This is a thin pass-through layer: all business logic lives in Workspace.
  * Only Electron-specific APIs (dialog, shell) remain here.
  */
 export class WorkspaceIpc implements IpcModule {
 	readonly name = 'workspace';
 
-	private mgr(event: IpcMainInvokeEvent, container: ServiceContainer): WorkspaceManager {
-		return getWindowService<WorkspaceManager>(event, container, 'workspaceManager');
+	private mgr(event: IpcMainInvokeEvent, container: ServiceContainer): Workspace {
+		return getWindowService<Workspace>(event, container, 'workspaceManager');
 	}
 
 	register(container: ServiceContainer, _eventBus: EventBus): void {
@@ -272,7 +272,7 @@ export class WorkspaceIpc implements IpcModule {
 		ipcMain.handle(
 			WorkspaceChannels.outputSave,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, input: Parameters<WorkspaceManager['saveOutput']>[0]) =>
+				(event: IpcMainInvokeEvent, input: Parameters<Workspace['saveOutput']>[0]) =>
 					this.mgr(event, container).saveOutput(input),
 				WorkspaceChannels.outputSave
 			)
@@ -281,7 +281,7 @@ export class WorkspaceIpc implements IpcModule {
 		ipcMain.handle(
 			WorkspaceChannels.update,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, params: Parameters<WorkspaceManager['updateOutput']>[0]) =>
+				(event: IpcMainInvokeEvent, params: Parameters<Workspace['updateOutput']>[0]) =>
 					this.mgr(event, container).updateOutput(params),
 				WorkspaceChannels.update
 			)
