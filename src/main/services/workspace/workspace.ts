@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import type { Disposable } from '../core/service-container';
-import type { WorkspaceService } from './workspace';
-import type { FileManagementService, FileMetadata } from './file-management-service';
-import type { WorkspaceMetadataService } from './workspace-metadata';
-import type { DocumentsWatcherService } from './documents-watcher';
+import type { Disposable } from '../../core/service-container';
+import type { WorkspaceService } from '../workspace';
+import type { FileManagementService, FileMetadata } from '../file-management-service';
+import type { WorkspaceMetadataService } from '../workspace-metadata';
+import type { DocumentsWatcherService } from '../documents-watcher';
 import type {
 	OutputFilesService,
 	OutputFile,
@@ -13,10 +13,10 @@ import type {
 	SaveOutputFileInput,
 	SaveOutputFileResult,
 	UpdateOutputFileInput,
-} from './output-files';
-import { VALID_OUTPUT_TYPES } from './output-files';
-import { DocumentsService } from './documents';
-import type { LoggerService } from './logger';
+} from '../output-files';
+import { VALID_OUTPUT_TYPES } from '../output-files';
+import { DocumentsService } from '../documents';
+import type { LoggerService } from '../logger';
 import type {
 	DirectoryEntry,
 	DirectoryAddManyResult,
@@ -28,8 +28,8 @@ import type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
-} from '../../shared/types';
-import { FileManager } from '../file_manager';
+} from '../../../shared/types';
+import { FileManager } from '../../file_manager';
 
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
