@@ -81,12 +81,12 @@ export class WindowScopedServiceFactory {
 			eventBus: EventBus;
 			storeService: StoreService;
 			workspaceService: WorkspaceService;
-		},
+		}
 	): Promise<void> {
 		const logger = context.globalContainer.get<LoggerService>('logger');
 		logger?.info(
 			'WindowScopedServiceFactory',
-			`Creating ${this.definitions.size} window-scoped services`,
+			`Creating ${this.definitions.size} window-scoped services`
 		);
 
 		const enrichedContext: WindowScopedFactoryContext = {
@@ -103,7 +103,7 @@ export class WindowScopedServiceFactory {
 				logger?.error(
 					'WindowScopedServiceFactory',
 					`Failed to register service "${definition.key}"`,
-					error,
+					error
 				);
 				throw error;
 			}
@@ -111,7 +111,7 @@ export class WindowScopedServiceFactory {
 
 		logger?.info(
 			'WindowScopedServiceFactory',
-			'Successfully registered all window-scoped services',
+			'Successfully registered all window-scoped services'
 		);
 	}
 
@@ -188,7 +188,7 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 				metadata,
 				watcher,
 				outputFiles,
-				logger,
+				logger
 			);
 		},
 	});

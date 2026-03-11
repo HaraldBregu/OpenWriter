@@ -45,15 +45,15 @@ export class WorkspaceIpc implements IpcModule {
 					return workspacePath;
 				}
 				return null;
-			}, WorkspaceChannels.selectFolder),
+			}, WorkspaceChannels.selectFolder)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.getCurrent,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).getCurrent(),
-				WorkspaceChannels.getCurrent,
-			),
+				WorkspaceChannels.getCurrent
+			)
 		);
 
 		ipcMain.handle(
@@ -61,24 +61,24 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, workspacePath: string) =>
 					this.mgr(event, container).setCurrent(workspacePath),
-				WorkspaceChannels.setCurrent,
-			),
+				WorkspaceChannels.setCurrent
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.getRecent,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).getRecent(),
-				WorkspaceChannels.getRecent,
-			),
+				WorkspaceChannels.getRecent
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.clear,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).clear(),
-				WorkspaceChannels.clear,
-			),
+				WorkspaceChannels.clear
+			)
 		);
 
 		ipcMain.handle(
@@ -89,7 +89,7 @@ export class WorkspaceIpc implements IpcModule {
 				} catch {
 					return false;
 				}
-			}, WorkspaceChannels.directoryExists),
+			}, WorkspaceChannels.directoryExists)
 		);
 
 		ipcMain.handle(
@@ -97,8 +97,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, workspacePath: string) =>
 					this.mgr(event, container).removeRecent(workspacePath),
-				WorkspaceChannels.removeRecent,
-			),
+				WorkspaceChannels.removeRecent
+			)
 		);
 
 		// -------------------------------------------------------------------------
@@ -109,8 +109,8 @@ export class WorkspaceIpc implements IpcModule {
 			WorkspaceChannels.getIndexingInfo,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).getIndexingInfo(),
-				WorkspaceChannels.getIndexingInfo,
-			),
+				WorkspaceChannels.getIndexingInfo
+			)
 		);
 
 		// -------------------------------------------------------------------------
@@ -122,7 +122,7 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const dataDir = this.mgr(event, container).getDataFolderPath();
 				await shell.openPath(dataDir);
-			}, WorkspaceChannels.openDataFolder),
+			}, WorkspaceChannels.openDataFolder)
 		);
 
 		// -------------------------------------------------------------------------
@@ -166,7 +166,7 @@ export class WorkspaceIpc implements IpcModule {
 					}
 					throw err;
 				}
-			}, WorkspaceChannels.importFiles),
+			}, WorkspaceChannels.importFiles)
 		);
 
 		ipcMain.handle(
@@ -174,34 +174,32 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, paths: string[]) =>
 					this.mgr(event, container).importByPaths(paths),
-				WorkspaceChannels.importByPaths,
-			),
+				WorkspaceChannels.importByPaths
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.downloadFromUrl,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, url: string) =>
-					this.mgr(event, container).downloadFromUrl(url),
-				WorkspaceChannels.downloadFromUrl,
-			),
+				(event: IpcMainInvokeEvent, url: string) => this.mgr(event, container).downloadFromUrl(url),
+				WorkspaceChannels.downloadFromUrl
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.documentsLoadAll,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).loadDocuments(),
-				WorkspaceChannels.documentsLoadAll,
-			),
+				WorkspaceChannels.documentsLoadAll
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.deleteFile,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, id: string) =>
-					this.mgr(event, container).deleteDocument(id),
-				WorkspaceChannels.deleteFile,
-			),
+				(event: IpcMainInvokeEvent, id: string) => this.mgr(event, container).deleteDocument(id),
+				WorkspaceChannels.deleteFile
+			)
 		);
 
 		// -------------------------------------------------------------------------
@@ -212,8 +210,8 @@ export class WorkspaceIpc implements IpcModule {
 			WorkspaceChannels.list,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).getDirectories(),
-				WorkspaceChannels.list,
-			),
+				WorkspaceChannels.list
+			)
 		);
 
 		ipcMain.handle(
@@ -221,8 +219,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, dirPath: string) =>
 					this.mgr(event, container).addDirectory(dirPath),
-				WorkspaceChannels.add,
-			),
+				WorkspaceChannels.add
+			)
 		);
 
 		ipcMain.handle(
@@ -230,17 +228,16 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, dirPaths: string[]) =>
 					this.mgr(event, container).addDirectories(dirPaths),
-				WorkspaceChannels.addMany,
-			),
+				WorkspaceChannels.addMany
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.remove,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, id: string) =>
-					this.mgr(event, container).removeDirectory(id),
-				WorkspaceChannels.remove,
-			),
+				(event: IpcMainInvokeEvent, id: string) => this.mgr(event, container).removeDirectory(id),
+				WorkspaceChannels.remove
+			)
 		);
 
 		ipcMain.handle(
@@ -248,8 +245,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, dirPath: string) =>
 					this.mgr(event, container).validateDirectory(dirPath),
-				WorkspaceChannels.validate,
-			),
+				WorkspaceChannels.validate
+			)
 		);
 
 		ipcMain.handle(
@@ -257,8 +254,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, id: string, isIndexed: boolean) =>
 					this.mgr(event, container).markDirectoryIndexed(id, isIndexed),
-				WorkspaceChannels.markIndexed,
-			),
+				WorkspaceChannels.markIndexed
+			)
 		);
 
 		// -------------------------------------------------------------------------
@@ -270,27 +267,25 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, input: Parameters<WorkspaceManager['saveOutput']>[0]) =>
 					this.mgr(event, container).saveOutput(input),
-				WorkspaceChannels.outputSave,
-			),
+				WorkspaceChannels.outputSave
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.update,
 			wrapIpcHandler(
-				(
-					event: IpcMainInvokeEvent,
-					params: Parameters<WorkspaceManager['updateOutput']>[0],
-				) => this.mgr(event, container).updateOutput(params),
-				WorkspaceChannels.update,
-			),
+				(event: IpcMainInvokeEvent, params: Parameters<WorkspaceManager['updateOutput']>[0]) =>
+					this.mgr(event, container).updateOutput(params),
+				WorkspaceChannels.update
+			)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.outputLoadAll,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).loadOutputs(),
-				WorkspaceChannels.outputLoadAll,
-			),
+				WorkspaceChannels.outputLoadAll
+			)
 		);
 
 		ipcMain.handle(
@@ -298,8 +293,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, outputType: string) =>
 					this.mgr(event, container).loadOutputsByType(outputType),
-				WorkspaceChannels.loadByType,
-			),
+				WorkspaceChannels.loadByType
+			)
 		);
 
 		ipcMain.handle(
@@ -307,8 +302,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: { type: string; id: string }) =>
 					this.mgr(event, container).loadOutput(params),
-				WorkspaceChannels.outputLoadOne,
-			),
+				WorkspaceChannels.outputLoadOne
+			)
 		);
 
 		ipcMain.handle(
@@ -316,8 +311,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: { type: string; id: string }) =>
 					this.mgr(event, container).deleteOutput(params),
-				WorkspaceChannels.outputDelete,
-			),
+				WorkspaceChannels.outputDelete
+			)
 		);
 
 		ipcMain.handle(
@@ -325,8 +320,8 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: { type: string; id: string }) =>
 					this.mgr(event, container).trashOutput(params),
-				WorkspaceChannels.outputTrash,
-			),
+				WorkspaceChannels.outputTrash
+			)
 		);
 
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);

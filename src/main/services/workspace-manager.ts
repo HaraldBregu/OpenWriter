@@ -43,7 +43,7 @@ export class WorkspaceManager implements Disposable {
 		private readonly metadata: WorkspaceMetadataService,
 		private readonly watcher: DocumentsWatcherService | null,
 		private readonly outputFiles: OutputFilesService,
-		private readonly logger: LoggerService,
+		private readonly logger: LoggerService
 	) {
 		this.documents = new DocumentsService(fileManagement, watcher);
 	}
@@ -106,10 +106,7 @@ export class WorkspaceManager implements Disposable {
 	// Documents
 	// -------------------------------------------------------------------------
 
-	async importFiles(
-		filePaths: string[],
-		extensions?: string[],
-	): Promise<FileMetadata[]> {
+	async importFiles(filePaths: string[], extensions?: string[]): Promise<FileMetadata[]> {
 		const currentWorkspace = this.requireWorkspace();
 		return this.documents.importFiles(currentWorkspace, filePaths, extensions);
 	}
@@ -183,7 +180,10 @@ export class WorkspaceManager implements Disposable {
 	async loadOutputsByType(outputType: string): Promise<OutputFile[]> {
 		this.validateOutputType(outputType);
 		const files = await this.outputFiles.loadByType(outputType as OutputType);
-		this.logger.info('WorkspaceManager', `Loaded ${files.length} output files for type "${outputType}"`);
+		this.logger.info(
+			'WorkspaceManager',
+			`Loaded ${files.length} output files for type "${outputType}"`
+		);
 		return files;
 	}
 
@@ -194,7 +194,7 @@ export class WorkspaceManager implements Disposable {
 			'WorkspaceManager',
 			file
 				? `Loaded output file: ${params.type}/${params.id}`
-				: `Output file not found: ${params.type}/${params.id}`,
+				: `Output file not found: ${params.type}/${params.id}`
 		);
 		return file;
 	}
@@ -271,7 +271,7 @@ export class WorkspaceManager implements Disposable {
 		}
 		if (!this.isValidOutputType(type)) {
 			throw new Error(
-				`Invalid output type "${type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`,
+				`Invalid output type "${type}". Must be one of: ${VALID_OUTPUT_TYPES.join(', ')}`
 			);
 		}
 	}
@@ -288,11 +288,7 @@ export class WorkspaceManager implements Disposable {
 		if (typeof input.content !== 'string') {
 			throw new Error('Invalid content: must be a string');
 		}
-		if (
-			!input.metadata ||
-			typeof input.metadata !== 'object' ||
-			Array.isArray(input.metadata)
-		) {
+		if (!input.metadata || typeof input.metadata !== 'object' || Array.isArray(input.metadata)) {
 			throw new Error('Invalid metadata: must be an object');
 		}
 	}
@@ -307,11 +303,7 @@ export class WorkspaceManager implements Disposable {
 		if (typeof params.content !== 'string') {
 			throw new Error('Invalid content: must be a string');
 		}
-		if (
-			!params.metadata ||
-			typeof params.metadata !== 'object' ||
-			Array.isArray(params.metadata)
-		) {
+		if (!params.metadata || typeof params.metadata !== 'object' || Array.isArray(params.metadata)) {
 			throw new Error('Invalid metadata: must be an object');
 		}
 	}

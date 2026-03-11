@@ -97,7 +97,7 @@ function PdfPreview({ path }: { path: string }) {
 	useEffect(() => {
 		let cancelled = false;
 
-		window.fs
+		window.workspace
 			.readFile({ filePath: path, encoding: 'latin1' })
 			.then((raw) => {
 				if (cancelled) return;
