@@ -181,7 +181,7 @@ export interface WorkspaceApi {
 	/** Open the folder for a specific document by its ID in the system file explorer. */
 	openDocumentFolder: (documentId: string) => Promise<void>;
 	// -------------------------------------------------------------------------
-	// Output file management (posts and writings)
+	// Output file management (documents)
 	// -------------------------------------------------------------------------
 	saveOutput: (input: SaveOutputInput) => Promise<SaveOutputResult>;
 	loadOutputs: () => Promise<OutputFile[]>;
