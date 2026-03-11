@@ -334,7 +334,7 @@ const workspace: WorkspaceApi = {
 		return typedInvokeUnwrap(WorkspaceChannels.openDocumentFolder, documentId);
 	},
 	// -------------------------------------------------------------------------
-	// Output file management (posts and writings)
+	// Output file management (documents)
 	// -------------------------------------------------------------------------
 	saveOutput: (input: {
 		type: string;
