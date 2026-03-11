@@ -214,8 +214,8 @@ describe('OutputFilesService', () => {
 			expect(blockWriteCall![1]).toBe('# Hello World');
 		});
 
-		it('should accept "writings" as a valid output type', async () => {
-			await expect(service.save({ ...VALID_INPUT, type: 'writings' })).resolves.not.toThrow();
+		it('should accept "documents" as a valid output type', async () => {
+			await expect(service.save({ ...VALID_INPUT, type: 'documents' })).resolves.not.toThrow();
 		});
 
 		it('should handle multiple blocks in a single save', async () => {
