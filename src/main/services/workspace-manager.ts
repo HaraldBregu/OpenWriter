@@ -369,13 +369,13 @@ export class WorkspaceManager implements Disposable {
 		}
 	}
 
-	private buildFileManager(): FileSystemManager {
+	private buildFileManager(): FileManager {
 		const extraRoots: string[] = [];
 		const workspacePath = this.workspace.getCurrent();
 		if (workspacePath) {
 			extraRoots.push(workspacePath);
 		}
-		return new FileSystemManager(this.logger, extraRoots);
+		return new FileManager(this.logger, extraRoots);
 	}
 
 	private validateFsParams(params: unknown, required: string[]): void {
