@@ -54,6 +54,13 @@ import { assertPathSafe, assertValidName, assertValidEncoding } from './validato
  * - {@link createFile}  — Create a new file, optionally with initial content
  * - {@link createFolder} — Create a directory, optionally recursive
  * - {@link renameEntry} — Rename or move a file or directory
+ * - {@link copyFile}    — Copy a file to a destination directory
+ * - {@link downloadFile} — Download a file from an HTTPS URL
+ * - {@link deleteFile}  — Delete a file from disk
+ * - {@link getUniqueFilePath} — Generate a unique file path
+ * - {@link ensureDirectory} — Ensure a directory exists
+ * - {@link createFileMetadata} — Build metadata from filesystem stats
+ * - {@link getMimeType} — Determine MIME type from extension
  */
 export class FileManager {
 	private static readonly LOG_SOURCE = 'FileManager';
