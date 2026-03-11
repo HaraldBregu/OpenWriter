@@ -42,7 +42,6 @@ import {
 	ChevronRight,
 	Bell,
 	Bug,
-	Bot,
 	PenLine,
 	Plus,
 	Library,
