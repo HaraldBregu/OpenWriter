@@ -39,7 +39,6 @@ export default function ResourcesPage() {
 	const indexingTask = useTaskListener<{
 		indexedCount: number;
 		failedIds: string[];
-		skippedCount: number;
 		totalChunks: number;
 	}>('index-resources');
 
