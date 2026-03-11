@@ -120,7 +120,7 @@ export interface DocumentFileChangeEvent {
 
 // ---- Output ---------------------------------------------------------------
 
-export type OutputType = 'writings';
+export type OutputType = 'documents';
 
 export interface OutputFileMetadata {
 	title: string;
