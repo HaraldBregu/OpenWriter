@@ -29,6 +29,7 @@ import { ResourcesEmptyState } from './ResourcesEmptyState';
 import { ResourcesTable } from './ResourcesTable';
 
 const RESOURCES_DIR = 'resources';
+const VECTOR_STORE_SUBDIR = 'data/vector_store';
 
 export default function ResourcesPage() {
 	const dispatch = useAppDispatch();
@@ -98,6 +99,12 @@ export default function ResourcesPage() {
 		}
 	}, [selected, dispatch]);
 
+	const handleOpenDataFolder = useCallback(() => {
+		if (workspacePath) {
+			window.workspace.openFolder(`${workspacePath}/${VECTOR_STORE_SUBDIR}`);
+		}
+	}, [workspacePath]);
+
 	return (
 		<div className="flex flex-col h-full">
 			<ResourcesHeader
@@ -130,6 +137,14 @@ export default function ResourcesPage() {
 						{indexingInfo.failedCount > 0 && (
 							<span className="text-destructive">{indexingInfo.failedCount} failed</span>
 						)}
+						<button
+							type="button"
+							className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+							onClick={handleOpenDataFolder}
+						>
+							<FolderOpen className="h-3.5 w-3.5" />
+							Open data folder
+						</button>
 					</div>
 				</div>
 			)}
