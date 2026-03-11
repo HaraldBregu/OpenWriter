@@ -174,6 +174,10 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	getIndexingInfo: () => Promise<IndexingInfo | null>;
 	// -------------------------------------------------------------------------
+	// Shell
+	// -------------------------------------------------------------------------
+	openFolder: (folderPath: string) => Promise<void>;
+	// -------------------------------------------------------------------------
 	// Output file management (posts and writings)
 	// -------------------------------------------------------------------------
 	saveOutput: (input: SaveOutputInput) => Promise<SaveOutputResult>;
