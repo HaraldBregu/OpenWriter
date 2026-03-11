@@ -13,6 +13,7 @@ import type {
 	WorkspaceInfo,
 	WorkspaceChangedEvent,
 	WorkspaceDeletedEvent,
+	IndexingInfo,
 	TaskSubmitPayload,
 	TaskInfo,
 	TaskEvent,
