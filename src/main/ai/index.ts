@@ -26,4 +26,3 @@ export {
 	TextContinuationAgent,
 	SentenceCompleterAgent,
 } from './agents';
-
