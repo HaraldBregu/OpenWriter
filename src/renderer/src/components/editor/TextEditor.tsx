@@ -122,6 +122,14 @@ const TextEditor = React.memo(
 							.setMeta('preventEditorUpdate', options?.preventEditorUpdate);
 						editor.view.dispatch(tr);
 					},
+					insertImage(options: ImageInsertOptions) {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.setImage({
+							src: options.src,
+							alt: options.alt,
+							title: options.title,
+						});
+					},
 					setSearch(query: string) {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.setSearch(query);
