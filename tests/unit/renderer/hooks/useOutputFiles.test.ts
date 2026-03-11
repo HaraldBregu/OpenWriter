@@ -126,11 +126,11 @@ describe('useOutputFiles — initial load', () => {
 		mockOutputLoadAll.mockResolvedValue([
 			{
 				id: 'item-001',
-				type: 'writings',
+				type: 'documents',
 				path: '/workspace/output/writings/item-001',
 				metadata: {
 					title: 'Hello World',
-					type: 'writings',
+					type: 'documents',
 					category: 'tech',
 					tags: ['a'],
 					visibility: 'public',
@@ -221,7 +221,7 @@ describe('useOutputFiles — file-change subscription', () => {
 		act(() => {
 			capturedFileChangeCallback?.({
 				type: 'added',
-				outputType: 'writings',
+				outputType: 'documents',
 				fileId: 'new-item',
 				filePath: '/workspace/output/writings/new-item/DATA.md',
 				timestamp: Date.now(),
@@ -261,7 +261,7 @@ describe('useOutputFiles — file-change subscription', () => {
 			act(() => {
 				capturedFileChangeCallback?.({
 					type: 'changed',
-					outputType: 'writings',
+					outputType: 'documents',
 					fileId: `item-${i}`,
 					filePath: `/workspace/output/writings/item-${i}/DATA.md`,
 					timestamp: Date.now(),
@@ -319,7 +319,7 @@ describe('useOutputFiles — cleanup on unmount', () => {
 		act(() => {
 			capturedFileChangeCallback?.({
 				type: 'removed',
-				outputType: 'writings',
+				outputType: 'documents',
 				fileId: 'deleted-item',
 				filePath: '/workspace/output/writings/deleted-item/DATA.md',
 				timestamp: Date.now(),
