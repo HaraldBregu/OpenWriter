@@ -40,4 +40,5 @@ export const initialState: WorkspaceState = {
 	resourcesStatus: 'idle',
 	resourcesError: null,
 	importing: false,
+	indexingInfo: null,
 };
