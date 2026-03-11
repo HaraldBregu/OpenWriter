@@ -139,29 +139,21 @@ export class WorkspaceIpc implements IpcModule {
 		// -------------------------------------------------------------------------
 
 		ipcMain.handle(
-			WorkspaceChannels.openFolder,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent, folderPath: string) => {
+			WorkspaceChannels.openDataFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const workspace = getWindowService<WorkspaceService>(event, container, 'workspace');
 				const currentWorkspace = workspace.getCurrent();
 				if (!currentWorkspace) {
 					throw new Error('No workspace selected.');
 				}
 
-				// Ensure the folder path is within the current workspace
-				const resolved = path.resolve(folderPath);
-				const resolvedWorkspace = path.resolve(currentWorkspace);
-				if (!resolved.startsWith(resolvedWorkspace)) {
-					throw new Error('Cannot open folders outside the current workspace.');
+				const dataDir = path.join(currentWorkspace, 'data', 'vector_store');
+				if (!fs.existsSync(dataDir) || !fs.statSync(dataDir).isDirectory()) {
+					throw new Error('Data folder does not exist. Run indexing first.');
 				}
 
-				// Ensure the directory exists before opening
-				const exists = fs.existsSync(resolved) && fs.statSync(resolved).isDirectory();
-				if (!exists) {
-					throw new Error(`Folder does not exist: ${folderPath}`);
-				}
-
-				await shell.openPath(resolved);
-			}, WorkspaceChannels.openFolder)
+				await shell.openPath(dataDir);
+			}, WorkspaceChannels.openDataFolder)
 		);
 
 		// -------------------------------------------------------------------------
