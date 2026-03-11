@@ -63,9 +63,14 @@ function ensureListening(): void {
 		let next: TaskSnapshot;
 
 		switch (event.type) {
-			case 'queued':
+			case 'queued': {
 				next = { ...prev, status: 'queued' };
+				const taskType = (event.data as { taskType?: string }).taskType;
+				if (taskType) {
+					typeSubscribers.get(taskType)?.forEach((cb) => cb(taskId));
+				}
 				break;
+			}
 			case 'started':
 				next = { ...prev, status: 'running' };
 				break;
