@@ -51,10 +51,10 @@ export default function ResourcesPage() {
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	const handleIndex = useCallback(() => {
-		if (!workspacePath) return;
+		if (!workspacePath || indexing) return;
 		const resourcesPath = `${workspacePath}/${RESOURCES_DIR}`;
-		indexingTask.submit({ workspacePath, resourcesPath });
-	}, [workspacePath, indexingTask]);
+		window.task.submit('index-resources', { workspacePath, resourcesPath });
+	}, [workspacePath, indexing]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(importResourcesRequested(SUPPORTED_EXTENSIONS));
