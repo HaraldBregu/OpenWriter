@@ -6,7 +6,7 @@ import type { LoggerService } from '../services/logger';
 import { WorkspaceMetadataService } from '../services/workspace-metadata';
 import { DocumentsWatcherService } from '../services/documents-watcher';
 import { OutputFilesService } from '../services/output-files';
-import { WorkspaceManager } from '../workspace/workspace';
+import { Workspace } from '../workspace/workspace';
 
 /**
  * Context available to every window-scoped service factory function.
@@ -182,7 +182,7 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 				? windowContainer.get<DocumentsWatcherService>('documentsWatcher')
 				: null;
 			const outputFiles = windowContainer.get<OutputFilesService>('outputFiles');
-			return new WorkspaceManager(
+			return new Workspace(
 				workspaceService,
 				fileManagement,
 				metadata,
