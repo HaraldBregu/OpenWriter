@@ -44,7 +44,7 @@ const DocumentPage: React.FC = () => {
 		async function load() {
 			try {
 				const output = await window.workspace.loadOutput({
-					type: 'writings',
+					type: 'documents',
 					id: id!,
 				});
 				if (cancelled || !output) {
@@ -73,7 +73,7 @@ const DocumentPage: React.FC = () => {
 					if (!id || !loadedRef.current) return;
 					const { title: t, content: c } = stateRef.current;
 					window.workspace.updateOutput({
-						type: 'writings',
+						type: 'documents',
 						id,
 						content: c,
 						metadata: { title: t },
@@ -122,7 +122,7 @@ const DocumentPage: React.FC = () => {
 		debouncedSave.cancel();
 
 		try {
-			await window.workspace.trashOutput({ type: 'writings', id });
+			await window.workspace.trashOutput({ type: 'documents', id });
 			navigate('/home');
 		} catch (err) {
 			console.error('[DocumentPage] Failed to trash writing:', err);
