@@ -52,6 +52,18 @@ export default function ResourcesPage() {
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
+	// Load indexing info on mount
+	useEffect(() => {
+		dispatch(loadIndexingInfo());
+	}, [dispatch]);
+
+	// Reload indexing info after indexing completes
+	useEffect(() => {
+		if (indexingTask.isCompleted) {
+			dispatch(loadIndexingInfo());
+		}
+	}, [indexingTask.isCompleted, dispatch]);
+
 	const handleIndex = useCallback(() => {
 		if (!workspacePath || indexing) return;
 		const resourcesPath = `${workspacePath}/${RESOURCES_DIR}`;
