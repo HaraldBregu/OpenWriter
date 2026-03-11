@@ -121,6 +121,23 @@ export default function ResourcesPage() {
 				</div>
 			)}
 
+			{!indexing && indexingInfo && (
+				<div className="px-6 py-3 border-b shrink-0">
+					<div className="flex items-center gap-4 text-xs text-muted-foreground">
+						<span>
+							Last indexed: {new Date(indexingInfo.lastIndexedAt).toLocaleString()}
+						</span>
+						<span>{indexingInfo.indexedCount} documents</span>
+						<span>{indexingInfo.totalChunks} chunks</span>
+						{indexingInfo.failedCount > 0 && (
+							<span className="text-destructive">
+								{indexingInfo.failedCount} failed
+							</span>
+						)}
+					</div>
+				</div>
+			)}
+
 			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
