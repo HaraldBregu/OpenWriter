@@ -34,7 +34,7 @@ jest.mock('chokidar', () => ({
 import fs from 'node:fs/promises';
 import chokidar from 'chokidar';
 import 'node:path';
-import { OutputFilesService } from '../../../../src/main/services/output-files';
+import { OutputFilesService } from '../../../../src/main/workspace/output-files';
 import { EventBus } from '../../../../src/main/core/event-bus';
 
 const mockAccess = fs.access as jest.Mock;
