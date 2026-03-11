@@ -306,7 +306,9 @@
 		"tryAgain": "Riprova",
 		"goHome": "Vai alla Home",
 		"restartApp": "Riavvia App",
-		"agents": "Agenti"
+		"agents": "Agenti",
+		"openFolder": "Apri cartella",
+		"search": "Cerca"
 	},
 	"sidebar": {
 		"write": "Scrivi",
