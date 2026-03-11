@@ -33,7 +33,6 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAI?: (content: string, positionFrom: number) => void;
-	onAskAIAgent?: (prompt: string) => void;
 }
 
 const TextEditor = React.memo(
@@ -48,7 +47,6 @@ const TextEditor = React.memo(
 				id,
 				streamingContent,
 				onContinueWithAI,
-				onAskAIAgent,
 			},
 			ref
 		) => {
@@ -98,11 +96,6 @@ const TextEditor = React.memo(
 			);
 
 			const editor = useEditor(editorOptions, []);
-
-			// useEffect(() => {
-			// 	if (!editor || editor.isDestroyed) return;
-			// 	editor.storage.agentPrompt.onSubmit = onAskAIAgent ?? (() => {});
-			// }, [editor, onAskAIAgent]);
 
 			const rootRef = useRef<HTMLDivElement>(null);
 
