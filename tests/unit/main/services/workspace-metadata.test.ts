@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { WorkspaceMetadataService } from '../../../../src/main/services/workspace-metadata';
-import type { WorkspaceService } from '../../../../src/main/services/workspace';
+import { WorkspaceMetadataService } from '../../../../src/main/workspace/workspace-metadata';
+import type { WorkspaceService } from '../../../../src/main/workspace/workspace-service';
 import type { EventBus } from '../../../../src/main/core/event-bus';
 
 describe('WorkspaceMetadataService - Workspace Isolation', () => {
