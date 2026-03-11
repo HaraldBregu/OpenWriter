@@ -37,6 +37,15 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 						size="icon"
 						variant="outline"
 						className="h-8 w-8"
+						onClick={onOpenFolder}
+						disabled={editing}
+					>
+						<FolderOpen className="h-3.5 w-3.5" />
+					</AppButton>
+					<AppButton
+						size="icon"
+						variant="outline"
+						className="h-8 w-8"
 						onClick={onIndex}
 						disabled={indexing || editing}
 					>
