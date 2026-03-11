@@ -7,9 +7,8 @@
  *
  * Resolution chain (highest priority first):
  *   1. AgentTaskInput overrides (per-request)
- *   2. AgentDefinition.defaultConfig (per-agent)
- *   3. ModelRegistry.resolve(role) (per-role)
- *   4. ProviderResolver defaults (user's global settings)
+ *   2. ModelRegistry.resolve(role) (per-role)
+ *   3. ProviderResolver defaults (user's global settings)
  *
  * The registry does NOT create model instances — it returns configuration
  * objects that feed into the existing ProviderResolver → ChatModelFactory chain.
