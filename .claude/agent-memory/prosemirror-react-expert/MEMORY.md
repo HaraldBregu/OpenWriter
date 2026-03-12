@@ -26,5 +26,7 @@
 - Placeholder extension is already configured with per-node-type placeholder text.
 - The CSP in `index.html` uses `style-src 'self' 'unsafe-inline'` — no external font CDNs are allowed.
 
-## See Also
-- `patterns.md` (not yet created) for React NodeView and plugin patterns
+## Extension Authoring Conventions
+- Callbacks from callers: `addOptions` + typed interface. Storage is for internal mutable state only.
+- NodeView options access: `extension.options as MyOptions` (NodeViewProps types extension as `Node<any,any>`)
+- See `patterns.md` for full details and code examples
