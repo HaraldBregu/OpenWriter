@@ -6,7 +6,7 @@ import { AppButton } from '@components/app/AppButton';
 import { ArrowUp, Bot } from 'lucide-react';
 
 export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): React.JSX.Element {
-	const inputRef = useRef<HTMLInputElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [prompt, setPrompt] = useState('');
 
 	const deleteNode = useCallback(() => {
