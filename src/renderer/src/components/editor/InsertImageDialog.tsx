@@ -150,8 +150,8 @@ export function InsertImageDialog({
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="url">URL</SelectItem>
-								<SelectItem value="upload">Upload from computer</SelectItem>
+								<SelectItem value="url">{t('insertImageDialog.url')}</SelectItem>
+								<SelectItem value="upload">{t('insertImageDialog.uploadFromComputer')}</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
