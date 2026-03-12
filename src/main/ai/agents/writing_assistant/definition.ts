@@ -58,4 +58,4 @@ const definition: AgentDefinition = {
 	},
 };
 
-export { definition as TextContinuationAgent };
+export { definition as WritingAssistantAgent };
