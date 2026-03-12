@@ -117,7 +117,7 @@ const TextEditor = React.memo(
 						},
 					},
 				}),
-				[]
+				[extensions]
 			);
 
 			const editor = useEditor(editorOptions, []);
