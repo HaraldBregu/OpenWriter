@@ -22,7 +22,7 @@ export function LogPanel({ task, onClose }: LogPanelProps) {
 					type="button"
 					onClick={onClose}
 					className="ml-2 shrink-0 p-1 rounded hover:bg-accent transition-colors"
-					title="Close logs"
+					title={t('debug.closeLogs')}
 				>
 					<X className="h-4 w-4" />
 				</button>
