@@ -31,14 +31,14 @@ export default function DebugPage() {
 							onClick={() => setActiveTab('tasks')}
 							className={tabClass('tasks')}
 						>
-							Tasks
+							{t('debug.tasks')}
 						</button>
 						<button
 							type="button"
 							onClick={() => setActiveTab('redux')}
 							className={tabClass('redux')}
 						>
-							Redux State
+							{t('debug.reduxState')}
 						</button>
 					</div>
 				</div>
