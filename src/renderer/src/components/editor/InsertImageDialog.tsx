@@ -159,7 +159,7 @@ export function InsertImageDialog({
 					{/* URL input or Upload button */}
 					{source === 'url' ? (
 						<div className="grid gap-2">
-							<Label htmlFor="image-url">Image URL</Label>
+							<Label htmlFor="image-url">{t('insertImageDialog.imageUrl')}</Label>
 							<Input
 								id="image-url"
 								placeholder="https://example.com/image.png"
