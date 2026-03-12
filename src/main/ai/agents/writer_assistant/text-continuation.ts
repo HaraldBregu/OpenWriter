@@ -32,13 +32,9 @@ const definition: AgentDefinition = {
 	/**
 	 * Map executor-resolved context to WriterState initial fields.
 	 *
-	 * `prompt` carries the full document text (including the <<INSERT_HERE>>
-	 * marker when present). The node resolves the actual content to send to
-	 * the model, so we store the raw prompt in `inputText` and leave `content`
-	 * empty — the node handles the split.
-	 *
-	 * `apiKey` and `modelName` are threaded through state so the node can
-	 * instantiate the LLM without hardcoding provider details.
+	 * `prompt` carries the input text. The model is injected via closure
+	 * in buildGraph, so `apiKey`/`modelName`/`providerId` are only kept
+	 * in state for backward compatibility.
 	 */
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
 		return {
