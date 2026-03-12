@@ -191,7 +191,7 @@ export default function ResourcesPage() {
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
-						<AppAlertDialogCancel>Cancel</AppAlertDialogCancel>
+						<AppAlertDialogCancel>{t('common.cancel')}</AppAlertDialogCancel>
 						<AppAlertDialogAction
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleConfirmRemove}
