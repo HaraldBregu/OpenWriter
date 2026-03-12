@@ -69,11 +69,11 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 
 				{/* Layout */}
 				<div className="mb-1">
-					<span className="text-xs font-medium text-muted-foreground/70">Layout</span>
+					<span className="text-xs font-medium text-muted-foreground/70">{t('settings.sections.layout')}</span>
 				</div>
 				<div className="space-y-4 mb-5">
 					<div className="space-y-2">
-						<AppLabel className="text-xs text-muted-foreground">Editor Width</AppLabel>
+						<AppLabel className="text-xs text-muted-foreground">{t('configSidebar.editorWidth')}</AppLabel>
 						<AppSelect value={editorWidth} onValueChange={setEditorWidth}>
 							<AppSelectTrigger className="h-8 text-sm">
 								<AppSelectValue />
