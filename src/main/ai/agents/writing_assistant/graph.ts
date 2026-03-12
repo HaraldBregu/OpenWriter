@@ -1,5 +1,5 @@
 /**
- * LangGraph definition for the Writer Assistant agent.
+ * LangGraph definition for the Writing Assistant agent.
  *
  * Topology:  START → continue_writing → END
  *
