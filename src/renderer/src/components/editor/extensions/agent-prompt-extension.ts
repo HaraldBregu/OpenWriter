@@ -2,6 +2,14 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { AgentPromptNodeView } from './views/AgentPromptNodeView';
 
+export interface AgentPromptOptions {
+	/**
+	 * Called when the user submits a non-empty prompt. The node is deleted
+	 * from the document immediately after this callback is invoked.
+	 */
+	onSubmit: (prompt: string) => void;
+}
+
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		agentPrompt: {
@@ -10,7 +18,7 @@ declare module '@tiptap/core' {
 	}
 }
 
-export const AgentPromptExtension = Node.create({
+export const AgentPromptExtension = Node.create<AgentPromptOptions>({
 	name: 'agentPrompt',
 
 	group: 'block',
@@ -21,7 +29,7 @@ export const AgentPromptExtension = Node.create({
 
 	draggable: false,
 
-	addStorage() {
+	addOptions() {
 		return {
 			onSubmit: (_prompt: string) => {},
 		};
