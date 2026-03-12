@@ -403,6 +403,7 @@ const task: TaskApi = {
 			priority?: 'low' | 'normal' | 'high';
 			timeoutMs?: number;
 			windowId?: number;
+			metadata?: Record<string, unknown>;
 		}
 	) => {
 		return typedInvokeRaw(TaskChannels.submit, { type, input, options });
