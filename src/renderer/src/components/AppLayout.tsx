@@ -234,7 +234,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors"
 								onClick={() => setWritingsOpen((prev) => !prev)}
 							>
-								{t('sidebar.writings') || 'Documents'}
+								{t('sidebar.writings')}
 								<ChevronRight
 									className={`h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 ${writingsOpen ? 'rotate-90' : ''}`}
 								/>
