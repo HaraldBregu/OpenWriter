@@ -131,10 +131,18 @@ const DocumentPage: React.FC = () => {
 
 	useEffect(() => {
 		if (!task.taskId) return;
+		let accumulated = '';
 		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
-			console.log(`[DocumentPage] Received task update:`, snap.metadata);
 			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, {
+			if (snap.streamedContent) {
+				accumulated += snap.streamedContent;
+			}
+			if (!accumulated) return;
+			const metadata = snap.metadata as
+				| { positionFrom?: number }
+				| undefined;
+			editorRef.current?.insertMarkdown(accumulated, {
+				from: metadata?.positionFrom,
 				preventEditorUpdate: !completed,
 			});
 		});
