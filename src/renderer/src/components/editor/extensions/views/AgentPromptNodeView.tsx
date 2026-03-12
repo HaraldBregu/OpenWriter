@@ -104,18 +104,28 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					<AppButton variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground">
 						<Plus className="h-4 w-4" />
 					</AppButton>
-					<AppButton
-						variant="prompt-submit"
-						size="prompt-icon-sm"
-						className="shrink-0 rounded-lg"
-						disabled={!prompt.trim()}
-						onMouseDown={(e) => {
-							e.preventDefault();
-							submitRef.current();
-						}}
-					>
-						<ArrowUp />
-					</AppButton>
+					<div className="flex items-center gap-3">
+						<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+							<AppCheckbox className="h-3.5 w-3.5" />
+							Search
+						</label>
+						<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+							<AppCheckbox className="h-3.5 w-3.5" />
+							RAG
+						</label>
+						<AppButton
+							variant="prompt-submit"
+							size="prompt-icon-sm"
+							className="shrink-0 rounded-lg"
+							disabled={!prompt.trim()}
+							onMouseDown={(e) => {
+								e.preventDefault();
+								submitRef.current();
+							}}
+						>
+							<ArrowUp />
+						</AppButton>
+					</div>
 				</div>
 			</div>
 		</NodeViewWrapper>
