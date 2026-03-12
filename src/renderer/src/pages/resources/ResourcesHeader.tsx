@@ -65,7 +65,7 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 					{editing && selectedCount > 0 && (
 						<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
 							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
-							Remove ({selectedCount})
+							{t('resources.removeWithCount', { count: selectedCount })}
 						</AppButton>
 					)}
 					<AppButton
