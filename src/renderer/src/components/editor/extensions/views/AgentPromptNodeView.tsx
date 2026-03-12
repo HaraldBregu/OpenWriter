@@ -40,14 +40,14 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 	// Use a native DOM listener so stopPropagation fires before ProseMirror's
 	// keydown handler (React 18 delegates events at the root, which is too late).
 	useEffect(() => {
-		const input = inputRef.current;
-		if (!input) return;
+		const textarea = textareaRef.current;
+		if (!textarea) return;
 
-		requestAnimationFrame(() => input.focus());
+		requestAnimationFrame(() => textarea.focus());
 
 		const handleKeyDown = (e: KeyboardEvent): void => {
 			e.stopPropagation();
-			if (e.key === 'Enter') {
+			if (e.key === 'Enter' && !e.shiftKey) {
 				e.preventDefault();
 				submitRef.current();
 			} else if (e.key === 'Escape') {
@@ -55,8 +55,8 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 			}
 		};
 
-		input.addEventListener('keydown', handleKeyDown);
-		return () => input.removeEventListener('keydown', handleKeyDown);
+		textarea.addEventListener('keydown', handleKeyDown);
+		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, []);
 
 	// Click outside → remove the node.
