@@ -41,6 +41,13 @@ export const BASE_EXTENSIONS: AnyExtension[] = [
 	ImageExtension,
 	SearchExtension,
 	AgentPromptExtension,
+	Markdown.configure({
+		html: true,
+		tightLists: true,
+		bulletListMarker: '-',
+		transformPastedText: true,
+		transformCopiedText: true,
+	}),
 	Placeholder.configure({
 		placeholder: ({ node }) => {
 			if (node.type.name === 'paragraph') {
