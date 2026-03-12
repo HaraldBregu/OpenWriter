@@ -136,18 +136,18 @@ const TextEditor = React.memo(
 					const from = options.from ?? editor.state.selection.from;
 					const to = editor.state.doc.content.size;
 
-					const mdParser = (
-						editor.storage.markdown as
-							| {
-									parser?: {
-										parse: (
-											content: string,
-											options?: { inline?: boolean }
-										) => string;
-									};
-							  }
-							| undefined
-					)?.parser;
+					const storage = editor.storage as Record<
+						string,
+						Record<string, unknown>
+					>;
+					const mdParser = storage.markdown?.parser as
+						| {
+								parse: (
+									content: string,
+									options?: { inline?: boolean }
+								) => string;
+						  }
+						| undefined;
 					if (!mdParser) return;
 					const html = mdParser.parse(markdown, { inline: false });
 					if (!html) return;
