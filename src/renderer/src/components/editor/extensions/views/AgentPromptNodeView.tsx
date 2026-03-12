@@ -32,10 +32,10 @@ export function AgentPromptNodeView({
 			deleteNode();
 			return;
 		}
-		const onSubmit = editor.storage.agentPrompt?.onSubmit;
-		onSubmit?.(p);
+		const { onSubmit } = (extension as { options: AgentPromptOptions }).options;
+		onSubmit(p);
 		deleteNode();
-	}, [prompt, editor, deleteNode]);
+	}, [prompt, extension, deleteNode]);
 
 	const submitRef = useRef(submit);
 	submitRef.current = submit;
