@@ -132,7 +132,7 @@ export function AgentPromptNodeView({
 							variant="prompt-submit"
 							size="prompt-submit-md"
 							className="shrink-0"
-							disabled={loading || !prompt.trim()}
+							disabled={!enable || loading || !prompt.trim()}
 							onMouseDown={(e) => {
 								e.preventDefault();
 								if (!loading) submitRef.current();
