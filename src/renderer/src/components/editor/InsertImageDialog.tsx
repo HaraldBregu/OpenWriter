@@ -236,10 +236,10 @@ export function InsertImageDialog({
 
 				<DialogFooter>
 					<Button variant="outline" onClick={() => handleOpenChange(false)}>
-						Cancel
+						{t('common.cancel')}
 					</Button>
 					<Button onClick={handleInsert} disabled={!canInsert}>
-						Insert
+						{t('insertImageDialog.insert')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
