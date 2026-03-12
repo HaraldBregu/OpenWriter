@@ -37,13 +37,23 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
+	const resizeTextarea = useCallback(() => {
+		const textarea = textareaRef.current;
+		if (!textarea) return;
+		textarea.style.height = 'auto';
+		textarea.style.height = `${textarea.scrollHeight}px`;
+	}, []);
+
 	// Use a native DOM listener so stopPropagation fires before ProseMirror's
 	// keydown handler (React 18 delegates events at the root, which is too late).
 	useEffect(() => {
 		const textarea = textareaRef.current;
 		if (!textarea) return;
 
-		requestAnimationFrame(() => textarea.focus());
+		requestAnimationFrame(() => {
+			textarea.focus();
+			resizeTextarea();
+		});
 
 		const handleKeyDown = (e: KeyboardEvent): void => {
 			e.stopPropagation();
