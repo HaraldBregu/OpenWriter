@@ -45,8 +45,6 @@ export interface AgentDefinition {
 	id: string;
 	/** Human-readable display name shown in the UI */
 	name: string;
-	/** Short description of the agent's purpose and behaviour */
-	description: string;
 	/** Category used for grouping / filtering in the UI */
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 	/**
@@ -105,7 +103,6 @@ export interface AgentDefinition {
 export interface AgentDefinitionInfo {
 	id: string;
 	name: string;
-	description: string;
 	category: AgentDefinition['category'];
 }
 
@@ -121,7 +118,6 @@ export function toAgentDefinitionInfo(def: AgentDefinition): AgentDefinitionInfo
 	return {
 		id: def.id,
 		name: def.name,
-		description: def.description,
 		category: def.category,
 	};
 }

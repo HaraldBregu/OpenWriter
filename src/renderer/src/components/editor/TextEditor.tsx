@@ -14,7 +14,7 @@ import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls'
 import { BlockActions } from './BlockActions';
 import { BubbleMenu } from './bubble_menu';
 import { OptionMenu } from './option_menu';
-import { PromptInput } from './prompt_input';
+
 import { markdownToTiptapJSON, tiptapDocToMarkdown } from './markdown';
 import { BASE_EXTENSIONS } from './extensions';
 import { EditorProvider } from './EditorContext';
@@ -44,7 +44,7 @@ export interface TextEditorProps {
 	disabled?: boolean;
 	id?: string;
 	streamingContent?: string;
-	onContinueWithAssistant?: (content: string, positionFrom: number) => void;
+	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
 }
 
 const TextEditor = React.memo(
@@ -122,7 +122,7 @@ const TextEditor = React.memo(
 					) {
 						if (!editor || editor.isDestroyed) return;
 						const { from } = editor.state.selection;
-						console.log('text to insert:', { text, from, options });
+
 						const tr = editor.state.tr
 							.insertText(text, from)
 							.setMeta('preventEditorUpdate', options?.preventEditorUpdate);

@@ -51,7 +51,6 @@ function ensureListening(): void {
 	if (typeof window.task?.onEvent !== 'function') return;
 
 	globalUnsub = window.task.onEvent((event: TaskEvent) => {
-		console.log('[taskEventBus] Received event:', event);
 		const data = event.data as { taskId?: string };
 		const taskId = data?.taskId;
 		if (!taskId) return;

@@ -7,7 +7,7 @@ import { OptionMenuPlugin } from './option-menu-plugin';
 import { InsertImageDialog } from '../InsertImageDialog';
 
 interface OptionMenuProps {
-	onContinueWithAssistant?: (content: string, positionFrom: number) => void;
+	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
 }
 
 interface MenuItem {
@@ -142,7 +142,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		() => [
 			...MENU_ITEMS,
 			{
-				label: 'Continue with AI',
+				label: 'Continue with assistant',
 				icon: Sparkles,
 				section: 'ai' as const,
 				command: (ed, slashPos, queryLength) => {
@@ -160,16 +160,14 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 					const subDocBefore = ed.state.doc.cut(0, from);
 					const subDocAfter = ed.state.doc.cut(from, docSize);
 					const markdownBeforeCursor =
-						serializer?.serialize(subDocBefore) ??
-						ed.state.doc.textBetween(0, from, '\n');
+						serializer?.serialize(subDocBefore) ?? ed.state.doc.textBetween(0, from, '\n');
 					const markdownAfterCursor =
-						serializer?.serialize(subDocAfter) ??
-						ed.state.doc.textBetween(from, docSize, '\n');
-					onContinueWithAssistantRef.current?.(markdownBeforeCursor, from);
+						serializer?.serialize(subDocAfter) ?? ed.state.doc.textBetween(from, docSize, '\n');
+					onContinueWithAssistantRef.current?.(markdownBeforeCursor, markdownAfterCursor, from);
 				},
 			},
 			{
-				label: 'Ask to AI Agent',
+				label: 'Ask to assistant',
 				icon: Bot,
 				section: 'ai' as const,
 				command: (ed, slashPos, queryLength) => {

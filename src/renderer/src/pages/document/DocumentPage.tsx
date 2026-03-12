@@ -22,7 +22,7 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	const task = useTask<{ prompt: string }>('agent-writing-assistant', {
+	const writingAssistantTask = useTask<{ prompt: string }>('agent-writing-assistant', {
 		prompt: '',
 	});
 
@@ -130,38 +130,31 @@ const DocumentPage: React.FC = () => {
 	}, [id, isTrashing, navigate, debouncedSave]);
 
 	useEffect(() => {
-		if (!task.taskId) return;
-		let accumulated = '';
-		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+		if (!writingAssistantTask.taskId) return;
+		const unsub = subscribeToTask(writingAssistantTask.taskId, (snap: TaskSnapshot) => {
 			const completed = snap.status === 'completed';
-			if (snap.streamedContent) {
-				accumulated += snap.streamedContent;
-			}
-			if (!accumulated) return;
-			const metadata = snap.metadata as { positionFrom?: number } | undefined;
-			editorRef.current?.insertMarkdown(accumulated, {
-				from: metadata?.positionFrom,
+			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
 			});
 		});
 		return unsub;
-	}, [task.taskId]);
+	}, [writingAssistantTask.taskId]);
 
-	const handleContinueWithAI = useCallback(
-		(content: string, positionFrom: number) => {
-			task.submit(
+	const onContinueWithAssistant = useCallback(
+		(before: string, after: string, cursorPos: number) => {
+			writingAssistantTask.submit(
 				{
-					prompt: content,
+					prompt: before,
 				},
 				{
 					metadata: {
-						positionFrom,
+						cursorPos,
 						contentLength: 'long',
 					},
 				}
 			);
 		},
-		[task.submit]
+		[writingAssistantTask.submit]
 	);
 
 	const handleOpenFolder = useCallback(() => {
@@ -198,12 +191,12 @@ const DocumentPage: React.FC = () => {
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
 								<TextEditor
-									disabled={task.isRunning}
+									disabled={writingAssistantTask.isRunning}
 									ref={editorRef}
 									key={id}
 									value={content}
 									onChange={handleContentChange}
-									onContinueWithAssistant={handleContinueWithAI}
+									onContinueWithAssistant={onContinueWithAssistant}
 								/>
 							)}
 						</div>
