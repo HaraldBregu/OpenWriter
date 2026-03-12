@@ -192,10 +192,10 @@ export function InsertImageDialog({
 
 					{/* Alt text */}
 					<div className="grid gap-2">
-						<Label htmlFor="image-alt">Alt text</Label>
+						<Label htmlFor="image-alt">{t('insertImageDialog.altText')}</Label>
 						<Input
 							id="image-alt"
-							placeholder="Describe the image"
+							placeholder={t('insertImageDialog.altTextPlaceholder')}
 							value={alt}
 							onChange={(e) => setAlt(e.target.value)}
 						/>
