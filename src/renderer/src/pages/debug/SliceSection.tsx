@@ -37,7 +37,7 @@ export function SliceSection({ name, data }: { name: SliceName; data: unknown })
 					<button
 						type="button"
 						onClick={handleCopy}
-						title="Copy to clipboard"
+						title={t('debug.copyToClipboard')}
 						className="absolute top-2 right-2 p-1.5 rounded hover:bg-accent transition-colors text-muted-foreground"
 					>
 						{copied ? (
