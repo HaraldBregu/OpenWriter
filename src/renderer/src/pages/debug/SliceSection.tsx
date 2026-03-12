@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, Copy, Check } from 'lucide-react';
 import type { SliceName } from './debug-constants';
 import { entryCount } from './debug-helpers';
