@@ -198,7 +198,7 @@ const DocumentPage: React.FC = () => {
 									key={id}
 									value={content}
 									onChange={handleContentChange}
-									onContinueWithAI={handleContinueWithAI}
+									onContinueWithAssistant={handleContinueWithAI}
 								/>
 							)}
 						</div>
