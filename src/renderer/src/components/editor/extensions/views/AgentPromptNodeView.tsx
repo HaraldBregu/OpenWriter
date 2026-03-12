@@ -86,9 +86,8 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 		<NodeViewWrapper contentEditable={false}>
 			<div
 				ref={wrapperRef}
-				className="my-2 flex items-start gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md"
+				className="my-2 flex flex-col rounded-2xl border border-border bg-popover shadow-sm"
 			>
-				<Bot className="mt-2 shrink-0 text-violet-500" style={{ width: 18, height: 18 }} />
 				<AppTextarea
 					ref={textareaRef}
 					value={prompt}
@@ -96,22 +95,30 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 						setPrompt(e.target.value);
 						resizeTextarea();
 					}}
-					className="min-h-[36px] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-3 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					placeholder="Ask the AI Agent and press Enter…"
 					rows={1}
 				/>
-				<AppButton
-					variant="prompt-submit"
-					size="prompt-icon-sm"
-					className="shrink-0"
-					disabled={!prompt.trim()}
-					onMouseDown={(e) => {
-						e.preventDefault();
-						submitRef.current();
-					}}
-				>
-					<ArrowUp />
-				</AppButton>
+				<div className="flex items-center justify-between px-3 pb-2">
+					<button
+						type="button"
+						className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+					>
+						<Plus className="h-4 w-4" />
+					</button>
+					<AppButton
+						variant="prompt-submit"
+						size="prompt-icon-sm"
+						className="shrink-0 rounded-lg"
+						disabled={!prompt.trim()}
+						onMouseDown={(e) => {
+							e.preventDefault();
+							submitRef.current();
+						}}
+					>
+						<ArrowUp />
+					</AppButton>
+				</div>
 			</div>
 		</NodeViewWrapper>
 	);
