@@ -105,6 +105,7 @@ export function AgentPromptNodeView({
 						setPrompt(e.target.value);
 						resizeTextarea();
 					}}
+					disabled={!enable}
 					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-3 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					placeholder={t('agentPrompt.placeholder')}
 					rows={1}
