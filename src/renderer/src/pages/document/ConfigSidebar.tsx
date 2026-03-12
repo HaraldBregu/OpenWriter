@@ -57,9 +57,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
-								<AppSelectItem value="sans">Sans Serif</AppSelectItem>
-								<AppSelectItem value="serif">Serif</AppSelectItem>
-								<AppSelectItem value="mono">Monospace</AppSelectItem>
+								<AppSelectItem value="sans">{t('configSidebar.sansSerif')}</AppSelectItem>
+								<AppSelectItem value="serif">{t('configSidebar.serif')}</AppSelectItem>
+								<AppSelectItem value="mono">{t('configSidebar.monospace')}</AppSelectItem>
 							</AppSelectContent>
 						</AppSelect>
 					</div>
