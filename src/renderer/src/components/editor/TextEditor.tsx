@@ -129,43 +129,34 @@ const TextEditor = React.memo(
 						editor.view.dispatch(tr);
 					},
 					insertMarkdown(
-					markdown: string,
-					options: { from?: number; preventEditorUpdate?: boolean } = {}
-				) {
-					if (!editor || editor.isDestroyed) return;
-					const from = options.from ?? editor.state.selection.from;
-					const to = editor.state.doc.content.size;
+						markdown: string,
+						options: { from?: number; preventEditorUpdate?: boolean } = {}
+					) {
+						if (!editor || editor.isDestroyed) return;
+						const from = options.from ?? editor.state.selection.from;
+						const to = editor.state.doc.content.size;
 
-					const storage = editor.storage as unknown as Record<
-						string,
-						Record<string, unknown>
-					>;
-					const mdParser = storage.markdown?.parser as
-						| {
-								parse: (
-									content: string,
-									options?: { inline?: boolean }
-								) => string;
-						  }
-						| undefined;
-					if (!mdParser) return;
-					const html = mdParser.parse(markdown, { inline: false });
-					if (!html) return;
+						const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+						const mdParser = storage.markdown?.parser as
+							| {
+									parse: (content: string, options?: { inline?: boolean }) => string;
+							  }
+							| undefined;
+						if (!mdParser) return;
+						const html = mdParser.parse(markdown, { inline: false });
+						if (!html) return;
 
-					const tempEl = document.createElement('div');
-					tempEl.innerHTML = html;
-					const parsed = PmDOMParser.fromSchema(editor.schema).parse(tempEl);
-					const slice = new Slice(parsed.content, 0, 0);
+						const tempEl = document.createElement('div');
+						tempEl.innerHTML = html;
+						const parsed = PmDOMParser.fromSchema(editor.schema).parse(tempEl);
+						const slice = new Slice(parsed.content, 0, 0);
 
-					const tr = editor.state.tr
-						.replace(from, to, slice)
-						.setMeta(
-							'preventEditorUpdate',
-							options.preventEditorUpdate ?? false
-						);
-					editor.view.dispatch(tr);
-				},
-				insertImage(options: ImageInsertOptions) {
+						const tr = editor.state.tr
+							.replace(from, to, slice)
+							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
+						editor.view.dispatch(tr);
+					},
+					insertImage(options: ImageInsertOptions) {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.setImage({
 							src: options.src,

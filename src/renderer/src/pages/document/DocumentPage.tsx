@@ -138,9 +138,7 @@ const DocumentPage: React.FC = () => {
 				accumulated += snap.streamedContent;
 			}
 			if (!accumulated) return;
-			const metadata = snap.metadata as
-				| { positionFrom?: number }
-				| undefined;
+			const metadata = snap.metadata as { positionFrom?: number } | undefined;
 			editorRef.current?.insertMarkdown(accumulated, {
 				from: metadata?.positionFrom,
 				preventEditorUpdate: !completed,

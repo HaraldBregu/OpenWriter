@@ -152,8 +152,20 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 						.setMeta('preventEditorUpdate', true)
 						.run();
 					const { from } = ed.state.selection;
-					const textBeforeCursor = ed.state.doc.textBetween(0, from, '\n');
-					onContinueWithAssistantRef.current?.(textBeforeCursor, from);
+					const storage = ed.storage as unknown as Record<string, Record<string, unknown>>;
+					const serializer = storage.markdown?.serializer as
+						| { serialize: (node: unknown) => string }
+						| undefined;
+					const docSize = ed.state.doc.content.size;
+					const subDocBefore = ed.state.doc.cut(0, from);
+					const subDocAfter = ed.state.doc.cut(from, docSize);
+					const markdownBeforeCursor =
+						serializer?.serialize(subDocBefore) ??
+						ed.state.doc.textBetween(0, from, '\n');
+					const markdownAfterCursor =
+						serializer?.serialize(subDocAfter) ??
+						ed.state.doc.textBetween(from, docSize, '\n');
+					onContinueWithAssistantRef.current?.(markdownBeforeCursor, from);
 				},
 			},
 			{
