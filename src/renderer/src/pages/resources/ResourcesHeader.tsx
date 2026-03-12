@@ -28,6 +28,7 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 	onIndex,
 	onOpenFolder,
 }: ResourcesHeaderProps) {
+	const { t } = useTranslation();
 	return (
 		<div className="px-6 py-3 border-b shrink-0">
 			<div className="flex items-center gap-2">
