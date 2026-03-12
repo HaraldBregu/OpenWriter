@@ -50,4 +50,9 @@ export const WriterState = Annotation.Root({
 		reducer: (_a, b) => b,
 		default: () => 'gpt-4o',
 	}),
+	/** Resolved provider identifier (e.g. 'openai'). Injected by the executor. */
+	providerId: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => 'openai',
+	}),
 });
