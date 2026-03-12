@@ -224,7 +224,7 @@ export function InsertImageDialog({
 									alt={alt || 'Preview'}
 									className="mx-auto block rounded"
 									style={{ maxHeight: MAX_PREVIEW_HEIGHT, maxWidth: '100%', objectFit: 'contain' }}
-									onError={() => setError('Unable to load image preview.')}
+									onError={() => setError(t('insertImageDialog.previewError'))}
 								/>
 							</div>
 						</div>
