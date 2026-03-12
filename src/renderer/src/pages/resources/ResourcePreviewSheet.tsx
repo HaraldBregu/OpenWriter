@@ -146,11 +146,12 @@ function PdfPreview({ path }: { path: string }) {
 }
 
 function CsvPreview({ content }: { content: string }) {
+	const { t } = useTranslation();
 	const rows = useMemo(() => parseCsv(content), [content]);
 	const [header, ...body] = rows;
 
 	if (rows.length === 0) {
-		return <p className="text-sm text-muted-foreground">Empty CSV file</p>;
+		return <p className="text-sm text-muted-foreground">{t('resources.emptyCsv')}</p>;
 	}
 
 	return (
