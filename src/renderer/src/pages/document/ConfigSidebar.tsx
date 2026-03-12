@@ -92,23 +92,23 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 
 				{/* Preferences */}
 				<div className="mb-1">
-					<span className="text-xs font-medium text-muted-foreground/70">Preferences</span>
+					<span className="text-xs font-medium text-muted-foreground/70">{t('configSidebar.preferences')}</span>
 				</div>
 				<div className="space-y-3">
 					<div className="flex items-center justify-between">
-						<AppLabel className="text-sm">Spell Check</AppLabel>
+						<AppLabel className="text-sm">{t('configSidebar.spellCheck')}</AppLabel>
 						<AppSwitch checked={spellCheck} onCheckedChange={setSpellCheck} />
 					</div>
 					<div className="flex items-center justify-between">
-						<AppLabel className="text-sm">Auto Save</AppLabel>
+						<AppLabel className="text-sm">{t('configSidebar.autoSave')}</AppLabel>
 						<AppSwitch checked={autoSave} onCheckedChange={setAutoSave} />
 					</div>
 					<div className="flex items-center justify-between">
-						<AppLabel className="text-sm">Focus Mode</AppLabel>
+						<AppLabel className="text-sm">{t('configSidebar.focusMode')}</AppLabel>
 						<AppSwitch checked={focusMode} onCheckedChange={setFocusMode} />
 					</div>
 					<div className="flex items-center justify-between">
-						<AppLabel className="text-sm">Line Numbers</AppLabel>
+						<AppLabel className="text-sm">{t('configSidebar.lineNumbers')}</AppLabel>
 						<AppSwitch checked={showLineNumbers} onCheckedChange={setShowLineNumbers} />
 					</div>
 				</div>
