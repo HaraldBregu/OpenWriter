@@ -24,6 +24,8 @@ export interface AgentTaskInput {
 	modelId?: string;
 	temperature?: number;
 	maxTokens?: number;
+	/** Opaque caller-supplied metadata forwarded to the agent graph state. */
+	metadata?: Record<string, unknown>;
 }
 
 export interface AgentTaskOutput {
