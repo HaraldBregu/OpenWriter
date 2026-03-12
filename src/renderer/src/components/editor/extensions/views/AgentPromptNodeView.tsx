@@ -5,6 +5,7 @@ import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { AppCheckbox } from '@components/app/AppCheckbox';
 import { ArrowUp, Plus } from 'lucide-react';
+import type { AgentPromptOptions } from '../agent-prompt-extension';
 
 export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): React.JSX.Element {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
