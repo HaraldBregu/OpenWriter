@@ -157,6 +157,10 @@ const DocumentPage: React.FC = () => {
 		[writingAssistantTask.submit]
 	);
 
+	const onAgentPromptSubmit = useCallback((prompt: string) => {
+		console.log('Agent prompt submitted:', prompt);
+	}, []);
+
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
@@ -197,6 +201,7 @@ const DocumentPage: React.FC = () => {
 									value={content}
 									onChange={handleContentChange}
 									onContinueWithAssistant={onContinueWithAssistant}
+									onAgentPromptSubmit={onAgentPromptSubmit}
 								/>
 							)}
 						</div>
