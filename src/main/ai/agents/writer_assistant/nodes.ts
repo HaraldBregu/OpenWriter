@@ -10,7 +10,7 @@
  * hardcode provider credentials.
  */
 
-import { ChatOpenAI } from '@langchain/openai';
+import { createChatModel } from '../../../shared/chat-model-factory';
 import type { WriterState } from './state';
 
 // ---------------------------------------------------------------------------
