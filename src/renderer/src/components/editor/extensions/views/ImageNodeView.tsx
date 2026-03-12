@@ -18,6 +18,7 @@ export function ImageNodeView({
 	selected,
 	updateAttributes,
 }: NodeViewProps): React.JSX.Element {
+	const { t } = useTranslation();
 	const { src, alt, title, width, height } = node.attrs as ImageAttrs;
 
 	const [loadError, setLoadError] = useState(false);
