@@ -144,7 +144,7 @@ export function InsertImageDialog({
 				<div className="grid gap-4 py-2">
 					{/* Source select */}
 					<div className="grid gap-2">
-						<Label htmlFor="image-source">Source</Label>
+						<Label htmlFor="image-source">{t('insertImageDialog.source')}</Label>
 						<Select value={source} onValueChange={handleSourceChange}>
 							<SelectTrigger id="image-source">
 								<SelectValue />
