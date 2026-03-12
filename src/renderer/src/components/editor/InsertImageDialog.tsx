@@ -217,7 +217,7 @@ export function InsertImageDialog({
 					{/* Preview */}
 					{preview && (
 						<div className="grid gap-2">
-							<Label>Preview</Label>
+							<Label>{t('common.preview')}</Label>
 							<div className="overflow-hidden rounded-md border border-border bg-muted/50 p-2">
 								<img
 									src={preview}
