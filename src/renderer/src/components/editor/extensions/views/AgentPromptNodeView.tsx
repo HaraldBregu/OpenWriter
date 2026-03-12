@@ -78,13 +78,14 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 				ref={wrapperRef}
 				className="my-2 flex items-center gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md"
 			>
-				<Bot className="shrink-0 text-violet-500" style={{ width: 18, height: 18 }} />
-				<AppInput
-					ref={inputRef}
+				<Bot className="mt-2 shrink-0 text-violet-500" style={{ width: 18, height: 18 }} />
+				<AppTextarea
+					ref={textareaRef}
 					value={prompt}
 					onChange={(e) => setPrompt(e.target.value)}
-					className="border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+					className="min-h-[36px] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					placeholder="Ask the AI Agent and press Enter…"
+					rows={1}
 				/>
 				<AppButton
 					variant="prompt-submit"
