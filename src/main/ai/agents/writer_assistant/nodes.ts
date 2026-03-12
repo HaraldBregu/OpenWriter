@@ -5,12 +5,12 @@
  * a partial state update. Keeping nodes in their own file makes the graph
  * definition (graph.ts) a pure wiring concern.
  *
- * The LLM is instantiated from `state.apiKey` and `state.modelName` — both
- * fields are injected by the executor via `buildGraphInput`. Nodes never
- * hardcode provider credentials.
+ * The model is injected via closure from graph.ts — nodes never construct
+ * or configure LLM instances directly.
  */
 
-import { createChatModel } from '../../../shared/chat-model-factory';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { extractTokenFromChunk } from '../../../shared/ai-utils';
 import type { WriterState } from './state';
 
 // ---------------------------------------------------------------------------
@@ -121,8 +121,11 @@ export async function continueWritingNode(
 		{ role: 'user', content: `<content>${content}</content>` },
 	];
 
+	console.log('Invoking model with messages:', content);
 	const response = await model.invoke(messages);
 	const completion = typeof response.content === 'string' ? response.content : '';
+
+		console.log('Invoking model with messages:', completion);
 
 	return { completion };
 }
