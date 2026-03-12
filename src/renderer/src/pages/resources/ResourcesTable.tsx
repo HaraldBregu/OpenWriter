@@ -31,12 +31,12 @@ const ALL_TYPES_VALUE = 'all';
 type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
 type SortDirection = 'none' | 'asc' | 'desc';
 
-const COLUMNS: { key: SortKey; label: string; className?: string }[] = [
-	{ key: 'name', label: 'Name' },
-	{ key: 'mimeType', label: 'Type' },
-	{ key: 'size', label: 'Size', className: 'text-right' },
-	{ key: 'importedAt', label: 'Imported' },
-	{ key: 'lastModified', label: 'Last Modified' },
+const COLUMN_KEYS: { key: SortKey; i18nKey: string; className?: string }[] = [
+	{ key: 'name', i18nKey: 'resources.name' },
+	{ key: 'mimeType', i18nKey: 'resources.type' },
+	{ key: 'size', i18nKey: 'resources.size', className: 'text-right' },
+	{ key: 'importedAt', i18nKey: 'resources.imported' },
+	{ key: 'lastModified', i18nKey: 'resources.lastModified' },
 ];
 
 function compareDocs(a: ResourceInfo, b: ResourceInfo, key: SortKey, dir: SortDirection): number {
