@@ -58,6 +58,7 @@ const definition: AgentDefinition = {
 			completion: '',
 			apiKey: ctx.apiKey,
 			modelName: ctx.modelName,
+			providerId: ctx.providerId,
 		};
 	},
 
