@@ -1,3 +1,4 @@
+import { BrowserWindow } from 'electron';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';

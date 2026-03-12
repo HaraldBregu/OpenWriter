@@ -83,7 +83,10 @@
       "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit; echo \"Exit code: $?\")",
       "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && yarn format 2>&1 | grep -E \"types\\\\.ts|error|warn\" && npx tsc --noEmit; echo \"TSC Exit: $?\")",
       "Bash(cd \"C:/Users/BRGHLD87H/Documents/OpenWriter\" && npx tsc --noEmit 2>&1; echo \"TSC Exit: $?\")",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(cd C:/Users/BRGHLD87H/Documents/OpenWriter && npx tsc --noEmit -p tsconfig.node.json 2>&1 | tail -20)",
+      "Bash(cd C:/Users/BRGHLD87H/Documents/OpenWriter && npx tsc --noEmit -p tsconfig.node.json 2>&1)",
+      "Bash(cd C:/Users/BRGHLD87H/Documents/OpenWriter && grep -n \"import.meta.env\" src/main/shared/provider-resolver.ts)"
     ],
     "deny": [
       "Bash(git push --force:*)",
