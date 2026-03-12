@@ -10,6 +10,7 @@ interface LogPanelProps {
 }
 
 export function LogPanel({ task, onClose }: LogPanelProps) {
+	const { t } = useTranslation();
 	return (
 		<div className="flex flex-col border-l bg-muted/20 w-80 shrink-0 h-full">
 			<div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
