@@ -34,6 +34,7 @@ export interface TextEditorElement extends HTMLDivElement {
 	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
+	removeAgentPrompt: () => void;
 }
 
 export interface TextEditorProps {
