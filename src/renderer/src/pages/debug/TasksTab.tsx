@@ -76,25 +76,25 @@ export function TasksTab() {
 							<thead className="border-b sticky top-0 bg-background z-10">
 								<tr>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										ID
+										{t('debug.id')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Type
+										{t('debug.type')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Status
+										{t('debug.status')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Priority
+										{t('debug.priority')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Progress
+										{t('debug.progress')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Duration
+										{t('debug.duration')}
 									</th>
 									<th className="px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-										Actions
+										{t('debug.actions')}
 									</th>
 								</tr>
 							</thead>
