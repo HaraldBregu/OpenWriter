@@ -226,14 +226,14 @@ export const ResourcesTable = memo(function ResourcesTable({
 									/>
 								</AppTableHead>
 							)}
-							{COLUMNS.map((col) => (
+							{COLUMN_KEYS.map((col) => (
 								<AppTableHead key={col.key} className={col.className}>
 									<button
 										type="button"
 										className="inline-flex items-center hover:text-foreground transition-colors"
 										onClick={() => handleSort(col.key)}
 									>
-										{col.label}
+										{t(col.i18nKey)}
 										<SortIcon column={col.key} sortKey={sortKey} sortDir={sortDir} />
 									</button>
 								</AppTableHead>
