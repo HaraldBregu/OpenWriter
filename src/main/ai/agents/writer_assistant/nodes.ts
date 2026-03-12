@@ -67,32 +67,6 @@ const LENGTH_PROMPTS: Record<string, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Resolve the content passage to send to the model.
- *
- * When `inputText` contains the `<<INSERT_HERE>>` marker the text is split at
- * the marker and only the preceding half is used — the model must produce text
- * that connects from that point onward. When no marker is present the full
- * `inputText` is used verbatim.
- *
- * Falls back to `state.content` when `inputText` is empty, for cases where
- * the caller pre-processed the content before building graph state.
- */
-function resolveContent(state: typeof WriterState.State): string {
-	if (state.inputText) {
-		const markerIndex = state.inputText.indexOf(INSERTION_MARKER);
-		if (markerIndex !== -1) {
-			return state.inputText.slice(0, markerIndex).trimEnd();
-		}
-		return state.inputText;
-	}
-	return state.content;
-}
-
-// ---------------------------------------------------------------------------
 // Node: continue_writing
 // ---------------------------------------------------------------------------
 
@@ -100,7 +74,7 @@ export async function continueWritingNode(
 	state: typeof WriterState.State,
 	model: BaseChatModel
 ): Promise<Partial<typeof WriterState.State>> {
-	const content = resolveContent(state);
+	const content = state.inputText || state.content;
 
 	const messages: { role: 'system' | 'user'; content: string }[] = [
 		{ role: 'system', content: SYSTEM_PROMPT },
