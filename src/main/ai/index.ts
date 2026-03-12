@@ -16,4 +16,4 @@ export { ModelRegistry } from './registry';
 export type { ModelRole, ModelRoleConfig, CostTier } from './registry';
 
 // Agents
-export { TextContinuationAgent } from './agents';
+export { WritingAssistantAgent } from './agents';
