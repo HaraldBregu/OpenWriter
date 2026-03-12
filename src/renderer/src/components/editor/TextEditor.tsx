@@ -136,7 +136,7 @@ const TextEditor = React.memo(
 					const from = options.from ?? editor.state.selection.from;
 					const to = editor.state.doc.content.size;
 
-					const storage = editor.storage as Record<
+					const storage = editor.storage as unknown as Record<
 						string,
 						Record<string, unknown>
 					>;
