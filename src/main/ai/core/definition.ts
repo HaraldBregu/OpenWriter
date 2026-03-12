@@ -39,7 +39,7 @@ export interface GraphInputContext {
 // ---------------------------------------------------------------------------
 
 export interface AgentDefinition {
-	/** Unique machine-readable identifier, e.g. 'text-continuation' */
+	/** Unique machine-readable identifier, e.g. 'writing-assistant' */
 	id: string;
 	/** Human-readable display name shown in the UI */
 	name: string;
