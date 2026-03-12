@@ -33,6 +33,7 @@ import { ResourcesTable } from './ResourcesTable';
 const RESOURCES_DIR = 'resources';
 
 export default function ResourcesPage() {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const resources = useAppSelector(selectResources);
 	const status = useAppSelector(selectResourcesStatus);
