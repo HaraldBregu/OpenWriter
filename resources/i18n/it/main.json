@@ -689,7 +689,8 @@
 		"priority": "Priorità",
 		"progress": "Avanzamento",
 		"duration": "Durata",
-		"actions": "Azioni"
+		"actions": "Azioni",
+		"refresh": "Aggiorna"
 	},
 	"appLayout": {
 		"untitled": "Senza titolo",
