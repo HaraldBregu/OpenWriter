@@ -7,7 +7,12 @@ import { AppCheckbox } from '@components/app/AppCheckbox';
 import { ArrowUp, Plus } from 'lucide-react';
 import type { AgentPromptOptions } from '../agent-prompt-extension';
 
-export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): React.JSX.Element {
+export function AgentPromptNodeView({
+	editor,
+	node,
+	getPos,
+	extension,
+}: NodeViewProps): React.JSX.Element {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [prompt, setPrompt] = useState('');
 
