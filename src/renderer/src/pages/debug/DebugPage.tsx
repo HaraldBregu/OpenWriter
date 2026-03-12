@@ -33,13 +33,6 @@ export default function DebugPage() {
 						</button>
 						<button
 							type="button"
-							onClick={() => setActiveTab('text-continuation')}
-							className={tabClass('text-continuation')}
-						>
-							Text Continuation
-						</button>
-						<button
-							type="button"
 							onClick={() => setActiveTab('redux')}
 							className={tabClass('redux')}
 						>
