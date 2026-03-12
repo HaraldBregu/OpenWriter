@@ -68,8 +68,8 @@ export function TasksTab() {
 					{tasks.length === 0 ? (
 						<div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
 							<Bug className="h-10 w-10 opacity-20" />
-							<p className="text-sm">No tasks tracked yet</p>
-							<p className="text-xs opacity-60">Tasks will appear here when submitted</p>
+							<p className="text-sm">{t('debug.noTasksYet')}</p>
+							<p className="text-xs opacity-60">{t('debug.tasksWillAppear')}</p>
 						</div>
 					) : (
 						<table className="w-full text-left">
