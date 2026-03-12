@@ -35,6 +35,16 @@ export const AgentPromptExtension = Node.create<AgentPromptOptions>({
 		};
 	},
 
+	addAttributes() {
+		return {
+			loading: {
+				default: false,
+				parseHTML: () => false,
+				renderHTML: () => ({}),
+			},
+		};
+	},
+
 	parseHTML() {
 		return [{ tag: 'div[data-type="agent-prompt"]' }];
 	},

@@ -92,7 +92,7 @@ export function AgentPromptNodeView({
 		<NodeViewWrapper contentEditable={false}>
 			<div
 				ref={wrapperRef}
-				className="my-2 flex flex-col rounded-2xl border border-border bg-popover shadow-sm"
+				className="my-2 flex flex-col rounded-2xl border border-border bg-popover shadow-sm py-2"
 			>
 				<AppTextarea
 					ref={textareaRef}
@@ -120,8 +120,8 @@ export function AgentPromptNodeView({
 						</label>
 						<AppButton
 							variant="prompt-submit"
-							size="prompt-icon-sm"
-							className="shrink-0 rounded-lg"
+							size="prompt-submit-sm"
+							className="shrink-0"
 							disabled={!prompt.trim()}
 							onMouseDown={(e) => {
 								e.preventDefault();
