@@ -43,7 +43,7 @@ export function ReduxStateTab() {
 					className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
 				>
 					<RefreshCw className="h-3 w-3" />
-					Refresh
+					{t('debug.refresh')}
 				</button>
 				<label className="inline-flex items-center gap-1.5 text-xs cursor-pointer select-none">
 					<input
