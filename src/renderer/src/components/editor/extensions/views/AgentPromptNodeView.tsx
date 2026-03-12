@@ -32,8 +32,8 @@ export function AgentPromptNodeView({
 			deleteNode();
 			return;
 		}
-		const { onSubmit } = (extension as { options: AgentPromptOptions }).options;
-		onSubmit(p);
+		const options = extension.options as AgentPromptOptions;
+		options.onSubmit(p);
 		deleteNode();
 	}, [prompt, extension, deleteNode]);
 
