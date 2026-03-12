@@ -161,6 +161,10 @@ const DocumentPage: React.FC = () => {
 		// editorRef.current?.removeAgentPrompt();
 		console.log('Agent prompt submitted:', prompt);
 		editorRef.current?.setAgentPromptLoading(true);
+		editorRef.current?.setAgentPromptEnable(false);
+		setTimeout(() => {
+			editorRef.current?.insertText("[Agent's response will appear here]");
+		}, 250);
 	}, []);
 
 	const handleOpenFolder = useCallback(() => {
