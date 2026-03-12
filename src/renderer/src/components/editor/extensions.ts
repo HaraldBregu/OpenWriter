@@ -21,42 +21,50 @@ import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/agent-prompt-extension';
 import { ImageExtension } from './extensions/image-extension';
 
-export const BASE_EXTENSIONS: AnyExtension[] = [
-	Document,
-	Text,
-	Paragraph,
-	Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
-	History,
-	Bold,
-	Italic,
-	Underline,
-	Strike,
-	HorizontalRule,
-	BulletList,
-	OrderedList,
-	ListItem,
-	ListKeymap,
-	Dropcursor,
-	Gapcursor,
-	ImageExtension,
-	SearchExtension,
-	AgentPromptExtension,
-	Markdown.configure({
-		html: true,
-		tightLists: true,
-		bulletListMarker: '-',
-		transformPastedText: true,
-		transformCopiedText: true,
-	}),
-	Placeholder.configure({
-		placeholder: ({ node }) => {
-			if (node.type.name === 'paragraph') {
-				return "Type '/' for commands, or press 'space' for AI assistance\u2026";
-			}
-			if (node.type.name === 'heading') {
-				return `Heading ${node.attrs.level}`;
-			}
-			return '';
-		},
-	}),
-];
+export interface ExtensionHandlers {
+	onAgentPromptSubmit: (prompt: string) => void;
+}
+
+export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
+	return [
+		Document,
+		Text,
+		Paragraph,
+		Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
+		History,
+		Bold,
+		Italic,
+		Underline,
+		Strike,
+		HorizontalRule,
+		BulletList,
+		OrderedList,
+		ListItem,
+		ListKeymap,
+		Dropcursor,
+		Gapcursor,
+		ImageExtension,
+		SearchExtension,
+		AgentPromptExtension.configure({
+			onSubmit: handlers.onAgentPromptSubmit,
+		}),
+		Markdown.configure({
+			html: true,
+			tightLists: true,
+			bulletListMarker: '-',
+			transformPastedText: true,
+			transformCopiedText: true,
+		}),
+		Placeholder.configure({
+			placeholder: ({ node }) => {
+				if (node.type.name === 'paragraph') {
+					return "Type '/' for commands, or press 'space' for AI assistance\u2026";
+				}
+				if (node.type.name === 'heading') {
+					return `Heading ${node.attrs.level}`;
+				}
+				return '';
+			},
+		}),
+	];
+}

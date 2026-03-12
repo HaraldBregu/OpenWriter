@@ -29,12 +29,12 @@ export function AgentPromptNodeView({
 	const submit = useCallback(() => {
 		const p = prompt.trim();
 		if (!p) {
-			deleteNode();
+			//deleteNode();
 			return;
 		}
 		const options = extension.options as AgentPromptOptions;
 		options.onSubmit(p);
-		deleteNode();
+		//deleteNode();
 	}, [prompt, extension, deleteNode]);
 
 	const submitRef = useRef(submit);
