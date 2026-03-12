@@ -186,6 +186,17 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.clearSearch();
 					},
+					removeAgentPrompt() {
+						if (!editor || editor.isDestroyed) return;
+						const { doc } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'agentPrompt') {
+								editor.chain().deleteRange({ from: pos, to: pos + node.nodeSize }).run();
+								return false;
+							}
+							return true;
+						});
+					},
 				}) as TextEditorElement;
 			}, [editor]);
 
