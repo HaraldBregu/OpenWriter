@@ -225,19 +225,43 @@ async function* executeCustomStateGraphStream(
 		const graph = buildGraph(model);
 		const initialState = buildGraphInput(ctx);
 
-		// streamMode:'values' yields one full state snapshot per node completion.
-		// We accumulate them and use the last one as the final state.
+		let fullContent = '';
+		let tokenCount = 0;
 		let finalState: Record<string, unknown> = {};
 
+		// Combined stream mode: 'messages' for token-level streaming,
+		// 'values' for final state snapshots used by extractGraphOutput.
 		const stream = await graph.stream(initialState, {
-			streamMode: 'values',
+			streamMode: ['messages', 'values'],
 			signal: signal as AbortSignal | undefined,
 		});
 
-		for await (const snapshot of stream) {
+		for await (const event of stream) {
 			if (signal?.aborted) break;
-			// Each snapshot IS the full current state — keep the latest
-			finalState = snapshot as Record<string, unknown>;
+
+			const [mode, data] = event as [string, unknown];
+
+			if (mode === 'messages') {
+				const [chunk] = data as [unknown, unknown];
+				if (!chunk) continue;
+
+				// Skip the final complete AIMessage emitted after all streaming deltas
+				if (chunk instanceof AIMessage) continue;
+
+				const token = extractTokenFromChunk(
+					typeof chunk === 'object' && chunk !== null && 'content' in chunk
+						? (chunk as { content: unknown }).content
+						: ''
+				);
+
+				if (token) {
+					fullContent += token;
+					tokenCount++;
+					yield { type: 'token', token, runId };
+				}
+			} else if (mode === 'values') {
+				finalState = data as Record<string, unknown>;
+			}
 		}
 
 		if (signal?.aborted) {
@@ -245,13 +269,17 @@ async function* executeCustomStateGraphStream(
 			return;
 		}
 
-		const content = extractGraphOutput(finalState);
+		// Prefer streamed content; fall back to extractGraphOutput for agents
+		// whose nodes do post-processing beyond raw LLM output.
+		const extractedContent = extractGraphOutput(finalState);
+		const content = fullContent || extractedContent;
 
-		logger?.info(LOG_PREFIX, `run=${runId} custom-state graph completed: ${content.length} chars`);
+		logger?.info(
+			LOG_PREFIX,
+			`run=${runId} custom-state graph completed: ${content.length} chars, ${tokenCount} tokens`
+		);
 
-		// tokenCount is not meaningful for a non-streaming node execution;
-		// report 0 so the contract is satisfied without fabricating a number.
-		yield { type: 'done', content, tokenCount: 0, runId };
+		yield { type: 'done', content, tokenCount, runId };
 	} catch (error: unknown) {
 		const kind = classifyError(error);
 
