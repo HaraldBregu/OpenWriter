@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { AppInput } from '@components/app/AppInput';
+import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { ArrowUp, Bot } from 'lucide-react';
 
