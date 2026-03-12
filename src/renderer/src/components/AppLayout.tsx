@@ -277,7 +277,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										>
 											<Link to="/resources">
 												<Library className="h-3.5 w-3.5 shrink-0" />
-												<span className="flex-1 truncate">Resources</span>
+												<span className="flex-1 truncate">{t('appLayout.resources')}</span>
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
