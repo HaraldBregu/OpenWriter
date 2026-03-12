@@ -157,8 +157,9 @@ const DocumentPage: React.FC = () => {
 		[writingAssistantTask.submit]
 	);
 
-	const onAgentPromptSubmit = useCallback((prompt: string) => {
+	const onAgentPromptSubmit = useCallback((before: string, after: string, cursorPos: number, prompt: string) => {
 		// editorRef.current?.removeAgentPrompt();
+		console.log('Prompt submitted:', { before, after, cursorPos, prompt });
 		console.log('Agent prompt submitted:', prompt);
 		editorRef.current?.setAgentPromptLoading(true);
 		editorRef.current?.setAgentPromptEnable(false);

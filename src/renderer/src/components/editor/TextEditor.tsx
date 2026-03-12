@@ -48,7 +48,7 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
-	onAgentPromptSubmit?: (prompt: string) => void;
+	onAgentPromptSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
 }
 
 const TextEditor = React.memo(
@@ -76,7 +76,7 @@ const TextEditor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onAgentPromptSubmit: (prompt) => onAgentPromptSubmitRef.current?.(prompt),
+						onAgentPromptSubmit: (before, after, cursorPos, prompt) => onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
 					}),
 				[]
 			);

@@ -22,7 +22,7 @@ import { AgentPromptExtension } from './extensions/agent-prompt-extension';
 import { ImageExtension } from './extensions/image-extension';
 
 export interface ExtensionHandlers {
-	onAgentPromptSubmit: (prompt: string) => void;
+	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {

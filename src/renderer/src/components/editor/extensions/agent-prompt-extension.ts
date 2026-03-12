@@ -7,7 +7,7 @@ export interface AgentPromptOptions {
 	 * Called when the user submits a non-empty prompt. The node is deleted
 	 * from the document immediately after this callback is invoked.
 	 */
-	onSubmit: (prompt: string) => void;
+	onSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 }
 
 declare module '@tiptap/core' {
@@ -31,7 +31,7 @@ export const AgentPromptExtension = Node.create<AgentPromptOptions>({
 
 	addOptions() {
 		return {
-			onSubmit: (_prompt: string) => {},
+			onSubmit: (_before: string, _after: string, _cursorPos: number, _prompt: string) => { },
 		};
 	},
 
@@ -62,9 +62,9 @@ export const AgentPromptExtension = Node.create<AgentPromptOptions>({
 		return {
 			insertAgentPrompt:
 				() =>
-				({ commands }) => {
-					return commands.insertContent({ type: this.name });
-				},
+					({ commands }) => {
+						return commands.insertContent({ type: this.name });
+					},
 		};
 	},
 
