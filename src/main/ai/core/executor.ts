@@ -14,9 +14,9 @@
  * 3. LangGraph custom-state protocol — when `buildGraph`, `buildGraphInput`,
  *    AND `extractGraphOutput` are all supplied.
  *    Calls `buildGraphInput(ctx)` to construct domain-specific initial state,
- *    runs the graph to completion via `streamMode: 'values'`, then calls
- *    `extractGraphOutput(finalState)` to pull the content string and emits a
- *    single `done` event (no incremental token events).
+ *    streams via `streamMode: ['messages', 'values']` to forward token events
+ *    incrementally, then calls `extractGraphOutput(finalState)` as a fallback
+ *    for any post-processed content not captured in the token stream.
  */
 
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
