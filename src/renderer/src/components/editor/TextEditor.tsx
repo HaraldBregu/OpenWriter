@@ -35,6 +35,7 @@ export interface TextEditorElement extends HTMLDivElement {
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 	removeAgentPrompt: () => void;
+	setAgentPromptLoading: (loading: boolean) => void;
 }
 
 export interface TextEditorProps {
