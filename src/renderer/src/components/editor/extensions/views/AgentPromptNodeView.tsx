@@ -92,7 +92,10 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 				<AppTextarea
 					ref={textareaRef}
 					value={prompt}
-					onChange={(e) => setPrompt(e.target.value)}
+					onChange={(e) => {
+					setPrompt(e.target.value);
+					resizeTextarea();
+				}}
 					className="min-h-[36px] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					placeholder="Ask the AI Agent and press Enter…"
 					rows={1}
