@@ -20,6 +20,7 @@ interface BlockActionsProps {
 export const BlockActions = React.memo(function BlockActions({
 	hoveredBlock,
 }: BlockActionsProps): React.JSX.Element {
+	const { t } = useTranslation();
 	const { editor } = useEditorContext();
 	const [menuOpen, setMenuOpen] = useState(false);
 	// Captures the `top` value at the moment the menu opens so the container
