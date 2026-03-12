@@ -133,6 +133,7 @@ const DocumentPage: React.FC = () => {
 	useEffect(() => {
 		if (!task.taskId) return;
 		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
+			console.log(`[DocumentPage] Received task update:`, snap.metadata);
 			const completed = snap.status === 'completed';
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
@@ -143,7 +144,13 @@ const DocumentPage: React.FC = () => {
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
-			task.submit({ prompt: content }, { metadata: { positionFrom } });
+			task.submit({
+				prompt: content,
+			}, {
+				metadata: {
+					positionFrom,
+				},
+			});
 		},
 		[task.submit]
 	);

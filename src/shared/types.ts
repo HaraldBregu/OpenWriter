@@ -42,6 +42,8 @@ export interface TaskSubmitOptions {
 	priority?: TaskPriority;
 	timeoutMs?: number;
 	windowId?: number;
+	/** Opaque caller-supplied metadata forwarded to the task handler and agent graph. */
+	metadata?: Record<string, unknown>;
 }
 
 export interface TaskSubmitPayload<TInput = unknown> {
