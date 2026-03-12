@@ -166,18 +166,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 					onContinueWithAssistantRef.current?.(markdownBeforeCursor, markdownAfterCursor, from);
 				},
 			},
-			{
-				label: 'Ask to assistant',
-				icon: Bot,
-				section: 'ai' as const,
-				command: (ed, slashPos, queryLength) => {
-					ed.chain()
-						.focus()
-						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-						.run();
-					ed.commands.insertAgentPrompt();
-				},
-			},
 		],
 		// allItems is stable — the AI callback is accessed via ref so no dep needed.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
