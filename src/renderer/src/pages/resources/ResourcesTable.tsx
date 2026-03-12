@@ -202,10 +202,10 @@ export const ResourcesTable = memo(function ResourcesTable({
 				</div>
 				<Select value={typeFilter} onValueChange={setTypeFilter}>
 					<SelectTrigger className="w-[200px]">
-						<SelectValue placeholder="All types" />
+						<SelectValue placeholder={t('resources.allTypes')} />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value={ALL_TYPES_VALUE}>All types</SelectItem>
+						<SelectItem value={ALL_TYPES_VALUE}>{t('resources.allTypes')}</SelectItem>
 						{mimeTypes.map((type) => (
 							<SelectItem key={type} value={type}>
 								{type}
