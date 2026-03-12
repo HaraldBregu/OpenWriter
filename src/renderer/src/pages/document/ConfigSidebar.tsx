@@ -79,10 +79,10 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
-								<AppSelectItem value="narrow">Narrow</AppSelectItem>
-								<AppSelectItem value="normal">Normal</AppSelectItem>
-								<AppSelectItem value="wide">Wide</AppSelectItem>
-								<AppSelectItem value="full">Full Width</AppSelectItem>
+								<AppSelectItem value="narrow">{t('configSidebar.narrow')}</AppSelectItem>
+								<AppSelectItem value="normal">{t('configSidebar.normal')}</AppSelectItem>
+								<AppSelectItem value="wide">{t('configSidebar.wide')}</AppSelectItem>
+								<AppSelectItem value="full">{t('configSidebar.fullWidth')}</AppSelectItem>
 							</AppSelectContent>
 						</AppSelect>
 					</div>
