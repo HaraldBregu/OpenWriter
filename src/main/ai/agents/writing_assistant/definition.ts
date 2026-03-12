@@ -1,5 +1,5 @@
 /**
- * TextContinuation — continues writing from the end of provided text.
+ * WritingAssistant — continues writing from the end of provided text.
  *
  * Runs as a single-node LangGraph StateGraph:
  *   START → continue_writing → END
