@@ -25,7 +25,6 @@ const DocumentPage: React.FC = () => {
 	const task = useTask<{ prompt: string }>('agent-writing-assistant', {
 		prompt: '',
 	});
-	console.log(`[DocumentPage] rendered`);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -144,6 +143,7 @@ const DocumentPage: React.FC = () => {
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
+			
 			task.submit(
 				{
 					prompt: content,

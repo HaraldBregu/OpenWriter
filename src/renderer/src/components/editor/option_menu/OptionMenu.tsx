@@ -7,7 +7,7 @@ import { OptionMenuPlugin } from './option-menu-plugin';
 import { InsertImageDialog } from '../InsertImageDialog';
 
 interface OptionMenuProps {
-	onContinueWithAI?: (content: string, positionFrom: number) => void;
+	onContinueWithAssistant?: (content: string, positionFrom: number) => void;
 }
 
 interface MenuItem {
@@ -120,7 +120,7 @@ const MENU_ITEMS: MenuItem[] = [
 
 const pluginKey = new PluginKey('optionMenu');
 
-export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Element {
+export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
@@ -134,9 +134,9 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
 	selectedIndexRef.current = selectedIndex;
 
 	// Build the full item list, appending the AI item so the command closes over
-	// the latest onContinueWithAI callback via a ref.
-	const onContinueWithAIRef = useRef(onContinueWithAI);
-	onContinueWithAIRef.current = onContinueWithAI;
+	// the latest onContinueWithAssistant callback via a ref.
+	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
+	onContinueWithAssistantRef.current = onContinueWithAssistant;
 
 	const allItems = useMemo<MenuItem[]>(
 		() => [
@@ -153,7 +153,7 @@ export function OptionMenu({ onContinueWithAI }: OptionMenuProps): React.JSX.Ele
 						.run();
 					const { from } = ed.state.selection;
 					const textBeforeCursor = ed.state.doc.textBetween(0, from, '\n');
-					onContinueWithAIRef.current?.(textBeforeCursor, from);
+					onContinueWithAssistantRef.current?.(textBeforeCursor, from);
 				},
 			},
 			{
