@@ -31,6 +31,11 @@ export interface TaskOptions {
 	 * If not provided, events will be broadcast to all windows
 	 */
 	windowId?: number;
+
+	/**
+	 * Opaque caller-supplied metadata forwarded to the task handler and agent graph.
+	 */
+	metadata?: Record<string, unknown>;
 }
 
 /**
