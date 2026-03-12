@@ -7,6 +7,7 @@ import { ReduxStateTab } from './ReduxStateTab';
 type DebugTab = 'tasks' | 'redux';
 
 export default function DebugPage() {
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<DebugTab>('tasks');
 
 	const tabClass = (tab: DebugTab) =>
