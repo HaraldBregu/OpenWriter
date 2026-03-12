@@ -121,6 +121,7 @@ export const ResourcesTable = memo(function ResourcesTable({
 	selected,
 	onSelectedChange,
 }: ResourcesTableProps) {
+	const { t } = useTranslation();
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
