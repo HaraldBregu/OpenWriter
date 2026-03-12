@@ -43,7 +43,6 @@ export default function DebugPage() {
 			</div>
 
 			{activeTab === 'tasks' && <TasksTab />}
-			{activeTab === 'text-continuation' && <TextContinuationTab />}
 			{activeTab === 'redux' && <ReduxStateTab />}
 		</div>
 	);
