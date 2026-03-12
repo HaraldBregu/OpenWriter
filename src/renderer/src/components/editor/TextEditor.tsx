@@ -201,6 +201,18 @@ const TextEditor = React.memo(
 							return true;
 						});
 					},
+					setAgentPromptLoading(loading: boolean) {
+						if (!editor || editor.isDestroyed) return;
+						const { doc, tr } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'agentPrompt') {
+								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
+								return false;
+							}
+							return true;
+						});
+						editor.view.dispatch(tr);
+					},
 				}) as TextEditorElement;
 			}, [editor]);
 
