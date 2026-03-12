@@ -111,7 +111,12 @@ export function AgentPromptNodeView({
 					rows={1}
 				/>
 				<div className="flex items-center justify-between px-3 pb-2">
-					<AppButton variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground">
+					<AppButton
+						variant="ghost"
+						size="icon"
+						className="h-7 w-7 text-muted-foreground"
+						disabled={!enable}
+					>
 						<Plus className="h-4 w-4" />
 					</AppButton>
 					<div className="flex items-center gap-3">
