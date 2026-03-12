@@ -32,13 +32,16 @@ export function TasksTab() {
 				<div className="px-6 py-3 border-b shrink-0 space-y-2">
 					<div className="flex items-center gap-4 text-xs text-muted-foreground">
 						<span>
-							<span className="font-medium text-foreground">{queueStats.running}</span> {t('debug.running')}
+							<span className="font-medium text-foreground">{queueStats.running}</span>{' '}
+							{t('debug.running')}
 						</span>
 						<span>
-							<span className="font-medium text-foreground">{queueStats.queued}</span> {t('debug.queued')}
+							<span className="font-medium text-foreground">{queueStats.queued}</span>{' '}
+							{t('debug.queued')}
 						</span>
 						<span>
-							<span className="font-medium text-foreground">{queueStats.completed}</span> {t('debug.completed')}
+							<span className="font-medium text-foreground">{queueStats.completed}</span>{' '}
+							{t('debug.completed')}
 						</span>
 						{queueStats.error > 0 && (
 							<span className="text-destructive">

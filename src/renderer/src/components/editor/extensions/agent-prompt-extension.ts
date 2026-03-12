@@ -42,6 +42,11 @@ export const AgentPromptExtension = Node.create<AgentPromptOptions>({
 				parseHTML: () => false,
 				renderHTML: () => ({}),
 			},
+			enable: {
+				default: true,
+				parseHTML: () => true,
+				renderHTML: () => ({}),
+			},
 		};
 	},
 

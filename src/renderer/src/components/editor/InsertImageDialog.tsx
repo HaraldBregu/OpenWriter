@@ -136,9 +136,7 @@ export function InsertImageDialog({
 						<ImagePlus className="h-5 w-5" />
 						{t('insertImageDialog.title')}
 					</DialogTitle>
-					<DialogDescription>
-						{t('insertImageDialog.description')}
-					</DialogDescription>
+					<DialogDescription>{t('insertImageDialog.description')}</DialogDescription>
 				</DialogHeader>
 
 				<div className="grid gap-4 py-2">
@@ -203,9 +201,7 @@ export function InsertImageDialog({
 
 					{/* Title (optional) */}
 					<div className="grid gap-2">
-						<Label htmlFor="image-title">
-							{t('insertImageDialog.titleOptional')}
-						</Label>
+						<Label htmlFor="image-title">{t('insertImageDialog.titleOptional')}</Label>
 						<Input
 							id="image-title"
 							placeholder={t('insertImageDialog.titlePlaceholder')}
