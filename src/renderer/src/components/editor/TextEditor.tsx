@@ -27,6 +27,10 @@ export interface ImageInsertOptions {
 
 export interface TextEditorElement extends HTMLDivElement {
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
+	insertMarkdown: (
+		markdown: string,
+		options?: { from?: number; preventEditorUpdate?: boolean }
+	) => void;
 	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
