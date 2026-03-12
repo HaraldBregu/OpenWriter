@@ -134,10 +134,10 @@ export function InsertImageDialog({
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
 						<ImagePlus className="h-5 w-5" />
-						Insert Image
+						{t('insertImageDialog.title')}
 					</DialogTitle>
 					<DialogDescription>
-						Add an image from a URL or upload from your computer.
+						{t('insertImageDialog.description')}
 					</DialogDescription>
 				</DialogHeader>
 
