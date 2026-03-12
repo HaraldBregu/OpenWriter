@@ -1,4 +1,5 @@
 import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search } from 'lucide-react';
 import {
 	AppButton,
