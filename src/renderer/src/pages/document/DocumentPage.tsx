@@ -158,6 +158,7 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onAgentPromptSubmit = useCallback((prompt: string) => {
+		editorRef.current?.removeAgentPrompt();
 		console.log('Agent prompt submitted:', prompt);
 	}, []);
 
