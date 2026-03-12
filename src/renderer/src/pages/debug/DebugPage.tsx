@@ -23,7 +23,7 @@ export default function DebugPage() {
 				<div className="flex items-center gap-4">
 					<div className="flex items-center gap-2">
 						<Bug className="h-5 w-5 text-muted-foreground" />
-						<h1 className="text-lg font-semibold">Debug</h1>
+						<h1 className="text-lg font-semibold">{t('debug.title')}</h1>
 					</div>
 					<div className="flex items-center gap-1">
 						<button
