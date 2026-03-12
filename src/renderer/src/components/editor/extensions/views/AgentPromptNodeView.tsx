@@ -16,6 +16,7 @@ export function AgentPromptNodeView({
 }: NodeViewProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const loading = node.attrs.loading as boolean;
+	const enable = node.attrs.enable as boolean;
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [prompt, setPrompt] = useState('');
 
