@@ -92,6 +92,7 @@ function parseCsv(text: string): string[][] {
 }
 
 function PdfPreview({ path }: { path: string }) {
+	const { t } = useTranslation();
 	const [dataUrl, setDataUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
