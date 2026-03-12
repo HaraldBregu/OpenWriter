@@ -185,7 +185,7 @@ export function InsertImageDialog({
 								onClick={handleFileSelect}
 							>
 								<Upload className="h-4 w-4" />
-								{preview ? 'Change file...' : 'Choose file...'}
+								{preview ? t('insertImageDialog.changeFile') : t('insertImageDialog.chooseFile')}
 							</Button>
 						</div>
 					)}
