@@ -1,7 +1,7 @@
 /**
  * AgentTaskHandler — bridge between TaskManager and AI Agents subsystems.
  *
- * One instance per registered agent definition (e.g. 'agent-text-continuation').
+ * One instance per registered agent definition (e.g. 'agent-writing-assistant').
  * Calls executeAIAgentsStream directly — no session management.
  * This is the *only* file that imports from both subsystems, keeping them
  * fully decoupled from each other.
