@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
+import { DOMParser as PmDOMParser, Slice } from '@tiptap/pm/model';
 import { cn } from '@/lib/utils';
 import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls';
 import { BlockActions } from './BlockActions';
