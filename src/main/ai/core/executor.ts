@@ -193,10 +193,11 @@ export async function* executeAIAgentsStream(
 // Custom-state graph sub-generator
 // ---------------------------------------------------------------------------
 //
-// Uses streamMode:'values' which yields a full state snapshot after each node
-// completes. We keep the last snapshot and call extractGraphOutput once the
-// stream ends. No token events are emitted — the caller receives a single
-// 'done' event with the full content string.
+// Uses combined streamMode:['messages','values'] which yields both token-level
+// streaming chunks (from LLM calls within nodes) and full state snapshots
+// after each node completes. Token events are forwarded incrementally to the
+// caller; the last state snapshot is used with extractGraphOutput to produce
+// the final content string.
 //
 // This path is for agents with domain-specific state shapes (e.g. WriterState)
 // whose nodes call the LLM internally and return a plain string field rather
