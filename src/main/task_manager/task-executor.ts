@@ -309,12 +309,9 @@ export class TaskExecutor implements Disposable {
 	 * Process queued tasks whenever execution slots are available.
 	 */
 	private drainQueue(): void {
-		const idx = 0;
-		while (this.runningCount < this.maxConcurrency && idx < this.queue.length) {
-			const queued = this.queue[idx];
-
-			// Remove from queue
-			this.queue.splice(idx, 1);
+		while (this.runningCount < this.maxConcurrency && this.queue.length > 0) {
+			const queued = this.queue.shift();
+			if (!queued) break;
 
 			// Skip if already cancelled while in queue
 			if (queued.controller.signal.aborted) {
