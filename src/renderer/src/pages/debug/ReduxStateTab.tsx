@@ -8,6 +8,7 @@ import type { SliceName } from './debug-constants';
 import { SliceSection } from './SliceSection';
 
 export function ReduxStateTab() {
+	const { t } = useTranslation();
 	const [live, setLive] = useState(false);
 	const [tick, setTick] = useState(0);
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
