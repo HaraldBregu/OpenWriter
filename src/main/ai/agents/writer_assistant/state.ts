@@ -9,7 +9,6 @@
 import { Annotation } from '@langchain/langgraph';
 
 export const WriterState = Annotation.Root({
-	/** The full document text (may include <<INSERT_HERE>> marker). */
 	inputText: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
