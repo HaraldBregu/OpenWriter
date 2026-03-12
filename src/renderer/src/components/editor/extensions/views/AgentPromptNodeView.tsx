@@ -123,13 +123,13 @@ export function AgentPromptNodeView({
 							variant="prompt-submit"
 							size="prompt-submit-sm"
 							className="shrink-0"
-							disabled={!prompt.trim()}
+							disabled={loading || !prompt.trim()}
 							onMouseDown={(e) => {
 								e.preventDefault();
-								submitRef.current();
+								if (!loading) submitRef.current();
 							}}
 						>
-							<ArrowUp />
+							{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 						</AppButton>
 					</div>
 				</div>
