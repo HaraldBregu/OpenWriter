@@ -5,6 +5,7 @@ import type { SliceName } from './debug-constants';
 import { entryCount } from './debug-helpers';
 
 export function SliceSection({ name, data }: { name: SliceName; data: unknown }) {
+	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const json = JSON.stringify(data, null, 2);
