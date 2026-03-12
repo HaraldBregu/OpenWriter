@@ -25,8 +25,8 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 			deleteNode();
 			return;
 		}
-		// const onSubmit = editor.storage.agentPrompt?.onSubmit;
-		// onSubmit?.(p);
+		const onSubmit = editor.storage.agentPrompt?.onSubmit;
+		onSubmit?.(p);
 		deleteNode();
 	}, [prompt, editor, deleteNode]);
 
