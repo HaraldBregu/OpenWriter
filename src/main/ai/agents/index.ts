@@ -1,1 +1,1 @@
-export { TextContinuationAgent } from './writer_assistant/text-continuation';
+export { TextContinuationAgent } from './writing_assistant/text-continuation';
