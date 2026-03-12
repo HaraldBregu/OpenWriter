@@ -287,6 +287,7 @@ interface ResourcePreviewSheetProps {
 }
 
 export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps) {
+	const { t } = useTranslation();
 	const [content, setContent] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
