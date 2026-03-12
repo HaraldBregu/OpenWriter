@@ -8,6 +8,7 @@ import { TaskRow } from './TaskRow';
 import { LogPanel } from './LogPanel';
 
 export function TasksTab() {
+	const { t } = useTranslation();
 	const { tasks, queueStats, hide, cancel } = useDebugTasks();
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 
