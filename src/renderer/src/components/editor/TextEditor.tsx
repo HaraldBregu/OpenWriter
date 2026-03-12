@@ -39,13 +39,13 @@ export interface TextEditorProps {
 	disabled?: boolean;
 	id?: string;
 	streamingContent?: string;
-	onContinueWithAI?: (content: string, positionFrom: number) => void;
+	onContinueWithAssistant?: (content: string, positionFrom: number) => void;
 }
 
 const TextEditor = React.memo(
 	React.forwardRef<TextEditorElement, TextEditorProps>(
 		(
-			{ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAI },
+			{ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAssistant },
 			ref
 		) => {
 			const onChangeRef = useRef(onChange);
@@ -260,7 +260,7 @@ const TextEditor = React.memo(
 									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BubbleMenu />
-									<OptionMenu onContinueWithAI={onContinueWithAI} />
+									<OptionMenu onContinueWithAssistant={onContinueWithAssistant} />
 									<PromptInput
 										containerRef={containerRef}
 										onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)}
