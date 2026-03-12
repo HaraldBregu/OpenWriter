@@ -47,11 +47,11 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 
 				{/* Typography */}
 				<div className="mb-1">
-					<span className="text-xs font-medium text-muted-foreground/70">Typography</span>
+					<span className="text-xs font-medium text-muted-foreground/70">{t('configSidebar.typography')}</span>
 				</div>
 				<div className="space-y-4 mb-5">
 					<div className="space-y-2">
-						<AppLabel className="text-xs text-muted-foreground">Font Family</AppLabel>
+						<AppLabel className="text-xs text-muted-foreground">{t('configSidebar.fontFamily')}</AppLabel>
 						<AppSelect value={fontFamily} onValueChange={setFontFamily}>
 							<AppSelectTrigger className="h-8 text-sm">
 								<AppSelectValue />
