@@ -100,12 +100,13 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					rows={1}
 				/>
 				<div className="flex items-center justify-between px-3 pb-2">
-					<button
-						type="button"
-						className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+					<AppButton
+						variant="ghost"
+						size="icon"
+						className="h-7 w-7 text-muted-foreground"
 					>
 						<Plus className="h-4 w-4" />
-					</button>
+					</AppButton>
 					<AppButton
 						variant="prompt-submit"
 						size="prompt-icon-sm"
