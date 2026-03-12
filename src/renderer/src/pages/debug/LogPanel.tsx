@@ -15,7 +15,7 @@ export function LogPanel({ task, onClose }: LogPanelProps) {
 		<div className="flex flex-col border-l bg-muted/20 w-80 shrink-0 h-full">
 			<div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
 				<div className="min-w-0">
-					<p className="text-sm font-medium truncate">{task.type || 'Unknown'}</p>
+					<p className="text-sm font-medium truncate">{task.type || t('debug.unknown')}</p>
 					<p className="text-xs text-muted-foreground font-mono">{task.taskId.slice(0, 12)}…</p>
 				</div>
 				<button
