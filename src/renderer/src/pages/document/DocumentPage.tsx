@@ -22,7 +22,7 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	const task = useTask<{ prompt: string }>('agent-text-continuation', {
+	const task = useTask<{ prompt: string }>('agent-writing-assistant', {
 		prompt: '',
 	});
 	console.log(`[DocumentPage] rendered`);
