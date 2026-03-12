@@ -45,7 +45,16 @@ export interface TextEditorProps {
 const TextEditor = React.memo(
 	React.forwardRef<TextEditorElement, TextEditorProps>(
 		(
-			{ value, onChange, autoFocus, className, disabled, id, streamingContent, onContinueWithAssistant },
+			{
+				value,
+				onChange,
+				autoFocus,
+				className,
+				disabled,
+				id,
+				streamingContent,
+				onContinueWithAssistant,
+			},
 			ref
 		) => {
 			const onChangeRef = useRef(onChange);

@@ -143,7 +143,6 @@ const DocumentPage: React.FC = () => {
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
-			
 			task.submit(
 				{
 					prompt: content,
@@ -151,7 +150,7 @@ const DocumentPage: React.FC = () => {
 				{
 					metadata: {
 						positionFrom,
-						contentLength: "long",
+						contentLength: 'long',
 					},
 				}
 			);

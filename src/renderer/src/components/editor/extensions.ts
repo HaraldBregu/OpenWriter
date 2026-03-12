@@ -16,6 +16,7 @@ import { ListKeymap } from '@tiptap/extension-list';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
+import { Markdown } from 'tiptap-markdown';
 import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/agent-prompt-extension';
 import { ImageExtension } from './extensions/image-extension';
