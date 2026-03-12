@@ -48,7 +48,7 @@ export function TasksTab() {
 					</div>
 
 					<div className="flex items-center gap-2 pb-1">
-						<span className="text-xs text-muted-foreground shrink-0">Demo task:</span>
+						<span className="text-xs text-muted-foreground shrink-0">{t('debug.demoTask')}</span>
 						{DEMO_VARIANTS.map(({ variant, label, icon: Icon, description }) => (
 							<button
 								key={variant}
