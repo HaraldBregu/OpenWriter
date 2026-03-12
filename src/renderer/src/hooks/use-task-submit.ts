@@ -211,6 +211,12 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 				})
 			);
 
+			// Seed the event-bus snapshot so that every TaskSnapshot delivered
+			// via subscribeToTask includes the caller-supplied metadata.
+			if (submitOptions?.metadata !== undefined) {
+				initTaskMetadata(resolvedTaskId, submitOptions.metadata);
+			}
+
 			taskIdRef.current = resolvedTaskId;
 			setTaskId(resolvedTaskId);
 		},
