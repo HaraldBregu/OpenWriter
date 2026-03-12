@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FolderOpen, Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
