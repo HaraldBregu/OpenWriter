@@ -34,7 +34,6 @@ export function AgentPromptNodeView({
 		}
 		const options = extension.options as AgentPromptOptions;
 		options.onSubmit(p);
-		deleteNode();
 	}, [prompt, extension, deleteNode]);
 
 	const submitRef = useRef(submit);
