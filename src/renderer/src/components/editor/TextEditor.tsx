@@ -67,6 +67,17 @@ const TextEditor = React.memo(
 			const onChangeRef = useRef(onChange);
 			onChangeRef.current = onChange;
 
+			const onAgentPromptSubmitRef = useRef(onAgentPromptSubmit);
+			onAgentPromptSubmitRef.current = onAgentPromptSubmit;
+
+			const extensions = useMemo(
+				() =>
+					createExtensions({
+						onAgentPromptSubmit: (prompt) => onAgentPromptSubmitRef.current?.(prompt),
+					}),
+				[]
+			);
+
 			const lastEmittedRef = useRef<string>('');
 			const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 			const initialValueRef = useRef(value);
@@ -79,7 +90,7 @@ const TextEditor = React.memo(
 
 			const editorOptions = useMemo<UseEditorOptions>(
 				() => ({
-					extensions: BASE_EXTENSIONS,
+					extensions,
 					content: '',
 					immediatelyRender: false,
 					onCreate: ({ editor: ed }: { editor: Editor }) => {
