@@ -45,6 +45,22 @@ export const AgentPromptExtension = Node.create({
 		};
 	},
 
+	addKeyboardShortcuts() {
+		return {
+			Space: ({ editor: ed }) => {
+				const { selection } = ed.state;
+				if (!selection.empty) return false;
+
+				const $from = selection.$from;
+				if ($from.parent.type.name !== 'paragraph') return false;
+				if ($from.parent.content.size !== 0) return false;
+				if ($from.pos !== $from.start()) return false;
+
+				return ed.commands.insertAgentPrompt();
+			},
+		};
+	},
+
 	addNodeView() {
 		return ReactNodeViewRenderer(AgentPromptNodeView);
 	},
