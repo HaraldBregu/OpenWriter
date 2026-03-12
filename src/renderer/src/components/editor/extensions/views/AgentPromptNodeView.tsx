@@ -3,7 +3,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
-import { ArrowUp, Bot } from 'lucide-react';
+import { ArrowUp, Plus } from 'lucide-react';
 
 export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): React.JSX.Element {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -93,9 +93,9 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					ref={textareaRef}
 					value={prompt}
 					onChange={(e) => {
-					setPrompt(e.target.value);
-					resizeTextarea();
-				}}
+						setPrompt(e.target.value);
+						resizeTextarea();
+					}}
 					className="min-h-[36px] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					placeholder="Ask the AI Agent and press Enter…"
 					rows={1}
