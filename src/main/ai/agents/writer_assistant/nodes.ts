@@ -105,9 +105,11 @@ function resolveContent(state: typeof WriterState.State): string {
 export async function continueWritingNode(
 	state: typeof WriterState.State
 ): Promise<Partial<typeof WriterState.State>> {
-	const model = new ChatOpenAI({
-		openAIApiKey: state.apiKey,
-		model: state.modelName,
+	const model = createChatModel({
+		providerId: state.providerId,
+		apiKey: state.apiKey,
+		modelName: state.modelName,
+		streaming: false,
 		temperature: 0.7,
 	});
 
