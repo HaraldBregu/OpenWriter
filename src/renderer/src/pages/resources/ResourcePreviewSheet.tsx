@@ -235,10 +235,11 @@ function PlainTextPreview({ content }: { content: string }) {
 }
 
 function UnsupportedPreview({ mimeType }: { mimeType: string }) {
+	const { t } = useTranslation();
 	return (
 		<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
 			<FileWarning className="h-10 w-10" />
-			<p className="text-sm">Preview is not available for {mimeType} files</p>
+			<p className="text-sm">{t('resources.previewNotAvailable', { mimeType })}</p>
 		</div>
 	);
 }
