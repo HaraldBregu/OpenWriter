@@ -67,7 +67,7 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 
 		textarea.addEventListener('keydown', handleKeyDown);
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
-	}, []);
+	}, [resizeTextarea]);
 
 	// Click outside → remove the node.
 	useEffect(() => {
