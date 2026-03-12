@@ -52,7 +52,7 @@ export function ReduxStateTab() {
 						onChange={(e) => setLive(e.target.checked)}
 						className="rounded border-muted-foreground"
 					/>
-					Live (1 s)
+					{t('debug.live')}
 				</label>
 			</div>
 
