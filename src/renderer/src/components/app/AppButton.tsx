@@ -29,7 +29,7 @@ const buttonVariants = cva(
 				'editor-block-icons-sm': 'h-5 w-5 rounded p-2 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-icon': 'h-6 w-6 rounded-full p-0 [&_svg]:size-3.5',
 				'prompt-icon-sm': 'h-5 w-5 rounded-full p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
-				'prompt-submit-md': 'h-5 w-5 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
+				'prompt-submit-md': 'h-6 w-6 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-submit-sm': 'h-5 w-5 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 			},
 		},

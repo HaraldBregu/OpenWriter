@@ -19,6 +19,7 @@ interface ConfigSidebarProps {
 }
 
 const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
+	const { t } = useTranslation();
 	const [fontFamily, setFontFamily] = useState('sans');
 	const [spellCheck, setSpellCheck] = useState(true);
 	const [autoSave, setAutoSave] = useState(true);
