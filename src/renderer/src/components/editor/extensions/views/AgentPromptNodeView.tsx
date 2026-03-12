@@ -86,7 +86,7 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 		<NodeViewWrapper contentEditable={false}>
 			<div
 				ref={wrapperRef}
-				className="my-2 flex items-center gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md"
+				className="my-2 flex items-start gap-2 rounded-xl border border-border bg-popover px-5 py-2 shadow-md"
 			>
 				<Bot className="mt-2 shrink-0 text-violet-500" style={{ width: 18, height: 18 }} />
 				<AppTextarea
