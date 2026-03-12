@@ -132,7 +132,7 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 						type="button"
 						variant={sidebarOpen ? 'secondary' : 'outline'}
 						size="icon"
-						title="Toggle sidebar"
+						title={t('titleBar.toggleSidebar')}
 						onClick={onToggleSidebar}
 					>
 						<PanelRight className="h-4 w-4" />
