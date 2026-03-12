@@ -21,7 +21,7 @@ import { buildGraph } from './graph';
 // ---------------------------------------------------------------------------
 
 const definition: AgentDefinition = {
-	id: 'text-continuation',
+	id: 'writing-assistant',
 	name: 'Writing Assistant',
 	description:
 		'Inserts new content at a specific position within existing text, matching the surrounding tone, voice, and style while connecting smoothly to both the preceding and following context.',
