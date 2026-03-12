@@ -22,6 +22,8 @@ export interface TaskSnapshot {
 	seedContent: string; // original text before AI enhancement (set by initTaskContent)
 	error?: string;
 	result?: unknown;
+	/** Caller-supplied metadata attached at submit time via initTaskMetadata. */
+	metadata?: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -49,6 +51,7 @@ function ensureListening(): void {
 	if (typeof window.task?.onEvent !== 'function') return;
 
 	globalUnsub = window.task.onEvent((event: TaskEvent) => {
+		console.log('[taskEventBus] Received event:', event);
 		const data = event.data as { taskId?: string };
 		const taskId = data?.taskId;
 		if (!taskId) return;
@@ -118,7 +121,7 @@ function ensureListening(): void {
 			default:
 				next = prev;
 		}
-		
+
 		snapshots.set(taskId, next);
 
 		// Notify subscribers for this specific task.
