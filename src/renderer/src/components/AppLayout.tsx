@@ -252,7 +252,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<Link to={`/content/${w.id}`}>
 														<PenLine className="h-3.5 w-3.5 shrink-0" />
 														<span className="flex-1 truncate">
-															{w.title || t('sidebar.untitledWriting') || 'Untitled'}
+															{w.title || t('sidebar.untitledWriting')}
 														</span>
 													</Link>
 												</AppSidebarMenuButton>
