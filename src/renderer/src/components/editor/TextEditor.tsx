@@ -45,6 +45,7 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
+	onAgentPromptSubmit?: (prompt: string) => void;
 }
 
 const TextEditor = React.memo(
