@@ -204,11 +204,11 @@ export function InsertImageDialog({
 					{/* Title (optional) */}
 					<div className="grid gap-2">
 						<Label htmlFor="image-title">
-							Title <span className="text-muted-foreground">(optional)</span>
+							{t('insertImageDialog.titleOptional')}
 						</Label>
 						<Input
 							id="image-title"
-							placeholder="Tooltip text"
+							placeholder={t('insertImageDialog.titlePlaceholder')}
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
 						/>
