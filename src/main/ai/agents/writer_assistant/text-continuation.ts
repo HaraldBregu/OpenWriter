@@ -1,25 +1,16 @@
 /**
- * TextContinuation — inserts new content at a specific position within existing text.
- *
- * Unlike TextCompleter (which appends to the end), this agent receives the full
- * document split around a marked insertion point (<<INSERT_HERE>>) and generates
- * content that connects smoothly to both the preceding and following text.
+ * TextContinuation — continues writing from the end of provided text.
  *
  * Runs as a single-node LangGraph StateGraph:
  *   START → continue_writing → END
  *
- * The node splits the document at the marker, embeds the preceding half into a
- * rich system prompt with inline style-matching instructions, and returns only
- * the insertion text — no JSON, no commentary.
+ * The node receives the input text, streams it through the injected model,
+ * and returns only the continuation — no JSON, no commentary.
  *
  * Execution contract: custom-state protocol.
  *   - `buildGraphInput` maps executor context → WriterState initial fields.
  *   - `extractGraphOutput` pulls `state.completion` from the final snapshot.
- *   - `streamMode: 'values'` is used; a single `done` event is emitted.
- *
- * Expected prompt format (built by the caller):
- *   The prompt must contain the full document with <<INSERT_HERE>> at the
- *   insertion point. The node handles marker splitting internally.
+ *   - `streamMode: ['messages', 'values']` enables token-level streaming.
  */
 
 import type { AgentDefinition, GraphInputContext } from '../../core/definition';
