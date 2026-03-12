@@ -185,10 +185,9 @@ export default function ResourcesPage() {
 			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AppAlertDialogContent>
 					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>Remove resources</AppAlertDialogTitle>
+						<AppAlertDialogTitle>{t('resources.removeResources')}</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
-							Are you sure you want to remove {selected.size}{' '}
-							{selected.size === 1 ? 'resource' : 'resources'}? This action cannot be undone.
+							{t('resources.removeConfirm', { count: selected.size })}
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
