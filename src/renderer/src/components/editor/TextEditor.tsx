@@ -303,10 +303,6 @@ const TextEditor = React.memo(
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BubbleMenu />
 									<OptionMenu onContinueWithAssistant={onContinueWithAssistant} />
-									<PromptInput
-										containerRef={containerRef}
-										onSubmit={(prompt, _pos) => console.log('PromptInput submit:', prompt)}
-									/>
 								</EditorProvider>
 							)}
 							<EditorContent editor={editor} />
