@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react';
 import { useEditorContext } from './EditorContext';
 import { cn } from '@/lib/utils';
