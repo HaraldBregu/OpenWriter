@@ -121,11 +121,11 @@ export function AgentPromptNodeView({
 					</AppButton>
 					<div className="flex items-center gap-3">
 						<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-							<AppCheckbox className="h-3.5 w-3.5" />
+							<AppCheckbox className="h-3.5 w-3.5" disabled={!enable} />
 							{t('agentPrompt.search')}
 						</label>
 						<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-							<AppCheckbox className="h-3.5 w-3.5" />
+							<AppCheckbox className="h-3.5 w-3.5" disabled={!enable} />
 							{t('agentPrompt.rag')}
 						</label>
 						<AppButton
