@@ -1,5 +1,5 @@
 /**
- * Graph state annotation for the Writer Assistant agent.
+ * Graph state annotation for the Writing Assistant agent.
  *
  * The `apiKey` and `modelName` fields are populated by the executor via
  * `buildGraphInput` so that nodes can instantiate the LLM without hardcoding
