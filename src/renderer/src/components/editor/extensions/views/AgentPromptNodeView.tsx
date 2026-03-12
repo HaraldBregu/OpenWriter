@@ -105,7 +105,7 @@ export function AgentPromptNodeView({
 						resizeTextarea();
 					}}
 					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-3 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					placeholder="Ask the AI Agent and press Enter…"
+					placeholder={t('agentPrompt.placeholder')}
 					rows={1}
 				/>
 				<div className="flex items-center justify-between px-3 pb-2">
