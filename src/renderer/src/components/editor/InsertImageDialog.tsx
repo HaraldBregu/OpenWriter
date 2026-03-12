@@ -170,7 +170,7 @@ export function InsertImageDialog({
 						</div>
 					) : (
 						<div className="grid gap-2">
-							<Label>File</Label>
+							<Label>{t('insertImageDialog.file')}</Label>
 							<input
 								ref={fileInputRef}
 								type="file"
