@@ -36,6 +36,7 @@ export function InsertImageDialog({
 	onOpenChange,
 	onInsert,
 }: InsertImageDialogProps): React.JSX.Element {
+	const { t } = useTranslation();
 	const [source, setSource] = useState<ImageSource>('url');
 	const [url, setUrl] = useState('');
 	const [alt, setAlt] = useState('');
