@@ -66,14 +66,17 @@ export class TaskManagerIpc implements IpcModule {
 		 */
 		registerCommandWithEvent(TaskChannels.submit, async (event, payload: TaskSubmitInput) => {
 			const options: TaskOptions = { ...payload.options };
-			// Security: always use the sender's webContents ID, never the renderer-supplied windowId.
-			options.windowId = event.sender.id;
+			// Security: derive BrowserWindow.id from webContents (not event.sender.id,
+			// which is webContents.id — a different integer that EventBus.sendTo cannot resolve).
+			const senderWindow = BrowserWindow.fromWebContents(event.sender);
+			const windowId = senderWindow?.id;
+			options.windowId = windowId;
 
 			// Inject server-stamped windowId into object inputs so handlers can
 			// resolve window-scoped services (e.g. workspace, documents).
 			const input =
 				typeof payload.input === 'object' && payload.input !== null
-					? { ...(payload.input as Record<string, unknown>), windowId: event.sender.id }
+					? { ...(payload.input as Record<string, unknown>), windowId }
 					: payload.input;
 
 			const taskId = await executor.submit(payload.type, input, options);
