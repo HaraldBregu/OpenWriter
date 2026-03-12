@@ -103,16 +103,9 @@ function resolveContent(state: typeof WriterState.State): string {
 // ---------------------------------------------------------------------------
 
 export async function continueWritingNode(
-	state: typeof WriterState.State
+	state: typeof WriterState.State,
+	model: BaseChatModel
 ): Promise<Partial<typeof WriterState.State>> {
-	const model = createChatModel({
-		providerId: state.providerId,
-		apiKey: state.apiKey,
-		modelName: state.modelName,
-		streaming: false,
-		temperature: 0.7,
-	});
-
 	const content = resolveContent(state);
 
 	const messages: { role: 'system' | 'user'; content: string }[] = [
@@ -121,11 +114,14 @@ export async function continueWritingNode(
 		{ role: 'user', content: `<content>${content}</content>` },
 	];
 
-	console.log('Invoking model with messages:', content);
-	const response = await model.invoke(messages);
-	const completion = typeof response.content === 'string' ? response.content : '';
-
-		console.log('Invoking model with messages:', completion);
+	let completion = '';
+	const stream = await model.stream(messages);
+	for await (const chunk of stream) {
+		const token = extractTokenFromChunk(chunk.content);
+		if (token) {
+			completion += token;
+		}
+	}
 
 	return { completion };
 }
