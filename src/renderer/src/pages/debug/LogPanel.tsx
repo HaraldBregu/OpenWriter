@@ -30,7 +30,7 @@ export function LogPanel({ task, onClose }: LogPanelProps) {
 
 			<div className="flex-1 overflow-y-auto p-3 space-y-1.5">
 				{task.events.length === 0 ? (
-					<p className="text-xs text-muted-foreground text-center py-8">No events yet</p>
+					<p className="text-xs text-muted-foreground text-center py-8">{t('debug.noEventsYet')}</p>
 				) : (
 					[...task.events].reverse().map((ev, i) => (
 						<div key={i} className="rounded border bg-background p-2 text-xs">
