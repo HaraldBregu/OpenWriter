@@ -196,7 +196,7 @@ export default function ResourcesPage() {
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleConfirmRemove}
 						>
-							Remove
+							{t('resources.remove')}
 						</AppAlertDialogAction>
 					</AppAlertDialogFooter>
 				</AppAlertDialogContent>
