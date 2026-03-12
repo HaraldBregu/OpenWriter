@@ -94,15 +94,15 @@ export const BlockActions = React.memo(function BlockActions({
 				<AppDropdownMenuContent align="end" sideOffset={4}>
 					<AppDropdownMenuItem onClick={deleteBlock}>
 						<Trash2 className="mr-2 h-4 w-4" />
-						Delete
+						{t('common.delete')}
 					</AppDropdownMenuItem>
 					<AppDropdownMenuItem onClick={duplicateBlock}>
 						<Copy className="mr-2 h-4 w-4" />
-						Duplicate
+						{t('common.duplicate')}
 					</AppDropdownMenuItem>
 					<AppDropdownMenuItem onClick={copyBlockText}>
 						<Clipboard className="mr-2 h-4 w-4" />
-						Copy to clipboard
+						{t('blockActions.copyToClipboard')}
 					</AppDropdownMenuItem>
 				</AppDropdownMenuContent>
 			</AppDropdownMenu>
