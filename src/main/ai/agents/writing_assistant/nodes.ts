@@ -1,5 +1,5 @@
 /**
- * Graph nodes for the Writer Assistant agent.
+ * Graph nodes for the Writing Assistant agent.
  *
  * Each exported node function receives the current graph state and returns
  * a partial state update. Keeping nodes in their own file makes the graph
