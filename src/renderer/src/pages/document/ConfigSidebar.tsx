@@ -36,7 +36,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 				<div className="flex items-center justify-between mb-4">
 					<div className="flex items-center gap-2">
 						<Settings className="h-4 w-4 text-muted-foreground" />
-						<span className="text-sm font-semibold text-foreground">Configuration</span>
+						<span className="text-sm font-semibold text-foreground">{t('configSidebar.title')}</span>
 					</div>
 					<AppButton variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
 						<X className="h-3.5 w-3.5" />

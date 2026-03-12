@@ -121,7 +121,7 @@ export function AgentPromptNodeView({
 						</label>
 						<AppButton
 							variant="prompt-submit"
-							size="prompt-submit-sm"
+							size="prompt-submit-md"
 							className="shrink-0"
 							disabled={loading || !prompt.trim()}
 							onMouseDown={(e) => {
