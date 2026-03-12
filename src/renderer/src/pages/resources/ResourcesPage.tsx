@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FolderOpen, Loader2 } from 'lucide-react';
 import {
 	AppAlertDialog,
