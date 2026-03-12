@@ -3,6 +3,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
+import { AppCheckbox } from '@components/app/AppCheckbox';
 import { ArrowUp, Plus } from 'lucide-react';
 
 export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): React.JSX.Element {
@@ -100,11 +101,7 @@ export function AgentPromptNodeView({ editor, node, getPos }: NodeViewProps): Re
 					rows={1}
 				/>
 				<div className="flex items-center justify-between px-3 pb-2">
-					<AppButton
-						variant="ghost"
-						size="icon"
-						className="h-7 w-7 text-muted-foreground"
-					>
+					<AppButton variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground">
 						<Plus className="h-4 w-4" />
 					</AppButton>
 					<AppButton
