@@ -22,9 +22,16 @@ export function TextContinuationTab() {
 	useEffect(() => {
 		if (!task.taskId) return;
 		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
-			console.log('Received task snapshot:', snap);
 			if (snap.content) {
 				setOutput(snap.content);
+			}
+			// Custom-state agents (like text-continuation) emit a single 'completed'
+			// event with the result in snap.result instead of incremental stream tokens.
+			if (snap.status === 'completed' && snap.result) {
+				const r = snap.result as { content: string };
+				if (r.content) {
+					setOutput(r.content);
+				}
 			}
 		});
 		return unsub;
