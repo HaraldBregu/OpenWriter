@@ -25,7 +25,7 @@ export const ResourcesEmptyState = memo(function ResourcesEmptyState({
 				disabled={uploading}
 			>
 				<Upload className="h-3.5 w-3.5 mr-1.5" />
-				Upload resources
+				{t('resources.uploadResources')}
 			</AppButton>
 		</div>
 	);
