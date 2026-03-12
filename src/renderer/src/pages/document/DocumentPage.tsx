@@ -134,6 +134,7 @@ const DocumentPage: React.FC = () => {
 		if (!task.taskId) return;
 		const unsub = subscribeToTask(task.taskId, (snap: TaskSnapshot) => {
 			const completed = snap.status === 'completed';
+			console.log(`[DocumentPage] Received task update:`, snap);
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
 			});

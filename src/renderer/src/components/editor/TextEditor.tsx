@@ -108,6 +108,7 @@ const TextEditor = React.memo(
 					) {
 						if (!editor || editor.isDestroyed) return;
 						const { from } = editor.state.selection;
+						console.log('text to insert:', { text, from, options });
 						const tr = editor.state.tr
 							.insertText(text, from)
 							.setMeta('preventEditorUpdate', options?.preventEditorUpdate);

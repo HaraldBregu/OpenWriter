@@ -89,7 +89,12 @@ function ensureListening(): void {
 			}
 			case 'completed': {
 				const cd = event.data as { result?: unknown };
-				next = { ...prev, status: 'completed', result: cd.result };
+				next = {
+					...prev,
+					status: 'completed',
+					streamedContent: '',
+					result: cd.result,
+				};
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
 				// Clear snapshot after all subscribers have processed the terminal event.
@@ -113,7 +118,7 @@ function ensureListening(): void {
 			default:
 				next = prev;
 		}
-
+		
 		snapshots.set(taskId, next);
 
 		// Notify subscribers for this specific task.
