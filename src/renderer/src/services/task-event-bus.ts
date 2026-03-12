@@ -75,7 +75,7 @@ function ensureListening(): void {
 				next = { ...prev, status: 'running' };
 				break;
 			case 'progress':
-				next = { ...prev, status: 'running' };
+				next = { ...prev, status: 'running', streamedContent: '' };
 				break;
 			case 'stream': {
 				const sd = event.data as { data?: string };
