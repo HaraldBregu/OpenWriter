@@ -85,7 +85,7 @@ export function ImageNodeView({
 			>
 				{loadError || !src ? (
 					<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
-						{alt ?? 'Image not found'}
+						{alt ?? t('imageNode.notFound')}
 					</div>
 				) : (
 					<div className="relative inline-block">
