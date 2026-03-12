@@ -144,13 +144,17 @@ const DocumentPage: React.FC = () => {
 
 	const handleContinueWithAI = useCallback(
 		(content: string, positionFrom: number) => {
-			task.submit({
-				prompt: content,
-			}, {
-				metadata: {
-					positionFrom,
+			task.submit(
+				{
+					prompt: content,
 				},
-			});
+				{
+					metadata: {
+						positionFrom,
+						contentLength: "long",
+					},
+				}
+			);
 		},
 		[task.submit]
 	);
