@@ -4,7 +4,7 @@
  * CustomIpc and exposed to the renderer via window.app instead of window.store.
  */
 import { ipcMain } from 'electron';
-import { CustomIpc } from '../../../../src/main/ipc/CustomIpc';
+import { AppIpc as CustomIpc } from '../../../../src/main/ipc/app-ipc';
 import { ServiceContainer } from '../../../../src/main/core/service-container';
 import { EventBus } from '../../../../src/main/core/event-bus';
 
