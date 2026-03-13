@@ -186,6 +186,15 @@
 			"saving": "Saving…",
 			"saved": "Saved!",
 			"saveError": "Error"
+		},
+		"agents": {
+			"title": "Agents",
+			"description": "Configure the AI model and parameters for each agent.",
+			"provider": "Provider",
+			"model": "Model",
+			"temperature": "Temperature",
+			"thinkingMode": "Thinking Mode",
+			"thinkingModeDescription": "Enable extended reasoning for complex tasks"
 		}
 	},
 	"dialogs": {
