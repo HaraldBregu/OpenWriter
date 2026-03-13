@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ToolsSettings: React.FC = () => {
+const ToolsSettingsPage: React.FC = () => {
 	return null;
 };
 
