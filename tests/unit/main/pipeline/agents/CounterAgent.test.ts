@@ -390,7 +390,7 @@ describe('CounterAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal);
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('openai');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('openai');
 	});
 
 	it('should use a custom providerId from context when supplied', async () => {
@@ -402,7 +402,7 @@ describe('CounterAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'custom-llm' });
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('custom-llm');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('custom-llm');
 	});
 });
 
