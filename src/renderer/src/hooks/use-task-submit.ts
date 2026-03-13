@@ -28,8 +28,6 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	queuePosition: number | undefined;
 	/** Wall-clock duration of the task in milliseconds, set on completion. */
 	durationMs: number | undefined;
-	/** Caller-supplied metadata stored alongside the task in Redux. */
-	metadata: unknown | undefined;
 	/** Submit the task. */
 	submit: (input: TInput, options?: TaskOptions) => Promise<void>;
 	/** Cancel the current task. No-op if not running. */

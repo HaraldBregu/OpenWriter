@@ -150,12 +150,7 @@ const DocumentPage: React.FC = () => {
 			const prompt = `${cleanBefore}\n\n▇\n\n${cleanAfter}`;
 			const temperature = 0.9;
 			const data: WritingAssistantTaskData = { prompt, temperature };
-			writingAssistantTask.submit(data, {
-				metadata: {
-					cursorPos,
-					contentLength: 'long',
-				},
-			});
+			writingAssistantTask.submit(data);
 		},
 		[writingAssistantTask.submit]
 	);
