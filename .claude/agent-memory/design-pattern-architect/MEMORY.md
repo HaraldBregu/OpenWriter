@@ -91,6 +91,17 @@
 - `WorkspaceIpc` becomes ~100 lines: every handler is `return this.mgr(event, container).method(args)`
 - Private `mgr()` helper in `WorkspaceIpc` wraps the `getWindowService<WorkspaceManager>` call
 
+## AI Agent / LangGraph Architecture (confirmed)
+- AgentRegistry + AgentTaskHandler bridge TaskManager ↔ AI subsystems (only coupling point)
+- AgentDefinition declares `buildGraph`, `buildGraphInput`, `extractGraphOutput` hooks
+- Three executor paths: plain chat, messages-protocol graph, custom-state graph
+- ModelRegistry (role-based) is slated for REMOVAL — see agent-node-config.md for full design
+- Replacement: `NodeConfigMap` (Record<nodeName, NodeModelConfig>) inline on AgentDefinition
+- `NodeModelConfig` = `{ providerId, modelId, temperature?, maxTokens? }` Value Object
+- AgentTaskHandler loses `modelRegistry` constructor param after this change
+- 8 files affected: delete registry/, simplify definition.ts, handler, bootstrap, barrel exports
+
 ## Links to Detail Files
 - `theme-pattern.md` — full analysis of theme system pattern decision
 - `main-process-patterns.md` — detailed pattern analysis of src/main/ (see analysis in conversation)
+- `agent-node-config.md` — NodeConfigMap design (replaces ModelRole/ModelRegistry)
