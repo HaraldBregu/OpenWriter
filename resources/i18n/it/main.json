@@ -176,7 +176,15 @@
 			"enterApiKey": "Inserisci la chiave API di {{provider}}…",
 			"show": "Mostra",
 			"hide": "Nascondi",
-			"context": "{{window}} ctx"
+			"context": "{{window}} ctx",
+			"apiKeysSection": "Chiavi API",
+			"apiKeyPlaceholder": "Inserisci la chiave API…",
+			"showApiKey": "Mostra la chiave API",
+			"hideApiKey": "Nascondi la chiave API",
+			"save": "Salva",
+			"saving": "Salvataggio in corso…",
+			"saved": "Salvato!",
+			"saveError": "Errore"
 		}
 	},
 	"dialogs": {
