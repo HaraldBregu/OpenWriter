@@ -63,17 +63,16 @@ export interface AgentDefinition {
 	/** Category used for grouping / filtering in the UI */
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 	/**
-	 * Optional functional role for model selection via ModelRegistry.
-	 * When set, the registry's provider/model/temperature for this role
-	 * are used as fallbacks.
+	 * Default model config for the single-model path.
+	 * Used when the agent has no per-node configs and no per-request override.
 	 */
-	role?: ModelRole;
+	defaultModel?: NodeModelConfig;
 	/**
-	 * Optional per-node role mapping for multi-model graphs.
-	 * When present, the executor resolves a separate model for each node
+	 * Per-node model configs for multi-model graphs.
+	 * When present, the handler resolves a separate model for each node
 	 * and passes a `NodeModelMap` to `buildGraph` instead of a single model.
 	 */
-	nodeRoles?: NodeRoleMap;
+	nodeModels?: NodeModelConfigs;
 	/**
 	 * Optional LangGraph factory. When present, the agent runs as a full
 	 * LangGraph StateGraph instead of a plain chat completion.
