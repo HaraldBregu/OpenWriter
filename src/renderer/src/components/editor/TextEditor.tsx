@@ -357,7 +357,7 @@ const TextEditor = React.memo(
 								<EditorProvider editor={editor}>
 									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
-									<BubbleMenu onEnhanceWithAI={onEnhanceWithAI} />
+									<BubbleMenu onEnhanceWithAssistant={onEnhanceWithAssistant} />
 									<OptionMenu onContinueWithAssistant={onContinueWithAssistant} />
 								</EditorProvider>
 							)}
