@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useCallback } from 'react';
+import React, { useEffect, useReducer, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { aiProviders, type AIProvider } from '@/config/ai-providers';
+import { AppButton, AppInput, AppLabel } from '@/components/app';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -25,6 +26,7 @@ type Action =
 // ---------------------------------------------------------------------------
 
 const INITIAL_PROVIDER_STATE: ProviderState = { token: '', status: 'idle' };
+const SAVED_RESET_MS = 2000;
 
 function buildInitialState(): ProviderStateMap {
 	return Object.fromEntries(aiProviders.map((p) => [p.id, { ...INITIAL_PROVIDER_STATE }]));
@@ -50,10 +52,46 @@ function reducer(state: ProviderStateMap, action: Action): ProviderStateMap {
 }
 
 // ---------------------------------------------------------------------------
-// Sub-component: one row per provider
+// Icons
 // ---------------------------------------------------------------------------
 
-const SAVED_RESET_MS = 2000;
+const EyeIcon: React.FC = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+		<circle cx={12} cy={12} r={3} />
+	</svg>
+);
+
+const EyeOffIcon: React.FC = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+		<path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+		<path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+		<line x1={2} y1={2} x2={22} y2={22} />
+	</svg>
+);
+
+// ---------------------------------------------------------------------------
+// Sub-component: one row per provider
+// ---------------------------------------------------------------------------
 
 interface ProviderApiKeyRowProps {
 	provider: AIProvider;
@@ -71,43 +109,92 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 	onSave,
 }) => {
 	const { t } = useTranslation();
+	const [isVisible, setIsVisible] = useState(false);
 
 	const isSaving = status === 'saving';
 	const isSaved = status === 'saved';
 	const isError = status === 'error';
 
+	const inputId = `api-key-${provider.id}`;
+	const toggleVisibilityLabel = isVisible
+		? t('settings.models.hideApiKey') || 'Hide API key'
+		: t('settings.models.showApiKey') || 'Show API key';
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.key === 'Enter') {
+				onSave(provider.id);
+			}
+		},
+		[onSave, provider.id]
+	);
+
+	const handleChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			onTokenChange(provider.id, e.target.value);
+		},
+		[onTokenChange, provider.id]
+	);
+
+	const handleToggleVisibility = useCallback(() => {
+		setIsVisible((prev) => !prev);
+	}, []);
+
+	const handleSave = useCallback(() => {
+		onSave(provider.id);
+	}, [onSave, provider.id]);
+
 	return (
 		<div className="flex items-center justify-between gap-4 px-4 py-3">
-			<label htmlFor={`api-key-${provider.id}`} className="text-sm font-medium w-24 shrink-0">
+			<AppLabel htmlFor={inputId} className="w-24 shrink-0 text-sm font-medium">
 				{provider.name}
-			</label>
+			</AppLabel>
 
 			<div className="flex flex-1 items-center gap-2">
-				<input
-					id={`api-key-${provider.id}`}
-					type="password"
-					value={token}
-					onChange={(e) => onTokenChange(provider.id, e.target.value)}
-					placeholder={t('settings.models.apiKeyPlaceholder') || 'Enter API key…'}
-					autoComplete="off"
-					spellCheck={false}
-					disabled={isSaving}
-					className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
-				/>
+				<div className="relative flex flex-1 items-center">
+					<AppInput
+						id={inputId}
+						type={isVisible ? 'text' : 'password'}
+						value={token}
+						onChange={handleChange}
+						onKeyDown={handleKeyDown}
+						placeholder={t('settings.models.apiKeyPlaceholder') || 'Enter API key…'}
+						autoComplete="off"
+						spellCheck={false}
+						disabled={isSaving}
+						className="flex-1 font-mono pr-8 text-sm"
+					/>
+					<AppButton
+						type="button"
+						variant="ghost"
+						size="icon-xs"
+						aria-label={toggleVisibilityLabel}
+						onClick={handleToggleVisibility}
+						className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+					>
+						{isVisible ? <EyeOffIcon /> : <EyeIcon />}
+					</AppButton>
+				</div>
 
-				<button
+				<AppButton
 					type="button"
-					onClick={() => onSave(provider.id)}
+					variant="default"
+					size="sm"
+					onClick={handleSave}
 					disabled={isSaving || token.trim() === ''}
-					className="shrink-0 rounded-md border border-transparent bg-foreground px-3 py-1.5 text-sm text-background transition-colors hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
+					className="shrink-0"
 				>
 					{isSaving
 						? t('settings.models.saving') || 'Saving…'
 						: t('settings.models.save') || 'Save'}
-				</button>
+				</AppButton>
 			</div>
 
-			<span className="w-14 shrink-0 text-right text-xs">
+			<span
+				role="status"
+				aria-live="polite"
+				className="w-14 shrink-0 text-right text-xs"
+			>
 				{isSaved && (
 					<span className="text-green-600 dark:text-green-400">
 						{t('settings.models.saved') || 'Saved!'}
@@ -129,7 +216,6 @@ const ModelsSettings: React.FC = () => {
 	const { t } = useTranslation();
 	const [providerStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
-	// Load all provider settings in a single IPC call on mount
 	useEffect(() => {
 		window.app.getAllProviderSettings().then((all) => {
 			const loaded: ProviderStateMap = buildInitialState();
@@ -170,7 +256,7 @@ const ModelsSettings: React.FC = () => {
 	);
 
 	return (
-		<div className="mx-auto w-full p-6 space-y-8">
+		<div className="mx-auto w-full space-y-8 p-6">
 			<div>
 				<h1 className="text-lg font-normal">{t('settings.models.title')}</h1>
 				<p className="text-sm text-muted-foreground">{t('settings.models.description')}</p>
@@ -180,7 +266,7 @@ const ModelsSettings: React.FC = () => {
 				<h2 className="text-sm font-normal text-muted-foreground">
 					{t('settings.models.apiKeysSection') || 'API Keys'}
 				</h2>
-				<div className="rounded-md border divide-y text-sm">
+				<div className="divide-y rounded-md border text-sm">
 					{aiProviders.map((provider) => {
 						const state = providerStates[provider.id] ?? INITIAL_PROVIDER_STATE;
 						return (
