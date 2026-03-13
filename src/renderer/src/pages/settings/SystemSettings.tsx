@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CollapsibleSection } from './CollapsibleSection';
 import { ThemeModeSelector } from './ThemeModeSelector';
 
-const SystemSettings: React.FC = () => {
+const SystemSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 
 	return (
