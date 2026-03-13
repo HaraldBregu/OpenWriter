@@ -93,6 +93,10 @@ export const WorkspaceChannels = {
 	fsCreateFile: 'fs:create-file',
 	fsCreateFolder: 'fs:create-folder',
 	fsRename: 'fs:rename',
+	// Project workspace
+	getProjectInfo: 'project-workspace:get-info',
+	updateProjectName: 'project-workspace:update-name',
+	updateProjectDescription: 'project-workspace:update-description',
 } as const;
 
 export const WindowChannels = {
