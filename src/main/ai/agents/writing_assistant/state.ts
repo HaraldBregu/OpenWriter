@@ -54,9 +54,4 @@ export const WriterState = Annotation.Root({
 		reducer: (_a, b) => b,
 		default: () => 'openai',
 	}),
-	/** Opaque caller-supplied metadata from the task submission. */
-	metadata: Annotation<Record<string, unknown> | undefined>({
-		reducer: (_a, b) => b,
-		default: () => undefined,
-	}),
 });
