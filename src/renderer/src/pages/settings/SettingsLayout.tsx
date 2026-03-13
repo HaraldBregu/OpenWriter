@@ -18,50 +18,37 @@ const TABS: TabDefinition[] = [
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
 
-const BASE_CLASSES =
-	'px-4 py-3 text-sm font-normal border-b-2 transition-colors border-transparent text-muted-foreground hover:text-foreground';
-const ACTIVE_CLASSES = 'border-foreground text-foreground';
-const INACTIVE_CLASSES = 'border-transparent text-muted-foreground hover:text-foreground';
+const TAB_BASE = 'px-4 py-3 text-sm font-normal border-b-2 transition-colors';
+const TAB_ACTIVE = 'border-foreground text-foreground';
+const TAB_INACTIVE = 'border-transparent text-muted-foreground hover:text-foreground';
+
+function getTabClass(tabPath: string, currentPathname: string): string {
+	const isGeneralTab = tabPath === '/settings/general';
+	const isActive = isGeneralTab
+		? currentPathname === '/settings' || currentPathname === '/settings/general'
+		: currentPathname === tabPath;
+
+	return `${TAB_BASE} ${isActive ? TAB_ACTIVE : TAB_INACTIVE}`;
+}
 
 export function SettingsLayout(): React.JSX.Element {
 	const { t } = useTranslation();
 	const location = useLocation();
 	useLanguage();
 
-	const isGeneralActive =
-		location.pathname === '/settings' || location.pathname === '/settings/general';
-
 	return (
 		<div className="flex flex-col h-full">
 			<div className="border-b px-6">
 				<nav className="flex gap-0 -mb-px">
-					{TABS.map((tab) => {
-						const isGeneral = tab.path === '/settings/general';
-
-						if (isGeneral) {
-							return (
-								<NavLink
-									key={tab.path}
-									to={tab.path}
-									className={`${BASE_CLASSES} ${isGeneralActive ? ACTIVE_CLASSES : INACTIVE_CLASSES}`}
-								>
-									{t(tab.labelKey)}
-								</NavLink>
-							);
-						}
-
-						return (
-							<NavLink
-								key={tab.path}
-								to={tab.path}
-								className={({ isActive }) =>
-									`${BASE_CLASSES} ${isActive ? ACTIVE_CLASSES : INACTIVE_CLASSES}`
-								}
-							>
-								{t(tab.labelKey)}
-							</NavLink>
-						);
-					})}
+					{TABS.map((tab) => (
+						<NavLink
+							key={tab.path}
+							to={tab.path}
+							className={getTabClass(tab.path, location.pathname)}
+						>
+							{t(tab.labelKey)}
+						</NavLink>
+					))}
 				</nav>
 			</div>
 
