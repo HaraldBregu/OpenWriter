@@ -8,7 +8,6 @@ import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { StoreService } from '../services/store';
 import type { LoggerService } from '../services/logger';
-import type { ProviderSettings, InferenceDefaultsUpdate } from '../../shared/aiSettings';
 import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
