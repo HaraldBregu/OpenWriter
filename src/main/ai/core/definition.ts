@@ -62,6 +62,12 @@ export interface AgentDefinition {
 	 */
 	role?: ModelRole;
 	/**
+	 * Optional per-node role mapping for multi-model graphs.
+	 * When present, the executor resolves a separate model for each node
+	 * and passes a `NodeModelMap` to `buildGraph` instead of a single model.
+	 */
+	nodeRoles?: NodeRoleMap;
+	/**
 	 * Optional LangGraph factory. When present, the agent runs as a full
 	 * LangGraph StateGraph instead of a plain chat completion.
 	 *
