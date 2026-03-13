@@ -279,10 +279,7 @@ describe('ProjectWorkspaceService', () => {
 		it('should write valid JSON to disk', async () => {
 			await service.getOrCreate();
 
-			const raw = fs.readFileSync(
-				path.join(workspaceDir, 'project_workspace.json'),
-				'utf-8'
-			);
+			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.json'), 'utf-8');
 
 			expect(() => JSON.parse(raw)).not.toThrow();
 		});
@@ -290,10 +287,7 @@ describe('ProjectWorkspaceService', () => {
 		it('should write pretty-printed JSON', async () => {
 			await service.getOrCreate();
 
-			const raw = fs.readFileSync(
-				path.join(workspaceDir, 'project_workspace.json'),
-				'utf-8'
-			);
+			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.json'), 'utf-8');
 
 			// Pretty-printed JSON contains newlines and indentation
 			expect(raw).toContain('\n');

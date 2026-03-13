@@ -1,61 +1,31 @@
 # Workspace Architect Memory
 
 ## Architecture Overview
-- **Multi-process model**: Launcher process + per-workspace child Electron processes (`WorkspaceProcessManager`)
 - **Window-scoped services**: Each `BrowserWindow` gets its own `WindowContext` with isolated workspace services
-- **Service factory pattern**: `WindowScopedServiceFactory` in `src/main/core/WindowScopedServiceFactory.ts` registers per-window services
+- **Service factory pattern**: `WindowScopedServiceFactory` in `src/main/core/window-scoped-service-factory.ts`
 
-## Key Files
-- `src/shared/types/ipc/channels.ts` - All IPC channel constants and type maps
-- `src/shared/types/ipc/types.ts` - Shared data interfaces (~50 types)
-- `src/main/services/workspace.ts` - WorkspaceService (path management, validation, EventBus, deletion detection)
-- `src/main/services/workspace-metadata.ts` - WorkspaceMetadataService (workspace.tsrct file, directories)
-- `src/main/ipc/WorkspaceIpc.ts` - IPC handlers for workspace operations
-- `src/main/core/WindowContext.ts` - Per-window service isolation
-- `src/main/services/documents-watcher.ts` - DocumentsWatcherService (documents directory, chokidar)
-
-## Workspace Data Flow
-1. Renderer calls `window.workspace.selectFolder()` -> IPC -> native dialog
-2. Renderer calls `window.workspace.setCurrent(path)` -> WorkspaceService validates + persists
-3. WorkspaceService emits `workspace:changed` on EventBus
-4. All watchers (DocumentsWatcher, PersonalityFiles, OutputFiles) react to workspace change
-5. Metadata stored in `workspace.tsrct` JSON file in workspace root
-
-## Writing Creation Flow (updated)
-- All "New Writing" actions (sidebar + HomePage) use `useCreateWriting` hook
-- Hook calls `window.workspace.saveOutput()` to create disk folder first
-- Returns `SaveOutputResult { id, path, savedAt }` where `id` is disk folder name
-- Hook creates Redux entry with client-side UUID as `id`, disk folder as `writingItemId`
-- Navigates to `/new/writing/:entryId` where entryId is the client-side UUID
-- No more "draft mode" route at `/new/writing` (without :id) -- removed
-- `useDraftEditor` only operates in edit mode (reads from Redux, auto-saves to disk)
-
-## WritingEntry ID Design
-- `id`: client-side UUID for React routing and Redux keying
-- `writingItemId`: stable disk folder name (YYYY-MM-DD_HHmmss) for file I/O
-- `loadWritingItems` merge logic preserves existing `id` when matching by `writingItemId`
-
-## Workspace Deletion Detection (implemented)
-- WorkspaceService runs 5s interval timer checking `fs.statSync` on workspace path
-- Timer starts on `initialize()` and `setCurrent()`, stops on `clear()` and `destroy()`
-- On detection: calls `clear()`, emits `workspace:deleted` via EventBus + broadcast
-- Reason heuristic: parent dir missing -> `inaccessible`, else -> `deleted`
-- Renderer: `useWorkspaceValidation` hook subscribes to `workspace:deleted` IPC event
-- Redux: `handleWorkspaceDeleted` sets `deletionReason`, `clearDeletionReason` resets
-- WelcomePage shows dismissible banner when `deletionReason` is set
+## Key Files (verified current locations)
+- `src/shared/channels.ts` - All IPC channel constants and type maps
+- `src/shared/types.ts` - Shared data interfaces
+- `src/main/workspace/workspace-service.ts` - WorkspaceService (path management, validation, deletion detection)
+- `src/main/workspace/workspace-metadata.ts` - WorkspaceMetadataService (workspace.tsrct file, directories)
+- `src/main/workspace/workspace.ts` - Workspace facade over all workspace services
+- `src/main/workspace/project-workspace.ts` - ProjectWorkspaceService (project_workspace.json)
+- `src/main/ipc/workspace-ipc.ts` - IPC handlers for workspace operations
+- `src/main/core/window-context.ts` - Per-window service isolation
+- `src/preload/index.ts` - Preload bridge (exposes window.workspace API)
+- `src/preload/index.d.ts` - Type declarations for preload API
 
 ## IPC Pattern
-- `wrapSimpleHandler` / `wrapIpcHandler` in IpcErrorHandler for error wrapping
+- `wrapSimpleHandler` / `wrapIpcHandler` in `src/main/ipc/ipc-error-handler.ts`
 - Preload uses `typedInvokeUnwrap` for type-safe renderer->main calls
 - EventBus `broadcast()` pushes events from main->renderer via `webContents.send`
-- Event channels: add to `EventChannelMap` in channels.ts, wire in preload with `typedOn`
-
-## i18n
-- Translation files: `resources/i18n/{en,it}/main.json`
-- Setup: `src/renderer/src/i18n.ts` (i18next + react-i18next)
+- Channels defined in `WorkspaceChannels` constant object in `src/shared/channels.ts`
 
 ## Testing
-- Tests live in `tests/unit/{main,renderer}/` mirroring src structure
-- Jest with fake timers for interval-based tests
-- Mock `node:fs` at top with `jest.mock('node:fs')`
-- EventBus mocked as plain object with jest.fn() methods
+- Tests live in `tests/unit/main/services/` with filenames matching source
+- Many pre-existing test failures from missing modules (bluetooth, dialog, agent, etc.)
+- Workspace tests all pass: WorkspaceService, workspace-metadata, project-workspace
+
+## Project Workspace Feature (implemented)
+- [project-workspace.md](project-workspace.md) - Feature details
