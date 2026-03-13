@@ -38,63 +38,11 @@ export class StoreValidators {
 	}
 
 	/**
-	 * Validates a model name string
-	 * @param modelName - The model name to validate
-	 * @throws Error if model name is invalid
-	 */
-	static validateModelName(modelName: string): void {
-		if (typeof modelName !== 'string') {
-			throw new Error('Model name must be a string');
-		}
-		if (modelName.length === 0 || modelName.length > 200) {
-			throw new Error('Model name must be between 1 and 200 characters');
-		}
-		// Allow alphanumeric, hyphens, underscores, dots, and forward slashes (for model paths like "meta/llama-3")
-		if (!/^[a-zA-Z0-9\-_./]+$/.test(modelName)) {
-			throw new Error('Model name contains invalid characters');
-		}
-	}
-
-	/**
 	 * Get the list of valid provider IDs
 	 * @returns Array of valid provider IDs
 	 */
 	static getValidProviders(): string[] {
 		return [...this.VALID_PROVIDERS];
-	}
-
-	/**
-	 * Validates an inference temperature value
-	 * @param value - The temperature to validate
-	 * @throws Error if value is not a number in the range [0, 2]
-	 */
-	static validateTemperature(value: unknown): void {
-		if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 2) {
-			throw new Error('Temperature must be a number between 0 and 2');
-		}
-	}
-
-	/**
-	 * Validates a maxTokens value
-	 * @param value - The maxTokens to validate
-	 * @throws Error if value is not null and not a non-negative integer <= 1,000,000
-	 */
-	static validateMaxTokens(value: unknown): void {
-		if (value === null) return;
-		if (typeof value !== 'number' || !Number.isInteger(value) || value < 0 || value > 1_000_000) {
-			throw new Error('maxTokens must be null or a non-negative integer no greater than 1,000,000');
-		}
-	}
-
-	/**
-	 * Validates a reasoning flag value
-	 * @param value - The reasoning flag to validate
-	 * @throws Error if value is not a boolean
-	 */
-	static validateReasoning(value: unknown): void {
-		if (typeof value !== 'boolean') {
-			throw new Error('Reasoning must be a boolean');
-		}
 	}
 }
 
