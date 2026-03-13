@@ -66,12 +66,9 @@ import type { ProgressReporter, StreamReporter } from '../../../../../src/main/t
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeStoreService(overrides: { apiToken?: string; selectedModel?: string } = {}) {
+function makeStoreService(overrides: { apiKey?: string } = {}) {
 	return {
-		getModelSettings: jest.fn().mockReturnValue({
-			apiToken: overrides.apiToken ?? 'sk-test-key',
-			selectedModel: overrides.selectedModel ?? 'gpt-4o-mini',
-		}),
+		getApiKey: jest.fn().mockReturnValue(overrides.apiKey ?? 'sk-test-key'),
 	};
 }
 
