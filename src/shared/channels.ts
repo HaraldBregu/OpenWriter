@@ -235,6 +235,14 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsCreateFile]: { args: [params: FsCreateFileParams]; result: void };
 	[WorkspaceChannels.fsCreateFolder]: { args: [params: FsCreateFolderParams]; result: void };
 	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
+
+	// ---- Project Workspace (IpcResult-wrapped) ----
+	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
+	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
+	[WorkspaceChannels.updateProjectDescription]: {
+		args: [description: string];
+		result: ProjectWorkspaceInfo;
+	};
 }
 
 /**
