@@ -268,7 +268,7 @@ export class ProjectWorkspaceService {
 	 */
 	private async atomicWrite(filePath: string, data: ProjectWorkspaceInfo): Promise<void> {
 		const dir = path.dirname(filePath);
-		const tmpPath = path.join(dir, `.project_workspace_tmp_${Date.now()}.json`);
+		const tmpPath = path.join(dir, `.project_workspace_tmp_${Date.now()}.openwriter`);
 		const content = JSON.stringify(data, null, 2);
 
 		try {
