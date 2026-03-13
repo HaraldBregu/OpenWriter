@@ -7,7 +7,7 @@
  */
 
 // Core
-export type { AgentDefinition, AgentDefinitionInfo } from './core';
+export type { AgentDefinition, AgentDefinitionInfo, NodeModelMap, NodeRoleMap } from './core';
 export { toAgentDefinitionInfo, AgentRegistry, executeAIAgentsStream } from './core';
 export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './core';
 
