@@ -11,7 +11,6 @@ export type {
 	AgentDefinition,
 	AgentDefinitionInfo,
 	NodeModelConfig,
-	NodeModelConfigs,
 	NodeModelMap,
 } from './core';
 export { toAgentDefinitionInfo, AgentRegistry, executeAIAgentsStream } from './core';
