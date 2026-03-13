@@ -70,12 +70,11 @@ export class TaskManagerIpc implements IpcModule {
 			const windowId = senderWindow?.id;
 			options.windowId = windowId;
 
-			// Inject server-stamped windowId and caller-supplied metadata into object
-			// inputs so handlers can resolve window-scoped services and access metadata.
-			const metadata = payload.options?.metadata;
+			// Inject server-stamped windowId into object inputs so handlers can
+			// resolve window-scoped services.
 			const input =
 				typeof payload.input === 'object' && payload.input !== null
-					? { ...(payload.input as Record<string, unknown>), windowId, metadata }
+					? { ...(payload.input as Record<string, unknown>), windowId }
 					: payload.input;
 
 			const taskId = await executor.submit(payload.type, input, options);
