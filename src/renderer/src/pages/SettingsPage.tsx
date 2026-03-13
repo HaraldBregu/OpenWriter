@@ -5,16 +5,18 @@ import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
 const GeneralSettings = lazy(() => import('./settings/GeneralSettings'));
 const ModelsSettings = lazy(() => import('./settings/ModelsSettings'));
+const AgentSettings = lazy(() => import('./settings/AgentSettings'));
 const MediaSettings = lazy(() => import('./settings/MediaSettings'));
 const DevicesSettings = lazy(() => import('./settings/DevicesSettings'));
 const ToolsSettings = lazy(() => import('./settings/ToolsSettings'));
 const SystemSettings = lazy(() => import('./settings/SystemSettings'));
 
-type Tab = 'general' | 'models' | 'media' | 'devices' | 'tools' | 'system';
+type Tab = 'general' | 'models' | 'agents' | 'media' | 'devices' | 'tools' | 'system';
 
 const tabComponents: Record<Tab, React.LazyExoticComponent<React.FC>> = {
 	general: GeneralSettings,
 	models: ModelsSettings,
+	agents: AgentSettings,
 	media: MediaSettings,
 	devices: DevicesSettings,
 	tools: ToolsSettings,
