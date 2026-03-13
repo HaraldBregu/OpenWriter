@@ -114,7 +114,6 @@ export async function* executeAIAgentsStream(
 			modelName,
 			providerId: provider.providerId,
 			temperature,
-			metadata,
 		};
 		yield* executeCustomStateGraphStream({
 			runId,
