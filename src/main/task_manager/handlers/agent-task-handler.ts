@@ -9,9 +9,10 @@
 
 import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
-import type { AgentRegistry, AgentStreamEvent, ModelRegistry } from '../../ai';
+import type { AgentRegistry, AgentStreamEvent, ModelRegistry, NodeModelMap } from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
 import type { ProviderResolver } from '../../shared/provider-resolver';
+import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';
 
 // ---------------------------------------------------------------------------
