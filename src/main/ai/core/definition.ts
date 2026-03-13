@@ -10,6 +10,16 @@ import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { ModelRole } from '../registry/model-registry';
 
 // ---------------------------------------------------------------------------
+// Per-node model types
+// ---------------------------------------------------------------------------
+
+/** Maps node names to resolved LangChain chat model instances. */
+export type NodeModelMap = Record<string, BaseChatModel>;
+
+/** Maps node names to functional roles for model resolution. */
+export type NodeRoleMap = Record<string, ModelRole>;
+
+// ---------------------------------------------------------------------------
 // Graph input context
 // ---------------------------------------------------------------------------
 
