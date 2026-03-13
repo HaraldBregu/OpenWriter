@@ -40,6 +40,7 @@ import type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
 import type { AgentConfig } from '../shared/aiSettings';

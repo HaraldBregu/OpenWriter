@@ -426,6 +426,36 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		// -------------------------------------------------------------------------
+		// Project workspace (project_workspace.json)
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getProjectInfo,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent) => this.mgr(event, container).getProjectInfo(),
+				WorkspaceChannels.getProjectInfo
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.updateProjectName,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, name: string) =>
+					this.mgr(event, container).updateProjectName(name),
+				WorkspaceChannels.updateProjectName
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.updateProjectDescription,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, description: string) =>
+					this.mgr(event, container).updateProjectDescription(description),
+				WorkspaceChannels.updateProjectDescription
+			)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
