@@ -4,4 +4,4 @@ const DevicesSettingsPage: React.FC = () => {
 	return null;
 };
 
-export default DevicesSettings;
+export default DevicesSettingsPage;
