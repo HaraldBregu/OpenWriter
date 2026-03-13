@@ -162,7 +162,7 @@ const DocumentPage: React.FC = () => {
 			const data: WritingAssistantTaskData = { prompt, temperature };
 			writingAssistantTask.submit(data);
 		},
-		[writingAssistantTask.submit]
+		[writingAssistantTask]
 	);
 
 	const onEnhanceWithAssistant = useCallback(
@@ -172,7 +172,7 @@ const DocumentPage: React.FC = () => {
 			// const data: WritingAssistantTaskData = { prompt, temperature };
 			// writingAssistantTask.submit(data);
 		},
-		[writingAssistantTask.submit]
+		[writingAssistantTask]
 	);
 
 	const onAgentPromptSubmit = useCallback(
