@@ -1,6 +1,4 @@
-import { app } from 'electron';
-import fs from 'node:fs';
-import path from 'node:path';
+import Store from 'electron-store';
 import {
 	ProviderSettings,
 	DEFAULT_PROVIDER_INFERENCE,
@@ -29,82 +27,74 @@ const DEFAULTS: StoreSchema = {
 	recentWorkspaces: [],
 };
 
+/**
+ * Fills in missing inference fields on an old settings record read from disk.
+ * Old records may only have { selectedModel, apiToken }; this adds temperature,
+ * maxTokens, and reasoning from DEFAULT_PROVIDER_INFERENCE when absent.
+ */
+function migrateProviderSettingsRecord(
+	record: Partial<ProviderSettings> & { selectedModel?: string; apiToken?: string }
+): ProviderSettings {
+	return {
+		selectedModel: record.selectedModel ?? '',
+		apiToken: record.apiToken ?? '',
+		temperature: record.temperature ?? DEFAULT_PROVIDER_INFERENCE.temperature,
+		maxTokens:
+			record.maxTokens !== undefined ? record.maxTokens : DEFAULT_PROVIDER_INFERENCE.maxTokens,
+		reasoning: record.reasoning ?? DEFAULT_PROVIDER_INFERENCE.reasoning,
+	};
+}
+
 export class StoreService {
-	private filePath: string;
-	private data: StoreSchema;
+	private store: Store<StoreSchema>;
 
 	constructor() {
-		const userDataPath = app.getPath('userData');
-		this.filePath = path.join(userDataPath, 'settings.json');
-		this.data = this.load();
+		this.store = new Store<StoreSchema>({
+			name: 'settings',
+			defaults: DEFAULTS,
+			accessPropertiesByDotNotation: false,
+			migrations: {
+				'1.0.0': (store) => {
+					const raw = (store.get('modelSettings') ?? {}) as Record<string, unknown>;
+					const migrated: Record<string, ProviderSettings> = {};
+					for (const [id, record] of Object.entries(raw)) {
+						migrated[id] = migrateProviderSettingsRecord(
+							record as Partial<ProviderSettings>
+						);
+					}
+					store.set('modelSettings', migrated);
+				},
+			},
+		});
 	}
 
-	private load(): StoreSchema {
-		try {
-			const raw = fs.readFileSync(this.filePath, 'utf-8');
-			const parsed = JSON.parse(raw) as Partial<StoreSchema>;
-			const merged: StoreSchema = { ...DEFAULTS, ...parsed };
-
-			// Migrate each provider record to the full ProviderSettings shape
-			const migratedModelSettings: Record<string, ProviderSettings> = {};
-			for (const [providerId, record] of Object.entries(merged.modelSettings)) {
-				migratedModelSettings[providerId] = this.migrateProviderSettings(record);
-			}
-			merged.modelSettings = migratedModelSettings;
-
-			return merged;
-		} catch {
-			return { ...DEFAULTS };
-		}
-	}
-
-	private save(): void {
-		fs.mkdirSync(path.dirname(this.filePath), { recursive: true });
-		fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2), 'utf-8');
-	}
-
-	/**
-	 * Fills in missing inference fields on an old settings record read from disk.
-	 * Old records may only have { selectedModel, apiToken }; this adds temperature,
-	 * maxTokens, and reasoning from DEFAULT_PROVIDER_INFERENCE when absent.
-	 */
-	private migrateProviderSettings(
-		record: Partial<ProviderSettings> & { selectedModel?: string; apiToken?: string }
-	): ProviderSettings {
-		return {
-			selectedModel: record.selectedModel ?? '',
-			apiToken: record.apiToken ?? '',
-			temperature: record.temperature ?? DEFAULT_PROVIDER_INFERENCE.temperature,
-			maxTokens:
-				record.maxTokens !== undefined ? record.maxTokens : DEFAULT_PROVIDER_INFERENCE.maxTokens,
-			reasoning: record.reasoning ?? DEFAULT_PROVIDER_INFERENCE.reasoning,
-		};
-	}
-
-	// --- New provider settings methods ---
+	// --- Provider settings methods ---
 
 	getProviderSettings(providerId: string): ProviderSettings | null {
-		return this.data.modelSettings[providerId] ?? null;
+		const all = this.store.get('modelSettings');
+		return all[providerId] ?? null;
 	}
 
 	getAllProviderSettings(): Record<string, ProviderSettings> {
-		return { ...this.data.modelSettings };
+		return { ...this.store.get('modelSettings') };
 	}
 
 	setProviderSettings(providerId: string, settings: ProviderSettings): void {
-		this.data.modelSettings[providerId] = { ...settings };
-		this.save();
+		const all = this.store.get('modelSettings');
+		all[providerId] = { ...settings };
+		this.store.set('modelSettings', all);
 	}
 
 	setInferenceDefaults(providerId: string, update: InferenceDefaultsUpdate): void {
-		const existing = this.data.modelSettings[providerId] ?? this.migrateProviderSettings({});
-		this.data.modelSettings[providerId] = {
+		const all = this.store.get('modelSettings');
+		const existing = all[providerId] ?? migrateProviderSettingsRecord({});
+		all[providerId] = {
 			...existing,
 			...(update.temperature !== undefined && { temperature: update.temperature }),
 			...(update.maxTokens !== undefined && { maxTokens: update.maxTokens }),
 			...(update.reasoning !== undefined && { reasoning: update.reasoning }),
 		};
-		this.save();
+		this.store.set('modelSettings', all);
 	}
 
 	// --- Legacy methods (delegate to new methods for backward compatibility) ---
@@ -118,21 +108,17 @@ export class StoreService {
 	}
 
 	setSelectedModel(providerId: string, modelId: string): void {
-		const existing = this.data.modelSettings[providerId] ?? this.migrateProviderSettings({});
-		this.data.modelSettings[providerId] = {
-			...existing,
-			selectedModel: modelId,
-		};
-		this.save();
+		const all = this.store.get('modelSettings');
+		const existing = all[providerId] ?? migrateProviderSettingsRecord({});
+		all[providerId] = { ...existing, selectedModel: modelId };
+		this.store.set('modelSettings', all);
 	}
 
 	setApiToken(providerId: string, token: string): void {
-		const existing = this.data.modelSettings[providerId] ?? this.migrateProviderSettings({});
-		this.data.modelSettings[providerId] = {
-			...existing,
-			apiToken: token,
-		};
-		this.save();
+		const all = this.store.get('modelSettings');
+		const existing = all[providerId] ?? migrateProviderSettingsRecord({});
+		all[providerId] = { ...existing, apiToken: token };
+		this.store.set('modelSettings', all);
 	}
 
 	setModelSettings(providerId: string, settings: ProviderSettings): void {
@@ -142,40 +128,39 @@ export class StoreService {
 	// --- Workspace settings ---
 
 	getCurrentWorkspace(): string | null {
-		return this.data.currentWorkspace;
+		return this.store.get('currentWorkspace');
 	}
 
 	setCurrentWorkspace(workspacePath: string): void {
-		this.data.currentWorkspace = workspacePath;
+		this.store.set('currentWorkspace', workspacePath);
 		this.addRecentWorkspace(workspacePath);
-		this.save();
 	}
 
 	getRecentWorkspaces(): WorkspaceInfo[] {
-		return [...this.data.recentWorkspaces];
+		return [...this.store.get('recentWorkspaces')];
 	}
 
 	private addRecentWorkspace(workspacePath: string): void {
-		// Remove if already exists
-		this.data.recentWorkspaces = this.data.recentWorkspaces.filter((w) => w.path !== workspacePath);
+		const recent = this.store
+			.get('recentWorkspaces')
+			.filter((w) => w.path !== workspacePath);
 
-		// Add to front
-		this.data.recentWorkspaces.unshift({
+		recent.unshift({
 			path: workspacePath,
 			lastOpened: Date.now(),
 		});
 
-		// Keep only last MAX_RECENT_WORKSPACES entries
-		this.data.recentWorkspaces = this.data.recentWorkspaces.slice(0, MAX_RECENT_WORKSPACES);
+		this.store.set('recentWorkspaces', recent.slice(0, MAX_RECENT_WORKSPACES));
 	}
 
 	clearCurrentWorkspace(): void {
-		this.data.currentWorkspace = null;
-		this.save();
+		this.store.set('currentWorkspace', null);
 	}
 
 	removeRecentWorkspace(workspacePath: string): void {
-		this.data.recentWorkspaces = this.data.recentWorkspaces.filter((w) => w.path !== workspacePath);
-		this.save();
+		const filtered = this.store
+			.get('recentWorkspaces')
+			.filter((w) => w.path !== workspacePath);
+		this.store.set('recentWorkspaces', filtered);
 	}
 }
