@@ -61,4 +61,4 @@ const GeneralSettingsPage: React.FC = () => {
 	);
 };
 
-export default GeneralSettings;
+export default GeneralSettingsPage;
