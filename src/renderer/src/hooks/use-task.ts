@@ -28,7 +28,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 	const [status, setStatus] = useState<TaskStatus | null>(null);
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [result, setResult] = useState<TResult | undefined>(undefined);
-	const [metadata, setMetadata] = useState<unknown | undefined>(undefined);
 
 	// Progress not available from TaskSnapshot — always defaults.
 	const progressPercent = 0;
