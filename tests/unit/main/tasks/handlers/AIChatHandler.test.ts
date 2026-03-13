@@ -17,7 +17,7 @@
  *  - execute(): propagates rate-limit error with user-friendly message
  *  - execute(): handles abort/cancel and throws 'Task cancelled'
  *  - execute(): respects a history of messages (user + assistant roles)
- *  - execute(): uses storeService.getModelSettings for API key + model
+ *  - execute(): uses storeService.getApiKey for API key resolution
  *  - isReasoningModel: omits temperature for o1/o3 model families
  *  - extractTokenFromChunk: handles string, array-of-objects, and unknown shapes
  */
