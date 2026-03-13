@@ -77,8 +77,8 @@ const DEFAULT_ROLE_ASSIGNMENTS: Record<ModelRole, ModelRoleConfig> = {
 	},
 
 	writer: {
-		providerId: 'anthropic',
-		modelId: 'claude-sonnet-4-5-20250929',
+		providerId: 'openai',
+		modelId: 'gpt-4o',
 		temperature: 0.7,
 		maxTokens: 4096,
 		description: 'Creative writing, generation, and continuation',
