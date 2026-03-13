@@ -3,7 +3,6 @@ export type {
 	AgentDefinitionInfo,
 	GraphInputContext,
 	NodeModelConfig,
-	NodeModelConfigs,
 	NodeModelMap,
 } from './definition';
 export { toAgentDefinitionInfo } from './definition';
