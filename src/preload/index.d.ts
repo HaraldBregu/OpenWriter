@@ -71,8 +71,6 @@ export type {
 	WatcherError,
 	AgentStreamEvent,
 	AgentDefinitionInfo,
-	ProviderSettings,
-	InferenceDefaultsUpdate,
 	IpcResult,
 	FsReadFileParams,
 	FsWriteFileParams,
