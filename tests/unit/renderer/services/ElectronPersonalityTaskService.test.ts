@@ -293,36 +293,34 @@ describe('ElectronPersonalityTaskService — cancelTask', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Suite 4: getModelSettings
+// Suite 4: getApiKey
 // ---------------------------------------------------------------------------
 
-describe('ElectronPersonalityTaskService — getModelSettings', () => {
-	it('returns the model settings from window.app.getModelSettings', async () => {
-		(window.app.getModelSettings as jest.Mock).mockResolvedValue({
-			selectedModel: 'gpt-4o',
-		});
+describe('ElectronPersonalityTaskService — getApiKey', () => {
+	it('returns the API key from window.app.getApiKey', async () => {
+		(window.app.getApiKey as jest.Mock).mockResolvedValue('sk-test-key');
 
 		const service = createService();
-		const result = await service.getModelSettings('openai');
+		const result = await service.getApiKey('openai');
 
-		expect(result).toEqual({ selectedModel: 'gpt-4o' });
-		expect(window.app.getModelSettings).toHaveBeenCalledWith('openai');
+		expect(result).toBe('sk-test-key');
+		expect(window.app.getApiKey).toHaveBeenCalledWith('openai');
 	});
 
-	it('returns null when window.app.getModelSettings throws', async () => {
-		(window.app.getModelSettings as jest.Mock).mockRejectedValue(new Error('Store unavailable'));
+	it('returns null when window.app.getApiKey throws', async () => {
+		(window.app.getApiKey as jest.Mock).mockRejectedValue(new Error('Store unavailable'));
 
 		const service = createService();
-		const result = await service.getModelSettings('openai');
+		const result = await service.getApiKey('openai');
 
 		expect(result).toBeNull();
 	});
 
-	it('returns null when window.app.getModelSettings returns null', async () => {
-		(window.app.getModelSettings as jest.Mock).mockResolvedValue(null);
+	it('returns null when window.app.getApiKey returns null', async () => {
+		(window.app.getApiKey as jest.Mock).mockResolvedValue(null);
 
 		const service = createService();
-		const result = await service.getModelSettings('openai');
+		const result = await service.getApiKey('openai');
 
 		expect(result).toBeNull();
 	});
