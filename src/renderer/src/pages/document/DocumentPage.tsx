@@ -144,7 +144,7 @@ const DocumentPage: React.FC = () => {
 	}, [writingAssistantTask.taskId]);
 
 	const onContinueWithAssistant = useCallback(
-		(before: string, after: string, cursorPos: number) => {
+		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('▇', '').trimEnd();
 			const cleanAfter = after.replaceAll('▇', '').trimStart();
 			const prompt = `${cleanBefore}\n\n▇\n\n${cleanAfter}`;
