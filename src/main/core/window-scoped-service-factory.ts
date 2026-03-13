@@ -175,6 +175,15 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
+	// Register project workspace service (manages project_workspace.json)
+	factory.register({
+		key: 'projectWorkspace',
+		factory: ({ workspaceService, globalContainer }) => {
+			const logger = globalContainer.get<LoggerService>('logger');
+			return new ProjectWorkspaceService(workspaceService, logger);
+		},
+	});
+
 	// Register workspace manager (Facade over all workspace services)
 	factory.register({
 		key: 'workspaceManager',
@@ -186,12 +195,15 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 				? windowContainer.get<DocumentsWatcherService>('documentsWatcher')
 				: null;
 			const outputFiles = windowContainer.get<OutputFilesService>('outputFiles');
+			const projectWorkspace =
+				windowContainer.get<ProjectWorkspaceService>('projectWorkspace');
 			return new Workspace(
 				workspaceService,
 				fileManagement,
 				metadata,
 				watcher,
 				outputFiles,
+				projectWorkspace,
 				logger
 			);
 		},
