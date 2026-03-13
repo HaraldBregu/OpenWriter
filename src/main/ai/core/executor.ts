@@ -325,7 +325,7 @@ interface MessagesGraphStreamInput {
 	model: BaseChatModel;
 	langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
 	signal?: AbortSignal;
 	logger?: LoggerService;
 }
