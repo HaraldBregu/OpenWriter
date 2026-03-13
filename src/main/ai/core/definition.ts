@@ -92,7 +92,7 @@ export interface AgentDefinition {
 	 *   Use this for graphs with domain-specific state shapes (e.g. WriterState).
 	 *
 	 * @param models - A single resolved LangChain chat model, or a `NodeModelMap`
-	 *                 keyed by node name when the definition declares `nodeRoles`.
+	 *                 keyed by node name when the definition declares `nodeModels`.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	buildGraph?: (
