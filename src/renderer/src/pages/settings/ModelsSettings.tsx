@@ -145,50 +145,48 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 	}, [onSave, provider.id]);
 
 	return (
-		<div className="flex items-center justify-between gap-4 px-4 py-3">
+		<div className="flex items-center gap-4 px-4 py-3">
 			<AppLabel htmlFor={inputId} className="w-24 shrink-0 text-sm font-medium">
 				{provider.name}
 			</AppLabel>
 
-			<div className="flex flex-1 items-center gap-2">
-				<div className="relative flex flex-1 items-center">
-					<AppInput
-						id={inputId}
-						type={isVisible ? 'text' : 'password'}
-						value={token}
-						onChange={handleChange}
-						onKeyDown={handleKeyDown}
-						placeholder={t('settings.models.apiKeyPlaceholder') || 'Enter API key…'}
-						autoComplete="off"
-						spellCheck={false}
-						disabled={isSaving}
-						className="flex-1 font-mono pr-8 text-sm"
-					/>
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon-xs"
-						aria-label={toggleVisibilityLabel}
-						onClick={handleToggleVisibility}
-						className="absolute right-1.5 text-muted-foreground hover:text-foreground"
-					>
-						{isVisible ? <EyeOffIcon /> : <EyeIcon />}
-					</AppButton>
-				</div>
-
+			<div className="relative flex flex-1 items-center">
+				<AppInput
+					id={inputId}
+					type={isVisible ? 'text' : 'password'}
+					value={token}
+					onChange={handleChange}
+					onKeyDown={handleKeyDown}
+					placeholder={t('settings.models.apiKeyPlaceholder') || 'Enter API key…'}
+					autoComplete="off"
+					spellCheck={false}
+					disabled={isSaving}
+					className="flex-1 font-mono pr-8 text-sm"
+				/>
 				<AppButton
 					type="button"
-					variant="default"
-					size="sm"
-					onClick={handleSave}
-					disabled={isSaving || token.trim() === ''}
-					className="shrink-0"
+					variant="ghost"
+					size="icon-xs"
+					aria-label={toggleVisibilityLabel}
+					onClick={handleToggleVisibility}
+					className="absolute right-1.5 text-muted-foreground hover:text-foreground"
 				>
-					{isSaving
-						? t('settings.models.saving') || 'Saving…'
-						: t('settings.models.save') || 'Save'}
+					{isVisible ? <EyeOffIcon /> : <EyeIcon />}
 				</AppButton>
 			</div>
+
+			<AppButton
+				type="button"
+				variant="default"
+				size="sm"
+				onClick={handleSave}
+				disabled={isSaving || token.trim() === ''}
+				className="shrink-0"
+			>
+				{isSaving
+					? t('settings.models.saving') || 'Saving…'
+					: t('settings.models.save') || 'Save'}
+			</AppButton>
 
 			<span role="status" aria-live="polite" className="w-14 shrink-0 text-right text-xs">
 				{isSaved && (
