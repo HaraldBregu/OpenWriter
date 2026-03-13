@@ -32,8 +32,7 @@ export async function node(
 
 	const response = await model.invoke(messages);
 
-	const raw =
-		typeof response.content === 'string' ? response.content.trim().toLowerCase() : '';
+	const raw = typeof response.content === 'string' ? response.content.trim().toLowerCase() : '';
 
 	const intent: WriterIntent = VALID_INTENTS.has(raw as WriterIntent)
 		? (raw as WriterIntent)

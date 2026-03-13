@@ -22,6 +22,7 @@ export async function node(
 	const stream = await model.stream(messages);
 	for await (const chunk of stream) {
 		const token = extractTokenFromChunk(chunk.content);
+		console.log('Enhance Received token:', token);
 		if (token) {
 			completion += token;
 		}

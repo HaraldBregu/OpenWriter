@@ -28,6 +28,8 @@ export async function node(
 	for await (const chunk of stream) {
 		const token = extractTokenFromChunk(chunk.content);
 		if (token) {
+					console.log('Continue Writing Received token:', token);
+
 			completion += token;
 		}
 	}
