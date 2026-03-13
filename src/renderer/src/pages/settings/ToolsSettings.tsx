@@ -4,4 +4,4 @@ const ToolsSettingsPage: React.FC = () => {
 	return null;
 };
 
-export default ToolsSettings;
+export default ToolsSettingsPage;
