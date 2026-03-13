@@ -32,6 +32,23 @@ export class StoreService {
 		});
 	}
 
+	// --- Agent config methods ---
+
+	getAgentSettings(): Record<string, AgentConfig> {
+		return { ...this.store.get('agentSettings') };
+	}
+
+	getAgentConfig(agentId: string): AgentConfig | null {
+		const all = this.store.get('agentSettings');
+		return all[agentId] ?? null;
+	}
+
+	setAgentConfig(agentId: string, config: AgentConfig): void {
+		const all = this.store.get('agentSettings');
+		all[agentId] = config;
+		this.store.set('agentSettings', all);
+	}
+
 	// --- API key methods ---
 
 	getApiKey(providerId: string): string | null {
