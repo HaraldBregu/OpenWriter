@@ -8,6 +8,9 @@ export type { WorkspaceState } from './workspace-service';
 // Metadata repository
 export { WorkspaceMetadataService } from './workspace-metadata';
 
+// Project workspace file management
+export { ProjectWorkspaceService } from './project-workspace';
+
 // File watching
 export { DocumentsWatcherService } from './documents-watcher';
 
