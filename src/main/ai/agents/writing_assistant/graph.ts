@@ -10,7 +10,7 @@
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { WriterState } from './state';
-import { continueWriting } from './nodes/continue-writing/node';
+import { continueWriting } from './nodes';
 
 // ---------------------------------------------------------------------------
 // Graph factory

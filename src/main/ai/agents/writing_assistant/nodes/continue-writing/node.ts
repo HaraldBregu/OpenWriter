@@ -15,7 +15,7 @@ import type { WriterState } from '../../state';
 import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import SYSTEM_PROMPT from './SYSTEM.md?raw';
 
-export async function continueWriting(
+export async function node(
 	state: typeof WriterState.State,
 	model: BaseChatModel
 ): Promise<Partial<typeof WriterState.State>> {

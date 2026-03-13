@@ -1,1 +1,1 @@
-export { continueWriting } from './continue-writing/node';
+export { node as continueWriting } from './continue-writing/node';

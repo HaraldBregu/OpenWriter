@@ -1,13 +1,28 @@
-import React, { useEffect, useRef } from 'react';
-import { Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3 } from 'lucide-react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import {
+	Bold,
+	Italic,
+	Underline,
+	Strikethrough,
+	Heading1,
+	Heading2,
+	Heading3,
+	Sparkles,
+} from 'lucide-react';
 import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
 import { AppButton } from '../../app/AppButton';
 import { useEditorContext } from '../EditorContext';
 
+interface BubbleMenuProps {
+	onEnhanceWithAI?: (selectedText: string, from: number, to: number) => void;
+}
+
 const pluginKey = new PluginKey('bubbleMenu');
 
-export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
+export const BubbleMenu = React.memo(function BubbleMenu({
+	onEnhanceWithAI,
+}: BubbleMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 
