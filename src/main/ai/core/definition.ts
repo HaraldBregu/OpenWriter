@@ -7,17 +7,24 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
-import type { ModelRole } from '../registry/model-registry';
 
 // ---------------------------------------------------------------------------
 // Per-node model types
 // ---------------------------------------------------------------------------
 
+/** Model configuration for a single node — plain value object. */
+export interface NodeModelConfig {
+	providerId: string;
+	modelId: string;
+	temperature: number;
+	maxTokens?: number;
+}
+
+/** Maps node names to their model configuration. */
+export type NodeModelConfigs = Record<string, NodeModelConfig>;
+
 /** Maps node names to resolved LangChain chat model instances. */
 export type NodeModelMap = Record<string, BaseChatModel>;
-
-/** Maps node names to functional roles for model resolution. */
-export type NodeRoleMap = Record<string, ModelRole>;
 
 // ---------------------------------------------------------------------------
 // Graph input context
