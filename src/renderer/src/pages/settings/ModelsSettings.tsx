@@ -190,11 +190,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 				</AppButton>
 			</div>
 
-			<span
-				role="status"
-				aria-live="polite"
-				className="w-14 shrink-0 text-right text-xs"
-			>
+			<span role="status" aria-live="polite" className="w-14 shrink-0 text-right text-xs">
 				{isSaved && (
 					<span className="text-green-600 dark:text-green-400">
 						{t('settings.models.saved') || 'Saved!'}

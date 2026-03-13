@@ -176,7 +176,15 @@
 			"enterApiKey": "Enter {{provider}} API key…",
 			"show": "Show",
 			"hide": "Hide",
-			"context": "{{window}} ctx"
+			"context": "{{window}} ctx",
+			"apiKeysSection": "API Keys",
+			"apiKeyPlaceholder": "Enter API key…",
+			"showApiKey": "Show API key",
+			"hideApiKey": "Hide API key",
+			"save": "Save",
+			"saving": "Saving…",
+			"saved": "Saved!",
+			"saveError": "Error"
 		}
 	},
 	"dialogs": {
