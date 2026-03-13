@@ -124,6 +124,7 @@ export async function* executeAIAgentsStream(
 		yield* executeCustomStateGraphStream({
 			runId,
 			model,
+			nodeModels,
 			ctx,
 			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
 			buildGraphInput: buildGraphInput as NonNullable<typeof buildGraphInput>,
