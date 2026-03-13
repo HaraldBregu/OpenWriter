@@ -43,11 +43,16 @@ export interface ExecutorInput {
 	signal?: AbortSignal;
 	logger?: LoggerService;
 	/**
+	 * Pre-resolved per-node models. When supplied alongside `buildGraph`,
+	 * the map is passed to `buildGraph` instead of the single model.
+	 */
+	nodeModels?: NodeModelMap;
+	/**
 	 * LangGraph factory — when supplied the executor runs the graph path.
 	 * The factory receives the already-configured streaming model.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
 	/**
 	 * Custom-state graph hooks (must be provided as a pair).
 	 * When present, the executor uses the custom-state protocol instead of
