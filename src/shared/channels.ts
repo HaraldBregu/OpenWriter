@@ -37,6 +37,7 @@ import type {
 	FsRenameParams,
 	FsRenameResult,
 } from './types';
+import type { AgentConfig } from './aiSettings';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
