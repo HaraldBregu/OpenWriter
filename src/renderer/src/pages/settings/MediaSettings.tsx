@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MediaSettings: React.FC = () => {
+const MediaSettingsPage: React.FC = () => {
 	return null;
 };
 
