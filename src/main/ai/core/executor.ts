@@ -55,8 +55,6 @@ export interface ExecutorInput {
 	 */
 	buildGraphInput?: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput?: (state: Record<string, unknown>) => string;
-	/** Opaque caller-supplied metadata forwarded to the graph input context. */
-	metadata?: Record<string, unknown>;
 }
 
 /**
