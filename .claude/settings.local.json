@@ -89,7 +89,9 @@
       "Bash(cd C:/Users/BRGHLD87H/Documents/OpenWriter && grep -n \"import.meta.env\" src/main/shared/provider-resolver.ts)",
       "Bash(node -e \"require\\('electron-store'\\)\" 2>&1 | head -5 || echo \"not available\")",
       "Bash(npm show:*)",
-      "Bash(cd /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/pages/settings && mv AgentSettings.tsx AgentSettingsPage.tsx && mv GeneralSettings.tsx GeneralSettingsPage.tsx && mv ModelsSettings.tsx ModelsSettingsPage.tsx && mv SystemSettings.tsx SystemSettingsPage.tsx)"
+      "Bash(cd /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/pages/settings && mv AgentSettings.tsx AgentSettingsPage.tsx && mv GeneralSettings.tsx GeneralSettingsPage.tsx && mv ModelsSettings.tsx ModelsSettingsPage.tsx && mv SystemSettings.tsx SystemSettingsPage.tsx)",
+      "Bash(sed -n '143,166p' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/App.tsx)",
+      "Read(//tmp/**)"
     ],
     "deny": [
       "Bash(git push --force:*)",

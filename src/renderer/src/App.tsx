@@ -141,30 +141,6 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="media"
-														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<MediaSettings />
-															</Suspense>
-														}
-													/>
-													<Route
-														path="devices"
-														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<DevicesSettings />
-															</Suspense>
-														}
-													/>
-													<Route
-														path="tools"
-														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<ToolsSettings />
-															</Suspense>
-														}
-													/>
-													<Route
 														path="system"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
