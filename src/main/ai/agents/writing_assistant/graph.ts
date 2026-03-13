@@ -48,16 +48,16 @@ function routeByIntent(state: typeof WriterState.State): NodeName {
 // Graph factory
 // ---------------------------------------------------------------------------
 
-export function buildGraph(model: BaseChatModel) {
+export function buildGraph(models: NodeModelMap) {
 	const graph = new StateGraph(WriterState)
 		.addNode(NODE.CLASSIFY_INTENT, (state: typeof WriterState.State) =>
-			classifyIntent(state, model)
+			classifyIntent(state, models[NODE.CLASSIFY_INTENT])
 		)
 		.addNode(NODE.CONTINUE_WRITING, (state: typeof WriterState.State) =>
-			continueWriting(state, model)
+			continueWriting(state, models[NODE.CONTINUE_WRITING])
 		)
 		.addNode(NODE.ENHANCE_TEXT, (state: typeof WriterState.State) =>
-			enhanceText(state, model)
+			enhanceText(state, models[NODE.ENHANCE_TEXT])
 		)
 		.addEdge(START, NODE.CLASSIFY_INTENT)
 		.addConditionalEdges(NODE.CLASSIFY_INTENT, routeByIntent, {
