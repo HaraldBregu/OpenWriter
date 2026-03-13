@@ -100,27 +100,11 @@ export interface AppApi {
 	/** Subscribe to writing context-menu action events. */
 	onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void;
 	// ---------------------------------------------------------------------------
-	// Persisted AI model settings (previously window.store)
+	// API key settings
 	// ---------------------------------------------------------------------------
-	getAllProviderSettings: () => Promise<Record<string, ProviderSettings>>;
-	getProviderSettings: (providerId: string) => Promise<ProviderSettings | null>;
-	setProviderSettings: (providerId: string, settings: ProviderSettings) => Promise<void>;
-	setInferenceDefaults: (providerId: string, update: InferenceDefaultsUpdate) => Promise<void>;
-	/** @deprecated Use getAllProviderSettings instead */
-	getAllModelSettings: () => Promise<Record<string, { selectedModel: string; apiToken: string }>>;
-	/** @deprecated Use getProviderSettings instead */
-	getModelSettings: (
-		providerId: string
-	) => Promise<{ selectedModel: string; apiToken: string } | null>;
-	/** @deprecated Use setProviderSettings instead */
-	setSelectedModel: (providerId: string, modelId: string) => Promise<void>;
-	/** @deprecated Use setProviderSettings instead */
-	setApiToken: (providerId: string, token: string) => Promise<void>;
-	/** @deprecated Use setProviderSettings instead */
-	setModelSettings: (
-		providerId: string,
-		settings: { selectedModel: string; apiToken: string }
-	) => Promise<void>;
+	getAllApiKeys: () => Promise<Record<string, string>>;
+	getApiKey: (providerId: string) => Promise<string | null>;
+	setApiKey: (providerId: string, apiKey: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
