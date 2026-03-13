@@ -9,6 +9,11 @@ import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 
+type WritingAssistantTaskData = {
+	prompt: string;
+	temperature?: number;
+};
+
 const DocumentPage: React.FC = () => {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
@@ -22,7 +27,6 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	type WritingAssistantTaskData = { prompt: string; temperature?: number; maxTokens?: number };
 	const writingAssistantTaskData: WritingAssistantTaskData = { prompt: '' };
 	const writingAssistantTask = useTask<WritingAssistantTaskData>(
 		'agent-writing-assistant',
@@ -157,9 +161,9 @@ const DocumentPage: React.FC = () => {
 
 	const onAgentPromptSubmit = useCallback(
 		(before: string, after: string, cursorPos: number, prompt: string) => {
-			// editorRef.current?.removeAgentPrompt();
 			console.log('Prompt submitted:', { before, after, cursorPos, prompt });
 			console.log('Agent prompt submitted:', prompt);
+			// editorRef.current?.removeAgentPrompt();
 			editorRef.current?.setAgentPromptLoading(true);
 			editorRef.current?.setAgentPromptEnable(false);
 			setTimeout(() => {

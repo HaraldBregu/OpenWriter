@@ -192,7 +192,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 			<TitleBar title={displayWorkspaceName} onToggleSidebar={toggleSidebar} />
 
 			<div className="flex flex-1 min-h-0 w-full">
-				<AppSidebar variant="inset" className="border-r top-12 h-[calc(100svh-3rem)]">
+				<AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
 					{/* Header */}
 					<AppSidebarHeader className="border-b p-4">
 						<Link
