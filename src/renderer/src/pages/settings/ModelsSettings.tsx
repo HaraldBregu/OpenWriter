@@ -183,9 +183,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 				disabled={isSaving || token.trim() === ''}
 				className="shrink-0"
 			>
-				{isSaving
-					? t('settings.models.saving') || 'Saving…'
-					: t('settings.models.save') || 'Save'}
+				{isSaving ? t('settings.models.saving') || 'Saving…' : t('settings.models.save') || 'Save'}
 			</AppButton>
 
 			<span role="status" aria-live="polite" className="w-14 shrink-0 text-right text-xs">
