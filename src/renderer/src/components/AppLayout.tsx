@@ -229,39 +229,38 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						<AppSidebarSeparator className="my-1" />
 
 						{/* Writings collapsible group */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupLabel
-								className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors"
-								onClick={() => setWritingsOpen((prev) => !prev)}
-							>
-								{t('sidebar.writings')}
-								<ChevronRight
-									className={`h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 ${writingsOpen ? 'rotate-90' : ''}`}
-								/>
-							</AppSidebarGroupLabel>
-							{writingsOpen && (
-								<AppSidebarGroupContent>
-									<AppSidebarMenu>
-										{writings.map((w) => (
-											<AppSidebarMenuItem key={w.id}>
-												<AppSidebarMenuButton
-													asChild
-													className="h-9 px-3"
-													isActive={location.pathname === `/content/${w.id}`}
-												>
-													<Link to={`/content/${w.id}`}>
-														<PenLine className="h-3.5 w-3.5 shrink-0" />
-														<span className="flex-1 truncate">
-															{w.title || t('sidebar.untitledWriting')}
-														</span>
-													</Link>
-												</AppSidebarMenuButton>
-											</AppSidebarMenuItem>
-										))}
-									</AppSidebarMenu>
-								</AppSidebarGroupContent>
-							)}
-						</AppSidebarGroup>
+						<AppCollapsible defaultOpen className="py-0">
+							<AppSidebarGroup className="py-0">
+								<AppSidebarGroupLabel asChild>
+									<AppCollapsibleTrigger className="cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
+										{t('sidebar.writings')}
+										<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 data-[panel-open]:rotate-90" />
+									</AppCollapsibleTrigger>
+								</AppSidebarGroupLabel>
+								<AppCollapsiblePanel>
+									<AppSidebarGroupContent>
+										<AppSidebarMenu>
+											{writings.map((w) => (
+												<AppSidebarMenuItem key={w.id}>
+													<AppSidebarMenuButton
+														asChild
+														className="h-9 px-3"
+														isActive={location.pathname === `/content/${w.id}`}
+													>
+														<Link to={`/content/${w.id}`}>
+															<PenLine className="h-3.5 w-3.5 shrink-0" />
+															<span className="flex-1 truncate">
+																{w.title || t('sidebar.untitledWriting')}
+															</span>
+														</Link>
+													</AppSidebarMenuButton>
+												</AppSidebarMenuItem>
+											))}
+										</AppSidebarMenu>
+									</AppSidebarGroupContent>
+								</AppCollapsiblePanel>
+							</AppSidebarGroup>
+						</AppCollapsible>
 
 						<AppSidebarSeparator className="my-1" />
 
