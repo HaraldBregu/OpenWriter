@@ -13,7 +13,7 @@
  *   - `streamMode: ['messages', 'values']` enables token-level streaming.
  */
 
-import type { AgentDefinition, GraphInputContext } from '../../core/definition';
+import type { AgentDefinition, GraphInputContext, NodeRoleMap } from '../../core/definition';
 import { buildGraph } from './graph';
 
 // ---------------------------------------------------------------------------
