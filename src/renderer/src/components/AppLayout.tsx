@@ -215,7 +215,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppSidebarMenuButton
 									asChild
 									className="h-9 px-3"
-									isActive={location.pathname === '/settings'}
+									isActive={location.pathname.startsWith('/settings')}
 								>
 									<Link to="/settings">
 										<Settings className="h-3.5 w-3.5 shrink-0" />
