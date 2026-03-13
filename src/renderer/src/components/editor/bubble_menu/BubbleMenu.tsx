@@ -43,6 +43,14 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		};
 	}, [editor]);
 
+	const handleEnhanceWithAI = useCallback(() => {
+		const { from, to } = editor.state.selection;
+		const selectedText = editor.state.doc.textBetween(from, to, ' ');
+		if (selectedText.trim().length > 0) {
+			onEnhanceWithAI?.(selectedText, from, to);
+		}
+	}, [editor, onEnhanceWithAI]);
+
 	return (
 		<div
 			ref={menuRef}
