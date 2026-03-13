@@ -43,8 +43,8 @@ describe('CustomIpc', () => {
 		module = new CustomIpc();
 	});
 
-	it('should have name "custom"', () => {
-		expect(module.name).toBe('custom');
+	it('should have name "app"', () => {
+		expect(module.name).toBe('app');
 	});
 
 	it('should register 3 ipcMain.on handlers (sound + 2 context menus)', () => {
