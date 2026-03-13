@@ -65,8 +65,8 @@ import { ChatOpenAI } from '@langchain/openai';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeStoreService(settings: ModelSettings | null = null) {
-	return { getModelSettings: jest.fn().mockReturnValue(settings) };
+function makeStoreService(settings: { apiToken: string; selectedModel: string } | null = null) {
+	return { getApiKey: jest.fn().mockReturnValue(settings?.apiToken ?? null) };
 }
 
 /** Builds an async iterable that yields the given chunks then returns. */
