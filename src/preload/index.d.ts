@@ -41,7 +41,6 @@ import type {
 	FsRenameParams,
 	FsRenameResult,
 } from '../shared/types';
-import type { ProviderSettings, InferenceDefaultsUpdate } from '../shared/aiSettings';
 import type { IpcResult } from '../shared/ipc-result';
 
 // ---------------------------------------------------------------------------
