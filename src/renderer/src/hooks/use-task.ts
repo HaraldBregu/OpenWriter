@@ -197,7 +197,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		setStatus(null);
 		setError(undefined);
 		setResult(undefined);
-		setMetadata(undefined);
 	}, []);
 
 	return useMemo(
