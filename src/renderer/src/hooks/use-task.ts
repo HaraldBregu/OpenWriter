@@ -153,13 +153,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 				return;
 			}
 
-			// Store metadata locally and seed the event-bus snapshot so that
-			// every TaskSnapshot delivered via subscribeToTask includes it.
-			if (submitOptions?.metadata !== undefined) {
-				setMetadata(submitOptions.metadata);
-				initTaskMetadata(resolvedTaskId, submitOptions.metadata);
-			}
-
 			// Reset prev snapshot ref for the new task.
 			prevSnapRef.current = { status: null, error: undefined, result: undefined };
 
