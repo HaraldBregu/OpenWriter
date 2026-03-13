@@ -125,8 +125,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			prev.error === next.error &&
 			prev.result === next.result &&
 			prev.queuePosition === next.queuePosition &&
-			prev.durationMs === next.durationMs &&
-			prev.metadata === next.metadata
+			prev.durationMs === next.durationMs
 		);
 	});
 
