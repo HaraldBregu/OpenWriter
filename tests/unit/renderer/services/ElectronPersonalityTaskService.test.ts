@@ -21,8 +21,8 @@
  *   - submitTask: omits optional fields when not provided
  *   - cancelTask: delegates to window.tasksManager.cancel when bridge is present
  *   - cancelTask: is a no-op when window.tasksManager is undefined (graceful)
- *   - getModelSettings: delegates to window.app.getModelSettings
- *   - getModelSettings: returns null when window.app throws
+ *   - getApiKey: delegates to window.app.getApiKey
+ *   - getApiKey: returns null when window.app throws
  *   - savePersonality: delegates to window.workspace.personality.save
  */
 
