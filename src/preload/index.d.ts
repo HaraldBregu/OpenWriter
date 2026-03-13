@@ -221,25 +221,6 @@ export interface WorkspaceApi {
 	 * Throws by default if the destination already exists.
 	 */
 	rename: (params: FsRenameParams) => Promise<FsRenameResult>;
-	// -------------------------------------------------------------------------
-	// Project workspace (project_workspace.openwriter)
-	// -------------------------------------------------------------------------
-	/**
-	 * Read the project_workspace.openwriter from the current workspace root.
-	 * If the file does not exist, a default is created and returned.
-	 * Returns null if no workspace is currently set.
-	 */
-	getProjectInfo: () => Promise<ProjectWorkspaceInfo | null>;
-	/**
-	 * Update the `name` field in project_workspace.openwriter.
-	 * Must be non-empty and at most 255 characters.
-	 */
-	updateProjectName: (name: string) => Promise<ProjectWorkspaceInfo>;
-	/**
-	 * Update the `description` field in project_workspace.openwriter.
-	 * May be an empty string to clear the description.
-	 */
-	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 }
 
 /** Background task queue */
