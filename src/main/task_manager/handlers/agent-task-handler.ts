@@ -98,7 +98,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		let tokensSinceLastProgress = 0;
 		let currentProgress = 10;
 
-		console.log(`[AgentTaskHandler] Starting execution with input:`, input);
 		const resolvedTemperature = input.temperature ?? roleConfig?.temperature ?? 0.7;
 		const resolvedMaxTokens = input.maxTokens ?? roleConfig?.maxTokens;
 

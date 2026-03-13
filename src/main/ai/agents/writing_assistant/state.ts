@@ -9,20 +9,7 @@
 import { Annotation } from '@langchain/langgraph';
 
 export const WriterState = Annotation.Root({
-	inputText: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
-	}),
-	/** Task type — currently only 'continue_writing' is supported. */
-	type: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => 'continue_writing',
-	}),
-	/**
-	 * The actual text passage to continue.
-	 * For insertion tasks this is the text preceding the marker.
-	 */
-	content: Annotation<string>({
+	prompt: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),

@@ -149,9 +149,15 @@ const DocumentPage: React.FC = () => {
 
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
-			const cleanBefore = before.replaceAll('▇', '').trimEnd();
-			const cleanAfter = after.replaceAll('▇', '').trimStart();
-			const prompt = `${cleanBefore}\n\n▇\n\n${cleanAfter}`;
+			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
+			const cleanAfter = after.replaceAll('⬢', '').trimStart();
+			const prompt = `
+			${cleanBefore}
+
+			⬢CONTINUE WRITING HERE⬢
+
+			${cleanAfter}
+			`;			
 			const temperature = 0.9;
 			const data: WritingAssistantTaskData = { prompt, temperature };
 			writingAssistantTask.submit(data);

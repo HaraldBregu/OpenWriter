@@ -10,8 +10,9 @@
  */
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { extractTokenFromChunk } from '../../../shared/ai-utils';
-import type { WriterState } from './state';
+import { extractTokenFromChunk } from '../../../../../shared/ai-utils';
+import type { WriterState } from '../../state';
+import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 
 // ---------------------------------------------------------------------------
 // Prompts
@@ -70,16 +71,16 @@ const LENGTH_PROMPTS: Record<string, string> = {
 // Node: continue_writing
 // ---------------------------------------------------------------------------
 
-export async function continueWritingNode(
+export async function continueWriting(
 	state: typeof WriterState.State,
 	model: BaseChatModel
 ): Promise<Partial<typeof WriterState.State>> {
-	const content = state.inputText || state.content;
+	const content = state.prompt;
 
-	const messages: { role: 'system' | 'user'; content: string }[] = [
-		{ role: 'system', content: SYSTEM_PROMPT },
-		{ role: 'system', content: LENGTH_PROMPTS[state.contentLength] ?? SHORT_CONTINUATION_PROMPT },
-		{ role: 'user', content: `<content>${content}</content>` },
+	const messages: BaseMessage[] = [
+		new SystemMessage(SYSTEM_PROMPT),
+		new SystemMessage(LENGTH_PROMPTS[state.contentLength] ?? SHORT_CONTINUATION_PROMPT),
+		new HumanMessage(content),
 	];
 
 	let completion = '';

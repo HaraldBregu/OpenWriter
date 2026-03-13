@@ -10,7 +10,7 @@
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { WriterState } from './state';
-import { continueWritingNode } from './nodes';
+import { continueWriting } from './nodes/continue-writing/node';
 
 // ---------------------------------------------------------------------------
 // Graph factory
@@ -19,7 +19,7 @@ import { continueWritingNode } from './nodes';
 export function buildGraph(model: BaseChatModel) {
 	const graph = new StateGraph(WriterState)
 		.addNode('continue_writing', (state: typeof WriterState.State) =>
-			continueWritingNode(state, model)
+			continueWriting(state, model)
 		)
 		.addEdge(START, 'continue_writing')
 		.addEdge('continue_writing', END);
