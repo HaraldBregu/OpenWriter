@@ -135,6 +135,22 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Project workspace info
+	// -------------------------------------------------------------------------
+
+	getProjectInfo(): ProjectWorkspaceInfo | null {
+		return this.projectWorkspace.getProjectInfo();
+	}
+
+	updateProjectName(name: string): ProjectWorkspaceInfo {
+		return this.projectWorkspace.updateName(name);
+	}
+
+	updateProjectDescription(description: string): ProjectWorkspaceInfo {
+		return this.projectWorkspace.updateDescription(description);
+	}
+
+	// -------------------------------------------------------------------------
 	// Documents
 	// -------------------------------------------------------------------------
 
