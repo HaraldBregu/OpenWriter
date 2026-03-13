@@ -168,7 +168,7 @@ const App: React.FC = () => {
 														path="system"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<SystemSettings />
+																<SystemSettingsPage />
 															</Suspense>
 														}
 													/>
