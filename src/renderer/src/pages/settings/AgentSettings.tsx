@@ -203,7 +203,7 @@ AgentConfigCard.displayName = 'AgentConfigCard';
 // Main component
 // ---------------------------------------------------------------------------
 
-const AgentSettings: React.FC = () => {
+const AgentSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [agentStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
