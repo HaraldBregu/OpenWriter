@@ -1,6 +1,6 @@
 /**
  * E2E tests for store/settings persistence.
- * Verifies that model settings and workspace preferences persist
+ * Verifies that API keys and workspace preferences persist
  * through the StoreService via IPC.
  *
  * NOTE: Store and Workspace IPC handlers use wrapSimpleHandler,
@@ -37,58 +37,35 @@ function unwrap<T>(result: unknown): T {
 }
 
 test.describe('Store Persistence', () => {
-	test('should start with empty model settings', async () => {
+	test('should start with empty API keys', async () => {
 		const rawResult = await ctx.page.evaluate(async () => {
-			return await (window as any).api.storeGetAllModelSettings();
+			return await (window as any).app.getAllApiKeys();
 		});
-		const settings = unwrap<Record<string, unknown>>(rawResult);
-		// Settings might be empty or might have data from previous runs.
-		// We just verify the IPC round-trip works and returns an object.
-		expect(typeof settings).toBe('object');
-		expect(settings).not.toBeNull();
+		const keys = unwrap<Record<string, string>>(rawResult);
+		expect(typeof keys).toBe('object');
+		expect(keys).not.toBeNull();
 	});
 
-	test('should set and retrieve a selected model', async () => {
-		// Use a valid provider ID (StoreValidators rejects unknown providers)
-		const setResult = await ctx.page.evaluate(async () => {
-			return await (window as any).api.storeSetSelectedModel('openai', 'gpt-4o-mini');
-		});
-		// Set returns void wrapped: { success: true, data: undefined }
-		expect(unwrap(setResult)).toBeUndefined();
-
-		const rawSettings = await ctx.page.evaluate(async () => {
-			return await (window as any).api.storeGetModelSettings('openai');
-		});
-		const settings = unwrap<{ selectedModel: string; apiToken: string }>(rawSettings);
-
-		expect(settings).not.toBeNull();
-		expect(settings.selectedModel).toBe('gpt-4o-mini');
-	});
-
-	test('should set and retrieve an API token', async () => {
-		// Use a valid provider ID (StoreValidators rejects unknown providers)
+	test('should set and retrieve an API key', async () => {
 		await ctx.page.evaluate(async () => {
-			return await (window as any).api.storeSetApiToken('openai', 'sk-test-token-123');
+			return await (window as any).app.setApiKey('openai', 'sk-test-token-123');
 		});
 
-		const rawSettings = await ctx.page.evaluate(async () => {
-			return await (window as any).api.storeGetModelSettings('openai');
+		const rawKey = await ctx.page.evaluate(async () => {
+			return await (window as any).app.getApiKey('openai');
 		});
-		const settings = unwrap<{ selectedModel: string; apiToken: string }>(rawSettings);
+		const apiKey = unwrap<string | null>(rawKey);
 
-		expect(settings).not.toBeNull();
-		expect(settings.apiToken).toBe('sk-test-token-123');
-		// The previously set model should still be there
-		expect(settings.selectedModel).toBe('gpt-4o-mini');
+		expect(apiKey).toBe('sk-test-token-123');
 	});
 
 	test('should set and retrieve workspace', async () => {
 		await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceSetCurrent('/fake/e2e/test/workspace');
+			return await (window as any).app.workspaceSetCurrent('/fake/e2e/test/workspace');
 		});
 
 		const rawWorkspace = await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceGetCurrent();
+			return await (window as any).app.workspaceGetCurrent();
 		});
 		const workspace = unwrap<string | null>(rawWorkspace);
 
@@ -98,14 +75,14 @@ test.describe('Store Persistence', () => {
 	test('should track recent workspaces', async () => {
 		// Set a couple of workspaces
 		await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceSetCurrent('/fake/project-a');
+			return await (window as any).app.workspaceSetCurrent('/fake/project-a');
 		});
 		await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceSetCurrent('/fake/project-b');
+			return await (window as any).app.workspaceSetCurrent('/fake/project-b');
 		});
 
 		const rawRecent = await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceGetRecent();
+			return await (window as any).app.workspaceGetRecent();
 		});
 		const recent = unwrap<Array<{ path: string; lastOpened: number }>>(rawRecent);
 
@@ -117,11 +94,11 @@ test.describe('Store Persistence', () => {
 
 	test('should clear current workspace', async () => {
 		await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceClear();
+			return await (window as any).app.workspaceClear();
 		});
 
 		const rawWorkspace = await ctx.page.evaluate(async () => {
-			return await (window as any).api.workspaceGetCurrent();
+			return await (window as any).app.workspaceGetCurrent();
 		});
 		const workspace = unwrap<string | null>(rawWorkspace);
 
