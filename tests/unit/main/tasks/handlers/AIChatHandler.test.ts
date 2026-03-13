@@ -166,10 +166,7 @@ describe('AIChatHandler', () => {
 		});
 
 		it('should throw for the placeholder API key', async () => {
-			storeService.getModelSettings.mockReturnValue({
-				apiToken: 'your-openai-api-key-here',
-				selectedModel: 'gpt-4o-mini',
-			});
+			storeService.getApiKey.mockReturnValue('your-openai-api-key-here');
 			handler = new AIChatHandler(storeService as any);
 
 			await expect(
