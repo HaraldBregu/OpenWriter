@@ -39,6 +39,12 @@ describe('CustomIpc', () => {
 			getApiKey: jest.fn().mockReturnValue(null),
 			setApiKey: jest.fn(),
 		});
+		container.register('logger', {
+			info: jest.fn(),
+			error: jest.fn(),
+			warn: jest.fn(),
+			debug: jest.fn(),
+		});
 		eventBus = new EventBus();
 		module = new CustomIpc();
 	});
