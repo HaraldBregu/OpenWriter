@@ -28,7 +28,7 @@ type AgentStateMap = Record<AgentId, AgentConfig>;
 
 type Action =
 	| { type: 'INIT'; states: AgentStateMap }
-	| { type: 'SET_FIELD'; agentId: AgentId; field: keyof AgentConfig; value: string | number | boolean };
+	| { type: 'SET_CONFIG'; agentId: AgentId; config: AgentConfig };
 
 // ---------------------------------------------------------------------------
 // Reducer
@@ -44,13 +44,10 @@ function reducer(state: AgentStateMap, action: Action): AgentStateMap {
 	switch (action.type) {
 		case 'INIT':
 			return action.states;
-		case 'SET_FIELD':
+		case 'SET_CONFIG':
 			return {
 				...state,
-				[action.agentId]: {
-					...state[action.agentId],
-					[action.field]: action.value,
-				},
+				[action.agentId]: action.config,
 			};
 		default:
 			return state;
@@ -64,11 +61,11 @@ function reducer(state: AgentStateMap, action: Action): AgentStateMap {
 interface AgentConfigCardProps {
 	agentId: AgentId;
 	config: AgentConfig;
-	onFieldChange: (agentId: AgentId, field: keyof AgentConfig, value: string | number | boolean) => void;
+	onConfigChange: (agentId: AgentId, config: AgentConfig) => void;
 }
 
 const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
-	({ agentId, config, onFieldChange }) => {
+	({ agentId, config, onConfigChange }) => {
 		const { t } = useTranslation();
 		const definition = AGENT_DEFINITIONS[agentId];
 
@@ -78,37 +75,36 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 			(value: string) => {
 				const provider = aiProviders.find((p) => p.id === value);
 				const firstModelId = provider?.models[0]?.id ?? '';
-				onFieldChange(agentId, 'providerId', value);
-				onFieldChange(agentId, 'modelId', firstModelId);
+				onConfigChange(agentId, { ...config, providerId: value, modelId: firstModelId });
 			},
-			[agentId, onFieldChange]
+			[agentId, config, onConfigChange]
 		);
 
 		const handleModelChange = useCallback(
 			(value: string) => {
-				onFieldChange(agentId, 'modelId', value);
+				onConfigChange(agentId, { ...config, modelId: value });
 			},
-			[agentId, onFieldChange]
+			[agentId, config, onConfigChange]
 		);
 
 		const handleTemperatureChange = useCallback(
 			(value: number) => {
-				onFieldChange(agentId, 'temperature', value);
+				onConfigChange(agentId, { ...config, temperature: value });
 			},
-			[agentId, onFieldChange]
+			[agentId, config, onConfigChange]
 		);
 
 		const handleReasoningChange = useCallback(
 			(checked: boolean) => {
-				onFieldChange(agentId, 'reasoning', checked);
+				onConfigChange(agentId, { ...config, reasoning: checked });
 			},
-			[agentId, onFieldChange]
+			[agentId, config, onConfigChange]
 		);
 
-		const providerId = `agent-provider-${agentId}`;
-		const modelId = `agent-model-${agentId}`;
-		const temperatureId = `agent-temperature-${agentId}`;
-		const reasoningId = `agent-reasoning-${agentId}`;
+		const providerSelectId = `agent-provider-${agentId}`;
+		const modelSelectId = `agent-model-${agentId}`;
+		const temperatureSliderId = `agent-temperature-${agentId}`;
+		const reasoningSwitchId = `agent-reasoning-${agentId}`;
 
 		return (
 			<div className="rounded-md border p-4 space-y-4">
@@ -120,11 +116,11 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 				<div className="grid grid-cols-2 gap-4">
 					{/* Provider select */}
 					<div className="space-y-1.5">
-						<AppLabel htmlFor={providerId} className="text-xs text-muted-foreground">
+						<AppLabel htmlFor={providerSelectId} className="text-xs text-muted-foreground">
 							{t('settings.agents.provider')}
 						</AppLabel>
 						<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
-							<AppSelectTrigger id={providerId} className="h-8 text-sm">
+							<AppSelectTrigger id={providerSelectId} className="h-8 text-sm">
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
@@ -142,11 +138,11 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 
 					{/* Model select */}
 					<div className="space-y-1.5">
-						<AppLabel htmlFor={modelId} className="text-xs text-muted-foreground">
+						<AppLabel htmlFor={modelSelectId} className="text-xs text-muted-foreground">
 							{t('settings.agents.model')}
 						</AppLabel>
 						<AppSelect value={config.modelId} onValueChange={handleModelChange}>
-							<AppSelectTrigger id={modelId} className="h-8 text-sm">
+							<AppSelectTrigger id={modelSelectId} className="h-8 text-sm">
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
@@ -166,7 +162,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 				{/* Temperature slider */}
 				<div className="space-y-2">
 					<div className="flex items-center justify-between">
-						<AppLabel htmlFor={temperatureId} className="text-xs text-muted-foreground">
+						<AppLabel htmlFor={temperatureSliderId} className="text-xs text-muted-foreground">
 							{t('settings.agents.temperature')}
 						</AppLabel>
 						<span className="text-xs tabular-nums text-muted-foreground">
@@ -174,7 +170,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 						</span>
 					</div>
 					<AppSlider
-						id={temperatureId}
+						id={temperatureSliderId}
 						min={0}
 						max={2}
 						step={0.1}
@@ -187,7 +183,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 				{/* Thinking mode switch */}
 				<div className="flex items-center justify-between">
 					<div className="space-y-0.5">
-						<AppLabel htmlFor={reasoningId} className="text-sm cursor-pointer">
+						<AppLabel htmlFor={reasoningSwitchId} className="text-sm cursor-pointer">
 							{t('settings.agents.thinkingMode')}
 						</AppLabel>
 						<p className="text-xs text-muted-foreground">
@@ -195,7 +191,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 						</p>
 					</div>
 					<AppSwitch
-						id={reasoningId}
+						id={reasoningSwitchId}
 						checked={config.reasoning}
 						onCheckedChange={handleReasoningChange}
 						aria-label={t('settings.agents.thinkingMode')}
@@ -228,24 +224,12 @@ const AgentSettings: React.FC = () => {
 		});
 	}, []);
 
-	const handleFieldChange = useCallback(
-		(agentId: AgentId, field: keyof AgentConfig, value: string | number | boolean) => {
-			dispatch({ type: 'SET_FIELD', agentId, field, value });
-
-			const updated: AgentConfig = {
-				...agentStates[agentId],
-				[field]: value,
-			};
-
-			// When provider changes, reset modelId to the first model of the new provider
-			// The provider handler in the card already dispatches the model reset,
-			// so here we need to read the latest state for the other field.
-			window.app.setAgentConfig(agentId, updated).catch(() => {
-				// Silently ignore; config will be re-attempted on next change.
-			});
-		},
-		[agentStates]
-	);
+	const handleConfigChange = useCallback((agentId: AgentId, config: AgentConfig) => {
+		dispatch({ type: 'SET_CONFIG', agentId, config });
+		window.app.setAgentConfig(agentId, config).catch(() => {
+			// Silently ignore persistence failure; UI state is still updated.
+		});
+	}, []);
 
 	return (
 		<div className="mx-auto w-full space-y-8 p-6">
@@ -260,7 +244,7 @@ const AgentSettings: React.FC = () => {
 						key={agentId}
 						agentId={agentId}
 						config={agentStates[agentId]}
-						onFieldChange={handleFieldChange}
+						onConfigChange={handleConfigChange}
 					/>
 				))}
 			</section>
