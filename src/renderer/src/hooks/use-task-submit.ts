@@ -4,7 +4,6 @@ import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
 import { taskAdded, taskRemoved } from '@/store/tasks/actions';
 import { makeSelectTaskById } from '@/store/tasks/selectors';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { initTaskMetadata } from '@/services/task-event-bus';
 
 // ---------------------------------------------------------------------------
 // Types
