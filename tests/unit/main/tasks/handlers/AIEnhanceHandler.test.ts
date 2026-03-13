@@ -141,11 +141,8 @@ describe('AIEnhanceHandler', () => {
 	// ---- execute — API key guard ---------------------------------------------
 
 	describe('execute — API key guard', () => {
-		it('should throw when storeService returns no apiToken', async () => {
-			storeService.getModelSettings.mockReturnValue({
-				apiToken: undefined,
-				selectedModel: 'gpt-4o-mini',
-			});
+		it('should throw when storeService returns no apiKey', async () => {
+			storeService.getApiKey.mockReturnValue(null);
 			handler = new AIEnhanceHandler(storeService as any);
 
 			await expect(
