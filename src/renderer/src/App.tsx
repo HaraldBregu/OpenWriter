@@ -136,7 +136,7 @@ const App: React.FC = () => {
 														path="agents"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<AgentSettings />
+																<AgentSettingsPage />
 															</Suspense>
 														}
 													/>
