@@ -184,6 +184,15 @@ export interface WorkspaceApi {
 	onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void;
 	onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
+	// Project workspace (project_workspace.json)
+	// -------------------------------------------------------------------------
+	/** Get the project workspace info, or null if no workspace is set. */
+	getProjectInfo: () => Promise<ProjectWorkspaceInfo | null>;
+	/** Update the project name. */
+	updateProjectName: (name: string) => Promise<ProjectWorkspaceInfo>;
+	/** Update the project description. */
+	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
