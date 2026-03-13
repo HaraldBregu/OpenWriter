@@ -1,6 +1,6 @@
 /**
  * Tests for StoreService.
- * Validates electron-store-based settings persistence for model settings and workspaces.
+ * Validates electron-store-based API key and workspace persistence.
  */
 
 // In-memory store backing for the mock
@@ -50,75 +50,37 @@ describe('StoreService', () => {
 			const service = new StoreService();
 			expect(service.getCurrentWorkspace()).toBeNull();
 			expect(service.getRecentWorkspaces()).toEqual([]);
-			expect(service.getAllModelSettings()).toEqual({});
+			expect(service.getAllApiKeys()).toEqual({});
 		});
 	});
 
-	describe('model settings', () => {
+	describe('API key settings', () => {
 		it('should return null for unknown provider', () => {
 			const service = new StoreService();
-			expect(service.getModelSettings('unknown')).toBeNull();
+			expect(service.getApiKey('unknown')).toBeNull();
 		});
 
-		it('should set and get selected model', () => {
+		it('should set and get an API key', () => {
 			const service = new StoreService();
-			service.setSelectedModel('openai', 'gpt-4o');
-			const settings = service.getModelSettings('openai');
-			expect(settings).not.toBeNull();
-			expect(settings?.selectedModel).toBe('gpt-4o');
-			expect(settings?.apiToken).toBe('');
+			service.setApiKey('openai', 'sk-test-123');
+			expect(service.getApiKey('openai')).toBe('sk-test-123');
 		});
 
-		it('should preserve existing apiToken when setting model', () => {
+		it('should overwrite existing API key', () => {
 			const service = new StoreService();
-			service.setApiToken('openai', 'my-token');
-			service.setSelectedModel('openai', 'gpt-4o-mini');
-			const settings = service.getModelSettings('openai');
-			expect(settings?.apiToken).toBe('my-token');
-			expect(settings?.selectedModel).toBe('gpt-4o-mini');
+			service.setApiKey('openai', 'sk-old');
+			service.setApiKey('openai', 'sk-new');
+			expect(service.getApiKey('openai')).toBe('sk-new');
 		});
 
-		it('should set API token', () => {
+		it('should return all API keys', () => {
 			const service = new StoreService();
-			service.setApiToken('anthropic', 'sk-123');
-			const settings = service.getModelSettings('anthropic');
-			expect(settings?.apiToken).toBe('sk-123');
-		});
-
-		it('should set full model settings', () => {
-			const service = new StoreService();
-			service.setModelSettings('custom', {
-				selectedModel: 'llama',
-				apiToken: 'key',
-				temperature: 0.7,
-				maxTokens: 2048,
-				reasoning: false,
-			});
-			expect(service.getModelSettings('custom')).toEqual({
-				selectedModel: 'llama',
-				apiToken: 'key',
-				temperature: 0.7,
-				maxTokens: 2048,
-				reasoning: false,
-			});
-		});
-
-		it('should return all model settings', () => {
-			const service = new StoreService();
-			service.setSelectedModel('a', 'model-a');
-			service.setSelectedModel('b', 'model-b');
-			const all = service.getAllModelSettings();
+			service.setApiKey('openai', 'sk-openai');
+			service.setApiKey('anthropic', 'sk-anthropic');
+			const all = service.getAllApiKeys();
 			expect(Object.keys(all)).toHaveLength(2);
-		});
-
-		it('should set inference defaults', () => {
-			const service = new StoreService();
-			service.setApiToken('openai', 'tok');
-			service.setInferenceDefaults('openai', { temperature: 0.5, reasoning: true });
-			const settings = service.getModelSettings('openai');
-			expect(settings?.temperature).toBe(0.5);
-			expect(settings?.reasoning).toBe(true);
-			expect(settings?.apiToken).toBe('tok');
+			expect(all.openai).toBe('sk-openai');
+			expect(all.anthropic).toBe('sk-anthropic');
 		});
 	});
 
