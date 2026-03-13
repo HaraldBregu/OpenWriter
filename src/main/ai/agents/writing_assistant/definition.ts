@@ -13,25 +13,24 @@
  *   - `streamMode: ['messages', 'values']` enables token-level streaming.
  */
 
-import type { AgentDefinition, GraphInputContext, NodeRoleMap } from '../../core/definition';
+import type { AgentDefinition, GraphInputContext, NodeModelConfigs } from '../../core/definition';
 import { buildGraph } from './graph';
 
 // ---------------------------------------------------------------------------
 // Agent definition
 // ---------------------------------------------------------------------------
 
-const NODE_ROLES: NodeRoleMap = {
-	classify_intent: 'completer',
-	continue_writing: 'writer',
-	enhance_text: 'editor',
+const NODE_MODELS: NodeModelConfigs = {
+	classify_intent: { providerId: 'openai', modelId: 'gpt-4o-mini', temperature: 0 },
+	continue_writing: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.7, maxTokens: 4096 },
+	enhance_text: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
 };
 
 const definition: AgentDefinition = {
 	id: 'writing-assistant',
 	name: 'Writing Assistant',
 	category: 'writing',
-	role: 'completer',
-	nodeRoles: NODE_ROLES,
+	nodeModels: NODE_MODELS,
 	buildGraph,
 
 	/**
