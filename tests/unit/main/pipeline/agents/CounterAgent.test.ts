@@ -20,7 +20,6 @@
  */
 
 import type { AgentEvent } from '../../../../../src/main/pipeline/AgentBase';
-import type { ModelSettings } from '../../../../../src/main/services/store';
 
 // ---------------------------------------------------------------------------
 // Mock @langchain/openai before importing the agent
