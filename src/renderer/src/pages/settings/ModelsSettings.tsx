@@ -241,4 +241,4 @@ const ModelsSettingsPage: React.FC = () => {
 	);
 };
 
-export default ModelsSettings;
+export default ModelsSettingsPage;
