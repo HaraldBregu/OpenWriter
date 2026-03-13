@@ -7,13 +7,15 @@
  */
 
 // Core
-export type { AgentDefinition, AgentDefinitionInfo, NodeModelMap, NodeRoleMap } from './core';
+export type {
+	AgentDefinition,
+	AgentDefinitionInfo,
+	NodeModelConfig,
+	NodeModelConfigs,
+	NodeModelMap,
+} from './core';
 export { toAgentDefinitionInfo, AgentRegistry, executeAIAgentsStream } from './core';
 export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './core';
-
-// Registry
-export { ModelRegistry } from './registry';
-export type { ModelRole, ModelRoleConfig, CostTier } from './registry';
 
 // Agents
 export { WritingAssistantAgent } from './agents';
