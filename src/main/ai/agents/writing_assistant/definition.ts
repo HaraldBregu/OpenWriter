@@ -39,12 +39,11 @@ const definition: AgentDefinition = {
 			inputText: ctx.prompt,
 			type: 'continue_writing',
 			content: '',
-			contentLength: ctx.metadata?.contentLength ?? 'short',
+			contentLength: 'short',
 			completion: '',
 			apiKey: ctx.apiKey,
 			modelName: ctx.modelName,
 			providerId: ctx.providerId,
-			metadata: ctx.metadata,
 		};
 	},
 
