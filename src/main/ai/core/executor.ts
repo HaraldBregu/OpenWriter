@@ -226,11 +226,20 @@ interface CustomStateGraphStreamInput {
 async function* executeCustomStateGraphStream(
 	input: CustomStateGraphStreamInput
 ): AsyncGenerator<AgentStreamEvent> {
-	const { runId, model, ctx, buildGraph, buildGraphInput, extractGraphOutput, signal, logger } =
-		input;
+	const {
+		runId,
+		model,
+		nodeModels,
+		ctx,
+		buildGraph,
+		buildGraphInput,
+		extractGraphOutput,
+		signal,
+		logger,
+	} = input;
 
 	try {
-		const graph = buildGraph(model);
+		const graph = nodeModels ? buildGraph(nodeModels) : buildGraph(model);
 		const initialState = buildGraphInput(ctx);
 
 		let fullContent = '';
