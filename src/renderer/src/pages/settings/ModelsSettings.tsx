@@ -172,12 +172,12 @@ const ModelsSettings: React.FC = () => {
 	const [providerStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
 	useEffect(() => {
-		window.app.getAllProviderSettings().then((all) => {
+		window.app.getAllApiKeys().then((all) => {
 			const loaded: ProviderStateMap = buildInitialState();
 			for (const provider of aiProviders) {
-				const settings = all[provider.id];
-				if (settings) {
-					loaded[provider.id] = { token: settings.apiToken ?? '', status: 'idle' };
+				const apiKey = all[provider.id];
+				if (apiKey) {
+					loaded[provider.id] = { token: apiKey, status: 'idle' };
 				}
 			}
 			dispatch({ type: 'INIT', states: loaded });
