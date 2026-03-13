@@ -341,6 +341,13 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.outputWatcherError, callback);
 	},
 	// -------------------------------------------------------------------------
+	// Project workspace (project_workspace.json)
+	// -------------------------------------------------------------------------
+	getProjectInfo: () => typedInvokeUnwrap(WorkspaceChannels.getProjectInfo),
+	updateProjectName: (name: string) => typedInvokeUnwrap(WorkspaceChannels.updateProjectName, name),
+	updateProjectDescription: (description: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),

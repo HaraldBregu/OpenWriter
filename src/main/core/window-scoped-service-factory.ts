@@ -10,7 +10,6 @@ import {
 	ProjectWorkspaceService,
 } from '../workspace';
 import type { WorkspaceService } from '../workspace';
-import { app } from 'electron';
 
 /**
  * Context available to every window-scoped service factory function.
