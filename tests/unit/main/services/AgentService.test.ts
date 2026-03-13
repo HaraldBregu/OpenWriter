@@ -24,13 +24,9 @@ describe('AgentService', () => {
 		jest.clearAllMocks();
 
 		mockStoreService = {
-			getModelSettings: jest.fn().mockReturnValue({
-				selectedModel: 'gpt-4o-mini',
-				apiToken: 'test-token',
-			}),
-			getAllModelSettings: jest.fn().mockReturnValue({}),
-			setSelectedModel: jest.fn(),
-			setApiToken: jest.fn(),
+			getApiKey: jest.fn().mockReturnValue('test-token'),
+			getAllApiKeys: jest.fn().mockReturnValue({}),
+			setApiKey: jest.fn(),
 		};
 
 		service = new AgentService(mockStoreService as any);
