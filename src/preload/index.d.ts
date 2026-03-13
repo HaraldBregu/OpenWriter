@@ -184,7 +184,7 @@ export interface WorkspaceApi {
 	onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void;
 	onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Project workspace (project_workspace.json)
+	// Project workspace (project_workspace.openwriter)
 	// -------------------------------------------------------------------------
 	/** Get the project workspace info, or null if no workspace is set. */
 	getProjectInfo: () => Promise<ProjectWorkspaceInfo | null>;
@@ -222,21 +222,21 @@ export interface WorkspaceApi {
 	 */
 	rename: (params: FsRenameParams) => Promise<FsRenameResult>;
 	// -------------------------------------------------------------------------
-	// Project workspace (project_workspace.json)
+	// Project workspace (project_workspace.openwriter)
 	// -------------------------------------------------------------------------
 	/**
-	 * Read the project_workspace.json from the current workspace root.
+	 * Read the project_workspace.openwriter from the current workspace root.
 	 * If the file does not exist, a default is created and returned.
 	 * Returns null if no workspace is currently set.
 	 */
 	getProjectInfo: () => Promise<ProjectWorkspaceInfo | null>;
 	/**
-	 * Update the `name` field in project_workspace.json.
+	 * Update the `name` field in project_workspace.openwriter.
 	 * Must be non-empty and at most 255 characters.
 	 */
 	updateProjectName: (name: string) => Promise<ProjectWorkspaceInfo>;
 	/**
-	 * Update the `description` field in project_workspace.json.
+	 * Update the `description` field in project_workspace.openwriter.
 	 * May be an empty string to clear the description.
 	 */
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
