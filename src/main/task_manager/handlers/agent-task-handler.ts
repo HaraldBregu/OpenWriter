@@ -132,6 +132,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			history: [],
 			prompt: input.prompt,
 			signal,
+			nodeModels,
 			buildGraph: def.buildGraph,
 			buildGraphInput: def.buildGraphInput,
 			extractGraphOutput: def.extractGraphOutput,
