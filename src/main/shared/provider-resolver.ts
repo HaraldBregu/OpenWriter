@@ -24,8 +24,8 @@ export interface ResolvedProvider {
  *
  * Resolution order:
  *   - Provider ID: input.providerId → 'openai' (default)
- *   - API Key: storeService.getModelSettings(providerId).apiToken → VITE_OPENAI_API_KEY env var
- *   - Model: input.modelId → storeService.getModelSettings().selectedModel → VITE_OPENAI_MODEL → 'gpt-4o-mini'
+ *   - API Key: storeService.getApiKey(providerId) → VITE_OPENAI_API_KEY env var
+ *   - Model: input.modelId → VITE_OPENAI_MODEL → 'gpt-4o-mini'
  *
  * Validates that an API key exists and is not the placeholder default.
  *
