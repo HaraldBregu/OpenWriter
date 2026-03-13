@@ -55,6 +55,18 @@ const app: AppApi = {
 	setApiKey: (providerId: string, apiKey: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.setApiKey, providerId, apiKey);
 	},
+	// -------------------------------------------------------------------------
+	// Agent settings
+	// -------------------------------------------------------------------------
+	getAgentSettings: (): Promise<Record<string, AgentConfig>> => {
+		return typedInvokeUnwrap(AppChannels.getAgentSettings);
+	},
+	getAgentConfig: (agentId: string): Promise<AgentConfig | null> => {
+		return typedInvokeUnwrap(AppChannels.getAgentConfig, agentId);
+	},
+	setAgentConfig: (agentId: string, config: AgentConfig): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.setAgentConfig, agentId, config);
+	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
