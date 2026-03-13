@@ -86,8 +86,8 @@ import { HumanMessage, AIMessage } from '@langchain/core/messages';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeStoreService(settings: ModelSettings | null = null) {
-	return { getModelSettings: jest.fn().mockReturnValue(settings) };
+function makeStoreService(settings: { apiToken: string; selectedModel: string } | null = null) {
+	return { getApiKey: jest.fn().mockReturnValue(settings?.apiToken ?? null) };
 }
 
 async function* makeChunkStream(
