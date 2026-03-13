@@ -213,9 +213,10 @@ export async function* executeAIAgentsStream(
 interface CustomStateGraphStreamInput {
 	runId: string;
 	model: BaseChatModel;
+	nodeModels?: NodeModelMap;
 	ctx: GraphInputContext;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
 	buildGraphInput: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput: (state: Record<string, unknown>) => string;
 	signal?: AbortSignal;
