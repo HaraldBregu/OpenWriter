@@ -27,9 +27,7 @@ type Action =
 const INITIAL_PROVIDER_STATE: ProviderState = { token: '', status: 'idle' };
 
 function buildInitialState(): ProviderStateMap {
-	return Object.fromEntries(
-		aiProviders.map((p) => [p.id, { ...INITIAL_PROVIDER_STATE }]),
-	);
+	return Object.fromEntries(aiProviders.map((p) => [p.id, { ...INITIAL_PROVIDER_STATE }]));
 }
 
 function reducer(state: ProviderStateMap, action: Action): ProviderStateMap {
@@ -80,10 +78,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 
 	return (
 		<div className="flex items-center justify-between gap-4 px-4 py-3">
-			<label
-				htmlFor={`api-key-${provider.id}`}
-				className="text-sm font-medium w-24 shrink-0"
-			>
+			<label htmlFor={`api-key-${provider.id}`} className="text-sm font-medium w-24 shrink-0">
 				{provider.name}
 			</label>
 
@@ -107,8 +102,8 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 					className="shrink-0 rounded-md border border-transparent bg-foreground px-3 py-1.5 text-sm text-background transition-colors hover:opacity-80 active:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
 				>
 					{isSaving
-						? (t('settings.models.saving') || 'Saving…')
-						: (t('settings.models.save') || 'Save')}
+						? t('settings.models.saving') || 'Saving…'
+						: t('settings.models.save') || 'Save'}
 				</button>
 			</div>
 
@@ -119,9 +114,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 					</span>
 				)}
 				{isError && (
-					<span className="text-destructive">
-						{t('settings.models.saveError') || 'Error'}
-					</span>
+					<span className="text-destructive">{t('settings.models.saveError') || 'Error'}</span>
 				)}
 			</span>
 		</div>
@@ -173,7 +166,7 @@ const ModelsSettings: React.FC = () => {
 					dispatch({ type: 'SET_STATUS', providerId, status: 'error' });
 				});
 		},
-		[providerStates],
+		[providerStates]
 	);
 
 	return (

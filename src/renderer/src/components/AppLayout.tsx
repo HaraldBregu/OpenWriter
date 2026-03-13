@@ -304,21 +304,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
-
-						<Collapsible defaultOpen className="group/collapsible">
-  <AppSidebarGroup>
-    <SidebarGroupLabel asChild>
-      <CollapsibleTrigger>
-        Help
-        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-      </CollapsibleTrigger>
-    </SidebarGroupLabel>
-    <CollapsibleContent>
-      <SidebarGroupContent />
-    </CollapsibleContent>
-  </SidebarGroup>
-</Collapsible>
-
 					</AppSidebarContent>
 
 					{/* Footer — Settings popover */}
