@@ -26,20 +26,6 @@ export class StoreService {
 			name: 'settings',
 			defaults: DEFAULTS,
 			accessPropertiesByDotNotation: false,
-			migrations: {
-				'1.0.0': (store) => {
-					const raw = (store.get('modelSettings') ?? {}) as Record<string, unknown>;
-					const migrated: Record<string, string> = {};
-					for (const [id, record] of Object.entries(raw)) {
-						if (typeof record === 'string') {
-							migrated[id] = record;
-						} else if (typeof record === 'object' && record !== null && 'apiToken' in record) {
-							migrated[id] = String((record as { apiToken: unknown }).apiToken);
-						}
-					}
-					store.set('modelSettings', migrated);
-				},
-			},
 		});
 	}
 

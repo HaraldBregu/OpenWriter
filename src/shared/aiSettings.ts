@@ -29,3 +29,39 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
 	maxTokens: 2048,
 	reasoning: false,
 };
+
+// ---------------------------------------------------------------------------
+// Agent configuration types
+// ---------------------------------------------------------------------------
+
+/**
+ * Persisted configuration for a named AI agent.
+ * Stored under `agentSettings[agentId]` in the electron-store.
+ */
+export interface AgentConfig {
+	providerId: string;
+	modelId: string;
+	temperature: number;
+	reasoning: boolean;
+}
+
+export const AGENT_IDS = ['writing-assistant', 'text-enhancer'] as const;
+export type AgentId = (typeof AGENT_IDS)[number];
+
+export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: string }> = {
+	'writing-assistant': {
+		name: 'Writing Assistant',
+		description: 'Helps with writing, editing, and improving text',
+	},
+	'text-enhancer': {
+		name: 'Text Enhancer Assistant',
+		description: 'Enhances and transforms text style and tone',
+	},
+};
+
+export const DEFAULT_AGENT_CONFIG: AgentConfig = {
+	providerId: 'openai',
+	modelId: 'gpt-4o',
+	temperature: 0.7,
+	reasoning: false,
+};
