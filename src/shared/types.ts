@@ -307,7 +307,7 @@ export interface FsRenameResult {
 // ---- Project Workspace ----------------------------------------------------
 
 /**
- * Schema for the project_workspace.json file stored in the workspace root.
+ * Schema for the project_workspace.openwriter file stored in the workspace root.
  * Contains project-level metadata that identifies and describes the workspace.
  */
 export interface ProjectWorkspaceInfo {
