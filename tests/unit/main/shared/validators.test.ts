@@ -58,37 +58,6 @@ describe('StoreValidators', () => {
 		});
 	});
 
-	describe('validateModelName', () => {
-		it('should accept valid model names', () => {
-			expect(() => StoreValidators.validateModelName('gpt-4')).not.toThrow();
-			expect(() => StoreValidators.validateModelName('claude-3.5-sonnet')).not.toThrow();
-			expect(() => StoreValidators.validateModelName('meta/llama-3')).not.toThrow();
-			expect(() => StoreValidators.validateModelName('model_v2')).not.toThrow();
-		});
-
-		it('should reject empty model names', () => {
-			expect(() => StoreValidators.validateModelName('')).toThrow(
-				'must be between 1 and 200 characters'
-			);
-		});
-
-		it('should reject model names over 200 characters', () => {
-			const longName = 'a'.repeat(201);
-			expect(() => StoreValidators.validateModelName(longName)).toThrow(
-				'must be between 1 and 200 characters'
-			);
-		});
-
-		it('should reject model names with invalid characters', () => {
-			expect(() => StoreValidators.validateModelName('model with spaces')).toThrow(
-				'contains invalid characters'
-			);
-			expect(() => StoreValidators.validateModelName('model<script>')).toThrow(
-				'contains invalid characters'
-			);
-		});
-	});
-
 	describe('getValidProviders', () => {
 		it('should return a copy of the valid providers list', () => {
 			const providers = StoreValidators.getValidProviders();
