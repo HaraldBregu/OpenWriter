@@ -104,13 +104,78 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/settings"
+													path="/settings/*"
 													element={
 														<RouteWrapper>
-															<SettingsPage />
+															<SettingsLayout />
 														</RouteWrapper>
 													}
-												/>
+												>
+													<Route
+														index
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<GeneralSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="general"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<GeneralSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="models"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<ModelsSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="agents"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<AgentSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="media"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<MediaSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="devices"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<DevicesSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="tools"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<ToolsSettings />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="system"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<SystemSettings />
+															</Suspense>
+														}
+													/>
+												</Route>
 												<Route
 													path="/content/:id"
 													element={
