@@ -167,7 +167,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 // Main component
 // ---------------------------------------------------------------------------
 
-const ModelsSettings: React.FC = () => {
+const ModelsSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [providerStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
