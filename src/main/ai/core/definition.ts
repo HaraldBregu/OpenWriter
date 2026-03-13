@@ -69,7 +69,7 @@ export interface AgentDefinition {
 	 * When present, the handler resolves a separate model for each node
 	 * and passes a `NodeModelMap` to `buildGraph` instead of a single model.
 	 */
-	nodeModels?: NodeModelConfigs;
+	nodeModels?: Record<string, NodeModelConfig>;
 	/**
 	 * Optional LangGraph factory. When present, the agent runs as a full
 	 * LangGraph StateGraph instead of a plain chat completion.
