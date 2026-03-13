@@ -208,9 +208,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						</AppSidebarGroup>
 					</AppSidebarContent>
 
-					{/* Footer — Settings popover */}
+					{/* Footer — Settings link */}
 					<AppSidebarFooter className="border-t px-3 py-3">
-						<SettingsPopover />
+						<AppSidebarMenu>
+							<AppSidebarMenuItem>
+								<AppSidebarMenuButton
+									asChild
+									className="h-9 px-3"
+									isActive={location.pathname === '/settings'}
+								>
+									<Link to="/settings">
+										<Settings className="h-3.5 w-3.5 shrink-0" />
+										<span className="flex-1 truncate">{t('menu.settings')}</span>
+									</Link>
+								</AppSidebarMenuButton>
+							</AppSidebarMenuItem>
+						</AppSidebarMenu>
 					</AppSidebarFooter>
 				</AppSidebar>
 
