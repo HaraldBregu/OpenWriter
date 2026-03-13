@@ -420,7 +420,7 @@ describe('AlphabetAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal);
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('openai');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('openai');
 	});
 
 	it('should use providerId from context when supplied', async () => {
@@ -432,7 +432,7 @@ describe('AlphabetAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'anthropic' });
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('anthropic');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('anthropic');
 	});
 });
 
