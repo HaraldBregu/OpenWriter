@@ -122,11 +122,9 @@ export const mockApi = {
 	clipboardHasHTML: jest.fn().mockResolvedValue(false),
 
 	// Store
-	storeGetAllModelSettings: jest.fn().mockResolvedValue({}),
-	storeGetModelSettings: jest.fn().mockResolvedValue(null),
-	storeSetSelectedModel: jest.fn().mockResolvedValue(undefined),
-	storeSetApiToken: jest.fn().mockResolvedValue(undefined),
-	storeSetModelSettings: jest.fn().mockResolvedValue(undefined),
+	storeGetAllApiKeys: jest.fn().mockResolvedValue({}),
+	storeGetApiKey: jest.fn().mockResolvedValue(null),
+	storeSetApiKey: jest.fn().mockResolvedValue(undefined),
 
 	// Workspace
 	workspaceSelectFolder: jest.fn().mockResolvedValue(null),
