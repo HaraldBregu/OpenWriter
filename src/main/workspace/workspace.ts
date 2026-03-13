@@ -71,9 +71,10 @@ export class Workspace implements Disposable {
 		return this.workspace.getCurrent();
 	}
 
-	setCurrent(workspacePath: string): void {
+	async setCurrent(workspacePath: string): Promise<void> {
 		this.logger.info('Workspace', `Setting workspace: ${workspacePath}`);
 		this.workspace.setCurrent(workspacePath);
+		await this.projectWorkspace.getOrCreate();
 	}
 
 	getRecent(): Array<{ path: string; lastOpened: number }> {
