@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const GeneralSettings: React.FC = () => {
+const GeneralSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null);
 
