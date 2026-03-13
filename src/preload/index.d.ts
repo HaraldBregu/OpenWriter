@@ -79,6 +79,7 @@ export type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	AgentConfig,
 };
 
 // ---------------------------------------------------------------------------
