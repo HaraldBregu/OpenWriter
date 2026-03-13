@@ -76,7 +76,8 @@ const TextEditor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onAgentPromptSubmit: (before, after, cursorPos, prompt) => onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
+						onAgentPromptSubmit: (before, after, cursorPos, prompt) =>
+							onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
 					}),
 				[]
 			);

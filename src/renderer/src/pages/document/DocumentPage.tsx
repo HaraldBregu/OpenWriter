@@ -22,9 +22,9 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	const writingAssistantTask = useTask<{ prompt: string }>('agent-writing-assistant', {
-		prompt: '',
-	});
+	type WritingAssistantTaskData = { prompt: string, temperature?: number, maxTokens?: number };
+	const writingAssistantTaskData: WritingAssistantTaskData = { prompt: '' };
+	const writingAssistantTask = useTask<WritingAssistantTaskData>('agent-writing-assistant',  writingAssistantTaskData);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -142,10 +142,13 @@ const DocumentPage: React.FC = () => {
 
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, cursorPos: number) => {
+			const cleanBefore = before.replaceAll('▇', '').trimEnd();
+			const cleanAfter = after.replaceAll('▇', '').trimStart();
+			const prompt = `${cleanBefore}\n\n▇\n\n${cleanAfter}`;
+			const temperature = 0.9;
+			const data: WritingAssistantTaskData = { prompt, temperature };
 			writingAssistantTask.submit(
-				{
-					prompt: before,
-				},
+				data,
 				{
 					metadata: {
 						cursorPos,
@@ -157,16 +160,19 @@ const DocumentPage: React.FC = () => {
 		[writingAssistantTask.submit]
 	);
 
-	const onAgentPromptSubmit = useCallback((before: string, after: string, cursorPos: number, prompt: string) => {
-		// editorRef.current?.removeAgentPrompt();
-		console.log('Prompt submitted:', { before, after, cursorPos, prompt });
-		console.log('Agent prompt submitted:', prompt);
-		editorRef.current?.setAgentPromptLoading(true);
-		editorRef.current?.setAgentPromptEnable(false);
-		setTimeout(() => {
-			editorRef.current?.insertText("[Agent's response will appear here]");
-		}, 250);
-	}, []);
+	const onAgentPromptSubmit = useCallback(
+		(before: string, after: string, cursorPos: number, prompt: string) => {
+			// editorRef.current?.removeAgentPrompt();
+			console.log('Prompt submitted:', { before, after, cursorPos, prompt });
+			console.log('Agent prompt submitted:', prompt);
+			editorRef.current?.setAgentPromptLoading(true);
+			editorRef.current?.setAgentPromptEnable(false);
+			setTimeout(() => {
+				editorRef.current?.insertText("[Agent's response will appear here]");
+			}, 250);
+		},
+		[]
+	);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
