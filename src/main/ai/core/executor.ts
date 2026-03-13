@@ -80,6 +80,7 @@ export async function* executeAIAgentsStream(
 		history,
 		prompt,
 		signal,
+		nodeModels,
 		buildGraph,
 		buildGraphInput,
 		extractGraphOutput,
