@@ -9,18 +9,11 @@ import type { TaskInfo, TaskPriority } from '../../shared/types';
 import { registerQuery, registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { TaskChannels } from '../../shared/channels';
 
-/**
- * Input payload for task:submit channel.
- *
- * The `metadata` field lives on the payload itself (not inside `options`)
- * because it is injected into the task input by the IPC handler, not
- * forwarded as a task-execution option. Renderer hooks may still send
- * it alongside options at runtime; the handler extracts it here.
- */
+/** Input payload for task:submit channel. */
 interface TaskSubmitInput {
 	type: string;
 	input: unknown;
-	options?: TaskOptions & { metadata?: Record<string, unknown> };
+	options?: TaskOptions;
 }
 
 /** Strip non-serializable fields from ActiveTask for IPC transport. */
