@@ -186,6 +186,15 @@
 			"saving": "Salvataggio in corso…",
 			"saved": "Salvato!",
 			"saveError": "Errore"
+		},
+		"agents": {
+			"title": "Agenti",
+			"description": "Configura il modello AI e i parametri per ogni agente.",
+			"provider": "Provider",
+			"model": "Modello",
+			"temperature": "Temperatura",
+			"thinkingMode": "Modalità Ragionamento",
+			"thinkingModeDescription": "Abilita il ragionamento esteso per attività complesse"
 		}
 	},
 	"dialogs": {
