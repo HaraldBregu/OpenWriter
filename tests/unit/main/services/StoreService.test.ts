@@ -1,56 +1,56 @@
 /**
  * Tests for StoreService.
- * Validates JSON-based settings persistence for model settings and workspaces.
+ * Validates electron-store-based settings persistence for model settings and workspaces.
  */
 
-// Mock node:fs before importing the service
-jest.mock('node:fs', () => ({
-	readFileSync: jest.fn().mockImplementation(() => {
-		throw new Error('ENOENT');
-	}),
-	writeFileSync: jest.fn(),
-	mkdirSync: jest.fn(),
-}));
+// In-memory store backing for the mock
+let mockStoreData: Record<string, unknown> = {};
 
-import { app } from 'electron';
-import fs from 'node:fs';
+jest.mock('electron-store', () => {
+	return jest.fn().mockImplementation((opts: { defaults?: Record<string, unknown> }) => {
+		// Reset store data and apply defaults
+		mockStoreData = { ...(opts?.defaults ?? {}) };
+
+		// Run migrations if provided
+		if (opts && 'migrations' in opts) {
+			const migrations = (opts as Record<string, unknown>).migrations as Record<
+				string,
+				(store: { get: (key: string) => unknown; set: (key: string, val: unknown) => void }) => void
+			>;
+			const migrationStore = {
+				get: (key: string) => mockStoreData[key],
+				set: (key: string, val: unknown) => {
+					mockStoreData[key] = val;
+				},
+			};
+			for (const fn of Object.values(migrations)) {
+				fn(migrationStore);
+			}
+		}
+
+		return {
+			get: jest.fn((key: string) => mockStoreData[key]),
+			set: jest.fn((key: string, val: unknown) => {
+				mockStoreData[key] = val;
+			}),
+		};
+	});
+});
+
 import { StoreService } from '../../../../src/main/services/store';
 
 describe('StoreService', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		(app.getPath as jest.Mock).mockReturnValue('/fake/userData');
-		// Default: return clean empty defaults from file (avoids DEFAULTS object mutation leaking between tests)
-		(fs.readFileSync as jest.Mock).mockReturnValue(
-			JSON.stringify({ modelSettings: {}, currentWorkspace: null, recentWorkspaces: [] })
-		);
+		mockStoreData = {};
 	});
 
 	describe('constructor', () => {
-		it('should create service with defaults when no settings file exists', () => {
-			(fs.readFileSync as jest.Mock).mockImplementationOnce(() => {
-				throw new Error('ENOENT');
-			});
+		it('should create service with defaults when store is empty', () => {
 			const service = new StoreService();
 			expect(service.getCurrentWorkspace()).toBeNull();
 			expect(service.getRecentWorkspaces()).toEqual([]);
 			expect(service.getAllModelSettings()).toEqual({});
-		});
-
-		it('should load existing settings from JSON file', () => {
-			(fs.readFileSync as jest.Mock).mockReturnValueOnce(
-				JSON.stringify({
-					modelSettings: { openai: { selectedModel: 'gpt-4', apiToken: 'tok' } },
-					currentWorkspace: '/my/workspace',
-					recentWorkspaces: [{ path: '/my/workspace', lastOpened: 1000 }],
-				})
-			);
-			const service = new StoreService();
-			expect(service.getCurrentWorkspace()).toBe('/my/workspace');
-			expect(service.getModelSettings('openai')).toEqual({
-				selectedModel: 'gpt-4',
-				apiToken: 'tok',
-			});
 		});
 	});
 
@@ -65,9 +65,8 @@ describe('StoreService', () => {
 			service.setSelectedModel('openai', 'gpt-4o');
 			const settings = service.getModelSettings('openai');
 			expect(settings).not.toBeNull();
-			expect(settings!.selectedModel).toBe('gpt-4o');
-			expect(settings!.apiToken).toBe('');
-			expect(fs.writeFileSync).toHaveBeenCalled();
+			expect(settings?.selectedModel).toBe('gpt-4o');
+			expect(settings?.apiToken).toBe('');
 		});
 
 		it('should preserve existing apiToken when setting model', () => {
@@ -75,23 +74,32 @@ describe('StoreService', () => {
 			service.setApiToken('openai', 'my-token');
 			service.setSelectedModel('openai', 'gpt-4o-mini');
 			const settings = service.getModelSettings('openai');
-			expect(settings!.apiToken).toBe('my-token');
-			expect(settings!.selectedModel).toBe('gpt-4o-mini');
+			expect(settings?.apiToken).toBe('my-token');
+			expect(settings?.selectedModel).toBe('gpt-4o-mini');
 		});
 
 		it('should set API token', () => {
 			const service = new StoreService();
 			service.setApiToken('anthropic', 'sk-123');
 			const settings = service.getModelSettings('anthropic');
-			expect(settings!.apiToken).toBe('sk-123');
+			expect(settings?.apiToken).toBe('sk-123');
 		});
 
 		it('should set full model settings', () => {
 			const service = new StoreService();
-			service.setModelSettings('custom', { selectedModel: 'llama', apiToken: 'key' });
+			service.setModelSettings('custom', {
+				selectedModel: 'llama',
+				apiToken: 'key',
+				temperature: 0.7,
+				maxTokens: 2048,
+				reasoning: false,
+			});
 			expect(service.getModelSettings('custom')).toEqual({
 				selectedModel: 'llama',
 				apiToken: 'key',
+				temperature: 0.7,
+				maxTokens: 2048,
+				reasoning: false,
 			});
 		});
 
@@ -101,6 +109,16 @@ describe('StoreService', () => {
 			service.setSelectedModel('b', 'model-b');
 			const all = service.getAllModelSettings();
 			expect(Object.keys(all)).toHaveLength(2);
+		});
+
+		it('should set inference defaults', () => {
+			const service = new StoreService();
+			service.setApiToken('openai', 'tok');
+			service.setInferenceDefaults('openai', { temperature: 0.5, reasoning: true });
+			const settings = service.getModelSettings('openai');
+			expect(settings?.temperature).toBe(0.5);
+			expect(settings?.reasoning).toBe(true);
+			expect(settings?.apiToken).toBe('tok');
 		});
 	});
 
@@ -126,7 +144,6 @@ describe('StoreService', () => {
 			service.setCurrentWorkspace('/project2');
 			service.setCurrentWorkspace('/project1');
 			const recent = service.getRecentWorkspaces();
-			// /project1 should appear only once (moved to front)
 			const paths = recent.map((w) => w.path);
 			expect(paths.filter((p) => p === '/project1')).toHaveLength(1);
 			expect(paths[0]).toBe('/project1');
@@ -145,7 +162,16 @@ describe('StoreService', () => {
 			service.setCurrentWorkspace('/project');
 			service.clearCurrentWorkspace();
 			expect(service.getCurrentWorkspace()).toBeNull();
-			expect(fs.writeFileSync).toHaveBeenCalled();
+		});
+
+		it('should remove a recent workspace', () => {
+			const service = new StoreService();
+			service.setCurrentWorkspace('/project1');
+			service.setCurrentWorkspace('/project2');
+			service.removeRecentWorkspace('/project1');
+			const paths = service.getRecentWorkspaces().map((w) => w.path);
+			expect(paths).not.toContain('/project1');
+			expect(paths).toContain('/project2');
 		});
 
 		it('should return a copy of recent workspaces', () => {
@@ -154,27 +180,6 @@ describe('StoreService', () => {
 			const recent1 = service.getRecentWorkspaces();
 			recent1.push({ path: '/fake', lastOpened: 0 });
 			expect(service.getRecentWorkspaces()).toHaveLength(1);
-		});
-	});
-
-	describe('persistence', () => {
-		it('should create directory before writing', () => {
-			const service = new StoreService();
-			service.setSelectedModel('test', 'model');
-			expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
-		});
-
-		it('should write JSON to the settings file', () => {
-			const service = new StoreService();
-			service.setSelectedModel('test', 'model');
-			expect(fs.writeFileSync).toHaveBeenCalledWith(
-				expect.stringContaining('settings.json'),
-				expect.any(String),
-				'utf-8'
-			);
-			// Verify the written JSON is valid
-			const writtenJson = (fs.writeFileSync as jest.Mock).mock.calls[0][1];
-			expect(() => JSON.parse(writtenJson)).not.toThrow();
 		});
 	});
 });

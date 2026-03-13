@@ -58,9 +58,7 @@ export class StoreService {
 					const raw = (store.get('modelSettings') ?? {}) as Record<string, unknown>;
 					const migrated: Record<string, ProviderSettings> = {};
 					for (const [id, record] of Object.entries(raw)) {
-						migrated[id] = migrateProviderSettingsRecord(
-							record as Partial<ProviderSettings>
-						);
+						migrated[id] = migrateProviderSettingsRecord(record as Partial<ProviderSettings>);
 					}
 					store.set('modelSettings', migrated);
 				},
@@ -141,9 +139,7 @@ export class StoreService {
 	}
 
 	private addRecentWorkspace(workspacePath: string): void {
-		const recent = this.store
-			.get('recentWorkspaces')
-			.filter((w) => w.path !== workspacePath);
+		const recent = this.store.get('recentWorkspaces').filter((w) => w.path !== workspacePath);
 
 		recent.unshift({
 			path: workspacePath,
@@ -158,9 +154,7 @@ export class StoreService {
 	}
 
 	removeRecentWorkspace(workspacePath: string): void {
-		const filtered = this.store
-			.get('recentWorkspaces')
-			.filter((w) => w.path !== workspacePath);
+		const filtered = this.store.get('recentWorkspaces').filter((w) => w.path !== workspacePath);
 		this.store.set('recentWorkspaces', filtered);
 	}
 }
