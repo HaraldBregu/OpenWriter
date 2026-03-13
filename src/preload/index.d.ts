@@ -107,6 +107,12 @@ export interface AppApi {
 	getAllApiKeys: () => Promise<Record<string, string>>;
 	getApiKey: (providerId: string) => Promise<string | null>;
 	setApiKey: (providerId: string, apiKey: string) => Promise<void>;
+	// ---------------------------------------------------------------------------
+	// Agent settings
+	// ---------------------------------------------------------------------------
+	getAgentSettings: () => Promise<Record<string, AgentConfig>>;
+	getAgentConfig: (agentId: string) => Promise<AgentConfig | null>;
+	setAgentConfig: (agentId: string, config: AgentConfig) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
