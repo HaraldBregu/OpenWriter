@@ -134,7 +134,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 					onClick={handleToggleVisibility}
 					className="absolute right-1.5 text-muted-foreground hover:text-foreground"
 				>
-					{isVisible ? <EyeOffIcon /> : <EyeIcon />}
+					{isVisible ? <EyeOff /> : <Eye />}
 				</AppButton>
 			</div>
 
