@@ -93,6 +93,27 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const provider = this.providerResolver.resolve({ providerId, modelId });
 		reporter.progress(10, 'Provider resolved');
 
+		// 2b. Resolve per-node models when the agent declares nodeRoles
+		let nodeModels: NodeModelMap | undefined;
+		if (def.nodeRoles && this.modelRegistry) {
+			nodeModels = {};
+			for (const [nodeName, role] of Object.entries(def.nodeRoles)) {
+				const cfg = this.modelRegistry.resolve(role);
+				const nodeProvider = this.providerResolver.resolve({
+					providerId: cfg.providerId,
+					modelId: cfg.modelId,
+				});
+				nodeModels[nodeName] = createChatModel({
+					providerId: nodeProvider.providerId,
+					apiKey: nodeProvider.apiKey,
+					modelName: nodeProvider.modelName,
+					streaming: true,
+					temperature: cfg.temperature,
+					maxTokens: cfg.maxTokens,
+				});
+			}
+		}
+
 		// 3. Stream via executor directly
 		let content = '';
 		let tokenCount = 0;
