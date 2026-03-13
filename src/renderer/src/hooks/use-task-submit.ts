@@ -201,15 +201,8 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 					taskId: resolvedTaskId,
 					type,
 					priority: mergedOptions.priority ?? optionsRef.current?.priority ?? 'normal',
-					metadata: submitOptions?.metadata,
 				})
 			);
-
-			// Seed the event-bus snapshot so that every TaskSnapshot delivered
-			// via subscribeToTask includes the caller-supplied metadata.
-			if (submitOptions?.metadata !== undefined) {
-				initTaskMetadata(resolvedTaskId, submitOptions.metadata);
-			}
 
 			taskIdRef.current = resolvedTaskId;
 			setTaskId(resolvedTaskId);
