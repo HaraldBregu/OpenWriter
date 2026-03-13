@@ -12,6 +12,9 @@ import { selectAllWritings } from '../store/writings/selectors';
 import { writingAdded } from '../store/writings/actions';
 import { TitleBar } from './TitleBar';
 import {
+	AppCollapsible,
+	AppCollapsibleTrigger,
+	AppCollapsiblePanel,
 	AppPopover,
 	AppPopoverContent,
 	AppPopoverTrigger,

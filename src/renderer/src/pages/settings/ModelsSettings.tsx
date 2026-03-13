@@ -1,4 +1,4 @@
-uimport React, { useEffect, useReducer, useCallback } from 'react';
+import React, { useEffect, useReducer, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { aiProviders, type AIProvider } from '@/config/ai-providers';
 
@@ -9,7 +9,7 @@ import { aiProviders, type AIProvider } from '@/config/ai-providers';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 interface ProviderState {
-	token: string;u
+	token: string;
 	status: SaveStatus;
 }
 
