@@ -162,7 +162,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	// Writings list — sourced from Redux (loaded/watched at app startup)
 	// -------------------------------------------------------------------------
 	const writings = useAppSelector(selectAllWritings);
-	const [writingsOpen, setWritingsOpen] = useState(true);
 
 	// -------------------------------------------------------------------------
 	// New writing handler — optimistic Redux update
