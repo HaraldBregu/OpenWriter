@@ -131,6 +131,10 @@ export const AppChannels = {
 	getAllApiKeys: 'store-get-all-api-keys',
 	getApiKey: 'store-get-api-key',
 	setApiKey: 'store-set-api-key',
+	// Store / Agent settings
+	getAgentSettings: 'store-get-agent-settings',
+	getAgentConfig: 'store-get-agent-config',
+	setAgentConfig: 'store-set-agent-config',
 } as const;
 
 // ===========================================================================
