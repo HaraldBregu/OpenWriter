@@ -28,7 +28,9 @@ import type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	ProjectWorkspaceInfo,
 } from '../../shared/types';
+import type { ProjectWorkspaceService } from './project-workspace';
 import { FileManager } from '../file_manager';
 
 const DATA_DIR = 'data';
