@@ -28,7 +28,7 @@ import { createChatModel } from '../../shared/chat-model-factory';
 import type { AgentStreamEvent } from './types';
 import type { AgentHistoryMessage } from './types';
 import type { LoggerService } from '../../services/logger';
-import type { GraphInputContext } from './definition';
+import type { GraphInputContext, NodeModelMap } from './definition';
 
 const LOG_PREFIX = 'AgentExecutor';
 
