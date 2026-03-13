@@ -36,6 +36,7 @@ import type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig } from './aiSettings';
 
