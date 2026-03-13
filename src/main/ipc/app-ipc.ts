@@ -140,94 +140,29 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Store / AI model settings handlers (merged from StoreIpc)
-		// Exposed to the renderer via window.app (not window.store).
+		// Store / API key handlers
 		// -----------------------------------------------------------------------
 
-		// --- Provider settings (current API) ---
-
 		ipcMain.handle(
-			AppChannels.getAllProviderSettings,
-			wrapSimpleHandler(() => store.getAllProviderSettings(), AppChannels.getAllProviderSettings)
+			AppChannels.getAllApiKeys,
+			wrapSimpleHandler(() => store.getAllApiKeys(), AppChannels.getAllApiKeys)
 		);
 
 		ipcMain.handle(
-			AppChannels.getProviderSettings,
+			AppChannels.getApiKey,
 			wrapSimpleHandler((providerId: string) => {
 				StoreValidators.validateProviderId(providerId);
-				return store.getProviderSettings(providerId);
-			}, AppChannels.getProviderSettings)
+				return store.getApiKey(providerId);
+			}, AppChannels.getApiKey)
 		);
 
 		ipcMain.handle(
-			AppChannels.setProviderSettings,
-			wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
+			AppChannels.setApiKey,
+			wrapSimpleHandler((providerId: string, apiKey: string) => {
 				StoreValidators.validateProviderId(providerId);
-				StoreValidators.validateModelName(settings.selectedModel);
-				StoreValidators.validateApiToken(settings.apiToken);
-				StoreValidators.validateTemperature(settings.temperature);
-				StoreValidators.validateMaxTokens(settings.maxTokens);
-				StoreValidators.validateReasoning(settings.reasoning);
-				return store.setProviderSettings(providerId, settings);
-			}, AppChannels.setProviderSettings)
-		);
-
-		ipcMain.handle(
-			AppChannels.setInferenceDefaults,
-			wrapSimpleHandler((providerId: string, update: InferenceDefaultsUpdate) => {
-				StoreValidators.validateProviderId(providerId);
-				if (update.temperature !== undefined) {
-					StoreValidators.validateTemperature(update.temperature);
-				}
-				if (update.maxTokens !== undefined) {
-					StoreValidators.validateMaxTokens(update.maxTokens);
-				}
-				if (update.reasoning !== undefined) {
-					StoreValidators.validateReasoning(update.reasoning);
-				}
-				return store.setInferenceDefaults(providerId, update);
-			}, AppChannels.setInferenceDefaults)
-		);
-
-		// --- Legacy model settings handlers ---
-
-		ipcMain.handle(
-			AppChannels.getModelSettings,
-			wrapSimpleHandler((providerId: string) => {
-				StoreValidators.validateProviderId(providerId);
-				return store.getModelSettings(providerId);
-			}, AppChannels.getModelSettings)
-		);
-
-		ipcMain.handle(
-			AppChannels.getAllModelSettings,
-			wrapSimpleHandler(() => store.getAllModelSettings(), AppChannels.getAllModelSettings)
-		);
-
-		ipcMain.handle(
-			AppChannels.setSelectedModel,
-			wrapSimpleHandler((providerId: string, modelId: string) => {
-				StoreValidators.validateProviderId(providerId);
-				StoreValidators.validateModelName(modelId);
-				return store.setSelectedModel(providerId, modelId);
-			}, AppChannels.setSelectedModel)
-		);
-
-		ipcMain.handle(
-			AppChannels.setApiToken,
-			wrapSimpleHandler((providerId: string, token: string) => {
-				StoreValidators.validateProviderId(providerId);
-				StoreValidators.validateApiToken(token);
-				return store.setApiToken(providerId, token);
-			}, AppChannels.setApiToken)
-		);
-
-		ipcMain.handle(
-			AppChannels.setModelSettings,
-			wrapSimpleHandler((providerId: string, settings: ProviderSettings) => {
-				StoreValidators.validateProviderId(providerId);
-				return store.setModelSettings(providerId, settings);
-			}, AppChannels.setModelSettings)
+				StoreValidators.validateApiToken(apiKey);
+				return store.setApiKey(providerId, apiKey);
+			}, AppChannels.setApiKey)
 		);
 
 		logger.info('AppIpc', `Registered ${this.name} module`);
