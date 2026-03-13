@@ -128,7 +128,7 @@ const App: React.FC = () => {
 														path="models"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<ModelsSettings />
+																<ModelsSettingsPage />
 															</Suspense>
 														}
 													/>
