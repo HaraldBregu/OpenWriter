@@ -223,20 +223,20 @@ describe('AIChatHandler', () => {
 			);
 		});
 
-		it('should use storeService.getModelSettings with the providerId', async () => {
+		it('should use storeService.getApiKey with the providerId', async () => {
 			await handler.execute(
 				{ prompt: 'hi', providerId: 'anthropic' },
 				makeAbortSignal(),
 				makeReporter()
 			);
 
-			expect(storeService.getModelSettings).toHaveBeenCalledWith('anthropic');
+			expect(storeService.getApiKey).toHaveBeenCalledWith('anthropic');
 		});
 
 		it('should default to "openai" provider when no providerId is supplied', async () => {
 			await handler.execute({ prompt: 'hi' }, makeAbortSignal(), makeReporter());
 
-			expect(storeService.getModelSettings).toHaveBeenCalledWith('openai');
+			expect(storeService.getApiKey).toHaveBeenCalledWith('openai');
 		});
 
 		it('should use the modelId from input when provided', async () => {

@@ -27,7 +27,7 @@ export class StoreService {
 			defaults: DEFAULTS,
 			accessPropertiesByDotNotation: false,
 			migrations: {
-				'2.0.0': (store) => {
+				'1.0.0': (store) => {
 					const raw = (store.get('modelSettings') ?? {}) as Record<string, unknown>;
 					const migrated: Record<string, string> = {};
 					for (const [id, record] of Object.entries(raw)) {
