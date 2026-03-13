@@ -13,11 +13,6 @@ export const WriterState = Annotation.Root({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
-	/** Desired output length. Controls which length-constraint prompt is used. */
-	contentLength: Annotation<'short' | 'medium' | 'long'>({
-		reducer: (_a, b) => b,
-		default: () => 'short',
-	}),
 	/** Output field — the generated continuation text. Populated by the node. */
 	completion: Annotation<string>({
 		reducer: (_a, b) => b,
