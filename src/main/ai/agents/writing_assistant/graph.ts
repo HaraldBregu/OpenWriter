@@ -14,9 +14,9 @@
  */
 
 import { StateGraph, START, END } from '@langchain/langgraph';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { WriterState } from './state';
 import type { WriterIntent } from './state';
+import type { NodeModelMap } from '../../core/definition';
 import { classifyIntent, continueWriting, enhanceText } from './nodes';
 
 // ---------------------------------------------------------------------------
