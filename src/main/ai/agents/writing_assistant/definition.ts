@@ -13,14 +13,14 @@
  *   - `streamMode: ['messages', 'values']` enables token-level streaming.
  */
 
-import type { AgentDefinition, GraphInputContext, NodeModelConfigs } from '../../core/definition';
+import type { AgentDefinition, GraphInputContext } from '../../core/definition';
 import { buildGraph } from './graph';
 
 // ---------------------------------------------------------------------------
 // Agent definition
 // ---------------------------------------------------------------------------
 
-const NODE_MODELS: NodeModelConfigs = {
+const NODE_MODELS: AgentDefinition['nodeModels'] = {
 	classify_intent: { providerId: 'openai', modelId: 'gpt-4o-mini', temperature: 0 },
 	continue_writing: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.7, maxTokens: 4096 },
 	enhance_text: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
