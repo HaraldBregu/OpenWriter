@@ -13,7 +13,7 @@
  *  - execute(): streams tokens via streamReporter.stream()
  *  - execute(): accumulates content and returns tokenCount
  *  - execute(): reports 'connecting' before streaming starts
- *  - execute(): uses storeService.getModelSettings for provider config
+ *  - execute(): uses storeService.getApiKey for provider config
  *  - execute(): aborts stream on cancel and throws 'Task cancelled'
  *  - execute(): auth error → user-friendly message
  *  - execute(): rate-limit error → user-friendly message
