@@ -43,6 +43,12 @@ describe('Store handlers in CustomIpc (formerly StoreIpc)', () => {
 
 		container = new ServiceContainer();
 		container.register('store', mockStore);
+		container.register('logger', {
+			info: jest.fn(),
+			error: jest.fn(),
+			warn: jest.fn(),
+			debug: jest.fn(),
+		});
 		eventBus = new EventBus();
 		module = new CustomIpc();
 	});
