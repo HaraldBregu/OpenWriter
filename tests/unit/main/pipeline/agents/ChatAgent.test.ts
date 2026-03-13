@@ -25,7 +25,6 @@
  */
 
 import type { AgentEvent } from '../../../../../src/main/pipeline/AgentBase';
-import type { ModelSettings } from '../../../../../src/main/services/store';
 
 // ---------------------------------------------------------------------------
 // Mock LangChain before importing the agent
