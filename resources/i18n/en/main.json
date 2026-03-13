@@ -118,6 +118,7 @@
 		"tabs": {
 			"general": "General",
 			"models": "Models",
+			"agents": "Agents",
 			"media": "Media",
 			"devices": "Devices",
 			"tools": "Tools",
