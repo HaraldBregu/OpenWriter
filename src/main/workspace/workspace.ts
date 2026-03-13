@@ -53,6 +53,7 @@ export class Workspace implements Disposable {
 		private readonly metadata: WorkspaceMetadataService,
 		private readonly watcher: DocumentsWatcherService | null,
 		private readonly outputFiles: OutputFilesService,
+		private readonly projectWorkspace: ProjectWorkspaceService,
 		private readonly logger: LoggerService
 	) {
 		this.documents = new DocumentsService(fileManagement, watcher);
