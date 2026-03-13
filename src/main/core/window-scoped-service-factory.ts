@@ -194,8 +194,7 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 				? windowContainer.get<DocumentsWatcherService>('documentsWatcher')
 				: null;
 			const outputFiles = windowContainer.get<OutputFilesService>('outputFiles');
-			const projectWorkspace =
-				windowContainer.get<ProjectWorkspaceService>('projectWorkspace');
+			const projectWorkspace = windowContainer.get<ProjectWorkspaceService>('projectWorkspace');
 			return new Workspace(
 				workspaceService,
 				fileManagement,

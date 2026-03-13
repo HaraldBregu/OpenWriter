@@ -237,7 +237,8 @@ export class ProjectWorkspaceService {
 				typeof record['name'] === 'string' && record['name'].trim().length > 0
 					? (record['name'] as string)
 					: path.basename(workspacePath),
-			description: typeof record['description'] === 'string' ? (record['description'] as string) : '',
+			description:
+				typeof record['description'] === 'string' ? (record['description'] as string) : '',
 			createdAt: typeof record['createdAt'] === 'string' ? (record['createdAt'] as string) : now,
 			updatedAt: typeof record['updatedAt'] === 'string' ? (record['updatedAt'] as string) : now,
 			appVersion:

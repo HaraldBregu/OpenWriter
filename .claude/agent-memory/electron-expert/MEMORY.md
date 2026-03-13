@@ -142,5 +142,20 @@
 - `createFile` has `createParents` option (default false) for the same reason
 - readFile has 64 MB size cap enforced via `fs.stat` before allocating the read buffer
 
+## Project Workspace File (project_workspace.json)
+- Service: `src/main/workspace/project-workspace.ts` → `ProjectWorkspaceService`
+- File location: `<workspace>/project_workspace.json` (workspace root)
+- Service is window-scoped, created by `createDefaultWindowScopedServiceFactory()` under key `'projectWorkspace'`
+- Passed into `Workspace` facade as 6th constructor arg (before `logger`)
+- Three IPC channels (all in WorkspaceIpc, all `wrapIpcHandler`):
+  - `project-workspace:get-info` → `workspace.getProjectInfo()` → returns `ProjectWorkspaceInfo | null`
+  - `project-workspace:update-name` → `workspace.updateProjectName(name)`
+  - `project-workspace:update-description` → `workspace.updateProjectDescription(description)`
+- Preload: `window.workspace.getProjectInfo/updateProjectName/updateProjectDescription` via `typedInvokeUnwrap`
+- Shared type: `ProjectWorkspaceInfo` in `src/shared/types.ts` (version, projectId, name, description, createdAt, updatedAt, appVersion)
+- Write strategy: atomic (temp-sibling + rename); no persistent cache — always reads fresh from disk
+- Schema migration hook: `migrateIfNeeded()` in service — extend when schema version bumps
+- `getOrCreate()` auto-creates a default file (name = folder basename, UUID projectId) on first access
+
 ## Details Files
 - See `patterns.md` for extended code patterns
