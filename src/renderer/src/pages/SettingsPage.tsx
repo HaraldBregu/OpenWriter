@@ -31,6 +31,7 @@ const SettingsPage: React.FC = () => {
 	const tabs: { id: Tab; label: string }[] = [
 		{ id: 'general', label: t('settings.tabs.general') },
 		{ id: 'models', label: t('settings.tabs.models') },
+		{ id: 'agents', label: t('settings.tabs.agents') },
 		{ id: 'media', label: t('settings.tabs.media') },
 		{ id: 'devices', label: t('settings.tabs.devices') },
 		{ id: 'tools', label: t('settings.tabs.tools') },
