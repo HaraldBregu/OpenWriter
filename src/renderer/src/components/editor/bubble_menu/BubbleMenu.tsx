@@ -123,6 +123,21 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			>
 				<Heading3 className="h-3.5 w-3.5" />
 			</AppButton>
+
+			{onEnhanceWithAI && (
+				<>
+					<div className="mx-0.5 h-4 w-px bg-border" />
+					<AppButton
+						variant="ghost"
+						size="icon"
+						aria-label="Enhance with AI"
+						className="h-7 w-7 text-violet-500 hover:text-violet-400"
+						onClick={handleEnhanceWithAI}
+					>
+						<Sparkles className="h-3.5 w-3.5" />
+					</AppButton>
+				</>
+			)}
 		</div>
 	);
 });
