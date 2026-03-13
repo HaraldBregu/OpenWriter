@@ -52,7 +52,9 @@ export interface ExecutorInput {
 	 * The factory receives the already-configured streaming model.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (
+		models: BaseChatModel | NodeModelMap
+	) => CompiledStateGraph<any, any, any, any, any, any>;
 	/**
 	 * Custom-state graph hooks (must be provided as a pair).
 	 * When present, the executor uses the custom-state protocol instead of
@@ -216,7 +218,9 @@ interface CustomStateGraphStreamInput {
 	nodeModels?: NodeModelMap;
 	ctx: GraphInputContext;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (
+		models: BaseChatModel | NodeModelMap
+	) => CompiledStateGraph<any, any, any, any, any, any>;
 	buildGraphInput: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput: (state: Record<string, unknown>) => string;
 	signal?: AbortSignal;
@@ -325,7 +329,9 @@ interface MessagesGraphStreamInput {
 	model: BaseChatModel;
 	langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (
+		models: BaseChatModel | NodeModelMap
+	) => CompiledStateGraph<any, any, any, any, any, any>;
 	signal?: AbortSignal;
 	logger?: LoggerService;
 }

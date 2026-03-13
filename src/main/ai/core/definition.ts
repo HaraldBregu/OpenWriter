@@ -89,7 +89,9 @@ export interface AgentDefinition {
 	 *                 keyed by node name when the definition declares `nodeRoles`.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (
+		models: BaseChatModel | NodeModelMap
+	) => CompiledStateGraph<any, any, any, any, any, any>;
 	/**
 	 * Maps executor-resolved context to the graph's initial state object.
 	 *
