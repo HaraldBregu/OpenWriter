@@ -31,20 +31,7 @@ import {
 	useSidebar,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
-import {
-	Settings,
-	User,
-	Shield,
-	LogOut,
-	CreditCard,
-	HelpCircle,
-	ChevronRight,
-	Bell,
-	Bug,
-	PenLine,
-	Plus,
-	Library,
-} from 'lucide-react';
+import { Settings, ChevronRight, Bug, PenLine, Plus, Library } from 'lucide-react';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
