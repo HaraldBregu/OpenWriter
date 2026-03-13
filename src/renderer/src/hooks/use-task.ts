@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
 import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
-import { subscribeToTask, getTaskSnapshot, initTaskMetadata } from '@/services/task-event-bus';
+import { subscribeToTask, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
 import type { UseTaskSubmitReturn, TaskOptions } from './use-task-submit';
 
