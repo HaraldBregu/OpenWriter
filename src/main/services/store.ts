@@ -1,5 +1,6 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
+import type { AgentConfig } from '../../shared/aiSettings';
 
 export interface WorkspaceInfo {
 	path: string;
@@ -8,12 +9,14 @@ export interface WorkspaceInfo {
 
 export interface StoreSchema {
 	modelSettings: Record<string, string>;
+	agentSettings: Record<string, AgentConfig>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
 
 const DEFAULTS: StoreSchema = {
 	modelSettings: {},
+	agentSettings: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
