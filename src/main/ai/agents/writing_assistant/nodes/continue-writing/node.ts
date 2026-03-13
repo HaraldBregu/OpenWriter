@@ -18,20 +18,13 @@ import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messag
 
 const SYSTEM_PROMPT = readFileSync(join(__dirname, 'SYSTEM.md'), 'utf-8');
 
-// ---------------------------------------------------------------------------
-// Node: continue_writing
-// ---------------------------------------------------------------------------
-
 export async function continueWriting(
 	state: typeof WriterState.State,
 	model: BaseChatModel
 ): Promise<Partial<typeof WriterState.State>> {
 	const content = state.prompt;
 
-	const messages: BaseMessage[] = [
-		new SystemMessage(SYSTEM_PROMPT),
-		new HumanMessage(content),
-	];
+	const messages: BaseMessage[] = [new SystemMessage(SYSTEM_PROMPT), new HumanMessage(content)];
 
 	let completion = '';
 	const stream = await model.stream(messages);
