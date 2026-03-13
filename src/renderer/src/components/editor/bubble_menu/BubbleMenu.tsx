@@ -15,13 +15,13 @@ import { AppButton } from '../../app/AppButton';
 import { useEditorContext } from '../EditorContext';
 
 interface BubbleMenuProps {
-	onEnhanceWithAI?: (selectedText: string, from: number, to: number) => void;
+	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 }
 
 const pluginKey = new PluginKey('bubbleMenu');
 
 export const BubbleMenu = React.memo(function BubbleMenu({
-	onEnhanceWithAI,
+	onEnhanceWithAssistant,
 }: BubbleMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
@@ -47,9 +47,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		const { from, to } = editor.state.selection;
 		const selectedText = editor.state.doc.textBetween(from, to, ' ');
 		if (selectedText.trim().length > 0) {
-			onEnhanceWithAI?.(selectedText, from, to);
+			onEnhanceWithAssistant?.(selectedText, from, to);
 		}
-	}, [editor, onEnhanceWithAI]);
+	}, [editor, onEnhanceWithAssistant]);
 
 	return (
 		<div
@@ -124,7 +124,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				<Heading3 className="h-3.5 w-3.5" />
 			</AppButton>
 
-			{onEnhanceWithAI && (
+			{onEnhanceWithAssistant && (
 				<>
 					<div className="mx-0.5 h-4 w-px bg-border" />
 					<AppButton
