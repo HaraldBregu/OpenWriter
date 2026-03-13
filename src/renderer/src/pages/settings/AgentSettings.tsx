@@ -248,4 +248,4 @@ const AgentSettingsPage: React.FC = () => {
 	);
 };
 
-export default AgentSettings;
+export default AgentSettingsPage;
