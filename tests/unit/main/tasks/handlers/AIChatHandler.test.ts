@@ -156,11 +156,8 @@ describe('AIChatHandler', () => {
 	// ---- execute — API key guard ---------------------------------------------
 
 	describe('execute — API key guard', () => {
-		it('should throw when storeService returns no apiToken and env key is undefined', async () => {
-			storeService.getModelSettings.mockReturnValue({
-				apiToken: undefined,
-				selectedModel: 'gpt-4o-mini',
-			});
+		it('should throw when storeService returns no apiKey and env key is undefined', async () => {
+			storeService.getApiKey.mockReturnValue(null);
 			handler = new AIChatHandler(storeService as any);
 
 			await expect(
