@@ -8,8 +8,20 @@
 
 import { Annotation } from '@langchain/langgraph';
 
+/** Valid classifications produced by the intent node. */
+export type WriterIntent = 'enhance' | 'continue_writing';
+
 export const WriterState = Annotation.Root({
 	prompt: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+	/**
+	 * Intent classification set by the intent node.
+	 * Empty string is the unclassified default; the intent node always
+	 * overwrites it before any downstream node runs.
+	 */
+	intent: Annotation<WriterIntent | ''>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
