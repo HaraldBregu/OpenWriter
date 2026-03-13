@@ -11,7 +11,7 @@ import type { WorkspaceService } from './workspace-service';
 // Constants
 // ---------------------------------------------------------------------------
 
-const PROJECT_WORKSPACE_FILENAME = 'project_workspace.json';
+const PROJECT_WORKSPACE_FILENAME = 'project_workspace.openwriter';
 
 /**
  * Current schema version written to every new project_workspace.json.
