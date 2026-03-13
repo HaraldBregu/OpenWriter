@@ -327,6 +327,22 @@ export interface ProjectWorkspaceInfo {
 	appVersion: string;
 }
 
+/**
+ * Payload accepted by the `project-workspace:update-name` channel.
+ */
+export interface ProjectWorkspaceUpdateNameParams {
+	/** New project name. Must be a non-empty string of at most 255 characters. */
+	name: string;
+}
+
+/**
+ * Payload accepted by the `project-workspace:update-description` channel.
+ */
+export interface ProjectWorkspaceUpdateDescriptionParams {
+	/** New project description. May be an empty string to clear it. */
+	description: string;
+}
+
 // ---- AI Agents ------------------------------------------------------------
 
 export type AgentStreamEvent =
