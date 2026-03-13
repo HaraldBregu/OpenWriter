@@ -52,11 +52,8 @@ export class ProviderResolver {
 		// Resolve provider ID
 		const providerId = options?.providerId || this.DEFAULT_PROVIDER;
 
-		// Fetch settings for this provider
-		const settings = this.storeService.getModelSettings(providerId);
-
 		// Resolve API key with fallback to environment variable
-		const apiKey = settings?.apiToken || import.meta.env.VITE_OPENAI_API_KEY;
+		const apiKey = this.storeService.getApiKey(providerId) || import.meta.env.VITE_OPENAI_API_KEY;
 
 		// Validate API key
 		if (!apiKey || apiKey === this.PLACEHOLDER_API_KEY) {
@@ -68,10 +65,7 @@ export class ProviderResolver {
 
 		// Resolve model name with fallback to environment variable and default
 		const modelName =
-			options?.modelId ||
-			settings?.selectedModel ||
-			import.meta.env.VITE_OPENAI_MODEL ||
-			this.DEFAULT_MODEL;
+			options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
 
 		return { apiKey, modelName, providerId };
 	}
