@@ -165,6 +165,16 @@ const DocumentPage: React.FC = () => {
 		[writingAssistantTask.submit]
 	);
 
+	const onEnhanceWithAssistant = useCallback(
+		(selectedText: string, from: number, to: number) => {
+			// const prompt = `ENHANCE THE FOLLOWING TEXT WITH MORE DETAIL AND DESCRIPTION:\n\n${selectedText}`;
+			// const temperature = 0.9;
+			// const data: WritingAssistantTaskData = { prompt, temperature };
+			// writingAssistantTask.submit(data);
+		},
+		[writingAssistantTask.submit]
+	);
+
 	const onAgentPromptSubmit = useCallback(
 		(before: string, after: string, cursorPos: number, prompt: string) => {
 			console.log('Prompt submitted:', { before, after, cursorPos, prompt });
@@ -219,6 +229,7 @@ const DocumentPage: React.FC = () => {
 									value={content}
 									onChange={handleContentChange}
 									onContinueWithAssistant={onContinueWithAssistant}
+									onEnhanceWithAssistant={onEnhanceWithAssistant}
 									onAgentPromptSubmit={onAgentPromptSubmit}
 								/>
 							)}
