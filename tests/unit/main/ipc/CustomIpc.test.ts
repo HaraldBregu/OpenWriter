@@ -34,17 +34,10 @@ describe('CustomIpc', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		container = new ServiceContainer();
-		// CustomIpc now also registers store handlers and requires the store service
 		container.register('store', {
-			getAllProviderSettings: jest.fn().mockReturnValue({}),
-			getProviderSettings: jest.fn().mockReturnValue(null),
-			setProviderSettings: jest.fn(),
-			setInferenceDefaults: jest.fn(),
-			getModelSettings: jest.fn().mockReturnValue(null),
-			getAllModelSettings: jest.fn().mockReturnValue({}),
-			setSelectedModel: jest.fn(),
-			setApiToken: jest.fn(),
-			setModelSettings: jest.fn(),
+			getAllApiKeys: jest.fn().mockReturnValue({}),
+			getApiKey: jest.fn().mockReturnValue(null),
+			setApiKey: jest.fn(),
 		});
 		eventBus = new EventBus();
 		module = new CustomIpc();
@@ -67,24 +60,18 @@ describe('CustomIpc', () => {
 		expect(channels).toContain('context-menu-editable');
 	});
 
-	it('should register 10 ipcMain.handle handlers (writing context menu + 9 store channels)', () => {
+	it('should register 4 ipcMain.handle handlers (writing context menu + 3 store channels)', () => {
 		module.register(container, eventBus);
-		// 1 writing context menu + 9 store/settings channels
-		expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(10);
+		// 1 writing context menu + 3 API key channels
+		expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(4);
 	});
 
 	it('should register writing context menu and all store channels via handle', () => {
 		module.register(container, eventBus);
 		const channels = (ipcMain.handle as jest.Mock).mock.calls.map((c: unknown[]) => c[0]);
 		expect(channels).toContain('context-menu:writing');
-		expect(channels).toContain('store-get-all-provider-settings');
-		expect(channels).toContain('store-get-provider-settings');
-		expect(channels).toContain('store-set-provider-settings');
-		expect(channels).toContain('store-set-inference-defaults');
-		expect(channels).toContain('store-get-all-model-settings');
-		expect(channels).toContain('store-get-model-settings');
-		expect(channels).toContain('store-set-selected-model');
-		expect(channels).toContain('store-set-api-token');
-		expect(channels).toContain('store-set-model-settings');
+		expect(channels).toContain('store-get-all-api-keys');
+		expect(channels).toContain('store-get-api-key');
+		expect(channels).toContain('store-set-api-key');
 	});
 });
