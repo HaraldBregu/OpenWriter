@@ -18,9 +18,7 @@ import { continueWriting } from './nodes/continue-writing/node';
 
 export function buildGraph(model: BaseChatModel) {
 	const graph = new StateGraph(WriterState)
-		.addNode('continue_writing', (state: typeof WriterState.State) =>
-			continueWriting(state, model)
-		)
+		.addNode('continue_writing', (state: typeof WriterState.State) => continueWriting(state, model))
 		.addEdge(START, 'continue_writing')
 		.addEdge('continue_writing', END);
 

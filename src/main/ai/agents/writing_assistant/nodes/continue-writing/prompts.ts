@@ -1,5 +1,4 @@
-import { SystemMessage } from "@langchain/core/messages";
-
+import { SystemMessage } from '@langchain/core/messages';
 
 export const systemPrompt = new SystemMessage(`
 You are a writing continuation assistant.
@@ -43,4 +42,3 @@ export const systemPromptLong = new SystemMessage(`
 # Length constraint
 Write a maximum of 50–60 words to continue the text. Provide rich detail, depth, and nuance while staying focused.
 `);
-
