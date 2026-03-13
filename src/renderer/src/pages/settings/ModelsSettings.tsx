@@ -196,7 +196,7 @@ const ModelsSettings: React.FC = () => {
 			dispatch({ type: 'SET_STATUS', providerId, status: 'saving' });
 
 			window.app
-				.setApiToken(providerId, current.token.trim())
+				.setApiKey(providerId, current.token.trim())
 				.then(() => {
 					dispatch({ type: 'SET_STATUS', providerId, status: 'saved' });
 					setTimeout(() => {
