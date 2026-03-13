@@ -85,11 +85,11 @@ export interface AgentDefinition {
 	 *   `extractGraphOutput(finalState)` to pull the content string.
 	 *   Use this for graphs with domain-specific state shapes (e.g. WriterState).
 	 *
-	 * @param model - The resolved LangChain chat model (streaming enabled).
-	 *               Graphs that manage their own model internally may ignore this.
+	 * @param models - A single resolved LangChain chat model, or a `NodeModelMap`
+	 *                 keyed by node name when the definition declares `nodeRoles`.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (models: BaseChatModel | NodeModelMap) => CompiledStateGraph<any, any, any, any, any, any>;
 	/**
 	 * Maps executor-resolved context to the graph's initial state object.
 	 *
