@@ -20,9 +20,6 @@ export interface NodeModelConfig {
 	maxTokens?: number;
 }
 
-/** Maps node names to their model configuration. */
-export type NodeModelConfigs = Record<string, NodeModelConfig>;
-
 /** Maps node names to resolved LangChain chat model instances. */
 export type NodeModelMap = Record<string, BaseChatModel>;
 
