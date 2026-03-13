@@ -53,9 +53,9 @@ describe('CustomIpc', () => {
 		expect(module.name).toBe('app');
 	});
 
-	it('should register 3 ipcMain.on handlers (sound + 2 context menus)', () => {
+	it('should register 4 ipcMain.on handlers (theme + sound + 2 context menus)', () => {
 		module.register(container, eventBus);
-		expect((ipcMain.on as jest.Mock).mock.calls).toHaveLength(3);
+		expect((ipcMain.on as jest.Mock).mock.calls).toHaveLength(4);
 	});
 
 	it('should register play-sound, context-menu, and context-menu-editable on channels', () => {
