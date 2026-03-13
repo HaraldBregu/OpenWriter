@@ -16,32 +16,7 @@ import { extractTokenFromChunk } from '../../../../../shared/ai-utils';
 import type { WriterState } from '../../state';
 import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 
-// ---------------------------------------------------------------------------
-// Prompts
-// ---------------------------------------------------------------------------
-
 const SYSTEM_PROMPT = readFileSync(join(__dirname, 'SYSTEM.md'), 'utf-8');
-
-const SHORT_CONTINUATION_PROMPT = `
-# Length constraint
-Write a maximum of 10–15 words to continue the text. Be concise and precise.
-`;
-
-const MEDIUM_CONTINUATION_PROMPT = `
-# Length constraint
-Write a maximum of 25–30 words to continue the text. Provide more detail and depth while staying focused.
-`;
-
-const LONG_CONTINUATION_PROMPT = `
-# Length constraint
-Write a maximum of 50–60 words to continue the text. Provide rich detail, depth, and nuance while staying focused.
-`;
-
-const LENGTH_PROMPTS: Record<string, string> = {
-	short: SHORT_CONTINUATION_PROMPT,
-	medium: MEDIUM_CONTINUATION_PROMPT,
-	long: LONG_CONTINUATION_PROMPT,
-};
 
 // ---------------------------------------------------------------------------
 // Node: continue_writing
@@ -55,7 +30,6 @@ export async function continueWriting(
 
 	const messages: BaseMessage[] = [
 		new SystemMessage(SYSTEM_PROMPT),
-		// new SystemMessage(LENGTH_PROMPTS[state.contentLength] ?? SHORT_CONTINUATION_PROMPT),
 		new HumanMessage(content),
 	];
 
