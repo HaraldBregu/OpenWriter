@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DevicesSettings: React.FC = () => {
+const DevicesSettingsPage: React.FC = () => {
 	return null;
 };
 
