@@ -9,7 +9,7 @@
 
 import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
-import type { AgentRegistry, AgentStreamEvent, ModelRegistry, NodeModelMap } from '../../ai';
+import type { AgentRegistry, AgentStreamEvent, NodeModelMap } from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { createChatModel } from '../../shared/chat-model-factory';
@@ -44,8 +44,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		private readonly agentId: string,
 		private readonly agentsRegistry: AgentRegistry,
 		private readonly providerResolver: ProviderResolver,
-		private readonly logger?: LoggerService,
-		private readonly modelRegistry?: ModelRegistry
+		private readonly logger?: LoggerService
 	) {
 		this.type = `agent-${agentId}`;
 	}
@@ -80,25 +79,19 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		}
 		reporter.progress(5, 'Resolved agent definition');
 
-		// 2. Resolve model config via role (if available), then provider
-		//    Priority: task input → ModelRegistry role → ProviderResolver fallback
-		const roleConfig =
-			def.role && this.modelRegistry?.has(def.role)
-				? this.modelRegistry.resolve(def.role)
-				: undefined;
-
-		const providerId = input.providerId ?? roleConfig?.providerId;
-		const modelId = input.modelId ?? roleConfig?.modelId;
+		// 2. Resolve provider (task input overrides → definition default → global fallback)
+		const defaultCfg = def.defaultModel;
+		const providerId = input.providerId ?? defaultCfg?.providerId;
+		const modelId = input.modelId ?? defaultCfg?.modelId;
 
 		const provider = this.providerResolver.resolve({ providerId, modelId });
 		reporter.progress(10, 'Provider resolved');
 
-		// 2b. Resolve per-node models when the agent declares nodeRoles
+		// 3. Resolve per-node models when the definition declares them
 		let nodeModels: NodeModelMap | undefined;
-		if (def.nodeRoles && this.modelRegistry) {
+		if (def.nodeModels) {
 			nodeModels = {};
-			for (const [nodeName, role] of Object.entries(def.nodeRoles)) {
-				const cfg = this.modelRegistry.resolve(role);
+			for (const [nodeName, cfg] of Object.entries(def.nodeModels)) {
 				const nodeProvider = this.providerResolver.resolve({
 					providerId: cfg.providerId,
 					modelId: cfg.modelId,
@@ -114,14 +107,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			}
 		}
 
-		// 3. Stream via executor directly
+		// 4. Stream via executor directly
 		let content = '';
 		let tokenCount = 0;
 		let tokensSinceLastProgress = 0;
 		let currentProgress = 10;
 
-		const resolvedTemperature = input.temperature ?? roleConfig?.temperature ?? 0.7;
-		const resolvedMaxTokens = input.maxTokens ?? roleConfig?.maxTokens;
+		const resolvedTemperature = input.temperature ?? defaultCfg?.temperature ?? 0.7;
+		const resolvedMaxTokens = input.maxTokens ?? defaultCfg?.maxTokens;
 
 		const gen = executeAIAgentsStream({
 			runId: randomUUID(),
