@@ -4,4 +4,4 @@ const MediaSettingsPage: React.FC = () => {
 	return null;
 };
 
-export default MediaSettings;
+export default MediaSettingsPage;
