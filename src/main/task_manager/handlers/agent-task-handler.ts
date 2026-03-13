@@ -74,7 +74,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		reporter: ProgressReporter,
 		streamReporter?: StreamReporter
 	): Promise<AgentTaskOutput> {
-
 		// 1. Resolve agent definition
 		const def = this.agentsRegistry.get(this.agentId);
 		if (!def) {

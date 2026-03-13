@@ -22,9 +22,12 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	type WritingAssistantTaskData = { prompt: string, temperature?: number, maxTokens?: number };
+	type WritingAssistantTaskData = { prompt: string; temperature?: number; maxTokens?: number };
 	const writingAssistantTaskData: WritingAssistantTaskData = { prompt: '' };
-	const writingAssistantTask = useTask<WritingAssistantTaskData>('agent-writing-assistant',  writingAssistantTaskData);
+	const writingAssistantTask = useTask<WritingAssistantTaskData>(
+		'agent-writing-assistant',
+		writingAssistantTaskData
+	);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -147,15 +150,12 @@ const DocumentPage: React.FC = () => {
 			const prompt = `${cleanBefore}\n\n▇\n\n${cleanAfter}`;
 			const temperature = 0.9;
 			const data: WritingAssistantTaskData = { prompt, temperature };
-			writingAssistantTask.submit(
-				data,
-				{
-					metadata: {
-						cursorPos,
-						contentLength: 'long',
-					},
-				}
-			);
+			writingAssistantTask.submit(data, {
+				metadata: {
+					cursorPos,
+					contentLength: 'long',
+				},
+			});
 		},
 		[writingAssistantTask.submit]
 	);
