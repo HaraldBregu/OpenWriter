@@ -20,11 +20,18 @@ import { buildGraph } from './graph';
 // Agent definition
 // ---------------------------------------------------------------------------
 
+const NODE_ROLES: NodeRoleMap = {
+	classify_intent: 'completer',
+	continue_writing: 'writer',
+	enhance_text: 'editor',
+};
+
 const definition: AgentDefinition = {
 	id: 'writing-assistant',
 	name: 'Writing Assistant',
 	category: 'writing',
 	role: 'completer',
+	nodeRoles: NODE_ROLES,
 	buildGraph,
 
 	/**
