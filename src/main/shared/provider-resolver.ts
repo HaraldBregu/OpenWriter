@@ -64,8 +64,7 @@ export class ProviderResolver {
 		}
 
 		// Resolve model name with fallback to environment variable and default
-		const modelName =
-			options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
+		const modelName = options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
 
 		return { apiKey, modelName, providerId };
 	}
