@@ -578,7 +578,7 @@ describe('EnhanceAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal);
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('openai');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('openai');
 	});
 
 	it('should use providerId from context when supplied', async () => {
@@ -590,7 +590,7 @@ describe('EnhanceAgent — configuration resolution', () => {
 
 		await collectEvents(agent, 'test', 'run-1', controller.signal, { providerId: 'azure-openai' });
 
-		expect(storeService.getModelSettings).toHaveBeenCalledWith('azure-openai');
+		expect(storeService.getApiKey).toHaveBeenCalledWith('azure-openai');
 	});
 });
 
