@@ -304,6 +304,29 @@ export interface FsRenameResult {
 	newPath: string;
 }
 
+// ---- Project Workspace ----------------------------------------------------
+
+/**
+ * Schema for the project_workspace.json file stored in the workspace root.
+ * Contains project-level metadata that identifies and describes the workspace.
+ */
+export interface ProjectWorkspaceInfo {
+	/** Schema version for forward compatibility. */
+	version: number;
+	/** Unique identifier for this project workspace (UUID v4). */
+	projectId: string;
+	/** Human-readable project name (defaults to the folder name). */
+	name: string;
+	/** Optional project description. */
+	description: string;
+	/** ISO 8601 timestamp when the project was first created. */
+	createdAt: string;
+	/** ISO 8601 timestamp of the last update to this file. */
+	updatedAt: string;
+	/** Application version that created this project file. */
+	appVersion: string;
+}
+
 // ---- AI Agents ------------------------------------------------------------
 
 export type AgentStreamEvent =
