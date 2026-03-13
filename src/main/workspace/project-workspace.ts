@@ -14,7 +14,7 @@ import type { WorkspaceService } from './workspace-service';
 const PROJECT_WORKSPACE_FILENAME = 'project_workspace.openwriter';
 
 /**
- * Current schema version written to every new project_workspace.json.
+ * Current schema version written to every new project_workspace.openwriter.
  * Increment when the file shape changes in a breaking way and add migration
  * logic in `migrateIfNeeded`.
  */
@@ -30,7 +30,7 @@ const MAX_NAME_LENGTH = 255;
 // ---------------------------------------------------------------------------
 
 /**
- * ProjectWorkspaceService manages the `project_workspace.json` file in the
+ * ProjectWorkspaceService manages the `project_workspace.openwriter` file in the
  * root of each workspace folder.
  *
  * Responsibilities:
@@ -57,7 +57,7 @@ export class ProjectWorkspaceService {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Return the current `project_workspace.json` data, creating it if it does
+	 * Return the current `project_workspace.openwriter` data, creating it if it does
 	 * not yet exist.
 	 *
 	 * @returns The parsed `ProjectWorkspaceInfo`, guaranteed non-null.
@@ -70,7 +70,7 @@ export class ProjectWorkspaceService {
 		if (!fs.existsSync(filePath)) {
 			this.logger?.info(
 				'ProjectWorkspaceService',
-				`project_workspace.json not found, creating default at: ${filePath}`
+				`project_workspace.openwriter not found, creating default at: ${filePath}`
 			);
 			const created = this.buildDefault(workspacePath);
 			await this.atomicWrite(filePath, created);
@@ -144,7 +144,7 @@ export class ProjectWorkspaceService {
 	}
 
 	/**
-	 * Resolve the absolute path to `project_workspace.json` in a workspace.
+	 * Resolve the absolute path to `project_workspace.openwriter` in a workspace.
 	 */
 	private resolveFilePath(workspacePath: string): string {
 		return path.join(workspacePath, PROJECT_WORKSPACE_FILENAME);
@@ -168,7 +168,7 @@ export class ProjectWorkspaceService {
 	}
 
 	/**
-	 * Read and parse the project_workspace.json file.
+	 * Read and parse the project_workspace.openwriter file.
 	 * Applies any pending migrations before returning.
 	 *
 	 * @throws If the file cannot be read or parsed as valid JSON.
@@ -182,7 +182,7 @@ export class ProjectWorkspaceService {
 			raw = await fsPromises.readFile(filePath, 'utf-8');
 		} catch (err) {
 			throw new Error(
-				`Failed to read project_workspace.json: ${err instanceof Error ? err.message : String(err)}`
+				`Failed to read project_workspace.openwriter: ${err instanceof Error ? err.message : String(err)}`
 			);
 		}
 
@@ -191,7 +191,7 @@ export class ProjectWorkspaceService {
 			parsed = JSON.parse(raw);
 		} catch {
 			throw new Error(
-				`project_workspace.json contains invalid JSON. ` +
+				`project_workspace.openwriter contains invalid JSON. ` +
 					`Delete the file to let OpenWriter recreate it.`
 			);
 		}
@@ -204,7 +204,7 @@ export class ProjectWorkspaceService {
 			await this.atomicWrite(filePath, migrated);
 			this.logger?.info(
 				'ProjectWorkspaceService',
-				`Migrated project_workspace.json v${info.version} → v${migrated.version}`
+				`Migrated project_workspace.openwriter v${info.version} → v${migrated.version}`
 			);
 		}
 
@@ -221,7 +221,7 @@ export class ProjectWorkspaceService {
 	 */
 	private validateSchema(parsed: unknown, workspacePath: string): ProjectWorkspaceInfo {
 		if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
-			throw new Error('project_workspace.json must contain a JSON object at the root level.');
+			throw new Error('project_workspace.openwriter must contain a JSON object at the root level.');
 		}
 
 		const record = parsed as Record<string, unknown>;
@@ -278,7 +278,7 @@ export class ProjectWorkspaceService {
 			// Best-effort cleanup of the temp file
 			await fsPromises.unlink(tmpPath).catch(() => undefined);
 			throw new Error(
-				`Failed to write project_workspace.json: ${err instanceof Error ? err.message : String(err)}`
+				`Failed to write project_workspace.openwriter: ${err instanceof Error ? err.message : String(err)}`
 			);
 		}
 	}
