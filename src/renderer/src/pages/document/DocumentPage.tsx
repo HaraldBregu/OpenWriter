@@ -154,7 +154,7 @@ const DocumentPage: React.FC = () => {
 			const prompt = `
 			${cleanBefore}
 
-			⬢CONTINUE WRITING HERE⬢
+			⬢ CONTINUE WRITING HERE WITH 15 WORDS MAX ⬢
 
 			${cleanAfter}
 			`;
