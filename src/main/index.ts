@@ -7,6 +7,7 @@ import { WorkspaceProcessManager } from './workspace-process';
 
 import type { WorkspaceService } from './workspace/workspace-service';
 import type { WorkspaceMetadataService } from './workspace/workspace-metadata';
+import type { ProjectWorkspaceService } from './workspace/project-workspace';
 import {
 	bootstrapServices,
 	bootstrapIpcModules,
