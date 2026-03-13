@@ -64,6 +64,7 @@ const TextEditor = React.memo(
 				id,
 				streamingContent,
 				onContinueWithAssistant,
+				onEnhanceWithAssistant,
 				onAgentPromptSubmit,
 			},
 			ref
