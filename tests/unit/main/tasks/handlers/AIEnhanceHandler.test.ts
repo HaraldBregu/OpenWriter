@@ -212,7 +212,7 @@ describe('AIEnhanceHandler', () => {
 		it('should default to "openai" provider when no providerId is supplied', async () => {
 			await handler.execute({ text: 'Some text' }, makeAbortSignal(), makeReporter());
 
-			expect(storeService.getModelSettings).toHaveBeenCalledWith('openai');
+			expect(storeService.getApiKey).toHaveBeenCalledWith('openai');
 		});
 
 		it('should use the supplied providerId', async () => {
@@ -222,7 +222,7 @@ describe('AIEnhanceHandler', () => {
 				makeReporter()
 			);
 
-			expect(storeService.getModelSettings).toHaveBeenCalledWith('anthropic');
+			expect(storeService.getApiKey).toHaveBeenCalledWith('anthropic');
 		});
 
 		it('should use the modelId from input when provided', async () => {
