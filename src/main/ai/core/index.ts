@@ -2,8 +2,9 @@ export type {
 	AgentDefinition,
 	AgentDefinitionInfo,
 	GraphInputContext,
+	NodeModelConfig,
+	NodeModelConfigs,
 	NodeModelMap,
-	NodeRoleMap,
 } from './definition';
 export { toAgentDefinitionInfo } from './definition';
 export { AgentRegistry } from './agent-registry';
