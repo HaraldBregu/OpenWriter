@@ -61,14 +61,11 @@ const DocumentPage = lazy(() => import('./pages/document/DocumentPage'));
 const DebugPage = lazy(() => import('./pages/debug/DebugPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 
-// Lazy-loaded settings panels
-const GeneralSettings = lazy(() => import('./pages/settings/GeneralSettings'));
-const ModelsSettings = lazy(() => import('./pages/settings/ModelsSettings'));
-const AgentSettings = lazy(() => import('./pages/settings/AgentSettings'));
-const MediaSettings = lazy(() => import('./pages/settings/MediaSettings'));
-const DevicesSettings = lazy(() => import('./pages/settings/DevicesSettings'));
-const ToolsSettings = lazy(() => import('./pages/settings/ToolsSettings'));
-const SystemSettings = lazy(() => import('./pages/settings/SystemSettings'));
+// Lazy-loaded settings pages
+const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
+const ModelsSettingsPage = lazy(() => import('./pages/settings/ModelsSettingsPage'));
+const AgentSettingsPage = lazy(() => import('./pages/settings/AgentSettingsPage'));
+const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
