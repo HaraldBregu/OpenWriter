@@ -55,13 +55,13 @@ describe('ProjectWorkspaceService', () => {
 	// ---------------------------------------------------------------------------
 
 	function readProjectFile(): ProjectWorkspaceInfo {
-		const filePath = path.join(workspaceDir, 'project_workspace.json');
+		const filePath = path.join(workspaceDir, 'project_workspace.openwriter');
 		const raw = fs.readFileSync(filePath, 'utf-8');
 		return JSON.parse(raw);
 	}
 
 	function projectFileExists(): boolean {
-		return fs.existsSync(path.join(workspaceDir, 'project_workspace.json'));
+		return fs.existsSync(path.join(workspaceDir, 'project_workspace.openwriter'));
 	}
 
 	// ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ describe('ProjectWorkspaceService', () => {
 	// ---------------------------------------------------------------------------
 
 	describe('getOrCreate', () => {
-		it('should create project_workspace.json if it does not exist', async () => {
+		it('should create project_workspace.openwriter if it does not exist', async () => {
 			expect(projectFileExists()).toBe(false);
 
 			const info = await service.getOrCreate();
@@ -84,7 +84,7 @@ describe('ProjectWorkspaceService', () => {
 			expect(info.appVersion).toBe('1.0.0-test');
 		});
 
-		it('should return existing project_workspace.json data', async () => {
+		it('should return existing project_workspace.openwriter data', async () => {
 			const existingData: ProjectWorkspaceInfo = {
 				version: 1,
 				projectId: 'existing-id-123',
@@ -95,7 +95,7 @@ describe('ProjectWorkspaceService', () => {
 				appVersion: '0.9.0',
 			};
 			fs.writeFileSync(
-				path.join(workspaceDir, 'project_workspace.json'),
+				path.join(workspaceDir, 'project_workspace.openwriter'),
 				JSON.stringify(existingData, null, 2),
 				'utf-8'
 			);
@@ -130,7 +130,7 @@ describe('ProjectWorkspaceService', () => {
 
 		it('should handle malformed JSON by throwing', async () => {
 			fs.writeFileSync(
-				path.join(workspaceDir, 'project_workspace.json'),
+				path.join(workspaceDir, 'project_workspace.openwriter'),
 				'{ invalid json }}',
 				'utf-8'
 			);
@@ -140,7 +140,7 @@ describe('ProjectWorkspaceService', () => {
 
 		it('should handle missing fields gracefully with defaults', async () => {
 			fs.writeFileSync(
-				path.join(workspaceDir, 'project_workspace.json'),
+				path.join(workspaceDir, 'project_workspace.openwriter'),
 				JSON.stringify({ version: 1 }),
 				'utf-8'
 			);
@@ -279,7 +279,7 @@ describe('ProjectWorkspaceService', () => {
 		it('should write valid JSON to disk', async () => {
 			await service.getOrCreate();
 
-			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.json'), 'utf-8');
+			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.openwriter'), 'utf-8');
 
 			expect(() => JSON.parse(raw)).not.toThrow();
 		});
@@ -287,7 +287,7 @@ describe('ProjectWorkspaceService', () => {
 		it('should write pretty-printed JSON', async () => {
 			await service.getOrCreate();
 
-			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.json'), 'utf-8');
+			const raw = fs.readFileSync(path.join(workspaceDir, 'project_workspace.openwriter'), 'utf-8');
 
 			// Pretty-printed JSON contains newlines and indentation
 			expect(raw).toContain('\n');
