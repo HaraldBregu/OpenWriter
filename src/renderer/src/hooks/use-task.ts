@@ -209,7 +209,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			result,
 			queuePosition,
 			durationMs,
-			metadata,
 			submit,
 			cancel,
 			updatePriority,
