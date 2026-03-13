@@ -138,15 +138,18 @@ export class Workspace implements Disposable {
 	// Project workspace info
 	// -------------------------------------------------------------------------
 
-	getProjectInfo(): ProjectWorkspaceInfo | null {
-		return this.projectWorkspace.getProjectInfo();
+	async getProjectInfo(): Promise<ProjectWorkspaceInfo | null> {
+		if (!this.workspace.getCurrent()) {
+			return null;
+		}
+		return this.projectWorkspace.getOrCreate();
 	}
 
-	updateProjectName(name: string): ProjectWorkspaceInfo {
+	async updateProjectName(name: string): Promise<ProjectWorkspaceInfo> {
 		return this.projectWorkspace.updateName(name);
 	}
 
-	updateProjectDescription(description: string): ProjectWorkspaceInfo {
+	async updateProjectDescription(description: string): Promise<ProjectWorkspaceInfo> {
 		return this.projectWorkspace.updateDescription(description);
 	}
 

@@ -1,267 +1,322 @@
+import fsPromises from 'node:fs/promises';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { WorkspaceService } from './workspace-service';
-import type { EventBus } from '../core/event-bus';
-import type { Disposable } from '../core/service-container';
-import type { LoggerService } from '../services/logger';
+import { app } from 'electron';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
+import type { LoggerService } from '../services/logger';
+import type { WorkspaceService } from './workspace-service';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const PROJECT_WORKSPACE_FILENAME = 'project_workspace.json';
-const PROJECT_WORKSPACE_VERSION = 1;
-const JSON_INDENT_SPACES = 2;
+
+/**
+ * Current schema version written to every new project_workspace.json.
+ * Increment when the file shape changes in a breaking way and add migration
+ * logic in `migrateIfNeeded`.
+ */
+const SCHEMA_VERSION = 1;
+
+/**
+ * Maximum allowed length for the `name` field.
+ */
+const MAX_NAME_LENGTH = 255;
 
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
 
 /**
- * ProjectWorkspaceService manages the project_workspace.json file in the workspace root.
+ * ProjectWorkspaceService manages the `project_workspace.json` file in the
+ * root of each workspace folder.
  *
  * Responsibilities:
- *   - Automatically creates project_workspace.json when a workspace is set
- *   - Reads and returns the project metadata
- *   - Updates project name and description
- *   - Touches updatedAt on every modification
+ *   - Read the file on demand (no caching — allows external edits to be picked
+ *     up automatically without a restart).
+ *   - Write the file atomically using a temp-file-then-rename strategy so that
+ *     a crash mid-write never leaves a corrupt file on disk.
+ *   - Validate all inputs before accepting them.
+ *   - Auto-create a default file when the workspace is opened for the first
+ *     time (i.e. the file does not exist yet).
  *
- * The file is created lazily on first workspace set. If the file already exists,
- * only the updatedAt timestamp is refreshed.
+ * This service has no Electron dependency (other than `app.getVersion()` which
+ * is lazy-resolved at write time) and can be unit-tested without mocking
+ * Electron itself.
  */
-export class ProjectWorkspaceService implements Disposable {
-	private workspaceEventUnsubscribe: (() => void) | null = null;
-
+export class ProjectWorkspaceService {
 	constructor(
 		private readonly workspaceService: WorkspaceService,
-		private readonly eventBus: EventBus,
-		private readonly appVersion: string,
 		private readonly logger?: LoggerService
 	) {}
 
-	/**
-	 * Initialize the service by ensuring the project file exists for the
-	 * current workspace (if any) and subscribing to workspace changes.
-	 */
-	initialize(): void {
-		const workspacePath = this.workspaceService.getCurrent();
-		if (workspacePath) {
-			this.ensureProjectFile(workspacePath);
-		}
-
-		this.workspaceEventUnsubscribe = this.eventBus.on('workspace:changed', (event) => {
-			const payload = event.payload as { currentPath: string | null; previousPath: string | null };
-			if (payload.currentPath) {
-				this.ensureProjectFile(payload.currentPath);
-			}
-		});
-
-		this.logger?.info('ProjectWorkspaceService', 'Initialized');
-	}
-
-	// ---------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	// Public API
-	// ---------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
 	/**
-	 * Get the project workspace info for the current workspace.
-	 * Returns null if no workspace is set or the file does not exist.
-	 */
-	getProjectInfo(): ProjectWorkspaceInfo | null {
-		const workspacePath = this.workspaceService.getCurrent();
-		if (!workspacePath) {
-			return null;
-		}
-		return this.readProjectFile(workspacePath);
-	}
-
-	/**
-	 * Update the project name.
-	 * @throws Error if no workspace is set or name is empty.
-	 */
-	updateName(name: string): ProjectWorkspaceInfo {
-		this.requireWorkspace();
-		if (!name || typeof name !== 'string' || name.trim().length === 0) {
-			throw new Error('Project name must be a non-empty string');
-		}
-
-		const workspacePath = this.workspaceService.getCurrent()!;
-		const info = this.ensureProjectFile(workspacePath);
-		info.name = name.trim();
-		info.updatedAt = new Date().toISOString();
-		this.writeProjectFile(workspacePath, info);
-
-		this.logger?.info('ProjectWorkspaceService', `Updated project name to: ${info.name}`);
-		return info;
-	}
-
-	/**
-	 * Update the project description.
-	 * @throws Error if no workspace is set.
-	 */
-	updateDescription(description: string): ProjectWorkspaceInfo {
-		this.requireWorkspace();
-		if (typeof description !== 'string') {
-			throw new Error('Project description must be a string');
-		}
-
-		const workspacePath = this.workspaceService.getCurrent()!;
-		const info = this.ensureProjectFile(workspacePath);
-		info.description = description.trim();
-		info.updatedAt = new Date().toISOString();
-		this.writeProjectFile(workspacePath, info);
-
-		this.logger?.info('ProjectWorkspaceService', 'Updated project description');
-		return info;
-	}
-
-	/**
-	 * Clean up resources on shutdown.
-	 */
-	destroy(): void {
-		if (this.workspaceEventUnsubscribe) {
-			this.workspaceEventUnsubscribe();
-			this.workspaceEventUnsubscribe = null;
-		}
-		this.logger?.info('ProjectWorkspaceService', 'Destroyed');
-	}
-
-	// ---------------------------------------------------------------------------
-	// Private helpers
-	// ---------------------------------------------------------------------------
-
-	/**
-	 * Ensure the project_workspace.json file exists in the given workspace.
-	 * If it already exists, updates the updatedAt timestamp.
-	 * If it does not exist, creates it with default values.
+	 * Return the current `project_workspace.json` data, creating it if it does
+	 * not yet exist.
 	 *
-	 * @returns The current (or newly created) project info.
+	 * @returns The parsed `ProjectWorkspaceInfo`, guaranteed non-null.
+	 * @throws If no workspace is set or if the file exists but cannot be parsed.
 	 */
-	private ensureProjectFile(workspacePath: string): ProjectWorkspaceInfo {
-		const existing = this.readProjectFile(workspacePath);
-		if (existing) {
-			this.touchUpdatedAt(workspacePath, existing);
-			return existing;
-		}
-
-		const folderName = path.basename(workspacePath);
-		const now = new Date().toISOString();
-		const info: ProjectWorkspaceInfo = {
-			version: PROJECT_WORKSPACE_VERSION,
-			projectId: randomUUID(),
-			name: folderName,
-			description: '',
-			createdAt: now,
-			updatedAt: now,
-			appVersion: this.appVersion,
-		};
-
-		this.writeProjectFile(workspacePath, info);
-		this.logger?.info(
-			'ProjectWorkspaceService',
-			`Created project_workspace.json in: ${workspacePath}`
-		);
-		return info;
-	}
-
-	/**
-	 * Read and parse the project_workspace.json file from a workspace directory.
-	 * Returns null if the file does not exist or is invalid.
-	 */
-	private readProjectFile(workspacePath: string): ProjectWorkspaceInfo | null {
-		const filePath = this.getFilePath(workspacePath);
+	async getOrCreate(): Promise<ProjectWorkspaceInfo> {
+		const workspacePath = this.requireWorkspace();
+		const filePath = this.resolveFilePath(workspacePath);
 
 		if (!fs.existsSync(filePath)) {
-			return null;
-		}
-
-		try {
-			const raw = fs.readFileSync(filePath, 'utf-8');
-			const parsed: unknown = JSON.parse(raw);
-
-			if (!this.isValidProjectInfo(parsed)) {
-				this.logger?.warn(
-					'ProjectWorkspaceService',
-					`Invalid project_workspace.json schema in: ${workspacePath}`
-				);
-				return null;
-			}
-
-			return parsed;
-		} catch (err) {
-			this.logger?.error(
+			this.logger?.info(
 				'ProjectWorkspaceService',
-				'Failed to read project_workspace.json',
-				err
+				`project_workspace.json not found, creating default at: ${filePath}`
 			);
-			return null;
+			const created = this.buildDefault(workspacePath);
+			await this.atomicWrite(filePath, created);
+			return created;
 		}
+
+		return this.readAndMigrate(filePath, workspacePath);
 	}
 
 	/**
-	 * Write the project info to the project_workspace.json file.
+	 * Update the `name` field of the project.
+	 *
+	 * @param name - New project name. Must be non-empty, max 255 chars.
+	 * @returns The updated `ProjectWorkspaceInfo`.
+	 * @throws If validation fails, no workspace is set, or the write fails.
 	 */
-	private writeProjectFile(workspacePath: string, info: ProjectWorkspaceInfo): void {
-		const filePath = this.getFilePath(workspacePath);
+	async updateName(name: string): Promise<ProjectWorkspaceInfo> {
+		this.validateName(name);
+		const workspacePath = this.requireWorkspace();
+		const filePath = this.resolveFilePath(workspacePath);
 
-		try {
-			const content = JSON.stringify(info, null, JSON_INDENT_SPACES);
-			fs.writeFileSync(filePath, content, 'utf-8');
-		} catch (err) {
-			this.logger?.error(
-				'ProjectWorkspaceService',
-				'Failed to write project_workspace.json',
-				err
-			);
-			throw new Error(
-				`Failed to save project workspace file: ${err instanceof Error ? err.message : String(err)}`
-			);
+		const current = await this.getOrCreate();
+		const updated: ProjectWorkspaceInfo = {
+			...current,
+			name: name.trim(),
+			updatedAt: new Date().toISOString(),
+		};
+
+		await this.atomicWrite(filePath, updated);
+		this.logger?.info('ProjectWorkspaceService', `Updated project name to: "${updated.name}"`);
+		return updated;
+	}
+
+	/**
+	 * Update the `description` field of the project.
+	 *
+	 * @param description - New description. May be empty string to clear it.
+	 * @returns The updated `ProjectWorkspaceInfo`.
+	 * @throws If validation fails, no workspace is set, or the write fails.
+	 */
+	async updateDescription(description: string): Promise<ProjectWorkspaceInfo> {
+		this.validateDescription(description);
+		const workspacePath = this.requireWorkspace();
+		const filePath = this.resolveFilePath(workspacePath);
+
+		const current = await this.getOrCreate();
+		const updated: ProjectWorkspaceInfo = {
+			...current,
+			description,
+			updatedAt: new Date().toISOString(),
+		};
+
+		await this.atomicWrite(filePath, updated);
+		this.logger?.info('ProjectWorkspaceService', `Updated project description`);
+		return updated;
+	}
+
+	// -------------------------------------------------------------------------
+	// Private helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Require the current workspace path or throw.
+	 */
+	private requireWorkspace(): string {
+		const current = this.workspaceService.getCurrent();
+		if (!current) {
+			throw new Error('No workspace selected. Please select a workspace first.');
 		}
+		return current;
 	}
 
 	/**
-	 * Update the updatedAt timestamp without changing other fields.
+	 * Resolve the absolute path to `project_workspace.json` in a workspace.
 	 */
-	private touchUpdatedAt(workspacePath: string, info: ProjectWorkspaceInfo): void {
-		info.updatedAt = new Date().toISOString();
-		this.writeProjectFile(workspacePath, info);
-	}
-
-	/**
-	 * Get the full path to the project_workspace.json file.
-	 */
-	private getFilePath(workspacePath: string): string {
+	private resolveFilePath(workspacePath: string): string {
 		return path.join(workspacePath, PROJECT_WORKSPACE_FILENAME);
 	}
 
 	/**
-	 * Ensure a workspace is currently set. Throws if not.
+	 * Build a default `ProjectWorkspaceInfo` for a freshly opened workspace.
+	 * The project name defaults to the workspace folder's base name.
 	 */
-	private requireWorkspace(): void {
-		if (!this.workspaceService.getCurrent()) {
-			throw new Error('No workspace is currently set. Please select a workspace first.');
+	private buildDefault(workspacePath: string): ProjectWorkspaceInfo {
+		const now = new Date().toISOString();
+		return {
+			version: SCHEMA_VERSION,
+			projectId: randomUUID(),
+			name: path.basename(workspacePath),
+			description: '',
+			createdAt: now,
+			updatedAt: now,
+			appVersion: this.getAppVersion(),
+		};
+	}
+
+	/**
+	 * Read and parse the project_workspace.json file.
+	 * Applies any pending migrations before returning.
+	 *
+	 * @throws If the file cannot be read or parsed as valid JSON.
+	 */
+	private async readAndMigrate(
+		filePath: string,
+		workspacePath: string
+	): Promise<ProjectWorkspaceInfo> {
+		let raw: string;
+		try {
+			raw = await fsPromises.readFile(filePath, 'utf-8');
+		} catch (err) {
+			throw new Error(
+				`Failed to read project_workspace.json: ${err instanceof Error ? err.message : String(err)}`
+			);
+		}
+
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(raw);
+		} catch {
+			throw new Error(
+				`project_workspace.json contains invalid JSON. ` +
+					`Delete the file to let OpenWriter recreate it.`
+			);
+		}
+
+		const info = this.validateSchema(parsed, workspacePath);
+		const migrated = this.migrateIfNeeded(info, workspacePath);
+
+		// Persist migrations back to disk if the version changed
+		if (migrated.version !== info.version) {
+			await this.atomicWrite(filePath, migrated);
+			this.logger?.info(
+				'ProjectWorkspaceService',
+				`Migrated project_workspace.json v${info.version} → v${migrated.version}`
+			);
+		}
+
+		return migrated;
+	}
+
+	/**
+	 * Validate that the parsed value conforms to the expected schema shape and
+	 * fill in missing optional fields with sensible defaults.
+	 *
+	 * This is intentionally lenient so that manually edited files (e.g. a
+	 * developer edited the file by hand and removed a field) can still be
+	 * loaded rather than failing hard.
+	 */
+	private validateSchema(parsed: unknown, workspacePath: string): ProjectWorkspaceInfo {
+		if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+			throw new Error('project_workspace.json must contain a JSON object at the root level.');
+		}
+
+		const record = parsed as Record<string, unknown>;
+		const now = new Date().toISOString();
+
+		return {
+			version:
+				typeof record['version'] === 'number' && record['version'] > 0
+					? (record['version'] as number)
+					: SCHEMA_VERSION,
+			projectId: typeof record['projectId'] === 'string' ? record['projectId'] : randomUUID(),
+			name:
+				typeof record['name'] === 'string' && record['name'].trim().length > 0
+					? (record['name'] as string)
+					: path.basename(workspacePath),
+			description: typeof record['description'] === 'string' ? (record['description'] as string) : '',
+			createdAt: typeof record['createdAt'] === 'string' ? (record['createdAt'] as string) : now,
+			updatedAt: typeof record['updatedAt'] === 'string' ? (record['updatedAt'] as string) : now,
+			appVersion:
+				typeof record['appVersion'] === 'string'
+					? (record['appVersion'] as string)
+					: this.getAppVersion(),
+		};
+	}
+
+	/**
+	 * Apply schema migrations for older file versions.
+	 * Currently there is only v1, so this is a no-op placeholder for future use.
+	 */
+	private migrateIfNeeded(
+		info: ProjectWorkspaceInfo,
+		_workspacePath: string
+	): ProjectWorkspaceInfo {
+		// Future migrations go here, e.g.:
+		//   if (info.version < 2) info = migrateV1ToV2(info);
+		return info;
+	}
+
+	/**
+	 * Write `data` to `filePath` atomically using a temp-sibling-then-rename
+	 * strategy. This ensures no half-written file is left on disk if the
+	 * process crashes during the write.
+	 */
+	private async atomicWrite(filePath: string, data: ProjectWorkspaceInfo): Promise<void> {
+		const dir = path.dirname(filePath);
+		const tmpPath = path.join(dir, `.project_workspace_tmp_${Date.now()}.json`);
+		const content = JSON.stringify(data, null, 2);
+
+		try {
+			await fsPromises.writeFile(tmpPath, content, 'utf-8');
+			await fsPromises.rename(tmpPath, filePath);
+		} catch (err) {
+			// Best-effort cleanup of the temp file
+			await fsPromises.unlink(tmpPath).catch(() => undefined);
+			throw new Error(
+				`Failed to write project_workspace.json: ${err instanceof Error ? err.message : String(err)}`
+			);
 		}
 	}
 
 	/**
-	 * Validate that a parsed object conforms to the ProjectWorkspaceInfo schema.
+	 * Validate the project name field.
 	 */
-	private isValidProjectInfo(value: unknown): value is ProjectWorkspaceInfo {
-		if (value === null || typeof value !== 'object' || Array.isArray(value)) {
-			return false;
+	private validateName(name: unknown): void {
+		if (typeof name !== 'string') {
+			throw new TypeError('Project name must be a string');
 		}
+		const trimmed = name.trim();
+		if (trimmed.length === 0) {
+			throw new Error('Project name must not be empty');
+		}
+		if (trimmed.length > MAX_NAME_LENGTH) {
+			throw new Error(`Project name must not exceed ${MAX_NAME_LENGTH} characters`);
+		}
+	}
 
-		const obj = value as Record<string, unknown>;
-		return (
-			typeof obj.version === 'number' &&
-			typeof obj.projectId === 'string' &&
-			typeof obj.name === 'string' &&
-			typeof obj.description === 'string' &&
-			typeof obj.createdAt === 'string' &&
-			typeof obj.updatedAt === 'string' &&
-			typeof obj.appVersion === 'string'
-		);
+	/**
+	 * Validate the project description field.
+	 */
+	private validateDescription(description: unknown): void {
+		if (typeof description !== 'string') {
+			throw new TypeError('Project description must be a string');
+		}
+	}
+
+	/**
+	 * Safely resolve the running Electron app version.
+	 * Falls back to '0.0.0' in unit-test environments where `app` is not
+	 * initialised.
+	 */
+	private getAppVersion(): string {
+		try {
+			return app.getVersion();
+		} catch {
+			return '0.0.0';
+		}
 	}
 }
