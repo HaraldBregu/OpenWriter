@@ -60,17 +60,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	}, [dispatch]);
 
 	// -------------------------------------------------------------------------
-	// Writings list — sourced from Redux (loaded/watched at app startup)
+	// Documents list — sourced from Redux (loaded/watched at app startup)
 	// -------------------------------------------------------------------------
-	const writings = useAppSelector(selectAllWritings);
+	const documents = useAppSelector(selectAllDocuments);
 
 	// -------------------------------------------------------------------------
-	// New writing handler — optimistic Redux update
+	// New document handler — optimistic Redux update
 	// -------------------------------------------------------------------------
-	const handleWritingCreated = useCallback(
+	const handleDocumentCreated = useCallback(
 		(result: { id: string }) => {
 			dispatch(
-				writingAdded({
+				documentAdded({
 					id: result.id,
 					title: '',
 					path: '',
@@ -83,7 +83,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	);
 
 	const { createWriting, isCreating: creatingWriting } = useCreateWriting({
-		onCreated: handleWritingCreated,
+		onCreated: handleDocumentCreated,
 	});
 
 	const displayWorkspaceName = workspaceNameFromPath
