@@ -173,10 +173,10 @@ const DocumentPage: React.FC = () => {
 			${cleanAfter}
 			`;
 
-			const data: TextWriterTaskData = { prompt };
-			textWriterTask.submit(data);
+			const data: TextCompleterTaskData = { prompt };
+			textCompleterTask.submit(data);
 		},
-		[textWriterTask]
+		[textCompleterTask]
 	);
 
 	const onEnhanceWithAssistant = useCallback(
@@ -233,7 +233,7 @@ const DocumentPage: React.FC = () => {
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
 								<TextEditor
-									disabled={textWriterTask.isRunning || textEnhanceTask.isRunning}
+									disabled={textCompleterTask.isRunning || textEnhanceTask.isRunning}
 									ref={editorRef}
 									key={id}
 									value={content}
