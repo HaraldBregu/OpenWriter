@@ -4,7 +4,7 @@ import type { TypedAddListener, TypedStartListening } from '@reduxjs/toolkit';
 /**
  * Shared RTK listener middleware instance.
  *
- * Hydration listeners (postsHydration, writingsHydration) register their
+ * Hydration listeners (postsHydration, documentsHydration) register their
  * effects here instead of using extraReducers with hardcoded action type
  * strings. This breaks the circular import:
  *
