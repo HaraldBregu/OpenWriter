@@ -44,7 +44,7 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	isIdle: boolean;
 	/** True when status === 'queued'. */
 	isQueued: boolean;
-	/** True when status === 'running'. */
+	/** True when status is 'started' or 'running' (task is actively executing). */
 	isRunning: boolean;
 	/** True when status === 'completed'. */
 	isCompleted: boolean;

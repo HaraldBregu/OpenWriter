@@ -144,13 +144,15 @@ const DocumentPage: React.FC = () => {
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
 		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
-			console.log('Received enhance task update:', snap);
+			console.log('Received enhance task update:', snap.status);
 			const metadata = snap.metadata;
-
-			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
+			const from = metadata?.from as number;
+			const to = metadata?.to as number;
+			// editorRef.current?.deleteText(from, to);
+			// const completed = snap.status === 'completed';
+			// editorRef.current?.insertText(snap.streamedContent, {
+			// 	preventEditorUpdate: !completed,
+			// });
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);
@@ -188,6 +190,7 @@ const DocumentPage: React.FC = () => {
 			`;
 			const data: TextEnhanceTaskData = { prompt };
 			const metadata = { type: 'replace_text', from, to };
+			console.log('Submitting enhance task with metadata:', metadata);	
 			textEnhanceTask.submit(data, metadata);
 		},
 		[textEnhanceTask]
