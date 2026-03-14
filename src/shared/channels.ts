@@ -140,6 +140,10 @@ export const AppChannels = {
 	getAllApiKeys: 'store-get-all-api-keys',
 	getApiKey: 'store-get-api-key',
 	setApiKey: 'store-set-api-key',
+	// Store / Agent settings
+	getAgentSettings: 'store-get-agent-settings',
+	getAgentConfig: 'store-get-agent-config',
+	setAgentConfig: 'store-set-agent-config',
 } as const;
 
 // ===========================================================================
@@ -243,7 +247,10 @@ export interface InvokeChannelMap {
 	// ---- Agent Settings (workspace-scoped, IpcResult-wrapped) ----
 	[WorkspaceChannels.getAgentSettings]: { args: []; result: Record<string, AgentConfig> };
 	[WorkspaceChannels.getAgentConfig]: { args: [agentId: string]; result: AgentConfig | null };
-	[WorkspaceChannels.setAgentConfig]: { args: [agentId: string, config: AgentConfig]; result: void };
+	[WorkspaceChannels.setAgentConfig]: {
+		args: [agentId: string, config: AgentConfig];
+		result: void;
+	};
 }
 
 /**

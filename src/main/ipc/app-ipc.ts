@@ -12,8 +12,6 @@ import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import type { WritingContextMenuAction } from '../../shared/types';
-import type { AgentConfig } from '../../shared/aiSettings';
-import { AGENT_IDS } from '../../shared/aiSettings';
 
 const execFileAsync = promisify(execFile);
 
