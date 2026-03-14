@@ -81,6 +81,7 @@ export type {
 	FsRenameParams,
 	FsRenameResult,
 	AgentConfig,
+	WorkspaceAgentEntry,
 	ProjectWorkspaceInfo,
 };
 
