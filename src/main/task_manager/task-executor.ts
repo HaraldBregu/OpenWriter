@@ -89,6 +89,8 @@ export class TaskExecutor implements Disposable {
 		const priority = options?.priority ?? 'normal';
 		const controller = new AbortController();
 
+		const metadata = options?.metadata;
+
 		const activeTask: ActiveTask = {
 			taskId,
 			type,
@@ -96,6 +98,7 @@ export class TaskExecutor implements Disposable {
 			priority,
 			controller,
 			windowId: options?.windowId,
+			metadata,
 		};
 
 		this.activeTasks.set(taskId, activeTask);
