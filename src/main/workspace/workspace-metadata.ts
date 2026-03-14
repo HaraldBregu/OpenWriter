@@ -470,8 +470,8 @@ export class WorkspaceMetadataService implements Disposable {
 				parsed.settings.directories = [];
 			}
 
-			if (!parsed.settings.agentSettings || typeof parsed.settings.agentSettings !== 'object') {
-				parsed.settings.agentSettings = {};
+			if (!Array.isArray(parsed.settings.agents)) {
+				parsed.settings.agents = [];
 			}
 
 			this.logger?.info(
