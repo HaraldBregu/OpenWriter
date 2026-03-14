@@ -31,6 +31,12 @@ export interface TaskOptions {
 	 * If not provided, events will be broadcast to all windows
 	 */
 	windowId?: number;
+
+	/**
+	 * Caller-supplied metadata that persists with the task and is included
+	 * in every TaskEvent emitted for this task.
+	 */
+	metadata?: Record<string, unknown>;
 }
 
 /**
