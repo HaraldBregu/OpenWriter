@@ -141,12 +141,12 @@ function extractIntentResult(parsed: unknown): WriterIntentResult {
 
 	const result: WriterIntentResult = { type: record['type'] };
 
-	if (typeof record['contentLength'] === 'string') {
-		return { ...result, contentLength: record['contentLength'] };
-	}
+	const contentLength =
+		typeof record['contentLength'] === 'string' ? record['contentLength'] : undefined;
+	const tone = typeof record['tone'] === 'string' ? record['tone'] : undefined;
 
-	if (typeof record['tone'] === 'string') {
-		return { ...result, tone: record['tone'] };
+	if (contentLength !== undefined || tone !== undefined) {
+		return { ...result, ...(contentLength !== undefined && { contentLength }), ...(tone !== undefined && { tone }) };
 	}
 
 	return result;
