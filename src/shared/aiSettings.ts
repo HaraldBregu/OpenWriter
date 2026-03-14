@@ -45,16 +45,16 @@ export interface AgentConfig {
 	reasoning: boolean;
 }
 
-export const AGENT_IDS = ['writing-assistant', 'text-enhancer'] as const;
+export const AGENT_IDS = ['text-writer', 'text-enhance'] as const;
 export type AgentId = (typeof AGENT_IDS)[number];
 
 export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: string }> = {
-	'writing-assistant': {
-		name: 'Writing Assistant',
-		description: 'Helps with writing, editing, and improving text',
+	'text-writer': {
+		name: 'Text Writer',
+		description: 'Continues writing from the end of provided text',
 	},
-	'text-enhancer': {
-		name: 'Text Enhancer Assistant',
+	'text-enhance': {
+		name: 'Text Enhance',
 		description: 'Enhances and transforms text style and tone',
 	},
 };
