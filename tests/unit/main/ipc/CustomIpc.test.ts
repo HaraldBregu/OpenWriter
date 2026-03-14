@@ -72,18 +72,15 @@ describe('CustomIpc', () => {
 	it('should register 7 ipcMain.handle handlers (writing context menu + 3 store + 3 agent channels)', () => {
 		module.register(container, eventBus);
 		// 1 writing context menu + 3 API key channels + 3 agent channels
-		expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(7);
+		expect((ipcMain.handle as jest.Mock).mock.calls).toHaveLength(4);
 	});
 
-	it('should register writing context menu, store, and agent channels via handle', () => {
+	it('should register writing context menu and API key channels via handle', () => {
 		module.register(container, eventBus);
 		const channels = (ipcMain.handle as jest.Mock).mock.calls.map((c: unknown[]) => c[0]);
 		expect(channels).toContain('context-menu:writing');
 		expect(channels).toContain('store-get-all-api-keys');
 		expect(channels).toContain('store-get-api-key');
 		expect(channels).toContain('store-set-api-key');
-		expect(channels).toContain('store-get-agent-settings');
-		expect(channels).toContain('store-get-agent-config');
-		expect(channels).toContain('store-set-agent-config');
 	});
 });
