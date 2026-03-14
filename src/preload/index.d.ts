@@ -43,7 +43,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
-import type { AgentConfig } from '../shared/aiSettings';
+import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
