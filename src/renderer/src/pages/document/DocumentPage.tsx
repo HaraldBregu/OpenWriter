@@ -162,10 +162,7 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onAgentPromptSubmit = useCallback(
-		(before: string, after: string, cursorPos: number, prompt: string) => {
-			console.log('Prompt submitted:', { before, after, cursorPos, prompt });
-			console.log('Agent prompt submitted:', prompt);
-			// editorRef.current?.removeAgentPrompt();
+		(_before: string, _after: string, _cursorPos: number, _prompt: string) => {
 			editorRef.current?.setAgentPromptLoading(true);
 			editorRef.current?.setAgentPromptEnable(false);
 			setTimeout(() => {
