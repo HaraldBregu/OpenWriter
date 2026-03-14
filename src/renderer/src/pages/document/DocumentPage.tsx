@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import { subscribeToTask } from '../../services/task-event-bus';
-import type { TaskSnapshot } from '../../services/task-event-bus';
+import type { TaskEvent } from '../../../shared/types';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
