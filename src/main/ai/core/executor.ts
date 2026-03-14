@@ -230,6 +230,7 @@ interface CustomStateGraphStreamInput {
 	) => CompiledStateGraph<any, any, any, any, any, any>;
 	buildGraphInput: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput: (state: Record<string, unknown>) => string;
+	streamableNodes?: string[];
 	signal?: AbortSignal;
 	logger?: LoggerService;
 }
