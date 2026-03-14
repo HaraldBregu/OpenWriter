@@ -141,7 +141,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
 										<AppSidebarMenu>
-											{writings.map((w) => (
+											{documents.map((w) => (
 												<AppSidebarMenuItem key={w.id}>
 													<AppSidebarMenuButton
 														asChild
