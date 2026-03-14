@@ -82,7 +82,7 @@ function ensureListening(): void {
 				break;
 			}
 			case 'started':
-				next = { ...prev, status: 'running', ...metadataOverride };
+				next = { ...prev, status: 'started', ...metadataOverride };
 				break;
 			case 'progress':
 				next = { ...prev, status: 'running', streamedContent: '', ...metadataOverride };
