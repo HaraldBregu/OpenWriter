@@ -30,11 +30,8 @@ const DocumentPage: React.FC = () => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 
-	const writingAssistantTaskData: WritingAssistantTaskData = { prompt: '' };
-	const writingAssistantTask = useTask<WritingAssistantTaskData>(
-		'agent-writing-assistant',
-		writingAssistantTaskData
-	);
+	const textWriterTaskData: TextWriterTaskData = { prompt: '' };
+	const textWriterTask = useTask<TextWriterTaskData>('agent-text-writer', textWriterTaskData);
 
 	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
 	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);
