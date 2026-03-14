@@ -97,6 +97,10 @@ export const WorkspaceChannels = {
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
 	updateProjectDescription: 'project-workspace:update-description',
+	// Agent settings (workspace-scoped)
+	getAgentSettings: 'workspace:agent-settings',
+	getAgentConfig: 'workspace:agent-config-get',
+	setAgentConfig: 'workspace:agent-config-set',
 } as const;
 
 export const WindowChannels = {

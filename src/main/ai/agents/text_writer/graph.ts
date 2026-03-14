@@ -24,9 +24,7 @@ const NODE = {
 export function buildGraph(models: BaseChatModel | NodeModelMap) {
 	const m = models as NodeModelMap;
 	const graph = new StateGraph(TextWriterState)
-		.addNode(NODE.WRITE, (state: typeof TextWriterState.State) =>
-			writeNode(state, m[NODE.WRITE])
-		)
+		.addNode(NODE.WRITE, (state: typeof TextWriterState.State) => writeNode(state, m[NODE.WRITE]))
 		.addEdge(START, NODE.WRITE)
 		.addEdge(NODE.WRITE, END);
 
