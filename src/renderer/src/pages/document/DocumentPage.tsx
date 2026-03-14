@@ -29,7 +29,10 @@ const DocumentPage: React.FC = () => {
 	const editorRef = useRef<TextEditorElement>(null);
 
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
-	const textCompleterTask = useTask<TextCompleterTaskData>('agent-text-completer', textCompleterTaskData);
+	const textCompleterTask = useTask<TextCompleterTaskData>(
+		'agent-text-completer',
+		textCompleterTaskData
+	);
 
 	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
 	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);

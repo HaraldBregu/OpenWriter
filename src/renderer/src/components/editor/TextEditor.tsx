@@ -49,11 +49,7 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
-	onEnhanceWithAssistant?: (
-		selectedText: string,
-		from: number,
-		to: number
-	) => void;
+	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 	onAgentPromptSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
 }
 

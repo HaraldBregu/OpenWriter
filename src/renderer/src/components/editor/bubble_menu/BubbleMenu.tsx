@@ -15,11 +15,7 @@ import { AppButton } from '../../app/AppButton';
 import { useEditorContext } from '../EditorContext';
 
 interface BubbleMenuProps {
-	onEnhanceWithAssistant?: (
-		selectedText: string,
-		from: number,
-		to: number
-	) => void;
+	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 }
 
 const pluginKey = new PluginKey('bubbleMenu');
