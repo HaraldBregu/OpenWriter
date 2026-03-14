@@ -23,19 +23,19 @@ if (!initialized && typeof window.task?.onEvent === 'function') {
 	});
 }
 
-// IPC → Redux bridge: load writings on startup and re-load on file changes.
-let writingsInitialized = false;
-if (!writingsInitialized && typeof window.workspace?.onOutputFileChange === 'function') {
-	writingsInitialized = true;
-	store.dispatch(loadWritings());
+// IPC → Redux bridge: load documents on startup and re-load on file changes.
+let documentsInitialized = false;
+if (!documentsInitialized && typeof window.workspace?.onOutputFileChange === 'function') {
+	documentsInitialized = true;
+	store.dispatch(loadDocuments());
 	window.workspace.onOutputFileChange((event) => {
 		if (event.outputType !== 'documents') return;
 		if (event.type === 'changed') {
-			store.dispatch(refreshWriting(event.fileId));
+			store.dispatch(refreshDocument(event.fileId));
 		} else if (event.type === 'removed') {
-			store.dispatch(writingRemoved(event.fileId));
+			store.dispatch(documentRemoved(event.fileId));
 		} else {
-			store.dispatch(loadWritings());
+			store.dispatch(loadDocuments());
 		}
 	});
 }
