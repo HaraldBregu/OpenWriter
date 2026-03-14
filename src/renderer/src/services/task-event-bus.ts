@@ -66,7 +66,12 @@ function ensureListening(): void {
 
 		switch (event.type) {
 			case 'queued': {
-				next = { ...prev, status: 'queued' };
+				const eventMetadata = (event.data as { metadata?: unknown }).metadata;
+				next = {
+					...prev,
+					status: 'queued',
+					...(eventMetadata !== undefined ? { metadata: eventMetadata } : {}),
+				};
 				const taskType = (event.data as { taskType?: string }).taskType;
 				if (taskType) {
 					typeSubscribers.get(taskType)?.forEach((cb) => cb(taskId));
