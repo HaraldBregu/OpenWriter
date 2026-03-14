@@ -80,6 +80,7 @@ export function bootstrapServices(): BootstrapResult {
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
 	agentRegistry.register(TextCompleterAgent);
 	agentRegistry.register(TextEnhanceAgent);
+	agentRegistry.register(TextWriterAgent);
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
