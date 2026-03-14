@@ -441,7 +441,7 @@ export class TaskExecutor implements Disposable {
 
 				this.send(windowId, 'task:event', {
 					type: 'error',
-					data: { taskId, message, code },
+					data: { taskId, message, code, metadata },
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:failed', {
