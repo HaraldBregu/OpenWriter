@@ -129,6 +129,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			buildGraph: def.buildGraph,
 			buildGraphInput: def.buildGraphInput,
 			extractGraphOutput: def.extractGraphOutput,
+			streamableNodes: def.streamableNodes,
 			logger: this.logger,
 		});
 
