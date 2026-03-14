@@ -1,5 +1,5 @@
 /**
- * Graph state annotation for the Text Writer agent.
+ * Graph state annotation for the Text Completer agent.
  *
  * The `apiKey`, `modelName`, and `providerId` fields are populated by the
  * executor via `buildGraphInput` so that nodes can instantiate the LLM
@@ -9,7 +9,7 @@
 
 import { Annotation } from '@langchain/langgraph';
 
-export const TextWriterState = Annotation.Root({
+export const TextCompleterState = Annotation.Root({
 	prompt: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
