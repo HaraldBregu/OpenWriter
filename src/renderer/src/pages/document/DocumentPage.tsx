@@ -36,6 +36,9 @@ const DocumentPage: React.FC = () => {
 		writingAssistantTaskData
 	);
 
+	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
+	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);
+
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
 
