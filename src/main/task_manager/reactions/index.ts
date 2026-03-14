@@ -5,3 +5,5 @@
  * Pattern mirrors agent registrations in bootstrap — explicit,
  * ordered, and safe to tree-shake in tests.
  */
+
+export { TextEnhanceTaskReaction } from './text-enhance-task-reaction';
