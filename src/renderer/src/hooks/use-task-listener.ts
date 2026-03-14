@@ -38,7 +38,9 @@ export function useTaskListener<TResult = unknown>(
 		window.task.list().then((res) => {
 			if (!res.success) return;
 			const active = res.data.find(
-				(t) => t.type === taskType && (t.status === 'queued' || t.status === 'running')
+				(t) =>
+					t.type === taskType &&
+					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 			);
 			if (active) {
 				setTaskId(active.taskId);
