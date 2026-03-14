@@ -29,7 +29,7 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	/** Wall-clock duration of the task in milliseconds, set on completion. */
 	durationMs: number | undefined;
 	/** Submit the task. */
-	submit: (input: TInput, options?: TaskOptions) => Promise<void>;
+	submit: (input: TInput, metadata?: Record<string, unknown>, options?: TaskOptions) => Promise<void>;
 	/** Cancel the current task. No-op if not running. */
 	cancel: () => void;
 	/** Change the priority of the queued task. */

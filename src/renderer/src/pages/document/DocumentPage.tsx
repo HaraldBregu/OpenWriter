@@ -14,7 +14,6 @@ type TextWriterTaskData = {
 
 type TextEnhanceTaskData = {
 	prompt: string;
-	metadata?: Record<string, string | number | boolean>;
 };
 
 const DocumentPage: React.FC = () => {
