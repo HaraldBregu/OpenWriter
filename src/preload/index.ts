@@ -336,6 +336,18 @@ const workspace: WorkspaceApi = {
 	updateProjectDescription: (description: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
 	// -------------------------------------------------------------------------
+	// Agent settings (workspace-scoped)
+	// -------------------------------------------------------------------------
+	getAgentSettings: (): Promise<Record<string, AgentConfig>> => {
+		return typedInvokeUnwrap(WorkspaceChannels.getAgentSettings);
+	},
+	getAgentConfig: (agentId: string): Promise<AgentConfig | null> => {
+		return typedInvokeUnwrap(WorkspaceChannels.getAgentConfig, agentId);
+	},
+	setAgentConfig: (agentId: string, config: AgentConfig): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.setAgentConfig, agentId, config);
+	},
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
