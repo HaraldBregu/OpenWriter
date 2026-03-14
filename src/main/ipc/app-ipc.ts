@@ -165,35 +165,6 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.setApiKey)
 		);
 
-		// -----------------------------------------------------------------------
-		// Store / Agent settings handlers
-		// -----------------------------------------------------------------------
-
-		ipcMain.handle(
-			AppChannels.getAgentSettings,
-			wrapSimpleHandler(() => store.getAgentSettings(), AppChannels.getAgentSettings)
-		);
-
-		ipcMain.handle(
-			AppChannels.getAgentConfig,
-			wrapSimpleHandler((agentId: string) => {
-				if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
-					throw new Error(`Invalid agent ID: ${agentId}`);
-				}
-				return store.getAgentConfig(agentId);
-			}, AppChannels.getAgentConfig)
-		);
-
-		ipcMain.handle(
-			AppChannels.setAgentConfig,
-			wrapSimpleHandler((agentId: string, config: AgentConfig) => {
-				if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
-					throw new Error(`Invalid agent ID: ${agentId}`);
-				}
-				return store.setAgentConfig(agentId, config);
-			}, AppChannels.setAgentConfig)
-		);
-
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
