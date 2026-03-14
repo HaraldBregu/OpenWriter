@@ -64,13 +64,17 @@ function ensureListening(): void {
 		};
 		let next: TaskSnapshot;
 
+		// Extract metadata from any event that carries it.
+		const eventMetadata = (event.data as { metadata?: Record<string, unknown> }).metadata;
+		const metadataOverride =
+			eventMetadata !== undefined ? { metadata: eventMetadata } : {};
+
 		switch (event.type) {
 			case 'queued': {
-				const eventMetadata = (event.data as { metadata?: unknown }).metadata;
 				next = {
 					...prev,
 					status: 'queued',
-					...(eventMetadata !== undefined ? { metadata: eventMetadata } : {}),
+					...metadataOverride,
 				};
 				const taskType = (event.data as { taskType?: string }).taskType;
 				if (taskType) {
@@ -79,10 +83,10 @@ function ensureListening(): void {
 				break;
 			}
 			case 'started':
-				next = { ...prev, status: 'running' };
+				next = { ...prev, status: 'running', ...metadataOverride };
 				break;
 			case 'progress':
-				next = { ...prev, status: 'running', streamedContent: '' };
+				next = { ...prev, status: 'running', streamedContent: '', ...metadataOverride };
 				break;
 			case 'stream': {
 				const sd = event.data as { data?: string };
@@ -91,6 +95,7 @@ function ensureListening(): void {
 					status: 'running',
 					streamedContent: sd.data ?? '',
 					content: (prev.seedContent ?? '') + (prev.content + (sd.data ?? '')),
+					...metadataOverride,
 				};
 				break;
 			}
@@ -101,6 +106,7 @@ function ensureListening(): void {
 					status: 'completed',
 					streamedContent: '',
 					result: cd.result,
+					...metadataOverride,
 				};
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
@@ -110,14 +116,14 @@ function ensureListening(): void {
 			}
 			case 'error': {
 				const ed = event.data as { message?: string };
-				next = { ...prev, status: 'error', error: ed.message };
+				next = { ...prev, status: 'error', error: ed.message, ...metadataOverride };
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
 				setTimeout(() => snapshots.delete(taskId), 0);
 				return;
 			}
 			case 'cancelled':
-				next = { ...prev, status: 'cancelled' };
+				next = { ...prev, status: 'cancelled', ...metadataOverride };
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
 				setTimeout(() => snapshots.delete(taskId), 0);
