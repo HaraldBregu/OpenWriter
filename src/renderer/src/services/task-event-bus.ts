@@ -162,6 +162,13 @@ export function subscribeToTask(taskId: string, cb: (snap: TaskSnapshot) => void
 	}
 	set.add(cb);
 
+	// Replay the current snapshot so late subscribers see the current state
+	// (e.g. 'started') even if the event arrived before subscription.
+	const existing = snapshots.get(taskId);
+	if (existing) {
+		cb(existing);
+	}
+
 	return () => {
 		const s = subscribers.get(taskId);
 		if (!s) return;

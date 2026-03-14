@@ -190,7 +190,7 @@ const DocumentPage: React.FC = () => {
 			`;
 			const data: TextEnhanceTaskData = { prompt };
 			const metadata = { type: 'replace_text', from, to };
-			console.log('Submitting enhance task with metadata:', metadata);	
+			console.log('Submitting enhance task with metadata:', metadata);
 			textEnhanceTask.submit(data, metadata);
 		},
 		[textEnhanceTask]
