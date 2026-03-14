@@ -27,7 +27,6 @@ import { TaskReactionBus } from './task_manager/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task_manager/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
-import { DemoTaskReaction } from './task_manager/reactions';
 
 // Indexing infrastructure
 import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './indexing';
@@ -94,7 +93,6 @@ export function bootstrapServices(): BootstrapResult {
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
-	taskReactionRegistry.register(new DemoTaskReaction(logger));
 	const taskReactionBus = container.register(
 		'taskReactionBus',
 		new TaskReactionBus(taskReactionRegistry, eventBus, logger)
