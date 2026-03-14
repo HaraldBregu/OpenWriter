@@ -146,6 +146,17 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [writingAssistantTask.taskId]);
 
+	useEffect(() => {
+		if (!textEnhanceTask.taskId) return;
+		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
+			const completed = snap.status === 'completed';
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
+		});
+		return unsub;
+	}, [textEnhanceTask.taskId]);
+
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
