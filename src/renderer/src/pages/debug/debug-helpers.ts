@@ -24,7 +24,7 @@ export function entryCount(value: unknown): string {
 }
 
 export async function submitDemoTask(variant: DemoVariant): Promise<void> {
-	const result = await window.task.submit('demo', { variant }, { priority: 'normal' });
+	const result = await window.task.submit('demo', { variant }, undefined, { priority: 'normal' });
 	if (result.success && result.data?.taskId) {
 		store.dispatch(taskAdded({ taskId: result.data.taskId, type: 'demo' }));
 	}
