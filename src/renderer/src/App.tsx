@@ -63,7 +63,6 @@ const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 // Lazy-loaded settings pages
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
 const ModelsSettingsPage = lazy(() => import('./pages/settings/ModelsSettingsPage'));
-const AgentSettingsPage = lazy(() => import('./pages/settings/AgentSettingsPage'));
 const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
