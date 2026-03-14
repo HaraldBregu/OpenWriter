@@ -38,7 +38,7 @@ import type {
 	FsRenameResult,
 	ProjectWorkspaceInfo,
 } from './types';
-import type { AgentConfig } from './aiSettings';
+import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
