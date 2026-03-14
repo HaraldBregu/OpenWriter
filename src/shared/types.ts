@@ -64,6 +64,7 @@ export interface TaskInfo {
 	error?: string;
 	queuePosition?: number;
 	durationMs?: number;
+	metadata?: Record<string, unknown>;
 }
 
 /** Queue metrics returned by task:queue-status */
