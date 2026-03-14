@@ -30,10 +30,6 @@ export async function node(
 	const response = await model.invoke(messages);
 
 	const raw = extractTokenFromChunk(response.content);
-	console.log('Raw intent output:', raw);
-	console.log('Parsed intent output:', parseWriterIntent(raw));
-	console.log('Fallback intent:', FALLBACK_INTENT);
-	console.log('Is parsed intent valid?', response.content);
 	const intent: WriterIntentResult = raw.length > 0 ? parseWriterIntent(raw) : FALLBACK_INTENT;
 
 	return { intent };
