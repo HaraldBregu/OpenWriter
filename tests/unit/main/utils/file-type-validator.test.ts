@@ -8,7 +8,7 @@ import {
 	getFileTypeCategory,
 	getSupportedFileTypesDescription,
 	getRejectedFileTypesDescription,
-} from '../../../../src/main/utils/file-type-validator';
+} from '../../../../src/shared/file-type-validator';
 
 describe('file-type-validator', () => {
 	describe('validateTextFile', () => {
