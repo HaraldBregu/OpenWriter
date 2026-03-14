@@ -9,8 +9,8 @@ import { useCreateWriting } from '../hooks/use-create-writing';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectWorkspaceName } from '../store/workspace/selectors';
 import { loadCurrentWorkspace } from '../store/workspace/actions';
-import { selectAllWritings } from '../store/writings/selectors';
-import { writingAdded } from '../store/writings/actions';
+import { selectAllDocuments } from '../store/documents/selectors';
+import { documentAdded } from '../store/documents/actions';
 import { TitleBar } from './TitleBar';
 import {
 	AppCollapsible,
