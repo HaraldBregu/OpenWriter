@@ -78,7 +78,7 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
-	agentRegistry.register(TextWriterAgent);
+	agentRegistry.register(TextCompleterAgent);
 	agentRegistry.register(TextEnhanceAgent);
 
 	// Task system -- handler registry + executor
