@@ -131,27 +131,28 @@ const DocumentPage: React.FC = () => {
 
 	useEffect(() => {
 		if (!textWriterTask.taskId) return;
-		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
-			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
+		const taskId = textWriterTask.taskId;
+		const unsub = window.task.onEvent((event: TaskEvent) => {
+			if (event.data.taskId !== taskId) return;
+			if (event.type === 'stream') {
+				editorRef.current?.insertText(event.data.data, {
+					preventEditorUpdate: true,
+				});
+			} else if (event.type === 'completed') {
+				editorRef.current?.insertText('', {
+					preventEditorUpdate: false,
+				});
+			}
 		});
 		return unsub;
 	}, [textWriterTask.taskId]);
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
-		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
-			console.log('Received enhance task update:', snap.status);
-			const metadata = snap.metadata;
-			const from = metadata?.from as number;
-			const to = metadata?.to as number;
-			// editorRef.current?.deleteText(from, to);
-			// const completed = snap.status === 'completed';
-			// editorRef.current?.insertText(snap.streamedContent, {
-			// 	preventEditorUpdate: !completed,
-			// });
+		const taskId = textEnhanceTask.taskId;
+		const unsub = window.task.onEvent((event: TaskEvent) => {
+			if (event.data.taskId !== taskId) return;
+			console.log('Received enhance task event:', event.type, event.data);
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);
