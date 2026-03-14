@@ -133,15 +133,15 @@ const DocumentPage: React.FC = () => {
 	}, [id, isTrashing, navigate, debouncedSave]);
 
 	useEffect(() => {
-		if (!writingAssistantTask.taskId) return;
-		const unsub = subscribeToTask(writingAssistantTask.taskId, (snap: TaskSnapshot) => {
+		if (!textWriterTask.taskId) return;
+		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
 			const completed = snap.status === 'completed';
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
 			});
 		});
 		return unsub;
-	}, [writingAssistantTask.taskId]);
+	}, [textWriterTask.taskId]);
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
@@ -167,9 +167,9 @@ const DocumentPage: React.FC = () => {
 			`;
 			const temperature = 0.9;
 			const data: WritingAssistantTaskData = { prompt, temperature };
-			writingAssistantTask.submit(data);
+			textWriterTask.submit(data);
 		},
-		[writingAssistantTask]
+		[textWriterTask]
 	);
 
 	const onEnhanceWithAssistant = useCallback(
@@ -236,7 +236,7 @@ const DocumentPage: React.FC = () => {
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
 								<TextEditor
-									disabled={writingAssistantTask.isRunning || textEnhanceTask.isRunning}
+									disabled={textWriterTask.isRunning || textEnhanceTask.isRunning}
 									ref={editorRef}
 									key={id}
 									value={content}
