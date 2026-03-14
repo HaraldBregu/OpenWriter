@@ -137,6 +137,7 @@ export async function* executeAIAgentsStream(
 			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
 			buildGraphInput: buildGraphInput as NonNullable<typeof buildGraphInput>,
 			extractGraphOutput: extractGraphOutput as NonNullable<typeof extractGraphOutput>,
+			streamableNodes,
 			signal,
 			logger,
 		});
