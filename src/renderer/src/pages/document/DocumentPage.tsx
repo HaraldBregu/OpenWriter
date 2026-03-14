@@ -131,15 +131,15 @@ const DocumentPage: React.FC = () => {
 	}, [id, isTrashing, navigate, debouncedSave]);
 
 	useEffect(() => {
-		if (!textWriterTask.taskId) return;
-		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
+		if (!textCompleterTask.taskId) return;
+		const unsub = subscribeToTask(textCompleterTask.taskId, (snap: TaskSnapshot) => {
 			const completed = snap.status === 'completed';
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
 			});
 		});
 		return unsub;
-	}, [textWriterTask.taskId]);
+	}, [textCompleterTask.taskId]);
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
