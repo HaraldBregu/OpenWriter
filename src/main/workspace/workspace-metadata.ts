@@ -520,6 +520,7 @@ export class WorkspaceMetadataService implements Disposable {
 			},
 			settings: {
 				directories: [],
+				agentSettings: {},
 			},
 		};
 	}
