@@ -252,8 +252,7 @@ async function* executeCustomStateGraphStream(
 	} = input;
 
 	// Build a Set once for O(1) lookups; undefined means "stream all nodes".
-	const allowedNodes =
-		streamableNodes !== undefined ? new Set(streamableNodes) : undefined;
+	const allowedNodes = streamableNodes !== undefined ? new Set(streamableNodes) : undefined;
 
 	try {
 		const graph = nodeModels ? buildGraph(nodeModels) : buildGraph(model);
@@ -284,9 +283,7 @@ async function* executeCustomStateGraphStream(
 
 				// When streamableNodes is declared, only forward tokens from listed nodes.
 				const nodeName =
-					typeof metadata?.['langgraph_node'] === 'string'
-						? metadata['langgraph_node']
-						: undefined;
+					typeof metadata?.['langgraph_node'] === 'string' ? metadata['langgraph_node'] : undefined;
 				if (allowedNodes !== undefined && (nodeName === undefined || !allowedNodes.has(nodeName))) {
 					continue;
 				}

@@ -1,4 +1,11 @@
 // ---------------------------------------------------------------------------
+// Stream events — canonical definition lives in src/shared/types.ts.
+// Re-exported here so ai/core consumers can import from a single local path.
+// ---------------------------------------------------------------------------
+
+export type { AgentStreamEvent } from '../../../shared/types';
+
+// ---------------------------------------------------------------------------
 // History message (inlined from former AIAgentsSession)
 // ---------------------------------------------------------------------------
 
@@ -25,13 +32,3 @@ export interface AgentRequest {
 	/** Override maxTokens for this request only */
 	maxTokens?: number;
 }
-
-// ---------------------------------------------------------------------------
-// Stream events
-// ---------------------------------------------------------------------------
-
-export type AgentStreamEvent =
-	| { type: 'token'; token: string; runId: string }
-	| { type: 'thinking'; content: string; runId: string }
-	| { type: 'done'; content: string; tokenCount: number; runId: string }
-	| { type: 'error'; error: string; code: string; runId: string };
