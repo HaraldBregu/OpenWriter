@@ -338,6 +338,5 @@ export type AgentStreamEvent =
 export interface AgentDefinitionInfo {
 	id: string;
 	name: string;
-	description: string;
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 }
