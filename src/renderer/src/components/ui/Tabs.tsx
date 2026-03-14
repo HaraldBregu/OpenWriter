@@ -55,10 +55,7 @@ export interface TabsListProps {
 
 export function TabsList({ className, children }: TabsListProps): React.JSX.Element {
 	return (
-		<div
-			role="tablist"
-			className={cn('border-b px-6 flex gap-0 -mb-px shrink-0', className)}
-		>
+		<div role="tablist" className={cn('border-b px-6 flex gap-0 -mb-px shrink-0', className)}>
 			{children}
 		</div>
 	);
@@ -90,11 +87,7 @@ export function TabsTrigger({ value, className, children }: TabsTriggerProps): R
 			aria-selected={isActive}
 			tabIndex={isActive ? 0 : -1}
 			onClick={() => onTabChange(value)}
-			className={cn(
-				TRIGGER_BASE,
-				isActive ? TRIGGER_ACTIVE : TRIGGER_INACTIVE,
-				className
-			)}
+			className={cn(TRIGGER_BASE, isActive ? TRIGGER_ACTIVE : TRIGGER_INACTIVE, className)}
 		>
 			{children}
 		</button>
@@ -111,16 +104,17 @@ export interface TabsContentProps {
 	children: React.ReactNode;
 }
 
-export function TabsContent({ value, className, children }: TabsContentProps): React.JSX.Element | null {
+export function TabsContent({
+	value,
+	className,
+	children,
+}: TabsContentProps): React.JSX.Element | null {
 	const { activeTab } = useTabsContext('TabsContent');
 
 	if (activeTab !== value) return null;
 
 	return (
-		<div
-			role="tabpanel"
-			className={cn('flex-1 min-h-0', className)}
-		>
+		<div role="tabpanel" className={cn('flex-1 min-h-0', className)}>
 			{children}
 		</div>
 	);

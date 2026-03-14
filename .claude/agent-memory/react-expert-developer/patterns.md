@@ -28,6 +28,20 @@
   event for that path within the window is dropped silently.
 - Events are debounced 300 ms and broadcast via `eventBus.broadcast('resources:file-changed')`.
 
+## UI: Tabs Component
+
+- Location: `src/renderer/src/components/ui/Tabs.tsx`
+- Compound component API: `<Tabs value onValueChange>`, `<TabsList>`, `<TabsTrigger value>`,
+  `<TabsContent value>`.
+- Uses React Context (`TabsContext`) to wire triggers to content without prop drilling.
+- Styling matches `SettingsLayout` underline-style tabs:
+  `border-b-2 border-foreground` for active, `border-transparent` for inactive.
+- No external dependency (no `@radix-ui/react-tabs`); implemented from scratch.
+- `TabsContent` renders `null` when inactive — no hidden mount. Suitable for lazy rendering.
+- `TabsList` owns the outer `border-b px-6` container; the parent does NOT need its own border.
+- Used in `DebugPage.tsx` for Tasks / Redux State tabs.
+- **Do not install** `@radix-ui/react-tabs` — the app already has this custom component.
+
 ## Resource reload pattern
 
 - Correct approach after any app-driven write to the resources folder:

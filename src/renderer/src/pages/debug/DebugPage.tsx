@@ -25,7 +25,11 @@ export default function DebugPage(): React.JSX.Element {
 				</div>
 			</div>
 
-			<Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as DebugTab)} className="flex-1 min-h-0">
+			<Tabs
+				value={activeTab}
+				onValueChange={(v) => setActiveTab(v as DebugTab)}
+				className="flex-1 min-h-0"
+			>
 				<TabsList>
 					{DEBUG_TABS.map(({ value, labelKey }) => (
 						<TabsTrigger key={value} value={value}>
