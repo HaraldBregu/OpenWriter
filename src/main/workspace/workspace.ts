@@ -214,6 +214,22 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Agent settings (workspace-scoped)
+	// -------------------------------------------------------------------------
+
+	getAgentSettings(): Record<string, AgentConfig> {
+		return this.metadata.getAgentSettings();
+	}
+
+	getAgentConfig(agentId: string): AgentConfig | null {
+		return this.metadata.getAgentConfig(agentId);
+	}
+
+	setAgentConfig(agentId: string, config: AgentConfig): void {
+		this.metadata.setAgentConfig(agentId, config);
+	}
+
+	// -------------------------------------------------------------------------
 	// Output files
 	// -------------------------------------------------------------------------
 
