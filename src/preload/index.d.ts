@@ -191,7 +191,7 @@ export interface WorkspaceApi {
 	// Agent settings (workspace-scoped)
 	// -------------------------------------------------------------------------
 	/** Get all agent configurations for this workspace. */
-	getAgentSettings: () => Promise<Record<string, AgentConfig>>;
+	getAgentSettings: () => Promise<WorkspaceAgentEntry[]>;
 	/** Get the configuration for a single agent. */
 	getAgentConfig: (agentId: string) => Promise<AgentConfig | null>;
 	/** Set the configuration for a single agent. */
