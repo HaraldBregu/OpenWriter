@@ -269,7 +269,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			reset,
 			isIdle: taskId === null,
 			isQueued: status === 'queued',
-			isRunning: status === 'running',
+			isRunning: status === 'started' || status === 'running',
 			isCompleted: status === 'completed',
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
