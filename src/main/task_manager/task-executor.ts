@@ -127,15 +127,20 @@ export class TaskExecutor implements Disposable {
 		this.queue.push(queued);
 		this.sortQueue();
 
-		const position = this.queue.indexOf(queued) + 1;
-		this.send(options?.windowId, 'task:event', {
-			type: 'queued',
-			data: { taskId, taskType: type, position, metadata },
-		} satisfies TaskEvent);
+		// Defer renderer-bound events so they arrive AFTER the task:submit
+		// IPC invoke response. Without this, queued/started events are sent
+		// via webContents.send() synchronously before the invoke resolves,
+		// and the renderer misses them because its listener isn't set up yet.
+		const windowId = options?.windowId;
+		setImmediate(() => {
+			const position = this.queue.indexOf(queued) + 1;
+			this.send(windowId, 'task:event', {
+				type: 'queued',
+				data: { taskId, taskType: type, position, metadata },
+			} satisfies TaskEvent);
 
-		// Task queued and added to queue
-
-		this.drainQueue();
+			this.drainQueue();
+		});
 
 		return taskId;
 	}

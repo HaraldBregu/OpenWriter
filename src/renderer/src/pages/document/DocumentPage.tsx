@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import type { TaskEvent } from '../../../shared/types';
+import type { TaskEvent } from '../../../../shared/types';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
@@ -151,8 +151,9 @@ const DocumentPage: React.FC = () => {
 		if (!textEnhanceTask.taskId) return;
 		const taskId = textEnhanceTask.taskId;
 		const unsub = window.task.onEvent((event: TaskEvent) => {
+					console.log('Received enhance task event:', event.type);
+
 			if (event.data.taskId !== taskId) return;
-			console.log('Received enhance task event:', event.type, event.data);
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);

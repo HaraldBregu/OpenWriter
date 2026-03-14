@@ -76,53 +76,59 @@ export interface TaskQueueStatus {
 
 export type TaskEvent =
 	| {
-			type: 'queued';
-			data: {
-				taskId: string;
-				taskType: string;
-				position: number;
-				metadata?: Record<string, unknown>;
-			};
-	  }
-	| { type: 'started'; data: { taskId: string; metadata?: Record<string, unknown> } }
+		type: 'queued';
+		data: {
+			taskId: string;
+			taskType: string;
+			position: number;
+			metadata?: Record<string, unknown>;
+		};
+	}
 	| {
-			type: 'progress';
-			data: {
-				taskId: string;
-				percent: number;
-				message?: string;
-				detail?: unknown;
-				metadata?: Record<string, unknown>;
-			};
-	  }
+		type: 'started';
+		data: {
+			taskId: string;
+			metadata?: Record<string, unknown>,
+		}
+	}
 	| {
-			type: 'completed';
-			data: {
-				taskId: string;
-				result: unknown;
-				durationMs: number;
-				metadata?: Record<string, unknown>;
-			};
-	  }
+		type: 'progress';
+		data: {
+			taskId: string;
+			percent: number;
+			message?: string;
+			detail?: unknown;
+			metadata?: Record<string, unknown>;
+		};
+	}
 	| {
-			type: 'error';
-			data: { taskId: string; message: string; code: string; metadata?: Record<string, unknown> };
-	  }
+		type: 'completed';
+		data: {
+			taskId: string;
+			result: unknown;
+			durationMs: number;
+			metadata?: Record<string, unknown>;
+		};
+	}
+	| {
+		type: 'error';
+		data: { taskId: string; message: string; code: string; metadata?: Record<string, unknown> };
+	}
 	| { type: 'cancelled'; data: { taskId: string; metadata?: Record<string, unknown> } }
 	| { type: 'stream'; data: { taskId: string; data: string; metadata?: Record<string, unknown> } }
 	| {
-			type: 'priority-changed';
-			data: {
-				taskId: string;
-				priority: TaskPriority;
-				position: number;
-				metadata?: Record<string, unknown>;
-			};
-	  }
+		type: 'priority-changed';
+		data: {
+			taskId: string;
+			priority: TaskPriority;
+			position: number;
+			metadata?: Record<string, unknown>;
+		};
+	}
 	| {
-			type: 'queue-position';
-			data: { taskId: string; position: number; metadata?: Record<string, unknown> };
-	  };
+		type: 'queue-position';
+		data: { taskId: string; position: number; metadata?: Record<string, unknown> };
+	};
 
 // ---- Indexing -------------------------------------------------------------
 
