@@ -31,6 +31,7 @@ const definition: AgentDefinition = {
 	name: 'Writing Assistant',
 	category: 'writing',
 	nodeModels: NODE_MODELS,
+	streamableNodes: ['continue_writing', 'enhance_text'],
 	buildGraph,
 
 	/**
