@@ -154,6 +154,18 @@ const TextEditor = React.memo(
 							.setMeta('preventEditorUpdate', options?.preventEditorUpdate);
 						editor.view.dispatch(tr);
 					},
+					deleteText(
+						from: number,
+						to: number,
+						options: { preventEditorUpdate?: boolean } = {}
+					) {
+						if (!editor || editor.isDestroyed) return;
+
+						const tr = editor.state.tr
+							.delete(from, to)
+							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
+						editor.view.dispatch(tr);
+					},
 					insertMarkdown(
 						markdown: string,
 						options: { from?: number; preventEditorUpdate?: boolean } = {}
