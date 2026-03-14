@@ -17,7 +17,7 @@ import type { AgentDefinition, GraphInputContext } from '../../core/definition';
 import { buildGraph } from './graph';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
-	enhance_text: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
+	enhance: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
 };
 
 const definition: AgentDefinition = {
@@ -25,7 +25,7 @@ const definition: AgentDefinition = {
 	name: 'Text Enhance',
 	category: 'writing',
 	nodeModels: NODE_MODELS,
-	streamableNodes: ['enhance_text'],
+	streamableNodes: ['enhance'],
 	buildGraph,
 
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
