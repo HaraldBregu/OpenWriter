@@ -385,7 +385,7 @@ export class TaskExecutor implements Disposable {
 					if (!this.activeTasks.has(taskId)) return;
 					this.send(windowId, 'task:event', {
 						type: 'stream',
-						data: { taskId, data },
+						data: { taskId, data, metadata },
 					} satisfies TaskEvent);
 				},
 			};
