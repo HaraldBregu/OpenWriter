@@ -218,15 +218,6 @@ const DocumentPage: React.FC = () => {
 							)}
 						</div>
 					</div>
-
-					<div className="shrink-0 flex items-center justify-end px-8 py-2 border-t border-border">
-						<span className="text-xs text-muted-foreground">
-							{t('writing.charactersAndWords', {
-								chars: charCount,
-								words: wordCount,
-							})}
-						</span>
-					</div>
 				</div>
 
 				<ConfigSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
