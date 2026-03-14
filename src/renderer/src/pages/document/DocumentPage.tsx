@@ -95,13 +95,6 @@ const DocumentPage: React.FC = () => {
 		};
 	}, [debouncedSave]);
 
-	const { charCount, wordCount } = useMemo(() => {
-		const trimmed = content.trim();
-		const chars = trimmed.length;
-		const words = trimmed.length === 0 ? 0 : trimmed.split(/\s+/).filter(Boolean).length;
-		return { charCount: chars, wordCount: words };
-	}, [content]);
-
 	const handleTitleChange = useCallback(
 		(value: string) => {
 			setTitle(value);
