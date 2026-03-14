@@ -65,7 +65,7 @@ export const tasksSlice = createSlice({
 				taskId: string;
 				type: string;
 				priority?: TaskPriority;
-				metadata?: unknown;
+				metadata?: Record<string, unknown>;
 			}>
 		) {
 			const { taskId, type, priority = 'normal', metadata } = action.payload;
