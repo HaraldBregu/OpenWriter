@@ -403,7 +403,7 @@ export class TaskExecutor implements Disposable {
 
 			this.send(windowId, 'task:event', {
 				type: 'completed',
-				data: { taskId, result, durationMs },
+				data: { taskId, result, durationMs, metadata },
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
