@@ -31,7 +31,7 @@ export interface IndexedDirectory {
  */
 export interface WorkspaceSettings {
 	directories: IndexedDirectory[];
-	agentSettings: Record<string, AgentConfig>;
+	agents: WorkspaceAgentEntry[];
 }
 
 /**
