@@ -23,10 +23,7 @@ export class TextEnhanceTaskReaction implements TaskReactionHandler {
 	constructor(private readonly logger?: LoggerService) {}
 
 	onSubmitted(event: TaskSubmittedEvent): void {
-		this.logger?.debug(
-			TAG,
-			`submitted id=${event.taskId.slice(0, 8)} priority=${event.priority}`
-		);
+		this.logger?.debug(TAG, `submitted id=${event.taskId.slice(0, 8)} priority=${event.priority}`);
 	}
 
 	onStarted(event: TaskStartedEvent): void {
@@ -41,10 +38,7 @@ export class TextEnhanceTaskReaction implements TaskReactionHandler {
 	}
 
 	onFailed(event: TaskFailedEvent): void {
-		this.logger?.warn(
-			TAG,
-			`failed id=${event.taskId.slice(0, 8)} error="${event.error}"`
-		);
+		this.logger?.warn(TAG, `failed id=${event.taskId.slice(0, 8)} error="${event.error}"`);
 	}
 
 	onCancelled(event: TaskCancelledEvent): void {
