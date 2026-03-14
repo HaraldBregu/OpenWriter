@@ -217,16 +217,16 @@ export class Workspace implements Disposable {
 	// Agent settings (workspace-scoped)
 	// -------------------------------------------------------------------------
 
-	getAgentSettings(): WorkspaceAgentEntry[] {
-		return this.metadata.getAgentSettings();
+	async getAgentSettings(): Promise<WorkspaceAgentEntry[]> {
+		return this.projectWorkspace.getAgentSettings();
 	}
 
-	getAgentConfig(agentId: string): AgentConfig | null {
-		return this.metadata.getAgentConfig(agentId);
+	async getAgentConfig(agentId: string): Promise<AgentConfig | null> {
+		return this.projectWorkspace.getAgentConfig(agentId);
 	}
 
-	setAgentConfig(agentId: string, config: AgentConfig): void {
-		this.metadata.setAgentConfig(agentId, config);
+	async setAgentConfig(agentId: string, config: AgentConfig): Promise<void> {
+		await this.projectWorkspace.setAgentConfig(agentId, config);
 	}
 
 	// -------------------------------------------------------------------------
