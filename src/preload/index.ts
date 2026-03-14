@@ -364,13 +364,14 @@ const task: TaskApi = {
 	submit: (
 		type: string,
 		input: unknown,
+		metadata?: Record<string, unknown>,
 		options?: {
 			priority?: 'low' | 'normal' | 'high';
 			timeoutMs?: number;
 			windowId?: number;
 		}
 	) => {
-		return typedInvokeRaw(TaskChannels.submit, { type, input, options });
+		return typedInvokeRaw(TaskChannels.submit, { type, input, metadata, options });
 	},
 	cancel: (taskId: string) => {
 		return typedInvokeRaw(TaskChannels.cancel, taskId);
