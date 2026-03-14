@@ -14,6 +14,7 @@ interface TaskSubmitInput {
 	type: string;
 	input: unknown;
 	options?: TaskOptions;
+	metadata?: Record<string, unknown>;
 }
 
 /** Strip non-serializable fields from ActiveTask for IPC transport. */
