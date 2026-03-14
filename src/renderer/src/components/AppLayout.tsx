@@ -28,7 +28,6 @@ import {
 	AppSidebarProvider,
 	AppSidebarInset,
 	AppSidebarHeader,
-	AppSidebarFooter,
 	useSidebar,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
