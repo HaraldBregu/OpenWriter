@@ -149,7 +149,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 														isActive={location.pathname === `/content/${w.id}`}
 													>
 														<Link to={`/content/${w.id}`}>
-								
 															<span className="flex-1 truncate">
 																{w.title || t('sidebar.untitledWriting')}
 															</span>

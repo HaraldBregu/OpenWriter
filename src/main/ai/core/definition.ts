@@ -136,7 +136,7 @@ export interface AgentDefinition {
  * Strip non-serializable / internal fields and return a plain object that is
  * safe to send from the main process to a renderer window via IPC.
  */
-export function toAgentDefinitionInfo(def: AgentDefinition): AgentDefinitionInfo {
+export function toAgentDefinitionInfo(def: AgentDefinition) {
 	return {
 		id: def.id,
 		name: def.name,
