@@ -14,7 +14,6 @@ export interface StoreSchema {
 
 const DEFAULTS: StoreSchema = {
 	modelSettings: {},
-	agentSettings: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
