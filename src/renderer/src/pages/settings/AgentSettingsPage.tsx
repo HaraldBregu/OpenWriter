@@ -208,12 +208,12 @@ const AgentSettingsPage: React.FC = () => {
 	const [agentStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
 	useEffect(() => {
-		window.workspace.getAgentSettings().then((all) => {
+		window.workspace.getAgentSettings().then((entries) => {
 			const loaded = buildInitialState();
-			for (const id of AGENT_IDS) {
-				const persisted = all[id];
-				if (persisted) {
-					loaded[id] = persisted;
+			for (const entry of entries) {
+				const { agentId, ...config } = entry;
+				if (AGENT_IDS.includes(agentId as AgentId)) {
+					loaded[agentId as AgentId] = config;
 				}
 			}
 			dispatch({ type: 'INIT', states: loaded });
