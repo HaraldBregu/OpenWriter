@@ -113,6 +113,16 @@ export interface AgentDefinition {
 	 * Required when `buildGraphInput` is provided.
 	 */
 	extractGraphOutput?: (state: Record<string, unknown>) => string;
+	/**
+	 * Inclusion list of node names whose streaming tokens should be forwarded
+	 * to the caller. When present, the executor filters `messages` stream
+	 * events by `metadata.langgraph_node` and only yields tokens from listed
+	 * nodes. When absent, all nodes are streamed (backward-compatible default).
+	 *
+	 * Use this to suppress tokens from routing / classification nodes that
+	 * produce internal output (e.g. JSON) not intended for the user.
+	 */
+	streamableNodes?: string[];
 }
 
 // ---------------------------------------------------------------------------

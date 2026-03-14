@@ -146,7 +146,11 @@ function extractIntentResult(parsed: unknown): WriterIntentResult {
 	const tone = typeof record['tone'] === 'string' ? record['tone'] : undefined;
 
 	if (contentLength !== undefined || tone !== undefined) {
-		return { ...result, ...(contentLength !== undefined && { contentLength }), ...(tone !== undefined && { tone }) };
+		return {
+			...result,
+			...(contentLength !== undefined && { contentLength }),
+			...(tone !== undefined && { tone }),
+		};
 	}
 
 	return result;
