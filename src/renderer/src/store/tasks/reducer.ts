@@ -132,13 +132,13 @@ export const tasksSlice = createSlice({
 
 			appendEventToDraft(task, record);
 
+			// Propagate metadata carried by every event variant.
+			applyEventMetadata(task, event.data);
+
 			switch (event.type) {
 				case 'queued': {
 					task.status = 'queued';
 					task.queuePosition = event.data.position;
-					if (event.data.metadata !== undefined) {
-						task.metadata = event.data.metadata;
-					}
 					break;
 				}
 				case 'started': {
