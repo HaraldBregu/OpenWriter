@@ -10,8 +10,7 @@ import WelcomePage from './pages/WelcomePage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import type { TaskEvent } from '../../shared/types';
 import { taskEventReceived } from './store/tasks/actions';
-import { loadWritings, refreshWriting } from './store/writings/actions';
-import { writingRemoved } from './store/writings/actions';
+import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
 import './index.css';
 
