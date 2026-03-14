@@ -208,22 +208,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					</AppSidebarContent>
 
 					{/* Footer — Settings link */}
-					<AppSidebarFooter className="border-t px-3 py-3">
-						<AppSidebarMenu>
-							<AppSidebarMenuItem>
-								<AppSidebarMenuButton
-									asChild
-									className="h-9 px-3"
-									isActive={location.pathname.startsWith('/settings')}
-								>
-									<Link to="/settings">
-										<Settings className="h-3.5 w-3.5 shrink-0" />
-										<span className="flex-1 truncate">{t('menu.settings')}</span>
-									</Link>
-								</AppSidebarMenuButton>
-							</AppSidebarMenuItem>
-						</AppSidebarMenu>
-					</AppSidebarFooter>
+					<Link
+						to="/settings"
+						className={cn(
+							'flex items-center gap-2 border-t px-4 py-3 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+							location.pathname.startsWith('/settings') &&
+								'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+						)}
+					>
+						<Settings className="h-3.5 w-3.5 shrink-0" />
+						<span className="truncate">{t('menu.settings')}</span>
+					</Link>
 				</AppSidebar>
 
 				<AppSidebarInset className="flex flex-col flex-1 min-h-0 min-w-0">
