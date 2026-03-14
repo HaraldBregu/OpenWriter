@@ -113,7 +113,11 @@ export function useTask<TInput = unknown, TResult = unknown>(
 	}, [taskId]);
 
 	const submit = useCallback(
-		async (inputOverride?: TInput, submitOptions?: TaskOptions): Promise<void> => {
+		async (
+			inputOverride?: TInput,
+			metadata?: Record<string, unknown>,
+			submitOptions?: TaskOptions
+		): Promise<void> => {
 			if (runningRef.current) return;
 
 			if (typeof window.task?.submit !== 'function') {
@@ -130,8 +134,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 				...optionsRef.current,
 				...submitOptions,
 			};
-
-			const metadata = submitOptions?.metadata;
 
 			let resolvedTaskId: string;
 
