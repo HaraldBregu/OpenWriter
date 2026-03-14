@@ -51,8 +51,6 @@ export interface TextEditorProps {
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
 	onEnhanceWithAssistant?: (
 		selectedText: string,
-		before: string,
-		after: string,
 		from: number,
 		to: number
 	) => void;

@@ -8,7 +8,7 @@ import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 
-type TextWriterTaskData = {
+type TextCompleterTaskData = {
 	prompt: string;
 };
 
@@ -144,7 +144,16 @@ const DocumentPage: React.FC = () => {
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
 		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
-			console.log('Received enhance task update:', snap.status);
+			if (snap.status == 'started') {
+				const metadata = snap.metadata;
+				const from = metadata?.from as number;
+				const to = metadata?.to as number;
+				editorRef.current?.deleteText(from, to);
+			}
+			const completed = snap.status === 'completed';
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);
@@ -168,21 +177,9 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onEnhanceWithAssistant = useCallback(
-		(selectedText: string, before: string, after: string, from: number, to: number) => {
-			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
-			const cleanAfter = after.replaceAll('⬢', '').trimStart();
-			const cleanSelected = selectedText.replaceAll('⬢', '').trim();
-			const prompt = `
-			${cleanBefore}
-
-			⬢ ENHANCE THE TEXT ⬢
-			⬢ ${cleanSelected} ⬢
-
-			${cleanAfter}
-			`;
-			const data: TextEnhanceTaskData = { prompt };
+		(selectedText: string, from: number, to: number) => {
+			const data: TextEnhanceTaskData = { prompt: selectedText };
 			const metadata = { type: 'replace_text', from, to };
-			console.log('Submitting enhance task with metadata:', metadata);
 			textEnhanceTask.submit(data, metadata);
 		},
 		[textEnhanceTask]

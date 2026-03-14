@@ -17,8 +17,6 @@ import { useEditorContext } from '../EditorContext';
 interface BubbleMenuProps {
 	onEnhanceWithAssistant?: (
 		selectedText: string,
-		before: string,
-		after: string,
 		from: number,
 		to: number
 	) => void;
@@ -53,10 +51,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		const { from, to } = editor.state.selection;
 		const selectedText = editor.state.doc.textBetween(from, to, ' ');
 		if (selectedText.trim().length > 0) {
-			const docSize = editor.state.doc.content.size;
-			const before = editor.state.doc.textBetween(0, from, ' ');
-			const after = editor.state.doc.textBetween(to, docSize, ' ');
-			onEnhanceWithAssistant?.(selectedText, before, after, from, to);
+			onEnhanceWithAssistant?.(selectedText, from, to);
 		}
 	}, [editor, onEnhanceWithAssistant]);
 
