@@ -7,7 +7,7 @@ import {
 	validateTextFiles,
 	getAllTextExtensions,
 	getFileExtension,
-} from '../utils/file-type-validator';
+} from '../../shared/file-type-validator';
 
 /**
  * DocumentsService manages document files within a workspace.
