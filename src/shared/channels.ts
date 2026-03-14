@@ -241,7 +241,7 @@ export interface InvokeChannelMap {
 	};
 
 	// ---- Agent Settings (workspace-scoped, IpcResult-wrapped) ----
-	[WorkspaceChannels.getAgentSettings]: { args: []; result: Record<string, AgentConfig> };
+	[WorkspaceChannels.getAgentSettings]: { args: []; result: WorkspaceAgentEntry[] };
 	[WorkspaceChannels.getAgentConfig]: { args: [agentId: string]; result: AgentConfig | null };
 	[WorkspaceChannels.setAgentConfig]: {
 		args: [agentId: string, config: AgentConfig];
