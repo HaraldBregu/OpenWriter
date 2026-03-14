@@ -338,7 +338,7 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	// Agent settings (workspace-scoped)
 	// -------------------------------------------------------------------------
-	getAgentSettings: (): Promise<Record<string, AgentConfig>> => {
+	getAgentSettings: (): Promise<WorkspaceAgentEntry[]> => {
 		return typedInvokeUnwrap(WorkspaceChannels.getAgentSettings);
 	},
 	getAgentConfig: (agentId: string): Promise<AgentConfig | null> => {
