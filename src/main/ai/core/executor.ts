@@ -91,6 +91,7 @@ export async function* executeAIAgentsStream(
 		buildGraph,
 		buildGraphInput,
 		extractGraphOutput,
+		streamableNodes,
 		logger,
 	} = input;
 	const { apiKey, modelName } = provider;
