@@ -8,7 +8,7 @@ import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 
-type WritingAssistantTaskData = {
+type TextWriterTaskData = {
 	prompt: string;
 	temperature?: number;
 };
