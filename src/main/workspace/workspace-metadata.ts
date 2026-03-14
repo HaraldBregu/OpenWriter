@@ -269,6 +269,32 @@ export class WorkspaceMetadataService implements Disposable {
 	}
 
 	/**
+	 * Get all persisted agent configurations for this workspace.
+	 */
+	getAgentSettings(): Record<string, AgentConfig> {
+		return { ...this.getMetadata().settings.agentSettings };
+	}
+
+	/**
+	 * Get the configuration for a single agent by ID.
+	 */
+	getAgentConfig(agentId: string): AgentConfig | null {
+		return this.getMetadata().settings.agentSettings[agentId] ?? null;
+	}
+
+	/**
+	 * Persist the configuration for a single agent.
+	 */
+	setAgentConfig(agentId: string, config: AgentConfig): void {
+		this.requireWorkspace();
+		const metadata = this.getMetadata();
+		metadata.settings.agentSettings[agentId] = config;
+		metadata.metadata.updatedAt = Date.now();
+		this.scheduleSave(metadata);
+		this.logger?.info('WorkspaceMetadataService', `Updated agent config: ${agentId}`);
+	}
+
+	/**
 	 * Validate a directory path without adding it.
 	 * Useful for UI validation before presenting confirmation.
 	 */
