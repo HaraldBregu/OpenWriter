@@ -85,7 +85,7 @@ export function useTaskListener<TResult = unknown>(
 			result,
 			isIdle: taskId === null,
 			isQueued: status === 'queued',
-			isRunning: status === 'running',
+			isRunning: status === 'started' || status === 'running',
 			isCompleted: status === 'completed',
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
