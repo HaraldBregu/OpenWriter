@@ -290,6 +290,9 @@ export class ProjectWorkspaceService {
 					: path.basename(workspacePath),
 			description:
 				typeof record['description'] === 'string' ? (record['description'] as string) : '',
+			agents: Array.isArray(record['agents'])
+				? (record['agents'] as WorkspaceAgentEntry[])
+				: [],
 			createdAt: typeof record['createdAt'] === 'string' ? (record['createdAt'] as string) : now,
 			updatedAt: typeof record['updatedAt'] === 'string' ? (record['updatedAt'] as string) : now,
 			appVersion:
