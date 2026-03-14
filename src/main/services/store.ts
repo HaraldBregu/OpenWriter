@@ -1,6 +1,5 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import type { AgentConfig } from '../../shared/aiSettings';
 
 export interface WorkspaceInfo {
 	path: string;
