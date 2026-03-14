@@ -119,6 +119,7 @@ export class TaskExecutor implements Disposable {
 			priority,
 			windowId: options?.windowId,
 			timeoutMs: options?.timeoutMs,
+			metadata,
 			controller,
 			queuedAt: Date.now(),
 		};
