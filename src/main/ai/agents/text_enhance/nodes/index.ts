@@ -1,1 +1,1 @@
-export { node as enhanceText } from './enhance-text/node';
+export { node as enhance } from './enhance/node';
