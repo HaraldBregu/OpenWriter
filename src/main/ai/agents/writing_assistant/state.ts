@@ -7,9 +7,7 @@
  */
 
 import { Annotation } from '@langchain/langgraph';
-
-/** Valid classifications produced by the intent node. */
-export type WriterIntent = 'enhance' | 'continue_writing';
+import type { WriterIntentResult } from './writer-intent';
 
 export const WriterState = Annotation.Root({
 	prompt: Annotation<string>({
@@ -17,13 +15,13 @@ export const WriterState = Annotation.Root({
 		default: () => '',
 	}),
 	/**
-	 * Intent classification set by the intent node.
-	 * Empty string is the unclassified default; the intent node always
-	 * overwrites it before any downstream node runs.
+	 * Structured intent classification set by the intent node.
+	 * `null` is the unclassified default — the intent node always writes a
+	 * valid `WriterIntentResult` before any downstream node runs.
 	 */
-	intent: Annotation<WriterIntent | ''>({
+	intent: Annotation<WriterIntentResult | null>({
 		reducer: (_a, b) => b,
-		default: () => '',
+		default: () => null,
 	}),
 	/** Output field — the generated continuation text. Populated by the node. */
 	completion: Annotation<string>({
