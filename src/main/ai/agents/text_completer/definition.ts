@@ -1,5 +1,5 @@
 /**
- * TextWriter — continues writing from the end of provided text.
+ * TextCompleter — continues writing from the end of provided text.
  *
  * Runs as a single-node LangGraph StateGraph:
  *   START → write → END
@@ -8,7 +8,7 @@
  * and returns only the continuation — no JSON, no commentary.
  *
  * Execution contract: custom-state protocol.
- *   - `buildGraphInput` maps executor context → TextWriterState initial fields.
+ *   - `buildGraphInput` maps executor context → TextCompleterState initial fields.
  *   - `extractGraphOutput` pulls `state.completion` from the final snapshot.
  *   - `streamMode: ['messages', 'values']` enables token-level streaming.
  */
@@ -21,8 +21,8 @@ const NODE_MODELS: AgentDefinition['nodeModels'] = {
 };
 
 const definition: AgentDefinition = {
-	id: 'text-writer',
-	name: 'Text Writer',
+	id: 'text-completer',
+	name: 'Text Completer',
 	category: 'writing',
 	nodeModels: NODE_MODELS,
 	streamableNodes: ['write'],
@@ -43,4 +43,4 @@ const definition: AgentDefinition = {
 	},
 };
 
-export { definition as TextWriterAgent };
+export { definition as TextCompleterAgent };
