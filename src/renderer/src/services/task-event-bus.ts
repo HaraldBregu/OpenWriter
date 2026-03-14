@@ -139,6 +139,13 @@ function ensureListening(): void {
 }
 
 // ---------------------------------------------------------------------------
+// Eager init: register the global IPC listener immediately so no early
+// events (queued, started) are lost before the first subscribeToTask call.
+// ---------------------------------------------------------------------------
+
+ensureListening();
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
