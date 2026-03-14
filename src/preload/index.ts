@@ -2,7 +2,7 @@ import { contextBridge } from 'electron';
 import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } from './typed-ipc';
 import { AppChannels, WindowChannels, WorkspaceChannels, TaskChannels } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
-import type { AgentConfig } from '../shared/aiSettings';
+import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
