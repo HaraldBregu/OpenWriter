@@ -1,5 +1,5 @@
 /**
- * LangGraph definition for the Text Writer agent.
+ * LangGraph definition for the Text Completer agent.
  *
  * Topology:
  *
@@ -13,7 +13,7 @@
 
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { TextWriterState } from './state';
+import { TextCompleterState } from './state';
 import type { NodeModelMap } from '../../core/definition';
 import { writeNode } from './write-node';
 
@@ -23,8 +23,10 @@ const NODE = {
 
 export function buildGraph(models: BaseChatModel | NodeModelMap) {
 	const m = models as NodeModelMap;
-	const graph = new StateGraph(TextWriterState)
-		.addNode(NODE.WRITE, (state: typeof TextWriterState.State) => writeNode(state, m[NODE.WRITE]))
+	const graph = new StateGraph(TextCompleterState)
+		.addNode(NODE.WRITE, (state: typeof TextCompleterState.State) =>
+			writeNode(state, m[NODE.WRITE])
+		)
 		.addEdge(START, NODE.WRITE)
 		.addEdge(NODE.WRITE, END);
 
