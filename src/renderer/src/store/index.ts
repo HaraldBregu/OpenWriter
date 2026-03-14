@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
 import tasksReducer from './tasks/reducer';
-import writingsReducer from './writings/reducer';
+import documentsReducer from './documents/reducer';
 import { listenerMiddleware } from './listener-middleware';
 
 // Side-effect imports: register listener effects
@@ -14,7 +14,7 @@ export const store = configureStore({
 	reducer: {
 		workspace: workspaceReducer,
 		tasks: tasksReducer,
-		writings: writingsReducer,
+		documents: documentsReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().prepend(listenerMiddleware.middleware),
