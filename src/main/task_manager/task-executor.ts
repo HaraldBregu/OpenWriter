@@ -241,7 +241,7 @@ export class TaskExecutor implements Disposable {
 
 		this.send(task.windowId, 'task:event', {
 			type: 'priority-changed',
-			data: { taskId, priority: newPriority, position },
+			data: { taskId, priority: newPriority, position, metadata: task.metadata },
 		} satisfies TaskEvent);
 
 		// Task log
