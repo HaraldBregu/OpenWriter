@@ -173,12 +173,15 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 				...submitOptions,
 			};
 
+			const metadata = submitOptions?.metadata;
+
 			let resolvedTaskId: string;
 
 			try {
 				const ipcResult = await window.task.submit(
 					type,
 					inputOverride ?? inputRef.current,
+					metadata,
 					mergedOptions
 				);
 
@@ -202,6 +205,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 					taskId: resolvedTaskId,
 					type,
 					priority: mergedOptions.priority ?? optionsRef.current?.priority ?? 'normal',
+					metadata,
 				})
 			);
 
