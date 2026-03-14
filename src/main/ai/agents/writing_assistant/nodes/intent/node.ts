@@ -1,24 +1,21 @@
 /**
  * Intent classification node for the Writing Assistant agent.
  *
- * Uses model.invoke() (not stream) because it only needs a single classification
- * token — "enhance" or "continue_writing" — before the graph routes downstream.
+ * Uses model.invoke() (not stream) because it only needs a single JSON object
+ * before the graph routes downstream. The raw LLM output is parsed via
+ * `parseWriterIntent`, which is safe — it never throws and always returns a
+ * valid `WriterIntentResult`, falling back to `FALLBACK_INTENT` on any error.
  *
  * The model is injected via closure from graph.ts.
  */
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import type { WriterIntent } from '../../state';
+import { extractTokenFromChunk } from '../../../../../shared/ai-utils';
+import { parseWriterIntent, FALLBACK_INTENT } from '../../writer-intent';
+import type { WriterIntentResult } from '../../writer-intent';
 import { WriterState } from '../../state';
 import SYSTEM_PROMPT from './SYSTEM.md?raw';
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const VALID_INTENTS = new Set<WriterIntent>(['enhance', 'continue_writing']);
-const FALLBACK_INTENT: WriterIntent = 'continue_writing';
 
 // ---------------------------------------------------------------------------
 // Node
@@ -32,11 +29,8 @@ export async function node(
 
 	const response = await model.invoke(messages);
 
-	const raw = typeof response.content === 'string' ? response.content.trim().toLowerCase() : '';
-
-	const intent: WriterIntent = VALID_INTENTS.has(raw as WriterIntent)
-		? (raw as WriterIntent)
-		: FALLBACK_INTENT;
+	const raw = extractTokenFromChunk(response.content);
+	const intent: WriterIntentResult = raw.length > 0 ? parseWriterIntent(raw) : FALLBACK_INTENT;
 
 	return { intent };
 }
