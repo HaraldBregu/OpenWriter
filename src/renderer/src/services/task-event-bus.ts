@@ -23,7 +23,7 @@ export interface TaskSnapshot {
 	error?: string;
 	result?: unknown;
 	/** Caller-supplied metadata attached at submit time via initTaskMetadata. */
-	metadata?: unknown;
+	metadata?: Record<string, unknown>;
 }
 
 // ---------------------------------------------------------------------------

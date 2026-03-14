@@ -173,7 +173,6 @@ const DocumentPage: React.FC = () => {
 
 	const onEnhanceWithAssistant = useCallback(
 		(selectedText: string, before: string, after: string, from: number, to: number) => {
-			console.log('Enhance prompt:', { selectedText, before, after, from, to });
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
 			const cleanAfter = after.replaceAll('⬢', '').trimStart();
 			const cleanSelected = selectedText.replaceAll('⬢', '').trim();
@@ -186,7 +185,8 @@ const DocumentPage: React.FC = () => {
 			${cleanAfter}
 			`;
 			const data: TextEnhanceTaskData = { prompt };
-			textEnhanceTask.submit(data);
+			const metadata = { from, to };
+			textEnhanceTask.submit(data, metadata);
 		},
 		[textEnhanceTask]
 	);
