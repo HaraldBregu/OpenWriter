@@ -157,12 +157,7 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onEnhanceWithAssistant = useCallback(
-		(selectedText: string, from: number, to: number) => {
-			// const prompt = `ENHANCE THE FOLLOWING TEXT WITH MORE DETAIL AND DESCRIPTION:\n\n${selectedText}`;
-			// const temperature = 0.9;
-			// const data: WritingAssistantTaskData = { prompt, temperature };
-			// writingAssistantTask.submit(data);
-		},
+		(_selectedText: string, _from: number, _to: number) => {},
 		[writingAssistantTask]
 	);
 
