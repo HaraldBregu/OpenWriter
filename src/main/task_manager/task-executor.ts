@@ -43,6 +43,7 @@ interface QueuedTask {
 	priority: TaskPriority;
 	windowId?: number;
 	timeoutMs?: number;
+	metadata?: Record<string, unknown>;
 	controller: AbortController;
 	queuedAt: number;
 }
