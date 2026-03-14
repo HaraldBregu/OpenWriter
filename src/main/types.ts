@@ -28,4 +28,4 @@ export type { LogLevel, LoggerOptions } from './services/logger';
 export type { WorkspaceInfo, StoreSchema } from './services/store';
 
 // ---- File utility types --------------------------------------------------
-export type { FileTypeValidationResult } from './utils/file-type-validator';
+export type { FileTypeValidationResult } from '../shared/file-type-validator';
