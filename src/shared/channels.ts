@@ -163,6 +163,10 @@ export interface InvokeChannelMap {
 	[AppChannels.getAllApiKeys]: { args: []; result: Record<string, string> };
 	[AppChannels.getApiKey]: { args: [providerId: string]; result: string | null };
 	[AppChannels.setApiKey]: { args: [providerId: string, apiKey: string]; result: void };
+	[AppChannels.getAgentSettings]: { args: []; result: Record<string, AgentConfig> };
+	[AppChannels.getAgentConfig]: { args: [agentId: string]; result: AgentConfig | null };
+	[AppChannels.setAgentConfig]: { args: [agentId: string, config: AgentConfig]; result: void };
+
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
