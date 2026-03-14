@@ -166,7 +166,7 @@ const DocumentPage: React.FC = () => {
 			${cleanAfter}
 			`;
 			const temperature = 0.9;
-			const data: WritingAssistantTaskData = { prompt, temperature };
+			const data: TextWriterTaskData = { prompt, temperature };
 			textWriterTask.submit(data);
 		},
 		[textWriterTask]
