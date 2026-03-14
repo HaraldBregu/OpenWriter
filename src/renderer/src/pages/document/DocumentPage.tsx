@@ -157,7 +157,9 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onEnhanceWithAssistant = useCallback(
-		(_selectedText: string, _from: number, _to: number) => {},
+		(selectedText: string, before: string, after: string, from: number, to: number) => {
+			console.log('enhanceWithAssistant', { selectedText, before, after, from, to });
+		},
 		[writingAssistantTask]
 	);
 
