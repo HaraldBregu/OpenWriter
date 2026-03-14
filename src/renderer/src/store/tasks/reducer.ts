@@ -33,6 +33,20 @@ function appendEventToDraft(task: TrackedTaskState, record: TaskEventRecord): vo
 	task.events.push(record);
 }
 
+/**
+ * Merge incoming event metadata into the task's metadata field.
+ * Every TaskEvent variant carries an optional `metadata` bag — this helper
+ * ensures we never silently drop it regardless of event type.
+ */
+function applyEventMetadata(
+	task: TrackedTaskState,
+	eventData: { metadata?: Record<string, unknown> }
+): void {
+	if (eventData.metadata !== undefined) {
+		task.metadata = eventData.metadata;
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Slice
 // ---------------------------------------------------------------------------
