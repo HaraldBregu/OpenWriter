@@ -8,7 +8,6 @@ export interface WorkspaceInfo {
 
 export interface StoreSchema {
 	modelSettings: Record<string, string>;
-	agentSettings: Record<string, AgentConfig>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
