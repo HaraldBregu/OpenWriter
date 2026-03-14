@@ -208,7 +208,7 @@ const AgentSettingsPage: React.FC = () => {
 	const [agentStates, dispatch] = useReducer(reducer, undefined, buildInitialState);
 
 	useEffect(() => {
-		window.app.getAgentSettings().then((all) => {
+		window.workspace.getAgentSettings().then((all) => {
 			const loaded = buildInitialState();
 			for (const id of AGENT_IDS) {
 				const persisted = all[id];
