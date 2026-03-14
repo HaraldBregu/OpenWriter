@@ -191,7 +191,7 @@ export class TaskExecutor implements Disposable {
 	 */
 	listTasks(): ActiveTask[] {
 		return Array.from(this.activeTasks.values()).map(
-			({ taskId, type, status, priority, startedAt, completedAt, windowId }) => ({
+			({ taskId, type, status, priority, startedAt, completedAt, windowId, metadata }) => ({
 				taskId,
 				type,
 				status,
@@ -199,6 +199,7 @@ export class TaskExecutor implements Disposable {
 				startedAt,
 				completedAt,
 				windowId,
+				metadata,
 				controller: undefined as unknown as AbortController,
 			})
 		);
