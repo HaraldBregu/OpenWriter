@@ -97,6 +97,7 @@ export const tasksSlice = createSlice({
 						status: 'queued',
 						priority: 'normal',
 						progress: { percent: 0 },
+						metadata: event.data.metadata,
 						streamBuffer: '',
 						events: [],
 					};
