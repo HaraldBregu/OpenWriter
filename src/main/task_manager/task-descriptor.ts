@@ -97,4 +97,10 @@ export interface ActiveTask {
 	 * Error message (set on error)
 	 */
 	error?: string;
+
+	/**
+	 * Caller-supplied metadata attached at submission time.
+	 * Included in every TaskEvent for this task.
+	 */
+	metadata?: Record<string, unknown>;
 }
