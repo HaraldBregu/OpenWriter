@@ -70,6 +70,9 @@ export class TaskManagerIpc implements IpcModule {
 			const senderWindow = BrowserWindow.fromWebContents(event.sender);
 			const windowId = senderWindow?.id;
 			options.windowId = windowId;
+			if (payload.metadata !== undefined) {
+				options.metadata = payload.metadata;
+			}
 
 			// Inject server-stamped windowId into object inputs so handlers can
 			// resolve window-scoped services.
