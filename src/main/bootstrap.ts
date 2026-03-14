@@ -27,6 +27,7 @@ import { TaskReactionBus } from './task_manager/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task_manager/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
+import { TextEnhanceTaskReaction } from './task_manager/reactions';
 
 // Indexing infrastructure
 import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './indexing';
