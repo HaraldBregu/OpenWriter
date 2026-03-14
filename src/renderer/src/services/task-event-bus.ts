@@ -224,7 +224,7 @@ export function initTaskContent(taskId: string, initialContent: string): void {
  * includes the metadata. The metadata is carried across all snapshot transitions
  * (started, stream, progress, completed, error, cancelled).
  */
-export function initTaskMetadata(taskId: string, metadata: unknown): void {
+export function initTaskMetadata(taskId: string, metadata: Record<string, unknown>): void {
 	const prev = snapshots.get(taskId) ?? {
 		status: 'queued',
 		streamedContent: '',
