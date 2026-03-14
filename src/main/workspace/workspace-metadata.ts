@@ -267,42 +267,6 @@ export class WorkspaceMetadataService implements Disposable {
 	}
 
 	/**
-	 * Get all persisted agent configurations for this workspace.
-	 */
-	getAgentSettings(): WorkspaceAgentEntry[] {
-		return [...this.getMetadata().settings.agents];
-	}
-
-	/**
-	 * Get the configuration for a single agent by ID.
-	 */
-	getAgentConfig(agentId: string): AgentConfig | null {
-		const entry = this.getMetadata().settings.agents.find((a) => a.agentId === agentId);
-		if (!entry) return null;
-		const { agentId: _id, ...config } = entry;
-		return config;
-	}
-
-	/**
-	 * Persist the configuration for a single agent.
-	 * Upserts: updates the existing entry or appends a new one.
-	 */
-	setAgentConfig(agentId: string, config: AgentConfig): void {
-		this.requireWorkspace();
-		const metadata = this.getMetadata();
-		const index = metadata.settings.agents.findIndex((a) => a.agentId === agentId);
-		const entry: WorkspaceAgentEntry = { agentId, ...config };
-		if (index >= 0) {
-			metadata.settings.agents[index] = entry;
-		} else {
-			metadata.settings.agents.push(entry);
-		}
-		metadata.metadata.updatedAt = Date.now();
-		this.scheduleSave(metadata);
-		this.logger?.info('WorkspaceMetadataService', `Updated agent config: ${agentId}`);
-	}
-
-	/**
 	 * Validate a directory path without adding it.
 	 * Useful for UI validation before presenting confirmation.
 	 */
