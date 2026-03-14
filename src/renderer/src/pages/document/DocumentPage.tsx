@@ -14,7 +14,6 @@ type WritingAssistantTaskData = {
 };
 
 const DocumentPage: React.FC = () => {
-	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 
