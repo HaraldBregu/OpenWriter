@@ -434,6 +434,10 @@ export class WorkspaceMetadataService implements Disposable {
 				parsed.settings.directories = [];
 			}
 
+			if (!parsed.settings.agentSettings || typeof parsed.settings.agentSettings !== 'object') {
+				parsed.settings.agentSettings = {};
+			}
+
 			this.logger?.info(
 				'WorkspaceMetadataService',
 				`Read ${parsed.settings.directories.length} directories from ${filePath} paths=${parsed.settings.directories.map((d) => d.path).join(', ')}`
