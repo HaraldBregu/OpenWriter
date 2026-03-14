@@ -131,12 +131,15 @@ export function useTask<TInput = unknown, TResult = unknown>(
 				...submitOptions,
 			};
 
+			const metadata = submitOptions?.metadata;
+
 			let resolvedTaskId: string;
 
 			try {
 				const ipcResult = await window.task.submit(
 					type,
 					inputOverride ?? inputRef.current,
+					metadata,
 					mergedOptions
 				);
 
