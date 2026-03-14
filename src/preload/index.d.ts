@@ -228,6 +228,7 @@ export interface TaskApi {
 	submit: (
 		type: string,
 		input: unknown,
+		metadata?: Record<string, unknown>,
 		options?: TaskSubmitPayload['options']
 	) => Promise<IpcResult<{ taskId: string }>>;
 	cancel: (taskId: string) => Promise<IpcResult<boolean>>;
