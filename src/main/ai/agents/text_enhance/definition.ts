@@ -2,7 +2,7 @@
  * TextEnhance — enhances selected text while preserving meaning and voice.
  *
  * Runs as a single-node LangGraph StateGraph:
- *   START → enhance_text → END
+ *   START → enhance → END
  *
  * The node receives the input text, streams the enhanced version through
  * the injected model, and returns the improved text.
