@@ -222,7 +222,7 @@ const AgentSettingsPage: React.FC = () => {
 
 	const handleConfigChange = useCallback((agentId: AgentId, config: AgentConfig) => {
 		dispatch({ type: 'SET_CONFIG', agentId, config });
-		window.app.setAgentConfig(agentId, config).catch(() => {
+		window.workspace.setAgentConfig(agentId, config).catch(() => {
 			// Silently ignore persistence failure; UI state is still updated.
 		});
 	}, []);
