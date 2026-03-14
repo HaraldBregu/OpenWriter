@@ -35,14 +35,22 @@ export const DEFAULT_INFERENCE_SETTINGS: InferenceSettings = {
 // ---------------------------------------------------------------------------
 
 /**
- * Persisted configuration for a named AI agent.
- * Stored under `agentSettings[agentId]` in the electron-store.
+ * Persisted configuration for a named AI agent (without identity).
+ * Used as the value type when setting config for a known agent ID.
  */
 export interface AgentConfig {
 	providerId: string;
 	modelId: string;
 	temperature: number;
 	reasoning: boolean;
+}
+
+/**
+ * A single agent entry stored in the workspace metadata file.
+ * Each object in the `agents` array carries its own `agentId`.
+ */
+export interface WorkspaceAgentEntry extends AgentConfig {
+	agentId: string;
 }
 
 export const AGENT_IDS = ['text-completer', 'text-enhance', 'text-writer'] as const;

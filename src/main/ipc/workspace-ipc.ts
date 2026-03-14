@@ -297,28 +297,22 @@ export class WorkspaceIpc implements IpcModule {
 
 		ipcMain.handle(
 			WorkspaceChannels.getAgentConfig,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, agentId: string) => {
-					if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
-						throw new Error(`Invalid agent ID: ${agentId}`);
-					}
-					return this.mgr(event, container).getAgentConfig(agentId);
-				},
-				WorkspaceChannels.getAgentConfig
-			)
+			wrapIpcHandler((event: IpcMainInvokeEvent, agentId: string) => {
+				if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
+					throw new Error(`Invalid agent ID: ${agentId}`);
+				}
+				return this.mgr(event, container).getAgentConfig(agentId);
+			}, WorkspaceChannels.getAgentConfig)
 		);
 
 		ipcMain.handle(
 			WorkspaceChannels.setAgentConfig,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, agentId: string, config: AgentConfig) => {
-					if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
-						throw new Error(`Invalid agent ID: ${agentId}`);
-					}
-					return this.mgr(event, container).setAgentConfig(agentId, config);
-				},
-				WorkspaceChannels.setAgentConfig
-			)
+			wrapIpcHandler((event: IpcMainInvokeEvent, agentId: string, config: AgentConfig) => {
+				if (!AGENT_IDS.includes(agentId as (typeof AGENT_IDS)[number])) {
+					throw new Error(`Invalid agent ID: ${agentId}`);
+				}
+				return this.mgr(event, container).setAgentConfig(agentId, config);
+			}, WorkspaceChannels.setAgentConfig)
 		);
 
 		// -------------------------------------------------------------------------
