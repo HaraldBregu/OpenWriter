@@ -239,7 +239,7 @@ const DocumentPage: React.FC = () => {
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
 								<TextEditor
-									disabled={writingAssistantTask.isRunning}
+									disabled={writingAssistantTask.isRunning || textEnhanceTask.isRunning}
 									ref={editorRef}
 									key={id}
 									value={content}
