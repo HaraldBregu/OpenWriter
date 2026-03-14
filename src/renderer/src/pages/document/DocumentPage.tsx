@@ -145,6 +145,8 @@ const DocumentPage: React.FC = () => {
 		if (!textEnhanceTask.taskId) return;
 		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
 			console.log('Received enhance task update:', snap);
+			const metadata = snap.metadata;
+
 			const completed = snap.status === 'completed';
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
@@ -185,7 +187,7 @@ const DocumentPage: React.FC = () => {
 			${cleanAfter}
 			`;
 			const data: TextEnhanceTaskData = { prompt };
-			const metadata = { from, to };
+			const metadata = { type: 'replace_text', from, to };
 			textEnhanceTask.submit(data, metadata);
 		},
 		[textEnhanceTask]

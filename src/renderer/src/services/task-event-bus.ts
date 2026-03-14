@@ -66,8 +66,7 @@ function ensureListening(): void {
 
 		// Extract metadata from any event that carries it.
 		const eventMetadata = (event.data as { metadata?: Record<string, unknown> }).metadata;
-		const metadataOverride =
-			eventMetadata !== undefined ? { metadata: eventMetadata } : {};
+		const metadataOverride = eventMetadata !== undefined ? { metadata: eventMetadata } : {};
 
 		switch (event.type) {
 			case 'queued': {
