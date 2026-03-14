@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import type { TaskEvent } from '../../../../shared/types';
+import { subscribeToTask } from '../../services/task-event-bus';
+import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
@@ -151,9 +152,13 @@ const DocumentPage: React.FC = () => {
 		if (!textEnhanceTask.taskId) return;
 		const taskId = textEnhanceTask.taskId;
 		const unsub = window.task.onEvent((event: TaskEvent) => {
-					console.log('Received enhance task event:', event.type);
-
 			if (event.data.taskId !== taskId) return;
+
+			if (event.type === 'queued') {
+				
+			}
+
+			console.log('Received enhance task event:', event.type);
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);
