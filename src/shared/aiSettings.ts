@@ -57,6 +57,10 @@ export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: str
 		name: 'Text Enhance',
 		description: 'Enhances and transforms text style and tone',
 	},
+	'text-writer': {
+		name: 'Text Writer',
+		description: 'Writes new text from a given prompt',
+	},
 };
 
 export const DEFAULT_AGENT_CONFIG: AgentConfig = {
