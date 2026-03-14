@@ -375,7 +375,7 @@ export class TaskExecutor implements Disposable {
 
 					this.send(windowId, 'task:event', {
 						type: 'progress',
-						data: { taskId, percent, message, detail },
+						data: { taskId, percent, message, detail, metadata },
 					} satisfies TaskEvent);
 				},
 			};
