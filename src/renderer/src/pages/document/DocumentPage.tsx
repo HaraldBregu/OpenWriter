@@ -159,6 +159,21 @@ const DocumentPage: React.FC = () => {
 	const onEnhanceWithAssistant = useCallback(
 		(selectedText: string, before: string, after: string, from: number, to: number) => {
 			console.log('enhanceWithAssistant', { selectedText, before, after, from, to });
+			
+			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
+			const cleanAfter = after.replaceAll('⬢', '').trimStart();
+			const cleanSelected = selectedText.replaceAll('⬢', '').trim();
+			const prompt = `
+			${cleanBefore}
+
+			⬢ ENHANCE THE TEXT ⬢
+			⬢ ${cleanSelected} ⬢
+
+			${cleanAfter}
+			`;
+			const temperature = 0.9;
+			const data: WritingAssistantTaskData = { prompt, temperature };
+			writingAssistantTask.submit(data);
 		},
 		[writingAssistantTask]
 	);
