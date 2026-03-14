@@ -62,6 +62,11 @@ export interface ExecutorInput {
 	 */
 	buildGraphInput?: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput?: (state: Record<string, unknown>) => string;
+	/**
+	 * When present, only tokens from these nodes are forwarded to the caller.
+	 * See `AgentDefinition.streamableNodes` for full documentation.
+	 */
+	streamableNodes?: string[];
 }
 
 /**
