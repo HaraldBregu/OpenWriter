@@ -87,7 +87,22 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const provider = this.providerResolver.resolve({ providerId, modelId });
 		reporter.progress(10, 'Provider resolved');
 
-		// 3. Resolve per-node models when the definition declares them
+		// 3. Resolve per-node models when the definition declares them.
+		//
+		// Why this handler calls createChatModel directly rather than delegating
+		// to the executor's internal model construction:
+		//
+		// The executor owns a single default model, built from the task-level
+		// provider resolution (step 2 above). Agents that declare `nodeModels`
+		// need one independently-configured model instance per graph node — each
+		// with its own provider, API key, and temperature — before the graph is
+		// even constructed. That pre-resolution must happen here in the handler,
+		// where per-node NodeModelConfig entries are available and the executor's
+		// buildGraph signature can receive a ready-made NodeModelMap. The executor
+		// receives these pre-built models via the `nodeModels` field of
+		// ExecutorInput and passes them straight to buildGraph, bypassing its own
+		// single-model path entirely. This keeps the executor agnostic to
+		// multi-provider orchestration logic.
 		let nodeModels: NodeModelMap | undefined;
 		if (def.nodeModels) {
 			nodeModels = {};
