@@ -142,7 +142,7 @@ export const tasksSlice = createSlice({
 					break;
 				}
 				case 'started': {
-					task.status = 'running';
+					task.status = 'started';
 					task.queuePosition = undefined;
 					break;
 				}
