@@ -31,7 +31,7 @@ import {
 	useSidebar,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
-import { Settings, ChevronRight, Bug, PenLine, Plus, Library } from 'lucide-react';
+import { Settings, ChevronRight, Bug, Plus, Library } from 'lucide-react';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
