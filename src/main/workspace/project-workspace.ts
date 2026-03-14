@@ -211,6 +211,7 @@ export class ProjectWorkspaceService {
 			projectId: randomUUID(),
 			name: path.basename(workspacePath),
 			description: '',
+			agents: [],
 			createdAt: now,
 			updatedAt: now,
 			appVersion: this.getAppVersion(),
