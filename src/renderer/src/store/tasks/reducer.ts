@@ -122,6 +122,9 @@ export const tasksSlice = createSlice({
 				case 'queued': {
 					task.status = 'queued';
 					task.queuePosition = event.data.position;
+					if (event.data.metadata !== undefined) {
+						task.metadata = event.data.metadata;
+					}
 					break;
 				}
 				case 'started': {
