@@ -10,12 +10,11 @@ import ConfigSidebar from './ConfigSidebar';
 
 type TextWriterTaskData = {
 	prompt: string;
-	temperature?: number;
 };
 
 type TextEnhanceTaskData = {
 	prompt: string;
-	temperature?: number;
+	metadata?: Record<string, string | number | boolean>;
 };
 
 const DocumentPage: React.FC = () => {
@@ -146,6 +145,7 @@ const DocumentPage: React.FC = () => {
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
 		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
+			console.log('Received enhance task update:', snap);
 			const completed = snap.status === 'completed';
 			editorRef.current?.insertText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
@@ -165,15 +165,16 @@ const DocumentPage: React.FC = () => {
 
 			${cleanAfter}
 			`;
-			const temperature = 0.9;
-			const data: TextWriterTaskData = { prompt, temperature };
+
+			const data: TextWriterTaskData = { prompt };
 			textWriterTask.submit(data);
 		},
 		[textWriterTask]
 	);
 
 	const onEnhanceWithAssistant = useCallback(
-		(selectedText: string, before: string, after: string, _from: number, _to: number) => {
+		(selectedText: string, before: string, after: string, from: number, to: number) => {
+			console.log('Enhance prompt:', { selectedText, before, after, from, to });
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
 			const cleanAfter = after.replaceAll('⬢', '').trimStart();
 			const cleanSelected = selectedText.replaceAll('⬢', '').trim();
@@ -185,7 +186,7 @@ const DocumentPage: React.FC = () => {
 
 			${cleanAfter}
 			`;
-			const data: TextEnhanceTaskData = { prompt, temperature: 0.4 };
+			const data: TextEnhanceTaskData = { prompt };
 			textEnhanceTask.submit(data);
 		},
 		[textEnhanceTask]
