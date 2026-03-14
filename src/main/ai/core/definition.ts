@@ -129,16 +129,6 @@ export interface AgentDefinition {
 }
 
 // ---------------------------------------------------------------------------
-// Serializable snapshot — safe to transmit over Electron IPC
-// ---------------------------------------------------------------------------
-
-export interface AgentDefinitionInfo {
-	id: string;
-	name: string;
-	category: AgentDefinition['category'];
-}
-
-// ---------------------------------------------------------------------------
 // Helper
 // ---------------------------------------------------------------------------
 
