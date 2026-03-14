@@ -336,7 +336,7 @@ export class TaskExecutor implements Disposable {
 	 * Does NOT throw -- all errors are caught and delivered as events.
 	 */
 	private async executeTask(queued: QueuedTask): Promise<void> {
-		const { taskId, type, input, controller, windowId, timeoutMs } = queued;
+		const { taskId, type, input, controller, windowId, timeoutMs, metadata } = queued;
 		const task = this.activeTasks.get(taskId);
 
 		if (!task) {
