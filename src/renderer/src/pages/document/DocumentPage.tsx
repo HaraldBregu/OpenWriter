@@ -132,33 +132,19 @@ const DocumentPage: React.FC = () => {
 
 	useEffect(() => {
 		if (!textWriterTask.taskId) return;
-		const taskId = textWriterTask.taskId;
-		const unsub = window.task.onEvent((event: TaskEvent) => {
-			if (event.data.taskId !== taskId) return;
-			if (event.type === 'stream') {
-				editorRef.current?.insertText(event.data.data, {
-					preventEditorUpdate: true,
-				});
-			} else if (event.type === 'completed') {
-				editorRef.current?.insertText('', {
-					preventEditorUpdate: false,
-				});
-			}
+		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
+			const completed = snap.status === 'completed';
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
 		});
 		return unsub;
 	}, [textWriterTask.taskId]);
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
-		const taskId = textEnhanceTask.taskId;
-		const unsub = window.task.onEvent((event: TaskEvent) => {
-			if (event.data.taskId !== taskId) return;
-
-			if (event.type === 'queued') {
-				
-			}
-
-			console.log('Received enhance task event:', event.type);
+		const unsub = subscribeToTask(textEnhanceTask.taskId, (snap: TaskSnapshot) => {
+			console.log('Received enhance task update:', snap.status);
 		});
 		return unsub;
 	}, [textEnhanceTask.taskId]);
