@@ -28,6 +28,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
 		completedAt: t.completedAt,
 		windowId: t.windowId,
 		error: t.error,
+		metadata: t.metadata,
 	};
 }
 
