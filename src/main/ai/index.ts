@@ -12,4 +12,4 @@ export { toAgentDefinitionInfo, AgentRegistry, executeAIAgentsStream } from './c
 export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './core';
 
 // Agents
-export { TextCompleterAgent, TextEnhanceAgent } from './agents';
+export { TextCompleterAgent, TextEnhanceAgent, TextWriterAgent } from './agents';
