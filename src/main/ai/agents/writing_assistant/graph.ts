@@ -3,7 +3,7 @@
  *
  * Topology:
  *
- *   START → classify_intent ─┬─ (enhance)           → enhance_text      → END
+ *   START → classify_intent ─┬─ (enhance_writing)   → enhance_text      → END
  *                             └─ (continue_writing)  → continue_writing  → END
  *
  * The intent node classifies the user prompt first; the conditional edge then
@@ -16,7 +16,6 @@
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { WriterState } from './state';
-import type { WriterIntent } from './state';
 import type { NodeModelMap } from '../../core/definition';
 import { classifyIntent, continueWriting, enhanceText } from './nodes';
 
@@ -36,10 +35,12 @@ type NodeName = (typeof NODE)[keyof typeof NODE];
 /**
  * Routes from the intent node to the appropriate generation node based on the
  * classification stored in state.
+ *
+ * A `null` intent (the default before classification runs) falls through to
+ * `CONTINUE_WRITING` as a safe default — matching `FALLBACK_INTENT.type`.
  */
 function routeByIntent(state: typeof WriterState.State): NodeName {
-	const intent: WriterIntent | '' = state.intent;
-	if (intent === 'enhance') {
+	if (state.intent?.type === 'enhance_writing') {
 		return NODE.ENHANCE_TEXT;
 	}
 	return NODE.CONTINUE_WRITING;
