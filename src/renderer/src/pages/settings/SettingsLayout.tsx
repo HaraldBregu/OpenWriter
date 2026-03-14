@@ -11,7 +11,6 @@ interface TabDefinition {
 const TABS: TabDefinition[] = [
 	{ path: '/settings/general', labelKey: 'settings.tabs.general' },
 	{ path: '/settings/models', labelKey: 'settings.tabs.models' },
-	{ path: '/settings/agents', labelKey: 'settings.tabs.agents' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
 
