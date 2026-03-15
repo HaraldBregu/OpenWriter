@@ -109,10 +109,9 @@ const MENU_ITEMS: MenuItem[] = [
 				.chain()
 				.focus()
 				.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+				.insertImagePlaceholder()
 				.run();
-			// The actual dialog opening is handled via the openImageDialogRef
 		},
-		opensDialog: true,
 	},
 ];
 
