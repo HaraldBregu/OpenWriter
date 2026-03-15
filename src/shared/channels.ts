@@ -79,6 +79,8 @@ export const WorkspaceChannels = {
 	openDataFolder: 'workspace:open-data-folder',
 	openResourcesFolder: 'workspace:open-resources-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
+	// Document images
+	saveDocumentImage: 'output:save-document-image',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
