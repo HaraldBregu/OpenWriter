@@ -283,7 +283,7 @@ const workspace: WorkspaceApi = {
 		documentId: string;
 		fileName: string;
 		base64: string;
-	}): Promise<{ fileName: string }> => {
+	}): Promise<{ fileName: string; filePath: string }> => {
 		return typedInvokeUnwrap(WorkspaceChannels.saveDocumentImage, params);
 	},
 	// -------------------------------------------------------------------------
