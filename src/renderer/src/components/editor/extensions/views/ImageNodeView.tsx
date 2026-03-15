@@ -29,8 +29,12 @@ export function ImageNodeView({
 }: NodeViewProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const { src, alt, title, width, height } = node.attrs as ImageAttrs;
-	const documentBasePath = (editor.storage.image?.documentBasePath as string) ?? null;
-	const resolvedSrc = useMemo(() => resolveImageSrc(src, documentBasePath), [src, documentBasePath]);
+	const storage = editor.storage as Record<string, Record<string, unknown>>;
+	const documentBasePath = (storage.image?.documentBasePath as string) ?? null;
+	const resolvedSrc = useMemo(
+		() => resolveImageSrc(src, documentBasePath),
+		[src, documentBasePath]
+	);
 
 	const [loadError, setLoadError] = useState(false);
 	const [resizing, setResizing] = useState(false);
