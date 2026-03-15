@@ -174,7 +174,6 @@ export function ImageNodeView({
 						)}
 
 						<img
-							ref={imgRef}
 							src={resolvedSrc}
 							alt={alt ?? ''}
 							title={title ?? undefined}
@@ -182,14 +181,7 @@ export function ImageNodeView({
 							onLoad={handleLoad}
 							draggable={false}
 							className="block max-w-full rounded-md"
-							style={imgStyle}
 						/>
-						{(selected || resizing) && (
-							<div
-								onPointerDown={onPointerDown}
-								className="absolute bottom-0 right-0 h-3 w-3 translate-x-1/2 translate-y-1/2 cursor-nwse-resize rounded-full border-2 border-background bg-ring shadow-sm"
-							/>
-						)}
 					</div>
 				)}
 			</figure>
