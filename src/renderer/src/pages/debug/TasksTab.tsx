@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bug } from 'lucide-react';
 import { useDebugTasks } from '../../hooks/use-debug-tasks';

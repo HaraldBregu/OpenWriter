@@ -1,4 +1,3 @@
-import React from 'react';
 import type { TaskStatus } from '@/store/tasks/types';
 import { STATUS_CONFIG } from './debug-constants';
 

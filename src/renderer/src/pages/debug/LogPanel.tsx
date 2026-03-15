@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import type { TrackedTaskState } from '@/store/tasks/types';

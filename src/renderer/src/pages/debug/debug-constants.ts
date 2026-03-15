@@ -21,6 +21,10 @@ export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: strin
 		label: 'Queued',
 		className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
 	},
+	started: {
+		label: 'Queued',
+		className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+	},
 	running: {
 		label: 'Running',
 		className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',

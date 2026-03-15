@@ -1,4 +1,3 @@
-import React from 'react';
 import { Square, EyeOff } from 'lucide-react';
 import type { TrackedTaskState } from '@/store/tasks/types';
 import { StatusBadge } from './StatusBadge';

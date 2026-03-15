@@ -57,7 +57,7 @@ export class Workspace implements Disposable {
 		private readonly projectWorkspace: ProjectWorkspaceService,
 		private readonly logger: LoggerService
 	) {
-		this.documents = new DocumentsService(fileManagement, watcher);
+		this.documents = new DocumentsService(this.fileManagement, this.watcher);
 	}
 
 	destroy(): void {

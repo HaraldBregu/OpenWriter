@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 import { useAppSelector } from '@/store';
 import type { RootState } from '@/store';
-import { SLICE_NAMES } from './debug-constants';
 import type { SliceName } from './debug-constants';
 import { SliceSection } from './SliceSection';
 

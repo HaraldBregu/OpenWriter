@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function ProgressBar({ percent }: { percent: number }) {
 	return (
 		<div className="w-20 bg-muted rounded-full h-1.5">
