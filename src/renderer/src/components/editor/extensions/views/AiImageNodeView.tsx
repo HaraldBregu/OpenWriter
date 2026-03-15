@@ -201,14 +201,15 @@ export function AiImageNodeView({
 					onChange={handleFileInputChange}
 					aria-hidden="true"
 					tabIndex={-1}
+					multiple
 				/>
 
-				<div className="px-3">
-					{previewUrl ? (
-						<div className="relative inline-block">
+				<div className="flex gap-2 overflow-x-auto px-3 scrollbar-none">
+					{previewUrls.map((url, index) => (
+						<div key={index} className="relative shrink-0">
 							<img
-								src={previewUrl}
-								alt={file?.name ?? ''}
+								src={url}
+								alt={files[index]?.name ?? ''}
 								className="h-10 w-10 rounded-lg object-cover"
 							/>
 							<AppButton
@@ -217,33 +218,32 @@ export function AiImageNodeView({
 								className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
 								onMouseDown={(e) => {
 									e.preventDefault();
-									clearFile();
+									removeFile(index);
 								}}
 								aria-label={t('imagePlaceholder.removeImage', { defaultValue: 'Remove image' })}
 							>
 								<X className="h-3 w-3" />
 							</AppButton>
 						</div>
-					) : (
-						<div
-							role="button"
-							tabIndex={0}
-							className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/70"
-							onMouseDown={(e) => {
+					))}
+					<div
+						role="button"
+						tabIndex={0}
+						className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/70"
+						onMouseDown={(e) => {
+							e.preventDefault();
+							handleDropZoneClick();
+						}}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
 								e.preventDefault();
 								handleDropZoneClick();
-							}}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									handleDropZoneClick();
-								}
-							}}
-							aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
-						>
-							<Plus className="h-4 w-4 text-muted-foreground" />
-						</div>
-					)}
+							}
+						}}
+						aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
+					>
+						<Plus className="h-4 w-4 text-muted-foreground" />
+					</div>
 				</div>
 
 				<div className="flex items-end gap-2 px-3">
