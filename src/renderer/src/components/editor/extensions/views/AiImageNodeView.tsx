@@ -172,22 +172,7 @@ export function AiImageNodeView({
 				ref={wrapperRef}
 				className="my-2 flex flex-col rounded-2xl border border-border bg-popover shadow-sm py-2"
 			>
-				<AppTextarea
-					ref={textareaRef}
-					value={prompt}
-					onChange={(e) => {
-						setPrompt(e.target.value);
-						resizeTextarea();
-					}}
-					disabled={loading}
-					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-3 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					placeholder={t('imagePlaceholder.promptPlaceholder', {
-						defaultValue: 'Describe the image you want to create...',
-					})}
-					rows={1}
-				/>
-
-				<div className="px-3 pb-2">
+				<div className="px-3 pt-2 pb-2">
 					{previewUrl ? (
 						<div className="relative inline-block">
 							<img
@@ -250,6 +235,21 @@ export function AiImageNodeView({
 						tabIndex={-1}
 					/>
 				</div>
+
+				<AppTextarea
+					ref={textareaRef}
+					value={prompt}
+					onChange={(e) => {
+						setPrompt(e.target.value);
+						resizeTextarea();
+					}}
+					disabled={loading}
+					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-1 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+					placeholder={t('imagePlaceholder.promptPlaceholder', {
+						defaultValue: 'Describe the image you want to create...',
+					})}
+					rows={1}
+				/>
 
 				<div className="flex items-center justify-end px-3 pb-1">
 					<AppButton
