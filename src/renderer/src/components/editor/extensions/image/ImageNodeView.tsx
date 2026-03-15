@@ -17,7 +17,6 @@ interface ImageAttrs {
 	height: number | null;
 }
 
-const MIN_WIDTH = 80;
 const ABSOLUTE_URL_RE = /^(https?:\/\/|data:|local-resource:\/\/)/;
 
 function resolveImageSrc(src: string | null, documentBasePath: string | null): string | null {
