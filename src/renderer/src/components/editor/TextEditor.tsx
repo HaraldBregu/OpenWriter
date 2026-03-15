@@ -38,6 +38,8 @@ export interface TextEditorElement extends HTMLDivElement {
 	removeAgentPrompt: () => void;
 	setAgentPromptLoading: (loading: boolean) => void;
 	setAgentPromptEnable: (enable: boolean) => void;
+	removeImagePlaceholder: () => void;
+	setImagePlaceholderLoading: (loading: boolean) => void;
 }
 
 export interface TextEditorProps {
