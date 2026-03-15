@@ -129,7 +129,6 @@ export function ImageNodeView({
 	};
 
 	const isEditable = editor.isEditable;
-	const showToolbar = isEditable && (selected || editOpen);
 
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
@@ -147,9 +146,16 @@ export function ImageNodeView({
 					</div>
 				) : (
 					<div className="relative inline-block">
-						{showToolbar && (
+						{isEditable && (
 							<TooltipProvider delayDuration={300}>
-								<div className="absolute left-1/2 top-2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-border bg-background/90 p-1 shadow-md backdrop-blur-sm">
+								<div
+									className={[
+										'absolute right-2 top-2 z-10 flex items-center gap-1 rounded-lg border border-border bg-background/90 p-1 shadow-md backdrop-blur-sm transition-opacity',
+										editOpen
+											? 'opacity-100'
+											: 'opacity-0 group-hover:opacity-100',
+									].join(' ')}
+								>
 									<Popover open={editOpen} onOpenChange={handleEditOpen}>
 										<Tooltip>
 											<TooltipTrigger asChild>
@@ -164,7 +170,7 @@ export function ImageNodeView({
 										<PopoverContent
 											className="w-72"
 											side="bottom"
-											align="center"
+											align="end"
 											onKeyDown={handleEditKeyDown}
 										>
 											<div className="grid gap-3">
