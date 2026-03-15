@@ -38,9 +38,20 @@ export function AgentPromptNodeView({
 		}
 		const options = extension.options as AgentPromptOptions;
 		const { from } = editor.state.selection;
+		const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+		const serializer = storage.markdown?.serializer as
+			| { serialize: (node: unknown) => string }
+			| undefined;
 		const docSize = editor.state.doc.content.size;
-		const markdownBeforeCursor = editor.state.doc.textBetween(0, from, '\n');
-		const markdownAfterCursor = editor.state.doc.textBetween(from, docSize, '\n');
+		const subDocBefore = editor.state.doc.cut(0, from);
+		const subDocAfter = editor.state.doc.cut(from, docSize);
+		const rawBefore =
+			serializer?.serialize(subDocBefore) ?? editor.state.doc.textBetween(0, from, '\n');
+		const rawAfter =
+			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
+		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
+		const markdownBeforeCursor = stripHtml(rawBefore);
+		const markdownAfterCursor = stripHtml(rawAfter);
 
 		options.onSubmit(markdownBeforeCursor, markdownAfterCursor, from, p);
 	}, [prompt, extension, deleteNode]);

@@ -198,7 +198,7 @@ const DocumentPage: React.FC = () => {
 	useEffect(() => {
 		if (!textWriterTask.taskId) return;
 		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
-			console.log(snap)
+			console.log(snap);
 			if (snap.status === 'started') {
 				editorRef.current?.setAgentPromptLoading(true);
 			}
@@ -216,6 +216,7 @@ const DocumentPage: React.FC = () => {
 
 	const onAgentPromptSubmit = useCallback(
 		(before: string, after: string, cursorPos: number, prompt: string) => {
+			console.log(before)
 			editorRef.current?.setAgentPromptEnable(false);
 			const data: TextWriterTaskData = { prompt };
 			const metadata = { before, after, cursorPos };
