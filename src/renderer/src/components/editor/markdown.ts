@@ -186,7 +186,34 @@ md.core.ruler.after('inline', 'image_block', (state) => {
 	state.tokens = newTokens;
 });
 
-md.core.ruler.after('image_block', 'underline_html', (state) => {
+md.core.ruler.after('image_block', 'html_image_block', (state) => {
+	const tokens = state.tokens;
+	const newTokens: import('markdown-it/lib/token.mjs').default[] = [];
+	for (const tok of tokens) {
+		if (tok.type === 'html_block') {
+			const parsed = parseImgTag(tok.content);
+			if (parsed && parsed.src) {
+				const blockImg = new state.Token('image', 'img', 0);
+				blockImg.attrSet('src', parsed.src);
+				if (parsed.title) blockImg.attrSet('title', parsed.title);
+				if (parsed.width) blockImg.attrSet('width', parsed.width);
+				if (parsed.height) blockImg.attrSet('height', parsed.height);
+				blockImg.children = [];
+				if (parsed.alt) {
+					const altToken = new state.Token('text', '', 0);
+					altToken.content = parsed.alt;
+					blockImg.children.push(altToken);
+				}
+				newTokens.push(blockImg);
+				continue;
+			}
+		}
+		newTokens.push(tok);
+	}
+	state.tokens = newTokens;
+});
+
+md.core.ruler.after('html_image_block', 'underline_html', (state) => {
 	for (const blockToken of state.tokens) {
 		if (blockToken.type !== 'inline' || !blockToken.children) continue;
 		const newChildren: import('markdown-it/lib/token.mjs').default[] = [];
