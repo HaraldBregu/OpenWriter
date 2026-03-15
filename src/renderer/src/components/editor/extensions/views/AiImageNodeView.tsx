@@ -260,7 +260,7 @@ export function AiImageNodeView({
 					/>
 				</div>
 
-				<div className="flex items-end gap-2 px-3 pb-2">
+				<div className="flex items-end gap-2 px-3">
 					<AppTextarea
 						ref={textareaRef}
 						value={prompt}
