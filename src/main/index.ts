@@ -1,9 +1,14 @@
-import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu } from 'electron';
+import { app, BrowserWindow, nativeTheme, dialog, Menu as ElectronMenu, protocol, net } from 'electron';
 import path from 'node:path';
 import { Main } from './main';
 import { Tray } from './tray';
 import { Menu } from './menu';
 import { WorkspaceProcessManager } from './workspace-process';
+
+// Register custom scheme before app is ready so the renderer can load local files.
+protocol.registerSchemesAsPrivileged([
+	{ scheme: 'local-resource', privileges: { standard: true, secure: true, bypassCSP: true } },
+]);
 
 import type { WorkspaceService } from './workspace/workspace-service';
 import type { WorkspaceMetadataService } from './workspace/workspace-metadata';

@@ -495,9 +495,9 @@ const TextEditor = React.memo(
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BubbleMenu onEnhanceWithAssistant={onEnhanceWithAssistant} />
 									<OptionMenu
-									onContinueWithAssistant={onContinueWithAssistant}
-									onInsertImage={handleInsertImage}
-								/>
+										onContinueWithAssistant={onContinueWithAssistant}
+										onInsertImage={handleInsertImage}
+									/>
 								</EditorProvider>
 							)}
 							<EditorContent editor={editor} />
