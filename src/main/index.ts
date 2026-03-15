@@ -15,7 +15,10 @@ import { WorkspaceProcessManager } from './workspace-process';
 
 // Register custom scheme before app is ready so the renderer can load local files.
 protocol.registerSchemesAsPrivileged([
-	{ scheme: 'local-resource', privileges: { standard: true, secure: true, bypassCSP: true } },
+	{
+		scheme: 'local-resource',
+		privileges: { secure: true, bypassCSP: true, supportFetchAPI: true, stream: true },
+	},
 ]);
 
 import type { WorkspaceService } from './workspace/workspace-service';
