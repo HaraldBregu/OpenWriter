@@ -397,7 +397,8 @@ const TextEditor = React.memo(
 				window.workspace.getCurrent().then((workspacePath) => {
 					if (cancelled || !workspacePath) return;
 					const basePath = `${workspacePath}/output/documents/${documentId}`;
-					editor.storage.image.documentBasePath = basePath;
+					const storage = editor.storage as Record<string, Record<string, unknown>>;
+					storage.image.documentBasePath = basePath;
 				});
 				return () => {
 					cancelled = true;
