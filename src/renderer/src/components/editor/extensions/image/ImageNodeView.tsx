@@ -27,7 +27,6 @@ function resolveImageSrc(src: string | null, documentBasePath: string | null): s
 export function ImageNodeView({
 	node,
 	editor,
-	selected,
 	updateAttributes,
 	deleteNode,
 }: NodeViewProps): React.JSX.Element {
