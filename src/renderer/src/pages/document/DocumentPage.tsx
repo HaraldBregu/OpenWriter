@@ -175,8 +175,7 @@ const DocumentPage: React.FC = () => {
 				editorRef.current?.setAgentPromptLoading(true);
 			}
 			const completed = snap.status === 'completed';
-			console.log(snap.streamedContent);
-			editorRef.current?.insertText(snap.streamedContent, {
+			editorRef.current?.insertMarkdownText(snap.streamedContent, {
 				preventEditorUpdate: !completed,
 			});
 			if (completed) {
