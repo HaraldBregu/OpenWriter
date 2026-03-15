@@ -58,6 +58,21 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 		return ['img', mergeAttributes(HTMLAttributes)];
 	},
 
+	parseMarkdown: (token: Record<string, string>, helpers: Record<string, Function>) => {
+		return helpers.createNode('image', {
+			src: token.href,
+			title: token.title,
+			alt: token.text,
+		});
+	},
+
+	renderMarkdown: (node: { attrs?: Record<string, string> }) => {
+		const src = node.attrs?.src ?? '';
+		const alt = node.attrs?.alt ?? '';
+		const title = node.attrs?.title ?? '';
+		return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
+	},
+
 	addCommands() {
 		return {
 			setImage:

@@ -16,11 +16,11 @@ import { ListKeymap } from '@tiptap/extension-list';
 import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
-import { Markdown } from 'tiptap-markdown';
 import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/text_generator/agent-prompt-extension';
 import { ImageExtension } from './extensions/image/image-extension';
 import { ImagePlaceholderExtension } from './extensions/image_generator/image-placeholder-extension';
+import { Markdown } from '@tiptap/markdown'
 
 export interface ExtensionHandlers {
 	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
@@ -55,13 +55,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 			onSubmit: handlers.onImagePlaceholderSubmit,
 			onFileSelect: handlers.onImagePlaceholderFileSelect,
 		}),
-		Markdown.configure({
-			html: true,
-			tightLists: true,
-			bulletListMarker: '-',
-			transformPastedText: true,
-			transformCopiedText: true,
-		}),
+		Markdown,
 		Placeholder.configure({
 			placeholder: ({ node }) => {
 				if (node.type.name === 'paragraph') {
