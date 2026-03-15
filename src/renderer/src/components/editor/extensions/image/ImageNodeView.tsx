@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
@@ -25,7 +25,7 @@ export function ImageNodeView({ node, editor }: NodeViewProps): React.JSX.Elemen
 	const documentBasePath = (storage.image?.documentBasePath as string) ?? null;
 	const resolvedSrc = useMemo(
 		() => resolveImageSrc(src, documentBasePath),
-		[src, documentBasePath],
+		[src, documentBasePath]
 	);
 
 	const [loadError, setLoadError] = useState(false);
