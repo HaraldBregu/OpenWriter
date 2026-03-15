@@ -1,5 +1,5 @@
-import { Plugin, PluginKey } from '@tiptap/pm/state';
-import type { EditorView } from '@tiptap/pm/view';
+import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
+import type { Editor } from '@tiptap/core';
 
 export type ImageFileHandler = (file: File) => Promise<string>;
 
@@ -19,17 +19,10 @@ export function fileToDataUri(file: File): Promise<string> {
 	});
 }
 
-function insertImageAtPos(view: EditorView, src: string, alt: string, pos: number): void {
-	const { schema } = view.state;
-	const imageType = schema.nodes.image;
-	if (!imageType) return;
-
-	const node = imageType.create({ src, alt, title: null });
-	const tr = view.state.tr.insert(pos, node);
-	view.dispatch(tr);
-}
-
-export function createImageDropPastePlugin(onImageFile: ImageFileHandler): Plugin {
+export function createImageDropPastePlugin(
+	editor: Editor,
+	onImageFile: ImageFileHandler,
+): Plugin {
 	return new Plugin({
 		key: imageDropPasteKey,
 
@@ -54,7 +47,7 @@ export function createImageDropPastePlugin(onImageFile: ImageFileHandler): Plugi
 				for (const file of imageFiles) {
 					onImageFile(file)
 						.then((src) => {
-							insertImageAtPos(view, src, file.name, view.state.selection.from);
+							editor.commands.setImage({ src, alt: file.name });
 						})
 						.catch((err: unknown) => {
 							console.error('[ImageDropPaste] Failed to process pasted image:', err);
@@ -65,8 +58,6 @@ export function createImageDropPastePlugin(onImageFile: ImageFileHandler): Plugi
 			},
 
 			handleDrop(view, event, _slice, moved) {
-				// `moved` is true when this is a ProseMirror node drag (repositioning
-				// within the doc). Let ProseMirror handle that natively.
 				if (moved) return false;
 
 				const files = event.dataTransfer?.files;
@@ -84,7 +75,10 @@ export function createImageDropPastePlugin(onImageFile: ImageFileHandler): Plugi
 				for (const file of imageFiles) {
 					onImageFile(file)
 						.then((src) => {
-							insertImageAtPos(view, src, file.name, insertPos);
+							const resolvedPos = view.state.doc.resolve(insertPos);
+							const selection = TextSelection.create(view.state.doc, resolvedPos.pos);
+							view.dispatch(view.state.tr.setSelection(selection));
+							editor.commands.setImage({ src, alt: file.name });
 						})
 						.catch((err: unknown) => {
 							console.error('[ImageDropPaste] Failed to process dropped image:', err);
