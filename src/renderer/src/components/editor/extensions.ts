@@ -47,7 +47,9 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		ListKeymap,
 		Dropcursor,
 		Gapcursor,
-		ImageExtension,
+		ImageExtension.configure({
+			basePath: handlers.basePath,
+		}),
 		SearchExtension,
 		AgentPromptExtension.configure({
 			onSubmit: handlers.onAgentPromptSubmit,
