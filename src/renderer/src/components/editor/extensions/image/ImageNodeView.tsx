@@ -14,6 +14,7 @@ import {
 import {
 	Tooltip,
 	TooltipContent,
+	TooltipProvider,
 	TooltipTrigger,
 } from '../../../ui/Tooltip';
 
