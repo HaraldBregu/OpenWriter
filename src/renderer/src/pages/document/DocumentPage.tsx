@@ -174,10 +174,17 @@ const DocumentPage: React.FC = () => {
 			if (snap.status === 'started') {
 				editorRef.current?.setAgentPromptLoading(true);
 			}
+						console.log({streamedContent: snap.streamedContent})
+
 			const completed = snap.status === 'completed';
-			editorRef.current?.insertMarkdownText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
+			if (completed){
+			// console.log({seedContent: snap.seedContent})
+			console.log(snap.content)
+			// console.log({streamedContent: snap.streamedContent})
+				editorRef.current?.insertMarkdownText(snap.content, {
+					preventEditorUpdate: !completed,
+				});
+			}
 			if (completed) {
 				editorRef.current?.removeAgentPrompt();
 			}

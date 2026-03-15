@@ -44,6 +44,11 @@ export interface TextEditorElement extends HTMLDivElement {
 	setAgentPromptEnable: (enable: boolean) => void;
 	removeImagePlaceholder: () => void;
 	setImagePlaceholderLoading: (loading: boolean) => void;
+	splitBlock: () => void;
+	setHeading: (level: number) => void;
+	ensureBulletList: () => void;
+	ensureOrderedList: () => void;
+	exitList: () => void;
 }
 
 export interface TextEditorProps {
