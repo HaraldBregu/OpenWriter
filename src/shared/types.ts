@@ -348,6 +348,28 @@ export interface FsRenameResult {
 	newPath: string;
 }
 
+// ---- Document Image --------------------------------------------------------
+
+/**
+ * Payload for saving an image file into a document's folder.
+ */
+export interface SaveDocumentImageParams {
+	/** Document UUID. */
+	documentId: string;
+	/** Desired file name (e.g. "photo.png"). */
+	fileName: string;
+	/** Base-64 encoded image data (without the data-URI prefix). */
+	base64: string;
+}
+
+/**
+ * Result returned after saving a document image.
+ */
+export interface SaveDocumentImageResult {
+	/** The file name as written to disk (may be deduplicated). */
+	fileName: string;
+}
+
 // ---- Project Workspace ----------------------------------------------------
 
 /**
