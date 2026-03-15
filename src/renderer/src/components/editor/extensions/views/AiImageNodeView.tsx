@@ -85,24 +85,21 @@ export function AiImageNodeView({
 		textarea.style.height = `${textarea.scrollHeight}px`;
 	}, []);
 
-	const applyFile = useCallback((selectedFile: File) => {
-		setFile(selectedFile);
+	const addFile = useCallback((newFile: File) => {
+		setFiles((prev) => [...prev, newFile]);
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			const result = e.target?.result;
 			if (typeof result === 'string') {
-				setPreviewUrl(result);
+				setPreviewUrls((prev) => [...prev, result]);
 			}
 		};
-		reader.readAsDataURL(selectedFile);
+		reader.readAsDataURL(newFile);
 	}, []);
 
-	const clearFile = useCallback(() => {
-		setFile(null);
-		setPreviewUrl(null);
-		if (fileInputRef.current) {
-			fileInputRef.current.value = '';
-		}
+	const removeFile = useCallback((index: number) => {
+		setFiles((prev) => prev.filter((_, i) => i !== index));
+		setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
 	}, []);
 
 	const handleFileInputChange = useCallback(
