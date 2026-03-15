@@ -267,6 +267,8 @@ const TIPTAP_TOKEN_MAP = {
 			src: tok.attrGet('src'),
 			title: tok.attrGet('title') || null,
 			alt: (tok.children as Array<{ content: string }> | null)?.[0]?.content || null,
+			width: tok.attrGet('width') ? Number(tok.attrGet('width')) : null,
+			height: tok.attrGet('height') ? Number(tok.attrGet('height')) : null,
 		}),
 	},
 	hardbreak: { node: 'hardBreak' },
