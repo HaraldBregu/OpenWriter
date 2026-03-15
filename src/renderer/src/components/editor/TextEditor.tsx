@@ -411,15 +411,35 @@ const TextEditor = React.memo(
 			}, []);
 
 			const handleImageInsert = useCallback(
-				(result: { src: string; alt: string; title: string }) => {
+				async (result: { src: string; alt: string; title: string }) => {
 					if (!editor || editor.isDestroyed) return;
+
+					let imageSrc = result.src;
+
+					// When the source is a data URI and we have a document folder,
+					// save the image as a file and reference it by name instead.
+					if (documentId && imageSrc.startsWith('data:')) {
+						const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
+						if (match) {
+							const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+							const base64 = match[2];
+							const fileName = `image-${Date.now()}.${ext}`;
+							const saved = await window.workspace.saveDocumentImage({
+								documentId,
+								fileName,
+								base64,
+							});
+							imageSrc = saved.fileName;
+						}
+					}
+
 					editor.commands.setImage({
-						src: result.src,
+						src: imageSrc,
 						alt: result.alt || undefined,
 						title: result.title || undefined,
 					});
 				},
-				[editor]
+				[editor, documentId]
 			);
 
 			const containerRef = useRef<HTMLDivElement>(null);
