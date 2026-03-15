@@ -40,7 +40,6 @@ export function ImageNodeView({
 	node,
 	editor,
 	selected,
-	getPos,
 	updateAttributes,
 	deleteNode,
 }: NodeViewProps): React.JSX.Element {
