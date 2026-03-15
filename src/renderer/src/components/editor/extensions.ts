@@ -20,9 +20,12 @@ import { Markdown } from 'tiptap-markdown';
 import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/agent-prompt-extension';
 import { ImageExtension } from './extensions/image-extension';
+import { ImagePlaceholderExtension } from './extensions/image-placeholder-extension';
 
 export interface ExtensionHandlers {
 	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onImagePlaceholderSubmit: (prompt: string) => void;
+	onImagePlaceholderFileSelect: (file: File) => void;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
@@ -47,6 +50,10 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		SearchExtension,
 		AgentPromptExtension.configure({
 			onSubmit: handlers.onAgentPromptSubmit,
+		}),
+		ImagePlaceholderExtension.configure({
+			onSubmit: handlers.onImagePlaceholderSubmit,
+			onFileSelect: handlers.onImagePlaceholderFileSelect,
 		}),
 		Markdown.configure({
 			html: true,
