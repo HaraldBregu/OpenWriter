@@ -205,7 +205,7 @@ const DocumentPage: React.FC = () => {
 				if (atBlockStartRef.current) {
 					const headingMatch = buf.match(HEADING_RE);
 					if (headingMatch) {
-						editorRef.current?.setHeading(headingMatch[1].length);
+						editorRef.current?.setHeading(headingMatch[1].length as 1 | 2 | 3 | 4 | 5 | 6);
 						streamBufferRef.current = buf.slice(headingMatch[0].length);
 						atBlockStartRef.current = false;
 						continue;

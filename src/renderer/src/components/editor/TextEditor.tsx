@@ -45,7 +45,7 @@ export interface TextEditorElement extends HTMLDivElement {
 	removeImagePlaceholder: () => void;
 	setImagePlaceholderLoading: (loading: boolean) => void;
 	splitBlock: () => void;
-	setHeading: (level: number) => void;
+	setHeading: (level: 1 | 2 | 3 | 4 | 5 | 6) => void;
 	ensureBulletList: () => void;
 	ensureOrderedList: () => void;
 	exitList: () => void;
@@ -315,11 +315,11 @@ const TextEditor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
-				splitBlock() {
+					splitBlock() {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.splitBlock();
 					},
-					setHeading(level: number) {
+					setHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.setHeading({ level });
 					},
