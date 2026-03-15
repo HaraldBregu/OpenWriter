@@ -16,7 +16,6 @@ import { BubbleMenu } from './bubble_menu';
 import { OptionMenu } from './option_menu';
 import { InsertImageDialog } from './InsertImageDialog';
 
-import { markdownToTiptapJSON, tiptapDocToMarkdown } from './markdown';
 import { createExtensions } from './extensions';
 import { EditorProvider } from './EditorContext';
 
