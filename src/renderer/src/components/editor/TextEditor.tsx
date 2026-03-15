@@ -426,7 +426,7 @@ const TextEditor = React.memo(
 								fileName,
 								base64,
 							});
-							imageSrc = `local-resource://${saved.filePath}`;
+							imageSrc = `local-resource://localhost${saved.filePath}`;
 						}
 					}
 
