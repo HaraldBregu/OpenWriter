@@ -168,6 +168,8 @@ export interface WorkspaceApi {
 	openResourcesFolder: () => Promise<void>;
 	/** Open the folder for a specific document by its ID in the system file explorer. */
 	openDocumentFolder: (documentId: string) => Promise<void>;
+	/** Save an image file into a document's folder and return the saved file name. */
+	saveDocumentImage: (params: SaveDocumentImageParams) => Promise<SaveDocumentImageResult>;
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
