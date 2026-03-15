@@ -44,14 +44,9 @@ export function ImageNodeView({
 	);
 
 	const [loadError, setLoadError] = useState(false);
-	const [resizing, setResizing] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
 	const [editAlt, setEditAlt] = useState(alt ?? '');
 	const [editTitle, setEditTitle] = useState(title ?? '');
-	const imgRef = useRef<HTMLImageElement>(null);
-	const startXRef = useRef(0);
-	const startWidthRef = useRef(0);
-	const aspectRatioRef = useRef(1);
 
 	const handleError = useCallback(() => {
 		setLoadError(true);
