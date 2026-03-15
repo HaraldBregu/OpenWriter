@@ -56,38 +56,6 @@ export function ImageNodeView({
 		setLoadError(false);
 	}, []);
 
-	const onPointerDown = useCallback(
-		(e: React.PointerEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			const img = imgRef.current;
-			if (!img) return;
-
-			startXRef.current = e.clientX;
-			startWidthRef.current = img.offsetWidth;
-			aspectRatioRef.current = img.naturalHeight / img.naturalWidth || 1;
-			setResizing(true);
-
-			const onPointerMove = (ev: PointerEvent): void => {
-				const diff = ev.clientX - startXRef.current;
-				const newWidth = Math.max(MIN_WIDTH, startWidthRef.current + diff);
-				const newHeight = Math.round(newWidth * aspectRatioRef.current);
-				updateAttributes({ width: newWidth, height: newHeight });
-			};
-
-			const onPointerUp = (): void => {
-				setResizing(false);
-				document.removeEventListener('pointermove', onPointerMove);
-				document.removeEventListener('pointerup', onPointerUp);
-			};
-
-			document.addEventListener('pointermove', onPointerMove);
-			document.addEventListener('pointerup', onPointerUp);
-		},
-		[updateAttributes]
-	);
-
 	const handleDelete = useCallback(() => {
 		deleteNode();
 	}, [deleteNode]);
