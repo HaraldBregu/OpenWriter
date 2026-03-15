@@ -206,7 +206,7 @@ export function AiImageNodeView({
 
 				<div className="flex gap-2 overflow-x-auto px-3 scrollbar-none">
 					{previewUrls.map((url, index) => (
-						<div key={index} className="relative shrink-0">
+						<div key={index} className="group/thumb relative shrink-0">
 							<img
 								src={url}
 								alt={files[index]?.name ?? ''}
@@ -215,7 +215,7 @@ export function AiImageNodeView({
 							<AppButton
 								variant="ghost"
 								size="icon-xs"
-								className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
+								className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-background/80 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground"
 								onMouseDown={(e) => {
 									e.preventDefault();
 									removeFile(index);
