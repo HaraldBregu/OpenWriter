@@ -53,6 +53,8 @@ export interface TextEditorProps {
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
 	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 	onAgentPromptSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onImagePlaceholderSubmit?: (prompt: string) => void;
+	onImagePlaceholderFileSelect?: (file: File) => void;
 }
 
 const TextEditor = React.memo(
