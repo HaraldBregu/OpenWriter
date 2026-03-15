@@ -157,11 +157,12 @@ export class WorkspaceIpc implements IpcModule {
 			WorkspaceChannels.saveDocumentImage,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, params: SaveDocumentImageParams) => {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(params.documentId);
-				await fsPromises.mkdir(documentDir, { recursive: true });
-				const filePath = path.join(documentDir, params.fileName);
+				const imagesDir = path.join(documentDir, 'images');
+				await fsPromises.mkdir(imagesDir, { recursive: true });
+				const filePath = path.join(imagesDir, params.fileName);
 				const buffer = Buffer.from(params.base64, 'base64');
 				await fsPromises.writeFile(filePath, buffer);
-				return { fileName: params.fileName };
+				return { fileName: params.fileName, filePath };
 			}, WorkspaceChannels.saveDocumentImage)
 		);
 
