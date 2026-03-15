@@ -501,6 +501,11 @@ const TextEditor = React.memo(
 								</EditorProvider>
 							)}
 							<EditorContent editor={editor} />
+							<InsertImageDialog
+								open={imageDialogOpen}
+								onOpenChange={setImageDialogOpen}
+								onInsert={handleImageInsert}
+							/>
 						</div>
 					</div>
 				</div>
