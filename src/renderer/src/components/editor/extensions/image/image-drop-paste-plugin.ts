@@ -19,15 +19,12 @@ export function fileToDataUri(file: File): Promise<string> {
 	});
 }
 
-export function createImageDropPastePlugin(
-	editor: Editor,
-	onImageFile: ImageFileHandler,
-): Plugin {
+export function createImageDropPastePlugin(editor: Editor, onImageFile: ImageFileHandler): Plugin {
 	return new Plugin({
 		key: imageDropPasteKey,
 
 		props: {
-			handlePaste(view, event) {
+			handlePaste(_view, event) {
 				const items = event.clipboardData?.items;
 				if (!items) return false;
 
