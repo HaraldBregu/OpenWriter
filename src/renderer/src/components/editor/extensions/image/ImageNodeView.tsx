@@ -230,6 +230,7 @@ export function ImageNodeView({
 									</TooltipContent>
 								</Tooltip>
 							</div>
+							</TooltipProvider>
 						)}
 
 						<img
