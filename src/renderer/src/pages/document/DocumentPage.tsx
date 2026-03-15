@@ -73,6 +73,7 @@ const DocumentPage: React.FC = () => {
 
 				setTitle(output.metadata.title || '');
 				setContent(output.content || '');
+				setDocumentPath(output.path);
 				setLoaded(true);
 			} catch {
 				if (!cancelled) setLoaded(true);
