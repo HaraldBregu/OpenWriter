@@ -168,6 +168,24 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [textEnhanceTask.taskId]);
 
+	useEffect(() => {
+		if (!textWriterTask.taskId) return;
+		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
+			if (snap.status === 'started') {
+				editorRef.current?.setAgentPromptLoading(true);
+			}
+			const completed = snap.status === 'completed';
+			console.log(snap.streamedContent);
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
+			if (completed) {
+				editorRef.current?.removeAgentPrompt();
+			}
+		});
+		return unsub;
+	}, [textWriterTask.taskId]);
+
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
@@ -195,29 +213,16 @@ const DocumentPage: React.FC = () => {
 		[textEnhanceTask]
 	);
 
-	useEffect(() => {
-		if (!textWriterTask.taskId) return;
-		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
-			console.log(snap);
-			if (snap.status === 'started') {
-				editorRef.current?.setAgentPromptLoading(true);
-			}
-			const completed = snap.status === 'completed';
-			console.log(snap.streamedContent);
-			editorRef.current?.insertText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
-			if (completed) {
-				editorRef.current?.removeAgentPrompt();
-			}
-		});
-		return unsub;
-	}, [textWriterTask.taskId]);
-
 	const onAgentPromptSubmit = useCallback(
-		(before: string, after: string, cursorPos: number, prompt: string) => {
-			console.log(before)
+		(before: string, after: string, cursorPos: number, input: string) => {
 			editorRef.current?.setAgentPromptEnable(false);
+			const prompt = `
+			${before}
+			
+			⬢ ${input} ⬢
+
+			${after}
+			`;
 			const data: TextWriterTaskData = { prompt };
 			const metadata = { before, after, cursorPos };
 			textWriterTask.submit(data, metadata);

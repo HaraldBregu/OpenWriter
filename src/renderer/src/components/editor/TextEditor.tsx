@@ -32,6 +32,10 @@ export interface TextEditorElement extends HTMLDivElement {
 		markdown: string,
 		options?: { from?: number; preventEditorUpdate?: boolean }
 	) => void;
+	insertMarkdownText: (
+		markdown: string,
+		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
+	) => void;
 	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
