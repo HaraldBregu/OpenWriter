@@ -203,6 +203,12 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.documentsLoadAll]: { args: []; result: ResourceInfo[] };
 	[WorkspaceChannels.deleteFile]: { args: [id: string]; result: void };
 
+	// ---- Document images (IpcResult-wrapped) ----
+	[WorkspaceChannels.saveDocumentImage]: {
+		args: [params: SaveDocumentImageParams];
+		result: SaveDocumentImageResult;
+	};
+
 	// ---- Output (IpcResult-wrapped) ----
 	[WorkspaceChannels.outputSave]: { args: [input: SaveOutputInput]; result: SaveOutputResult };
 	[WorkspaceChannels.outputLoadAll]: { args: []; result: OutputFile[] };
