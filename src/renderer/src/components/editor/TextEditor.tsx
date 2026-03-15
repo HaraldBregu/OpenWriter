@@ -67,8 +67,6 @@ export interface TextEditorProps {
 	onImagePlaceholderFileSelect?: (file: File) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
-	/** Absolute path of the document folder on disk. */
-	documentPath?: string;
 }
 
 const TextEditor = React.memo(
