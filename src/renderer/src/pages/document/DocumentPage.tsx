@@ -364,7 +364,6 @@ const DocumentPage: React.FC = () => {
 									onAgentPromptSubmit={onAgentPromptSubmit}
 									onImagePlaceholderSubmit={onImagePlaceholderSubmit}
 									documentId={id}
-									documentPath={documentPath}
 								/>
 							)}
 						</div>
