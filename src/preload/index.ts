@@ -279,6 +279,13 @@ const workspace: WorkspaceApi = {
 	openDocumentFolder: (documentId: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDocumentFolder, documentId);
 	},
+	saveDocumentImage: (params: {
+		documentId: string;
+		fileName: string;
+		base64: string;
+	}): Promise<{ fileName: string }> => {
+		return typedInvokeUnwrap(WorkspaceChannels.saveDocumentImage, params);
+	},
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
