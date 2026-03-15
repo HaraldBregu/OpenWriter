@@ -168,23 +168,101 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [textEnhanceTask.taskId]);
 
+	const streamBufferRef = useRef('');
+	const atBlockStartRef = useRef(true);
+
 	useEffect(() => {
 		if (!textWriterTask.taskId) return;
+		streamBufferRef.current = '';
+		atBlockStartRef.current = true;
+
+		const PARTIAL_MARKER_RE = /^(#{1,6}|[-*]|\d+\.?)$/;
+		const HEADING_RE = /^(#{1,6}) /;
+		const BULLET_RE = /^[-*] /;
+		const ORDERED_RE = /^\d+\. /;
+
+		function processBuffer(completed: boolean): void {
+			while (streamBufferRef.current.length > 0) {
+				const buf = streamBufferRef.current;
+
+				if (buf[0] === '\n') {
+					if (buf[1] === '\n') {
+						editorRef.current?.splitBlock();
+						editorRef.current?.exitList();
+						streamBufferRef.current = buf.slice(2);
+						atBlockStartRef.current = true;
+						continue;
+					}
+					if (buf.length === 1 && !completed) {
+						break;
+					}
+					editorRef.current?.splitBlock();
+					streamBufferRef.current = buf.slice(1);
+					atBlockStartRef.current = true;
+					continue;
+				}
+
+				if (atBlockStartRef.current) {
+					const headingMatch = buf.match(HEADING_RE);
+					if (headingMatch) {
+						editorRef.current?.setHeading(headingMatch[1].length);
+						streamBufferRef.current = buf.slice(headingMatch[0].length);
+						atBlockStartRef.current = false;
+						continue;
+					}
+
+					const bulletMatch = buf.match(BULLET_RE);
+					if (bulletMatch) {
+						editorRef.current?.ensureBulletList();
+						streamBufferRef.current = buf.slice(bulletMatch[0].length);
+						atBlockStartRef.current = false;
+						continue;
+					}
+
+					const orderedMatch = buf.match(ORDERED_RE);
+					if (orderedMatch) {
+						editorRef.current?.ensureOrderedList();
+						streamBufferRef.current = buf.slice(orderedMatch[0].length);
+						atBlockStartRef.current = false;
+						continue;
+					}
+
+					if (!completed && PARTIAL_MARKER_RE.test(buf)) {
+						break;
+					}
+
+					atBlockStartRef.current = false;
+				}
+
+				const nextNewline = buf.indexOf('\n');
+				if (nextNewline > 0) {
+					editorRef.current?.insertText(buf.slice(0, nextNewline), {
+						preventEditorUpdate: !completed,
+					});
+					streamBufferRef.current = buf.slice(nextNewline);
+					continue;
+				}
+
+				editorRef.current?.insertText(buf, { preventEditorUpdate: !completed });
+				streamBufferRef.current = '';
+				break;
+			}
+		}
+
 		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
 				editorRef.current?.setAgentPromptLoading(true);
+				return;
 			}
-						console.log({streamedContent: snap.streamedContent})
 
 			const completed = snap.status === 'completed';
-			if (completed){
-			// console.log({seedContent: snap.seedContent})
-			console.log(snap.content)
-			// console.log({streamedContent: snap.streamedContent})
-				editorRef.current?.insertMarkdownText(snap.content, {
-					preventEditorUpdate: !completed,
-				});
+
+			if (snap.streamedContent) {
+				streamBufferRef.current += snap.streamedContent;
 			}
+
+			processBuffer(completed);
+
 			if (completed) {
 				editorRef.current?.removeAgentPrompt();
 			}
