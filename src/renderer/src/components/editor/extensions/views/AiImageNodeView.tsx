@@ -132,12 +132,13 @@ export function AiImageNodeView({
 		(e: React.DragEvent<HTMLDivElement>) => {
 			e.preventDefault();
 			setIsDragOver(false);
-			const dropped = e.dataTransfer.files[0];
-			if (dropped && dropped.type.startsWith('image/')) {
-				applyFile(dropped);
+			for (const dropped of Array.from(e.dataTransfer.files)) {
+				if (dropped.type.startsWith('image/')) {
+					addFile(dropped);
+				}
 			}
 		},
-		[applyFile]
+		[addFile]
 	);
 
 	// Use a native DOM listener so stopPropagation fires before ProseMirror's
