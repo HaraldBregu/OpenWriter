@@ -168,6 +168,23 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [textEnhanceTask.taskId]);
 
+	useEffect(() => {
+		if (!textWriterTask.taskId) return;
+		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
+			if (snap.status === 'started') {
+				editorRef.current?.setImagePlaceholderLoading(true);
+			}
+			const completed = snap.status === 'completed';
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
+			if (completed) {
+				editorRef.current?.removeImagePlaceholder();
+			}
+		});
+		return unsub;
+	}, [textWriterTask.taskId]);
+
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
