@@ -108,9 +108,8 @@ const TextEditor = React.memo(
 							onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
 						onImagePlaceholderSubmit: (prompt) => onImagePlaceholderSubmitRef.current?.(prompt),
 						onImagePlaceholderFileSelect: (file) => onImagePlaceholderFileSelectRef.current?.(file),
-						basePath: documentPath ?? null,
 					}),
-				[documentPath]
+				[]
 			);
 
 			const lastEmittedRef = useRef<string>('');
