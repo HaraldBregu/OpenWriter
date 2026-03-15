@@ -102,18 +102,6 @@ const MENU_ITEMS: MenuItem[] = [
 				.run();
 		},
 	},
-	{
-		label: 'Image',
-		icon: ImagePlus,
-		command: (editor, slashPos, queryLength) => {
-			editor
-				.chain()
-				.focus()
-				.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-				.insertImagePlaceholder()
-				.run();
-		},
-	},
 ];
 
 const pluginKey = new PluginKey('optionMenu');
