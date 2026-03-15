@@ -683,7 +683,14 @@
 		"rag": "RAG"
 	},
 	"imageNode": {
-		"notFound": "Immagine non trovata"
+		"notFound": "Immagine non trovata",
+		"delete": "Elimina immagine",
+		"edit": "Modifica immagine",
+		"altText": "Testo alternativo",
+		"altTextPlaceholder": "Descrivi l'immagine",
+		"title": "Titolo",
+		"titlePlaceholder": "Testo del tooltip",
+		"save": "Salva"
 	},
 	"debug": {
 		"title": "Debug",
