@@ -108,7 +108,40 @@ const tiptapMarkdownSerializer = new MarkdownSerializer(
 
 const md = new MarkdownIt('commonmark', { html: true }).enable('strikethrough');
 
-md.core.ruler.after('inline', 'underline_html', (state) => {
+md.core.ruler.after('inline', 'image_block', (state) => {
+	const tokens = state.tokens;
+	const newTokens: import('markdown-it/lib/token.mjs').default[] = [];
+	let i = 0;
+	while (i < tokens.length) {
+		// Look for the triplet: paragraph_open, inline (image-only), paragraph_close
+		if (
+			i + 2 < tokens.length &&
+			tokens[i].type === 'paragraph_open' &&
+			tokens[i + 1].type === 'inline' &&
+			tokens[i + 2].type === 'paragraph_close' &&
+			tokens[i + 1].children
+		) {
+			const meaningful = tokens[i + 1].children.filter(
+				(c) => c.type !== 'softbreak' && !(c.type === 'text' && !c.content.trim())
+			);
+			if (meaningful.length === 1 && meaningful[0].type === 'image') {
+				const imgToken = meaningful[0];
+				const blockImg = new state.Token('image', 'img', 0);
+				blockImg.attrs = imgToken.attrs;
+				blockImg.children = imgToken.children;
+				blockImg.content = imgToken.content;
+				newTokens.push(blockImg);
+				i += 3;
+				continue;
+			}
+		}
+		newTokens.push(tokens[i]);
+		i++;
+	}
+	state.tokens = newTokens;
+});
+
+md.core.ruler.after('image_block', 'underline_html', (state) => {
 	for (const blockToken of state.tokens) {
 		if (blockToken.type !== 'inline' || !blockToken.children) continue;
 		const newChildren: import('markdown-it/lib/token.mjs').default[] = [];
