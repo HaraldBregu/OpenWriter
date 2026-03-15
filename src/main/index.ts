@@ -17,7 +17,7 @@ import { WorkspaceProcessManager } from './workspace-process';
 protocol.registerSchemesAsPrivileged([
 	{
 		scheme: 'local-resource',
-		privileges: { secure: true, bypassCSP: true, supportFetchAPI: true, stream: true },
+		privileges: { standard: true, secure: true, bypassCSP: true, supportFetchAPI: true },
 	},
 ]);
 

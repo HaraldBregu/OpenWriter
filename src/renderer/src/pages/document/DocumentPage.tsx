@@ -64,6 +64,7 @@ const DocumentPage: React.FC = () => {
 					type: 'documents',
 					id: id!,
 				});
+
 				if (cancelled || !output) {
 					if (!cancelled) setLoaded(true);
 					return;
