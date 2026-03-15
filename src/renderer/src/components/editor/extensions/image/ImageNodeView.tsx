@@ -29,6 +29,14 @@ export function ImageNodeView({ node, editor }: NodeViewProps): React.JSX.Elemen
 	);
 
 	const [loadError, setLoadError] = useState(false);
+	const prevSrcRef = useRef(resolvedSrc);
+
+	useEffect(() => {
+		if (prevSrcRef.current !== resolvedSrc) {
+			prevSrcRef.current = resolvedSrc;
+			setLoadError(false);
+		}
+	}, [resolvedSrc]);
 
 	const handleError = useCallback(() => {
 		setLoadError(true);
