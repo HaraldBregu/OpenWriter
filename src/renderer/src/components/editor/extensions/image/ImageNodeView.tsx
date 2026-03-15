@@ -86,11 +86,6 @@ export function ImageNodeView({
 		[handleEditSave]
 	);
 
-	const imgStyle: React.CSSProperties = {
-		width: width ? `${width}px` : undefined,
-		height: height ? `${height}px` : 'auto',
-	};
-
 	const isEditable = editor.isEditable;
 
 	return (
