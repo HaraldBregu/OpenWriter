@@ -26,7 +26,6 @@ export interface ExtensionHandlers {
 	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onImagePlaceholderSubmit: (prompt: string) => void;
 	onImagePlaceholderFileSelect: (file: File) => void;
-	basePath: string | null;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
