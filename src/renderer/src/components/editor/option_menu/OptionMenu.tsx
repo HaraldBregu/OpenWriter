@@ -123,7 +123,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const slashPosRef = useRef<number | null>(null);
-	const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
 	const queryRef = useRef(query);
 	queryRef.current = query;
