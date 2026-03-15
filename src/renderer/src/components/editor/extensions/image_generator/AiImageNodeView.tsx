@@ -5,7 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { ArrowUp, LoaderCircle, Plus, X } from 'lucide-react';
-import type { ImagePlaceholderOptions } from '../image-placeholder-extension';
+import type { ImagePlaceholderOptions } from './image-placeholder-extension';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 

@@ -13,7 +13,7 @@ import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
 import { ImagePlus, Upload } from 'lucide-react';
-import { fileToDataUri } from './extensions/image-drop-paste-plugin';
+import { fileToDataUri } from './extensions/image/image-drop-paste-plugin';
 
 type ImageSource = 'url' | 'upload';
 

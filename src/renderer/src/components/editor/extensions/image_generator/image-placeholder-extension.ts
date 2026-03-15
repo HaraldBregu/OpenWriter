@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { AiImageNodeView } from './views/AiImageNodeView';
+import { AiImageNodeView } from './AiImageNodeView';
 
 export interface ImagePlaceholderOptions {
 	/**

@@ -683,7 +683,14 @@
 		"rag": "RAG"
 	},
 	"imageNode": {
-		"notFound": "Image not found"
+		"notFound": "Image not found",
+		"delete": "Delete image",
+		"edit": "Edit image",
+		"altText": "Alt text",
+		"altTextPlaceholder": "Describe the image",
+		"title": "Title",
+		"titlePlaceholder": "Tooltip text",
+		"save": "Save"
 	},
 	"debug": {
 		"title": "Debug",

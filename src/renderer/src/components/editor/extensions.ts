@@ -18,9 +18,9 @@ import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { Markdown } from 'tiptap-markdown';
 import { SearchExtension } from './extensions/search-extension';
-import { AgentPromptExtension } from './extensions/agent-prompt-extension';
-import { ImageExtension } from './extensions/image-extension';
-import { ImagePlaceholderExtension } from './extensions/image-placeholder-extension';
+import { AgentPromptExtension } from './extensions/text_generator/agent-prompt-extension';
+import { ImageExtension } from './extensions/image/image-extension';
+import { ImagePlaceholderExtension } from './extensions/image_generator/image-placeholder-extension';
 
 export interface ExtensionHandlers {
 	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
