@@ -351,17 +351,12 @@ const TextEditor = React.memo(
 				if (!editor || editor.isDestroyed) return;
 
 				if (streamingContent !== undefined) {
-					const doc = markdownToTiptapJSON(editor.schema, streamingContent);
-					const current = tiptapDocToMarkdown(editor.state.doc);
+					const current = editor.getMarkdown();
 					if (current !== streamingContent) {
-						if (doc) {
-							editor.commands.setContent(doc.toJSON(), {
-								emitUpdate: false,
-								parseOptions: { preserveWhitespace: 'full' },
-							});
-						} else {
-							editor.commands.setContent('', { emitUpdate: false });
-						}
+						editor.commands.setContent(streamingContent || '', {
+							emitUpdate: false,
+							contentType: 'markdown',
+						});
 					}
 					return;
 				}
@@ -370,18 +365,13 @@ const TextEditor = React.memo(
 					return;
 				}
 
-				const current = tiptapDocToMarkdown(editor.state.doc);
+				const current = editor.getMarkdown();
 				const incoming = value || '';
 				if (current !== incoming) {
-					const doc = markdownToTiptapJSON(editor.schema, incoming);
-					if (doc) {
-						editor.commands.setContent(doc.toJSON(), {
-							emitUpdate: false,
-							parseOptions: { preserveWhitespace: 'full' },
-						});
-					} else {
-						editor.commands.setContent('', { emitUpdate: false });
-					}
+					editor.commands.setContent(incoming, {
+						emitUpdate: false,
+						contentType: 'markdown',
+					});
 				}
 			}, [value, streamingContent, editor]);
 
