@@ -38,6 +38,7 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	addOptions() {
 		return {
 			onImageFile: fileToDataUri,
+			basePath: null,
 		};
 	},
 
