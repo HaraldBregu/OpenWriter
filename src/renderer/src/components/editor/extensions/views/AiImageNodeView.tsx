@@ -194,10 +194,16 @@ export function AiImageNodeView({
 		<NodeViewWrapper contentEditable={false}>
 			<div
 				ref={wrapperRef}
-				className="my-2 flex flex-col gap-3 rounded-2xl border border-border bg-popover py-3 shadow-sm"
+				className={[
+					'my-2 flex flex-col gap-3 rounded-2xl border bg-popover py-3 shadow-sm transition-colors',
+					isDragOver ? 'border-primary bg-primary/5' : 'border-border',
+				].join(' ')}
+				onDragOver={handleDragOver}
+				onDragLeave={handleDragLeave}
+				onDrop={handleDrop}
 			>
-				<div className="px-3">
-					{previewUrl ? (
+				{previewUrl && (
+					<div className="px-3">
 						<div className="relative inline-block">
 							<img
 								src={previewUrl}
@@ -217,50 +223,33 @@ export function AiImageNodeView({
 								<X />
 							</AppButton>
 						</div>
-					) : (
-						<div
-							role="button"
-							tabIndex={0}
-							aria-label={t('imagePlaceholder.dropZoneLabel', {
-								defaultValue: 'Drop an image here, or click to browse',
-							})}
-							className={[
-								'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition-colors',
-								isDragOver
-									? 'border-primary bg-primary/5'
-									: 'border-border hover:border-primary/50',
-							].join(' ')}
-							onClick={handleDropZoneClick}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									handleDropZoneClick();
-								}
-							}}
-							onDragOver={handleDragOver}
-							onDragLeave={handleDragLeave}
-							onDrop={handleDrop}
-						>
-							<ImagePlus className="h-6 w-6 text-muted-foreground" />
-							<span className="text-xs text-muted-foreground">
-								{t('imagePlaceholder.dropZoneLabel', {
-									defaultValue: 'Drop an image here, or click to browse',
-								})}
-							</span>
-						</div>
-					)}
-					<input
-						ref={fileInputRef}
-						type="file"
-						accept={ACCEPTED_IMAGE_TYPES}
-						className="hidden"
-						onChange={handleFileInputChange}
-						aria-hidden="true"
-						tabIndex={-1}
-					/>
-				</div>
+					</div>
+				)}
+
+				<input
+					ref={fileInputRef}
+					type="file"
+					accept={ACCEPTED_IMAGE_TYPES}
+					className="hidden"
+					onChange={handleFileInputChange}
+					aria-hidden="true"
+					tabIndex={-1}
+				/>
 
 				<div className="flex items-end gap-2 px-3">
+					<AppButton
+						variant="ghost"
+						size="icon"
+						className="h-7 w-7 shrink-0 text-muted-foreground"
+						disabled={loading}
+						onMouseDown={(e) => {
+							e.preventDefault();
+							handleDropZoneClick();
+						}}
+						aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
+					>
+						<Plus className="h-4 w-4" />
+					</AppButton>
 					<AppTextarea
 						ref={textareaRef}
 						value={prompt}
