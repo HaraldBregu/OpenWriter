@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
@@ -12,14 +12,25 @@ interface ImageAttrs {
 }
 
 const MIN_WIDTH = 80;
+const ABSOLUTE_URL_RE = /^(https?:\/\/|data:|local-resource:\/\/)/;
+
+function resolveImageSrc(src: string | null, documentBasePath: string | null): string | null {
+	if (!src) return null;
+	if (ABSOLUTE_URL_RE.test(src)) return src;
+	if (!documentBasePath) return src;
+	return `local-resource://localhost${documentBasePath}/${src}`;
+}
 
 export function ImageNodeView({
 	node,
+	editor,
 	selected,
 	updateAttributes,
 }: NodeViewProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const { src, alt, title, width, height } = node.attrs as ImageAttrs;
+	const documentBasePath = (editor.storage.image?.documentBasePath as string) ?? null;
+	const resolvedSrc = useMemo(() => resolveImageSrc(src, documentBasePath), [src, documentBasePath]);
 
 	const [loadError, setLoadError] = useState(false);
 	const [resizing, setResizing] = useState(false);
