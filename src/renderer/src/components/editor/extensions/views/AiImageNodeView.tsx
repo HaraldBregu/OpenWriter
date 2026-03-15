@@ -196,7 +196,7 @@ export function AiImageNodeView({
 				ref={wrapperRef}
 				className="my-2 flex flex-col gap-3 rounded-2xl border border-border bg-popover py-3 shadow-sm"
 			>
-				<div className="px-3 pt-2 pb-2">
+				<div className="px-3">
 					{previewUrl ? (
 						<div className="relative inline-block">
 							<img
