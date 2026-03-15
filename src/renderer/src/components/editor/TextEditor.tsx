@@ -397,6 +397,24 @@ const TextEditor = React.memo(
 				});
 			}, [editor, autoFocus]);
 
+			const [imageDialogOpen, setImageDialogOpen] = useState(false);
+
+			const handleInsertImage = useCallback(() => {
+				setImageDialogOpen(true);
+			}, []);
+
+			const handleImageInsert = useCallback(
+				(result: { src: string; alt: string; title: string }) => {
+					if (!editor || editor.isDestroyed) return;
+					editor.commands.setImage({
+						src: result.src,
+						alt: result.alt || undefined,
+						title: result.title || undefined,
+					});
+				},
+				[editor]
+			);
+
 			const containerRef = useRef<HTMLDivElement>(null);
 			const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null);
 
