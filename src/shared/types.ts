@@ -366,8 +366,10 @@ export interface SaveDocumentImageParams {
  * Result returned after saving a document image.
  */
 export interface SaveDocumentImageResult {
-	/** The file name as written to disk (may be deduplicated). */
+	/** The file name as written to disk. */
 	fileName: string;
+	/** Absolute path of the saved file on disk. */
+	filePath: string;
 }
 
 // ---- Project Workspace ----------------------------------------------------
