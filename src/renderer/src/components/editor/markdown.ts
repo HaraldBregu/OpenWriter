@@ -72,6 +72,9 @@ const tiptapMarkdownSerializer = new MarkdownSerializer(
 		agentPrompt() {
 			// Transient UI node — omit from markdown output.
 		},
+		imagePlaceholder() {
+			// Transient UI node — omit from markdown output.
+		},
 		doc(state, node) {
 			state.renderContent(node);
 		},
