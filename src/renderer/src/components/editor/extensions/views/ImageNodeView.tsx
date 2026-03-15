@@ -102,7 +102,7 @@ export function ImageNodeView({
 					<div className="relative inline-block">
 						<img
 							ref={imgRef}
-							src={src}
+							src={resolvedSrc}
 							alt={alt ?? ''}
 							title={title ?? undefined}
 							onError={handleError}
