@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
@@ -151,9 +151,7 @@ export function ImageNodeView({
 								<div
 									className={[
 										'absolute right-2 top-2 z-10 flex items-center gap-1 rounded-lg border border-border bg-background/90 p-1 shadow-md backdrop-blur-sm transition-opacity',
-										editOpen
-											? 'opacity-100'
-											: 'opacity-0 group-hover:opacity-100',
+										editOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
 									].join(' ')}
 								>
 									<Popover open={editOpen} onOpenChange={handleEditOpen}>
