@@ -14,6 +14,7 @@ import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './BlockControls'
 import { BlockActions } from './BlockActions';
 import { BubbleMenu } from './bubble_menu';
 import { OptionMenu } from './option_menu';
+import { InsertImageDialog } from './InsertImageDialog';
 
 import { markdownToTiptapJSON, tiptapDocToMarkdown } from './markdown';
 import { createExtensions } from './extensions';
