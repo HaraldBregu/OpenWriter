@@ -13,8 +13,6 @@ interface ImageAttrs {
 	src: string | null;
 	alt: string | null;
 	title: string | null;
-	width: number | null;
-	height: number | null;
 }
 
 const ABSOLUTE_URL_RE = /^(https?:\/\/|data:|local-resource:\/\/)/;
