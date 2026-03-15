@@ -87,6 +87,8 @@ const TextEditor = React.memo(
 				onAgentPromptSubmit,
 				onImagePlaceholderSubmit,
 				onImagePlaceholderFileSelect,
+				documentId,
+				documentPath,
 			},
 			ref
 		) => {
