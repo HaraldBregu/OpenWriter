@@ -35,7 +35,7 @@ export function ImageNodeView({
 	deleteNode,
 }: NodeViewProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const { src, alt, title, width, height } = node.attrs as ImageAttrs;
+	const { src, alt, title } = node.attrs as ImageAttrs;
 	const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
 	const documentBasePath = (storage.image?.documentBasePath as string) ?? null;
 	const resolvedSrc = useMemo(
