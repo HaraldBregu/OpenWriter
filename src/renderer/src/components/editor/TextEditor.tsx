@@ -71,6 +71,8 @@ const TextEditor = React.memo(
 				onContinueWithAssistant,
 				onEnhanceWithAssistant,
 				onAgentPromptSubmit,
+				onImagePlaceholderSubmit,
+				onImagePlaceholderFileSelect,
 			},
 			ref
 		) => {
@@ -80,11 +82,21 @@ const TextEditor = React.memo(
 			const onAgentPromptSubmitRef = useRef(onAgentPromptSubmit);
 			onAgentPromptSubmitRef.current = onAgentPromptSubmit;
 
+			const onImagePlaceholderSubmitRef = useRef(onImagePlaceholderSubmit);
+			onImagePlaceholderSubmitRef.current = onImagePlaceholderSubmit;
+
+			const onImagePlaceholderFileSelectRef = useRef(onImagePlaceholderFileSelect);
+			onImagePlaceholderFileSelectRef.current = onImagePlaceholderFileSelect;
+
 			const extensions = useMemo(
 				() =>
 					createExtensions({
 						onAgentPromptSubmit: (before, after, cursorPos, prompt) =>
 							onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
+						onImagePlaceholderSubmit: (prompt) =>
+							onImagePlaceholderSubmitRef.current?.(prompt),
+						onImagePlaceholderFileSelect: (file) =>
+							onImagePlaceholderFileSelectRef.current?.(file),
 					}),
 				[]
 			);
