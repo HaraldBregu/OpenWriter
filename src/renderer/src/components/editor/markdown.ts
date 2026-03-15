@@ -38,6 +38,25 @@ type MarkSerializerSpec = {
 const defaultNodes = defaultMarkdownSerializer.nodes as Record<string, NodeSerializerFn>;
 const defaultMarks = defaultMarkdownSerializer.marks as Record<string, MarkSerializerSpec>;
 
+function escapeHtmlAttr(value: string): string {
+	return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+const IMG_TAG_RE = /^<img\s+([\s\S]*?)\s*\/?>$/i;
+const ATTR_RE = /(\w+)=["']([^"']*)["']/g;
+
+function parseImgTag(html: string): Record<string, string> | null {
+	const match = html.trim().match(IMG_TAG_RE);
+	if (!match) return null;
+	const attrs: Record<string, string> = {};
+	let m: RegExpExecArray | null;
+	while ((m = ATTR_RE.exec(match[1])) !== null) {
+		attrs[m[1].toLowerCase()] = m[2];
+	}
+	ATTR_RE.lastIndex = 0;
+	return Object.keys(attrs).length > 0 ? attrs : null;
+}
+
 function backticksFor(node: ProseMirrorNode, side: -1 | 1): string {
 	const ticks = /`+/g;
 	let m: RegExpExecArray | null;
