@@ -71,7 +71,7 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	},
 
 	addProseMirrorPlugins() {
-		return [createImageDropPastePlugin(this.options.onImageFile)];
+		return [createImageDropPastePlugin(this.editor, this.options.onImageFile)];
 	},
 
 	addNodeView() {
