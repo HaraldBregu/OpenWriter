@@ -391,6 +391,19 @@ const TextEditor = React.memo(
 				editor.setEditable(!disabled);
 			}, [editor, disabled]);
 
+			useEffect(() => {
+				if (!editor || editor.isDestroyed || !documentId) return;
+				let cancelled = false;
+				window.workspace.getCurrent().then((workspacePath) => {
+					if (cancelled || !workspacePath) return;
+					const basePath = `${workspacePath}/output/documents/${documentId}`;
+					editor.storage.image.documentBasePath = basePath;
+				});
+				return () => {
+					cancelled = true;
+				};
+			}, [editor, documentId]);
+
 			const didAutoFocus = useRef(false);
 			useEffect(() => {
 				if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed) return;
