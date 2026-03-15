@@ -315,6 +315,32 @@ const TextEditor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
+				splitBlock() {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.splitBlock();
+					},
+					setHeading(level: number) {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.setHeading({ level });
+					},
+					ensureBulletList() {
+						if (!editor || editor.isDestroyed) return;
+						if (!editor.isActive('bulletList')) {
+							editor.commands.toggleBulletList();
+						}
+					},
+					ensureOrderedList() {
+						if (!editor || editor.isDestroyed) return;
+						if (!editor.isActive('orderedList')) {
+							editor.commands.toggleOrderedList();
+						}
+					},
+					exitList() {
+						if (!editor || editor.isDestroyed) return;
+						if (editor.isActive('bulletList') || editor.isActive('orderedList')) {
+							editor.commands.liftListItem('listItem');
+						}
+					},
 				}) as TextEditorElement;
 			}, [editor]);
 
