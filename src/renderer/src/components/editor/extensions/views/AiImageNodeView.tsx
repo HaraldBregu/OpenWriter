@@ -202,32 +202,42 @@ export function AiImageNodeView({
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
 			>
-				<div className="px-3">
+				<input
+					ref={fileInputRef}
+					type="file"
+					accept={ACCEPTED_IMAGE_TYPES}
+					className="hidden"
+					onChange={handleFileInputChange}
+					aria-hidden="true"
+					tabIndex={-1}
+				/>
+
+				<div className="flex items-end gap-2 px-3">
 					{previewUrl ? (
-						<div className="relative inline-block">
+						<div className="relative shrink-0">
 							<img
 								src={previewUrl}
 								alt={file?.name ?? ''}
-								className="max-h-40 rounded-xl object-contain"
+								className="h-10 w-10 rounded-lg object-cover"
 							/>
 							<AppButton
 								variant="ghost"
 								size="icon-xs"
-								className="absolute right-1 top-1 h-5 w-5 bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
+								className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-background/80 text-muted-foreground hover:bg-background hover:text-foreground"
 								onMouseDown={(e) => {
 									e.preventDefault();
 									clearFile();
 								}}
 								aria-label={t('imagePlaceholder.removeImage', { defaultValue: 'Remove image' })}
 							>
-								<X />
+								<X className="h-3 w-3" />
 							</AppButton>
 						</div>
 					) : (
 						<div
 							role="button"
 							tabIndex={0}
-							className="flex h-24 cursor-pointer items-center justify-center rounded-xl bg-muted transition-colors hover:bg-muted/70"
+							className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/70"
 							onMouseDown={(e) => {
 								e.preventDefault();
 								handleDropZoneClick();
@@ -240,22 +250,9 @@ export function AiImageNodeView({
 							}}
 							aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
 						>
-							<Plus className="h-6 w-6 text-muted-foreground" />
+							<Plus className="h-4 w-4 text-muted-foreground" />
 						</div>
 					)}
-				</div>
-
-				<input
-					ref={fileInputRef}
-					type="file"
-					accept={ACCEPTED_IMAGE_TYPES}
-					className="hidden"
-					onChange={handleFileInputChange}
-					aria-hidden="true"
-					tabIndex={-1}
-				/>
-
-				<div className="flex items-end gap-2 px-3">
 					<AppTextarea
 						ref={textareaRef}
 						value={prompt}
