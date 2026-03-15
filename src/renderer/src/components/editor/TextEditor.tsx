@@ -129,16 +129,16 @@ const TextEditor = React.memo(
 					onCreate: ({ editor: ed }: { editor: Editor }) => {
 						const initial = initialValueRef.current;
 						if (!initial) return;
-						const doc = markdownToTiptapJSON(ed.schema, initial);
-						if (doc) {
-							ed.commands.setContent(doc.toJSON(), { emitUpdate: false });
-						}
+						ed.commands.setContent(initial, {
+							emitUpdate: false,
+							contentType: 'markdown',
+						});
 					},
 					onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
-							const md = tiptapDocToMarkdown(ed.state.doc);
+							const md = ed.getMarkdown();
 							lastEmittedRef.current = md;
 							onChangeRef.current(md);
 						}, 100);
