@@ -36,6 +36,12 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 		};
 	},
 
+	addStorage() {
+		return {
+			documentBasePath: null as string | null,
+		};
+	},
+
 	addAttributes() {
 		return {
 			src: { default: null },
