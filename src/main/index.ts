@@ -135,7 +135,7 @@ app.whenReady().then(async () => {
 	// Serve local files via the local-resource:// protocol so the renderer
 	// can display images stored in document folders regardless of its origin.
 	protocol.handle('local-resource', (request) => {
-		const filePath = decodeURIComponent(request.url.replace('local-resource://', ''));
+		const filePath = decodeURIComponent(new URL(request.url).pathname);
 		return net.fetch(`file://${filePath}`);
 	});
 
