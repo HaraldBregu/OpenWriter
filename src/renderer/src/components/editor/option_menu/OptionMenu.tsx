@@ -106,7 +106,10 @@ const MENU_ITEMS: MenuItem[] = [
 
 const pluginKey = new PluginKey('optionMenu');
 
-export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
+export function OptionMenu({
+	onContinueWithAssistant,
+	onInsertImage,
+}: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
