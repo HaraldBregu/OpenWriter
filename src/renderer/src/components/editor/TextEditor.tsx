@@ -395,10 +395,12 @@ const TextEditor = React.memo(
 				if (!editor || editor.isDestroyed || !documentId) return;
 				let cancelled = false;
 				window.workspace.getCurrent().then((workspacePath) => {
-					if (cancelled || !workspacePath) return;
+					if (cancelled || editor.isDestroyed || !workspacePath) return;
 					const basePath = `${workspacePath}/output/documents/${documentId}`;
 					const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
 					storage.image.documentBasePath = basePath;
+					// Force node views to re-render so images resolve with the new base path.
+					editor.view.dispatch(editor.state.tr.setMeta('preventEditorUpdate', true));
 				});
 				return () => {
 					cancelled = true;
