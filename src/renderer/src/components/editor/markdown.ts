@@ -85,7 +85,33 @@ const tiptapMarkdownSerializer = new MarkdownSerializer(
 		},
 		listItem: defaultNodes.list_item,
 		paragraph: defaultNodes.paragraph,
-		image: defaultNodes.image,
+		image(state, node) {
+			const src: string = (node.attrs.src as string) || '';
+			const alt: string = (node.attrs.alt as string) || '';
+			const title: string | null = (node.attrs.title as string) || null;
+			const width: number | null = (node.attrs.width as number) || null;
+			const height: number | null = (node.attrs.height as number) || null;
+
+			if (width || height) {
+				const parts = [`<img src="${escapeHtmlAttr(src)}"`];
+				if (alt) parts.push(`alt="${escapeHtmlAttr(alt)}"`);
+				if (title) parts.push(`title="${escapeHtmlAttr(title)}"`);
+				if (width) parts.push(`width="${width}"`);
+				if (height) parts.push(`height="${height}"`);
+				parts.push('/>');
+				state.write(parts.join(' '));
+			} else {
+				state.write(
+					'![' +
+						state.esc(alt) +
+						'](' +
+						src +
+						(title ? ` "${title.replace(/"/g, '\\"')}"` : '') +
+						')'
+				);
+			}
+			state.closeBlock(node);
+		},
 		hardBreak: defaultNodes.hard_break,
 		text: defaultNodes.text,
 		agentPrompt() {
