@@ -104,12 +104,14 @@ export function AiImageNodeView({
 
 	const handleFileInputChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const selected = e.target.files?.[0];
-			if (selected) {
-				applyFile(selected);
+			const selected = e.target.files;
+			if (!selected) return;
+			for (const f of Array.from(selected)) {
+				addFile(f);
 			}
+			e.target.value = '';
 		},
-		[applyFile]
+		[addFile]
 	);
 
 	const handleDropZoneClick = useCallback(() => {
