@@ -168,23 +168,6 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [textEnhanceTask.taskId]);
 
-	useEffect(() => {
-		if (!textWriterTask.taskId) return;
-		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
-			if (snap.status === 'started') {
-				editorRef.current?.setImagePlaceholderLoading(true);
-			}
-			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
-			if (completed) {
-				editorRef.current?.removeImagePlaceholder();
-			}
-		});
-		return unsub;
-	}, [textWriterTask.taskId]);
-
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
@@ -212,24 +195,36 @@ const DocumentPage: React.FC = () => {
 		[textEnhanceTask]
 	);
 
-	const onAgentPromptSubmit = useCallback(
-		(_before: string, _after: string, _cursorPos: number, _prompt: string) => {
-			editorRef.current?.setAgentPromptLoading(true);
-			editorRef.current?.setAgentPromptEnable(false);
-			setTimeout(() => {
-				editorRef.current?.insertText("[Agent's response will appear here]");
-			}, 250);
-		},
-		[]
-	);
+	useEffect(() => {
+		if (!textWriterTask.taskId) return;
+		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
+			console.log(snap)
+			if (snap.status === 'started') {
+				editorRef.current?.setAgentPromptLoading(true);
+			}
+			const completed = snap.status === 'completed';
+			console.log(snap.streamedContent);
+			editorRef.current?.insertText(snap.streamedContent, {
+				preventEditorUpdate: !completed,
+			});
+			if (completed) {
+				editorRef.current?.removeAgentPrompt();
+			}
+		});
+		return unsub;
+	}, [textWriterTask.taskId]);
 
-	const onImagePlaceholderSubmit = useCallback(
-		(prompt: string) => {
+	const onAgentPromptSubmit = useCallback(
+		(before: string, after: string, cursorPos: number, prompt: string) => {
+			editorRef.current?.setAgentPromptEnable(false);
 			const data: TextWriterTaskData = { prompt };
-			textWriterTask.submit(data);
+			const metadata = { before, after, cursorPos };
+			textWriterTask.submit(data, metadata);
 		},
 		[textWriterTask]
 	);
+
+	const onImagePlaceholderSubmit = useCallback((_prompt: string) => {}, []);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
