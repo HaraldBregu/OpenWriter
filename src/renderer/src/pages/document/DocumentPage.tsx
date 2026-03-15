@@ -366,6 +366,8 @@ const DocumentPage: React.FC = () => {
 									onEnhanceWithAssistant={onEnhanceWithAssistant}
 									onAgentPromptSubmit={onAgentPromptSubmit}
 									onImagePlaceholderSubmit={onImagePlaceholderSubmit}
+									documentId={id}
+									documentPath={documentPath}
 								/>
 							)}
 						</div>
