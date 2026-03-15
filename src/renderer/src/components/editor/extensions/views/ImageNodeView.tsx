@@ -1,7 +1,8 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
+import type { ImageExtensionOptions } from '../image-extension';
 
 interface ImageAttrs {
 	src: string | null;
@@ -13,13 +14,30 @@ interface ImageAttrs {
 
 const MIN_WIDTH = 80;
 
+const ABSOLUTE_URL_RE = /^(?:https?:\/\/|data:|file:\/\/|blob:|local-resource:\/\/)/i;
+
+/**
+ * Resolve a potentially relative image src to a displayable URL.
+ * Relative filenames are served through the local-resource:// protocol
+ * which the main process maps to the filesystem.
+ */
+function resolveImageSrc(src: string | null, basePath: string | null): string | null {
+	if (!src) return null;
+	if (ABSOLUTE_URL_RE.test(src)) return src;
+	if (!basePath) return src;
+	return `local-resource://${basePath}/${src}`;
+}
+
 export function ImageNodeView({
 	node,
 	selected,
 	updateAttributes,
+	extension,
 }: NodeViewProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const { src, alt, title, width, height } = node.attrs as ImageAttrs;
+	const { basePath } = extension.options as ImageExtensionOptions;
+	const resolvedSrc = useMemo(() => resolveImageSrc(src, basePath), [src, basePath]);
 
 	const [loadError, setLoadError] = useState(false);
 	const [resizing, setResizing] = useState(false);
