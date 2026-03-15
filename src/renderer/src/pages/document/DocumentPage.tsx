@@ -265,7 +265,11 @@ const DocumentPage: React.FC = () => {
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
 							{loaded && (
 								<TextEditor
-									disabled={textCompleterTask.isRunning || textEnhanceTask.isRunning}
+									disabled={
+										textCompleterTask.isRunning ||
+										textEnhanceTask.isRunning ||
+										textWriterTask.isRunning
+									}
 									ref={editorRef}
 									key={id}
 									value={content}
@@ -273,6 +277,7 @@ const DocumentPage: React.FC = () => {
 									onContinueWithAssistant={onContinueWithAssistant}
 									onEnhanceWithAssistant={onEnhanceWithAssistant}
 									onAgentPromptSubmit={onAgentPromptSubmit}
+									onImagePlaceholderSubmit={onImagePlaceholderSubmit}
 								/>
 							)}
 						</div>
