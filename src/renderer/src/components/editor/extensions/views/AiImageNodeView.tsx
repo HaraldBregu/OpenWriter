@@ -43,8 +43,8 @@ export function AiImageNodeView({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	const [prompt, setPrompt] = useState('');
-	const [file, setFile] = useState<File | null>(null);
-	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+	const [files, setFiles] = useState<File[]>([]);
+	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState('none');
 
