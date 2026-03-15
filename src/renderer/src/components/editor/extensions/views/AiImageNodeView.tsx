@@ -260,20 +260,35 @@ export function AiImageNodeView({
 					/>
 				</div>
 
-				<AppTextarea
-					ref={textareaRef}
-					value={prompt}
-					onChange={(e) => {
-						setPrompt(e.target.value);
-						resizeTextarea();
-					}}
-					disabled={loading}
-					className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-1 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					placeholder={t('imagePlaceholder.promptPlaceholder', {
-						defaultValue: 'Describe the image you want to create...',
-					})}
-					rows={1}
-				/>
+				<div className="flex items-end gap-2 px-3 pb-2">
+					<AppTextarea
+						ref={textareaRef}
+						value={prompt}
+						onChange={(e) => {
+							setPrompt(e.target.value);
+							resizeTextarea();
+						}}
+						disabled={loading}
+						className="min-h-[40px] min-w-0 flex-1 resize-none border-none bg-transparent px-1 pt-1 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+						placeholder={t('imagePlaceholder.promptPlaceholder', {
+							defaultValue: 'Describe the image you want to create...',
+						})}
+						rows={1}
+					/>
+					<AppButton
+						variant="prompt-submit"
+						size="prompt-submit-md"
+						className="shrink-0"
+						disabled={isSubmitDisabled}
+						onMouseDown={(e) => {
+							e.preventDefault();
+							if (!loading) submitRef.current();
+						}}
+						aria-label={t('imagePlaceholder.submit', { defaultValue: 'Generate image' })}
+					>
+						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+					</AppButton>
+				</div>
 
 				<div className="flex gap-2 overflow-x-auto px-3 pb-2 scrollbar-none">
 					{IMAGE_STYLES.map((style) => (
@@ -295,22 +310,6 @@ export function AiImageNodeView({
 							<span className="leading-none">{style.label}</span>
 						</button>
 					))}
-				</div>
-
-				<div className="flex items-center justify-end px-3 pb-1">
-					<AppButton
-						variant="prompt-submit"
-						size="prompt-submit-md"
-						className="shrink-0"
-						disabled={isSubmitDisabled}
-						onMouseDown={(e) => {
-							e.preventDefault();
-							if (!loading) submitRef.current();
-						}}
-						aria-label={t('imagePlaceholder.submit', { defaultValue: 'Generate image' })}
-					>
-						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-					</AppButton>
 				</div>
 			</div>
 		</NodeViewWrapper>
