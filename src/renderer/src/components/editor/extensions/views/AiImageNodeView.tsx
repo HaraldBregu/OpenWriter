@@ -61,15 +61,17 @@ export function AiImageNodeView({
 	const submit = useCallback(() => {
 		const trimmedPrompt = prompt.trim();
 		const options = extension.options as ImagePlaceholderOptions;
+		const style = selectedStyle !== 'none' ? selectedStyle : undefined;
 
 		if (trimmedPrompt) {
-			options.onSubmit(trimmedPrompt);
+			const fullPrompt = style ? `${trimmedPrompt}, ${style} style` : trimmedPrompt;
+			options.onSubmit(fullPrompt);
 		} else if (file) {
 			options.onFileSelect(file);
 		} else {
 			deleteNode();
 		}
-	}, [prompt, file, extension, deleteNode]);
+	}, [prompt, file, selectedStyle, extension, deleteNode]);
 
 	const submitRef = useRef(submit);
 	submitRef.current = submit;
