@@ -26,7 +26,6 @@ const DocumentPage: React.FC = () => {
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
-	const [documentPath, setDocumentPath] = useState<string | undefined>(undefined);
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
