@@ -202,8 +202,8 @@ export function AiImageNodeView({
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
 			>
-				{previewUrl && (
-					<div className="px-3">
+				<div className="px-3">
+					{previewUrl ? (
 						<div className="relative inline-block">
 							<img
 								src={previewUrl}
@@ -223,8 +223,27 @@ export function AiImageNodeView({
 								<X />
 							</AppButton>
 						</div>
-					</div>
-				)}
+					) : (
+						<div
+							role="button"
+							tabIndex={0}
+							className="flex h-24 cursor-pointer items-center justify-center rounded-xl bg-muted transition-colors hover:bg-muted/70"
+							onMouseDown={(e) => {
+								e.preventDefault();
+								handleDropZoneClick();
+							}}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault();
+									handleDropZoneClick();
+								}
+							}}
+							aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
+						>
+							<Plus className="h-6 w-6 text-muted-foreground" />
+						</div>
+					)}
+				</div>
 
 				<input
 					ref={fileInputRef}
@@ -237,19 +256,6 @@ export function AiImageNodeView({
 				/>
 
 				<div className="flex items-end gap-2 px-3">
-					<AppButton
-						variant="ghost"
-						size="icon"
-						className="h-7 w-7 shrink-0 text-muted-foreground"
-						disabled={loading}
-						onMouseDown={(e) => {
-							e.preventDefault();
-							handleDropZoneClick();
-						}}
-						aria-label={t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}
-					>
-						<Plus className="h-4 w-4" />
-					</AppButton>
 					<AppTextarea
 						ref={textareaRef}
 						value={prompt}
