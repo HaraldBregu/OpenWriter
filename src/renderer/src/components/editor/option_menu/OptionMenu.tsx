@@ -4,7 +4,6 @@ import { Heading, Type, List, ListOrdered, Sparkles, Minus, ImagePlus } from 'lu
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { OptionMenuPlugin } from './option-menu-plugin';
-import { InsertImageDialog } from '../InsertImageDialog';
 
 interface OptionMenuProps {
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
