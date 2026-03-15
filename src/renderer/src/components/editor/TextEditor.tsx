@@ -427,19 +427,19 @@ const TextEditor = React.memo(
 
 					// When the source is a data URI and we have a document folder,
 					// save the image file into the document's images/ directory
-					// and use its local-resource:// URL instead.
+					// and store its relative path for portability.
 					if (documentId && imageSrc.startsWith('data:')) {
 						const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
 						if (match) {
 							const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
 							const base64 = match[2];
 							const fileName = `image-${Date.now()}.${ext}`;
-							const saved = await window.workspace.saveDocumentImage({
+							await window.workspace.saveDocumentImage({
 								documentId,
 								fileName,
 								base64,
 							});
-							imageSrc = `local-resource://localhost${saved.filePath}`;
+							imageSrc = `images/${fileName}`;
 						}
 					}
 
