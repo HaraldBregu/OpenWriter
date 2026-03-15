@@ -212,9 +212,9 @@ export function AiImageNodeView({
 					tabIndex={-1}
 				/>
 
-				<div className="flex items-end gap-2 px-3">
+				<div className="px-3">
 					{previewUrl ? (
-						<div className="relative shrink-0">
+						<div className="relative inline-block">
 							<img
 								src={previewUrl}
 								alt={file?.name ?? ''}
@@ -253,6 +253,9 @@ export function AiImageNodeView({
 							<Plus className="h-4 w-4 text-muted-foreground" />
 						</div>
 					)}
+				</div>
+
+				<div className="flex items-end gap-2 px-3">
 					<AppTextarea
 						ref={textareaRef}
 						value={prompt}
