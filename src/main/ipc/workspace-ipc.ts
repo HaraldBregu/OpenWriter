@@ -153,6 +153,18 @@ export class WorkspaceIpc implements IpcModule {
 			}, WorkspaceChannels.openDocumentFolder)
 		);
 
+		ipcMain.handle(
+			WorkspaceChannels.saveDocumentImage,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, params: SaveDocumentImageParams) => {
+				const documentDir = this.mgr(event, container).getDocumentFolderPath(params.documentId);
+				await fsPromises.mkdir(documentDir, { recursive: true });
+				const filePath = path.join(documentDir, params.fileName);
+				const buffer = Buffer.from(params.base64, 'base64');
+				await fsPromises.writeFile(filePath, buffer);
+				return { fileName: params.fileName };
+			}, WorkspaceChannels.saveDocumentImage)
+		);
+
 		// -------------------------------------------------------------------------
 		// Documents — dialog stays here, import logic in manager
 		// -------------------------------------------------------------------------
