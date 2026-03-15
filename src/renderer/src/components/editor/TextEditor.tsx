@@ -65,6 +65,10 @@ export interface TextEditorProps {
 	onAgentPromptSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onImagePlaceholderSubmit?: (prompt: string) => void;
 	onImagePlaceholderFileSelect?: (file: File) => void;
+	/** Document UUID — needed to save image files into the document folder. */
+	documentId?: string;
+	/** Absolute path of the document folder on disk. */
+	documentPath?: string;
 }
 
 const TextEditor = React.memo(
