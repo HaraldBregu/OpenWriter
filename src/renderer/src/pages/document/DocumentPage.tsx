@@ -223,6 +223,14 @@ const DocumentPage: React.FC = () => {
 		[]
 	);
 
+	const onImagePlaceholderSubmit = useCallback(
+		(prompt: string) => {
+			const data: TextWriterTaskData = { prompt };
+			textWriterTask.submit(data);
+		},
+		[textWriterTask]
+	);
+
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
