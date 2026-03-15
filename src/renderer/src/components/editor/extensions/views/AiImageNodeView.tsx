@@ -179,16 +179,7 @@ export function AiImageNodeView({
 		return () => document.removeEventListener('mousedown', handleMouseDown, true);
 	}, []);
 
-	// Revoke the object URL on unmount to avoid memory leaks.
-	useEffect(() => {
-		return () => {
-			if (previewUrl && previewUrl.startsWith('blob:')) {
-				URL.revokeObjectURL(previewUrl);
-			}
-		};
-	}, [previewUrl]);
-
-	const isSubmitDisabled = loading || (!prompt.trim() && !file);
+	const isSubmitDisabled = loading || (!prompt.trim() && files.length === 0);
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
