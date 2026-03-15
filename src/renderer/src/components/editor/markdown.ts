@@ -163,14 +163,15 @@ md.core.ruler.after('inline', 'image_block', (state) => {
 	let i = 0;
 	while (i < tokens.length) {
 		// Look for the triplet: paragraph_open, inline (image-only), paragraph_close
+		const inlineChildren = tokens[i + 1]?.children;
 		if (
 			i + 2 < tokens.length &&
 			tokens[i].type === 'paragraph_open' &&
 			tokens[i + 1].type === 'inline' &&
 			tokens[i + 2].type === 'paragraph_close' &&
-			tokens[i + 1].children
+			inlineChildren
 		) {
-			const meaningful = tokens[i + 1].children!.filter(
+			const meaningful = inlineChildren.filter(
 				(c) => c.type !== 'softbreak' && !(c.type === 'text' && !c.content.trim())
 			);
 			if (meaningful.length === 1 && meaningful[0].type === 'image') {
