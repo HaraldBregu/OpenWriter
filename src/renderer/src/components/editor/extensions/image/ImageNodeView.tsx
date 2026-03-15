@@ -158,6 +158,7 @@ export function ImageNodeView({
 				) : (
 					<div className="relative inline-block">
 						{showToolbar && (
+							<TooltipProvider delayDuration={300}>
 							<div className="absolute left-1/2 top-2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-border bg-background/90 p-1 shadow-md backdrop-blur-sm">
 								<Popover open={editOpen} onOpenChange={handleEditOpen}>
 									<Tooltip>
