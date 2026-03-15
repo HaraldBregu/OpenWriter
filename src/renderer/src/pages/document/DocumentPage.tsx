@@ -57,7 +57,6 @@ const DocumentPage: React.FC = () => {
 		setLoaded(false);
 		setTitle('');
 		setContent('');
-		setDocumentPath(undefined);
 
 		async function load() {
 			try {
