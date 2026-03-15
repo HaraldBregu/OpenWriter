@@ -14,11 +14,6 @@ export interface ImageExtensionOptions {
 	 * Defaults to converting the file to a data URI.
 	 */
 	onImageFile: ImageFileHandler;
-	/**
-	 * Absolute path of the document folder on disk.
-	 * Used by ImageNodeView to resolve relative image src values.
-	 */
-	basePath: string | null;
 }
 
 declare module '@tiptap/core' {
