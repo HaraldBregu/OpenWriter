@@ -7,6 +7,7 @@ import { OptionMenuPlugin } from './option-menu-plugin';
 
 interface OptionMenuProps {
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
+	onInsertImage?: () => void;
 }
 
 interface MenuItem {
