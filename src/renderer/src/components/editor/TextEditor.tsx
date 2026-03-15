@@ -190,20 +190,11 @@ const TextEditor = React.memo(
 						const from = options.from ?? editor.state.selection.from;
 						const to = editor.state.doc.content.size;
 
-						const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-						const mdParser = storage.markdown?.parser as
-							| {
-									parse: (content: string, options?: { inline?: boolean }) => string;
-							  }
-							| undefined;
-						if (!mdParser) return;
-						const html = mdParser.parse(markdown, { inline: false });
-						if (!html) return;
+						const json = editor.markdown?.parse(markdown);
+						if (!json) return;
 
-						const tempEl = document.createElement('div');
-						tempEl.innerHTML = html;
-						const parsed = PmDOMParser.fromSchema(editor.schema).parse(tempEl);
-						const slice = new Slice(parsed.content, 0, 0);
+						const doc = editor.schema.nodeFromJSON(json);
+						const slice = new Slice(doc.content, 0, 0);
 
 						const tr = editor.state.tr
 							.replace(from, to, slice)
@@ -218,20 +209,11 @@ const TextEditor = React.memo(
 						const from = options.from ?? editor.state.selection.from;
 						const to = options.to ?? from;
 
-						const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-						const mdParser = storage.markdown?.parser as
-							| {
-									parse: (content: string, options?: { inline?: boolean }) => string;
-							  }
-							| undefined;
-						if (!mdParser) return;
-						const html = mdParser.parse(markdown, { inline: false });
-						if (!html) return;
+						const json = editor.markdown?.parse(markdown);
+						if (!json) return;
 
-						const tempEl = document.createElement('div');
-						tempEl.innerHTML = html;
-						const parsed = PmDOMParser.fromSchema(editor.schema).parse(tempEl);
-						const slice = new Slice(parsed.content, 0, 0);
+						const doc = editor.schema.nodeFromJSON(json);
+						const slice = new Slice(doc.content, 0, 0);
 
 						const tr = editor.state.tr
 							.replaceRange(from, to, slice)
