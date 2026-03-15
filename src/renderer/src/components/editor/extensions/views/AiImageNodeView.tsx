@@ -46,6 +46,7 @@ export function AiImageNodeView({
 	const [file, setFile] = useState<File | null>(null);
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
+	const [selectedStyle, setSelectedStyle] = useState('none');
 
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
