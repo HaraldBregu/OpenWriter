@@ -20,7 +20,7 @@ import { SearchExtension } from './extensions/search-extension';
 import { AgentPromptExtension } from './extensions/text_generator/agent-prompt-extension';
 import { ImageExtension } from './extensions/image/image-extension';
 import { ImagePlaceholderExtension } from './extensions/image_generator/image-placeholder-extension';
-import { Markdown } from '@tiptap/markdown'
+import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
 	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
