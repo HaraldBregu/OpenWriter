@@ -290,7 +290,7 @@ export function AiImageNodeView({
 					</AppButton>
 				</div>
 
-				<div className="flex gap-2 overflow-x-auto px-3 pb-2 scrollbar-none">
+				<div className="flex gap-2 overflow-x-auto px-3 scrollbar-none">
 					{IMAGE_STYLES.map((style) => (
 						<button
 							key={style.id}
