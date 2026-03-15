@@ -39,7 +39,11 @@ const defaultNodes = defaultMarkdownSerializer.nodes as Record<string, NodeSeria
 const defaultMarks = defaultMarkdownSerializer.marks as Record<string, MarkSerializerSpec>;
 
 function escapeHtmlAttr(value: string): string {
-	return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/"/g, '&quot;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
 }
 
 const IMG_TAG_RE = /^<img\s+([\s\S]*?)\s*\/?>$/i;
@@ -166,7 +170,7 @@ md.core.ruler.after('inline', 'image_block', (state) => {
 			tokens[i + 2].type === 'paragraph_close' &&
 			tokens[i + 1].children
 		) {
-			const meaningful = tokens[i + 1].children.filter(
+			const meaningful = tokens[i + 1].children!.filter(
 				(c) => c.type !== 'softbreak' && !(c.type === 'text' && !c.content.trim())
 			);
 			if (meaningful.length === 1 && meaningful[0].type === 'image') {
