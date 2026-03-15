@@ -93,10 +93,8 @@ const TextEditor = React.memo(
 					createExtensions({
 						onAgentPromptSubmit: (before, after, cursorPos, prompt) =>
 							onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
-						onImagePlaceholderSubmit: (prompt) =>
-							onImagePlaceholderSubmitRef.current?.(prompt),
-						onImagePlaceholderFileSelect: (file) =>
-							onImagePlaceholderFileSelectRef.current?.(file),
+						onImagePlaceholderSubmit: (prompt) => onImagePlaceholderSubmitRef.current?.(prompt),
+						onImagePlaceholderFileSelect: (file) => onImagePlaceholderFileSelectRef.current?.(file),
 					}),
 				[]
 			);
@@ -254,6 +252,32 @@ const TextEditor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
+					removeImagePlaceholder() {
+						if (!editor || editor.isDestroyed) return;
+						const { doc } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'imagePlaceholder') {
+								editor
+									.chain()
+									.deleteRange({ from: pos, to: pos + node.nodeSize })
+									.run();
+								return false;
+							}
+							return true;
+						});
+					},
+					setImagePlaceholderLoading(loading: boolean) {
+						if (!editor || editor.isDestroyed) return;
+						const { doc, tr } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'imagePlaceholder') {
+								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
+								return false;
+							}
+							return true;
+						});
+						editor.view.dispatch(tr);
+					},
 				}) as TextEditorElement;
 			}, [editor]);
 
@@ -325,7 +349,11 @@ const TextEditor = React.memo(
 								const pos = editor.state.doc.resolve(p).before(1);
 								const node = editor.state.doc.nodeAt(pos);
 								// Skip transient UI-only nodes (not part of markdown output).
-								if (node && node.type.name === 'agentPrompt') return null;
+								if (
+									node &&
+									(node.type.name === 'agentPrompt' || node.type.name === 'imagePlaceholder')
+								)
+									return null;
 								return { dom: child, pos };
 							} catch {
 								return null;
