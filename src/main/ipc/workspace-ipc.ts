@@ -17,6 +17,7 @@ import type {
 	FsCreateFileParams,
 	FsCreateFolderParams,
 	FsRenameParams,
+	SaveDocumentImageParams,
 } from '../../shared/types';
 
 /**
