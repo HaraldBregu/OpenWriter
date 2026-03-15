@@ -88,12 +88,7 @@ export function ImageNodeView({
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
 			<figure
-				className={[
-					'group relative inline-block max-w-full rounded-md',
-					selected ? 'ring-2 ring-ring ring-offset-2 ring-offset-background' : '',
-				]
-					.filter(Boolean)
-					.join(' ')}
+				className="group relative inline-block max-w-full rounded-md"
 			>
 				{loadError || !resolvedSrc ? (
 					<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
