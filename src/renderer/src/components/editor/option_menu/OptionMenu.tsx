@@ -126,9 +126,23 @@ export function OptionMenu({
 	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
 	onContinueWithAssistantRef.current = onContinueWithAssistant;
 
+	const onInsertImageRef = useRef(onInsertImage);
+	onInsertImageRef.current = onInsertImage;
+
 	const allItems = useMemo<MenuItem[]>(
 		() => [
 			...MENU_ITEMS,
+			{
+				label: 'Image',
+				icon: ImagePlus,
+				command: (ed, slashPos, queryLength) => {
+					ed.chain()
+						.focus()
+						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+						.run();
+					onInsertImageRef.current?.();
+				},
+			},
 			{
 				label: 'Generate image',
 				icon: ImagePlus,
