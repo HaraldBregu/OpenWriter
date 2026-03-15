@@ -9,7 +9,7 @@ import type { ImagePlaceholderOptions } from '../image-placeholder-extension';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-export function ImagePlaceholderNodeView({
+export function AiImageNodeView({
 	editor,
 	node,
 	getPos,
