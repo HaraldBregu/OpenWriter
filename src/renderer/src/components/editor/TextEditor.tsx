@@ -413,7 +413,8 @@ const TextEditor = React.memo(
 					let imageSrc = result.src;
 
 					// When the source is a data URI and we have a document folder,
-					// save the image as a file and reference it by name instead.
+					// save the image file into the document's images/ directory
+					// and use its local-resource:// URL instead.
 					if (documentId && imageSrc.startsWith('data:')) {
 						const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
 						if (match) {
@@ -425,7 +426,7 @@ const TextEditor = React.memo(
 								fileName,
 								base64,
 							});
-							imageSrc = saved.fileName;
+							imageSrc = `local-resource://${saved.filePath}`;
 						}
 					}
 
