@@ -38,12 +38,6 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, metadata }) => {
 			className={`shrink-0 border-l border-border bg-muted/30 overflow-y-auto transition-all duration-300 ease-in-out ${open ? 'w-72' : 'w-0'}`}
 		>
 			<div className="w-72 p-4">
-				<div className="flex items-center justify-end mb-4">
-					<AppButton variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
-						<X className="h-3.5 w-3.5" />
-					</AppButton>
-				</div>
-
 				{/* Document Info */}
 				{metadata && (
 					<>
