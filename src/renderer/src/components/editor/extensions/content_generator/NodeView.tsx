@@ -390,7 +390,13 @@ export function ContentGeneratorNodeView({
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<div ref={wrapperRef} className={wrapperClassName}>
+			<div
+				ref={wrapperRef}
+				className={wrapperClassName}
+				onDragOver={mode === 'image' ? handleDragOver : undefined}
+				onDragLeave={mode === 'image' ? handleDragLeave : undefined}
+				onDrop={mode === 'image' ? handleDrop : undefined}
+			>
 				{mode === 'text' ? (
 					<TextGeneratorContent
 						prompt={prompt}
