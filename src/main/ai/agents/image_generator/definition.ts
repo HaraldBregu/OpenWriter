@@ -52,6 +52,7 @@ const definition: AgentDefinition = {
 			apiKey: ctx.apiKey,
 			modelName: ctx.modelName,
 			providerId: ctx.providerId,
+			documentPath: (ctx.metadata?.documentPath as string) ?? '',
 		};
 	},
 

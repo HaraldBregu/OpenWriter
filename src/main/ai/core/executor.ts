@@ -67,6 +67,8 @@ export interface ExecutorInput {
 	 * See `AgentDefinition.streamableNodes` for full documentation.
 	 */
 	streamableNodes?: string[];
+	/** Optional task-level metadata forwarded to buildGraphInput. */
+	metadata?: Record<string, unknown>;
 }
 
 /**
