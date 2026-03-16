@@ -67,20 +67,24 @@ interface TextGeneratorContentProps {
 	prompt: string;
 	loading: boolean;
 	enable: boolean;
+	mode: ContentGeneratorMode;
 	textareaRef: React.RefObject<HTMLTextAreaElement>;
 	submitRef: React.RefObject<() => void>;
 	onPromptChange: (value: string) => void;
 	onResize: () => void;
+	onModeChange: (mode: ContentGeneratorMode) => void;
 }
 
 function TextGeneratorContent({
 	prompt,
 	loading,
 	enable,
+	mode,
 	textareaRef,
 	submitRef,
 	onPromptChange,
 	onResize,
+	onModeChange,
 }: TextGeneratorContentProps): React.JSX.Element {
 	const { t } = useTranslation();
 
@@ -99,14 +103,7 @@ function TextGeneratorContent({
 				rows={1}
 			/>
 			<div className="flex items-center justify-between px-3 pb-2">
-				<AppButton
-					variant="ghost"
-					size="icon"
-					className="h-7 w-7 text-muted-foreground"
-					disabled={!enable}
-				>
-					<Plus className="h-4 w-4" />
-				</AppButton>
+				<ModeDropdown mode={mode} disabled={!enable} onModeChange={onModeChange} />
 				<div className="flex items-center gap-3">
 					<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
 						<AppCheckbox className="h-3.5 w-3.5" disabled={!enable} />
