@@ -24,7 +24,6 @@ import {
 	AppSidebarMenu,
 	AppSidebarMenuButton,
 	AppSidebarMenuItem,
-	AppSidebarSeparator,
 	AppSidebarProvider,
 	AppSidebarInset,
 	AppSidebarHeader,
