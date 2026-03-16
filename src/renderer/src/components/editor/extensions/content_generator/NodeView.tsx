@@ -439,6 +439,8 @@ export function ContentGeneratorNodeView({
 			const wrapper = wrapperRef.current;
 			if (!wrapper) return;
 			if (wrapper.contains(e.target as Node)) return;
+			const target = e.target as Element;
+			if (target.closest('[data-radix-popper-content-wrapper]')) return;
 			deleteNodeRef.current();
 		};
 
