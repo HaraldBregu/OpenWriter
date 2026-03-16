@@ -119,7 +119,7 @@ const ProviderApiKeyRow: React.FC<ProviderApiKeyRowProps> = ({
 	}, [onSave, provider.id]);
 
 	return (
-		<div className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-muted/40">
+		<div className="flex items-center gap-4 py-2">
 			<AppLabel htmlFor={inputId} className="w-24 shrink-0 text-sm font-medium">
 				{provider.name}
 			</AppLabel>
