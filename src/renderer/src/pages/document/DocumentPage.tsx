@@ -98,6 +98,26 @@ const DocumentPage: React.FC = () => {
 		};
 	}, [id]);
 
+	useEffect(() => {
+		if (!id) return;
+
+		const unsubscribe = window.workspace.onOutputFileChange((event) => {
+			if (event.outputType !== 'documents' || event.fileId !== id) return;
+			if (event.type !== 'changed') return;
+
+			window.workspace
+				.loadOutput({ type: 'documents', id })
+				.then((output) => {
+					if (output) {
+						setMetadata(output.metadata);
+					}
+				})
+				.catch(() => {});
+		});
+
+		return unsubscribe;
+	}, [id]);
+
 	const debouncedSave = useMemo(
 		() =>
 			debounce(
