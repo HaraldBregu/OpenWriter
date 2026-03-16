@@ -69,6 +69,7 @@ const DocumentPage: React.FC = () => {
 		setLoaded(false);
 		setTitle('');
 		setContent('');
+		setMetadata(null);
 
 		async function load() {
 			try {
