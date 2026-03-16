@@ -360,7 +360,7 @@ const DocumentPage: React.FC = () => {
 			editorRef.current?.setContentGeneratorEnable(false);
 			const documentPath = await window.workspace.getDocumentPath(id);
 			const data: ImageGeneratorTaskData = { prompt };
-			const metadata = { documentId: id, documentPath };
+			const metadata = { documentPath };
 			imageGeneratorTask.submit(data, metadata);
 		},
 		[imageGeneratorTask, id]

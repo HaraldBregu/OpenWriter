@@ -49,6 +49,8 @@ export interface GraphInputContext {
 	providerId: string;
 	/** Effective sampling temperature for this run. */
 	temperature: number;
+	/** Optional task-level metadata forwarded from the submission. */
+	metadata?: Record<string, unknown>;
 }
 
 // ---------------------------------------------------------------------------

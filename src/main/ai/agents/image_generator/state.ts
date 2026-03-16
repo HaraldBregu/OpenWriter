@@ -7,9 +7,10 @@
  *   2. `generate-image` — DALL-E node. Reads `refinedPrompt` + `apiKey`,
  *                         writes `imageUrl`, `revisedPrompt`, and `result`.
  *
- * The `apiKey`, `modelName`, and `providerId` fields are injected by the
- * executor via `buildGraphInput` so that nodes do not hardcode provider
- * details. They are write-once inputs — nodes must not mutate them.
+ * The `apiKey`, `modelName`, `providerId`, and `documentPath` fields are
+ * injected by the executor via `buildGraphInput` so that nodes do not
+ * hardcode provider or filesystem details. They are write-once inputs —
+ * nodes must not mutate them.
  */
 
 import { Annotation } from '@langchain/langgraph';
