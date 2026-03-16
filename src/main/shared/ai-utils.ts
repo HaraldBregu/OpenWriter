@@ -1,27 +1,21 @@
 /**
  * Shared utilities for AI task handlers (AIChatHandler, AIEnhanceHandler).
  *
- * Centralises reasoning-model detection, chunk token extraction, error
- * classification, and user-facing error messages so the individual handlers
- * stay thin.
+ * Centralises chunk token extraction, error classification, and user-facing
+ * error messages so the individual handlers stay thin.
+ *
+ * Reasoning-model detection is delegated to the shared model constants module.
  */
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-export const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview'];
+import { isReasoningModel as catalogueIsReasoningModel } from '../../shared/model-constants';
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Re-export reasoning detection from the shared catalogue
 // ---------------------------------------------------------------------------
 
-/** Returns `true` when `modelName` matches a known reasoning-only model prefix. */
+/** Returns `true` when `modelName` matches a known reasoning-only model. */
 export function isReasoningModel(modelName: string): boolean {
-	const normalized = modelName.toLowerCase();
-	return REASONING_MODEL_PREFIXES.some(
-		(prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
-	);
+	return catalogueIsReasoningModel(modelName);
 }
 
 /**
