@@ -231,7 +231,7 @@ export class OutputFilesService implements Disposable {
 
 		const metadata: OutputFileMetadata = {
 			title: input.metadata.title,
-			type: input.type,
+			type: 'document',
 			category: input.metadata.category ?? '',
 			tags: input.metadata.tags ?? [],
 			visibility: input.metadata.visibility ?? 'private',
