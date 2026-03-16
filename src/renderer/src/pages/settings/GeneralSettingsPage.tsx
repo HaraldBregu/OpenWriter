@@ -400,8 +400,7 @@ const GeneralSettingsPage: React.FC = () => {
 					)}
 				</div>
 			</section>
-
-			</div>
+		</div>
 	);
 };
 
