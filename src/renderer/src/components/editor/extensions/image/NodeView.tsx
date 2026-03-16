@@ -161,27 +161,15 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 							label={t('imageNode.enhance')}
 							onClick={handleEnhance}
 						/>
-						<ActionButton
-							icon={<Pencil />}
-							label={t('imageNode.edit')}
-							onClick={handleEdit}
-						/>
-						<ActionButton
-							icon={<Copy />}
-							label={t('imageNode.copy')}
-							onClick={handleCopy}
-						/>
+						<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
+						<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
 						<ActionButton
 							icon={<Download />}
 							label={t('imageNode.download')}
 							onClick={handleDownload}
 						/>
 						<div className="mx-0.5 h-4 w-px bg-border" />
-						<ActionButton
-							icon={<Trash2 />}
-							label={t('imageNode.delete')}
-							onClick={handleDelete}
-						/>
+						<ActionButton icon={<Trash2 />} label={t('imageNode.delete')} onClick={handleDelete} />
 					</div>
 				</AppTooltipProvider>
 			</figure>
