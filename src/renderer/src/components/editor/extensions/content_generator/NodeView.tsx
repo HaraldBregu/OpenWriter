@@ -49,10 +49,7 @@ function ModeDropdown({ mode, disabled, onModeChange }: ModeDropdownProps): Reac
 				{MODE_OPTIONS.map((option) => {
 					const Icon = option.icon;
 					return (
-						<AppDropdownMenuItem
-							key={option.value}
-							onSelect={() => onModeChange(option.value)}
-						>
+						<AppDropdownMenuItem key={option.value} onSelect={() => onModeChange(option.value)}>
 							<Icon className="mr-2 h-4 w-4" />
 							<span>{option.label}</span>
 						</AppDropdownMenuItem>
@@ -68,8 +65,8 @@ interface TextGeneratorContentProps {
 	loading: boolean;
 	enable: boolean;
 	mode: ContentGeneratorMode;
-	textareaRef: React.RefObject<HTMLTextAreaElement>;
-	submitRef: React.RefObject<() => void>;
+	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+	submitRef: React.RefObject<(() => void) | null>;
 	onPromptChange: (value: string) => void;
 	onResize: () => void;
 	onModeChange: (mode: ContentGeneratorMode) => void;
