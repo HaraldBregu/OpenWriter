@@ -6,7 +6,6 @@ import { AppLabel } from '@/components/app';
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
-	readonly onClose: () => void;
 	readonly metadata: OutputFileMetadata | null;
 }
 
