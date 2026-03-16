@@ -20,7 +20,7 @@ function formatDate(isoString: string, locale: string): string {
 	});
 }
 
-const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose, metadata }) => {
+const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, metadata }) => {
 	const { t, i18n } = useTranslation();
 
 	const formattedCreatedAt = useMemo(
