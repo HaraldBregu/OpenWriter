@@ -44,7 +44,7 @@ function ActionButton({ icon, label, onClick }: ActionButtonProps): React.JSX.El
 					size="icon-xs"
 					aria-label={label}
 					onClick={onClick}
-					className="bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent"
+					className="h-5 w-5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
 				>
 					{icon}
 				</AppButton>
