@@ -37,7 +37,7 @@ export async function generateImageNode(
 		quality: IMAGE_QUALITY,
 	});
 
-	const generated = response.data[0];
+	const generated = response.data?.[0];
 	const imageUrl = generated?.url ?? '';
 	const revisedPrompt = generated?.revised_prompt ?? '';
 
