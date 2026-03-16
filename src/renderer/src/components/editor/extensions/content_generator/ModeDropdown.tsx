@@ -53,7 +53,7 @@ export function ModeDropdown({
 					return (
 						<AppDropdownMenuItem key={option.value} onSelect={() => onModeChange(option.value)}>
 							<Icon className="mr-2 h-4 w-4" />
-							<span>{option.label}</span>
+							<span>{option.menuLabel}</span>
 						</AppDropdownMenuItem>
 					);
 				})}
