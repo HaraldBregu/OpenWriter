@@ -309,10 +309,15 @@ async function* executeCustomStateGraphStream(
 			return;
 		}
 
-		// Prefer streamed content; fall back to extractGraphOutput for agents
-		// whose nodes do post-processing beyond raw LLM output.
+		// extractGraphOutput is the authoritative source for the final result
+		// content. Streamed tokens serve real-time UI delivery and may only
+		// represent a subset of the graph's work (e.g. a refinement node
+		// streams tokens but a subsequent generation node produces the actual
+		// output). Fall back to accumulated streamed content only when
+		// extractGraphOutput returns an empty string (e.g. graph error or
+		// incomplete state).
 		const extractedContent = extractGraphOutput(finalState);
-		const content = fullContent || extractedContent;
+		const content = extractedContent || fullContent;
 
 		logger?.info(
 			LOG_PREFIX,

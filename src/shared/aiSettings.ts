@@ -53,7 +53,12 @@ export interface WorkspaceAgentEntry extends AgentConfig {
 	agentId: string;
 }
 
-export const AGENT_IDS = ['text-completer', 'text-enhance', 'text-writer', 'image-generator'] as const;
+export const AGENT_IDS = [
+	'text-completer',
+	'text-enhance',
+	'text-writer',
+	'image-generator',
+] as const;
 export type AgentId = (typeof AGENT_IDS)[number];
 
 export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: string }> = {
