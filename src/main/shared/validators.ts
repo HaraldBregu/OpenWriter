@@ -3,7 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 export class StoreValidators {
-	private static readonly VALID_PROVIDERS = ['anthropic', 'openai', 'google', 'meta', 'mistral'];
+	private static readonly VALID_PROVIDERS: readonly string[] = PROVIDER_IDS;
 	private static readonly MAX_TOKEN_LENGTH = 500;
 	private static readonly DANGEROUS_CHARS = /[<>;"'`]/;
 
