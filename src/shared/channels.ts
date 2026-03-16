@@ -38,6 +38,7 @@ import type {
 	FsRenameResult,
 	SaveDocumentImageParams,
 	SaveDocumentImageResult,
+	DocumentImageInfo,
 	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
