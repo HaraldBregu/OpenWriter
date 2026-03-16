@@ -278,6 +278,17 @@ export function ContentGeneratorNodeView({
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
 
+	const handleModeChange = useCallback(
+		(newMode: ContentGeneratorMode) => {
+			const pos = getPos();
+			if (typeof pos !== 'number') return;
+			editor.view.dispatch(
+				editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, mode: newMode })
+			);
+		},
+		[editor, getPos, node.attrs]
+	);
+
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
 		if (typeof pos !== 'number') return;
