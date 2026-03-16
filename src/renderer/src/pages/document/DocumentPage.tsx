@@ -358,9 +358,10 @@ const DocumentPage: React.FC = () => {
 		(prompt: string) => {
 			editorRef.current?.setContentGeneratorEnable(false);
 			const data: ImageGeneratorTaskData = { prompt };
-			imageGeneratorTask.submit(data);
+			const metadata = { documentId: id };
+			imageGeneratorTask.submit(data, metadata);
 		},
-		[imageGeneratorTask]
+		[imageGeneratorTask, id]
 	);
 
 	const handleOpenFolder = useCallback(() => {
