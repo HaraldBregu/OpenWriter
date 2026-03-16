@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProjectWorkspaceInfo } from '@/../../preload/index.d';
 import { AppInput } from '@/components/app/AppInput';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
@@ -295,9 +294,7 @@ const GeneralSettingsPage: React.FC = () => {
 							title={currentWorkspace || t('settings.workspace.notSet')}
 						>
 							{isLoading ? (
-								<span className="text-muted-foreground/50">
-									{t('settings.workspace.loading')}
-								</span>
+								<span className="text-muted-foreground/50">{t('settings.workspace.loading')}</span>
 							) : (
 								currentWorkspace || t('settings.workspace.notSet')
 							)}
@@ -372,9 +369,7 @@ const GeneralSettingsPage: React.FC = () => {
 								<span className="text-muted-foreground shrink-0">
 									{t('settings.workspace.createdAt')}
 								</span>
-								<span className="font-mono text-xs ml-4">
-									{formatDate(projectInfo.createdAt)}
-								</span>
+								<span className="font-mono text-xs ml-4">{formatDate(projectInfo.createdAt)}</span>
 							</div>
 
 							{/* Updated at */}
@@ -382,9 +377,7 @@ const GeneralSettingsPage: React.FC = () => {
 								<span className="text-muted-foreground shrink-0">
 									{t('settings.workspace.updatedAt')}
 								</span>
-								<span className="font-mono text-xs ml-4">
-									{formatDate(projectInfo.updatedAt)}
-								</span>
+								<span className="font-mono text-xs ml-4">{formatDate(projectInfo.updatedAt)}</span>
 							</div>
 
 							{/* App version */}
