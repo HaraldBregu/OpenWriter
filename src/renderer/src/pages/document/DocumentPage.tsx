@@ -85,6 +85,7 @@ const DocumentPage: React.FC = () => {
 
 				setTitle(output.metadata.title || '');
 				setContent(output.content || '');
+				setMetadata(output.metadata);
 				setLoaded(true);
 			} catch {
 				if (!cancelled) setLoaded(true);
