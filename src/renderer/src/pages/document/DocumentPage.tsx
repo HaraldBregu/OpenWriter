@@ -31,6 +31,7 @@ const DocumentPage: React.FC = () => {
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
+	const [metadata, setMetadata] = useState<OutputFileMetadata | null>(null);
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
