@@ -43,12 +43,7 @@ export const ContentGeneratorExtension = Node.create<ContentGeneratorOptions>({
 
 	addOptions() {
 		return {
-			onTextSubmit: (
-				_before: string,
-				_after: string,
-				_cursorPos: number,
-				_prompt: string
-			) => {},
+			onTextSubmit: (_before: string, _after: string, _cursorPos: number, _prompt: string) => {},
 			onImageSubmit: (_prompt: string) => {},
 			onFileSelect: (_file: File) => {},
 		};
