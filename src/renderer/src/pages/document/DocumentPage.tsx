@@ -281,6 +281,34 @@ const DocumentPage: React.FC = () => {
 		return unsub;
 	}, [textWriterTask.taskId]);
 
+	useEffect(() => {
+		if (!imageGeneratorTask.taskId) return;
+
+		const unsub = subscribeToTask(imageGeneratorTask.taskId, (snap: TaskSnapshot) => {
+			if (snap.status === 'started') {
+				editorRef.current?.setContentGeneratorLoading(true);
+				return;
+			}
+
+			if (snap.status === 'completed') {
+				try {
+					const result = JSON.parse(snap.content) as {
+						imageUrl: string;
+						revisedPrompt: string;
+					};
+					editorRef.current?.insertImage({
+						src: result.imageUrl,
+						alt: result.revisedPrompt,
+					});
+				} catch {
+					// Content wasn't valid JSON - ignore
+				}
+				editorRef.current?.removeContentGenerator();
+			}
+		});
+		return unsub;
+	}, [imageGeneratorTask.taskId]);
+
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
