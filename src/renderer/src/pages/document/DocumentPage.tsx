@@ -252,7 +252,7 @@ const DocumentPage: React.FC = () => {
 
 		const unsub = subscribeToTask(textWriterTask.taskId, (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
-				editorRef.current?.setAgentPromptLoading(true);
+				editorRef.current?.setContentGeneratorLoading(true);
 				return;
 			}
 
