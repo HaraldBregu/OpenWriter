@@ -7,8 +7,9 @@
  */
 
 import { OpenAIEmbeddings } from '@langchain/openai';
+import { DEFAULT_EMBEDDING_MODEL_ID } from '../../shared/model-constants';
 
-const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small';
+const DEFAULT_EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL_ID;
 
 const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
 	openai: undefined,
