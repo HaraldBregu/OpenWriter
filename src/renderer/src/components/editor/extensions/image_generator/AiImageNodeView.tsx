@@ -251,28 +251,6 @@ export function AiImageNodeView({
 						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 					</AppButton>
 				</div>
-
-				<div className="flex gap-2 overflow-x-auto px-3 scrollbar-none">
-					{IMAGE_STYLES.map((style) => (
-						<button
-							key={style.id}
-							type="button"
-							className={[
-								'flex shrink-0 flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-xs transition-colors',
-								selectedStyle === style.id
-									? 'bg-accent text-accent-foreground'
-									: 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground',
-							].join(' ')}
-							onMouseDown={(e) => {
-								e.preventDefault();
-								setSelectedStyle(style.id);
-							}}
-						>
-							<span className="text-base leading-none">{style.emoji}</span>
-							<span className="leading-none">{style.label}</span>
-						</button>
-					))}
-				</div>
 			</div>
 		</NodeViewWrapper>
 	);
