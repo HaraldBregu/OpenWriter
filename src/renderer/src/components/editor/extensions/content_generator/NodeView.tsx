@@ -482,6 +482,7 @@ export function ContentGeneratorNodeView({
 					<ImageGeneratorContent
 						prompt={prompt}
 						loading={loading}
+						mode={mode}
 						files={files}
 						previewUrls={previewUrls}
 						textareaRef={textareaRef}
@@ -492,6 +493,7 @@ export function ContentGeneratorNodeView({
 						onRemoveFile={removeFile}
 						onFileInputChange={handleFileInputChange}
 						onDropZoneClick={handleDropZoneClick}
+						onModeChange={handleModeChange}
 					/>
 				)}
 			</div>
