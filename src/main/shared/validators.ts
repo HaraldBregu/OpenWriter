@@ -2,6 +2,9 @@
  * Input validators for preventing injection attacks and malformed data.
  * Used by AppIpc (store handlers) to validate user inputs.
  */
+
+import { PROVIDER_IDS } from '../../shared/model-constants';
+
 export class StoreValidators {
 	private static readonly VALID_PROVIDERS: readonly string[] = PROVIDER_IDS;
 	private static readonly MAX_TOKEN_LENGTH = 500;
