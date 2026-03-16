@@ -360,10 +360,10 @@ const DocumentPage: React.FC = () => {
 		(prompt: string) => {
 			editorRef.current?.setContentGeneratorEnable(false);
 			const data: ImageGeneratorTaskData = { prompt };
-			const metadata = { documentId: id };
+			const metadata = { documentId: id, documentPath };
 			imageGeneratorTask.submit(data, metadata);
 		},
-		[imageGeneratorTask, id]
+		[imageGeneratorTask, id, documentPath]
 	);
 
 	const handleOpenFolder = useCallback(() => {
