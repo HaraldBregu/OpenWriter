@@ -424,7 +424,7 @@ export class OutputFilesService implements Disposable {
 
 		const updatedMetadata: OutputFileMetadata = {
 			...input.metadata,
-			type: outputType,
+			type: 'document',
 			createdAt: existing.createdAt,
 			updatedAt: now,
 		};
