@@ -66,4 +66,14 @@ export const ImageGeneratorState = Annotation.Root({
 		reducer: (_a, b) => b,
 		default: () => 'openai',
 	}),
+	/**
+	 * Absolute path to the directory of the active document. Injected by the
+	 * executor via `buildGraphInput` from `ctx.metadata.documentPath`. The
+	 * `generate-image` node writes generated images to an `images/` subdirectory
+	 * under this path.
+	 */
+	documentPath: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
 });
