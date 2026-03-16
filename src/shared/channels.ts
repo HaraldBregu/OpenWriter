@@ -82,6 +82,7 @@ export const WorkspaceChannels = {
 	getDocumentPath: 'workspace:get-document-path',
 	// Document images
 	saveDocumentImage: 'output:save-document-image',
+	listDocumentImages: 'output:list-document-images',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
