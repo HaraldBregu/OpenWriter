@@ -25,15 +25,19 @@ OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, pre
 - Redux actions: `src/renderer/src/store/tasks/actions.ts`
 - IPC->Redux bridge: `src/renderer/src/App.tsx` (top-level onEvent listener)
 - Handlers: `src/main/ai/` directory (moved from src/main/tasks/handlers/)
+- Agent bootstrap: `src/main/bootstrap.ts` (agent registration + AgentTaskHandler wiring)
+- AgentTaskHandler: `src/main/task_manager/handlers/agent-task-handler.ts`
+- AI executor: `src/main/ai/core/executor.ts`
+- Agent definitions: `src/main/ai/core/definition.ts`
+
+## Agents
+- text-completer: single-node (write), custom-state, streamable
+- text-enhance: single-node (enhance), custom-state, streamable
+- text-writer: single-node (write), custom-state, streamable
+- image-generator: two-node (refine-prompt + generate-image), custom-state, only refine-prompt streamable
 
 ## Metadata Support (added 2026-03-14)
-- `metadata?: Record<string, unknown>` flows through the entire stack:
-  - TaskSubmitPayload, TaskOptions, ActiveTask, QueuedTask, TaskInfo
-  - Every TaskEvent variant carries optional metadata
-  - Preload API: `submit(type, input, metadata?, options?)`
-  - Redux: taskAdded action accepts metadata; TrackedTaskState has metadata field
-  - taskEventBus: TaskSnapshot carries metadata; auto-populated from queued events
-  - Hooks: TaskOptions includes metadata; passed through to submit and Redux
+- `metadata?: Record<string, unknown>` flows through the entire stack
 
 ## Patterns
 - IPC: registerQuery (read), registerCommand (mutate), registerCommandWithEvent (mutate+sender)
@@ -42,9 +46,14 @@ OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, pre
 - Preload: typedInvoke (raw), typedInvokeUnwrap (throws on error), typedInvokeRaw (returns IpcResult envelope)
 - Security: windowId always overridden from event.sender.id in TaskIpc
 - Redux: taskEventReceived auto-creates tasks on 'queued' event if not already tracked
+- Custom-state graph: extractGraphOutput is authoritative for final content (fixed 2026-03-16)
+- Non-LLM nodes: nodes that make direct API calls (e.g. DALL-E) don't need nodeModels entries; read apiKey from state
 
 ## Known Issues
 - Preload uses `typedInvokeRaw` for task API (inconsistent with rest of app using `typedInvokeUnwrap`)
 - Some old test files reference deleted paths (TaskContext, old handler paths, shared/types/ipc/)
 - No task result persistence after completion (deleted from activeTasks in finally block, moved to TTL-based completedTasks)
 - `listTasks` uses `undefined as unknown as AbortController` type hack
+
+## Memory Files
+- [project_executor_content_fix.md](project_executor_content_fix.md) - extractGraphOutput priority fix details
