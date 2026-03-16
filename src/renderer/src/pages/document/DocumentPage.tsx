@@ -20,6 +20,10 @@ type TextWriterTaskData = {
 	prompt: string;
 };
 
+type ImageGeneratorTaskData = {
+	prompt: string;
+};
+
 const DocumentPage: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
