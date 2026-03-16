@@ -153,7 +153,19 @@
 		},
 		"workspace": {
 			"currentWorkspace": "Area di Lavoro Corrente",
-			"notSet": "Non impostata"
+			"notSet": "Non impostata",
+			"loading": "Caricamento…",
+			"projectName": "Nome Progetto",
+			"projectNamePlaceholder": "Inserisci il nome del progetto",
+			"projectDescription": "Descrizione",
+			"projectDescriptionPlaceholder": "Inserisci la descrizione del progetto",
+			"projectId": "ID Progetto",
+			"agents": "Agenti",
+			"agentsConfigured": "{{count}} configurati",
+			"createdAt": "Creato",
+			"updatedAt": "Ultimo Aggiornamento",
+			"appVersion": "Versione App",
+			"schemaVersion": "Versione Schema"
 		},
 		"systemInfo": {
 			"platform": "Piattaforma",
