@@ -89,22 +89,22 @@ const TextEditor = React.memo(
 			const onChangeRef = useRef(onChange);
 			onChangeRef.current = onChange;
 
-			const onAgentPromptSubmitRef = useRef(onAgentPromptSubmit);
-			onAgentPromptSubmitRef.current = onAgentPromptSubmit;
+			const onTextSubmitRef = useRef(onTextSubmit);
+			onTextSubmitRef.current = onTextSubmit;
 
-			const onImagePlaceholderSubmitRef = useRef(onImagePlaceholderSubmit);
-			onImagePlaceholderSubmitRef.current = onImagePlaceholderSubmit;
+			const onImageSubmitRef = useRef(onImageSubmit);
+			onImageSubmitRef.current = onImageSubmit;
 
-			const onImagePlaceholderFileSelectRef = useRef(onImagePlaceholderFileSelect);
-			onImagePlaceholderFileSelectRef.current = onImagePlaceholderFileSelect;
+			const onImageFileSelectRef = useRef(onImageFileSelect);
+			onImageFileSelectRef.current = onImageFileSelect;
 
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onAgentPromptSubmit: (before, after, cursorPos, prompt) =>
-							onAgentPromptSubmitRef.current?.(before, after, cursorPos, prompt),
-						onImagePlaceholderSubmit: (prompt) => onImagePlaceholderSubmitRef.current?.(prompt),
-						onImagePlaceholderFileSelect: (file) => onImagePlaceholderFileSelectRef.current?.(file),
+						onTextSubmit: (before, after, cursorPos, prompt) =>
+							onTextSubmitRef.current?.(before, after, cursorPos, prompt),
+						onImageSubmit: (prompt) => onImageSubmitRef.current?.(prompt),
+						onImageFileSelect: (file) => onImageFileSelectRef.current?.(file),
 					}),
 				[]
 			);
