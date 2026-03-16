@@ -15,7 +15,9 @@ function resolveImageSrc(src: string | null, documentBasePath: string | null): s
 	if (!src) return null;
 	if (ABSOLUTE_URL_RE.test(src)) return src;
 	if (!documentBasePath) return src;
-	return `local-resource://localhost${documentBasePath}/${src}`;
+	const normalized = documentBasePath.replace(/\\/g, '/');
+	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+	return `local-resource://localhost${urlPath}/${src}`;
 }
 
 export function ImageNodeView({ node, editor }: NodeViewProps): React.JSX.Element {
