@@ -101,7 +101,6 @@ function ImageGeneratorContent({
 	loading,
 	files,
 	previewUrls,
-	isDragOver,
 	textareaRef,
 	fileInputRef,
 	submitRef,
@@ -110,20 +109,12 @@ function ImageGeneratorContent({
 	onRemoveFile,
 	onFileInputChange,
 	onDropZoneClick,
-	onDragOver,
-	onDragLeave,
-	onDrop,
 }: ImageGeneratorContentProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const isSubmitDisabled = loading || (!prompt.trim() && files.length === 0);
 
 	return (
-		<div
-			className={['flex flex-col gap-3', isDragOver ? 'border-primary bg-primary/5' : ''].join(' ')}
-			onDragOver={onDragOver}
-			onDragLeave={onDragLeave}
-			onDrop={onDrop}
-		>
+		<>
 			<input
 				ref={fileInputRef}
 				type="file"
