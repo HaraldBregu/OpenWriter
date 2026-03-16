@@ -154,6 +154,15 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.getDocumentPath,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, documentId: string) =>
+					this.mgr(event, container).getDocumentFolderPath(documentId),
+				WorkspaceChannels.getDocumentPath
+			)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.saveDocumentImage,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, params: SaveDocumentImageParams) => {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(params.documentId);
