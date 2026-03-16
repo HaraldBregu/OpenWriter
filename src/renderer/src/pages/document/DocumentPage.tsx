@@ -445,7 +445,7 @@ const DocumentPage: React.FC = () => {
 					</div>
 				</div>
 
-				<ConfigSidebar open={sidebarOpen} metadata={metadata} />
+				<ConfigSidebar open={sidebarOpen} documentId={id} metadata={metadata} />
 			</div>
 		</div>
 	);
