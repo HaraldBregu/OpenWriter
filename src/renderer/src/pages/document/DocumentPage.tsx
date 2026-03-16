@@ -425,11 +425,7 @@ const DocumentPage: React.FC = () => {
 					</div>
 				</div>
 
-				<ConfigSidebar
-					open={sidebarOpen}
-					onClose={() => setSidebarOpen(false)}
-					metadata={metadata}
-				/>
+				<ConfigSidebar open={sidebarOpen} metadata={metadata} />
 			</div>
 		</div>
 	);
