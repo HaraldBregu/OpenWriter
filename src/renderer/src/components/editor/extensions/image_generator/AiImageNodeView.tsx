@@ -9,27 +9,6 @@ import type { ImagePlaceholderOptions } from './image-placeholder-extension';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-interface ImageStyle {
-	id: string;
-	label: string;
-	emoji: string;
-}
-
-const IMAGE_STYLES: ImageStyle[] = [
-	{ id: 'none', label: 'None', emoji: '🚫' },
-	{ id: 'photorealistic', label: 'Photo', emoji: '📷' },
-	{ id: 'illustration', label: 'Illustration', emoji: '🎨' },
-	{ id: 'watercolor', label: 'Watercolor', emoji: '💧' },
-	{ id: 'oil-painting', label: 'Oil Paint', emoji: '🖼️' },
-	{ id: 'pencil-sketch', label: 'Sketch', emoji: '✏️' },
-	{ id: 'digital-art', label: 'Digital Art', emoji: '💻' },
-	{ id: 'anime', label: 'Anime', emoji: '🌸' },
-	{ id: 'pixel-art', label: 'Pixel Art', emoji: '👾' },
-	{ id: '3d-render', label: '3D Render', emoji: '🧊' },
-	{ id: 'comic', label: 'Comic', emoji: '💬' },
-	{ id: 'minimalist', label: 'Minimal', emoji: '⬜' },
-];
-
 export function AiImageNodeView({
 	editor,
 	node,
