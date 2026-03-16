@@ -355,13 +355,15 @@ const DocumentPage: React.FC = () => {
 	);
 
 	const onImageSubmit = useCallback(
-		(prompt: string) => {
+		async (prompt: string) => {
+			if (!id) return;
 			editorRef.current?.setContentGeneratorEnable(false);
+			const documentPath = await window.workspace.getDocumentPath(id);
 			const data: ImageGeneratorTaskData = { prompt };
 			const metadata = { documentId: id, documentPath };
 			imageGeneratorTask.submit(data, metadata);
 		},
-		[imageGeneratorTask, id, documentPath]
+		[imageGeneratorTask, id]
 	);
 
 	const handleOpenFolder = useCallback(() => {
