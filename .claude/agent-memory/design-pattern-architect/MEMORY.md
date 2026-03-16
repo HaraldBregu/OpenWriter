@@ -105,3 +105,4 @@
 - `theme-pattern.md` — full analysis of theme system pattern decision
 - `main-process-patterns.md` — detailed pattern analysis of src/main/ (see analysis in conversation)
 - `agent-node-config.md` — NodeConfigMap design (replaces ModelRole/ModelRegistry)
+- `model-constants.md` — full design for src/shared/model-constants.ts (Typed Catalog pattern)
