@@ -632,7 +632,9 @@
 		"documentTitle": "Titolo",
 		"documentType": "Tipo",
 		"createdAt": "Creato",
-		"updatedAt": "Aggiornato"
+		"updatedAt": "Aggiornato",
+		"resources": "Risorse",
+		"noResources": "Nessuna immagine"
 	},
 	"resources": {
 		"title": "Risorse",
