@@ -212,6 +212,10 @@ export interface InvokeChannelMap {
 		args: [params: SaveDocumentImageParams];
 		result: SaveDocumentImageResult;
 	};
+	[WorkspaceChannels.listDocumentImages]: {
+		args: [documentId: string];
+		result: DocumentImageInfo[];
+	};
 
 	// ---- Output (IpcResult-wrapped) ----
 	[WorkspaceChannels.outputSave]: { args: [input: SaveOutputInput]; result: SaveOutputResult };
