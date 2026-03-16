@@ -627,7 +627,12 @@
 		"spellCheck": "Controllo Ortografico",
 		"autoSave": "Salvataggio Automatico",
 		"focusMode": "Modalità Focus",
-		"lineNumbers": "Numeri di Riga"
+		"lineNumbers": "Numeri di Riga",
+		"documentInfo": "Info Documento",
+		"documentTitle": "Titolo",
+		"documentType": "Tipo",
+		"createdAt": "Creato",
+		"updatedAt": "Aggiornato"
 	},
 	"resources": {
 		"title": "Risorse",
