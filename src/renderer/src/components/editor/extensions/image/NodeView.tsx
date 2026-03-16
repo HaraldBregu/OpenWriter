@@ -49,8 +49,8 @@ function ActionButton({ icon, label, onClick }: ActionButtonProps): React.JSX.El
 					{icon}
 				</AppButton>
 			</AppTooltipTrigger>
-			<AppTooltipContent side="top" sideOffset={4}>
-				<p className="text-xs">{label}</p>
+			<AppTooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
+				{label}
 			</AppTooltipContent>
 		</AppTooltip>
 	);
