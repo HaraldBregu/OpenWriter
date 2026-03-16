@@ -362,8 +362,8 @@ const DocumentPage: React.FC = () => {
 									onChange={handleContentChange}
 									onContinueWithAssistant={onContinueWithAssistant}
 									onEnhanceWithAssistant={onEnhanceWithAssistant}
-									onAgentPromptSubmit={onAgentPromptSubmit}
-									onImagePlaceholderSubmit={onImagePlaceholderSubmit}
+									onTextSubmit={onTextSubmit}
+									onImageSubmit={onImageSubmit}
 									documentId={id}
 								/>
 							)}
