@@ -627,7 +627,12 @@
 		"spellCheck": "Spell Check",
 		"autoSave": "Auto Save",
 		"focusMode": "Focus Mode",
-		"lineNumbers": "Line Numbers"
+		"lineNumbers": "Line Numbers",
+		"documentInfo": "Document Info",
+		"documentTitle": "Title",
+		"documentType": "Type",
+		"createdAt": "Created",
+		"updatedAt": "Updated"
 	},
 	"resources": {
 		"title": "Resources",
