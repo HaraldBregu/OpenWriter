@@ -290,18 +290,19 @@ const DocumentPage: React.FC = () => {
 				return;
 			}
 
-			if (snap.status === 'completed') {
+			if (snap.status === 'completed' && snap.result) {
 				try {
-					const result = JSON.parse(snap.content) as {
+					const agentOutput = snap.result as { content: string };
+					const parsed = JSON.parse(agentOutput.content) as {
 						imageUrl: string;
 						revisedPrompt: string;
 					};
 					editorRef.current?.insertImage({
-						src: result.imageUrl,
-						alt: result.revisedPrompt,
+						src: parsed.imageUrl,
+						alt: parsed.revisedPrompt,
 					});
 				} catch {
-					// Content wasn't valid JSON - ignore
+					// Result wasn't valid JSON - ignore
 				}
 				editorRef.current?.removeContentGenerator();
 			}
