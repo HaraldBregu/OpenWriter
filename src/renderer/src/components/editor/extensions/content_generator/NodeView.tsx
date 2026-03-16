@@ -86,7 +86,6 @@ interface ImageGeneratorContentProps {
 	loading: boolean;
 	files: File[];
 	previewUrls: string[];
-	isDragOver: boolean;
 	textareaRef: React.RefObject<HTMLTextAreaElement>;
 	fileInputRef: React.RefObject<HTMLInputElement>;
 	submitRef: React.RefObject<() => void>;
@@ -95,9 +94,6 @@ interface ImageGeneratorContentProps {
 	onRemoveFile: (index: number) => void;
 	onFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onDropZoneClick: () => void;
-	onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-	onDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
-	onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 function ImageGeneratorContent({
@@ -123,10 +119,7 @@ function ImageGeneratorContent({
 
 	return (
 		<div
-			className={[
-				'flex flex-col gap-3',
-				isDragOver ? 'border-primary bg-primary/5' : '',
-			].join(' ')}
+			className={['flex flex-col gap-3', isDragOver ? 'border-primary bg-primary/5' : ''].join(' ')}
 			onDragOver={onDragOver}
 			onDragLeave={onDragLeave}
 			onDrop={onDrop}
