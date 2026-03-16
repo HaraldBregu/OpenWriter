@@ -265,7 +265,7 @@ const DocumentPage: React.FC = () => {
 			processBuffer(completed);
 
 			if (completed) {
-				editorRef.current?.removeAgentPrompt();
+				editorRef.current?.removeContentGenerator();
 			}
 		});
 		return unsub;
