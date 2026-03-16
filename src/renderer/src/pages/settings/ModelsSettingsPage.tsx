@@ -463,7 +463,7 @@ const ModelsSettingsPage: React.FC = () => {
 				<h2 className="text-sm font-normal text-muted-foreground">
 					{t('settings.agents.title') || 'Agents'}
 				</h2>
-				<div className="space-y-6">
+				<div className="space-y-10">
 					{AGENT_IDS.map((agentId) => (
 						<AgentConfigCard
 							key={agentId}
