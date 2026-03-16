@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings, X } from 'lucide-react';
+import { Settings, X, FileText, Calendar } from 'lucide-react';
+import type { OutputFileMetadata } from '../../../../shared/types';
 import {
 	AppButton,
 	AppLabel,
@@ -16,16 +17,38 @@ import {
 interface ConfigSidebarProps {
 	readonly open: boolean;
 	readonly onClose: () => void;
+	readonly metadata: OutputFileMetadata | null;
 }
 
-const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
-	const { t } = useTranslation();
+function formatDate(isoString: string, locale: string): string {
+	const date = new Date(isoString);
+	return date.toLocaleDateString(locale, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
+
+const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose, metadata }) => {
+	const { t, i18n } = useTranslation();
 	const [fontFamily, setFontFamily] = useState('sans');
 	const [spellCheck, setSpellCheck] = useState(true);
 	const [autoSave, setAutoSave] = useState(true);
 	const [focusMode, setFocusMode] = useState(false);
 	const [showLineNumbers, setShowLineNumbers] = useState(false);
 	const [editorWidth, setEditorWidth] = useState('normal');
+
+	const formattedCreatedAt = useMemo(
+		() => (metadata?.createdAt ? formatDate(metadata.createdAt, i18n.language) : null),
+		[metadata?.createdAt, i18n.language],
+	);
+
+	const formattedUpdatedAt = useMemo(
+		() => (metadata?.updatedAt ? formatDate(metadata.updatedAt, i18n.language) : null),
+		[metadata?.updatedAt, i18n.language],
+	);
 
 	return (
 		<div
@@ -46,6 +69,66 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onClose }) => {
 				</div>
 
 				<AppSeparator className="mb-4" />
+
+				{/* Document Info */}
+				{metadata && (
+					<>
+						<div className="mb-1">
+							<span className="text-xs font-medium text-muted-foreground/70">
+								{t('configSidebar.documentInfo')}
+							</span>
+						</div>
+						<div className="space-y-3 mb-5">
+							<div className="space-y-1">
+								<AppLabel className="text-xs text-muted-foreground">
+									{t('configSidebar.documentTitle')}
+								</AppLabel>
+								<div className="flex items-center gap-1.5">
+									<FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+									<span className="text-sm text-foreground truncate">
+										{metadata.title || '—'}
+									</span>
+								</div>
+							</div>
+							<div className="space-y-1">
+								<AppLabel className="text-xs text-muted-foreground">
+									{t('configSidebar.documentType')}
+								</AppLabel>
+								<span className="text-sm text-foreground capitalize">
+									{metadata.type}
+								</span>
+							</div>
+							{formattedCreatedAt && (
+								<div className="space-y-1">
+									<AppLabel className="text-xs text-muted-foreground">
+										{t('configSidebar.createdAt')}
+									</AppLabel>
+									<div className="flex items-center gap-1.5">
+										<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+										<span className="text-sm text-foreground">
+											{formattedCreatedAt}
+										</span>
+									</div>
+								</div>
+							)}
+							{formattedUpdatedAt && (
+								<div className="space-y-1">
+									<AppLabel className="text-xs text-muted-foreground">
+										{t('configSidebar.updatedAt')}
+									</AppLabel>
+									<div className="flex items-center gap-1.5">
+										<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+										<span className="text-sm text-foreground">
+											{formattedUpdatedAt}
+										</span>
+									</div>
+								</div>
+							)}
+						</div>
+
+						<AppSeparator className="mb-4" />
+					</>
+				)}
 
 				{/* Typography */}
 				<div className="mb-1">
