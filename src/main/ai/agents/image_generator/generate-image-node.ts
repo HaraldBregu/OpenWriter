@@ -23,6 +23,7 @@ const IMAGE_MODEL = 'gpt-image-1-mini';
 const IMAGE_SIZE = '1024x1024' as const;
 const IMAGE_QUALITY = 'low' as const;
 const IMAGES_PER_REQUEST = 1;
+const BASE64_PNG_PREFIX = 'data:image/png;base64,';
 
 export async function generateImageNode(
 	state: typeof ImageGeneratorState.State
@@ -35,19 +36,12 @@ export async function generateImageNode(
 		n: IMAGES_PER_REQUEST,
 		size: IMAGE_SIZE,
 		quality: IMAGE_QUALITY,
+		response_format: 'b64_json',
 	});
 
 	const generated = response.data?.[0];
-	const imageUrl = generated?.url ?? '';
-	console.log('imageUrl', imageUrl);
-	console.log('generated', generated);
-	console.log('response', response);
-	console.log('state', state);
-	console.log('refinedPrompt', state.refinedPrompt);
-	console.log('prompt', state.prompt);
-	console.log('apiKey', state.apiKey);
-	console.log('modelName', state.modelName);
-	console.log('providerId', state.providerId);
+	const b64 = generated?.b64_json ?? '';
+	const imageUrl = b64 ? `${BASE64_PNG_PREFIX}${b64}` : '';
 	const revisedPrompt = generated?.revised_prompt ?? '';
 
 	const result = JSON.stringify({ imageUrl, revisedPrompt });
