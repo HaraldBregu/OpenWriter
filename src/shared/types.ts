@@ -168,7 +168,7 @@ export type OutputType = 'documents';
 
 export interface OutputFileMetadata {
 	title: string;
-	type: OutputType;
+	type: string;
 	category: string;
 	tags: string[];
 	visibility: string;
