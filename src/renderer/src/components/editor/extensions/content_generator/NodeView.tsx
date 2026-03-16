@@ -197,13 +197,10 @@ export function ContentGeneratorNodeView({
 		return () => document.removeEventListener('mousedown', handleMouseDown, true);
 	}, []);
 
-	const wrapperClassName =
-		mode === 'image'
-			? [
-					'my-2 flex flex-col gap-3 rounded-2xl border bg-popover py-3 shadow-sm transition-colors',
-					isDragOver ? 'border-primary bg-primary/5' : 'border-border',
-				].join(' ')
-			: 'my-2 flex flex-col rounded-2xl border border-border bg-popover shadow-sm py-2';
+	const wrapperClassName = [
+		'my-2 flex flex-col rounded-2xl border bg-popover shadow-sm py-2 transition-colors',
+		isDragOver && mode === 'image' ? 'border-primary bg-primary/5' : 'border-border',
+	].join(' ');
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
