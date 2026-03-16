@@ -234,11 +234,11 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.clearSearch();
 					},
-					removeAgentPrompt() {
+					removeContentGenerator() {
 						if (!editor || editor.isDestroyed) return;
 						const { doc } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'agentPrompt') {
+							if (node.type.name === 'contentGenerator') {
 								editor
 									.chain()
 									.deleteRange({ from: pos, to: pos + node.nodeSize })
@@ -248,11 +248,11 @@ const TextEditor = React.memo(
 							return true;
 						});
 					},
-					setAgentPromptLoading(loading: boolean) {
+					setContentGeneratorLoading(loading: boolean) {
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'agentPrompt') {
+							if (node.type.name === 'contentGenerator') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
 								return false;
 							}
@@ -260,38 +260,12 @@ const TextEditor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
-					setAgentPromptEnable(enable: boolean) {
+					setContentGeneratorEnable(enable: boolean) {
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'agentPrompt') {
+							if (node.type.name === 'contentGenerator') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, enable });
-								return false;
-							}
-							return true;
-						});
-						editor.view.dispatch(tr);
-					},
-					removeImagePlaceholder() {
-						if (!editor || editor.isDestroyed) return;
-						const { doc } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'imagePlaceholder') {
-								editor
-									.chain()
-									.deleteRange({ from: pos, to: pos + node.nodeSize })
-									.run();
-								return false;
-							}
-							return true;
-						});
-					},
-					setImagePlaceholderLoading(loading: boolean) {
-						if (!editor || editor.isDestroyed) return;
-						const { doc, tr } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'imagePlaceholder') {
-								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
 								return false;
 							}
 							return true;
