@@ -52,12 +52,14 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 	 * @param signal - Abort signal for cancellation
 	 * @param reporter - Progress reporter for status updates
 	 * @param streamReporter - Optional stream reporter for token delivery
+	 * @param metadata - Optional task-level metadata from the submission
 	 * @returns Promise resolving to task output
 	 */
 	execute(
 		input: TInput,
 		signal: AbortSignal,
 		reporter: ProgressReporter,
-		streamReporter?: StreamReporter
+		streamReporter?: StreamReporter,
+		metadata?: Record<string, unknown>
 	): Promise<TOutput>;
 }
