@@ -413,7 +413,6 @@ export function ContentGeneratorNodeView({
 						loading={loading}
 						files={files}
 						previewUrls={previewUrls}
-						isDragOver={isDragOver}
 						textareaRef={textareaRef}
 						fileInputRef={fileInputRef}
 						submitRef={submitRef}
@@ -422,9 +421,6 @@ export function ContentGeneratorNodeView({
 						onRemoveFile={removeFile}
 						onFileInputChange={handleFileInputChange}
 						onDropZoneClick={handleDropZoneClick}
-						onDragOver={handleDragOver}
-						onDragLeave={handleDragLeave}
-						onDrop={handleDrop}
 					/>
 				)}
 			</div>
