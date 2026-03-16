@@ -399,7 +399,8 @@ const DocumentPage: React.FC = () => {
 									disabled={
 										textCompleterTask.isRunning ||
 										textEnhanceTask.isRunning ||
-										textWriterTask.isRunning
+										textWriterTask.isRunning ||
+										imageGeneratorTask.isRunning
 									}
 									ref={editorRef}
 									key={id}
