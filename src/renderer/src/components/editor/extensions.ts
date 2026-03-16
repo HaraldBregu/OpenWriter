@@ -17,15 +17,14 @@ import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
-import { AgentPromptExtension } from './extensions/text_generator';
+import { ContentGeneratorExtension } from './extensions/content_generator';
 import { ImageExtension } from './extensions/image';
-import { ImagePlaceholderExtension } from './extensions/image_generator';
 import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
-	onAgentPromptSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
-	onImagePlaceholderSubmit: (prompt: string) => void;
-	onImagePlaceholderFileSelect: (file: File) => void;
+	onTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onImageSubmit: (prompt: string) => void;
+	onImageFileSelect: (file: File) => void;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
