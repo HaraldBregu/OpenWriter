@@ -1,7 +1,7 @@
 /**
  * Generate-image node for the Image Generator agent.
  *
- * Calls the OpenAI Images API (gpt-image-1-mini) using the refined prompt
+ * Calls the OpenAI Images API (gpt-image-1) using the refined prompt
  * produced by the upstream `refine-prompt` node. The API key is read directly
  * from state — it was injected there by the executor via `buildGraphInput` and
  * originates from the user's provider configuration in the main process.
@@ -10,39 +10,27 @@
  * from `streamableNodes` in the agent definition because image generation is a
  * single blocking API call with no incremental token output.
  *
+ * The generated image is written to disk under:
+ *   `<documentPath>/images/<uuid>.png`
+ *
  * Output written to state:
- *   - `imageUrl`      — base64 data URI of the generated image
+ *   - `imageUrl`      — relative path to the saved image (`images/<uuid>.png`)
  *   - `revisedPrompt` — the model's own internal revision of the prompt (may differ)
  *   - `result`        — JSON string: `{ imageUrl, revisedPrompt }`
  */
 
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
 import type { ImageGeneratorState } from './state';
-
-//'gpt-image-1.5' | 'dall-e-2' | 'dall-e-3' | 'gpt-image-1' | 'gpt-image-1-mini';
-
-/**
- * The size of the generated images. Must be one of `1024x1024`, `1536x1024`
- * (landscape), `1024x1536` (portrait), or `auto` (default value) for the GPT image
- * models, one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`, and one of
- * `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3`.
- */
-//  size?:
-//  | 'auto'
-//  | '1024x1024'
-//  | '1536x1024'
-//  | '1024x1536'
-//  | '256x256'
-//  | '512x512'
-//  | '1792x1024'
-//  | '1024x1792'
-//  | null;
 
 const IMAGE_MODEL = 'gpt-image-1';
 const IMAGE_SIZE = '1536x1024' as const;
 const IMAGE_QUALITY = 'low' as const;
 const IMAGES_PER_REQUEST = 1;
-const BASE64_PNG_PREFIX = 'data:image/png;base64,';
+const IMAGES_SUBDIR = 'images';
+const PNG_EXTENSION = '.png';
 
 export async function generateImageNode(
 	state: typeof ImageGeneratorState.State
@@ -59,9 +47,16 @@ export async function generateImageNode(
 
 	const generated = response.data?.[0];
 	const b64 = generated?.b64_json ?? '';
-	const imageUrl = b64 ? `${BASE64_PNG_PREFIX}${b64}` : '';
 	const revisedPrompt = generated?.revised_prompt ?? '';
 
+	const imagesDir = path.join(state.documentPath, IMAGES_SUBDIR);
+	await mkdir(imagesDir, { recursive: true });
+
+	const filename = `${randomUUID()}${PNG_EXTENSION}`;
+	const absolutePath = path.join(imagesDir, filename);
+	await writeFile(absolutePath, Buffer.from(b64, 'base64'));
+
+	const imageUrl = `${IMAGES_SUBDIR}/${filename}`;
 	const result = JSON.stringify({ imageUrl, revisedPrompt });
 
 	return { imageUrl, revisedPrompt, result };
