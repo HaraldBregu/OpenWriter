@@ -259,7 +259,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 		return (
 			<div className="space-y-4">
 				<div>
-					<h3 className="text-sm font-medium">{definition.name}</h3>
+					<h3 className="text-base font-medium">{definition.name}</h3>
 					<p className="text-xs text-muted-foreground mt-0.5">{definition.description}</p>
 				</div>
 
