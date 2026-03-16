@@ -372,6 +372,18 @@ export interface SaveDocumentImageResult {
 	filePath: string;
 }
 
+/**
+ * Info about a single image file inside a document's images/ folder.
+ */
+export interface DocumentImageInfo {
+	/** File name (e.g. "photo.png"). */
+	fileName: string;
+	/** Absolute path on disk. */
+	filePath: string;
+	/** File size in bytes. */
+	size: number;
+}
+
 // ---- Project Workspace ----------------------------------------------------
 
 /**
