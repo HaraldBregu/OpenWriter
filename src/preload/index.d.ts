@@ -172,6 +172,8 @@ export interface WorkspaceApi {
 	getDocumentPath: (documentId: string) => Promise<string>;
 	/** Save an image file into a document's folder and return the saved file name. */
 	saveDocumentImage: (params: SaveDocumentImageParams) => Promise<SaveDocumentImageResult>;
+	/** List all image files in a document's images/ folder. */
+	listDocumentImages: (documentId: string) => Promise<DocumentImageInfo[]>;
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
