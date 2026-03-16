@@ -151,7 +151,7 @@ export function OptionMenu({
 					ed.chain()
 						.focus()
 						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-						.insertImagePlaceholder()
+						.insertContentGenerator('image')
 						.run();
 				},
 			},
