@@ -63,12 +63,12 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 
 	const formattedCreatedAt = useMemo(
 		() => (metadata?.createdAt ? formatDate(metadata.createdAt, i18n.language) : null),
-		[metadata?.createdAt, i18n.language],
+		[metadata?.createdAt, i18n.language]
 	);
 
 	const formattedUpdatedAt = useMemo(
 		() => (metadata?.updatedAt ? formatDate(metadata.updatedAt, i18n.language) : null),
-		[metadata?.updatedAt, i18n.language],
+		[metadata?.updatedAt, i18n.language]
 	);
 
 	return (
@@ -91,9 +91,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 								</AppLabel>
 								<div className="flex items-center gap-1.5">
 									<FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-									<span className="text-sm text-foreground truncate">
-										{metadata.title || '—'}
-									</span>
+									<span className="text-sm text-foreground truncate">{metadata.title || '—'}</span>
 								</div>
 							</div>
 							<div className="space-y-1">
@@ -102,9 +100,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 								</AppLabel>
 								<div className="flex items-center gap-1.5">
 									<Tag className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-									<span className="text-sm text-foreground capitalize">
-										{metadata.type}
-									</span>
+									<span className="text-sm text-foreground capitalize">{metadata.type}</span>
 								</div>
 							</div>
 							{formattedCreatedAt && (
@@ -114,9 +110,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-										<span className="text-sm text-foreground">
-											{formattedCreatedAt}
-										</span>
+										<span className="text-sm text-foreground">{formattedCreatedAt}</span>
 									</div>
 								</div>
 							)}
@@ -127,9 +121,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-										<span className="text-sm text-foreground">
-											{formattedUpdatedAt}
-										</span>
+										<span className="text-sm text-foreground">{formattedUpdatedAt}</span>
 									</div>
 								</div>
 							)}
@@ -161,9 +153,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 											loading="lazy"
 										/>
 										<div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-											<span className="text-[10px] text-white truncate block">
-												{img.fileName}
-											</span>
+											<span className="text-[10px] text-white truncate block">{img.fileName}</span>
 										</div>
 									</div>
 								))}
@@ -171,9 +161,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 						) : (
 							<div className="flex items-center gap-1.5 text-muted-foreground">
 								<Image className="h-3.5 w-3.5 shrink-0" />
-								<span className="text-xs">
-									{t('configSidebar.noResources')}
-								</span>
+								<span className="text-xs">{t('configSidebar.noResources')}</span>
 							</div>
 						)}
 					</>
