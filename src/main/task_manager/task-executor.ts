@@ -395,7 +395,13 @@ export class TaskExecutor implements Disposable {
 				},
 			};
 
-			const result = await handler.execute(input, controller.signal, reporter, streamReporter, metadata);
+			const result = await handler.execute(
+				input,
+				controller.signal,
+				reporter,
+				streamReporter,
+				metadata
+			);
 
 			// Task may have been cancelled during execution
 			if (!this.activeTasks.has(taskId)) return;
