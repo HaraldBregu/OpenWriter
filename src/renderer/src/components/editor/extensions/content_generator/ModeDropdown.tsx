@@ -10,8 +10,8 @@ import { ChevronDown, ImagePlus, Type } from 'lucide-react';
 import type { ContentGeneratorMode } from './input-extension';
 
 const MODE_OPTIONS: { value: ContentGeneratorMode; label: string; icon: React.ElementType }[] = [
-	{ value: 'text', label: 'Generate text', icon: Type },
-	{ value: 'image', label: 'Generate image', icon: ImagePlus },
+	{ value: 'text', label: 'Text', icon: Type },
+	{ value: 'image', label: 'Image', icon: ImagePlus },
 ];
 
 interface ModeDropdownProps {
