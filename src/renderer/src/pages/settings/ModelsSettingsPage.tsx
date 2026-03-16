@@ -257,7 +257,7 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 		const reasoningSwitchId = `agent-reasoning-${agentId}`;
 
 		return (
-			<div className="space-y-4 px-4 py-4 transition-colors hover:bg-muted/40">
+			<div className="space-y-4">
 				<div>
 					<h3 className="text-sm font-medium">{definition.name}</h3>
 					<p className="text-xs text-muted-foreground mt-0.5">{definition.description}</p>
