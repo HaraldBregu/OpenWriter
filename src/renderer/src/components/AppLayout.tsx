@@ -108,7 +108,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					</AppSidebarHeader>
 
 					{/* Nav */}
-					<AppSidebarContent className="gap-0 py-2">
+					<AppSidebarContent className="gap-4 py-2">
 						{/* New Writing */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
@@ -126,8 +126,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
-
-						<AppSidebarSeparator className="my-1" />
 
 						{/* Writings collapsible group */}
 						<AppCollapsible defaultOpen className="py-0">
@@ -162,8 +160,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
-						<AppSidebarSeparator className="my-1" />
-
 						{/* Resources */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
@@ -183,8 +179,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
-
-						<AppSidebarSeparator className="my-1" />
 
 						{/* Debug + Agents */}
 						<AppSidebarGroup className="py-0">
