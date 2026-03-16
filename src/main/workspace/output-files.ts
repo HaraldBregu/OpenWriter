@@ -973,6 +973,11 @@ export class OutputFilesService implements Disposable {
 			throw new Error(`Invalid config.json in ${folderPath}: ${(err as Error).message}`);
 		}
 
+		// Normalize legacy plural type to singular
+		if (metadata.type === 'documents') {
+			metadata.type = 'document';
+		}
+
 		const folderId = path.basename(folderPath);
 
 		// Prefer createdAt from metadata if present; fall back to mtime
