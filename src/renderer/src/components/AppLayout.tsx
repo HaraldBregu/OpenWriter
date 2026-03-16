@@ -125,7 +125,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<Plus className="h-[18px] w-[18px] shrink-0 rounded-full" />
+											<Plus className="h-3.5 w-3.5 shrink-0 rounded-full" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
@@ -177,7 +177,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											isActive={location.pathname === '/resources'}
 										>
 											<Link to="/resources">
-												<Library className="h-[18px] w-[18px] shrink-0" />
+												<Library className="h-3.5 w-3.5 shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.resources')}</span>
 											</Link>
 										</AppSidebarMenuButton>
