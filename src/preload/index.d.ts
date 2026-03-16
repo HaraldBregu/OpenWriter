@@ -42,6 +42,7 @@ import type {
 	FsRenameResult,
 	SaveDocumentImageParams,
 	SaveDocumentImageResult,
+	DocumentImageInfo,
 	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
