@@ -5,7 +5,13 @@ import type { NodeViewProps } from '@tiptap/react';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { AppCheckbox } from '@components/app/AppCheckbox';
-import { ArrowUp, LoaderCircle, Plus, X } from 'lucide-react';
+import {
+	AppDropdownMenu,
+	AppDropdownMenuTrigger,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+} from '@components/app/AppDropdownMenu';
+import { ArrowUp, ChevronDown, ImagePlus, LoaderCircle, Plus, Type, X } from 'lucide-react';
 import type { ContentGeneratorMode, ContentGeneratorOptions } from './input-extension';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
