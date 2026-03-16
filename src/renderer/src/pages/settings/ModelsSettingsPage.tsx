@@ -460,7 +460,7 @@ const ModelsSettingsPage: React.FC = () => {
 
 			{/* Agents section */}
 			<section className="space-y-3">
-				<h2 className="text-sm font-normal text-muted-foreground">
+				<h2 className="text-base font-normal text-muted-foreground">
 					{t('settings.agents.title') || 'Agents'}
 				</h2>
 				<div className="space-y-10">
