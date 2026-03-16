@@ -47,12 +47,10 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Gapcursor,
 		ImageExtension,
 		SearchExtension,
-		AgentPromptExtension.configure({
-			onSubmit: handlers.onAgentPromptSubmit,
-		}),
-		ImagePlaceholderExtension.configure({
-			onSubmit: handlers.onImagePlaceholderSubmit,
-			onFileSelect: handlers.onImagePlaceholderFileSelect,
+		ContentGeneratorExtension.configure({
+			onTextSubmit: handlers.onTextSubmit,
+			onImageSubmit: handlers.onImageSubmit,
+			onFileSelect: handlers.onImageFileSelect,
 		}),
 		Markdown,
 		Placeholder.configure({
