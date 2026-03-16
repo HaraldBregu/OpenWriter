@@ -93,7 +93,9 @@
       "Bash(sed -n '143,166p' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/App.tsx)",
       "Read(//tmp/**)",
       "Bash(npm info:*)",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "Bash(lsof:*)",
+      "Bash(npm pack:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
