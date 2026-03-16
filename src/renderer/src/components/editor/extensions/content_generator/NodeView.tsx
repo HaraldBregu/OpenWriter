@@ -134,9 +134,9 @@ interface ImageGeneratorContentProps {
 	mode: ContentGeneratorMode;
 	files: File[];
 	previewUrls: string[];
-	textareaRef: React.RefObject<HTMLTextAreaElement>;
-	fileInputRef: React.RefObject<HTMLInputElement>;
-	submitRef: React.RefObject<() => void>;
+	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+	fileInputRef: React.RefObject<HTMLInputElement | null>;
+	submitRef: React.RefObject<(() => void) | null>;
 	onPromptChange: (value: string) => void;
 	onResize: () => void;
 	onRemoveFile: (index: number) => void;
