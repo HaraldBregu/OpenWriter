@@ -60,7 +60,10 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, metadata }) => {
 								<AppLabel className="text-xs text-muted-foreground">
 									{t('configSidebar.documentType')}
 								</AppLabel>
-								<span className="text-sm text-foreground capitalize">{metadata.type}</span>
+								<div className="flex items-center gap-1.5">
+									<Tag className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+									<span className="text-sm text-foreground capitalize">{metadata.type}</span>
+								</div>
 							</div>
 							{formattedCreatedAt && (
 								<div className="space-y-1">
