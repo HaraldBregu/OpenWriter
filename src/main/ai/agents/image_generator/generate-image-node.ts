@@ -24,11 +24,17 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
 import type { ImageGeneratorState } from './state';
+import { DEFAULT_IMAGE_MODEL_ID, getImageGenerationConfig } from '../../../../shared/model-constants';
 
-const IMAGE_MODEL = 'gpt-image-1';
-const IMAGE_SIZE = '1536x1024' as const;
-const IMAGE_QUALITY = 'low' as const;
-const IMAGES_PER_REQUEST = 1;
+const IMAGE_CONFIG = getImageGenerationConfig(DEFAULT_IMAGE_MODEL_ID);
+if (!IMAGE_CONFIG) {
+	throw new Error(`No image generation config found for model "${DEFAULT_IMAGE_MODEL_ID}"`);
+}
+
+const IMAGE_MODEL = DEFAULT_IMAGE_MODEL_ID;
+const IMAGE_SIZE = IMAGE_CONFIG.defaultSize;
+const IMAGE_QUALITY = IMAGE_CONFIG.defaultQuality;
+const IMAGES_PER_REQUEST = IMAGE_CONFIG.maxImagesPerRequest;
 const IMAGES_SUBDIR = 'images';
 const PNG_EXTENSION = '.png';
 
