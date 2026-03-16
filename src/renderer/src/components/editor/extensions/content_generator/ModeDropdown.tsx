@@ -20,7 +20,11 @@ interface ModeDropdownProps {
 	onModeChange: (mode: ContentGeneratorMode) => void;
 }
 
-export function ModeDropdown({ mode, disabled, onModeChange }: ModeDropdownProps): React.JSX.Element {
+export function ModeDropdown({
+	mode,
+	disabled,
+	onModeChange,
+}: ModeDropdownProps): React.JSX.Element {
 	const current = MODE_OPTIONS.find((o) => o.value === mode) ?? MODE_OPTIONS[0];
 	const CurrentIcon = current.icon;
 
