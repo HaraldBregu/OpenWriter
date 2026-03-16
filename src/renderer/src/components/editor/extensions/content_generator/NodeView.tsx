@@ -134,6 +134,7 @@ function TextGeneratorContent({
 interface ImageGeneratorContentProps {
 	prompt: string;
 	loading: boolean;
+	mode: ContentGeneratorMode;
 	files: File[];
 	previewUrls: string[];
 	textareaRef: React.RefObject<HTMLTextAreaElement>;
@@ -144,11 +145,13 @@ interface ImageGeneratorContentProps {
 	onRemoveFile: (index: number) => void;
 	onFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onDropZoneClick: () => void;
+	onModeChange: (mode: ContentGeneratorMode) => void;
 }
 
 function ImageGeneratorContent({
 	prompt,
 	loading,
+	mode,
 	files,
 	previewUrls,
 	textareaRef,
@@ -159,6 +162,7 @@ function ImageGeneratorContent({
 	onRemoveFile,
 	onFileInputChange,
 	onDropZoneClick,
+	onModeChange,
 }: ImageGeneratorContentProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const isSubmitDisabled = loading || (!prompt.trim() && files.length === 0);
@@ -246,6 +250,10 @@ function ImageGeneratorContent({
 				>
 					{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 				</AppButton>
+			</div>
+
+			<div className="px-3 pb-2">
+				<ModeDropdown mode={mode} disabled={loading} onModeChange={onModeChange} />
 			</div>
 		</>
 	);
