@@ -59,9 +59,9 @@ export interface TextEditorProps {
 	streamingContent?: string;
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
 	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
-	onAgentPromptSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
-	onImagePlaceholderSubmit?: (prompt: string) => void;
-	onImagePlaceholderFileSelect?: (file: File) => void;
+	onTextSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onImageSubmit?: (prompt: string) => void;
+	onImageFileSelect?: (file: File) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 }
