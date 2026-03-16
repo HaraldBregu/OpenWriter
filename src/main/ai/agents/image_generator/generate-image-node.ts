@@ -21,8 +21,25 @@ import type { ImageGeneratorState } from './state';
 
 //'gpt-image-1.5' | 'dall-e-2' | 'dall-e-3' | 'gpt-image-1' | 'gpt-image-1-mini';
 
+ /**
+   * The size of the generated images. Must be one of `1024x1024`, `1536x1024`
+   * (landscape), `1024x1536` (portrait), or `auto` (default value) for the GPT image
+   * models, one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`, and one of
+   * `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3`.
+   */
+//  size?:
+//  | 'auto'
+//  | '1024x1024'
+//  | '1536x1024'
+//  | '1024x1536'
+//  | '256x256'
+//  | '512x512'
+//  | '1792x1024'
+//  | '1024x1792'
+//  | null;
+
 const IMAGE_MODEL = 'gpt-image-1';
-const IMAGE_SIZE = '512x512' as const;
+const IMAGE_SIZE = '1536x1024' as const;
 const IMAGE_QUALITY = 'low' as const;
 const IMAGES_PER_REQUEST = 1;
 const BASE64_PNG_PREFIX = 'data:image/png;base64,';
