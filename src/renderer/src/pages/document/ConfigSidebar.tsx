@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Calendar } from 'lucide-react';
+import { FileText, Calendar, Tag } from 'lucide-react';
 import type { OutputFileMetadata } from '../../../../shared/types';
 import { AppLabel } from '@/components/app';
 
