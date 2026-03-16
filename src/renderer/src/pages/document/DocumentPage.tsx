@@ -315,7 +315,7 @@ const DocumentPage: React.FC = () => {
 		[textWriterTask]
 	);
 
-	const onImagePlaceholderSubmit = useCallback((_prompt: string) => {}, []);
+	const onImageSubmit = useCallback((_prompt: string) => {}, []);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
