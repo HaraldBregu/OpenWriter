@@ -1,7 +1,7 @@
 /**
  * Generate-image node for the Image Generator agent.
  *
- * Calls the OpenAI Images API (DALL-E 3) using the refined prompt produced by
+ * Calls the OpenAI Images API (gpt-image-1-mini) using the refined prompt produced by
  * the upstream `refine-prompt` node. The API key is read directly from state —
  * it was injected there by the executor via `buildGraphInput` and originates
  * from the user's provider configuration in the main process.
