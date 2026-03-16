@@ -441,7 +441,7 @@ const ModelsSettingsPage: React.FC = () => {
 				<h2 className="text-sm font-normal text-muted-foreground">
 					{t('settings.models.apiKeysSection') || 'API Keys'}
 				</h2>
-				<div className="divide-y rounded-md border text-sm">
+				<div className="divide-y rounded-md border bg-card text-sm">
 					{aiProviders.map((provider) => {
 						const state = providerStates[provider.id] ?? INITIAL_PROVIDER_STATE;
 						return (
