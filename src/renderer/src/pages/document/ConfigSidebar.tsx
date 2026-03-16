@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, FileText, Calendar } from 'lucide-react';
+import { FileText, Calendar } from 'lucide-react';
 import type { OutputFileMetadata } from '../../../../shared/types';
-import { AppButton, AppLabel } from '@/components/app';
+import { AppLabel } from '@/components/app';
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
