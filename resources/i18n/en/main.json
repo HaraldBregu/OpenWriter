@@ -153,7 +153,19 @@
 		},
 		"workspace": {
 			"currentWorkspace": "Current Workspace",
-			"notSet": "Not set"
+			"notSet": "Not set",
+			"loading": "Loading…",
+			"projectName": "Project Name",
+			"projectNamePlaceholder": "Enter project name",
+			"projectDescription": "Description",
+			"projectDescriptionPlaceholder": "Enter project description",
+			"projectId": "Project ID",
+			"agents": "Agents",
+			"agentsConfigured": "{{count}} configured",
+			"createdAt": "Created",
+			"updatedAt": "Last Updated",
+			"appVersion": "App Version",
+			"schemaVersion": "Schema Version"
 		},
 		"systemInfo": {
 			"platform": "Platform",
