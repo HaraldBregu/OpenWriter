@@ -27,7 +27,7 @@ export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['documents'] as const;
  */
 export interface OutputFileMetadata {
 	title: string;
-	type: OutputType;
+	type: string;
 	category: string;
 	tags: string[];
 	visibility: string;
