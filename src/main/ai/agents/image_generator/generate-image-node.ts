@@ -11,8 +11,8 @@
  * single blocking API call with no incremental token output.
  *
  * Output written to state:
- *   - `imageUrl`      — URL of the generated image (1-hour expiry from OpenAI)
- *   - `revisedPrompt` — DALL-E's own internal revision of the prompt (may differ)
+ *   - `imageUrl`      — base64 data URI of the generated image
+ *   - `revisedPrompt` — the model's own internal revision of the prompt (may differ)
  *   - `result`        — JSON string: `{ imageUrl, revisedPrompt }`
  */
 
@@ -21,7 +21,7 @@ import type { ImageGeneratorState } from './state';
 
 const IMAGE_MODEL = 'gpt-image-1-mini';
 const IMAGE_SIZE = '1024x1024' as const;
-const IMAGE_QUALITY = 'standard' as const;
+const IMAGE_QUALITY = 'low' as const;
 const IMAGES_PER_REQUEST = 1;
 
 export async function generateImageNode(
@@ -39,6 +39,15 @@ export async function generateImageNode(
 
 	const generated = response.data?.[0];
 	const imageUrl = generated?.url ?? '';
+	console.log('imageUrl', imageUrl);
+	console.log('generated', generated);
+	console.log('response', response);
+	console.log('state', state);
+	console.log('refinedPrompt', state.refinedPrompt);
+	console.log('prompt', state.prompt);
+	console.log('apiKey', state.apiKey);
+	console.log('modelName', state.modelName);
+	console.log('providerId', state.providerId);
 	const revisedPrompt = generated?.revised_prompt ?? '';
 
 	const result = JSON.stringify({ imageUrl, revisedPrompt });
