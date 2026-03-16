@@ -48,6 +48,12 @@ const DocumentPage: React.FC = () => {
 	const textWriterTaskData: TextWriterTaskData = { prompt: '' };
 	const textWriterTask = useTask<TextWriterTaskData>('agent-text-writer', textWriterTaskData);
 
+	const imageGeneratorTaskData: ImageGeneratorTaskData = { prompt: '' };
+	const imageGeneratorTask = useTask<ImageGeneratorTaskData>(
+		'agent-image-generator',
+		imageGeneratorTaskData
+	);
+
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
 
