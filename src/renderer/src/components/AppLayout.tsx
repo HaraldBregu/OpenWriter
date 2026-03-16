@@ -31,6 +31,7 @@ import {
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
 import { Settings, ChevronRight, Bug, Plus, Library } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
@@ -45,6 +46,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const { toggleSidebar } = useSidebar();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 
 	// Listen for workspace changes from main process and update Redux
@@ -96,14 +98,19 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 			<div className="flex flex-1 min-h-0 w-full">
 				<AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
 					{/* Header */}
-					<AppSidebarHeader className="border-b p-4">
-						<Link
-							to="/home"
-							className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-						>
-							<img src={logoIcon} alt="OpenWriter" className="h-6 w-6 rounded-full object-cover" />
-							<span className="text-md font-normal tracking-tight">OpenWriter</span>
-						</Link>
+					<AppSidebarHeader>
+						<AppSidebarMenu>
+							<AppSidebarMenuItem>
+								<AppSidebarMenuButton onClick={() => navigate('/home')}>
+									<img
+										src={logoIcon}
+										alt="OpenWriter"
+										className="h-[18px] w-[18px] rounded-full object-cover"
+									/>
+									<span className="text-md font-normal tracking-tight">OpenWriter</span>
+								</AppSidebarMenuButton>
+							</AppSidebarMenuItem>
+						</AppSidebarMenu>
 					</AppSidebarHeader>
 
 					{/* Nav */}
@@ -118,7 +125,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<Plus className="h-3.5 w-3.5 shrink-0" />
+											<Plus className="h-[18px] w-[18px] shrink-0 rounded-full" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
@@ -170,7 +177,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											isActive={location.pathname === '/resources'}
 										>
 											<Link to="/resources">
-												<Library className="h-3.5 w-3.5 shrink-0" />
+												<Library className="h-[18px] w-[18px] shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.resources')}</span>
 											</Link>
 										</AppSidebarMenuButton>
