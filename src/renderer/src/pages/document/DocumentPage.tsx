@@ -298,9 +298,9 @@ const DocumentPage: React.FC = () => {
 		[textEnhanceTask]
 	);
 
-	const onAgentPromptSubmit = useCallback(
+	const onTextSubmit = useCallback(
 		(before: string, after: string, cursorPos: number, input: string) => {
-			editorRef.current?.setAgentPromptEnable(false);
+			editorRef.current?.setContentGeneratorEnable(false);
 			const prompt = `
 			${before}
 			
