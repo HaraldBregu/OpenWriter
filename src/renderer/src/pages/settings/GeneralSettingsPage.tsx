@@ -401,23 +401,7 @@ const GeneralSettingsPage: React.FC = () => {
 				</div>
 			</section>
 
-			{/* System */}
-			<section className="space-y-3">
-				<h2 className="text-sm font-normal text-muted-foreground">
-					{t('settings.sections.system')}
-				</h2>
-				<div className="rounded-md border divide-y text-sm">
-					<div className="flex justify-between px-4 py-2.5">
-						<span className="text-muted-foreground">{t('settings.systemInfo.platform')}</span>
-						<span className="font-mono text-xs">{navigator.platform}</span>
-					</div>
-					<div className="flex justify-between px-4 py-2.5">
-						<span className="text-muted-foreground">{t('settings.systemInfo.language')}</span>
-						<span className="font-mono text-xs">{navigator.language}</span>
-					</div>
-				</div>
-			</section>
-		</div>
+			</div>
 	);
 };
 
