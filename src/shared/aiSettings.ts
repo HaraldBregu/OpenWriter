@@ -69,6 +69,10 @@ export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: str
 		name: 'Text Writer',
 		description: 'Writes new text from a given prompt',
 	},
+	'image-generator': {
+		name: 'Image Generator',
+		description: 'Generates images from a text prompt and returns the image URL',
+	},
 };
 
 export const DEFAULT_AGENT_CONFIG: AgentConfig = {
