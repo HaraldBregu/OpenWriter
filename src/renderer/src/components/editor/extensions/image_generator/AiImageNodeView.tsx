@@ -25,7 +25,6 @@ export function AiImageNodeView({
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
-	const [selectedStyle, setSelectedStyle] = useState('none');
 
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
