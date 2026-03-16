@@ -197,7 +197,7 @@ function ImageGeneratorContent({
 					{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 				</AppButton>
 			</div>
-		</div>
+		</>
 	);
 }
 
