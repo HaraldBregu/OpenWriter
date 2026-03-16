@@ -24,7 +24,10 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
 import type { ImageGeneratorState } from './state';
-import { DEFAULT_IMAGE_MODEL_ID, getImageGenerationConfig } from '../../../../shared/model-constants';
+import {
+	DEFAULT_IMAGE_MODEL_ID,
+	getImageGenerationConfig,
+} from '../../../../shared/model-constants';
 
 const IMAGE_CONFIG = getImageGenerationConfig(DEFAULT_IMAGE_MODEL_ID);
 if (!IMAGE_CONFIG) {
