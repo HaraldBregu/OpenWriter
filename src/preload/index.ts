@@ -289,6 +289,11 @@ const workspace: WorkspaceApi = {
 	}): Promise<{ fileName: string; filePath: string }> => {
 		return typedInvokeUnwrap(WorkspaceChannels.saveDocumentImage, params);
 	},
+	listDocumentImages: (
+		documentId: string
+	): Promise<{ fileName: string; filePath: string; size: number }[]> => {
+		return typedInvokeUnwrap(WorkspaceChannels.listDocumentImages, documentId);
+	},
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
