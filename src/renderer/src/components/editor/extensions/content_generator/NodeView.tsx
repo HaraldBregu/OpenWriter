@@ -471,10 +471,12 @@ export function ContentGeneratorNodeView({
 						prompt={prompt}
 						loading={loading}
 						enable={enable}
+						mode={mode}
 						textareaRef={textareaRef}
 						submitRef={submitRef}
 						onPromptChange={setPrompt}
 						onResize={resizeTextarea}
+						onModeChange={handleModeChange}
 					/>
 				) : (
 					<ImageGeneratorContent
