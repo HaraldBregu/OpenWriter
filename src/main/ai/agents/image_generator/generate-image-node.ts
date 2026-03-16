@@ -19,8 +19,10 @@
 import OpenAI from 'openai';
 import type { ImageGeneratorState } from './state';
 
-const IMAGE_MODEL = 'gpt-image-1-mini';
-const IMAGE_SIZE = '1024x1024' as const;
+//'gpt-image-1.5' | 'dall-e-2' | 'dall-e-3' | 'gpt-image-1' | 'gpt-image-1-mini';
+
+const IMAGE_MODEL = 'gpt-image-1';
+const IMAGE_SIZE = '512x512' as const;
 const IMAGE_QUALITY = 'low' as const;
 const IMAGES_PER_REQUEST = 1;
 const BASE64_PNG_PREFIX = 'data:image/png;base64,';
@@ -36,7 +38,6 @@ export async function generateImageNode(
 		n: IMAGES_PER_REQUEST,
 		size: IMAGE_SIZE,
 		quality: IMAGE_QUALITY,
-		response_format: 'b64_json',
 	});
 
 	const generated = response.data?.[0];
