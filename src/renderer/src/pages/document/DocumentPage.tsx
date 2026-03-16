@@ -353,7 +353,14 @@ const DocumentPage: React.FC = () => {
 		[textWriterTask]
 	);
 
-	const onImageSubmit = useCallback((_prompt: string) => {}, []);
+	const onImageSubmit = useCallback(
+		(prompt: string) => {
+			editorRef.current?.setContentGeneratorEnable(false);
+			const data: ImageGeneratorTaskData = { prompt };
+			imageGeneratorTask.submit(data);
+		},
+		[imageGeneratorTask]
+	);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
