@@ -125,7 +125,7 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 						title={t('titleBar.toggleSidebar')}
 						onClick={onToggleSidebar}
 					>
-						<Settings className="h-4 w-4" />
+						<Info className="h-4 w-4" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
