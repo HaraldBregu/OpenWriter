@@ -80,10 +80,18 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, documentId, metadat
 				{/* Document Info */}
 				{metadata && (
 					<>
-						<div className="mb-1">
+						<div className="mb-1 flex items-center justify-between">
 							<span className="text-xs font-medium text-muted-foreground/70">
 								{t('configSidebar.documentInfo')}
 							</span>
+							<button
+								type="button"
+								onClick={onOpenFolder}
+								className="text-muted-foreground/70 hover:text-foreground transition-colors"
+								title={t('common.openFolder')}
+							>
+								<FolderOpen className="h-3.5 w-3.5" />
+							</button>
 						</div>
 						<div className="space-y-3">
 							<div className="space-y-1">
