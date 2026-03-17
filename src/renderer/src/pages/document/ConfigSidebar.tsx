@@ -48,43 +48,12 @@ function toLocalResourceUrl(filePath: string): string {
 
 const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) => {
 	const { t, i18n } = useTranslation();
-	const { documentId, metadata } = useDocumentState();
+	const { documentId, metadata, images } = useDocumentState();
 
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
 		window.workspace.openDocumentFolder(documentId);
 	}, [documentId]);
-	const [images, setImages] = useState<DocumentImageInfo[]>([]);
-
-	const loadImages = useCallback(async () => {
-		if (!documentId) {
-			setImages([]);
-			return;
-		}
-		try {
-			const result = await window.workspace.listDocumentImages(documentId);
-			setImages(result);
-		} catch {
-			setImages([]);
-		}
-	}, [documentId]);
-
-	useEffect(() => {
-		loadImages();
-	}, [loadImages]);
-
-	useEffect(() => {
-		if (!documentId) return;
-
-		const unsubscribe = window.workspace.onOutputFileChange((event) => {
-			if (event.outputType !== 'documents' || event.fileId !== documentId) return;
-			if (event.type === 'changed' || event.type === 'added') {
-				loadImages();
-			}
-		});
-
-		return unsubscribe;
-	}, [documentId, loadImages]);
 
 	const formattedCreatedAt = useMemo(
 		() => (metadata?.createdAt ? formatDate(metadata.createdAt, i18n.language) : null),
