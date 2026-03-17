@@ -64,6 +64,7 @@ const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
 const ModelsSettingsPage = lazy(() => import('./pages/settings/ModelsSettingsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
+const AgentsSettingsPage = lazy(() => import('./pages/settings/AgentsSettingsPage'));
 const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
