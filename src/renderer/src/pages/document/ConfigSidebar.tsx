@@ -200,21 +200,21 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 							<div className="space-y-1">
 								<button
 									type="button"
-									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted transition-colors"
+									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
 								>
 									<FileDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
 									{t('configSidebar.exportPdf')}
 								</button>
 								<button
 									type="button"
-									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted transition-colors"
+									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
 								>
 									<FileType className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
 									{t('configSidebar.exportMd')}
 								</button>
 								<button
 									type="button"
-									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted transition-colors"
+									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
 								>
 									<Link className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
 									{t('configSidebar.shareLink')}
