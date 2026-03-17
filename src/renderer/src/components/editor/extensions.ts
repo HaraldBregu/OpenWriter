@@ -57,7 +57,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Placeholder.configure({
 			placeholder: ({ node }) => {
 				if (node.type.name === 'paragraph') {
-					return "Type '/' for commands, or press 'space' for AI assistance\u2026";
+					return "Type '/' for commands\u2026";
 				}
 				if (node.type.name === 'heading') {
 					return `Heading ${node.attrs.level}`;

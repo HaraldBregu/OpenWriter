@@ -653,6 +653,9 @@
 		"exportMd": "Export as Markdown",
 		"shareLink": "Copy Share Link"
 	},
+	"agenticSidebar": {
+		"placeholder": "AI assistant coming soon"
+	},
 	"resources": {
 		"title": "Resources",
 		"indexing": "Indexing resources…",
