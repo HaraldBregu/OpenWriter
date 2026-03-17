@@ -34,6 +34,7 @@ export type { WorkspaceState as WorkspaceStateType };
 
 export const initialState: WorkspaceState = {
 	currentPath: null,
+	projectName: null,
 	recentWorkspaces: [],
 	status: 'idle',
 	error: null,
