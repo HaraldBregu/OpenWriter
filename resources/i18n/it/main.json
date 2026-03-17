@@ -649,8 +649,7 @@
 		"noResources": "Nessuna immagine",
 		"shareAndExport": "Condividi & Esporta",
 		"exportPdf": "Esporta come PDF",
-		"exportDocx": "Esporta come DOCX",
-		"exportHtml": "Esporta come HTML",
+		"exportMd": "Esporta come Markdown",
 		"shareLink": "Copia Link di Condivisione"
 	},
 	"resources": {
