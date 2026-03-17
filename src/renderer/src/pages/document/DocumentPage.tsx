@@ -407,6 +407,7 @@ const DocumentPage: React.FC = () => {
 	}, []);
 
 	return (
+		<DocumentProvider documentId={id}>
 		<div className="h-full flex flex-col">
 			<DocumentHeader
 				title={title}
