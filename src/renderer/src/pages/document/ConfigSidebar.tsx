@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Calendar, Tag, Image, FolderOpen, FileDown, FileType, Link } from 'lucide-react';
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../shared/types';
-import { AppLabel, AppSeparator } from '@/components/app';
+import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
