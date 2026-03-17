@@ -799,6 +799,8 @@
 		"updatedAt": "Ultimo Aggiornamento",
 		"updatedAtDescription": "Quando questa area di lavoro \u00e8 stata modificata l'ultima volta",
 		"notSet": "Non impostata",
-		"loading": "Caricamento\u2026"
+		"loading": "Caricamento\u2026",
+		"loadError": "Impossibile caricare le informazioni dell'area di lavoro. Riprova.",
+		"saveError": "Impossibile salvare le modifiche. Il campo \u00e8 ancora aperto per riprovare."
 	}
 }
