@@ -215,7 +215,7 @@ const WorkspacePage: React.FC = () => {
 								value={draft}
 								onChange={(e) => setDraft(e.target.value)}
 								onBlur={handleCommit}
-								onKeyDown={handleNameKeyDown}
+								onKeyDown={handleEditKeyDown}
 								disabled={isSaving}
 								className="h-7 px-2 py-0 text-sm w-56"
 								aria-label={t('workspacePage.namePlaceholder')}
