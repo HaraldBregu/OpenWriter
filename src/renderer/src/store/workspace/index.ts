@@ -14,6 +14,7 @@ export {
 	loadResources,
 	removeResources,
 	loadIndexingInfo,
+	loadProjectName,
 } from './actions';
 
 // Reducer, slice, and synchronous actions
