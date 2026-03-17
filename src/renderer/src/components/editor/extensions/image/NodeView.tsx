@@ -148,6 +148,14 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
+			{editing && resolvedSrc && (
+				<ImageEditor
+					src={resolvedSrc}
+					alt={alt}
+					onSave={handleEditorSave}
+					onCancel={handleEditorCancel}
+				/>
+			)}
 			<div
 				className="inline-block max-w-full"
 				onMouseEnter={() => setHovered(true)}
