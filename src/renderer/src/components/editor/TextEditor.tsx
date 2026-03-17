@@ -17,6 +17,7 @@ import { OptionMenu } from './option_menu';
 import { InsertImageDialog } from './InsertImageDialog';
 
 import { createExtensions } from './extensions';
+import { type ImageInsertHandler } from './extensions/image';
 import { EditorProvider } from './EditorContext';
 
 export interface ImageInsertOptions {
@@ -66,6 +67,15 @@ export interface TextEditorProps {
 	documentId?: string;
 }
 
+function readFileAsDataUri(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = (): void => resolve(reader.result as string);
+		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
+		reader.readAsDataURL(file);
+	});
+}
+
 const TextEditor = React.memo(
 	React.forwardRef<TextEditorElement, TextEditorProps>(
 		(
@@ -101,53 +111,10 @@ const TextEditor = React.memo(
 			const documentIdRef = useRef(documentId);
 			documentIdRef.current = documentId;
 
-			const handleImageFileInsert = useCallback(
-				(file: File, _insertAtPos: number | null): void => {
-					if (!editor || editor.isDestroyed) return;
-
-					const readFileAsDataUri = (f: File): Promise<string> =>
-						new Promise((resolve, reject) => {
-							const reader = new FileReader();
-							reader.onload = (): void => resolve(reader.result as string);
-							reader.onerror = (): void =>
-								reject(new Error(`FileReader failed for ${f.name}`));
-							reader.readAsDataURL(f);
-						});
-
-					readFileAsDataUri(file)
-						.then(async (dataUri) => {
-							if (!editor || editor.isDestroyed) return;
-
-							let imageSrc = dataUri;
-							const currentDocumentId = documentIdRef.current;
-
-							if (currentDocumentId && imageSrc.startsWith('data:')) {
-								const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
-								if (match) {
-									const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-									const base64 = match[2];
-									const fileName = `image-${Date.now()}.${ext}`;
-									await window.workspace.saveDocumentImage({
-										documentId: currentDocumentId,
-										fileName,
-										base64,
-									});
-									imageSrc = `images/${fileName}`;
-								}
-							}
-
-							editor.commands.setImage({ src: imageSrc, alt: file.name });
-						})
-						.catch((err: unknown) => {
-							console.error('[TextEditor] Failed to process dropped/pasted image:', err);
-						});
-				},
-				// eslint-disable-next-line react-hooks/exhaustive-deps
-				[editor]
-			);
-
-			const handleImageFileInsertRef = useRef(handleImageFileInsert);
-			handleImageFileInsertRef.current = handleImageFileInsert;
+			// Stable ref used by the extensions useMemo (which runs once).
+			// Updated after editor is initialised so it always points at the
+			// latest handler that has access to the live editor instance.
+			const handleImageFileInsertRef = useRef<ImageInsertHandler>(() => undefined);
 
 			const extensions = useMemo(
 				() =>
@@ -205,6 +172,45 @@ const TextEditor = React.memo(
 			);
 
 			const editor = useEditor(editorOptions, []);
+
+			// Keep the image-insert ref pointing at a callback that closes over
+			// the live editor instance. This is updated every time editor changes
+			// so the handler is always fresh, while extensions only need the ref.
+			const handleImageFileInsert = useCallback(
+				(file: File, _insertAtPos: number | null): void => {
+					if (!editor || editor.isDestroyed) return;
+
+					readFileAsDataUri(file)
+						.then(async (dataUri) => {
+							if (!editor || editor.isDestroyed) return;
+
+							let imageSrc = dataUri;
+							const currentDocumentId = documentIdRef.current;
+
+							if (currentDocumentId && imageSrc.startsWith('data:')) {
+								const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
+								if (match) {
+									const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+									const base64 = match[2];
+									const fileName = `image-${Date.now()}.${ext}`;
+									await window.workspace.saveDocumentImage({
+										documentId: currentDocumentId,
+										fileName,
+										base64,
+									});
+									imageSrc = `images/${fileName}`;
+								}
+							}
+
+							editor.commands.setImage({ src: imageSrc, alt: file.name });
+						})
+						.catch((err: unknown) => {
+							console.error('[TextEditor] Failed to process dropped/pasted image:', err);
+						});
+				},
+				[editor]
+			);
+			handleImageFileInsertRef.current = handleImageFileInsert;
 
 			const rootRef = useRef<HTMLDivElement>(null);
 
