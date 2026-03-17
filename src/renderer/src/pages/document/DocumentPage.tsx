@@ -38,6 +38,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [agenticSidebarOpen, setAgenticSidebarOpen] = useState(false);
+	const [sidebarAnimate, setSidebarAnimate] = useState(true);
 
 	const editorRef = useRef<TextEditorElement>(null);
 
