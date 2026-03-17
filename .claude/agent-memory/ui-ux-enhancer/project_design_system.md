@@ -8,7 +8,7 @@ OpenWriter uses Tailwind CSS with a shadcn/ui-compatible token set. Key tokens: 
 
 Settings pages use two competing layout patterns:
 1. **Old pattern (GeneralSettingsPage, ModelsSettingsPage)**: `space-y-8 p-6`, bordered card rows with `divide-y`, `h1` at `text-lg font-normal`, section headers as `h2 text-sm font-normal text-muted-foreground`.
-2. **New Cursor-style pattern (WorkspacePage)**: `max-w-2xl p-6`, borderless rows with bottom border only (`border-b last:border-b-0`), `h1` at `text-xl font-semibold`, section headers as `h3 text-xs uppercase tracking-wide`.
+2. **New Cursor-style pattern (WorkspacePage)**: `max-w-2xl p-6`, borderless rows with bottom border only (`border-b last:border-b-0`), `h1` at `text-lg font-normal`, section headers via local `SectionHeader` component (`h2 text-xs font-medium text-muted-foreground uppercase tracking-wide`).
 
 SettingsLayout uses `NavLink` from react-router-dom with manual `aria-current="page"` computed via `isItemActive()`. Nav items are `rounded-md px-3 py-1.5 text-sm`.
 
