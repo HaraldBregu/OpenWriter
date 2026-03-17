@@ -765,5 +765,31 @@
 		"untitled": "Senza titolo",
 		"resources": "Risorse",
 		"debug": "Debug"
+	},
+	"workspacePage": {
+		"title": "Area di Lavoro",
+		"description": "Visualizza e gestisci la configurazione dell'area di lavoro",
+		"sections": {
+			"baseInfo": "Informazioni Base",
+			"agentConfig": "Configurazione Agenti",
+			"versioning": "Versionamento"
+		},
+		"path": "Percorso Area di Lavoro",
+		"name": "Nome Progetto",
+		"namePlaceholder": "Inserisci il nome del progetto",
+		"descriptionLabel": "Descrizione",
+		"descriptionPlaceholder": "Inserisci la descrizione del progetto",
+		"projectId": "ID Progetto",
+		"temperature": "Temperatura",
+		"reasoning": "Ragionamento",
+		"enabled": "Abilitato",
+		"disabled": "Disabilitato",
+		"noAgents": "Nessun agente configurato",
+		"schemaVersion": "Versione Schema",
+		"appVersion": "Versione App",
+		"createdAt": "Creato",
+		"updatedAt": "Ultimo Aggiornamento",
+		"notSet": "Non impostata",
+		"loading": "Caricamento\u2026"
 	}
 }
