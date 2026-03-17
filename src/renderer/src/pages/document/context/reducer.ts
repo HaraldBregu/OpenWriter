@@ -4,7 +4,7 @@ import type { DocumentAction } from './actions';
 export function documentReducer(state: DocumentState, action: DocumentAction): DocumentState {
 	switch (action.type) {
 		case 'LOAD_STARTED':
-			return { ...state, loaded: false, title: '', content: '', metadata: null };
+			return { ...state, loaded: false, title: '', content: '', metadata: null, images: [] };
 
 		case 'LOAD_SUCCEEDED':
 			return {
