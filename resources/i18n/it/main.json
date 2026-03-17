@@ -646,7 +646,12 @@
 		"createdAt": "Creato",
 		"updatedAt": "Aggiornato",
 		"resources": "Risorse del Documento",
-		"noResources": "Nessuna immagine"
+		"noResources": "Nessuna immagine",
+		"shareAndExport": "Condividi & Esporta",
+		"exportPdf": "Esporta come PDF",
+		"exportDocx": "Esporta come DOCX",
+		"exportHtml": "Esporta come HTML",
+		"shareLink": "Copia Link di Condivisione"
 	},
 	"resources": {
 		"title": "Risorse",
