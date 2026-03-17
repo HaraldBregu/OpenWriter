@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Calendar, Tag, Image } from 'lucide-react';
+import { FileText, Calendar, Tag, Image, FolderOpen } from 'lucide-react';
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../shared/types';
 import { AppLabel, AppSeparator } from '@/components/app';
 
