@@ -653,6 +653,9 @@
 		"exportMd": "Esporta come Markdown",
 		"shareLink": "Copia Link di Condivisione"
 	},
+	"agenticSidebar": {
+		"placeholder": "Assistente AI in arrivo"
+	},
 	"resources": {
 		"title": "Risorse",
 		"indexing": "Indicizzazione risorse…",
