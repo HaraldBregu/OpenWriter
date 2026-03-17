@@ -414,17 +414,19 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 				onTitleChange={handleTitleChange}
 				sidebarOpen={sidebarOpen}
 				onToggleSidebar={() => {
-					setSidebarOpen((prev) => {
-						if (!prev) setAgenticSidebarOpen(false);
-						return !prev;
-					});
+					const isSwap = !sidebarOpen && agenticSidebarOpen;
+					if (isSwap) setSidebarAnimate(false);
+					setSidebarOpen((prev) => !prev);
+					if (isSwap) setAgenticSidebarOpen(false);
+					if (isSwap) requestAnimationFrame(() => setSidebarAnimate(true));
 				}}
 				agenticSidebarOpen={agenticSidebarOpen}
 				onToggleAgenticSidebar={() => {
-					setAgenticSidebarOpen((prev) => {
-						if (!prev) setSidebarOpen(false);
-						return !prev;
-					});
+					const isSwap = !agenticSidebarOpen && sidebarOpen;
+					if (isSwap) setSidebarAnimate(false);
+					setAgenticSidebarOpen((prev) => !prev);
+					if (isSwap) setSidebarOpen(false);
+					if (isSwap) requestAnimationFrame(() => setSidebarAnimate(true));
 				}}
 				isTrashing={isTrashing}
 				onMoveToTrash={handleMoveToTrash}
