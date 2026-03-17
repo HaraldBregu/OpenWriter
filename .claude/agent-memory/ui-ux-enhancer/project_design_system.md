@@ -8,13 +8,19 @@ OpenWriter uses Tailwind CSS with a shadcn/ui-compatible token set. Key tokens: 
 
 Settings pages use two competing layout patterns:
 1. **Old pattern (GeneralSettingsPage, ModelsSettingsPage)**: `space-y-8 p-6`, bordered card rows with `divide-y`, `h1` at `text-lg font-normal`, section headers as `h2 text-sm font-normal text-muted-foreground`.
-2. **New Cursor-style pattern (WorkspacePage)**: `max-w-2xl p-6`, borderless rows with bottom border only (`border-b last:border-b-0`), `h1` at `text-lg font-normal`, section headers via local `SectionHeader` component (`h2 text-xs font-medium text-muted-foreground uppercase tracking-wide`).
+2. **New Cursor-style pattern (WorkspacePage, AgentsSettingsPage)**: `max-w-2xl p-6`, borderless rows, `h1` at `text-lg font-normal`, section headers via local `SectionHeader` component (`h2 text-xs font-medium text-muted-foreground uppercase tracking-wide`).
+
+`SectionHeader` is duplicated verbatim in AgentsSettingsPage, ModelsSettingsPage, and WorkspacePage — it should be extracted to a shared module (SonarQube duplication violation).
 
 SettingsLayout uses `NavLink` from react-router-dom with manual `aria-current="page"` computed via `isItemActive()`. Nav items are `rounded-md px-3 py-1.5 text-sm`.
 
-App routing: HashRouter, `/settings/*` renders `SettingsLayout` with nested routes for `general`, `workspace`, `models`, `system`. Index route renders `GeneralSettingsPage`.
+App routing: HashRouter, `/settings/*` renders `SettingsLayout` with nested routes for `general`, `workspace`, `models`, `agents`, `system`. Index route renders `GeneralSettingsPage`.
 
-Component library: `AppInput`, `AppTextarea`, `AppButton`, `AppSelect`, `AppSlider`, `AppSwitch`, `AppLabel` — all thin wrappers over shadcn/ui primitives using `forwardRef` + `React.memo`.
+Component library: `AppInput`, `AppTextarea`, `AppButton`, `AppSelect`, `AppSlider`, `AppSwitch`, `AppLabel`, `AppSkeleton`, `AppSeparator`, `AppTooltip` — all thin wrappers over shadcn/ui primitives using `forwardRef` + `React.memo`.
+
+Switch UI component: custom (not Radix), renders a `<button role="switch" aria-checked>`. When using `htmlFor`/`id` label association with AppSwitch, do NOT also add `aria-label` — `aria-label` overrides the label element's text for AT. Use `aria-describedby` instead to wire description paragraphs.
+
+Slider UI component: custom `<input type="range">` wrapper. Supports `aria-label`, `aria-describedby`, `aria-valuetext`. Use `aria-valuetext` to provide formatted value strings to screen readers.
 
 **Why:** Recording because two layout patterns coexist and future pages need to know which to follow.
-**How to apply:** New settings pages should use the WorkspacePage Cursor-style pattern as it is the newer, intentional design direction.
+**How to apply:** New settings pages should use the WorkspacePage/AgentsSettingsPage Cursor-style pattern as it is the newer, intentional design direction.
