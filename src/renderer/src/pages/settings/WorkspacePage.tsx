@@ -182,6 +182,20 @@ const WorkspacePage: React.FC = () => {
 			{/* Page title */}
 			<h1 className="text-xl font-semibold mb-6">{t('workspacePage.title')}</h1>
 
+			{/* Load error */}
+			{loadError && (
+				<p className="text-sm text-destructive mb-4" role="alert">
+					{t('workspacePage.loadError')}
+				</p>
+			)}
+
+			{/* Save error */}
+			{saveError && (
+				<p className="text-sm text-destructive mb-4" role="alert">
+					{t('workspacePage.saveError')}
+				</p>
+			)}
+
 			{/* ── Base Information ─────────────────────────────────────────── */}
 			<SectionHeader title={t('workspacePage.sections.baseInfo')} />
 
