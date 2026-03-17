@@ -168,6 +168,17 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 							)}
 						</>
 					)}
+
+					{/* Resources */}
+					{documentId && (
+						<div>
+							<div className="mb-2">
+								<span className="text-xs font-medium text-muted-foreground/70">
+									{t('configSidebar.resources')}
+								</span>
+							</div>
+						</div>
+					)}
 				</AppCardContent>
 
 				{/* Share & Export */}
