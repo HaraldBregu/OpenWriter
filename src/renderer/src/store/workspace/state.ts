@@ -9,6 +9,8 @@ export type ResourcesStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface WorkspaceState {
 	currentPath: string | null;
+	/** Project name from workspace metadata (project_workspace.openwriter) */
+	projectName: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	status: 'idle' | 'loading' | 'ready' | 'error';
 	error: string | null;
