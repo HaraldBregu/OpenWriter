@@ -52,7 +52,7 @@ const SettingRow: React.FC<SettingRowProps> = ({ label, description, children })
 			<p className="text-sm">{label}</p>
 			{description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
 		</div>
-		<div className="shrink-0">{children}</div>
+		<div className="min-w-0">{children}</div>
 	</div>
 );
 
