@@ -172,7 +172,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 								</span>
 							</div>
 							{images.length > 0 ? (
-								<div className="grid grid-cols-3 gap-2">
+								<div className="grid grid-cols-4 gap-2">
 									{images.map((img) => (
 										<div
 											key={img.fileName}
@@ -204,7 +204,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 
 				{/* Share & Export */}
 				{documentId && (
-					<AppCardFooter className="sticky bottom-0 flex-col items-stretch border-t border-border bg-muted/30 p-0">
+					<AppCardFooter className="sticky bottom-0 flex-col items-stretch border-t border-border bg-muted p-0">
 						<AppCollapsible>
 							<AppCollapsibleTrigger className="justify-between px-4 py-3 text-xs font-medium text-muted-foreground/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors">
 								{t('configSidebar.shareAndExport')}
