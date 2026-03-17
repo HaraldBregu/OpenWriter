@@ -28,9 +28,9 @@ type ImageGeneratorTaskData = {
 	prompt: string;
 };
 
-const DocumentPage: React.FC = () => {
-	const { id } = useParams<{ id: string }>();
+const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ documentId: id }) => {
 	const navigate = useNavigate();
+	const dispatch = useDocumentDispatch();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
@@ -65,6 +65,13 @@ const DocumentPage: React.FC = () => {
 
 	const loadedRef = useRef(false);
 	loadedRef.current = loaded;
+
+	// Sync metadata to context whenever it changes
+	useEffect(() => {
+		if (metadata) {
+			dispatch({ type: 'METADATA_UPDATED', metadata });
+		}
+	}, [metadata, dispatch]);
 
 	useEffect(() => {
 		if (!id) return;
@@ -370,7 +377,7 @@ const DocumentPage: React.FC = () => {
 			editorRef.current?.setContentGeneratorEnable(false);
 			const prompt = `
 			${before}
-			
+
 			⬢ ${input} ⬢
 
 			${after}
@@ -408,64 +415,72 @@ const DocumentPage: React.FC = () => {
 	}, []);
 
 	return (
-		<DocumentProvider documentId={id}>
-			<div className="h-full flex flex-col">
-				<DocumentHeader
-					title={title}
-					onTitleChange={handleTitleChange}
-					sidebarOpen={sidebarOpen}
-					onToggleSidebar={() => {
-						setSidebarOpen((prev) => {
-							if (!prev) setAgenticSidebarOpen(false);
-							return !prev;
-						});
-					}}
-					agenticSidebarOpen={agenticSidebarOpen}
-					onToggleAgenticSidebar={() => {
-						setAgenticSidebarOpen((prev) => {
-							if (!prev) setSidebarOpen(false);
-							return !prev;
-						});
-					}}
-					isTrashing={isTrashing}
-					onMoveToTrash={handleMoveToTrash}
-					onSearch={handleSearch}
-					onClearSearch={handleClearSearch}
-					onOpenFolder={handleOpenFolder}
-				/>
+		<div className="h-full flex flex-col">
+			<DocumentHeader
+				title={title}
+				onTitleChange={handleTitleChange}
+				sidebarOpen={sidebarOpen}
+				onToggleSidebar={() => {
+					setSidebarOpen((prev) => {
+						if (!prev) setAgenticSidebarOpen(false);
+						return !prev;
+					});
+				}}
+				agenticSidebarOpen={agenticSidebarOpen}
+				onToggleAgenticSidebar={() => {
+					setAgenticSidebarOpen((prev) => {
+						if (!prev) setSidebarOpen(false);
+						return !prev;
+					});
+				}}
+				isTrashing={isTrashing}
+				onMoveToTrash={handleMoveToTrash}
+				onSearch={handleSearch}
+				onClearSearch={handleClearSearch}
+				onOpenFolder={handleOpenFolder}
+			/>
 
-				{/* Editor + Right Sidebar */}
-				<div className="flex-1 flex min-h-0">
-					<div className="flex-1 flex flex-col min-w-0">
-						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-							<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-								{loaded && (
-									<TextEditor
-										disabled={
-											textCompleterTask.isRunning ||
-											textEnhanceTask.isRunning ||
-											textWriterTask.isRunning ||
-											imageGeneratorTask.isRunning
-										}
-										ref={editorRef}
-										key={id}
-										value={content}
-										onChange={handleContentChange}
-										onContinueWithAssistant={onContinueWithAssistant}
-										onEnhanceWithAssistant={onEnhanceWithAssistant}
-										onTextSubmit={onTextSubmit}
-										onImageSubmit={onImageSubmit}
-										documentId={id}
-									/>
-								)}
-							</div>
+			{/* Editor + Right Sidebar */}
+			<div className="flex-1 flex min-h-0">
+				<div className="flex-1 flex flex-col min-w-0">
+					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
+							{loaded && (
+								<TextEditor
+									disabled={
+										textCompleterTask.isRunning ||
+										textEnhanceTask.isRunning ||
+										textWriterTask.isRunning ||
+										imageGeneratorTask.isRunning
+									}
+									ref={editorRef}
+									key={id}
+									value={content}
+									onChange={handleContentChange}
+									onContinueWithAssistant={onContinueWithAssistant}
+									onEnhanceWithAssistant={onEnhanceWithAssistant}
+									onTextSubmit={onTextSubmit}
+									onImageSubmit={onImageSubmit}
+									documentId={id}
+								/>
+							)}
 						</div>
 					</div>
-
-					<ConfigSidebar open={sidebarOpen} />
-					<AgenticSidebar open={agenticSidebarOpen} />
 				</div>
+
+				<ConfigSidebar open={sidebarOpen} />
+				<AgenticSidebar open={agenticSidebarOpen} />
 			</div>
+		</div>
+	);
+};
+
+const DocumentPage: React.FC = () => {
+	const { id } = useParams<{ id: string }>();
+
+	return (
+		<DocumentProvider documentId={id}>
+			<DocumentPageInner documentId={id} />
 		</DocumentProvider>
 	);
 };
