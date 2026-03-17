@@ -117,6 +117,7 @@
 		"description": "Configura le preferenze dell'applicazione",
 		"tabs": {
 			"general": "Generale",
+			"workspace": "Area di Lavoro",
 			"models": "Modelli",
 			"agents": "Agenti",
 			"media": "Media",
