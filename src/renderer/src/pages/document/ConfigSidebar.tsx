@@ -131,12 +131,12 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 				)}
 
 				<AppCardContent className="p-4 flex-1">
-					{/* Resources */}
+					{/* Images */}
 					{documentId && (
 						<>
 							<div className="mb-2">
 								<span className="text-xs font-medium text-muted-foreground/70">
-									{t('configSidebar.resources')}
+									{t('configSidebar.images')}
 								</span>
 							</div>
 							{images.length > 0 ? (
