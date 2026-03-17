@@ -48,6 +48,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
+	const projectName = useAppSelector(selectProjectName);
 
 	// Listen for workspace changes from main process and update Redux
 	useWorkspaceListener();
