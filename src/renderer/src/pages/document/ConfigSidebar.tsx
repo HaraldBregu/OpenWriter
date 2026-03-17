@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Calendar, Tag, Image, FolderOpen, FileDown, FileType, Link } from 'lucide-react';
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../shared/types';
-import { AppLabel, AppCard, AppCardContent, AppSeparator } from '@/components/app';
+import { AppLabel, AppCard, AppCardContent, AppCardFooter, AppSeparator } from '@/components/app';
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
@@ -118,9 +118,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<Tag className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-										<span className="text-sm text-foreground capitalize">
-											{metadata.type}
-										</span>
+										<span className="text-sm text-foreground capitalize">{metadata.type}</span>
 									</div>
 								</div>
 								{formattedCreatedAt && (
@@ -130,9 +128,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 										</AppLabel>
 										<div className="flex items-center gap-1.5">
 											<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-											<span className="text-sm text-foreground">
-												{formattedCreatedAt}
-											</span>
+											<span className="text-sm text-foreground">{formattedCreatedAt}</span>
 										</div>
 									</div>
 								)}
@@ -143,9 +139,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 										</AppLabel>
 										<div className="flex items-center gap-1.5">
 											<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-											<span className="text-sm text-foreground">
-												{formattedUpdatedAt}
-											</span>
+											<span className="text-sm text-foreground">{formattedUpdatedAt}</span>
 										</div>
 									</div>
 								)}
@@ -186,9 +180,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 							) : (
 								<div className="flex items-center gap-1.5 text-muted-foreground">
 									<Image className="h-3.5 w-3.5 shrink-0" />
-									<span className="text-xs">
-										{t('configSidebar.noResources')}
-									</span>
+									<span className="text-xs">{t('configSidebar.noResources')}</span>
 								</div>
 							)}
 						</>
