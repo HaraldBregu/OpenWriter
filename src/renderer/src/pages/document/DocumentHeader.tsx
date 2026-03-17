@@ -11,7 +11,7 @@ import {
 	PenLine,
 	Search,
 	X,
-	Settings,
+	Info,
 } from 'lucide-react';
 import {
 	AppButton,
