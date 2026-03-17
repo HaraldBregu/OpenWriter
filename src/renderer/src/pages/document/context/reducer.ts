@@ -27,6 +27,9 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 		case 'METADATA_UPDATED':
 			return { ...state, metadata: action.metadata };
 
+		case 'IMAGES_UPDATED':
+			return { ...state, images: action.images };
+
 		case 'TRASH_STARTED':
 			return { ...state, isTrashing: true };
 
