@@ -235,7 +235,7 @@ const WorkspacePage: React.FC = () => {
 								onClick={() => handleStartEdit('name')}
 								className="text-sm truncate max-w-[14rem] text-right hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
 								title={projectInfo.name || t('workspacePage.namePlaceholder')}
-								aria-label={`${t('workspacePage.name')}: ${projectInfo.name || t('workspacePage.namePlaceholder')}`}
+								aria-label={`${t('common.edit')} ${t('workspacePage.name')}: ${projectInfo.name || t('workspacePage.namePlaceholder')}`}
 							>
 								{projectInfo.name || (
 									<span className="text-muted-foreground italic">
