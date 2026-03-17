@@ -24,9 +24,13 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="grid grid-cols-[200px_1fr] h-full">
+		<div className="grid grid-cols-[240px_1fr] h-full">
 			{/* Left column — navigation */}
-			<div className="flex flex-col border-r bg-muted/30 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+			<div
+				className="flex flex-col border-r bg-muted/50 overflow-y-auto"
+				role="navigation"
+				aria-label={t('settings.title')}
+			>
 				<div className="px-3 py-4 space-y-0.5">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
@@ -42,7 +46,7 @@ export function SettingsLayout(): React.JSX.Element {
 			</div>
 
 			{/* Right column — content */}
-			<div className="flex flex-col overflow-y-auto">
+			<div className="flex flex-col overflow-y-auto px-8 py-6">
 				<Outlet />
 			</div>
 		</div>
