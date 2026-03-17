@@ -16,17 +16,21 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
 );
 
 // ---------------------------------------------------------------------------
-// Setting row — label on the left, value on the right
+// Setting row — label + description on the left, action/value on the right
 // ---------------------------------------------------------------------------
 
 interface SettingRowProps {
 	readonly label: string;
+	readonly description?: string;
 	readonly children: React.ReactNode;
 }
 
-const SettingRow: React.FC<SettingRowProps> = ({ label, children }) => (
+const SettingRow: React.FC<SettingRowProps> = ({ label, description, children }) => (
 	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
-		<p className="text-sm min-w-0 mr-4">{label}</p>
+		<div className="min-w-0 mr-4">
+			<p className="text-sm">{label}</p>
+			{description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
+		</div>
 		<div className="min-w-0">{children}</div>
 	</div>
 );
