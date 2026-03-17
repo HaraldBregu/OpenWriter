@@ -28,6 +28,8 @@ interface DocumentHeaderProps {
 	readonly onTitleChange: (value: string) => void;
 	readonly sidebarOpen: boolean;
 	readonly onToggleSidebar: () => void;
+	readonly agenticSidebarOpen: boolean;
+	readonly onToggleAgenticSidebar: () => void;
 	readonly isTrashing: boolean;
 	readonly onMoveToTrash: () => void;
 	readonly onSearch: (query: string) => void;
