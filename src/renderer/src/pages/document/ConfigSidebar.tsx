@@ -27,8 +27,6 @@ import {
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
-	readonly documentId: string | undefined;
-	readonly metadata: OutputFileMetadata | null;
 	readonly onOpenFolder: () => void;
 }
 
