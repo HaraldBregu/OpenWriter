@@ -645,7 +645,7 @@
 		"documentType": "Type",
 		"createdAt": "Created",
 		"updatedAt": "Updated",
-		"resources": "Resources",
+		"resources": "Document Resources",
 		"noResources": "No images yet"
 	},
 	"resources": {
