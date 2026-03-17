@@ -51,6 +51,7 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	addStorage() {
 		return {
 			documentBasePath: null as string | null,
+			onImageEditSave: null as ((dataUri: string) => Promise<string>) | null,
 		};
 	},
 
