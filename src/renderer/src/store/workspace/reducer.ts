@@ -157,6 +157,7 @@ export const workspaceSlice = createSlice({
 		builder
 			.addCase(clearWorkspace.fulfilled, (state) => {
 				state.currentPath = null;
+				state.projectName = null;
 				state.status = 'ready';
 				state.resources = [];
 				state.resourcesStatus = 'idle';
