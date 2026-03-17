@@ -293,12 +293,8 @@ const WorkspacePage: React.FC = () => {
 
 					{projectInfo.agents.length > 0 ? (
 						projectInfo.agents.map((agent) => {
-							const isKnownAgent = (AGENT_IDS as readonly string[]).includes(
-								agent.agentId
-							);
-							const def = isKnownAgent
-								? AGENT_DEFINITIONS[agent.agentId as AgentId]
-								: null;
+							const isKnownAgent = (AGENT_IDS as readonly string[]).includes(agent.agentId);
+							const def = isKnownAgent ? AGENT_DEFINITIONS[agent.agentId as AgentId] : null;
 							return (
 								<SettingRow
 									key={agent.agentId}

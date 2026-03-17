@@ -24,18 +24,16 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex h-full">
-			{/* Sidebar navigation */}
-			<aside className="w-56 shrink-0 border-r overflow-y-auto bg-muted/30">
-				<nav className="px-3 py-4 space-y-0.5" aria-label={t('settings.title')}>
+		<div className="grid grid-cols-[160px_1fr] h-full overflow-y-auto">
+			{/* Left nav column — sticky so it stays visible while content scrolls */}
+			<aside className="sticky top-0 self-start pt-4 pl-3 pr-2">
+				<nav className="space-y-0.5" aria-label={t('settings.title')}>
 					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}
 							to={item.path}
 							end
-							className={({ isActive }) =>
-								`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
-							}
+							className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
 						>
 							{t(item.labelKey)}
 						</NavLink>
@@ -43,10 +41,10 @@ export function SettingsLayout(): React.JSX.Element {
 				</nav>
 			</aside>
 
-			{/* Content */}
-			<div className="flex-1 overflow-y-auto">
+			{/* Right content column */}
+			<main>
 				<Outlet />
-			</div>
+			</main>
 		</div>
 	);
 }
