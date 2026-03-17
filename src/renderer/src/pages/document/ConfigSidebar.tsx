@@ -163,7 +163,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 							) : (
 								<div className="flex items-center gap-1.5 text-muted-foreground">
 									<Image className="h-3.5 w-3.5 shrink-0" />
-									<span className="text-xs">{t('configSidebar.noResources')}</span>
+									<span className="text-xs">{t('configSidebar.noImages')}</span>
 								</div>
 							)}
 						</>
