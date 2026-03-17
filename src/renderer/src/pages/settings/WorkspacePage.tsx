@@ -111,6 +111,7 @@ const WorkspacePage: React.FC = () => {
 	const handleCancel = useCallback(() => {
 		setEditingField(null);
 		setDraft('');
+		setSaveError(false);
 	}, []);
 
 	const handleCommit = useCallback(() => {
