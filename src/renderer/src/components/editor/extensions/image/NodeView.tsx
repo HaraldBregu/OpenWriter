@@ -125,16 +125,25 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	}, []);
 
 	const handleEditorSave = useCallback(
-		(dataUri: string) => {
+		async (dataUri: string) => {
 			const pos = getPos();
-			if (typeof pos === 'number') {
-				editor.view.dispatch(
-					editor.view.state.tr.setNodeMarkup(pos, undefined, {
-						...node.attrs,
-						src: dataUri,
-					})
-				);
-			}
+			if (typeof pos !== 'number') return;
+
+			const imgStorage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+			const saveHandler = imgStorage.image?.onImageEditSave as
+				| ((dataUri: string) => Promise<string>)
+				| null;
+
+			const finalSrc = saveHandler ? await saveHandler(dataUri) : dataUri;
+
+			if (editor.isDestroyed) return;
+
+			editor.view.dispatch(
+				editor.view.state.tr.setNodeMarkup(pos, undefined, {
+					...node.attrs,
+					src: finalSrc,
+				})
+			);
 			setEditing(false);
 		},
 		[editor, getPos, node.attrs]
