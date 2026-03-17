@@ -19,6 +19,16 @@
  * `AIMessage` without an explicit import.  The canonical definition lives in
  * src/renderer/src/types.ts; this declaration mirrors it for ambient access.
  */
+// ---------------------------------------------------------------------------
+// Build-time constants injected via electron.vite.config.ts `define`
+// ---------------------------------------------------------------------------
+declare const __APP_NAME__: string;
+declare const __APP_DESCRIPTION__: string;
+declare const __APP_VERSION__: string;
+declare const __APP_AUTHOR__: string;
+declare const __APP_HOMEPAGE__: string;
+declare const __APP_LICENSE__: string;
+
 interface AIMessage {
 	id: string;
 	role: 'user' | 'assistant';
