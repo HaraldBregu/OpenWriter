@@ -125,6 +125,17 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 				<div className="flex items-center gap-3 ml-4 shrink-0">
 					<AppButton
 						type="button"
+						variant={agenticSidebarOpen ? 'secondary' : 'outline'}
+						size="icon"
+						title={t('titleBar.toggleAgenticSidebar')}
+						aria-label={t('titleBar.toggleAgenticSidebar')}
+						aria-expanded={agenticSidebarOpen}
+						onClick={onToggleAgenticSidebar}
+					>
+						<Bot className="h-4 w-4" aria-hidden="true" />
+					</AppButton>
+					<AppButton
+						type="button"
 						variant={sidebarOpen ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleSidebar')}
