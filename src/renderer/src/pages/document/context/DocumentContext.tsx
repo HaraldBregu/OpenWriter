@@ -11,7 +11,10 @@ interface DocumentProviderProps {
 	readonly documentId: string | undefined;
 }
 
-export function DocumentProvider({ children, documentId }: DocumentProviderProps): React.JSX.Element {
+export function DocumentProvider({
+	children,
+	documentId,
+}: DocumentProviderProps): React.JSX.Element {
 	const [state, dispatch] = useReducer(documentReducer, {
 		...INITIAL_DOCUMENT_STATE,
 		documentId,
