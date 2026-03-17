@@ -19,46 +19,32 @@ const LINK_BASE = 'block px-3 py-1.5 rounded-md text-sm transition-colors';
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
 const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-accent/50';
 
-function LeftColumn(): React.JSX.Element {
-	const { t } = useTranslation();
-
-	return (
-		<div
-			className="border-r bg-muted/30 overflow-y-auto"
-			role="navigation"
-			aria-label={t('settings.title')}
-		>
-			<div className="px-3 py-4 space-y-0.5">
-				{NAV_ITEMS.map((item) => (
-					<NavLink
-						key={item.path}
-						to={item.path}
-						end
-						className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
-					>
-						{t(item.labelKey)}
-					</NavLink>
-				))}
-			</div>
-		</div>
-	);
-}
-
-function RightColumn(): React.JSX.Element {
-	return (
-		<div className="overflow-y-auto">
-			<Outlet />
-		</div>
-	);
-}
-
 export function SettingsLayout(): React.JSX.Element {
+	const { t } = useTranslation();
 	useLanguage();
 
 	return (
 		<div className="grid grid-cols-[200px_1fr] h-full">
-			<LeftColumn />
-			<RightColumn />
+			{/* Left column — navigation */}
+			<div className="flex flex-col border-r bg-muted/30 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+				<div className="px-3 py-4 space-y-0.5">
+					{NAV_ITEMS.map((item) => (
+						<NavLink
+							key={item.path}
+							to={item.path}
+							end
+							className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
+						>
+							{t(item.labelKey)}
+						</NavLink>
+					))}
+				</div>
+			</div>
+
+			{/* Right column — content */}
+			<div className="flex flex-col overflow-y-auto">
+				<Outlet />
+			</div>
 		</div>
 	);
 }
