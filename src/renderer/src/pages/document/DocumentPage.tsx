@@ -463,8 +463,8 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					</div>
 				</div>
 
-				<ConfigSidebar open={sidebarOpen} />
-				<AgenticSidebar open={agenticSidebarOpen} />
+				<ConfigSidebar open={sidebarOpen} animate={sidebarAnimate} />
+				<AgenticSidebar open={agenticSidebarOpen} animate={sidebarAnimate} />
 			</div>
 		</div>
 	);
