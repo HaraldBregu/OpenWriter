@@ -4,16 +4,20 @@ import { ImageNodeView } from './NodeView';
 import {
 	createImageDropPastePlugin,
 	fileToDataUri,
-	type ImageFileHandler,
+	type ImageInsertHandler,
 } from './image-drop-paste-plugin';
 
 export interface ImageExtensionOptions {
 	/**
 	 * Called for every image File that is dropped or pasted into the editor.
-	 * Must return a Promise resolving to the image src string (data URI or path).
-	 * Defaults to converting the file to a data URI.
+	 * The handler is responsible for converting the file, saving it if needed,
+	 * and inserting the image node. `insertAtPos` is the document position for
+	 * drops (cursor has already been moved there); it is `null` for pastes
+	 * (insert at current cursor position).
+	 *
+	 * Defaults to converting the file to a data URI and calling setImage.
 	 */
-	onImageFile: ImageFileHandler;
+	onImageInsert: ImageInsertHandler;
 }
 
 declare module '@tiptap/core' {
@@ -32,7 +36,15 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 
 	addOptions() {
 		return {
-			onImageFile: fileToDataUri,
+			onImageInsert: (file, _insertAtPos) => {
+				fileToDataUri(file)
+					.then((src) => {
+						this.editor.commands.setImage({ src, alt: file.name });
+					})
+					.catch((err: unknown) => {
+						console.error('[ImageExtension] Failed to process image file:', err);
+					});
+			},
 		};
 	},
 
@@ -84,7 +96,7 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	},
 
 	addProseMirrorPlugins() {
-		return [createImageDropPastePlugin(this.editor, this.options.onImageFile)];
+		return [createImageDropPastePlugin(this.options.onImageInsert)];
 	},
 
 	addNodeView() {
