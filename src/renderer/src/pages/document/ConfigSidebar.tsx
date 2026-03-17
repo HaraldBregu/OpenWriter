@@ -61,11 +61,55 @@ function toLocalResourceUrl(filePath: string): string {
 const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
+	const dispatch = useDocumentDispatch();
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
 		window.workspace.openDocumentFolder(documentId);
 	}, [documentId]);
+
+	const handleUploadClick = useCallback(() => {
+		fileInputRef.current?.click();
+	}, []);
+
+	const handleFileChange = useCallback(
+		async (e: React.ChangeEvent<HTMLInputElement>) => {
+			const files = e.target.files;
+			if (!files || files.length === 0 || !documentId) return;
+
+			for (const file of Array.from(files)) {
+				try {
+					const dataUri = await readFileAsDataUri(file);
+					const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
+					if (match) {
+						const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+						const base64 = match[2];
+						const fileName = `image-${Date.now()}.${ext}`;
+						await window.workspace.saveDocumentImage({
+							documentId,
+							fileName,
+							base64,
+						});
+					}
+				} catch {
+					/* skip failed files */
+				}
+			}
+
+			// Reset input so the same file can be re-selected
+			e.target.value = '';
+
+			// Refresh images list
+			try {
+				const updated = await window.workspace.listDocumentImages(documentId);
+				dispatch({ type: 'IMAGES_UPDATED', images: updated });
+			} catch {
+				/* file watcher will pick it up */
+			}
+		},
+		[documentId, dispatch]
+	);
 
 	const formattedCreatedAt = useMemo(
 		() => (metadata?.createdAt ? formatDate(metadata.createdAt, i18n.language) : null),
