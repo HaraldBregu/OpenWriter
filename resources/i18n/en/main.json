@@ -117,6 +117,7 @@
 		"description": "Configure your application preferences",
 		"tabs": {
 			"general": "General",
+			"workspace": "Workspace",
 			"models": "Models",
 			"agents": "Agents",
 			"media": "Media",
