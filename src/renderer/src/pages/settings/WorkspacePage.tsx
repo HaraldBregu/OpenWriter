@@ -177,11 +177,9 @@ const WorkspacePage: React.FC = () => {
 							title={currentWorkspace ?? t('workspacePage.notSet')}
 						>
 							{isLoading ? (
-								<span className="text-muted-foreground/50">
-									{t('workspacePage.loading')}
-								</span>
+								<span className="text-muted-foreground/50">{t('workspacePage.loading')}</span>
 							) : (
-								currentWorkspace ?? t('workspacePage.notSet')
+								(currentWorkspace ?? t('workspacePage.notSet'))
 							)}
 						</span>
 					</SectionRow>
@@ -206,9 +204,7 @@ const WorkspacePage: React.FC = () => {
 										type="button"
 										onClick={() => handleStartEdit('name')}
 										className="font-mono text-xs truncate max-w-xs text-left hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
-										title={
-											projectInfo.name || t('workspacePage.namePlaceholder')
-										}
+										title={projectInfo.name || t('workspacePage.namePlaceholder')}
 										aria-label={`${t('workspacePage.name')}: ${projectInfo.name || t('workspacePage.namePlaceholder')}`}
 									>
 										{projectInfo.name || (
@@ -239,10 +235,7 @@ const WorkspacePage: React.FC = () => {
 										type="button"
 										onClick={() => handleStartEdit('description')}
 										className="font-mono text-xs text-right max-w-xs truncate hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
-										title={
-											projectInfo.description ||
-											t('workspacePage.descriptionPlaceholder')
-										}
+										title={projectInfo.description || t('workspacePage.descriptionPlaceholder')}
 										aria-label={`${t('workspacePage.descriptionLabel')}: ${projectInfo.description || t('workspacePage.descriptionPlaceholder')}`}
 									>
 										{projectInfo.description || (
@@ -274,28 +267,22 @@ const WorkspacePage: React.FC = () => {
 					<div className="rounded-md border divide-y text-sm">
 						{projectInfo.agents.length > 0 ? (
 							projectInfo.agents.map((agent) => {
-								const def =
-									AGENT_DEFINITIONS[agent.agentId as AgentId] ?? null;
+								const def = AGENT_DEFINITIONS[agent.agentId as AgentId] ?? null;
 								return (
 									<div key={agent.agentId} className="px-4 py-3">
 										<div className="flex justify-between items-center">
-											<span className="font-medium text-sm">
-												{def?.name ?? agent.agentId}
-											</span>
+											<span className="font-medium text-sm">{def?.name ?? agent.agentId}</span>
 											<span className="text-xs text-muted-foreground">
 												{agent.providerId} / {agent.modelId}
 											</span>
 										</div>
 										<div className="flex gap-4 mt-1 text-xs text-muted-foreground">
 											<span>
-												{t('workspacePage.temperature')}:{' '}
-												{agent.temperature.toFixed(1)}
+												{t('workspacePage.temperature')}: {agent.temperature.toFixed(1)}
 											</span>
 											<span>
 												{t('workspacePage.reasoning')}:{' '}
-												{agent.reasoning
-													? t('workspacePage.enabled')
-													: t('workspacePage.disabled')}
+												{agent.reasoning ? t('workspacePage.enabled') : t('workspacePage.disabled')}
 											</span>
 										</div>
 									</div>
@@ -324,14 +311,10 @@ const WorkspacePage: React.FC = () => {
 							<span className="font-mono text-xs">{projectInfo.appVersion}</span>
 						</SectionRow>
 						<SectionRow label={t('workspacePage.createdAt')}>
-							<span className="font-mono text-xs">
-								{formatDate(projectInfo.createdAt)}
-							</span>
+							<span className="font-mono text-xs">{formatDate(projectInfo.createdAt)}</span>
 						</SectionRow>
 						<SectionRow label={t('workspacePage.updatedAt')}>
-							<span className="font-mono text-xs">
-								{formatDate(projectInfo.updatedAt)}
-							</span>
+							<span className="font-mono text-xs">{formatDate(projectInfo.updatedAt)}</span>
 						</SectionRow>
 					</div>
 				</section>

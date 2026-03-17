@@ -22,10 +22,6 @@ function isItemActive(itemPath: string, currentPathname: string): boolean {
 		: currentPathname === itemPath;
 }
 
-const LINK_BASE = 'block px-3 py-1.5 rounded-md text-sm transition-colors';
-const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
-const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-muted/50';
-
 export function SettingsLayout(): React.JSX.Element {
 	const { t } = useTranslation();
 	const location = useLocation();
@@ -33,19 +29,22 @@ export function SettingsLayout(): React.JSX.Element {
 
 	return (
 		<div className="flex h-full">
-			{/* Sidebar */}
-			<aside className="w-52 border-r shrink-0 overflow-y-auto">
-				<div className="px-4 pt-6 pb-4">
-					<h2 className="text-sm font-medium">{t('settings.title')}</h2>
-				</div>
-				<nav className="px-3 pb-4 space-y-0.5">
+			{/* Sidebar navigation */}
+			<aside className="w-56 shrink-0 border-r overflow-y-auto bg-muted/30">
+				<nav className="px-3 py-4 space-y-0.5" aria-label={t('settings.title')}>
 					{NAV_ITEMS.map((item) => {
 						const active = isItemActive(item.path, location.pathname);
 						return (
 							<NavLink
 								key={item.path}
 								to={item.path}
-								className={`${LINK_BASE} ${active ? LINK_ACTIVE : LINK_INACTIVE}`}
+								className={[
+									'block px-3 py-1.5 rounded-md text-sm transition-colors',
+									active
+										? 'bg-accent text-accent-foreground font-medium'
+										: 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+								].join(' ')}
+								aria-current={active ? 'page' : undefined}
 							>
 								{t(item.labelKey)}
 							</NavLink>
