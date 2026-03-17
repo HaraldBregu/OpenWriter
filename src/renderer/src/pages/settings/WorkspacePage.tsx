@@ -249,9 +249,7 @@ const WorkspacePage: React.FC = () => {
 								type="button"
 								onClick={() => handleStartEdit('description')}
 								className="text-sm text-right max-w-[14rem] truncate hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
-								title={
-									projectInfo.description || t('workspacePage.descriptionPlaceholder')
-								}
+								title={projectInfo.description || t('workspacePage.descriptionPlaceholder')}
 								aria-label={`${t('workspacePage.descriptionLabel')}: ${projectInfo.description || t('workspacePage.descriptionPlaceholder')}`}
 							>
 								{projectInfo.description || (
