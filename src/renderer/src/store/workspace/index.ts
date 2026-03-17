@@ -41,6 +41,7 @@ export {
 	selectWorkspaceError,
 	selectWorkspaceIsLoading,
 	selectWorkspaceDeletionReason,
+	selectProjectName,
 	selectResources,
 	selectResourcesStatus,
 	selectResourcesError,
