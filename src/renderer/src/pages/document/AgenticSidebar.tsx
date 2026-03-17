@@ -12,7 +12,7 @@ const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open, animate = true })
 
 	return (
 		<div
-			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${open ? 'w-80' : 'w-0'}`}
+			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden ${animate ? 'transition-all duration-300 ease-in-out' : ''} ${open ? 'w-80' : 'w-0'}`}
 		>
 			<div className="w-80 flex flex-col items-center justify-center flex-1 p-4 text-muted-foreground">
 				<Bot className="h-8 w-8 mb-2" />
