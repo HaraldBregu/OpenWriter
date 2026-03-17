@@ -799,6 +799,8 @@
 		"updatedAt": "Last Updated",
 		"updatedAtDescription": "When this workspace was last modified",
 		"notSet": "Not set",
-		"loading": "Loading\u2026"
+		"loading": "Loading\u2026",
+		"loadError": "Failed to load workspace information. Please try again.",
+		"saveError": "Failed to save changes. The field is still open so you can retry."
 	}
 }
