@@ -254,15 +254,14 @@ const WorkspacePage: React.FC = () => {
 						description={t('workspacePage.descriptionDescription')}
 					>
 						{editingField === 'description' ? (
-							<AppTextarea
-								ref={textareaRef}
+							<AppInput
+								ref={descriptionInputRef}
 								value={draft}
 								onChange={(e) => setDraft(e.target.value)}
 								onBlur={handleCommit}
 								onKeyDown={handleDescriptionKeyDown}
 								disabled={isSaving}
-								rows={3}
-								className="text-sm w-56 resize-none py-1 px-2"
+								className="h-7 px-2 py-0 text-sm w-56"
 								aria-label={t('workspacePage.descriptionPlaceholder')}
 							/>
 						) : (
