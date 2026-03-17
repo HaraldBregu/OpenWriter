@@ -56,9 +56,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	// Monitor workspace folder for external deletion and redirect to Welcome
 	useWorkspaceValidation();
 
-	// Load current workspace on mount
+	// Load current workspace and project name on mount
 	useEffect(() => {
-		dispatch(loadCurrentWorkspace());
+		dispatch(loadCurrentWorkspace()).then(() => {
+			dispatch(loadProjectName());
+		});
 	}, [dispatch]);
 
 	// -------------------------------------------------------------------------
