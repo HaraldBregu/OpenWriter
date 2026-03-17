@@ -12,7 +12,7 @@ const SystemSettingsPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.layout')} />
 
-			<p className="text-sm font-normal mb-1">{t('settings.theme.title')}</p>
+			<h2 className="text-sm font-normal mb-1">{t('settings.theme.title')}</h2>
 			<p className="text-xs text-muted-foreground mb-4">{t('settings.theme.description')}</p>
 			<div className="rounded-md border divide-y">
 				<ThemeModeSelector />
