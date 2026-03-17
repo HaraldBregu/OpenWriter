@@ -197,6 +197,11 @@ export const workspaceSlice = createSlice({
 				state.resourcesError = action.error.message || 'Failed to remove resources';
 			});
 
+		// loadProjectName
+		builder.addCase(loadProjectName.fulfilled, (state, action) => {
+			state.projectName = action.payload;
+		});
+
 		// loadIndexingInfo
 		builder.addCase(loadIndexingInfo.fulfilled, (state, action) => {
 			state.indexingInfo = action.payload;
