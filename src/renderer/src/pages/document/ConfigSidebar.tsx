@@ -1,6 +1,16 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Calendar, Tag, Image, FolderOpen, FileDown, FileType, Link } from 'lucide-react';
+import {
+	FileText,
+	Calendar,
+	Tag,
+	Image,
+	FolderOpen,
+	FileDown,
+	FileType,
+	Link,
+	ChevronDown,
+} from 'lucide-react';
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../shared/types';
 import {
 	AppLabel,
@@ -86,9 +96,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 
 	return (
 		<div
-			className={`shrink-0 border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${open ? 'w-72' : 'w-0'}`}
+			className={`shrink-0 border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${open ? 'w-80' : 'w-0'}`}
 		>
-			<AppCard className="w-72 bg-transparent shadow-none border-none rounded-none">
+			<AppCard className="w-full bg-transparent shadow-none border-none rounded-none">
 				{/* Document Info */}
 				{metadata && (
 					<AppCardHeader className="p-4 pb-0">
@@ -111,9 +121,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 								</AppLabel>
 								<div className="flex items-center gap-1.5">
 									<FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-									<span className="text-sm text-foreground truncate">
-										{metadata.title || '—'}
-									</span>
+									<span className="text-sm text-foreground truncate">{metadata.title || '—'}</span>
 								</div>
 							</div>
 							<div className="space-y-1">
