@@ -152,6 +152,10 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 								{t('common.share')}
 							</AppDropdownMenuItem>
 							<AppDropdownMenuSeparator />
+							<AppDropdownMenuItem onClick={onOpenFolder}>
+								<FolderOpen className="h-4 w-4" />
+								{t('common.openFolder')}
+							</AppDropdownMenuItem>
 							<AppDropdownMenuItem>
 								<Copy className="h-4 w-4" />
 								{t('common.duplicate')}
