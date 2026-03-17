@@ -121,7 +121,27 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	}, []);
 
 	const handleEdit = useCallback(() => {
-		/* TODO: open image editor */
+		setEditing(true);
+	}, []);
+
+	const handleEditorSave = useCallback(
+		(dataUri: string) => {
+			const pos = getPos();
+			if (typeof pos === 'number') {
+				editor.view.dispatch(
+					editor.view.state.tr.setNodeMarkup(pos, undefined, {
+						...node.attrs,
+						src: dataUri,
+					})
+				);
+			}
+			setEditing(false);
+		},
+		[editor, getPos, node.attrs]
+	);
+
+	const handleEditorCancel = useCallback(() => {
+		setEditing(false);
 	}, []);
 
 	const showToolbar = hovered && !loadError && resolvedSrc;
