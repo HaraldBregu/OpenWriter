@@ -115,7 +115,7 @@ const DocumentPage: React.FC = () => {
 						setMetadata(output.metadata);
 					}
 				})
-				.catch(() => {});
+				.catch(() => { });
 		});
 
 		return unsubscribe;
@@ -408,63 +408,63 @@ const DocumentPage: React.FC = () => {
 
 	return (
 		<DocumentProvider documentId={id}>
-		<div className="h-full flex flex-col">
-			<DocumentHeader
-				title={title}
-				onTitleChange={handleTitleChange}
-				sidebarOpen={sidebarOpen}
-				onToggleSidebar={() => {
-					setSidebarOpen((prev) => {
-						if (!prev) setAgenticSidebarOpen(false);
-						return !prev;
-					});
-				}}
-				agenticSidebarOpen={agenticSidebarOpen}
-				onToggleAgenticSidebar={() => {
-					setAgenticSidebarOpen((prev) => {
-						if (!prev) setSidebarOpen(false);
-						return !prev;
-					});
-				}}
-				isTrashing={isTrashing}
-				onMoveToTrash={handleMoveToTrash}
-				onSearch={handleSearch}
-				onClearSearch={handleClearSearch}
-				onOpenFolder={handleOpenFolder}
-			/>
+			<div className="h-full flex flex-col">
+				<DocumentHeader
+					title={title}
+					onTitleChange={handleTitleChange}
+					sidebarOpen={sidebarOpen}
+					onToggleSidebar={() => {
+						setSidebarOpen((prev) => {
+							if (!prev) setAgenticSidebarOpen(false);
+							return !prev;
+						});
+					}}
+					agenticSidebarOpen={agenticSidebarOpen}
+					onToggleAgenticSidebar={() => {
+						setAgenticSidebarOpen((prev) => {
+							if (!prev) setSidebarOpen(false);
+							return !prev;
+						});
+					}}
+					isTrashing={isTrashing}
+					onMoveToTrash={handleMoveToTrash}
+					onSearch={handleSearch}
+					onClearSearch={handleClearSearch}
+					onOpenFolder={handleOpenFolder}
+				/>
 
-			{/* Editor + Right Sidebar */}
-			<div className="flex-1 flex min-h-0">
-				<div className="flex-1 flex flex-col min-w-0">
-					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-							{loaded && (
-								<TextEditor
-									disabled={
-										textCompleterTask.isRunning ||
-										textEnhanceTask.isRunning ||
-										textWriterTask.isRunning ||
-										imageGeneratorTask.isRunning
-									}
-									ref={editorRef}
-									key={id}
-									value={content}
-									onChange={handleContentChange}
-									onContinueWithAssistant={onContinueWithAssistant}
-									onEnhanceWithAssistant={onEnhanceWithAssistant}
-									onTextSubmit={onTextSubmit}
-									onImageSubmit={onImageSubmit}
-									documentId={id}
-								/>
-							)}
+				{/* Editor + Right Sidebar */}
+				<div className="flex-1 flex min-h-0">
+					<div className="flex-1 flex flex-col min-w-0">
+						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+							<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
+								{loaded && (
+									<TextEditor
+										disabled={
+											textCompleterTask.isRunning ||
+											textEnhanceTask.isRunning ||
+											textWriterTask.isRunning ||
+											imageGeneratorTask.isRunning
+										}
+										ref={editorRef}
+										key={id}
+										value={content}
+										onChange={handleContentChange}
+										onContinueWithAssistant={onContinueWithAssistant}
+										onEnhanceWithAssistant={onEnhanceWithAssistant}
+										onTextSubmit={onTextSubmit}
+										onImageSubmit={onImageSubmit}
+										documentId={id}
+									/>
+								)}
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<ConfigSidebar open={sidebarOpen} />
-				<AgenticSidebar open={agenticSidebarOpen} />
+					<ConfigSidebar open={sidebarOpen} />
+					<AgenticSidebar open={agenticSidebarOpen} />
+				</div>
 			</div>
-		</div>
 		</DocumentProvider>
 	);
 };

@@ -27,7 +27,6 @@ import {
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
-	readonly onOpenFolder: () => void;
 }
 
 function formatDate(isoString: string, locale: string): string {
