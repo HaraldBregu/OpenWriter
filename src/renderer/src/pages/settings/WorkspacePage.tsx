@@ -71,7 +71,7 @@ const WorkspacePage: React.FC = () => {
 	const [draft, setDraft] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
 	const [saveError, setSaveError] = useState(false);
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const descriptionInputRef = useRef<HTMLInputElement>(null);
 
 	// ---- Load workspace data ------------------------------------------------
 
