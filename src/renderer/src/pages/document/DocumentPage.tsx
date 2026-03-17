@@ -421,8 +421,9 @@ const DocumentPage: React.FC = () => {
 				onOpenFolder={handleOpenFolder}
 			/>
 
-			{/* Editor + Right Sidebar */}
+			{/* Agentic Sidebar + Editor + Config Sidebar */}
 			<div className="flex-1 flex min-h-0">
+				<AgenticSidebar open={agenticSidebarOpen} />
 				<div className="flex-1 flex flex-col min-w-0">
 					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
 						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
