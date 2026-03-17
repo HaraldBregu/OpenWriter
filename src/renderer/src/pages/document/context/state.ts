@@ -1,10 +1,11 @@
-import type { OutputFileMetadata } from '../../../../../shared/types';
+import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
 
 export interface DocumentState {
 	readonly documentId: string | undefined;
 	readonly title: string;
 	readonly content: string;
 	readonly metadata: OutputFileMetadata | null;
+	readonly images: DocumentImageInfo[];
 	readonly loaded: boolean;
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
@@ -16,6 +17,7 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	title: '',
 	content: '',
 	metadata: null,
+	images: [],
 	loaded: false,
 	isTrashing: false,
 	sidebarOpen: true,
