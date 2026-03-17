@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	FileText,
@@ -10,8 +10,9 @@ import {
 	FileType,
 	Link,
 	ChevronDown,
+	Plus,
 } from 'lucide-react';
-import { useDocumentState } from './hooks';
+import { useDocumentState, useDocumentDispatch } from './hooks';
 import {
 	AppLabel,
 	AppCard,
