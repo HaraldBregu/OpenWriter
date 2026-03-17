@@ -411,9 +411,19 @@ const DocumentPage: React.FC = () => {
 				title={title}
 				onTitleChange={handleTitleChange}
 				sidebarOpen={sidebarOpen}
-				onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+				onToggleSidebar={() => {
+					setSidebarOpen((prev) => {
+						if (!prev) setAgenticSidebarOpen(false);
+						return !prev;
+					});
+				}}
 				agenticSidebarOpen={agenticSidebarOpen}
-				onToggleAgenticSidebar={() => setAgenticSidebarOpen((prev) => !prev)}
+				onToggleAgenticSidebar={() => {
+					setAgenticSidebarOpen((prev) => {
+						if (!prev) setSidebarOpen(false);
+						return !prev;
+					});
+				}}
 				isTrashing={isTrashing}
 				onMoveToTrash={handleMoveToTrash}
 				onSearch={handleSearch}
