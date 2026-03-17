@@ -204,35 +204,38 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 
 				{/* Share & Export */}
 				{documentId && (
-					<AppCardFooter className="flex-col items-stretch border-t border-border px-4 pt-4 pb-4">
-						<div className="mb-2">
-							<span className="text-xs font-medium text-muted-foreground/70">
+					<AppCardFooter className="flex-col items-stretch border-t border-border p-0">
+						<AppCollapsible>
+							<AppCollapsibleTrigger className="justify-between px-4 py-3 text-xs font-medium text-muted-foreground/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors">
 								{t('configSidebar.shareAndExport')}
-							</span>
-						</div>
-						<div className="space-y-1">
-							<button
-								type="button"
-								className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
-							>
-								<FileDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-								{t('configSidebar.exportPdf')}
-							</button>
-							<button
-								type="button"
-								className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
-							>
-								<FileType className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-								{t('configSidebar.exportMd')}
-							</button>
-							<button
-								type="button"
-								className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
-							>
-								<Link className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-								{t('configSidebar.shareLink')}
-							</button>
-						</div>
+								<ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 [[data-panel-open]_&]:rotate-180" />
+							</AppCollapsibleTrigger>
+							<AppCollapsiblePanel>
+								<div className="space-y-1 px-4 pb-4">
+									<button
+										type="button"
+										className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+									>
+										<FileDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+										{t('configSidebar.exportPdf')}
+									</button>
+									<button
+										type="button"
+										className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+									>
+										<FileType className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+										{t('configSidebar.exportMd')}
+									</button>
+									<button
+										type="button"
+										className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+									>
+										<Link className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+										{t('configSidebar.shareLink')}
+									</button>
+								</div>
+							</AppCollapsiblePanel>
+						</AppCollapsible>
 					</AppCardFooter>
 				)}
 			</AppCard>
