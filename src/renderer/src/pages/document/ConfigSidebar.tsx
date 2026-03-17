@@ -162,7 +162,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 					</AppCardHeader>
 				)}
 
-				<AppCardContent className="p-4">
+				<AppCardContent className="p-4 flex-1">
 					{/* Resources */}
 					{documentId && (
 						<>
