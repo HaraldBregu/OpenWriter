@@ -102,25 +102,49 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 		};
 	}, [id]);
 
+	// Load images
+	const loadImages = useCallback(async () => {
+		if (!id) {
+			dispatch({ type: 'IMAGES_UPDATED', images: [] });
+			return;
+		}
+		try {
+			const result = await window.workspace.listDocumentImages(id);
+			dispatch({ type: 'IMAGES_UPDATED', images: result });
+		} catch {
+			dispatch({ type: 'IMAGES_UPDATED', images: [] });
+		}
+	}, [id, dispatch]);
+
+	useEffect(() => {
+		loadImages();
+	}, [loadImages]);
+
+	// File-watcher: sync metadata + images
 	useEffect(() => {
 		if (!id) return;
 
 		const unsubscribe = window.workspace.onOutputFileChange((event) => {
 			if (event.outputType !== 'documents' || event.fileId !== id) return;
-			if (event.type !== 'changed') return;
 
-			window.workspace
-				.loadOutput({ type: 'documents', id })
-				.then((output) => {
-					if (output) {
-						dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
-					}
-				})
-				.catch(() => {});
+			if (event.type === 'changed') {
+				window.workspace
+					.loadOutput({ type: 'documents', id })
+					.then((output) => {
+						if (output) {
+							dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
+						}
+					})
+					.catch(() => {});
+			}
+
+			if (event.type === 'changed' || event.type === 'added') {
+				loadImages();
+			}
 		});
 
 		return unsubscribe;
-	}, [id]);
+	}, [id, loadImages, dispatch]);
 
 	const debouncedSave = useMemo(
 		() =>
