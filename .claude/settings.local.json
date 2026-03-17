@@ -95,7 +95,8 @@
       "Bash(npm info:*)",
       "Bash(npm view:*)",
       "Bash(lsof:*)",
-      "Bash(npm pack:*)"
+      "Bash(npm pack:*)",
+      "Bash(xxd:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

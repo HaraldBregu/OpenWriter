@@ -124,6 +124,14 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
+														path="workspace"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<WorkspacePage />
+															</Suspense>
+														}
+													/>
+													<Route
 														path="models"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
