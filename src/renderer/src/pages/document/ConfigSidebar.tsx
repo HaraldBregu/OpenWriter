@@ -130,7 +130,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 					</AppCardHeader>
 				)}
 
-				<AppCardContent className="p-4 flex-1">
+				<AppCardContent className="p-4 flex-1 space-y-4">
 					{/* Images */}
 					{documentId && (
 						<>
