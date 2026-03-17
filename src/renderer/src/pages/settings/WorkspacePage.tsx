@@ -145,19 +145,7 @@ const WorkspacePage: React.FC = () => {
 			});
 	}, [editingField, draft, projectInfo]);
 
-	const handleNameKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (e.key === 'Enter') {
-				e.preventDefault();
-				handleCommit();
-			} else if (e.key === 'Escape') {
-				handleCancel();
-			}
-		},
-		[handleCommit, handleCancel]
-	);
-
-	const handleDescriptionKeyDown = useCallback(
+	const handleEditKeyDown = useCallback(
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
 			if (e.key === 'Enter') {
 				e.preventDefault();
