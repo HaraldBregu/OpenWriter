@@ -47,13 +47,9 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
-	open,
-	documentId,
-	metadata,
-	onOpenFolder,
-}) => {
+const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
+	const { documentId, metadata } = useDocumentState();
 	const [images, setImages] = useState<DocumentImageInfo[]>([]);
 
 	const loadImages = useCallback(async () => {
