@@ -321,6 +321,34 @@ const WorkspacePage: React.FC = () => {
 					>
 						<span className="text-sm">{formatDate(projectInfo.updatedAt)}</span>
 					</SettingRow>
+
+					{/* ── Agent Configuration ───────────────────────────────── */}
+					<SectionHeader title={t('workspacePage.sections.agentConfig')} />
+
+					{projectInfo.agents.length > 0 ? (
+						projectInfo.agents.map((agent) => {
+							const isKnownAgent = (AGENT_IDS as readonly string[]).includes(agent.agentId);
+							const def = isKnownAgent ? AGENT_DEFINITIONS[agent.agentId as AgentId] : null;
+							return (
+								<SettingRow
+									key={agent.agentId}
+									label={def?.name ?? agent.agentId}
+									description={`${t('workspacePage.temperature')}: ${agent.temperature.toFixed(1)} \u00B7 ${t('workspacePage.reasoning')}: ${agent.reasoning ? t('workspacePage.enabled') : t('workspacePage.disabled')}`}
+								>
+									<span className="text-xs text-muted-foreground">
+										{agent.providerId} / {agent.modelId}
+									</span>
+								</SettingRow>
+							);
+						})
+					) : (
+						<SettingRow
+							label={t('workspacePage.noAgents')}
+							description={t('workspacePage.noAgentsDescription')}
+						>
+							<span />
+						</SettingRow>
+					)}
 				</>
 			)}
 		</div>
