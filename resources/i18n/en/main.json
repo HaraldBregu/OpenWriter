@@ -765,5 +765,31 @@
 		"untitled": "Untitled",
 		"resources": "Resources",
 		"debug": "Debug"
+	},
+	"workspacePage": {
+		"title": "Workspace",
+		"description": "View and manage your workspace configuration",
+		"sections": {
+			"baseInfo": "Base Information",
+			"agentConfig": "Agent Configuration",
+			"versioning": "Versioning"
+		},
+		"path": "Workspace Path",
+		"name": "Project Name",
+		"namePlaceholder": "Enter project name",
+		"descriptionLabel": "Description",
+		"descriptionPlaceholder": "Enter project description",
+		"projectId": "Project ID",
+		"temperature": "Temperature",
+		"reasoning": "Reasoning",
+		"enabled": "Enabled",
+		"disabled": "Disabled",
+		"noAgents": "No agents configured",
+		"schemaVersion": "Schema Version",
+		"appVersion": "App Version",
+		"createdAt": "Created",
+		"updatedAt": "Last Updated",
+		"notSet": "Not set",
+		"loading": "Loading\u2026"
 	}
 }
