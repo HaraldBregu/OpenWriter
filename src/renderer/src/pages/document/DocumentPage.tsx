@@ -8,6 +8,7 @@ import { useTask } from '@/hooks/use-task';
 import type { OutputFileMetadata } from '../../../../shared/types';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
+import AgenticSidebar from './AgenticSidebar';
 
 type TextCompleterTaskData = {
 	prompt: string;
