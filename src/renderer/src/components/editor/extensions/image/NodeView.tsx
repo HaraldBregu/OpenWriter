@@ -11,6 +11,7 @@ import {
 	AppTooltipContent,
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
+import { ImageEditor } from './ImageEditor';
 
 interface ImageAttrs {
 	src: string | null;
