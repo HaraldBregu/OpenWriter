@@ -123,9 +123,11 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 						variant={sidebarOpen ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleSidebar')}
+						aria-label={t('titleBar.toggleSidebar')}
+						aria-expanded={sidebarOpen}
 						onClick={onToggleSidebar}
 					>
-						<Info className="h-4 w-4" />
+						<Info className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
