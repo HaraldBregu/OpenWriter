@@ -102,6 +102,7 @@ const WorkspacePage: React.FC = () => {
 	const handleStartEdit = useCallback(
 		(field: 'name' | 'description') => {
 			if (!projectInfo) return;
+			setSaveError(false);
 			setEditingField(field);
 			setDraft(field === 'name' ? projectInfo.name : projectInfo.description);
 		},
