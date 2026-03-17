@@ -91,10 +91,11 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 								<button
 									type="button"
 									onClick={onOpenFolder}
-									className="text-muted-foreground/70 hover:text-foreground transition-colors"
+									className="p-1 rounded text-muted-foreground/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+									aria-label={t('common.openFolder')}
 									title={t('common.openFolder')}
 								>
-									<FolderOpen className="h-3.5 w-3.5" />
+									<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
 								</button>
 							</AppCardTitle>
 						</AppCardHeader>
@@ -106,7 +107,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-										<span className="text-sm text-foreground truncate">{metadata.title || '—'}</span>
+										<span className="text-sm text-foreground truncate">
+											{metadata.title || '—'}
+										</span>
 									</div>
 								</div>
 								<div className="space-y-1">
@@ -168,7 +171,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 												loading="lazy"
 											/>
 											<div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-												<span className="text-[10px] text-white truncate block">{img.fileName}</span>
+												<span className="text-[10px] text-white truncate block">
+													{img.fileName}
+												</span>
 											</div>
 										</div>
 									))}
