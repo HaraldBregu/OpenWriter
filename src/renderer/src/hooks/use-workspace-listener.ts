@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from '@/store';
 import { handleWorkspaceChanged } from '@/store/workspace/reducer';
+import { loadProjectName } from '@/store/workspace/actions';
 import type { WorkspaceChangedEvent } from '../../../shared/types';
 
 /**
@@ -15,8 +16,10 @@ export function useWorkspaceListener(): void {
 
 	useEffect(() => {
 		const unsubscribe = window.workspace.onChange((event: WorkspaceChangedEvent) => {
-			console.log('[useWorkspaceListener] Workspace changed:', event.currentPath);
 			dispatch(handleWorkspaceChanged(event));
+			if (event.currentPath) {
+				dispatch(loadProjectName());
+			}
 		});
 
 		return () => {
