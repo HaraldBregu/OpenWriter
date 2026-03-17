@@ -23,19 +23,36 @@ function formatDate(iso: string): string {
 type EditingField = 'name' | 'description' | null;
 
 // ---------------------------------------------------------------------------
-// Section row — keeps the key/value layout DRY
+// Section header — small muted text used as a visual divider
 // ---------------------------------------------------------------------------
 
-interface SectionRowProps {
-	readonly label: string;
-	readonly children: React.ReactNode;
-	readonly alignTop?: boolean;
+interface SectionHeaderProps {
+	readonly title: string;
 }
 
-const SectionRow: React.FC<SectionRowProps> = ({ label, children, alignTop }) => (
-	<div className={`flex justify-between ${alignTop ? 'items-start' : 'items-center'} px-4 py-2.5`}>
-		<span className={`text-muted-foreground shrink-0 ${alignTop ? 'pt-0.5' : ''}`}>{label}</span>
-		<div className="ml-4 flex justify-end">{children}</div>
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
+	<div className="pt-6 pb-2 px-1 first:pt-0">
+		<h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h3>
+	</div>
+);
+
+// ---------------------------------------------------------------------------
+// Setting row — label + description on the left, action/value on the right
+// ---------------------------------------------------------------------------
+
+interface SettingRowProps {
+	readonly label: string;
+	readonly description?: string;
+	readonly children: React.ReactNode;
+}
+
+const SettingRow: React.FC<SettingRowProps> = ({ label, description, children }) => (
+	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
+		<div className="min-w-0 mr-4">
+			<p className="text-sm">{label}</p>
+			{description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
+		</div>
+		<div className="shrink-0">{children}</div>
 	</div>
 );
 
@@ -158,166 +175,162 @@ const WorkspacePage: React.FC = () => {
 	// ---- Render -------------------------------------------------------------
 
 	return (
-		<div className="mx-auto w-full p-6 space-y-8">
-			<div>
-				<h1 className="text-lg font-normal">{t('workspacePage.title')}</h1>
-				<p className="text-sm text-muted-foreground">{t('workspacePage.description')}</p>
-			</div>
+		<div className="mx-auto w-full max-w-2xl p-6">
+			{/* Page title */}
+			<h1 className="text-xl font-semibold mb-6">{t('workspacePage.title')}</h1>
 
 			{/* ── Base Information ─────────────────────────────────────────── */}
-			<section className="space-y-3">
-				<h2 className="text-sm font-normal text-muted-foreground">
-					{t('workspacePage.sections.baseInfo')}
-				</h2>
-				<div className="rounded-md border divide-y text-sm">
-					{/* Workspace path */}
-					<SectionRow label={t('workspacePage.path')}>
-						<span
-							className="font-mono text-xs truncate max-w-md"
-							title={currentWorkspace ?? t('workspacePage.notSet')}
-						>
-							{isLoading ? (
-								<span className="text-muted-foreground/50">{t('workspacePage.loading')}</span>
-							) : (
-								(currentWorkspace ?? t('workspacePage.notSet'))
-							)}
-						</span>
-					</SectionRow>
+			<SectionHeader title={t('workspacePage.sections.baseInfo')} />
 
-					{!isLoading && currentWorkspace && projectInfo && (
-						<>
-							{/* Project name (editable) */}
-							<SectionRow label={t('workspacePage.name')}>
-								{editingField === 'name' ? (
-									<AppInput
-										autoFocus
-										value={draft}
-										onChange={(e) => setDraft(e.target.value)}
-										onBlur={handleCommit}
-										onKeyDown={handleNameKeyDown}
-										disabled={isSaving}
-										className="h-6 px-1.5 py-0 text-xs font-mono w-64 max-w-full"
-										aria-label={t('workspacePage.namePlaceholder')}
-									/>
-								) : (
-									<button
-										type="button"
-										onClick={() => handleStartEdit('name')}
-										className="font-mono text-xs truncate max-w-xs text-left hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
-										title={projectInfo.name || t('workspacePage.namePlaceholder')}
-										aria-label={`${t('workspacePage.name')}: ${projectInfo.name || t('workspacePage.namePlaceholder')}`}
-									>
-										{projectInfo.name || (
-											<span className="text-muted-foreground/50 italic">
-												{t('workspacePage.namePlaceholder')}
-											</span>
-										)}
-									</button>
-								)}
-							</SectionRow>
+			{/* Workspace path */}
+			<SettingRow label={t('workspacePage.path')} description={t('workspacePage.pathDescription')}>
+				<span
+					className="font-mono text-xs truncate max-w-xs inline-block text-muted-foreground"
+					title={currentWorkspace ?? t('workspacePage.notSet')}
+				>
+					{isLoading ? t('workspacePage.loading') : (currentWorkspace ?? t('workspacePage.notSet'))}
+				</span>
+			</SettingRow>
 
-							{/* Description (editable) */}
-							<SectionRow label={t('workspacePage.descriptionLabel')} alignTop>
-								{editingField === 'description' ? (
-									<AppTextarea
-										ref={textareaRef}
-										value={draft}
-										onChange={(e) => setDraft(e.target.value)}
-										onBlur={handleCommit}
-										onKeyDown={handleDescriptionKeyDown}
-										disabled={isSaving}
-										rows={3}
-										className="text-xs font-mono w-64 max-w-full resize-none py-1 px-1.5"
-										aria-label={t('workspacePage.descriptionPlaceholder')}
-									/>
-								) : (
-									<button
-										type="button"
-										onClick={() => handleStartEdit('description')}
-										className="font-mono text-xs text-right max-w-xs truncate hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
-										title={projectInfo.description || t('workspacePage.descriptionPlaceholder')}
-										aria-label={`${t('workspacePage.descriptionLabel')}: ${projectInfo.description || t('workspacePage.descriptionPlaceholder')}`}
-									>
-										{projectInfo.description || (
-											<span className="text-muted-foreground/50 italic">
-												{t('workspacePage.descriptionPlaceholder')}
-											</span>
-										)}
-									</button>
-								)}
-							</SectionRow>
-
-							{/* Project ID */}
-							<SectionRow label={t('workspacePage.projectId')}>
-								<span className="font-mono text-xs truncate max-w-xs text-muted-foreground/70">
-									{projectInfo.projectId}
-								</span>
-							</SectionRow>
-						</>
-					)}
-				</div>
-			</section>
-
-			{/* ── Agent Configuration ─────────────────────────────────────── */}
 			{!isLoading && currentWorkspace && projectInfo && (
-				<section className="space-y-3">
-					<h2 className="text-sm font-normal text-muted-foreground">
-						{t('workspacePage.sections.agentConfig')}
-					</h2>
-					<div className="rounded-md border divide-y text-sm">
-						{projectInfo.agents.length > 0 ? (
-							projectInfo.agents.map((agent) => {
-								const def = AGENT_DEFINITIONS[agent.agentId as AgentId] ?? null;
-								return (
-									<div key={agent.agentId} className="px-4 py-3">
-										<div className="flex justify-between items-center">
-											<span className="font-medium text-sm">{def?.name ?? agent.agentId}</span>
-											<span className="text-xs text-muted-foreground">
-												{agent.providerId} / {agent.modelId}
-											</span>
-										</div>
-										<div className="flex gap-4 mt-1 text-xs text-muted-foreground">
-											<span>
-												{t('workspacePage.temperature')}: {agent.temperature.toFixed(1)}
-											</span>
-											<span>
-												{t('workspacePage.reasoning')}:{' '}
-												{agent.reasoning ? t('workspacePage.enabled') : t('workspacePage.disabled')}
-											</span>
-										</div>
-									</div>
-								);
-							})
+				<>
+					{/* Project name (editable) */}
+					<SettingRow
+						label={t('workspacePage.name')}
+						description={t('workspacePage.nameDescription')}
+					>
+						{editingField === 'name' ? (
+							<AppInput
+								autoFocus
+								value={draft}
+								onChange={(e) => setDraft(e.target.value)}
+								onBlur={handleCommit}
+								onKeyDown={handleNameKeyDown}
+								disabled={isSaving}
+								className="h-7 px-2 py-0 text-sm w-56"
+								aria-label={t('workspacePage.namePlaceholder')}
+							/>
 						) : (
-							<div className="px-4 py-3 text-muted-foreground/70 text-center">
-								{t('workspacePage.noAgents')}
-							</div>
+							<button
+								type="button"
+								onClick={() => handleStartEdit('name')}
+								className="text-sm truncate max-w-[14rem] text-right hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
+								title={projectInfo.name || t('workspacePage.namePlaceholder')}
+								aria-label={`${t('workspacePage.name')}: ${projectInfo.name || t('workspacePage.namePlaceholder')}`}
+							>
+								{projectInfo.name || (
+									<span className="text-muted-foreground italic">
+										{t('workspacePage.namePlaceholder')}
+									</span>
+								)}
+							</button>
 						)}
-					</div>
-				</section>
-			)}
+					</SettingRow>
 
-			{/* ── Versioning ──────────────────────────────────────────────── */}
-			{!isLoading && currentWorkspace && projectInfo && (
-				<section className="space-y-3">
-					<h2 className="text-sm font-normal text-muted-foreground">
-						{t('workspacePage.sections.versioning')}
-					</h2>
-					<div className="rounded-md border divide-y text-sm">
-						<SectionRow label={t('workspacePage.schemaVersion')}>
-							<span className="font-mono text-xs">{projectInfo.version}</span>
-						</SectionRow>
-						<SectionRow label={t('workspacePage.appVersion')}>
-							<span className="font-mono text-xs">{projectInfo.appVersion}</span>
-						</SectionRow>
-						<SectionRow label={t('workspacePage.createdAt')}>
-							<span className="font-mono text-xs">{formatDate(projectInfo.createdAt)}</span>
-						</SectionRow>
-						<SectionRow label={t('workspacePage.updatedAt')}>
-							<span className="font-mono text-xs">{formatDate(projectInfo.updatedAt)}</span>
-						</SectionRow>
-					</div>
-				</section>
+					{/* Description (editable) */}
+					<SettingRow
+						label={t('workspacePage.descriptionLabel')}
+						description={t('workspacePage.descriptionDescription')}
+					>
+						{editingField === 'description' ? (
+							<AppTextarea
+								ref={textareaRef}
+								value={draft}
+								onChange={(e) => setDraft(e.target.value)}
+								onBlur={handleCommit}
+								onKeyDown={handleDescriptionKeyDown}
+								disabled={isSaving}
+								rows={3}
+								className="text-sm w-56 resize-none py-1 px-2"
+								aria-label={t('workspacePage.descriptionPlaceholder')}
+							/>
+						) : (
+							<button
+								type="button"
+								onClick={() => handleStartEdit('description')}
+								className="text-sm text-right max-w-[14rem] truncate hover:text-foreground hover:underline underline-offset-2 transition-colors cursor-text"
+								title={
+									projectInfo.description || t('workspacePage.descriptionPlaceholder')
+								}
+								aria-label={`${t('workspacePage.descriptionLabel')}: ${projectInfo.description || t('workspacePage.descriptionPlaceholder')}`}
+							>
+								{projectInfo.description || (
+									<span className="text-muted-foreground italic">
+										{t('workspacePage.descriptionPlaceholder')}
+									</span>
+								)}
+							</button>
+						)}
+					</SettingRow>
+
+					{/* Project ID */}
+					<SettingRow
+						label={t('workspacePage.projectId')}
+						description={t('workspacePage.projectIdDescription')}
+					>
+						<span className="font-mono text-xs text-muted-foreground truncate max-w-[14rem] inline-block">
+							{projectInfo.projectId}
+						</span>
+					</SettingRow>
+
+					{/* ── Agent Configuration ───────────────────────────────── */}
+					<SectionHeader title={t('workspacePage.sections.agentConfig')} />
+
+					{projectInfo.agents.length > 0 ? (
+						projectInfo.agents.map((agent) => {
+							const def = AGENT_DEFINITIONS[agent.agentId as AgentId] ?? null;
+							return (
+								<SettingRow
+									key={agent.agentId}
+									label={def?.name ?? agent.agentId}
+									description={`${t('workspacePage.temperature')}: ${agent.temperature.toFixed(1)} \u00B7 ${t('workspacePage.reasoning')}: ${agent.reasoning ? t('workspacePage.enabled') : t('workspacePage.disabled')}`}
+								>
+									<span className="text-xs text-muted-foreground">
+										{agent.providerId} / {agent.modelId}
+									</span>
+								</SettingRow>
+							);
+						})
+					) : (
+						<SettingRow
+							label={t('workspacePage.noAgents')}
+							description={t('workspacePage.noAgentsDescription')}
+						>
+							<span />
+						</SettingRow>
+					)}
+
+					{/* ── Versioning ────────────────────────────────────────── */}
+					<SectionHeader title={t('workspacePage.sections.versioning')} />
+
+					<SettingRow
+						label={t('workspacePage.schemaVersion')}
+						description={t('workspacePage.schemaVersionDescription')}
+					>
+						<span className="font-mono text-sm">{projectInfo.version}</span>
+					</SettingRow>
+
+					<SettingRow
+						label={t('workspacePage.appVersion')}
+						description={t('workspacePage.appVersionDescription')}
+					>
+						<span className="font-mono text-sm">{projectInfo.appVersion}</span>
+					</SettingRow>
+
+					<SettingRow
+						label={t('workspacePage.createdAt')}
+						description={t('workspacePage.createdAtDescription')}
+					>
+						<span className="text-sm">{formatDate(projectInfo.createdAt)}</span>
+					</SettingRow>
+
+					<SettingRow
+						label={t('workspacePage.updatedAt')}
+						description={t('workspacePage.updatedAtDescription')}
+					>
+						<span className="text-sm">{formatDate(projectInfo.updatedAt)}</span>
+					</SettingRow>
+				</>
 			)}
 		</div>
 	);
