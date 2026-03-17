@@ -157,12 +157,15 @@ const WorkspacePage: React.FC = () => {
 	);
 
 	const handleDescriptionKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-			if (e.key === 'Escape') {
+		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				handleCommit();
+			} else if (e.key === 'Escape') {
 				handleCancel();
 			}
 		},
-		[handleCancel]
+		[handleCommit, handleCancel]
 	);
 
 	// Focus textarea when description editing starts
