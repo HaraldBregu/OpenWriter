@@ -64,6 +64,40 @@ function apiKeyReducer(state: ProviderStateMap, action: ApiKeyAction): ProviderS
 }
 
 // ---------------------------------------------------------------------------
+// Section header — small muted text used as a visual divider
+// ---------------------------------------------------------------------------
+
+interface SectionHeaderProps {
+	readonly title: string;
+}
+
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
+	<div className="pt-6 pb-2 first:pt-0">
+		<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h2>
+	</div>
+);
+
+// ---------------------------------------------------------------------------
+// Setting row — label + description on the left, action/value on the right
+// ---------------------------------------------------------------------------
+
+interface SettingRowProps {
+	readonly label: string;
+	readonly description?: string;
+	readonly children: React.ReactNode;
+}
+
+const SettingRow: React.FC<SettingRowProps> = ({ label, description, children }) => (
+	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
+		<div className="min-w-0 mr-4">
+			<p className="text-sm">{label}</p>
+			{description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
+		</div>
+		<div className="min-w-0">{children}</div>
+	</div>
+);
+
+// ---------------------------------------------------------------------------
 // ProviderApiKeyRow
 // ---------------------------------------------------------------------------
 
@@ -430,50 +464,39 @@ const ModelsSettingsPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="mx-auto w-full space-y-8 p-6">
-			<div>
-				<h1 className="text-lg font-normal">{t('settings.models.title')}</h1>
-				<p className="text-sm text-muted-foreground">{t('settings.models.description')}</p>
+		<div className="w-full max-w-2xl p-6">
+			<h1 className="text-lg font-normal mb-6">{t('settings.models.title')}</h1>
+
+			{/* ── API Keys ────────────────────────────────────────────────── */}
+			<SectionHeader title={t('settings.models.apiKeysSection') || 'API Keys'} />
+
+			{aiProviders.map((provider) => {
+				const state = providerStates[provider.id] ?? INITIAL_PROVIDER_STATE;
+				return (
+					<ProviderApiKeyRow
+						key={provider.id}
+						provider={provider}
+						token={state.token}
+						status={state.status}
+						onTokenChange={handleTokenChange}
+						onSave={handleSave}
+					/>
+				);
+			})}
+
+			{/* ── Agents ──────────────────────────────────────────────────── */}
+			<SectionHeader title={t('settings.agents.title') || 'Agents'} />
+
+			<div className="space-y-10">
+				{AGENT_IDS.map((agentId) => (
+					<AgentConfigCard
+						key={agentId}
+						agentId={agentId}
+						config={agentStates[agentId]}
+						onConfigChange={handleConfigChange}
+					/>
+				))}
 			</div>
-
-			{/* API Keys section */}
-			<section className="space-y-3">
-				<h2 className="text-sm font-normal text-muted-foreground">
-					{t('settings.models.apiKeysSection') || 'API Keys'}
-				</h2>
-				<div className="space-y-2">
-					{aiProviders.map((provider) => {
-						const state = providerStates[provider.id] ?? INITIAL_PROVIDER_STATE;
-						return (
-							<ProviderApiKeyRow
-								key={provider.id}
-								provider={provider}
-								token={state.token}
-								status={state.status}
-								onTokenChange={handleTokenChange}
-								onSave={handleSave}
-							/>
-						);
-					})}
-				</div>
-			</section>
-
-			{/* Agents section */}
-			<section className="space-y-3">
-				<h2 className="text-base font-normal text-muted-foreground">
-					{t('settings.agents.title') || 'Agents'}
-				</h2>
-				<div className="space-y-10">
-					{AGENT_IDS.map((agentId) => (
-						<AgentConfigCard
-							key={agentId}
-							agentId={agentId}
-							config={agentStates[agentId]}
-							onConfigChange={handleConfigChange}
-						/>
-					))}
-				</div>
-			</section>
 		</div>
 	);
 };
