@@ -135,13 +135,13 @@ const WorkspacePage: React.FC = () => {
 		apiCall
 			.then((updated) => {
 				setProjectInfo(updated);
+				setEditingField(null);
 			})
 			.catch(() => {
-				// Leave in previous state on error
+				setSaveError(true);
 			})
 			.finally(() => {
 				setIsSaving(false);
-				setEditingField(null);
 			});
 	}, [editingField, draft, projectInfo]);
 
