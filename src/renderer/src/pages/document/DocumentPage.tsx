@@ -465,6 +465,7 @@ const DocumentPage: React.FC = () => {
 				<AgenticSidebar open={agenticSidebarOpen} />
 			</div>
 		</div>
+		</DocumentProvider>
 	);
 };
 
