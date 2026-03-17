@@ -24,13 +24,9 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex gap-4 h-full w-full mx-auto">
+		<div className="flex gap-4 h-full w-full max-w-lg mx-auto">
 			{/* Left column — navigation (1/4 width) */}
-			<div
-				className="w-1/4 overflow-y-auto"
-				role="navigation"
-				aria-label={t('settings.title')}
-			>
+			<div className="w-1/4 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
 				<div className="px-3 py-4 space-y-0.5">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
