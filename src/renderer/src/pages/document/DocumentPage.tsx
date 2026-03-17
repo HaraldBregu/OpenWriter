@@ -10,6 +10,7 @@ import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 import AgenticSidebar from './AgenticSidebar';
 import { DocumentProvider } from './context';
+import { useDocumentDispatch } from './hooks';
 
 type TextCompleterTaskData = {
 	prompt: string;
@@ -115,7 +116,7 @@ const DocumentPage: React.FC = () => {
 						setMetadata(output.metadata);
 					}
 				})
-				.catch(() => { });
+				.catch(() => {});
 		});
 
 		return unsubscribe;
