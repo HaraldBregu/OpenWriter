@@ -646,7 +646,12 @@
 		"createdAt": "Created",
 		"updatedAt": "Updated",
 		"resources": "Document Resources",
-		"noResources": "No images yet"
+		"noResources": "No images yet",
+		"shareAndExport": "Share & Export",
+		"exportPdf": "Export as PDF",
+		"exportDocx": "Export as DOCX",
+		"exportHtml": "Export as HTML",
+		"shareLink": "Copy Share Link"
 	},
 	"resources": {
 		"title": "Resources",
