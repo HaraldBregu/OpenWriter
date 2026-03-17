@@ -63,6 +63,7 @@ const SettingRow: React.FC<SettingRowProps> = ({ label, description, children })
 
 const WorkspacePage: React.FC = () => {
 	const { t } = useTranslation();
+	const reduxDispatch = useAppDispatch();
 
 	const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null);
 	const [projectInfo, setProjectInfo] = useState<ProjectWorkspaceInfo | null>(null);
