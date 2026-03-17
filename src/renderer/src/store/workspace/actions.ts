@@ -69,6 +69,21 @@ export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
 });
 
 // ---------------------------------------------------------------------------
+// Project info thunks
+// ---------------------------------------------------------------------------
+
+/**
+ * Load the project name from workspace metadata.
+ */
+export const loadProjectName = createAsyncThunk<string | null>(
+	'workspace/loadProjectName',
+	async () => {
+		const info = await window.workspace.getProjectInfo();
+		return info?.name ?? null;
+	}
+);
+
+// ---------------------------------------------------------------------------
 // Indexing thunks
 // ---------------------------------------------------------------------------
 
