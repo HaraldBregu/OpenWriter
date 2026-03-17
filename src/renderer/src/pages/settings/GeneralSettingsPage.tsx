@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ThemeModeSelector } from './ThemeModeSelector';
 
 // ---------------------------------------------------------------------------
 // Section header — small muted text used as a visual divider
@@ -17,6 +16,22 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
 );
 
 // ---------------------------------------------------------------------------
+// Setting row — label on the left, value on the right
+// ---------------------------------------------------------------------------
+
+interface SettingRowProps {
+	readonly label: string;
+	readonly children: React.ReactNode;
+}
+
+const SettingRow: React.FC<SettingRowProps> = ({ label, children }) => (
+	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
+		<p className="text-sm min-w-0 mr-4">{label}</p>
+		<div className="min-w-0">{children}</div>
+	</div>
+);
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 
@@ -25,12 +40,29 @@ const GeneralSettingsPage: React.FC = () => {
 
 	return (
 		<div className="w-full max-w-2xl p-6">
-			{/* Page title */}
 			<h1 className="text-lg font-normal mb-6">{t('settings.title')}</h1>
 
-			{/* ── Theme ───────────────────────────────────────────────────── */}
-			<SectionHeader title={t('settings.theme.title')} />
-			<ThemeModeSelector />
+			<SectionHeader title={t('settings.sections.application')} />
+
+			<SettingRow label={t('settings.application.name')}>
+				<span className="text-sm">{__APP_NAME__}</span>
+			</SettingRow>
+
+			<SettingRow label={t('settings.application.description')}>
+				<span className="text-sm text-muted-foreground">{__APP_DESCRIPTION__}</span>
+			</SettingRow>
+
+			<SettingRow label={t('settings.application.version')}>
+				<span className="font-mono text-sm">{__APP_VERSION__}</span>
+			</SettingRow>
+
+			<SettingRow label={t('settings.application.author')}>
+				<span className="text-sm">{__APP_AUTHOR__}</span>
+			</SettingRow>
+
+			<SettingRow label={t('settings.application.license')}>
+				<span className="text-sm">{__APP_LICENSE__}</span>
+			</SettingRow>
 		</div>
 	);
 };
