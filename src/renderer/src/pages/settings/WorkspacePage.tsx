@@ -180,7 +180,7 @@ const WorkspacePage: React.FC = () => {
 	return (
 		<div className="mx-auto w-full max-w-2xl p-6">
 			{/* Page title */}
-			<h1 className="text-xl font-semibold mb-6">{t('workspacePage.title')}</h1>
+			<h1 className="text-lg font-normal mb-6">{t('workspacePage.title')}</h1>
 
 			{/* Load error */}
 			{loadError && (
