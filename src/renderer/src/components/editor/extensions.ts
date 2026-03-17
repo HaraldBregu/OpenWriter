@@ -18,13 +18,14 @@ import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
 import { ContentGeneratorExtension } from './extensions/content_generator';
-import { ImageExtension } from './extensions/image';
+import { ImageExtension, type ImageInsertHandler } from './extensions/image';
 import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
 	onTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onImageSubmit: (prompt: string) => void;
 	onImageFileSelect: (file: File) => void;
+	onImageInsert: ImageInsertHandler;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
@@ -45,7 +46,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		ListKeymap,
 		Dropcursor,
 		Gapcursor,
-		ImageExtension,
+		ImageExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
 		ContentGeneratorExtension.configure({
 			onTextSubmit: handlers.onTextSubmit,
