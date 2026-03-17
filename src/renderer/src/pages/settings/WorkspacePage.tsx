@@ -139,6 +139,9 @@ const WorkspacePage: React.FC = () => {
 			.then((updated) => {
 				setProjectInfo(updated);
 				setEditingField(null);
+				if (editingField === 'name') {
+					reduxDispatch(loadProjectName());
+				}
 			})
 			.catch(() => {
 				setSaveError(true);

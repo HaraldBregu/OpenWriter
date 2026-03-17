@@ -195,6 +195,14 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 									{t('configSidebar.images')}
 								</span>
 							</div>
+							<input
+								ref={fileInputRef}
+								type="file"
+								accept={ACCEPTED_IMAGE_TYPES}
+								multiple
+								className="hidden"
+								onChange={handleFileChange}
+							/>
 							{images.length > 0 ? (
 								<div className="grid grid-cols-4 gap-2">
 									{images.map((img) => (
@@ -215,12 +223,26 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) =
 											</div>
 										</div>
 									))}
+									<button
+										type="button"
+										onClick={handleUploadClick}
+										className="aspect-square rounded-md border border-dashed border-border bg-muted/30 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+										aria-label={t('configSidebar.uploadImage')}
+										title={t('configSidebar.uploadImage')}
+									>
+										<Plus className="h-4 w-4" />
+									</button>
 								</div>
 							) : (
-								<div className="flex items-center gap-1.5 text-muted-foreground">
-									<Image className="h-3.5 w-3.5 shrink-0" />
-									<span className="text-xs">{t('configSidebar.noImages')}</span>
-								</div>
+								<button
+									type="button"
+									onClick={handleUploadClick}
+									className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border bg-muted/30 px-3 py-4 text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+									aria-label={t('configSidebar.uploadImage')}
+								>
+									<Image className="h-4 w-4 shrink-0" />
+									<span className="text-xs">{t('configSidebar.uploadImage')}</span>
+								</button>
 							)}
 						</>
 					)}
