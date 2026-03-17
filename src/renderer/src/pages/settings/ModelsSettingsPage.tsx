@@ -50,20 +50,6 @@ function apiKeyReducer(state: ProviderStateMap, action: ApiKeyAction): ProviderS
 }
 
 // ---------------------------------------------------------------------------
-// Section header — small muted text used as a visual divider
-// ---------------------------------------------------------------------------
-
-interface SectionHeaderProps {
-	readonly title: string;
-}
-
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
-	<div className="pt-6 pb-2 first:pt-0">
-		<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h2>
-	</div>
-);
-
-// ---------------------------------------------------------------------------
 // ProviderApiKeyRow
 // ---------------------------------------------------------------------------
 
