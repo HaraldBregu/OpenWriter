@@ -26,30 +26,25 @@ export function SettingsLayout(): React.JSX.Element {
 	return (
 		<div className="grid grid-cols-[200px_1fr] h-full">
 			{/* Left column — navigation */}
-			<aside
-				className="border-r bg-muted/30 overflow-y-auto"
-				aria-label={t('settings.title')}
-			>
-				<nav className="px-3 py-4 space-y-0.5" aria-label={t('settings.title')}>
+			<div className="border-r bg-muted/30 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+				<div className="px-3 py-4 space-y-0.5">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}
 							to={item.path}
 							end
-							className={({ isActive }) =>
-								`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
-							}
+							className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
 						>
 							{t(item.labelKey)}
 						</NavLink>
 					))}
-				</nav>
-			</aside>
+				</div>
+			</div>
 
 			{/* Right column — content */}
-			<main className="overflow-y-auto">
+			<div className="overflow-y-auto">
 				<Outlet />
-			</main>
+			</div>
 		</div>
 	);
 }
