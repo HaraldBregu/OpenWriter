@@ -32,7 +32,7 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
 	<div className="pt-6 pb-2 px-1 first:pt-0">
-		<h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h3>
+		<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h2>
 	</div>
 );
 
