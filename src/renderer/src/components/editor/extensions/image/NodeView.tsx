@@ -148,63 +148,76 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
-			{editing && resolvedSrc && (
+			{editing && resolvedSrc ? (
 				<ImageEditor
 					src={resolvedSrc}
 					alt={alt}
 					onSave={handleEditorSave}
 					onCancel={handleEditorCancel}
 				/>
-			)}
-			<div
-				className="inline-block max-w-full"
-				onMouseEnter={() => setHovered(true)}
-				onMouseLeave={() => setHovered(false)}
-			>
-				{/* Action buttons above the image */}
-				<AppTooltipProvider delayDuration={300}>
-					<div
-						className={cn(
-							'mb-1 flex items-center gap-0.5',
-							'pointer-events-none opacity-0 transition-opacity duration-150',
-							showToolbar && 'pointer-events-auto opacity-100'
-						)}
-					>
-						<ActionButton
-							icon={<Sparkles />}
-							label={t('imageNode.enhance')}
-							onClick={handleEnhance}
-						/>
-						<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
-						<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
-						<ActionButton
-							icon={<Download />}
-							label={t('imageNode.download')}
-							onClick={handleDownload}
-						/>
-						<div className="mx-0.5 h-3.5 w-px bg-border" />
-						<ActionButton icon={<Trash2 />} label={t('imageNode.delete')} onClick={handleDelete} />
-					</div>
-				</AppTooltipProvider>
-
-				<figure className="relative inline-block max-w-full rounded-md">
-					{loadError || !resolvedSrc ? (
-						<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
-							{alt ?? t('imageNode.notFound')}
+			) : (
+				<div
+					className="inline-block max-w-full"
+					onMouseEnter={() => setHovered(true)}
+					onMouseLeave={() => setHovered(false)}
+				>
+					{/* Action buttons above the image */}
+					<AppTooltipProvider delayDuration={300}>
+						<div
+							className={cn(
+								'mb-1 flex items-center gap-0.5',
+								'pointer-events-none opacity-0 transition-opacity duration-150',
+								showToolbar && 'pointer-events-auto opacity-100'
+							)}
+						>
+							<ActionButton
+								icon={<Sparkles />}
+								label={t('imageNode.enhance')}
+								onClick={handleEnhance}
+							/>
+							<ActionButton
+								icon={<Pencil />}
+								label={t('imageNode.edit')}
+								onClick={handleEdit}
+							/>
+							<ActionButton
+								icon={<Copy />}
+								label={t('imageNode.copy')}
+								onClick={handleCopy}
+							/>
+							<ActionButton
+								icon={<Download />}
+								label={t('imageNode.download')}
+								onClick={handleDownload}
+							/>
+							<div className="mx-0.5 h-3.5 w-px bg-border" />
+							<ActionButton
+								icon={<Trash2 />}
+								label={t('imageNode.delete')}
+								onClick={handleDelete}
+							/>
 						</div>
-					) : (
-						<img
-							src={resolvedSrc}
-							alt={alt ?? ''}
-							title={title ?? undefined}
-							onError={handleError}
-							onLoad={handleLoad}
-							draggable={false}
-							className="block max-w-full rounded-md"
-						/>
-					)}
-				</figure>
-			</div>
+					</AppTooltipProvider>
+
+					<figure className="relative inline-block max-w-full rounded-md">
+						{loadError || !resolvedSrc ? (
+							<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
+								{alt ?? t('imageNode.notFound')}
+							</div>
+						) : (
+							<img
+								src={resolvedSrc}
+								alt={alt ?? ''}
+								title={title ?? undefined}
+								onError={handleError}
+								onLoad={handleLoad}
+								draggable={false}
+								className="block max-w-full rounded-md"
+							/>
+						)}
+					</figure>
+				</div>
+			)}
 		</NodeViewWrapper>
 	);
 }
