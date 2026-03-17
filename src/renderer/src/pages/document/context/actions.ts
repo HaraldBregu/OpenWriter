@@ -1,4 +1,4 @@
-import type { OutputFileMetadata } from '../../../../../shared/types';
+import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
@@ -7,6 +7,7 @@ export type DocumentAction =
 	| { type: 'TITLE_CHANGED'; value: string }
 	| { type: 'CONTENT_CHANGED'; value: string }
 	| { type: 'METADATA_UPDATED'; metadata: OutputFileMetadata | null }
+	| { type: 'IMAGES_UPDATED'; images: DocumentImageInfo[] }
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }
