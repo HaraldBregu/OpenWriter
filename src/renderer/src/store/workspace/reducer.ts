@@ -57,6 +57,7 @@ export const workspaceSlice = createSlice({
 			action: PayloadAction<{ deletedPath: string; reason: string }>
 		) => {
 			state.currentPath = null;
+			state.projectName = null;
 			state.status = 'ready';
 			state.error = null;
 			state.deletionReason = action.payload.reason;
