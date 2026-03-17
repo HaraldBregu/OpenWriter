@@ -27,6 +27,7 @@ import {
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
+	readonly animate?: boolean;
 }
 
 function formatDate(isoString: string, locale: string): string {

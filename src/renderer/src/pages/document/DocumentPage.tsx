@@ -34,7 +34,6 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
-	const [metadata, setMetadata] = useState<OutputFileMetadata | null>(null);
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,13 +65,6 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 	const loadedRef = useRef(false);
 	loadedRef.current = loaded;
 
-	// Sync metadata to context whenever it changes
-	useEffect(() => {
-		if (metadata) {
-			dispatch({ type: 'METADATA_UPDATED', metadata });
-		}
-	}, [metadata, dispatch]);
-
 	useEffect(() => {
 		if (!id) return;
 		let cancelled = false;
@@ -80,7 +72,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 		setLoaded(false);
 		setTitle('');
 		setContent('');
-		setMetadata(null);
+		dispatch({ type: 'METADATA_UPDATED', metadata: null });
 
 		async function load() {
 			try {
@@ -96,7 +88,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 
 				setTitle(output.metadata.title || '');
 				setContent(output.content || '');
-				setMetadata(output.metadata);
+				dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
 				setLoaded(true);
 			} catch {
 				if (!cancelled) setLoaded(true);
@@ -120,7 +112,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 				.loadOutput({ type: 'documents', id })
 				.then((output) => {
 					if (output) {
-						setMetadata(output.metadata);
+						dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
 					}
 				})
 				.catch(() => {});
