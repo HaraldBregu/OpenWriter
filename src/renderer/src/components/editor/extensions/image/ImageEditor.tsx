@@ -9,6 +9,8 @@ import {
 	Lock,
 	Unlock,
 	Undo2,
+	Check,
+	X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
@@ -18,14 +20,6 @@ import {
 	AppTooltipContent,
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from '@/components/ui/Dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { useImageCanvas, type CropRegion } from './use-image-canvas';
 
 // ---------------------------------------------------------------------------
@@ -35,7 +29,6 @@ import { useImageCanvas, type CropRegion } from './use-image-canvas';
 const MIN_CROP_SIZE = 4;
 const MIN_DIMENSION = 1;
 const MAX_DIMENSION = 8000;
-const CANVAS_CONTAINER_MAX_H = 480;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -125,7 +118,6 @@ function CropOverlay({
 		(e: React.PointerEvent<HTMLDivElement>): void => {
 			e.currentTarget.releasePointerCapture(e.pointerId);
 			isDraggingRef.current = false;
-			// Clear region if too small to be meaningful
 			if (cropRegion && (cropRegion.width < MIN_CROP_SIZE || cropRegion.height < MIN_CROP_SIZE)) {
 				onCropChange(null);
 			}
@@ -133,7 +125,6 @@ function CropOverlay({
 		[cropRegion, onCropChange]
 	);
 
-	// Compute overlay cutout positions as percentages for CSS
 	const selectionStyle = useMemo((): React.CSSProperties => {
 		if (!cropRegion || canvasWidth === 0 || canvasHeight === 0) return { display: 'none' };
 		return {
@@ -157,48 +148,46 @@ function CropOverlay({
 			role="presentation"
 			aria-label="Crop selection area"
 		>
-			{/* Darkened overlay covering everything outside the selection */}
 			{hasSelection && (
 				<>
 					{/* Top */}
 					<div
 						className="absolute inset-x-0 top-0 bg-black/50"
-						style={{ height: `${(cropRegion!.y / canvasHeight) * 100}%` }}
+						style={{ height: `${(cropRegion.y / canvasHeight) * 100}%` }}
 					/>
 					{/* Bottom */}
 					<div
 						className="absolute inset-x-0 bottom-0 bg-black/50"
 						style={{
-							top: `${((cropRegion!.y + cropRegion!.height) / canvasHeight) * 100}%`,
+							top: `${((cropRegion.y + cropRegion.height) / canvasHeight) * 100}%`,
 						}}
 					/>
 					{/* Left */}
 					<div
 						className="absolute bg-black/50"
 						style={{
-							top: `${(cropRegion!.y / canvasHeight) * 100}%`,
+							top: `${(cropRegion.y / canvasHeight) * 100}%`,
 							left: 0,
-							width: `${(cropRegion!.x / canvasWidth) * 100}%`,
-							height: `${(cropRegion!.height / canvasHeight) * 100}%`,
+							width: `${(cropRegion.x / canvasWidth) * 100}%`,
+							height: `${(cropRegion.height / canvasHeight) * 100}%`,
 						}}
 					/>
 					{/* Right */}
 					<div
 						className="absolute bg-black/50"
 						style={{
-							top: `${(cropRegion!.y / canvasHeight) * 100}%`,
-							left: `${((cropRegion!.x + cropRegion!.width) / canvasWidth) * 100}%`,
+							top: `${(cropRegion.y / canvasHeight) * 100}%`,
+							left: `${((cropRegion.x + cropRegion.width) / canvasWidth) * 100}%`,
 							right: 0,
-							height: `${(cropRegion!.height / canvasHeight) * 100}%`,
+							height: `${(cropRegion.height / canvasHeight) * 100}%`,
 						}}
 					/>
 
-					{/* Selection border + corner handles */}
+					{/* Selection border + handles */}
 					<div
 						className="pointer-events-none absolute box-border border-2 border-white"
 						style={selectionStyle}
 					>
-						{/* Corner handles */}
 						{(['tl', 'tr', 'bl', 'br'] as const).map((corner) => (
 							<div
 								key={corner}
@@ -211,7 +200,6 @@ function CropOverlay({
 								)}
 							/>
 						))}
-						{/* Edge handles */}
 						<div className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
 						<div className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
 						<div className="absolute left-[-6px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
@@ -244,7 +232,6 @@ function ResizeControls({
 	const [isLocked, setIsLocked] = useState(true);
 	const aspectRatioRef = useRef(currentWidth / currentHeight);
 
-	// Sync inputs when dimensions change externally (e.g. after crop/rotation)
 	useEffect(() => {
 		setWidthInput(String(currentWidth));
 		setHeightInput(String(currentHeight));
@@ -305,8 +292,7 @@ function ResizeControls({
 	}, [isLocked, currentWidth, currentHeight]);
 
 	return (
-		<div className="flex flex-wrap items-end gap-3 px-4 py-3">
-			{/* Width */}
+		<div className="flex flex-wrap items-end gap-2">
 			<div className="flex flex-col gap-1">
 				<label className="text-xs text-muted-foreground" htmlFor="resize-width">
 					{t('imageNode.width')}
@@ -319,16 +305,15 @@ function ResizeControls({
 					value={widthInput}
 					onChange={handleWidthChange}
 					onKeyDown={handleKeyDown}
-					className="h-8 w-24 rounded-md border border-input bg-background px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+					className="h-7 w-20 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				/>
 			</div>
 
-			{/* Lock/Unlock aspect ratio */}
 			<AppTooltip>
 				<AppTooltipTrigger asChild>
 					<AppButton
 						variant="ghost"
-						size="icon"
+						size="icon-xs"
 						aria-label={
 							isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')
 						}
@@ -343,7 +328,6 @@ function ResizeControls({
 				</AppTooltipContent>
 			</AppTooltip>
 
-			{/* Height */}
 			<div className="flex flex-col gap-1">
 				<label className="text-xs text-muted-foreground" htmlFor="resize-height">
 					{t('imageNode.height')}
@@ -356,11 +340,11 @@ function ResizeControls({
 					value={heightInput}
 					onChange={handleHeightChange}
 					onKeyDown={handleKeyDown}
-					className="h-8 w-24 rounded-md border border-input bg-background px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+					className="h-7 w-20 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				/>
 			</div>
 
-			<AppButton size="sm" onClick={handleApply} className="mb-0.5">
+			<AppButton size="sm" onClick={handleApply} className="mb-0.5 h-7 px-2 text-xs">
 				{t('imageNode.resize')}
 			</AppButton>
 		</div>
@@ -368,7 +352,50 @@ function ResizeControls({
 }
 
 // ---------------------------------------------------------------------------
-// ImageEditor (main component)
+// Inline toolbar button
+// ---------------------------------------------------------------------------
+
+interface ToolbarButtonProps {
+	icon: React.ReactNode;
+	label: string;
+	onClick: () => void;
+	active?: boolean;
+	disabled?: boolean;
+}
+
+function ToolbarButton({
+	icon,
+	label,
+	onClick,
+	active,
+	disabled,
+}: ToolbarButtonProps): React.JSX.Element {
+	return (
+		<AppTooltip>
+			<AppTooltipTrigger asChild>
+				<AppButton
+					variant="ghost"
+					size="icon-xs"
+					aria-label={label}
+					onClick={onClick}
+					disabled={disabled}
+					className={cn(
+						'h-6 w-6 text-muted-foreground hover:text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5',
+						active && 'bg-accent text-foreground'
+					)}
+				>
+					{icon}
+				</AppButton>
+			</AppTooltipTrigger>
+			<AppTooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
+				{label}
+			</AppTooltipContent>
+		</AppTooltip>
+	);
+}
+
+// ---------------------------------------------------------------------------
+// ImageEditor (inline component)
 // ---------------------------------------------------------------------------
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
@@ -395,38 +422,14 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		}
 	}, [exportDataUri, onSave]);
 
-	const handleApplyCrop = useCallback((): void => {
-		applyCrop();
-	}, [applyCrop]);
-
-	const handleResetCrop = useCallback((): void => {
-		resetCrop();
-	}, [resetCrop]);
-
-	const handleRotateLeft = useCallback((): void => {
-		applyRotation('left');
-	}, [applyRotation]);
-
-	const handleRotateRight = useCallback((): void => {
-		applyRotation('right');
-	}, [applyRotation]);
-
 	const handleModeChange = useCallback(
-		(mode: string): void => {
-			// Clear crop selection when leaving crop mode
+		(mode: EditMode): void => {
 			if (activeMode === 'crop' && mode !== 'crop') {
 				resetCrop();
 			}
-			setActiveMode(mode as EditMode);
+			setActiveMode(mode);
 		},
 		[activeMode, resetCrop]
-	);
-
-	const handleResize = useCallback(
-		(width: number, height: number): void => {
-			applyResize(width, height);
-		},
-		[applyResize]
 	);
 
 	const currentWidth = state.dimensions?.width ?? 0;
@@ -436,196 +439,150 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		state.cropRegion.width >= MIN_CROP_SIZE &&
 		state.cropRegion.height >= MIN_CROP_SIZE;
 
-	// The canvas display is scaled to fit the container while preserving aspect ratio.
-	const canvasContainerStyle = useMemo((): React.CSSProperties => {
-		if (!state.dimensions) return {};
-		const { width, height } = state.dimensions;
-		if (width === 0 || height === 0) return {};
-		return {
-			aspectRatio: `${width} / ${height}`,
-			maxHeight: CANVAS_CONTAINER_MAX_H,
-		};
-	}, [state.dimensions]);
-
 	return (
-		<Dialog
-			open
-			onOpenChange={(open) => {
-				if (!open) onCancel();
-			}}
-		>
-			<DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">
-				{/* Header */}
-				<DialogHeader className="shrink-0 border-b px-6 py-4">
-					<div className="flex items-center justify-between">
-						<DialogTitle>
-							{t('imageNode.editTitle')}
-							{alt ? (
-								<span className="ml-2 text-sm font-normal text-muted-foreground">— {alt}</span>
-							) : null}
-						</DialogTitle>
-						<AppTooltipProvider delayDuration={300}>
-							<AppTooltip>
-								<AppTooltipTrigger asChild>
-									<AppButton
-										variant="ghost"
-										size="icon"
-										aria-label="Undo"
-										onClick={undo}
-										disabled={!canUndo}
-									>
-										<Undo2 />
-									</AppButton>
-								</AppTooltipTrigger>
-								<AppTooltipContent side="bottom" className="px-2 py-1 text-xs">
-									Undo
-								</AppTooltipContent>
-							</AppTooltip>
-						</AppTooltipProvider>
+		<div className="overflow-hidden rounded-lg border border-border bg-muted/30">
+			{/* Top toolbar: mode buttons + undo + save/cancel */}
+			<AppTooltipProvider delayDuration={300}>
+				<div className="flex items-center gap-1 border-b border-border px-2 py-1.5">
+					{/* Mode buttons */}
+					<ToolbarButton
+						icon={<Crop />}
+						label={t('imageNode.crop')}
+						onClick={() => handleModeChange('crop')}
+						active={activeMode === 'crop'}
+					/>
+					<ToolbarButton
+						icon={<Maximize2 />}
+						label={t('imageNode.resize')}
+						onClick={() => handleModeChange('resize')}
+						active={activeMode === 'resize'}
+					/>
+					<ToolbarButton
+						icon={<RefreshCcw />}
+						label={t('imageNode.rotate')}
+						onClick={() => handleModeChange('rotate')}
+						active={activeMode === 'rotate'}
+					/>
+
+					<div className="mx-1 h-4 w-px bg-border" />
+
+					{/* Undo */}
+					<ToolbarButton
+						icon={<Undo2 />}
+						label="Undo"
+						onClick={undo}
+						disabled={!canUndo}
+					/>
+
+					{/* Spacer */}
+					<div className="flex-1" />
+
+					{/* Save / Cancel */}
+					<AppButton
+						variant="ghost"
+						size="icon-xs"
+						aria-label={t('imageNode.cancel')}
+						onClick={onCancel}
+						className="h-6 w-6 text-muted-foreground hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
+					>
+						<X />
+					</AppButton>
+					<AppButton
+						variant="ghost"
+						size="icon-xs"
+						aria-label={t('imageNode.save')}
+						onClick={handleSave}
+						disabled={!state.isLoaded}
+						className="h-6 w-6 text-muted-foreground hover:text-green-600 [&_svg]:h-3.5 [&_svg]:w-3.5"
+					>
+						<Check />
+					</AppButton>
+				</div>
+			</AppTooltipProvider>
+
+			{/* Canvas area */}
+			<div className="relative flex items-center justify-center p-3">
+				{state.hasError && (
+					<div className="flex h-32 items-center justify-center text-sm text-destructive">
+						{alt ?? t('imageNode.notFound')}
 					</div>
-				</DialogHeader>
-
-				{/* Mode tabs + controls */}
-				<Tabs
-					value={activeMode}
-					onValueChange={handleModeChange}
-					className="flex min-h-0 flex-1 flex-col overflow-hidden"
-				>
-					<TabsList className="shrink-0">
-						<TabsTrigger value="crop">
-							<span className="flex items-center gap-1.5">
-								<Crop className="h-3.5 w-3.5" />
-								{t('imageNode.crop')}
-							</span>
-						</TabsTrigger>
-						<TabsTrigger value="resize">
-							<span className="flex items-center gap-1.5">
-								<Maximize2 className="h-3.5 w-3.5" />
-								{t('imageNode.resize')}
-							</span>
-						</TabsTrigger>
-						<TabsTrigger value="rotate">
-							<span className="flex items-center gap-1.5">
-								<RefreshCcw className="h-3.5 w-3.5" />
-								{t('imageNode.rotate')}
-							</span>
-						</TabsTrigger>
-					</TabsList>
-
-					{/* Canvas area — shared across all modes */}
-					<div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-muted/30 p-4">
-						{state.hasError && (
-							<div className="text-sm text-destructive">Failed to load image for editing.</div>
-						)}
-						{!state.hasError && (
-							<div className="relative inline-block" style={canvasContainerStyle}>
-								<canvas
-									ref={canvasRef}
-									className="block max-h-full max-w-full"
-									aria-label={alt ?? 'Image being edited'}
-								/>
-								{/* Crop overlay only when in crop mode and image is loaded */}
-								{activeMode === 'crop' && state.isLoaded && currentWidth > 0 && (
-									<CropOverlay
-										canvasWidth={currentWidth}
-										canvasHeight={currentHeight}
-										cropRegion={state.cropRegion}
-										onCropChange={setCropRegion}
-									/>
-								)}
-							</div>
+				)}
+				{!state.hasError && (
+					<div className="relative inline-block max-w-full">
+						<canvas
+							ref={canvasRef}
+							className="block max-w-full rounded"
+							aria-label={alt ?? 'Image being edited'}
+						/>
+						{activeMode === 'crop' && state.isLoaded && currentWidth > 0 && (
+							<CropOverlay
+								canvasWidth={currentWidth}
+								canvasHeight={currentHeight}
+								cropRegion={state.cropRegion}
+								onCropChange={setCropRegion}
+							/>
 						)}
 					</div>
+				)}
+			</div>
 
-					{/* Mode-specific bottom toolbars */}
-					<TabsContent value="crop" className="shrink-0 border-t">
-						<div className="flex items-center gap-2 px-4 py-3">
-							<AppButton size="sm" onClick={handleApplyCrop} disabled={!hasCropSelection}>
+			{/* Bottom controls — mode-specific */}
+			<AppTooltipProvider delayDuration={300}>
+				<div className="flex items-center gap-2 border-t border-border px-2 py-1.5">
+					{activeMode === 'crop' && (
+						<>
+							<AppButton
+								size="sm"
+								onClick={applyCrop}
+								disabled={!hasCropSelection}
+								className="h-7 px-2 text-xs"
+							>
 								{t('imageNode.applyCrop')}
 							</AppButton>
 							<AppButton
 								variant="outline"
 								size="sm"
-								onClick={handleResetCrop}
+								onClick={resetCrop}
 								disabled={!state.cropRegion}
+								className="h-7 px-2 text-xs"
 							>
 								{t('imageNode.resetCrop')}
 							</AppButton>
-							<p className="ml-2 text-xs text-muted-foreground">
+							<span className="ml-1 text-xs text-muted-foreground">
 								{hasCropSelection
-									? `${Math.round(state.cropRegion!.width)} × ${Math.round(state.cropRegion!.height)} px`
-									: 'Click and drag to select crop area'}
-							</p>
-						</div>
-					</TabsContent>
+									? `${Math.round(state.cropRegion!.width)} x ${Math.round(state.cropRegion!.height)} px`
+									: `${currentWidth} x ${currentHeight} px`}
+							</span>
+						</>
+					)}
 
-					<TabsContent value="resize" className="shrink-0 border-t">
-						<AppTooltipProvider delayDuration={300}>
-							{state.isLoaded && (
-								<ResizeControls
-									currentWidth={currentWidth}
-									currentHeight={currentHeight}
-									onApply={handleResize}
-								/>
-							)}
-						</AppTooltipProvider>
-					</TabsContent>
+					{activeMode === 'resize' && state.isLoaded && (
+						<ResizeControls
+							currentWidth={currentWidth}
+							currentHeight={currentHeight}
+							onApply={applyResize}
+						/>
+					)}
 
-					<TabsContent value="rotate" className="shrink-0 border-t">
-						<div className="flex items-center gap-3 px-4 py-3">
-							<AppTooltipProvider delayDuration={300}>
-								<AppTooltip>
-									<AppTooltipTrigger asChild>
-										<AppButton
-											variant="outline"
-											size="sm"
-											aria-label={t('imageNode.rotateLeft')}
-											onClick={handleRotateLeft}
-											disabled={!state.isLoaded}
-										>
-											<RotateCcw className="mr-1.5 h-4 w-4" />
-											{t('imageNode.rotateLeft')}
-										</AppButton>
-									</AppTooltipTrigger>
-									<AppTooltipContent side="top" className="px-2 py-1 text-xs">
-										{t('imageNode.rotateLeft')}
-									</AppTooltipContent>
-								</AppTooltip>
-
-								<AppTooltip>
-									<AppTooltipTrigger asChild>
-										<AppButton
-											variant="outline"
-											size="sm"
-											aria-label={t('imageNode.rotateRight')}
-											onClick={handleRotateRight}
-											disabled={!state.isLoaded}
-										>
-											<RotateCw className="mr-1.5 h-4 w-4" />
-											{t('imageNode.rotateRight')}
-										</AppButton>
-									</AppTooltipTrigger>
-									<AppTooltipContent side="top" className="px-2 py-1 text-xs">
-										{t('imageNode.rotateRight')}
-									</AppTooltipContent>
-								</AppTooltip>
-							</AppTooltipProvider>
-
-							<span className="text-xs text-muted-foreground">{state.rotation}°</span>
-						</div>
-					</TabsContent>
-				</Tabs>
-
-				{/* Footer */}
-				<DialogFooter className="shrink-0 border-t px-6 py-4">
-					<AppButton variant="outline" onClick={onCancel}>
-						{t('imageNode.cancel')}
-					</AppButton>
-					<AppButton onClick={handleSave} disabled={!state.isLoaded}>
-						{t('imageNode.save')}
-					</AppButton>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+					{activeMode === 'rotate' && (
+						<>
+							<ToolbarButton
+								icon={<RotateCcw />}
+								label={t('imageNode.rotateLeft')}
+								onClick={() => applyRotation('left')}
+								disabled={!state.isLoaded}
+							/>
+							<ToolbarButton
+								icon={<RotateCw />}
+								label={t('imageNode.rotateRight')}
+								onClick={() => applyRotation('right')}
+								disabled={!state.isLoaded}
+							/>
+							<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
+						</>
+					)}
+				</div>
+			</AppTooltipProvider>
+		</div>
 	);
 }
