@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff } from 'lucide-react';
 import { aiProviders, type AIProvider } from '@/config/ai-providers';
 import { AppButton, AppInput, AppLabel } from '@/components/app';
+import { SectionHeader } from './SettingsComponents';
 
 // ===========================================================================
 // API Keys section
