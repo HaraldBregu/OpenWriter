@@ -204,6 +204,8 @@ const WorkspacePage: React.FC = () => {
 				<span
 					className="font-mono text-xs truncate max-w-xs inline-block text-muted-foreground"
 					title={currentWorkspace ?? t('workspacePage.notSet')}
+					aria-live="polite"
+					aria-atomic="true"
 				>
 					{isLoading ? t('workspacePage.loading') : (currentWorkspace ?? t('workspacePage.notSet'))}
 				</span>
