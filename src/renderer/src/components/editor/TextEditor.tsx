@@ -215,34 +215,28 @@ const TextEditor = React.memo(
 			// Save an edited image to the document's images/ directory and
 			// return the relative path. Falls back to the data URI when no
 			// documentId is available.
-			const handleImageEditSave = useCallback(
-				async (dataUri: string): Promise<string> => {
-					const currentDocumentId = documentIdRef.current;
-					if (currentDocumentId && dataUri.startsWith('data:')) {
-						const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
-						if (match) {
-							const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-							const base64 = match[2];
-							const fileName = `image-${Date.now()}.${ext}`;
-							await window.workspace.saveDocumentImage({
-								documentId: currentDocumentId,
-								fileName,
-								base64,
-							});
-							return `images/${fileName}`;
-						}
+			const handleImageEditSave = useCallback(async (dataUri: string): Promise<string> => {
+				const currentDocumentId = documentIdRef.current;
+				if (currentDocumentId && dataUri.startsWith('data:')) {
+					const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
+					if (match) {
+						const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+						const base64 = match[2];
+						const fileName = `image-${Date.now()}.${ext}`;
+						await window.workspace.saveDocumentImage({
+							documentId: currentDocumentId,
+							fileName,
+							base64,
+						});
+						return `images/${fileName}`;
 					}
-					return dataUri;
-				},
-				[]
-			);
+				}
+				return dataUri;
+			}, []);
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
-				const imgStorage = editor.storage as unknown as Record<
-					string,
-					Record<string, unknown>
-				>;
+				const imgStorage = editor.storage as unknown as Record<string, Record<string, unknown>>;
 				imgStorage.image.onImageEditSave = handleImageEditSave;
 			}, [editor, handleImageEditSave]);
 
