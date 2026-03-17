@@ -86,7 +86,7 @@ const WorkspacePage: React.FC = () => {
 				setProjectInfo(info);
 			})
 			.catch(() => {
-				// Errors are surfaced implicitly via null state
+				if (!cancelled) setLoadError(true);
 			})
 			.finally(() => {
 				if (!cancelled) setIsLoading(false);
