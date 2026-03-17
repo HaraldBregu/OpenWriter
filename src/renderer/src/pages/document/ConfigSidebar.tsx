@@ -81,13 +81,15 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 		<div
 			className={`shrink-0 border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${open ? 'w-72' : 'w-0'}`}
 		>
-			<div className="w-72 p-4 space-y-4">
-				{/* Document Info */}
-				{metadata && (
-					<AppCard className="bg-transparent shadow-none">
-						<AppCardHeader className="px-0 pt-0 pb-2">
-							<AppCardTitle className="flex items-center justify-between text-xs font-medium text-muted-foreground/70">
-								{t('configSidebar.documentInfo')}
+			<AppCard className="w-72 bg-transparent shadow-none border-none rounded-none">
+				<AppCardContent className="p-4">
+					{/* Document Info */}
+					{metadata && (
+						<>
+							<div className="mb-1 flex items-center justify-between">
+								<span className="text-xs font-medium text-muted-foreground/70">
+									{t('configSidebar.documentInfo')}
+								</span>
 								<button
 									type="button"
 									onClick={onOpenFolder}
@@ -97,9 +99,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 								>
 									<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
 								</button>
-							</AppCardTitle>
-						</AppCardHeader>
-						<AppCardContent className="px-0 pb-0">
+							</div>
 							<div className="space-y-3">
 								<div className="space-y-1">
 									<AppLabel className="text-xs text-muted-foreground">
@@ -118,7 +118,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<Tag className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-										<span className="text-sm text-foreground capitalize">{metadata.type}</span>
+										<span className="text-sm text-foreground capitalize">
+											{metadata.type}
+										</span>
 									</div>
 								</div>
 								{formattedCreatedAt && (
@@ -128,7 +130,9 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 										</AppLabel>
 										<div className="flex items-center gap-1.5">
 											<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-											<span className="text-sm text-foreground">{formattedCreatedAt}</span>
+											<span className="text-sm text-foreground">
+												{formattedCreatedAt}
+											</span>
 										</div>
 									</div>
 								)}
@@ -139,24 +143,25 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 										</AppLabel>
 										<div className="flex items-center gap-1.5">
 											<Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-											<span className="text-sm text-foreground">{formattedUpdatedAt}</span>
+											<span className="text-sm text-foreground">
+												{formattedUpdatedAt}
+											</span>
 										</div>
 									</div>
 								)}
 							</div>
-						</AppCardContent>
-					</AppCard>
-				)}
+							<AppSeparator className="my-4" />
+						</>
+					)}
 
-				{/* Resources */}
-				{documentId && (
-					<AppCard className="bg-transparent shadow-none">
-						<AppCardHeader className="px-0 pt-0 pb-2">
-							<AppCardTitle className="text-xs font-medium text-muted-foreground/70">
-								{t('configSidebar.resources')}
-							</AppCardTitle>
-						</AppCardHeader>
-						<AppCardContent className="px-0 pb-0">
+					{/* Resources */}
+					{documentId && (
+						<>
+							<div className="mb-2">
+								<span className="text-xs font-medium text-muted-foreground/70">
+									{t('configSidebar.resources')}
+								</span>
+							</div>
 							{images.length > 0 ? (
 								<div className="grid grid-cols-3 gap-2">
 									{images.map((img) => (
@@ -181,22 +186,23 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 							) : (
 								<div className="flex items-center gap-1.5 text-muted-foreground">
 									<Image className="h-3.5 w-3.5 shrink-0" />
-									<span className="text-xs">{t('configSidebar.noResources')}</span>
+									<span className="text-xs">
+										{t('configSidebar.noResources')}
+									</span>
 								</div>
 							)}
-						</AppCardContent>
-					</AppCard>
-				)}
+						</>
+					)}
 
-				{/* Share & Export */}
-				{documentId && (
-					<AppCard className="bg-transparent shadow-none">
-						<AppCardHeader className="px-0 pt-0 pb-2">
-							<AppCardTitle className="text-xs font-medium text-muted-foreground/70">
-								{t('configSidebar.shareAndExport')}
-							</AppCardTitle>
-						</AppCardHeader>
-						<AppCardContent className="px-0 pb-0">
+					{/* Share & Export */}
+					{documentId && (
+						<>
+							<AppSeparator className="my-4" />
+							<div className="mb-2">
+								<span className="text-xs font-medium text-muted-foreground/70">
+									{t('configSidebar.shareAndExport')}
+								</span>
+							</div>
 							<div className="space-y-1">
 								<button
 									type="button"
@@ -220,10 +226,10 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({
 									{t('configSidebar.shareLink')}
 								</button>
 							</div>
-						</AppCardContent>
-					</AppCard>
-				)}
-			</div>
+						</>
+					)}
+				</AppCardContent>
+			</AppCard>
 		</div>
 	);
 };
