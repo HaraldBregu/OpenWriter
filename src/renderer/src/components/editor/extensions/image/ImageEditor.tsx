@@ -467,12 +467,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					<div className="mx-1 h-4 w-px bg-border" />
 
 					{/* Undo */}
-					<ToolbarButton
-						icon={<Undo2 />}
-						label="Undo"
-						onClick={undo}
-						disabled={!canUndo}
-					/>
+					<ToolbarButton icon={<Undo2 />} label="Undo" onClick={undo} disabled={!canUndo} />
 
 					{/* Spacer */}
 					<div className="flex-1" />

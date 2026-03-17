@@ -381,6 +381,7 @@ const DocumentPage: React.FC = () => {
 	const onImageSubmit = useCallback(
 		async (prompt: string) => {
 			if (!id) return;
+			console.log('onImageSubmit', prompt);
 			editorRef.current?.setContentGeneratorEnable(false);
 			const documentPath = await window.workspace.getDocumentPath(id);
 			const data: ImageGeneratorTaskData = { prompt };

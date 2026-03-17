@@ -1,7 +1,6 @@
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
-import type { Editor } from '@tiptap/core';
 
-export type ImageFileHandler = (file: File) => Promise<string>;
+export type ImageInsertHandler = (file: File, insertAtPos: number | null) => void;
 
 const IMAGE_MIME_PATTERN = /^image\/(jpeg|jpg|png|gif|webp|svg\+xml|avif)$/;
 const imageDropPasteKey = new PluginKey('imageDropPaste');
@@ -19,7 +18,7 @@ export function fileToDataUri(file: File): Promise<string> {
 	});
 }
 
-export function createImageDropPastePlugin(editor: Editor, onImageFile: ImageFileHandler): Plugin {
+export function createImageDropPastePlugin(onImageInsert: ImageInsertHandler): Plugin {
 	return new Plugin({
 		key: imageDropPasteKey,
 
@@ -42,13 +41,7 @@ export function createImageDropPastePlugin(editor: Editor, onImageFile: ImageFil
 				event.preventDefault();
 
 				for (const file of imageFiles) {
-					onImageFile(file)
-						.then((src) => {
-							editor.commands.setImage({ src, alt: file.name });
-						})
-						.catch((err: unknown) => {
-							console.error('[ImageDropPaste] Failed to process pasted image:', err);
-						});
+					onImageInsert(file, null);
 				}
 
 				return true;
@@ -69,17 +62,14 @@ export function createImageDropPastePlugin(editor: Editor, onImageFile: ImageFil
 				const pos = view.posAtCoords(coords);
 				const insertPos = pos ? pos.pos : view.state.doc.content.size;
 
+				// Move cursor to drop position before handing off to the insert handler,
+				// so that setImage inserts at the correct location.
+				const resolvedPos = view.state.doc.resolve(insertPos);
+				const selection = TextSelection.create(view.state.doc, resolvedPos.pos);
+				view.dispatch(view.state.tr.setSelection(selection));
+
 				for (const file of imageFiles) {
-					onImageFile(file)
-						.then((src) => {
-							const resolvedPos = view.state.doc.resolve(insertPos);
-							const selection = TextSelection.create(view.state.doc, resolvedPos.pos);
-							view.dispatch(view.state.tr.setSelection(selection));
-							editor.commands.setImage({ src, alt: file.name });
-						})
-						.catch((err: unknown) => {
-							console.error('[ImageDropPaste] Failed to process dropped image:', err);
-						});
+					onImageInsert(file, insertPos);
 				}
 
 				return true;

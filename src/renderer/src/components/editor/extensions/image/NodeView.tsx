@@ -175,16 +175,8 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								label={t('imageNode.enhance')}
 								onClick={handleEnhance}
 							/>
-							<ActionButton
-								icon={<Pencil />}
-								label={t('imageNode.edit')}
-								onClick={handleEdit}
-							/>
-							<ActionButton
-								icon={<Copy />}
-								label={t('imageNode.copy')}
-								onClick={handleCopy}
-							/>
+							<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
+							<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
 							<ActionButton
 								icon={<Download />}
 								label={t('imageNode.download')}
