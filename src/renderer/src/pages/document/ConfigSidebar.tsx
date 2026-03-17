@@ -108,7 +108,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open }) => {
 							{t('configSidebar.documentInfo')}
 							<button
 								type="button"
-								onClick={onOpenFolder}
+								onClick={handleOpenFolder}
 								className="p-1 rounded text-muted-foreground/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
 								aria-label={t('common.openFolder')}
 								title={t('common.openFolder')}
