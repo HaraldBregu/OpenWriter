@@ -36,6 +36,7 @@ const DocumentPage: React.FC = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [agenticSidebarOpen, setAgenticSidebarOpen] = useState(false);
 
 	const editorRef = useRef<TextEditorElement>(null);
 
