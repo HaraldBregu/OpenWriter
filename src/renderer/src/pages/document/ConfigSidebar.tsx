@@ -11,7 +11,8 @@ import {
 	Link,
 	ChevronDown,
 } from 'lucide-react';
-import type { OutputFileMetadata, DocumentImageInfo } from '../../../../shared/types';
+import type { DocumentImageInfo } from '../../../../shared/types';
+import { useDocumentState } from './hooks';
 import {
 	AppLabel,
 	AppCard,
