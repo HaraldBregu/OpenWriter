@@ -712,7 +712,20 @@
 		"altTextPlaceholder": "Describe the image",
 		"title": "Title",
 		"titlePlaceholder": "Tooltip text",
-		"save": "Save"
+		"save": "Save",
+		"editTitle": "Edit Image",
+		"crop": "Crop",
+		"resize": "Resize",
+		"rotate": "Rotate",
+		"rotateLeft": "Rotate left",
+		"rotateRight": "Rotate right",
+		"applyCrop": "Apply Crop",
+		"resetCrop": "Reset Crop",
+		"width": "Width",
+		"height": "Height",
+		"lockAspectRatio": "Lock aspect ratio",
+		"unlockAspectRatio": "Unlock aspect ratio",
+		"cancel": "Cancel"
 	},
 	"debug": {
 		"title": "Debug",
