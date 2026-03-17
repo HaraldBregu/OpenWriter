@@ -26,7 +26,7 @@ export function SettingsLayout(): React.JSX.Element {
 	return (
 		<div className="grid grid-cols-[160px_1fr] h-full overflow-y-auto">
 			{/* Left nav column — sticky so it stays visible while content scrolls */}
-			<aside className="sticky top-0 self-start pt-4 pl-3 pr-2">
+			<aside className="sticky top-0 self-start pt-4 pl-3 pr-2" aria-label={t('settings.title')}>
 				<nav className="space-y-0.5" aria-label={t('settings.title')}>
 					{NAV_ITEMS.map((item) => (
 						<NavLink
