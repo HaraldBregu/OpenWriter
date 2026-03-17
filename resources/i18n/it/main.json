@@ -140,7 +140,15 @@
 			"windows": "Finestre",
 			"filesystem": "File System",
 			"dialogs": "Dialoghi",
-			"clipboard": "Appunti"
+			"clipboard": "Appunti",
+			"application": "Applicazione"
+		},
+		"application": {
+			"name": "Nome",
+			"description": "Descrizione",
+			"version": "Versione",
+			"author": "Autore",
+			"license": "Licenza"
 		},
 		"permissions": {
 			"microphone": "Microfono",
