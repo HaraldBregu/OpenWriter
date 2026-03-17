@@ -25,10 +25,10 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex gap-4 h-full w-full mx-auto">
+		<div className="flex h-full w-full mx-auto">
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
-				<div className="px-3 py-4 space-y-0.5 my-10">
+				<div className="px-3 py-4 space-y-0.5 my-20">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}
