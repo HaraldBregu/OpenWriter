@@ -13,6 +13,7 @@ import {
 	loadResources,
 	removeResources,
 	loadIndexingInfo,
+	loadProjectName,
 } from './actions';
 
 export type { WorkspaceState };
