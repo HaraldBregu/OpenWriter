@@ -440,6 +440,7 @@
 	"titleBar": {
 		"applicationMenu": "Menu applicazione",
 		"toggleSidebar": "Mostra/nascondi barra laterale",
+		"toggleAgenticSidebar": "Mostra/nascondi assistente AI",
 		"minimize": "Riduci a icona",
 		"maximize": "Ingrandisci",
 		"restore": "Ripristina",
