@@ -12,6 +12,7 @@ import {
 	Search,
 	X,
 	Info,
+	Bot,
 } from 'lucide-react';
 import {
 	AppButton,
