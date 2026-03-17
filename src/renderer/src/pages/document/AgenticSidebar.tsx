@@ -4,9 +4,10 @@ import { Bot } from 'lucide-react';
 
 interface AgenticSidebarProps {
 	readonly open: boolean;
+	readonly animate?: boolean;
 }
 
-const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open }) => {
+const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open, animate = true }) => {
 	const { t } = useTranslation();
 
 	return (
