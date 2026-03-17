@@ -90,9 +90,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 		onCreated: handleDocumentCreated,
 	});
 
-	const displayWorkspaceName = workspaceNameFromPath
-		? `${workspaceNameFromPath} (workspace)`
-		: 'OpenWriter';
+	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
 
 	return (
 		<>
