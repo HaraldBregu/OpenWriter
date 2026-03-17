@@ -712,7 +712,20 @@
 		"altTextPlaceholder": "Descrivi l'immagine",
 		"title": "Titolo",
 		"titlePlaceholder": "Testo del tooltip",
-		"save": "Salva"
+		"save": "Salva",
+		"editTitle": "Modifica Immagine",
+		"crop": "Ritaglia",
+		"resize": "Ridimensiona",
+		"rotate": "Ruota",
+		"rotateLeft": "Ruota a sinistra",
+		"rotateRight": "Ruota a destra",
+		"applyCrop": "Applica Ritaglio",
+		"resetCrop": "Reimposta Ritaglio",
+		"width": "Larghezza",
+		"height": "Altezza",
+		"lockAspectRatio": "Blocca proporzioni",
+		"unlockAspectRatio": "Sblocca proporzioni",
+		"cancel": "Annulla"
 	},
 	"debug": {
 		"title": "Debug",
