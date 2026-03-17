@@ -440,6 +440,7 @@
 	"titleBar": {
 		"applicationMenu": "Application menu",
 		"toggleSidebar": "Toggle sidebar",
+		"toggleAgenticSidebar": "Toggle AI assistant",
 		"minimize": "Minimize",
 		"maximize": "Maximize",
 		"restore": "Restore",
