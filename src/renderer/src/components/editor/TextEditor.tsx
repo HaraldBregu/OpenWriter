@@ -98,6 +98,57 @@ const TextEditor = React.memo(
 			const onImageFileSelectRef = useRef(onImageFileSelect);
 			onImageFileSelectRef.current = onImageFileSelect;
 
+			const documentIdRef = useRef(documentId);
+			documentIdRef.current = documentId;
+
+			const handleImageFileInsert = useCallback(
+				(file: File, _insertAtPos: number | null): void => {
+					if (!editor || editor.isDestroyed) return;
+
+					const readFileAsDataUri = (f: File): Promise<string> =>
+						new Promise((resolve, reject) => {
+							const reader = new FileReader();
+							reader.onload = (): void => resolve(reader.result as string);
+							reader.onerror = (): void =>
+								reject(new Error(`FileReader failed for ${f.name}`));
+							reader.readAsDataURL(f);
+						});
+
+					readFileAsDataUri(file)
+						.then(async (dataUri) => {
+							if (!editor || editor.isDestroyed) return;
+
+							let imageSrc = dataUri;
+							const currentDocumentId = documentIdRef.current;
+
+							if (currentDocumentId && imageSrc.startsWith('data:')) {
+								const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
+								if (match) {
+									const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+									const base64 = match[2];
+									const fileName = `image-${Date.now()}.${ext}`;
+									await window.workspace.saveDocumentImage({
+										documentId: currentDocumentId,
+										fileName,
+										base64,
+									});
+									imageSrc = `images/${fileName}`;
+								}
+							}
+
+							editor.commands.setImage({ src: imageSrc, alt: file.name });
+						})
+						.catch((err: unknown) => {
+							console.error('[TextEditor] Failed to process dropped/pasted image:', err);
+						});
+				},
+				// eslint-disable-next-line react-hooks/exhaustive-deps
+				[editor]
+			);
+
+			const handleImageFileInsertRef = useRef(handleImageFileInsert);
+			handleImageFileInsertRef.current = handleImageFileInsert;
+
 			const extensions = useMemo(
 				() =>
 					createExtensions({
@@ -105,6 +156,8 @@ const TextEditor = React.memo(
 							onTextSubmitRef.current?.(before, after, cursorPos, prompt),
 						onImageSubmit: (prompt) => onImageSubmitRef.current?.(prompt),
 						onImageFileSelect: (file) => onImageFileSelectRef.current?.(file),
+						onImageInsert: (file, insertAtPos) =>
+							handleImageFileInsertRef.current(file, insertAtPos),
 					}),
 				[]
 			);
