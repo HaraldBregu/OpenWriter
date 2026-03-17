@@ -1,6 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RotateCcw, RotateCw, Crop, Maximize2, RefreshCcw, Lock, Unlock, Undo2 } from 'lucide-react';
+import {
+	RotateCcw,
+	RotateCw,
+	Crop,
+	Maximize2,
+	RefreshCcw,
+	Lock,
+	Unlock,
+	Undo2,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
 import {
@@ -135,7 +144,8 @@ function CropOverlay({
 		};
 	}, [cropRegion, canvasWidth, canvasHeight]);
 
-	const hasSelection = cropRegion !== null && cropRegion.width >= MIN_CROP_SIZE && cropRegion.height >= MIN_CROP_SIZE;
+	const hasSelection =
+		cropRegion !== null && cropRegion.width >= MIN_CROP_SIZE && cropRegion.height >= MIN_CROP_SIZE;
 
 	return (
 		<div
@@ -223,7 +233,11 @@ interface ResizeControlsProps {
 	onApply: (width: number, height: number) => void;
 }
 
-function ResizeControls({ currentWidth, currentHeight, onApply }: ResizeControlsProps): React.JSX.Element {
+function ResizeControls({
+	currentWidth,
+	currentHeight,
+	onApply,
+}: ResizeControlsProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const [widthInput, setWidthInput] = useState(String(currentWidth));
 	const [heightInput, setHeightInput] = useState(String(currentHeight));
@@ -239,8 +253,10 @@ function ResizeControls({ currentWidth, currentHeight, onApply }: ResizeControls
 		}
 	}, [currentWidth, currentHeight]);
 
-	const clampDimension = useCallback((value: number): number =>
-		Math.round(Math.min(Math.max(value, MIN_DIMENSION), MAX_DIMENSION)), []);
+	const clampDimension = useCallback(
+		(value: number): number => Math.round(Math.min(Math.max(value, MIN_DIMENSION), MAX_DIMENSION)),
+		[]
+	);
 
 	const handleWidthChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -313,7 +329,9 @@ function ResizeControls({ currentWidth, currentHeight, onApply }: ResizeControls
 					<AppButton
 						variant="ghost"
 						size="icon"
-						aria-label={isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')}
+						aria-label={
+							isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')
+						}
 						onClick={toggleLock}
 						className="mb-0.5"
 					>
@@ -357,8 +375,18 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 	const { t } = useTranslation();
 	const [activeMode, setActiveMode] = useState<EditMode>('crop');
 
-	const { canvasRef, state, applyRotation, applyCrop, resetCrop, setCropRegion, applyResize, undo, canUndo, exportDataUri } =
-		useImageCanvas(src);
+	const {
+		canvasRef,
+		state,
+		applyRotation,
+		applyCrop,
+		resetCrop,
+		setCropRegion,
+		applyResize,
+		undo,
+		canUndo,
+		exportDataUri,
+	} = useImageCanvas(src);
 
 	const handleSave = useCallback((): void => {
 		const dataUri = exportDataUri();
@@ -409,17 +437,23 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		state.cropRegion.height >= MIN_CROP_SIZE;
 
 	// The canvas display is scaled to fit the container while preserving aspect ratio.
-	// We use CSS object-fit styling on the wrapping div.
 	const canvasContainerStyle = useMemo((): React.CSSProperties => {
 		if (!state.dimensions) return {};
 		const { width, height } = state.dimensions;
 		if (width === 0 || height === 0) return {};
-		const aspectRatio = width / height;
-		return { aspectRatio: `${width} / ${height}`, maxHeight: CANVAS_CONTAINER_MAX_H, aspectRatioValue: aspectRatio } as React.CSSProperties;
+		return {
+			aspectRatio: `${width} / ${height}`,
+			maxHeight: CANVAS_CONTAINER_MAX_H,
+		};
 	}, [state.dimensions]);
 
 	return (
-		<Dialog open onOpenChange={(open) => { if (!open) onCancel(); }}>
+		<Dialog
+			open
+			onOpenChange={(open) => {
+				if (!open) onCancel();
+			}}
+		>
 			<DialogContent className="flex max-h-[90vh] max-w-4xl flex-col gap-0 overflow-hidden p-0">
 				{/* Header */}
 				<DialogHeader className="shrink-0 border-b px-6 py-4">
@@ -427,9 +461,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						<DialogTitle>
 							{t('imageNode.editTitle')}
 							{alt ? (
-								<span className="ml-2 text-sm font-normal text-muted-foreground">
-									— {alt}
-								</span>
+								<span className="ml-2 text-sm font-normal text-muted-foreground">— {alt}</span>
 							) : null}
 						</DialogTitle>
 						<AppTooltipProvider delayDuration={300}>
@@ -454,7 +486,11 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 				</DialogHeader>
 
 				{/* Mode tabs + controls */}
-				<Tabs value={activeMode} onValueChange={handleModeChange} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+				<Tabs
+					value={activeMode}
+					onValueChange={handleModeChange}
+					className="flex min-h-0 flex-1 flex-col overflow-hidden"
+				>
 					<TabsList className="shrink-0">
 						<TabsTrigger value="crop">
 							<span className="flex items-center gap-1.5">
@@ -482,10 +518,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							<div className="text-sm text-destructive">Failed to load image for editing.</div>
 						)}
 						{!state.hasError && (
-							<div
-								className="relative inline-block"
-								style={canvasContainerStyle}
-							>
+							<div className="relative inline-block" style={canvasContainerStyle}>
 								<canvas
 									ref={canvasRef}
 									className="block max-h-full max-w-full"
@@ -507,11 +540,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					{/* Mode-specific bottom toolbars */}
 					<TabsContent value="crop" className="shrink-0 border-t">
 						<div className="flex items-center gap-2 px-4 py-3">
-							<AppButton
-								size="sm"
-								onClick={handleApplyCrop}
-								disabled={!hasCropSelection}
-							>
+							<AppButton size="sm" onClick={handleApplyCrop} disabled={!hasCropSelection}>
 								{t('imageNode.applyCrop')}
 							</AppButton>
 							<AppButton
@@ -582,9 +611,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 								</AppTooltip>
 							</AppTooltipProvider>
 
-							<span className="text-xs text-muted-foreground">
-								{state.rotation}°
-							</span>
+							<span className="text-xs text-muted-foreground">{state.rotation}°</span>
 						</div>
 					</TabsContent>
 				</Tabs>

@@ -208,7 +208,8 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 			pushSnapshot(state.rotation);
 
 			const delta = direction === 'right' ? ROTATION_STEP_DEG : -ROTATION_STEP_DEG;
-			const nextRotation = ((state.rotation + delta) % FULL_ROTATION_DEG + FULL_ROTATION_DEG) % FULL_ROTATION_DEG;
+			const nextRotation =
+				(((state.rotation + delta) % FULL_ROTATION_DEG) + FULL_ROTATION_DEG) % FULL_ROTATION_DEG;
 
 			// Draw current canvas content rotated onto an offscreen canvas
 			const offscreen = document.createElement('canvas');
