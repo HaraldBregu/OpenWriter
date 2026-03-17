@@ -461,7 +461,7 @@ const DocumentPage: React.FC = () => {
 					</div>
 				</div>
 
-				<ConfigSidebar open={sidebarOpen} onOpenFolder={handleOpenFolder} />
+				<ConfigSidebar open={sidebarOpen} />
 				<AgenticSidebar open={agenticSidebarOpen} />
 			</div>
 		</div>
