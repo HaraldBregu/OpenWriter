@@ -19,6 +19,9 @@ import {
 	AppCardTitle,
 	AppCardContent,
 	AppCardFooter,
+	AppCollapsible,
+	AppCollapsibleTrigger,
+	AppCollapsiblePanel,
 } from '@/components/app';
 
 interface ConfigSidebarProps {
