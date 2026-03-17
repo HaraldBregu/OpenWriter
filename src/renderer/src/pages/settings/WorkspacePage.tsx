@@ -31,7 +31,7 @@ interface SectionHeaderProps {
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
-	<div className="pt-6 pb-2 px-1 first:pt-0">
+	<div className="pt-6 pb-2 first:pt-0">
 		<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h2>
 	</div>
 );
@@ -178,7 +178,7 @@ const WorkspacePage: React.FC = () => {
 	// ---- Render -------------------------------------------------------------
 
 	return (
-		<div className="mx-auto w-full p-6" aria-busy={isSaving}>
+		<div className="mx-auto w-full max-w-2xl p-6" aria-busy={isSaving}>
 			{/* Page title */}
 			<h1 className="text-lg font-normal mb-6">{t('workspacePage.title')}</h1>
 
