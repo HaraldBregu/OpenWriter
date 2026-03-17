@@ -33,11 +33,23 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 		case 'TRASH_FAILED':
 			return { ...state, isTrashing: false };
 
-		case 'SIDEBAR_TOGGLED':
-			return { ...state, sidebarOpen: !state.sidebarOpen };
+		case 'SIDEBAR_TOGGLED': {
+			const nextSidebar = !state.sidebarOpen;
+			return {
+				...state,
+				sidebarOpen: nextSidebar,
+				agenticSidebarOpen: nextSidebar ? false : state.agenticSidebarOpen,
+			};
+		}
 
-		case 'AGENTIC_SIDEBAR_TOGGLED':
-			return { ...state, agenticSidebarOpen: !state.agenticSidebarOpen };
+		case 'AGENTIC_SIDEBAR_TOGGLED': {
+			const nextAgentic = !state.agenticSidebarOpen;
+			return {
+				...state,
+				agenticSidebarOpen: nextAgentic,
+				sidebarOpen: nextAgentic ? false : state.sidebarOpen,
+			};
+		}
 
 		default: {
 			const _exhaustive: never = action;
