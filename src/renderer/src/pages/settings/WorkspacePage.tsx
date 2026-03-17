@@ -66,10 +66,12 @@ const WorkspacePage: React.FC = () => {
 	const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null);
 	const [projectInfo, setProjectInfo] = useState<ProjectWorkspaceInfo | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [loadError, setLoadError] = useState(false);
 
 	const [editingField, setEditingField] = useState<EditingField>(null);
 	const [draft, setDraft] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
+	const [saveError, setSaveError] = useState(false);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	// ---- Load workspace data ------------------------------------------------
