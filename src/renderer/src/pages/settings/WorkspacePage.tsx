@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { ProjectWorkspaceInfo } from '../../../../shared/types';
 import { AppInput } from '@/components/app/AppInput';
 import { AppTextarea } from '@/components/app/AppTextarea';
-import { AGENT_DEFINITIONS } from '../../../../shared/aiSettings';
+import { AGENT_DEFINITIONS, AGENT_IDS } from '../../../../shared/aiSettings';
 import type { AgentId } from '../../../../shared/aiSettings';
 
 // ---------------------------------------------------------------------------
