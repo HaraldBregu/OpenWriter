@@ -9,6 +9,7 @@ import type { OutputFileMetadata } from '../../../../shared/types';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 import AgenticSidebar from './AgenticSidebar';
+import { DocumentProvider } from './context';
 
 type TextCompleterTaskData = {
 	prompt: string;
