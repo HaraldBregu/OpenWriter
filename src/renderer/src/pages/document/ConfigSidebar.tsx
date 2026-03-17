@@ -8,6 +8,7 @@ interface ConfigSidebarProps {
 	readonly open: boolean;
 	readonly documentId: string | undefined;
 	readonly metadata: OutputFileMetadata | null;
+	readonly onOpenFolder: () => void;
 }
 
 function formatDate(isoString: string, locale: string): string {
