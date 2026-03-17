@@ -168,12 +168,12 @@ const WorkspacePage: React.FC = () => {
 		[handleCommit, handleCancel]
 	);
 
-	// Focus textarea when description editing starts
+	// Focus input when description editing starts
 	useEffect(() => {
-		if (editingField === 'description' && textareaRef.current) {
-			textareaRef.current.focus();
-			const len = textareaRef.current.value.length;
-			textareaRef.current.setSelectionRange(len, len);
+		if (editingField === 'description' && descriptionInputRef.current) {
+			descriptionInputRef.current.focus();
+			const len = descriptionInputRef.current.value.length;
+			descriptionInputRef.current.setSelectionRange(len, len);
 		}
 	}, [editingField]);
 
