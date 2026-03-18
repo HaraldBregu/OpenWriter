@@ -181,6 +181,34 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
+						{/* Media */}
+						<AppSidebarGroup className="py-0">
+							<AppSidebarGroupContent>
+								<AppSidebarMenu>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Film className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.media')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+								</AppSidebarMenu>
+							</AppSidebarGroupContent>
+						</AppSidebarGroup>
+
+						{/* Images */}
+						<AppSidebarGroup className="py-0">
+							<AppSidebarGroupContent>
+								<AppSidebarMenu>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<ImageIcon className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.images')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+								</AppSidebarMenu>
+							</AppSidebarGroupContent>
+						</AppSidebarGroup>
+
 						{/* Resources */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
