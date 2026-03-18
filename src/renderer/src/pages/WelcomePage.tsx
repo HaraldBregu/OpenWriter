@@ -240,18 +240,19 @@ const WelcomePage: React.FC = () => {
 				</div>
 
 				{/* ── Features ── */}
-				<div className="w-full max-w-2xl mb-8">
-					<h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+				<div className="w-full max-w-2xl mb-8" role="region" aria-label={t('welcome.features')}>
+					<p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
 						{t('welcome.features')}
-					</h2>
+					</p>
 					<div className="grid grid-cols-3 gap-3">
 						{featureDefs.map((feature) => (
 							<div
 								key={feature.labelKey}
-								className="flex flex-col gap-3 rounded-xl border border-border p-4"
+								className="flex flex-col gap-3 rounded-xl border border-border p-4 min-w-0"
 							>
 								<div
 									className={`h-9 w-9 rounded-lg flex items-center justify-center ${feature.accent}`}
+									aria-hidden="true"
 								>
 									<feature.icon className="h-4 w-4" />
 								</div>
