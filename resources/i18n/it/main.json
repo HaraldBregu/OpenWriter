@@ -777,6 +777,8 @@
 		"documents": "Documenti",
 		"media": "Media",
 		"images": "Immagini",
+		"integrations": "Integrazioni",
+		"socialMedia": "Social media",
 		"debug": "Debug"
 	},
 	"workspacePage": {
