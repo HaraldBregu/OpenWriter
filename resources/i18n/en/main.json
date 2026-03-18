@@ -10,7 +10,14 @@
 		"recentProjects": "Recent Projects",
 		"viewAll": "View all",
 		"notFound": "(Not Found)",
-		"removeFromRecent": "Remove from recent projects"
+		"removeFromRecent": "Remove from recent projects",
+		"features": "What you can do",
+		"featureWriting": "Writing",
+		"featureWritingDesc": "Create and edit documents with a clean, distraction-free editor",
+		"featureChat": "New Chat",
+		"featureChatDesc": "Start a conversation with AI to brainstorm, draft, or refine ideas",
+		"featureSkills": "Skills",
+		"featureSkillsDesc": "Use AI-powered skills to enhance your writing workflow"
 	},
 	"subtitle": "Clean & Simple",
 	"description": "A modern, advanced desktop application",
