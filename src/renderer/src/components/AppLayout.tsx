@@ -35,7 +35,6 @@ import {
 	Settings,
 	ChevronRight,
 	Bug,
-	Plus,
 	Library,
 	FileText,
 	Film,
@@ -44,7 +43,7 @@ import {
 	Share2,
 	MessageSquarePlus,
 	Sparkles,
-	Workflow,
+	FilePlus2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
