@@ -45,7 +45,6 @@ import {
 	Layers,
 	FilePlus2,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
