@@ -560,6 +560,10 @@ export function useThemeMode(): ThemeMode {
 	return useTheme().theme;
 }
 
+export function useLanguageMode(): AppLanguage {
+	return useLanguageContext().language;
+}
+
 export function useCurrentUser(): User | null {
 	return useUser().user;
 }
