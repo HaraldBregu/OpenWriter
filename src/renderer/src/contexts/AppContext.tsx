@@ -423,7 +423,7 @@ export function useNetworkContext(): NetworkContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// AppProvider — composition root for all 5 focused providers
+// AppProvider — composition root for all focused providers
 // ---------------------------------------------------------------------------
 
 interface AppProviderProps {
@@ -435,18 +435,20 @@ interface AppProviderProps {
 export function AppProvider({ children, initialState }: AppProviderProps) {
 	return (
 		<ThemeProvider initialTheme={initialState?.theme}>
-			<UserProvider initialUser={initialState?.user}>
-				<UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
-					<ModalProvider initialModals={initialState?.modals}>
-						<NetworkProvider
-							initialOnline={initialState?.isOnline}
-							initialSyncedAt={initialState?.lastSyncedAt}
-						>
-							{children}
-						</NetworkProvider>
-					</ModalProvider>
-				</UIPreferencesProvider>
-			</UserProvider>
+			<LanguageProvider initialLanguage={initialState?.language}>
+				<UserProvider initialUser={initialState?.user}>
+					<UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
+						<ModalProvider initialModals={initialState?.modals}>
+							<NetworkProvider
+								initialOnline={initialState?.isOnline}
+								initialSyncedAt={initialState?.lastSyncedAt}
+							>
+								{children}
+							</NetworkProvider>
+						</ModalProvider>
+					</UIPreferencesProvider>
+				</UserProvider>
+			</LanguageProvider>
 		</ThemeProvider>
 	);
 }
