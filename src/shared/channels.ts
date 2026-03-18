@@ -275,6 +275,7 @@ export interface InvokeChannelMap {
 export interface SendChannelMap {
 	[AppChannels.playSound]: { args: [] };
 	[AppChannels.setTheme]: { args: [theme: string] };
+	[AppChannels.setLanguage]: { args: [language: string] };
 	[AppChannels.contextMenu]: { args: [] };
 	[AppChannels.contextMenuEditable]: { args: [] };
 	[WindowChannels.minimize]: { args: [] };
