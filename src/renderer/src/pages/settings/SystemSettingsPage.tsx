@@ -20,9 +20,7 @@ const SystemSettingsPage: React.FC = () => {
 			</div>
 
 			<h2 className="text-sm font-normal mb-1 mt-6">{t('settings.language.title')}</h2>
-			<p className="text-xs text-muted-foreground mb-4">
-				{t('settings.language.description')}
-			</p>
+			<p className="text-xs text-muted-foreground mb-4">{t('settings.language.description')}</p>
 			<div className="rounded-md border divide-y">
 				<LanguageSelector />
 			</div>

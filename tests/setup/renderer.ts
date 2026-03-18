@@ -27,6 +27,7 @@ Object.defineProperty(window, 'app', {
 	value: {
 		playSound: jest.fn(),
 		setTheme: jest.fn(),
+		setLanguage: jest.fn(),
 		showContextMenu: jest.fn(),
 		showContextMenuEditable: jest.fn(),
 		onLanguageChange: jest.fn().mockReturnValue(jest.fn()),
