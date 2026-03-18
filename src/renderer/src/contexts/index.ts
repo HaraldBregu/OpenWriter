@@ -21,6 +21,7 @@ export {
 	useAppActions,
 	useAppSelector,
 	useThemeMode,
+	useLanguageMode,
 	useCurrentUser,
 	useUIPreferences,
 	useModalStates,
@@ -33,6 +34,7 @@ export {
 
 export type {
 	ThemeMode,
+	AppLanguage,
 	SidebarState,
 	User,
 	UIPreferences,
