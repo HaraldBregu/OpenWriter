@@ -411,6 +411,11 @@
 		"untitled": "Post Senza Titolo",
 		"charactersAndWords": "{{chars}} caratteri · {{words}} parole"
 	},
+	"chat": {
+		"titlePlaceholder": "Chat Senza Titolo",
+		"placeholder": "Chat in arrivo",
+		"placeholderDescription": "Inizia una conversazione con l'AI per fare brainstorming, redigere o perfezionare idee."
+	},
 	"writing": {
 		"titlePlaceholder": "Scrittura Senza Titolo",
 		"notFound": "Scrittura non trovata.",

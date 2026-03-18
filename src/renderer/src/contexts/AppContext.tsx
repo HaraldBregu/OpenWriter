@@ -369,7 +369,7 @@ export function useModalContext(): ModalContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 5. NetworkContext
+// 7. NetworkContext
 // ---------------------------------------------------------------------------
 
 interface NetworkContextValue {
