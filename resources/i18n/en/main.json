@@ -775,6 +775,8 @@
 		"untitled": "Untitled",
 		"resources": "Resources",
 		"documents": "Documents",
+		"media": "Media",
+		"images": "Images",
 		"debug": "Debug"
 	},
 	"workspacePage": {
