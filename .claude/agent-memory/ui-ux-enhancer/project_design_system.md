@@ -22,5 +22,9 @@ Switch UI component: custom (not Radix), renders a `<button role="switch" aria-c
 
 Slider UI component: custom `<input type="range">` wrapper. Supports `aria-label`, `aria-describedby`, `aria-valuetext`. Use `aria-valuetext` to provide formatted value strings to screen readers.
 
+RadioGroup pattern (ThemeModeSelector, LanguageSelector): Each `AppRadioGroupItem` must carry `aria-describedby` pointing to the `id` of the accompanying description `<span>`. Without this, screen readers announce only the label, not the helper text. The `id` convention is `{prefix}-{value}-description` (e.g. `theme-light-description`, `language-en-description`).
+
+Heading hierarchy in SystemSettingsPage: `<h1>` for the page title, `SectionHeader` renders `<h2>` for section groupings (e.g. "Layout"), sub-section widget labels (e.g. "Theme", "Language") must use `<h3>` — not `<h2>` — to maintain a valid outline.
+
 **Why:** Recording because two layout patterns coexist and future pages need to know which to follow.
 **How to apply:** New settings pages should use the WorkspacePage/AgentsSettingsPage Cursor-style pattern as it is the newer, intentional design direction.
