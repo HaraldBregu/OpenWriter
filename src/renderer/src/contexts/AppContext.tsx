@@ -498,16 +498,18 @@ export interface AppActionsContextValue {
  */
 export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
+	const { setLanguage } = useLanguageContext();
 	const { setUser } = useUser();
 	const { updateUIPreferences } = useUIPreferencesContext();
 	const { toggleModal } = useModalContext();
 	const { setOnlineStatus, updateSyncTime } = useNetworkContext();
 
-	// resetState re-navigates all 5 contexts back to their defaults. Because
+	// resetState re-navigates all contexts back to their defaults. Because
 	// each sub-provider owns its own useState, we drive them through their
 	// stable setters with the default values.
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
+		setLanguage(readPersistedLanguage());
 		setUser(null);
 		updateUIPreferences(defaultUIPreferences);
 		toggleModal('settingsOpen', false);
@@ -515,7 +517,7 @@ export function useAppActions(): AppActionsContextValue {
 		toggleModal('searchOpen', false);
 		toggleModal('shareDialogOpen', false);
 		setOnlineStatus(navigator.onLine);
-	}, [setTheme, setUser, updateUIPreferences, toggleModal, setOnlineStatus]);
+	}, [setTheme, setLanguage, setUser, updateUIPreferences, toggleModal, setOnlineStatus]);
 
 	return useMemo(
 		() => ({
