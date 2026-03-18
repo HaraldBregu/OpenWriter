@@ -774,6 +774,7 @@
 	"appLayout": {
 		"untitled": "Untitled",
 		"resources": "Resources",
+		"documents": "Documents",
 		"debug": "Debug"
 	},
 	"workspacePage": {
