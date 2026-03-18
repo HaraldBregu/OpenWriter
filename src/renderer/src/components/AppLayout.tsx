@@ -28,6 +28,7 @@ import {
 	AppSidebarInset,
 	AppSidebarHeader,
 	useSidebar,
+	AppSidebarSeparator,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
 import {
@@ -39,6 +40,7 @@ import {
 	FileText,
 	Film,
 	ImageIcon,
+	Blocks,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -176,6 +178,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
+						<AppSidebarSeparator />
+						
 						{/* Resources group */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
