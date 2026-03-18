@@ -1,17 +1,11 @@
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-
 /**
- * Hook to handle language changes from the main process
- * Syncs language changes with i18n
+ * Language change syncing is now handled by the LanguageProvider in AppContext.
+ * The LanguageProvider subscribes to window.app.onLanguageChange and calls
+ * i18n.changeLanguage automatically. This hook is kept as a no-op for backward
+ * compatibility with any existing call sites, but may be removed in a future cleanup.
+ *
+ * @deprecated Use useLanguageMode() and useAppActions().setLanguage() from contexts instead.
  */
 export function useLanguage(): void {
-	const { i18n } = useTranslation();
-
-	useEffect(() => {
-		const cleanup = window.app.onLanguageChange((lng: string) => {
-			i18n.changeLanguage(lng);
-		});
-		return cleanup;
-	}, [i18n]);
+	// Intentionally empty — language sync is managed by LanguageProvider.
 }
