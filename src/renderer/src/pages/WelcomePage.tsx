@@ -190,8 +190,8 @@ const WelcomePage: React.FC = () => {
 				</div>
 			)}
 
-			{/* Main content — vertically centered, not scrollable */}
-			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-hidden">
+			{/* Main content */}
+			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-y-auto">
 				{/* ── Hero ── */}
 				<div className="flex flex-col items-center mb-10">
 					<img
@@ -255,9 +255,7 @@ const WelcomePage: React.FC = () => {
 									<feature.icon className="h-4 w-4" />
 								</div>
 								<div>
-									<p className="text-sm font-medium text-foreground">
-										{t(feature.labelKey)}
-									</p>
+									<p className="text-sm font-medium text-foreground">{t(feature.labelKey)}</p>
 									<p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
 										{t(feature.descriptionKey)}
 									</p>
