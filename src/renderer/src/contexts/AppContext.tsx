@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react';
+import i18n from '../i18n';
 
 // ---------------------------------------------------------------------------
 // Shared types
 // ---------------------------------------------------------------------------
 
 export type ThemeMode = 'light' | 'dark' | 'system';
+export type AppLanguage = 'en' | 'it';
 export type SidebarState = 'expanded' | 'collapsed';
 
 export interface User {
