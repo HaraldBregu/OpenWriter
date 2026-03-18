@@ -522,6 +522,7 @@ export function useAppActions(): AppActionsContextValue {
 	return useMemo(
 		() => ({
 			setTheme,
+			setLanguage,
 			setUser,
 			updateUIPreferences,
 			toggleModal,
@@ -531,6 +532,7 @@ export function useAppActions(): AppActionsContextValue {
 		}),
 		[
 			setTheme,
+			setLanguage,
 			setUser,
 			updateUIPreferences,
 			toggleModal,
