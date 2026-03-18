@@ -21,15 +21,31 @@ const execFileAsync = promisify(execFile);
  * (formerly in StoreIpc, now consolidated here and exposed on window.app).
  */
 const VALID_THEMES = ['light', 'dark', 'system'] as const;
+const VALID_LANGUAGES = ['en', 'it'] as const;
 
 export class AppIpc implements IpcModule {
 	readonly name = 'app';
 
 	private lastTheme: string | null = null;
+	private lastLanguage: string | null = null;
 
 	register(container: ServiceContainer, eventBus: EventBus): void {
 		const store = container.get<StoreService>('store');
 		const logger = container.get<LoggerService>('logger');
+
+		// Language handler
+		ipcMain.on(AppChannels.setLanguage, (event, language: string) => {
+			if (!VALID_LANGUAGES.includes(language as (typeof VALID_LANGUAGES)[number])) return;
+			if (this.lastLanguage === language) return;
+			this.lastLanguage = language;
+
+			const senderContents = event.sender;
+			BrowserWindow.getAllWindows().forEach((win) => {
+				if (!win.isDestroyed() && win.webContents !== senderContents) {
+					win.webContents.send(AppChannels.changeLanguage, language);
+				}
+			});
+		});
 
 		// Theme handler
 		ipcMain.on(AppChannels.setTheme, (event, theme: string) => {
