@@ -361,7 +361,10 @@
 		"directories": "Directories",
 		"untitledPost": "Untitled Post",
 		"untitledWriting": "Untitled Writing",
-		"writings": "Documents"
+		"writings": "Documents",
+		"newChat": "New Chat",
+		"skills": "Skills",
+		"automations": "Automations"
 	},
 	"menu": {
 		"account": "Account",
