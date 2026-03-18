@@ -35,6 +35,7 @@ export interface ModalState {
 // Kept for backward-compatibility with the test file and any external consumers.
 export interface AppState {
 	theme: ThemeMode;
+	language: AppLanguage;
 	user: User | null;
 	uiPreferences: UIPreferences;
 	modals: ModalState;
