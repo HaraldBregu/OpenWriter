@@ -167,6 +167,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
+						{/* Documents */}
+						<AppSidebarGroup className="py-0">
+							<AppSidebarGroupContent>
+								<AppSidebarMenu>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<FileText className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.documents')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+								</AppSidebarMenu>
+							</AppSidebarGroupContent>
+						</AppSidebarGroup>
+
 						{/* Resources */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
