@@ -411,6 +411,11 @@
 		"untitled": "Untitled Post",
 		"charactersAndWords": "{{chars}} characters · {{words}} words"
 	},
+	"chat": {
+		"titlePlaceholder": "Untitled Chat",
+		"placeholder": "Chat coming soon",
+		"placeholderDescription": "Start a conversation with AI to brainstorm, draft, or refine ideas."
+	},
 	"writing": {
 		"titlePlaceholder": "Untitled Writing",
 		"notFound": "Writing not found.",

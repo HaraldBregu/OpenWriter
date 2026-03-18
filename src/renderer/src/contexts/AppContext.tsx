@@ -264,7 +264,7 @@ export function useUser(): UserContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 3. UIPreferencesContext
+// 5. UIPreferencesContext
 // ---------------------------------------------------------------------------
 
 interface UIPreferencesContextValue {
