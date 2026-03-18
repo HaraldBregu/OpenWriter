@@ -219,7 +219,10 @@ function LanguageProvider({
 		});
 	}, []);
 
-	const value = useMemo<LanguageContextValue>(() => ({ language, setLanguage }), [language, setLanguage]);
+	const value = useMemo<LanguageContextValue>(
+		() => ({ language, setLanguage }),
+		[language, setLanguage]
+	);
 
 	return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
@@ -465,13 +468,14 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
  */
 export function useAppState(): AppState {
 	const { theme } = useTheme();
+	const { language } = useLanguageContext();
 	const { user } = useUser();
 	const { uiPreferences } = useUIPreferencesContext();
 	const { modals } = useModalContext();
 	const { isOnline, lastSyncedAt } = useNetworkContext();
 	return useMemo(
-		() => ({ theme, user, uiPreferences, modals, isOnline, lastSyncedAt }),
-		[theme, user, uiPreferences, modals, isOnline, lastSyncedAt]
+		() => ({ theme, language, user, uiPreferences, modals, isOnline, lastSyncedAt }),
+		[theme, language, user, uiPreferences, modals, isOnline, lastSyncedAt]
 	);
 }
 
