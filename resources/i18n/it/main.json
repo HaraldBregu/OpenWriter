@@ -361,7 +361,9 @@
 		"directories": "Cartelle",
 		"untitledPost": "Post Senza Titolo",
 		"untitledWriting": "Scrittura Senza Titolo",
-		"writings": "Documenti"
+		"writings": "Documenti",
+		"newChat": "Nuova Chat",
+		"skills": "Abilità"
 	},
 	"menu": {
 		"account": "Account",
