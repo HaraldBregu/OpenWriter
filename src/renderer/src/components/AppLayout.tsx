@@ -30,7 +30,16 @@ import {
 	useSidebar,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
-import { Settings, ChevronRight, Bug, Plus, Library, FileText, Film, ImageIcon } from 'lucide-react';
+import {
+	Settings,
+	ChevronRight,
+	Bug,
+	Plus,
+	Library,
+	FileText,
+	Film,
+	ImageIcon,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
@@ -167,7 +176,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
-						{/* Documents */}
+						{/* Resources group */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
@@ -177,42 +186,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('appLayout.documents')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-								</AppSidebarMenu>
-							</AppSidebarGroupContent>
-						</AppSidebarGroup>
-
-						{/* Media */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupContent>
-								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton className="h-9 px-3">
 											<Film className="h-3.5 w-3.5 shrink-0" />
 											<span className="flex-1 truncate">{t('appLayout.media')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-								</AppSidebarMenu>
-							</AppSidebarGroupContent>
-						</AppSidebarGroup>
-
-						{/* Images */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupContent>
-								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton className="h-9 px-3">
 											<ImageIcon className="h-3.5 w-3.5 shrink-0" />
 											<span className="flex-1 truncate">{t('appLayout.images')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-								</AppSidebarMenu>
-							</AppSidebarGroupContent>
-						</AppSidebarGroup>
-
-						{/* Resources */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupContent>
-								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
