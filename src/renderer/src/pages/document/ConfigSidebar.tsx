@@ -59,16 +59,11 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true }) => {
+const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true, onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
-
-	const handleOpenFolder = useCallback(() => {
-		if (!documentId) return;
-		window.workspace.openDocumentFolder(documentId);
-	}, [documentId]);
 
 	const handleUploadClick = useCallback(() => {
 		fileInputRef.current?.click();
