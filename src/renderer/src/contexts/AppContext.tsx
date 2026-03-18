@@ -482,6 +482,7 @@ export function useAppState(): AppState {
 /** Backward-compatible actions bag. */
 export interface AppActionsContextValue {
 	setTheme: (theme: ThemeMode) => void;
+	setLanguage: (language: AppLanguage) => void;
 	setUser: (user: User | null) => void;
 	updateUIPreferences: (preferences: Partial<UIPreferences>) => void;
 	toggleModal: (modal: keyof ModalState, open?: boolean) => void;
