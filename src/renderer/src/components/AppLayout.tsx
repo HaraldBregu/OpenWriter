@@ -140,7 +140,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<Plus className="h-3.5 w-3.5 shrink-0 rounded-full" />
+											<FilePlus2 className="h-3.5 w-3.5 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
@@ -154,12 +154,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<AppSidebarMenuButton className="h-9 px-3">
 											<Sparkles className="h-3.5 w-3.5 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.skills')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Workflow className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('sidebar.automations')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 								</AppSidebarMenu>
