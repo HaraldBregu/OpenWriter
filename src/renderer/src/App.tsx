@@ -41,6 +41,23 @@ if (!documentsInitialized && typeof window.workspace?.onOutputFileChange === 'fu
 	});
 }
 
+// IPC → Redux bridge: load chats on startup and re-load on file changes.
+let chatsInitialized = false;
+if (!chatsInitialized && typeof window.workspace?.onOutputFileChange === 'function') {
+	chatsInitialized = true;
+	store.dispatch(loadChats());
+	window.workspace.onOutputFileChange((event) => {
+		if (event.outputType !== 'chats') return;
+		if (event.type === 'changed') {
+			store.dispatch(refreshChat(event.fileId));
+		} else if (event.type === 'removed') {
+			store.dispatch(chatRemoved(event.fileId));
+		} else {
+			store.dispatch(loadChats());
+		}
+	});
+}
+
 // IPC → Redux bridge: load resources on startup and re-load on file changes.
 let resourcesInitialized = false;
 if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === 'function') {

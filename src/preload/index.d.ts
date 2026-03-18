@@ -96,6 +96,7 @@ export type {
 export interface AppApi {
 	playSound: () => void;
 	setTheme: (theme: string) => void;
+	setLanguage: (language: string) => void;
 	showContextMenu: () => void;
 	showContextMenuEditable: () => void;
 	onLanguageChange: (callback: (lng: string) => void) => () => void;
