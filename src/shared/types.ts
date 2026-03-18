@@ -164,7 +164,7 @@ export interface DocumentFileChangeEvent {
 
 // ---- Output ---------------------------------------------------------------
 
-export type OutputType = 'documents';
+export type OutputType = 'documents' | 'chats';
 
 export interface OutputFileMetadata {
 	title: string;
