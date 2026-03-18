@@ -215,6 +215,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Blocks className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.integrations')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Share2 className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.socialMedia')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
