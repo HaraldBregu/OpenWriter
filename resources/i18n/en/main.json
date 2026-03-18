@@ -396,6 +396,10 @@
 		"documentsDescription": "Browse your files",
 		"integrations": "Integrations",
 		"integrationsDescription": "Connect your tools",
+		"chat": "New Chat",
+		"chatDescription": "Start a conversation with AI",
+		"skills": "Skills",
+		"skillsDescription": "AI-powered writing capabilities",
 		"tip": "Tip",
 		"tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to show or hide the sidebar."
 	},

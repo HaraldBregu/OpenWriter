@@ -81,9 +81,7 @@ const FeatureCard = React.memo(function FeatureCard({
 			</div>
 			<div>
 				<p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
-				<p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-					{t(descriptionKey)}
-				</p>
+				<p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{t(descriptionKey)}</p>
 			</div>
 		</div>
 	);
@@ -285,11 +283,7 @@ const WelcomePage: React.FC = () => {
 				</div>
 
 				{/* ── Features ── */}
-				<section
-					className="w-full max-w-2xl mb-8"
-					role="region"
-					aria-label={t('welcome.features')}
-				>
+				<section className="w-full max-w-2xl mb-8" role="region" aria-label={t('welcome.features')}>
 					<p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
 						{t('welcome.features')}
 					</p>
