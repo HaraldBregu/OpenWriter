@@ -62,6 +62,16 @@ function readPersistedTheme(): ThemeMode {
 	return 'system';
 }
 
+function readPersistedLanguage(): AppLanguage {
+	try {
+		const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+		if (stored === 'en' || stored === 'it') return stored;
+	} catch {
+		// localStorage may be unavailable in some contexts
+	}
+	return 'en';
+}
+
 function applyThemeClass(theme: ThemeMode): void {
 	const root = document.documentElement;
 	if (theme === 'dark') {
