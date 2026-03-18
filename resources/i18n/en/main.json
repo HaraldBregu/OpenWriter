@@ -369,8 +369,10 @@
 		"untitledPost": "Untitled Post",
 		"untitledWriting": "Untitled Writing",
 		"writings": "Documents",
+		"chats": "Chats",
 		"newChat": "New Chat",
-		"skills": "Skills"
+		"skills": "Skills",
+		"untitledChat": "Untitled Chat"
 	},
 	"menu": {
 		"account": "Account",

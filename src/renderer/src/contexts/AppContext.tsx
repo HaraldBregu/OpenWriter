@@ -231,7 +231,7 @@ export function useLanguageContext(): LanguageContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 3. UserContext
+// 4. UserContext
 // ---------------------------------------------------------------------------
 
 interface UserContextValue {
