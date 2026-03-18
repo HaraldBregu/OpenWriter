@@ -197,6 +197,14 @@
 			"system": "Sistema",
 			"systemDescription": "Segui la preferenza del sistema operativo"
 		},
+		"language": {
+			"title": "Lingua",
+			"description": "Scegli la lingua di visualizzazione dell'applicazione.",
+			"en": "English",
+			"enDescription": "Usa l'inglese come lingua di visualizzazione",
+			"it": "Italiano",
+			"itDescription": "Usa l'italiano come lingua di visualizzazione"
+		},
 		"models": {
 			"title": "Modelli",
 			"description": "Seleziona il modello attivo per ogni provider AI.",
