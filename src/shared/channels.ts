@@ -135,6 +135,7 @@ export const TaskChannels = {
 export const AppChannels = {
 	playSound: 'play-sound',
 	setTheme: 'set-theme',
+	setLanguage: 'set-language',
 	contextMenu: 'context-menu',
 	contextMenuEditable: 'context-menu-editable',
 	changeLanguage: 'change-language',
