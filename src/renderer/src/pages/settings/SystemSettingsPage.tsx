@@ -13,13 +13,13 @@ const SystemSettingsPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.layout')} />
 
-			<h2 className="text-sm font-normal mb-1">{t('settings.theme.title')}</h2>
+			<h3 className="text-sm font-normal mb-1">{t('settings.theme.title')}</h3>
 			<p className="text-xs text-muted-foreground mb-4">{t('settings.theme.description')}</p>
 			<div className="rounded-md border divide-y">
 				<ThemeModeSelector />
 			</div>
 
-			<h2 className="text-sm font-normal mb-1 mt-6">{t('settings.language.title')}</h2>
+			<h3 className="text-sm font-normal mb-1 mt-6">{t('settings.language.title')}</h3>
 			<p className="text-xs text-muted-foreground mb-4">{t('settings.language.description')}</p>
 			<div className="rounded-md border divide-y">
 				<LanguageSelector />
