@@ -14,6 +14,9 @@ const app: AppApi = {
 	setTheme: (theme: string): void => {
 		typedSend(AppChannels.setTheme, theme);
 	},
+	setLanguage: (language: string): void => {
+		typedSend(AppChannels.setLanguage, language);
+	},
 	showContextMenu: (): void => {
 		typedSend(AppChannels.contextMenu);
 	},
