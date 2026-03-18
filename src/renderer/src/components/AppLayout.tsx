@@ -180,7 +180,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						</AppCollapsible>
 
 						<AppSidebarSeparator />
-						
+
 						{/* Resources group */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
