@@ -30,7 +30,7 @@ import {
 	useSidebar,
 } from './app';
 import logoIcon from '@resources/icons/icon.png';
-import { Settings, ChevronRight, Bug, Plus, Library } from 'lucide-react';
+import { Settings, ChevronRight, Bug, Plus, Library, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
