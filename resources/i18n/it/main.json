@@ -369,8 +369,10 @@
 		"untitledPost": "Post Senza Titolo",
 		"untitledWriting": "Scrittura Senza Titolo",
 		"writings": "Documenti",
+		"chats": "Chat",
 		"newChat": "Nuova Chat",
-		"skills": "Abilità"
+		"skills": "Abilità",
+		"untitledChat": "Chat Senza Titolo"
 	},
 	"menu": {
 		"account": "Account",

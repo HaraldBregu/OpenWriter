@@ -328,7 +328,7 @@ export function useUIPreferencesContext(): UIPreferencesContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 4. ModalContext
+// 6. ModalContext
 // ---------------------------------------------------------------------------
 
 interface ModalContextValue {
