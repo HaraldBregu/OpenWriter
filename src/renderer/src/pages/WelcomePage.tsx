@@ -183,9 +183,10 @@ const WelcomePage: React.FC = () => {
 					</p>
 					<button
 						onClick={clearDeletion}
+						aria-label={t('common.close')}
 						className="h-6 w-6 rounded-md hover:bg-destructive/10 flex items-center justify-center transition-colors shrink-0"
 					>
-						<X className="h-3.5 w-3.5 text-destructive" />
+						<X className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
 					</button>
 				</div>
 			)}
