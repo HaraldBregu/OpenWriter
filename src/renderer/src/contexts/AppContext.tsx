@@ -48,6 +48,7 @@ export interface AppState {
 // ---------------------------------------------------------------------------
 
 const THEME_STORAGE_KEY = 'app-theme-mode';
+const LANGUAGE_STORAGE_KEY = 'app-language';
 const UI_PREFS_STORAGE_KEY = 'app-ui-preferences';
 const DARK_CLASS = 'dark';
 
