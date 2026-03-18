@@ -24,7 +24,14 @@ interface RecentProject {
 	exists?: boolean;
 }
 
-const featureDefs = [
+interface FeatureDef {
+	readonly icon: React.ElementType;
+	readonly labelKey: string;
+	readonly descriptionKey: string;
+	readonly accent: string;
+}
+
+const featureDefs: readonly FeatureDef[] = [
 	{
 		icon: FilePlus2,
 		labelKey: 'welcome.featureWriting',
@@ -43,7 +50,45 @@ const featureDefs = [
 		descriptionKey: 'welcome.featureSkillsDesc',
 		accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
 	},
-] as const;
+];
+
+// ---------------------------------------------------------------------------
+// FeatureCard — memoised sub-component (mirrors HomePage's CategoryCard)
+// ---------------------------------------------------------------------------
+
+interface FeatureCardProps {
+	readonly icon: React.ElementType;
+	readonly labelKey: string;
+	readonly descriptionKey: string;
+	readonly accent: string;
+}
+
+const FeatureCard = React.memo(function FeatureCard({
+	icon: Icon,
+	labelKey,
+	descriptionKey,
+	accent,
+}: FeatureCardProps) {
+	const { t } = useTranslation();
+
+	return (
+		<div className="flex flex-col gap-3 rounded-xl border border-border p-4 min-w-0">
+			<div
+				className={`h-9 w-9 rounded-lg flex items-center justify-center ${accent}`}
+				aria-hidden="true"
+			>
+				<Icon className="h-4 w-4" />
+			</div>
+			<div>
+				<p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
+				<p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+					{t(descriptionKey)}
+				</p>
+			</div>
+		</div>
+	);
+});
+FeatureCard.displayName = 'FeatureCard';
 
 const WelcomePage: React.FC = () => {
 	const navigate = useNavigate();
