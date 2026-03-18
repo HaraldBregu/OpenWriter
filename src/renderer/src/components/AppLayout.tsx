@@ -131,7 +131,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 					{/* Nav */}
 					<AppSidebarContent className="gap-4 py-2">
-						{/* New Writing */}
+						{/* New Writing + Quick Actions */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
@@ -143,6 +143,24 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										>
 											<Plus className="h-3.5 w-3.5 shrink-0 rounded-full" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<MessageSquarePlus className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('sidebar.newChat')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Sparkles className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('sidebar.skills')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Workflow className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('sidebar.automations')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 								</AppSidebarMenu>
