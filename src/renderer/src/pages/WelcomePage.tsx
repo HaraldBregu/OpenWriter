@@ -24,6 +24,27 @@ interface RecentProject {
 	exists?: boolean;
 }
 
+const featureDefs = [
+	{
+		icon: FilePlus2,
+		labelKey: 'welcome.featureWriting',
+		descriptionKey: 'welcome.featureWritingDesc',
+		accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+	},
+	{
+		icon: MessageSquarePlus,
+		labelKey: 'welcome.featureChat',
+		descriptionKey: 'welcome.featureChatDesc',
+		accent: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+	},
+	{
+		icon: Layers,
+		labelKey: 'welcome.featureSkills',
+		descriptionKey: 'welcome.featureSkillsDesc',
+		accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+	},
+] as const;
+
 const WelcomePage: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
