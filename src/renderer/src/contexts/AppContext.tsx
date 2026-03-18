@@ -173,7 +173,65 @@ export function useTheme(): ThemeContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 2. UserContext
+// 2. LanguageContext
+// ---------------------------------------------------------------------------
+
+interface LanguageContextValue {
+	language: AppLanguage;
+	setLanguage: (language: AppLanguage) => void;
+}
+
+const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+
+function LanguageProvider({
+	children,
+	initialLanguage,
+}: {
+	children: React.ReactNode;
+	initialLanguage?: AppLanguage;
+}) {
+	const [language, setLanguageState] = useState<AppLanguage>(
+		initialLanguage ?? readPersistedLanguage()
+	);
+
+	const setLanguage = useCallback((next: AppLanguage) => setLanguageState(next), []);
+
+	// Apply i18n change, persist, and notify main process on language change.
+	useEffect(() => {
+		i18n.changeLanguage(language);
+		try {
+			localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+		} catch (error) {
+			console.error('Failed to save language preference:', error);
+		}
+		// window.app is only present inside the Electron preload context.
+		window.app?.setLanguage(language);
+	}, [language]);
+
+	// Sync language changes broadcast from the Electron main process (e.g. sibling windows).
+	useEffect(() => {
+		// Guard: window.app is only available inside the Electron preload context.
+		if (!window.app?.onLanguageChange) return;
+		return window.app.onLanguageChange((incoming: string) => {
+			if (incoming === 'en' || incoming === 'it') {
+				setLanguageState(incoming as AppLanguage);
+			}
+		});
+	}, []);
+
+	const value = useMemo<LanguageContextValue>(() => ({ language, setLanguage }), [language, setLanguage]);
+
+	return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+}
+
+export function useLanguageContext(): LanguageContextValue {
+	const ctx = useContext(LanguageContext);
+	if (ctx === undefined) throw new Error('useLanguageContext must be used within an AppProvider');
+	return ctx;
+}
+
+// ---------------------------------------------------------------------------
+// 3. UserContext
 // ---------------------------------------------------------------------------
 
 interface UserContextValue {
