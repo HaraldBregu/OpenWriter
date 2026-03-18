@@ -29,20 +29,29 @@ export function LanguageSelector(): React.ReactElement {
 			className="grid gap-0"
 			aria-label={t('settings.language.title')}
 		>
-			{languageOptions.map((option) => (
-				<div key={option.value} className="flex items-center justify-between px-4 py-3">
-					<div className="flex flex-col gap-0.5">
-						<AppLabel
-							htmlFor={`language-${option.value}`}
-							className="text-sm font-normal cursor-pointer"
-						>
-							{option.label}
-						</AppLabel>
-						<span className="text-xs text-muted-foreground">{option.description}</span>
+			{languageOptions.map((option) => {
+				const descriptionId = `language-${option.value}-description`;
+				return (
+					<div key={option.value} className="flex items-center justify-between px-4 py-3">
+						<div className="flex flex-col gap-0.5">
+							<AppLabel
+								htmlFor={`language-${option.value}`}
+								className="text-sm font-normal cursor-pointer"
+							>
+								{option.label}
+							</AppLabel>
+							<span id={descriptionId} className="text-xs text-muted-foreground">
+								{option.description}
+							</span>
+						</div>
+						<AppRadioGroupItem
+							id={`language-${option.value}`}
+							value={option.value}
+							aria-describedby={descriptionId}
+						/>
 					</div>
-					<AppRadioGroupItem id={`language-${option.value}`} value={option.value} />
-				</div>
-			))}
+				);
+			})}
 		</AppRadioGroup>
 	);
 }
