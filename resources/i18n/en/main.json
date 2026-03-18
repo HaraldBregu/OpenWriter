@@ -197,6 +197,14 @@
 			"system": "System",
 			"systemDescription": "Follow the operating system preference"
 		},
+		"language": {
+			"title": "Language",
+			"description": "Choose the display language for the application.",
+			"en": "English",
+			"enDescription": "Use English as the display language",
+			"it": "Italiano",
+			"itDescription": "Use Italian as the display language"
+		},
 		"models": {
 			"title": "Models",
 			"description": "Select the active model for each AI provider.",
