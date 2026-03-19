@@ -38,6 +38,7 @@ import {
 	Settings,
 	ChevronRight,
 	Bug,
+	Database,
 	Library,
 	FileText,
 	Film,
