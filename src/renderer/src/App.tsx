@@ -194,10 +194,18 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/debug"
+													path="/debug/tasks"
 													element={
 														<RouteWrapper>
-															<DebugPage />
+															<DebugTasksPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/debug/redux"
+													element={
+														<RouteWrapper>
+															<DebugReduxPage />
 														</RouteWrapper>
 													}
 												/>
