@@ -76,7 +76,8 @@ if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === '
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DocumentPage = lazy(() => import('./pages/document/DocumentPage'));
 const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
-const DebugPage = lazy(() => import('./pages/debug/DebugPage'));
+const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
+const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 
 // Lazy-loaded settings pages
