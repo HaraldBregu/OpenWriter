@@ -308,25 +308,47 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
-						{/* Debug + Agents */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupContent>
-								<AppSidebarMenu>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton
-											asChild
-											className="h-9 px-3"
-											isActive={location.pathname === '/debug'}
-										>
-											<Link to="/debug">
-												<Bug className="h-3.5 w-3.5 shrink-0" />
-												<span className="flex-1 truncate">{t('appLayout.debug')}</span>
-											</Link>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-								</AppSidebarMenu>
-							</AppSidebarGroupContent>
-						</AppSidebarGroup>
+						{/* Debug */}
+						<AppCollapsible defaultOpen className="py-0">
+							<AppSidebarGroup className="py-0">
+								<AppSidebarGroupLabel asChild>
+									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
+										{t('appLayout.debug')}
+										<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
+									</AppCollapsibleTrigger>
+								</AppSidebarGroupLabel>
+								<AppCollapsiblePanel>
+									<AppSidebarGroupContent>
+										<AppSidebarMenu>
+											<AppSidebarMenuItem>
+												<AppSidebarMenuButton
+													asChild
+													className="h-9 px-3"
+													isActive={location.pathname === '/debug/tasks'}
+												>
+													<Link to="/debug/tasks">
+														<Bug className="h-3.5 w-3.5 shrink-0" />
+														<span className="flex-1 truncate">{t('debug.tasks')}</span>
+													</Link>
+												</AppSidebarMenuButton>
+											</AppSidebarMenuItem>
+											<AppSidebarMenuItem>
+												<AppSidebarMenuButton
+													asChild
+													className="h-9 px-3"
+													isActive={location.pathname === '/debug/redux'}
+												>
+													<Link to="/debug/redux">
+														<Database className="h-3.5 w-3.5 shrink-0" />
+														<span className="flex-1 truncate">{t('debug.reduxState')}</span>
+													</Link>
+												</AppSidebarMenuButton>
+											</AppSidebarMenuItem>
+										</AppSidebarMenu>
+									</AppSidebarGroupContent>
+								</AppCollapsiblePanel>
+							</AppSidebarGroup>
+						</AppCollapsible>
 					</AppSidebarContent>
 
 					{/* Footer — Settings link */}
