@@ -18,7 +18,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 // Services
 import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
-import { FileManager } from './file_manager';
+import { FileManager } from './shared/file_manager';
 import {
 	AgentRegistry,
 	TextCompleterAgent,
