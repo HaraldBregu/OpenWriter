@@ -141,6 +141,17 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 					</AppButton>
 					<AppButton
 						type="button"
+						variant={editorSidebarOpen ? 'secondary' : 'outline'}
+						size="icon"
+						title={t('titleBar.toggleEditorSidebar')}
+						aria-label={t('titleBar.toggleEditorSidebar')}
+						aria-expanded={editorSidebarOpen}
+						onClick={onToggleEditorSidebar}
+					>
+						<PanelRight className="h-4 w-4" aria-hidden="true" />
+					</AppButton>
+					<AppButton
+						type="button"
 						variant={sidebarOpen ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleSidebar')}
