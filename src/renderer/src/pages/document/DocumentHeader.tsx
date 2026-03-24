@@ -13,6 +13,7 @@ import {
 	X,
 	Info,
 	Bot,
+	PanelRight,
 } from 'lucide-react';
 import {
 	AppButton,
