@@ -211,25 +211,7 @@ const WelcomePage: React.FC = () => {
 					</div>
 				</div>
 
-				{/* ── Features ── */}
-				<section className="w-full max-w-2xl mb-8" role="region" aria-label={t('welcome.features')}>
-					<p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
-						{t('welcome.features')}
-					</p>
-					<div className="grid grid-cols-3 gap-3">
-						{featureDefs.map((feature) => (
-							<FeatureCard
-								key={feature.labelKey}
-								icon={feature.icon}
-								labelKey={feature.labelKey}
-								descriptionKey={feature.descriptionKey}
-								accent={feature.accent}
-							/>
-						))}
-					</div>
-				</section>
-
-				{/* ── Recent projects ── */}
+	{/* ── Recent projects ── */}
 				{recentProjects.length > 0 && (
 					<div className="w-full max-w-2xl flex flex-col min-h-0">
 						<div className="flex items-center justify-between mb-3">
