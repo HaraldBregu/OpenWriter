@@ -11,9 +11,8 @@ import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 import AgenticSidebar from './AgenticSidebar';
 import EditorSidebar from './EditorSidebar';
-import { DocumentProvider, EditorInstanceProvider } from './context';
+import { DocumentProvider, EditorInstanceProvider, useEditorInstance } from './context';
 import { useDocumentDispatch } from './hooks';
-import { useEditorInstance } from './context/editor-instance-context';
 
 type TextCompleterTaskData = {
 	prompt: string;
