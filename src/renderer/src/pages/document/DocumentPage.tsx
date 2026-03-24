@@ -487,9 +487,9 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					</div>
 				</div>
 
-				<EditorSidebar open={activeSidebar === 'editor'} />
-				<ConfigSidebar open={activeSidebar === 'config'} onOpenFolder={handleOpenFolder} />
-				<AgenticSidebar open={activeSidebar === 'agentic'} />
+				<EditorSidebar open={activeSidebar === 'editor'} animate={animate} />
+				<ConfigSidebar open={activeSidebar === 'config'} animate={animate} onOpenFolder={handleOpenFolder} />
+				<AgenticSidebar open={activeSidebar === 'agentic'} animate={animate} />
 			</div>
 		</div>
 	);
