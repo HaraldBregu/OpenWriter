@@ -95,6 +95,7 @@ const TextEditor = React.memo(
 				onImageSubmit,
 				onImageFileSelect,
 				documentId,
+				onEditorReady,
 			},
 			ref
 		) => {
