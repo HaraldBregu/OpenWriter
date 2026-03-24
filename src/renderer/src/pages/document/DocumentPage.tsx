@@ -451,24 +451,6 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 			<DocumentHeader
 				title={title}
 				onTitleChange={handleTitleChange}
-				sidebarOpen={sidebarOpen}
-				onToggleSidebar={() => {
-					const isSwap = !sidebarOpen && agenticSidebarOpen;
-					if (isSwap) setSidebarAnimate(false);
-					setSidebarOpen((prev) => !prev);
-					if (isSwap) setAgenticSidebarOpen(false);
-					if (isSwap) requestAnimationFrame(() => setSidebarAnimate(true));
-				}}
-				agenticSidebarOpen={agenticSidebarOpen}
-				onToggleAgenticSidebar={() => {
-					const isSwap = !agenticSidebarOpen && sidebarOpen;
-					if (isSwap) setSidebarAnimate(false);
-					setAgenticSidebarOpen((prev) => !prev);
-					if (isSwap) setSidebarOpen(false);
-					if (isSwap) requestAnimationFrame(() => setSidebarAnimate(true));
-				}}
-				editorSidebarOpen={editorSidebarOpen}
-				onToggleEditorSidebar={() => setEditorSidebarOpen((prev) => !prev)}
 				isTrashing={isTrashing}
 				onMoveToTrash={handleMoveToTrash}
 				onSearch={handleSearch}
@@ -505,13 +487,9 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					</div>
 				</div>
 
-				<EditorSidebar open={editorSidebarOpen} animate={sidebarAnimate} />
-				<ConfigSidebar
-					open={sidebarOpen}
-					animate={sidebarAnimate}
-					onOpenFolder={handleOpenFolder}
-				/>
-				<AgenticSidebar open={agenticSidebarOpen} animate={sidebarAnimate} />
+				<EditorSidebar open={activeSidebar === 'editor'} />
+				<ConfigSidebar open={activeSidebar === 'config'} onOpenFolder={handleOpenFolder} />
+				<AgenticSidebar open={activeSidebar === 'agentic'} />
 			</div>
 		</div>
 	);
