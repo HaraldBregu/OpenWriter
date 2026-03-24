@@ -696,6 +696,24 @@
 	"agenticSidebar": {
 		"placeholder": "AI assistant coming soon"
 	},
+	"editorSidebar": {
+		"ariaLabel": "Formatting toolbar",
+		"textFormatting": "Format",
+		"bold": "Bold",
+		"italic": "Italic",
+		"underline": "Underline",
+		"strikethrough": "Strikethrough",
+		"headings": "Headings",
+		"heading1": "Heading 1",
+		"heading2": "Heading 2",
+		"heading3": "Heading 3",
+		"lists": "Lists",
+		"bulletList": "Bullet list",
+		"orderedList": "Ordered list",
+		"history": "History",
+		"undo": "Undo",
+		"redo": "Redo"
+	},
 	"resources": {
 		"title": "Resources",
 		"indexing": "Indexing resources…",
