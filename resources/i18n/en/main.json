@@ -478,6 +478,7 @@
 		"applicationMenu": "Application menu",
 		"toggleSidebar": "Toggle sidebar",
 		"toggleAgenticSidebar": "Toggle AI assistant",
+		"toggleEditorSidebar": "Toggle formatting toolbar",
 		"minimize": "Minimize",
 		"maximize": "Maximize",
 		"restore": "Restore",
