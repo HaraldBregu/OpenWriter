@@ -71,11 +71,13 @@ Key files: `src/preload/index.ts`, `src/preload/index.d.ts`
 
 The Node.js process. Handles all privileged operations: file system, AI model calls, and long-running background work.
 
-| Module         | Responsibility                                             |
-|----------------|------------------------------------------------------------|
-| `Workspace`    | File system watch, folder read/write, recent files         |
-| `Task Manager` | Priority queue, concurrent task execution, progress stream |
-| `AI Manager`   | LLM orchestration via LangChain/LangGraph, prompt routing  |
+| Module         | Responsibility                                              | Depends on     |
+|----------------|-------------------------------------------------------------|----------------|
+| `Task Manager` | Priority queue, concurrent task execution, progress stream  | —              |
+| `AI Manager`   | LLM orchestration via LangChain/LangGraph, prompt routing   | Task Manager   |
+| `Workspace`    | File system watch, folder read/write, recent files          | AI Manager ○   |
+
+> `○` — AI Manager accesses Workspace through an interface (not a direct import), keeping the dependency inverted.
 
 Key directories: `src/main/`
 
