@@ -496,6 +496,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 									onTextSubmit={onTextSubmit}
 									onImageSubmit={onImageSubmit}
 									documentId={id}
+									onEditorReady={handleEditorReady}
 								/>
 							)}
 						</div>
