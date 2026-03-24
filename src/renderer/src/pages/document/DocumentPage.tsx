@@ -465,6 +465,8 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					if (isSwap) setSidebarOpen(false);
 					if (isSwap) requestAnimationFrame(() => setSidebarAnimate(true));
 				}}
+				editorSidebarOpen={editorSidebarOpen}
+				onToggleEditorSidebar={() => setEditorSidebarOpen((prev) => !prev)}
 				isTrashing={isTrashing}
 				onMoveToTrash={handleMoveToTrash}
 				onSearch={handleSearch}
