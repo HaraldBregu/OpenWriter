@@ -76,7 +76,7 @@ const SidebarButton = React.memo(function SidebarButton({
 					{children}
 				</AppButton>
 			</AppTooltipTrigger>
-			<AppTooltipContent side="left">
+			<AppTooltipContent side="bottom">
 				<span className="text-xs">{label}</span>
 			</AppTooltipContent>
 		</AppTooltip>
