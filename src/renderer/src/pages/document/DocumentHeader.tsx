@@ -45,6 +45,7 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 	onOpenFolder,
 }) => {
 	const { t } = useTranslation();
+	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const searchInputRef = useRef<HTMLInputElement>(null);
