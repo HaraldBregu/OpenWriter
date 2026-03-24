@@ -24,6 +24,7 @@ export function ReduxStateTab() {
 	const workspace = useAppSelector((s: RootState) => s.workspace);
 	const tasks = useAppSelector((s: RootState) => s.tasks);
 	const documents = useAppSelector((s: RootState) => s.documents);
+	const chats = useAppSelector((s: RootState) => s.chats);
 
 	void tick;
 
@@ -31,6 +32,7 @@ export function ReduxStateTab() {
 		{ name: 'workspace', data: workspace },
 		{ name: 'tasks', data: tasks },
 		{ name: 'documents', data: documents },
+		{ name: 'chats', data: chats },
 	];
 
 	return (

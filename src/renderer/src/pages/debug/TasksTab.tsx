@@ -2,8 +2,6 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bug } from 'lucide-react';
 import { useDebugTasks } from '../../hooks/use-debug-tasks';
-import { DEMO_VARIANTS } from './debug-constants';
-import { submitDemoTask } from './debug-helpers';
 import { TaskRow } from './TaskRow';
 import { LogPanel } from './LogPanel';
 
@@ -29,7 +27,7 @@ export function TasksTab() {
 	return (
 		<div className="flex flex-1 min-h-0">
 			<div className="flex flex-col flex-1 min-w-0 min-h-0">
-				<div className="px-6 py-3 border-b shrink-0 space-y-2">
+				<div className="px-6 py-3 border-b shrink-0">
 					<div className="flex items-center gap-4 text-xs text-muted-foreground">
 						<span>
 							<span className="font-medium text-foreground">{queueStats.running}</span>{' '}
@@ -48,22 +46,6 @@ export function TasksTab() {
 								<span className="font-medium">{queueStats.error}</span> {t('debug.errors')}
 							</span>
 						)}
-					</div>
-
-					<div className="flex items-center gap-2 pb-1">
-						<span className="text-xs text-muted-foreground shrink-0">{t('debug.demoTask')}</span>
-						{DEMO_VARIANTS.map(({ variant, label, icon: Icon, description }) => (
-							<button
-								key={variant}
-								type="button"
-								title={description}
-								onClick={() => submitDemoTask(variant)}
-								className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-							>
-								<Icon className="h-3 w-3 shrink-0" />
-								{label}
-							</button>
-						))}
 					</div>
 				</div>
 
