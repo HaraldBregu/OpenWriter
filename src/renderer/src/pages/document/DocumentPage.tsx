@@ -520,7 +520,9 @@ const DocumentPage: React.FC = () => {
 
 	return (
 		<DocumentProvider documentId={id}>
-			<DocumentPageInner documentId={id} />
+			<EditorInstanceProvider>
+				<DocumentPageInner documentId={id} />
+			</EditorInstanceProvider>
 		</DocumentProvider>
 	);
 };
