@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import https from 'node:https';
 import { randomUUID } from 'node:crypto';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../../services/logger';
 import type {
 	FileEncoding,
 	FileMetadata,
