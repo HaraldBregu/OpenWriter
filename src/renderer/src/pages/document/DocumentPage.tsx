@@ -11,7 +11,13 @@ import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 import AgenticSidebar from './AgenticSidebar';
 import EditorSidebar from './EditorSidebar';
-import { DocumentProvider, EditorInstanceProvider, useEditorInstance } from './context';
+import {
+	DocumentProvider,
+	EditorInstanceProvider,
+	SidebarVisibilityProvider,
+	useEditorInstance,
+	useSidebarVisibility,
+} from './context';
 import { useDocumentDispatch } from './hooks';
 
 type TextCompleterTaskData = {
