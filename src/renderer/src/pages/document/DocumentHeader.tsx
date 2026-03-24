@@ -47,6 +47,8 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 	onToggleSidebar,
 	agenticSidebarOpen,
 	onToggleAgenticSidebar,
+	editorSidebarOpen,
+	onToggleEditorSidebar,
 	isTrashing,
 	onMoveToTrash,
 	onSearch,
