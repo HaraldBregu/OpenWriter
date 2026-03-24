@@ -65,6 +65,8 @@ export interface TextEditorProps {
 	onImageFileSelect?: (file: File) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
+	/** Called when the TipTap editor instance becomes available or is destroyed. */
+	onEditorReady?: (editor: Editor | null) => void;
 }
 
 function readFileAsDataUri(file: File): Promise<string> {
