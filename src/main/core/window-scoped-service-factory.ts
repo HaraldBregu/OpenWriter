@@ -1,6 +1,6 @@
 import type { ServiceContainer, EventBus } from './index';
 import type { StoreService } from '../services/store';
-import type { FileManager } from '../file_manager';
+import type { FileManager } from '../shared/file_manager';
 import type { LoggerService } from '../services/logger';
 import {
 	Workspace,
