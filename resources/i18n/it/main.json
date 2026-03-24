@@ -478,6 +478,7 @@
 		"applicationMenu": "Menu applicazione",
 		"toggleSidebar": "Mostra/nascondi barra laterale",
 		"toggleAgenticSidebar": "Mostra/nascondi assistente AI",
+		"toggleEditorSidebar": "Mostra/nascondi barra formattazione",
 		"minimize": "Riduci a icona",
 		"maximize": "Ingrandisci",
 		"restore": "Ripristina",
