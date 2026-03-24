@@ -16,7 +16,6 @@ interface RecentProject {
 	exists?: boolean;
 }
 
-
 const WelcomePage: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -211,7 +210,7 @@ const WelcomePage: React.FC = () => {
 					</div>
 				</div>
 
-	{/* ── Recent projects ── */}
+				{/* ── Recent projects ── */}
 				{recentProjects.length > 0 && (
 					<div className="w-full max-w-2xl flex flex-col min-h-0">
 						<div className="flex items-center justify-between mb-3">
