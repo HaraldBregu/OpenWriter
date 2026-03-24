@@ -23,16 +23,11 @@ import {
 	AppDropdownMenuSeparator,
 	AppDropdownMenuTrigger,
 } from '@/components/app';
+import { useSidebarVisibility } from './context';
 
 interface DocumentHeaderProps {
 	readonly title: string;
 	readonly onTitleChange: (value: string) => void;
-	readonly sidebarOpen: boolean;
-	readonly onToggleSidebar: () => void;
-	readonly agenticSidebarOpen: boolean;
-	readonly onToggleAgenticSidebar: () => void;
-	readonly editorSidebarOpen: boolean;
-	readonly onToggleEditorSidebar: () => void;
 	readonly isTrashing: boolean;
 	readonly onMoveToTrash: () => void;
 	readonly onSearch: (query: string) => void;
@@ -43,12 +38,6 @@ interface DocumentHeaderProps {
 const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 	title,
 	onTitleChange,
-	sidebarOpen,
-	onToggleSidebar,
-	agenticSidebarOpen,
-	onToggleAgenticSidebar,
-	editorSidebarOpen,
-	onToggleEditorSidebar,
 	isTrashing,
 	onMoveToTrash,
 	onSearch,
