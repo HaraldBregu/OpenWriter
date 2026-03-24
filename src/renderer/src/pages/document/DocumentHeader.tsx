@@ -31,6 +31,8 @@ interface DocumentHeaderProps {
 	readonly onToggleSidebar: () => void;
 	readonly agenticSidebarOpen: boolean;
 	readonly onToggleAgenticSidebar: () => void;
+	readonly editorSidebarOpen: boolean;
+	readonly onToggleEditorSidebar: () => void;
 	readonly isTrashing: boolean;
 	readonly onMoveToTrash: () => void;
 	readonly onSearch: (query: string) => void;
