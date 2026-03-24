@@ -503,6 +503,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					</div>
 				</div>
 
+				<EditorSidebar open={editorSidebarOpen} animate={sidebarAnimate} />
 				<ConfigSidebar
 					open={sidebarOpen}
 					animate={sidebarAnimate}
