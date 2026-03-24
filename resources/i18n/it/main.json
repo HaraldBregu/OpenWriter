@@ -696,6 +696,24 @@
 	"agenticSidebar": {
 		"placeholder": "Assistente AI in arrivo"
 	},
+	"editorSidebar": {
+		"ariaLabel": "Barra di formattazione",
+		"textFormatting": "Formato",
+		"bold": "Grassetto",
+		"italic": "Corsivo",
+		"underline": "Sottolineato",
+		"strikethrough": "Barrato",
+		"headings": "Intestazioni",
+		"heading1": "Intestazione 1",
+		"heading2": "Intestazione 2",
+		"heading3": "Intestazione 3",
+		"lists": "Liste",
+		"bulletList": "Elenco puntato",
+		"orderedList": "Elenco numerato",
+		"history": "Cronologia",
+		"undo": "Annulla",
+		"redo": "Ripeti"
+	},
 	"resources": {
 		"title": "Risorse",
 		"indexing": "Indicizzazione risorse…",
