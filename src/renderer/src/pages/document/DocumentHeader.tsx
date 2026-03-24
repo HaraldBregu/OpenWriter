@@ -120,34 +120,34 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 				<div className="flex items-center gap-3 ml-4 shrink-0">
 					<AppButton
 						type="button"
-						variant={agenticSidebarOpen ? 'secondary' : 'outline'}
+						variant={activeSidebar === 'agentic' ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
-						aria-expanded={agenticSidebarOpen}
-						onClick={onToggleAgenticSidebar}
+						aria-expanded={activeSidebar === 'agentic'}
+						onClick={() => toggleSidebar('agentic')}
 					>
 						<Bot className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
 					<AppButton
 						type="button"
-						variant={editorSidebarOpen ? 'secondary' : 'outline'}
+						variant={activeSidebar === 'editor' ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleEditorSidebar')}
 						aria-label={t('titleBar.toggleEditorSidebar')}
-						aria-expanded={editorSidebarOpen}
-						onClick={onToggleEditorSidebar}
+						aria-expanded={activeSidebar === 'editor'}
+						onClick={() => toggleSidebar('editor')}
 					>
 						<PanelRight className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
 					<AppButton
 						type="button"
-						variant={sidebarOpen ? 'secondary' : 'outline'}
+						variant={activeSidebar === 'config' ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
-						aria-expanded={sidebarOpen}
-						onClick={onToggleSidebar}
+						aria-expanded={activeSidebar === 'config'}
+						onClick={() => toggleSidebar('config')}
 					>
 						<Info className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
