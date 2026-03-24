@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { FileMetadata, FileManager } from '../file_manager';
+import type { FileMetadata, FileManager } from '../shared/file_manager';
 import type { DocumentsWatcherService } from './documents-watcher';
 import type { LoggerService } from '../services/logger';
 import {
