@@ -15,7 +15,13 @@ import {
 } from 'lucide-react';
 import type { Editor } from '@tiptap/core';
 import { useEditorInstance } from './context/editor-instance-context';
-import { AppButton, AppTooltip, AppTooltipTrigger, AppTooltipContent, AppTooltipProvider } from '@/components/app';
+import {
+	AppButton,
+	AppTooltip,
+	AppTooltipTrigger,
+	AppTooltipContent,
+	AppTooltipProvider,
+} from '@/components/app';
 
 // ------------------------------------------------------------------
 // Types
@@ -117,41 +123,32 @@ const EditorControls = React.memo(function EditorControls({
 		};
 	}, [editor]);
 
-	const handleBold = useCallback(
-		() => editor.chain().focus().toggleBold().run(),
-		[editor],
-	);
-	const handleItalic = useCallback(
-		() => editor.chain().focus().toggleItalic().run(),
-		[editor],
-	);
+	const handleBold = useCallback(() => editor.chain().focus().toggleBold().run(), [editor]);
+	const handleItalic = useCallback(() => editor.chain().focus().toggleItalic().run(), [editor]);
 	const handleUnderline = useCallback(
 		() => editor.chain().focus().toggleUnderline().run(),
-		[editor],
+		[editor]
 	);
-	const handleStrike = useCallback(
-		() => editor.chain().focus().toggleStrike().run(),
-		[editor],
-	);
+	const handleStrike = useCallback(() => editor.chain().focus().toggleStrike().run(), [editor]);
 	const handleH1 = useCallback(
 		() => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-		[editor],
+		[editor]
 	);
 	const handleH2 = useCallback(
 		() => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-		[editor],
+		[editor]
 	);
 	const handleH3 = useCallback(
 		() => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-		[editor],
+		[editor]
 	);
 	const handleBulletList = useCallback(
 		() => editor.chain().focus().toggleBulletList().run(),
-		[editor],
+		[editor]
 	);
 	const handleOrderedList = useCallback(
 		() => editor.chain().focus().toggleOrderedList().run(),
-		[editor],
+		[editor]
 	);
 	const handleUndo = useCallback(() => editor.chain().focus().undo().run(), [editor]);
 	const handleRedo = useCallback(() => editor.chain().focus().redo().run(), [editor]);
@@ -244,18 +241,10 @@ const EditorControls = React.memo(function EditorControls({
 
 			{/* History */}
 			<SidebarSection label={t('editorSidebar.history')}>
-				<SidebarButton
-					label={t('editorSidebar.undo')}
-					disabled={!canUndo}
-					onClick={handleUndo}
-				>
+				<SidebarButton label={t('editorSidebar.undo')} disabled={!canUndo} onClick={handleUndo}>
 					<Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
 				</SidebarButton>
-				<SidebarButton
-					label={t('editorSidebar.redo')}
-					disabled={!canRedo}
-					onClick={handleRedo}
-				>
+				<SidebarButton label={t('editorSidebar.redo')} disabled={!canRedo} onClick={handleRedo}>
 					<Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
 				</SidebarButton>
 			</SidebarSection>

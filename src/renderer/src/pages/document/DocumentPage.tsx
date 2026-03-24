@@ -49,7 +49,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 		(editor: Editor | null) => {
 			setEditor(editor);
 		},
-		[setEditor],
+		[setEditor]
 	);
 
 	const editorRef = useRef<TextEditorElement>(null);
