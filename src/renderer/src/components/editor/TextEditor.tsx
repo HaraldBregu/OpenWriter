@@ -179,6 +179,15 @@ const TextEditor = React.memo(
 
 			const editor = useEditor(editorOptions, []);
 
+			// Notify the parent when the editor instance becomes available.
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+				onEditorReadyRef.current?.(editor);
+				return () => {
+					onEditorReadyRef.current?.(null);
+				};
+			}, [editor]);
+
 			// Keep the image-insert ref pointing at a callback that closes over
 			// the live editor instance. This is updated every time editor changes
 			// so the handler is always fresh, while extensions only need the ref.
