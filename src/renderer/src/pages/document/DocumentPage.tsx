@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
@@ -9,8 +10,10 @@ import type { OutputFileMetadata } from '../../../../shared/types';
 import DocumentHeader from './DocumentHeader';
 import ConfigSidebar from './ConfigSidebar';
 import AgenticSidebar from './AgenticSidebar';
-import { DocumentProvider } from './context';
+import EditorSidebar from './EditorSidebar';
+import { DocumentProvider, EditorInstanceProvider } from './context';
 import { useDocumentDispatch } from './hooks';
+import { useEditorInstance } from './context/editor-instance-context';
 
 type TextCompleterTaskData = {
 	prompt: string;
