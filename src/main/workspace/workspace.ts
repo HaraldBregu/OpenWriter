@@ -32,7 +32,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';
-import { FileManager } from '../file_manager';
+import { FileManager } from '../shared/file_manager';
 
 const DATA_DIR = 'data';
 const RESOURCES_DIR = 'resources';
