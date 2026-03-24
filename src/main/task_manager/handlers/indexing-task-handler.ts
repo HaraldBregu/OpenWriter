@@ -17,7 +17,7 @@ import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { ServiceContainer } from '../../core/service-container';
-import type { FileManager } from '../../file_manager';
+import type { FileManager } from '../../shared/file_manager';
 import type { DocumentsWatcherService } from '../../workspace/documents-watcher';
 import type { LoggerService } from '../../services/logger';
 import type { WorkspaceService } from '../../workspace/workspace-service';
