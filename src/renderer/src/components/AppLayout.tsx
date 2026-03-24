@@ -46,7 +46,6 @@ import {
 	Blocks,
 	Share2,
 	MessageSquarePlus,
-	Layers,
 	FilePlus2,
 } from 'lucide-react';
 

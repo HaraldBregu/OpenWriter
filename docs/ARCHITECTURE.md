@@ -36,6 +36,7 @@ OpenWriter is an Electron application structured in three distinct layers: **Ren
 ```
 
 **Legend**
+
 - `│` solid line — direct call / ownership
 - `:` dotted line — IPC channel (Preload → Main)
 - `○` interface connector — AI Manager uses Workspace via a defined interface
@@ -57,11 +58,11 @@ Key directories: `src/renderer/src/`
 The bridge layer exposed via Electron's `contextBridge`. Defines the typed surface the Renderer can call. Each namespace maps to a set of IPC channels.
 
 | Namespace   | Responsibility                                              |
-|-------------|-------------------------------------------------------------|
-| `Workspace` | Open, close, and watch workspace folders                   |
-| `Task`      | Create, cancel, and stream background tasks                |
-| `Window`    | Control the BrowserWindow (maximize, minimize, close, etc.)|
-| `App`       | App-level utilities (version, platform, theme, etc.)       |
+| ----------- | ----------------------------------------------------------- |
+| `Workspace` | Open, close, and watch workspace folders                    |
+| `Task`      | Create, cancel, and stream background tasks                 |
+| `Window`    | Control the BrowserWindow (maximize, minimize, close, etc.) |
+| `App`       | App-level utilities (version, platform, theme, etc.)        |
 
 Key files: `src/preload/index.ts`, `src/preload/index.d.ts`
 
@@ -71,11 +72,11 @@ Key files: `src/preload/index.ts`, `src/preload/index.d.ts`
 
 The Node.js process. Handles all privileged operations: file system, AI model calls, and long-running background work.
 
-| Module         | Responsibility                                              | Depends on     |
-|----------------|-------------------------------------------------------------|----------------|
-| `Task Manager` | Priority queue, concurrent task execution, progress stream  | —              |
-| `AI Manager`   | LLM orchestration via LangChain/LangGraph, prompt routing   | Task Manager   |
-| `Workspace`    | File system watch, folder read/write, recent files          | AI Manager ○   |
+| Module         | Responsibility                                             | Depends on   |
+| -------------- | ---------------------------------------------------------- | ------------ |
+| `Task Manager` | Priority queue, concurrent task execution, progress stream | —            |
+| `AI Manager`   | LLM orchestration via LangChain/LangGraph, prompt routing  | Task Manager |
+| `Workspace`    | File system watch, folder read/write, recent files         | AI Manager ○ |
 
 > `○` — AI Manager accesses Workspace through an interface (not a direct import), keeping the dependency inverted.
 
