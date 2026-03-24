@@ -114,6 +114,9 @@ const TextEditor = React.memo(
 			const documentIdRef = useRef(documentId);
 			documentIdRef.current = documentId;
 
+			const onEditorReadyRef = useRef(onEditorReady);
+			onEditorReadyRef.current = onEditorReady;
+
 			// Stable ref used by the extensions useMemo (which runs once).
 			// Updated after editor is initialised so it always points at the
 			// latest handler that has access to the live editor instance.
