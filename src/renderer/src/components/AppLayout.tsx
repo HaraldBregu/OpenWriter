@@ -179,7 +179,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newChat')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-	
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
