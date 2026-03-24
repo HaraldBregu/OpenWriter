@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Bold,
@@ -13,9 +13,9 @@ import {
 	Undo2,
 	Redo2,
 } from 'lucide-react';
-import { useEditorContext } from '@/components/editor/EditorContext';
-import { AppButton } from '@/components/app';
-import { AppTooltip, AppTooltipTrigger, AppTooltipContent, AppTooltipProvider } from '@/components/app';
+import type { Editor } from '@tiptap/core';
+import { useEditorInstance } from './context/editor-instance-context';
+import { AppButton, AppTooltip, AppTooltipTrigger, AppTooltipContent, AppTooltipProvider } from '@/components/app';
 
 // ------------------------------------------------------------------
 // Types
@@ -92,16 +92,21 @@ const SidebarSection = React.memo(function SidebarSection({
 });
 
 // ------------------------------------------------------------------
-// Inner panel — rendered only when the editor context is available
+// Controls panel — rendered only when the editor instance is ready
 // ------------------------------------------------------------------
 
-const EditorSidebarPanel = React.memo(function EditorSidebarPanel(): React.JSX.Element {
-	const { t } = useTranslation();
-	const { editor } = useEditorContext();
+interface EditorControlsProps {
+	readonly editor: Editor;
+}
 
-	// Re-render when editor state changes so active states stay in sync.
+const EditorControls = React.memo(function EditorControls({
+	editor,
+}: EditorControlsProps): React.JSX.Element {
+	const { t } = useTranslation();
+
+	// Re-render when editor state changes so active / disabled states stay in sync.
 	const [, forceUpdate] = useState(0);
-	React.useEffect(() => {
+	useEffect(() => {
 		if (editor.isDestroyed) return;
 		const handler = (): void => forceUpdate((n) => n + 1);
 		editor.on('selectionUpdate', handler);
@@ -155,108 +160,106 @@ const EditorSidebarPanel = React.memo(function EditorSidebarPanel(): React.JSX.E
 	const canRedo = editor.can().redo();
 
 	return (
-		<AppTooltipProvider delayDuration={400}>
-			<div className="flex flex-col gap-4 p-3">
-				{/* Text formatting */}
-				<SidebarSection label={t('editorSidebar.textFormatting')}>
-					<SidebarButton
-						label={t('editorSidebar.bold')}
-						isActive={editor.isActive('bold')}
-						onClick={handleBold}
-					>
-						<Bold className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.italic')}
-						isActive={editor.isActive('italic')}
-						onClick={handleItalic}
-					>
-						<Italic className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.underline')}
-						isActive={editor.isActive('underline')}
-						onClick={handleUnderline}
-					>
-						<Underline className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.strikethrough')}
-						isActive={editor.isActive('strike')}
-						onClick={handleStrike}
-					>
-						<Strikethrough className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-				</SidebarSection>
+		<div className="flex flex-col gap-4 p-3">
+			{/* Text formatting */}
+			<SidebarSection label={t('editorSidebar.textFormatting')}>
+				<SidebarButton
+					label={t('editorSidebar.bold')}
+					isActive={editor.isActive('bold')}
+					onClick={handleBold}
+				>
+					<Bold className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.italic')}
+					isActive={editor.isActive('italic')}
+					onClick={handleItalic}
+				>
+					<Italic className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.underline')}
+					isActive={editor.isActive('underline')}
+					onClick={handleUnderline}
+				>
+					<Underline className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.strikethrough')}
+					isActive={editor.isActive('strike')}
+					onClick={handleStrike}
+				>
+					<Strikethrough className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+			</SidebarSection>
 
-				<div className="h-px bg-border" role="separator" />
+			<div className="h-px bg-border" role="separator" />
 
-				{/* Headings */}
-				<SidebarSection label={t('editorSidebar.headings')}>
-					<SidebarButton
-						label={t('editorSidebar.heading1')}
-						isActive={editor.isActive('heading', { level: 1 })}
-						onClick={handleH1}
-					>
-						<Heading1 className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.heading2')}
-						isActive={editor.isActive('heading', { level: 2 })}
-						onClick={handleH2}
-					>
-						<Heading2 className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.heading3')}
-						isActive={editor.isActive('heading', { level: 3 })}
-						onClick={handleH3}
-					>
-						<Heading3 className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-				</SidebarSection>
+			{/* Headings */}
+			<SidebarSection label={t('editorSidebar.headings')}>
+				<SidebarButton
+					label={t('editorSidebar.heading1')}
+					isActive={editor.isActive('heading', { level: 1 })}
+					onClick={handleH1}
+				>
+					<Heading1 className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.heading2')}
+					isActive={editor.isActive('heading', { level: 2 })}
+					onClick={handleH2}
+				>
+					<Heading2 className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.heading3')}
+					isActive={editor.isActive('heading', { level: 3 })}
+					onClick={handleH3}
+				>
+					<Heading3 className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+			</SidebarSection>
 
-				<div className="h-px bg-border" role="separator" />
+			<div className="h-px bg-border" role="separator" />
 
-				{/* Lists */}
-				<SidebarSection label={t('editorSidebar.lists')}>
-					<SidebarButton
-						label={t('editorSidebar.bulletList')}
-						isActive={editor.isActive('bulletList')}
-						onClick={handleBulletList}
-					>
-						<List className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.orderedList')}
-						isActive={editor.isActive('orderedList')}
-						onClick={handleOrderedList}
-					>
-						<ListOrdered className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-				</SidebarSection>
+			{/* Lists */}
+			<SidebarSection label={t('editorSidebar.lists')}>
+				<SidebarButton
+					label={t('editorSidebar.bulletList')}
+					isActive={editor.isActive('bulletList')}
+					onClick={handleBulletList}
+				>
+					<List className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.orderedList')}
+					isActive={editor.isActive('orderedList')}
+					onClick={handleOrderedList}
+				>
+					<ListOrdered className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+			</SidebarSection>
 
-				<div className="h-px bg-border" role="separator" />
+			<div className="h-px bg-border" role="separator" />
 
-				{/* History */}
-				<SidebarSection label={t('editorSidebar.history')}>
-					<SidebarButton
-						label={t('editorSidebar.undo')}
-						disabled={!canUndo}
-						onClick={handleUndo}
-					>
-						<Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-					<SidebarButton
-						label={t('editorSidebar.redo')}
-						disabled={!canRedo}
-						onClick={handleRedo}
-					>
-						<Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
-					</SidebarButton>
-				</SidebarSection>
-			</div>
-		</AppTooltipProvider>
+			{/* History */}
+			<SidebarSection label={t('editorSidebar.history')}>
+				<SidebarButton
+					label={t('editorSidebar.undo')}
+					disabled={!canUndo}
+					onClick={handleUndo}
+				>
+					<Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+				<SidebarButton
+					label={t('editorSidebar.redo')}
+					disabled={!canRedo}
+					onClick={handleRedo}
+				>
+					<Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
+				</SidebarButton>
+			</SidebarSection>
+		</div>
 	);
 });
 
@@ -266,6 +269,7 @@ const EditorSidebarPanel = React.memo(function EditorSidebarPanel(): React.JSX.E
 
 const EditorSidebar: React.FC<EditorSidebarProps> = ({ open, animate = true }) => {
 	const { t } = useTranslation();
+	const { editor } = useEditorInstance();
 
 	return (
 		<div
@@ -273,7 +277,9 @@ const EditorSidebar: React.FC<EditorSidebarProps> = ({ open, animate = true }) =
 			aria-label={t('editorSidebar.ariaLabel')}
 			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden ${animate ? 'transition-all duration-300 ease-in-out' : ''} ${open ? 'w-14' : 'w-0'}`}
 		>
-			<EditorSidebarPanel />
+			<AppTooltipProvider delayDuration={400}>
+				{editor !== null && <EditorControls editor={editor} />}
+			</AppTooltipProvider>
 		</div>
 	);
 };
