@@ -92,7 +92,7 @@ const SidebarSection = React.memo(function SidebarSection({
 			<span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60 px-1">
 				{label}
 			</span>
-			<div className="flex flex-col gap-0.5">{children}</div>
+			<div className="flex flex-row flex-wrap gap-0.5">{children}</div>
 		</div>
 	);
 });
