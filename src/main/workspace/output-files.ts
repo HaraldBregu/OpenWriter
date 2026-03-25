@@ -16,10 +16,10 @@ import type { LoggerService } from '../services/logger';
  * Valid output content types.
  * Each type maps to a subdirectory under <workspace>/output/.
  */
-export type OutputType = 'documents' | 'chats';
+export type OutputType = 'documents';
 
 /** Exhaustive list of valid output types for runtime validation. */
-export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['documents', 'chats'] as const;
+export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['documents'] as const;
 
 /**
  * Metadata stored in config.json of each output entry folder.
