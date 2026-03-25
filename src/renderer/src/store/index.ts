@@ -15,7 +15,6 @@ export const store = configureStore({
 		workspace: workspaceReducer,
 		tasks: tasksReducer,
 		documents: documentsReducer,
-		chats: chatsReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().prepend(listenerMiddleware.middleware),
