@@ -268,4 +268,4 @@ const EditorPanel: React.FC = () => {
 	);
 };
 
-export default EditorLayout;
+export default EditorPanel;
