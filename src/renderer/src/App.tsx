@@ -11,7 +11,6 @@ import { SettingsLayout } from './pages/settings/SettingsLayout';
 import type { TaskEvent } from '../../shared/types';
 import { taskEventReceived } from './store/tasks/actions';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
-import { loadChats, refreshChat, chatRemoved } from './store/chats/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
 import './index.css';
 
