@@ -93,4 +93,4 @@ const AgenticPanel: React.FC = () => {
 	);
 };
 
-export default AgenticLayout;
+export default AgenticPanel;
