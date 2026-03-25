@@ -179,39 +179,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
-						{/* Chats collapsible group */}
-						<AppCollapsible defaultOpen className="py-0">
-							<AppSidebarGroup className="py-0">
-								<AppSidebarGroupLabel asChild>
-									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
-										{t('sidebar.chats')}
-										<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
-									</AppCollapsibleTrigger>
-								</AppSidebarGroupLabel>
-								<AppCollapsiblePanel>
-									<AppSidebarGroupContent>
-										<AppSidebarMenu>
-											{chats.map((c) => (
-												<AppSidebarMenuItem key={c.id}>
-													<AppSidebarMenuButton
-														asChild
-														className="h-9 px-3"
-														isActive={location.pathname === `/chat/${c.id}`}
-													>
-														<Link to={`/chat/${c.id}`}>
-															<span className="flex-1 truncate">
-																{c.title || t('sidebar.untitledChat')}
-															</span>
-														</Link>
-													</AppSidebarMenuButton>
-												</AppSidebarMenuItem>
-											))}
-										</AppSidebarMenu>
-									</AppSidebarGroupContent>
-								</AppCollapsiblePanel>
-							</AppSidebarGroup>
-						</AppCollapsible>
-
 						<AppSidebarSeparator />
 
 						{/* Resources group */}
