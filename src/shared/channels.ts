@@ -39,6 +39,7 @@ import type {
 	SaveDocumentImageParams,
 	SaveDocumentImageResult,
 	DocumentImageInfo,
+	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
