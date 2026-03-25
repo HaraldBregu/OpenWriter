@@ -66,7 +66,7 @@ const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open }) => {
 
 	return (
 		<div
-			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-hidden ${animate ? 'transition-all duration-300 ease-in-out' : ''} ${open ? 'w-72' : 'w-0'}`}
+			className={`flex flex-col border-l border-border bg-muted/30 overflow-hidden w-full ${open ? '' : 'hidden'}`}
 		>
 			<AppCard className="w-72 flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
 				<AppCardHeader className="p-4 pb-2 shrink-0">
