@@ -8,9 +8,9 @@ import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import type { OutputFileMetadata } from '../../../../shared/types';
 import DocumentHeader from './DocumentHeader';
-import ConfigSidebar from './ConfigSidebar';
-import AgenticSidebar from './AgenticSidebar';
-import EditorSidebar from './EditorSidebar';
+import ConfigPanel from './ConfigPanel';
+import AgenticPanel from './AgenticPanel';
+import EditorPanel from './EditorPanel';
 import {
 	DocumentProvider,
 	EditorInstanceProvider,
