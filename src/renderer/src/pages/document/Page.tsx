@@ -17,4 +17,4 @@ const Page: React.FC = () => {
 	);
 };
 
-export default DocumentPage;
+export default Page;
