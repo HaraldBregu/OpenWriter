@@ -309,4 +309,4 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onOpenFolder }) => {
 	);
 };
 
-export default ConfigLayout;
+export default ConfigPanel;
