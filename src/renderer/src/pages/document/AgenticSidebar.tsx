@@ -14,7 +14,6 @@ interface ChatMessageData {
 
 interface AgenticSidebarProps {
 	readonly open: boolean;
-	readonly animate?: boolean;
 }
 
 const DEMO_MESSAGES: ChatMessageData[] = [
