@@ -691,7 +691,8 @@
 		"exportPdf": "Esporta come PDF",
 		"exportMd": "Esporta come Markdown",
 		"share": "Condividi",
-		"shareLink": "Copia Link di Condivisione"
+		"shareLink": "Copia Link di Condivisione",
+		"deletePermanently": "Elimina definitivamente"
 	},
 	"agenticSidebar": {
 		"placeholder": "Assistente AI in arrivo"
