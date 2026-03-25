@@ -29,7 +29,6 @@ import {
 
 interface EditorSidebarProps {
 	readonly open: boolean;
-	readonly animate?: boolean;
 }
 
 interface SidebarButtonProps {
