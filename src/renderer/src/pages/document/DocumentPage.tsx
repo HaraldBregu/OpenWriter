@@ -519,7 +519,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					defaultSize="30%"
 					minSize="30%"
 					collapsible
-					collapsedSize={0}
+					collapsedSize="0%"
 				>
 					<div className="h-full flex">
 						<EditorSidebar open={activeSidebar === 'editor'} />
