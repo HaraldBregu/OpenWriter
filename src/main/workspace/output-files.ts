@@ -726,12 +726,19 @@ export class OutputFilesService implements Disposable {
 						return !this.DATE_FOLDER_RE.test(parts[1]);
 					}
 
-					// Depth 3 — allow config.json, content.md, and legacy DATA.md
+					// Depth 3 — allow config.json, content.md, legacy DATA.md, and the images/ subfolder
 					if (parts.length === 3) {
 						const name = parts[2];
 						if (name === this.CONFIG_FILENAME) return false;
 						if (name === this.CONTENT_FILENAME) return false;
 						if (name === this.LEGACY_DATA_FILENAME) return false;
+						if (name === 'images') return false;
+						return true;
+					}
+
+					// Depth 4 — allow image files directly inside the images/ subfolder
+					if (parts.length === 4) {
+						if (parts[2] === 'images') return false;
 						return true;
 					}
 
