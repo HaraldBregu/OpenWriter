@@ -17,12 +17,6 @@ const categoryDefs = [
 		accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
 	},
 	{
-		icon: MessageSquarePlus,
-		labelKey: 'home.chat',
-		descriptionKey: 'home.chatDescription',
-		accent: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
-	},
-	{
 		icon: Layers,
 		labelKey: 'home.skills',
 		descriptionKey: 'home.skillsDescription',
