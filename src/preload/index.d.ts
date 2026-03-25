@@ -178,6 +178,8 @@ export interface WorkspaceApi {
 	saveDocumentImage: (params: SaveDocumentImageParams) => Promise<SaveDocumentImageResult>;
 	/** List all image files in a document's images/ folder. */
 	listDocumentImages: (documentId: string) => Promise<DocumentImageInfo[]>;
+	/** Subscribe to image file changes (add/modify/delete) inside a document's images/ folder. */
+	onDocumentImageChange: (callback: (event: DocumentImageChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
