@@ -5,7 +5,6 @@ import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
 import tasksReducer from './tasks/reducer';
 import documentsReducer from './documents/reducer';
-import chatsReducer from './chats/reducer';
 import { listenerMiddleware } from './listener-middleware';
 
 // Side-effect imports: register listener effects
