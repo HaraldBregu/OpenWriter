@@ -79,7 +79,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	// Documents list — sourced from Redux (loaded/watched at app startup)
 	// -------------------------------------------------------------------------
 	const documents = useAppSelector(selectAllDocuments);
-	const chats = useAppSelector(selectAllChats);
 
 	// -------------------------------------------------------------------------
 	// New document handler — optimistic Redux update
