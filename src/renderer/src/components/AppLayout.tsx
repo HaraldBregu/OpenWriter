@@ -56,7 +56,7 @@ interface AppLayoutProps {
 
 function AppLayoutInner({ children }: AppLayoutProps) {
 	const { t } = useTranslation();
-	const { toggleSidebar } = useSidebar();
+	const { toggleSidebar, open } = useSidebar();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
