@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot } from 'lucide-react';
-import { AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 
@@ -61,34 +59,30 @@ const AgenticPanel: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="flex flex-col border-l border-border bg-muted/30 overflow-hidden w-full h-full">
-			<AppCard className="w-full flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
-				<AppCardHeader className="p-4 pb-2 shrink-0">
-					<AppCardTitle className="flex items-center gap-2 text-xs font-medium text-muted-foreground/70">
-						<Bot className="h-3.5 w-3.5" aria-hidden="true" />
-						{t('agenticSidebar.title', 'Writing Assistant')}
-					</AppCardTitle>
-				</AppCardHeader>
+		<div className="flex flex-col h-full w-full overflow-hidden border-l border-border bg-background">
+			{/* Messages area — grows to fill available space */}
+			<div
+				className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
+				role="log"
+				aria-label={t('agenticPanel.messagesRegion', 'Chat messages')}
+				aria-live="polite"
+			>
+				<div className="flex flex-col gap-4">
+					{messages.map((msg) => (
+						<ChatMessage
+							key={msg.id}
+							id={msg.id}
+							content={msg.content}
+							role={msg.role}
+							timestamp={msg.timestamp}
+						/>
+					))}
+					<div ref={bottomRef} />
+				</div>
+			</div>
 
-				<AppCardContent className="flex-1 min-h-0 p-0 flex flex-col">
-					<div className="flex-1 overflow-y-auto px-4 py-2">
-						<div className="flex flex-col gap-3">
-							{messages.map((msg) => (
-								<ChatMessage
-									key={msg.id}
-									id={msg.id}
-									content={msg.content}
-									role={msg.role}
-									timestamp={msg.timestamp}
-								/>
-							))}
-							<div ref={bottomRef} />
-						</div>
-					</div>
-
-					<ChatInput onSend={handleSend} />
-				</AppCardContent>
-			</AppCard>
+			{/* Floating input card anchored to bottom */}
+			<ChatInput onSend={handleSend} />
 		</div>
 	);
 };
