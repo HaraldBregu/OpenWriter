@@ -512,9 +512,15 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					</div>
 				</ResizablePanel>
 
-				<ResizableHandle withHandle />
+				{activeSidebar && <ResizableHandle withHandle />}
 
-				<ResizablePanel defaultSize={25} minSize={15}>
+				<ResizablePanel
+					ref={sidebarPanelRef}
+					defaultSize={25}
+					minSize={15}
+					collapsible
+					collapsedSize={0}
+				>
 					<div className="h-full flex">
 						<EditorSidebar open={activeSidebar === 'editor'} animate={animate} />
 						<ConfigSidebar
