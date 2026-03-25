@@ -102,28 +102,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 		onCreated: handleDocumentCreated,
 	});
 
-	// -------------------------------------------------------------------------
-	// New chat handler — optimistic Redux update
-	// -------------------------------------------------------------------------
-	const handleChatCreated = useCallback(
-		(result: { id: string }) => {
-			dispatch(
-				chatAdded({
-					id: result.id,
-					title: '',
-					path: '',
-					createdAt: Date.now(),
-					updatedAt: Date.now(),
-				})
-			);
-		},
-		[dispatch]
-	);
-
-	const { createChat, isCreating: creatingChat } = useCreateChat({
-		onCreated: handleChatCreated,
-	});
-
 	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
 
 	return (
