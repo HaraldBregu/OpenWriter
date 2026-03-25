@@ -947,10 +947,7 @@ export class OutputFilesService implements Disposable {
 		const documentId = parts[1];
 		const fileName = parts[3];
 
-		this.logger?.info(
-			'OutputFilesService',
-			`Document image ${type}: ${documentId}/${fileName}`
-		);
+		this.logger?.info('OutputFilesService', `Document image ${type}: ${documentId}/${fileName}`);
 
 		this.eventBus.broadcast('output:document-image-changed', {
 			type,

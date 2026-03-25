@@ -161,6 +161,18 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 		return unsubscribe;
 	}, [id, loadImages, dispatch]);
 
+	// Image-watcher: refresh images on add/change/remove events
+	useEffect(() => {
+		if (!id) return;
+
+		const unsubscribe = window.workspace.onDocumentImageChange((event) => {
+			if (event.documentId !== id) return;
+			loadImages();
+		});
+
+		return unsubscribe;
+	}, [id, loadImages]);
+
 	const debouncedSave = useMemo(
 		() =>
 			debounce(
