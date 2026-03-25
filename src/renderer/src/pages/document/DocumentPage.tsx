@@ -58,7 +58,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 	);
 
 	const editorRef = useRef<TextEditorElement>(null);
-	const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+	const sidebarPanelRef = usePanelRef();
 
 	useEffect(() => {
 		if (activeSidebar) {
