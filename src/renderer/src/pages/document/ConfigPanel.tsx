@@ -60,6 +60,7 @@ function toLocalResourceUrl(filePath: string): string {
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ open, onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
+	const { toggleSidebar } = useSidebarVisibility();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
