@@ -48,7 +48,7 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ConfigLayout: React.FC<ConfigLayoutProps> = ({ onOpenFolder }) => {
+const ConfigPanel: React.FC<ConfigPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
