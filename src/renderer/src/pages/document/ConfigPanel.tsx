@@ -117,10 +117,26 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ open, onOpenFolder }) => {
 		[metadata?.updatedAt, i18n.language]
 	);
 
+	if (!open) {
+		return (
+			<div className="flex h-full w-12 shrink-0 flex-col items-center border-l border-border bg-muted/30 pt-2">
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon"
+					aria-label={t('configSidebar.documentInfo')}
+					title={t('configSidebar.documentInfo')}
+					className="h-8 w-8 text-muted-foreground hover:text-foreground"
+					onClick={() => toggleSidebar('config')}
+				>
+					<Info className="h-4 w-4" aria-hidden="true" />
+				</AppButton>
+			</div>
+		);
+	}
+
 	return (
-		<div
-			className={`flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden w-full ${open ? '' : 'hidden'}`}
-		>
+		<div className="flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden w-full">
 			<AppCard className="w-full flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
 				{/* Document Info */}
 				{metadata && (
