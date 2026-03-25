@@ -49,7 +49,7 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true, onOpenFolder }) => {
+const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
