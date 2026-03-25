@@ -251,28 +251,9 @@ const EditorControls = React.memo(function EditorControls({
 // Public component
 // ------------------------------------------------------------------
 
-const EditorPanel: React.FC<EditorPanelProps> = ({ open }) => {
+const EditorPanel: React.FC = () => {
 	const { t } = useTranslation();
-	const { toggleSidebar } = useSidebarVisibility();
 	const { editor } = useEditorInstance();
-
-	if (!open) {
-		return (
-			<div className="flex h-full w-12 shrink-0 flex-col items-center border-l border-border bg-muted/30 pt-2">
-				<AppButton
-					type="button"
-					variant="ghost"
-					size="icon"
-					aria-label={t('editorSidebar.ariaLabel')}
-					title={t('editorSidebar.ariaLabel')}
-					className="h-8 w-8 text-muted-foreground hover:text-foreground"
-					onClick={() => toggleSidebar('editor')}
-				>
-					<PanelRight className="h-4 w-4" aria-hidden="true" />
-				</AppButton>
-			</div>
-		);
-	}
 
 	return (
 		<div
