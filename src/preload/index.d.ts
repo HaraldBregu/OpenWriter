@@ -86,6 +86,7 @@ export type {
 	FsRenameResult,
 	AgentConfig,
 	WorkspaceAgentEntry,
+	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 };
 
