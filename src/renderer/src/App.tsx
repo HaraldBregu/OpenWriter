@@ -167,14 +167,6 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/chat/:id"
-													element={
-														<RouteWrapper>
-															<ChatPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
 													path="/debug/tasks"
 													element={
 														<RouteWrapper>
