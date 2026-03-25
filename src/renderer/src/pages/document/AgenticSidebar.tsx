@@ -27,7 +27,7 @@ const DEMO_MESSAGES: ChatMessageData[] = [
 	{
 		id: '2',
 		content:
-			'Of course! Share the paragraph and I'll suggest ways to make it more engaging and concise.',
+			"Of course! Share the paragraph and I'll suggest ways to make it more engaging and concise.",
 		role: 'assistant',
 		timestamp: new Date(Date.now() - 3 * 60 * 1000),
 	},
