@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot } from 'lucide-react';
-import { AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
+import { AppCard, AppCardHeader, AppCardTitle, AppCardContent, AppButton } from '@/components/app';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
+import { useSidebarVisibility } from './context/sidebar-visibility-context';
 
 interface ChatMessageData {
 	id: string;
