@@ -109,7 +109,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, onOpenFolder }) => 
 
 	return (
 		<div
-			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden ${animate ? 'transition-all duration-300 ease-in-out' : ''} ${open ? 'w-72' : 'w-0'}`}
+			className={`flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden w-full ${open ? '' : 'hidden'}`}
 		>
 			<AppCard className="w-full flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
 				{/* Document Info */}
