@@ -142,7 +142,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-									</AppSidebarMenu>
+								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
