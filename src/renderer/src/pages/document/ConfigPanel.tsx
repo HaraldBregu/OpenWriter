@@ -16,7 +16,7 @@ import {
 import { useDocumentState, useDocumentDispatch } from './hooks';
 import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 
-interface ConfigPanelProps {
+interface ConfigLayoutProps {
 	readonly onOpenFolder: () => void;
 }
 
@@ -48,7 +48,7 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ConfigPanel: React.FC<ConfigPanelProps> = ({ onOpenFolder }) => {
+const ConfigLayout: React.FC<ConfigLayoutProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
@@ -309,4 +309,4 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onOpenFolder }) => {
 	);
 };
 
-export default ConfigPanel;
+export default ConfigLayout;

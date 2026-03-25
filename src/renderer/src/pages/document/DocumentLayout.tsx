@@ -7,9 +7,9 @@ import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import DocumentHeader from './DocumentHeader';
-import ConfigPanel from './ConfigPanel';
-import AgenticPanel from './AgenticPanel';
-import EditorPanel from './EditorPanel';
+import ConfigLayout from './ConfigLayout';
+import AgenticLayout from './AgenticLayout';
+import EditorLayout from './EditorLayout';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
@@ -520,9 +520,9 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 					collapsedSize="0%"
 				>
 					<div className="h-full">
-						{activeSidebar === 'editor' && <EditorPanel />}
-						{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <AgenticPanel />}
+						{activeSidebar === 'editor' && <EditorLayout />}
+						{activeSidebar === 'config' && <ConfigLayout onOpenFolder={handleOpenFolder} />}
+						{activeSidebar === 'agentic' && <AgenticLayout />}
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>

@@ -41,7 +41,7 @@ const DEMO_MESSAGES: ChatMessageData[] = [
 	},
 ];
 
-const AgenticPanel: React.FC = () => {
+const AgenticLayout: React.FC = () => {
 	const { t } = useTranslation();
 	const [messages, setMessages] = useState<ChatMessageData[]>(DEMO_MESSAGES);
 	const bottomRef = useRef<HTMLDivElement>(null);
@@ -93,4 +93,4 @@ const AgenticPanel: React.FC = () => {
 	);
 };
 
-export default AgenticPanel;
+export default AgenticLayout;
