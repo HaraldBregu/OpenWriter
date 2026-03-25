@@ -155,37 +155,39 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						</AppSidebarGroup>
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
-						{open && <AppCollapsible defaultOpen className="py-0">
-							<AppSidebarGroup className="py-0">
-								<AppSidebarGroupLabel asChild>
-									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
-										{t('sidebar.writings')}
-										<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
-									</AppCollapsibleTrigger>
-								</AppSidebarGroupLabel>
-								<AppCollapsiblePanel>
-									<AppSidebarGroupContent>
-										<AppSidebarMenu>
-											{documents.map((w) => (
-												<AppSidebarMenuItem key={w.id}>
-													<AppSidebarMenuButton
-														asChild
-														className="h-9 px-3"
-														isActive={location.pathname === `/content/${w.id}`}
-													>
-														<Link to={`/content/${w.id}`}>
-															<span className="flex-1 truncate">
-																{w.title || t('sidebar.untitledWriting')}
-															</span>
-														</Link>
-													</AppSidebarMenuButton>
-												</AppSidebarMenuItem>
-											))}
-										</AppSidebarMenu>
-									</AppSidebarGroupContent>
-								</AppCollapsiblePanel>
-							</AppSidebarGroup>
-						</AppCollapsible>
+						{open && (
+							<AppCollapsible defaultOpen className="py-0">
+								<AppSidebarGroup className="py-0">
+									<AppSidebarGroupLabel asChild>
+										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
+											{t('sidebar.writings')}
+											<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
+										</AppCollapsibleTrigger>
+									</AppSidebarGroupLabel>
+									<AppCollapsiblePanel>
+										<AppSidebarGroupContent>
+											<AppSidebarMenu>
+												{documents.map((w) => (
+													<AppSidebarMenuItem key={w.id}>
+														<AppSidebarMenuButton
+															asChild
+															className="h-9 px-3"
+															isActive={location.pathname === `/content/${w.id}`}
+														>
+															<Link to={`/content/${w.id}`}>
+																<span className="flex-1 truncate">
+																	{w.title || t('sidebar.untitledWriting')}
+																</span>
+															</Link>
+														</AppSidebarMenuButton>
+													</AppSidebarMenuItem>
+												))}
+											</AppSidebarMenu>
+										</AppSidebarGroupContent>
+									</AppCollapsiblePanel>
+								</AppSidebarGroup>
+							</AppCollapsible>
+						)}
 
 						<AppSidebarSeparator />
 
