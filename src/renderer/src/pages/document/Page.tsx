@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { DocumentProvider, EditorInstanceProvider, SidebarVisibilityProvider } from './context';
-import { DocumentLayout } from './DocumentLayout';
+import { Layout } from './Layout';
 
 const DocumentPage: React.FC = () => {
 	const { id } = useParams<{ id: string }>();

@@ -6,7 +6,7 @@ import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
-import DocumentHeader from './DocumentHeader';
+import Header from './Header';
 import ConfigPanel from './ConfigPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
@@ -31,11 +31,11 @@ type ImageGeneratorTaskData = {
 	prompt: string;
 };
 
-interface DocumentLayoutProps {
+interface LayoutProps {
 	documentId: string | undefined;
 }
 
-const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
+const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
 	const dispatch = useDocumentDispatch();
 
@@ -233,7 +233,7 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 			await window.workspace.trashOutput({ type: 'documents', id });
 			navigate('/home');
 		} catch (err) {
-			console.error('[DocumentLayout] Failed to trash writing:', err);
+			console.error('[Layout] Failed to trash writing:', err);
 			setIsTrashing(false);
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
@@ -468,7 +468,7 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 
 	return (
 		<div className="h-full flex flex-col">
-			<DocumentHeader
+			<Header
 				title={title}
 				onTitleChange={handleTitleChange}
 				isTrashing={isTrashing}
@@ -530,4 +530,4 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 	);
 };
 
-export { DocumentLayout };
+export { Layout };

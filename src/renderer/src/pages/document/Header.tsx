@@ -25,8 +25,7 @@ import {
 } from '@/components/app';
 import { useSidebarVisibility } from './context';
 
-interface DocumentHeaderProps {
-
+interface HeaderProps {
 	readonly title: string;
 	readonly onTitleChange: (value: string) => void;
 	readonly isTrashing: boolean;
@@ -36,7 +35,7 @@ interface DocumentHeaderProps {
 	readonly onOpenFolder: () => void;
 }
 
-const DocumentHeader: React.FC<DocumentHeaderProps> = ({
+const Header: React.FC<HeaderProps> = ({
 	title,
 	onTitleChange,
 	isTrashing,
@@ -201,4 +200,4 @@ const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 	);
 };
 
-export default DocumentHeader;
+export default Header;
