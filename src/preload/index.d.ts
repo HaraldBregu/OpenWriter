@@ -43,6 +43,7 @@ import type {
 	SaveDocumentImageParams,
 	SaveDocumentImageResult,
 	DocumentImageInfo,
+	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
