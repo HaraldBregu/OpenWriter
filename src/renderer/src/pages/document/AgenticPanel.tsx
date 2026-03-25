@@ -48,6 +48,7 @@ const DEMO_MESSAGES: ChatMessageData[] = [
 
 const AgenticPanel: React.FC<AgenticPanelProps> = ({ open }) => {
 	const { t } = useTranslation();
+	const { toggleSidebar } = useSidebarVisibility();
 	const [messages, setMessages] = useState<ChatMessageData[]>(DEMO_MESSAGES);
 	const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -65,10 +66,26 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ open }) => {
 		setMessages((prev) => [...prev, newMessage]);
 	}, []);
 
+	if (!open) {
+		return (
+			<div className="flex h-full w-12 shrink-0 flex-col items-center border-l border-border bg-muted/30 pt-2">
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon"
+					aria-label={t('agenticSidebar.title', 'Writing Assistant')}
+					title={t('agenticSidebar.title', 'Writing Assistant')}
+					className="h-8 w-8 text-muted-foreground hover:text-foreground"
+					onClick={() => toggleSidebar('agentic')}
+				>
+					<Bot className="h-4 w-4" aria-hidden="true" />
+				</AppButton>
+			</div>
+		);
+	}
+
 	return (
-		<div
-			className={`flex flex-col border-l border-border bg-muted/30 overflow-hidden w-full ${open ? '' : 'hidden'}`}
-		>
+		<div className="flex flex-col border-l border-border bg-muted/30 overflow-hidden w-full">
 			<AppCard className="w-full flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
 				<AppCardHeader className="p-4 pb-2 shrink-0">
 					<AppCardTitle className="flex items-center gap-2 text-xs font-medium text-muted-foreground/70">
