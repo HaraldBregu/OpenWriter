@@ -297,6 +297,17 @@ const workspace: WorkspaceApi = {
 	): Promise<{ fileName: string; filePath: string; size: number }[]> => {
 		return typedInvokeUnwrap(WorkspaceChannels.listDocumentImages, documentId);
 	},
+	onDocumentImageChange: (
+		callback: (event: {
+			type: 'added' | 'changed' | 'removed';
+			documentId: string;
+			fileName: string;
+			filePath: string;
+			timestamp: number;
+		}) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.documentImageChanged, callback);
+	},
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
