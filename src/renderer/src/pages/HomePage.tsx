@@ -91,7 +91,7 @@ const HomePage: React.FC = () => {
 
 				{/* Categories */}
 				<section className="space-y-3">
-					<div className="grid grid-cols-3 gap-3">
+					<div className="grid grid-cols-2 gap-3">
 						<CategoryCard
 							icon={categoryDefs[0].icon}
 							labelKey={categoryDefs[0].labelKey}
@@ -105,14 +105,6 @@ const HomePage: React.FC = () => {
 							labelKey={categoryDefs[1].labelKey}
 							descriptionKey={categoryDefs[1].descriptionKey}
 							accent={categoryDefs[1].accent}
-							onClick={() => {}}
-							disabled
-						/>
-						<CategoryCard
-							icon={categoryDefs[2].icon}
-							labelKey={categoryDefs[2].labelKey}
-							descriptionKey={categoryDefs[2].descriptionKey}
-							accent={categoryDefs[2].accent}
 							onClick={() => {}}
 							disabled
 						/>
