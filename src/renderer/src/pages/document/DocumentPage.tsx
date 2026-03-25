@@ -20,6 +20,7 @@ import {
 } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
+import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 type TextCompleterTaskData = {
 	prompt: string;
@@ -472,7 +473,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 			/>
 
 			{/* Editor + Right Sidebar */}
-			<ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
+			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 				<ResizablePanel defaultSize={75} minSize={40}>
 					<div className="h-full flex flex-col min-w-0">
 						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
