@@ -791,7 +791,9 @@ export class OutputFilesService implements Disposable {
 	 * Handle file added event.
 	 */
 	private handleFileAdded(filePath: string): void {
-		if (this.shouldIgnoreFile(filePath)) {
+		if (this.shouldIgnoreFile(filePath)) return;
+		if (this.isImageFilePath(filePath)) {
+			this.emitImageChangeEvent(filePath, 'added');
 			return;
 		}
 		this.debouncedEmit(filePath, 'added');
@@ -801,7 +803,9 @@ export class OutputFilesService implements Disposable {
 	 * Handle file changed event.
 	 */
 	private handleFileChanged(filePath: string): void {
-		if (this.shouldIgnoreFile(filePath)) {
+		if (this.shouldIgnoreFile(filePath)) return;
+		if (this.isImageFilePath(filePath)) {
+			this.emitImageChangeEvent(filePath, 'changed');
 			return;
 		}
 		this.debouncedEmit(filePath, 'changed');
@@ -811,7 +815,9 @@ export class OutputFilesService implements Disposable {
 	 * Handle file removed event.
 	 */
 	private handleFileRemoved(filePath: string): void {
-		if (this.shouldIgnoreFile(filePath)) {
+		if (this.shouldIgnoreFile(filePath)) return;
+		if (this.isImageFilePath(filePath)) {
+			this.emitImageChangeEvent(filePath, 'removed');
 			return;
 		}
 		this.debouncedEmit(filePath, 'removed');
