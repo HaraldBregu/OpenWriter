@@ -9,7 +9,6 @@ import {
 	FileDown,
 	FileType,
 	Link,
-	ChevronDown,
 	Plus,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
@@ -19,10 +18,6 @@ import {
 	AppCardHeader,
 	AppCardTitle,
 	AppCardContent,
-	AppCardFooter,
-	AppCollapsible,
-	AppCollapsibleTrigger,
-	AppCollapsiblePanel,
 } from '@/components/app';
 
 interface ConfigSidebarProps {
