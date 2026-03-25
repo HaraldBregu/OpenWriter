@@ -41,7 +41,7 @@ const DEMO_MESSAGES: ChatMessageData[] = [
 	},
 ];
 
-const AgenticLayout: React.FC = () => {
+const AgenticPanel: React.FC = () => {
 	const { t } = useTranslation();
 	const [messages, setMessages] = useState<ChatMessageData[]>(DEMO_MESSAGES);
 	const bottomRef = useRef<HTMLDivElement>(null);
