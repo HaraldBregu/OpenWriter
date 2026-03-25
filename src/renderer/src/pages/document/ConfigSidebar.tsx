@@ -277,11 +277,7 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true, onO
 									<Link className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
 									{t('configSidebar.shareLink')}
 								</button>
-								<button
-									type="button"
-									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
-								>
-								</div>
+							</div>
 						</div>
 					)}
 
