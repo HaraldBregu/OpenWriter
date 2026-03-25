@@ -68,7 +68,7 @@ const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open }) => {
 		<div
 			className={`flex flex-col border-l border-border bg-muted/30 overflow-hidden w-full ${open ? '' : 'hidden'}`}
 		>
-			<AppCard className="w-72 flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
+			<AppCard className="w-full flex flex-col flex-1 min-h-0 bg-transparent shadow-none border-none rounded-none">
 				<AppCardHeader className="p-4 pb-2 shrink-0">
 					<AppCardTitle className="flex items-center gap-2 text-xs font-medium text-muted-foreground/70">
 						<Bot className="h-3.5 w-3.5" aria-hidden="true" />
