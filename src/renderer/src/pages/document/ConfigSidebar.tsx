@@ -10,15 +10,10 @@ import {
 	FileType,
 	Link,
 	Plus,
+	Trash2,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
-import {
-	AppLabel,
-	AppCard,
-	AppCardHeader,
-	AppCardTitle,
-	AppCardContent,
-} from '@/components/app';
+import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
