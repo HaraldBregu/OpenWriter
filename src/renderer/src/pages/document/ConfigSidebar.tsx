@@ -18,7 +18,6 @@ import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '
 
 interface ConfigSidebarProps {
 	readonly open: boolean;
-	readonly animate?: boolean;
 	readonly onOpenFolder: () => void;
 }
 
