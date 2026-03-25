@@ -11,6 +11,7 @@ import {
 	Link,
 	Plus,
 	Trash2,
+	Copy,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
 import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
