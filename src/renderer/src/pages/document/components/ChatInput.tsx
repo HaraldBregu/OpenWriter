@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Code2, SlidersHorizontal, Mic, ArrowUp } from 'lucide-react';
+import { Plus, SlidersHorizontal, Mic, ArrowUp } from 'lucide-react';
 import {
 	AppButton,
 	AppTextarea,
@@ -19,7 +19,7 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
-	const [selectedAgent, setSelectedAgent] = useState<string>('auto');
+	const [selectedAgent, setSelectedAgent] = useState<string>('nova');
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	const adjustHeight = useCallback(() => {
@@ -73,7 +73,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 					rows={3}
 					placeholder={t('agenticPanel.inputPlaceholder', 'Describe what to build')}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
+					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
 				/>
 
 				{/* Bottom toolbar */}
@@ -89,36 +89,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 						<Plus className="h-3.5 w-3.5" aria-hidden="true" />
 					</AppButton>
 
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						aria-label={t('agenticPanel.insertCode', 'Insert code')}
-						className="h-7 w-7 text-muted-foreground hover:text-foreground"
-					>
-						<Code2 className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
-
 					<AppSelect value={selectedAgent} onValueChange={setSelectedAgent}>
-						<AppSelectTrigger className="h-7 px-2 text-xs border-none bg-transparent text-muted-foreground hover:text-foreground shadow-none">
+						<AppSelectTrigger className="h-7 w-fit px-2 text-xs border-none bg-transparent text-muted-foreground hover:text-foreground shadow-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none">
 							<AppSelectValue />
 						</AppSelectTrigger>
 						<AppSelectContent>
-							<AppSelectItem value="auto">
-								{t('agenticPanel.agentAuto', 'Auto')}
-							</AppSelectItem>
-							<AppSelectItem value="writer">
-								{t('agenticPanel.agentWriter', 'Writer')}
-							</AppSelectItem>
-							<AppSelectItem value="editor">
-								{t('agenticPanel.agentEditor', 'Editor')}
-							</AppSelectItem>
-							<AppSelectItem value="researcher">
-								{t('agenticPanel.agentResearcher', 'Researcher')}
-							</AppSelectItem>
-							<AppSelectItem value="summarizer">
-								{t('agenticPanel.agentSummarizer', 'Summarizer')}
-							</AppSelectItem>
+							<AppSelectItem value="nova">Nova</AppSelectItem>
+							<AppSelectItem value="sage">Sage</AppSelectItem>
+							<AppSelectItem value="echo">Echo</AppSelectItem>
+							<AppSelectItem value="draft">Draft</AppSelectItem>
+							<AppSelectItem value="lens">Lens</AppSelectItem>
 						</AppSelectContent>
 					</AppSelect>
 
