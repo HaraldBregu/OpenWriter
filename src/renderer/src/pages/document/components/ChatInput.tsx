@@ -73,7 +73,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 					rows={3}
 					placeholder={t('agenticPanel.inputPlaceholder', 'Describe what to build')}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
+					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
 				/>
 
 				{/* Bottom toolbar */}
