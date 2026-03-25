@@ -483,7 +483,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize={75} minSize={40}>
+				<ResizablePanel defaultSize="70%" minSize="40%">
 					<div className="h-full flex flex-col min-w-0">
 						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
 							<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
