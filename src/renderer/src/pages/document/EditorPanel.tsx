@@ -27,10 +27,6 @@ import {
 // Types
 // ------------------------------------------------------------------
 
-interface EditorPanelProps {
-	readonly open: boolean;
-}
-
 interface SidebarButtonProps {
 	readonly label: string;
 	readonly isActive?: boolean;
