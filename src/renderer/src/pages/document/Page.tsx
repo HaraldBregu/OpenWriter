@@ -10,7 +10,7 @@ const DocumentPage: React.FC = () => {
 		<DocumentProvider documentId={id}>
 			<SidebarVisibilityProvider>
 				<EditorInstanceProvider>
-					<DocumentLayout documentId={id} />
+					<Layout documentId={id} />
 				</EditorInstanceProvider>
 			</SidebarVisibilityProvider>
 		</DocumentProvider>
