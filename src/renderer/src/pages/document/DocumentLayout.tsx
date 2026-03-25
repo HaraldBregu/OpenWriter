@@ -123,7 +123,7 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 		return () => {
 			cancelled = true;
 		};
-	}, [id]);
+	}, [id, dispatch]);
 
 	// Load images
 	const loadImages = useCallback(async () => {
