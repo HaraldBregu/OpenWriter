@@ -281,6 +281,30 @@ const ConfigSidebar: React.FC<ConfigSidebarProps> = ({ open, animate = true, onO
 									type="button"
 									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
 								>
+								</div>
+						</div>
+					)}
+
+					{/* Actions */}
+					{documentId && (
+						<div>
+							<div className="mb-2">
+								<span className="text-xs font-medium text-muted-foreground/70">
+									{t('configSidebar.actions')}
+								</span>
+							</div>
+							<div className="space-y-1">
+								<button
+									type="button"
+									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+								>
+									<Copy className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+									{t('configSidebar.duplicate')}
+								</button>
+								<button
+									type="button"
+									className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+								>
 									<Trash2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
 									{t('configSidebar.deletePermanently')}
 								</button>
