@@ -11,9 +11,6 @@ import { selectProjectName, selectWorkspaceName } from '../store/workspace/selec
 import { loadCurrentWorkspace, loadProjectName } from '../store/workspace/actions';
 import { selectAllDocuments } from '../store/documents/selectors';
 import { documentAdded } from '../store/documents/actions';
-import { selectAllChats } from '../store/chats/selectors';
-import { chatAdded } from '../store/chats/actions';
-import { useCreateChat } from '../hooks/use-create-chat';
 import { TitleBar } from './TitleBar';
 import {
 	AppCollapsible,
