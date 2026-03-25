@@ -304,5 +304,6 @@ export interface EventChannelMap {
 	[WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent };
 	[WorkspaceChannels.outputWatcherError]: { data: WatcherError };
 	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
+	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
 }
