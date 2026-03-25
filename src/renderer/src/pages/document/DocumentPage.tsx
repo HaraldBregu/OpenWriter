@@ -6,7 +6,6 @@ import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
-import type { OutputFileMetadata } from '../../../../shared/types';
 import DocumentHeader from './DocumentHeader';
 import ConfigPanel from './ConfigPanel';
 import AgenticPanel from './AgenticPanel';
