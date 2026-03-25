@@ -20,12 +20,9 @@ import {
 	AppCardHeader,
 	AppCardTitle,
 	AppCardContent,
-	AppButton,
 } from '@/components/app';
-import { useSidebarVisibility } from './context/sidebar-visibility-context';
 
 interface ConfigPanelProps {
-	readonly open: boolean;
 	readonly onOpenFolder: () => void;
 }
 
