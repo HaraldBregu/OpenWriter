@@ -85,6 +85,7 @@ export const WorkspaceChannels = {
 	// Document images
 	saveDocumentImage: 'output:save-document-image',
 	listDocumentImages: 'output:list-document-images',
+	documentImageChanged: 'output:document-image-changed',
 	// Output
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
