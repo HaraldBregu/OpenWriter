@@ -521,10 +521,12 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					collapsible
 					collapsedSize="0%"
 				>
-					<div className="h-full flex">
-						<EditorPanel open={activeSidebar === 'editor'} />
-						<ConfigPanel open={activeSidebar === 'config'} onOpenFolder={handleOpenFolder} />
-						<AgenticPanel open={activeSidebar === 'agentic'} />
+					<div className="h-full">
+						{activeSidebar === 'editor' && <EditorPanel />}
+						{activeSidebar === 'config' && (
+							<ConfigPanel onOpenFolder={handleOpenFolder} />
+						)}
+						{activeSidebar === 'agentic' && <AgenticPanel />}
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>
