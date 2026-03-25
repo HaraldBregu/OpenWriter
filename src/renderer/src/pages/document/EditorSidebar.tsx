@@ -264,7 +264,7 @@ const EditorSidebar: React.FC<EditorSidebarProps> = ({ open }) => {
 		<div
 			role="complementary"
 			aria-label={t('editorSidebar.ariaLabel')}
-			className={`shrink-0 flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden ${animate ? 'transition-all duration-300 ease-in-out' : ''} ${open ? 'w-72' : 'w-0'}`}
+			className={`flex flex-col border-l border-border bg-muted/30 overflow-y-auto overflow-x-hidden w-full ${open ? '' : 'hidden'}`}
 		>
 			<AppTooltipProvider delayDuration={400}>
 				{editor !== null && <EditorControls editor={editor} />}
