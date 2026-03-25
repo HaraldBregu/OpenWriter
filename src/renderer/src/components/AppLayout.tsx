@@ -42,7 +42,6 @@ import {
 	ImageIcon,
 	Blocks,
 	Share2,
-	MessageSquarePlus,
 	FilePlus2,
 } from 'lucide-react';
 
