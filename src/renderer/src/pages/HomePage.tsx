@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PenLine, Puzzle, ArrowRight, Star, MessageSquarePlus, Layers } from 'lucide-react';
+import { PenLine, Puzzle, ArrowRight, Star, Layers } from 'lucide-react';
 import { AppSeparator } from '@/components/app';
 import { useCreateWriting } from '@/hooks/use-create-writing';
 
