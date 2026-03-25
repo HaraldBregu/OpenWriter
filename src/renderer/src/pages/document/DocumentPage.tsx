@@ -58,6 +58,15 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 	);
 
 	const editorRef = useRef<TextEditorElement>(null);
+	const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+
+	useEffect(() => {
+		if (activeSidebar) {
+			sidebarPanelRef.current?.expand();
+		} else {
+			sidebarPanelRef.current?.collapse();
+		}
+	}, [activeSidebar]);
 
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
 	const textCompleterTask = useTask<TextCompleterTaskData>(
