@@ -687,10 +687,10 @@
 		"images": "Immagini",
 		"noImages": "Nessuna immagine",
 		"uploadImage": "Carica Immagine",
-		"resources": "Risorse",
-		"shareAndExport": "Condividi & Esporta",
+		"export": "Esporta",
 		"exportPdf": "Esporta come PDF",
 		"exportMd": "Esporta come Markdown",
+		"share": "Condividi",
 		"shareLink": "Copia Link di Condivisione"
 	},
 	"agenticSidebar": {
