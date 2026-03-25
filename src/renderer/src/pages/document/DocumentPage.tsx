@@ -20,7 +20,7 @@ import {
 } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
-import type { ImperativePanelHandle } from 'react-resizable-panels';
+import { usePanelRef } from 'react-resizable-panels';
 
 type TextCompleterTaskData = {
 	prompt: string;
