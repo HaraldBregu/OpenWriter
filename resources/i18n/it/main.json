@@ -692,7 +692,9 @@
 		"exportMd": "Esporta come Markdown",
 		"share": "Condividi",
 		"shareLink": "Copia Link di Condivisione",
-		"deletePermanently": "Elimina definitivamente"
+		"deletePermanently": "Elimina definitivamente",
+		"actions": "Azioni",
+		"duplicate": "Duplica"
 	},
 	"agenticSidebar": {
 		"placeholder": "Assistente AI in arrivo"
