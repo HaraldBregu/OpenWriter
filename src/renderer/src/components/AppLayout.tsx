@@ -142,17 +142,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton
-											className="h-9 px-3"
-											onClick={createChat}
-											disabled={creatingChat}
-										>
-											<MessageSquarePlus className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('sidebar.newChat')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-								</AppSidebarMenu>
+									</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
