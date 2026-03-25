@@ -143,13 +143,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-								{!open && (
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Search className="h-3.5 w-3.5 shrink-0" />
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-								)}
+									{!open && (
+										<AppSidebarMenuItem>
+											<AppSidebarMenuButton className="h-9 px-3">
+												<Search className="h-3.5 w-3.5 shrink-0" />
+											</AppSidebarMenuButton>
+										</AppSidebarMenuItem>
+									)}
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
