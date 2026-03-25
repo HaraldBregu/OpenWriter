@@ -16,7 +16,7 @@ import {
 import { useDocumentState, useDocumentDispatch } from './hooks';
 import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 
-interface ConfigLayoutProps {
+interface ConfigPanelProps {
 	readonly onOpenFolder: () => void;
 }
 
