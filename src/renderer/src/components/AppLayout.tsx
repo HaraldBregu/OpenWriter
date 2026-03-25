@@ -43,6 +43,7 @@ import {
 	Blocks,
 	Share2,
 	FilePlus2,
+	Search,
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -109,7 +110,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 			<TitleBar title={displayWorkspaceName} onToggleSidebar={toggleSidebar} />
 
 			<div className="flex flex-1 min-h-0 w-full">
-				<AppSidebar className="border-r top-12 h-[calc(100svh-3rem)]">
+				<AppSidebar collapsible="icon" className="border-r top-12 h-[calc(100svh-3rem)]">
 					{/* Header */}
 					<AppSidebarHeader>
 						<AppSidebarMenu>
