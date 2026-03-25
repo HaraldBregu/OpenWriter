@@ -256,7 +256,7 @@ const EditorControls = React.memo(function EditorControls({
 // Public component
 // ------------------------------------------------------------------
 
-const EditorSidebar: React.FC<EditorSidebarProps> = ({ open, animate = true }) => {
+const EditorSidebar: React.FC<EditorSidebarProps> = ({ open }) => {
 	const { t } = useTranslation();
 	const { editor } = useEditorInstance();
 
