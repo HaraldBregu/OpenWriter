@@ -697,8 +697,8 @@ export class OutputFilesService implements Disposable {
 				},
 				usePolling: true,
 				interval: 500,
-				// depth=3 covers output/ -> <type>/ -> <date-folder>/ -> content.md
-				depth: 3,
+				// depth=4 covers output/ -> <type>/ -> <uuid>/ -> images/ -> <file>
+				depth: 4,
 				alwaysStat: false,
 				ignored: (filePath: string) => {
 					// Chokidar v5 normalizes all paths to forward slashes internally,
