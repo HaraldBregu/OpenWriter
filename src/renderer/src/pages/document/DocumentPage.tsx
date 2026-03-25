@@ -522,13 +522,9 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 					collapsedSize={0}
 				>
 					<div className="h-full flex">
-						<EditorSidebar open={activeSidebar === 'editor'} animate={animate} />
-						<ConfigSidebar
-							open={activeSidebar === 'config'}
-							animate={animate}
-							onOpenFolder={handleOpenFolder}
-						/>
-						<AgenticSidebar open={activeSidebar === 'agentic'} animate={animate} />
+						<EditorSidebar open={activeSidebar === 'editor'} />
+						<ConfigSidebar open={activeSidebar === 'config'} onOpenFolder={handleOpenFolder} />
+						<AgenticSidebar open={activeSidebar === 'agentic'} />
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>
