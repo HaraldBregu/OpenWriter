@@ -921,6 +921,47 @@ export class OutputFilesService implements Disposable {
 	}
 
 	/**
+	 * Check whether the given path points to a file inside a document's images/ subfolder.
+	 * Expected layout: output/<type>/<uuid>/images/<filename>  (4 segments relative to output dir).
+	 */
+	private isImageFilePath(filePath: string): boolean {
+		const normalized = path.normalize(filePath);
+		const outputDir = this.currentOutputDir;
+		if (!outputDir) return false;
+		const rel = path.relative(outputDir, normalized);
+		const parts = rel.split(path.sep);
+		return parts.length === 4 && parts[2] === 'images';
+	}
+
+	/**
+	 * Emit a DocumentImageChangeEvent for an image file that was added, changed, or removed
+	 * inside a document's images/ subfolder.
+	 */
+	private emitImageChangeEvent(filePath: string, type: 'added' | 'changed' | 'removed'): void {
+		if (!this.currentOutputDir) return;
+		const normalized = path.normalize(filePath);
+		const rel = path.relative(this.currentOutputDir, normalized);
+		const parts = rel.split(path.sep);
+		// parts: [<type>, <uuid>, 'images', <filename>]
+		if (parts.length !== 4) return;
+		const documentId = parts[1];
+		const fileName = parts[3];
+
+		this.logger?.info(
+			'OutputFilesService',
+			`Document image ${type}: ${documentId}/${fileName}`
+		);
+
+		this.eventBus.broadcast('output:document-image-changed', {
+			type,
+			documentId,
+			fileName,
+			filePath: normalized,
+			timestamp: Date.now(),
+		});
+	}
+
+	/**
 	 * Extract output type and file ID from a file path.
 	 *
 	 * Handles both depth-3 paths (config.json / DATA.md / <block>.md) and
