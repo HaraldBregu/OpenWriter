@@ -476,42 +476,50 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 			/>
 
 			{/* Editor + Right Sidebar */}
-			<div className="flex-1 flex min-h-0">
-				<div className="flex-1 flex flex-col min-w-0">
-					<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-						<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-							{loaded && (
-								<TextEditor
-									disabled={
-										textCompleterTask.isRunning ||
-										textEnhanceTask.isRunning ||
-										textWriterTask.isRunning ||
-										imageGeneratorTask.isRunning
-									}
-									ref={editorRef}
-									key={id}
-									value={content}
-									onChange={handleContentChange}
-									onContinueWithAssistant={onContinueWithAssistant}
-									onEnhanceWithAssistant={onEnhanceWithAssistant}
-									onTextSubmit={onTextSubmit}
-									onImageSubmit={onImageSubmit}
-									documentId={id}
-									onEditorReady={handleEditorReady}
-								/>
-							)}
+			<ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
+				<ResizablePanel defaultSize={75} minSize={40}>
+					<div className="h-full flex flex-col min-w-0">
+						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+							<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
+								{loaded && (
+									<TextEditor
+										disabled={
+											textCompleterTask.isRunning ||
+											textEnhanceTask.isRunning ||
+											textWriterTask.isRunning ||
+											imageGeneratorTask.isRunning
+										}
+										ref={editorRef}
+										key={id}
+										value={content}
+										onChange={handleContentChange}
+										onContinueWithAssistant={onContinueWithAssistant}
+										onEnhanceWithAssistant={onEnhanceWithAssistant}
+										onTextSubmit={onTextSubmit}
+										onImageSubmit={onImageSubmit}
+										documentId={id}
+										onEditorReady={handleEditorReady}
+									/>
+								)}
+							</div>
 						</div>
 					</div>
-				</div>
+				</ResizablePanel>
 
-				<EditorSidebar open={activeSidebar === 'editor'} animate={animate} />
-				<ConfigSidebar
-					open={activeSidebar === 'config'}
-					animate={animate}
-					onOpenFolder={handleOpenFolder}
-				/>
-				<AgenticSidebar open={activeSidebar === 'agentic'} animate={animate} />
-			</div>
+				<ResizableHandle withHandle />
+
+				<ResizablePanel defaultSize={25} minSize={15}>
+					<div className="h-full flex">
+						<EditorSidebar open={activeSidebar === 'editor'} animate={animate} />
+						<ConfigSidebar
+							open={activeSidebar === 'config'}
+							animate={animate}
+							onOpenFolder={handleOpenFolder}
+						/>
+						<AgenticSidebar open={activeSidebar === 'agentic'} animate={animate} />
+					</div>
+				</ResizablePanel>
+			</ResizablePanelGroup>
 		</div>
 	);
 };
