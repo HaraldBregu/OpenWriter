@@ -1,10 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import {
-	DocumentProvider,
-	EditorInstanceProvider,
-	SidebarVisibilityProvider,
-} from './context';
+import { DocumentProvider, EditorInstanceProvider, SidebarVisibilityProvider } from './context';
 import { DocumentLayout } from './DocumentLayout';
 
 const DocumentPage: React.FC = () => {

@@ -63,7 +63,7 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 		} else {
 			sidebarPanelRef.current?.collapse();
 		}
-	}, [activeSidebar]);
+	}, [activeSidebar, sidebarPanelRef]);
 
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
 	const textCompleterTask = useTask<TextCompleterTaskData>(
