@@ -1,39 +1,25 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Plus, Code2, SlidersHorizontal, Mic, ArrowUp } from 'lucide-react';
 import {
-	Plus,
-	Code2,
-	ChevronDown,
-	SlidersHorizontal,
-	Mic,
-	ArrowUp,
-	FileCode2,
-	X,
-} from 'lucide-react';
-import { AppButton } from '@/components/app';
-
-interface ContextFile {
-	readonly id: string;
-	readonly name: string;
-}
+	AppButton,
+	AppTextarea,
+	AppSelect,
+	AppSelectTrigger,
+	AppSelectValue,
+	AppSelectContent,
+	AppSelectItem,
+} from '@/components/app';
 
 interface ChatInputProps {
 	readonly onSend: (message: string) => void;
 	readonly disabled?: boolean;
-	readonly contextFiles?: ContextFile[];
-	readonly onRemoveContextFile?: (id: string) => void;
 }
 
-const DEMO_CONTEXT_FILES: ContextFile[] = [{ id: 'demo-1', name: 'AppLayout.tsx' }];
-
-const ChatInput: React.FC<ChatInputProps> = ({
-	onSend,
-	disabled = false,
-	contextFiles = DEMO_CONTEXT_FILES,
-	onRemoveContextFile,
-}) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
+	const [selectedAgent, setSelectedAgent] = useState<string>('auto');
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	const adjustHeight = useCallback(() => {
@@ -77,35 +63,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
 			<div className="rounded-2xl border border-dashed border-border bg-muted/40 overflow-hidden">
-				{/* Context file chips */}
-				{contextFiles.length > 0 && (
-					<div className="flex flex-wrap gap-1.5 px-3 pt-3 pb-1">
-						{contextFiles.map((file) => (
-							<div
-								key={file.id}
-								className="flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-2 py-1 text-xs text-muted-foreground"
-							>
-								<FileCode2 className="h-3 w-3 shrink-0 text-blue-400" aria-hidden="true" />
-								<span className="max-w-[120px] truncate">{file.name}</span>
-								{onRemoveContextFile && (
-									<button
-										type="button"
-										onClick={() => onRemoveContextFile(file.id)}
-										aria-label={t('agenticPanel.removeFile', 'Remove {{name}}', {
-											name: file.name,
-										})}
-										className="ml-0.5 rounded-sm text-muted-foreground/60 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-									>
-										<X className="h-2.5 w-2.5" aria-hidden="true" />
-									</button>
-								)}
-							</div>
-						))}
-					</div>
-				)}
-
 				{/* Textarea */}
-				<textarea
+				<AppTextarea
 					ref={textareaRef}
 					value={value}
 					onChange={handleChange}
@@ -114,7 +73,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 					rows={3}
 					placeholder={t('agenticPanel.inputPlaceholder', 'Describe what to build')}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed"
+					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
 				/>
 
 				{/* Bottom toolbar */}
@@ -140,16 +99,28 @@ const ChatInput: React.FC<ChatInputProps> = ({
 						<Code2 className="h-3.5 w-3.5" aria-hidden="true" />
 					</AppButton>
 
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="sm"
-						aria-label={t('agenticPanel.selectModel', 'Select model')}
-						className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
-					>
-						{t('agenticPanel.modelAuto', 'Auto')}
-						<ChevronDown className="h-3 w-3" aria-hidden="true" />
-					</AppButton>
+					<AppSelect value={selectedAgent} onValueChange={setSelectedAgent}>
+						<AppSelectTrigger className="h-7 px-2 text-xs border-none bg-transparent text-muted-foreground hover:text-foreground shadow-none">
+							<AppSelectValue />
+						</AppSelectTrigger>
+						<AppSelectContent>
+							<AppSelectItem value="auto">
+								{t('agenticPanel.agentAuto', 'Auto')}
+							</AppSelectItem>
+							<AppSelectItem value="writer">
+								{t('agenticPanel.agentWriter', 'Writer')}
+							</AppSelectItem>
+							<AppSelectItem value="editor">
+								{t('agenticPanel.agentEditor', 'Editor')}
+							</AppSelectItem>
+							<AppSelectItem value="researcher">
+								{t('agenticPanel.agentResearcher', 'Researcher')}
+							</AppSelectItem>
+							<AppSelectItem value="summarizer">
+								{t('agenticPanel.agentSummarizer', 'Summarizer')}
+							</AppSelectItem>
+						</AppSelectContent>
+					</AppSelect>
 
 					<AppButton
 						type="button"
@@ -193,4 +164,4 @@ const ChatInput: React.FC<ChatInputProps> = ({
 };
 
 export { ChatInput };
-export type { ChatInputProps, ContextFile };
+export type { ChatInputProps };
