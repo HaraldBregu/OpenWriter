@@ -516,8 +516,8 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 
 				<ResizablePanel
 					panelRef={sidebarPanelRef}
-					defaultSize={25}
-					minSize={15}
+					defaultSize={30}
+					minSize={30}
 					collapsible
 					collapsedSize={0}
 				>
