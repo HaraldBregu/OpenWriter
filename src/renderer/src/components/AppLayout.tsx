@@ -143,12 +143,19 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
+								{!open && (
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Search className="h-3.5 w-3.5 shrink-0" />
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+								)}
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
-						{/* Writings collapsible group */}
-						<AppCollapsible defaultOpen className="py-0">
+						{/* Writings collapsible group — hidden when sidebar is collapsed */}
+						{open && <AppCollapsible defaultOpen className="py-0">
 							<AppSidebarGroup className="py-0">
 								<AppSidebarGroupLabel asChild>
 									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
