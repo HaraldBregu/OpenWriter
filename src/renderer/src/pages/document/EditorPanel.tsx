@@ -12,9 +12,11 @@ import {
 	ListOrdered,
 	Undo2,
 	Redo2,
+	PanelRight,
 } from 'lucide-react';
 import type { Editor } from '@tiptap/core';
 import { useEditorInstance } from './context/editor-instance-context';
+import { useSidebarVisibility } from './context/sidebar-visibility-context';
 import {
 	AppButton,
 	AppTooltip,
