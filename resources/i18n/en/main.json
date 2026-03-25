@@ -691,7 +691,8 @@
 		"exportPdf": "Export as PDF",
 		"exportMd": "Export as Markdown",
 		"share": "Share",
-		"shareLink": "Copy Share Link"
+		"shareLink": "Copy Share Link",
+		"deletePermanently": "Delete permanently"
 	},
 	"agenticSidebar": {
 		"placeholder": "AI assistant coming soon"
