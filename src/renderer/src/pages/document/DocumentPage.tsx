@@ -19,6 +19,11 @@ import {
 	useSidebarVisibility,
 } from './context';
 import { useDocumentDispatch } from './hooks';
+import {
+	ResizablePanelGroup,
+	ResizablePanel,
+	ResizableHandle,
+} from '@/components/ui/Resizable';
 
 type TextCompleterTaskData = {
 	prompt: string;
