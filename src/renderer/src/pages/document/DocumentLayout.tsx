@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
@@ -10,13 +10,7 @@ import DocumentHeader from './DocumentHeader';
 import ConfigPanel from './ConfigPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
-import {
-	DocumentProvider,
-	EditorInstanceProvider,
-	SidebarVisibilityProvider,
-	useEditorInstance,
-	useSidebarVisibility,
-} from './context';
+import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
@@ -37,7 +31,11 @@ type ImageGeneratorTaskData = {
 	prompt: string;
 };
 
-const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ documentId: id }) => {
+interface DocumentLayoutProps {
+	documentId: string | undefined;
+}
+
+const DocumentLayout: React.FC<DocumentLayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
 	const dispatch = useDocumentDispatch();
 
@@ -235,7 +233,7 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 			await window.workspace.trashOutput({ type: 'documents', id });
 			navigate('/home');
 		} catch (err) {
-			console.error('[DocumentPage] Failed to trash writing:', err);
+			console.error('[DocumentLayout] Failed to trash writing:', err);
 			setIsTrashing(false);
 		}
 	}, [id, isTrashing, navigate, debouncedSave]);
@@ -532,18 +530,4 @@ const DocumentPageInner: React.FC<{ documentId: string | undefined }> = ({ docum
 	);
 };
 
-const DocumentPage: React.FC = () => {
-	const { id } = useParams<{ id: string }>();
-
-	return (
-		<DocumentProvider documentId={id}>
-			<SidebarVisibilityProvider>
-				<EditorInstanceProvider>
-					<DocumentPageInner documentId={id} />
-				</EditorInstanceProvider>
-			</SidebarVisibilityProvider>
-		</DocumentProvider>
-	);
-};
-
-export default DocumentPage;
+export { DocumentLayout };

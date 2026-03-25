@@ -14,13 +14,7 @@ import {
 	Copy,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
-import {
-	AppLabel,
-	AppCard,
-	AppCardHeader,
-	AppCardTitle,
-	AppCardContent,
-} from '@/components/app';
+import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
 
 interface ConfigPanelProps {
 	readonly onOpenFolder: () => void;
