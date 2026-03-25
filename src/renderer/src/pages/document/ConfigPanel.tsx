@@ -12,7 +12,6 @@ import {
 	Plus,
 	Trash2,
 	Copy,
-	Info,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
 import {
