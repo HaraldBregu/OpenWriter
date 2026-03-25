@@ -373,6 +373,22 @@ export interface SaveDocumentImageResult {
 }
 
 /**
+ * Event payload emitted when a file inside a document's images/ folder changes.
+ */
+export interface DocumentImageChangeEvent {
+	/** Whether the image was added, modified, or removed. */
+	type: 'added' | 'changed' | 'removed';
+	/** The document UUID that owns the image. */
+	documentId: string;
+	/** File name of the changed image (e.g. "photo.jpg"). */
+	fileName: string;
+	/** Absolute path to the image file. */
+	filePath: string;
+	/** Unix timestamp (ms). */
+	timestamp: number;
+}
+
+/**
  * Info about a single image file inside a document's images/ folder.
  */
 export interface DocumentImageInfo {
