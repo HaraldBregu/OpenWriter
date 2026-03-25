@@ -12,9 +12,18 @@ import {
 	Plus,
 	Trash2,
 	Copy,
+	Info,
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from './hooks';
-import { AppLabel, AppCard, AppCardHeader, AppCardTitle, AppCardContent } from '@/components/app';
+import {
+	AppLabel,
+	AppCard,
+	AppCardHeader,
+	AppCardTitle,
+	AppCardContent,
+	AppButton,
+} from '@/components/app';
+import { useSidebarVisibility } from './context/sidebar-visibility-context';
 
 interface ConfigPanelProps {
 	readonly open: boolean;
