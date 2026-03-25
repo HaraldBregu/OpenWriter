@@ -96,7 +96,8 @@
       "Bash(npm view:*)",
       "Bash(lsof:*)",
       "Bash(npm pack:*)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(node -e \"console.log\\(require.resolve\\(''./node_modules/react-resizable-panels''\\)\\)\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
