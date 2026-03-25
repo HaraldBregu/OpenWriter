@@ -45,7 +45,7 @@ const DEMO_MESSAGES: ChatMessageData[] = [
 	},
 ];
 
-const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open, animate = true }) => {
+const AgenticSidebar: React.FC<AgenticSidebarProps> = ({ open }) => {
 	const { t } = useTranslation();
 	const [messages, setMessages] = useState<ChatMessageData[]>(DEMO_MESSAGES);
 	const bottomRef = useRef<HTMLDivElement>(null);
