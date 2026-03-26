@@ -7,11 +7,13 @@ import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import Header from './Header';
+import ConfigPanel from './ConfigPanel';
+import AgenticPanel from './AgenticPanel';
+import EditorPanel from './EditorPanel';
 import EditorResizablePanel from './EditorResizablePanel';
-import SidebarResizablePanel from './SidebarResizablePanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
-import { ResizablePanelGroup, ResizableHandle } from '@/components/ui/Resizable';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
 type TextCompleterTaskData = {
