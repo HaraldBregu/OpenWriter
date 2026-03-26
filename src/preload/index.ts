@@ -50,10 +50,10 @@ const app: AppApi = {
 	// -------------------------------------------------------------------------
 	// Provider management
 	// -------------------------------------------------------------------------
-	getProviders: (): Promise<ServiceProvider[]> => {
+	getProviders: (): Promise<Array<ServiceProvider & { id: string }>> => {
 		return typedInvokeUnwrap(AppChannels.getProviders);
 	},
-	addProvider: (provider: ServiceProvider): Promise<ServiceProvider> => {
+	addProvider: (provider: ServiceProvider): Promise<ServiceProvider & { id: string }> => {
 		return typedInvokeUnwrap(AppChannels.addProvider, provider);
 	},
 	deleteProvider: (id: string): Promise<void> => {
