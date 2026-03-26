@@ -2,7 +2,6 @@ import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
 import {
-	DEFAULT_MODELS,
 	type CreateModelInput,
 	type ModelConfig,
 } from '../../../../shared/model-defaults';

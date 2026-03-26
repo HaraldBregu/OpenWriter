@@ -175,11 +175,6 @@ export class StoreService {
 
 	private normalizeStoredModels(): void {
 		const normalized = normalizeModels(this.rawStore.get('models'));
-		if (normalized.length === 0) {
-			this.store.set('models', DEFAULTS.models.map(cloneModel));
-			return;
-		}
-
 		const current = this.store.get('models');
 		const needsRewrite =
 			current.length !== normalized.length ||
