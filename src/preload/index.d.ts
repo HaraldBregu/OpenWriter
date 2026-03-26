@@ -48,7 +48,7 @@ import type {
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
 import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
-import type { ServiceProvider, ProviderConfig } from '../shared/model-defaults';
+import type { ServiceProvider } from '../shared/model-defaults';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
