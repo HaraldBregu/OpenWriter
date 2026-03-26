@@ -115,7 +115,6 @@ export class StoreService {
 			provider: model.provider,
 			apikey: model.apikey,
 			baseurl: model.baseurl,
-			default: false,
 		};
 		models.push(newModel);
 		this.store.set('models', models);
