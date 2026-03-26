@@ -89,6 +89,7 @@ export type {
 	WorkspaceAgentEntry,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	ModelConfig,
 };
 
 // ---------------------------------------------------------------------------

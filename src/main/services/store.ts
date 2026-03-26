@@ -1,5 +1,7 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
+import type { ModelConfig } from '../../shared/model-defaults';
+import { DEFAULT_MODELS } from '../../shared/model-defaults';
 
 export interface WorkspaceInfo {
 	path: string;
@@ -7,13 +9,13 @@ export interface WorkspaceInfo {
 }
 
 export interface StoreSchema {
-	modelSettings: Record<string, string>;
+	models: ModelConfig[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
 
 const DEFAULTS: StoreSchema = {
-	modelSettings: {},
+	models: [...DEFAULT_MODELS],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
@@ -29,21 +31,37 @@ export class StoreService {
 		});
 	}
 
-	// --- API key methods ---
+	// --- Model methods ---
 
-	getApiKey(providerId: string): string | null {
-		const all = this.store.get('modelSettings');
-		return all[providerId] ?? null;
+	getModels(): ModelConfig[] {
+		return [...this.store.get('models')];
 	}
 
-	getAllApiKeys(): Record<string, string> {
-		return { ...this.store.get('modelSettings') };
+	addModel(model: Omit<ModelConfig, 'id'>): ModelConfig {
+		const models = this.store.get('models');
+		const newModel: ModelConfig = {
+			...model,
+			id: `model-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+		};
+		// If the new model is marked as default, clear existing defaults
+		if (newModel.default) {
+			for (const m of models) {
+				m.default = false;
+			}
+		}
+		models.push(newModel);
+		this.store.set('models', models);
+		return { ...newModel };
 	}
 
-	setApiKey(providerId: string, apiKey: string): void {
-		const all = this.store.get('modelSettings');
-		all[providerId] = apiKey;
-		this.store.set('modelSettings', all);
+	deleteModel(id: string): void {
+		const models = this.store.get('models').filter((m) => m.id !== id);
+		this.store.set('models', models);
+	}
+
+	setDefaultModel(id: string): void {
+		const models = this.store.get('models').map((m) => ({ ...m, default: m.id === id }));
+		this.store.set('models', models);
 	}
 
 	// --- Workspace settings ---
