@@ -37,10 +37,13 @@ Object.defineProperty(window, 'app', {
 		getPlatform: jest.fn().mockResolvedValue('win32'),
 		showWriting: jest.fn().mockResolvedValue(undefined),
 		onWritingAction: jest.fn().mockReturnValue(jest.fn()),
-		// API key settings
-		getAllApiKeys: jest.fn().mockResolvedValue({}),
-		getApiKey: jest.fn().mockResolvedValue(null),
-		setApiKey: jest.fn().mockResolvedValue(undefined),
+		// Model management
+		getModels: jest.fn().mockResolvedValue([]),
+		addModel: jest
+			.fn()
+			.mockResolvedValue({ id: 'test-id', provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: true }),
+		deleteModel: jest.fn().mockResolvedValue(undefined),
+		setDefaultModel: jest.fn().mockResolvedValue(undefined),
 	},
 	writable: true,
 	configurable: true,
