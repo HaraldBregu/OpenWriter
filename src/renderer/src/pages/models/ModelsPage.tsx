@@ -303,19 +303,6 @@ const ModelsPage: React.FC = () => {
 		[loadModels]
 	);
 
-	const handleSetDefault = useCallback(
-		(id: string) => {
-			window.app
-				.setDefaultModel(id)
-				.then(() => {
-					return loadModels();
-				})
-				.catch(() => {
-					// Update failed — keep existing state
-				});
-		},
-		[loadModels]
-	);
 
 	return (
 		<div className="flex flex-col h-full">
