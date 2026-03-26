@@ -22,28 +22,24 @@ export interface ModelConfig extends SeededModel {
 export const DEFAULT_MODELS: readonly SeededModel[] = [
 	{
 		provider: 'anthropic',
-		model: 'claude-opus-4-6',
 		apikey: '',
 		baseurl: '',
 		default: false,
 	},
 	{
 		provider: 'openai',
-		model: 'gpt-4o',
 		apikey: '',
 		baseurl: '',
 		default: true,
 	},
 	{
 		provider: 'google',
-		model: 'gemini-2-0-pro',
 		apikey: '',
 		baseurl: '',
 		default: false,
 	},
 	{
 		provider: 'mistral',
-		model: 'mistral-large-2',
 		apikey: '',
 		baseurl: '',
 		default: false,
