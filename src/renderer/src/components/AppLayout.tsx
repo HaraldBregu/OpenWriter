@@ -157,13 +157,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
-									{!open && (
-										<AppSidebarMenuItem>
-											<AppSidebarMenuButton className="h-9 px-3">
-												<Search className="h-3.5 w-3.5 shrink-0" />
-											</AppSidebarMenuButton>
-										</AppSidebarMenuItem>
-									)}
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton className="h-9 px-3">
+											<Search className="h-3.5 w-3.5 shrink-0" />
+											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
@@ -354,9 +353,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
 								>
 									<CircleArrowUp className="h-4 w-4 text-muted-foreground" />
-									<span className="flex-1 text-left">
-										{t('menu.upgradePlan', 'Upgrade plan')}
-									</span>
+									<span className="flex-1 text-left">{t('menu.upgradePlan', 'Upgrade plan')}</span>
 								</button>
 								<button
 									type="button"
