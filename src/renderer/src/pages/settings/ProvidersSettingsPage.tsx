@@ -538,8 +538,8 @@ const ProvidersSettingsPage: React.FC = () => {
 
 	const handleSaveProviderApiKey = useCallback(
 		async (provider: string, apiKey: string) => {
-			const added = await window.app.addModel({
-				name: provider,
+			const added = await window.app.addProvider({
+				provider: provider,
 				apikey: apiKey,
 				baseurl: '',
 			});
@@ -547,7 +547,7 @@ const ProvidersSettingsPage: React.FC = () => {
 			const staleEntries = models.filter(
 				(entry) => entry.provider === provider && entry.id !== added.id
 			);
-			await Promise.all(staleEntries.map((entry) => window.app.deleteModel(entry.id)));
+			await Promise.all(staleEntries.map((entry) => window.app.deleteProvider(entry.id!)));
 			await loadModels();
 		},
 		[loadModels, models]

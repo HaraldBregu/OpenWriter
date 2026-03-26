@@ -90,7 +90,6 @@ export type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	ServiceProvider,
-	ProviderConfig,
 };
 
 // ---------------------------------------------------------------------------
