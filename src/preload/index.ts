@@ -3,7 +3,7 @@ import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } fr
 import { AppChannels, WindowChannels, WorkspaceChannels, TaskChannels } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
-import type { ServiceProvider, ProviderConfig } from '../shared/model-defaults';
+import type { ServiceProvider } from '../shared/model-defaults';
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
