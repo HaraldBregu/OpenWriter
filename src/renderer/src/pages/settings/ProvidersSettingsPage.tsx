@@ -23,6 +23,8 @@ const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	{} as Record<ProviderId, string>
 );
 
+const MASKED_API_KEY = '********';
+
 interface FormState {
 	provider: string;
 	apikey: string;
@@ -238,6 +240,11 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 				{PROVIDER_IDS.map((provider) => {
 					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
+					const displayValue = hasInputValue
+						? apiKeys[provider]
+						: existing.length > 0
+							? MASKED_API_KEY
+							: '';
 					const isSaving = saving[provider];
 					const visibilityLabel = visible[provider]
 						? t('models.hideApiKey', 'Hide API key')
@@ -254,7 +261,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 								<AppInput
 									id={`${uid}-${provider}-apikey`}
 									type={visible[provider] ? 'text' : 'password'}
-									value={apiKeys[provider]}
+									value={displayValue}
 									onChange={(e) => handleApiKeyChange(provider, e.target.value)}
 									placeholder={
 										existing.length > 0
@@ -420,6 +427,11 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 						const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
 						const inputValue = apiKeys[provider] ?? '';
 						const hasInputValue = inputValue.trim().length > 0;
+						const displayValue = hasInputValue
+							? inputValue
+							: existing.length > 0
+								? MASKED_API_KEY
+								: '';
 						const isSaving = Boolean(saving[provider]);
 						const isDeleting = Boolean(deleting[provider]);
 						const isVisible = Boolean(visible[provider]);
@@ -438,7 +450,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 									<AppInput
 										id={`${uid}-${provider}-apikey`}
 										type={isVisible ? 'text' : 'password'}
-										value={inputValue}
+										value={displayValue}
 										onChange={(e) => handleApiKeyChange(provider, e.target.value)}
 										placeholder={
 											existing.length > 0
