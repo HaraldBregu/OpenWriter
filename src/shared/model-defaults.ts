@@ -15,31 +15,11 @@ export interface ModelConfig extends CreateModelInput {
 	id: string;
 }
 
-export const DEFAULT_MODELS: readonly Omit<ModelConfig, 'id'>[] = [
-	{
-		provider: 'anthropic',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{
-		provider: 'openai',
-		apikey: '',
-		baseurl: '',
-		default: true,
-	},
-	{
-		provider: 'google',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{
-		provider: 'mistral',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
+export const DEFAULT_MODELS: readonly CreateModelInput[] = [
+	{ provider: 'anthropic', apikey: '', baseurl: '' },
+	{ provider: 'openai', apikey: '', baseurl: '' },
+	{ provider: 'google', apikey: '', baseurl: '' },
+	{ provider: 'mistral', apikey: '', baseurl: '' },
 ] as const;
 
 function slugify(segment: string): string {
