@@ -176,7 +176,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 };
 
 interface DefaultProvidersSectionProps {
-	models: ProviderConfig[];
+	models: ServiceProvider[];
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 }
 
