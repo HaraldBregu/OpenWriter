@@ -273,13 +273,17 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							</div>
 							<AppButton
 								type="button"
-								size="sm"
+								variant="ghost"
+								size="icon-xs"
+								aria-label={
+									isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')
+								}
 								disabled={!hasInputValue || isSaving}
 								onClick={() => {
 									void handleSaveProvider(provider);
 								}}
 							>
-								{isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')}
+								{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
 							</AppButton>
 						</div>
 					);
@@ -463,13 +467,17 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 								<div className="flex items-center justify-end gap-2">
 									<AppButton
 										type="button"
-										size="sm"
+										variant="ghost"
+										size="icon-xs"
+										aria-label={
+											isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')
+										}
 										disabled={!hasInputValue || isSaving || isDeleting}
 										onClick={() => {
 											void handleSaveProvider(provider);
 										}}
 									>
-										{isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')}
+										{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
 									</AppButton>
 									<AppButton
 										type="button"
@@ -500,20 +508,19 @@ const ProvidersSettingsPage: React.FC = () => {
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
-	const loadProviders = useCallback(() => {
-		return window.app.getProviders().then((loaded) => {
-			setProviders(loaded);
-			setProviderSuggestions((prev) => {
-				const next = new Set(prev);
-				loaded.forEach((model) => {
-					if (model.name.trim().length > 0) {
-						next.add(model.name.trim());
-					}
-				});
-				return Array.from(next);
+	const loadProviders = useCallback(async () => {
+		const loaded = await window.app.getProviders();
+		setProviders(loaded);
+		setProviderSuggestions((prev) => {
+			const next = new Set(prev);
+			loaded.forEach((model) => {
+				if (model.name.trim().length > 0) {
+					next.add(model.name.trim());
+				}
 			});
-			return loaded;
+			return Array.from(next);
 		});
+		return loaded;
 	}, []);
 
 	useEffect(() => {
