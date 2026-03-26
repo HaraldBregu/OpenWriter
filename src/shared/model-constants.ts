@@ -103,6 +103,8 @@ const REASONING: ModelCapabilities = {
 
 export const PROVIDER_IDS = ['anthropic', 'openai', 'google', 'meta', 'mistral'] as const;
 export type ProviderId = (typeof PROVIDER_IDS)[number];
+export const DEFAULT_PROVIDER_IDS = ['anthropic', 'openai', 'google', 'mistral'] as const;
+export type DefaultProviderId = (typeof DEFAULT_PROVIDER_IDS)[number];
 
 // ---------------------------------------------------------------------------
 // Provider catalogue

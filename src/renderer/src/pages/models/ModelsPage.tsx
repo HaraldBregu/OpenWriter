@@ -1,21 +1,26 @@
-import React, { useState, useCallback, useId, useEffect } from 'react';
+import React, { useState, useCallback, useId, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { type CreateModelInput, type ModelConfig } from '../../../../shared/model-defaults';
-import { PROVIDER_CATALOGUE } from '../../../../shared/model-constants';
-import { AppButton, AppInput, AppLabel, AppBadge, AppSeparator } from '../../components/app';
+import {
+	DEFAULT_PROVIDER_IDS,
+	type DefaultProviderId,
+	PROVIDER_CATALOGUE,
+} from '../../../../shared/model-constants';
+import { AppButton, AppInput, AppLabel, AppSeparator } from '../../components/app';
 
-const DEFAULT_PROVIDERS = ['anthropic', 'openai', 'google', 'mistral'] as const;
-type DefaultProvider = (typeof DEFAULT_PROVIDERS)[number];
+function isDefaultProvider(provider: string): provider is DefaultProviderId {
+	return (DEFAULT_PROVIDER_IDS as readonly string[]).includes(provider);
+}
 
-const PROVIDER_LABELS: Record<DefaultProvider, string> = DEFAULT_PROVIDERS.reduce(
+const PROVIDER_LABELS: Record<DefaultProviderId, string> = DEFAULT_PROVIDER_IDS.reduce(
 	(acc, providerId) => {
 		const label =
 			PROVIDER_CATALOGUE.find((provider) => provider.id === providerId)?.name ?? providerId;
 		acc[providerId] = label;
 		return acc;
 	},
-	{} as Record<DefaultProvider, string>
+	{} as Record<DefaultProviderId, string>
 );
 
 interface FormState {
@@ -31,88 +36,6 @@ const EMPTY_FORM: FormState = {
 };
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function maskApiKey(key: string): string {
-	if (key.length === 0) return '—';
-	if (key.length <= 4) return '••••';
-	return `${key.slice(0, 3)}${'•'.repeat(8)}${key.slice(-4)}`;
-}
-
-// ---------------------------------------------------------------------------
-// Empty state
-// ---------------------------------------------------------------------------
-
-const ModelsEmptyState: React.FC = () => {
-	const { t } = useTranslation();
-
-	return (
-		<div className="flex flex-col items-center justify-center gap-4 text-center px-6 py-12">
-			<div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted">
-				<Cpu className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-			</div>
-			<div className="space-y-1 max-w-xs">
-				<p className="text-sm font-medium text-foreground">
-					{t('models.emptyTitle', 'No models registered')}
-				</p>
-				<p className="text-xs text-muted-foreground">
-					{t('models.emptyDescription', 'Register a model to make it available in your workspace.')}
-				</p>
-			</div>
-		</div>
-	);
-};
-
-// ---------------------------------------------------------------------------
-// Model row
-// ---------------------------------------------------------------------------
-
-interface ModelRowProps {
-	entry: ModelConfig;
-	onDelete: (id: string) => void;
-}
-
-const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
-	const { t } = useTranslation();
-
-	const handleDelete = useCallback(() => {
-		onDelete(entry.id);
-	}, [onDelete, entry.id]);
-
-	return (
-		<div className="flex items-center gap-3 py-2.5 px-1">
-			<AppBadge variant="secondary" className="shrink-0 text-xs font-medium">
-				{entry.provider}
-			</AppBadge>
-			{entry.apikey.length > 0 && (
-				<span className="font-mono text-xs text-muted-foreground shrink-0">
-					{maskApiKey(entry.apikey)}
-				</span>
-			)}
-			{entry.baseurl.length > 0 && (
-				<span
-					className="text-xs text-muted-foreground truncate max-w-[140px]"
-					title={entry.baseurl}
-				>
-					{entry.baseurl}
-				</span>
-			)}
-			<AppButton
-				type="button"
-				variant="ghost"
-				size="icon-xs"
-				aria-label={t('models.deleteModel', 'Delete model')}
-				onClick={handleDelete}
-				className="shrink-0 text-muted-foreground hover:text-destructive"
-			>
-				<Trash2 />
-			</AppButton>
-		</div>
-	);
-};
-
-// ---------------------------------------------------------------------------
 // Registration form
 // ---------------------------------------------------------------------------
 
@@ -120,12 +43,14 @@ interface RegistrationFormProps {
 	providerSuggestions: string[];
 	onRegister: (entry: CreateModelInput) => void;
 	onProviderAdded: (provider: string) => void;
+	onCancel: () => void;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({
 	providerSuggestions,
 	onRegister,
 	onProviderAdded,
+	onCancel,
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();
@@ -240,7 +165,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				</div>
 			</div>
 
-			<div className="flex justify-end mt-4">
+			<div className="flex justify-end gap-2 mt-4">
+				<AppButton type="button" size="sm" variant="ghost" onClick={onCancel}>
+					{t('models.form.cancel', 'Cancel')}
+				</AppButton>
 				<AppButton type="submit" size="sm" disabled={!isValid}>
 					{t('models.form.save', 'Save')}
 				</AppButton>
@@ -255,7 +183,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
 interface DefaultProvidersSectionProps {
 	models: ModelConfig[];
-	onSaveProviderApiKey: (provider: DefaultProvider, apiKey: string) => Promise<void>;
+	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 }
 
 const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
@@ -264,35 +192,35 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();
-	const [apiKeys, setApiKeys] = useState<Record<DefaultProvider, string>>({
+	const [apiKeys, setApiKeys] = useState<Record<DefaultProviderId, string>>({
 		anthropic: '',
 		openai: '',
 		google: '',
 		mistral: '',
 	});
-	const [visible, setVisible] = useState<Record<DefaultProvider, boolean>>({
+	const [visible, setVisible] = useState<Record<DefaultProviderId, boolean>>({
 		anthropic: false,
 		openai: false,
 		google: false,
 		mistral: false,
 	});
-	const [saving, setSaving] = useState<Record<DefaultProvider, boolean>>({
+	const [saving, setSaving] = useState<Record<DefaultProviderId, boolean>>({
 		anthropic: false,
 		openai: false,
 		google: false,
 		mistral: false,
 	});
 
-	const handleApiKeyChange = useCallback((provider: DefaultProvider, value: string) => {
+	const handleApiKeyChange = useCallback((provider: DefaultProviderId, value: string) => {
 		setApiKeys((prev) => ({ ...prev, [provider]: value }));
 	}, []);
 
-	const handleToggleVisibility = useCallback((provider: DefaultProvider) => {
+	const handleToggleVisibility = useCallback((provider: DefaultProviderId) => {
 		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
 	}, []);
 
 	const handleSaveProvider = useCallback(
-		async (provider: DefaultProvider) => {
+		async (provider: DefaultProviderId) => {
 			const apiKey = apiKeys[provider].trim();
 			if (apiKey.length === 0 || saving[provider]) return;
 
@@ -324,7 +252,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 			</div>
 
 			<div className="space-y-3">
-				{DEFAULT_PROVIDERS.map((provider) => {
+				{DEFAULT_PROVIDER_IDS.map((provider) => {
 					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
 					const isSaving = saving[provider];
@@ -375,17 +303,174 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							>
 								{isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')}
 							</AppButton>
-							{existing.length > 0 && (
-								<p className="text-xs text-muted-foreground col-start-2">
-									{t('models.defaultProviders.currentKey', 'Current key: {{key}}', {
-										key: maskApiKey(existing),
-									})}
-								</p>
-							)}
 						</div>
 					);
 				})}
 			</div>
+		</section>
+	);
+};
+
+interface CustomProvidersSectionProps {
+	models: ModelConfig[];
+	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
+	onDeleteProvider: (provider: string) => Promise<void>;
+}
+
+const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
+	models,
+	onSaveProviderApiKey,
+	onDeleteProvider,
+}) => {
+	const { t } = useTranslation();
+	const uid = useId();
+	const customProviders = useMemo(() => {
+		const unique = new Set<string>();
+		models.forEach((model) => {
+			const provider = model.provider.trim();
+			if (provider.length > 0 && !isDefaultProvider(provider)) {
+				unique.add(provider);
+			}
+		});
+		return Array.from(unique).sort((a, b) => a.localeCompare(b));
+	}, [models]);
+	const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+	const [visible, setVisible] = useState<Record<string, boolean>>({});
+	const [saving, setSaving] = useState<Record<string, boolean>>({});
+	const [deleting, setDeleting] = useState<Record<string, boolean>>({});
+
+	const handleApiKeyChange = useCallback((provider: string, value: string) => {
+		setApiKeys((prev) => ({ ...prev, [provider]: value }));
+	}, []);
+
+	const handleToggleVisibility = useCallback((provider: string) => {
+		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
+	}, []);
+
+	const handleSaveProvider = useCallback(
+		async (provider: string) => {
+			const apiKey = (apiKeys[provider] ?? '').trim();
+			if (apiKey.length === 0 || saving[provider]) return;
+
+			setSaving((prev) => ({ ...prev, [provider]: true }));
+			try {
+				await onSaveProviderApiKey(provider, apiKey);
+				setApiKeys((prev) => ({ ...prev, [provider]: '' }));
+			} catch {
+				// Save failed — keep current input so the user can retry
+			} finally {
+				setSaving((prev) => ({ ...prev, [provider]: false }));
+			}
+		},
+		[apiKeys, onSaveProviderApiKey, saving]
+	);
+
+	const handleDeleteProvider = useCallback(
+		async (provider: string) => {
+			if (deleting[provider]) return;
+			setDeleting((prev) => ({ ...prev, [provider]: true }));
+			try {
+				await onDeleteProvider(provider);
+			} catch {
+				// Deletion failed — keep current state
+			} finally {
+				setDeleting((prev) => ({ ...prev, [provider]: false }));
+			}
+		},
+		[deleting, onDeleteProvider]
+	);
+
+	return (
+		<section className="px-6 py-5">
+			<div className="mb-4">
+				<h2 className="text-sm font-semibold text-foreground">
+					{t('models.customProviders.title', 'Custom Providers')}
+				</h2>
+				<p className="text-xs text-muted-foreground mt-0.5">
+					{t('models.customProviders.subtitle', 'Configure API keys for your custom providers.')}
+				</p>
+			</div>
+
+			{customProviders.length === 0 ? (
+				<p className="text-xs text-muted-foreground">
+					{t('models.customProviders.empty', 'No custom providers yet.')}
+				</p>
+			) : (
+				<div className="space-y-3">
+					{customProviders.map((provider) => {
+						const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
+						const inputValue = apiKeys[provider] ?? '';
+						const hasInputValue = inputValue.trim().length > 0;
+						const isSaving = Boolean(saving[provider]);
+						const isDeleting = Boolean(deleting[provider]);
+						const isVisible = Boolean(visible[provider]);
+						const visibilityLabel = isVisible
+							? t('models.hideApiKey', 'Hide API key')
+							: t('models.showApiKey', 'Show API key');
+
+						return (
+							<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-end">
+								<div className="flex flex-col gap-1.5">
+									<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
+										{provider}
+									</AppLabel>
+								</div>
+								<div className="relative flex items-center">
+									<AppInput
+										id={`${uid}-${provider}-apikey`}
+										type={isVisible ? 'text' : 'password'}
+										value={inputValue}
+										onChange={(e) => handleApiKeyChange(provider, e.target.value)}
+										placeholder={
+											existing.length > 0
+												? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
+												: t('models.form.apiKeyPlaceholder', 'Enter API key…')
+										}
+										autoComplete="off"
+										spellCheck={false}
+										className="h-9 text-sm font-mono pr-8"
+									/>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon-xs"
+										aria-label={visibilityLabel}
+										onClick={() => handleToggleVisibility(provider)}
+										className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+									>
+										{isVisible ? <EyeOff /> : <Eye />}
+									</AppButton>
+								</div>
+								<div className="flex items-center justify-end gap-2">
+									<AppButton
+										type="button"
+										size="sm"
+										disabled={!hasInputValue || isSaving || isDeleting}
+										onClick={() => {
+											void handleSaveProvider(provider);
+										}}
+									>
+										{isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')}
+									</AppButton>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon-xs"
+										aria-label={t('models.deleteProvider', 'Delete provider')}
+										disabled={isDeleting || isSaving}
+										onClick={() => {
+											void handleDeleteProvider(provider);
+										}}
+										className="text-muted-foreground hover:text-destructive"
+									>
+										<Trash2 />
+									</AppButton>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			)}
 		</section>
 	);
 };
@@ -397,10 +482,9 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<ModelConfig[]>([]);
-	const [loading, setLoading] = useState(true);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([
-		...DEFAULT_PROVIDERS.map((provider) => PROVIDER_LABELS[provider].toLowerCase()),
+		...DEFAULT_PROVIDER_IDS,
 	]);
 
 	const loadModels = useCallback(() => {
@@ -423,9 +507,6 @@ const ModelsPage: React.FC = () => {
 		loadModels()
 			.catch(() => {
 				setModels([]);
-			})
-			.finally(() => {
-				setLoading(false);
 			});
 	}, [loadModels]);
 
@@ -443,22 +524,8 @@ const ModelsPage: React.FC = () => {
 		[loadModels]
 	);
 
-	const handleDelete = useCallback(
-		(id: string) => {
-			window.app
-				.deleteModel(id)
-				.then(() => {
-					return loadModels();
-				})
-				.catch(() => {
-					// Deletion failed — keep existing state
-				});
-		},
-		[loadModels]
-	);
-
 	const handleSaveProviderApiKey = useCallback(
-		async (provider: DefaultProvider, apiKey: string) => {
+		async (provider: string, apiKey: string) => {
 			const added = await window.app.addModel({
 				provider,
 				apikey: apiKey,
@@ -469,6 +536,15 @@ const ModelsPage: React.FC = () => {
 				(entry) => entry.provider === provider && entry.id !== added.id
 			);
 			await Promise.all(staleEntries.map((entry) => window.app.deleteModel(entry.id)));
+			await loadModels();
+		},
+		[loadModels, models]
+	);
+
+	const handleDeleteProvider = useCallback(
+		async (provider: string) => {
+			const entries = models.filter((entry) => entry.provider === provider);
+			await Promise.all(entries.map((entry) => window.app.deleteModel(entry.id)));
 			await loadModels();
 		},
 		[loadModels, models]
@@ -505,6 +581,7 @@ const ModelsPage: React.FC = () => {
 						providerSuggestions={providerSuggestions}
 						onRegister={handleRegister}
 						onProviderAdded={handleProviderAdded}
+						onCancel={() => setShowRegistrationForm(false)}
 					/>
 				</div>
 			)}
@@ -514,23 +591,11 @@ const ModelsPage: React.FC = () => {
 
 				<AppSeparator />
 
-				<div className="px-6 py-2 flex flex-col">
-					{loading ? (
-						<div className="flex items-center justify-center py-12">
-							<p className="text-xs text-muted-foreground">
-								{t('models.loading', 'Loading models…')}
-							</p>
-						</div>
-					) : models.length === 0 ? (
-						<ModelsEmptyState />
-					) : (
-						<div className="divide-y divide-border">
-							{models.map((m) => (
-								<ModelRow key={m.id} entry={m} onDelete={handleDelete} />
-							))}
-						</div>
-					)}
-				</div>
+				<CustomProvidersSection
+					models={models}
+					onSaveProviderApiKey={handleSaveProviderApiKey}
+					onDeleteProvider={handleDeleteProvider}
+				/>
 			</div>
 		</div>
 	);
