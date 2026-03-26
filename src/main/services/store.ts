@@ -34,11 +34,11 @@ function normalizeProviderInput(value: unknown): ServiceProvider | null {
 		return null;
 	}
 
-	const provider =
-		typeof value.provider === 'string'
-			? value.provider.trim()
-			: typeof value.name === 'string'
-				? value.name.trim()
+	const name =
+		typeof value.name === 'string'
+			? value.name.trim()
+			: typeof value.provider === 'string'
+				? value.provider.trim()
 				: '';
 	const apikey =
 		typeof value.apikey === 'string'
@@ -52,11 +52,11 @@ function normalizeProviderInput(value: unknown): ServiceProvider | null {
 			: typeof value.baseUrl === 'string'
 				? value.baseUrl.trim()
 				: '';
-	if (provider.length === 0) {
+	if (name.length === 0) {
 		return null;
 	}
 
-	return { provider, apikey, baseurl };
+	return { name, apikey, baseurl };
 }
 
 function normalizeProviders(value: unknown): ServiceProvider[] {
