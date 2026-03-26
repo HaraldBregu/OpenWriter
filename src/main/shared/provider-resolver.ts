@@ -48,16 +48,10 @@ export class ProviderResolver {
 	resolve(options?: { providerId?: string; modelId?: string }): ResolvedProvider {
 		const models = this.storeService.getModels();
 
-		// Try exact match by provider + model
-		let found =
-			options?.providerId && options?.modelId
-				? models.find((m) => m.provider === options.providerId && m.model === options.modelId)
-				: undefined;
-
-		// Try match by provider only
-		if (!found && options?.providerId) {
-			found = models.find((m) => m.provider === options.providerId);
-		}
+		// Match by provider
+		let found = options?.providerId
+			? models.find((m) => m.provider === options.providerId)
+			: undefined;
 
 		// Fall back to default model
 		if (!found) {
@@ -77,12 +71,13 @@ export class ProviderResolver {
 
 		if (!apiKey || apiKey === this.PLACEHOLDER_API_KEY) {
 			throw new Error(
-				`No API key configured for model "${found.model}" (${found.provider}). ` +
+				`No API key configured for provider "${found.provider}". ` +
 					'Please configure the API key in the Models page.'
 			);
 		}
 
-		const modelName = options?.modelId || found.model;
+		const modelName =
+			options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
 
 		return {
 			apiKey,
