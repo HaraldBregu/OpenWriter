@@ -77,10 +77,7 @@ const ModelsEmptyState: React.FC = () => {
 					{t('models.emptyTitle', 'No models registered')}
 				</p>
 				<p className="text-xs text-muted-foreground">
-					{t(
-						'models.emptyDescription',
-						'Register a model to make it available in your workspace.'
-					)}
+					{t('models.emptyDescription', 'Register a model to make it available in your workspace.')}
 				</p>
 			</div>
 		</div>
@@ -115,7 +112,10 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
 				</span>
 			)}
 			{entry.baseUrl.length > 0 && (
-				<span className="text-xs text-muted-foreground truncate max-w-[140px]" title={entry.baseUrl}>
+				<span
+					className="text-xs text-muted-foreground truncate max-w-[140px]"
+					title={entry.baseUrl}
+				>
 					{entry.baseUrl}
 				</span>
 			)}
@@ -305,9 +305,7 @@ const ModelsPage: React.FC = () => {
 		<div className="flex flex-col h-full">
 			<div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
 				<div>
-					<h1 className="text-sm font-semibold text-foreground">
-						{t('models.title', 'Models')}
-					</h1>
+					<h1 className="text-sm font-semibold text-foreground">{t('models.title', 'Models')}</h1>
 					<p className="text-xs text-muted-foreground mt-0.5">
 						{t('models.subtitle', 'Manage the AI models registered in your workspace.')}
 					</p>

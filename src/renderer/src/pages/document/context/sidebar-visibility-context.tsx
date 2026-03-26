@@ -18,7 +18,7 @@ interface SidebarVisibilityProviderProps {
 export function SidebarVisibilityProvider({
 	children,
 }: SidebarVisibilityProviderProps): React.JSX.Element {
-	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('config');
+	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('agentic');
 	const [animate, setAnimate] = useState(true);
 
 	const toggleSidebar = useCallback((sidebar: Exclude<ActiveSidebar, null>) => {
