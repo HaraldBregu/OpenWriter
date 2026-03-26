@@ -78,7 +78,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 			if (!isValid) return;
 			const provider = form.provider.trim();
 			onRegister({
-				name: provider,
+				provider: provider,
 				apikey: form.apikey,
 				baseurl: form.baseurl.trim(),
 			});

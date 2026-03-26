@@ -147,10 +147,10 @@ export const AppChannels = {
 	// Writing context menu (formerly ContextMenuChannels)
 	showWritingContextMenu: 'context-menu:writing',
 	writingContextMenuAction: 'context-menu:writing-action',
-	// Store / Model management
-	getModels: 'store-get-models',
-	addModel: 'store-add-model',
-	deleteModel: 'store-delete-model',
+	// Store / Provider management
+	getProviders: 'store-get-providers',
+	addProvider: 'store-add-provider',
+	deleteProvider: 'store-delete-provider',
 } as const;
 
 // ===========================================================================
