@@ -159,7 +159,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									</AppSidebarMenuItem>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton className="h-9 px-3">
-											<Search className="h-3.5 w-3.5 shrink-0" />
+											<Search className="h-4 w-4 shrink-0" />
 											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
