@@ -53,18 +53,11 @@ function normalizeModelInput(value: unknown): CreateModelInput | null {
 			: typeof value.baseUrl === 'string'
 				? value.baseUrl.trim()
 				: '';
-	const isDefault = value.default === true;
-
 	if (provider.length === 0) {
 		return null;
 	}
 
-	return {
-		provider,
-		apikey,
-		baseurl,
-		default: isDefault,
-	};
+	return { provider, apikey, baseurl };
 }
 
 function normalizeModels(value: unknown): CreateModelInput[] {
