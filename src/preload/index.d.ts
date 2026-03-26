@@ -115,8 +115,8 @@ export interface AppApi {
 	// ---------------------------------------------------------------------------
 	// Provider management
 	// ---------------------------------------------------------------------------
-	getProviders: () => Promise<ServiceProvider[]>;
-	addProvider: (provider: ServiceProvider) => Promise<ServiceProvider>;
+	getProviders: () => Promise<Array<ServiceProvider & { id: string }>>;
+	addProvider: (provider: ServiceProvider) => Promise<ServiceProvider & { id: string }>;
 	deleteProvider: (id: string) => Promise<void>;
 }
 
