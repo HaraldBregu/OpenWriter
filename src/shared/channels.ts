@@ -43,7 +43,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
-import type { ServiceProvider, ProviderConfig } from './model-defaults';
+import type { ServiceProvider } from './model-defaults';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
