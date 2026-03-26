@@ -17,12 +17,7 @@ interface EditorResizablePanelProps {
 	readonly onContentChange: (newContent: string) => void;
 	readonly onContinueWithAssistant: (before: string, after: string, cursorPos: number) => void;
 	readonly onEnhanceWithAssistant: (selectedText: string, from: number, to: number) => void;
-	readonly onTextSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		input: string,
-	) => void;
+	readonly onTextSubmit: (before: string, after: string, cursorPos: number, input: string) => void;
 	readonly onImageSubmit: (prompt: string) => Promise<void>;
 }
 
