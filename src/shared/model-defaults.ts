@@ -12,7 +12,6 @@ export interface CreateModelInput {
 }
 
 export interface SeededModel extends CreateModelInput {
-	model: string;
 	default: boolean;
 }
 
