@@ -41,7 +41,7 @@ Object.defineProperty(window, 'app', {
 		getProviders: jest.fn().mockResolvedValue([]),
 		addProvider: jest.fn().mockResolvedValue({
 			id: 'test-id',
-			provider: 'openai',
+			name: 'openai',
 			apikey: '',
 			baseurl: '',
 		}),

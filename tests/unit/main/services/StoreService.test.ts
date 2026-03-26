@@ -65,20 +65,20 @@ describe('StoreService', () => {
 		it('should add a new provider and return it with a generated id', () => {
 			const service = new StoreService();
 			const input: ServiceProvider = {
-				provider: 'openai',
+				name: 'openai',
 				apikey: 'sk-test',
 				baseurl: '',
 			};
 			const added = service.addProvider(input);
 			expect(added.id).toMatch(/^model-[a-z0-9-]+-\d+-[a-z0-9]+$/);
-			expect(added.provider).toBe('openai');
+			expect(added.name).toBe('openai');
 			expect(service.getProviders().some((p) => p.id === added.id)).toBe(true);
 		});
 
 		it('should delete a provider by id', () => {
 			const service = new StoreService();
-			const added = service.addProvider({ provider: 'openai', apikey: '', baseurl: '' });
-			service.deleteProvider(added.id as string);
+			const added = service.addProvider({ name: 'openai', apikey: '', baseurl: '' });
+			service.deleteProvider(added.id);
 			expect(service.getProviders().some((p) => p.id === added.id)).toBe(false);
 		});
 
@@ -93,7 +93,7 @@ describe('StoreService', () => {
 			const providers = service.getProviders();
 			const originalLength = providers.length;
 			// Mutate the returned array
-			providers.push({ id: 'fake', provider: 'x', apikey: '', baseurl: '' });
+			providers.push({ id: 'fake', name: 'x', apikey: '', baseurl: '' });
 			// Store should not be affected
 			expect(service.getProviders()).toHaveLength(originalLength);
 		});
