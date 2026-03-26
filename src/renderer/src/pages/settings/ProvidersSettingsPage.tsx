@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useId, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { type ServiceProvider, type ProviderConfig } from '../../../../shared/model-defaults';
+import type { ServiceProvider } from '../../../../shared/model-defaults';
 import {
 	PROVIDER_IDS,
 	type ProviderId,

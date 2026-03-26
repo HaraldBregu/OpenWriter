@@ -1,27 +1,16 @@
 // ---------------------------------------------------------------------------
-// Shared model types
+// Shared provider types
 // ---------------------------------------------------------------------------
 // DO NOT import Electron, Node.js, React, or any browser APIs here.
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
 export interface ServiceProvider {
-	name: string;
-	apikey: string;
-	baseurl: string;
-}
-
-export interface ProviderConfig {
-	id: string;
+	id?: string;
 	provider: string;
 	apikey: string;
 	baseurl: string;
 }
-
-// Backward-compatible aliases (deprecated).
-export type CreateProviderInput = ServiceProvider;
-export type CreateModelInput = ServiceProvider;
-export type ModelConfig = ProviderConfig;
 
 function slugify(segment: string): string {
 	return segment
@@ -43,7 +32,7 @@ function hashModelIdentity(value: string): string {
 }
 
 export function createProviderId(
-	provider: Pick<ProviderConfig, 'provider' | 'apikey' | 'baseurl'>,
+	provider: Pick<ServiceProvider, 'provider' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
 	return `model-${slugify(provider.provider)}-${index}-${hashModelIdentity(
@@ -51,8 +40,8 @@ export function createProviderId(
 	)}`;
 }
 
-export function toProviderConfig(provider: ServiceProvider, index: number): ProviderConfig {
-	const normalizedProvider = provider.name.trim();
+export function toProviderConfig(provider: ServiceProvider, index: number): ServiceProvider {
+	const normalizedProvider = provider.provider.trim();
 	return {
 		id: createProviderId(
 			{
@@ -67,7 +56,3 @@ export function toProviderConfig(provider: ServiceProvider, index: number): Prov
 		baseurl: provider.baseurl,
 	};
 }
-
-// Backward-compatible aliases (deprecated).
-export const createModelId = createProviderId;
-export const toModelConfig = toProviderConfig;
