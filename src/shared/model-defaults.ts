@@ -6,8 +6,7 @@
 // ---------------------------------------------------------------------------
 
 export interface ServiceProvider {
-	id?: string;
-	provider: string;
+	name: string;
 	apikey: string;
 	baseurl: string;
 }

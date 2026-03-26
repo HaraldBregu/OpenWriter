@@ -36,6 +36,7 @@ Keep secrets in `.env` only and never commit credentials. Treat prompt files und
 ## Git
 
 Always:
+
 - git add .
 - git commit -m "auto: {describe changes}"
 - git push
