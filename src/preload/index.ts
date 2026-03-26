@@ -48,16 +48,16 @@ const app: AppApi = {
 		return typedOn(AppChannels.writingContextMenuAction, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Model management
+	// Provider management
 	// -------------------------------------------------------------------------
-	getModels: (): Promise<ProviderConfig[]> => {
-		return typedInvokeUnwrap(AppChannels.getModels);
+	getProviders: (): Promise<ServiceProvider[]> => {
+		return typedInvokeUnwrap(AppChannels.getProviders);
 	},
-	addModel: (model: ServiceProvider): Promise<ProviderConfig> => {
-		return typedInvokeUnwrap(AppChannels.addModel, model);
+	addProvider: (provider: ServiceProvider): Promise<ServiceProvider> => {
+		return typedInvokeUnwrap(AppChannels.addProvider, provider);
 	},
-	deleteModel: (id: string): Promise<void> => {
-		return typedInvokeUnwrap(AppChannels.deleteModel, id);
+	deleteProvider: (id: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.deleteProvider, id);
 	},
 } satisfies AppApi;
 

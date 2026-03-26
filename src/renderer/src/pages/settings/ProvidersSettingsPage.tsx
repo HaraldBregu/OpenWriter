@@ -525,7 +525,7 @@ const ProvidersSettingsPage: React.FC = () => {
 	const handleRegister = useCallback(
 		(entry: ServiceProvider) => {
 			window.app
-				.addModel(entry)
+				.addProvider(entry)
 				.then(() => {
 					return loadModels();
 				})
