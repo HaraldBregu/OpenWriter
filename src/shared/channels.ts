@@ -166,10 +166,10 @@ export const AppChannels = {
  * `result` = the logical return type.
  */
 export interface InvokeChannelMap {
-	// ---- App / Model management (IpcResult-wrapped) ----
-	[AppChannels.getModels]: { args: []; result: ProviderConfig[] };
-	[AppChannels.addModel]: { args: [model: ServiceProvider]; result: ProviderConfig };
-	[AppChannels.deleteModel]: { args: [id: string]; result: void };
+	// ---- App / Provider management (IpcResult-wrapped) ----
+	[AppChannels.getProviders]: { args: []; result: ServiceProvider[] };
+	[AppChannels.addProvider]: { args: [provider: ServiceProvider]; result: ServiceProvider };
+	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
