@@ -147,7 +147,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
-											className="h-9 px-3"
+											className="h-9 px-3 rounded-full"
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
