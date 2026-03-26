@@ -112,18 +112,12 @@ export class StoreService {
 
 	addModel(model: CreateModelInput): ModelConfig {
 		const models = this.store.get('models').map(cloneModel);
-		const seededModel = DEFAULT_MODELS.find((entry) => entry.provider === model.provider);
-		if (!seededModel) {
-			throw new Error(`No seeded model is configured for provider "${model.provider}"`);
-		}
-
 		const newModel: SeededModel = {
-			...seededModel,
+			provider: model.provider,
 			apikey: model.apikey,
 			baseurl: model.baseurl,
 			default: false,
 		};
-
 		models.push(newModel);
 		this.store.set('models', models);
 		return toModelConfig(newModel, models.length - 1);
