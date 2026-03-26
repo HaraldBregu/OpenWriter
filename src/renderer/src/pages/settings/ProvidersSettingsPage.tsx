@@ -290,7 +290,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 };
 
 interface CustomProvidersSectionProps {
-	models: ProviderConfig[];
+	models: ServiceProvider[];
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 	onDeleteProvider: (provider: string) => Promise<void>;
 	showRegistrationForm: boolean;
