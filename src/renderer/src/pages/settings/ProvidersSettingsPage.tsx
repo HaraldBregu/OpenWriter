@@ -224,18 +224,6 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 
 	return (
 		<section>
-			<div className="mb-4">
-				<h2 className="text-sm font-semibold text-foreground">
-					{t('models.defaultProviders.title', 'Default Providers')}
-				</h2>
-				<p className="text-xs text-muted-foreground mt-0.5">
-					{t(
-						'models.defaultProviders.subtitle',
-						'Configure API keys for the most important providers.'
-					)}
-				</p>
-			</div>
-
 			<div className="space-y-3">
 				{PROVIDER_IDS.map((provider) => {
 					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
