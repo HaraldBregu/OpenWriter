@@ -42,7 +42,6 @@ function normalizeModelInput(value: unknown): SeededModel | null {
 	}
 
 	const provider = typeof value.provider === 'string' ? value.provider.trim() : '';
-	const model = typeof value.model === 'string' ? value.model.trim() : '';
 	const apikey =
 		typeof value.apikey === 'string'
 			? value.apikey
@@ -57,13 +56,12 @@ function normalizeModelInput(value: unknown): SeededModel | null {
 				: '';
 	const isDefault = value.default === true;
 
-	if (provider.length === 0 || model.length === 0) {
+	if (provider.length === 0) {
 		return null;
 	}
 
 	return {
 		provider,
-		model,
 		apikey,
 		baseurl,
 		default: isDefault,
