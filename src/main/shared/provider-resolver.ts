@@ -34,6 +34,7 @@ export interface ResolvedProvider {
  */
 export class ProviderResolver {
 	private readonly PLACEHOLDER_API_KEY = 'your-openai-api-key-here';
+	private readonly DEFAULT_MODEL = 'gpt-4o-mini';
 
 	constructor(private readonly storeService: StoreService) {}
 
