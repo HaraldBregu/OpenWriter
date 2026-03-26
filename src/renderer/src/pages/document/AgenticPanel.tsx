@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Bot } from 'lucide-react';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 
@@ -10,38 +11,9 @@ interface ChatMessageData {
 	timestamp: Date;
 }
 
-const DEMO_MESSAGES: ChatMessageData[] = [
-	{
-		id: '1',
-		content: 'Can you help me improve the opening paragraph of my essay?',
-		role: 'user',
-		timestamp: new Date(Date.now() - 4 * 60 * 1000),
-	},
-	{
-		id: '2',
-		content:
-			"Of course! Share the paragraph and I'll suggest ways to make it more engaging and concise.",
-		role: 'assistant',
-		timestamp: new Date(Date.now() - 3 * 60 * 1000),
-	},
-	{
-		id: '3',
-		content: 'The essay is about the impact of technology on modern communication.',
-		role: 'user',
-		timestamp: new Date(Date.now() - 2 * 60 * 1000),
-	},
-	{
-		id: '4',
-		content:
-			'Great topic! Try opening with a vivid anecdote or a striking statistic to hook the reader immediately, then introduce your thesis in the second sentence.',
-		role: 'assistant',
-		timestamp: new Date(Date.now() - 1 * 60 * 1000),
-	},
-];
-
 const AgenticPanel: React.FC = () => {
 	const { t } = useTranslation();
-	const [messages, setMessages] = useState<ChatMessageData[]>(DEMO_MESSAGES);
+	const [messages, setMessages] = useState<ChatMessageData[]>([]);
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -67,18 +39,34 @@ const AgenticPanel: React.FC = () => {
 				aria-label={t('agenticPanel.messagesRegion', 'Chat messages')}
 				aria-live="polite"
 			>
-				<div className="flex flex-col gap-4">
-					{messages.map((msg) => (
-						<ChatMessage
-							key={msg.id}
-							id={msg.id}
-							content={msg.content}
-							role={msg.role}
-							timestamp={msg.timestamp}
-						/>
-					))}
-					<div ref={bottomRef} />
-				</div>
+				{messages.length === 0 ? (
+					<div className="flex flex-col items-center justify-center h-full gap-3 text-center px-6">
+						<div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted">
+							<Bot className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+						</div>
+						<div className="space-y-1">
+							<p className="text-sm font-medium text-foreground">
+								{t('agenticPanel.emptyTitle', 'Start a conversation')}
+							</p>
+							<p className="text-xs text-muted-foreground">
+								{t('agenticPanel.emptyDescription', 'Ask the assistant to help with your writing.')}
+							</p>
+						</div>
+					</div>
+				) : (
+					<div className="flex flex-col gap-4">
+						{messages.map((msg) => (
+							<ChatMessage
+								key={msg.id}
+								id={msg.id}
+								content={msg.content}
+								role={msg.role}
+								timestamp={msg.timestamp}
+							/>
+						))}
+						<div ref={bottomRef} />
+					</div>
+				)}
 			</div>
 
 			{/* Floating input card anchored to bottom */}
