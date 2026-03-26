@@ -8,17 +8,12 @@ import {
 	AppLabel,
 	AppBadge,
 	AppSeparator,
-	AppSelect,
-	AppSelectTrigger,
-	AppSelectValue,
-	AppSelectContent,
-	AppSelectItem,
 } from '../../components/app';
 
-const PROVIDERS = ['anthropic', 'openai', 'google', 'mistral'] as const;
-type Provider = (typeof PROVIDERS)[number];
+const DEFAULT_PROVIDERS = ['anthropic', 'openai', 'google', 'mistral'] as const;
+type DefaultProvider = (typeof DEFAULT_PROVIDERS)[number];
 
-const PROVIDER_LABELS: Record<Provider, string> = {
+const PROVIDER_LABELS: Record<DefaultProvider, string> = {
 	anthropic: 'Anthropic',
 	openai: 'OpenAI',
 	google: 'Google',
@@ -26,7 +21,7 @@ const PROVIDER_LABELS: Record<Provider, string> = {
 };
 
 interface FormState {
-	provider: Provider | '';
+	provider: string;
 	apikey: string;
 	baseurl: string;
 }
@@ -124,18 +119,24 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
 // ---------------------------------------------------------------------------
 
 interface RegistrationFormProps {
+	providerSuggestions: string[];
 	onRegister: (entry: CreateModelInput) => void;
+	onProviderAdded: (provider: string) => void;
 }
 
-const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
+const RegistrationForm: React.FC<RegistrationFormProps> = ({
+	providerSuggestions,
+	onRegister,
+	onProviderAdded,
+}) => {
 	const { t } = useTranslation();
 	const uid = useId();
 	const [form, setForm] = useState<FormState>(EMPTY_FORM);
 	const [apiKeyVisible, setApiKeyVisible] = useState(false);
-	const isValid = form.provider !== '';
+	const isValid = form.provider.trim().length > 0;
 
-	const handleProviderChange = useCallback((value: string) => {
-		setForm((prev) => ({ ...prev, provider: value as Provider, baseurl: '' }));
+	const handleProviderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		setForm((prev) => ({ ...prev, provider: e.target.value }));
 	}, []);
 
 	const handleApiKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,15 +155,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 		(e: React.FormEvent<HTMLFormElement>) => {
 			e.preventDefault();
 			if (!isValid) return;
+			const provider = form.provider.trim();
 			onRegister({
-				provider: form.provider as Provider,
+				provider,
 				apikey: form.apikey,
 				baseurl: form.baseurl.trim(),
 			});
+			onProviderAdded(provider);
 			setForm(EMPTY_FORM);
 			setApiKeyVisible(false);
 		},
-		[isValid, form, onRegister]
+		[isValid, form, onProviderAdded, onRegister]
 	);
 
 	const toggleVisibilityLabel = apiKeyVisible
@@ -176,18 +179,22 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 					<AppLabel htmlFor={`${uid}-provider`} className="text-xs font-medium">
 						{t('models.form.provider', 'Provider')}
 					</AppLabel>
-					<AppSelect value={form.provider} onValueChange={handleProviderChange}>
-						<AppSelectTrigger id={`${uid}-provider`} className="h-9 text-sm">
-							<AppSelectValue placeholder={t('models.form.selectProvider', 'Select provider…')} />
-						</AppSelectTrigger>
-						<AppSelectContent>
-							{PROVIDERS.map((p) => (
-								<AppSelectItem key={p} value={p} className="text-sm">
-									{PROVIDER_LABELS[p]}
-								</AppSelectItem>
-							))}
-						</AppSelectContent>
-					</AppSelect>
+					<AppInput
+						id={`${uid}-provider`}
+						list={`${uid}-provider-options`}
+						type="text"
+						value={form.provider}
+						onChange={handleProviderChange}
+						placeholder={t('models.form.selectProvider', 'Select provider…')}
+						autoComplete="off"
+						spellCheck={false}
+						className="h-9 text-sm"
+					/>
+					<datalist id={`${uid}-provider-options`}>
+						{providerSuggestions.map((provider) => (
+							<option key={provider} value={provider} />
+						))}
+					</datalist>
 				</div>
 
 				<div className="flex flex-col gap-1.5">
@@ -250,7 +257,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 
 interface DefaultProvidersSectionProps {
 	models: ModelConfig[];
-	onSaveProviderApiKey: (provider: Provider, apiKey: string) => Promise<void>;
+	onSaveProviderApiKey: (provider: DefaultProvider, apiKey: string) => Promise<void>;
 }
 
 const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
@@ -259,35 +266,35 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();
-	const [apiKeys, setApiKeys] = useState<Record<Provider, string>>({
+	const [apiKeys, setApiKeys] = useState<Record<DefaultProvider, string>>({
 		anthropic: '',
 		openai: '',
 		google: '',
 		mistral: '',
 	});
-	const [visible, setVisible] = useState<Record<Provider, boolean>>({
+	const [visible, setVisible] = useState<Record<DefaultProvider, boolean>>({
 		anthropic: false,
 		openai: false,
 		google: false,
 		mistral: false,
 	});
-	const [saving, setSaving] = useState<Record<Provider, boolean>>({
+	const [saving, setSaving] = useState<Record<DefaultProvider, boolean>>({
 		anthropic: false,
 		openai: false,
 		google: false,
 		mistral: false,
 	});
 
-	const handleApiKeyChange = useCallback((provider: Provider, value: string) => {
+	const handleApiKeyChange = useCallback((provider: DefaultProvider, value: string) => {
 		setApiKeys((prev) => ({ ...prev, [provider]: value }));
 	}, []);
 
-	const handleToggleVisibility = useCallback((provider: Provider) => {
+	const handleToggleVisibility = useCallback((provider: DefaultProvider) => {
 		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
 	}, []);
 
 	const handleSaveProvider = useCallback(
-		async (provider: Provider) => {
+		async (provider: DefaultProvider) => {
 			const apiKey = apiKeys[provider].trim();
 			if (apiKey.length === 0 || saving[provider]) return;
 
@@ -319,7 +326,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 			</div>
 
 			<div className="space-y-3">
-				{PROVIDERS.map((provider) => {
+				{DEFAULT_PROVIDERS.map((provider) => {
 					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
 					const isSaving = saving[provider];
@@ -393,10 +400,23 @@ const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<ModelConfig[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([
+		...DEFAULT_PROVIDERS.map((provider) => PROVIDER_LABELS[provider].toLowerCase()),
+	]);
 
 	const loadModels = useCallback(() => {
 		return window.app.getModels().then((loaded) => {
 			setModels(loaded);
+			setProviderSuggestions((prev) => {
+				const next = new Set(prev);
+				loaded.forEach((model) => {
+					if (model.provider.trim().length > 0) {
+						next.add(model.provider.trim());
+					}
+				});
+				return Array.from(next);
+			});
 			return loaded;
 		});
 	}, []);
@@ -440,7 +460,7 @@ const ModelsPage: React.FC = () => {
 	);
 
 	const handleSaveProviderApiKey = useCallback(
-		async (provider: Provider, apiKey: string) => {
+		async (provider: DefaultProvider, apiKey: string) => {
 			const added = await window.app.addModel({
 				provider,
 				apikey: apiKey,
@@ -453,6 +473,15 @@ const ModelsPage: React.FC = () => {
 		},
 		[loadModels, models]
 	);
+
+	const handleProviderAdded = useCallback((provider: string) => {
+		const normalized = provider.trim();
+		if (normalized.length === 0) return;
+		setProviderSuggestions((prev) => {
+			if (prev.includes(normalized)) return prev;
+			return [...prev, normalized];
+		});
+	}, []);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -471,7 +500,32 @@ const ModelsPage: React.FC = () => {
 				<AppSeparator />
 
 				<div className="px-6 py-5">
-					<RegistrationForm onRegister={handleRegister} />
+					{showRegistrationForm ? (
+						<div className="space-y-3">
+							<div className="flex items-center justify-between">
+								<h2 className="text-sm font-semibold text-foreground">
+									{t('models.customProvider.title', 'Add custom provider')}
+								</h2>
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="sm"
+									onClick={() => setShowRegistrationForm(false)}
+								>
+									{t('models.customProvider.hide', 'Hide')}
+								</AppButton>
+							</div>
+							<RegistrationForm
+								providerSuggestions={providerSuggestions}
+								onRegister={handleRegister}
+								onProviderAdded={handleProviderAdded}
+							/>
+						</div>
+					) : (
+						<AppButton type="button" size="sm" onClick={() => setShowRegistrationForm(true)}>
+							{t('models.customProvider.cta', 'Add custom provider')}
+						</AppButton>
+					)}
 				</div>
 
 				<AppSeparator />
