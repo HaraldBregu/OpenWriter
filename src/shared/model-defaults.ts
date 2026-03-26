@@ -66,11 +66,11 @@ function hashModelIdentity(value: string): string {
 }
 
 export function createModelId(
-	model: Pick<SeededModel, 'provider' | 'model' | 'apikey' | 'baseurl'>,
+	model: Pick<SeededModel, 'provider' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
-	return `model-${slugify(model.provider)}-${slugify(model.model)}-${index}-${hashModelIdentity(
-		[model.provider, model.model, model.baseurl, model.apikey].join('\u0000')
+	return `model-${slugify(model.provider)}-${index}-${hashModelIdentity(
+		[model.provider, model.baseurl, model.apikey].join('\u0000')
 	)}`;
 }
 
