@@ -48,16 +48,19 @@ const app: AppApi = {
 		return typedOn(AppChannels.writingContextMenuAction, callback);
 	},
 	// -------------------------------------------------------------------------
-	// API key settings
+	// Model management
 	// -------------------------------------------------------------------------
-	getAllApiKeys: (): Promise<Record<string, string>> => {
-		return typedInvokeUnwrap(AppChannels.getAllApiKeys);
+	getModels: (): Promise<ModelConfig[]> => {
+		return typedInvokeUnwrap(AppChannels.getModels);
 	},
-	getApiKey: (providerId: string): Promise<string | null> => {
-		return typedInvokeUnwrap(AppChannels.getApiKey, providerId);
+	addModel: (model: Omit<ModelConfig, 'id'>): Promise<ModelConfig> => {
+		return typedInvokeUnwrap(AppChannels.addModel, model);
 	},
-	setApiKey: (providerId: string, apiKey: string): Promise<void> => {
-		return typedInvokeUnwrap(AppChannels.setApiKey, providerId, apiKey);
+	deleteModel: (id: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.deleteModel, id);
+	},
+	setDefaultModel: (id: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.setDefaultModel, id);
 	},
 } satisfies AppApi;
 
