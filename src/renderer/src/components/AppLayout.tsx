@@ -151,9 +151,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover:bg-sidebar-accent/70 group-hover:text-sidebar-foreground">
-												<Plus className="h-4 w-4" />
-											</div>
+											<Plus className="h-4 w-4 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
