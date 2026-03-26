@@ -49,7 +49,7 @@ export class ProviderResolver {
 
 		// Match by provider
 		let found = options?.providerId
-			? models.find((m) => m.provider === options.providerId)
+			? models.find((m) => m.name === options.providerId)
 			: undefined;
 
 		// Fall back to first available model
@@ -65,7 +65,7 @@ export class ProviderResolver {
 
 		if (!apiKey || apiKey === this.PLACEHOLDER_API_KEY) {
 			throw new Error(
-				`No API key configured for provider "${found.provider}". ` +
+				`No API key configured for provider "${found.name}". ` +
 					'Please configure the API key in the Providers page.'
 			);
 		}
@@ -75,7 +75,7 @@ export class ProviderResolver {
 		return {
 			apiKey,
 			modelName,
-			providerId: found.provider,
+			providerId: found.name,
 			baseUrl: found.baseurl || undefined,
 		};
 	}
