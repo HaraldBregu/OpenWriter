@@ -102,7 +102,6 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete, onSetDefault }) =>
 			<AppBadge variant="secondary" className="shrink-0 text-xs font-medium">
 				{entry.provider}
 			</AppBadge>
-			<span className="flex-1 text-sm text-foreground truncate">{entry.model}</span>
 			{entry.default && (
 				<AppBadge variant="default" className="shrink-0 text-xs">
 					{t('models.default', 'Default')}
