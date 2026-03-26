@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
@@ -481,34 +481,24 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize="70%" minSize="40%">
-					<div className="h-full flex flex-col min-w-0">
-						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-							<div className="w-full max-w-4xl mx-auto px-10 py-10 flex flex-col gap-2">
-								{loaded && (
-									<TextEditor
-										disabled={
-											textCompleterTask.isRunning ||
-											textEnhanceTask.isRunning ||
-											textWriterTask.isRunning ||
-											imageGeneratorTask.isRunning
-										}
-										ref={editorRef}
-										key={id}
-										value={content}
-										onChange={handleContentChange}
-										onContinueWithAssistant={onContinueWithAssistant}
-										onEnhanceWithAssistant={onEnhanceWithAssistant}
-										onTextSubmit={onTextSubmit}
-										onImageSubmit={onImageSubmit}
-										documentId={id}
-										onEditorReady={handleEditorReady}
-									/>
-								)}
-							</div>
-						</div>
-					</div>
-				</ResizablePanel>
+				<EditorResizablePanel
+					documentId={id}
+					loaded={loaded}
+					content={content}
+					disabled={
+						textCompleterTask.isRunning ||
+						textEnhanceTask.isRunning ||
+						textWriterTask.isRunning ||
+						imageGeneratorTask.isRunning
+					}
+					editorRef={editorRef}
+					onEditorReady={handleEditorReady}
+					onContentChange={handleContentChange}
+					onContinueWithAssistant={onContinueWithAssistant}
+					onEnhanceWithAssistant={onEnhanceWithAssistant}
+					onTextSubmit={onTextSubmit}
+					onImageSubmit={onImageSubmit}
+				/>
 
 				{activeSidebar && <ResizableHandle withHandle />}
 
