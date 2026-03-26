@@ -10,6 +10,7 @@ import Header from './Header';
 import ConfigPanel from './ConfigPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
+import EditorResizablePanel from './EditorResizablePanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
@@ -480,43 +481,32 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize="70%" minSize="40%">
-					<Ed
-						documentId={id}
-						loaded={loaded}
-						content={content}
-						disabled={
-							textCompleterTask.isRunning ||
-							textEnhanceTask.isRunning ||
-							textWriterTask.isRunning ||
-							imageGeneratorTask.isRunning
-						}
-						editorRef={editorRef}
-						onEditorReady={handleEditorReady}
-						onContentChange={handleContentChange}
-						onContinueWithAssistant={onContinueWithAssistant}
-						onEnhanceWithAssistant={onEnhanceWithAssistant}
-						onTextSubmit={onTextSubmit}
-						onImageSubmit={onImageSubmit}
-					/>
-				</ResizablePanel>
+				<EditorResizablePanel
+					documentId={id}
+					loaded={loaded}
+					content={content}
+					disabled={
+						textCompleterTask.isRunning ||
+						textEnhanceTask.isRunning ||
+						textWriterTask.isRunning ||
+						imageGeneratorTask.isRunning
+					}
+					editorRef={editorRef}
+					onEditorReady={handleEditorReady}
+					onContentChange={handleContentChange}
+					onContinueWithAssistant={onContinueWithAssistant}
+					onEnhanceWithAssistant={onEnhanceWithAssistant}
+					onTextSubmit={onTextSubmit}
+					onImageSubmit={onImageSubmit}
+				/>
 
 				{activeSidebar && <ResizableHandle withHandle />}
 
-				<ResizablePanel
+				<SidebarResizablePanel
 					panelRef={sidebarPanelRef}
-					defaultSize="30%"
-					minSize="25%"
-					maxSize="40%"
-					collapsible
-					collapsedSize="0%"
-				>
-					<div className="h-full">
-						{activeSidebar === 'editor' && <EditorPanel />}
-						{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <AgenticPanel />}
-					</div>
-				</ResizablePanel>
+					activeSidebar={activeSidebar}
+					onOpenFolder={handleOpenFolder}
+				/>
 			</ResizablePanelGroup>
 		</div>
 	);
