@@ -24,7 +24,7 @@ import type { WorkspaceService } from '../../workspace/workspace-service';
 import { DocumentsService } from '../../workspace/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import { ExtractorRegistry, JsonVectorStore, chunkText } from '../../indexing';
+import { ExtractorRegistry, JsonVectorStore, chunkText } from '../../ai/indexing';
 import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';

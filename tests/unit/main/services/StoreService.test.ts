@@ -51,7 +51,6 @@ describe('StoreService', () => {
 			const service = new StoreService();
 			expect(service.getCurrentWorkspace()).toBeNull();
 			expect(service.getRecentWorkspaces()).toEqual([]);
-			// Default models are seeded from DEFAULT_MODELS
 			expect(Array.isArray(service.getModels())).toBe(true);
 		});
 	});

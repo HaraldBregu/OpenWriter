@@ -1,10 +1,7 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
-import {
-	type CreateModelInput,
-	type ModelConfig,
-} from '../../../../shared/model-defaults';
+import { type CreateModelInput, type ModelConfig } from '../../../../shared/model-defaults';
 import {
 	AppButton,
 	AppInput,
@@ -248,6 +245,147 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 };
 
 // ---------------------------------------------------------------------------
+// Default providers
+// ---------------------------------------------------------------------------
+
+interface DefaultProvidersSectionProps {
+	models: ModelConfig[];
+	onSaveProviderApiKey: (provider: Provider, apiKey: string) => Promise<void>;
+}
+
+const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
+	models,
+	onSaveProviderApiKey,
+}) => {
+	const { t } = useTranslation();
+	const uid = useId();
+	const [apiKeys, setApiKeys] = useState<Record<Provider, string>>({
+		anthropic: '',
+		openai: '',
+		google: '',
+		mistral: '',
+	});
+	const [visible, setVisible] = useState<Record<Provider, boolean>>({
+		anthropic: false,
+		openai: false,
+		google: false,
+		mistral: false,
+	});
+	const [saving, setSaving] = useState<Record<Provider, boolean>>({
+		anthropic: false,
+		openai: false,
+		google: false,
+		mistral: false,
+	});
+
+	const handleApiKeyChange = useCallback((provider: Provider, value: string) => {
+		setApiKeys((prev) => ({ ...prev, [provider]: value }));
+	}, []);
+
+	const handleToggleVisibility = useCallback((provider: Provider) => {
+		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
+	}, []);
+
+	const handleSaveProvider = useCallback(
+		async (provider: Provider) => {
+			const apiKey = apiKeys[provider].trim();
+			if (apiKey.length === 0 || saving[provider]) return;
+
+			setSaving((prev) => ({ ...prev, [provider]: true }));
+			try {
+				await onSaveProviderApiKey(provider, apiKey);
+				setApiKeys((prev) => ({ ...prev, [provider]: '' }));
+			} catch {
+				// Save failed — keep current input so the user can retry
+			} finally {
+				setSaving((prev) => ({ ...prev, [provider]: false }));
+			}
+		},
+		[apiKeys, onSaveProviderApiKey, saving]
+	);
+
+	return (
+		<section className="px-6 py-5">
+			<div className="mb-4">
+				<h2 className="text-sm font-semibold text-foreground">
+					{t('models.defaultProviders.title', 'Default Providers')}
+				</h2>
+				<p className="text-xs text-muted-foreground mt-0.5">
+					{t(
+						'models.defaultProviders.subtitle',
+						'Configure API keys for the most important providers.'
+					)}
+				</p>
+			</div>
+
+			<div className="space-y-3">
+				{PROVIDERS.map((provider) => {
+					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
+					const hasInputValue = apiKeys[provider].trim().length > 0;
+					const isSaving = saving[provider];
+					const visibilityLabel = visible[provider]
+						? t('models.hideApiKey', 'Hide API key')
+						: t('models.showApiKey', 'Show API key');
+
+					return (
+						<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-end">
+							<div className="flex flex-col gap-1.5">
+								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
+									{PROVIDER_LABELS[provider]}
+								</AppLabel>
+							</div>
+							<div className="relative flex items-center">
+								<AppInput
+									id={`${uid}-${provider}-apikey`}
+									type={visible[provider] ? 'text' : 'password'}
+									value={apiKeys[provider]}
+									onChange={(e) => handleApiKeyChange(provider, e.target.value)}
+									placeholder={
+										existing.length > 0
+											? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
+											: t('models.form.apiKeyPlaceholder', 'Enter API key…')
+									}
+									autoComplete="off"
+									spellCheck={false}
+									className="h-9 text-sm font-mono pr-8"
+								/>
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="icon-xs"
+									aria-label={visibilityLabel}
+									onClick={() => handleToggleVisibility(provider)}
+									className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+								>
+									{visible[provider] ? <EyeOff /> : <Eye />}
+								</AppButton>
+							</div>
+							<AppButton
+								type="button"
+								size="sm"
+								disabled={!hasInputValue || isSaving}
+								onClick={() => {
+									void handleSaveProvider(provider);
+								}}
+							>
+								{isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')}
+							</AppButton>
+							{existing.length > 0 && (
+								<p className="text-xs text-muted-foreground col-start-2">
+									{t('models.defaultProviders.currentKey', 'Current key: {{key}}', {
+										key: maskApiKey(existing),
+									})}
+								</p>
+							)}
+						</div>
+					);
+				})}
+			</div>
+		</section>
+	);
+};
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
@@ -301,6 +439,21 @@ const ModelsPage: React.FC = () => {
 		[loadModels]
 	);
 
+	const handleSaveProviderApiKey = useCallback(
+		async (provider: Provider, apiKey: string) => {
+			const added = await window.app.addModel({
+				provider,
+				apikey: apiKey,
+				baseurl: '',
+			});
+
+			const staleEntries = models.filter((entry) => entry.provider === provider && entry.id !== added.id);
+			await Promise.all(staleEntries.map((entry) => window.app.deleteModel(entry.id)));
+			await loadModels();
+		},
+		[loadModels, models]
+	);
+
 	return (
 		<div className="flex flex-col h-full">
 			<div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
@@ -313,6 +466,10 @@ const ModelsPage: React.FC = () => {
 			</div>
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
+				<DefaultProvidersSection models={models} onSaveProviderApiKey={handleSaveProviderApiKey} />
+
+				<AppSeparator />
+
 				<div className="px-6 py-5">
 					<RegistrationForm onRegister={handleRegister} />
 				</div>
