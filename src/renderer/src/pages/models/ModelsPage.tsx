@@ -492,41 +492,25 @@ const ModelsPage: React.FC = () => {
 						{t('models.subtitle', 'Manage the AI models registered in your workspace.')}
 					</p>
 				</div>
+				<AppButton type="button" size="sm" onClick={() => setShowRegistrationForm((prev) => !prev)}>
+					{showRegistrationForm
+						? t('models.customProvider.hide', 'Hide custom provider')
+						: t('models.customProvider.cta', 'Add custom provider')}
+				</AppButton>
 			</div>
+
+			{showRegistrationForm && (
+				<div className="px-6 py-5 border-b border-border shrink-0">
+					<RegistrationForm
+						providerSuggestions={providerSuggestions}
+						onRegister={handleRegister}
+						onProviderAdded={handleProviderAdded}
+					/>
+				</div>
+			)}
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				<DefaultProvidersSection models={models} onSaveProviderApiKey={handleSaveProviderApiKey} />
-
-				<AppSeparator />
-
-				<div className="px-6 py-5">
-					{showRegistrationForm ? (
-						<div className="space-y-3">
-							<div className="flex items-center justify-between">
-								<h2 className="text-sm font-semibold text-foreground">
-									{t('models.customProvider.title', 'Add custom provider')}
-								</h2>
-								<AppButton
-									type="button"
-									variant="ghost"
-									size="sm"
-									onClick={() => setShowRegistrationForm(false)}
-								>
-									{t('models.customProvider.hide', 'Hide')}
-								</AppButton>
-							</div>
-							<RegistrationForm
-								providerSuggestions={providerSuggestions}
-								onRegister={handleRegister}
-								onProviderAdded={handleProviderAdded}
-							/>
-						</div>
-					) : (
-						<AppButton type="button" size="sm" onClick={() => setShowRegistrationForm(true)}>
-							{t('models.customProvider.cta', 'Add custom provider')}
-						</AppButton>
-					)}
-				</div>
 
 				<AppSeparator />
 
