@@ -45,7 +45,7 @@ export class ProviderResolver {
 	 * @throws Error if no models are configured or no API key is set
 	 */
 	resolve(options?: { providerId?: string; modelId?: string }): ResolvedProvider {
-		const models = this.storeService.getModels();
+		const models = this.storeService.getProviders();
 
 		// Match by provider
 		let found = options?.providerId
