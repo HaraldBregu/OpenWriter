@@ -51,51 +51,51 @@ describe('StoreService', () => {
 			const service = new StoreService();
 			expect(service.getCurrentWorkspace()).toBeNull();
 			expect(service.getRecentWorkspaces()).toEqual([]);
-			expect(Array.isArray(service.getModels())).toBe(true);
+			expect(Array.isArray(service.getProviders())).toBe(true);
 		});
 	});
 
-	describe('model management', () => {
-		it('should return an array of models', () => {
+	describe('provider management', () => {
+		it('should return an array of providers', () => {
 			const service = new StoreService();
-			const models = service.getModels();
-			expect(Array.isArray(models)).toBe(true);
+			const providers = service.getProviders();
+			expect(Array.isArray(providers)).toBe(true);
 		});
 
-		it('should add a new model and return it with a generated id', () => {
+		it('should add a new provider and return it with a generated id', () => {
 			const service = new StoreService();
-			const input: CreateModelInput = {
-				name: 'openai',
+			const input: ServiceProvider = {
+				provider: 'openai',
 				apikey: 'sk-test',
 				baseurl: '',
 			};
-			const added = service.addModel(input);
+			const added = service.addProvider(input);
 			expect(added.id).toMatch(/^model-\d+-[a-z0-9]+$/);
 			expect(added.provider).toBe('openai');
-			expect(service.getModels().some((m) => m.id === added.id)).toBe(true);
+			expect(service.getProviders().some((p) => p.id === added.id)).toBe(true);
 		});
 
-		it('should delete a model by id', () => {
+		it('should delete a provider by id', () => {
 			const service = new StoreService();
-			const added = service.addModel({ name: 'openai', apikey: '', baseurl: '' });
-			service.deleteModel(added.id);
-			expect(service.getModels().some((m) => m.id === added.id)).toBe(false);
+			const added = service.addProvider({ provider: 'openai', apikey: '', baseurl: '' });
+			service.deleteProvider(added.id as string);
+			expect(service.getProviders().some((p) => p.id === added.id)).toBe(false);
 		});
 
-		it('should not throw when deleting a non-existent model id', () => {
+		it('should not throw when deleting a non-existent provider id', () => {
 			const service = new StoreService();
-			expect(() => service.deleteModel('nonexistent-id')).not.toThrow();
+			expect(() => service.deleteProvider('nonexistent-id')).not.toThrow();
 		});
 
-		it('should return a copy from getModels (mutation does not affect store)', () => {
+		it('should return a copy from getProviders (mutation does not affect store)', () => {
 			const service = new StoreService();
-			service.addModel({ name: 'openai', apikey: '', baseurl: '' });
-			const models = service.getModels();
-			const originalLength = models.length;
+			service.addProvider({ provider: 'openai', apikey: '', baseurl: '' });
+			const providers = service.getProviders();
+			const originalLength = providers.length;
 			// Mutate the returned array
-			models.push({ id: 'fake', provider: 'x', apikey: '', baseurl: '' });
+			providers.push({ id: 'fake', provider: 'x', apikey: '', baseurl: '' });
 			// Store should not be affected
-			expect(service.getModels()).toHaveLength(originalLength);
+			expect(service.getProviders()).toHaveLength(originalLength);
 		});
 	});
 
