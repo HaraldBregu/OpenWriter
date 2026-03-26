@@ -512,8 +512,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					collapsedSize="0%"
 				>
 					<div className="h-full">
-						{activeSidebar === 'editor' && <EditorToolsPanel />}
-						{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
+	{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
 						{activeSidebar === 'agentic' && <AgenticPanel />}
 					</div>
 				</ResizablePanel>
