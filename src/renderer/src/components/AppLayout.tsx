@@ -50,6 +50,7 @@ import {
 	Gift,
 	Info,
 	LogOut,
+	Plus,
 } from 'lucide-react';
 import { useCurrentUser } from '../contexts';
 
