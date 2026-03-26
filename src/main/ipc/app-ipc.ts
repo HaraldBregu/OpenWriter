@@ -181,14 +181,6 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.deleteModel)
 		);
 
-		ipcMain.handle(
-			AppChannels.setDefaultModel,
-			wrapSimpleHandler((id: string) => {
-				StoreValidators.validateModelId(id);
-				return store.setDefaultModel(id);
-			}, AppChannels.setDefaultModel)
-		);
-
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
