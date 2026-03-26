@@ -127,8 +127,20 @@ describe('StoreService', () => {
 
 		it('should set a model as default and clear others', () => {
 			const service = new StoreService();
-			const a = service.addModel({ provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: false });
-			const b = service.addModel({ provider: 'openai', model: 'gpt-4o-mini', apikey: '', baseurl: '', default: false });
+			const a = service.addModel({
+				provider: 'openai',
+				model: 'gpt-4o',
+				apikey: '',
+				baseurl: '',
+				default: false,
+			});
+			const b = service.addModel({
+				provider: 'openai',
+				model: 'gpt-4o-mini',
+				apikey: '',
+				baseurl: '',
+				default: false,
+			});
 			service.setDefaultModel(a.id);
 			const models = service.getModels();
 			const modelA = models.find((m) => m.id === a.id);
@@ -139,11 +151,24 @@ describe('StoreService', () => {
 
 		it('should return a copy from getModels (mutation does not affect store)', () => {
 			const service = new StoreService();
-			service.addModel({ provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: false });
+			service.addModel({
+				provider: 'openai',
+				model: 'gpt-4o',
+				apikey: '',
+				baseurl: '',
+				default: false,
+			});
 			const models = service.getModels();
 			const originalLength = models.length;
 			// Mutate the returned array
-			models.push({ id: 'fake', provider: 'x', model: 'y', apikey: '', baseurl: '', default: false });
+			models.push({
+				id: 'fake',
+				provider: 'x',
+				model: 'y',
+				apikey: '',
+				baseurl: '',
+				default: false,
+			});
 			// Store should not be affected
 			expect(service.getModels()).toHaveLength(originalLength);
 		});

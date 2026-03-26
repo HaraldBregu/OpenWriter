@@ -41,7 +41,14 @@ Object.defineProperty(window, 'app', {
 		getModels: jest.fn().mockResolvedValue([]),
 		addModel: jest
 			.fn()
-			.mockResolvedValue({ id: 'test-id', provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: true }),
+			.mockResolvedValue({
+				id: 'test-id',
+				provider: 'openai',
+				model: 'gpt-4o',
+				apikey: '',
+				baseurl: '',
+				default: true,
+			}),
 		deleteModel: jest.fn().mockResolvedValue(undefined),
 		setDefaultModel: jest.fn().mockResolvedValue(undefined),
 	},

@@ -76,8 +76,7 @@ export class ProviderResolver {
 			);
 		}
 
-		const modelName =
-			options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
+		const modelName = options?.modelId || import.meta.env.VITE_OPENAI_MODEL || this.DEFAULT_MODEL;
 
 		return {
 			apiKey,

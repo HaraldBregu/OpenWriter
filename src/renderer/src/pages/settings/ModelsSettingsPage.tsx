@@ -57,7 +57,7 @@ const ModelsSettingsPage: React.FC = () => {
 							<AppBadge variant="secondary" className="shrink-0 text-xs">
 								{m.provider}
 							</AppBadge>
-								{m.default && (
+							{m.default && (
 								<AppBadge variant="default" className="shrink-0 text-xs">
 									{t('settings.models.default', 'Default')}
 								</AppBadge>

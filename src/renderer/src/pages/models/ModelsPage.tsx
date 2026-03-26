@@ -297,38 +297,47 @@ const ModelsPage: React.FC = () => {
 			});
 	}, [loadModels]);
 
-	const handleRegister = useCallback((entry: CreateModelInput) => {
-		window.app
-			.addModel(entry)
-			.then(() => {
-				return loadModels();
-			})
-			.catch(() => {
-				// Addition failed — no local state update
-			});
-	}, [loadModels]);
+	const handleRegister = useCallback(
+		(entry: CreateModelInput) => {
+			window.app
+				.addModel(entry)
+				.then(() => {
+					return loadModels();
+				})
+				.catch(() => {
+					// Addition failed — no local state update
+				});
+		},
+		[loadModels]
+	);
 
-	const handleDelete = useCallback((id: string) => {
-		window.app
-			.deleteModel(id)
-			.then(() => {
-				return loadModels();
-			})
-			.catch(() => {
-				// Deletion failed — keep existing state
-			});
-	}, [loadModels]);
+	const handleDelete = useCallback(
+		(id: string) => {
+			window.app
+				.deleteModel(id)
+				.then(() => {
+					return loadModels();
+				})
+				.catch(() => {
+					// Deletion failed — keep existing state
+				});
+		},
+		[loadModels]
+	);
 
-	const handleSetDefault = useCallback((id: string) => {
-		window.app
-			.setDefaultModel(id)
-			.then(() => {
-				return loadModels();
-			})
-			.catch(() => {
-				// Update failed — keep existing state
-			});
-	}, [loadModels]);
+	const handleSetDefault = useCallback(
+		(id: string) => {
+			window.app
+				.setDefaultModel(id)
+				.then(() => {
+					return loadModels();
+				})
+				.catch(() => {
+					// Update failed — keep existing state
+				});
+		},
+		[loadModels]
+	);
 
 	return (
 		<div className="flex flex-col h-full">
