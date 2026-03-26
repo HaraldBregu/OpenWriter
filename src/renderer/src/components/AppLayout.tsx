@@ -147,11 +147,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
-											className="h-9 px-3 rounded-full"
+											className="h-9 px-3"
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-sidebar-accent">
+											<div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent">
 												<Plus className="h-3 w-3" />
 											</div>
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
