@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useId, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Trash2 } from 'lucide-react';
-import { type CreateModelInput, type ModelConfig } from '../../../../shared/model-defaults';
+import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
+import { type ServiceProvider, type ProviderConfig } from '../../../../shared/model-defaults';
 import {
 	PROVIDER_IDS,
 	type ProviderId,
@@ -41,7 +41,7 @@ const EMPTY_FORM: FormState = {
 
 interface RegistrationFormProps {
 	providerSuggestions: string[];
-	onRegister: (entry: CreateModelInput) => void;
+	onRegister: (entry: ServiceProvider) => void;
 	onProviderAdded: (provider: string) => void;
 	onCancel: () => void;
 }
@@ -182,7 +182,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 // ---------------------------------------------------------------------------
 
 interface DefaultProvidersSectionProps {
-	models: ModelConfig[];
+	models: ProviderConfig[];
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 }
 
@@ -303,15 +303,27 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 };
 
 interface CustomProvidersSectionProps {
-	models: ModelConfig[];
+	models: ProviderConfig[];
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 	onDeleteProvider: (provider: string) => Promise<void>;
+	showRegistrationForm: boolean;
+	onToggleRegistrationForm: () => void;
+	providerSuggestions: string[];
+	onRegister: (entry: ServiceProvider) => void;
+	onProviderAdded: (provider: string) => void;
+	onCancelRegistrationForm: () => void;
 }
 
 const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 	models,
 	onSaveProviderApiKey,
 	onDeleteProvider,
+	showRegistrationForm,
+	onToggleRegistrationForm,
+	providerSuggestions,
+	onRegister,
+	onProviderAdded,
+	onCancelRegistrationForm,
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();
@@ -373,14 +385,38 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 
 	return (
 		<section className="px-6 py-5">
-			<div className="mb-4">
+			<div className="mb-4 flex items-start justify-between gap-3">
 				<h2 className="text-sm font-semibold text-foreground">
 					{t('models.customProviders.title', 'Custom Providers')}
 				</h2>
-				<p className="text-xs text-muted-foreground mt-0.5">
-					{t('models.customProviders.subtitle', 'Configure API keys for your custom providers.')}
-				</p>
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon-xs"
+					aria-label={
+						showRegistrationForm
+							? t('models.customProvider.hide', 'Hide custom provider')
+							: t('models.customProvider.cta', 'Add custom provider')
+					}
+					onClick={onToggleRegistrationForm}
+				>
+					<Plus />
+				</AppButton>
 			</div>
+			<p className="text-xs text-muted-foreground mt-0.5 mb-4">
+				{t('models.customProviders.subtitle', 'Configure API keys for your custom providers.')}
+			</p>
+
+			{showRegistrationForm && (
+				<div className="mb-4">
+					<RegistrationForm
+						providerSuggestions={providerSuggestions}
+						onRegister={onRegister}
+						onProviderAdded={onProviderAdded}
+						onCancel={onCancelRegistrationForm}
+					/>
+				</div>
+			)}
 
 			{customProviders.length === 0 ? (
 				<p className="text-xs text-muted-foreground">
@@ -472,7 +508,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 
 const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<ModelConfig[]>([]);
+	const [models, setModels] = useState<ProviderConfig[]>([]);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
@@ -499,7 +535,7 @@ const ModelsPage: React.FC = () => {
 	}, [loadModels]);
 
 	const handleRegister = useCallback(
-		(entry: CreateModelInput) => {
+		(entry: ServiceProvider) => {
 			window.app
 				.addModel(entry)
 				.then(() => {
@@ -556,23 +592,7 @@ const ModelsPage: React.FC = () => {
 						{t('models.subtitle', 'Manage the AI models registered in your workspace.')}
 					</p>
 				</div>
-				<AppButton type="button" size="sm" onClick={() => setShowRegistrationForm((prev) => !prev)}>
-					{showRegistrationForm
-						? t('models.customProvider.hide', 'Hide custom provider')
-						: t('models.customProvider.cta', 'Add custom provider')}
-				</AppButton>
 			</div>
-
-			{showRegistrationForm && (
-				<div className="px-6 py-5 border-b border-border shrink-0">
-					<RegistrationForm
-						providerSuggestions={providerSuggestions}
-						onRegister={handleRegister}
-						onProviderAdded={handleProviderAdded}
-						onCancel={() => setShowRegistrationForm(false)}
-					/>
-				</div>
-			)}
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				<DefaultProvidersSection models={models} onSaveProviderApiKey={handleSaveProviderApiKey} />
@@ -583,6 +603,12 @@ const ModelsPage: React.FC = () => {
 					models={models}
 					onSaveProviderApiKey={handleSaveProviderApiKey}
 					onDeleteProvider={handleDeleteProvider}
+					showRegistrationForm={showRegistrationForm}
+					onToggleRegistrationForm={() => setShowRegistrationForm((prev) => !prev)}
+					providerSuggestions={providerSuggestions}
+					onRegister={handleRegister}
+					onProviderAdded={handleProviderAdded}
+					onCancelRegistrationForm={() => setShowRegistrationForm(false)}
 				/>
 			</div>
 		</div>

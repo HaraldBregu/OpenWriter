@@ -126,6 +126,7 @@
 			"general": "General",
 			"workspace": "Workspace",
 			"models": "Models",
+			"providers": "Providers",
 			"agents": "Agents",
 			"media": "Media",
 			"devices": "Devices",
@@ -222,6 +223,13 @@
 			"saving": "Saving…",
 			"saved": "Saved!",
 			"saveError": "Error"
+		},
+		"providers": {
+			"title": "Providers",
+			"registeredProviders": "Registered Providers",
+			"manageNote": "Manage provider API keys from the Models page in the main navigation.",
+			"noProviders": "No providers configured yet.",
+			"modelsCount": "{{count}} models"
 		},
 		"agents": {
 			"title": "Agents",

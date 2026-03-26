@@ -12,7 +12,7 @@ import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import type { WritingContextMenuAction } from '../../shared/types';
-import type { CreateModelInput } from '../../shared/model-defaults';
+import type { ServiceProvider } from '../../shared/model-defaults';
 
 const execFileAsync = promisify(execFile);
 
@@ -167,7 +167,7 @@ export class AppIpc implements IpcModule {
 
 		ipcMain.handle(
 			AppChannels.addModel,
-			wrapSimpleHandler((model: CreateModelInput) => {
+			wrapSimpleHandler((model: ServiceProvider) => {
 				StoreValidators.validateModelConfig(model);
 				return store.addModel(model);
 			}, AppChannels.addModel)

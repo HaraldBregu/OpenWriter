@@ -43,7 +43,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
-import type { CreateModelInput, ModelConfig } from './model-defaults';
+import type { ServiceProvider, ProviderConfig } from './model-defaults';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
@@ -167,8 +167,8 @@ export const AppChannels = {
  */
 export interface InvokeChannelMap {
 	// ---- App / Model management (IpcResult-wrapped) ----
-	[AppChannels.getModels]: { args: []; result: ModelConfig[] };
-	[AppChannels.addModel]: { args: [model: CreateModelInput]; result: ModelConfig };
+	[AppChannels.getModels]: { args: []; result: ProviderConfig[] };
+	[AppChannels.addModel]: { args: [model: ServiceProvider]; result: ProviderConfig };
 	[AppChannels.deleteModel]: { args: [id: string]; result: void };
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };

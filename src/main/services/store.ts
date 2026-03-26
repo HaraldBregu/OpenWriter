@@ -1,10 +1,10 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
 import {
-	createModelId,
-	toModelConfig,
-	type CreateModelInput,
-	type ModelConfig,
+	createProviderId,
+	toProviderConfig,
+	type ServiceProvider,
+	type ProviderConfig,
 } from '../../shared/model-defaults';
 
 export interface WorkspaceInfo {
@@ -13,13 +13,13 @@ export interface WorkspaceInfo {
 }
 
 export interface StoreSchema {
-	models: CreateModelInput[];
+	providers: ServiceProvider[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
 
 const DEFAULTS: StoreSchema = {
-	models: [],
+	providers: [],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
@@ -34,7 +34,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
-function normalizeModelInput(value: unknown): CreateModelInput | null {
+function normalizeProviderInput(value: unknown): ServiceProvider | null {
 	if (!isRecord(value)) {
 		return null;
 	}
@@ -59,26 +59,26 @@ function normalizeModelInput(value: unknown): CreateModelInput | null {
 	return { provider, apikey, baseurl };
 }
 
-function normalizeModels(value: unknown): CreateModelInput[] {
+function normalizeProviders(value: unknown): ServiceProvider[] {
 	if (!Array.isArray(value)) {
 		return [];
 	}
 
-	const normalized: CreateModelInput[] = [];
+	const normalized: ServiceProvider[] = [];
 
 	value.forEach((entry) => {
-		const model = normalizeModelInput(entry);
-		if (!model) {
+		const provider = normalizeProviderInput(entry);
+		if (!provider) {
 			return;
 		}
-		normalized.push(model);
+		normalized.push(provider);
 	});
 
 	return normalized;
 }
 
-function cloneModel(model: CreateModelInput): CreateModelInput {
-	return { ...model };
+function cloneProvider(provider: ServiceProvider): ServiceProvider {
+	return { ...provider };
 }
 
 export class StoreService {
@@ -91,33 +91,33 @@ export class StoreService {
 			accessPropertiesByDotNotation: false,
 		});
 
-		this.migrateLegacyModelSettings();
-		this.normalizeStoredModels();
+		this.migrateLegacyProviderSettings();
+		this.normalizeStoredProviders();
 	}
 
 	// --- Model methods ---
 
-	getModels(): ModelConfig[] {
-		return this.store.get('models').map((model, index) => toModelConfig(model, index));
+	getModels(): ProviderConfig[] {
+		return this.store.get('providers').map((provider, index) => toProviderConfig(provider, index));
 	}
 
-	addModel(model: CreateModelInput): ModelConfig {
-		const models = this.store.get('models').map(cloneModel);
-		const newModel: CreateModelInput = {
-			provider: model.provider,
-			apikey: model.apikey,
-			baseurl: model.baseurl,
+	addModel(provider: ServiceProvider): ProviderConfig {
+		const providers = this.store.get('providers').map(cloneProvider);
+		const newProvider: ServiceProvider = {
+			provider: provider.provider,
+			apikey: provider.apikey,
+			baseurl: provider.baseurl,
 		};
-		models.push(newModel);
-		this.store.set('models', models);
-		return toModelConfig(newModel, models.length - 1);
+		providers.push(newProvider);
+		this.store.set('providers', providers);
+		return toProviderConfig(newProvider, providers.length - 1);
 	}
 
 	deleteModel(id: string): void {
-		const models = this.store
-			.get('models')
-			.filter((model, index) => createModelId(model, index) !== id);
-		this.store.set('models', models);
+		const providers = this.store
+			.get('providers')
+			.filter((provider, index) => createProviderId(provider, index) !== id);
+		this.store.set('providers', providers);
 	}
 
 	// --- Workspace settings ---
@@ -159,29 +159,37 @@ export class StoreService {
 		return this.store as unknown as RawStore;
 	}
 
-	private migrateLegacyModelSettings(): void {
+	private migrateLegacyProviderSettings(): void {
 		const legacyModels = this.rawStore.get('modelSettings');
-		if (legacyModels === undefined) {
-			return;
+		if (legacyModels !== undefined) {
+			const migratedFromModelSettings = normalizeProviders(legacyModels);
+			if (migratedFromModelSettings.length > 0) {
+				this.store.set('providers', migratedFromModelSettings);
+			}
+			this.rawStore.delete('modelSettings');
 		}
 
-		const migrated = normalizeModels(legacyModels);
-		if (migrated.length > 0) {
-			this.store.set('models', migrated);
+		const legacyModelsKey = this.rawStore.get('models');
+		if (legacyModelsKey !== undefined && this.rawStore.get('providers') === undefined) {
+			const migratedFromModelsKey = normalizeProviders(legacyModelsKey);
+			if (migratedFromModelsKey.length > 0) {
+				this.store.set('providers', migratedFromModelsKey);
+			}
 		}
-
-		this.rawStore.delete('modelSettings');
+		this.rawStore.delete('models');
 	}
 
-	private normalizeStoredModels(): void {
-		const normalized = normalizeModels(this.rawStore.get('models'));
-		const current = this.store.get('models');
+	private normalizeStoredProviders(): void {
+		const normalized = normalizeProviders(this.rawStore.get('providers'));
+		const current = this.store.get('providers');
 		const needsRewrite =
 			current.length !== normalized.length ||
-			current.some((model, index) => JSON.stringify(model) !== JSON.stringify(normalized[index]));
+			current.some(
+				(provider, index) => JSON.stringify(provider) !== JSON.stringify(normalized[index])
+			);
 
 		if (needsRewrite) {
-			this.store.set('models', normalized);
+			this.store.set('providers', normalized);
 		}
 	}
 }

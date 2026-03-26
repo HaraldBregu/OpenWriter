@@ -3,7 +3,7 @@ import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } fr
 import { AppChannels, WindowChannels, WorkspaceChannels, TaskChannels } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
-import type { CreateModelInput, ModelConfig } from '../shared/model-defaults';
+import type { ServiceProvider, ProviderConfig } from '../shared/model-defaults';
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
@@ -50,10 +50,10 @@ const app: AppApi = {
 	// -------------------------------------------------------------------------
 	// Model management
 	// -------------------------------------------------------------------------
-	getModels: (): Promise<ModelConfig[]> => {
+	getModels: (): Promise<ProviderConfig[]> => {
 		return typedInvokeUnwrap(AppChannels.getModels);
 	},
-	addModel: (model: CreateModelInput): Promise<ModelConfig> => {
+	addModel: (model: ServiceProvider): Promise<ProviderConfig> => {
 		return typedInvokeUnwrap(AppChannels.addModel, model);
 	},
 	deleteModel: (id: string): Promise<void> => {

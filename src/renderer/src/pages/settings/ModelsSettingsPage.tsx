@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppBadge } from '@/components/app';
-import type { ModelConfig } from '../../../../shared/model-defaults';
+import type { ProviderConfig } from '../../../../shared/model-defaults';
 import { SectionHeader } from './SettingsComponents';
 
 // ---------------------------------------------------------------------------
@@ -20,7 +20,7 @@ function maskApiKey(key: string): string {
 
 const ModelsSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<ModelConfig[]>([]);
+	const [models, setModels] = useState<ProviderConfig[]>([]);
 
 	useEffect(() => {
 		window.app

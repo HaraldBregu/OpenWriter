@@ -5,15 +5,20 @@
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
-export interface CreateModelInput {
+export interface ServiceProvider {
 	provider: string;
 	apikey: string;
 	baseurl: string;
 }
 
-export interface ModelConfig extends CreateModelInput {
+export interface ProviderConfig extends ServiceProvider {
 	id: string;
 }
+
+// Backward-compatible aliases (deprecated).
+export type CreateProviderInput = ServiceProvider;
+export type CreateModelInput = ServiceProvider;
+export type ModelConfig = ProviderConfig;
 
 function slugify(segment: string): string {
 	return segment
@@ -34,18 +39,22 @@ function hashModelIdentity(value: string): string {
 	return (hash >>> 0).toString(36);
 }
 
-export function createModelId(
-	model: Pick<CreateModelInput, 'provider' | 'apikey' | 'baseurl'>,
+export function createProviderId(
+	provider: Pick<ServiceProvider, 'provider' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
-	return `model-${slugify(model.provider)}-${index}-${hashModelIdentity(
-		[model.provider, model.baseurl, model.apikey].join('\u0000')
+	return `model-${slugify(provider.provider)}-${index}-${hashModelIdentity(
+		[provider.provider, provider.baseurl, provider.apikey].join('\u0000')
 	)}`;
 }
 
-export function toModelConfig(model: CreateModelInput, index: number): ModelConfig {
+export function toProviderConfig(provider: ServiceProvider, index: number): ProviderConfig {
 	return {
-		id: createModelId(model, index),
-		...model,
+		id: createProviderId(provider, index),
+		...provider,
 	};
 }
+
+// Backward-compatible aliases (deprecated).
+export const createModelId = createProviderId;
+export const toModelConfig = toProviderConfig;

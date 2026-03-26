@@ -126,6 +126,7 @@
 			"general": "Generale",
 			"workspace": "Area di Lavoro",
 			"models": "Modelli",
+			"providers": "Provider",
 			"agents": "Agenti",
 			"media": "Media",
 			"devices": "Dispositivi",
@@ -222,6 +223,13 @@
 			"saving": "Salvataggio in corso…",
 			"saved": "Salvato!",
 			"saveError": "Errore"
+		},
+		"providers": {
+			"title": "Provider",
+			"registeredProviders": "Provider Registrati",
+			"manageNote": "Gestisci le chiavi API dei provider dalla pagina Modelli nella navigazione principale.",
+			"noProviders": "Nessun provider configurato.",
+			"modelsCount": "{{count}} modelli"
 		},
 		"agents": {
 			"title": "Agenti",

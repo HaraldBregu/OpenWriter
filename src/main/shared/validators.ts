@@ -3,7 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { CreateModelInput } from '../../shared/model-defaults';
+import type { ServiceProvider } from '../../shared/model-defaults';
 
 export class StoreValidators {
 	private static readonly MAX_TOKEN_LENGTH = 500;
@@ -29,7 +29,7 @@ export class StoreValidators {
 	 * @param model - The model config to validate
 	 * @throws Error if any field is invalid
 	 */
-	static validateModelConfig(model: CreateModelInput): void {
+	static validateModelConfig(model: ServiceProvider): void {
 		if (typeof model.provider !== 'string' || model.provider.trim().length === 0) {
 			throw new Error('Provider is required');
 		}

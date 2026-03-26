@@ -66,6 +66,7 @@ const ModelsPage = lazy(() => import('./pages/models/ModelsPage'));
 // Lazy-loaded settings pages
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
 const ModelsSettingsPage = lazy(() => import('./pages/settings/ModelsSettingsPage'));
+const ProvidersSettingsPage = lazy(() => import('./pages/settings/ProvidersSettingsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
 const AgentsSettingsPage = lazy(() => import('./pages/settings/AgentsSettingsPage'));
 const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
@@ -140,6 +141,14 @@ const App: React.FC = () => {
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
 																<ModelsSettingsPage />
+															</Suspense>
+														}
+													/>
+													<Route
+														path="providers"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<ProvidersSettingsPage />
 															</Suspense>
 														}
 													/>
