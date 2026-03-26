@@ -238,6 +238,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<span className="flex-1 truncate">{t('appLayout.socialMedia')}</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton
+											asChild
+											className="h-9 px-3"
+											isActive={location.pathname === '/agents'}
+										>
+											<Link to="/agents">
+												<Bot className="h-3.5 w-3.5 shrink-0" />
+												<span className="flex-1 truncate">{t('appLayout.agents', 'Agents')}</span>
+											</Link>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
