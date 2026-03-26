@@ -11,15 +11,12 @@ export interface CreateModelInput {
 	baseurl: string;
 }
 
-export interface SeededModel extends CreateModelInput {
-	default: boolean;
-}
-
-export interface ModelConfig extends SeededModel {
+export interface ModelConfig extends CreateModelInput {
+	default?: boolean;
 	id: string;
 }
 
-export const DEFAULT_MODELS: readonly SeededModel[] = [
+export const DEFAULT_MODELS: readonly Omit<ModelConfig, 'id'>[] = [
 	{
 		provider: 'anthropic',
 		apikey: '',
