@@ -480,7 +480,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize="70%" minSize="40%">
+				<ResizablePanel defaultSize="62%" minSize="40%">
 					<EditorPanel
 						documentId={id}
 						loaded={loaded}
