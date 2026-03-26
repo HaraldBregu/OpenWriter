@@ -174,7 +174,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<AppSidebarGroupLabel asChild>
 										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
 											{t('sidebar.writings')}
-											<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
+											<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 										</AppCollapsibleTrigger>
 									</AppSidebarGroupLabel>
 									<AppCollapsiblePanel>
@@ -215,7 +215,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											isActive={location.pathname === '/resources'}
 										>
 											<Link to="/resources">
-												<Library className="h-3.5 w-3.5 shrink-0" />
+												<Library className="h-4 w-4 shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.resources')}</span>
 											</Link>
 										</AppSidebarMenuButton>
@@ -227,7 +227,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											isActive={location.pathname === '/agents'}
 										>
 											<Link to="/agents">
-												<Bot className="h-3.5 w-3.5 shrink-0" />
+												<Bot className="h-4 w-4 shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.agents', 'Agents')}</span>
 											</Link>
 										</AppSidebarMenuButton>
@@ -242,7 +242,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppSidebarGroupLabel asChild>
 									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
 										{t('appLayout.debug')}
-										<ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</AppCollapsibleTrigger>
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
@@ -255,7 +255,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/tasks'}
 												>
 													<Link to="/debug/tasks">
-														<Bug className="h-3.5 w-3.5 shrink-0" />
+														<Bug className="h-4 w-4 shrink-0" />
 														<span className="flex-1 truncate">{t('debug.tasks')}</span>
 													</Link>
 												</AppSidebarMenuButton>
@@ -267,7 +267,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/redux'}
 												>
 													<Link to="/debug/redux">
-														<Database className="h-3.5 w-3.5 shrink-0" />
+														<Database className="h-4 w-4 shrink-0" />
 														<span className="flex-1 truncate">{t('debug.reduxState')}</span>
 													</Link>
 												</AppSidebarMenuButton>
