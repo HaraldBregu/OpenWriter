@@ -40,7 +40,6 @@ import {
 	FilePlus2,
 	Search,
 	Bot,
-	Cpu,
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -213,18 +212,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<Link to="/agents">
 												<Bot className="h-3.5 w-3.5 shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.agents', 'Agents')}</span>
-											</Link>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton
-											asChild
-											className="h-9 px-3"
-											isActive={location.pathname === '/models'}
-										>
-											<Link to="/models">
-												<Cpu className="h-3.5 w-3.5 shrink-0" />
-												<span className="flex-1 truncate">{t('appLayout.models', 'Models')}</span>
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>

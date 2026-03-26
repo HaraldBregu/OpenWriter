@@ -61,11 +61,9 @@ const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
-const ModelsPage = lazy(() => import('./pages/models/ModelsPage'));
 
 // Lazy-loaded settings pages
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
-const ModelsSettingsPage = lazy(() => import('./pages/settings/ModelsSettingsPage'));
 const ProvidersSettingsPage = lazy(() => import('./pages/settings/ProvidersSettingsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
 const AgentsSettingsPage = lazy(() => import('./pages/settings/AgentsSettingsPage'));
@@ -137,14 +135,6 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="models"
-														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<ModelsSettingsPage />
-															</Suspense>
-														}
-													/>
-													<Route
 														path="providers"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
@@ -206,14 +196,6 @@ const App: React.FC = () => {
 													element={
 														<RouteWrapper>
 															<AgentsPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/models"
-													element={
-														<RouteWrapper>
-															<ModelsPage />
 														</RouteWrapper>
 													}
 												/>

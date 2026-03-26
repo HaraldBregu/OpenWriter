@@ -32,3 +32,12 @@ Recent history uses short, imperative commit subjects such as `Add ConfigPanel a
 ## Configuration & Security
 
 Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/ai/agents/**/*.md` and IPC surfaces as sensitive interfaces: update tests when changing them.
+
+## Git
+
+Always:
+- git add .
+- git commit -m "auto: {describe changes}"
+- git push
+
+Do this after every file modification.

@@ -11,7 +11,6 @@ interface NavItemDefinition {
 const NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/general', labelKey: 'settings.tabs.general' },
 	{ path: '/settings/workspace', labelKey: 'settings.tabs.workspace' },
-	{ path: '/settings/models', labelKey: 'settings.tabs.models' },
 	{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
 	{ path: '/settings/agents', labelKey: 'settings.tabs.agents' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
@@ -29,7 +28,7 @@ export function SettingsLayout(): React.JSX.Element {
 		<div className="flex h-full w-full mx-auto">
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
-				<div className="px-3 py-4 space-y-0.5 my-20">
+				<div className="px-3 py-4 space-y-0.5">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}
@@ -44,7 +43,7 @@ export function SettingsLayout(): React.JSX.Element {
 			</div>
 
 			{/* Right column — content (3/4 width) */}
-			<div className="w-full overflow-y-auto py-6">
+			<div className="w-full overflow-y-auto">
 				<Outlet />
 			</div>
 		</div>
