@@ -481,32 +481,43 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<EditorResizablePanel
-					documentId={id}
-					loaded={loaded}
-					content={content}
-					disabled={
-						textCompleterTask.isRunning ||
-						textEnhanceTask.isRunning ||
-						textWriterTask.isRunning ||
-						imageGeneratorTask.isRunning
-					}
-					editorRef={editorRef}
-					onEditorReady={handleEditorReady}
-					onContentChange={handleContentChange}
-					onContinueWithAssistant={onContinueWithAssistant}
-					onEnhanceWithAssistant={onEnhanceWithAssistant}
-					onTextSubmit={onTextSubmit}
-					onImageSubmit={onImageSubmit}
-				/>
+				<ResizablePanel defaultSize="70%" minSize="40%">
+					<EditorPanel
+						documentId={id}
+						loaded={loaded}
+						content={content}
+						disabled={
+							textCompleterTask.isRunning ||
+							textEnhanceTask.isRunning ||
+							textWriterTask.isRunning ||
+							imageGeneratorTask.isRunning
+						}
+						editorRef={editorRef}
+						onEditorReady={handleEditorReady}
+						onContentChange={handleContentChange}
+						onContinueWithAssistant={onContinueWithAssistant}
+						onEnhanceWithAssistant={onEnhanceWithAssistant}
+						onTextSubmit={onTextSubmit}
+						onImageSubmit={onImageSubmit}
+					/>
+				</ResizablePanel>
 
 				{activeSidebar && <ResizableHandle withHandle />}
 
-				<SidebarResizablePanel
+				<ResizablePanel
 					panelRef={sidebarPanelRef}
-					activeSidebar={activeSidebar}
-					onOpenFolder={handleOpenFolder}
-				/>
+					defaultSize="30%"
+					minSize="25%"
+					maxSize="40%"
+					collapsible
+					collapsedSize="0%"
+				>
+					<div className="h-full">
+						{activeSidebar === 'editor' && <EditorToolsPanel />}
+						{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
+						{activeSidebar === 'agentic' && <AgenticPanel />}
+					</div>
+				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>
 	);
