@@ -83,30 +83,20 @@ const ModelsEmptyState: React.FC = () => {
 interface ModelRowProps {
 	entry: ModelConfig;
 	onDelete: (id: string) => void;
-	onSetDefault: (id: string) => void;
 }
 
-const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete, onSetDefault }) => {
+const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
 	const { t } = useTranslation();
 
 	const handleDelete = useCallback(() => {
 		onDelete(entry.id);
 	}, [onDelete, entry.id]);
 
-	const handleSetDefault = useCallback(() => {
-		onSetDefault(entry.id);
-	}, [onSetDefault, entry.id]);
-
 	return (
 		<div className="flex items-center gap-3 py-2.5 px-1">
 			<AppBadge variant="secondary" className="shrink-0 text-xs font-medium">
 				{entry.provider}
 			</AppBadge>
-			{entry.default && (
-				<AppBadge variant="default" className="shrink-0 text-xs">
-					{t('models.default', 'Default')}
-				</AppBadge>
-			)}
 			{entry.apikey.length > 0 && (
 				<span className="font-mono text-xs text-muted-foreground shrink-0">
 					{maskApiKey(entry.apikey)}
@@ -119,18 +109,6 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete, onSetDefault }) =>
 				>
 					{entry.baseurl}
 				</span>
-			)}
-			{!entry.default && (
-				<AppButton
-					type="button"
-					variant="ghost"
-					size="icon-xs"
-					aria-label={t('models.setDefault', 'Set as default')}
-					onClick={handleSetDefault}
-					className="shrink-0 text-muted-foreground hover:text-foreground"
-				>
-					<Star />
-				</AppButton>
 			)}
 			<AppButton
 				type="button"
