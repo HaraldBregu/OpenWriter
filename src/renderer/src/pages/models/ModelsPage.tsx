@@ -3,24 +3,24 @@ import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { type CreateModelInput, type ModelConfig } from '../../../../shared/model-defaults';
 import {
-	DEFAULT_PROVIDER_IDS,
-	type DefaultProviderId,
+	PROVIDER_IDS,
+	type ProviderId,
 	PROVIDER_CATALOGUE,
 } from '../../../../shared/model-constants';
 import { AppButton, AppInput, AppLabel, AppSeparator } from '../../components/app';
 
-function isDefaultProvider(provider: string): provider is DefaultProviderId {
-	return (DEFAULT_PROVIDER_IDS as readonly string[]).includes(provider);
+function isDefaultProvider(provider: string): provider is ProviderId {
+	return (PROVIDER_IDS as readonly string[]).includes(provider);
 }
 
-const PROVIDER_LABELS: Record<DefaultProviderId, string> = DEFAULT_PROVIDER_IDS.reduce(
+const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	(acc, providerId) => {
 		const label =
 			PROVIDER_CATALOGUE.find((provider) => provider.id === providerId)?.name ?? providerId;
 		acc[providerId] = label;
 		return acc;
 	},
-	{} as Record<DefaultProviderId, string>
+	{} as Record<ProviderId, string>
 );
 
 interface FormState {
@@ -192,35 +192,26 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();
-	const [apiKeys, setApiKeys] = useState<Record<DefaultProviderId, string>>({
-		anthropic: '',
-		openai: '',
-		google: '',
-		mistral: '',
-	});
-	const [visible, setVisible] = useState<Record<DefaultProviderId, boolean>>({
-		anthropic: false,
-		openai: false,
-		google: false,
-		mistral: false,
-	});
-	const [saving, setSaving] = useState<Record<DefaultProviderId, boolean>>({
-		anthropic: false,
-		openai: false,
-		google: false,
-		mistral: false,
-	});
+	const [apiKeys, setApiKeys] = useState<Record<ProviderId, string>>(
+		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, ''])) as Record<ProviderId, string>
+	);
+	const [visible, setVisible] = useState<Record<ProviderId, boolean>>(
+		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
+	);
+	const [saving, setSaving] = useState<Record<ProviderId, boolean>>(
+		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
+	);
 
-	const handleApiKeyChange = useCallback((provider: DefaultProviderId, value: string) => {
+	const handleApiKeyChange = useCallback((provider: ProviderId, value: string) => {
 		setApiKeys((prev) => ({ ...prev, [provider]: value }));
 	}, []);
 
-	const handleToggleVisibility = useCallback((provider: DefaultProviderId) => {
+	const handleToggleVisibility = useCallback((provider: ProviderId) => {
 		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
 	}, []);
 
 	const handleSaveProvider = useCallback(
-		async (provider: DefaultProviderId) => {
+		async (provider: ProviderId) => {
 			const apiKey = apiKeys[provider].trim();
 			if (apiKey.length === 0 || saving[provider]) return;
 
@@ -252,7 +243,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 			</div>
 
 			<div className="space-y-3">
-				{DEFAULT_PROVIDER_IDS.map((provider) => {
+				{PROVIDER_IDS.map((provider) => {
 					const existing = models.find((m) => m.provider === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
 					const isSaving = saving[provider];
@@ -483,9 +474,7 @@ const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<ModelConfig[]>([]);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([
-		...DEFAULT_PROVIDER_IDS,
-	]);
+	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
 	const loadModels = useCallback(() => {
 		return window.app.getModels().then((loaded) => {
@@ -504,10 +493,9 @@ const ModelsPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		loadModels()
-			.catch(() => {
-				setModels([]);
-			});
+		loadModels().catch(() => {
+			setModels([]);
+		});
 	}, [loadModels]);
 
 	const handleRegister = useCallback(
