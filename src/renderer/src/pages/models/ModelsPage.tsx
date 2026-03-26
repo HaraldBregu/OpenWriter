@@ -2,6 +2,7 @@ import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { type CreateModelInput, type ModelConfig } from '../../../../shared/model-defaults';
+import { PROVIDER_CATALOGUE } from '../../../../shared/model-constants';
 import {
 	AppButton,
 	AppInput,
@@ -13,12 +14,14 @@ import {
 const DEFAULT_PROVIDERS = ['anthropic', 'openai', 'google', 'mistral'] as const;
 type DefaultProvider = (typeof DEFAULT_PROVIDERS)[number];
 
-const PROVIDER_LABELS: Record<DefaultProvider, string> = {
-	anthropic: 'Anthropic',
-	openai: 'OpenAI',
-	google: 'Google',
-	mistral: 'Mistral',
-};
+const PROVIDER_LABELS: Record<DefaultProvider, string> = DEFAULT_PROVIDERS.reduce(
+	(acc, providerId) => {
+		const label = PROVIDER_CATALOGUE.find((provider) => provider.id === providerId)?.name ?? providerId;
+		acc[providerId] = label;
+		return acc;
+	},
+	{} as Record<DefaultProvider, string>
+);
 
 interface FormState {
 	provider: string;
