@@ -97,14 +97,14 @@ export class StoreService {
 
 	// --- Provider methods ---
 
-	getProviders(): ServiceProvider[] {
+	getProviders(): Array<ServiceProvider & { id: string }> {
 		return this.store.get('providers').map((provider, index) => toProviderConfig(provider, index));
 	}
 
-	addProvider(provider: ServiceProvider): ServiceProvider {
+	addProvider(provider: ServiceProvider): ServiceProvider & { id: string } {
 		const providers = this.store.get('providers').map(cloneProvider);
 		const newProvider: ServiceProvider = {
-			provider: provider.provider.trim(),
+			name: provider.name.trim(),
 			apikey: provider.apikey,
 			baseurl: provider.baseurl,
 		};
