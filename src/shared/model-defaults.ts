@@ -31,26 +31,22 @@ function hashModelIdentity(value: string): string {
 }
 
 export function createProviderId(
-	provider: Pick<ServiceProvider, 'provider' | 'apikey' | 'baseurl'>,
+	provider: Pick<ServiceProvider, 'name' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
-	return `model-${slugify(provider.provider)}-${index}-${hashModelIdentity(
-		[provider.provider, provider.baseurl, provider.apikey].join('\u0000')
+	return `model-${slugify(provider.name)}-${index}-${hashModelIdentity(
+		[provider.name, provider.baseurl, provider.apikey].join('\u0000')
 	)}`;
 }
 
-export function toProviderConfig(provider: ServiceProvider, index: number): ServiceProvider {
-	const normalizedProvider = provider.provider.trim();
+export function toProviderConfig(
+	provider: ServiceProvider,
+	index: number
+): ServiceProvider & { id: string } {
+	const normalizedName = provider.name.trim();
 	return {
-		id: createProviderId(
-			{
-				provider: normalizedProvider,
-				apikey: provider.apikey,
-				baseurl: provider.baseurl,
-			},
-			index
-		),
-		provider: normalizedProvider,
+		id: createProviderId({ name: normalizedName, apikey: provider.apikey, baseurl: provider.baseurl }, index),
+		name: normalizedName,
 		apikey: provider.apikey,
 		baseurl: provider.baseurl,
 	};
