@@ -36,7 +36,7 @@ import { ProviderResolver } from './shared/provider-resolver';
 import { TextEnhanceTaskReaction } from './task_manager/reactions';
 
 // Indexing infrastructure
-import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './indexing';
+import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './ai/indexing';
 
 // IPC modules
 import type { IpcModule } from './ipc';
