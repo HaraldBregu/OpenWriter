@@ -30,10 +30,10 @@ export class StoreValidators {
 	 * @throws Error if any field is invalid
 	 */
 	static validateModelConfig(model: ServiceProvider): void {
-		if (typeof model.provider !== 'string' || model.provider.trim().length === 0) {
+		if (typeof model.name !== 'string' || model.name.trim().length === 0) {
 			throw new Error('Provider is required');
 		}
-		if (model.provider.length > this.MAX_FIELD_LENGTH) {
+		if (model.name.length > this.MAX_FIELD_LENGTH) {
 			throw new Error('Provider exceeds maximum length');
 		}
 		if (typeof model.apikey === 'string' && model.apikey.length > 0) {
