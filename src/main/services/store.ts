@@ -19,7 +19,7 @@ export interface StoreSchema {
 }
 
 const DEFAULTS: StoreSchema = {
-	models: DEFAULT_MODELS.map((model) => ({ ...model })),
+	models: [],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
