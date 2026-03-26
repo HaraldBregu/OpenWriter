@@ -95,16 +95,16 @@ export class StoreService {
 		this.normalizeStoredProviders();
 	}
 
-	// --- Model methods ---
+	// --- Provider methods ---
 
-	getModels(): ProviderConfig[] {
+	getProviders(): ServiceProvider[] {
 		return this.store.get('providers').map((provider, index) => toProviderConfig(provider, index));
 	}
 
-	addModel(provider: ServiceProvider): ProviderConfig {
+	addProvider(provider: ServiceProvider): ServiceProvider {
 		const providers = this.store.get('providers').map(cloneProvider);
 		const newProvider: ServiceProvider = {
-			name: provider.name.trim(),
+			provider: provider.provider.trim(),
 			apikey: provider.apikey,
 			baseurl: provider.baseurl,
 		};
@@ -113,7 +113,7 @@ export class StoreService {
 		return toProviderConfig(newProvider, providers.length - 1);
 	}
 
-	deleteModel(id: string): void {
+	deleteProvider(id: string): void {
 		const providers = this.store
 			.get('providers')
 			.filter((provider, index) => toProviderConfig(provider, index).id !== id);
