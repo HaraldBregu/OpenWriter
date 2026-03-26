@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cpu, Eye, EyeOff, Star, Trash2 } from 'lucide-react';
+import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
 import {
 	DEFAULT_MODELS,
 	type CreateModelInput,
@@ -338,7 +338,6 @@ const ModelsPage: React.FC = () => {
 									key={m.id}
 									entry={m}
 									onDelete={handleDelete}
-									onSetDefault={handleSetDefault}
 								/>
 							))}
 						</div>

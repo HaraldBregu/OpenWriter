@@ -38,7 +38,7 @@ jest.mock('electron-store', () => {
 });
 
 import { StoreService } from '../../../../src/main/services/store';
-import type { ModelConfig } from '../../../../src/shared/model-defaults';
+import type { CreateModelInput } from '../../../../src/shared/model-defaults';
 
 describe('StoreService', () => {
 	beforeEach(() => {
@@ -65,57 +65,20 @@ describe('StoreService', () => {
 
 		it('should add a new model and return it with a generated id', () => {
 			const service = new StoreService();
-			const input: Omit<ModelConfig, 'id'> = {
+			const input: CreateModelInput = {
 				provider: 'openai',
-				model: 'gpt-4o',
 				apikey: 'sk-test',
 				baseurl: '',
-				default: false,
 			};
 			const added = service.addModel(input);
 			expect(added.id).toMatch(/^model-\d+-[a-z0-9]+$/);
 			expect(added.provider).toBe('openai');
-			expect(added.model).toBe('gpt-4o');
 			expect(service.getModels().some((m) => m.id === added.id)).toBe(true);
-		});
-
-		it('should clear existing defaults when adding a model marked as default', () => {
-			const service = new StoreService();
-			// Add a first default model
-			const first = service.addModel({
-				provider: 'openai',
-				model: 'gpt-4o',
-				apikey: '',
-				baseurl: '',
-				default: true,
-			});
-			// Add a second default model
-			service.addModel({
-				provider: 'anthropic',
-				model: 'claude-opus-4-6',
-				apikey: '',
-				baseurl: '',
-				default: true,
-			});
-			const models = service.getModels();
-			const defaultModels = models.filter((m) => m.default);
-			// Only one should be default — the newly added one
-			expect(defaultModels).toHaveLength(1);
-			expect(defaultModels[0].provider).toBe('anthropic');
-			// The first model should no longer be default
-			const firstInStore = models.find((m) => m.id === first.id);
-			expect(firstInStore?.default).toBe(false);
 		});
 
 		it('should delete a model by id', () => {
 			const service = new StoreService();
-			const added = service.addModel({
-				provider: 'openai',
-				model: 'gpt-4o-mini',
-				apikey: '',
-				baseurl: '',
-				default: false,
-			});
+			const added = service.addModel({ provider: 'openai', apikey: '', baseurl: '' });
 			service.deleteModel(added.id);
 			expect(service.getModels().some((m) => m.id === added.id)).toBe(false);
 		});
@@ -125,50 +88,13 @@ describe('StoreService', () => {
 			expect(() => service.deleteModel('nonexistent-id')).not.toThrow();
 		});
 
-		it('should set a model as default and clear others', () => {
-			const service = new StoreService();
-			const a = service.addModel({
-				provider: 'openai',
-				model: 'gpt-4o',
-				apikey: '',
-				baseurl: '',
-				default: false,
-			});
-			const b = service.addModel({
-				provider: 'openai',
-				model: 'gpt-4o-mini',
-				apikey: '',
-				baseurl: '',
-				default: false,
-			});
-			service.setDefaultModel(a.id);
-			const models = service.getModels();
-			const modelA = models.find((m) => m.id === a.id);
-			const modelB = models.find((m) => m.id === b.id);
-			expect(modelA?.default).toBe(true);
-			expect(modelB?.default).toBe(false);
-		});
-
 		it('should return a copy from getModels (mutation does not affect store)', () => {
 			const service = new StoreService();
-			service.addModel({
-				provider: 'openai',
-				model: 'gpt-4o',
-				apikey: '',
-				baseurl: '',
-				default: false,
-			});
+			service.addModel({ provider: 'openai', apikey: '', baseurl: '' });
 			const models = service.getModels();
 			const originalLength = models.length;
 			// Mutate the returned array
-			models.push({
-				id: 'fake',
-				provider: 'x',
-				model: 'y',
-				apikey: '',
-				baseurl: '',
-				default: false,
-			});
+			models.push({ id: 'fake', provider: 'x', apikey: '', baseurl: '' });
 			// Store should not be affected
 			expect(service.getModels()).toHaveLength(originalLength);
 		});
