@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useId } from 'react';
+import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cpu, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Cpu, Eye, EyeOff, Star, Trash2 } from 'lucide-react';
 import {
 	AppButton,
 	AppInput,
@@ -26,24 +26,25 @@ const PROVIDERS_WITH_BASE_URL = new Set<Provider>(['Ollama', 'Custom']);
 
 interface RegisteredModel {
 	id: string;
-	provider: Provider;
+	provider: string;
 	model: string;
-	apiKey: string;
-	baseUrl: string;
+	apikey: string;
+	baseurl: string;
+	default: boolean;
 }
 
 interface FormState {
 	provider: Provider | '';
 	model: string;
-	apiKey: string;
-	baseUrl: string;
+	apikey: string;
+	baseurl: string;
 }
 
 const EMPTY_FORM: FormState = {
 	provider: '',
 	model: '',
-	apiKey: '',
-	baseUrl: '',
+	apikey: '',
+	baseurl: '',
 };
 
 // ---------------------------------------------------------------------------
@@ -54,10 +55,6 @@ function maskApiKey(key: string): string {
 	if (key.length === 0) return '—';
 	if (key.length <= 4) return '••••';
 	return `${key.slice(0, 3)}${'•'.repeat(8)}${key.slice(-4)}`;
-}
-
-function generateId(): string {
-	return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -91,14 +88,19 @@ const ModelsEmptyState: React.FC = () => {
 interface ModelRowProps {
 	entry: RegisteredModel;
 	onDelete: (id: string) => void;
+	onSetDefault: (id: string) => void;
 }
 
-const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
+const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete, onSetDefault }) => {
 	const { t } = useTranslation();
 
 	const handleDelete = useCallback(() => {
 		onDelete(entry.id);
 	}, [onDelete, entry.id]);
+
+	const handleSetDefault = useCallback(() => {
+		onSetDefault(entry.id);
+	}, [onSetDefault, entry.id]);
 
 	return (
 		<div className="flex items-center gap-3 py-2.5 px-1">
@@ -106,18 +108,35 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete }) => {
 				{entry.provider}
 			</AppBadge>
 			<span className="flex-1 text-sm text-foreground truncate">{entry.model}</span>
-			{entry.apiKey.length > 0 && (
+			{entry.default && (
+				<AppBadge variant="default" className="shrink-0 text-xs">
+					{t('models.default', 'Default')}
+				</AppBadge>
+			)}
+			{entry.apikey.length > 0 && (
 				<span className="font-mono text-xs text-muted-foreground shrink-0">
-					{maskApiKey(entry.apiKey)}
+					{maskApiKey(entry.apikey)}
 				</span>
 			)}
-			{entry.baseUrl.length > 0 && (
+			{entry.baseurl.length > 0 && (
 				<span
 					className="text-xs text-muted-foreground truncate max-w-[140px]"
-					title={entry.baseUrl}
+					title={entry.baseurl}
 				>
-					{entry.baseUrl}
+					{entry.baseurl}
 				</span>
+			)}
+			{!entry.default && (
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon-xs"
+					aria-label={t('models.setDefault', 'Set as default')}
+					onClick={handleSetDefault}
+					className="shrink-0 text-muted-foreground hover:text-foreground"
+				>
+					<Star />
+				</AppButton>
 			)}
 			<AppButton
 				type="button"
@@ -153,7 +172,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 	const isValid = form.provider !== '' && form.model.trim().length > 0;
 
 	const handleProviderChange = useCallback((value: string) => {
-		setForm((prev) => ({ ...prev, provider: value as Provider, baseUrl: '' }));
+		setForm((prev) => ({ ...prev, provider: value as Provider, baseurl: '' }));
 	}, []);
 
 	const handleModelChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,11 +180,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 	}, []);
 
 	const handleApiKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		setForm((prev) => ({ ...prev, apiKey: e.target.value }));
+		setForm((prev) => ({ ...prev, apikey: e.target.value }));
 	}, []);
 
 	const handleBaseUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		setForm((prev) => ({ ...prev, baseUrl: e.target.value }));
+		setForm((prev) => ({ ...prev, baseurl: e.target.value }));
 	}, []);
 
 	const handleToggleApiKeyVisibility = useCallback(() => {
@@ -179,8 +198,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 			onRegister({
 				provider: form.provider as Provider,
 				model: form.model.trim(),
-				apiKey: form.apiKey,
-				baseUrl: form.baseUrl.trim(),
+				apikey: form.apikey,
+				baseurl: form.baseurl.trim(),
+				default: false,
 			});
 			setForm(EMPTY_FORM);
 			setApiKeyVisible(false);
@@ -237,7 +257,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 						<AppInput
 							id={`${uid}-apikey`}
 							type={apiKeyVisible ? 'text' : 'password'}
-							value={form.apiKey}
+							value={form.apikey}
 							onChange={handleApiKeyChange}
 							placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
 							autoComplete="off"
@@ -265,7 +285,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 						<AppInput
 							id={`${uid}-baseurl`}
 							type="url"
-							value={form.baseUrl}
+							value={form.baseurl}
 							onChange={handleBaseUrlChange}
 							placeholder={t('models.form.baseUrlPlaceholder', 'http://localhost:11434')}
 							autoComplete="off"
@@ -292,13 +312,58 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<RegisteredModel[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		window.app
+			.getModels()
+			.then((loaded) => {
+				setModels(loaded as RegisteredModel[]);
+			})
+			.catch(() => {
+				setModels([]);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, []);
 
 	const handleRegister = useCallback((entry: Omit<RegisteredModel, 'id'>) => {
-		setModels((prev) => [...prev, { ...entry, id: generateId() }]);
+		window.app
+			.addModel(entry)
+			.then((created) => {
+				setModels((prev) => [...prev, created as RegisteredModel]);
+			})
+			.catch(() => {
+				// Addition failed — no local state update
+			});
 	}, []);
 
 	const handleDelete = useCallback((id: string) => {
-		setModels((prev) => prev.filter((m) => m.id !== id));
+		window.app
+			.deleteModel(id)
+			.then(() => {
+				setModels((prev) => prev.filter((m) => m.id !== id));
+			})
+			.catch(() => {
+				// Deletion failed — keep existing state
+			});
+	}, []);
+
+	const handleSetDefault = useCallback((id: string) => {
+		window.app
+			.setDefaultModel(id)
+			.then(() => {
+				setModels((prev) =>
+					prev.map((m) => ({
+						...m,
+						default: m.id === id,
+					}))
+				);
+			})
+			.catch(() => {
+				// Update failed — keep existing state
+			});
 	}, []);
 
 	return (
@@ -320,12 +385,23 @@ const ModelsPage: React.FC = () => {
 				<AppSeparator />
 
 				<div className="px-6 py-2 flex flex-col">
-					{models.length === 0 ? (
+					{loading ? (
+						<div className="flex items-center justify-center py-12">
+							<p className="text-xs text-muted-foreground">
+								{t('models.loading', 'Loading models…')}
+							</p>
+						</div>
+					) : models.length === 0 ? (
 						<ModelsEmptyState />
 					) : (
 						<div className="divide-y divide-border">
 							{models.map((m) => (
-								<ModelRow key={m.id} entry={m} onDelete={handleDelete} />
+								<ModelRow
+									key={m.id}
+									entry={m}
+									onDelete={handleDelete}
+									onSetDefault={handleSetDefault}
+								/>
 							))}
 						</div>
 					)}

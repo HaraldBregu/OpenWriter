@@ -3,49 +3,58 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import { PROVIDER_IDS } from '../../shared/model-constants';
+import type { ModelConfig } from '../../shared/model-defaults';
 
 export class StoreValidators {
-	private static readonly VALID_PROVIDERS: readonly string[] = PROVIDER_IDS;
 	private static readonly MAX_TOKEN_LENGTH = 500;
+	private static readonly MAX_FIELD_LENGTH = 200;
 	private static readonly DANGEROUS_CHARS = /[<>;"'`]/;
 
 	/**
-	 * Validates that a provider ID is one of the supported providers
-	 * @param providerId - The provider ID to validate
-	 * @throws Error if provider ID is invalid
+	 * Validates a model ID string.
+	 * @param id - The model ID to validate
+	 * @throws Error if the model ID is invalid
 	 */
-	static validateProviderId(providerId: string): void {
-		if (!this.VALID_PROVIDERS.includes(providerId)) {
-			throw new Error(
-				`Invalid provider ID: ${providerId}. Must be one of: ${this.VALID_PROVIDERS.join(', ')}`
-			);
+	static validateModelId(id: string): void {
+		if (typeof id !== 'string' || id.trim().length === 0) {
+			throw new Error('Model ID must be a non-empty string');
+		}
+		if (id.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Model ID exceeds maximum length');
 		}
 	}
 
 	/**
-	 * Validates an API token for security issues
-	 * @param token - The API token to validate
-	 * @throws Error if token is invalid or contains dangerous characters
+	 * Validates a ModelConfig payload (without id) for security and correctness.
+	 * @param model - The model config to validate
+	 * @throws Error if any field is invalid
 	 */
-	static validateApiToken(token: string): void {
-		if (typeof token !== 'string') {
-			throw new Error('API token must be a string');
+	static validateModelConfig(model: Omit<ModelConfig, 'id'>): void {
+		if (typeof model.provider !== 'string' || model.provider.trim().length === 0) {
+			throw new Error('Provider is required');
 		}
-		if (token.length > this.MAX_TOKEN_LENGTH) {
-			throw new Error(`API token exceeds maximum length of ${this.MAX_TOKEN_LENGTH} characters`);
+		if (model.provider.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Provider exceeds maximum length');
 		}
-		if (this.DANGEROUS_CHARS.test(token)) {
-			throw new Error('API token contains invalid characters');
+		if (typeof model.model !== 'string' || model.model.trim().length === 0) {
+			throw new Error('Model name is required');
 		}
-	}
-
-	/**
-	 * Get the list of valid provider IDs
-	 * @returns Array of valid provider IDs
-	 */
-	static getValidProviders(): string[] {
-		return [...this.VALID_PROVIDERS];
+		if (model.model.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Model name exceeds maximum length');
+		}
+		if (typeof model.apikey === 'string' && model.apikey.length > 0) {
+			if (model.apikey.length > this.MAX_TOKEN_LENGTH) {
+				throw new Error(`API key exceeds maximum length of ${this.MAX_TOKEN_LENGTH} characters`);
+			}
+			if (this.DANGEROUS_CHARS.test(model.apikey)) {
+				throw new Error('API key contains invalid characters');
+			}
+		}
+		if (typeof model.baseurl === 'string' && model.baseurl.length > 0) {
+			if (model.baseurl.length > this.MAX_FIELD_LENGTH) {
+				throw new Error('Base URL exceeds maximum length');
+			}
+		}
 	}
 }
 
