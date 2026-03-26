@@ -556,7 +556,7 @@ const ProvidersSettingsPage: React.FC = () => {
 	const handleDeleteProvider = useCallback(
 		async (provider: string) => {
 			const entries = models.filter((entry) => entry.provider === provider);
-			await Promise.all(entries.map((entry) => window.app.deleteModel(entry.id)));
+			await Promise.all(entries.map((entry) => window.app.deleteProvider(entry.id!)));
 			await loadModels();
 		},
 		[loadModels, models]

@@ -113,11 +113,11 @@ export interface AppApi {
 	/** Subscribe to writing context-menu action events. */
 	onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void;
 	// ---------------------------------------------------------------------------
-	// Model management
+	// Provider management
 	// ---------------------------------------------------------------------------
-	getModels: () => Promise<ProviderConfig[]>;
-	addModel: (model: ServiceProvider) => Promise<ProviderConfig>;
-	deleteModel: (id: string) => Promise<void>;
+	getProviders: () => Promise<ServiceProvider[]>;
+	addProvider: (provider: ServiceProvider) => Promise<ServiceProvider>;
+	deleteProvider: (id: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
