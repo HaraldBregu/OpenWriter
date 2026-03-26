@@ -59,9 +59,6 @@ const app: AppApi = {
 	deleteModel: (id: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.deleteModel, id);
 	},
-	setDefaultModel: (id: string): Promise<void> => {
-		return typedInvokeUnwrap(AppChannels.setDefaultModel, id);
-	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
