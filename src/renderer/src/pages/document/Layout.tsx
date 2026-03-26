@@ -7,7 +7,7 @@ import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import Header from './Header';
-import ConfigPanel from './ConfigPanel';
+import ResourcesPanel from './ResourcesPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
