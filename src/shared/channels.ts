@@ -170,7 +170,6 @@ export interface InvokeChannelMap {
 	[AppChannels.getModels]: { args: []; result: ModelConfig[] };
 	[AppChannels.addModel]: { args: [model: CreateModelInput]; result: ModelConfig };
 	[AppChannels.deleteModel]: { args: [id: string]; result: void };
-	[AppChannels.setDefaultModel]: { args: [id: string]; result: void };
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
