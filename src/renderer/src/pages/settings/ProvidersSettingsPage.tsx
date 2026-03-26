@@ -176,12 +176,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 };
 
 interface DefaultProvidersSectionProps {
-	models: Array<ServiceProvider & { id: string }>;
+	providers: Array<ServiceProvider & { id: string }>;
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 }
 
 const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
-	models,
+	providers,
 	onSaveProviderApiKey,
 }) => {
 	const { t } = useTranslation();
@@ -226,7 +226,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 		<section>
 			<div className="space-y-3">
 				{PROVIDER_IDS.map((provider) => {
-					const existing = models.find((m) => m.name === provider)?.apikey ?? '';
+					const existing = providers.find((m) => m.name === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
 					const displayValue = hasInputValue
 						? apiKeys[provider]
@@ -290,7 +290,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 };
 
 interface CustomProvidersSectionProps {
-	models: ServiceProvider[];
+	providers: Array<ServiceProvider & { id: string }>;
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
 	onDeleteProvider: (provider: string) => Promise<void>;
 	showRegistrationForm: boolean;
@@ -302,7 +302,7 @@ interface CustomProvidersSectionProps {
 }
 
 const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
-	models,
+	providers,
 	onSaveProviderApiKey,
 	onDeleteProvider,
 	showRegistrationForm,
@@ -316,14 +316,14 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 	const uid = useId();
 	const customProviders = useMemo(() => {
 		const unique = new Set<string>();
-		models.forEach((model) => {
+		providers.forEach((model) => {
 			const provider = model.name.trim();
 			if (provider.length > 0 && !isDefaultProvider(provider)) {
 				unique.add(provider);
 			}
 		});
 		return Array.from(unique).sort((a, b) => a.localeCompare(b));
-	}, [models]);
+	}, [providers]);
 	const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
 	const [visible, setVisible] = useState<Record<string, boolean>>({});
 	const [saving, setSaving] = useState<Record<string, boolean>>({});
@@ -412,7 +412,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 			) : (
 				<div className="space-y-3">
 					{customProviders.map((provider) => {
-						const existing = models.find((m) => m.name === provider)?.apikey ?? '';
+						const existing = providers.find((m) => m.name === provider)?.apikey ?? '';
 						const inputValue = apiKeys[provider] ?? '';
 						const hasInputValue = inputValue.trim().length > 0;
 						const displayValue = hasInputValue
@@ -496,13 +496,13 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 
 const ProvidersSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<Array<ServiceProvider & { id: string }>>([]);
+	const [providers, setProviders] = useState<Array<ServiceProvider & { id: string }>>([]);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
-	const loadModels = useCallback(() => {
+	const loadProviders = useCallback(() => {
 		return window.app.getProviders().then((loaded) => {
-			setModels(loaded);
+			setProviders(loaded);
 			setProviderSuggestions((prev) => {
 				const next = new Set(prev);
 				loaded.forEach((model) => {
@@ -517,23 +517,23 @@ const ProvidersSettingsPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		loadModels().catch(() => {
-			setModels([]);
+		loadProviders().catch(() => {
+			setProviders([]);
 		});
-	}, [loadModels]);
+	}, [loadProviders]);
 
 	const handleRegister = useCallback(
 		(entry: ServiceProvider) => {
 			window.app
 				.addProvider(entry)
 				.then(() => {
-					return loadModels();
+					return loadProviders();
 				})
 				.catch(() => {
 					// Addition failed — no local state update
 				});
 		},
-		[loadModels]
+		[loadProviders]
 	);
 
 	const handleSaveProviderApiKey = useCallback(
@@ -544,22 +544,22 @@ const ProvidersSettingsPage: React.FC = () => {
 				baseurl: '',
 			});
 
-			const staleEntries = models.filter(
+			const staleEntries = providers.filter(
 				(entry) => entry.name === provider && entry.id !== added.id
 			);
 			await Promise.all(staleEntries.map((entry) => window.app.deleteProvider(entry.id)));
-			await loadModels();
+			await loadProviders();
 		},
-		[loadModels, models]
+		[loadProviders, providers]
 	);
 
 	const handleDeleteProvider = useCallback(
 		async (provider: string) => {
-			const entries = models.filter((entry) => entry.name === provider);
+			const entries = providers.filter((entry) => entry.name === provider);
 			await Promise.all(entries.map((entry) => window.app.deleteProvider(entry.id)));
-			await loadModels();
+			await loadProviders();
 		},
-		[loadModels, models]
+		[loadProviders, providers]
 	);
 
 	const handleProviderAdded = useCallback((provider: string) => {
@@ -582,12 +582,15 @@ const ProvidersSettingsPage: React.FC = () => {
 			</p>
 
 			<div className="space-y-10">
-				<DefaultProvidersSection models={models} onSaveProviderApiKey={handleSaveProviderApiKey} />
+				<DefaultProvidersSection
+					providers={providers}
+					onSaveProviderApiKey={handleSaveProviderApiKey}
+				/>
 
 				<AppSeparator />
 
 				<CustomProvidersSection
-					models={models}
+					providers={providers}
 					onSaveProviderApiKey={handleSaveProviderApiKey}
 					onDeleteProvider={handleDeleteProvider}
 					showRegistrationForm={showRegistrationForm}

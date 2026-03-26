@@ -45,7 +45,10 @@ export function toProviderConfig(
 ): ServiceProvider & { id: string } {
 	const normalizedName = provider.name.trim();
 	return {
-		id: createProviderId({ name: normalizedName, apikey: provider.apikey, baseurl: provider.baseurl }, index),
+		id: createProviderId(
+			{ name: normalizedName, apikey: provider.apikey, baseurl: provider.baseurl },
+			index
+		),
 		name: normalizedName,
 		apikey: provider.apikey,
 		baseurl: provider.baseurl,

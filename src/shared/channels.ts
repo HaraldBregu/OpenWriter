@@ -168,7 +168,10 @@ export const AppChannels = {
 export interface InvokeChannelMap {
 	// ---- App / Provider management (IpcResult-wrapped) ----
 	[AppChannels.getProviders]: { args: []; result: Array<ServiceProvider & { id: string }> };
-	[AppChannels.addProvider]: { args: [provider: ServiceProvider]; result: ServiceProvider & { id: string } };
+	[AppChannels.addProvider]: {
+		args: [provider: ServiceProvider];
+		result: ServiceProvider & { id: string };
+	};
 	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };

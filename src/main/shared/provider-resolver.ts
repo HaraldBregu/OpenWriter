@@ -48,9 +48,7 @@ export class ProviderResolver {
 		const models = this.storeService.getProviders();
 
 		// Match by provider
-		let found = options?.providerId
-			? models.find((m) => m.name === options.providerId)
-			: undefined;
+		let found = options?.providerId ? models.find((m) => m.name === options.providerId) : undefined;
 
 		// Fall back to first available model
 		if (!found) {
