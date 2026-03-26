@@ -121,13 +121,6 @@ export class StoreService {
 		this.store.set('models', models);
 	}
 
-	setDefaultModel(id: string): void {
-		const models = this.store
-			.get('models')
-			.map((model, index) => ({ ...model, default: createModelId(model, index) === id }));
-		this.store.set('models', models);
-	}
-
 	// --- Workspace settings ---
 
 	getCurrentWorkspace(): string | null {
