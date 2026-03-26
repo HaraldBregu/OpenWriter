@@ -313,7 +313,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								align="start"
 								side="top"
 								sideOffset={8}
-								className="w-[290px] rounded-2xl p-2"
+								className="w-[var(--radix-popover-trigger-width)] rounded-2xl p-2"
 							>
 								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
 									{footerUserEmail}
