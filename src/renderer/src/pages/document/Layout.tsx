@@ -10,6 +10,7 @@ import Header from './Header';
 import ConfigPanel from './ConfigPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
+import EditorResizablePanel from './EditorResizablePanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
