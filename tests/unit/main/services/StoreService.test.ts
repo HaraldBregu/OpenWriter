@@ -70,7 +70,7 @@ describe('StoreService', () => {
 				baseurl: '',
 			};
 			const added = service.addProvider(input);
-			expect(added.id).toMatch(/^model-\d+-[a-z0-9]+$/);
+			expect(added.id).toMatch(/^model-[a-z0-9-]+-\d+-[a-z0-9]+$/);
 			expect(added.provider).toBe('openai');
 			expect(service.getProviders().some((p) => p.id === added.id)).toBe(true);
 		});
