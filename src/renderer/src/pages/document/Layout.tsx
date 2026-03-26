@@ -11,7 +11,7 @@ import EditorResizablePanel from './EditorResizablePanel';
 import SidebarResizablePanel from './SidebarResizablePanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch } from './hooks';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
+import { ResizablePanelGroup, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
 type TextCompleterTaskData = {
