@@ -496,7 +496,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 
 const ProvidersSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<ProviderConfig[]>([]);
+	const [models, setModels] = useState<ServiceProvider[]>([]);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
