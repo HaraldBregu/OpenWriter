@@ -18,9 +18,8 @@ import {
 	AppSelectItem,
 } from '../../components/app';
 
-type Provider = (typeof DEFAULT_MODELS)[number]['provider'];
-
-const PROVIDERS = Array.from(new Set(DEFAULT_MODELS.map((entry) => entry.provider))) as Provider[];
+const PROVIDERS = ['anthropic', 'openai', 'google', 'mistral'] as const;
+type Provider = (typeof PROVIDERS)[number];
 
 const PROVIDER_LABELS: Record<Provider, string> = {
 	anthropic: 'Anthropic',
