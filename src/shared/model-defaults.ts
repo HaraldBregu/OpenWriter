@@ -71,7 +71,7 @@ export function createModelId(
 	)}`;
 }
 
-export function toModelConfig(model: SeededModel, index: number): ModelConfig {
+export function toModelConfig(model: Omit<ModelConfig, 'id'>, index: number): ModelConfig {
 	return {
 		id: createModelId(model, index),
 		...model,
