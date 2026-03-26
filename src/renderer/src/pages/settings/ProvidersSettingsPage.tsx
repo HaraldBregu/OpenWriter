@@ -501,7 +501,7 @@ const ProvidersSettingsPage: React.FC = () => {
 	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
 	const loadModels = useCallback(() => {
-		return window.app.getModels().then((loaded) => {
+		return window.app.getProviders().then((loaded) => {
 			setModels(loaded);
 			setProviderSuggestions((prev) => {
 				const next = new Set(prev);

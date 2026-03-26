@@ -157,28 +157,28 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Model management handlers
+		// Provider management handlers
 		// -----------------------------------------------------------------------
 
 		ipcMain.handle(
-			AppChannels.getModels,
-			wrapSimpleHandler(() => store.getModels(), AppChannels.getModels)
+			AppChannels.getProviders,
+			wrapSimpleHandler(() => store.getProviders(), AppChannels.getProviders)
 		);
 
 		ipcMain.handle(
-			AppChannels.addModel,
-			wrapSimpleHandler((model: ServiceProvider) => {
-				StoreValidators.validateModelConfig(model);
-				return store.addModel(model);
-			}, AppChannels.addModel)
+			AppChannels.addProvider,
+			wrapSimpleHandler((provider: ServiceProvider) => {
+				StoreValidators.validateModelConfig(provider);
+				return store.addProvider(provider);
+			}, AppChannels.addProvider)
 		);
 
 		ipcMain.handle(
-			AppChannels.deleteModel,
+			AppChannels.deleteProvider,
 			wrapSimpleHandler((id: string) => {
 				StoreValidators.validateModelId(id);
-				return store.deleteModel(id);
-			}, AppChannels.deleteModel)
+				return store.deleteProvider(id);
+			}, AppChannels.deleteProvider)
 		);
 
 		logger.info('AppIpc', `Registered ${this.name} module`);
