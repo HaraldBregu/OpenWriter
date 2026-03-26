@@ -14,7 +14,7 @@ export interface WorkspaceInfo {
 }
 
 export interface StoreSchema {
-	models: Omit<ModelConfig, 'id'>[];
+	models: CreateModelInput[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
@@ -35,7 +35,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
-function normalizeModelInput(value: unknown): Omit<ModelConfig, 'id'> | null {
+function normalizeModelInput(value: unknown): CreateModelInput | null {
 	if (!isRecord(value)) {
 		return null;
 	}
@@ -67,12 +67,12 @@ function normalizeModelInput(value: unknown): Omit<ModelConfig, 'id'> | null {
 	};
 }
 
-function normalizeModels(value: unknown): Omit<ModelConfig, 'id'>[] {
+function normalizeModels(value: unknown): CreateModelInput[] {
 	if (!Array.isArray(value)) {
 		return [];
 	}
 
-	const normalized: Omit<ModelConfig, 'id'>[] = [];
+	const normalized: CreateModelInput[] = [];
 
 	value.forEach((entry) => {
 		const model = normalizeModelInput(entry);
@@ -85,7 +85,7 @@ function normalizeModels(value: unknown): Omit<ModelConfig, 'id'>[] {
 	return normalized;
 }
 
-function cloneModel(model: Omit<ModelConfig, 'id'>): Omit<ModelConfig, 'id'> {
+function cloneModel(model: CreateModelInput): CreateModelInput {
 	return { ...model };
 }
 
@@ -111,7 +111,7 @@ export class StoreService {
 
 	addModel(model: CreateModelInput): ModelConfig {
 		const models = this.store.get('models').map(cloneModel);
-		const newModel: Omit<ModelConfig, 'id'> = {
+		const newModel: CreateModelInput = {
 			provider: model.provider,
 			apikey: model.apikey,
 			baseurl: model.baseurl,
