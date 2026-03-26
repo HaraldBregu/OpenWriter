@@ -6,7 +6,6 @@ import {
 	toModelConfig,
 	type CreateModelInput,
 	type ModelConfig,
-	type SeededModel,
 } from '../../shared/model-defaults';
 
 export interface WorkspaceInfo {
