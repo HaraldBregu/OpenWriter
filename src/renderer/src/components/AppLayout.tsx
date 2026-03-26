@@ -41,7 +41,6 @@ import {
 	Bug,
 	Database,
 	Library,
-	FilePlus2,
 	Search,
 	Bot,
 	Globe,
