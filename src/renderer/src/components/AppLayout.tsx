@@ -44,6 +44,7 @@ import {
 	Share2,
 	FilePlus2,
 	Search,
+	Bot,
 } from 'lucide-react';
 
 interface AppLayoutProps {
