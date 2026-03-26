@@ -147,10 +147,11 @@ export const AppChannels = {
 	// Writing context menu (formerly ContextMenuChannels)
 	showWritingContextMenu: 'context-menu:writing',
 	writingContextMenuAction: 'context-menu:writing-action',
-	// Store / API key settings
-	getAllApiKeys: 'store-get-all-api-keys',
-	getApiKey: 'store-get-api-key',
-	setApiKey: 'store-set-api-key',
+	// Store / Model management
+	getModels: 'store-get-models',
+	addModel: 'store-add-model',
+	deleteModel: 'store-delete-model',
+	setDefaultModel: 'store-set-default-model',
 } as const;
 
 // ===========================================================================
