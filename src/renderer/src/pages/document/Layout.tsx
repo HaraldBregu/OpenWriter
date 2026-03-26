@@ -500,20 +500,11 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 				{activeSidebar && <ResizableHandle withHandle />}
 
-				<ResizablePanel
+				<SidebarResizablePanel
 					panelRef={sidebarPanelRef}
-					defaultSize="30%"
-					minSize="25%"
-					maxSize="40%"
-					collapsible
-					collapsedSize="0%"
-				>
-					<div className="h-full">
-						{activeSidebar === 'editor' && <EditorPanel />}
-						{activeSidebar === 'config' && <ConfigPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <AgenticPanel />}
-					</div>
-				</ResizablePanel>
+					activeSidebar={activeSidebar}
+					onOpenFolder={handleOpenFolder}
+				/>
 			</ResizablePanelGroup>
 		</div>
 	);
