@@ -13,7 +13,6 @@ import {
 	X,
 	Info,
 	Bot,
-	PanelRight,
 } from 'lucide-react';
 import {
 	AppButton,
@@ -128,17 +127,6 @@ const Header: React.FC<HeaderProps> = ({
 						onClick={() => toggleSidebar('agentic')}
 					>
 						<Bot className="h-4 w-4" aria-hidden="true" />
-					</AppButton>
-					<AppButton
-						type="button"
-						variant={activeSidebar === 'editor' ? 'secondary' : 'outline'}
-						size="icon"
-						title={t('titleBar.toggleEditorSidebar')}
-						aria-label={t('titleBar.toggleEditorSidebar')}
-						aria-expanded={activeSidebar === 'editor'}
-						onClick={() => toggleSidebar('editor')}
-					>
-						<PanelRight className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
 					<AppButton
 						type="button"
