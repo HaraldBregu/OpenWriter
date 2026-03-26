@@ -9,6 +9,7 @@ import {
 	type SeededModel,
 } from '../../shared/model-defaults';
 
+
 export interface WorkspaceInfo {
 	path: string;
 	lastOpened: number;
