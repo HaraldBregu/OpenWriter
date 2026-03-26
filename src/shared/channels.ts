@@ -43,6 +43,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from './types';
 import type { AgentConfig, WorkspaceAgentEntry } from './aiSettings';
+import type { ModelConfig } from './model-defaults';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
