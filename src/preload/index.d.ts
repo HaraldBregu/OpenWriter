@@ -119,7 +119,6 @@ export interface AppApi {
 	getModels: () => Promise<ModelConfig[]>;
 	addModel: (model: CreateModelInput) => Promise<ModelConfig>;
 	deleteModel: (id: string) => Promise<void>;
-	setDefaultModel: (id: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
