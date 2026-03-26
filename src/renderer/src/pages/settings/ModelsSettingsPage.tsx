@@ -57,11 +57,6 @@ const ModelsSettingsPage: React.FC = () => {
 							<AppBadge variant="secondary" className="shrink-0 text-xs">
 								{m.provider}
 							</AppBadge>
-							{m.default && (
-								<AppBadge variant="default" className="shrink-0 text-xs">
-									{t('settings.models.default', 'Default')}
-								</AppBadge>
-							)}
 							{m.apikey.length > 0 && (
 								<span className="font-mono text-xs text-muted-foreground shrink-0">
 									{maskApiKey(m.apikey)}

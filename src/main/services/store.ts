@@ -1,7 +1,6 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
 import {
-	DEFAULT_MODELS,
 	createModelId,
 	toModelConfig,
 	type CreateModelInput,

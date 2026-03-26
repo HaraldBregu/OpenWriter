@@ -39,15 +39,13 @@ Object.defineProperty(window, 'app', {
 		onWritingAction: jest.fn().mockReturnValue(jest.fn()),
 		// Model management
 		getModels: jest.fn().mockResolvedValue([]),
-		addModel: jest
-			.fn()
-			.mockResolvedValue({
-				id: 'test-id',
-				provider: 'openai',
-				model: 'gpt-4o',
-				apikey: '',
-				baseurl: '',
-				}),
+		addModel: jest.fn().mockResolvedValue({
+			id: 'test-id',
+			provider: 'openai',
+			model: 'gpt-4o',
+			apikey: '',
+			baseurl: '',
+		}),
 		deleteModel: jest.fn().mockResolvedValue(undefined),
 	},
 	writable: true,

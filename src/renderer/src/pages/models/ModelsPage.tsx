@@ -303,7 +303,6 @@ const ModelsPage: React.FC = () => {
 		[loadModels]
 	);
 
-
 	return (
 		<div className="flex flex-col h-full">
 			<div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
@@ -334,11 +333,7 @@ const ModelsPage: React.FC = () => {
 					) : (
 						<div className="divide-y divide-border">
 							{models.map((m) => (
-								<ModelRow
-									key={m.id}
-									entry={m}
-									onDelete={handleDelete}
-								/>
+								<ModelRow key={m.id} entry={m} onDelete={handleDelete} />
 							))}
 						</div>
 					)}

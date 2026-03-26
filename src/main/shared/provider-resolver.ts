@@ -27,7 +27,6 @@ export interface ResolvedProvider {
  * Resolution order (first match wins):
  *   1. Exact match by provider + model
  *   2. First model matching provider
- *   3. Default model (ModelConfig.default === true)
  *   4. First available model in the list
  *
  * Validates that an API key exists and is not the placeholder default.
@@ -52,11 +51,6 @@ export class ProviderResolver {
 		let found = options?.providerId
 			? models.find((m) => m.provider === options.providerId)
 			: undefined;
-
-		// Fall back to default model
-		if (!found) {
-			found = models.find((m) => m.default);
-		}
 
 		// Fall back to first available model
 		if (!found) {
