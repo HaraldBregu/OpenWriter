@@ -151,7 +151,6 @@ export const AppChannels = {
 	getModels: 'store-get-models',
 	addModel: 'store-add-model',
 	deleteModel: 'store-delete-model',
-	setDefaultModel: 'store-set-default-model',
 } as const;
 
 // ===========================================================================
