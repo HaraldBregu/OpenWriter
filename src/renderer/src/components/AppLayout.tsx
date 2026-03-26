@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../hooks/use-language';
 import { useWorkspaceListener } from '../hooks/use-workspace-listener';
@@ -16,8 +15,12 @@ import {
 	AppCollapsible,
 	AppCollapsibleTrigger,
 	AppCollapsiblePanel,
+	AppPopover,
+	AppPopoverContent,
+	AppPopoverTrigger,
 	AppSidebar,
 	AppSidebarContent,
+	AppSidebarFooter,
 	AppSidebarGroup,
 	AppSidebarGroupContent,
 	AppSidebarGroupLabel,
@@ -34,13 +37,22 @@ import logoIcon from '@resources/icons/icon.png';
 import {
 	Settings,
 	ChevronRight,
+	ChevronsUpDown,
 	Bug,
 	Database,
 	Library,
 	FilePlus2,
 	Search,
 	Bot,
+	Globe,
+	CircleHelp,
+	CircleArrowUp,
+	Download,
+	Gift,
+	Info,
+	LogOut,
 } from 'lucide-react';
+import { useCurrentUser } from '../contexts';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
@@ -58,6 +70,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const navigate = useNavigate();
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
+	const currentUser = useCurrentUser();
 
 	// Listen for workspace changes from main process and update Redux
 	useWorkspaceListener();
@@ -100,6 +113,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	});
 
 	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
+	const footerUserName = currentUser?.name?.trim() || 'User';
+	const footerUserEmail = currentUser?.email?.trim() || 'user@example.com';
+	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
 
 	return (
 		<>
@@ -262,18 +278,121 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						</AppCollapsible>
 					</AppSidebarContent>
 
-					{/* Footer — Settings link */}
-					<Link
-						to="/settings"
-						className={cn(
-							'flex items-center gap-2 border-t px-4 py-3 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-							location.pathname.startsWith('/settings') &&
-								'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
-						)}
-					>
-						<Settings className="h-3.5 w-3.5 shrink-0" />
-						<span className="truncate">{t('menu.settings')}</span>
-					</Link>
+					<AppSidebarFooter className="border-t p-2">
+						<AppPopover>
+							<AppPopoverTrigger asChild>
+								<button
+									type="button"
+									className="flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+									aria-label={t('appLayout.accountMenu', 'Open account menu')}
+								>
+									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground">
+										{footerUserInitial}
+									</div>
+									{open && (
+										<>
+											<div className="min-w-0 flex-1">
+												<p className="truncate text-sm font-medium text-sidebar-foreground">
+													{footerUserName}
+												</p>
+												<p className="truncate text-xs text-muted-foreground">
+													{t('appLayout.plan', 'Pro plan')}
+												</p>
+											</div>
+											<div className="flex items-center gap-1">
+												<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground">
+													<Download className="h-4 w-4" />
+												</div>
+												<ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+											</div>
+										</>
+									)}
+								</button>
+							</AppPopoverTrigger>
+							<AppPopoverContent
+								align="start"
+								side="top"
+								sideOffset={8}
+								className="w-[290px] rounded-2xl p-2"
+							>
+								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
+									{footerUserEmail}
+								</div>
+
+								<button
+									type="button"
+									onClick={() => navigate('/settings')}
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<Settings className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.settings')}</span>
+									<span className="text-xs text-muted-foreground">⇧⌘,</span>
+								</button>
+								<button
+									type="button"
+									onClick={() => navigate('/settings/general')}
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<Globe className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.language', 'Language')}</span>
+									<ChevronRight className="h-4 w-4 text-muted-foreground" />
+								</button>
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<CircleHelp className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.getHelp', 'Get help')}</span>
+								</button>
+
+								<div className="my-2 h-px bg-border" />
+
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<CircleArrowUp className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">
+										{t('menu.upgradePlan', 'Upgrade plan')}
+									</span>
+								</button>
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<Download className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">
+										{t('menu.appsAndExtensions', 'Get apps and extensions')}
+									</span>
+								</button>
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<Gift className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.giftClaude', 'Gift Claude')}</span>
+								</button>
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<Info className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.learnMore', 'Learn more')}</span>
+									<ChevronRight className="h-4 w-4 text-muted-foreground" />
+								</button>
+
+								<div className="my-2 h-px bg-border" />
+
+								<button
+									type="button"
+									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+								>
+									<LogOut className="h-4 w-4 text-muted-foreground" />
+									<span className="flex-1 text-left">{t('menu.logOut', 'Log out')}</span>
+								</button>
+							</AppPopoverContent>
+						</AppPopover>
+					</AppSidebarFooter>
 				</AppSidebar>
 
 				<AppSidebarInset className="flex flex-col flex-1 min-h-0 min-w-0">
