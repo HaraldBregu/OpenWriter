@@ -21,3 +21,13 @@ export {
 	TextWriterAgent,
 	ImageGeneratorAgent,
 } from './agents';
+
+// Indexing
+export type { DocumentExtractor, ExtractedContent } from './indexing';
+export { ExtractorRegistry } from './indexing';
+export { PlainTextExtractor } from './indexing';
+export { PdfExtractor } from './indexing';
+export { DocxExtractor } from './indexing';
+export { chunkText, type ChunkOptions } from './indexing';
+export { IndexingManifest, type ManifestEntry } from './indexing';
+export { JsonVectorStore, type VectorEntry } from './indexing';
