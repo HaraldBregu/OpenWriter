@@ -6,9 +6,9 @@ export type {
 	TaskStatus,
 	TaskOptions,
 	ActiveTask,
-} from './task_manager/task-descriptor';
+} from './task/task-descriptor';
 
-export type { ProgressReporter, StreamReporter, TaskHandler } from './task_manager/task-handler';
+export type { ProgressReporter, StreamReporter, TaskHandler } from './task/task-handler';
 
 // ---- Core types ----------------------------------------------------------
 // Note: Core types are co-located with their implementation files.
