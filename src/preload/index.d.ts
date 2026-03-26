@@ -48,7 +48,7 @@ import type {
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
 import type { AgentConfig, WorkspaceAgentEntry } from '../shared/aiSettings';
-import type { ModelConfig } from '../shared/model-defaults';
+import type { CreateModelInput, ModelConfig } from '../shared/model-defaults';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
@@ -89,6 +89,7 @@ export type {
 	WorkspaceAgentEntry,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	CreateModelInput,
 	ModelConfig,
 };
 
@@ -116,7 +117,7 @@ export interface AppApi {
 	// Model management
 	// ---------------------------------------------------------------------------
 	getModels: () => Promise<ModelConfig[]>;
-	addModel: (model: Omit<ModelConfig, 'id'>) => Promise<ModelConfig>;
+	addModel: (model: CreateModelInput) => Promise<ModelConfig>;
 	deleteModel: (id: string) => Promise<void>;
 	setDefaultModel: (id: string) => Promise<void>;
 }

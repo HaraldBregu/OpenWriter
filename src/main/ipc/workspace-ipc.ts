@@ -19,6 +19,7 @@ import type {
 	FsCreateFileParams,
 	FsCreateFolderParams,
 	FsRenameParams,
+	DocumentImageInfo,
 	SaveDocumentImageParams,
 } from '../../shared/types';
 
@@ -183,7 +184,7 @@ export class WorkspaceIpc implements IpcModule {
 
 				try {
 					const entries = await fsPromises.readdir(imagesDir, { withFileTypes: true });
-					const images = [];
+					const images: DocumentImageInfo[] = [];
 
 					for (const entry of entries) {
 						if (!entry.isFile()) continue;

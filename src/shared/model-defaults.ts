@@ -1,22 +1,27 @@
 // ---------------------------------------------------------------------------
-// Shared Model Configuration Types & Defaults
+// Shared model types & seeded defaults
 // ---------------------------------------------------------------------------
 // DO NOT import Electron, Node.js, React, or any browser APIs here.
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
-export interface ModelConfig {
-	id: string;
+export interface CreateModelInput {
 	provider: string;
-	model: string;
 	apikey: string;
 	baseurl: string;
+}
+
+export interface SeededModel extends CreateModelInput {
+	model: string;
 	default: boolean;
 }
 
-export const DEFAULT_MODELS: readonly ModelConfig[] = [
+export interface ModelConfig extends SeededModel {
+	id: string;
+}
+
+export const DEFAULT_MODELS: readonly SeededModel[] = [
 	{
-		id: 'preset-claude-opus',
 		provider: 'anthropic',
 		model: 'claude-opus-4-6',
 		apikey: '',
@@ -24,23 +29,6 @@ export const DEFAULT_MODELS: readonly ModelConfig[] = [
 		default: false,
 	},
 	{
-		id: 'preset-claude-sonnet',
-		provider: 'anthropic',
-		model: 'claude-sonnet-4-5-20250929',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{
-		id: 'preset-claude-haiku',
-		provider: 'anthropic',
-		model: 'claude-haiku-4-5-20251001',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{
-		id: 'preset-gpt-4o',
 		provider: 'openai',
 		model: 'gpt-4o',
 		apikey: '',
@@ -48,24 +36,6 @@ export const DEFAULT_MODELS: readonly ModelConfig[] = [
 		default: true,
 	},
 	{
-		id: 'preset-gpt-4o-mini',
-		provider: 'openai',
-		model: 'gpt-4o-mini',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{ id: 'preset-o1', provider: 'openai', model: 'o1', apikey: '', baseurl: '', default: false },
-	{
-		id: 'preset-gemini-flash',
-		provider: 'google',
-		model: 'gemini-2-0-flash',
-		apikey: '',
-		baseurl: '',
-		default: false,
-	},
-	{
-		id: 'preset-gemini-pro',
 		provider: 'google',
 		model: 'gemini-2-0-pro',
 		apikey: '',
@@ -73,7 +43,6 @@ export const DEFAULT_MODELS: readonly ModelConfig[] = [
 		default: false,
 	},
 	{
-		id: 'preset-mistral-large',
 		provider: 'mistral',
 		model: 'mistral-large-2',
 		apikey: '',
@@ -81,3 +50,38 @@ export const DEFAULT_MODELS: readonly ModelConfig[] = [
 		default: false,
 	},
 ] as const;
+
+function slugify(segment: string): string {
+	return segment
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
+function hashModelIdentity(value: string): string {
+	let hash = 2166136261;
+
+	for (let index = 0; index < value.length; index += 1) {
+		hash ^= value.charCodeAt(index);
+		hash = Math.imul(hash, 16777619);
+	}
+
+	return (hash >>> 0).toString(36);
+}
+
+export function createModelId(
+	model: Pick<SeededModel, 'provider' | 'model' | 'apikey' | 'baseurl'>,
+	index: number
+): string {
+	return `model-${slugify(model.provider)}-${slugify(model.model)}-${index}-${hashModelIdentity(
+		[model.provider, model.model, model.baseurl, model.apikey].join('\u0000')
+	)}`;
+}
+
+export function toModelConfig(model: SeededModel, index: number): ModelConfig {
+	return {
+		id: createModelId(model, index),
+		...model,
+	};
+}

@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppBadge } from '@/components/app';
+import type { ModelConfig } from '../../../../shared/model-defaults';
 import { SectionHeader } from './SettingsComponents';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface ModelEntry {
-	id: string;
-	provider: string;
-	model: string;
-	apikey: string;
-	baseurl: string;
-	default: boolean;
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -32,13 +20,13 @@ function maskApiKey(key: string): string {
 
 const ModelsSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<ModelEntry[]>([]);
+	const [models, setModels] = useState<ModelConfig[]>([]);
 
 	useEffect(() => {
 		window.app
 			.getModels()
 			.then((loaded) => {
-				setModels(loaded as ModelEntry[]);
+				setModels(loaded);
 			})
 			.catch(() => {
 				setModels([]);

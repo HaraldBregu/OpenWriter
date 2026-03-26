@@ -3,7 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { ModelConfig } from '../../shared/model-defaults';
+import type { CreateModelInput } from '../../shared/model-defaults';
 
 export class StoreValidators {
 	private static readonly MAX_TOKEN_LENGTH = 500;
@@ -25,22 +25,16 @@ export class StoreValidators {
 	}
 
 	/**
-	 * Validates a ModelConfig payload (without id) for security and correctness.
+	 * Validates a model payload for security and correctness.
 	 * @param model - The model config to validate
 	 * @throws Error if any field is invalid
 	 */
-	static validateModelConfig(model: Omit<ModelConfig, 'id'>): void {
+	static validateModelConfig(model: CreateModelInput): void {
 		if (typeof model.provider !== 'string' || model.provider.trim().length === 0) {
 			throw new Error('Provider is required');
 		}
 		if (model.provider.length > this.MAX_FIELD_LENGTH) {
 			throw new Error('Provider exceeds maximum length');
-		}
-		if (typeof model.model !== 'string' || model.model.trim().length === 0) {
-			throw new Error('Model name is required');
-		}
-		if (model.model.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Model name exceeds maximum length');
 		}
 		if (typeof model.apikey === 'string' && model.apikey.length > 0) {
 			if (model.apikey.length > this.MAX_TOKEN_LENGTH) {

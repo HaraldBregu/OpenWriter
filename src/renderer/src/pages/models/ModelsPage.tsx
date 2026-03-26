@@ -2,6 +2,11 @@ import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cpu, Eye, EyeOff, Star, Trash2 } from 'lucide-react';
 import {
+	DEFAULT_MODELS,
+	type CreateModelInput,
+	type ModelConfig,
+} from '../../../../shared/model-defaults';
+import {
 	AppButton,
 	AppInput,
 	AppLabel,
@@ -14,35 +19,25 @@ import {
 	AppSelectItem,
 } from '../../components/app';
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+type Provider = (typeof DEFAULT_MODELS)[number]['provider'];
 
-type Provider = 'OpenAI' | 'Anthropic' | 'Google' | 'Mistral' | 'Ollama' | 'Custom';
+const PROVIDERS = Array.from(new Set(DEFAULT_MODELS.map((entry) => entry.provider))) as Provider[];
 
-const PROVIDERS: Provider[] = ['OpenAI', 'Anthropic', 'Google', 'Mistral', 'Ollama', 'Custom'];
-
-const PROVIDERS_WITH_BASE_URL = new Set<Provider>(['Ollama', 'Custom']);
-
-interface RegisteredModel {
-	id: string;
-	provider: string;
-	model: string;
-	apikey: string;
-	baseurl: string;
-	default: boolean;
-}
+const PROVIDER_LABELS: Record<Provider, string> = {
+	anthropic: 'Anthropic',
+	openai: 'OpenAI',
+	google: 'Google',
+	mistral: 'Mistral',
+};
 
 interface FormState {
 	provider: Provider | '';
-	model: string;
 	apikey: string;
 	baseurl: string;
 }
 
 const EMPTY_FORM: FormState = {
 	provider: '',
-	model: '',
 	apikey: '',
 	baseurl: '',
 };
@@ -86,7 +81,7 @@ const ModelsEmptyState: React.FC = () => {
 // ---------------------------------------------------------------------------
 
 interface ModelRowProps {
-	entry: RegisteredModel;
+	entry: ModelConfig;
 	onDelete: (id: string) => void;
 	onSetDefault: (id: string) => void;
 }
@@ -157,7 +152,7 @@ const ModelRow: React.FC<ModelRowProps> = ({ entry, onDelete, onSetDefault }) =>
 // ---------------------------------------------------------------------------
 
 interface RegistrationFormProps {
-	onRegister: (entry: Omit<RegisteredModel, 'id'>) => void;
+	onRegister: (entry: CreateModelInput) => void;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
@@ -165,18 +160,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 	const uid = useId();
 	const [form, setForm] = useState<FormState>(EMPTY_FORM);
 	const [apiKeyVisible, setApiKeyVisible] = useState(false);
-
-	const showBaseUrl =
-		form.provider !== '' && PROVIDERS_WITH_BASE_URL.has(form.provider as Provider);
-
-	const isValid = form.provider !== '' && form.model.trim().length > 0;
+	const isValid = form.provider !== '';
 
 	const handleProviderChange = useCallback((value: string) => {
 		setForm((prev) => ({ ...prev, provider: value as Provider, baseurl: '' }));
-	}, []);
-
-	const handleModelChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		setForm((prev) => ({ ...prev, model: e.target.value }));
 	}, []);
 
 	const handleApiKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,10 +184,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 			if (!isValid) return;
 			onRegister({
 				provider: form.provider as Provider,
-				model: form.model.trim(),
 				apikey: form.apikey,
 				baseurl: form.baseurl.trim(),
-				default: false,
 			});
 			setForm(EMPTY_FORM);
 			setApiKeyVisible(false);
@@ -226,7 +211,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 						<AppSelectContent>
 							{PROVIDERS.map((p) => (
 								<AppSelectItem key={p} value={p} className="text-sm">
-									{p}
+									{PROVIDER_LABELS[p]}
 								</AppSelectItem>
 							))}
 						</AppSelectContent>
@@ -234,22 +219,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 				</div>
 
 				<div className="flex flex-col gap-1.5">
-					<AppLabel htmlFor={`${uid}-model`} className="text-xs font-medium">
-						{t('models.form.model', 'Model')}
-					</AppLabel>
-					<AppInput
-						id={`${uid}-model`}
-						type="text"
-						value={form.model}
-						onChange={handleModelChange}
-						placeholder={t('models.form.modelPlaceholder', 'e.g. gpt-4o')}
-						autoComplete="off"
-						spellCheck={false}
-						className="h-9 text-sm"
-					/>
-				</div>
-
-				<div className={`flex flex-col gap-1.5 ${showBaseUrl ? '' : 'col-span-2'}`}>
 					<AppLabel htmlFor={`${uid}-apikey`} className="text-xs font-medium">
 						{t('models.form.apiKey', 'API Key')}
 					</AppLabel>
@@ -277,23 +246,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 					</div>
 				</div>
 
-				{showBaseUrl && (
-					<div className="flex flex-col gap-1.5">
-						<AppLabel htmlFor={`${uid}-baseurl`} className="text-xs font-medium">
-							{t('models.form.baseUrl', 'Base URL')}
-						</AppLabel>
-						<AppInput
-							id={`${uid}-baseurl`}
-							type="url"
-							value={form.baseurl}
-							onChange={handleBaseUrlChange}
-							placeholder={t('models.form.baseUrlPlaceholder', 'http://localhost:11434')}
-							autoComplete="off"
-							spellCheck={false}
-							className="h-9 text-sm"
-						/>
-					</div>
-				)}
+				<div className="flex flex-col gap-1.5">
+					<AppLabel htmlFor={`${uid}-baseurl`} className="text-xs font-medium">
+						{t('models.form.baseUrl', 'Base URL')}
+					</AppLabel>
+					<AppInput
+						id={`${uid}-baseurl`}
+						type="url"
+						value={form.baseurl}
+						onChange={handleBaseUrlChange}
+						placeholder={t('models.form.baseUrlPlaceholder', 'https://api.openai.com/v1')}
+						autoComplete="off"
+						spellCheck={false}
+						className="h-9 text-sm"
+					/>
+				</div>
 			</div>
 
 			<div className="flex justify-end mt-4">
@@ -311,60 +278,58 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegister }) => {
 
 const ModelsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [models, setModels] = useState<RegisteredModel[]>([]);
+	const [models, setModels] = useState<ModelConfig[]>([]);
 	const [loading, setLoading] = useState(true);
 
+	const loadModels = useCallback(() => {
+		return window.app.getModels().then((loaded) => {
+			setModels(loaded);
+			return loaded;
+		});
+	}, []);
+
 	useEffect(() => {
-		window.app
-			.getModels()
-			.then((loaded) => {
-				setModels(loaded as RegisteredModel[]);
-			})
+		loadModels()
 			.catch(() => {
 				setModels([]);
 			})
 			.finally(() => {
 				setLoading(false);
 			});
-	}, []);
+	}, [loadModels]);
 
-	const handleRegister = useCallback((entry: Omit<RegisteredModel, 'id'>) => {
+	const handleRegister = useCallback((entry: CreateModelInput) => {
 		window.app
 			.addModel(entry)
-			.then((created) => {
-				setModels((prev) => [...prev, created as RegisteredModel]);
+			.then(() => {
+				return loadModels();
 			})
 			.catch(() => {
 				// Addition failed — no local state update
 			});
-	}, []);
+	}, [loadModels]);
 
 	const handleDelete = useCallback((id: string) => {
 		window.app
 			.deleteModel(id)
 			.then(() => {
-				setModels((prev) => prev.filter((m) => m.id !== id));
+				return loadModels();
 			})
 			.catch(() => {
 				// Deletion failed — keep existing state
 			});
-	}, []);
+	}, [loadModels]);
 
 	const handleSetDefault = useCallback((id: string) => {
 		window.app
 			.setDefaultModel(id)
 			.then(() => {
-				setModels((prev) =>
-					prev.map((m) => ({
-						...m,
-						default: m.id === id,
-					}))
-				);
+				return loadModels();
 			})
 			.catch(() => {
 				// Update failed — keep existing state
 			});
-	}, []);
+	}, [loadModels]);
 
 	return (
 		<div className="flex flex-col h-full">
