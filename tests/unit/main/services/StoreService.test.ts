@@ -1,6 +1,6 @@
 /**
  * Tests for StoreService.
- * Validates electron-store-based API key and workspace persistence.
+ * Validates electron-store-based model management and workspace persistence.
  */
 
 // In-memory store backing for the mock
@@ -38,6 +38,7 @@ jest.mock('electron-store', () => {
 });
 
 import { StoreService } from '../../../../src/main/services/store';
+import type { ModelConfig } from '../../../../src/shared/model-defaults';
 
 describe('StoreService', () => {
 	beforeEach(() => {
@@ -50,37 +51,101 @@ describe('StoreService', () => {
 			const service = new StoreService();
 			expect(service.getCurrentWorkspace()).toBeNull();
 			expect(service.getRecentWorkspaces()).toEqual([]);
-			expect(service.getAllApiKeys()).toEqual({});
+			// Default models are seeded from DEFAULT_MODELS
+			expect(Array.isArray(service.getModels())).toBe(true);
 		});
 	});
 
-	describe('API key settings', () => {
-		it('should return null for unknown provider', () => {
+	describe('model management', () => {
+		it('should return an array of models', () => {
 			const service = new StoreService();
-			expect(service.getApiKey('unknown')).toBeNull();
+			const models = service.getModels();
+			expect(Array.isArray(models)).toBe(true);
 		});
 
-		it('should set and get an API key', () => {
+		it('should add a new model and return it with a generated id', () => {
 			const service = new StoreService();
-			service.setApiKey('openai', 'sk-test-123');
-			expect(service.getApiKey('openai')).toBe('sk-test-123');
+			const input: Omit<ModelConfig, 'id'> = {
+				provider: 'openai',
+				model: 'gpt-4o',
+				apikey: 'sk-test',
+				baseurl: '',
+				default: false,
+			};
+			const added = service.addModel(input);
+			expect(added.id).toMatch(/^model-\d+-[a-z0-9]+$/);
+			expect(added.provider).toBe('openai');
+			expect(added.model).toBe('gpt-4o');
+			expect(service.getModels().some((m) => m.id === added.id)).toBe(true);
 		});
 
-		it('should overwrite existing API key', () => {
+		it('should clear existing defaults when adding a model marked as default', () => {
 			const service = new StoreService();
-			service.setApiKey('openai', 'sk-old');
-			service.setApiKey('openai', 'sk-new');
-			expect(service.getApiKey('openai')).toBe('sk-new');
+			// Add a first default model
+			const first = service.addModel({
+				provider: 'openai',
+				model: 'gpt-4o',
+				apikey: '',
+				baseurl: '',
+				default: true,
+			});
+			// Add a second default model
+			service.addModel({
+				provider: 'anthropic',
+				model: 'claude-opus-4-6',
+				apikey: '',
+				baseurl: '',
+				default: true,
+			});
+			const models = service.getModels();
+			const defaultModels = models.filter((m) => m.default);
+			// Only one should be default — the newly added one
+			expect(defaultModels).toHaveLength(1);
+			expect(defaultModels[0].provider).toBe('anthropic');
+			// The first model should no longer be default
+			const firstInStore = models.find((m) => m.id === first.id);
+			expect(firstInStore?.default).toBe(false);
 		});
 
-		it('should return all API keys', () => {
+		it('should delete a model by id', () => {
 			const service = new StoreService();
-			service.setApiKey('openai', 'sk-openai');
-			service.setApiKey('anthropic', 'sk-anthropic');
-			const all = service.getAllApiKeys();
-			expect(Object.keys(all)).toHaveLength(2);
-			expect(all.openai).toBe('sk-openai');
-			expect(all.anthropic).toBe('sk-anthropic');
+			const added = service.addModel({
+				provider: 'openai',
+				model: 'gpt-4o-mini',
+				apikey: '',
+				baseurl: '',
+				default: false,
+			});
+			service.deleteModel(added.id);
+			expect(service.getModels().some((m) => m.id === added.id)).toBe(false);
+		});
+
+		it('should not throw when deleting a non-existent model id', () => {
+			const service = new StoreService();
+			expect(() => service.deleteModel('nonexistent-id')).not.toThrow();
+		});
+
+		it('should set a model as default and clear others', () => {
+			const service = new StoreService();
+			const a = service.addModel({ provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: false });
+			const b = service.addModel({ provider: 'openai', model: 'gpt-4o-mini', apikey: '', baseurl: '', default: false });
+			service.setDefaultModel(a.id);
+			const models = service.getModels();
+			const modelA = models.find((m) => m.id === a.id);
+			const modelB = models.find((m) => m.id === b.id);
+			expect(modelA?.default).toBe(true);
+			expect(modelB?.default).toBe(false);
+		});
+
+		it('should return a copy from getModels (mutation does not affect store)', () => {
+			const service = new StoreService();
+			service.addModel({ provider: 'openai', model: 'gpt-4o', apikey: '', baseurl: '', default: false });
+			const models = service.getModels();
+			const originalLength = models.length;
+			// Mutate the returned array
+			models.push({ id: 'fake', provider: 'x', model: 'y', apikey: '', baseurl: '', default: false });
+			// Store should not be affected
+			expect(service.getModels()).toHaveLength(originalLength);
 		});
 	});
 
