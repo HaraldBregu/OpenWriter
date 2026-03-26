@@ -157,29 +157,36 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Store / API key handlers
+		// Model management handlers
 		// -----------------------------------------------------------------------
 
 		ipcMain.handle(
-			AppChannels.getAllApiKeys,
-			wrapSimpleHandler(() => store.getAllApiKeys(), AppChannels.getAllApiKeys)
+			AppChannels.getModels,
+			wrapSimpleHandler(() => store.getModels(), AppChannels.getModels)
 		);
 
 		ipcMain.handle(
-			AppChannels.getApiKey,
-			wrapSimpleHandler((providerId: string) => {
-				StoreValidators.validateProviderId(providerId);
-				return store.getApiKey(providerId);
-			}, AppChannels.getApiKey)
+			AppChannels.addModel,
+			wrapSimpleHandler((model: Omit<ModelConfig, 'id'>) => {
+				StoreValidators.validateModelConfig(model);
+				return store.addModel(model);
+			}, AppChannels.addModel)
 		);
 
 		ipcMain.handle(
-			AppChannels.setApiKey,
-			wrapSimpleHandler((providerId: string, apiKey: string) => {
-				StoreValidators.validateProviderId(providerId);
-				StoreValidators.validateApiToken(apiKey);
-				return store.setApiKey(providerId, apiKey);
-			}, AppChannels.setApiKey)
+			AppChannels.deleteModel,
+			wrapSimpleHandler((id: string) => {
+				StoreValidators.validateModelId(id);
+				return store.deleteModel(id);
+			}, AppChannels.deleteModel)
+		);
+
+		ipcMain.handle(
+			AppChannels.setDefaultModel,
+			wrapSimpleHandler((id: string) => {
+				StoreValidators.validateModelId(id);
+				return store.setDefaultModel(id);
+			}, AppChannels.setDefaultModel)
 		);
 
 		logger.info('AppIpc', `Registered ${this.name} module`);

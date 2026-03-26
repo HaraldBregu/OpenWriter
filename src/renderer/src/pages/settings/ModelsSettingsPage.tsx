@@ -49,9 +49,7 @@ const ModelsSettingsPage: React.FC = () => {
 		<div className="w-full max-w-2xl p-6">
 			<h1 className="text-lg font-normal mb-6">{t('settings.models.title')}</h1>
 
-			<SectionHeader
-				title={t('settings.models.registeredModels', 'Registered Models')}
-			/>
+			<SectionHeader title={t('settings.models.registeredModels', 'Registered Models')} />
 
 			<p className="text-sm text-muted-foreground mb-4">
 				{t(
