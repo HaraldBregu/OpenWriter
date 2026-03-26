@@ -63,7 +63,7 @@ function hashModelIdentity(value: string): string {
 }
 
 export function createModelId(
-	model: Pick<SeededModel, 'provider' | 'apikey' | 'baseurl'>,
+	model: Pick<CreateModelInput, 'provider' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
 	return `model-${slugify(model.provider)}-${index}-${hashModelIdentity(
