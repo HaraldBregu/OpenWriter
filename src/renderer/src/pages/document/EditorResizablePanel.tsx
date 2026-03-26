@@ -1,7 +1,6 @@
 import React from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
-import { ResizablePanel } from '@/components/ui/Resizable';
 
 // ------------------------------------------------------------------
 // Types
