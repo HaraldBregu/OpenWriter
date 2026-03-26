@@ -37,14 +37,10 @@ import {
 	Bug,
 	Database,
 	Library,
-	FileText,
-	Film,
-	ImageIcon,
-	Blocks,
-	Share2,
 	FilePlus2,
 	Search,
 	Bot,
+	Cpu,
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -197,24 +193,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
 									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<FileText className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.documents')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Film className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.media')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<ImageIcon className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.images')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
 											className="h-9 px-3"
@@ -227,18 +205,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Blocks className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.integrations')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Share2 className="h-3.5 w-3.5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.socialMedia')}</span>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
 											className="h-9 px-3"
@@ -247,6 +213,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<Link to="/agents">
 												<Bot className="h-3.5 w-3.5 shrink-0" />
 												<span className="flex-1 truncate">{t('appLayout.agents', 'Agents')}</span>
+											</Link>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton
+											asChild
+											className="h-9 px-3"
+											isActive={location.pathname === '/models'}
+										>
+											<Link to="/models">
+												<Cpu className="h-3.5 w-3.5 shrink-0" />
+												<span className="flex-1 truncate">{t('appLayout.models', 'Models')}</span>
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>

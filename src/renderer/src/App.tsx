@@ -191,6 +191,14 @@ const App: React.FC = () => {
 														</RouteWrapper>
 													}
 												/>
+												<Route
+													path="/agents"
+													element={
+														<RouteWrapper>
+															<AgentsPage />
+														</RouteWrapper>
+													}
+												/>
 											</Routes>
 										</Suspense>
 									</AppLayout>
