@@ -1,7 +1,6 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
 import {
-	createProviderId,
 	toProviderConfig,
 	type ServiceProvider,
 	type ProviderConfig,
@@ -39,7 +38,12 @@ function normalizeProviderInput(value: unknown): ServiceProvider | null {
 		return null;
 	}
 
-	const provider = typeof value.provider === 'string' ? value.provider.trim() : '';
+	const name =
+		typeof value.name === 'string'
+			? value.name.trim()
+			: typeof value.provider === 'string'
+				? value.provider.trim()
+				: '';
 	const apikey =
 		typeof value.apikey === 'string'
 			? value.apikey
@@ -52,11 +56,11 @@ function normalizeProviderInput(value: unknown): ServiceProvider | null {
 			: typeof value.baseUrl === 'string'
 				? value.baseUrl.trim()
 				: '';
-	if (provider.length === 0) {
+	if (name.length === 0) {
 		return null;
 	}
 
-	return { provider, apikey, baseurl };
+	return { name, apikey, baseurl };
 }
 
 function normalizeProviders(value: unknown): ServiceProvider[] {
@@ -104,7 +108,7 @@ export class StoreService {
 	addModel(provider: ServiceProvider): ProviderConfig {
 		const providers = this.store.get('providers').map(cloneProvider);
 		const newProvider: ServiceProvider = {
-			provider: provider.provider,
+			name: provider.name.trim(),
 			apikey: provider.apikey,
 			baseurl: provider.baseurl,
 		};
@@ -116,7 +120,7 @@ export class StoreService {
 	deleteModel(id: string): void {
 		const providers = this.store
 			.get('providers')
-			.filter((provider, index) => createProviderId(provider, index) !== id);
+			.filter((provider, index) => toProviderConfig(provider, index).id !== id);
 		this.store.set('providers', providers);
 	}
 

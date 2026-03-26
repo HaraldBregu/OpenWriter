@@ -6,13 +6,16 @@
 // ---------------------------------------------------------------------------
 
 export interface ServiceProvider {
-	provider: string;
+	name: string;
 	apikey: string;
 	baseurl: string;
 }
 
-export interface ProviderConfig extends ServiceProvider {
+export interface ProviderConfig {
 	id: string;
+	provider: string;
+	apikey: string;
+	baseurl: string;
 }
 
 // Backward-compatible aliases (deprecated).
@@ -40,7 +43,7 @@ function hashModelIdentity(value: string): string {
 }
 
 export function createProviderId(
-	provider: Pick<ServiceProvider, 'provider' | 'apikey' | 'baseurl'>,
+	provider: Pick<ProviderConfig, 'provider' | 'apikey' | 'baseurl'>,
 	index: number
 ): string {
 	return `model-${slugify(provider.provider)}-${index}-${hashModelIdentity(
@@ -49,9 +52,19 @@ export function createProviderId(
 }
 
 export function toProviderConfig(provider: ServiceProvider, index: number): ProviderConfig {
+	const normalizedProvider = provider.name.trim();
 	return {
-		id: createProviderId(provider, index),
-		...provider,
+		id: createProviderId(
+			{
+				provider: normalizedProvider,
+				apikey: provider.apikey,
+				baseurl: provider.baseurl,
+			},
+			index
+		),
+		provider: normalizedProvider,
+		apikey: provider.apikey,
+		baseurl: provider.baseurl,
 	};
 }
 

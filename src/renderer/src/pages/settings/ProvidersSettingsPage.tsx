@@ -78,7 +78,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 			if (!isValid) return;
 			const provider = form.provider.trim();
 			onRegister({
-				provider,
+				name: provider,
 				apikey: form.apikey,
 				baseurl: form.baseurl.trim(),
 			});
@@ -539,7 +539,7 @@ const ProvidersSettingsPage: React.FC = () => {
 	const handleSaveProviderApiKey = useCallback(
 		async (provider: string, apiKey: string) => {
 			const added = await window.app.addModel({
-				provider,
+				name: provider,
 				apikey: apiKey,
 				baseurl: '',
 			});

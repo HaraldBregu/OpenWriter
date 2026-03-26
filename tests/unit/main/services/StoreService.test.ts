@@ -65,7 +65,7 @@ describe('StoreService', () => {
 		it('should add a new model and return it with a generated id', () => {
 			const service = new StoreService();
 			const input: CreateModelInput = {
-				provider: 'openai',
+				name: 'openai',
 				apikey: 'sk-test',
 				baseurl: '',
 			};
@@ -77,7 +77,7 @@ describe('StoreService', () => {
 
 		it('should delete a model by id', () => {
 			const service = new StoreService();
-			const added = service.addModel({ provider: 'openai', apikey: '', baseurl: '' });
+			const added = service.addModel({ name: 'openai', apikey: '', baseurl: '' });
 			service.deleteModel(added.id);
 			expect(service.getModels().some((m) => m.id === added.id)).toBe(false);
 		});
@@ -89,7 +89,7 @@ describe('StoreService', () => {
 
 		it('should return a copy from getModels (mutation does not affect store)', () => {
 			const service = new StoreService();
-			service.addModel({ provider: 'openai', apikey: '', baseurl: '' });
+			service.addModel({ name: 'openai', apikey: '', baseurl: '' });
 			const models = service.getModels();
 			const originalLength = models.length;
 			// Mutate the returned array
