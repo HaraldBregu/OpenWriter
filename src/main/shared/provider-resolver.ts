@@ -58,7 +58,7 @@ export class ProviderResolver {
 		}
 
 		if (!found) {
-			throw new Error('No models configured. Please add a model in the Models page.');
+			throw new Error('No providers configured. Please add a provider in the Providers page.');
 		}
 
 		const apiKey = found.apikey || import.meta.env.VITE_OPENAI_API_KEY;
@@ -66,7 +66,7 @@ export class ProviderResolver {
 		if (!apiKey || apiKey === this.PLACEHOLDER_API_KEY) {
 			throw new Error(
 				`No API key configured for provider "${found.provider}". ` +
-					'Please configure the API key in the Models page.'
+					'Please configure the API key in the Providers page.'
 			);
 		}
 
