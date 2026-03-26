@@ -12,7 +12,6 @@ export interface CreateModelInput {
 }
 
 export interface ModelConfig extends CreateModelInput {
-	default?: boolean;
 	id: string;
 }
 
