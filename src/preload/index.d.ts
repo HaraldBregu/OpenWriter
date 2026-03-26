@@ -113,11 +113,12 @@ export interface AppApi {
 	/** Subscribe to writing context-menu action events. */
 	onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void;
 	// ---------------------------------------------------------------------------
-	// API key settings
+	// Model management
 	// ---------------------------------------------------------------------------
-	getAllApiKeys: () => Promise<Record<string, string>>;
-	getApiKey: (providerId: string) => Promise<string | null>;
-	setApiKey: (providerId: string, apiKey: string) => Promise<void>;
+	getModels: () => Promise<ModelConfig[]>;
+	addModel: (model: Omit<ModelConfig, 'id'>) => Promise<ModelConfig>;
+	deleteModel: (id: string) => Promise<void>;
+	setDefaultModel: (id: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
