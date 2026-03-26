@@ -26,14 +26,14 @@ import {
 	TextWriterAgent,
 	ImageGeneratorAgent,
 } from './ai';
-import { TaskHandlerRegistry } from './task_manager/task-handler-registry';
-import { TaskExecutor } from './task_manager/task-executor';
-import { TaskReactionRegistry } from './task_manager/task-reaction-registry';
-import { TaskReactionBus } from './task_manager/task-reaction-bus';
-import { IndexResourcesTaskHandler } from './task_manager/handlers/indexing-task-handler';
-import { AgentTaskHandler } from './task_manager/handlers/agent-task-handler';
+import { TaskHandlerRegistry } from './task/task-handler-registry';
+import { TaskExecutor } from './task/task-executor';
+import { TaskReactionRegistry } from './task/task-reaction-registry';
+import { TaskReactionBus } from './task/task-reaction-bus';
+import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
+import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
-import { TextEnhanceTaskReaction } from './task_manager/reactions';
+import { TextEnhanceTaskReaction } from './task/reactions';
 
 // Indexing infrastructure
 import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './ai/indexing';
