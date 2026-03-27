@@ -312,4 +312,5 @@ export interface EventChannelMap {
 	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
 	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
+	[ResearcherChannels.event]: { data: ResearcherEvent };
 }
