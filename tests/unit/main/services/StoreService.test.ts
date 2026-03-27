@@ -38,7 +38,7 @@ jest.mock('electron-store', () => {
 });
 
 import { StoreService } from '../../../../src/main/services/store';
-import type { ServiceProvider } from '../../../../src/shared/model-defaults';
+import type { ServiceProvider } from '../../../../src/shared/provider-defaults';
 
 describe('StoreService', () => {
 	beforeEach(() => {
