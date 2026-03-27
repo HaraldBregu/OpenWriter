@@ -4,8 +4,6 @@ import type { ProjectWorkspaceInfo } from '../../../../shared/types';
 import { AppInput } from '@/components/app/AppInput';
 import { useAppDispatch } from '@/store';
 import { loadProjectName } from '@/store/workspace/actions';
-import { AGENT_DEFINITIONS, AGENT_IDS } from '../../../../shared/ai-settings';
-import type { AgentId } from '../../../../shared/ai-settings';
 
 // ---------------------------------------------------------------------------
 // Helpers
