@@ -201,15 +201,6 @@ export interface WorkspaceApi {
 	/** Update the project description. */
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 	// -------------------------------------------------------------------------
-	// Agent settings (workspace-scoped)
-	// -------------------------------------------------------------------------
-	/** Get all agent configurations for this workspace. */
-	getAgentSettings: () => Promise<WorkspaceAgentEntry[]>;
-	/** Get the configuration for a single agent. */
-	getAgentConfig: (agentId: string) => Promise<AgentConfig | null>;
-	/** Set the configuration for a single agent. */
-	setAgentConfig: (agentId: string, config: AgentConfig) => Promise<void>;
-	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
