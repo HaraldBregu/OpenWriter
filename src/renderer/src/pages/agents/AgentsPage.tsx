@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { LucideIcon } from 'lucide-react';
-import { PenTool, Palette, Sparkles, BrainCircuit, Loader2 } from 'lucide-react';
+import { PenTool, Palette, BrainCircuit, Loader2, Bot } from 'lucide-react';
 import { aiProviders } from '@/config/ai-providers';
 import {
 	AppBadge,
@@ -88,7 +88,7 @@ function getSaveBadge(
 		case 'saved':
 			return {
 				label: t('agents.saved', 'Saved'),
-				className: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700',
+				className: 'border-primary/20 bg-primary/10 text-primary',
 			};
 		case 'error':
 			return {
@@ -158,18 +158,16 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 	);
 
 	return (
-		<AppCard className="overflow-hidden border-border/80 bg-card/95 shadow-sm">
-			<AppCardHeader className="space-y-5 border-b border-border/70 pb-5">
+		<AppCard>
+			<AppCardHeader className="space-y-4 border-b pb-4">
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 					<div className="flex items-start gap-4">
-						<div
-							className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/40 shadow-sm ${definition.accentClassName}`}
-						>
+						<div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${definition.accentClassName}`}>
 							<Icon className="h-5 w-5" aria-hidden="true" />
 						</div>
 						<div className="space-y-1">
-							<AppCardTitle className="text-lg font-semibold">{definition.title}</AppCardTitle>
-							<AppCardDescription className="max-w-xl text-sm leading-6">
+							<AppCardTitle className="text-base font-semibold">{definition.title}</AppCardTitle>
+							<AppCardDescription className="max-w-xl text-xs leading-5">
 								{definition.description}
 							</AppCardDescription>
 						</div>
@@ -177,7 +175,7 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 
 					<AppBadge
 						variant="outline"
-						className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium ${saveBadge.className}`}
+						className={`flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium ${saveBadge.className}`}
 					>
 						{saveBadge.icon}
 						{saveBadge.label}
@@ -189,7 +187,7 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 						<AppBadge
 							key={chip}
 							variant="secondary"
-							className="rounded-full bg-muted/70 px-3 py-1 text-[11px] font-medium text-muted-foreground"
+							className="px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground"
 						>
 							{chip}
 						</AppBadge>
@@ -197,14 +195,14 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 				</div>
 			</AppCardHeader>
 
-			<AppCardContent className="space-y-6 pt-6">
+			<AppCardContent className="space-y-5 pt-5">
 				<div className="grid gap-4 md:grid-cols-2">
 					<div className="space-y-2">
-						<AppLabel className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+						<AppLabel className="text-xs font-medium text-muted-foreground">
 							{t('agents.provider', 'Provider')}
 						</AppLabel>
 						<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
-							<AppSelectTrigger className="h-10 rounded-2xl border-border/80 bg-background/70 text-sm">
+							<AppSelectTrigger className="h-9 text-sm">
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
@@ -221,11 +219,11 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 					</div>
 
 					<div className="space-y-2">
-						<AppLabel className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+						<AppLabel className="text-xs font-medium text-muted-foreground">
 							{t('agents.model', 'Model')}
 						</AppLabel>
 						<AppSelect value={config.modelId} onValueChange={handleModelChange}>
-							<AppSelectTrigger className="h-10 rounded-2xl border-border/80 bg-background/70 text-sm">
+							<AppSelectTrigger className="h-9 text-sm">
 								<AppSelectValue />
 							</AppSelectTrigger>
 							<AppSelectContent>
@@ -252,7 +250,7 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 								{t('agents.creativityDescription', 'Lower values stay precise, higher values explore more.')}
 							</p>
 						</div>
-						<span className="rounded-full bg-muted px-3 py-1 text-xs font-medium tabular-nums text-muted-foreground">
+						<span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
 							{config.temperature.toFixed(1)}
 						</span>
 					</div>
@@ -267,7 +265,7 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 					/>
 				</div>
 
-				<div className="flex items-start justify-between gap-4 rounded-2xl border border-border/70 bg-muted/30 px-4 py-3">
+				<div className="flex items-start justify-between gap-4 rounded-md border bg-muted/30 px-4 py-3">
 					<div className="space-y-1">
 						<div className="flex items-center gap-2 text-sm font-medium text-foreground">
 							<BrainCircuit className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -307,7 +305,7 @@ const AgentsPage: React.FC = () => {
 					'Drafts clean prose, expands rough ideas, and keeps your writing flow moving.'
 				),
 				icon: PenTool,
-				accentClassName: 'bg-amber-500/15 text-amber-700',
+				accentClassName: 'bg-warning/12 text-warning',
 				chips: [
 					t('agents.writer.chip1', 'Drafting'),
 					t('agents.writer.chip2', 'Structure'),
@@ -323,7 +321,7 @@ const AgentsPage: React.FC = () => {
 					'Turns visual direction into image prompts, concepts, and polished creative outputs.'
 				),
 				icon: Palette,
-				accentClassName: 'bg-sky-500/15 text-sky-700',
+				accentClassName: 'bg-primary/12 text-primary',
 				chips: [
 					t('agents.designer.chip1', 'Image prompts'),
 					t('agents.designer.chip2', 'Moodboards'),
@@ -395,94 +393,80 @@ const AgentsPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="h-full overflow-y-auto">
-			<div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-6">
-				<div className="grid gap-4 xl:grid-cols-[minmax(0,1.65fr)_320px]">
-					<section className="rounded-[28px] border border-border/80 bg-[radial-gradient(circle_at_top_left,_hsl(var(--primary)/0.14),_transparent_45%),linear-gradient(135deg,_hsl(var(--card))_0%,_hsl(var(--card))_100%)] p-6 shadow-sm">
-						<div className="flex h-full flex-col justify-between gap-6">
-							<div className="space-y-3">
-								<div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-									<Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-									{t('agents.overline', 'Default crew')}
-								</div>
-								<div className="space-y-2">
-									<h1 className="text-3xl font-semibold tracking-tight text-foreground">
-										{t('agents.title', 'Agents')}
-									</h1>
-									<p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+		<div className="flex h-full flex-col">
+			<div className="border-b px-6 py-3 shrink-0">
+				<div className="flex items-center gap-2">
+					<Bot className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+					<h1 className="text-lg font-semibold text-foreground">{t('agents.title', 'Agents')}</h1>
+					<div className="ml-auto hidden items-center gap-2 sm:flex">
+						{defaultAgents.map((agent) => (
+							<AppBadge key={agent.id} variant="outline" className="text-xs text-muted-foreground">
+								{agent.title}
+							</AppBadge>
+						))}
+					</div>
+				</div>
+			</div>
+
+			<div className="flex-1 min-h-0 overflow-y-auto">
+				<div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-6">
+					<AppCard>
+						<AppCardContent className="p-6">
+							<div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+								<div>
+									<p className="text-sm text-muted-foreground">
 										{t(
 											'agents.subtitle',
 											'Configure the core agents that power writing and visual ideation across your workspace.'
 										)}
 									</p>
 								</div>
-							</div>
+								<div className="space-y-3">
+									<p className="text-sm font-medium text-foreground">
+										{t('agents.summaryTitle', 'Workspace defaults')}
+									</p>
+									<div className="space-y-2">
+										{defaultAgents.map((agent) => {
+											const status = getSaveBadge(t, saveStates[agent.agentId] ?? 'idle');
 
-							<div className="flex flex-wrap gap-2">
-								{defaultAgents.map((agent) => (
-									<AppBadge
-										key={agent.id}
-										variant="outline"
-										className="rounded-full border-border/80 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground"
-									>
-										{agent.title}
-									</AppBadge>
-								))}
-							</div>
-						</div>
-					</section>
-
-					<section className="rounded-[28px] border border-border/80 bg-card/95 p-6 shadow-sm">
-						<div className="space-y-4">
-							<div>
-								<p className="text-sm font-semibold text-foreground">
-									{t('agents.summaryTitle', 'Workspace defaults')}
-								</p>
-								<p className="mt-1 text-xs leading-5 text-muted-foreground">
-									{t(
-										'agents.summaryDescription',
-										'These presets decide which provider and model each built-in agent uses by default.'
-									)}
-								</p>
-							</div>
-
-							<div className="space-y-3">
-								{defaultAgents.map((agent) => (
-									<div
-										key={agent.id}
-										className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/25 px-4 py-3"
-									>
-										<div className="min-w-0">
-											<p className="text-sm font-medium text-foreground">{agent.title}</p>
-											<p className="truncate text-xs text-muted-foreground">
-												{agentStates[agent.agentId].providerId} / {agentStates[agent.agentId].modelId}
-											</p>
-										</div>
-										<AppBadge
-											variant="outline"
-											className={`rounded-full px-2.5 py-1 text-[11px] ${
-												getSaveBadge(t, saveStates[agent.agentId] ?? 'idle').className
-											}`}
-										>
-											{getSaveBadge(t, saveStates[agent.agentId] ?? 'idle').label}
-										</AppBadge>
+											return (
+												<div
+													key={agent.id}
+													className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2"
+												>
+													<div className="min-w-0">
+														<p className="text-sm font-medium text-foreground">{agent.title}</p>
+														<p className="truncate text-xs text-muted-foreground">
+															{agentStates[agent.agentId].providerId} /{' '}
+															{agentStates[agent.agentId].modelId}
+														</p>
+													</div>
+													<AppBadge
+														variant="outline"
+														className={`px-2 py-0.5 text-[11px] ${status.className}`}
+													>
+														{status.label}
+													</AppBadge>
+												</div>
+											);
+										})}
 									</div>
-								))}
+								</div>
 							</div>
-						</div>
-					</section>
-				</div>
+						</AppCardContent>
+					</AppCard>
 
-				<div className="grid gap-5 2xl:grid-cols-2">
-					{defaultAgents.map((agent) => (
-						<AgentConfigCard
-							key={agent.id}
-							definition={agent}
-							config={agentStates[agent.agentId]}
-							saveStatus={saveStates[agent.agentId] ?? 'idle'}
-							onConfigChange={handleConfigChange}
-						/>
-					))}
+					<div className="grid gap-4 xl:grid-cols-2">
+						{defaultAgents.map((agent) => (
+							<AgentConfigCard
+								key={agent.id}
+								definition={agent}
+								config={agentStates[agent.agentId]}
+								saveStatus={saveStates[agent.agentId] ?? 'idle'}
+								onConfigChange={handleConfigChange}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>
