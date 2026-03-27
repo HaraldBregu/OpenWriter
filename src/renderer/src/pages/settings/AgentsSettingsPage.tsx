@@ -71,7 +71,7 @@ interface AgentConfigCardProps {
 const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 	({ agentId, config, onConfigChange }) => {
 		const { t } = useTranslation();
-		const definition = AGENT_DEFINITIONS[agentId];
+		const definition = DEFAULT_AGENTS.find((a) => a.id === agentId) ?? { name: '', description: '' };
 
 		const handleProviderChange = useCallback(
 			(value: string) => {
