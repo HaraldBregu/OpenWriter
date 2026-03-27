@@ -19,9 +19,11 @@ const DEFAULTS: StoreSchema = {
 	recentWorkspaces: [],
 };
 
-type RawStore = {
-	get: (key: string) => unknown;
-	set: (key: string, value: unknown) => void;
+type SettingsStore = {
+	get<TKey extends keyof StoreSchema>(key: TKey): StoreSchema[TKey];
+	get(key: string): unknown;
+	set<TKey extends keyof StoreSchema>(key: TKey, value: StoreSchema[TKey]): void;
+	set(key: string, value: unknown): void;
 	delete: (key: string) => void;
 };
 
@@ -82,14 +84,14 @@ function cloneProvider(provider: ServiceProvider): ServiceProvider {
 }
 
 export class StoreService {
-	private store: Store<StoreSchema>;
+	private store: SettingsStore;
 
 	constructor() {
 		this.store = new Store<StoreSchema>({
 			name: 'settings',
 			defaults: DEFAULTS,
 			accessPropertiesByDotNotation: false,
-		});
+		}) as unknown as SettingsStore;
 
 		this.migrateLegacyProviderSettings();
 		this.normalizeStoredProviders();
@@ -155,8 +157,8 @@ export class StoreService {
 		this.store.set('recentWorkspaces', filtered);
 	}
 
-	private get rawStore(): RawStore {
-		return this.store as unknown as RawStore;
+	private get rawStore(): SettingsStore {
+		return this.store;
 	}
 
 	private migrateLegacyProviderSettings(): void {
