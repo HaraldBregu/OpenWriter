@@ -18,7 +18,7 @@ const buttonVariants = cva(
 				'editor-block-actions':
 					'text-muted-foreground/50 transition-all duration-100 hover:bg-muted hover:text-muted-foreground active:scale-90',
 				'prompt-submit':
-					'bg-primary text-primary-foreground shadow-[0_10px_24px_hsl(var(--primary)/0.22)] hover:bg-primary/90',
+					'bg-primary text-primary-foreground shadow-[0_10px_24px_hsl(var(--foreground)/0.18)] hover:bg-primary/90',
 			},
 			size: {
 				default: 'h-10 rounded-full px-4 py-2 [&_svg]:size-4',

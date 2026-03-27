@@ -8,7 +8,6 @@ import {
 	AppBadge,
 	AppCard,
 	AppCardContent,
-	AppCardDescription,
 	AppCardHeader,
 	AppCardTitle,
 	AppLabel,
@@ -31,10 +30,8 @@ interface DefaultAgentCardDefinition {
 	id: 'writer' | 'designer';
 	agentId: AgentId;
 	title: string;
-	description: string;
 	icon: LucideIcon;
 	accentClassName: string;
-	chips: string[];
 }
 
 interface AgentCardProps {
@@ -135,11 +132,8 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 						<div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${definition.accentClassName}`}>
 							<Icon className="h-5 w-5" aria-hidden="true" />
 						</div>
-						<div className="space-y-1">
+						<div>
 							<AppCardTitle className="text-base font-semibold">{definition.title}</AppCardTitle>
-							<AppCardDescription className="max-w-xl text-xs leading-5">
-								{definition.description}
-							</AppCardDescription>
 						</div>
 					</div>
 
@@ -150,18 +144,6 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 						{saveBadge.icon}
 						{saveBadge.label}
 					</AppBadge>
-				</div>
-
-				<div className="flex flex-wrap gap-2">
-					{definition.chips.map((chip) => (
-						<AppBadge
-							key={chip}
-							variant="secondary"
-							className="px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground"
-						>
-							{chip}
-						</AppBadge>
-					))}
 				</div>
 			</AppCardHeader>
 
@@ -202,33 +184,15 @@ const AgentsPage: React.FC = () => {
 				id: 'writer',
 				agentId: 'text-writer',
 				title: t('agents.writer.title', 'Writer'),
-				description: t(
-					'agents.writer.description',
-					'Drafts clean prose, expands rough ideas, and keeps your writing flow moving.'
-				),
 				icon: PenTool,
 				accentClassName: 'bg-warning/12 text-warning',
-				chips: [
-					t('agents.writer.chip1', 'Drafting'),
-					t('agents.writer.chip2', 'Structure'),
-					t('agents.writer.chip3', 'Rewrites'),
-				],
 			},
 			{
 				id: 'designer',
 				agentId: 'image-generator',
 				title: t('agents.designer.title', 'Designer'),
-				description: t(
-					'agents.designer.description',
-					'Turns visual direction into image prompts, concepts, and polished creative outputs.'
-				),
 				icon: Palette,
 				accentClassName: 'bg-primary/12 text-primary',
-				chips: [
-					t('agents.designer.chip1', 'Image prompts'),
-					t('agents.designer.chip2', 'Moodboards'),
-					t('agents.designer.chip3', 'Visual concepts'),
-				],
 			},
 		],
 		[t]
@@ -300,63 +264,17 @@ const AgentsPage: React.FC = () => {
 				<div className="flex items-center gap-2">
 					<Bot className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
 					<h1 className="text-lg font-semibold text-foreground">{t('agents.title', 'Agents')}</h1>
-					<div className="ml-auto hidden items-center gap-2 sm:flex">
-						{defaultAgents.map((agent) => (
-							<AppBadge key={agent.id} variant="outline" className="text-xs text-muted-foreground">
-								{agent.title}
-							</AppBadge>
-						))}
-					</div>
 				</div>
 			</div>
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				<div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-6">
-					<AppCard>
-						<AppCardContent className="p-6">
-							<div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-								<div>
-									<p className="text-sm text-muted-foreground">
-										{t(
-											'agents.subtitle',
-											'Configure the core agents that power writing and visual ideation across your workspace.'
-										)}
-									</p>
-								</div>
-								<div className="space-y-3">
-									<p className="text-sm font-medium text-foreground">
-										{t('agents.summaryTitle', 'Workspace defaults')}
-									</p>
-									<div className="space-y-2">
-										{defaultAgents.map((agent) => {
-											const status = getSaveBadge(t, saveStates[agent.agentId] ?? 'idle');
-
-											return (
-												<div
-													key={agent.id}
-													className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2"
-												>
-													<div className="min-w-0">
-														<p className="text-sm font-medium text-foreground">{agent.title}</p>
-														<p className="truncate text-xs text-muted-foreground">
-															{agentStates[agent.agentId].providerId} /{' '}
-															{agentStates[agent.agentId].modelId}
-														</p>
-													</div>
-													<AppBadge
-														variant="outline"
-														className={`px-2 py-0.5 text-[11px] ${status.className}`}
-													>
-														{status.label}
-													</AppBadge>
-												</div>
-											);
-										})}
-									</div>
-								</div>
-							</div>
-						</AppCardContent>
-					</AppCard>
+					<p className="text-sm text-muted-foreground">
+						{t(
+							'agents.subtitle',
+							'Select the provider used by each default agent in your workspace.'
+						)}
+					</p>
 
 					<div className="grid gap-4 xl:grid-cols-2">
 						{defaultAgents.map((agent) => (

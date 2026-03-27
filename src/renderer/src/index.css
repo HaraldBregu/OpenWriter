@@ -6,77 +6,77 @@
 @layer base {
 	:root {
 		color-scheme: light;
-		--background: 210 32% 98%;
-		--foreground: 222 30% 14%;
+		--background: 0 0% 97%;
+		--foreground: 0 0% 8%;
 		--card: 0 0% 100%;
-		--card-foreground: 222 30% 14%;
+		--card-foreground: 0 0% 8%;
 		--popover: 0 0% 100%;
-		--popover-foreground: 222 30% 14%;
-		--primary: 214 84% 46%;
-		--primary-foreground: 0 0% 100%;
-		--secondary: 210 28% 94%;
-		--secondary-foreground: 222 28% 18%;
-		--muted: 214 24% 92%;
-		--muted-foreground: 218 16% 42%;
-		--accent: 210 70% 94%;
-		--accent-foreground: 222 28% 18%;
+		--popover-foreground: 0 0% 8%;
+		--primary: 0 0% 9%;
+		--primary-foreground: 0 0% 98%;
+		--secondary: 0 0% 93%;
+		--secondary-foreground: 0 0% 10%;
+		--muted: 0 0% 95%;
+		--muted-foreground: 0 0% 38%;
+		--accent: 0 0% 92%;
+		--accent-foreground: 0 0% 10%;
 		--destructive: 0 74% 54%;
 		--destructive-foreground: 0 0% 98%;
-		--border: 214 24% 86%;
-		--input: 214 24% 86%;
-		--ring: 214 84% 52%;
+		--border: 0 0% 87%;
+		--input: 0 0% 87%;
+		--ring: 0 0% 18%;
 		--radius: 0.5rem;
 		--success: 148 64% 40%;
 		--success-foreground: 0 0% 98%;
 		--warning: 34 92% 44%;
 		--warning-foreground: 25 95% 12%;
-		--info: 214 84% 52%;
+		--info: 215 70% 48%;
 		--info-foreground: 0 0% 98%;
-		--sidebar-background: 210 30% 96%;
-		--sidebar-foreground: 222 26% 20%;
-		--sidebar-primary: 214 84% 46%;
-		--sidebar-primary-foreground: 0 0% 100%;
-		--sidebar-accent: 210 56% 92%;
-		--sidebar-accent-foreground: 222 28% 18%;
-		--sidebar-border: 214 22% 88%;
-		--sidebar-ring: 214 84% 52%;
+		--sidebar-background: 0 0% 95%;
+		--sidebar-foreground: 0 0% 14%;
+		--sidebar-primary: 0 0% 9%;
+		--sidebar-primary-foreground: 0 0% 98%;
+		--sidebar-accent: 0 0% 91%;
+		--sidebar-accent-foreground: 0 0% 10%;
+		--sidebar-border: 0 0% 86%;
+		--sidebar-ring: 0 0% 18%;
 	}
 
 	.dark {
 		color-scheme: dark;
-		--background: 222 28% 11%;
-		--foreground: 210 20% 95%;
-		--card: 222 24% 15%;
-		--card-foreground: 210 20% 95%;
-		--popover: 222 24% 15%;
-		--popover-foreground: 210 20% 95%;
-		--primary: 211 92% 64%;
-		--primary-foreground: 222 42% 10%;
-		--secondary: 222 18% 19%;
-		--secondary-foreground: 210 20% 95%;
-		--muted: 223 17% 18%;
-		--muted-foreground: 216 14% 70%;
-		--accent: 217 28% 21%;
-		--accent-foreground: 210 20% 95%;
+		--background: 0 0% 6%;
+		--foreground: 0 0% 94%;
+		--card: 0 0% 9%;
+		--card-foreground: 0 0% 94%;
+		--popover: 0 0% 9%;
+		--popover-foreground: 0 0% 94%;
+		--primary: 0 0% 95%;
+		--primary-foreground: 0 0% 8%;
+		--secondary: 0 0% 13%;
+		--secondary-foreground: 0 0% 94%;
+		--muted: 0 0% 14%;
+		--muted-foreground: 0 0% 65%;
+		--accent: 0 0% 17%;
+		--accent-foreground: 0 0% 94%;
 		--destructive: 0 70% 57%;
 		--destructive-foreground: 0 0% 98%;
-		--border: 218 17% 24%;
-		--input: 218 17% 24%;
-		--ring: 211 92% 70%;
+		--border: 0 0% 19%;
+		--input: 0 0% 19%;
+		--ring: 0 0% 72%;
 		--success: 148 59% 55%;
 		--success-foreground: 150 30% 10%;
 		--warning: 38 92% 58%;
 		--warning-foreground: 32 88% 10%;
-		--info: 211 92% 64%;
-		--info-foreground: 222 42% 10%;
-		--sidebar-background: 222 30% 13%;
-		--sidebar-foreground: 210 18% 92%;
-		--sidebar-primary: 211 92% 64%;
-		--sidebar-primary-foreground: 222 42% 10%;
-		--sidebar-accent: 217 24% 20%;
-		--sidebar-accent-foreground: 210 18% 95%;
-		--sidebar-border: 218 16% 22%;
-		--sidebar-ring: 211 92% 70%;
+		--info: 215 78% 66%;
+		--info-foreground: 215 40% 10%;
+		--sidebar-background: 0 0% 7%;
+		--sidebar-foreground: 0 0% 91%;
+		--sidebar-primary: 0 0% 95%;
+		--sidebar-primary-foreground: 0 0% 8%;
+		--sidebar-accent: 0 0% 14%;
+		--sidebar-accent-foreground: 0 0% 94%;
+		--sidebar-border: 0 0% 16%;
+		--sidebar-ring: 0 0% 72%;
 	}
 }
 
@@ -108,7 +108,7 @@
 		background-color: hsl(var(--background));
 		color: hsl(var(--foreground));
 		background-image:
-			radial-gradient(circle at top, hsl(var(--primary) / 0.08), transparent 34%),
+			radial-gradient(circle at top, hsl(var(--foreground) / 0.05), transparent 34%),
 			linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
 	}
 

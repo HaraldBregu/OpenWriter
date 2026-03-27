@@ -73,7 +73,7 @@ export const TitleBar = React.memo(function TitleBar({
 
 	return (
 		<div
-			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-background/90 backdrop-blur-md ${className}`}
+			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-card/95 backdrop-blur-md ${className}`}
 			style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
 		>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}

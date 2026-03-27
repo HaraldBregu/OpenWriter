@@ -14,13 +14,13 @@ const categoryDefs = [
 		icon: PenLine,
 		labelKey: 'home.writing',
 		descriptionKey: 'home.writingDescription',
-		accent: 'bg-primary/12 text-primary',
+		accent: 'bg-foreground/8 text-foreground',
 	},
 	{
 		icon: Layers,
 		labelKey: 'home.skills',
 		descriptionKey: 'home.skillsDescription',
-		accent: 'bg-warning/12 text-warning',
+		accent: 'bg-secondary text-foreground',
 	},
 ];
 
@@ -52,7 +52,7 @@ const CategoryCard = React.memo(function CategoryCard({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-primary/20 hover:bg-card/95 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+			className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-foreground/15 hover:bg-card/95 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			<div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
 				<Icon className="h-4 w-4" />
@@ -61,7 +61,7 @@ const CategoryCard = React.memo(function CategoryCard({
 				<p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
 				<p className="text-xs text-muted-foreground mt-0.5">{t(descriptionKey)}</p>
 			</div>
-			<ArrowRight className="mt-auto h-3.5 w-3.5 self-end text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+			<ArrowRight className="mt-auto h-3.5 w-3.5 self-end text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
 		</button>
 	);
 });
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
 						<button
 							type="button"
 							onClick={() => navigate('/integrations')}
-							className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all hover:border-primary/20 hover:shadow-sm"
+							className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all hover:border-foreground/15 hover:shadow-sm"
 						>
 							<div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
 								<Puzzle className="h-4 w-4 text-muted-foreground" />
@@ -130,7 +130,7 @@ const HomePage: React.FC = () => {
 									{t('home.integrationsDescription')}
 								</p>
 							</div>
-							<ArrowRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+							<ArrowRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
 						</button>
 					</div>
 				</section>
