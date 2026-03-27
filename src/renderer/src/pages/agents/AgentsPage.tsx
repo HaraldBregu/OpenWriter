@@ -54,15 +54,9 @@ function normalizeAgentConfig(config: AgentConfig): AgentConfig {
 		return { ...DEFAULT_AGENT_CONFIG };
 	}
 
-	const modelExists = provider.models.some((model) => model.id === config.modelId);
-	const modelId =
-		(modelExists ? config.modelId : provider.models[0]?.id) ?? DEFAULT_AGENT_CONFIG.modelId;
-
 	return {
+		name: config.name,
 		providerId: provider.id,
-		modelId,
-		temperature: config.temperature,
-		reasoning: config.reasoning,
 	};
 }
 
