@@ -42,7 +42,6 @@ import type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 } from './types';
-import type { AgentConfig, WorkspaceAgentEntry } from './ai-settings';
 import type { ServiceProvider } from './model-defaults';
 
 // ===========================================================================
