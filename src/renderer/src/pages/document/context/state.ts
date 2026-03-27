@@ -24,9 +24,6 @@ export interface DocumentState {
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
 	readonly agenticSidebarOpen: boolean;
-	readonly chatMessages: DocumentChatMessage[];
-	readonly activeChatTaskId: string | null;
-	readonly activeChatMessageId: string | null;
 }
 
 export const INITIAL_DOCUMENT_STATE: DocumentState = {
@@ -39,7 +36,4 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	isTrashing: false,
 	sidebarOpen: true,
 	agenticSidebarOpen: false,
-	chatMessages: [],
-	activeChatTaskId: null,
-	activeChatMessageId: null,
 };
