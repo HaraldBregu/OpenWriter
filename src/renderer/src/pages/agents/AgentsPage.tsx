@@ -145,11 +145,11 @@ const AgentsPage: React.FC = () => {
 
 	const agentRows = useMemo<AgentTableRowDefinition[]>(
 		() =>
-			AGENT_IDS.map((agentId) => {
+			DEFAULT_AGENTS.map(({ id: agentId, name }) => {
 				const { icon, accentClassName } = getAgentIcon(agentId);
 				return {
 					agentId,
-					title: AGENT_DEFINITIONS[agentId].name,
+					title: name,
 					icon,
 					accentClassName,
 				};
