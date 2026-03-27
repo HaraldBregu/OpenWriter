@@ -41,7 +41,7 @@ import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } fr
 
 // IPC modules
 import type { IpcModule } from './ipc';
-import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
+import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc, ResearcherIpc } from './ipc';
 
 export interface BootstrapResult {
 	container: ServiceContainer;
