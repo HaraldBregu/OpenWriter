@@ -11,8 +11,8 @@ import type { Workspace } from '../workspace';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
-import type { AgentConfig } from '../../shared/aiSettings';
-import { AGENT_IDS } from '../../shared/aiSettings';
+import type { AgentConfig } from '../../shared/ai-settings';
+import { AGENT_IDS } from '../../shared/ai-settings';
 import type {
 	FsReadFileParams,
 	FsWriteFileParams,
