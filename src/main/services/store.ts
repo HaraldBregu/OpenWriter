@@ -103,6 +103,15 @@ export class StoreService {
 		return this.store.get('providers').map((provider, index) => toProviderConfig(provider, index));
 	}
 
+	getProviderByName(name: string): (ServiceProvider & { id: string }) | undefined {
+		const normalizedName = name.trim();
+		return this.getProviders().find((provider) => provider.name === normalizedName);
+	}
+
+	getFirstProvider(): (ServiceProvider & { id: string }) | undefined {
+		return this.getProviders()[0];
+	}
+
 	addProvider(provider: ServiceProvider): ServiceProvider & { id: string } {
 		const providers = this.store.get('providers').map(cloneProvider);
 		const newProvider: ServiceProvider = {

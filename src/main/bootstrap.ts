@@ -95,6 +95,7 @@ export function bootstrapServices(): BootstrapResult {
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
 	const providerResolver = new ProviderResolver(storeService);
+	container.register('providerResolver', providerResolver);
 	container.register('researcherService', new ResearcherService(providerResolver, logger));
 	for (const def of agentRegistry.list()) {
 		taskHandlerRegistry.register(
