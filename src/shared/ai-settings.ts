@@ -23,5 +23,9 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		name: 'Researcher',
 		description: 'Finds, summarizes, and organizes information for your writing',
 	},
+	{
+		name: 'Narrator',
+		description: 'Shapes scenes, voice, and storytelling flow for narrative writing',
+	},
 	{ name: 'Painter', description: 'Generates images from a text prompt' },
 ];
