@@ -1,4 +1,4 @@
-# AI Agent Architect Memory — tesseract-ai
+# AI Agent Architect Memory — OpenWriter
 
 ## Project Stack
 - Electron + TypeScript (strict mode, no `any`, no `!` assertions)
@@ -6,56 +6,50 @@
 - Lint: `yarn lint` — 0 errors expected (128 warnings baseline as of 2026-02)
 - Agent logic lives exclusively in `src/main/` — nothing agent-related in `src/renderer/`
 
-## AgentManager System (`src/main/agentManager/`)
-- `AgentManagerTypes.ts` — `AgentSessionConfig`, `AgentRequest`, `AgentStreamEvent`, `AgentSessionSnapshot`
-- `AgentSession.ts` — pure session class; defaults: temperature 0.7, maxHistory 50, systemPrompt 'You are a helpful AI assistant.'
-- `AgentManager.ts` — session lifecycle + run lifecycle; uses `ProviderResolver` for provider lookup
-- `AgentExecutor.ts` — async generator streaming via LangChain ChatOpenAI
-- `AgentRegistry.ts` — singleton `agentRegistry`; throws on duplicate ids; `buildSessionConfig()` helper
-- `AgentDefinition.ts` — `AgentDefinition` interface + `AgentDefinitionInfo` IPC-safe snapshot + `toAgentDefinitionInfo()`
-- `agents/` — self-registering named agent files (side-effect imports)
-- `index.ts` — barrel; `import './agents'` at bottom to self-register all agents on any barrel import
+## Actual Agent Architecture (confirmed 2026-03)
+See [agent-architecture.md](agent-architecture.md) for full detail.
 
-## Named Agent Registration Pattern
-Each agent file: (1) defines `const definition: AgentDefinition`, (2) calls `agentRegistry.register(definition)`, (3) exports with a named constant (`StoryWriterAgent`, etc.).
-The `agents/index.ts` barrel imports all files as side effects then re-exports named constants.
-`agentManager/index.ts` does `import './agents'` so any consumer of the barrel gets all agents registered for free.
+Key files:
+- `src/main/ai/core/definition.ts` — `AgentDefinition` interface; `GraphInputContext`; `NodeModelConfig`; `NodeModelMap`
+- `src/main/ai/core/executor.ts` — `executeAIAgentsStream()` async generator; 3 paths: plain/messages/custom-state
+- `src/main/ai/core/types.ts` — `AgentStreamEvent`, `AgentHistoryMessage`, `AgentRequest` (re-exports from shared/types)
+- `src/main/ai/core/agent-registry.ts` — `AgentRegistry` class
+- `src/main/ai/agents/` — one folder per agent; each has `definition.ts`, `graph.ts`, `state.ts`, `*-node.ts`
+- `src/main/task/handlers/agent-task-handler.ts` — bridges TaskExecutor → executeAIAgentsStream
+- `src/main/bootstrap.ts` — `bootstrapServices()` + `bootstrapIpcModules()`
 
-## Built-in Named Agents
-| id | category | temperature | purpose |
-|----|----------|-------------|---------|
-| story-writer | writing | 0.9 | Creative narrative fiction |
-| text-completer | writing | 0.4 | Style-faithful text continuation |
-| content-review | editing | 0.3 | Structured editorial feedback (4 sections) |
-| summarizer | analysis | 0.3 | High-fidelity long-form summarisation |
-| tone-adjuster | editing | 0.6 | Tone rewriting (formal/casual/persuasive/etc.) |
+## IPC Architecture Pattern
+- `src/shared/channels.ts` — single source of truth for all channel names + `InvokeChannelMap`, `SendChannelMap`, `EventChannelMap`
+- `src/shared/types.ts` — all shared data shapes (AgentStreamEvent, TaskEvent, etc.)
+- `src/main/ipc/ipc-gateway.ts` — `registerQuery`, `registerCommand`, `registerCommandWithEvent`
+- `src/main/ipc/ipc-module.ts` — `IpcModule` interface (`register(container, eventBus)`)
+- `src/main/core/event-bus.ts` — `EventBus`; `broadcast(channel, ...args)`, `sendTo(windowId, channel, ...args)`, typed `emit/on` for main-process events
+- `src/preload/index.ts` — exposes `window.app`, `window.win`, `window.workspace`, `window.task`
+- `src/preload/typed-ipc.ts` — `typedInvoke`, `typedInvokeUnwrap`, `typedInvokeRaw`, `typedSend`, `typedOn`
+- `src/preload/index.d.ts` — `AppApi`, `WindowApi`, `WorkspaceApi`, `TaskApi`; global `Window` augmentation
 
-## LangGraph Integration (`@langchain/langgraph@1.2.0` installed)
-- `AgentDefinition.buildGraph?: (model: BaseChatModel) => CompiledStateGraph<any,any,any,any,any,any>` — optional graph factory
-- `AgentSessionConfig.buildGraph` carries the factory from definition through to `AgentSession`
-- `AgentSession.buildGraph` — stored from config, NOT serialized in `toSnapshot()` (functions can't cross IPC)
-- `AgentExecutor` — if `input.buildGraph` is present, runs `executeGraphStream` using `streamMode:"messages"`; otherwise falls back to plain chat completion
-- `buildSessionConfig()` in AgentRegistry propagates `buildGraph` with: `overrides.buildGraph ?? def.buildGraph`
-- All 5 agents now implement `buildGraph` with real StateGraph topologies (see patterns.md)
-- `streamMode:"messages"` yields `[chunk, metadata]` tuples; extract content via `extractTokenFromChunk(chunk.content)`
-- Use `eslint-disable @typescript-eslint/no-explicit-any` on `CompiledStateGraph<any,any,any,any,any,any>` — 6 type params required, inference is impractical here
-- Lint baseline: 122 warnings, 0 errors (was 128 before this change)
+## Agent Graph Pattern (custom-state protocol)
+- State: `Annotation.Root({...})` with `reducer: (_a, b) => b` for overwrite fields
+- Graph: `new StateGraph(State).addNode().addEdge().compile()`
+- Node: pure `async function (state, model) → Partial<State>` — never creates models, receives via closure
+- Definition: `buildGraph` + `buildGraphInput(ctx) → Record<string,unknown>` + `extractGraphOutput(state) → string`
+- `nodeModels: Record<string, NodeModelConfig>` on the definition → `AgentTaskHandler` resolves per-node models → passes `NodeModelMap` to `buildGraph`
+- `streamableNodes: string[]` filters which nodes emit tokens to renderer
+- Streaming: `streamMode: ['messages', 'values']`; 'messages' → token events; 'values' → finalState for extractGraphOutput
 
-## Key Conventions
-- `AgentDefinition.defaultConfig` has optional `providerId` — callers must supply a real one via `buildSessionConfig(def, providerId, overrides?)`
-- `AgentDefinitionInfo` is the IPC-safe projection — use `listInfo()` or `toAgentDefinitionInfo()` before sending to renderer
-- `AgentRegistry.register()` throws on duplicate ids — this is intentional (catches copy-paste errors early)
-- `buildSessionConfig()` override precedence: `overrides` > `defaultConfig` > `AgentSession` class defaults; `providerId` arg always wins
+## Provider Resolution
+- `src/main/shared/provider-resolver.ts` — `ProviderResolver.resolve({ providerId?, modelId? }) → ResolvedProvider`
+- `src/main/shared/chat-model-factory.ts` — `createChatModel(opts) → ChatOpenAI`
+- `src/main/shared/ai-utils.ts` — `extractTokenFromChunk`, `classifyError`, `toUserMessage`
 
-## Resource Indexing Pipeline (designed 2026-03)
-- Vector store: HNSWLib (`@langchain/community/vectorstores/hnswlib` + `hnswlib-node`)
-  - Chosen over FAISS: FAISS native binaries break on macOS/ARM during electron-builder packaging
-  - `asarUnpack: ["**/node_modules/hnswlib-node/**"]` required in electron-builder config
-- Embedding model: `text-embedding-3-small` via `OpenAIEmbeddings`; API key resolved via `ProviderResolver`
-- Incremental indexing: SHA-256 content hashing via `IndexManifest` (JSON at `targetPath/index-manifest.json`)
-- Chunking: `RecursiveCharacterTextSplitter` — chunkSize 1000, overlap 200
-- Loaders: TextLoader (.txt/.md), PDFLoader (splitPages:false), DocxLoader
-- Pipeline files: `src/main/services/resource-indexing/` + `src/main/services/embedding-factory.ts`
-- Pattern: `runIndexingPipeline()` is a pure async function — handler is thin orchestrator
-- Save-per-file: vectorStore.save() called after each file to avoid total loss on abort
-- Error handling: per-file try/catch continues on individual failures; AbortError re-thrown
+## Registered Agents (bootstrap.ts)
+- TextCompleterAgent, TextEnhanceAgent, TextWriterAgent, ImageGeneratorAgent
+- Each auto-registered in bootstrap via `agentRegistry.register()`
+- Each accessed as `window.task.submit('agent-{id}', { prompt })` from renderer
+
+## Researcher Architecture (designed 2026-03)
+See [researcher-architecture.md](researcher-architecture.md) for complete specification.
+- Separate from TaskExecutor/AgentRegistry system
+- `src/main/ai/researcher/` — self-contained module
+- Channels: `researcher:query`, `researcher:cancel`, `researcher:event`
+- Window API: `window.researcher.query(...)`, `window.researcher.cancel(...)`, `window.researcher.onEvent(...)`
