@@ -33,6 +33,7 @@ import { TaskReactionBus } from './task/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
+import { ResearcherService } from './ai/researcher/researcher-service';
 import { TextEnhanceTaskReaction } from './task/reactions';
 
 // Indexing infrastructure
