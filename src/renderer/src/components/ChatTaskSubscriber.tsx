@@ -108,8 +108,7 @@ export function ChatTaskSubscriber(): null {
 								id: messageId,
 								patch: {
 									content:
-										snapshot.error ||
-										t('agenticPanel.error', 'The researcher failed to respond.'),
+										snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
 									taskId,
 									status: 'error',
 								},
@@ -124,10 +123,7 @@ export function ChatTaskSubscriber(): null {
 								documentId,
 								id: messageId,
 								patch: {
-									content: t(
-										'agenticPanel.cancelled',
-										'The researcher request was cancelled.'
-									),
+									content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
 									taskId,
 									status: 'cancelled',
 								},

@@ -54,48 +54,6 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 			};
 		}
 
-		case 'CHAT_RESET':
-			return {
-				...state,
-				chatMessages: [],
-				activeChatTaskId: null,
-				activeChatMessageId: null,
-			};
-
-		case 'CHAT_MESSAGE_ADDED':
-			return {
-				...state,
-				chatMessages: [...state.chatMessages, action.message],
-			};
-
-		case 'CHAT_MESSAGE_UPDATED':
-			return {
-				...state,
-				chatMessages: state.chatMessages.map((message) =>
-					message.id === action.id ? { ...message, ...action.patch } : message
-				),
-			};
-
-		case 'CHAT_ACTIVE_MESSAGE_SET':
-			return {
-				...state,
-				activeChatMessageId: action.messageId,
-			};
-
-		case 'CHAT_ACTIVE_TASK_SET':
-			return {
-				...state,
-				activeChatTaskId: action.taskId,
-			};
-
-		case 'CHAT_MESSAGES_LOADED':
-			return {
-				...state,
-				chatMessages: action.messages,
-				activeChatTaskId: null,
-				activeChatMessageId: null,
-			};
-
 		default: {
 			const _exhaustive: never = action;
 			return _exhaustive;
