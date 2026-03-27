@@ -47,7 +47,6 @@ import type {
 	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
-import type { AgentConfig } from '../shared/ai-settings';
 import type { ServiceProvider } from '../shared/model-defaults';
 
 // ---------------------------------------------------------------------------
