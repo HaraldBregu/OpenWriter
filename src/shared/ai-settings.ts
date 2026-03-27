@@ -46,7 +46,3 @@ export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: str
 	},
 };
 
-export const DEFAULT_AGENT_CONFIG: AgentConfig = {
-	name: '',
-	providerId: 'openai',
-};
