@@ -1,5 +1,10 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
 
+export interface ChatMessagesFile {
+	readonly version: 1;
+	readonly messages: DocumentChatMessage[];
+}
+
 export interface DocumentChatMessage {
 	readonly id: string;
 	readonly content: string;
