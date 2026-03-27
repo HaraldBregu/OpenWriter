@@ -129,55 +129,6 @@ export class ProjectWorkspaceService {
 	}
 
 	// -------------------------------------------------------------------------
-	// Agent settings
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Get all persisted agent configurations for this workspace.
-	 */
-	async getAgentSettings(): Promise<WorkspaceAgentEntry[]> {
-		const info = await this.getOrCreate();
-		return [...info.agents];
-	}
-
-	/**
-	 * Get the configuration for a single agent by ID.
-	 */
-	async getAgentConfig(agentId: string): Promise<AgentConfig | null> {
-		const info = await this.getOrCreate();
-		const entry = info.agents.find((a) => a.agentId === agentId);
-		if (!entry) return null;
-		const { agentId: _id, ...config } = entry;
-		return config;
-	}
-
-	/**
-	 * Persist the configuration for a single agent.
-	 * Upserts: updates the existing entry or appends a new one.
-	 */
-	async setAgentConfig(agentId: string, config: AgentConfig): Promise<void> {
-		const workspacePath = this.requireWorkspace();
-		const filePath = this.resolveFilePath(workspacePath);
-		const current = await this.getOrCreate();
-
-		const entry: WorkspaceAgentEntry = { agentId, ...config };
-		const index = current.agents.findIndex((a) => a.agentId === agentId);
-		if (index >= 0) {
-			current.agents[index] = entry;
-		} else {
-			current.agents.push(entry);
-		}
-
-		const updated: ProjectWorkspaceInfo = {
-			...current,
-			updatedAt: new Date().toISOString(),
-		};
-
-		await this.atomicWrite(filePath, updated);
-		this.logger?.info('ProjectWorkspaceService', `Updated agent config: ${agentId}`);
-	}
-
-	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
 
