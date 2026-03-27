@@ -15,6 +15,9 @@ export interface AgentConfig {
 }
 
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
-	{ name: 'Writer', description: 'Writes new text from a given prompt' },
+	{
+		name: 'Writer',
+		description: 'Writes, continues, and enhances text from a prompt or existing draft',
+	},
 	{ name: 'Painter', description: 'Generates images from a text prompt' },
 ];
