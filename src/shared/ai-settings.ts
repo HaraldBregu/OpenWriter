@@ -18,7 +18,6 @@ export interface AgentConfig {
 	providerId: string;
 }
 
-
 export const AGENT_IDS = [
 	'text-completer',
 	'text-enhance',
