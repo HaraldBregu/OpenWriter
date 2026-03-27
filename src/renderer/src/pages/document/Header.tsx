@@ -19,7 +19,6 @@ import {
 	AppDropdownMenu,
 	AppDropdownMenuContent,
 	AppDropdownMenuItem,
-	AppDropdownMenuSeparator,
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 import { useSidebarVisibility } from './context';
@@ -119,6 +118,33 @@ const Header: React.FC<HeaderProps> = ({
 				<div className="flex items-center gap-3 ml-4 shrink-0">
 					<AppButton
 						type="button"
+						variant="outline"
+						size="icon"
+						title={t('common.share')}
+						aria-label={t('common.share')}
+					>
+						<Share2 className="h-4 w-4" />
+					</AppButton>
+					<AppButton
+						type="button"
+						variant="outline"
+						size="icon"
+						title={t('common.preview')}
+						aria-label={t('common.preview')}
+					>
+						<Eye className="h-4 w-4" />
+					</AppButton>
+					<AppButton
+						type="button"
+						variant="outline"
+						size="icon"
+						title={t('common.download')}
+						aria-label={t('common.download')}
+					>
+						<Download className="h-4 w-4" />
+					</AppButton>
+					<AppButton
+						type="button"
 						variant={activeSidebar === 'agentic' ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleAgenticSidebar')}
@@ -151,19 +177,6 @@ const Header: React.FC<HeaderProps> = ({
 							</AppButton>
 						</AppDropdownMenuTrigger>
 						<AppDropdownMenuContent align="end">
-							<AppDropdownMenuItem>
-								<Eye className="h-4 w-4" />
-								{t('common.preview')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem>
-								<Download className="h-4 w-4" />
-								{t('common.download')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem>
-								<Share2 className="h-4 w-4" />
-								{t('common.share')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuSeparator />
 							<AppDropdownMenuItem onClick={onOpenFolder}>
 								<FolderOpen className="h-4 w-4" />
 								{t('common.openFolder')}
