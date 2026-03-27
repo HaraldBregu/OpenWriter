@@ -159,31 +159,6 @@ const AgentsPage: React.FC = () => {
 		[]
 	);
 
-	useEffect(() => {
-		let cancelled = false;
-
-		window.workspace
-			.getAgentSettings()
-			.then((entries) => {
-				if (cancelled) return;
-
-				const nextState = buildInitialAgentState();
-				for (const entry of entries) {
-					const agentId = entry.agentId as AgentId;
-					if ((AGENT_IDS as readonly string[]).includes(agentId)) {
-						nextState[agentId] = normalizeAgentConfig(entry);
-					}
-				}
-
-				setAgentStates(nextState);
-			})
-			.catch(() => {});
-
-		return () => {
-			cancelled = true;
-		};
-	}, []);
-
 	const handleConfigChange = useCallback((agentId: AgentId, config: AgentConfig) => {
 		const normalizedConfig = normalizeAgentConfig(config);
 
@@ -191,8 +166,6 @@ const AgentsPage: React.FC = () => {
 			...prev,
 			[agentId]: normalizedConfig,
 		}));
-
-		window.workspace.setAgentConfig(agentId, normalizedConfig).catch(() => {});
 	}, []);
 
 	return (

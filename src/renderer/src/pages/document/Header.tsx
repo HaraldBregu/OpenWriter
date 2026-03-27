@@ -1,7 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Download,
 	Eye,
 	FolderOpen,
 	Share2,
@@ -11,7 +10,6 @@ import {
 	PenLine,
 	Search,
 	X,
-	Info,
 	Bot,
 } from 'lucide-react';
 import {
@@ -136,15 +134,6 @@ const Header: React.FC<HeaderProps> = ({
 					</AppButton>
 					<AppButton
 						type="button"
-						variant="outline"
-						size="icon"
-						title={t('common.download')}
-						aria-label={t('common.download')}
-					>
-						<Download className="h-4 w-4" />
-					</AppButton>
-					<AppButton
-						type="button"
 						variant={activeSidebar === 'agentic' ? 'secondary' : 'outline'}
 						size="icon"
 						title={t('titleBar.toggleAgenticSidebar')}
@@ -163,7 +152,7 @@ const Header: React.FC<HeaderProps> = ({
 						aria-expanded={activeSidebar === 'config'}
 						onClick={() => toggleSidebar('config')}
 					>
-						<Info className="h-4 w-4" aria-hidden="true" />
+						<FolderOpen className="h-4 w-4" aria-hidden="true" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
