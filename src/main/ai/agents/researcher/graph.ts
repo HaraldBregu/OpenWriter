@@ -18,7 +18,8 @@
 
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { ResearcherState } from './researcher-state';
+import type { NodeModelMap } from '../../core/definition';
+import { ResearcherState } from './state';
 import { understandNode } from './nodes/understand-node';
 import { planNode } from './nodes/plan-node';
 import { researchNode } from './nodes/research-node';
@@ -38,19 +39,19 @@ export interface ResearcherNodeModels {
 	compose: BaseChatModel;
 }
 
-export function buildResearcherGraph(models: ResearcherNodeModels) {
+export function buildGraph(models: BaseChatModel | NodeModelMap) {
+	const m = models as unknown as ResearcherNodeModels;
+
 	return new StateGraph(ResearcherState)
 		.addNode(RESEARCHER_NODE.UNDERSTAND, (state: typeof ResearcherState.State) =>
-			understandNode(state, models.understand)
+			understandNode(state, m.understand)
 		)
-		.addNode(RESEARCHER_NODE.PLAN, (state: typeof ResearcherState.State) =>
-			planNode(state, models.plan)
-		)
+		.addNode(RESEARCHER_NODE.PLAN, (state: typeof ResearcherState.State) => planNode(state, m.plan))
 		.addNode(RESEARCHER_NODE.RESEARCH, (state: typeof ResearcherState.State) =>
-			researchNode(state, models.research)
+			researchNode(state, m.research)
 		)
 		.addNode(RESEARCHER_NODE.COMPOSE, (state: typeof ResearcherState.State) =>
-			composeNode(state, models.compose)
+			composeNode(state, m.compose)
 		)
 		.addEdge(START, RESEARCHER_NODE.UNDERSTAND)
 		.addEdge(RESEARCHER_NODE.UNDERSTAND, RESEARCHER_NODE.PLAN)
@@ -59,3 +60,5 @@ export function buildResearcherGraph(models: ResearcherNodeModels) {
 		.addEdge(RESEARCHER_NODE.COMPOSE, END)
 		.compile();
 }
+
+export { buildGraph as buildResearcherGraph };

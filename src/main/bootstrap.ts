@@ -25,6 +25,7 @@ import {
 	TextEnhanceAgent,
 	TextWriterAgent,
 	ImageGeneratorAgent,
+	ResearcherAgent,
 } from './ai';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
@@ -33,7 +34,7 @@ import { TaskReactionBus } from './task/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
-import { ResearcherService } from './ai/researcher/researcher-service';
+import { ResearcherService } from './ai/agents/researcher/researcher-service';
 import { TextEnhanceTaskReaction } from './task/reactions';
 
 // Indexing infrastructure
@@ -89,6 +90,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(TextEnhanceAgent);
 	agentRegistry.register(TextWriterAgent);
 	agentRegistry.register(ImageGeneratorAgent);
+	agentRegistry.register(ResearcherAgent);
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
@@ -144,6 +146,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 		new WorkspaceIpc(),
 		new TaskManagerIpc(),
 		new WindowIpc(),
+		new ResearcherIpc(),
 	];
 
 	for (const module of ipcModules) {

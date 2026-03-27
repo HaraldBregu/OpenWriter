@@ -15,13 +15,13 @@
  */
 
 import { AIMessage } from '@langchain/core/messages';
-import type { Disposable } from '../../core/service-container';
-import type { LoggerService } from '../../services/logger';
-import type { ProviderResolver } from '../../shared/provider-resolver';
-import { createChatModel } from '../../shared/chat-model-factory';
-import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/ai-utils';
-import type { ResearcherPhase } from '../../../shared/types';
-import { buildResearcherGraph, RESEARCHER_NODE } from './researcher-graph';
+import type { Disposable } from '../../../core/service-container';
+import type { LoggerService } from '../../../services/logger';
+import type { ProviderResolver } from '../../../shared/provider-resolver';
+import { createChatModel } from '../../../shared/chat-model-factory';
+import { extractTokenFromChunk, classifyError, toUserMessage } from '../../../shared/ai-utils';
+import type { ResearcherPhase } from '../../../../shared/types';
+import { buildResearcherGraph, RESEARCHER_NODE } from './graph';
 
 const LOG_PREFIX = 'ResearcherService';
 

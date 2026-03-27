@@ -27,7 +27,7 @@ import type { LoggerService } from '../services/logger';
 import { registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { ResearcherChannels } from '../../shared/channels';
 import type { ResearcherEvent, ResearcherQueryPayload } from '../../shared/types';
-import type { ResearcherService } from '../ai/researcher/researcher-service';
+import type { ResearcherService } from '../ai/agents/researcher/researcher-service';
 
 const MIN_PROMPT_LENGTH = 1;
 const MAX_PROMPT_LENGTH = 10_000;

@@ -8,7 +8,7 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import type { ResearcherState } from '../researcher-state';
+import type { ResearcherState } from '../state';
 
 const SYSTEM_PROMPT =
 	'You are a research analyst. Classify the user query intent in 1-2 concise sentences. ' +

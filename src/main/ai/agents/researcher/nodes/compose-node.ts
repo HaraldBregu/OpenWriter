@@ -9,8 +9,8 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { extractTokenFromChunk } from '../../../shared/ai-utils';
-import type { ResearcherState } from '../researcher-state';
+import { extractTokenFromChunk } from '../../../../shared/ai-utils';
+import type { ResearcherState } from '../state';
 
 const SYSTEM_PROMPT =
 	'You are an expert writer and researcher. Using the provided research synthesis, ' +

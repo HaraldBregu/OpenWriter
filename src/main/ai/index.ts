@@ -20,6 +20,7 @@ export {
 	TextEnhanceAgent,
 	TextWriterAgent,
 	ImageGeneratorAgent,
+	ResearcherAgent,
 } from './agents';
 
 // Indexing
