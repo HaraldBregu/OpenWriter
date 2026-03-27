@@ -9,21 +9,17 @@
 // Agent configuration types
 // ---------------------------------------------------------------------------
 
-/**
- * Persisted configuration for a named AI agent (without identity).
- * Used as the value type when setting config for a known agent ID.
- */
 export interface AgentConfig {
 	name: string;
 	description: string;
-	providerId: string;
 }
 
-export const DEFAULT_AGENTS = [
-	{ id: 'text-completer', name: 'Text Completer', description: 'Completes and continues text from the provided context' },
-	{ id: 'text-enhance', name: 'Text Enhance', description: 'Enhances and transforms text style and tone' },
-	{ id: 'text-writer', name: 'Text Writer', description: 'Writes new text from a given prompt' },
-	{ id: 'image-generator', name: 'Image Generator', description: 'Generates images from a text prompt and returns the image URL' },
-] as const;
-
-export type AgentId = (typeof DEFAULT_AGENTS)[number]['id'];
+export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
+	{ name: 'Text Completer', description: 'Completes and continues text from the provided context' },
+	{ name: 'Text Enhance', description: 'Enhances and transforms text style and tone' },
+	{ name: 'Text Writer', description: 'Writes new text from a given prompt' },
+	{
+		name: 'Image Generator',
+		description: 'Generates images from a text prompt and returns the image URL',
+	},
+];

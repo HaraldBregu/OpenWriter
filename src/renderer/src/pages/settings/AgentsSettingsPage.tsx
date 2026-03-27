@@ -26,7 +26,10 @@ type AgentAction =
 
 function buildInitialAgentState(): AgentStateMap {
 	return Object.fromEntries(
-		DEFAULT_AGENTS.map(({ id }) => [id, { name: '', description: '', providerId: aiProviders[0]?.id ?? '' }])
+		DEFAULT_AGENTS.map(({ id }) => [
+			id,
+			{ name: '', description: '', providerId: aiProviders[0]?.id ?? '' },
+		])
 	) as AgentStateMap;
 }
 
@@ -71,7 +74,10 @@ interface AgentConfigCardProps {
 const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 	({ agentId, config, onConfigChange }) => {
 		const { t } = useTranslation();
-		const definition = DEFAULT_AGENTS.find((a) => a.id === agentId) ?? { name: '', description: '' };
+		const definition = DEFAULT_AGENTS.find((a) => a.id === agentId) ?? {
+			name: '',
+			description: '',
+		};
 
 		const handleProviderChange = useCallback(
 			(value: string) => {

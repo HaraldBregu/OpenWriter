@@ -109,7 +109,7 @@ export { AppCheckbox } from './AppCheckbox';
 
 export { AppSwitch } from './AppSwitch';
 
-export { AppIconOpenWriter } from './AppIconOpenWriter';
+export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
 export {
 	AppSidebar,

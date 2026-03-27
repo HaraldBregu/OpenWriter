@@ -136,11 +136,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									className={open ? 'h-auto min-h-12 px-3 py-2.5' : 'h-8 w-8 p-2'}
 								>
 									{open ? (
-										<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent/70 ring-1 ring-sidebar-border/70">
-											<AppIconOpenWriter className="h-5 w-5 text-slate-900 dark:text-slate-100" />
-										</div>
+										<AppIconOpenWriter className="h-7 w-7 shrink-0 text-sidebar-foreground" />
 									) : (
-										<AppIconOpenWriter className="h-4 w-4 text-sidebar-foreground" />
+										<AppIconOpenWriter className="h-5 w-5 text-sidebar-foreground" />
 									)}
 									{open && (
 										<div className="grid min-w-0 flex-1 text-left leading-tight">

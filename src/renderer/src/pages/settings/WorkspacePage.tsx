@@ -314,8 +314,7 @@ const WorkspacePage: React.FC = () => {
 					>
 						<span className="text-sm">{formatDate(projectInfo.updatedAt)}</span>
 					</SettingRow>
-
-					</>
+				</>
 			)}
 		</div>
 	);
