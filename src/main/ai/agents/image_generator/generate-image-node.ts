@@ -27,7 +27,7 @@ import type { ImageGeneratorState } from './state';
 import {
 	DEFAULT_IMAGE_MODEL_ID,
 	getImageGenerationConfig,
-} from '../../../../shared/model-constants';
+} from '../../../../shared/provider-constants';
 
 const IMAGE_CONFIG = getImageGenerationConfig(DEFAULT_IMAGE_MODEL_ID);
 if (!IMAGE_CONFIG) {
