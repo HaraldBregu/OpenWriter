@@ -47,7 +47,7 @@ import type {
 	ProjectWorkspaceInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
-import type { ServiceProvider } from '../shared/model-defaults';
+import type { ServiceProvider } from '../shared/provider-defaults';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
