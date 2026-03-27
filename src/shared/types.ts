@@ -415,8 +415,6 @@ export interface ProjectWorkspaceInfo {
 	name: string;
 	/** Optional project description. */
 	description: string;
-	/** Per-agent configuration stored in this workspace. */
-	agents: import('./ai-settings').WorkspaceAgentEntry[];
 	/** ISO 8601 timestamp when the project was first created. */
 	createdAt: string;
 	/** ISO 8601 timestamp of the last update to this file. */
