@@ -2,13 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
-import { AppButton } from '@/components/app';
+import { AppButton, AppIconOpenWriter } from '@/components/app';
 import { TitleBar } from '@/components/TitleBar';
 import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
-import logoIcon from '@resources/icons/icon.png';
 
 interface RecentProject {
 	path: string;
@@ -166,10 +165,10 @@ const WelcomePage: React.FC = () => {
 			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-y-auto">
 				{/* ── Hero ── */}
 				<div className="flex flex-col items-center mb-10">
-					<img
-						src={logoIcon}
-						alt={t('appTitle')}
-						className="h-[77px] w-[77px] mb-5 drop-shadow-sm rounded-2xl"
+					<AppIconOpenWriter
+						className="mb-5 h-[84px] w-[84px] text-slate-900 dark:text-slate-100"
+						aria-label={t('appTitle')}
+						role="img"
 					/>
 					<h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
 						{t('appTitle')}
