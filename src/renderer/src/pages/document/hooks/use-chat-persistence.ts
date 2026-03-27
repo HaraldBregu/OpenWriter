@@ -95,7 +95,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 						const docPath = await window.workspace.getDocumentPath(documentId);
 						const filePath = `${docPath}/chat/messages.json`;
 
-						await window.workspace.writeFile({ path: filePath, content });
+						await window.workspace.writeFile({ filePath, content, createParents: true });
 						lastSavedRef.current = serialized;
 					} catch {
 						// Write failure is non-fatal — will retry on next change.
