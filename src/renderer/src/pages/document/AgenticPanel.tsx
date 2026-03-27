@@ -9,13 +9,8 @@ import {
 	chatMessageAdded,
 	chatActiveTaskSet,
 	chatActiveMessageSet,
-} from '../../store/chat/reducer';
-import type { RootState } from '../../store';
-
-function selectChatMessages(state: RootState, documentId: string | undefined) {
-	if (!documentId) return [];
-	return state.chat.sessions[documentId]?.messages ?? [];
-}
+	selectChatMessages,
+} from '../../store/chat';
 
 interface AgenticPanelProps {
 	readonly taskId: string | null;
