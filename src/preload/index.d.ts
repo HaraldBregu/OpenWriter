@@ -84,8 +84,6 @@ export type {
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsRenameResult,
-	AgentConfig,
-	WorkspaceAgentEntry,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	ServiceProvider,
