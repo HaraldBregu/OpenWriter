@@ -111,11 +111,6 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 
 	const saveBadge = getSaveBadge(t, saveStatus);
 	const Icon = definition.icon;
-	const activeProvider = useMemo(
-		() => aiProviders.find((provider) => provider.id === config.providerId) ?? null,
-		[config.providerId]
-	);
-	const activeModelName = activeProvider?.models.find((model) => model.id === config.modelId)?.name;
 
 	const handleProviderChange = useCallback(
 		(value: string) => {
@@ -190,19 +185,6 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 							</AppSelectGroup>
 						</AppSelectContent>
 					</AppSelect>
-				</div>
-
-				<div className="rounded-md border bg-muted/20 px-4 py-3">
-					<p className="text-xs font-medium text-muted-foreground">
-						{t('agents.assignedModel', 'Assigned model')}
-					</p>
-					<p className="mt-1 text-sm text-foreground">{activeModelName ?? config.modelId}</p>
-					<p className="mt-1 text-xs text-muted-foreground">
-						{t(
-							'agents.assignedModelDescription',
-							'The first available model for the selected provider is assigned automatically.'
-						)}
-					</p>
 				</div>
 			</AppCardContent>
 		</AppCard>
