@@ -11,7 +11,7 @@ import {
 	AppSelectTrigger,
 	AppSelectValue,
 } from '@/components/app';
-import { AGENT_DEFINITIONS, AGENT_IDS } from '../../../../shared/ai-settings';
+import { DEFAULT_AGENTS } from '../../../../shared/ai-settings';
 import type { AgentConfig, AgentId } from '../../../../shared/ai-settings';
 
 // ---------------------------------------------------------------------------
