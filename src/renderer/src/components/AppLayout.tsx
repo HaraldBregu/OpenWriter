@@ -30,10 +30,10 @@ import {
 	AppSidebarProvider,
 	AppSidebarInset,
 	AppSidebarHeader,
+	AppIconOpenWriter,
 	useSidebar,
 	AppSidebarSeparator,
 } from './app';
-import logoIcon from '@resources/images/icon_vector.svg';
 import {
 	Settings,
 	ChevronRight,
@@ -137,18 +137,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								>
 									{open ? (
 										<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent/70 ring-1 ring-sidebar-border/70">
-											<img
-												src={logoIcon}
-												alt="OpenWriter"
-												className="h-5 w-5 rounded-full object-cover"
-											/>
+											<AppIconOpenWriter className="h-5 w-5 text-slate-900 dark:text-slate-100" />
 										</div>
 									) : (
-										<img
-											src={logoIcon}
-											alt="OpenWriter"
-											className="h-4 w-4 rounded-full object-cover"
-										/>
+										<AppIconOpenWriter className="h-4 w-4 text-sidebar-foreground" />
 									)}
 									{open && (
 										<div className="grid min-w-0 flex-1 text-left leading-tight">
