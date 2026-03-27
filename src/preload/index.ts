@@ -58,6 +58,12 @@ const app: AppApi = {
 	deleteProvider: (id: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.deleteProvider, id);
 	},
+	getAgentProviders: (): Promise<Record<string, string>> => {
+		return typedInvokeUnwrap(AppChannels.getAgentProviders);
+	},
+	setAgentProvider: (agentName: string, providerName: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.setAgentProvider, agentName, providerName);
+	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------

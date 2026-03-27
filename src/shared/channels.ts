@@ -154,6 +154,8 @@ export const AppChannels = {
 	getProviders: 'store-get-providers',
 	addProvider: 'store-add-provider',
 	deleteProvider: 'store-delete-provider',
+	getAgentProviders: 'store-get-agent-providers',
+	setAgentProvider: 'store-set-agent-provider',
 } as const;
 
 // ===========================================================================
@@ -176,6 +178,11 @@ export interface InvokeChannelMap {
 		result: ServiceProvider & { id: string };
 	};
 	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
+	[AppChannels.getAgentProviders]: { args: []; result: Record<string, string> };
+	[AppChannels.setAgentProvider]: {
+		args: [agentName: string, providerName: string];
+		result: void;
+	};
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };

@@ -115,6 +115,8 @@ export interface AppApi {
 	getProviders: () => Promise<Array<ServiceProvider & { id: string }>>;
 	addProvider: (provider: ServiceProvider) => Promise<ServiceProvider & { id: string }>;
 	deleteProvider: (id: string) => Promise<void>;
+	getAgentProviders: () => Promise<Record<string, string>>;
+	setAgentProvider: (agentName: string, providerName: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */

@@ -9,12 +9,14 @@ export interface WorkspaceInfo {
 
 export interface StoreSchema {
 	providers: ServiceProvider[];
+	agentProviders: Record<string, string>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 }
 
 const DEFAULTS: StoreSchema = {
 	providers: [],
+	agentProviders: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 };
@@ -129,6 +131,19 @@ export class StoreService {
 			.get('providers')
 			.filter((provider, index) => toProviderConfig(provider, index).id !== id);
 		this.store.set('providers', providers);
+	}
+
+	// --- Agent provider settings ---
+
+	getAgentProviders(): Record<string, string> {
+		return { ...this.store.get('agentProviders') };
+	}
+
+	setAgentProvider(agentName: string, providerName: string): void {
+		const current = this.store.get('agentProviders');
+		const next = { ...current };
+		next[agentName] = providerName;
+		this.store.set('agentProviders', next);
 	}
 
 	// --- Workspace settings ---

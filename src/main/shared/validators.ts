@@ -50,6 +50,24 @@ export class StoreValidators {
 			}
 		}
 	}
+
+	static validateAgentName(agentName: string): void {
+		if (typeof agentName !== 'string' || agentName.trim().length === 0) {
+			throw new Error('Agent name must be a non-empty string');
+		}
+		if (agentName.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Agent name exceeds maximum length');
+		}
+	}
+
+	static validateProviderName(providerName: string): void {
+		if (typeof providerName !== 'string' || providerName.trim().length === 0) {
+			throw new Error('Provider name must be a non-empty string');
+		}
+		if (providerName.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Provider name exceeds maximum length');
+		}
+	}
 }
 
 /**

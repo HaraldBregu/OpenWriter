@@ -43,15 +43,30 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				const docPath = await window.workspace.getDocumentPath(documentId!);
 				const filePath = `${docPath}/chat/messages.json`;
 
-				let raw: string;
-				try {
-					raw = await window.workspace.readFile({ filePath });
-				} catch {
-					// File does not exist yet — treat as empty history.
-					return;
-				}
+				// Ensure the file exists before reading to avoid an IPC error log
+				// from the main process when the document has no chat history yet.
+				const EMPTY_ENVELOPE = JSON.stringify({
+					version: 1,
+					messages: [],
+				} satisfies ChatMessagesFile);
+				await window.workspace.createFile({
+					filePath,
+					content: EMPTY_ENVELOPE,
+					createParents: true,
+				});
+
+				const raw = await window.workspace.readFile({ filePath });
 
 				if (cancelled) return;
+
+				// If Redux already has messages (e.g. ChatTaskSubscriber kept the task
+				// running while we navigated away), the live state is authoritative —
+				// skip the disk load so we don't overwrite in-progress content.
+				if (messagesRef.current.length > 0) {
+					fileLoadedRef.current = true;
+					lastSavedRef.current = JSON.stringify(messagesRef.current);
+					return;
+				}
 
 				const parsed = JSON.parse(raw) as ChatMessagesFile;
 				const sanitized = sanitizeLoadedMessages(parsed.messages ?? []);
