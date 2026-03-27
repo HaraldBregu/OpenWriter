@@ -438,8 +438,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 // ---------------------------------------------------------------------------
 
 export function AppLayout({ children }: AppLayoutProps) {
-	useLanguage();
-
 	return (
 		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
 			<AppSidebarProvider
