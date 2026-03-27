@@ -132,6 +132,12 @@ export const TaskChannels = {
 	queueStatus: 'task:queue-status',
 } as const;
 
+export const ResearcherChannels = {
+	query: 'researcher:query',
+	cancel: 'researcher:cancel',
+	event: 'researcher:event',
+} as const;
+
 export const AppChannels = {
 	playSound: 'play-sound',
 	setTheme: 'set-theme',
