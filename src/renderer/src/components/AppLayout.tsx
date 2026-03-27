@@ -133,7 +133,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							<AppSidebarMenuItem>
 								<AppSidebarMenuButton
 									onClick={() => navigate('/home')}
-									className={open ? 'h-auto min-h-12 px-3 py-2.5' : 'h-8 w-8 p-2'}
+									className={
+										open
+											? 'h-auto min-h-12 px-3 py-2.5'
+											: 'mx-auto flex h-8 w-8 items-center justify-center p-0'
+									}
 								>
 									{open ? (
 										<AppIconOpenWriter className="h-7 w-7 shrink-0 text-sidebar-foreground" />
