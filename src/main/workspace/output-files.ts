@@ -145,6 +145,7 @@ export class OutputFilesService implements Disposable {
 	private readonly OUTPUT_DIR_NAME = 'output';
 	private readonly CONFIG_FILENAME = 'config.json';
 	private readonly CONTENT_FILENAME = 'content.md';
+	private readonly CHAT_DIRNAME = 'chat';
 	/** Legacy single-content file — kept for migration detection only. */
 	private readonly LEGACY_DATA_FILENAME = 'DATA.md';
 	private readonly IGNORE_WRITE_WINDOW_MS = 2000;
@@ -226,6 +227,7 @@ export class OutputFilesService implements Disposable {
 		const folderPath = path.join(typeDir, folderName);
 
 		await this.ensureDirectory(folderPath);
+		await this.ensureDocumentSupportDirectories(folderPath, input.type);
 
 		const now = new Date(timestamp).toISOString();
 
@@ -415,6 +417,7 @@ export class OutputFilesService implements Disposable {
 		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id);
 		const configPath = path.join(folderPath, this.CONFIG_FILENAME);
 		const contentPath = path.join(folderPath, this.CONTENT_FILENAME);
+		await this.ensureDocumentSupportDirectories(folderPath, outputType);
 
 		// Read existing config to preserve createdAt
 		const configRaw = await fs.readFile(configPath, 'utf-8');
@@ -1010,6 +1013,8 @@ export class OutputFilesService implements Disposable {
 	 *   4. Empty: neither → return content: ''
 	 */
 	private async loadFolder(folderPath: string, outputType: OutputType): Promise<OutputFile> {
+		await this.ensureDocumentSupportDirectories(folderPath, outputType);
+
 		const configPath = path.join(folderPath, this.CONFIG_FILENAME);
 
 		const [configRaw, folderStat] = await Promise.all([
@@ -1212,6 +1217,17 @@ export class OutputFilesService implements Disposable {
 				throw new Error(`Failed to access directory: ${(err as Error).message}`);
 			}
 		}
+	}
+
+	private async ensureDocumentSupportDirectories(
+		folderPath: string,
+		outputType: OutputType
+	): Promise<void> {
+		if (outputType !== 'documents') {
+			return;
+		}
+
+		await this.ensureDirectory(path.join(folderPath, this.CHAT_DIRNAME));
 	}
 
 	/**

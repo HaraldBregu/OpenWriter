@@ -132,6 +132,10 @@ export class Workspace implements Disposable {
 		if (!fs.existsSync(documentDir) || !fs.statSync(documentDir).isDirectory()) {
 			throw new Error(`Document folder does not exist for ID "${documentId}".`);
 		}
+		const chatDir = path.join(documentDir, 'chat');
+		if (!fs.existsSync(chatDir)) {
+			fs.mkdirSync(chatDir, { recursive: true });
+		}
 		return documentDir;
 	}
 
