@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, ImageIcon, PenTool, Sparkles, WandSparkles } from 'lucide-react';
+import { Bot, Paintbrush, PenTool } from 'lucide-react';
 import {
 	AppCard,
 	AppCardContent,
@@ -19,14 +19,10 @@ function getAgentIcon(name: string): {
 	accentClassName: string;
 } {
 	switch (name) {
-		case 'Text Completer':
-			return { icon: Sparkles, accentClassName: 'bg-muted text-muted-foreground' };
-		case 'Text Enhance':
-			return { icon: WandSparkles, accentClassName: 'bg-warning/12 text-warning' };
-		case 'Text Writer':
+		case 'Writer':
 			return { icon: PenTool, accentClassName: 'bg-primary/12 text-primary' };
-		case 'Image Generator':
-			return { icon: ImageIcon, accentClassName: 'bg-primary/12 text-primary' };
+		case 'Painter':
+			return { icon: Paintbrush, accentClassName: 'bg-warning/12 text-warning' };
 		default:
 			return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };
 	}

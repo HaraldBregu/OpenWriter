@@ -15,11 +15,6 @@ export interface AgentConfig {
 }
 
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
-	{ name: 'Text Completer', description: 'Completes and continues text from the provided context' },
-	{ name: 'Text Enhance', description: 'Enhances and transforms text style and tone' },
-	{ name: 'Text Writer', description: 'Writes new text from a given prompt' },
-	{
-		name: 'Image Generator',
-		description: 'Generates images from a text prompt and returns the image URL',
-	},
+	{ name: 'Writer', description: 'Writes new text from a given prompt' },
+	{ name: 'Painter', description: 'Generates images from a text prompt' },
 ];
