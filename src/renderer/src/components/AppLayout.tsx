@@ -33,7 +33,7 @@ import {
 	useSidebar,
 	AppSidebarSeparator,
 } from './app';
-import logoIcon from '@resources/icons/icon.png';
+import logoIcon from '@resources/images/icon_vector.svg';
 import {
 	Settings,
 	ChevronRight,
