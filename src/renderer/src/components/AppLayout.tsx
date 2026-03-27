@@ -10,6 +10,7 @@ import { loadCurrentWorkspace, loadProjectName } from '../store/workspace/action
 import { selectAllDocuments } from '../store/documents/selectors';
 import { documentAdded } from '../store/documents/actions';
 import { TitleBar } from './TitleBar';
+import { ChatTaskSubscriber } from './ChatTaskSubscriber';
 import {
 	AppCollapsible,
 	AppCollapsibleTrigger,

@@ -1,5 +1,4 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
-import type { DocumentChatMessage } from './state';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
@@ -12,14 +11,4 @@ export type DocumentAction =
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }
-	| { type: 'AGENTIC_SIDEBAR_TOGGLED' }
-	| { type: 'CHAT_RESET' }
-	| { type: 'CHAT_MESSAGE_ADDED'; message: DocumentChatMessage }
-	| {
-			type: 'CHAT_MESSAGE_UPDATED';
-			id: string;
-			patch: Partial<Omit<DocumentChatMessage, 'id' | 'role' | 'timestamp'>>;
-	  }
-	| { type: 'CHAT_ACTIVE_MESSAGE_SET'; messageId: string | null }
-	| { type: 'CHAT_ACTIVE_TASK_SET'; taskId: string | null }
-	| { type: 'CHAT_MESSAGES_LOADED'; messages: DocumentChatMessage[] };
+	| { type: 'AGENTIC_SIDEBAR_TOGGLED' };
