@@ -41,6 +41,8 @@ import type {
 	DocumentImageInfo,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	ResearcherQueryPayload,
+	ResearcherEvent,
 } from './types';
 import type { ServiceProvider } from './provider-defaults';
 
