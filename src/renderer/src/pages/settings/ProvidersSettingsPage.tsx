@@ -239,7 +239,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 						: t('models.showApiKey', 'Show API key');
 
 					return (
-						<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-end">
+						<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-center">
 							<div className="flex flex-col gap-1.5">
 								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
 									{PROVIDER_LABELS[provider]}
