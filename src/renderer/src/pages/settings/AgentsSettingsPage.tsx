@@ -89,89 +89,25 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 					<p className="text-xs text-muted-foreground mt-0.5">{definition.description}</p>
 				</div>
 
-				<div className="grid grid-cols-2 gap-4">
-					{/* Provider select */}
-					<div className="space-y-1.5">
-						<AppLabel htmlFor={providerSelectId} className="text-xs text-muted-foreground">
-							{t('settings.agents.provider')}
-						</AppLabel>
-						<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
-							<AppSelectTrigger id={providerSelectId} className="h-8 text-sm">
-								<AppSelectValue />
-							</AppSelectTrigger>
-							<AppSelectContent>
-								<AppSelectGroup>
-									<AppSelectLabel>{t('settings.agents.provider')}</AppSelectLabel>
-									{aiProviders.map((provider) => (
-										<AppSelectItem key={provider.id} value={provider.id}>
-											{provider.name}
-										</AppSelectItem>
-									))}
-								</AppSelectGroup>
-							</AppSelectContent>
-						</AppSelect>
-					</div>
-
-					{/* Model select */}
-					<div className="space-y-1.5">
-						<AppLabel htmlFor={modelSelectId} className="text-xs text-muted-foreground">
-							{t('settings.agents.model')}
-						</AppLabel>
-						<AppSelect value={config.modelId} onValueChange={handleModelChange}>
-							<AppSelectTrigger id={modelSelectId} className="h-8 text-sm">
-								<AppSelectValue />
-							</AppSelectTrigger>
-							<AppSelectContent>
-								<AppSelectGroup>
-									<AppSelectLabel>{t('settings.agents.model')}</AppSelectLabel>
-									{availableModels.map((model) => (
-										<AppSelectItem key={model.id} value={model.id}>
-											{model.name}
-										</AppSelectItem>
-									))}
-								</AppSelectGroup>
-							</AppSelectContent>
-						</AppSelect>
-					</div>
-				</div>
-
-				{/* Temperature slider */}
-				<div className="space-y-2">
-					<div className="flex items-center justify-between">
-						<AppLabel htmlFor={temperatureSliderId} className="text-xs text-muted-foreground">
-							{t('settings.agents.temperature')}
-						</AppLabel>
-						<span className="text-xs tabular-nums text-muted-foreground">
-							{config.temperature.toFixed(1)}
-						</span>
-					</div>
-					<AppSlider
-						id={temperatureSliderId}
-						min={0}
-						max={2}
-						step={0.1}
-						value={config.temperature}
-						onValueChange={handleTemperatureChange}
-						aria-label={t('settings.agents.temperature')}
-					/>
-				</div>
-
-				{/* Thinking mode switch */}
-				<div className="flex items-center justify-between">
-					<div className="space-y-0.5">
-						<AppLabel htmlFor={reasoningSwitchId} className="text-sm cursor-pointer">
-							{t('settings.agents.thinkingMode')}
-						</AppLabel>
-						<p className="text-xs text-muted-foreground">
-							{t('settings.agents.thinkingModeDescription')}
-						</p>
-					</div>
-					<AppSwitch
-						id={reasoningSwitchId}
-						checked={config.reasoning}
-						onCheckedChange={handleReasoningChange}
-						aria-label={t('settings.agents.thinkingMode')}
-					/>
+				<div className="space-y-1.5">
+					<AppLabel htmlFor={providerSelectId} className="text-xs text-muted-foreground">
+						{t('settings.agents.provider')}
+					</AppLabel>
+					<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
+						<AppSelectTrigger id={providerSelectId} className="h-8 text-sm">
+							<AppSelectValue />
+						</AppSelectTrigger>
+						<AppSelectContent>
+							<AppSelectGroup>
+								<AppSelectLabel>{t('settings.agents.provider')}</AppSelectLabel>
+								{aiProviders.map((provider) => (
+									<AppSelectItem key={provider.id} value={provider.id}>
+										{provider.name}
+									</AppSelectItem>
+								))}
+							</AppSelectGroup>
+						</AppSelectContent>
+					</AppSelect>
 				</div>
 			</div>
 		);
