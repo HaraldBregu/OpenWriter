@@ -26,7 +26,7 @@ type AgentAction =
 
 function buildInitialAgentState(): AgentStateMap {
 	return Object.fromEntries(
-		AGENT_IDS.map((id) => [id, { ...DEFAULT_AGENT_CONFIG }])
+		AGENT_IDS.map((id) => [id, { name: '', description: '', providerId: aiProviders[0]?.id ?? '' }])
 	) as AgentStateMap;
 }
 
