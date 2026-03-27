@@ -6,11 +6,12 @@ interface ChatMessageProps {
 	readonly id: string;
 	readonly content: string;
 	readonly role: 'user' | 'assistant';
-	readonly timestamp: Date;
+	readonly timestamp: Date | string;
 	readonly renderMarkdown?: boolean;
 }
 
-function formatTime(date: Date): string {
+function formatTime(timestamp: Date | string): string {
+	const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
 	return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 

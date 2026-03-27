@@ -1,5 +1,14 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
 
+export interface DocumentChatMessage {
+	readonly id: string;
+	readonly content: string;
+	readonly role: 'user' | 'assistant';
+	readonly timestamp: string;
+	readonly taskId: string | null;
+	readonly status: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
+}
+
 export interface DocumentState {
 	readonly documentId: string | undefined;
 	readonly title: string;
@@ -10,6 +19,9 @@ export interface DocumentState {
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
 	readonly agenticSidebarOpen: boolean;
+	readonly chatMessages: DocumentChatMessage[];
+	readonly activeChatTaskId: string | null;
+	readonly activeChatMessageId: string | null;
 }
 
 export const INITIAL_DOCUMENT_STATE: DocumentState = {
@@ -22,4 +34,7 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	isTrashing: false,
 	sidebarOpen: true,
 	agenticSidebarOpen: false,
+	chatMessages: [],
+	activeChatTaskId: null,
+	activeChatMessageId: null,
 };

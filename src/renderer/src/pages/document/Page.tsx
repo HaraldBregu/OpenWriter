@@ -7,7 +7,7 @@ const Page: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
 
 	return (
-		<DocumentProvider documentId={id}>
+		<DocumentProvider key={id} documentId={id}>
 			<SidebarVisibilityProvider>
 				<EditorInstanceProvider>
 					<Layout documentId={id} />

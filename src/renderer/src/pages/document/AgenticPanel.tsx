@@ -1,17 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { getTaskSnapshot, subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
-
-interface ChatMessageData {
-	id: string;
-	content: string;
-	role: 'user' | 'assistant';
-	timestamp: Date;
-}
+import { useDocumentDispatch, useDocumentState } from './hooks';
 
 interface ResearcherTaskOutput {
 	content: string;
@@ -27,123 +21,147 @@ interface AgenticPanelProps {
 
 const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }) => {
 	const { t } = useTranslation();
-	const [messages, setMessages] = useState<ChatMessageData[]>([]);
+	const dispatch = useDocumentDispatch();
+	const { chatMessages, activeChatMessageId, documentId } = useDocumentState();
 	const bottomRef = useRef<HTMLDivElement>(null);
-	const activeAssistantMessageIdRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-	}, [messages]);
-
-	const updateActiveAssistantMessage = useCallback(
-		(content: string | ((previousContent: string) => string)) => {
-			const activeId = activeAssistantMessageIdRef.current;
-			if (!activeId) return;
-
-			setMessages((prev) =>
-				prev.map((message) => {
-					if (message.id !== activeId) {
-						return message;
-					}
-
-					return {
-						...message,
-						content:
-							typeof content === 'function' ? content(message.content) : content,
-					};
-				})
-			);
-		},
-		[]
-	);
+	}, [chatMessages]);
 
 	useEffect(() => {
 		if (!taskId) return;
 
 		const currentSnapshot = getTaskSnapshot(taskId);
-
-		if (!activeAssistantMessageIdRef.current && (isRunning || currentSnapshot)) {
-			const assistantMessageId = crypto.randomUUID();
-			activeAssistantMessageIdRef.current = assistantMessageId;
-			setMessages((prev) => [
-				...prev,
-				{
-					id: assistantMessageId,
-					content: '',
-					role: 'assistant',
-					timestamp: new Date(),
-				},
-			]);
+		if (currentSnapshot?.metadata?.documentId && currentSnapshot.metadata.documentId !== documentId) {
+			return;
 		}
 
+		dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId });
+
 		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
+			if (
+				(snapshot.metadata?.documentId && snapshot.metadata.documentId !== documentId) ||
+				!activeChatMessageId
+			) {
+				return;
+			}
+
 			switch (snapshot.status) {
 				case 'queued':
 				case 'started':
-					updateActiveAssistantMessage((previousContent) =>
-						previousContent.trim().length > 0
-							? previousContent
-							: t('agenticPanel.researcherThinking', 'Researching...')
-					);
+					dispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: activeChatMessageId,
+						patch: {
+							content: t('agenticPanel.researcherThinking', 'Researching...'),
+							taskId,
+							status: 'queued',
+						},
+					});
 					break;
 				case 'running':
 					if (snapshot.content) {
-						updateActiveAssistantMessage(snapshot.content);
+						dispatch({
+							type: 'CHAT_MESSAGE_UPDATED',
+							id: activeChatMessageId,
+							patch: {
+								content: snapshot.content,
+								taskId,
+								status: 'running',
+							},
+						});
 					}
 					break;
 				case 'completed': {
 					const output = snapshot.result as ResearcherTaskOutput | undefined;
-					updateActiveAssistantMessage(
-						output?.content ||
-							snapshot.content ||
-							t('agenticPanel.emptyResponse', 'No response received.')
-					);
-					activeAssistantMessageIdRef.current = null;
+					dispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: activeChatMessageId,
+						patch: {
+							content:
+								output?.content ||
+								snapshot.content ||
+								t('agenticPanel.emptyResponse', 'No response received.'),
+							taskId,
+							status: 'completed',
+						},
+					});
+					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
 				}
 				case 'error':
-					updateActiveAssistantMessage(
-						snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.')
-					);
-					activeAssistantMessageIdRef.current = null;
+					dispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: activeChatMessageId,
+						patch: {
+							content:
+								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
+							taskId,
+							status: 'error',
+						},
+					});
+					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
 				case 'cancelled':
-					updateActiveAssistantMessage(
-						t('agenticPanel.cancelled', 'The researcher request was cancelled.')
-					);
-					activeAssistantMessageIdRef.current = null;
+					dispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: activeChatMessageId,
+						patch: {
+							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
+							taskId,
+							status: 'cancelled',
+						},
+					});
+					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
 			}
 		});
 
 		return unsubscribe;
-	}, [isRunning, taskId, t, updateActiveAssistantMessage]);
+	}, [activeChatMessageId, dispatch, documentId, taskId, t]);
 
 	const handleSend = useCallback(
 		(content: string) => {
 			if (isRunning) return;
 
-			const userMessage: ChatMessageData = {
-				id: crypto.randomUUID(),
-				content,
-				role: 'user',
-				timestamp: new Date(),
-			};
-
+			const userMessageId = crypto.randomUUID();
 			const assistantMessageId = crypto.randomUUID();
-			activeAssistantMessageIdRef.current = assistantMessageId;
+			const timestamp = new Date().toISOString();
 
-			const assistantMessage: ChatMessageData = {
-				id: assistantMessageId,
-				content: '',
-				role: 'assistant',
-				timestamp: new Date(),
-			};
+			dispatch({
+				type: 'CHAT_MESSAGE_ADDED',
+				message: {
+					id: userMessageId,
+					content,
+					role: 'user',
+					timestamp,
+					taskId: null,
+					status: 'completed',
+				},
+			});
 
-			setMessages((prev) => [...prev, userMessage, assistantMessage]);
+			dispatch({
+				type: 'CHAT_MESSAGE_ADDED',
+				message: {
+					id: assistantMessageId,
+					content: '',
+					role: 'assistant',
+					timestamp,
+					taskId: null,
+					status: 'idle',
+				},
+			});
+
+			dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: assistantMessageId });
+			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+
 			void onSend(content);
 		},
-		[isRunning, onSend]
+		[dispatch, isRunning, onSend]
 	);
 
 	return (
@@ -155,7 +173,7 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }
 				aria-live="polite"
 				aria-busy={isRunning}
 			>
-				{messages.length === 0 ? (
+				{chatMessages.length === 0 ? (
 					<div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
 						<div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
 							<Search className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -174,14 +192,14 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }
 					</div>
 				) : (
 					<div className="flex flex-col gap-4">
-						{messages.map((msg) => (
+						{chatMessages.map((message) => (
 							<ChatMessage
-								key={msg.id}
-								id={msg.id}
-								content={msg.content}
-								role={msg.role}
-								timestamp={msg.timestamp}
-								renderMarkdown={msg.role === 'assistant'}
+								key={message.id}
+								id={message.id}
+								content={message.content}
+								role={message.role}
+								timestamp={message.timestamp}
+								renderMarkdown={message.role === 'assistant'}
 							/>
 						))}
 						<div ref={bottomRef} />

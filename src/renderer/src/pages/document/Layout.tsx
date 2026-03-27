@@ -463,9 +463,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const onResearchSubmit = useCallback(
 		async (prompt: string) => {
 			const data: ResearcherTaskData = { prompt };
-			await researcherTask.submit(data);
+			const metadata = id ? { documentId: id } : undefined;
+			await researcherTask.submit(data, metadata);
 		},
-		[researcherTask]
+		[id, researcherTask]
 	);
 
 	const handleOpenFolder = useCallback(() => {
