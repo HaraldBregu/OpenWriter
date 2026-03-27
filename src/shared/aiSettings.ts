@@ -14,10 +14,8 @@
  * Used as the value type when setting config for a known agent ID.
  */
 export interface AgentConfig {
+	name: string;
 	providerId: string;
-	modelId: string;
-	temperature: number;
-	reasoning: boolean;
 }
 
 /**

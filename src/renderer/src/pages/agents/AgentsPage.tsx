@@ -20,11 +20,7 @@ import {
 	AppTableHeader,
 	AppTableRow,
 } from '@/components/app';
-import {
-	AGENT_DEFINITIONS,
-	AGENT_IDS,
-	DEFAULT_AGENT_CONFIG,
-} from '../../../../shared/aiSettings';
+import { AGENT_DEFINITIONS, AGENT_IDS, DEFAULT_AGENT_CONFIG } from '../../../../shared/aiSettings';
 import type { AgentConfig, AgentId } from '../../../../shared/aiSettings';
 
 type AgentStateMap = Record<AgentId, AgentConfig>;
