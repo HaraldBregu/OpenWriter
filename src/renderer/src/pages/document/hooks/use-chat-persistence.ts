@@ -1,11 +1,17 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { debounce } from 'lodash';
-import { useDocumentState } from './use-document-state';
-import { useDocumentDispatch } from './use-document-dispatch';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { chatMessagesLoaded } from '../../../store/chat/reducer';
+import type { RootState } from '../../../store';
 import type { DocumentChatMessage, ChatMessagesFile } from '../context/state';
 
 const SAVE_DEBOUNCE_MS = 500;
 const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'queued', 'running']);
+
+function selectChatMessages(state: RootState, documentId: string | undefined) {
+	if (!documentId) return [];
+	return state.chat.sessions[documentId]?.messages ?? [];
+}
 
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
@@ -16,8 +22,8 @@ function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMe
 }
 
 export function useChatPersistence(documentId: string | undefined): () => void {
-	const { chatMessages } = useDocumentState();
-	const dispatch = useDocumentDispatch();
+	const reduxDispatch = useAppDispatch();
+	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
 
 	const messagesRef = useRef(chatMessages);
 	messagesRef.current = chatMessages;
@@ -59,7 +65,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				fileLoadedRef.current = true;
 				lastSavedRef.current = JSON.stringify(sanitized);
 
-				dispatch({ type: 'CHAT_MESSAGES_LOADED', messages: sanitized });
+				reduxDispatch(chatMessagesLoaded({ documentId: documentId!, messages: sanitized }));
 			} catch {
 				// Malformed JSON or unexpected error — treat as empty history.
 			}
@@ -70,7 +76,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 		return () => {
 			cancelled = true;
 		};
-	}, [documentId, dispatch]);
+	}, [documentId, reduxDispatch]);
 
 	// Debounced save — recreated whenever documentId changes so the closure is
 	// always bound to the correct document.
