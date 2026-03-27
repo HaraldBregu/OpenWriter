@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { LucideIcon } from 'lucide-react';
-import { PenTool, Palette, BrainCircuit, Loader2, Bot } from 'lucide-react';
+import { PenTool, Palette, Loader2, Bot } from 'lucide-react';
 import { aiProviders } from '@/config/ai-providers';
 import {
 	AppBadge,
@@ -19,8 +19,6 @@ import {
 	AppSelectLabel,
 	AppSelectTrigger,
 	AppSelectValue,
-	AppSlider,
-	AppSwitch,
 } from '@/components/app';
 import { AGENT_IDS, DEFAULT_AGENT_CONFIG } from '../../../../shared/aiSettings';
 import type { AgentConfig, AgentId } from '../../../../shared/aiSettings';
@@ -111,12 +109,13 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 }: AgentCardProps) {
 	const { t } = useTranslation();
 
-	const availableModels = useMemo(
-		() => aiProviders.find((provider) => provider.id === config.providerId)?.models ?? [],
-		[config.providerId]
-	);
 	const saveBadge = getSaveBadge(t, saveStatus);
 	const Icon = definition.icon;
+	const activeProvider = useMemo(
+		() => aiProviders.find((provider) => provider.id === config.providerId) ?? null,
+		[config.providerId]
+	);
+	const activeModelName = activeProvider?.models.find((model) => model.id === config.modelId)?.name;
 
 	const handleProviderChange = useCallback(
 		(value: string) => {
@@ -129,30 +128,6 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 					modelId: provider?.models[0]?.id ?? config.modelId,
 				})
 			);
-		},
-		[config, definition.agentId, onConfigChange]
-	);
-
-	const handleModelChange = useCallback(
-		(value: string) => {
-			onConfigChange(definition.agentId, normalizeAgentConfig({ ...config, modelId: value }));
-		},
-		[config, definition.agentId, onConfigChange]
-	);
-
-	const handleTemperatureChange = useCallback(
-		(value: number) => {
-			onConfigChange(
-				definition.agentId,
-				normalizeAgentConfig({ ...config, temperature: Number(value.toFixed(1)) })
-			);
-		},
-		[config, definition.agentId, onConfigChange]
-	);
-
-	const handleReasoningChange = useCallback(
-		(checked: boolean) => {
-			onConfigChange(definition.agentId, normalizeAgentConfig({ ...config, reasoning: checked }));
 		},
 		[config, definition.agentId, onConfigChange]
 	);
@@ -196,93 +171,38 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 			</AppCardHeader>
 
 			<AppCardContent className="space-y-5 pt-5">
-				<div className="grid gap-4 md:grid-cols-2">
-					<div className="space-y-2">
-						<AppLabel className="text-xs font-medium text-muted-foreground">
-							{t('agents.provider', 'Provider')}
-						</AppLabel>
-						<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
-							<AppSelectTrigger className="h-9 text-sm">
-								<AppSelectValue />
-							</AppSelectTrigger>
-							<AppSelectContent>
-								<AppSelectGroup>
-									<AppSelectLabel>{t('agents.provider', 'Provider')}</AppSelectLabel>
-									{aiProviders.map((provider) => (
-										<AppSelectItem key={provider.id} value={provider.id}>
-											{provider.name}
-										</AppSelectItem>
-									))}
-								</AppSelectGroup>
-							</AppSelectContent>
-						</AppSelect>
-					</div>
-
-					<div className="space-y-2">
-						<AppLabel className="text-xs font-medium text-muted-foreground">
-							{t('agents.model', 'Model')}
-						</AppLabel>
-						<AppSelect value={config.modelId} onValueChange={handleModelChange}>
-							<AppSelectTrigger className="h-9 text-sm">
-								<AppSelectValue />
-							</AppSelectTrigger>
-							<AppSelectContent>
-								<AppSelectGroup>
-									<AppSelectLabel>{t('agents.model', 'Model')}</AppSelectLabel>
-									{availableModels.map((model) => (
-										<AppSelectItem key={model.id} value={model.id}>
-											{model.name}
-										</AppSelectItem>
-									))}
-								</AppSelectGroup>
-							</AppSelectContent>
-						</AppSelect>
-					</div>
+				<div className="space-y-2">
+					<AppLabel className="text-xs font-medium text-muted-foreground">
+						{t('agents.provider', 'Provider')}
+					</AppLabel>
+					<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
+						<AppSelectTrigger className="h-9 text-sm">
+							<AppSelectValue />
+						</AppSelectTrigger>
+						<AppSelectContent>
+							<AppSelectGroup>
+								<AppSelectLabel>{t('agents.provider', 'Provider')}</AppSelectLabel>
+								{aiProviders.map((provider) => (
+									<AppSelectItem key={provider.id} value={provider.id}>
+										{provider.name}
+									</AppSelectItem>
+								))}
+							</AppSelectGroup>
+						</AppSelectContent>
+					</AppSelect>
 				</div>
 
-				<div className="space-y-3">
-					<div className="flex items-center justify-between gap-3">
-						<div className="space-y-1">
-							<p className="text-sm font-medium text-foreground">
-								{t('agents.creativity', 'Creativity')}
-							</p>
-							<p className="text-xs text-muted-foreground">
-								{t('agents.creativityDescription', 'Lower values stay precise, higher values explore more.')}
-							</p>
-						</div>
-						<span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
-							{config.temperature.toFixed(1)}
-						</span>
-					</div>
-					<AppSlider
-						min={0}
-						max={2}
-						step={0.1}
-						value={config.temperature}
-						onValueChange={handleTemperatureChange}
-						aria-label={t('agents.creativity', 'Creativity')}
-						className="rounded-full"
-					/>
-				</div>
-
-				<div className="flex items-start justify-between gap-4 rounded-md border bg-muted/30 px-4 py-3">
-					<div className="space-y-1">
-						<div className="flex items-center gap-2 text-sm font-medium text-foreground">
-							<BrainCircuit className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-							{t('agents.reasoning', 'Reasoning mode')}
-						</div>
-						<p className="text-xs leading-5 text-muted-foreground">
-							{t(
-								'agents.reasoningDescription',
-								'Enable deeper planning when the task benefits from extra thinking time.'
-							)}
-						</p>
-					</div>
-					<AppSwitch
-						checked={config.reasoning}
-						onCheckedChange={handleReasoningChange}
-						aria-label={t('agents.reasoning', 'Reasoning mode')}
-					/>
+				<div className="rounded-md border bg-muted/20 px-4 py-3">
+					<p className="text-xs font-medium text-muted-foreground">
+						{t('agents.assignedModel', 'Assigned model')}
+					</p>
+					<p className="mt-1 text-sm text-foreground">{activeModelName ?? config.modelId}</p>
+					<p className="mt-1 text-xs text-muted-foreground">
+						{t(
+							'agents.assignedModelDescription',
+							'The first available model for the selected provider is assigned automatically.'
+						)}
+					</p>
 				</div>
 			</AppCardContent>
 		</AppCard>
