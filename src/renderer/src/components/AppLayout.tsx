@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../hooks/use-language';
 import { useWorkspaceListener } from '../hooks/use-workspace-listener';
 import { useWorkspaceValidation } from '../hooks/use-workspace-validation';
 import { useCreateWriting } from '../hooks/use-create-writing';

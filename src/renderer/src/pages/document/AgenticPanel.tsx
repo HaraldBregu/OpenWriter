@@ -33,7 +33,10 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }
 		if (!taskId) return;
 
 		const currentSnapshot = getTaskSnapshot(taskId);
-		if (currentSnapshot?.metadata?.documentId && currentSnapshot.metadata.documentId !== documentId) {
+		if (
+			currentSnapshot?.metadata?.documentId &&
+			currentSnapshot.metadata.documentId !== documentId
+		) {
 			return;
 		}
 
