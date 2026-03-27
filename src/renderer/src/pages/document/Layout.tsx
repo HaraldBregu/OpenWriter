@@ -42,6 +42,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
 	const dispatch = useDocumentDispatch();
+	useChatPersistence(id);
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
