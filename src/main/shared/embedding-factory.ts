@@ -7,7 +7,7 @@
  */
 
 import { OpenAIEmbeddings } from '@langchain/openai';
-import { DEFAULT_EMBEDDING_MODEL_ID } from '../../shared/model-constants';
+import { DEFAULT_EMBEDDING_MODEL_ID } from '../../shared/provider-constants';
 
 const DEFAULT_EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL_ID;
 
