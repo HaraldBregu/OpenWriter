@@ -45,8 +45,7 @@ function buildInitialAgentState(): AgentStateMap {
 }
 
 function normalizeAgentConfig(config: AgentConfig): AgentConfig {
-	const provider =
-		aiProviders.find((entry) => entry.id === config.providerId) ?? aiProviders[0];
+	const provider = aiProviders.find((entry) => entry.id === config.providerId) ?? aiProviders[0];
 
 	if (!provider) {
 		return { name: config.name, description: config.description, providerId: '' };

@@ -45,4 +45,3 @@ export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: str
 		description: 'Generates images from a text prompt and returns the image URL',
 	},
 };
-

@@ -69,7 +69,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 					if (match) {
 						const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
 						const base64 = match[2];
-						const fileName = `image-${Date.now()}.${ext}`;
+						const fileName = `${crypto.randomUUID()}.${ext}`;
 						await window.workspace.saveDocumentImage({
 							documentId,
 							fileName,
