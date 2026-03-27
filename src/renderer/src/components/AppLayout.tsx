@@ -133,15 +133,23 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							<AppSidebarMenuItem>
 								<AppSidebarMenuButton
 									onClick={() => navigate('/home')}
-									className="h-auto min-h-12 px-3 py-2.5"
+									className={open ? 'h-auto min-h-12 px-3 py-2.5' : 'h-8 w-8 p-2'}
 								>
-									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent/70 ring-1 ring-sidebar-border/70">
+									{open ? (
+										<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent/70 ring-1 ring-sidebar-border/70">
+											<img
+												src={logoIcon}
+												alt="OpenWriter"
+												className="h-5 w-5 rounded-full object-cover"
+											/>
+										</div>
+									) : (
 										<img
 											src={logoIcon}
 											alt="OpenWriter"
-											className="h-5 w-5 rounded-full object-cover"
+											className="h-4 w-4 rounded-full object-cover"
 										/>
-									</div>
+									)}
 									{open && (
 										<div className="grid min-w-0 flex-1 text-left leading-tight">
 											<span className="truncate text-[0.95rem] font-medium tracking-tight text-sidebar-foreground">
