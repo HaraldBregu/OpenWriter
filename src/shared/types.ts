@@ -423,6 +423,48 @@ export interface ProjectWorkspaceInfo {
 	appVersion: string;
 }
 
+// ---- Researcher -----------------------------------------------------------
+
+/**
+ * Phase of the researcher pipeline.
+ * Emitted as the graph transitions between nodes so the UI can show
+ * progress indicators to the user.
+ */
+export type ResearcherPhase = 'understanding' | 'planning' | 'researching' | 'composing';
+
+/**
+ * Payload sent from the renderer to start a researcher query.
+ */
+export interface ResearcherQueryPayload {
+	/** The user's research prompt. */
+	prompt: string;
+	/** Provider ID override (uses configured default when omitted). */
+	providerId?: string;
+	/** Model ID override. */
+	modelId?: string;
+	/** Sampling temperature override for the compose node (default: 0.7). */
+	temperature?: number;
+	/** Max token limit override. */
+	maxTokens?: number;
+}
+
+/**
+ * Union of all events pushed from the main process to the renderer during
+ * a researcher session. Events are keyed by `type` for exhaustive handling.
+ */
+export type ResearcherEvent =
+	| { type: 'token'; token: string; sessionId: string }
+	| { type: 'phase'; phase: ResearcherPhase; sessionId: string }
+	| {
+			type: 'done';
+			response: string;
+			tokenCount: number;
+			intent: string;
+			plan: string[];
+			sessionId: string;
+	  }
+	| { type: 'error'; error: string; code: string; sessionId: string };
+
 // ---- AI Agents ------------------------------------------------------------
 
 export type AgentStreamEvent =
