@@ -78,10 +78,7 @@ export const chatSlice = createSlice({
 		/**
 		 * Set the active task id for a session (null clears it).
 		 */
-		chatActiveTaskSet(
-			state,
-			action: PayloadAction<{ documentId: string; taskId: string | null }>
-		) {
+		chatActiveTaskSet(state, action: PayloadAction<{ documentId: string; taskId: string | null }>) {
 			const { documentId, taskId } = action.payload;
 			const session = getOrCreateSession(state, documentId);
 			session.activeTaskId = taskId;
