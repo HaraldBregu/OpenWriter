@@ -100,15 +100,7 @@ const AgentTableRow = React.memo(function AgentTableRow({
 
 	const handleProviderChange = useCallback(
 		(value: string) => {
-			const provider = aiProviders.find((entry) => entry.id === value);
-			onConfigChange(
-				definition.agentId,
-				normalizeAgentConfig({
-					...config,
-					providerId: value,
-					modelId: provider?.models[0]?.id ?? config.modelId,
-				})
-			);
+			onConfigChange(definition.agentId, normalizeAgentConfig({ ...config, providerId: value }));
 		},
 		[config, definition.agentId, onConfigChange]
 	);
