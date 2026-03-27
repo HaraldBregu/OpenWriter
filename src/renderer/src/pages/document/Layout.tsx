@@ -11,7 +11,7 @@ import ResourcesPanel from './ResourcesPanel';
 import AgenticPanel from './AgenticPanel';
 import EditorPanel from './EditorPanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
-import { useDocumentDispatch } from './hooks';
+import { useDocumentDispatch, useChatPersistence } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
