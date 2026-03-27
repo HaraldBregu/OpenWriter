@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Bot, ImageIcon, Loader2, PenTool, Sparkles, WandSparkles } from 'lucide-react';
+import { Bot, ImageIcon, PenTool, Sparkles, WandSparkles } from 'lucide-react';
 import { aiProviders } from '@/config/ai-providers';
 import {
-	AppBadge,
 	AppCard,
 	AppCardContent,
 	AppLabel,
@@ -30,8 +28,6 @@ import {
 import type { AgentConfig, AgentId } from '../../../../shared/aiSettings';
 
 type AgentStateMap = Record<AgentId, AgentConfig>;
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-type SaveStateMap = Partial<Record<AgentId, SaveStatus>>;
 
 interface AgentTableRowDefinition {
 	agentId: AgentId;
@@ -43,7 +39,6 @@ interface AgentTableRowDefinition {
 interface AgentRowProps {
 	definition: AgentTableRowDefinition;
 	config: AgentConfig;
-	saveStatus: SaveStatus;
 	onConfigChange: (agentId: AgentId, config: AgentConfig) => void;
 }
 
@@ -73,35 +68,6 @@ function normalizeAgentConfig(config: AgentConfig): AgentConfig {
 		temperature: config.temperature,
 		reasoning: config.reasoning,
 	};
-}
-
-function getSaveBadge(
-	t: TFunction,
-	status: SaveStatus
-): { label: string; className: string; icon?: React.ReactNode } {
-	switch (status) {
-		case 'saving':
-			return {
-				label: t('agents.saving', 'Saving'),
-				className: 'border-primary/20 bg-primary/10 text-primary',
-				icon: <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />,
-			};
-		case 'saved':
-			return {
-				label: t('agents.saved', 'Saved'),
-				className: 'border-primary/20 bg-primary/10 text-primary',
-			};
-		case 'error':
-			return {
-				label: t('agents.retry', 'Retry needed'),
-				className: 'border-destructive/20 bg-destructive/10 text-destructive',
-			};
-		default:
-			return {
-				label: t('agents.ready', 'Ready'),
-				className: 'border-border bg-muted/60 text-muted-foreground',
-			};
-	}
 }
 
 function getAgentIcon(agentId: AgentId) {
@@ -137,12 +103,10 @@ function getAgentIcon(agentId: AgentId) {
 const AgentTableRow = React.memo(function AgentTableRow({
 	definition,
 	config,
-	saveStatus,
 	onConfigChange,
 }: AgentRowProps) {
 	const { t } = useTranslation();
 	const Icon = definition.icon;
-	const saveBadge = getSaveBadge(t, saveStatus);
 
 	const handleProviderChange = useCallback(
 		(value: string) => {
@@ -191,17 +155,6 @@ const AgentTableRow = React.memo(function AgentTableRow({
 					</AppSelect>
 				</div>
 			</AppTableCell>
-			<AppTableCell className="w-[20%] text-right">
-				<div className="flex justify-end">
-					<AppBadge
-						variant="outline"
-						className={`flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium ${saveBadge.className}`}
-					>
-						{saveBadge.icon}
-						{saveBadge.label}
-					</AppBadge>
-				</div>
-			</AppTableCell>
 		</AppTableRow>
 	);
 });
@@ -209,7 +162,6 @@ const AgentTableRow = React.memo(function AgentTableRow({
 const AgentsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [agentStates, setAgentStates] = useState<AgentStateMap>(() => buildInitialAgentState());
-	const [saveStates, setSaveStates] = useState<SaveStateMap>({});
 
 	const agentRows = useMemo<AgentTableRowDefinition[]>(
 		() =>
@@ -243,13 +195,7 @@ const AgentsPage: React.FC = () => {
 
 				setAgentStates(nextState);
 			})
-			.catch(() => {
-				if (!cancelled) {
-					setSaveStates(
-						Object.fromEntries(AGENT_IDS.map((agentId) => [agentId, 'error'])) as SaveStateMap
-					);
-				}
-			});
+			.catch(() => {});
 
 		return () => {
 			cancelled = true;
@@ -263,25 +209,8 @@ const AgentsPage: React.FC = () => {
 			...prev,
 			[agentId]: normalizedConfig,
 		}));
-		setSaveStates((prev) => ({
-			...prev,
-			[agentId]: 'saving',
-		}));
 
-		window.workspace.setAgentConfig(agentId, normalizedConfig).then(
-			() => {
-				setSaveStates((prev) => ({
-					...prev,
-					[agentId]: 'saved',
-				}));
-			},
-			() => {
-				setSaveStates((prev) => ({
-					...prev,
-					[agentId]: 'error',
-				}));
-			}
-		);
+		window.workspace.setAgentConfig(agentId, normalizedConfig).catch(() => {});
 	}, []);
 
 	return (
@@ -306,7 +235,6 @@ const AgentsPage: React.FC = () => {
 									<AppTableRow>
 										<AppTableHead>{t('agents.agent', 'Agent')}</AppTableHead>
 										<AppTableHead>{t('agents.provider', 'Provider')}</AppTableHead>
-										<AppTableHead className="text-right">{t('agents.status', 'Status')}</AppTableHead>
 									</AppTableRow>
 								</AppTableHeader>
 								<AppTableBody>
@@ -315,7 +243,6 @@ const AgentsPage: React.FC = () => {
 											key={agent.agentId}
 											definition={agent}
 											config={agentStates[agent.agentId]}
-											saveStatus={saveStates[agent.agentId] ?? 'idle'}
 											onConfigChange={handleConfigChange}
 										/>
 									))}
