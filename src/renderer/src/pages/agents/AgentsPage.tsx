@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, Paintbrush, PenTool } from 'lucide-react';
+import { Bot, Paintbrush, PenTool, Search } from 'lucide-react';
 import {
 	AppCard,
 	AppCardContent,
@@ -21,6 +21,8 @@ function getAgentIcon(name: string): {
 	switch (name) {
 		case 'Writer':
 			return { icon: PenTool, accentClassName: 'bg-primary/12 text-primary' };
+		case 'Researcher':
+			return { icon: Search, accentClassName: 'bg-emerald-500/12 text-emerald-600' };
 		case 'Painter':
 			return { icon: Paintbrush, accentClassName: 'bg-warning/12 text-warning' };
 		default:
