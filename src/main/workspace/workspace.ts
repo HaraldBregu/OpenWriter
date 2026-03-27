@@ -16,7 +16,6 @@ import type {
 } from './output-files';
 import { VALID_OUTPUT_TYPES } from './output-files';
 import { DocumentsService } from './documents';
-import type { AgentConfig, WorkspaceAgentEntry } from '../../shared/ai-settings';
 import type { LoggerService } from '../services/logger';
 import type {
 	DirectoryEntry,
