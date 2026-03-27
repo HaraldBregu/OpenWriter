@@ -133,7 +133,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										alt="OpenWriter"
 										className="h-[18px] w-[18px] rounded-full object-cover"
 									/>
-									<span className="text-md font-normal tracking-tight">OpenWriter</span>
+									<span className="text-base font-normal tracking-tight">OpenWriter</span>
 								</AppSidebarMenuButton>
 							</AppSidebarMenuItem>
 						</AppSidebarMenu>
@@ -291,10 +291,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									{open && (
 										<>
 											<div className="min-w-0 flex-1">
-												<p className="truncate text-sm font-medium text-sidebar-foreground">
+												<p className="truncate text-[0.95rem] font-medium text-sidebar-foreground">
 													{footerUserName}
 												</p>
-												<p className="truncate text-xs text-muted-foreground">
+												<p className="truncate text-[0.85rem] text-muted-foreground">
 													{t('appLayout.plan', 'Pro plan')}
 												</p>
 											</div>
