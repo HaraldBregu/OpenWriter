@@ -1,18 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, ImageIcon, PenTool, Sparkles, WandSparkles } from 'lucide-react';
-import { aiProviders } from '@/config/ai-providers';
 import {
 	AppCard,
 	AppCardContent,
-	AppLabel,
-	AppSelect,
-	AppSelectContent,
-	AppSelectGroup,
-	AppSelectItem,
-	AppSelectLabel,
-	AppSelectTrigger,
-	AppSelectValue,
 	AppTable,
 	AppTableBody,
 	AppTableCell,
@@ -21,122 +12,43 @@ import {
 	AppTableRow,
 } from '@/components/app';
 import { DEFAULT_AGENTS } from '../../../../shared/ai-settings';
-import type { AgentConfig, AgentId } from '../../../../shared/ai-settings';
+import type { AgentConfig } from '../../../../shared/ai-settings';
 
-type AgentStateMap = Record<AgentId, AgentConfig>;
-
-interface AgentTableRowDefinition {
-	agentId: AgentId;
-	title: string;
+function getAgentIcon(name: string): {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	accentClassName: string;
-}
-
-interface AgentRowProps {
-	definition: AgentTableRowDefinition;
-	config: AgentConfig;
-	onConfigChange: (agentId: AgentId, config: AgentConfig) => void;
-}
-
-function buildInitialAgentState(): AgentStateMap {
-	return Object.fromEntries(
-		DEFAULT_AGENTS.map(({ id }) => [
-			id,
-			{ name: '', description: '', providerId: aiProviders[0]?.id ?? '' },
-		])
-	) as AgentStateMap;
-}
-
-function normalizeAgentConfig(config: AgentConfig): AgentConfig {
-	const provider = aiProviders.find((entry) => entry.id === config.providerId) ?? aiProviders[0];
-
-	if (!provider) {
-		return { name: config.name, description: config.description, providerId: '' };
+} {
+	switch (name) {
+		case 'Text Completer':
+			return { icon: Sparkles, accentClassName: 'bg-muted text-muted-foreground' };
+		case 'Text Enhance':
+			return { icon: WandSparkles, accentClassName: 'bg-warning/12 text-warning' };
+		case 'Text Writer':
+			return { icon: PenTool, accentClassName: 'bg-primary/12 text-primary' };
+		case 'Image Generator':
+			return { icon: ImageIcon, accentClassName: 'bg-primary/12 text-primary' };
+		default:
+			return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };
 	}
-
-	return {
-		name: config.name,
-		description: config.description,
-		providerId: provider.id,
-	};
 }
 
-function getAgentIcon(agentId: AgentId) {
-	switch (agentId) {
-		case 'text-completer':
-			return {
-				icon: Sparkles,
-				accentClassName: 'bg-muted text-muted-foreground',
-			};
-		case 'text-enhance':
-			return {
-				icon: WandSparkles,
-				accentClassName: 'bg-warning/12 text-warning',
-			};
-		case 'text-writer':
-			return {
-				icon: PenTool,
-				accentClassName: 'bg-primary/12 text-primary',
-			};
-		case 'image-generator':
-			return {
-				icon: ImageIcon,
-				accentClassName: 'bg-primary/12 text-primary',
-			};
-	}
-
-	return {
-		icon: Bot,
-		accentClassName: 'bg-muted text-muted-foreground',
-	};
-}
-
-const AgentTableRow = React.memo(function AgentTableRow({
-	definition,
-	config,
-	onConfigChange,
-}: AgentRowProps) {
-	const { t } = useTranslation();
-	const Icon = definition.icon;
-
-	const handleProviderChange = useCallback(
-		(value: string) => {
-			onConfigChange(definition.agentId, normalizeAgentConfig({ ...config, providerId: value }));
-		},
-		[config, definition.agentId, onConfigChange]
-	);
+const AgentTableRow = React.memo(function AgentTableRow({ agent }: { agent: AgentConfig }) {
+	const { icon: Icon, accentClassName } = getAgentIcon(agent.name);
 
 	return (
 		<AppTableRow>
-			<AppTableCell className="w-[70%]">
+			<AppTableCell className="w-[40%]">
 				<div className="flex items-center gap-3">
 					<div
-						className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${definition.accentClassName}`}
+						className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${accentClassName}`}
 					>
 						<Icon className="h-4 w-4" aria-hidden="true" />
 					</div>
-					<span className="text-sm font-medium text-foreground">{definition.title}</span>
+					<span className="text-sm font-medium text-foreground">{agent.name}</span>
 				</div>
 			</AppTableCell>
-			<AppTableCell className="w-[30%]">
-				<div className="max-w-[220px] space-y-1">
-					<AppLabel className="sr-only">{t('agents.provider', 'Provider')}</AppLabel>
-					<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
-						<AppSelectTrigger className="h-9 text-sm">
-							<AppSelectValue />
-						</AppSelectTrigger>
-						<AppSelectContent>
-							<AppSelectGroup>
-								<AppSelectLabel>{t('agents.provider', 'Provider')}</AppSelectLabel>
-								{aiProviders.map((provider) => (
-									<AppSelectItem key={provider.id} value={provider.id}>
-										{provider.name}
-									</AppSelectItem>
-								))}
-							</AppSelectGroup>
-						</AppSelectContent>
-					</AppSelect>
-				</div>
+			<AppTableCell className="w-[60%]">
+				<p className="text-sm text-muted-foreground">{agent.description}</p>
 			</AppTableCell>
 		</AppTableRow>
 	);
@@ -144,30 +56,6 @@ const AgentTableRow = React.memo(function AgentTableRow({
 
 const AgentsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [agentStates, setAgentStates] = useState<AgentStateMap>(() => buildInitialAgentState());
-
-	const agentRows = useMemo<AgentTableRowDefinition[]>(
-		() =>
-			DEFAULT_AGENTS.map(({ id: agentId, name }) => {
-				const { icon, accentClassName } = getAgentIcon(agentId);
-				return {
-					agentId,
-					title: name,
-					icon,
-					accentClassName,
-				};
-			}),
-		[]
-	);
-
-	const handleConfigChange = useCallback((agentId: AgentId, config: AgentConfig) => {
-		const normalizedConfig = normalizeAgentConfig(config);
-
-		setAgentStates((prev) => ({
-			...prev,
-			[agentId]: normalizedConfig,
-		}));
-	}, []);
 
 	return (
 		<div className="flex h-full flex-col">
@@ -180,29 +68,22 @@ const AgentsPage: React.FC = () => {
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				<div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-6">
-					<p className="text-sm text-muted-foreground">
-						{t('agents.subtitle', 'Select the provider used by each available agent.')}
-					</p>
-
 					<AppCard>
 						<AppCardContent className="p-0">
 							<AppTable>
 								<AppTableHeader>
 									<AppTableRow>
-										<AppTableHead className="w-[70%]">{t('agents.agent', 'Agent')}</AppTableHead>
-										<AppTableHead className="w-[30%]">
-											{t('agents.provider', 'Provider')}
+										<AppTableHead className="w-[40%]">
+											{t('agents.agent', 'Agent')}
+										</AppTableHead>
+										<AppTableHead className="w-[60%]">
+											{t('agents.description', 'Description')}
 										</AppTableHead>
 									</AppTableRow>
 								</AppTableHeader>
 								<AppTableBody>
-									{agentRows.map((agent) => (
-										<AgentTableRow
-											key={agent.agentId}
-											definition={agent}
-											config={agentStates[agent.agentId]}
-											onConfigChange={handleConfigChange}
-										/>
+									{DEFAULT_AGENTS.map((agent) => (
+										<AgentTableRow key={agent.name} agent={agent} />
 									))}
 								</AppTableBody>
 							</AppTable>
