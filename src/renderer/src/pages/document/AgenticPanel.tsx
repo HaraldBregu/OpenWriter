@@ -181,6 +181,7 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }
 								content={msg.content}
 								role={msg.role}
 								timestamp={msg.timestamp}
+								renderMarkdown={msg.role === 'assistant'}
 							/>
 						))}
 						<div ref={bottomRef} />
