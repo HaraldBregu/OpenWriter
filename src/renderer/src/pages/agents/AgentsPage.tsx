@@ -1,15 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import type { LucideIcon } from 'lucide-react';
-import { PenTool, Palette, Loader2, Bot } from 'lucide-react';
+import { Bot, ImageIcon, Loader2, PenTool, Sparkles, WandSparkles } from 'lucide-react';
 import { aiProviders } from '@/config/ai-providers';
 import {
 	AppBadge,
 	AppCard,
 	AppCardContent,
-	AppCardHeader,
-	AppCardTitle,
 	AppLabel,
 	AppSelect,
 	AppSelectContent,
@@ -18,24 +15,33 @@ import {
 	AppSelectLabel,
 	AppSelectTrigger,
 	AppSelectValue,
+	AppTable,
+	AppTableBody,
+	AppTableCell,
+	AppTableHead,
+	AppTableHeader,
+	AppTableRow,
 } from '@/components/app';
-import { AGENT_IDS, DEFAULT_AGENT_CONFIG } from '../../../../shared/aiSettings';
+import {
+	AGENT_DEFINITIONS,
+	AGENT_IDS,
+	DEFAULT_AGENT_CONFIG,
+} from '../../../../shared/aiSettings';
 import type { AgentConfig, AgentId } from '../../../../shared/aiSettings';
 
 type AgentStateMap = Record<AgentId, AgentConfig>;
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type SaveStateMap = Partial<Record<AgentId, SaveStatus>>;
 
-interface DefaultAgentCardDefinition {
-	id: 'writer' | 'designer';
+interface AgentTableRowDefinition {
 	agentId: AgentId;
 	title: string;
-	icon: LucideIcon;
+	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	accentClassName: string;
 }
 
-interface AgentCardProps {
-	definition: DefaultAgentCardDefinition;
+interface AgentRowProps {
+	definition: AgentTableRowDefinition;
 	config: AgentConfig;
 	saveStatus: SaveStatus;
 	onConfigChange: (agentId: AgentId, config: AgentConfig) => void;
@@ -98,16 +104,45 @@ function getSaveBadge(
 	}
 }
 
-const AgentConfigCard = React.memo(function AgentConfigCard({
+function getAgentIcon(agentId: AgentId) {
+	switch (agentId) {
+		case 'text-completer':
+			return {
+				icon: Sparkles,
+				accentClassName: 'bg-muted text-muted-foreground',
+			};
+		case 'text-enhance':
+			return {
+				icon: WandSparkles,
+				accentClassName: 'bg-warning/12 text-warning',
+			};
+		case 'text-writer':
+			return {
+				icon: PenTool,
+				accentClassName: 'bg-primary/12 text-primary',
+			};
+		case 'image-generator':
+			return {
+				icon: ImageIcon,
+				accentClassName: 'bg-primary/12 text-primary',
+			};
+	}
+
+	return {
+		icon: Bot,
+		accentClassName: 'bg-muted text-muted-foreground',
+	};
+}
+
+const AgentTableRow = React.memo(function AgentTableRow({
 	definition,
 	config,
 	saveStatus,
 	onConfigChange,
-}: AgentCardProps) {
+}: AgentRowProps) {
 	const { t } = useTranslation();
-
-	const saveBadge = getSaveBadge(t, saveStatus);
 	const Icon = definition.icon;
+	const saveBadge = getSaveBadge(t, saveStatus);
 
 	const handleProviderChange = useCallback(
 		(value: string) => {
@@ -125,33 +160,20 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 	);
 
 	return (
-		<AppCard>
-			<AppCardHeader className="space-y-4 border-b pb-4">
-				<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-					<div className="flex items-start gap-4">
-						<div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${definition.accentClassName}`}>
-							<Icon className="h-5 w-5" aria-hidden="true" />
-						</div>
-						<div>
-							<AppCardTitle className="text-base font-semibold">{definition.title}</AppCardTitle>
-						</div>
-					</div>
-
-					<AppBadge
-						variant="outline"
-						className={`flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium ${saveBadge.className}`}
+		<AppTableRow>
+			<AppTableCell className="w-[42%]">
+				<div className="flex items-center gap-3">
+					<div
+						className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${definition.accentClassName}`}
 					>
-						{saveBadge.icon}
-						{saveBadge.label}
-					</AppBadge>
+						<Icon className="h-4 w-4" aria-hidden="true" />
+					</div>
+					<span className="text-sm font-medium text-foreground">{definition.title}</span>
 				</div>
-			</AppCardHeader>
-
-			<AppCardContent className="space-y-5 pt-5">
-				<div className="space-y-2">
-					<AppLabel className="text-xs font-medium text-muted-foreground">
-						{t('agents.provider', 'Provider')}
-					</AppLabel>
+			</AppTableCell>
+			<AppTableCell className="w-[38%]">
+				<div className="space-y-1">
+					<AppLabel className="sr-only">{t('agents.provider', 'Provider')}</AppLabel>
 					<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
 						<AppSelectTrigger className="h-9 text-sm">
 							<AppSelectValue />
@@ -168,8 +190,19 @@ const AgentConfigCard = React.memo(function AgentConfigCard({
 						</AppSelectContent>
 					</AppSelect>
 				</div>
-			</AppCardContent>
-		</AppCard>
+			</AppTableCell>
+			<AppTableCell className="w-[20%] text-right">
+				<div className="flex justify-end">
+					<AppBadge
+						variant="outline"
+						className={`flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-medium ${saveBadge.className}`}
+					>
+						{saveBadge.icon}
+						{saveBadge.label}
+					</AppBadge>
+				</div>
+			</AppTableCell>
+		</AppTableRow>
 	);
 });
 
@@ -178,24 +211,18 @@ const AgentsPage: React.FC = () => {
 	const [agentStates, setAgentStates] = useState<AgentStateMap>(() => buildInitialAgentState());
 	const [saveStates, setSaveStates] = useState<SaveStateMap>({});
 
-	const defaultAgents = useMemo<DefaultAgentCardDefinition[]>(
-		() => [
-			{
-				id: 'writer',
-				agentId: 'text-writer',
-				title: t('agents.writer.title', 'Writer'),
-				icon: PenTool,
-				accentClassName: 'bg-warning/12 text-warning',
-			},
-			{
-				id: 'designer',
-				agentId: 'image-generator',
-				title: t('agents.designer.title', 'Designer'),
-				icon: Palette,
-				accentClassName: 'bg-primary/12 text-primary',
-			},
-		],
-		[t]
+	const agentRows = useMemo<AgentTableRowDefinition[]>(
+		() =>
+			AGENT_IDS.map((agentId) => {
+				const { icon, accentClassName } = getAgentIcon(agentId);
+				return {
+					agentId,
+					title: AGENT_DEFINITIONS[agentId].name,
+					icon,
+					accentClassName,
+				};
+			}),
+		[]
 	);
 
 	useEffect(() => {
@@ -218,10 +245,9 @@ const AgentsPage: React.FC = () => {
 			})
 			.catch(() => {
 				if (!cancelled) {
-					setSaveStates({
-						'text-writer': 'error',
-						'image-generator': 'error',
-					});
+					setSaveStates(
+						Object.fromEntries(AGENT_IDS.map((agentId) => [agentId, 'error'])) as SaveStateMap
+					);
 				}
 			});
 
@@ -270,23 +296,33 @@ const AgentsPage: React.FC = () => {
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				<div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-6">
 					<p className="text-sm text-muted-foreground">
-						{t(
-							'agents.subtitle',
-							'Select the provider used by each default agent in your workspace.'
-						)}
+						{t('agents.subtitle', 'Select the provider used by each available agent.')}
 					</p>
 
-					<div className="grid gap-4 xl:grid-cols-2">
-						{defaultAgents.map((agent) => (
-							<AgentConfigCard
-								key={agent.id}
-								definition={agent}
-								config={agentStates[agent.agentId]}
-								saveStatus={saveStates[agent.agentId] ?? 'idle'}
-								onConfigChange={handleConfigChange}
-							/>
-						))}
-					</div>
+					<AppCard>
+						<AppCardContent className="p-0">
+							<AppTable>
+								<AppTableHeader>
+									<AppTableRow>
+										<AppTableHead>{t('agents.agent', 'Agent')}</AppTableHead>
+										<AppTableHead>{t('agents.provider', 'Provider')}</AppTableHead>
+										<AppTableHead className="text-right">{t('agents.status', 'Status')}</AppTableHead>
+									</AppTableRow>
+								</AppTableHeader>
+								<AppTableBody>
+									{agentRows.map((agent) => (
+										<AgentTableRow
+											key={agent.agentId}
+											definition={agent}
+											config={agentStates[agent.agentId]}
+											saveStatus={saveStates[agent.agentId] ?? 'idle'}
+											onConfigChange={handleConfigChange}
+										/>
+									))}
+								</AppTableBody>
+							</AppTable>
+						</AppCardContent>
+					</AppCard>
 				</div>
 			</div>
 		</div>
