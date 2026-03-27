@@ -6,7 +6,7 @@ import {
 	PROVIDER_IDS,
 	type ProviderId,
 	PROVIDER_CATALOGUE,
-} from '../../../../shared/model-constants';
+} from '../../../../shared/provider-constants';
 import { AppButton, AppInput, AppLabel, AppSeparator } from '@/components/app';
 
 function isDefaultProvider(provider: string): provider is ProviderId {
