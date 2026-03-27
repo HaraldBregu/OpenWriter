@@ -4,7 +4,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { app } from 'electron';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
-import type { AgentConfig, WorkspaceAgentEntry } from '../../shared/aiSettings';
+import type { AgentConfig, WorkspaceAgentEntry } from '../../shared/ai-settings';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from './workspace-service';
 
