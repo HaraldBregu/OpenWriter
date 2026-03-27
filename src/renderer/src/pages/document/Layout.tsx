@@ -31,6 +31,10 @@ type ImageGeneratorTaskData = {
 	prompt: string;
 };
 
+type ResearcherTaskData = {
+	prompt: string;
+};
+
 interface LayoutProps {
 	documentId: string | undefined;
 }
@@ -82,6 +86,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		'agent-image-generator',
 		imageGeneratorTaskData
 	);
+
+	const researcherTaskData: ResearcherTaskData = { prompt: '' };
+	const researcherTask = useTask<ResearcherTaskData>('agent-researcher', researcherTaskData);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -453,6 +460,14 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[imageGeneratorTask, id]
 	);
 
+	const onResearchSubmit = useCallback(
+		async (prompt: string) => {
+			const data: ResearcherTaskData = { prompt };
+			await researcherTask.submit(data);
+		},
+		[researcherTask]
+	);
+
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
@@ -513,7 +528,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				>
 					<div className="h-full">
 						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <AgenticPanel />}
+						{activeSidebar === 'agentic' && (
+							<AgenticPanel
+								taskId={researcherTask.taskId}
+								isRunning={researcherTask.isQueued || researcherTask.isRunning}
+								onSend={onResearchSubmit}
+							/>
+						)}
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>

@@ -20,7 +20,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ content, role, timestamp }) =
 				className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words ${
 					isUser
 						? 'bg-primary text-primary-foreground rounded-tr-sm'
-						: 'bg-muted text-foreground rounded-tl-sm'
+						: 'bg-muted text-foreground rounded-tl-sm whitespace-pre-wrap'
 				}`}
 			>
 				{content}

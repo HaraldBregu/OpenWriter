@@ -1,25 +1,23 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, SlidersHorizontal, Mic, ArrowUp } from 'lucide-react';
-import {
-	AppButton,
-	AppTextarea,
-	AppSelect,
-	AppSelectTrigger,
-	AppSelectValue,
-	AppSelectContent,
-	AppSelectItem,
-} from '@/components/app';
+import { ArrowUp, Search } from 'lucide-react';
+import { AppButton, AppTextarea } from '@/components/app';
 
 interface ChatInputProps {
 	readonly onSend: (message: string) => void;
 	readonly disabled?: boolean;
+	readonly agentLabel?: string;
+	readonly placeholder?: string;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+	onSend,
+	disabled = false,
+	agentLabel,
+	placeholder,
+}) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
-	const [selectedAgent, setSelectedAgent] = useState<string>('nova');
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	const adjustHeight = useCallback(() => {
@@ -62,8 +60,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
-			<div className="rounded-2xl border border-dashed border-border bg-muted/40 overflow-hidden">
-				{/* Textarea */}
+			<div className="overflow-hidden rounded-2xl border border-border bg-background">
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
@@ -71,60 +68,23 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled = false }) => {
 					onKeyDown={handleKeyDown}
 					disabled={disabled}
 					rows={3}
-					placeholder={t('agenticPanel.inputPlaceholder', 'Describe what to build')}
+					placeholder={
+						placeholder ??
+						t('agenticPanel.inputPlaceholder', 'Ask the researcher for context, facts, or ideas')
+					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
 					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
 				/>
 
-				{/* Bottom toolbar */}
-				<div className="flex items-center gap-1 px-2 pb-2 pt-1">
-					{/* Left actions */}
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						aria-label={t('agenticPanel.attach', 'Attach file')}
-						className="h-7 w-7 text-muted-foreground hover:text-foreground"
-					>
-						<Plus className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
+				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
+					{agentLabel ? (
+						<div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
+							<Search className="h-3 w-3" aria-hidden="true" />
+							<span>{agentLabel}</span>
+						</div>
+					) : null}
 
-					<AppSelect value={selectedAgent} onValueChange={setSelectedAgent}>
-						<AppSelectTrigger className="h-7 w-fit px-2 text-xs border-none bg-transparent text-muted-foreground hover:text-foreground shadow-none focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none">
-							<AppSelectValue />
-						</AppSelectTrigger>
-						<AppSelectContent>
-							<AppSelectItem value="nova">Nova</AppSelectItem>
-							<AppSelectItem value="sage">Sage</AppSelectItem>
-							<AppSelectItem value="echo">Echo</AppSelectItem>
-							<AppSelectItem value="draft">Draft</AppSelectItem>
-							<AppSelectItem value="lens">Lens</AppSelectItem>
-						</AppSelectContent>
-					</AppSelect>
-
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						aria-label={t('agenticPanel.settings', 'Settings')}
-						className="h-7 w-7 text-muted-foreground hover:text-foreground"
-					>
-						<SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
-
-					{/* Spacer */}
 					<div className="flex-1" />
-
-					{/* Right actions */}
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						aria-label={t('agenticPanel.voiceInput', 'Voice input')}
-						className="h-7 w-7 text-muted-foreground hover:text-foreground"
-					>
-						<Mic className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
 
 					<AppButton
 						type="button"
