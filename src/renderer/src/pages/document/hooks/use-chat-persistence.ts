@@ -45,7 +45,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 
 				let raw: string;
 				try {
-					raw = await window.workspace.readFile({ path: filePath });
+					raw = await window.workspace.readFile({ filePath });
 				} catch {
 					// File does not exist yet — treat as empty history.
 					return;
