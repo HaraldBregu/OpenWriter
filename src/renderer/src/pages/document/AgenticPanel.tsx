@@ -7,7 +7,6 @@ import { useDocumentState } from './hooks';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
 	chatMessageAdded,
-	chatMessageUpdated,
 	chatActiveTaskSet,
 	chatActiveMessageSet,
 } from '../../store/chat/reducer';
@@ -16,11 +15,6 @@ import type { RootState } from '../../store';
 function selectChatMessages(state: RootState, documentId: string | undefined) {
 	if (!documentId) return [];
 	return state.chat.sessions[documentId]?.messages ?? [];
-}
-
-function selectActiveChatMessageId(state: RootState, documentId: string | undefined) {
-	if (!documentId) return null;
-	return state.chat.sessions[documentId]?.activeMessageId ?? null;
 }
 
 interface AgenticPanelProps {
@@ -34,9 +28,6 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 	const dispatch = useAppDispatch();
 	const { documentId } = useDocumentState();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
-	const activeChatMessageId = useAppSelector((state) =>
-		selectActiveChatMessageId(state, documentId)
-	);
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -86,11 +77,6 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 		},
 		[dispatch, documentId, isRunning, onSend]
 	);
-
-	// Suppress unused variable warning — activeChatMessageId is read by ChatTaskSubscriber
-	// via Redux; we keep it here only to satisfy the dependency on activeChatMessageId
-	// should local rendering ever need it.
-	void activeChatMessageId;
 
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background">
