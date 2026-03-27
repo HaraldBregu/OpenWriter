@@ -107,7 +107,7 @@ const AgentTableRow = React.memo(function AgentTableRow({
 
 	return (
 		<AppTableRow>
-			<AppTableCell className="w-[42%]">
+			<AppTableCell className="w-[70%]">
 				<div className="flex items-center gap-3">
 					<div
 						className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${definition.accentClassName}`}
@@ -117,8 +117,8 @@ const AgentTableRow = React.memo(function AgentTableRow({
 					<span className="text-sm font-medium text-foreground">{definition.title}</span>
 				</div>
 			</AppTableCell>
-			<AppTableCell className="w-[38%]">
-				<div className="space-y-1">
+			<AppTableCell className="w-[30%]">
+				<div className="max-w-[220px] space-y-1">
 					<AppLabel className="sr-only">{t('agents.provider', 'Provider')}</AppLabel>
 					<AppSelect value={config.providerId} onValueChange={handleProviderChange}>
 						<AppSelectTrigger className="h-9 text-sm">
@@ -215,8 +215,8 @@ const AgentsPage: React.FC = () => {
 							<AppTable>
 								<AppTableHeader>
 									<AppTableRow>
-										<AppTableHead>{t('agents.agent', 'Agent')}</AppTableHead>
-										<AppTableHead>{t('agents.provider', 'Provider')}</AppTableHead>
+										<AppTableHead className="w-[70%]">{t('agents.agent', 'Agent')}</AppTableHead>
+										<AppTableHead className="w-[30%]">{t('agents.provider', 'Provider')}</AppTableHead>
 									</AppTableRow>
 								</AppTableHeader>
 								<AppTableBody>
