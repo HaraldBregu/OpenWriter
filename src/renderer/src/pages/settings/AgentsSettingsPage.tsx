@@ -73,42 +73,14 @@ const AgentConfigCard: React.FC<AgentConfigCardProps> = React.memo(
 		const { t } = useTranslation();
 		const definition = AGENT_DEFINITIONS[agentId];
 
-		const availableModels = aiProviders.find((p) => p.id === config.providerId)?.models ?? [];
-
 		const handleProviderChange = useCallback(
 			(value: string) => {
-				const provider = aiProviders.find((p) => p.id === value);
-				const firstModelId = provider?.models[0]?.id ?? '';
-				onConfigChange(agentId, { ...config, providerId: value, modelId: firstModelId });
-			},
-			[agentId, config, onConfigChange]
-		);
-
-		const handleModelChange = useCallback(
-			(value: string) => {
-				onConfigChange(agentId, { ...config, modelId: value });
-			},
-			[agentId, config, onConfigChange]
-		);
-
-		const handleTemperatureChange = useCallback(
-			(value: number) => {
-				onConfigChange(agentId, { ...config, temperature: value });
-			},
-			[agentId, config, onConfigChange]
-		);
-
-		const handleReasoningChange = useCallback(
-			(checked: boolean) => {
-				onConfigChange(agentId, { ...config, reasoning: checked });
+				onConfigChange(agentId, { ...config, providerId: value });
 			},
 			[agentId, config, onConfigChange]
 		);
 
 		const providerSelectId = `agent-provider-${agentId}`;
-		const modelSelectId = `agent-model-${agentId}`;
-		const temperatureSliderId = `agent-temperature-${agentId}`;
-		const reasoningSwitchId = `agent-reasoning-${agentId}`;
 
 		return (
 			<div className="space-y-4">
