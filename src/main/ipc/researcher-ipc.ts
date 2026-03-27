@@ -77,56 +77,58 @@ export class ResearcherIpc implements IpcModule {
 		 * pipeline asynchronously. Returns { sessionId } immediately so the
 		 * renderer can subscribe to push events and later cancel if needed.
 		 */
-		registerCommandWithEvent(
-			ResearcherChannels.query,
-			(event, payload: ResearcherQueryPayload) => {
-				const validated = validatePayload(payload);
-				const sessionId = randomUUID();
+		registerCommandWithEvent(ResearcherChannels.query, (event, payload: ResearcherQueryPayload) => {
+			const validated = validatePayload(payload);
+			const sessionId = randomUUID();
 
-				const senderWindow = BrowserWindow.fromWebContents(event.sender);
-				const windowId = senderWindow?.id;
+			const senderWindow = BrowserWindow.fromWebContents(event.sender);
+			const windowId = senderWindow?.id;
 
-				function push(data: ResearcherEvent): void {
-					senderWindow?.webContents.send(ResearcherChannels.event, data);
-				}
-
-				service
-					.query(
-						validated.prompt,
-						sessionId,
-						{
-							onToken(token) {
-								push({ type: 'token', token, sessionId });
-							},
-							onPhase(phase) {
-								push({ type: 'phase', phase, sessionId });
-							},
-							onDone(result) {
-								push({
-									type: 'done',
-									response: result.response,
-									tokenCount: result.tokenCount,
-									intent: result.intent,
-									plan: result.plan,
-									sessionId,
-								});
-							},
-							onError(error, code) {
-								push({ type: 'error', error, code, sessionId });
-							},
-						},
-						validated,
-						windowId
-					)
-					.catch((err: unknown) => {
-						const message = err instanceof Error ? err.message : String(err);
-						logger.error('ResearcherIpc', `Unhandled error in session ${sessionId}: ${message}`);
-						push({ type: 'error', error: 'An unexpected error occurred', code: 'unknown', sessionId });
-					});
-
-				return { sessionId };
+			function push(data: ResearcherEvent): void {
+				senderWindow?.webContents.send(ResearcherChannels.event, data);
 			}
-		);
+
+			service
+				.query(
+					validated.prompt,
+					sessionId,
+					{
+						onToken(token) {
+							push({ type: 'token', token, sessionId });
+						},
+						onPhase(phase) {
+							push({ type: 'phase', phase, sessionId });
+						},
+						onDone(result) {
+							push({
+								type: 'done',
+								response: result.response,
+								tokenCount: result.tokenCount,
+								intent: result.intent,
+								plan: result.plan,
+								sessionId,
+							});
+						},
+						onError(error, code) {
+							push({ type: 'error', error, code, sessionId });
+						},
+					},
+					validated,
+					windowId
+				)
+				.catch((err: unknown) => {
+					const message = err instanceof Error ? err.message : String(err);
+					logger.error('ResearcherIpc', `Unhandled error in session ${sessionId}: ${message}`);
+					push({
+						type: 'error',
+						error: 'An unexpected error occurred',
+						code: 'unknown',
+						sessionId,
+					});
+				});
+
+			return { sessionId };
+		});
 
 		/**
 		 * Cancel an active researcher session.
