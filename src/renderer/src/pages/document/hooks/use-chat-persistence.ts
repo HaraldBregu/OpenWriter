@@ -1,17 +1,11 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { chatMessagesLoaded } from '../../../store/chat/reducer';
-import type { RootState } from '../../../store';
+import { chatMessagesLoaded, selectChatMessages } from '../../../store/chat';
 import type { DocumentChatMessage, ChatMessagesFile } from '../context/state';
 
 const SAVE_DEBOUNCE_MS = 500;
 const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'queued', 'running']);
-
-function selectChatMessages(state: RootState, documentId: string | undefined) {
-	if (!documentId) return [];
-	return state.chat.sessions[documentId]?.messages ?? [];
-}
 
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
