@@ -124,24 +124,8 @@ const AgentsSettingsPage: React.FC = () => {
 
 	const [agentStates, agentDispatch] = useReducer(agentReducer, undefined, buildInitialAgentState);
 
-	useEffect(() => {
-		window.workspace.getAgentSettings().then((entries) => {
-			const loaded = buildInitialAgentState();
-			for (const entry of entries) {
-				const { agentId, ...config } = entry;
-				if (AGENT_IDS.includes(agentId as AgentId)) {
-					loaded[agentId as AgentId] = config;
-				}
-			}
-			agentDispatch({ type: 'INIT', states: loaded });
-		});
-	}, []);
-
 	const handleConfigChange = useCallback((agentId: AgentId, config: AgentConfig) => {
 		agentDispatch({ type: 'SET_CONFIG', agentId, config });
-		window.workspace.setAgentConfig(agentId, config).catch(() => {
-			// Silently ignore persistence failure; UI state is still updated.
-		});
 	}, []);
 
 	return (
