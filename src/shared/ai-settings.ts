@@ -19,29 +19,11 @@ export interface AgentConfig {
 	providerId: string;
 }
 
-export const AGENT_IDS = [
-	'text-completer',
-	'text-enhance',
-	'text-writer',
-	'image-generator',
+export const DEFAULT_AGENTS = [
+	{ id: 'text-completer', name: 'Text Completer', description: 'Completes and continues text from the provided context' },
+	{ id: 'text-enhance', name: 'Text Enhance', description: 'Enhances and transforms text style and tone' },
+	{ id: 'text-writer', name: 'Text Writer', description: 'Writes new text from a given prompt' },
+	{ id: 'image-generator', name: 'Image Generator', description: 'Generates images from a text prompt and returns the image URL' },
 ] as const;
-export type AgentId = (typeof AGENT_IDS)[number];
 
-export const AGENT_DEFINITIONS: Record<AgentId, { name: string; description: string }> = {
-	'text-completer': {
-		name: 'Text Completer',
-		description: 'Completes and continues text from the provided context',
-	},
-	'text-enhance': {
-		name: 'Text Enhance',
-		description: 'Enhances and transforms text style and tone',
-	},
-	'text-writer': {
-		name: 'Text Writer',
-		description: 'Writes new text from a given prompt',
-	},
-	'image-generator': {
-		name: 'Image Generator',
-		description: 'Generates images from a text prompt and returns the image URL',
-	},
-};
+export type AgentId = (typeof DEFAULT_AGENTS)[number]['id'];
