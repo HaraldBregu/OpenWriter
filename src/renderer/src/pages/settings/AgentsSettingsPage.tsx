@@ -132,9 +132,9 @@ const AgentsSettingsPage: React.FC = () => {
 		<div className="w-full max-w-2xl p-6">
 			<h1 className="text-lg font-normal mb-6">{t('settings.agents.title')}</h1>
 
-			{AGENT_IDS.map((agentId) => (
+			{DEFAULT_AGENTS.map(({ id: agentId, name }) => (
 				<React.Fragment key={agentId}>
-					<SectionHeader title={AGENT_DEFINITIONS[agentId].name} />
+					<SectionHeader title={name} />
 					<AgentConfigCard
 						agentId={agentId}
 						config={agentStates[agentId]}
