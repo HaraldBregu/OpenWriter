@@ -267,6 +267,13 @@ export interface InvokeChannelMap {
 		args: [description: string];
 		result: ProjectWorkspaceInfo;
 	};
+
+	// ---- Researcher ----
+	[ResearcherChannels.query]: {
+		args: [payload: ResearcherQueryPayload];
+		result: { sessionId: string };
+	};
+	[ResearcherChannels.cancel]: { args: [sessionId: string]; result: boolean };
 }
 
 /**
