@@ -259,7 +259,6 @@ export interface InvokeChannelMap {
 		args: [description: string];
 		result: ProjectWorkspaceInfo;
 	};
-
 }
 
 /**

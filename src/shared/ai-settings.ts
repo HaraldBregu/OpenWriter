@@ -15,6 +15,7 @@
  */
 export interface AgentConfig {
 	name: string;
+	description: string;
 	providerId: string;
 }
 

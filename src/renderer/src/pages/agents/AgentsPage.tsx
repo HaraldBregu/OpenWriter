@@ -189,7 +189,9 @@ const AgentsPage: React.FC = () => {
 								<AppTableHeader>
 									<AppTableRow>
 										<AppTableHead className="w-[70%]">{t('agents.agent', 'Agent')}</AppTableHead>
-										<AppTableHead className="w-[30%]">{t('agents.provider', 'Provider')}</AppTableHead>
+										<AppTableHead className="w-[30%]">
+											{t('agents.provider', 'Provider')}
+										</AppTableHead>
 									</AppTableRow>
 								</AppTableHeader>
 								<AppTableBody>
