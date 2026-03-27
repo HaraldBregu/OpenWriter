@@ -13,20 +13,6 @@ import {
 } from '@/components/app';
 
 // ---------------------------------------------------------------------------
-// Section header — small muted text used as a visual divider
-// ---------------------------------------------------------------------------
-
-interface SectionHeaderProps {
-	readonly title: string;
-}
-
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
-	<div className="pt-6 pb-2 first:pt-0">
-		<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</h2>
-	</div>
-);
-
-// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 
@@ -138,54 +124,62 @@ const AgentsSettingsPage: React.FC = () => {
 		<div className="w-full max-w-2xl p-6">
 			<h1 className="text-lg font-normal mb-6">{t('settings.agents.title')}</h1>
 
-			{DEFAULT_AGENTS.map((agent) => (
-				<React.Fragment key={agent.name}>
-					<SectionHeader title={agent.name} />
-					<p className="text-sm text-muted-foreground">{agent.description}</p>
-					<div className="mt-3 mb-1">
-						<AppLabel className="text-xs font-medium">
-							{t('settings.agents.providerLabel', 'Provider')}
-						</AppLabel>
-						<div className="mt-1 flex items-center gap-2">
-							<AppSelect
-								value={selectedProviders[agent.name] ?? ''}
-								onValueChange={(value) => handleProviderChange(agent.name, value)}
-								disabled={providers.length === 0}
-							>
-								<AppSelectTrigger className="h-9 text-sm flex-1">
-									<AppSelectValue
-										placeholder={t('settings.agents.noProviders', 'No providers configured')}
-									/>
-								</AppSelectTrigger>
-								<AppSelectContent>
-									{providers.map((provider) => (
-										<AppSelectItem key={`${agent.name}-${provider}`} value={provider}>
-											{provider}
-										</AppSelectItem>
-									))}
-								</AppSelectContent>
-							</AppSelect>
-							<AppButton
-								type="button"
-								variant="ghost"
-								size="icon-xs"
-								aria-label={t('settings.agents.saveProvider', 'Save provider')}
-								disabled={
-									providers.length === 0 ||
-									!selectedProviders[agent.name] ||
-									selectedProviders[agent.name] === savedProviders[agent.name] ||
-									Boolean(savingByAgent[agent.name])
-								}
-								onClick={() => {
-									void handleSaveProvider(agent.name);
-								}}
-							>
-								{savingByAgent[agent.name] ? <Loader2 className="animate-spin" /> : <Check />}
-							</AppButton>
+			<div className="space-y-4">
+				{DEFAULT_AGENTS.map((agent) => (
+					<div
+						key={agent.name}
+						className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
+					>
+						<div className="mb-3">
+							<h2 className="text-sm font-medium text-foreground">{agent.name}</h2>
+							<p className="mt-1 text-sm text-muted-foreground">{agent.description}</p>
+						</div>
+
+						<div>
+							<AppLabel className="text-xs font-medium text-muted-foreground">
+								{t('settings.agents.providerLabel', 'Provider')}
+							</AppLabel>
+							<div className="mt-1 flex items-center gap-2">
+								<AppSelect
+									value={selectedProviders[agent.name] ?? ''}
+									onValueChange={(value) => handleProviderChange(agent.name, value)}
+									disabled={providers.length === 0}
+								>
+									<AppSelectTrigger className="h-9 text-sm flex-1">
+										<AppSelectValue
+											placeholder={t('settings.agents.noProviders', 'No providers configured')}
+										/>
+									</AppSelectTrigger>
+									<AppSelectContent>
+										{providers.map((provider) => (
+											<AppSelectItem key={`${agent.name}-${provider}`} value={provider}>
+												{provider}
+											</AppSelectItem>
+										))}
+									</AppSelectContent>
+								</AppSelect>
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="icon-xs"
+									aria-label={t('settings.agents.saveProvider', 'Save provider')}
+									disabled={
+										providers.length === 0 ||
+										!selectedProviders[agent.name] ||
+										selectedProviders[agent.name] === savedProviders[agent.name] ||
+										Boolean(savingByAgent[agent.name])
+									}
+									onClick={() => {
+										void handleSaveProvider(agent.name);
+									}}
+								>
+									{savingByAgent[agent.name] ? <Loader2 className="animate-spin" /> : <Check />}
+								</AppButton>
+							</div>
 						</div>
 					</div>
-				</React.Fragment>
-			))}
+				))}
+			</div>
 		</div>
 	);
 };
