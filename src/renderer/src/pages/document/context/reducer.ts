@@ -88,6 +88,14 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 				activeChatTaskId: action.taskId,
 			};
 
+		case 'CHAT_MESSAGES_LOADED':
+			return {
+				...state,
+				chatMessages: action.messages,
+				activeChatTaskId: null,
+				activeChatMessageId: null,
+			};
+
 		default: {
 			const _exhaustive: never = action;
 			return _exhaustive;
