@@ -18,13 +18,6 @@ export interface AgentConfig {
 	providerId: string;
 }
 
-/**
- * A single agent entry stored in the workspace metadata file.
- * Each object in the `agents` array carries its own `agentId`.
- */
-export interface WorkspaceAgentEntry extends AgentConfig {
-	agentId: string;
-}
 
 export const AGENT_IDS = [
 	'text-completer',
