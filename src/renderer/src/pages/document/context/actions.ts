@@ -21,4 +21,5 @@ export type DocumentAction =
 			patch: Partial<Omit<DocumentChatMessage, 'id' | 'role' | 'timestamp'>>;
 	  }
 	| { type: 'CHAT_ACTIVE_MESSAGE_SET'; messageId: string | null }
-	| { type: 'CHAT_ACTIVE_TASK_SET'; taskId: string | null };
+	| { type: 'CHAT_ACTIVE_TASK_SET'; taskId: string | null }
+	| { type: 'CHAT_MESSAGES_LOADED'; messages: DocumentChatMessage[] };
