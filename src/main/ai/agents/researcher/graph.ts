@@ -27,16 +27,16 @@ import { composeNode } from './nodes/compose-node';
 
 export const RESEARCHER_NODE = {
 	UNDERSTAND: 'understand',
-	PLAN: 'plan',
-	RESEARCH: 'research',
+	PLAN: 'plan_step',
+	RESEARCH: 'research_step',
 	COMPOSE: 'compose',
 } as const;
 
 export interface ResearcherNodeModels {
-	understand: BaseChatModel;
-	plan: BaseChatModel;
-	research: BaseChatModel;
-	compose: BaseChatModel;
+	[RESEARCHER_NODE.UNDERSTAND]: BaseChatModel;
+	[RESEARCHER_NODE.PLAN]: BaseChatModel;
+	[RESEARCHER_NODE.RESEARCH]: BaseChatModel;
+	[RESEARCHER_NODE.COMPOSE]: BaseChatModel;
 }
 
 export function buildGraph(models: BaseChatModel | NodeModelMap) {
@@ -44,14 +44,16 @@ export function buildGraph(models: BaseChatModel | NodeModelMap) {
 
 	return new StateGraph(ResearcherState)
 		.addNode(RESEARCHER_NODE.UNDERSTAND, (state: typeof ResearcherState.State) =>
-			understandNode(state, m.understand)
+			understandNode(state, m[RESEARCHER_NODE.UNDERSTAND])
 		)
-		.addNode(RESEARCHER_NODE.PLAN, (state: typeof ResearcherState.State) => planNode(state, m.plan))
+		.addNode(RESEARCHER_NODE.PLAN, (state: typeof ResearcherState.State) =>
+			planNode(state, m[RESEARCHER_NODE.PLAN])
+		)
 		.addNode(RESEARCHER_NODE.RESEARCH, (state: typeof ResearcherState.State) =>
-			researchNode(state, m.research)
+			researchNode(state, m[RESEARCHER_NODE.RESEARCH])
 		)
 		.addNode(RESEARCHER_NODE.COMPOSE, (state: typeof ResearcherState.State) =>
-			composeNode(state, m.compose)
+			composeNode(state, m[RESEARCHER_NODE.COMPOSE])
 		)
 		.addEdge(START, RESEARCHER_NODE.UNDERSTAND)
 		.addEdge(RESEARCHER_NODE.UNDERSTAND, RESEARCHER_NODE.PLAN)

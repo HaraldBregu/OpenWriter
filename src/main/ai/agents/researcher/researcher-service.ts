@@ -100,7 +100,7 @@ export class ResearcherService implements Disposable {
 			const maxTokens = options?.maxTokens;
 
 			const models = {
-				understand: createChatModel({
+				[RESEARCHER_NODE.UNDERSTAND]: createChatModel({
 					providerId,
 					apiKey,
 					modelName,
@@ -108,7 +108,7 @@ export class ResearcherService implements Disposable {
 					temperature: NODE_TEMPERATURES.understand,
 					maxTokens,
 				}),
-				plan: createChatModel({
+				[RESEARCHER_NODE.PLAN]: createChatModel({
 					providerId,
 					apiKey,
 					modelName,
@@ -116,7 +116,7 @@ export class ResearcherService implements Disposable {
 					temperature: NODE_TEMPERATURES.plan,
 					maxTokens,
 				}),
-				research: createChatModel({
+				[RESEARCHER_NODE.RESEARCH]: createChatModel({
 					providerId,
 					apiKey,
 					modelName,
@@ -124,7 +124,7 @@ export class ResearcherService implements Disposable {
 					temperature: NODE_TEMPERATURES.research,
 					maxTokens,
 				}),
-				compose: createChatModel({
+				[RESEARCHER_NODE.COMPOSE]: createChatModel({
 					providerId,
 					apiKey,
 					modelName,
