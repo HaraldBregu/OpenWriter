@@ -63,7 +63,7 @@ const InlinePlaceholder = Extension.create({
 							$cursor.pos,
 							() => {
 								const span = document.createElement('span');
-								span.className = 'text-gray-400 italic pointer-events-none select-none';
+								span.className = 'text-muted-foreground/55 italic pointer-events-none select-none';
 								span.textContent = ' ' + placeholder;
 								span.setAttribute('contenteditable', 'false');
 								return span;

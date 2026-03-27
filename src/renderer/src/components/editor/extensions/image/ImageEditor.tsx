@@ -440,7 +440,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		state.cropRegion.height >= MIN_CROP_SIZE;
 
 	return (
-		<div className="overflow-hidden rounded-lg border border-border bg-muted/30">
+		<div className="overflow-hidden rounded-lg border border-border bg-card/90">
 			{/* Top toolbar: mode buttons + undo + save/cancel */}
 			<AppTooltipProvider delayDuration={300}>
 				<div className="flex items-center gap-1 border-b border-border px-2 py-1.5">
@@ -488,7 +488,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						aria-label={t('imageNode.save')}
 						onClick={handleSave}
 						disabled={!state.isLoaded}
-						className="h-6 w-6 text-muted-foreground hover:text-green-600 [&_svg]:h-3.5 [&_svg]:w-3.5"
+						className="h-6 w-6 text-muted-foreground hover:text-success [&_svg]:h-3.5 [&_svg]:w-3.5"
 					>
 						<Check />
 					</AppButton>

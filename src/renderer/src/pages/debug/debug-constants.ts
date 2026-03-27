@@ -19,27 +19,27 @@ export const DEMO_VARIANTS: {
 export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = {
 	queued: {
 		label: 'Queued',
-		className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+		className: 'border border-warning/20 bg-warning/12 text-warning',
 	},
 	started: {
 		label: 'Queued',
-		className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+		className: 'border border-warning/20 bg-warning/12 text-warning',
 	},
 	running: {
 		label: 'Running',
-		className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+		className: 'border border-info/20 bg-info/12 text-info',
 	},
 	completed: {
 		label: 'Completed',
-		className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+		className: 'border border-success/20 bg-success/12 text-success',
 	},
 	error: {
 		label: 'Error',
-		className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+		className: 'border border-destructive/20 bg-destructive/12 text-destructive',
 	},
 	cancelled: {
 		label: 'Cancelled',
-		className: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+		className: 'border border-border bg-muted/70 text-muted-foreground',
 	},
 };
 

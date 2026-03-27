@@ -14,13 +14,13 @@ const categoryDefs = [
 		icon: PenLine,
 		labelKey: 'home.writing',
 		descriptionKey: 'home.writingDescription',
-		accent: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+		accent: 'bg-primary/12 text-primary',
 	},
 	{
 		icon: Layers,
 		labelKey: 'home.skills',
 		descriptionKey: 'home.skillsDescription',
-		accent: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+		accent: 'bg-warning/12 text-warning',
 	},
 ];
 
@@ -52,7 +52,7 @@ const CategoryCard = React.memo(function CategoryCard({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			className="group flex flex-col gap-3 rounded-xl border border-border bg-background p-5 hover:border-border/80 hover:shadow-sm transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+			className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-primary/20 hover:bg-card/95 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			<div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
 				<Icon className="h-4 w-4" />
@@ -61,7 +61,7 @@ const CategoryCard = React.memo(function CategoryCard({
 				<p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
 				<p className="text-xs text-muted-foreground mt-0.5">{t(descriptionKey)}</p>
 			</div>
-			<ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all mt-auto self-end" />
+			<ArrowRight className="mt-auto h-3.5 w-3.5 self-end text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
 		</button>
 	);
 });
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
 						<button
 							type="button"
 							onClick={() => navigate('/integrations')}
-							className="flex items-center gap-4 rounded-xl border border-border bg-background px-5 py-4 hover:shadow-sm hover:border-border/80 transition-all group text-left"
+							className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all hover:border-primary/20 hover:shadow-sm"
 						>
 							<div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
 								<Puzzle className="h-4 w-4 text-muted-foreground" />
@@ -130,7 +130,7 @@ const HomePage: React.FC = () => {
 									{t('home.integrationsDescription')}
 								</p>
 							</div>
-							<ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
+							<ArrowRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
 						</button>
 					</div>
 				</section>
@@ -138,8 +138,8 @@ const HomePage: React.FC = () => {
 				<AppSeparator />
 
 				{/* Tips */}
-				<section className="rounded-xl border border-border bg-background px-5 py-4 flex items-start gap-3">
-					<Star className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+				<section className="flex items-start gap-3 rounded-xl border border-border bg-card px-5 py-4">
+					<Star className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
 					<div>
 						<p className="text-sm font-medium text-foreground">{t('home.tip')}</p>
 						<p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">

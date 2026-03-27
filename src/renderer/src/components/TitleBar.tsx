@@ -60,20 +60,20 @@ export const TitleBar = React.memo(function TitleBar({
 
 	const btnBase = `
     flex items-center justify-center h-full w-[46px]
-    text-neutral-600 dark:text-neutral-300
-    hover:bg-black/[0.07] dark:hover:bg-white/[0.12]
-    active:bg-black/[0.12] dark:active:bg-white/[0.18]
+    text-muted-foreground
+    hover:bg-accent/80 hover:text-foreground
+    active:bg-accent
     transition-colors duration-100
   `;
 
 	const btnNoHover = `
     flex items-center justify-center h-full w-[46px]
-    text-neutral-600 dark:text-neutral-300
+    text-muted-foreground
   `;
 
 	return (
 		<div
-			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-muted/20 ${className}`}
+			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-background/90 backdrop-blur-md ${className}`}
 			style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
 		>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
@@ -111,7 +111,7 @@ export const TitleBar = React.memo(function TitleBar({
 						<button
 							type="button"
 							onClick={onToggleSidebar}
-							className="flex items-center justify-center h-full px-3 text-neutral-600 dark:text-neutral-300"
+							className="flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground"
 							title={t('titleBar.toggleSidebar')}
 						>
 							<PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
@@ -122,7 +122,7 @@ export const TitleBar = React.memo(function TitleBar({
 
 			{/* ── Center: app title (absolutely placed so it's always truly centered) ── */}
 			<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-				<span className="text-sm font-normal tracking-wide text-neutral-500 dark:text-neutral-400">
+				<span className="text-sm font-normal tracking-wide text-muted-foreground">
 					{title}
 				</span>
 			</div>
@@ -159,7 +159,7 @@ export const TitleBar = React.memo(function TitleBar({
 						onClick={() => window.win?.close()}
 						className={`
               flex items-center justify-center h-full w-[46px]
-              text-neutral-600 dark:text-neutral-300
+              text-muted-foreground
               hover:bg-[#e81123] hover:text-white
               active:bg-[#c42b1c] active:text-white
               transition-colors duration-100
