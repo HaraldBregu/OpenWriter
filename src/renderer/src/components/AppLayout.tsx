@@ -308,10 +308,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							<AppPopoverTrigger asChild>
 								<button
 									type="button"
-									className="flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+									className={
+										open
+											? 'flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+											: 'flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-sidebar p-0 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+									}
 									aria-label={t('appLayout.accountMenu', 'Open account menu')}
 								>
-									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground">
+									<div
+										className={
+											open
+												? 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
+												: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent/70 text-xs font-semibold text-sidebar-foreground ring-1 ring-sidebar-border/70'
+										}
+									>
 										{footerUserInitial}
 									</div>
 									{open && (
@@ -338,7 +348,11 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								align="start"
 								side="top"
 								sideOffset={8}
-								className="w-[var(--radix-popover-trigger-width)] rounded-2xl p-2"
+								className={
+									open
+										? 'w-[var(--radix-popover-trigger-width)] rounded-2xl p-2'
+										: 'w-64 rounded-2xl p-2'
+								}
 							>
 								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
 									{footerUserEmail}

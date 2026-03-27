@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, ImageIcon, PenTool, Sparkles, WandSparkles } from 'lucide-react';
 import { aiProviders } from '@/config/ai-providers';
