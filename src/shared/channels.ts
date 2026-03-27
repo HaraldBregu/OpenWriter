@@ -42,7 +42,7 @@ import type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 } from './types';
-import type { ServiceProvider } from './model-defaults';
+import type { ServiceProvider } from './provider-defaults';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
