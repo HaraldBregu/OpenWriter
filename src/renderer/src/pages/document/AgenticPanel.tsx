@@ -1,16 +1,26 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
-import { getTaskSnapshot, subscribeToTask } from '../../services/task-event-bus';
-import type { TaskSnapshot } from '../../services/task-event-bus';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
-import { useDocumentDispatch, useDocumentState } from './hooks';
+import { useDocumentState } from './hooks';
+import { useAppDispatch, useAppSelector } from '../../store';
+import {
+	chatMessageAdded,
+	chatMessageUpdated,
+	chatActiveTaskSet,
+	chatActiveMessageSet,
+} from '../../store/chat/reducer';
+import type { RootState } from '../../store';
 
-interface ResearcherTaskOutput {
-	content: string;
-	tokenCount: number;
-	agentId: string;
+function selectChatMessages(state: RootState, documentId: string | undefined) {
+	if (!documentId) return [];
+	return state.chat.sessions[documentId]?.messages ?? [];
+}
+
+function selectActiveChatMessageId(state: RootState, documentId: string | undefined) {
+	if (!documentId) return null;
+	return state.chat.sessions[documentId]?.activeMessageId ?? null;
 }
 
 interface AgenticPanelProps {
@@ -19,153 +29,68 @@ interface AgenticPanelProps {
 	readonly onSend: (content: string) => Promise<void> | void;
 }
 
-const AgenticPanel: React.FC<AgenticPanelProps> = ({ taskId, isRunning, onSend }) => {
+const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 	const { t } = useTranslation();
-	const dispatch = useDocumentDispatch();
-	const { chatMessages, activeChatMessageId, documentId } = useDocumentState();
+	const dispatch = useAppDispatch();
+	const { documentId } = useDocumentState();
+	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
+	const activeChatMessageId = useAppSelector((state) =>
+		selectActiveChatMessageId(state, documentId)
+	);
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [chatMessages]);
 
-	useEffect(() => {
-		if (!taskId) return;
-
-		const currentSnapshot = getTaskSnapshot(taskId);
-		if (
-			currentSnapshot?.metadata?.documentId &&
-			currentSnapshot.metadata.documentId !== documentId
-		) {
-			return;
-		}
-
-		dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId });
-
-		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
-			if (
-				(snapshot.metadata?.documentId && snapshot.metadata.documentId !== documentId) ||
-				!activeChatMessageId
-			) {
-				return;
-			}
-
-			switch (snapshot.status) {
-				case 'queued':
-				case 'started':
-					dispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: activeChatMessageId,
-						patch: {
-							content: t('agenticPanel.researcherThinking', 'Researching...'),
-							taskId,
-							status: 'queued',
-						},
-					});
-					break;
-				case 'running':
-					if (snapshot.content) {
-						dispatch({
-							type: 'CHAT_MESSAGE_UPDATED',
-							id: activeChatMessageId,
-							patch: {
-								content: snapshot.content,
-								taskId,
-								status: 'running',
-							},
-						});
-					}
-					break;
-				case 'completed': {
-					const output = snapshot.result as ResearcherTaskOutput | undefined;
-					dispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: activeChatMessageId,
-						patch: {
-							content:
-								output?.content ||
-								snapshot.content ||
-								t('agenticPanel.emptyResponse', 'No response received.'),
-							taskId,
-							status: 'completed',
-						},
-					});
-					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-				}
-				case 'error':
-					dispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: activeChatMessageId,
-						patch: {
-							content:
-								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
-							taskId,
-							status: 'error',
-						},
-					});
-					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-				case 'cancelled':
-					dispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: activeChatMessageId,
-						patch: {
-							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
-							taskId,
-							status: 'cancelled',
-						},
-					});
-					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-			}
-		});
-
-		return unsubscribe;
-	}, [activeChatMessageId, dispatch, documentId, taskId, t]);
-
 	const handleSend = useCallback(
 		(content: string) => {
-			if (isRunning) return;
+			if (!documentId || isRunning) return;
 
 			const userMessageId = crypto.randomUUID();
 			const assistantMessageId = crypto.randomUUID();
 			const timestamp = new Date().toISOString();
 
-			dispatch({
-				type: 'CHAT_MESSAGE_ADDED',
-				message: {
-					id: userMessageId,
-					content,
-					role: 'user',
-					timestamp,
-					taskId: null,
-					status: 'completed',
-				},
-			});
+			dispatch(
+				chatMessageAdded({
+					documentId,
+					message: {
+						id: userMessageId,
+						content,
+						role: 'user',
+						timestamp,
+						taskId: null,
+						status: 'completed',
+					},
+				})
+			);
 
-			dispatch({
-				type: 'CHAT_MESSAGE_ADDED',
-				message: {
-					id: assistantMessageId,
-					content: '',
-					role: 'assistant',
-					timestamp,
-					taskId: null,
-					status: 'idle',
-				},
-			});
+			dispatch(
+				chatMessageAdded({
+					documentId,
+					message: {
+						id: assistantMessageId,
+						content: '',
+						role: 'assistant',
+						timestamp,
+						taskId: null,
+						status: 'idle',
+					},
+				})
+			);
 
-			dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: assistantMessageId });
-			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+			dispatch(chatActiveMessageSet({ documentId, messageId: assistantMessageId }));
+			dispatch(chatActiveTaskSet({ documentId, taskId: null }));
 
 			void onSend(content);
 		},
-		[dispatch, isRunning, onSend]
+		[dispatch, documentId, isRunning, onSend]
 	);
+
+	// Suppress unused variable warning — activeChatMessageId is read by ChatTaskSubscriber
+	// via Redux; we keep it here only to satisfy the dependency on activeChatMessageId
+	// should local rendering ever need it.
+	void activeChatMessageId;
 
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background">
