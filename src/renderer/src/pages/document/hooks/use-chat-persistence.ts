@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, type Dispatch } from 'react';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../../../store';
@@ -13,7 +13,10 @@ import type {
 	ChatMessagesFile,
 	ChatSessionFile,
 	ChatSessionIndex,
+	ChatSessionListItem,
 } from '../context/state';
+import type { DocumentAction } from '../context/actions';
+import { useDocumentDispatch } from './use-document-dispatch';
 
 // ---------------------------------------------------------------------------
 // Constants
