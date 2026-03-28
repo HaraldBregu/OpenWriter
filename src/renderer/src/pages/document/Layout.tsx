@@ -537,7 +537,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					/>
 				</ResizablePanel>
 
-				{activeSidebar && <ResizableHandle withHandle />}
+				{activeSidebar && <ResizableHandle />}
 
 				<ResizablePanel
 					panelRef={sidebarPanelRef}
