@@ -383,7 +383,7 @@
 		"documents": "Documenti",
 		"directories": "Cartelle",
 		"untitledPost": "Post Senza Titolo",
-		"untitledWriting": "Documento senza titolo",
+		"untitledWriting": "Untitled",
 		"writings": "Documenti",
 		"chats": "Chat",
 		"newChat": "Nuova Chat",
@@ -433,9 +433,9 @@
 		"placeholderDescription": "Inizia una conversazione con l'AI per fare brainstorming, redigere o perfezionare idee."
 	},
 	"writing": {
-		"titlePlaceholder": "Documento senza titolo",
+		"titlePlaceholder": "Untitled",
 		"notFound": "Scrittura non trovata.",
-		"untitled": "Documento senza titolo",
+		"untitled": "Untitled",
 		"startWriting": "Inizia a scrivere...",
 		"typeHere": "Scrivi qui...",
 		"insertSection": "Inserisci sezione",

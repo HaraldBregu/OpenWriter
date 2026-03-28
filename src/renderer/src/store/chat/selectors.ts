@@ -18,7 +18,7 @@ export const selectChatSession = (
 
 /** All messages for a document session (empty array when no session exists). */
 export const selectChatMessages = (state: RootState, documentId: string | undefined) =>
-	selectChatSession(state, documentId)?.messages ?? [];
+	selectChatSession(state, documentId)?.messages ?? (EMPTY_MESSAGES as DocumentChatMessage[]);
 
 /** The session UUID for a document session, or null when no session has started. */
 export const selectChatSessionId = (
