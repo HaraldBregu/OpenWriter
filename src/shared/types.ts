@@ -361,6 +361,24 @@ export interface FsRenameResult {
 	newPath: string;
 }
 
+/**
+ * Payload for fs:list-dir.
+ */
+export interface FsListDirParams {
+	/** Absolute path of the directory to list. */
+	dirPath: string;
+}
+
+/**
+ * A single entry returned by fs:list-dir.
+ */
+export interface FsListDirEntry {
+	/** Name of the file or directory (basename only, no path). */
+	name: string;
+	/** Whether the entry is a directory. */
+	isDirectory: boolean;
+}
+
 // ---- Document Image --------------------------------------------------------
 
 /**
