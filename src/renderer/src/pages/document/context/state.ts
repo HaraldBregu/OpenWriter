@@ -12,16 +12,6 @@ export interface ChatSessionFile {
 	readonly messages: DocumentChatMessage[];
 }
 
-export interface ChatSessionEntry {
-	readonly sessionId: string;
-	readonly createdAt: string;
-}
-
-export interface ChatSessionIndex {
-	readonly version: 1;
-	readonly sessions: ChatSessionEntry[];
-}
-
 export interface DocumentChatMessage {
 	readonly id: string;
 	readonly content: string;
