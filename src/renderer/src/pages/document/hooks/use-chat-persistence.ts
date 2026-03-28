@@ -299,7 +299,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 
 	try {
 		const raw = await window.workspace.readFile({
-			filePath: `${oldChatDir}/sessions.json`,
+			filePath: `${oldChatDir}/session-index.json`,
 		});
 		const oldIndex = JSON.parse(raw) as {
 			sessions: Array<{ sessionId: string; createdAt: string }>;
