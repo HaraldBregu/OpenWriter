@@ -38,7 +38,7 @@ const ChatHeader: React.FC = () => {
 	return (
 		<div className="shrink-0 border-b border-border bg-background/80 px-5 py-3">
 			<div className="flex items-center justify-between">
-				<h2 className="truncate pr-4 text-base font-semibold tracking-tight text-foreground">
+				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'General conversation and greeting')}
 				</h2>
 				<div className="flex items-center gap-2">
