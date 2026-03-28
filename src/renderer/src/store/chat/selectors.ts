@@ -1,6 +1,11 @@
 /** Chat state selectors. */
+import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../index';
-import type { ChatSession } from './types';
+import type { ChatSession, DocumentChatMessage } from './types';
+
+/** Stable empty array returned when no session exists, so `useAppSelector` does not
+ *  produce a new reference on every call and trigger unnecessary re-renders. */
+const EMPTY_MESSAGES: readonly DocumentChatMessage[] = Object.freeze([]);
 
 /**
  * Returns the full session for a document, or undefined if none exists.
