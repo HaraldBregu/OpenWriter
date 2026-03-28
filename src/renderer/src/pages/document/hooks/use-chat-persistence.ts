@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, type Dispatch } from 'react';
+import { useEffect, useRef, useMemo, type Dispatch, type MutableRefObject } from 'react';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../../../store';
@@ -333,10 +333,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 								ageLabel: formatRelativeTime(createdAt),
 								createdAt,
 							};
-							const updatedList = [
-								newItem,
-								...sessionsListRef.current.filter((s) => s.id !== sid),
-							];
+							const updatedList = [newItem, ...sessionsListRef.current.filter((s) => s.id !== sid)];
 							sessionsListRef.current = updatedList;
 							docDispatchRef.current({
 								type: 'CHAT_SESSIONS_LOADED',
