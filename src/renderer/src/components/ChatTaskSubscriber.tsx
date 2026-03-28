@@ -19,6 +19,24 @@ import {
 	chatActiveMessageSet,
 } from '../store/chat';
 
+type ActiveSession = { documentId: string; taskId: string; messageId: string | null };
+
+/**
+ * Deep equality for the active sessions array. Prevents ChatTaskSubscriber from
+ * re-rendering (and re-subscribing to tasks) when only message content changed in
+ * Redux — which would otherwise cause an infinite dispatch loop via the synchronous
+ * snapshot replay in subscribeToTask.
+ */
+function activeSessionsEqual(a: ActiveSession[], b: ActiveSession[]): boolean {
+	if (a.length !== b.length) return false;
+	return a.every(
+		(sa, i) =>
+			sa.documentId === b[i].documentId &&
+			sa.taskId === b[i].taskId &&
+			sa.messageId === b[i].messageId
+	);
+}
+
 interface ResearcherTaskOutput {
 	content: string;
 	tokenCount: number;
