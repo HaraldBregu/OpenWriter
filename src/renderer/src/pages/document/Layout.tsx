@@ -12,6 +12,7 @@ import ChatPanel from './ChatPanel';
 import EditorPanel from './EditorPanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch, useChatPersistence } from './hooks';
+import { ChatTaskSubscriber } from '../../components/ChatTaskSubscriber';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
