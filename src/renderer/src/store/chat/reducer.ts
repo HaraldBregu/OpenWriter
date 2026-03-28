@@ -136,7 +136,7 @@ export const chatSlice = createSlice({
 		/**
 		 * Set the session UUID for a document's chat session.
 		 * Creates the session if it does not yet exist.
-		 * Used by AgenticPanel when the first message is sent with no active session.
+		 * Used by ChatPanel when the first message is sent with no active session.
 		 */
 		chatSessionStarted(state, action: PayloadAction<{ documentId: string; sessionId: string }>) {
 			const { documentId, sessionId } = action.payload;
