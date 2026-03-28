@@ -129,7 +129,7 @@ const ChatHeader: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-80 rounded-xl border border-border/70 bg-background p-2"
+							className="w-80 rounded-lg border border-border/70 bg-background p-2"
 						>
 							<div className="border-b border-border/60 px-2 pb-2">
 								<div className="relative">
