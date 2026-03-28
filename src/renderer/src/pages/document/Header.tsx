@@ -114,56 +114,56 @@ const Header: React.FC<HeaderProps> = ({
 						className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
 					/>
 				</div>
-				<div className="flex items-center gap-3 ml-4 shrink-0">
+				<div className="flex items-center gap-0 ml-3 shrink-0">
 					<AppButton
 						type="button"
-						variant="outline"
-						size="icon"
+						variant="header-icon"
+						size="header-icon-sm"
 						title={t('common.share')}
 						aria-label={t('common.share')}
 					>
-						<Share2 className="h-4 w-4" />
+						<Share2 />
 					</AppButton>
 					<AppButton
 						type="button"
-						variant="outline"
-						size="icon"
+						variant="header-icon"
+						size="header-icon-sm"
 						title={t('common.preview')}
 						aria-label={t('common.preview')}
 					>
-						<Eye className="h-4 w-4" />
+						<Eye />
 					</AppButton>
 					<AppButton
 						type="button"
-						variant={activeSidebar === 'agentic' ? 'secondary' : 'outline'}
-						size="icon"
+						variant="header-icon"
+						size="header-icon-sm"
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
 						aria-expanded={activeSidebar === 'agentic'}
 						onClick={() => toggleSidebar('agentic')}
 					>
-						<Bot className="h-4 w-4" aria-hidden="true" />
+						<Bot aria-hidden="true" />
 					</AppButton>
 					<AppButton
 						type="button"
-						variant={activeSidebar === 'config' ? 'secondary' : 'outline'}
-						size="icon"
+						variant="header-icon"
+						size="header-icon-sm"
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
 						aria-expanded={activeSidebar === 'config'}
 						onClick={() => toggleSidebar('config')}
 					>
-						<FileText className="h-4 w-4" aria-hidden="true" />
+						<FileText aria-hidden="true" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
 							<AppButton
 								type="button"
-								variant="outline"
-								size="icon"
+								variant="header-icon"
+								size="header-icon-sm"
 								title={t('common.moreOptions')}
 							>
-								<MoreHorizontal className="h-4 w-4" />
+								<MoreHorizontal />
 							</AppButton>
 						</AppDropdownMenuTrigger>
 						<AppDropdownMenuContent align="end">

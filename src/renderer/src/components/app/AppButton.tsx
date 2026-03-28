@@ -19,6 +19,8 @@ const buttonVariants = cva(
 					'text-muted-foreground/50 transition-all duration-100 hover:bg-muted hover:text-muted-foreground active:scale-90',
 				'prompt-submit':
 					'bg-primary text-primary-foreground shadow-[0_10px_24px_hsl(var(--foreground)/0.18)] hover:bg-primary/90',
+				'header-icon':
+					'bg-transparent text-muted-foreground shadow-none hover:bg-accent hover:text-foreground aria-expanded:text-foreground',
 			},
 			size: {
 				default: 'h-10 rounded-full px-4 py-2 [&_svg]:size-4',
@@ -33,6 +35,10 @@ const buttonVariants = cva(
 				'prompt-icon-sm': 'h-5 w-5 rounded-full p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-submit-md': 'h-6 w-6 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-submit-sm': 'h-5 w-5 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
+				'header-icon': 'h-11 w-11 rounded-full p-0 [&_svg]:h-5 [&_svg]:w-5',
+				'header-icon-sm': 'h-8 w-8 rounded-full p-0 [&_svg]:h-4 [&_svg]:w-4',
+				'header-icon-md': 'h-10 w-10 rounded-full p-0 [&_svg]:h-5 [&_svg]:w-5',
+				'header-icon-lg': 'h-12 w-12 rounded-full p-0 [&_svg]:h-6 [&_svg]:w-6',
 			},
 		},
 		defaultVariants: {
