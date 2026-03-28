@@ -1,19 +1,23 @@
 import type {
-	ChatSessionEntry,
 	ChatSessionFile,
-	ChatSessionIndex,
 	ChatSessionListItem,
 	DocumentChatMessage,
 } from '../context/state';
 
-function sortEntriesByCreatedAt(entries: ChatSessionEntry[]): ChatSessionEntry[] {
-	return [...entries].sort(
-		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-	);
-}
-
-function isMissingSessionFileError(error: unknown): boolean {
-	return error instanceof Error && error.message.startsWith('File not found:');
+/**
+ * Extract the creation timestamp embedded in a UUID v7 string.
+ * UUID v7 encodes a Unix ms timestamp in its first 48 bits (12 hex chars).
+ * Returns null if the string is not a recognisable UUID v7.
+ */
+function createdAtFromUuidV7(id: string): string | null {
+	try {
+		const msBits = id.replace(/-/g, '').slice(0, 12);
+		const ms = parseInt(msBits, 16);
+		if (ms > 0) return new Date(ms).toISOString();
+	} catch {
+		// ignore
+	}
+	return null;
 }
 
 export function formatRelativeTime(iso: string): string {
@@ -36,90 +40,75 @@ export function titleFromMessages(messages: DocumentChatMessage[], fallback: str
 	return firstUser.content.trim().replace(/\s+/g, ' ').slice(0, 64);
 }
 
-interface SyncedSessionRecord {
-	entry: ChatSessionEntry;
-	file: ChatSessionFile | null;
-}
-
 export interface SyncedChatSessions {
-	index: ChatSessionIndex;
 	sessionItems: ChatSessionListItem[];
 	latestSession: { sessionId: string; messages: DocumentChatMessage[] } | null;
 }
 
-export async function syncChatSessionsWithDisk(
-	docPath: string,
-	indexInput?: ChatSessionIndex
+/**
+ * Discover chat sessions by scanning the `chats/` directory for session
+ * subfolders that contain a `messages.json` file. No `sessions.json` index
+ * file is read or written.
+ *
+ * Each subfolder name is expected to be a UUID v7 session ID from which the
+ * creation timestamp is derived.
+ */
+export async function syncChatSessionsFromDisk(
+	docPath: string
 ): Promise<SyncedChatSessions | null> {
-	const indexPath = `${docPath}/sessions.json`;
 	const chatsDir = `${docPath}/chats`;
 
-	let index = indexInput ?? null;
-	if (!index) {
-		try {
-			const raw = await window.workspace.readFile({ filePath: indexPath });
-			index = JSON.parse(raw) as ChatSessionIndex;
-		} catch {
-			return null;
-		}
+	const entries = await window.workspace.listDir({ dirPath: chatsDir });
+	const sessionDirs = entries.filter((e) => e.isDirectory);
+
+	if (sessionDirs.length === 0) return null;
+
+	interface SessionRecord {
+		sessionId: string;
+		createdAt: string;
+		file: ChatSessionFile | null;
 	}
 
-	const validRecords: SyncedSessionRecord[] = [];
+	const records: SessionRecord[] = [];
 
-	for (const entry of index.sessions) {
+	for (const dir of sessionDirs) {
+		const sessionId = dir.name;
+		const createdAt = createdAtFromUuidV7(sessionId) ?? new Date().toISOString();
+
 		try {
 			const raw = await window.workspace.readFile({
-				filePath: `${chatsDir}/${entry.sessionId}/messages.json`,
+				filePath: `${chatsDir}/${sessionId}/messages.json`,
 			});
-			validRecords.push({
-				entry,
+			records.push({
+				sessionId,
+				createdAt,
 				file: JSON.parse(raw) as ChatSessionFile,
 			});
-		} catch (error) {
-			if (!isMissingSessionFileError(error)) {
-				validRecords.push({ entry, file: null });
-			}
-		}
-	}
-
-	const syncedIndex: ChatSessionIndex = {
-		version: index.version ?? 1,
-		sessions: validRecords.map((record) => record.entry),
-	};
-
-	if (syncedIndex.sessions.length !== index.sessions.length) {
-		try {
-			await window.workspace.writeFile({
-				filePath: indexPath,
-				content: JSON.stringify(syncedIndex, null, 2),
-				createParents: true,
-			});
 		} catch {
-			// Best effort: keep the in-memory list synced even if index rewrite fails.
+			// Folder exists but messages.json is missing or unreadable -- skip.
 		}
 	}
 
-	const sortedRecords = sortEntriesByCreatedAt(syncedIndex.sessions).map((entry) => {
-		const record = validRecords.find((item) => item.entry.sessionId === entry.sessionId);
-		return record ?? { entry, file: null };
-	});
+	if (records.length === 0) return null;
 
-	const sessionItems = sortedRecords.map((record) => ({
-		id: record.entry.sessionId,
+	// Sort newest first.
+	records.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+	const sessionItems: ChatSessionListItem[] = records.map((record) => ({
+		id: record.sessionId,
 		title: titleFromMessages(record.file?.messages ?? [], 'Untitled'),
-		ageLabel: formatRelativeTime(record.entry.createdAt),
-		createdAt: record.entry.createdAt,
+		ageLabel: formatRelativeTime(record.createdAt),
+		createdAt: record.createdAt,
 	}));
 
-	const latestRecord = sortedRecords.find((record) => record.file !== null);
+	const latestRecord = records[0];
 
 	return {
-		index: syncedIndex,
 		sessionItems,
 		latestSession:
 			latestRecord && latestRecord.file
 				? {
-						sessionId: latestRecord.entry.sessionId,
+						sessionId: latestRecord.sessionId,
 						messages: latestRecord.file.messages ?? [],
 					}
 				: null,
