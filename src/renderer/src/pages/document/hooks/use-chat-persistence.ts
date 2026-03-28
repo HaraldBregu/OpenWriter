@@ -58,7 +58,7 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
  *   {docPath}/chats/{sessionId}/messages.json
  *
  * Session discovery is done by scanning the `chats/` directory for session
- * subfolders -- no `sessions.json` index file is used.
+ * subfolders -- no separate session index file is used.
  *
  * Session IDs are UUID v7 -- the creation timestamp is recoverable from the
  * folder name via `createdAtFromSessionId`.
@@ -238,10 +238,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 							ageLabel: formatRelativeTime(createdAt),
 							createdAt,
 						};
-						const updatedList = [
-							newItem,
-							...sessionsListRef.current.filter((s) => s.id !== sid),
-						];
+						const updatedList = [newItem, ...sessionsListRef.current.filter((s) => s.id !== sid)];
 						sessionsListRef.current = updatedList;
 						docDispatchRef.current({
 							type: 'CHAT_SESSIONS_LOADED',
@@ -304,7 +301,9 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		const raw = await window.workspace.readFile({
 			filePath: `${oldChatDir}/sessions.json`,
 		});
-		const oldIndex = JSON.parse(raw) as { sessions: Array<{ sessionId: string; createdAt: string }> };
+		const oldIndex = JSON.parse(raw) as {
+			sessions: Array<{ sessionId: string; createdAt: string }>;
+		};
 		const sorted = [...oldIndex.sessions].sort(
 			(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 		);
