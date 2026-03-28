@@ -29,6 +29,8 @@ import type {
 	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	FsListDirParams,
+	FsListDirEntry,
 	ProjectWorkspaceInfo,
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';
