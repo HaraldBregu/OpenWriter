@@ -43,7 +43,7 @@ export interface SyncedChatSessions {
 
 /**
  * Discover chat sessions by scanning the `chats/` directory for session
- * subfolders that contain a `messages.json` file. No `sessions.json` index
+ * subfolders that contain a `messages.json` file. No separate session index
  * file is read or written.
  *
  * Each subfolder name is expected to be a UUID v7 session ID from which the
