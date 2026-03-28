@@ -36,7 +36,7 @@ const ChatHeader: React.FC = () => {
 	}, [search, sessions]);
 
 	return (
-		<div className="shrink-0 border-b border-border bg-background/80 px-5 py-3">
+		<div className="shrink-0 border-b border-border bg-background/80 px-4 py-2">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
@@ -48,7 +48,7 @@ const ChatHeader: React.FC = () => {
 								type="button"
 								variant="ghost"
 								size="icon"
-								className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+								className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
 								aria-label={t('agenticPanel.openHistory', 'Open chat history')}
 							>
 								<Clock3 className="h-4 w-4" />
@@ -121,7 +121,7 @@ const ChatHeader: React.FC = () => {
 						type="button"
 						variant="ghost"
 						size="icon"
-						className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+						className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
 						aria-label={t('agenticPanel.newChat', 'Start new chat')}
 					>
 						<MessageSquarePlus className="h-4 w-4" />
