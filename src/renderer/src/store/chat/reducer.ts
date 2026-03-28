@@ -18,6 +18,7 @@ export type { ChatState };
 // ---------------------------------------------------------------------------
 
 const EMPTY_SESSION: Readonly<ChatSession> = {
+	sessionId: null,
 	messages: [],
 	activeTaskId: null,
 	activeMessageId: null,
