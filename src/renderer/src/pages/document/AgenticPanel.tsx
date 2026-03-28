@@ -44,6 +44,11 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 		(content: string) => {
 			if (!documentId || isRunning) return;
 
+			if (!sessionId) {
+				const newSessionId = crypto.randomUUID();
+				dispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
+			}
+
 			const userMessageId = crypto.randomUUID();
 			const assistantMessageId = crypto.randomUUID();
 			const timestamp = new Date().toISOString();
