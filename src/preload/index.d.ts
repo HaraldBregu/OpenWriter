@@ -41,6 +41,8 @@ import type {
 	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	FsListDirParams,
+	FsListDirEntry,
 	SaveDocumentImageParams,
 	SaveDocumentImageResult,
 	DocumentImageInfo,
