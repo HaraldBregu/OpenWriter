@@ -53,7 +53,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 					</div>
 				)}
 				{content.trim() && (
-					<div className="rounded-xl border border-border/70 bg-background/70 px-2.5 py-2">
+					<div className="rounded-xl bg-background/70 px-2.5 py-2">
 						{renderMarkdown ? (
 							<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:border prose-pre:border-border/60 prose-pre:bg-black/20 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.75rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground text-xs leading-relaxed">
 								<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
