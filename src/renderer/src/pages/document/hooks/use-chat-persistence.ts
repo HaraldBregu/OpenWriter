@@ -57,6 +57,8 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
 /**
  * Persists chat messages for a document to:
  *   {docPath}/chats/{sessionId}/messages.json
+ * Session index:
+ *   {docPath}/sessions.json
  *
  * Session IDs are UUID v7 — the creation timestamp is recoverable from the
  * folder name via `createdAtFromSessionId`.
@@ -96,7 +98,8 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 		async function load(): Promise<void> {
 			const docPath = await window.workspace.getDocumentPath(documentId!);
 			const chatsDir = `${docPath}/chats`;
-			const indexPath = `${chatsDir}/sessions.json`;
+			const indexPath = `${docPath}/sessions.json`;
+			const legacyIndexPath = `${chatsDir}/sessions.json`;
 
 			// --- 1. Try to read the sessions index (new structure) ---
 			let index: ChatSessionIndex | null = null;
@@ -104,7 +107,19 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				const raw = await window.workspace.readFile({ filePath: indexPath });
 				index = JSON.parse(raw) as ChatSessionIndex;
 			} catch {
-				// Index does not exist yet.
+				// New index location does not exist yet. Try legacy location.
+				try {
+					const raw = await window.workspace.readFile({ filePath: legacyIndexPath });
+					index = JSON.parse(raw) as ChatSessionIndex;
+					// Migrate index to new location.
+					await window.workspace.writeFile({
+						filePath: indexPath,
+						content: JSON.stringify(index, null, 2),
+						createParents: true,
+					});
+				} catch {
+					// No index found.
+				}
 			}
 
 			if (cancelled) return;
@@ -212,7 +227,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					// Append to sessions.json if this sessionId is new this mount.
 					if (!indexedSessionsRef.current.has(sid)) {
 						try {
-							const indexPath = `${chatsDir}/sessions.json`;
+							const indexPath = `${docPath}/sessions.json`;
 							let idx: ChatSessionIndex = { version: 1, sessions: [] };
 							try {
 								const raw = await window.workspace.readFile({ filePath: indexPath });
