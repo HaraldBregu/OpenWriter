@@ -38,6 +38,7 @@ import type {
 	FsWriteFileParams,
 	FsCreateFileParams,
 	FsCreateFolderParams,
+	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
 	SaveDocumentImageParams,
@@ -82,6 +83,7 @@ export type {
 	FsWriteFileParams,
 	FsCreateFileParams,
 	FsCreateFolderParams,
+	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
 	DocumentImageChangeEvent,
@@ -226,6 +228,8 @@ export interface WorkspaceApi {
 	 * Idempotent by default; pass `failIfExists: true` for exclusive creation.
 	 */
 	createFolder: (params: FsCreateFolderParams) => Promise<void>;
+	/** Delete a directory within allowed roots. */
+	deleteFolder: (params: FsDeleteFolderParams) => Promise<void>;
 	/**
 	 * Rename or move a file or directory within allowed directories.
 	 * Throws by default if the destination already exists.

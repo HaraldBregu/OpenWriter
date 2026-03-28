@@ -12,6 +12,7 @@ import type {
 } from '../context/state';
 import type { DocumentAction } from '../context/actions';
 import { useDocumentDispatch } from './use-document-dispatch';
+import { useDocumentState } from './use-document-state';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -118,6 +119,7 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
 export function useChatPersistence(documentId: string | undefined): () => void {
 	const chatDispatch = useChatDispatch();
 	const docDispatch = useDocumentDispatch();
+	const { chatSessions } = useDocumentState();
 	const { messages: chatMessages, sessionId } = useChatState();
 
 	const messagesRef = useRef(chatMessages);
@@ -141,6 +143,10 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 	// Session IDs already appended to sessions.json in this mount — avoid
 	// redundant index reads on every debounced save.
 	const indexedSessionsRef = useRef<Set<string>>(new Set());
+
+	useEffect(() => {
+		sessionsListRef.current = chatSessions;
+	}, [chatSessions]);
 
 	// -------------------------------------------------------------------------
 	// Load on documentId change
@@ -198,7 +204,6 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					docPath,
 					chatsDir,
 					indexPath,
-					documentId: documentId!,
 					cancelled: () => cancelled,
 					chatDispatch,
 					docDispatchRef,
@@ -364,7 +369,6 @@ interface MigrateOptions {
 	docPath: string;
 	chatsDir: string;
 	indexPath: string;
-	documentId: string;
 	cancelled: () => boolean;
 	chatDispatch: Dispatch<ChatAction>;
 	docDispatchRef: MutableRefObject<Dispatch<DocumentAction>>;
@@ -378,7 +382,6 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		docPath,
 		chatsDir,
 		indexPath,
-		documentId,
 		cancelled,
 		chatDispatch,
 		docDispatchRef,

@@ -65,6 +65,15 @@ export interface CreateFolderOptions {
 	failIfExists?: boolean;
 }
 
+/** Options for {@link FileManager.deleteFolder}. */
+export interface DeleteFolderOptions {
+	/**
+	 * When `true` (default), remove directories recursively.
+	 * When `false`, the operation fails for non-empty directories.
+	 */
+	recursive?: boolean;
+}
+
 /** Options for {@link FileManager.renameEntry}. */
 export interface RenameOptions {
 	/**

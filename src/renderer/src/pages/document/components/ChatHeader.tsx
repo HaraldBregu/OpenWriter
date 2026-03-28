@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, MessageSquarePlus, Search } from 'lucide-react';
+import { Clock3, MessageSquarePlus, Search, Trash2 } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import {
 	AppButton,
@@ -9,23 +9,29 @@ import {
 	AppPopoverContent,
 	AppPopoverTrigger,
 } from '@/components/app';
-import { useDocumentState } from '../hooks';
+import { useDocumentDispatch, useDocumentState } from '../hooks';
 import { useChatState, useChatDispatch } from '../context';
-import type { ChatSessionFile } from '../context/state';
+import type { ChatSessionFile, ChatSessionIndex } from '../context/state';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
+	const docDispatch = useDocumentDispatch();
 	const { documentId, chatSessions } = useDocumentState();
 	const [search, setSearch] = useState('');
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const { sessionId: selectedId } = useChatState();
+	const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
+	const { sessionId: selectedId, messages: chatMessages } = useChatState();
 
 	const filteredSessions = useMemo(() => {
 		const q = search.trim().toLowerCase();
 		if (!q) return chatSessions;
 		return chatSessions.filter((item) => item.title.toLowerCase().includes(q));
 	}, [search, chatSessions]);
+
+	if (chatSessions.length === 0 && chatMessages.length === 0) {
+		return null;
+	}
 
 	const handleLoadSession = async (sessionId: string) => {
 		if (!documentId) return;
@@ -54,6 +60,53 @@ const ChatHeader: React.FC = () => {
 		setSearch('');
 	};
 
+	const handleDeleteSession = async (sessionId: string) => {
+		if (!documentId || deletingSessionId) return;
+
+		const isSelected = sessionId === selectedId;
+		const remainingSessions = chatSessions.filter((item) => item.id !== sessionId);
+
+		if (isSelected) {
+			dispatch({ type: 'CHAT_RESET' });
+		}
+
+		setDeletingSessionId(sessionId);
+
+		try {
+			const docPath = await window.workspace.getDocumentPath(documentId);
+			const indexPath = `${docPath}/sessions.json`;
+			let index: ChatSessionIndex = { version: 1, sessions: [] };
+
+			try {
+				const raw = await window.workspace.readFile({ filePath: indexPath });
+				index = JSON.parse(raw) as ChatSessionIndex;
+			} catch {
+				// Missing index is treated as an empty history.
+			}
+
+			const updatedIndex: ChatSessionIndex = {
+				version: index.version ?? 1,
+				sessions: index.sessions.filter((entry) => entry.sessionId !== sessionId),
+			};
+
+			await window.workspace.deleteFolder({
+				folderPath: `${docPath}/chats/${sessionId}`,
+				recursive: true,
+			});
+			await window.workspace.writeFile({
+				filePath: indexPath,
+				content: JSON.stringify(updatedIndex, null, 2),
+				createParents: true,
+			});
+
+			docDispatch({ type: 'CHAT_SESSIONS_LOADED', sessions: remainingSessions });
+		} catch {
+			// best effort
+		} finally {
+			setDeletingSessionId((current) => (current === sessionId ? null : current));
+		}
+	};
+
 	return (
 		<div className="shrink-0 border-b border-border bg-background/80 px-4 py-2">
 			<div className="flex items-center justify-between">
@@ -76,7 +129,7 @@ const ChatHeader: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-72 rounded-2xl border border-border/80 bg-background/95 p-3"
+							className="w-80 rounded-2xl border border-border/80 bg-background/95 p-3.5"
 						>
 							<div className="mb-3">
 								<div className="relative">
@@ -97,10 +150,11 @@ const ChatHeader: React.FC = () => {
 								)}
 								{filteredSessions.map((item) => {
 									const isSelected = item.id === selectedId;
+									const isDeleting = deletingSessionId === item.id;
 									return (
 										<div
 											key={item.id}
-											className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+											className={`flex items-center gap-2 rounded-lg px-3 py-2.5 ${
 												isSelected ? 'bg-muted/80' : 'hover:bg-muted/50'
 											}`}
 										>
@@ -113,9 +167,22 @@ const ChatHeader: React.FC = () => {
 											>
 												{item.title}
 											</button>
-											<span className="shrink-0 text-sm text-muted-foreground">
-												{item.ageLabel}
-											</span>
+											<div className="flex shrink-0 items-center gap-1.5 pl-2">
+												<span className="text-xs text-muted-foreground">{item.ageLabel}</span>
+												<AppButton
+													type="button"
+													variant="ghost"
+													size="icon-xs"
+													className="text-muted-foreground hover:text-destructive"
+													aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
+													disabled={isDeleting}
+													onClick={() => {
+														void handleDeleteSession(item.id);
+													}}
+												>
+													<Trash2 className="h-3.5 w-3.5" />
+												</AppButton>
+											</div>
 										</div>
 									);
 								})}

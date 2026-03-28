@@ -26,6 +26,7 @@ import type {
 	FsWriteFileParams,
 	FsCreateFileParams,
 	FsCreateFolderParams,
+	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
 	ProjectWorkspaceInfo,
@@ -321,6 +322,14 @@ export class Workspace implements Disposable {
 		await manager.createFolder(params.folderPath, {
 			recursive: params.recursive,
 			failIfExists: params.failIfExists,
+		});
+	}
+
+	async deleteFolder(params: FsDeleteFolderParams): Promise<void> {
+		this.validateFsParams(params, ['folderPath']);
+		const manager = this.buildFileManager();
+		await manager.deleteFolder(params.folderPath, {
+			recursive: params.recursive,
 		});
 	}
 

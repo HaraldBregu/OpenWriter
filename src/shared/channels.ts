@@ -34,6 +34,7 @@ import type {
 	FsWriteFileParams,
 	FsCreateFileParams,
 	FsCreateFolderParams,
+	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
 	SaveDocumentImageParams,
@@ -103,6 +104,7 @@ export const WorkspaceChannels = {
 	fsWriteFile: 'fs:write-file',
 	fsCreateFile: 'fs:create-file',
 	fsCreateFolder: 'fs:create-folder',
+	fsDeleteFolder: 'fs:delete-folder',
 	fsRename: 'fs:rename',
 	// Project workspace
 	getProjectInfo: 'project-workspace:get-info',
@@ -265,6 +267,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsWriteFile]: { args: [params: FsWriteFileParams]; result: void };
 	[WorkspaceChannels.fsCreateFile]: { args: [params: FsCreateFileParams]; result: void };
 	[WorkspaceChannels.fsCreateFolder]: { args: [params: FsCreateFolderParams]; result: void };
+	[WorkspaceChannels.fsDeleteFolder]: { args: [params: FsDeleteFolderParams]; result: void };
 	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----

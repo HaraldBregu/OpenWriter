@@ -326,6 +326,19 @@ export interface FsCreateFolderParams {
 }
 
 /**
+ * Payload for fs:delete-folder.
+ */
+export interface FsDeleteFolderParams {
+	/** Absolute path of the directory to delete. */
+	folderPath: string;
+	/**
+	 * When `true` (default), removes the directory recursively.
+	 * When `false`, deletion fails for non-empty directories.
+	 */
+	recursive?: boolean;
+}
+
+/**
  * Payload for fs:rename.
  */
 export interface FsRenameParams {

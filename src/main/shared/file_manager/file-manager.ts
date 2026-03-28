@@ -10,6 +10,7 @@ import type {
 	WriteFileOptions,
 	CreateFileOptions,
 	CreateFolderOptions,
+	DeleteFolderOptions,
 	RenameOptions,
 	RenameResult,
 } from './types';
@@ -578,6 +579,49 @@ export class FileManager {
 			await fs.unlink(filePath);
 		} catch (err) {
 			throw new Error(`Failed to delete file: ${(err as Error).message}`);
+		}
+	}
+
+	/**
+	 * Delete a directory from disk.
+	 *
+	 * Missing folders are treated as already deleted.
+	 *
+	 * @param folderPath - Path to the folder to delete
+	 * @param options - Recursive deletion behavior
+	 */
+	async deleteFolder(folderPath: string, options: DeleteFolderOptions = {}): Promise<void> {
+		const { recursive = true } = options;
+		const resolved = assertPathSafe(folderPath, this.extraRoots);
+
+		let stats: Awaited<ReturnType<typeof fs.stat>>;
+		try {
+			stats = await fs.stat(resolved);
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'ENOENT') {
+				return;
+			}
+			throw new Error(`Cannot stat "${resolved}": ${error.message}`);
+		}
+
+		if (!stats.isDirectory()) {
+			throw new Error(`Path is not a directory: ${resolved}`);
+		}
+
+		this.logger?.debug(
+			FileManager.LOG_SOURCE,
+			`deleteFolder: ${resolved} (recursive: ${recursive})`
+		);
+
+		try {
+			await fs.rm(resolved, { recursive });
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'EACCES') {
+				throw new Error(`Permission denied deleting directory: ${resolved}`);
+			}
+			throw new Error(`Failed to delete directory "${resolved}": ${error.message}`);
 		}
 	}
 

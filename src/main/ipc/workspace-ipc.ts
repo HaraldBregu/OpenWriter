@@ -475,6 +475,15 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.fsDeleteFolder,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: Parameters<Workspace['deleteFolder']>[0]) =>
+					this.mgr(event, container).deleteFolder(params),
+				WorkspaceChannels.fsDeleteFolder
+			)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.fsRename,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: FsRenameParams) =>

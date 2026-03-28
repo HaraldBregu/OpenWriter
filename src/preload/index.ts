@@ -377,6 +377,7 @@ const workspace: WorkspaceApi = {
 	writeFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsWriteFile, params),
 	createFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFile, params),
 	createFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFolder, params),
+	deleteFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsDeleteFolder, params),
 	rename: (params) => typedInvokeUnwrap(WorkspaceChannels.fsRename, params),
 } satisfies WorkspaceApi;
 
