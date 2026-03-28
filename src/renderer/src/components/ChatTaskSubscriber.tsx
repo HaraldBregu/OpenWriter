@@ -46,7 +46,7 @@ interface ResearcherTaskOutput {
 export function ChatTaskSubscriber(): null {
 	const dispatch = useAppDispatch();
 	const { t } = useTranslation();
-	const activeSessions = useAppSelector(selectAllActiveChatSessions);
+	const activeSessions = useAppSelector(selectAllActiveChatSessions, activeSessionsEqual);
 
 	// Track active subscriptions so we can avoid duplicates across re-renders
 	// and clean up stale ones when sessions change.
