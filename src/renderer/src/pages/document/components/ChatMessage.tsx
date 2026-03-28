@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -29,34 +29,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 		!isUser &&
 		!content.trim() &&
 		(status === 'idle' || status === 'queued' || status === 'running');
-	const [expanded, setExpanded] = useState(false);
-	const isLongMessage = useMemo(() => {
-		const lineCount = content.split('\n').length;
-		return content.length > 520 || lineCount > 8;
-	}, [content]);
-	const shouldCollapse = isLongMessage && !expanded;
 
 	if (isUser) {
 		return (
 			<div className="flex flex-col gap-1.5">
 				<div className="rounded-2xl border border-border/70 bg-muted/70 px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
-					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
-						<div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-							{content}
-						</div>
-						{shouldCollapse && (
-							<div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-muted/95 to-transparent" />
-						)}
+					<div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+						{content}
 					</div>
-					{isLongMessage && (
-						<button
-							type="button"
-							className="mt-2 text-xs font-medium text-muted-foreground underline underline-offset-2"
-							onClick={() => setExpanded((prev) => !prev)}
-						>
-							{expanded ? 'Show less' : 'Show more'}
-						</button>
-					)}
 				</div>
 				<span className="px-1 text-[10px] text-muted-foreground">{formatTime(timestamp)}</span>
 			</div>
@@ -77,7 +57,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 					</div>
 				)}
 				{content.trim() && (
-					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
+					<>
 						{renderMarkdown ? (
 							<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-background/80 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.8125rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground text-sm leading-relaxed">
 								<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
@@ -87,19 +67,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 								{content}
 							</div>
 						)}
-						{shouldCollapse && (
-							<div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background/90 to-transparent" />
-						)}
-					</div>
-				)}
-				{isLongMessage && content.trim() && (
-					<button
-						type="button"
-						className="mt-2 text-xs font-medium text-muted-foreground underline underline-offset-2"
-						onClick={() => setExpanded((prev) => !prev)}
-					>
-						{expanded ? 'Show less' : 'Show more'}
-					</button>
+					</>
 				)}
 				<div className="mt-1 px-1 text-[10px] text-muted-foreground">{formatTime(timestamp)}</div>
 			</div>
