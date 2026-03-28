@@ -14,6 +14,8 @@ import {
 	chatSessionStarted,
 	selectChatMessages,
 	selectChatSessionId,
+	selectActiveChatTaskId,
+	selectActiveChatMessageId,
 } from '../../store/chat';
 
 interface ChatPanelProps {
@@ -22,17 +24,24 @@ interface ChatPanelProps {
 	readonly onSend: (content: string) => Promise<void> | void;
 }
 
-const ChatPanel: React.FC<ChatPanelProps> = ({ isRunning, onSend }) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { documentId } = useDocumentState();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
 	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
+	const activeTaskId = useAppSelector((state) => selectActiveChatTaskId(state, documentId));
+	const activeMessageId = useAppSelector((state) => selectActiveChatMessageId(state, documentId));
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [chatMessages]);
+
+	useEffect(() => {
+		if (!documentId || !taskId || !activeMessageId || activeTaskId === taskId) return;
+		dispatch(chatActiveTaskSet({ documentId, taskId }));
+	}, [activeMessageId, activeTaskId, dispatch, documentId, taskId]);
 
 	const handleSend = useCallback(
 		(content: string) => {

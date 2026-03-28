@@ -50,13 +50,18 @@ export function ChatTaskSubscriber(): null {
 				if (!messageId) {
 					return;
 				}
+				const metadataDocumentId = snapshot.metadata?.documentId;
+				const targetDocumentId =
+					typeof metadataDocumentId === 'string' && metadataDocumentId.length > 0
+						? metadataDocumentId
+						: documentId;
 
 				switch (snapshot.status) {
 					case 'queued':
 					case 'started':
 						dispatch(
 							chatMessageUpdated({
-								documentId,
+								documentId: targetDocumentId,
 								id: messageId,
 								patch: {
 									content: t('agenticPanel.researcherThinking', 'Researching...'),
@@ -70,7 +75,7 @@ export function ChatTaskSubscriber(): null {
 						if (snapshot.content) {
 							dispatch(
 								chatMessageUpdated({
-									documentId,
+									documentId: targetDocumentId,
 									id: messageId,
 									patch: {
 										content: snapshot.content,
@@ -85,7 +90,7 @@ export function ChatTaskSubscriber(): null {
 						const output = snapshot.result as ResearcherTaskOutput | undefined;
 						dispatch(
 							chatMessageUpdated({
-								documentId,
+								documentId: targetDocumentId,
 								id: messageId,
 								patch: {
 									content:
@@ -97,14 +102,14 @@ export function ChatTaskSubscriber(): null {
 								},
 							})
 						);
-						dispatch(chatActiveTaskSet({ documentId, taskId: null }));
-						dispatch(chatActiveMessageSet({ documentId, messageId: null }));
+						dispatch(chatActiveTaskSet({ documentId: targetDocumentId, taskId: null }));
+						dispatch(chatActiveMessageSet({ documentId: targetDocumentId, messageId: null }));
 						break;
 					}
 					case 'error':
 						dispatch(
 							chatMessageUpdated({
-								documentId,
+								documentId: targetDocumentId,
 								id: messageId,
 								patch: {
 									content:
@@ -114,13 +119,13 @@ export function ChatTaskSubscriber(): null {
 								},
 							})
 						);
-						dispatch(chatActiveTaskSet({ documentId, taskId: null }));
-						dispatch(chatActiveMessageSet({ documentId, messageId: null }));
+						dispatch(chatActiveTaskSet({ documentId: targetDocumentId, taskId: null }));
+						dispatch(chatActiveMessageSet({ documentId: targetDocumentId, messageId: null }));
 						break;
 					case 'cancelled':
 						dispatch(
 							chatMessageUpdated({
-								documentId,
+								documentId: targetDocumentId,
 								id: messageId,
 								patch: {
 									content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
@@ -129,8 +134,8 @@ export function ChatTaskSubscriber(): null {
 								},
 							})
 						);
-						dispatch(chatActiveTaskSet({ documentId, taskId: null }));
-						dispatch(chatActiveMessageSet({ documentId, messageId: null }));
+						dispatch(chatActiveTaskSet({ documentId: targetDocumentId, taskId: null }));
+						dispatch(chatActiveMessageSet({ documentId: targetDocumentId, messageId: null }));
 						break;
 					default:
 						break;
