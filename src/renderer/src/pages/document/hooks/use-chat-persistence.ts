@@ -316,7 +316,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 			legacyMessages = sessionFile.messages ?? [];
 		}
 	} catch {
-		// No old sessions.json -- try original single-file layout.
+		// No old session-index.json -- try original single-file layout.
 	}
 
 	if (!legacyMessages) {
