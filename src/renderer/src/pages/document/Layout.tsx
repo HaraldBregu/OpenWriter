@@ -42,10 +42,20 @@ interface LayoutProps {
 	documentId: string | undefined;
 }
 
+interface ResearcherTaskOutput {
+	content: string;
+	tokenCount: number;
+	agentId: string;
+}
+
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const dispatch = useDocumentDispatch();
 	useChatPersistence(id);
+
+	const chatDispatch = useChatDispatch();
+	const { activeTaskId: chatActiveTaskId, activeMessageId: chatActiveMessageId } = useChatState();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
