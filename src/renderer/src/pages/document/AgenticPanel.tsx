@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search } from 'lucide-react';
+import { History, Search } from 'lucide-react';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 import { useDocumentState } from './hooks';
@@ -24,6 +24,14 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 	const { documentId } = useDocumentState();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const chatHistory = useMemo(
+		() =>
+			chatMessages
+				.filter((message) => message.role === 'user')
+				.slice()
+				.reverse(),
+		[chatMessages]
+	);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -75,6 +83,31 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background">
+			<div className="border-b border-border bg-muted/20 px-4 py-3">
+				<div className="mb-2 flex items-center gap-2">
+					<History className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+					<h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+						{t('agenticPanel.historyTitle', 'Previous chats')}
+					</h3>
+				</div>
+				{chatHistory.length === 0 ? (
+					<p className="text-xs text-muted-foreground">
+						{t('agenticPanel.historyEmpty', 'No previous chats yet')}
+					</p>
+				) : (
+					<ul className="max-h-28 space-y-1 overflow-y-auto pr-1">
+						{chatHistory.map((message) => (
+							<li key={`history-${message.id}`} className="rounded-md border bg-background px-2 py-1.5">
+								<p className="truncate text-xs text-foreground">{message.content}</p>
+								<p className="mt-0.5 text-[11px] text-muted-foreground">
+									{new Date(message.timestamp).toLocaleString()}
+								</p>
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
+
 			<div
 				className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
 				role="log"
