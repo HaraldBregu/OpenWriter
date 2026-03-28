@@ -493,6 +493,15 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		ipcMain.handle(
+			WorkspaceChannels.fsListDir,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: FsListDirParams) =>
+					this.mgr(event, container).listDir(params),
+				WorkspaceChannels.fsListDir
+			)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
