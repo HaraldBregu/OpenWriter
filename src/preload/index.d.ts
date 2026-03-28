@@ -88,6 +88,8 @@ export type {
 	FsDeleteFolderParams,
 	FsRenameParams,
 	FsRenameResult,
+	FsListDirParams,
+	FsListDirEntry,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	ServiceProvider,
