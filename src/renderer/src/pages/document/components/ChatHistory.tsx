@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, History, Trash2 } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import {
 	AppButton,
 	AppCollapsible,
@@ -27,25 +27,16 @@ const ChatHistory: React.FC = () => {
 	const [historyOpen, setHistoryOpen] = useState(false);
 	const [mockHistory, setMockHistory] = useState<MockChatHistoryItem[]>(() => createMockHistory());
 	const [selectedMockHistoryId, setSelectedMockHistoryId] = useState<string | null>(null);
-	const latestHistory = mockHistory[0] ?? null;
 
 	return (
-		<div className="border-b border-border px-3 py-2">
+		<div className="border-b border-border py-2">
 			<AppCollapsible open={historyOpen} onOpenChange={setHistoryOpen}>
-				<AppCollapsibleTrigger className="w-full justify-between border-b border-border px-0 py-1.5 text-left">
-					<div className="flex min-w-0 items-center gap-2">
-						<History className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-						<div className="min-w-0">
-							<p className="text-[11px] font-medium text-foreground">
-								{t('agenticPanel.historyTitle', 'Previous chats')}
-							</p>
-							<p className="truncate text-[10px] text-muted-foreground">
-								{latestHistory
-									? `${t('agenticPanel.chatLabel', 'Chat')} ${new Date(latestHistory.createdAt).toLocaleString()}`
-									: t('agenticPanel.historyEmpty', 'No previous chats yet')}
-							</p>
-						</div>
-					</div>
+				<AppCollapsibleTrigger
+					className={`w-full justify-between px-3 py-1 text-left ${
+						historyOpen ? 'border-b border-border' : ''
+					}`}
+				>
+					<p className="text-[11px] font-medium text-foreground">Chat history</p>
 					<ChevronDown
 						className={`h-4 w-4 text-muted-foreground transition-transform ${
 							historyOpen ? 'rotate-180' : ''
@@ -62,26 +53,17 @@ const ChatHistory: React.FC = () => {
 					) : (
 						<ul className="max-h-32 overflow-y-auto">
 							{mockHistory.map((entry) => {
-								const label = `${t('agenticPanel.chatLabel', 'Chat')} ${new Date(entry.createdAt).toLocaleString()}`;
+								const label = `${new Date(entry.createdAt).toLocaleString()}`;
 								const isSelected = selectedMockHistoryId === entry.id;
 								return (
 									<li
 										key={entry.id}
-										className={`flex w-full items-center justify-between border-b px-0 py-1.5 ${
+										className={`flex w-full items-center justify-between border-b px-3 py-1.5 ${
 											isSelected ? 'border-primary/40 text-foreground' : 'border-border'
 										}`}
 									>
 										<p className="truncate pr-2 text-[10px] text-foreground">{label}</p>
 										<div className="flex items-center gap-1">
-											<AppButton
-												type="button"
-												variant="ghost"
-												size="sm"
-												className="h-6 rounded-none px-1.5 text-[10px]"
-												onClick={() => setSelectedMockHistoryId(entry.id)}
-											>
-												{t('agenticPanel.useChat', 'Use')}
-											</AppButton>
 											<AppButton
 												type="button"
 												variant="ghost"
