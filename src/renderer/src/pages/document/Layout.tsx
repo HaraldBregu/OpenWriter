@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
@@ -10,9 +11,8 @@ import Header from './Header';
 import ResourcesPanel from './ResourcesPanel';
 import ChatPanel from './ChatPanel';
 import EditorPanel from './EditorPanel';
-import { useEditorInstance, useSidebarVisibility } from './context';
+import { useEditorInstance, useSidebarVisibility, useChatState, useChatDispatch } from './context';
 import { useDocumentDispatch, useChatPersistence } from './hooks';
-import { ChatTaskSubscriber } from '../../components/ChatTaskSubscriber';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 

@@ -325,10 +325,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 								ageLabel: formatRelativeTime(createdAt),
 								createdAt,
 							};
-							const updatedList = [
-								newItem,
-								...sessionsListRef.current.filter((s) => s.id !== sid),
-							];
+							const updatedList = [newItem, ...sessionsListRef.current.filter((s) => s.id !== sid)];
 							sessionsListRef.current = updatedList;
 							docDispatchRef.current({
 								type: 'CHAT_SESSIONS_LOADED',

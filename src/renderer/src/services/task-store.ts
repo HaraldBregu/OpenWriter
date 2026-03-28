@@ -92,7 +92,8 @@ function appendEvent(task: TrackedTaskState, event: TaskEvent): TaskEventRecord[
 		data: event.data,
 		receivedAt: Date.now(),
 	};
-	const nextEvents = task.events.length >= MAX_EVENT_HISTORY ? task.events.slice(1) : task.events.slice();
+	const nextEvents =
+		task.events.length >= MAX_EVENT_HISTORY ? task.events.slice(1) : task.events.slice();
 	nextEvents.push(record);
 	return nextEvents;
 }
@@ -126,7 +127,9 @@ function createTrackedTaskFromInfo(task: TaskInfo): TrackedTaskState {
 	};
 }
 
-function createTrackedTaskFromQueuedEvent(event: Extract<TaskEvent, { type: 'queued' }>): TrackedTaskState {
+function createTrackedTaskFromQueuedEvent(
+	event: Extract<TaskEvent, { type: 'queued' }>
+): TrackedTaskState {
 	return {
 		taskId: event.data.taskId,
 		type: event.data.taskType,
@@ -158,11 +161,7 @@ function updateTrackedTask(
 	const nextTask = updater(currentTask);
 	if (nextTask === currentTask) return false;
 
-	trackedTasks = [
-		...trackedTasks.slice(0, index),
-		nextTask,
-		...trackedTasks.slice(index + 1),
-	];
+	trackedTasks = [...trackedTasks.slice(0, index), nextTask, ...trackedTasks.slice(index + 1)];
 	notifyListeners();
 	return true;
 }
@@ -189,10 +188,7 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			durationMs: activeTask.durationMs ?? currentTask.durationMs,
 			error: activeTask.error ?? currentTask.error,
 			metadata: activeTask.metadata ?? currentTask.metadata,
-			progress:
-				activeTask.status === 'completed'
-					? { percent: 100 }
-					: currentTask.progress,
+			progress: activeTask.status === 'completed' ? { percent: 100 } : currentTask.progress,
 		};
 
 		if (
@@ -205,11 +201,7 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			currentTask.metadata !== mergedTask.metadata ||
 			currentTask.progress !== mergedTask.progress
 		) {
-			nextTasks = [
-				...nextTasks.slice(0, index),
-				mergedTask,
-				...nextTasks.slice(index + 1),
-			];
+			nextTasks = [...nextTasks.slice(0, index), mergedTask, ...nextTasks.slice(index + 1)];
 			changed = true;
 		}
 	}
@@ -346,10 +338,13 @@ export function getTrackedTasks(): TrackedTaskState[] {
 }
 
 export function getTrackedTaskQueueStats(): TrackedTaskQueueStats {
-	return trackedTasks.reduce<TrackedTaskQueueStats>((stats, task) => {
-		if (task.status in stats) {
-			stats[task.status as keyof TrackedTaskQueueStats] += 1;
-		}
-		return stats;
-	}, { ...EMPTY_STATS });
+	return trackedTasks.reduce<TrackedTaskQueueStats>(
+		(stats, task) => {
+			if (task.status in stats) {
+				stats[task.status as keyof TrackedTaskQueueStats] += 1;
+			}
+			return stats;
+		},
+		{ ...EMPTY_STATS }
+	);
 }

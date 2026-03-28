@@ -51,12 +51,9 @@ export function useDebugTasks(): UseDebugTasksReturn {
 		[tasks]
 	);
 
-	const hide = useCallback(
-		(taskId: string) => {
-			removeTask(taskId);
-		},
-		[]
-	);
+	const hide = useCallback((taskId: string) => {
+		removeTask(taskId);
+	}, []);
 
 	const cancel = useCallback(async (taskId: string): Promise<void> => {
 		if (typeof window.task?.cancel !== 'function') return;
