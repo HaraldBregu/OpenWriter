@@ -122,6 +122,7 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
  */
 export function useChatPersistence(documentId: string | undefined): () => void {
 	const reduxDispatch = useAppDispatch();
+	const docDispatch = useDocumentDispatch();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
 	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
 
@@ -130,6 +131,15 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 
 	const sessionIdRef = useRef<string | null>(null);
 	sessionIdRef.current = sessionId;
+
+	// Stable ref for docDispatch (guaranteed stable by React, but captured via ref
+	// so the debounced save closure does not need it as a dependency).
+	const docDispatchRef = useRef<Dispatch<DocumentAction>>(docDispatch);
+	docDispatchRef.current = docDispatch;
+
+	// Tracks the sessions list last dispatched to document context so new
+	// sessions can be prepended without a full re-read from disk.
+	const sessionsListRef = useRef<ChatSessionListItem[]>([]);
 
 	// Last serialized snapshot written to disk — skip writes when unchanged.
 	const lastSavedRef = useRef('');
@@ -149,6 +159,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 		// Reset per-document tracking state.
 		lastSavedRef.current = '';
 		indexedSessionsRef.current = new Set();
+		sessionsListRef.current = [];
 
 		async function load(): Promise<void> {
 			const docPath = await window.workspace.getDocumentPath(documentId!);
