@@ -9,7 +9,9 @@ import {
 	chatMessageAdded,
 	chatActiveTaskSet,
 	chatActiveMessageSet,
+	chatSessionStarted,
 	selectChatMessages,
+	selectChatSessionId,
 } from '../../store/chat';
 
 interface AgenticPanelProps {
@@ -23,6 +25,7 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 	const dispatch = useAppDispatch();
 	const { documentId } = useDocumentState();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
+	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const chatHistory = useMemo(
 		() =>

@@ -23,6 +23,7 @@ export { default } from './reducer';
 export {
 	selectChatSession,
 	selectChatMessages,
+	selectChatSessionId,
 	selectActiveChatTaskId,
 	selectActiveChatMessageId,
 	selectAllActiveChatSessions,
