@@ -39,7 +39,7 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 			if (!documentId || isRunning) return;
 
 			if (!sessionId) {
-				const newSessionId = crypto.randomUUID();
+				const newSessionId = uuidv7();
 				dispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
 			}
 
