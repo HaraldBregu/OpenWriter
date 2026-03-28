@@ -83,6 +83,96 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
+	useEffect(() => {
+		if (!chatActiveTaskId || !chatActiveMessageId) return;
+
+		const taskId = chatActiveTaskId;
+		const messageId = chatActiveMessageId;
+
+		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
+			const metadataDocumentId = snapshot.metadata?.documentId;
+			const targetDocumentId =
+				typeof metadataDocumentId === 'string' && metadataDocumentId.length > 0
+					? metadataDocumentId
+					: id;
+
+			if (targetDocumentId !== id) return;
+
+			switch (snapshot.status) {
+				case 'queued':
+				case 'started':
+					chatDispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: messageId,
+						patch: {
+							content: t('agenticPanel.researcherThinking', 'Researching...'),
+							taskId,
+							status: 'queued',
+						},
+					});
+					break;
+				case 'running':
+					if (snapshot.content) {
+						chatDispatch({
+							type: 'CHAT_MESSAGE_UPDATED',
+							id: messageId,
+							patch: { content: snapshot.content, taskId, status: 'running' },
+						});
+					}
+					break;
+				case 'completed': {
+					const output = snapshot.result as ResearcherTaskOutput | undefined;
+					chatDispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: messageId,
+						patch: {
+							content:
+								output?.content ||
+								snapshot.content ||
+								t('agenticPanel.emptyResponse', 'No response received.'),
+							taskId,
+							status: 'completed',
+						},
+					});
+					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
+					break;
+				}
+				case 'error':
+					chatDispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: messageId,
+						patch: {
+							content:
+								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
+							taskId,
+							status: 'error',
+						},
+					});
+					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
+					break;
+				case 'cancelled':
+					chatDispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: messageId,
+						patch: {
+							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
+							taskId,
+							status: 'cancelled',
+						},
+					});
+					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
+					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
+					break;
+				default:
+					break;
+			}
+		});
+
+		return unsubscribe;
+	}, [chatActiveTaskId, chatActiveMessageId, id, chatDispatch, t]);
+
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
 	const textCompleterTask = useTask<TextCompleterTaskData>(
 		'agent-text-completer',
