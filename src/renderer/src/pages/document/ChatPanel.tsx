@@ -131,7 +131,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 						</div>
 					</div>
 				) : (
-					<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-6">
 						{chatMessages.map((message) => (
 							<ChatMessage
 								key={message.id}

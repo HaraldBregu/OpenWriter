@@ -42,10 +42,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
 	return (
 		<div className="flex gap-2.5">
-			<div className="mt-1 flex w-4 shrink-0 flex-col items-center">
-				<span className="h-3 w-3 rounded-full bg-emerald-400/90" />
-				<span className="mt-1 h-full min-h-3 w-px bg-border/80" />
-			</div>
 			<div className="min-w-0 flex-1">
 				<div className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
 					Assistant
