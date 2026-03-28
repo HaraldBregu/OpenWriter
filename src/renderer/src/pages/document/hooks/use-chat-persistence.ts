@@ -325,6 +325,23 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 								});
 							}
 							indexedSessionsRef.current.add(sid);
+
+							// Prepend the new session to the document context list.
+							const newItem: ChatSessionListItem = {
+								id: sid,
+								title: titleFromMessages(messages, 'Untitled'),
+								ageLabel: formatRelativeTime(createdAt),
+								createdAt,
+							};
+							const updatedList = [
+								newItem,
+								...sessionsListRef.current.filter((s) => s.id !== sid),
+							];
+							sessionsListRef.current = updatedList;
+							docDispatchRef.current({
+								type: 'CHAT_SESSIONS_LOADED',
+								sessions: updatedList,
+							});
 						} catch {
 							// Index update failure is non-fatal.
 						}
@@ -361,8 +378,10 @@ interface MigrateOptions {
 	documentId: string;
 	cancelled: () => boolean;
 	reduxDispatch: ReturnType<typeof useAppDispatch>;
+	docDispatchRef: React.MutableRefObject<Dispatch<DocumentAction>>;
 	indexedSessionsRef: React.MutableRefObject<Set<string>>;
 	lastSavedRef: React.MutableRefObject<string>;
+	sessionsListRef: React.MutableRefObject<ChatSessionListItem[]>;
 }
 
 async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
@@ -373,8 +392,10 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		documentId,
 		cancelled,
 		reduxDispatch,
+		docDispatchRef,
 		indexedSessionsRef,
 		lastSavedRef,
+		sessionsListRef,
 	} = opts;
 
 	// Try previous layout: chat/sessions.json (flat UUID files, no subfolders)
@@ -449,4 +470,14 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 
 	reduxDispatch(chatMessagesLoaded({ documentId, messages: sanitized, sessionId: newSessionId }));
 	reduxDispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
+
+	// Update document context with the migrated session.
+	const migratedItem: ChatSessionListItem = {
+		id: newSessionId,
+		title: titleFromMessages(sanitized, 'Untitled'),
+		ageLabel: formatRelativeTime(createdAt),
+		createdAt,
+	};
+	sessionsListRef.current = [migratedItem];
+	docDispatchRef.current({ type: 'CHAT_SESSIONS_LOADED', sessions: [migratedItem] });
 }

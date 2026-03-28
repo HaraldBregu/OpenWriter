@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, MessageSquarePlus, Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
@@ -12,126 +12,21 @@ import {
 import { useDocumentState } from '../hooks';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { chatMessagesLoaded, chatReset, selectChatSessionId } from '../../../store/chat';
-import type { ChatSessionFile, ChatSessionIndex, DocumentChatMessage } from '../context/state';
-
-interface ChatSessionListItem {
-	id: string;
-	title: string;
-	ageLabel: string;
-	createdAt: string;
-}
-
-function formatRelativeTime(iso: string): string {
-	const ts = new Date(iso).getTime();
-	if (!Number.isFinite(ts)) return '';
-	const seconds = Math.floor((Date.now() - ts) / 1000);
-	if (seconds < 60) return 'now';
-	const minutes = Math.floor(seconds / 60);
-	if (minutes < 60) return `${minutes}m`;
-	const hours = Math.floor(minutes / 60);
-	if (hours < 24) return `${hours}h`;
-	const days = Math.floor(hours / 24);
-	if (days < 7) return `${days}d`;
-	return `${Math.floor(days / 7)}w`;
-}
-
-function titleFromMessages(messages: DocumentChatMessage[], fallback: string): string {
-	const firstUser = messages.find((m) => m.role === 'user' && m.content.trim().length > 0);
-	if (!firstUser) return fallback;
-	return firstUser.content.trim().replace(/\s+/g, ' ').slice(0, 64);
-}
+import type { ChatSessionFile } from '../context/state';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const { documentId } = useDocumentState();
+	const { documentId, chatSessions } = useDocumentState();
 	const [search, setSearch] = useState('');
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const [sessions, setSessions] = useState<ChatSessionListItem[]>([]);
 	const selectedId = useAppSelector((state) => selectChatSessionId(state, documentId));
-
-	useEffect(() => {
-		if (!popoverOpen || !documentId) {
-			if (!documentId) setSessions([]);
-			return;
-		}
-		const currentDocumentId = documentId;
-
-		let cancelled = false;
-		async function loadSessions() {
-			try {
-				const docPath = await window.workspace.getDocumentPath(currentDocumentId);
-
-				// Try primary index location, then fall back to legacy location inside chats/.
-				let index: ChatSessionIndex | null = null;
-				for (const indexPath of [`${docPath}/sessions.json`, `${docPath}/chats/sessions.json`]) {
-					try {
-						const rawIndex = await window.workspace.readFile({ filePath: indexPath });
-						index = JSON.parse(rawIndex) as ChatSessionIndex;
-						break;
-					} catch {
-						// try next
-					}
-				}
-
-				if (!index || cancelled) {
-					if (!cancelled) setSessions([]);
-					return;
-				}
-
-				const sorted = [...index.sessions].sort(
-					(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-				);
-
-				const items = await Promise.all(
-					sorted.map(async (entry) => {
-						try {
-							const rawSession = await window.workspace.readFile({
-								filePath: `${docPath}/chats/${entry.sessionId}/messages.json`,
-							});
-							const file = JSON.parse(rawSession) as ChatSessionFile;
-							const title = titleFromMessages(
-								file.messages ?? [],
-								t('writing.untitled', 'Untitled')
-							);
-							return {
-								id: entry.sessionId,
-								title,
-								ageLabel: formatRelativeTime(entry.createdAt),
-								createdAt: entry.createdAt,
-							} satisfies ChatSessionListItem;
-						} catch {
-							return {
-								id: entry.sessionId,
-								title: t('writing.untitled', 'Untitled'),
-								ageLabel: formatRelativeTime(entry.createdAt),
-								createdAt: entry.createdAt,
-							} satisfies ChatSessionListItem;
-						}
-					})
-				);
-
-				if (!cancelled) {
-					setSessions(items);
-				}
-			} catch {
-				if (!cancelled) {
-					setSessions([]);
-				}
-			}
-		}
-
-		void loadSessions();
-		return () => {
-			cancelled = true;
-		};
-	}, [popoverOpen, documentId, t]);
 
 	const filteredSessions = useMemo(() => {
 		const q = search.trim().toLowerCase();
-		if (!q) return sessions;
-		return sessions.filter((item) => item.title.toLowerCase().includes(q));
-	}, [search, sessions]);
+		if (!q) return chatSessions;
+		return chatSessions.filter((item) => item.title.toLowerCase().includes(q));
+	}, [search, chatSessions]);
 
 	const handleLoadSession = async (sessionId: string) => {
 		if (!documentId) return;
