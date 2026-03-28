@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
@@ -21,12 +21,13 @@ import {
 interface ChatPanelProps {
 	readonly taskId: string | null;
 	readonly isRunning: boolean;
-	readonly onSend: (content: string) => Promise<void> | void;
+	readonly onSend: (content: string, agentId: string) => Promise<void> | void;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
 	const { documentId } = useDocumentState();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
 	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
@@ -87,9 +88,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 			dispatch(chatActiveMessageSet({ documentId, messageId: assistantMessageId }));
 			dispatch(chatActiveTaskSet({ documentId, taskId: null }));
 
-			void onSend(content);
+			void onSend(content, selectedAgentId);
 		},
-		[dispatch, documentId, isRunning, onSend, sessionId]
+		[dispatch, documentId, isRunning, onSend, selectedAgentId, sessionId]
 	);
 
 	return (
@@ -140,7 +141,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 			<ChatInput
 				onSend={handleSend}
 				disabled={isRunning}
-				agentLabel={t('agenticPanel.researcherLabel', 'Researcher')}
+				agentOptions={[
+					{ id: 'researcher', label: t('agenticPanel.researcherLabel', 'Researcher') },
+					{ id: 'inventor', label: t('agenticPanel.inventorLabel', 'Inventor') },
+				]}
+				selectedAgentId={selectedAgentId}
+				onAgentChange={setSelectedAgentId}
 				placeholder={t(
 					'agenticPanel.inputPlaceholder',
 					'Ask the researcher for context, facts, or ideas'

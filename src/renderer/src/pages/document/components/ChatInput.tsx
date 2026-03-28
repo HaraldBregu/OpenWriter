@@ -1,19 +1,35 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, Search } from 'lucide-react';
-import { AppButton, AppTextarea } from '@/components/app';
+import { ArrowUp, ChevronDown, Search } from 'lucide-react';
+import {
+	AppButton,
+	AppTextarea,
+	AppDropdownMenu,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+	AppDropdownMenuTrigger,
+} from '@/components/app';
+
+interface ChatAgentOption {
+	readonly id: string;
+	readonly label: string;
+}
 
 interface ChatInputProps {
 	readonly onSend: (message: string) => void;
 	readonly disabled?: boolean;
-	readonly agentLabel?: string;
+	readonly agentOptions?: readonly ChatAgentOption[];
+	readonly selectedAgentId?: string;
+	readonly onAgentChange?: (agentId: string) => void;
 	readonly placeholder?: string;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
 	onSend,
 	disabled = false,
-	agentLabel,
+	agentOptions,
+	selectedAgentId,
+	onAgentChange,
 	placeholder,
 }) => {
 	const { t } = useTranslation();
@@ -57,6 +73,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
 	);
 
 	const canSend = value.trim().length > 0 && !disabled;
+	const selectedAgent = agentOptions?.find((agent) => agent.id === selectedAgentId);
+	const agentLabel = selectedAgent?.label;
 
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
@@ -78,10 +96,33 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
 				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
 					{agentLabel ? (
-						<div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
-							<Search className="h-3 w-3" aria-hidden="true" />
-							<span>{agentLabel}</span>
-						</div>
+						<AppDropdownMenu>
+							<AppDropdownMenuTrigger asChild>
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="sm"
+									className="h-7 rounded-full border border-border bg-muted px-2.5 text-xs text-muted-foreground"
+									disabled={disabled}
+									aria-label={t('agenticPanel.agentSelect', 'Select agent')}
+								>
+									<Search className="h-3 w-3" aria-hidden="true" />
+									<span>{agentLabel}</span>
+									<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
+								</AppButton>
+							</AppDropdownMenuTrigger>
+							<AppDropdownMenuContent align="start" className="min-w-40">
+								{agentOptions?.map((agent) => (
+									<AppDropdownMenuItem
+										key={agent.id}
+										onClick={() => onAgentChange?.(agent.id)}
+										className="text-xs"
+									>
+										{agent.label}
+									</AppDropdownMenuItem>
+								))}
+							</AppDropdownMenuContent>
+						</AppDropdownMenu>
 					) : null}
 
 					<div className="flex-1" />
@@ -104,4 +145,4 @@ const ChatInput: React.FC<ChatInputProps> = ({
 };
 
 export { ChatInput };
-export type { ChatInputProps };
+export type { ChatInputProps, ChatAgentOption };

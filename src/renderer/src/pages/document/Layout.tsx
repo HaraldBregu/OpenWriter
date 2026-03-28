@@ -35,6 +35,8 @@ type ResearcherTaskData = {
 	prompt: string;
 };
 
+type ChatAgentId = 'researcher' | 'inventor';
+
 interface LayoutProps {
 	documentId: string | undefined;
 }
@@ -90,6 +92,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const researcherTaskData: ResearcherTaskData = { prompt: '' };
 	const researcherTask = useTask<ResearcherTaskData>('agent-researcher', researcherTaskData);
+	const inventorTaskData: ResearcherTaskData = { prompt: '' };
+	const inventorTask = useTask<ResearcherTaskData>('agent-text-writer', inventorTaskData);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -461,14 +465,30 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[imageGeneratorTask, id]
 	);
 
-	const onResearchSubmit = useCallback(
-		async (prompt: string) => {
+	const onChatSubmit = useCallback(
+		async (prompt: string, agentId: ChatAgentId | string) => {
 			const data: ResearcherTaskData = { prompt };
-			const metadata = id ? { documentId: id } : undefined;
+			const metadata = id ? { documentId: id, agentId } : { agentId };
+			if (agentId === 'inventor') {
+				await inventorTask.submit(data, metadata);
+				return;
+			}
 			await researcherTask.submit(data, metadata);
 		},
-		[id, researcherTask]
+		[id, inventorTask, researcherTask]
 	);
+
+	const activeChatTaskId =
+		(researcherTask.isQueued || researcherTask.isRunning) && researcherTask.taskId
+			? researcherTask.taskId
+			: (inventorTask.isQueued || inventorTask.isRunning) && inventorTask.taskId
+				? inventorTask.taskId
+				: researcherTask.taskId;
+	const isChatRunning =
+		researcherTask.isQueued ||
+		researcherTask.isRunning ||
+		inventorTask.isQueued ||
+		inventorTask.isRunning;
 
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
@@ -532,9 +552,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
 						{activeSidebar === 'agentic' && (
 							<ChatPanel
-								taskId={researcherTask.taskId}
-								isRunning={researcherTask.isQueued || researcherTask.isRunning}
-								onSend={onResearchSubmit}
+								taskId={activeChatTaskId}
+								isRunning={isChatRunning}
+								onSend={onChatSubmit}
 							/>
 						)}
 					</div>
