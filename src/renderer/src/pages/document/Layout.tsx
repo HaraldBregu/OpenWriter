@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import Header from './Header';
 import ResourcesPanel from './ResourcesPanel';
-import AgenticPanel from './AgenticPanel';
+import ChatPanel from './ChatPanel';
 import EditorPanel from './EditorPanel';
 import { useEditorInstance, useSidebarVisibility } from './context';
 import { useDocumentDispatch, useChatPersistence } from './hooks';
