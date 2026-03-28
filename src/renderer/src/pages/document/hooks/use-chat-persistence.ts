@@ -355,8 +355,6 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 	indexedSessionsRef.current.add(newSessionId);
 	lastSavedRef.current = JSON.stringify(sanitized);
 
-	reduxDispatch(
-		chatMessagesLoaded({ documentId, messages: sanitized, sessionId: newSessionId })
-	);
+	reduxDispatch(chatMessagesLoaded({ documentId, messages: sanitized, sessionId: newSessionId }));
 	reduxDispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
 }

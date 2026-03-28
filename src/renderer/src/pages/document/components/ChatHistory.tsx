@@ -90,9 +90,7 @@ const ChatHistory: React.FC = () => {
 												aria-label={t('agenticPanel.deleteChat', 'Delete')}
 												onClick={() => {
 													setMockHistory((prev) => prev.filter((item) => item.id !== entry.id));
-													setSelectedMockHistoryId((prev) =>
-														prev === entry.id ? null : prev
-													);
+													setSelectedMockHistoryId((prev) => (prev === entry.id ? null : prev));
 												}}
 											>
 												<Trash2 className="h-3.5 w-3.5" />
