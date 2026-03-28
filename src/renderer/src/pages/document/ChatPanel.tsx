@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
-import { ChatHistory } from './components/ChatHistory';
+import { ChatHeader } from './components/ChatHeader';
 import { useDocumentState } from './hooks';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
@@ -95,7 +95,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background">
-			<ChatHistory />
+			<ChatHeader />
 
 			<div
 				className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
@@ -130,6 +130,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 								content={message.content}
 								role={message.role}
 								timestamp={message.timestamp}
+								status={message.status}
 								renderMarkdown={message.role === 'assistant'}
 							/>
 						))}

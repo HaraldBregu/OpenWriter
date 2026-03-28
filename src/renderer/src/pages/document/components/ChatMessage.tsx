@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { ChevronRight, Code2 } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -7,6 +8,7 @@ interface ChatMessageProps {
 	readonly content: string;
 	readonly role: 'user' | 'assistant';
 	readonly timestamp: Date | string;
+	readonly status?: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
 	readonly renderMarkdown?: boolean;
 }
 
@@ -19,9 +21,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	content,
 	role,
 	timestamp,
+	status,
 	renderMarkdown = false,
 }) => {
 	const isUser = role === 'user';
+	const isThinking =
+		!isUser &&
+		!content.trim() &&
+		(status === 'idle' || status === 'queued' || status === 'running');
 	const [expanded, setExpanded] = useState(false);
 	const isLongMessage = useMemo(() => {
 		const lineCount = content.split('\n').length;
@@ -29,42 +36,77 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	}, [content]);
 	const shouldCollapse = isLongMessage && !expanded;
 
-	return (
-		<div className={`flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}>
-			<div
-				className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words ${
-					isUser
-						? 'bg-primary text-primary-foreground rounded-tr-sm'
-						: 'bg-muted text-foreground rounded-tl-sm'
-				}`}
-			>
-				<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
-					{renderMarkdown ? (
-						<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-background/80 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.8125rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground">
-							<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+	if (isUser) {
+		return (
+			<div className="flex flex-col gap-1.5">
+				<div className="rounded-2xl border border-border/70 bg-muted/70 px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+					<div className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-background/30 px-2.5 py-1 text-xs font-semibold text-foreground/90">
+						<Code2 className="h-3.5 w-3.5" />
+						<span>types.ts</span>
+					</div>
+					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
+						<div className="whitespace-pre-wrap text-[1.05rem] leading-relaxed text-foreground">
+							{content}
 						</div>
-					) : (
-						<div className="whitespace-pre-wrap">{content}</div>
-					)}
-					{shouldCollapse && (
-						<div
-							className={`pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t ${
-								isUser ? 'from-primary to-transparent' : 'from-muted to-transparent'
-							}`}
-						/>
+						{shouldCollapse && (
+							<div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-muted/95 to-transparent" />
+						)}
+					</div>
+					{isLongMessage && (
+						<button
+							type="button"
+							className="mt-2 text-xs font-medium text-muted-foreground underline underline-offset-2"
+							onClick={() => setExpanded((prev) => !prev)}
+						>
+							{expanded ? 'Show less' : 'Show more'}
+						</button>
 					)}
 				</div>
-				{isLongMessage && (
+				<span className="px-1 text-[10px] text-muted-foreground">{formatTime(timestamp)}</span>
+			</div>
+		);
+	}
+
+	return (
+		<div className="flex gap-4">
+			<div className="mt-2 flex w-5 shrink-0 flex-col items-center">
+				<span className="h-3.5 w-3.5 rounded-full bg-muted-foreground/80" />
+				<span className="mt-1 h-full min-h-3 w-px bg-border/80" />
+			</div>
+			<div className="min-w-0 flex-1">
+				{isThinking && (
+					<div className="mb-2 inline-flex items-center gap-1 text-lg text-muted-foreground">
+						<span>Thinking</span>
+						<ChevronRight className="h-4 w-4" />
+					</div>
+				)}
+				{content.trim() && (
+					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
+						{renderMarkdown ? (
+							<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-background/80 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.8125rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground text-[1.05rem] leading-relaxed">
+								<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+							</div>
+						) : (
+							<div className="whitespace-pre-wrap text-[1.05rem] leading-relaxed text-foreground">
+								{content}
+							</div>
+						)}
+						{shouldCollapse && (
+							<div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background/90 to-transparent" />
+						)}
+					</div>
+				)}
+				{isLongMessage && content.trim() && (
 					<button
 						type="button"
-						className="mt-2 text-xs font-medium underline underline-offset-2"
+						className="mt-2 text-xs font-medium text-muted-foreground underline underline-offset-2"
 						onClick={() => setExpanded((prev) => !prev)}
 					>
 						{expanded ? 'Show less' : 'Show more'}
 					</button>
 				)}
+				<div className="mt-1 px-1 text-[10px] text-muted-foreground">{formatTime(timestamp)}</div>
 			</div>
-			<span className="text-[10px] text-muted-foreground px-1">{formatTime(timestamp)}</span>
 		</div>
 	);
 };
