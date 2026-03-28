@@ -531,7 +531,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					<div className="h-full">
 						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
 						{activeSidebar === 'agentic' && (
-							<AgenticPanel
+							<ChatPanel
 								taskId={researcherTask.taskId}
 								isRunning={researcherTask.isQueued || researcherTask.isRunning}
 								onSend={onResearchSubmit}
