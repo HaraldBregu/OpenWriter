@@ -129,22 +129,22 @@ const ChatHeader: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-80 rounded-lg border border-border/70 bg-background p-2"
+							className="w-80 rounded-lg border border-border/70 bg-background p-1.5"
 						>
-							<div className="border-b border-border/60 px-2 pb-2">
+							<div className="border-b border-border/60 px-1.5 pb-1.5">
 								<div className="relative">
 									<Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 									<AppInput
 										value={search}
 										onChange={(event) => setSearch(event.target.value)}
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-										className="h-9 border-0 bg-transparent pl-7 pr-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+										className="h-8 border-0 bg-transparent pl-7 pr-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
 								</div>
 							</div>
-							<ul className="max-h-[26rem] overflow-y-auto py-1">
+							<ul className="max-h-[26rem] overflow-y-auto py-0.5">
 								{filteredSessions.length === 0 && (
-									<li className="px-2 py-3 text-xs text-muted-foreground">
+									<li className="px-1.5 py-2 text-xs text-muted-foreground">
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
 									</li>
 								)}
@@ -154,7 +154,7 @@ const ChatHeader: React.FC = () => {
 									return (
 										<li
 											key={item.id}
-											className={`flex items-center gap-2 border-b border-border/50 px-2 py-2 last:border-b-0 ${
+											className={`flex items-center gap-2 border-b border-border/50 px-1.5 py-1.5 last:border-b-0 ${
 												isSelected ? 'bg-muted/40' : ''
 											}`}
 										>
@@ -167,7 +167,7 @@ const ChatHeader: React.FC = () => {
 											>
 												{item.title}
 											</button>
-											<div className="flex shrink-0 items-center gap-1 pl-2">
+											<div className="flex shrink-0 items-center gap-1 pl-1.5">
 												<span className="text-xs text-muted-foreground">{item.ageLabel}</span>
 												<AppButton
 													type="button"
