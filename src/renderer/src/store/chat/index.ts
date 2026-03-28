@@ -15,6 +15,7 @@ export {
 	chatActiveMessageSet,
 	chatMessagesLoaded,
 	chatReset,
+	chatSessionStarted,
 } from './reducer';
 export { default } from './reducer';
 
