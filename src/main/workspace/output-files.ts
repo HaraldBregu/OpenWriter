@@ -145,7 +145,7 @@ export class OutputFilesService implements Disposable {
 	private readonly OUTPUT_DIR_NAME = 'output';
 	private readonly CONFIG_FILENAME = 'config.json';
 	private readonly CONTENT_FILENAME = 'content.md';
-	private readonly CHAT_DIRNAME = 'chat';
+	private readonly CHAT_DIRNAME = 'chats';
 	/** Legacy single-content file — kept for migration detection only. */
 	private readonly LEGACY_DATA_FILENAME = 'DATA.md';
 	private readonly IGNORE_WRITE_WINDOW_MS = 2000;
