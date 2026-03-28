@@ -239,6 +239,11 @@ export interface WorkspaceApi {
 	 * Throws by default if the destination already exists.
 	 */
 	rename: (params: FsRenameParams) => Promise<FsRenameResult>;
+	/**
+	 * List the immediate children of a directory.
+	 * Returns an empty array if the directory does not exist.
+	 */
+	listDir: (params: FsListDirParams) => Promise<FsListDirEntry[]>;
 }
 
 /** Background task queue */
