@@ -10,17 +10,16 @@ import {
 	AppPopoverTrigger,
 } from '@/components/app';
 import { useDocumentState } from '../hooks';
-import { useAppDispatch, useAppSelector } from '../../../store';
-import { chatMessagesLoaded, chatReset, selectChatSessionId } from '../../../store/chat';
+import { useChatState, useChatDispatch } from '../context';
 import type { ChatSessionFile } from '../context/state';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const dispatch = useChatDispatch();
 	const { documentId, chatSessions } = useDocumentState();
 	const [search, setSearch] = useState('');
 	const [popoverOpen, setPopoverOpen] = useState(false);
-	const selectedId = useAppSelector((state) => selectChatSessionId(state, documentId));
+	const { sessionId: selectedId } = useChatState();
 
 	const filteredSessions = useMemo(() => {
 		const q = search.trim().toLowerCase();
@@ -36,13 +35,11 @@ const ChatHeader: React.FC = () => {
 				filePath: `${docPath}/chats/${sessionId}/messages.json`,
 			});
 			const file = JSON.parse(raw) as ChatSessionFile;
-			dispatch(
-				chatMessagesLoaded({
-					documentId,
-					messages: file.messages ?? [],
-					sessionId,
-				})
-			);
+			dispatch({
+				type: 'CHAT_MESSAGES_LOADED',
+				messages: file.messages ?? [],
+				sessionId,
+			});
 		} catch {
 			// best effort
 		}
@@ -52,7 +49,7 @@ const ChatHeader: React.FC = () => {
 
 	const handleNewChat = () => {
 		if (!documentId) return;
-		dispatch(chatReset({ documentId, sessionId: uuidv7() }));
+		dispatch({ type: 'CHAT_RESET', sessionId: uuidv7() });
 		setPopoverOpen(false);
 		setSearch('');
 	};
