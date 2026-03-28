@@ -54,6 +54,9 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 			};
 		}
 
+		case 'CHAT_SESSIONS_LOADED':
+			return { ...state, chatSessions: action.sessions };
+
 		default: {
 			const _exhaustive: never = action;
 			return _exhaustive;
