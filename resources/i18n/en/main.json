@@ -383,7 +383,7 @@
 		"documents": "Documents",
 		"directories": "Directories",
 		"untitledPost": "Untitled Post",
-		"untitledWriting": "Untitled Writing",
+		"untitledWriting": "Untitled document",
 		"writings": "Documents",
 		"chats": "Chats",
 		"newChat": "New Chat",
@@ -433,9 +433,9 @@
 		"placeholderDescription": "Start a conversation with AI to brainstorm, draft, or refine ideas."
 	},
 	"writing": {
-		"titlePlaceholder": "Untitled Writing",
+		"titlePlaceholder": "Untitled document",
 		"notFound": "Writing not found.",
-		"untitled": "Untitled Writing",
+		"untitled": "Untitled document",
 		"startWriting": "Start writing...",
 		"typeHere": "Type here...",
 		"insertSection": "Insert section",
