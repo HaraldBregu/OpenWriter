@@ -1,4 +1,5 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
+import type { ChatSessionListItem } from './state';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
