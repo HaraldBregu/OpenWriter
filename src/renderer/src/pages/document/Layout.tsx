@@ -478,12 +478,11 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[id, inventorTask, researcherTask]
 	);
 
-	const activeChatTaskId =
-		(researcherTask.isQueued || researcherTask.isRunning) && researcherTask.taskId
-			? researcherTask.taskId
-			: (inventorTask.isQueued || inventorTask.isRunning) && inventorTask.taskId
-				? inventorTask.taskId
-				: researcherTask.taskId;
+	const activeResearcherTaskId =
+		researcherTask.isQueued || researcherTask.isRunning ? researcherTask.taskId : null;
+	const activeInventorTaskId =
+		inventorTask.isQueued || inventorTask.isRunning ? inventorTask.taskId : null;
+	const activeChatTaskId = activeResearcherTaskId ?? activeInventorTaskId ?? null;
 	const isChatRunning =
 		researcherTask.isQueued ||
 		researcherTask.isRunning ||
