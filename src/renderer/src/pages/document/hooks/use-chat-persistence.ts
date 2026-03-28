@@ -1,13 +1,8 @@
 import { useEffect, useRef, useMemo, type Dispatch, type MutableRefObject } from 'react';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
-import { useAppDispatch, useAppSelector } from '../../../store';
-import {
-	chatMessagesLoaded,
-	chatSessionStarted,
-	selectChatMessages,
-	selectChatSessionId,
-} from '../../../store/chat';
+import { useChatState, useChatDispatch } from '../context';
+import type { ChatAction } from '../context';
 import type {
 	DocumentChatMessage,
 	ChatMessagesFile,
@@ -121,10 +116,9 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
  * Returns a flush function that immediately writes pending changes.
  */
 export function useChatPersistence(documentId: string | undefined): () => void {
-	const reduxDispatch = useAppDispatch();
+	const chatDispatch = useChatDispatch();
 	const docDispatch = useDocumentDispatch();
-	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
-	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
+	const { messages: chatMessages, sessionId } = useChatState();
 
 	const messagesRef = useRef(chatMessages);
 	messagesRef.current = chatMessages;
@@ -132,8 +126,8 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 	const sessionIdRef = useRef<string | null>(null);
 	sessionIdRef.current = sessionId;
 
-	// Stable ref for docDispatch (guaranteed stable by React, but captured via ref
-	// so the debounced save closure does not need it as a dependency).
+	// Stable ref for docDispatch so the debounced save closure does not need it
+	// as a dependency.
 	const docDispatchRef = useRef<Dispatch<DocumentAction>>(docDispatch);
 	docDispatchRef.current = docDispatch;
 
@@ -190,7 +184,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 
 			if (cancelled) return;
 
-			// If Redux already has live in-flight messages, the active session is
+			// If context already has live in-flight messages, the active session is
 			// authoritative — skip disk load to avoid overwriting streamed content.
 			if (messagesRef.current.length > 0) {
 				const sid = sessionIdRef.current;
@@ -206,7 +200,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					indexPath,
 					documentId: documentId!,
 					cancelled: () => cancelled,
-					reduxDispatch,
+					chatDispatch,
 					docDispatchRef,
 					indexedSessionsRef,
 					lastSavedRef,
@@ -232,13 +226,11 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				indexedSessionsRef.current.add(latest.sessionId);
 				lastSavedRef.current = JSON.stringify(messages);
 
-				reduxDispatch(
-					chatMessagesLoaded({
-						documentId: documentId!,
-						messages,
-						sessionId: latest.sessionId,
-					})
-				);
+				chatDispatch({
+					type: 'CHAT_MESSAGES_LOADED',
+					messages,
+					sessionId: latest.sessionId,
+				});
 			} catch {
 				// Session file corrupt or missing — start fresh.
 			}
@@ -257,7 +249,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 		return () => {
 			cancelled = true;
 		};
-	}, [documentId, reduxDispatch]);
+	}, [documentId, chatDispatch]);
 
 	// -------------------------------------------------------------------------
 	// Debounced save
@@ -333,7 +325,10 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 								ageLabel: formatRelativeTime(createdAt),
 								createdAt,
 							};
-							const updatedList = [newItem, ...sessionsListRef.current.filter((s) => s.id !== sid)];
+							const updatedList = [
+								newItem,
+								...sessionsListRef.current.filter((s) => s.id !== sid),
+							];
 							sessionsListRef.current = updatedList;
 							docDispatchRef.current({
 								type: 'CHAT_SESSIONS_LOADED',
@@ -374,7 +369,7 @@ interface MigrateOptions {
 	indexPath: string;
 	documentId: string;
 	cancelled: () => boolean;
-	reduxDispatch: ReturnType<typeof useAppDispatch>;
+	chatDispatch: Dispatch<ChatAction>;
 	docDispatchRef: MutableRefObject<Dispatch<DocumentAction>>;
 	indexedSessionsRef: MutableRefObject<Set<string>>;
 	lastSavedRef: MutableRefObject<string>;
@@ -388,7 +383,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		indexPath,
 		documentId,
 		cancelled,
-		reduxDispatch,
+		chatDispatch,
 		docDispatchRef,
 		indexedSessionsRef,
 		lastSavedRef,
@@ -465,8 +460,8 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 	indexedSessionsRef.current.add(newSessionId);
 	lastSavedRef.current = JSON.stringify(sanitized);
 
-	reduxDispatch(chatMessagesLoaded({ documentId, messages: sanitized, sessionId: newSessionId }));
-	reduxDispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
+	chatDispatch({ type: 'CHAT_MESSAGES_LOADED', messages: sanitized, sessionId: newSessionId });
+	chatDispatch({ type: 'CHAT_SESSION_STARTED', sessionId: newSessionId });
 
 	// Update document context with the migrated session.
 	const migratedItem: ChatSessionListItem = {
