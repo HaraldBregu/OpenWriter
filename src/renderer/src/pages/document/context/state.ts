@@ -5,6 +5,23 @@ export interface ChatMessagesFile {
 	readonly messages: DocumentChatMessage[];
 }
 
+export interface ChatSessionFile {
+	readonly version: 2;
+	readonly sessionId: string;
+	readonly createdAt: string; // ISO-8601
+	readonly messages: DocumentChatMessage[];
+}
+
+export interface ChatSessionEntry {
+	readonly sessionId: string;
+	readonly createdAt: string;
+}
+
+export interface ChatSessionIndex {
+	readonly version: 1;
+	readonly sessions: ChatSessionEntry[];
+}
+
 export interface DocumentChatMessage {
 	readonly id: string;
 	readonly content: string;

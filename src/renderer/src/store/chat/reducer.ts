@@ -120,14 +120,31 @@ export const chatSlice = createSlice({
 
 		/**
 		 * Reset a session back to its empty initial state.
+		 * An optional sessionId can be provided to atomically assign a new UUID
+		 * when the user starts a fresh chat.
 		 */
-		chatReset(state, action: PayloadAction<{ documentId: string }>) {
-			const { documentId } = action.payload;
+		chatReset(state, action: PayloadAction<{ documentId: string; sessionId?: string }>) {
+			const { documentId, sessionId } = action.payload;
 			state.sessions[documentId] = {
+				sessionId: sessionId ?? null,
 				messages: [],
 				activeTaskId: null,
 				activeMessageId: null,
 			};
+		},
+
+		/**
+		 * Set the session UUID for a document's chat session.
+		 * Creates the session if it does not yet exist.
+		 * Used by AgenticPanel when the first message is sent with no active session.
+		 */
+		chatSessionStarted(
+			state,
+			action: PayloadAction<{ documentId: string; sessionId: string }>
+		) {
+			const { documentId, sessionId } = action.payload;
+			const session = getOrCreateSession(state, documentId);
+			session.sessionId = sessionId;
 		},
 	},
 });
