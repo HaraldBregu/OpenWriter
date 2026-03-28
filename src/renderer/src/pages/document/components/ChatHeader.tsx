@@ -12,6 +12,7 @@ import {
 import { useDocumentDispatch, useDocumentState } from '../hooks';
 import { useChatState, useChatDispatch } from '../context';
 import type { ChatSessionFile, ChatSessionIndex } from '../context/state';
+import { syncChatSessionsWithDisk } from '../hooks/chat-session-storage';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();
@@ -107,6 +108,25 @@ const ChatHeader: React.FC = () => {
 		}
 	};
 
+	const handlePopoverOpenChange = (open: boolean) => {
+		setPopoverOpen(open);
+
+		if (!open || !documentId) return;
+
+		void (async () => {
+			try {
+				const docPath = await window.workspace.getDocumentPath(documentId);
+				const synced = await syncChatSessionsWithDisk(docPath);
+				docDispatch({
+					type: 'CHAT_SESSIONS_LOADED',
+					sessions: synced?.sessionItems ?? [],
+				});
+			} catch {
+				// best effort
+			}
+		})();
+	};
+
 	return (
 		<div className="shrink-0 border-b border-border bg-background/80 px-4 py-2">
 			<div className="flex items-center justify-between">
@@ -114,7 +134,7 @@ const ChatHeader: React.FC = () => {
 					{t('agenticPanel.headerTitle', 'Chat history')}
 				</h2>
 				<div className="flex items-center gap-2">
-					<AppPopover open={popoverOpen} onOpenChange={setPopoverOpen}>
+					<AppPopover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<AppPopoverTrigger asChild>
 							<AppButton
 								type="button"

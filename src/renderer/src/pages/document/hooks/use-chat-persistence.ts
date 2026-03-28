@@ -13,6 +13,11 @@ import type {
 import type { DocumentAction } from '../context/actions';
 import { useDocumentDispatch } from './use-document-dispatch';
 import { useDocumentState } from './use-document-state';
+import {
+	formatRelativeTime,
+	syncChatSessionsWithDisk,
+	titleFromMessages,
+} from './chat-session-storage';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -20,62 +25,6 @@ import { useDocumentState } from './use-document-state';
 
 const SAVE_DEBOUNCE_MS = 500;
 const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'queued', 'running']);
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatRelativeTime(iso: string): string {
-	const ts = new Date(iso).getTime();
-	if (!Number.isFinite(ts)) return '';
-	const seconds = Math.floor((Date.now() - ts) / 1000);
-	if (seconds < 60) return 'now';
-	const minutes = Math.floor(seconds / 60);
-	if (minutes < 60) return `${minutes}m`;
-	const hours = Math.floor(minutes / 60);
-	if (hours < 24) return `${hours}h`;
-	const days = Math.floor(hours / 24);
-	if (days < 7) return `${days}d`;
-	return `${Math.floor(days / 7)}w`;
-}
-
-function titleFromMessages(messages: DocumentChatMessage[], fallback: string): string {
-	const firstUser = messages.find((m) => m.role === 'user' && m.content.trim().length > 0);
-	if (!firstUser) return fallback;
-	return firstUser.content.trim().replace(/\s+/g, ' ').slice(0, 64);
-}
-
-async function buildSessionList(
-	chatsDir: string,
-	entries: ChatSessionIndex['sessions']
-): Promise<ChatSessionListItem[]> {
-	const sorted = [...entries].sort(
-		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-	);
-	return Promise.all(
-		sorted.map(async (entry) => {
-			try {
-				const raw = await window.workspace.readFile({
-					filePath: `${chatsDir}/${entry.sessionId}/messages.json`,
-				});
-				const file = JSON.parse(raw) as ChatSessionFile;
-				return {
-					id: entry.sessionId,
-					title: titleFromMessages(file.messages ?? [], 'Untitled'),
-					ageLabel: formatRelativeTime(entry.createdAt),
-					createdAt: entry.createdAt,
-				} satisfies ChatSessionListItem;
-			} catch {
-				return {
-					id: entry.sessionId,
-					title: 'Untitled',
-					ageLabel: formatRelativeTime(entry.createdAt),
-					createdAt: entry.createdAt,
-				} satisfies ChatSessionListItem;
-			}
-		})
-	);
-}
 
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
@@ -193,6 +142,20 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 			// If context already has live in-flight messages, the active session is
 			// authoritative — skip disk load to avoid overwriting streamed content.
 			if (messagesRef.current.length > 0) {
+				if (index) {
+					try {
+						const synced = await syncChatSessionsWithDisk(docPath, index);
+						if (!cancelled && synced) {
+							sessionsListRef.current = synced.sessionItems;
+							docDispatchRef.current({
+								type: 'CHAT_SESSIONS_LOADED',
+								sessions: synced.sessionItems,
+							});
+						}
+					} catch {
+						// Sync failure is non-fatal while live messages are active.
+					}
+				}
 				const sid = sessionIdRef.current;
 				if (sid) lastSavedRef.current = JSON.stringify(messagesRef.current);
 				return;
@@ -214,40 +177,25 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				return;
 			}
 
-			// --- 3. Load most recent session from index ---
-			const sorted = [...index.sessions].sort(
-				(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-			);
-			const latest = sorted[0];
-			if (!latest) return;
+			const synced = await syncChatSessionsWithDisk(docPath, index);
+			if (cancelled || !synced) return;
 
-			try {
-				const sessionPath = `${chatsDir}/${latest.sessionId}/messages.json`;
-				const raw = await window.workspace.readFile({ filePath: sessionPath });
-				if (cancelled) return;
-
-				const sessionFile = JSON.parse(raw) as ChatSessionFile;
-				const messages = sanitizeLoadedMessages(sessionFile.messages ?? []);
-				indexedSessionsRef.current.add(latest.sessionId);
+			// --- 3. Load most recent session from the synced index ---
+			if (synced.latestSession) {
+				const messages = sanitizeLoadedMessages(synced.latestSession.messages);
+				indexedSessionsRef.current.add(synced.latestSession.sessionId);
 				lastSavedRef.current = JSON.stringify(messages);
 
 				chatDispatch({
 					type: 'CHAT_MESSAGES_LOADED',
 					messages,
-					sessionId: latest.sessionId,
+					sessionId: synced.latestSession.sessionId,
 				});
-			} catch {
-				// Session file corrupt or missing — start fresh.
 			}
 
 			// --- 4. Build session list for document context ---
-			if (!cancelled) {
-				const sessionItems = await buildSessionList(chatsDir, index.sessions);
-				if (!cancelled) {
-					sessionsListRef.current = sessionItems;
-					docDispatchRef.current({ type: 'CHAT_SESSIONS_LOADED', sessions: sessionItems });
-				}
-			}
+			sessionsListRef.current = synced.sessionItems;
+			docDispatchRef.current({ type: 'CHAT_SESSIONS_LOADED', sessions: synced.sessionItems });
 		}
 
 		void load();
