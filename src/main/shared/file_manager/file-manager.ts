@@ -626,6 +626,47 @@ export class FileManager {
 	}
 
 	// -------------------------------------------------------------------------
+	// List directory
+	// -------------------------------------------------------------------------
+
+	/**
+	 * List the immediate children of a directory.
+	 *
+	 * Returns an array of `{ name, isDirectory }` objects, one per entry.
+	 * If the directory does not exist, an empty array is returned.
+	 *
+	 * @param dirPath - Absolute path of the directory to list.
+	 * @returns Array of directory entry descriptors.
+	 *
+	 * @throws {Error} If the path is outside allowed directories.
+	 * @throws {Error} If the path exists but is not a directory.
+	 * @throws {Error} If the process lacks read permission.
+	 */
+	async listDir(dirPath: string): Promise<Array<{ name: string; isDirectory: boolean }>> {
+		const resolved = assertPathSafe(dirPath, this.extraRoots);
+
+		let entries: Awaited<ReturnType<typeof fs.readdir>>;
+		try {
+			entries = await fs.readdir(resolved, { withFileTypes: true });
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'ENOENT') return [];
+			if (error.code === 'ENOTDIR') {
+				throw new Error(`Path is not a directory: ${resolved}`);
+			}
+			if (error.code === 'EACCES') {
+				throw new Error(`Permission denied reading directory: ${resolved}`);
+			}
+			throw new Error(`Failed to list directory "${resolved}": ${error.message}`);
+		}
+
+		return entries.map((entry) => ({
+			name: entry.name,
+			isDirectory: entry.isDirectory(),
+		}));
+	}
+
+	// -------------------------------------------------------------------------
 	// Unique path
 	// -------------------------------------------------------------------------
 
