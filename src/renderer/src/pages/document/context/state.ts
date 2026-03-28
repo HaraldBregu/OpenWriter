@@ -31,6 +31,13 @@ export interface DocumentChatMessage {
 	readonly status: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
 }
 
+export interface ChatSessionListItem {
+	readonly id: string;
+	readonly title: string;
+	readonly ageLabel: string;
+	readonly createdAt: string;
+}
+
 export interface DocumentState {
 	readonly documentId: string | undefined;
 	readonly title: string;
@@ -41,6 +48,7 @@ export interface DocumentState {
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
 	readonly agenticSidebarOpen: boolean;
+	readonly chatSessions: ChatSessionListItem[];
 }
 
 export const INITIAL_DOCUMENT_STATE: DocumentState = {
@@ -53,4 +61,5 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	isTrashing: false,
 	sidebarOpen: true,
 	agenticSidebarOpen: false,
+	chatSessions: [],
 };
