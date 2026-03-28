@@ -108,6 +108,7 @@ export const WorkspaceChannels = {
 	fsCreateFolder: 'fs:create-folder',
 	fsDeleteFolder: 'fs:delete-folder',
 	fsRename: 'fs:rename',
+	fsListDir: 'fs:list-dir',
 	// Project workspace
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
