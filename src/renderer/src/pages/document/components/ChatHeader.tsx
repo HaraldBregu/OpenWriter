@@ -64,10 +64,7 @@ const ChatHeader: React.FC = () => {
 
 				// Try primary index location, then fall back to legacy location inside chats/.
 				let index: ChatSessionIndex | null = null;
-				for (const indexPath of [
-					`${docPath}/sessions.json`,
-					`${docPath}/chats/sessions.json`,
-				]) {
+				for (const indexPath of [`${docPath}/sessions.json`, `${docPath}/chats/sessions.json`]) {
 					try {
 						const rawIndex = await window.workspace.readFile({ filePath: indexPath });
 						index = JSON.parse(rawIndex) as ChatSessionIndex;
@@ -93,7 +90,10 @@ const ChatHeader: React.FC = () => {
 								filePath: `${docPath}/chats/${entry.sessionId}/messages.json`,
 							});
 							const file = JSON.parse(rawSession) as ChatSessionFile;
-							const title = titleFromMessages(file.messages ?? [], t('writing.untitled', 'Untitled'));
+							const title = titleFromMessages(
+								file.messages ?? [],
+								t('writing.untitled', 'Untitled')
+							);
 							return {
 								id: entry.sessionId,
 								title,
@@ -151,11 +151,15 @@ const ChatHeader: React.FC = () => {
 		} catch {
 			// best effort
 		}
+		setPopoverOpen(false);
+		setSearch('');
 	};
 
 	const handleNewChat = () => {
 		if (!documentId) return;
 		dispatch(chatReset({ documentId, sessionId: uuidv7() }));
+		setPopoverOpen(false);
+		setSearch('');
 	};
 
 	return (
@@ -217,7 +221,9 @@ const ChatHeader: React.FC = () => {
 											>
 												{item.title}
 											</button>
-											<span className="shrink-0 text-sm text-muted-foreground">{item.ageLabel}</span>
+											<span className="shrink-0 text-sm text-muted-foreground">
+												{item.ageLabel}
+											</span>
 										</div>
 									);
 								})}

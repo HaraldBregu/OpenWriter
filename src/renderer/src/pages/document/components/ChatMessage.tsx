@@ -65,7 +65,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						)}
 					</div>
 				)}
-				<div className="mt-0.5 px-0.5 text-[9px] text-muted-foreground">{formatTime(timestamp)}</div>
+				<div className="mt-0.5 px-0.5 text-[9px] text-muted-foreground">
+					{formatTime(timestamp)}
+				</div>
 			</div>
 		</div>
 	);
