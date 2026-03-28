@@ -40,12 +40,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 		return (
 			<div className="flex flex-col gap-1.5">
 				<div className="rounded-2xl border border-border/70 bg-muted/70 px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
-					<div className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-background/30 px-2.5 py-1 text-xs font-semibold text-foreground/90">
-						<Code2 className="h-3.5 w-3.5" />
-						<span>types.ts</span>
-					</div>
 					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
-						<div className="whitespace-pre-wrap text-[1.05rem] leading-relaxed text-foreground">
+						<div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
 							{content}
 						</div>
 						{shouldCollapse && (
@@ -75,19 +71,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 			</div>
 			<div className="min-w-0 flex-1">
 				{isThinking && (
-					<div className="mb-2 inline-flex items-center gap-1 text-lg text-muted-foreground">
+					<div className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground">
 						<span>Thinking</span>
-						<ChevronRight className="h-4 w-4" />
+						<ChevronRight className="h-3.5 w-3.5" />
 					</div>
 				)}
 				{content.trim() && (
 					<div className={`relative ${shouldCollapse ? 'max-h-48 overflow-hidden' : ''}`}>
 						{renderMarkdown ? (
-							<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-background/80 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.8125rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground text-[1.05rem] leading-relaxed">
+							<div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-0 prose-headings:mb-2 prose-headings:mt-0 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-background/80 prose-code:rounded prose-code:bg-background/60 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.8125rem] prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-border prose-blockquote:text-muted-foreground text-sm leading-relaxed">
 								<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
 							</div>
 						) : (
-							<div className="whitespace-pre-wrap text-[1.05rem] leading-relaxed text-foreground">
+							<div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
 								{content}
 							</div>
 						)}
