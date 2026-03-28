@@ -375,10 +375,10 @@ interface MigrateOptions {
 	documentId: string;
 	cancelled: () => boolean;
 	reduxDispatch: ReturnType<typeof useAppDispatch>;
-	docDispatchRef: React.MutableRefObject<Dispatch<DocumentAction>>;
-	indexedSessionsRef: React.MutableRefObject<Set<string>>;
-	lastSavedRef: React.MutableRefObject<string>;
-	sessionsListRef: React.MutableRefObject<ChatSessionListItem[]>;
+	docDispatchRef: MutableRefObject<Dispatch<DocumentAction>>;
+	indexedSessionsRef: MutableRefObject<Set<string>>;
+	lastSavedRef: MutableRefObject<string>;
+	sessionsListRef: MutableRefObject<ChatSessionListItem[]>;
 }
 
 async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
