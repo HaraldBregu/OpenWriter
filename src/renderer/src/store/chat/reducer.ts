@@ -103,10 +103,15 @@ export const chatSlice = createSlice({
 		 */
 		chatMessagesLoaded(
 			state,
-			action: PayloadAction<{ documentId: string; messages: DocumentChatMessage[] }>
+			action: PayloadAction<{
+				documentId: string;
+				messages: DocumentChatMessage[];
+				sessionId: string | null;
+			}>
 		) {
-			const { documentId, messages } = action.payload;
+			const { documentId, messages, sessionId } = action.payload;
 			state.sessions[documentId] = {
+				sessionId,
 				messages,
 				activeTaskId: null,
 				activeMessageId: null,
