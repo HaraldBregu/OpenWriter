@@ -57,7 +57,7 @@ const ChatHeader: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-background/95 p-3"
+							className="w-72 rounded-2xl border border-border/80 bg-background/95 p-3"
 						>
 							<div className="mb-3">
 								<div className="relative">
@@ -109,7 +109,9 @@ const ChatHeader: React.FC = () => {
 													</AppButton>
 												</div>
 											) : (
-												<span className="shrink-0 text-sm text-muted-foreground">{item.ageLabel}</span>
+												<span className="shrink-0 text-sm text-muted-foreground">
+													{item.ageLabel}
+												</span>
 											)}
 										</div>
 									);

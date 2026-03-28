@@ -75,9 +75,7 @@ const HomePage: React.FC = () => {
 	const navigate = useNavigate();
 	const { createWriting, isCreating: creatingWriting } = useCreateWriting();
 	const allDocuments = useAppSelector(selectAllDocuments);
-	const recentDocuments = [...allDocuments]
-		.sort((a, b) => b.updatedAt - a.updatedAt)
-		.slice(0, 8);
+	const recentDocuments = [...allDocuments].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 8);
 
 	const hour = new Date().getHours();
 	const greeting =
