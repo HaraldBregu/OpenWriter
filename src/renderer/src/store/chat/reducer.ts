@@ -156,6 +156,7 @@ export const {
 	chatActiveMessageSet,
 	chatMessagesLoaded,
 	chatReset,
+	chatSessionStarted,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
