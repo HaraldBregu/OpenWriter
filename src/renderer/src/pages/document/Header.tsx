@@ -1,9 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Eye,
 	FolderOpen,
-	Share2,
 	MoreHorizontal,
 	Copy,
 	Trash2,
@@ -115,24 +113,6 @@ const Header: React.FC<HeaderProps> = ({
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">
-					<AppButton
-						type="button"
-						variant="header-icon"
-						size="header-icon-sm"
-						title={t('common.share')}
-						aria-label={t('common.share')}
-					>
-						<Share2 />
-					</AppButton>
-					<AppButton
-						type="button"
-						variant="header-icon"
-						size="header-icon-sm"
-						title={t('common.preview')}
-						aria-label={t('common.preview')}
-					>
-						<Eye />
-					</AppButton>
 					<AppButton
 						type="button"
 						variant="header-icon"
