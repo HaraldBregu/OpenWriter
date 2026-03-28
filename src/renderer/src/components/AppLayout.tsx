@@ -38,7 +38,6 @@ import {
 	Settings,
 	ChevronRight,
 	ChevronsUpDown,
-	Bug,
 	Database,
 	Library,
 	Search,
@@ -289,7 +288,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<Link to="/debug/redux">
 														<Database className="h-4 w-4 shrink-0" />
 														<span className="flex-1 truncate">
-															{t('appLayout.redux', 'redux')}
+															{t('appLayout.redux', 'Redux')}
 														</span>
 													</Link>
 												</AppSidebarMenuButton>

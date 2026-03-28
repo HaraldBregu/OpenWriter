@@ -1,6 +1,5 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import {
-	getTrackedTaskQueueStats,
 	getTrackedTasks,
 	removeTask,
 	subscribeToTaskStore,
@@ -38,10 +37,18 @@ export interface UseDebugTasksReturn {
  */
 export function useDebugTasks(): UseDebugTasksReturn {
 	const tasks = useSyncExternalStore(subscribeToTaskStore, getTrackedTasks, getTrackedTasks);
-	const queueStats = useSyncExternalStore(
-		subscribeToTaskStore,
-		getTrackedTaskQueueStats,
-		getTrackedTaskQueueStats
+	const queueStats = useMemo(
+		() =>
+			tasks.reduce<DebugQueueStats>(
+				(stats, task) => {
+					if (task.status in stats) {
+						stats[task.status as keyof DebugQueueStats] += 1;
+					}
+					return stats;
+				},
+				{ queued: 0, running: 0, completed: 0, error: 0, cancelled: 0 }
+			),
+		[tasks]
 	);
 
 	const hide = useCallback(
