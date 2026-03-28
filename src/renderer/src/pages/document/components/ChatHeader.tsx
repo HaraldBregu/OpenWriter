@@ -46,12 +46,13 @@ const ChatHeader: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const { documentId } = useDocumentState();
 	const [search, setSearch] = useState('');
+	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [sessions, setSessions] = useState<ChatSessionListItem[]>([]);
 	const selectedId = useAppSelector((state) => selectChatSessionId(state, documentId));
 
 	useEffect(() => {
-		if (!documentId) {
-			setSessions([]);
+		if (!popoverOpen || !documentId) {
+			if (!documentId) setSessions([]);
 			return;
 		}
 		const currentDocumentId = documentId;
@@ -60,8 +61,27 @@ const ChatHeader: React.FC = () => {
 		async function loadSessions() {
 			try {
 				const docPath = await window.workspace.getDocumentPath(currentDocumentId);
-				const rawIndex = await window.workspace.readFile({ filePath: `${docPath}/sessions.json` });
-				const index = JSON.parse(rawIndex) as ChatSessionIndex;
+
+				// Try primary index location, then fall back to legacy location inside chats/.
+				let index: ChatSessionIndex | null = null;
+				for (const indexPath of [
+					`${docPath}/sessions.json`,
+					`${docPath}/chats/sessions.json`,
+				]) {
+					try {
+						const rawIndex = await window.workspace.readFile({ filePath: indexPath });
+						index = JSON.parse(rawIndex) as ChatSessionIndex;
+						break;
+					} catch {
+						// try next
+					}
+				}
+
+				if (!index || cancelled) {
+					if (!cancelled) setSessions([]);
+					return;
+				}
+
 				const sorted = [...index.sessions].sort(
 					(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 				);
@@ -105,7 +125,7 @@ const ChatHeader: React.FC = () => {
 		return () => {
 			cancelled = true;
 		};
-	}, [documentId, t]);
+	}, [popoverOpen, documentId, t]);
 
 	const filteredSessions = useMemo(() => {
 		const q = search.trim().toLowerCase();
