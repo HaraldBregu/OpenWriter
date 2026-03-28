@@ -6,17 +6,7 @@ import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 import { ChatHeader } from './components/ChatHeader';
 import { useDocumentState } from './hooks';
-import { useAppDispatch, useAppSelector } from '../../store';
-import {
-	chatMessageAdded,
-	chatActiveTaskSet,
-	chatActiveMessageSet,
-	chatSessionStarted,
-	selectChatMessages,
-	selectChatSessionId,
-	selectActiveChatTaskId,
-	selectActiveChatMessageId,
-} from '../../store/chat';
+import { useChatState, useChatDispatch } from './context';
 
 interface ChatPanelProps {
 	readonly taskId: string | null;
@@ -26,13 +16,10 @@ interface ChatPanelProps {
 
 const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const dispatch = useChatDispatch();
 	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
 	const { documentId } = useDocumentState();
-	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
-	const sessionId = useAppSelector((state) => selectChatSessionId(state, documentId));
-	const activeTaskId = useAppSelector((state) => selectActiveChatTaskId(state, documentId));
-	const activeMessageId = useAppSelector((state) => selectActiveChatMessageId(state, documentId));
+	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const boundTaskKeyRef = useRef<string | null>(null);
 
@@ -50,7 +37,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 		const key = `${documentId}:${activeMessageId}:${taskId}`;
 		if (boundTaskKeyRef.current === key) return;
 		boundTaskKeyRef.current = key;
-		dispatch(chatActiveTaskSet({ documentId, taskId }));
+		dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId });
 	}, [activeMessageId, activeTaskId, dispatch, documentId, taskId]);
 
 	const handleSend = useCallback(
@@ -59,43 +46,39 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 
 			if (!sessionId) {
 				const newSessionId = uuidv7();
-				dispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
+				dispatch({ type: 'CHAT_SESSION_STARTED', sessionId: newSessionId });
 			}
 
 			const userMessageId = crypto.randomUUID();
 			const assistantMessageId = crypto.randomUUID();
 			const timestamp = new Date().toISOString();
 
-			dispatch(
-				chatMessageAdded({
-					documentId,
-					message: {
-						id: userMessageId,
-						content,
-						role: 'user',
-						timestamp,
-						taskId: null,
-						status: 'completed',
-					},
-				})
-			);
+			dispatch({
+				type: 'CHAT_MESSAGE_ADDED',
+				message: {
+					id: userMessageId,
+					content,
+					role: 'user',
+					timestamp,
+					taskId: null,
+					status: 'completed',
+				},
+			});
 
-			dispatch(
-				chatMessageAdded({
-					documentId,
-					message: {
-						id: assistantMessageId,
-						content: '',
-						role: 'assistant',
-						timestamp,
-						taskId: null,
-						status: 'idle',
-					},
-				})
-			);
+			dispatch({
+				type: 'CHAT_MESSAGE_ADDED',
+				message: {
+					id: assistantMessageId,
+					content: '',
+					role: 'assistant',
+					timestamp,
+					taskId: null,
+					status: 'idle',
+				},
+			});
 
-			dispatch(chatActiveMessageSet({ documentId, messageId: assistantMessageId }));
-			dispatch(chatActiveTaskSet({ documentId, taskId: null }));
+			dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: assistantMessageId });
+			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 
 			void onSend(content, selectedAgentId);
 		},
