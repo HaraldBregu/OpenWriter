@@ -47,6 +47,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 				<span className="mt-1 h-full min-h-3 w-px bg-border/80" />
 			</div>
 			<div className="min-w-0 flex-1">
+				<div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+					Assistant
+				</div>
 				{isThinking && (
 					<div className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground/90">
 						<span>Thinking</span>
