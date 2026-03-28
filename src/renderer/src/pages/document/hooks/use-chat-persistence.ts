@@ -7,7 +7,6 @@ import type {
 	DocumentChatMessage,
 	ChatMessagesFile,
 	ChatSessionFile,
-	ChatSessionIndex,
 	ChatSessionListItem,
 } from '../context/state';
 import type { DocumentAction } from '../context/actions';
@@ -15,7 +14,7 @@ import { useDocumentDispatch } from './use-document-dispatch';
 import { useDocumentState } from './use-document-state';
 import {
 	formatRelativeTime,
-	syncChatSessionsWithDisk,
+	syncChatSessionsFromDisk,
 	titleFromMessages,
 } from './chat-session-storage';
 
@@ -57,10 +56,11 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
 /**
  * Persists chat messages for a document to:
  *   {docPath}/chats/{sessionId}/messages.json
- * Session index:
- *   {docPath}/sessions.json
  *
- * Session IDs are UUID v7 — the creation timestamp is recoverable from the
+ * Session discovery is done by scanning the `chats/` directory for session
+ * subfolders -- no `sessions.json` index file is used.
+ *
+ * Session IDs are UUID v7 -- the creation timestamp is recoverable from the
  * folder name via `createdAtFromSessionId`.
  *
  * Returns a flush function that immediately writes pending changes.
@@ -86,12 +86,12 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 	// sessions can be prepended without a full re-read from disk.
 	const sessionsListRef = useRef<ChatSessionListItem[]>([]);
 
-	// Last serialized snapshot written to disk — skip writes when unchanged.
+	// Last serialized snapshot written to disk -- skip writes when unchanged.
 	const lastSavedRef = useRef('');
 
-	// Session IDs already appended to sessions.json in this mount — avoid
-	// redundant index reads on every debounced save.
-	const indexedSessionsRef = useRef<Set<string>>(new Set());
+	// Session IDs that have already been persisted to disk in this mount --
+	// used to know when a new item should be prepended to the UI list.
+	const knownSessionsRef = useRef<Set<string>>(new Set());
 
 	useEffect(() => {
 		sessionsListRef.current = chatSessions;
@@ -107,83 +107,59 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 
 		// Reset per-document tracking state.
 		lastSavedRef.current = '';
-		indexedSessionsRef.current = new Set();
+		knownSessionsRef.current = new Set();
 		sessionsListRef.current = [];
 
 		async function load(): Promise<void> {
 			const docPath = await window.workspace.getDocumentPath(documentId!);
-			const chatsDir = `${docPath}/chats`;
-			const indexPath = `${docPath}/sessions.json`;
-			const legacyIndexPath = `${chatsDir}/sessions.json`;
-
-			// --- 1. Try to read the sessions index (new structure) ---
-			let index: ChatSessionIndex | null = null;
-			try {
-				const raw = await window.workspace.readFile({ filePath: indexPath });
-				index = JSON.parse(raw) as ChatSessionIndex;
-			} catch {
-				// New index location does not exist yet. Try legacy location.
-				try {
-					const raw = await window.workspace.readFile({ filePath: legacyIndexPath });
-					index = JSON.parse(raw) as ChatSessionIndex;
-					// Migrate index to new location.
-					await window.workspace.writeFile({
-						filePath: indexPath,
-						content: JSON.stringify(index, null, 2),
-						createParents: true,
-					});
-				} catch {
-					// No index found.
-				}
-			}
-
-			if (cancelled) return;
 
 			// If context already has live in-flight messages, the active session is
-			// authoritative — skip disk load to avoid overwriting streamed content.
+			// authoritative -- skip disk load to avoid overwriting streamed content.
 			if (messagesRef.current.length > 0) {
-				if (index) {
-					try {
-						const synced = await syncChatSessionsWithDisk(docPath, index);
-						if (!cancelled && synced) {
-							sessionsListRef.current = synced.sessionItems;
-							docDispatchRef.current({
-								type: 'CHAT_SESSIONS_LOADED',
-								sessions: synced.sessionItems,
-							});
+				try {
+					const synced = await syncChatSessionsFromDisk(docPath);
+					if (!cancelled && synced) {
+						sessionsListRef.current = synced.sessionItems;
+						docDispatchRef.current({
+							type: 'CHAT_SESSIONS_LOADED',
+							sessions: synced.sessionItems,
+						});
+						for (const item of synced.sessionItems) {
+							knownSessionsRef.current.add(item.id);
 						}
-					} catch {
-						// Sync failure is non-fatal while live messages are active.
 					}
+				} catch {
+					// Sync failure is non-fatal while live messages are active.
 				}
 				const sid = sessionIdRef.current;
 				if (sid) lastSavedRef.current = JSON.stringify(messagesRef.current);
 				return;
 			}
 
-			// --- 2. Migration paths ---
-			if (!index) {
+			// --- Try scanning chats/ directory ---
+			const synced = await syncChatSessionsFromDisk(docPath);
+
+			if (cancelled) return;
+
+			if (!synced) {
+				// No sessions found -- try migration from legacy layouts.
 				await migrateAndLoad({
 					docPath,
-					chatsDir,
-					indexPath,
+					chatsDir: `${docPath}/chats`,
 					cancelled: () => cancelled,
 					chatDispatch,
 					docDispatchRef,
-					indexedSessionsRef,
+					knownSessionsRef,
 					lastSavedRef,
 					sessionsListRef,
 				});
 				return;
 			}
 
-			const synced = await syncChatSessionsWithDisk(docPath, index);
-			if (cancelled || !synced) return;
-
-			// --- 3. Load most recent session from the synced index ---
+			// Load most recent session from the scanned results.
 			if (synced.latestSession) {
 				const messages = sanitizeLoadedMessages(synced.latestSession.messages);
-				indexedSessionsRef.current.add(synced.latestSession.sessionId);
+				knownSessionsRef.current.add(synced.latestSession.sessionId);
 				lastSavedRef.current = JSON.stringify(messages);
 
 				chatDispatch({
@@ -193,7 +169,12 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				});
 			}
 
-			// --- 4. Build session list for document context ---
+			// Mark all discovered sessions as known.
+			for (const item of synced.sessionItems) {
+				knownSessionsRef.current.add(item.id);
+			}
+
+			// Build session list for document context.
 			sessionsListRef.current = synced.sessionItems;
 			docDispatchRef.current({ type: 'CHAT_SESSIONS_LOADED', sessions: synced.sessionItems });
 		}
@@ -242,51 +223,30 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 						});
 						lastSavedRef.current = serialized;
 					} catch {
-						// Write failure is non-fatal — retry on next change.
+						// Write failure is non-fatal -- retry on next change.
 						return;
 					}
 
-					// Append to sessions.json if this sessionId is new this mount.
-					if (!indexedSessionsRef.current.has(sid)) {
-						try {
-							const indexPath = `${docPath}/sessions.json`;
-							let idx: ChatSessionIndex = { version: 1, sessions: [] };
-							try {
-								const raw = await window.workspace.readFile({ filePath: indexPath });
-								idx = JSON.parse(raw) as ChatSessionIndex;
-							} catch {
-								// Index doesn't exist yet.
-							}
+					// Prepend the new session to the document context list if it is
+					// not yet known (first save for this session in this mount).
+					if (!knownSessionsRef.current.has(sid)) {
+						knownSessionsRef.current.add(sid);
 
-							if (!idx.sessions.some((e) => e.sessionId === sid)) {
-								const updated: ChatSessionIndex = {
-									...idx,
-									sessions: [...idx.sessions, { sessionId: sid, createdAt }],
-								};
-								await window.workspace.writeFile({
-									filePath: indexPath,
-									content: JSON.stringify(updated, null, 2),
-									createParents: true,
-								});
-							}
-							indexedSessionsRef.current.add(sid);
-
-							// Prepend the new session to the document context list.
-							const newItem: ChatSessionListItem = {
-								id: sid,
-								title: titleFromMessages(messages, 'Untitled'),
-								ageLabel: formatRelativeTime(createdAt),
-								createdAt,
-							};
-							const updatedList = [newItem, ...sessionsListRef.current.filter((s) => s.id !== sid)];
-							sessionsListRef.current = updatedList;
-							docDispatchRef.current({
-								type: 'CHAT_SESSIONS_LOADED',
-								sessions: updatedList,
-							});
-						} catch {
-							// Index update failure is non-fatal.
-						}
+						const newItem: ChatSessionListItem = {
+							id: sid,
+							title: titleFromMessages(messages, 'Untitled'),
+							ageLabel: formatRelativeTime(createdAt),
+							createdAt,
+						};
+						const updatedList = [
+							newItem,
+							...sessionsListRef.current.filter((s) => s.id !== sid),
+						];
+						sessionsListRef.current = updatedList;
+						docDispatchRef.current({
+							type: 'CHAT_SESSIONS_LOADED',
+							sessions: updatedList,
+						});
 					}
 				},
 				SAVE_DEBOUNCE_MS,
@@ -309,18 +269,17 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 }
 
 // ---------------------------------------------------------------------------
-// Migration helper — runs only once per document when upgrading from older
+// Migration helper -- runs only once per document when upgrading from older
 // storage layouts to the new chats/{sessionId}/messages.json structure.
 // ---------------------------------------------------------------------------
 
 interface MigrateOptions {
 	docPath: string;
 	chatsDir: string;
-	indexPath: string;
 	cancelled: () => boolean;
 	chatDispatch: Dispatch<ChatAction>;
 	docDispatchRef: MutableRefObject<Dispatch<DocumentAction>>;
-	indexedSessionsRef: MutableRefObject<Set<string>>;
+	knownSessionsRef: MutableRefObject<Set<string>>;
 	lastSavedRef: MutableRefObject<string>;
 	sessionsListRef: MutableRefObject<ChatSessionListItem[]>;
 }
@@ -329,11 +288,10 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 	const {
 		docPath,
 		chatsDir,
-		indexPath,
 		cancelled,
 		chatDispatch,
 		docDispatchRef,
-		indexedSessionsRef,
+		knownSessionsRef,
 		lastSavedRef,
 		sessionsListRef,
 	} = opts;
@@ -346,7 +304,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		const raw = await window.workspace.readFile({
 			filePath: `${oldChatDir}/sessions.json`,
 		});
-		const oldIndex = JSON.parse(raw) as ChatSessionIndex;
+		const oldIndex = JSON.parse(raw) as { sessions: Array<{ sessionId: string; createdAt: string }> };
 		const sorted = [...oldIndex.sessions].sort(
 			(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 		);
@@ -359,7 +317,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 			legacyMessages = sessionFile.messages ?? [];
 		}
 	} catch {
-		// No old sessions.json — try original single-file layout.
+		// No old sessions.json -- try original single-file layout.
 	}
 
 	if (!legacyMessages) {
@@ -370,7 +328,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 			const legacy = JSON.parse(raw) as ChatMessagesFile;
 			legacyMessages = legacy.messages ?? [];
 		} catch {
-			// No legacy file either — fresh document.
+			// No legacy file either -- fresh document.
 		}
 	}
 
@@ -386,26 +344,17 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		createdAt,
 		messages: sanitized,
 	};
-	const newIndex: ChatSessionIndex = {
-		version: 1,
-		sessions: [{ sessionId: newSessionId, createdAt }],
-	};
 
 	await window.workspace.writeFile({
 		filePath: `${chatsDir}/${newSessionId}/messages.json`,
 		content: JSON.stringify(sessionFile, null, 2),
 		createParents: true,
 	});
-	await window.workspace.writeFile({
-		filePath: indexPath,
-		content: JSON.stringify(newIndex, null, 2),
-		createParents: true,
-	});
 	// Old files are left in place as backup.
 
 	if (cancelled()) return;
 
-	indexedSessionsRef.current.add(newSessionId);
+	knownSessionsRef.current.add(newSessionId);
 	lastSavedRef.current = JSON.stringify(sanitized);
 
 	chatDispatch({ type: 'CHAT_MESSAGES_LOADED', messages: sanitized, sessionId: newSessionId });
