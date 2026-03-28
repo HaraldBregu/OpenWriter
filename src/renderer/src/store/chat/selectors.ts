@@ -15,6 +15,12 @@ export const selectChatSession = (
 export const selectChatMessages = (state: RootState, documentId: string | undefined) =>
 	selectChatSession(state, documentId)?.messages ?? [];
 
+/** The session UUID for a document session, or null when no session has started. */
+export const selectChatSessionId = (
+	state: RootState,
+	documentId: string | undefined
+): string | null => selectChatSession(state, documentId)?.sessionId ?? null;
+
 /** The active task id for a document session, or null. */
 export const selectActiveChatTaskId = (state: RootState, documentId: string | undefined) =>
 	selectChatSession(state, documentId)?.activeTaskId ?? null;
