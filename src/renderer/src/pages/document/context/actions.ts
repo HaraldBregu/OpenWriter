@@ -12,4 +12,5 @@ export type DocumentAction =
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }
-	| { type: 'AGENTIC_SIDEBAR_TOGGLED' };
+	| { type: 'AGENTIC_SIDEBAR_TOGGLED' }
+	| { type: 'CHAT_SESSIONS_LOADED'; sessions: ChatSessionListItem[] };
