@@ -165,7 +165,7 @@ const ChatHeader: React.FC = () => {
 					{t('agenticPanel.headerTitle', 'Chat history')}
 				</h2>
 				<div className="flex items-center gap-2">
-					<AppPopover>
+					<AppPopover open={popoverOpen} onOpenChange={setPopoverOpen}>
 						<AppPopoverTrigger asChild>
 							<AppButton
 								type="button"
