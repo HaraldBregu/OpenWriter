@@ -34,13 +34,22 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 	const activeTaskId = useAppSelector((state) => selectActiveChatTaskId(state, documentId));
 	const activeMessageId = useAppSelector((state) => selectActiveChatMessageId(state, documentId));
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const boundTaskKeyRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [chatMessages]);
 
 	useEffect(() => {
-		if (!documentId || !taskId || !activeMessageId || activeTaskId === taskId) return;
+		if (!documentId || !taskId || !activeMessageId || activeTaskId === taskId) {
+			if (!taskId || !activeMessageId) {
+				boundTaskKeyRef.current = null;
+			}
+			return;
+		}
+		const key = `${documentId}:${activeMessageId}:${taskId}`;
+		if (boundTaskKeyRef.current === key) return;
+		boundTaskKeyRef.current = key;
 		dispatch(chatActiveTaskSet({ documentId, taskId }));
 	}, [activeMessageId, activeTaskId, dispatch, documentId, taskId]);
 
