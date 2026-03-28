@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { debounce } from 'lodash';
+import { v7 as uuidv7 } from 'uuid';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import {
 	chatMessagesLoaded,
@@ -14,8 +15,16 @@ import type {
 	ChatSessionIndex,
 } from '../context/state';
 
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
 const SAVE_DEBOUNCE_MS = 500;
 const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'queued', 'running']);
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
@@ -25,6 +34,35 @@ function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMe
 	);
 }
 
+/**
+ * Extract the creation timestamp embedded in a UUID v7 folder name.
+ * UUID v7 encodes a Unix ms timestamp in its first 48 bits (12 hex chars).
+ * Falls back to the provided ISO string if the id is not a valid UUID v7.
+ */
+export function createdAtFromSessionId(sessionId: string, fallback: string): string {
+	try {
+		const msBits = sessionId.replace(/-/g, '').slice(0, 12);
+		const ms = parseInt(msBits, 16);
+		if (ms > 0) return new Date(ms).toISOString();
+	} catch {
+		// ignore
+	}
+	return fallback;
+}
+
+// ---------------------------------------------------------------------------
+// Hook
+// ---------------------------------------------------------------------------
+
+/**
+ * Persists chat messages for a document to:
+ *   {docPath}/chats/{sessionId}/messages.json
+ *
+ * Session IDs are UUID v7 — the creation timestamp is recoverable from the
+ * folder name via `createdAtFromSessionId`.
+ *
+ * Returns a flush function that immediately writes pending changes.
+ */
 export function useChatPersistence(documentId: string | undefined): () => void {
 	const reduxDispatch = useAppDispatch();
 	const chatMessages = useAppSelector((state) => selectChatMessages(state, documentId));
@@ -36,96 +74,61 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 	const sessionIdRef = useRef<string | null>(null);
 	sessionIdRef.current = sessionId;
 
-	// Track the last serialized state that was saved (or loaded) to skip no-op writes.
+	// Last serialized snapshot written to disk — skip writes when unchanged.
 	const lastSavedRef = useRef('');
 
-	// Track which sessionIds have already been written to sessions.json to avoid
-	// redundant index reads on every save.
+	// Session IDs already appended to sessions.json in this mount — avoid
+	// redundant index reads on every debounced save.
 	const indexedSessionsRef = useRef<Set<string>>(new Set());
 
-	// Load messages when documentId changes.
+	// -------------------------------------------------------------------------
+	// Load on documentId change
+	// -------------------------------------------------------------------------
 	useEffect(() => {
 		if (!documentId) return;
 
 		let cancelled = false;
 
-		// Reset tracking state for this document.
+		// Reset per-document tracking state.
 		lastSavedRef.current = '';
 		indexedSessionsRef.current = new Set();
 
 		async function load(): Promise<void> {
 			const docPath = await window.workspace.getDocumentPath(documentId!);
-			const chatDir = `${docPath}/chat`;
-			const indexPath = `${chatDir}/sessions.json`;
+			const chatsDir = `${docPath}/chats`;
+			const indexPath = `${chatsDir}/sessions.json`;
 
-			// --- 1. Try to read the sessions index ---
+			// --- 1. Try to read the sessions index (new structure) ---
 			let index: ChatSessionIndex | null = null;
 			try {
 				const raw = await window.workspace.readFile({ filePath: indexPath });
 				index = JSON.parse(raw) as ChatSessionIndex;
 			} catch {
-				// Index does not exist yet — check for legacy messages.json
+				// Index does not exist yet.
 			}
 
 			if (cancelled) return;
 
-			// Skip load if Redux already has live in-flight messages
+			// If Redux already has live in-flight messages, the active session is
+			// authoritative — skip disk load to avoid overwriting streamed content.
 			if (messagesRef.current.length > 0) {
 				const sid = sessionIdRef.current;
 				if (sid) lastSavedRef.current = JSON.stringify(messagesRef.current);
 				return;
 			}
 
-			// --- 2. Migration: legacy messages.json → new format ---
+			// --- 2. Migration paths ---
 			if (!index) {
-				const legacyPath = `${chatDir}/messages.json`;
-				let legacyRaw: string | null = null;
-				try {
-					legacyRaw = await window.workspace.readFile({ filePath: legacyPath });
-				} catch {
-					// No legacy file either — fresh document, nothing to load
-				}
-
-				if (legacyRaw) {
-					const legacy = JSON.parse(legacyRaw) as ChatMessagesFile;
-					const newSessionId = crypto.randomUUID();
-					const createdAt = new Date().toISOString();
-					const sessionFile: ChatSessionFile = {
-						version: 2,
-						sessionId: newSessionId,
-						createdAt,
-						messages: sanitizeLoadedMessages(legacy.messages ?? []),
-					};
-					const newIndex: ChatSessionIndex = {
-						version: 1,
-						sessions: [{ sessionId: newSessionId, createdAt }],
-					};
-
-					await window.workspace.writeFile({
-						filePath: `${chatDir}/${newSessionId}.json`,
-						content: JSON.stringify(sessionFile, null, 2),
-						createParents: true,
-					});
-					await window.workspace.writeFile({
-						filePath: indexPath,
-						content: JSON.stringify(newIndex, null, 2),
-						createParents: true,
-					});
-					// Leave messages.json in place as backup — do not delete
-
-					if (cancelled) return;
-
-					indexedSessionsRef.current.add(newSessionId);
-					lastSavedRef.current = JSON.stringify(sessionFile.messages);
-					reduxDispatch(
-						chatMessagesLoaded({
-							documentId: documentId!,
-							messages: sessionFile.messages,
-							sessionId: newSessionId,
-						})
-					);
-					reduxDispatch(chatSessionStarted({ documentId: documentId!, sessionId: newSessionId }));
-				}
+				await migrateAndLoad({
+					docPath,
+					chatsDir,
+					indexPath,
+					documentId: documentId!,
+					cancelled: () => cancelled,
+					reduxDispatch,
+					indexedSessionsRef,
+					lastSavedRef,
+				});
 				return;
 			}
 
@@ -137,13 +140,13 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 			if (!latest) return;
 
 			try {
-				const sessionPath = `${chatDir}/${latest.sessionId}.json`;
+				const sessionPath = `${chatsDir}/${latest.sessionId}/messages.json`;
 				const raw = await window.workspace.readFile({ filePath: sessionPath });
-
 				if (cancelled) return;
 
 				const sessionFile = JSON.parse(raw) as ChatSessionFile;
 				const messages = sanitizeLoadedMessages(sessionFile.messages ?? []);
+				indexedSessionsRef.current.add(latest.sessionId);
 				lastSavedRef.current = JSON.stringify(messages);
 
 				reduxDispatch(
@@ -154,19 +157,19 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					})
 				);
 			} catch {
-				// Session file corrupt or missing — start fresh
+				// Session file corrupt or missing — start fresh.
 			}
 		}
 
 		void load();
-
 		return () => {
 			cancelled = true;
 		};
 	}, [documentId, reduxDispatch]);
 
-	// Debounced save — recreated whenever documentId changes so the closure is
-	// always bound to the correct document.
+	// -------------------------------------------------------------------------
+	// Debounced save
+	// -------------------------------------------------------------------------
 	const debouncedSave = useMemo(
 		() =>
 			debounce(
@@ -174,7 +177,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					if (!documentId) return;
 
 					const sid = sessionIdRef.current;
-					if (!sid) return; // no active session, nothing to save
+					if (!sid) return; // no active session yet
 
 					const messages = messagesRef.current;
 					if (messages.length === 0 && lastSavedRef.current === '') return;
@@ -183,59 +186,55 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					if (serialized === lastSavedRef.current) return;
 
 					const docPath = await window.workspace.getDocumentPath(documentId);
-					const chatDir = `${docPath}/chat`;
+					const chatsDir = `${docPath}/chats`;
+					const sessionFilePath = `${chatsDir}/${sid}/messages.json`;
 
-					// Write session file
+					const createdAt = createdAtFromSessionId(sid, new Date().toISOString());
 					const sessionFile: ChatSessionFile = {
 						version: 2,
 						sessionId: sid,
-						createdAt: new Date().toISOString(),
+						createdAt,
 						messages,
 					};
 
 					try {
 						await window.workspace.writeFile({
-							filePath: `${chatDir}/${sid}.json`,
+							filePath: sessionFilePath,
 							content: JSON.stringify(sessionFile, null, 2),
 							createParents: true,
 						});
 						lastSavedRef.current = serialized;
 					} catch {
-						// Write failure is non-fatal — will retry on next change.
+						// Write failure is non-fatal — retry on next change.
 						return;
 					}
 
-					// Append to sessions.json index if this sessionId is new
+					// Append to sessions.json if this sessionId is new this mount.
 					if (!indexedSessionsRef.current.has(sid)) {
 						try {
-							let index: ChatSessionIndex = { version: 1, sessions: [] };
+							const indexPath = `${chatsDir}/sessions.json`;
+							let idx: ChatSessionIndex = { version: 1, sessions: [] };
 							try {
-								const raw = await window.workspace.readFile({
-									filePath: `${chatDir}/sessions.json`,
-								});
-								index = JSON.parse(raw) as ChatSessionIndex;
+								const raw = await window.workspace.readFile({ filePath: indexPath });
+								idx = JSON.parse(raw) as ChatSessionIndex;
 							} catch {
-								// index doesn't exist yet
+								// Index doesn't exist yet.
 							}
 
-							const alreadyIndexed = index.sessions.some((e) => e.sessionId === sid);
-							if (!alreadyIndexed) {
+							if (!idx.sessions.some((e) => e.sessionId === sid)) {
 								const updated: ChatSessionIndex = {
-									...index,
-									sessions: [
-										...index.sessions,
-										{ sessionId: sid, createdAt: sessionFile.createdAt },
-									],
+									...idx,
+									sessions: [...idx.sessions, { sessionId: sid, createdAt }],
 								};
 								await window.workspace.writeFile({
-									filePath: `${chatDir}/sessions.json`,
+									filePath: indexPath,
 									content: JSON.stringify(updated, null, 2),
 									createParents: true,
 								});
 							}
 							indexedSessionsRef.current.add(sid);
 						} catch {
-							// Index update failure is non-fatal
+							// Index update failure is non-fatal.
 						}
 					}
 				},
@@ -245,18 +244,119 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 		[documentId]
 	);
 
-	// Trigger debounced save whenever chatMessages changes.
 	useEffect(() => {
 		debouncedSave();
 	}, [chatMessages, debouncedSave]);
 
-	// Cancel debounce timer on unmount to avoid writes to a stale documentId.
 	useEffect(() => {
 		return () => {
 			debouncedSave.cancel();
 		};
 	}, [debouncedSave]);
 
-	// Expose flush so callers can force an immediate write (e.g., before navigation).
 	return debouncedSave.flush;
+}
+
+// ---------------------------------------------------------------------------
+// Migration helper — runs only once per document when upgrading from older
+// storage layouts to the new chats/{sessionId}/messages.json structure.
+// ---------------------------------------------------------------------------
+
+interface MigrateOptions {
+	docPath: string;
+	chatsDir: string;
+	indexPath: string;
+	documentId: string;
+	cancelled: () => boolean;
+	reduxDispatch: ReturnType<typeof useAppDispatch>;
+	indexedSessionsRef: React.MutableRefObject<Set<string>>;
+	lastSavedRef: React.MutableRefObject<string>;
+}
+
+async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
+	const {
+		docPath,
+		chatsDir,
+		indexPath,
+		documentId,
+		cancelled,
+		reduxDispatch,
+		indexedSessionsRef,
+		lastSavedRef,
+	} = opts;
+
+	// Try previous layout: chat/sessions.json (flat UUID files, no subfolders)
+	const oldChatDir = `${docPath}/chat`;
+	let legacyMessages: DocumentChatMessage[] | null = null;
+
+	try {
+		const raw = await window.workspace.readFile({
+			filePath: `${oldChatDir}/sessions.json`,
+		});
+		const oldIndex = JSON.parse(raw) as ChatSessionIndex;
+		const sorted = [...oldIndex.sessions].sort(
+			(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+		);
+		const latest = sorted[0];
+		if (latest) {
+			const sessionRaw = await window.workspace.readFile({
+				filePath: `${oldChatDir}/${latest.sessionId}.json`,
+			});
+			const sessionFile = JSON.parse(sessionRaw) as ChatSessionFile;
+			legacyMessages = sessionFile.messages ?? [];
+		}
+	} catch {
+		// No old sessions.json — try original single-file layout.
+	}
+
+	if (!legacyMessages) {
+		try {
+			const raw = await window.workspace.readFile({
+				filePath: `${oldChatDir}/messages.json`,
+			});
+			const legacy = JSON.parse(raw) as ChatMessagesFile;
+			legacyMessages = legacy.messages ?? [];
+		} catch {
+			// No legacy file either — fresh document.
+		}
+	}
+
+	if (!legacyMessages || cancelled()) return;
+
+	const newSessionId = uuidv7();
+	const createdAt = createdAtFromSessionId(newSessionId, new Date().toISOString());
+	const sanitized = sanitizeLoadedMessages(legacyMessages);
+
+	const sessionFile: ChatSessionFile = {
+		version: 2,
+		sessionId: newSessionId,
+		createdAt,
+		messages: sanitized,
+	};
+	const newIndex: ChatSessionIndex = {
+		version: 1,
+		sessions: [{ sessionId: newSessionId, createdAt }],
+	};
+
+	await window.workspace.writeFile({
+		filePath: `${chatsDir}/${newSessionId}/messages.json`,
+		content: JSON.stringify(sessionFile, null, 2),
+		createParents: true,
+	});
+	await window.workspace.writeFile({
+		filePath: indexPath,
+		content: JSON.stringify(newIndex, null, 2),
+		createParents: true,
+	});
+	// Old files are left in place as backup.
+
+	if (cancelled()) return;
+
+	indexedSessionsRef.current.add(newSessionId);
+	lastSavedRef.current = JSON.stringify(sanitized);
+
+	reduxDispatch(
+		chatMessagesLoaded({ documentId, messages: sanitized, sessionId: newSessionId })
+	);
+	reduxDispatch(chatSessionStarted({ documentId, sessionId: newSessionId }));
 }
