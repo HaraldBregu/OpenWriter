@@ -293,7 +293,7 @@ async function migrateAndLoad(opts: MigrateOptions): Promise<void> {
 		sessionsListRef,
 	} = opts;
 
-	// Try previous layout: chat/sessions.json (flat UUID files, no subfolders)
+	// Try previous layout: chat/session-index.json (flat UUID files, no subfolders)
 	const oldChatDir = `${docPath}/chat`;
 	let legacyMessages: DocumentChatMessage[] | null = null;
 
