@@ -505,6 +505,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	return (
 		<div className="h-full flex flex-col">
+			<ChatTaskSubscriber />
 			<Header
 				title={title}
 				onTitleChange={handleTitleChange}
