@@ -16,13 +16,13 @@ import {
 	selectChatSessionId,
 } from '../../store/chat';
 
-interface AgenticPanelProps {
+interface ChatPanelProps {
 	readonly taskId: string | null;
 	readonly isRunning: boolean;
 	readonly onSend: (content: string) => Promise<void> | void;
 }
 
-const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
+const ChatPanel: React.FC<ChatPanelProps> = ({ isRunning, onSend }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { documentId } = useDocumentState();
