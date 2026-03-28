@@ -272,6 +272,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsCreateFolder]: { args: [params: FsCreateFolderParams]; result: void };
 	[WorkspaceChannels.fsDeleteFolder]: { args: [params: FsDeleteFolderParams]; result: void };
 	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
+	[WorkspaceChannels.fsListDir]: { args: [params: FsListDirParams]; result: FsListDirEntry[] };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
