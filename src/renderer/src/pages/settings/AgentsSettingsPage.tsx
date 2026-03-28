@@ -104,21 +104,24 @@ const AgentsSettingsPage: React.FC = () => {
 		}));
 	}, []);
 
-	const handleSaveProvider = useCallback(async (agentName: string) => {
-		const providerName = selectedProviders[agentName]?.trim() ?? '';
-		if (providerName.length === 0 || typeof window.app?.setAgentProvider !== 'function') return;
+	const handleSaveProvider = useCallback(
+		async (agentName: string) => {
+			const providerName = selectedProviders[agentName]?.trim() ?? '';
+			if (providerName.length === 0 || typeof window.app?.setAgentProvider !== 'function') return;
 
-		setSavingByAgent((prev) => ({ ...prev, [agentName]: true }));
-		try {
-			await window.app.setAgentProvider(agentName, providerName);
-			setSavedProviders((prev) => ({
-				...prev,
-				[agentName]: providerName,
-			}));
-		} finally {
-			setSavingByAgent((prev) => ({ ...prev, [agentName]: false }));
-		}
-	}, [selectedProviders]);
+			setSavingByAgent((prev) => ({ ...prev, [agentName]: true }));
+			try {
+				await window.app.setAgentProvider(agentName, providerName);
+				setSavedProviders((prev) => ({
+					...prev,
+					[agentName]: providerName,
+				}));
+			} finally {
+				setSavingByAgent((prev) => ({ ...prev, [agentName]: false }));
+			}
+		},
+		[selectedProviders]
+	);
 
 	return (
 		<div className="w-full max-w-2xl p-6">

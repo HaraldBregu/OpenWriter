@@ -86,7 +86,7 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 
 			void onSend(content);
 		},
-		[dispatch, documentId, isRunning, onSend]
+		[dispatch, documentId, isRunning, onSend, sessionId]
 	);
 
 	return (
@@ -105,7 +105,10 @@ const AgenticPanel: React.FC<AgenticPanelProps> = ({ isRunning, onSend }) => {
 				) : (
 					<ul className="max-h-28 space-y-1 overflow-y-auto pr-1">
 						{chatHistory.map((message) => (
-							<li key={`history-${message.id}`} className="rounded-md border bg-background px-2 py-1.5">
+							<li
+								key={`history-${message.id}`}
+								className="rounded-md border bg-background px-2 py-1.5"
+							>
 								<p className="truncate text-xs text-foreground">{message.content}</p>
 								<p className="mt-0.5 text-[11px] text-muted-foreground">
 									{new Date(message.timestamp).toLocaleString()}

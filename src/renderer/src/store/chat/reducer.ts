@@ -138,10 +138,7 @@ export const chatSlice = createSlice({
 		 * Creates the session if it does not yet exist.
 		 * Used by AgenticPanel when the first message is sent with no active session.
 		 */
-		chatSessionStarted(
-			state,
-			action: PayloadAction<{ documentId: string; sessionId: string }>
-		) {
+		chatSessionStarted(state, action: PayloadAction<{ documentId: string; sessionId: string }>) {
 			const { documentId, sessionId } = action.payload;
 			const session = getOrCreateSession(state, documentId);
 			session.sessionId = sessionId;
