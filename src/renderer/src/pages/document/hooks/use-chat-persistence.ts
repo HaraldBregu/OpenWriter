@@ -29,6 +29,58 @@ const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'qu
 // Helpers
 // ---------------------------------------------------------------------------
 
+function formatRelativeTime(iso: string): string {
+	const ts = new Date(iso).getTime();
+	if (!Number.isFinite(ts)) return '';
+	const seconds = Math.floor((Date.now() - ts) / 1000);
+	if (seconds < 60) return 'now';
+	const minutes = Math.floor(seconds / 60);
+	if (minutes < 60) return `${minutes}m`;
+	const hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours}h`;
+	const days = Math.floor(hours / 24);
+	if (days < 7) return `${days}d`;
+	return `${Math.floor(days / 7)}w`;
+}
+
+function titleFromMessages(messages: DocumentChatMessage[], fallback: string): string {
+	const firstUser = messages.find((m) => m.role === 'user' && m.content.trim().length > 0);
+	if (!firstUser) return fallback;
+	return firstUser.content.trim().replace(/\s+/g, ' ').slice(0, 64);
+}
+
+async function buildSessionList(
+	chatsDir: string,
+	entries: ChatSessionIndex['sessions']
+): Promise<ChatSessionListItem[]> {
+	const sorted = [...entries].sort(
+		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+	);
+	return Promise.all(
+		sorted.map(async (entry) => {
+			try {
+				const raw = await window.workspace.readFile({
+					filePath: `${chatsDir}/${entry.sessionId}/messages.json`,
+				});
+				const file = JSON.parse(raw) as ChatSessionFile;
+				return {
+					id: entry.sessionId,
+					title: titleFromMessages(file.messages ?? [], 'Untitled'),
+					ageLabel: formatRelativeTime(entry.createdAt),
+					createdAt: entry.createdAt,
+				} satisfies ChatSessionListItem;
+			} catch {
+				return {
+					id: entry.sessionId,
+					title: 'Untitled',
+					ageLabel: formatRelativeTime(entry.createdAt),
+					createdAt: entry.createdAt,
+				} satisfies ChatSessionListItem;
+			}
+		})
+	);
+}
+
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
 		INTERRUPTED_STATUSES.has(msg.status)
