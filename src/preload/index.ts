@@ -379,6 +379,7 @@ const workspace: WorkspaceApi = {
 	createFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFolder, params),
 	deleteFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsDeleteFolder, params),
 	rename: (params) => typedInvokeUnwrap(WorkspaceChannels.fsRename, params),
+	listDir: (params) => typedInvokeUnwrap(WorkspaceChannels.fsListDir, params),
 } satisfies WorkspaceApi;
 
 // ---------------------------------------------------------------------------
