@@ -38,15 +38,20 @@ export const selectActiveChatMessageId = (state: RootState, documentId: string |
  * Returns all sessions that currently have an active (non-null) task.
  * Intended for a global subscriber that monitors in-flight AI tasks across
  * all open documents.
+ *
+ * Memoized with createSelector so the returned array reference is stable when
+ * the chat sessions object hasn't changed — prevents ChatTaskSubscriber from
+ * re-rendering (and re-subscribing) on every unrelated Redux dispatch.
  */
-export const selectAllActiveChatSessions = (
-	state: RootState
-): Array<{ documentId: string; taskId: string; messageId: string | null }> =>
-	Object.entries(state.chat.sessions)
-		.filter(([, session]) => session.activeTaskId !== null)
-		.map(([documentId, session]) => ({
-			documentId,
-			// Non-null assertion is safe: the filter above guarantees activeTaskId is set.
-			taskId: session.activeTaskId as string,
-			messageId: session.activeMessageId,
-		}));
+export const selectAllActiveChatSessions = createSelector(
+	(state: RootState) => state.chat.sessions,
+	(sessions) =>
+		Object.entries(sessions)
+			.filter(([, session]) => session.activeTaskId !== null)
+			.map(([documentId, session]) => ({
+				documentId,
+				// Non-null assertion is safe: the filter above guarantees activeTaskId is set.
+				taskId: session.activeTaskId as string,
+				messageId: session.activeMessageId,
+			}))
+);
