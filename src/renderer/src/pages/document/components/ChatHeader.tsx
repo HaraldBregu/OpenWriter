@@ -129,33 +129,33 @@ const ChatHeader: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-80 rounded-2xl border border-border/80 bg-background/95 p-3.5"
+							className="w-80 rounded-xl border border-border/70 bg-background p-2"
 						>
-							<div className="mb-3">
+							<div className="border-b border-border/60 px-2 pb-2">
 								<div className="relative">
-									<Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+									<Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 									<AppInput
 										value={search}
 										onChange={(event) => setSearch(event.target.value)}
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-										className="h-10 border-border/70 bg-muted/40 pl-9 text-sm"
+										className="h-9 border-0 bg-transparent pl-7 pr-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
 								</div>
 							</div>
-							<div className="max-h-[26rem] overflow-y-auto rounded-xl border border-border/70 bg-background/40 p-1.5">
+							<ul className="max-h-[26rem] overflow-y-auto py-1">
 								{filteredSessions.length === 0 && (
-									<div className="px-2 py-3 text-xs text-muted-foreground">
+									<li className="px-2 py-3 text-xs text-muted-foreground">
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
-									</div>
+									</li>
 								)}
 								{filteredSessions.map((item) => {
 									const isSelected = item.id === selectedId;
 									const isDeleting = deletingSessionId === item.id;
 									return (
-										<div
+										<li
 											key={item.id}
-											className={`flex items-center gap-2 rounded-lg px-3 py-2.5 ${
-												isSelected ? 'bg-muted/80' : 'hover:bg-muted/50'
+											className={`flex items-center gap-2 border-b border-border/50 px-2 py-2 last:border-b-0 ${
+												isSelected ? 'bg-muted/40' : ''
 											}`}
 										>
 											<button
@@ -163,17 +163,17 @@ const ChatHeader: React.FC = () => {
 												onClick={() => {
 													void handleLoadSession(item.id);
 												}}
-												className="min-w-0 flex-1 truncate text-left text-sm text-foreground"
+												className="min-w-0 flex-1 truncate text-left text-sm text-foreground hover:text-foreground/80"
 											>
 												{item.title}
 											</button>
-											<div className="flex shrink-0 items-center gap-1.5 pl-2">
+											<div className="flex shrink-0 items-center gap-1 pl-2">
 												<span className="text-xs text-muted-foreground">{item.ageLabel}</span>
 												<AppButton
 													type="button"
 													variant="ghost"
 													size="icon-xs"
-													className="text-muted-foreground hover:text-destructive"
+													className="text-muted-foreground hover:bg-transparent hover:text-destructive"
 													aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
 													disabled={isDeleting}
 													onClick={() => {
@@ -183,10 +183,10 @@ const ChatHeader: React.FC = () => {
 													<Trash2 className="h-3.5 w-3.5" />
 												</AppButton>
 											</div>
-										</div>
+										</li>
 									);
 								})}
-							</div>
+							</ul>
 						</AppPopoverContent>
 					</AppPopover>
 					<AppButton
