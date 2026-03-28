@@ -141,4 +141,4 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isRunning, onSend }) => {
 	);
 };
 
-export default AgenticPanel;
+export default ChatPanel;
