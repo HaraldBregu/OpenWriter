@@ -207,8 +207,10 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 					documentId: documentId!,
 					cancelled: () => cancelled,
 					reduxDispatch,
+					docDispatchRef,
 					indexedSessionsRef,
 					lastSavedRef,
+					sessionsListRef,
 				});
 				return;
 			}
@@ -239,6 +241,15 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 				);
 			} catch {
 				// Session file corrupt or missing — start fresh.
+			}
+
+			// --- 4. Build session list for document context ---
+			if (!cancelled) {
+				const sessionItems = await buildSessionList(chatsDir, index.sessions);
+				if (!cancelled) {
+					sessionsListRef.current = sessionItems;
+					docDispatchRef.current({ type: 'CHAT_SESSIONS_LOADED', sessions: sessionItems });
+				}
 			}
 		}
 
