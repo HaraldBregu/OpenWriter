@@ -11,8 +11,8 @@ import {
 } from '@/components/app';
 import { useDocumentDispatch, useDocumentState } from '../hooks';
 import { useChatState, useChatDispatch } from '../context';
-import type { ChatSessionFile, ChatSessionIndex } from '../context/state';
-import { syncChatSessionsWithDisk } from '../hooks/chat-session-storage';
+import type { ChatSessionFile } from '../context/state';
+import { syncChatSessionsFromDisk } from '../hooks/chat-session-storage';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();
@@ -75,29 +75,10 @@ const ChatHeader: React.FC = () => {
 
 		try {
 			const docPath = await window.workspace.getDocumentPath(documentId);
-			const indexPath = `${docPath}/sessions.json`;
-			let index: ChatSessionIndex = { version: 1, sessions: [] };
-
-			try {
-				const raw = await window.workspace.readFile({ filePath: indexPath });
-				index = JSON.parse(raw) as ChatSessionIndex;
-			} catch {
-				// Missing index is treated as an empty history.
-			}
-
-			const updatedIndex: ChatSessionIndex = {
-				version: index.version ?? 1,
-				sessions: index.sessions.filter((entry) => entry.sessionId !== sessionId),
-			};
 
 			await window.workspace.deleteFolder({
 				folderPath: `${docPath}/chats/${sessionId}`,
 				recursive: true,
-			});
-			await window.workspace.writeFile({
-				filePath: indexPath,
-				content: JSON.stringify(updatedIndex, null, 2),
-				createParents: true,
 			});
 
 			docDispatch({ type: 'CHAT_SESSIONS_LOADED', sessions: remainingSessions });
@@ -116,7 +97,7 @@ const ChatHeader: React.FC = () => {
 		void (async () => {
 			try {
 				const docPath = await window.workspace.getDocumentPath(documentId);
-				const synced = await syncChatSessionsWithDisk(docPath);
+				const synced = await syncChatSessionsFromDisk(docPath);
 				docDispatch({
 					type: 'CHAT_SESSIONS_LOADED',
 					sessions: synced?.sessionItems ?? [],
