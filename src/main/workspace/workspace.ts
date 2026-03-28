@@ -343,6 +343,12 @@ export class Workspace implements Disposable {
 		});
 	}
 
+	async listDir(params: FsListDirParams): Promise<FsListDirEntry[]> {
+		this.validateFsParams(params, ['dirPath']);
+		const manager = this.buildFileManager();
+		return manager.listDir(params.dirPath);
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
