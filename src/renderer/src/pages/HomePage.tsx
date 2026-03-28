@@ -1,28 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PenLine, Puzzle, ArrowRight, Star, Layers } from 'lucide-react';
+import { PenLine, Bot, FolderOpen, ArrowRight, Star, Clock3 } from 'lucide-react';
 import { AppSeparator } from '@/components/app';
 import { useCreateWriting } from '@/hooks/use-create-writing';
+import { useAppSelector } from '@/store';
+import { selectAllDocuments } from '@/store/documents';
 
 // ---------------------------------------------------------------------------
 // Category definitions — labels resolved via i18n at render time
 // ---------------------------------------------------------------------------
-
-const categoryDefs = [
-	{
-		icon: PenLine,
-		labelKey: 'home.writing',
-		descriptionKey: 'home.writingDescription',
-		accent: 'bg-foreground/8 text-foreground',
-	},
-	{
-		icon: Layers,
-		labelKey: 'home.skills',
-		descriptionKey: 'home.skillsDescription',
-		accent: 'bg-secondary text-foreground',
-	},
-];
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -67,6 +54,18 @@ const CategoryCard = React.memo(function CategoryCard({
 });
 CategoryCard.displayName = 'CategoryCard';
 
+function formatRelativeTime(timestampMs: number): string {
+	const seconds = Math.floor((Date.now() - timestampMs) / 1000);
+	if (seconds < 60) return 'just now';
+	const minutes = Math.floor(seconds / 60);
+	if (minutes < 60) return `${minutes}m ago`;
+	const hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours}h ago`;
+	const days = Math.floor(hours / 24);
+	if (days < 7) return `${days}d ago`;
+	return `${Math.floor(days / 7)}w ago`;
+}
+
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
@@ -75,6 +74,10 @@ const HomePage: React.FC = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { createWriting, isCreating: creatingWriting } = useCreateWriting();
+	const allDocuments = useAppSelector(selectAllDocuments);
+	const recentDocuments = [...allDocuments]
+		.sort((a, b) => b.updatedAt - a.updatedAt)
+		.slice(0, 8);
 
 	const hour = new Date().getHours();
 	const greeting =
@@ -91,48 +94,78 @@ const HomePage: React.FC = () => {
 
 				{/* Categories */}
 				<section className="space-y-3">
-					<div className="grid grid-cols-2 gap-3">
+					<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+						{t('home.quickActions', 'Quick actions')}
+					</p>
+					<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
 						<CategoryCard
-							icon={categoryDefs[0].icon}
-							labelKey={categoryDefs[0].labelKey}
-							descriptionKey={categoryDefs[0].descriptionKey}
-							accent={categoryDefs[0].accent}
+							icon={PenLine}
+							labelKey="home.writing"
+							descriptionKey="home.writingDescription"
+							accent="bg-foreground/8 text-foreground"
 							onClick={createWriting}
 							disabled={creatingWriting}
 						/>
 						<CategoryCard
-							icon={categoryDefs[1].icon}
-							labelKey={categoryDefs[1].labelKey}
-							descriptionKey={categoryDefs[1].descriptionKey}
-							accent={categoryDefs[1].accent}
-							onClick={() => {}}
-							disabled
+							icon={FolderOpen}
+							labelKey="home.documents"
+							descriptionKey="home.documentsDescription"
+							accent="bg-muted text-foreground"
+							onClick={() => navigate('/resources')}
+						/>
+						<CategoryCard
+							icon={Bot}
+							labelKey="common.agents"
+							descriptionKey="home.chatDescription"
+							accent="bg-secondary text-foreground"
+							onClick={() => navigate('/agents')}
 						/>
 					</div>
 				</section>
 
 				<AppSeparator />
 
-				{/* Integrations */}
+				{/* Recent documents */}
 				<section className="space-y-3">
-					<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-						<button
-							type="button"
-							onClick={() => navigate('/integrations')}
-							className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 text-left transition-all hover:border-foreground/15 hover:shadow-sm"
-						>
-							<div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-								<Puzzle className="h-4 w-4 text-muted-foreground" />
-							</div>
-							<div className="min-w-0">
-								<p className="text-sm font-medium text-foreground">{t('home.integrations')}</p>
-								<p className="text-xs text-muted-foreground mt-0.5">
-									{t('home.integrationsDescription')}
-								</p>
-							</div>
-							<ArrowRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
-						</button>
+					<div className="flex items-center justify-between">
+						<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+							{t('home.recent', 'Recent')}
+						</p>
 					</div>
+
+					{recentDocuments.length === 0 ? (
+						<div className="rounded-xl border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
+							{t('home.noRecentWritings', 'No writings yet. Create one to get started.')}
+						</div>
+					) : (
+						<div className="rounded-xl border border-border bg-card overflow-hidden">
+							{recentDocuments.map((doc, index) => (
+								<button
+									key={doc.id}
+									type="button"
+									onClick={() => navigate(`/content/${doc.id}`)}
+									className={`group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40 ${
+										index !== 0 ? 'border-t border-border' : ''
+									}`}
+								>
+									<div className="h-8 w-8 shrink-0 rounded-lg bg-muted flex items-center justify-center">
+										<FolderOpen className="h-4 w-4 text-muted-foreground" />
+									</div>
+									<div className="min-w-0 flex-1">
+										<p className="truncate text-sm font-medium text-foreground">
+											{doc.title || t('sidebar.untitledWriting', 'Untitled')}
+										</p>
+										<p className="truncate text-xs text-muted-foreground mt-0.5">{doc.path}</p>
+									</div>
+									<div className="shrink-0 flex items-center gap-1.5 text-xs text-muted-foreground">
+										<Clock3 className="h-3.5 w-3.5" />
+										<span>{formatRelativeTime(doc.updatedAt)}</span>
+									</div>
+									<ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/30 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
+								</button>
+							))}
+						</div>
+					)}
 				</section>
 
 				<AppSeparator />
