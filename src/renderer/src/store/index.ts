@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
 import documentsReducer from './documents/reducer';
-import chatReducer from './chat/reducer';
 import { listenerMiddleware } from './listener-middleware';
 
 // Side-effect imports: register listener effects
@@ -14,7 +13,6 @@ export const store = configureStore({
 	reducer: {
 		workspace: workspaceReducer,
 		documents: documentsReducer,
-		chat: chatReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().prepend(listenerMiddleware.middleware),
