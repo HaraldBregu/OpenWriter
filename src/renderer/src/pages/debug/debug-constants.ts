@@ -1,6 +1,6 @@
 import React from 'react';
 import { Zap, Clock, Radio, AlertTriangle } from 'lucide-react';
-import type { TaskStatus } from '@/store/tasks/types';
+import type { TaskStatus } from '@/services/task-store';
 
 export type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error';
 
@@ -43,5 +43,5 @@ export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: strin
 	},
 };
 
-export const SLICE_NAMES = ['workspace', 'tasks', 'documents'] as const;
+export const SLICE_NAMES = ['workspace', 'documents', 'chat'] as const;
 export type SliceName = (typeof SLICE_NAMES)[number];

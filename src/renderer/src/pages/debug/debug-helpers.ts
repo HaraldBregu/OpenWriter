@@ -1,5 +1,4 @@
-import { store } from '@/store';
-import { taskAdded } from '@/store/tasks/actions';
+import { addTask } from '@/services/task-store';
 import type { DemoVariant } from './debug-constants';
 
 export function formatDuration(ms?: number): string {
@@ -26,6 +25,6 @@ export function entryCount(value: unknown): string {
 export async function submitDemoTask(variant: DemoVariant): Promise<void> {
 	const result = await window.task.submit('demo', { variant }, undefined, { priority: 'normal' });
 	if (result.success && result.data?.taskId) {
-		store.dispatch(taskAdded({ taskId: result.data.taskId, type: 'demo' }));
+		addTask({ taskId: result.data.taskId, type: 'demo' });
 	}
 }

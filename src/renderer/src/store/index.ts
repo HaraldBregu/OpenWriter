@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
-import tasksReducer from './tasks/reducer';
 import documentsReducer from './documents/reducer';
 import chatReducer from './chat/reducer';
 import { listenerMiddleware } from './listener-middleware';
@@ -14,7 +13,6 @@ import './workspace/listeners';
 export const store = configureStore({
 	reducer: {
 		workspace: workspaceReducer,
-		tasks: tasksReducer,
 		documents: documentsReducer,
 		chat: chatReducer,
 	},

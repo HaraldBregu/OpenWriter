@@ -1,9 +1,13 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
-import type { TaskStatus, TaskProgressState } from '@/store/tasks/types';
-import { taskAdded, taskRemoved } from '@/store/tasks/actions';
-import { makeSelectTaskById } from '@/store/tasks/selectors';
-import { useAppDispatch, useAppSelector } from '@/store';
+import {
+	addTask,
+	getTrackedTask,
+	removeTask,
+	subscribeToTaskStore,
+	type TaskStatus,
+	type TaskProgressState,
+} from '@/services/task-store';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -59,81 +63,33 @@ export interface TaskOptions {
 	timeoutMs?: number;
 }
 
-// Terminal statuses — the task cannot change state again (except via a new submit).
 const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set(['completed', 'error', 'cancelled']);
-
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
 
 /**
  * useTaskSubmit — manages the full lifecycle of a single task submission.
  *
- * Reads task state from Redux via selectTaskById instead of the former
- * module-level taskStore singleton. Dispatches taskAdded on submit and
- * taskRemoved on reset.
- *
- * Key behaviours:
- *  - Dispatches taskAdded before IPC events arrive so taskEventReceived
- *    reducers always find the task and no events are dropped
- *  - All status fields derived from Redux (useAppSelector) — no duplicated
- *    local state for store-owned fields
- *  - On unmount cancels the task if still in a non-terminal status
- *  - cancel() / updatePriority() are best-effort IPC calls; the main process
- *    emits authoritative state-change events that Redux picks up
- *  - Gracefully no-ops when window.task is unavailable (tests)
- *
- * @template TInput Type of the task input payload.
- * @template TResult Type of the result from the completed event.
+ * Task snapshots come from the renderer-local task store instead of Redux.
  */
 export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 	type: string,
 	input: TInput,
 	options?: TaskSubmitOptions
 ): UseTaskSubmitReturn<TInput, TResult> {
-	const dispatch = useAppDispatch();
-
-	// The only local state is which task ID this hook instance "owns".
-	// Everything else is derived from Redux via useAppSelector.
 	const [taskId, setTaskId] = useState<string | null>(null);
-
-	// Stable ref so callbacks always see the latest taskId without needing it
-	// in their dependency arrays.
 	const taskIdRef = useRef<string | null>(null);
-
-	// Guard: prevents re-submitting while a task is still active.
 	const runningRef = useRef<boolean>(false);
 
-	// Keep input/options in refs so submit doesn't depend on their identity.
 	const inputRef = useRef(input);
 	inputRef.current = input;
 	const optionsRef = useRef(options);
 	optionsRef.current = options;
 
-	// Stable memoized selector — only recreated when taskId changes.
-	const selectTask = useMemo(
-		() => (taskId !== null ? makeSelectTaskById(taskId) : () => undefined),
-		[taskId]
+	const taskState = useSyncExternalStore(
+		subscribeToTaskStore,
+		() => (taskId ? getTrackedTask(taskId) : undefined),
+		() => undefined
 	);
 
-	// Custom equality comparator: only re-render when fields the hook
-	// exposes actually change. Excludes streamBuffer and events which
-	// change on every stream token but are not consumed by callers.
-	const taskState = useAppSelector(selectTask, (prev, next) => {
-		if (prev === next) return true;
-		if (prev == null || next == null) return prev === next;
-		return (
-			prev.status === next.status &&
-			prev.progress.percent === next.progress.percent &&
-			prev.progress.message === next.progress.message &&
-			prev.error === next.error &&
-			prev.result === next.result &&
-			prev.queuePosition === next.queuePosition &&
-			prev.durationMs === next.durationMs
-		);
-	});
-
-	// Derive all display fields from the Redux task state.
 	const status: TaskStatus | null = taskState?.status ?? null;
 	const progressPercent: number = taskState?.progress.percent ?? 0;
 	const progressMessage: string | undefined = taskState?.progress.message;
@@ -142,15 +98,12 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 	const queuePosition: number | undefined = taskState?.queuePosition;
 	const durationMs: number | undefined = taskState?.durationMs;
 
-	// Release the running guard once a terminal status is observed via Redux.
 	useEffect(() => {
 		if (status !== null && TERMINAL_STATUSES.has(status)) {
 			runningRef.current = false;
 		}
 	}, [status]);
 
-	// On unmount, release the running guard so re-mounting can submit again,
-	// but do NOT cancel the task — it should continue running in the main process.
 	useEffect(() => {
 		return () => {
 			runningRef.current = false;
@@ -203,21 +156,17 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 				return;
 			}
 
-			// Register the task in Redux before any IPC events arrive. This ensures
-			// taskEventReceived reducers will find the task and apply state updates.
-			dispatch(
-				taskAdded({
-					taskId: resolvedTaskId,
-					type,
-					priority: mergedOptions.priority ?? optionsRef.current?.priority ?? 'normal',
-					metadata,
-				})
-			);
+			addTask({
+				taskId: resolvedTaskId,
+				type,
+				priority: mergedOptions.priority ?? optionsRef.current?.priority ?? 'normal',
+				metadata,
+			});
 
 			taskIdRef.current = resolvedTaskId;
 			setTaskId(resolvedTaskId);
 		},
-		[dispatch, type]
+		[type]
 	);
 
 	const cancel = useCallback((): void => {
@@ -226,7 +175,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		if (typeof window.task?.cancel !== 'function') return;
 
 		window.task.cancel(id).catch(() => {
-			// Best-effort — the cancelled event from the main process will update Redux.
+			// Best-effort — the cancelled event from the main process will update the task store.
 		});
 	}, []);
 
@@ -236,22 +185,21 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		if (typeof window.task?.updatePriority !== 'function') return;
 
 		window.task.updatePriority(id, priority).catch(() => {
-			// Best-effort — the priority-changed event from the main process will update Redux.
+			// Best-effort — the priority-changed event from the main process will update the task store.
 		});
 	}, []);
 
 	const reset = useCallback((): void => {
-		// Prevent resetting while a task is still active.
 		if (runningRef.current) return;
 
 		const id = taskIdRef.current;
 		if (id) {
-			dispatch(taskRemoved(id));
+			removeTask(id);
 		}
 
 		taskIdRef.current = null;
 		setTaskId(null);
-	}, [dispatch]);
+	}, []);
 
 	return useMemo(
 		() => ({

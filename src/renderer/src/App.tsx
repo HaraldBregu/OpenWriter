@@ -8,20 +8,12 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import WelcomePage from './pages/WelcomePage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
-import type { TaskEvent } from '../../shared/types';
-import { taskEventReceived } from './store/tasks/actions';
+import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
 import './index.css';
 
-// IPC → Redux bridge: forward every task event into the store.
-let initialized = false;
-if (!initialized && typeof window.task?.onEvent === 'function') {
-	initialized = true;
-	window.task.onEvent((event: TaskEvent) => {
-		store.dispatch(taskEventReceived(event));
-	});
-}
+initializeTaskStore();
 
 // IPC → Redux bridge: load documents on startup and re-load on file changes.
 let documentsInitialized = false;

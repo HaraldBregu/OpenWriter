@@ -837,7 +837,8 @@
 		"images": "Images",
 		"integrations": "Integrations",
 		"socialMedia": "Social media",
-		"debug": "Debug"
+		"debug": "Debug",
+		"redux": "redux"
 	},
 	"workspacePage": {
 		"title": "Workspace",

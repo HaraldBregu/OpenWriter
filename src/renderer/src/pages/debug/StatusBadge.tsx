@@ -1,4 +1,4 @@
-import type { TaskStatus } from '@/store/tasks/types';
+import type { TaskStatus } from '@/services/task-store';
 import { STATUS_CONFIG } from './debug-constants';
 
 export function StatusBadge({ status }: { status: TaskStatus }) {

@@ -43,6 +43,7 @@ import {
 	Library,
 	Search,
 	Bot,
+	ListTodo,
 	Globe,
 	CircleHelp,
 	CircleArrowUp,
@@ -274,7 +275,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/tasks'}
 												>
 													<Link to="/debug/tasks">
-														<Bug className="h-4 w-4 shrink-0" />
+														<ListTodo className="h-4 w-4 shrink-0" />
 														<span className="flex-1 truncate">{t('debug.tasks')}</span>
 													</Link>
 												</AppSidebarMenuButton>
@@ -287,7 +288,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												>
 													<Link to="/debug/redux">
 														<Database className="h-4 w-4 shrink-0" />
-														<span className="flex-1 truncate">{t('debug.reduxState')}</span>
+														<span className="flex-1 truncate">
+															{t('appLayout.redux', 'redux')}
+														</span>
 													</Link>
 												</AppSidebarMenuButton>
 											</AppSidebarMenuItem>

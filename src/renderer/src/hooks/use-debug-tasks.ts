@@ -1,8 +1,12 @@
-import { useCallback } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store';
-import { selectAllTasks, selectQueueStats } from '@/store/tasks/selectors';
-import { taskRemoved } from '@/store/tasks/actions';
-import type { TrackedTaskState } from '@/store/tasks/types';
+import { useCallback, useSyncExternalStore } from 'react';
+import {
+	getTrackedTaskQueueStats,
+	getTrackedTasks,
+	removeTask,
+	subscribeToTaskStore,
+	type TrackedTaskQueueStats,
+	type TrackedTaskState,
+} from '@/services/task-store';
 
 export type { TrackedTaskState };
 
@@ -10,18 +14,12 @@ export type { TrackedTaskState };
 // Types
 // ---------------------------------------------------------------------------
 
-export interface DebugQueueStats {
-	queued: number;
-	running: number;
-	completed: number;
-	error: number;
-	cancelled: number;
-}
+export type DebugQueueStats = TrackedTaskQueueStats;
 
 export interface UseDebugTasksReturn {
 	tasks: TrackedTaskState[];
 	queueStats: DebugQueueStats;
-	/** Remove a task from the Redux store (UI-only dismissal). */
+	/** Remove a task from the renderer-local task store (UI-only dismissal). */
 	hide: (taskId: string) => void;
 	/** Cancel a running or queued task via IPC. */
 	cancel: (taskId: string) => Promise<void>;
@@ -34,24 +32,23 @@ export interface UseDebugTasksReturn {
 /**
  * useDebugTasks — provides a live view of all tracked tasks for the debug panel.
  *
- * Uses useAppSelector for reactive Redux subscriptions instead of the former
- * module-level taskStore singleton. `hide()` dispatches taskRemoved to the
- * Redux store so the task no longer appears anywhere in the UI. `cancel()`
- * makes a best-effort IPC call to the main process.
+ * Uses the renderer-local task store for reactive subscriptions. `hide()`
+ * removes a task from that store so it no longer appears in the debug UI.
+ * `cancel()` makes a best-effort IPC call to the main process.
  */
 export function useDebugTasks(): UseDebugTasksReturn {
-	const dispatch = useAppDispatch();
-
-	// Both selectors are memoised in tasksSlice via createSelector — they only
-	// recompute when the tasks map reference changes in Redux.
-	const tasks = useAppSelector(selectAllTasks);
-	const queueStats = useAppSelector(selectQueueStats);
+	const tasks = useSyncExternalStore(subscribeToTaskStore, getTrackedTasks, getTrackedTasks);
+	const queueStats = useSyncExternalStore(
+		subscribeToTaskStore,
+		getTrackedTaskQueueStats,
+		getTrackedTaskQueueStats
+	);
 
 	const hide = useCallback(
 		(taskId: string) => {
-			dispatch(taskRemoved(taskId));
+			removeTask(taskId);
 		},
-		[dispatch]
+		[]
 	);
 
 	const cancel = useCallback(async (taskId: string): Promise<void> => {
