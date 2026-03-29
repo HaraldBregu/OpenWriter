@@ -13,12 +13,36 @@ import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
 import { AppButton } from '../../app/AppButton';
 import { useEditorContext } from '../EditorContext';
+import { cn } from '@/lib/utils';
 
 interface BubbleMenuProps {
 	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 }
 
 const pluginKey = new PluginKey('bubbleMenu');
+
+function getMenuButtonClass({
+	isActive = false,
+	isAccent = false,
+}: {
+	isActive?: boolean;
+	isAccent?: boolean;
+}): string {
+	if (isAccent) {
+		return cn(
+			'h-7 w-7 shadow-[inset_0_0_0_1px_hsl(var(--info)/0.18)]',
+			'bg-[hsl(var(--info)/0.12)] text-[hsl(var(--info))]',
+			'hover:bg-[hsl(var(--info)/0.18)] hover:text-[hsl(var(--info))]'
+		);
+	}
+
+	return cn(
+		'h-7 w-7',
+		isActive
+			? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70'
+			: 'text-foreground/70 hover:bg-accent/90 hover:text-foreground'
+	);
+}
 
 export const BubbleMenu = React.memo(function BubbleMenu({
 	onEnhanceWithAssistant,
@@ -54,14 +78,14 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	return (
 		<div
 			ref={menuRef}
-			className="z-50 flex items-center gap-0.5 rounded-md border border-border bg-popover p-1 shadow-md"
+			className="z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] backdrop-blur-md"
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<AppButton
 				variant="ghost"
 				size="icon"
 				aria-label="Bold"
-				className="h-7 w-7 text-muted-foreground hover:text-foreground"
+				className={getMenuButtonClass({ isActive: editor.isActive('bold') })}
 				onClick={() => editor.chain().focus().toggleBold().run()}
 			>
 				<Bold className="h-3.5 w-3.5" />
@@ -70,7 +94,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Italic"
-				className="h-7 w-7 text-muted-foreground hover:text-foreground"
+				className={getMenuButtonClass({ isActive: editor.isActive('italic') })}
 				onClick={() => editor.chain().focus().toggleItalic().run()}
 			>
 				<Italic className="h-3.5 w-3.5" />
@@ -79,7 +103,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Underline"
-				className="h-7 w-7 text-muted-foreground hover:text-foreground"
+				className={getMenuButtonClass({ isActive: editor.isActive('underline') })}
 				onClick={() => editor.chain().focus().toggleUnderline().run()}
 			>
 				<Underline className="h-3.5 w-3.5" />
@@ -88,7 +112,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Strikethrough"
-				className="h-7 w-7 text-muted-foreground hover:text-foreground"
+				className={getMenuButtonClass({ isActive: editor.isActive('strike') })}
 				onClick={() => editor.chain().focus().toggleStrike().run()}
 			>
 				<Strikethrough className="h-3.5 w-3.5" />
@@ -100,7 +124,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 1"
-				className={`h-7 w-7 ${editor.isActive('heading', { level: 1 }) ? 'text-foreground bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
+				className={getMenuButtonClass({ isActive: editor.isActive('heading', { level: 1 }) })}
 				onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
 			>
 				<Heading1 className="h-3.5 w-3.5" />
@@ -109,7 +133,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 2"
-				className={`h-7 w-7 ${editor.isActive('heading', { level: 2 }) ? 'text-foreground bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
+				className={getMenuButtonClass({ isActive: editor.isActive('heading', { level: 2 }) })}
 				onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
 			>
 				<Heading2 className="h-3.5 w-3.5" />
@@ -118,7 +142,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 3"
-				className={`h-7 w-7 ${editor.isActive('heading', { level: 3 }) ? 'text-foreground bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
+				className={getMenuButtonClass({ isActive: editor.isActive('heading', { level: 3 }) })}
 				onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
 			>
 				<Heading3 className="h-3.5 w-3.5" />
@@ -131,7 +155,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						variant="ghost"
 						size="icon"
 						aria-label="Enhance with AI"
-						className="h-7 w-7 text-violet-500 hover:text-violet-400"
+						className={getMenuButtonClass({ isAccent: true })}
 						onClick={handleEnhanceWithAI}
 					>
 						<Sparkles className="h-3.5 w-3.5" />

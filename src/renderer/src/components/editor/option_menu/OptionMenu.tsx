@@ -4,6 +4,7 @@ import { Heading, Type, List, ListOrdered, Sparkles, Minus, ImagePlus } from 'lu
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { OptionMenuPlugin } from './option-menu-plugin';
+import { cn } from '@/lib/utils';
 
 interface OptionMenuProps {
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
@@ -15,6 +16,7 @@ interface MenuItem {
 	icon: React.ElementType;
 	command: (editor: Editor, slashPos: number, queryLength: number) => void;
 	section?: 'ai';
+	tone?: 'default' | 'ai';
 }
 
 const MENU_ITEMS: MenuItem[] = [
@@ -147,6 +149,7 @@ export function OptionMenu({
 				label: 'Generate image',
 				icon: ImagePlus,
 				section: 'ai' as const,
+				tone: 'ai',
 				command: (ed, slashPos, queryLength) => {
 					ed.chain()
 						.focus()
@@ -159,6 +162,7 @@ export function OptionMenu({
 				label: 'Continue with assistant',
 				icon: Sparkles,
 				section: 'ai' as const,
+				tone: 'ai',
 				command: (ed, slashPos, queryLength) => {
 					ed.chain()
 						.focus()
@@ -182,7 +186,6 @@ export function OptionMenu({
 			},
 		],
 		// allItems is stable — the AI callback is accessed via ref so no dep needed.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
@@ -274,13 +277,15 @@ export function OptionMenu({
 	return (
 		<div
 			ref={menuRef}
-			className="z-50 flex flex-col rounded-md border border-border bg-popover p-1 shadow-md"
-			style={{ visibility: 'hidden', position: 'absolute', minWidth: '180px' }}
+			className="z-50 flex min-w-[220px] flex-col rounded-xl border border-border/80 bg-popover/95 p-1.5 shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] backdrop-blur-md"
+			style={{ visibility: 'hidden', position: 'absolute', minWidth: '220px' }}
 		>
 			{filteredItems.length > 0 ? (
 				filteredItems.map((item, index) => {
 					const Icon = item.icon;
 					const isAiItem = item.section === 'ai';
+					const isSelected = index === selectedIndex;
+					const tone = item.tone ?? 'default';
 					// Show the separator immediately before the first AI item, but only
 					// when there are regular items above it.
 					const isFirstAiItem =
@@ -292,21 +297,37 @@ export function OptionMenu({
 						<React.Fragment key={item.label}>
 							{isFirstAiItem && <hr className="my-1 border-border" />}
 							<button
-								className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-left transition-colors ${
-									index === selectedIndex
-										? 'bg-accent text-accent-foreground'
-										: 'text-popover-foreground hover:bg-accent hover:text-accent-foreground'
-								}`}
+								className={cn(
+									'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
+									tone === 'ai'
+										? isSelected
+											? 'bg-[hsl(var(--info)/0.18)] text-popover-foreground ring-1 ring-[hsl(var(--info)/0.24)]'
+											: 'bg-[hsl(var(--info)/0.08)] text-popover-foreground hover:bg-[hsl(var(--info)/0.14)]'
+										: isSelected
+											? 'bg-accent text-accent-foreground'
+											: 'text-popover-foreground hover:bg-accent/90 hover:text-accent-foreground'
+								)}
 								onMouseEnter={() => setSelectedIndex(index)}
 								onMouseDown={(e) => {
 									e.preventDefault();
 									executeCommand(item);
 								}}
 							>
-								<Icon
-									className={`h-4 w-4 shrink-0 ${isAiItem ? 'text-violet-500' : 'text-muted-foreground'}`}
-								/>
-								<span>{item.label}</span>
+								<span
+									className={cn(
+										'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
+										tone === 'ai'
+											? isSelected
+												? 'bg-[hsl(var(--info)/0.24)] text-[hsl(var(--info))]'
+												: 'bg-[hsl(var(--info)/0.16)] text-[hsl(var(--info))]'
+											: isSelected
+												? 'bg-background/70 text-foreground shadow-sm dark:bg-background/40'
+												: 'text-foreground/60'
+									)}
+								>
+									<Icon className="h-4 w-4 shrink-0" />
+								</span>
+								<span className="truncate">{item.label}</span>
 							</button>
 						</React.Fragment>
 					);
