@@ -15,12 +15,18 @@
  */
 
 import { Annotation } from '@langchain/langgraph';
+import type { AgentHistoryMessage } from '../../core/types';
 
 export const ResearcherState = Annotation.Root({
 	/** Raw user input. Injected by the service before graph execution. */
 	prompt: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
+	}),
+
+	history: Annotation<AgentHistoryMessage[]>({
+		reducer: (_a, b) => b,
+		default: () => [],
 	}),
 
 	/** Intent classification produced by the understand node. */

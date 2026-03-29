@@ -31,6 +31,7 @@ const definition: AgentDefinition = {
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
 		return {
 			prompt: ctx.prompt,
+			history: ctx.history,
 			completion: '',
 			apiKey: ctx.apiKey,
 			modelName: ctx.modelName,

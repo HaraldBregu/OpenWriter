@@ -10,6 +10,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { BaseMessage } from '@langchain/core/messages';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { extractTokenFromChunk } from '../../../shared/ai-utils';
+import { toLangChainHistoryMessages } from '../../core/history';
 import type { TextWriterState } from './state';
 import SYSTEM_PROMPT from './WRITE_SYSTEM.md?raw';
 
@@ -19,6 +20,7 @@ export async function writeNode(
 ): Promise<Partial<typeof TextWriterState.State>> {
 	const messages: BaseMessage[] = [
 		new SystemMessage(SYSTEM_PROMPT),
+		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(state.prompt),
 	];
 

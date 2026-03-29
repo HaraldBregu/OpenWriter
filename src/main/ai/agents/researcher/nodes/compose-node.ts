@@ -11,6 +11,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
+import { toLangChainHistoryMessages } from '../../../core/history';
 import type { ResearcherState } from '../state';
 import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
@@ -62,6 +63,7 @@ export async function composeNode(
 ): Promise<Partial<typeof ResearcherState.State>> {
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
+		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(
 			buildHumanMessage(
 				state.prompt,

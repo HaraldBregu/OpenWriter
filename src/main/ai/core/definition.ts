@@ -7,6 +7,7 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
+import type { AgentHistoryMessage } from './types';
 // AgentDefinitionInfo is the canonical IPC-safe snapshot type shared across
 // all three process contexts (main, preload, renderer).
 export type { AgentDefinitionInfo } from '../../../shared/types';
@@ -51,6 +52,8 @@ export interface GraphInputContext {
 	temperature: number;
 	/** Optional task-level metadata forwarded from the submission. */
 	metadata?: Record<string, unknown>;
+	/** Prior chat turns already persisted for this conversation. */
+	history: AgentHistoryMessage[];
 }
 
 // ---------------------------------------------------------------------------

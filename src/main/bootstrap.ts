@@ -84,6 +84,10 @@ export function bootstrapServices(): BootstrapResult {
 	const windowFactory = new WindowFactory(logger);
 	container.register('windowFactory', windowFactory);
 
+	// Create WindowContextManager for managing per-window service instances
+	const windowContextManager = new WindowContextManager(container, eventBus);
+	container.register('windowContextManager', windowContextManager);
+
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
 	agentRegistry.register(TextCompleterAgent);
@@ -99,7 +103,7 @@ export function bootstrapServices(): BootstrapResult {
 	container.register('researcherService', new ResearcherService(providerResolver, logger));
 	for (const def of agentRegistry.list()) {
 		taskHandlerRegistry.register(
-			new AgentTaskHandler(def.id, agentRegistry, providerResolver, logger)
+			new AgentTaskHandler(def.id, agentRegistry, providerResolver, windowContextManager, logger)
 		);
 	}
 
@@ -114,10 +118,6 @@ export function bootstrapServices(): BootstrapResult {
 		new TaskReactionBus(taskReactionRegistry, eventBus, logger)
 	);
 	taskReactionBus.initialize();
-
-	// Create WindowContextManager for managing per-window service instances
-	const windowContextManager = new WindowContextManager(container, eventBus);
-	container.register('windowContextManager', windowContextManager);
 
 	// Document extractor registry — Strategy pattern for file-type-specific text extraction
 	const extractorRegistry = container.register('extractorRegistry', new ExtractorRegistry());

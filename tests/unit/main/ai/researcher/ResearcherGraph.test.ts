@@ -28,6 +28,7 @@ describe('evaluateNode', () => {
 		const result = await evaluateNode(
 			{
 				prompt: 'Hello how are you?',
+				history: [],
 				intent: 'A casual greeting.',
 				strategy: '',
 				requiresResearch: false,

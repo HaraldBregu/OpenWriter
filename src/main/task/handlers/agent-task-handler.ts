@@ -7,13 +7,23 @@
  * fully decoupled from each other.
  */
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
-import type { AgentDefinition, AgentRegistry, AgentStreamEvent, NodeModelMap } from '../../ai';
+import type {
+	AgentDefinition,
+	AgentHistoryMessage,
+	AgentRegistry,
+	AgentStreamEvent,
+	NodeModelMap,
+} from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';
+import type { WindowContextManager } from '../../core/window-context';
+import type { Workspace } from '../../workspace';
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)
@@ -25,6 +35,7 @@ export interface AgentTaskInput {
 	modelId?: string;
 	temperature?: number;
 	maxTokens?: number;
+	windowId?: number;
 }
 
 export interface AgentTaskOutput {
@@ -44,6 +55,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		private readonly agentId: string,
 		private readonly agentsRegistry: AgentRegistry,
 		private readonly providerResolver: ProviderResolver,
+		private readonly windowContextManager: WindowContextManager,
 		private readonly logger?: LoggerService
 	) {
 		this.type = `agent-${agentId}`;
@@ -121,6 +133,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			}
 		}
 
+		const history = await this.loadHistory(input, metadata);
+
 		// 4. Stream via executor directly
 		let content = '';
 		let tokenCount = 0;
@@ -137,6 +151,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			provider.modelName,
 			provider.apiKey,
 			resolvedTemperature,
+			history,
 			metadata
 		);
 
@@ -154,7 +169,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			systemPrompt: '',
 			temperature: resolvedTemperature,
 			maxTokens: resolvedMaxTokens,
-			history: [],
+			history,
 			prompt: input.prompt,
 			signal,
 			nodeModels,
@@ -240,6 +255,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		modelName: string,
 		apiKey: string,
 		temperature: number,
+		history: AgentHistoryMessage[],
 		metadata?: Record<string, unknown>
 	): string | undefined {
 		if (!def.buildGraphInput || !def.extractThinkingLabel) {
@@ -252,9 +268,107 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			modelName,
 			providerId,
 			temperature,
+			history,
 			metadata,
 		});
 
 		return def.extractThinkingLabel(initialState)?.trim() || undefined;
 	}
+
+	private async loadHistory(
+		input: AgentTaskInput,
+		metadata?: Record<string, unknown>
+	): Promise<AgentHistoryMessage[]> {
+		const windowId = input.windowId;
+		const documentId =
+			typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : undefined;
+		const chatId = typeof metadata?.chatId === 'string' ? metadata.chatId.trim() : undefined;
+
+		if (!windowId || !documentId || !chatId) {
+			return [];
+		}
+
+		const windowContext = this.windowContextManager.tryGet(windowId);
+		if (!windowContext) {
+			return [];
+		}
+
+		let documentDir: string;
+		try {
+			const workspace = windowContext.container.get<Workspace>('workspaceManager');
+			documentDir = workspace.getDocumentFolderPath(documentId);
+		} catch (error) {
+			this.logger?.warn(
+				'AgentTaskHandler',
+				`Skipping chat history for ${this.type}: ${error instanceof Error ? error.message : String(error)}`
+			);
+			return [];
+		}
+
+		const chatsDir = path.resolve(documentDir, 'chats');
+		const sessionDir = path.resolve(chatsDir, chatId);
+		if (!sessionDir.startsWith(`${chatsDir}${path.sep}`)) {
+			this.logger?.warn('AgentTaskHandler', `Rejected chat history path outside chats dir: ${chatId}`);
+			return [];
+		}
+
+		try {
+			const raw = await fs.readFile(path.join(sessionDir, 'messages.json'), 'utf-8');
+			const parsed = JSON.parse(raw) as { messages?: unknown };
+			return toAgentHistoryMessages(parsed.messages, input.prompt);
+		} catch (error) {
+			if ((error as NodeJS.ErrnoException | undefined)?.code !== 'ENOENT') {
+				this.logger?.warn(
+					'AgentTaskHandler',
+					`Failed to load chat history for ${documentId}/${chatId}: ${error instanceof Error ? error.message : String(error)}`
+				);
+			}
+			return [];
+		}
+	}
+}
+
+function toAgentHistoryMessages(
+	messages: unknown,
+	currentPrompt: string
+): AgentHistoryMessage[] {
+	if (!Array.isArray(messages)) {
+		return [];
+	}
+
+	const history: AgentHistoryMessage[] = [];
+
+	for (const message of messages) {
+		if (!message || typeof message !== 'object') {
+			continue;
+		}
+
+		const entry = message as Record<string, unknown>;
+		if (entry.role !== 'user' && entry.role !== 'assistant') {
+			continue;
+		}
+		if (entry.status !== 'completed') {
+			continue;
+		}
+		if (typeof entry.content !== 'string') {
+			continue;
+		}
+
+		const content = entry.content.trim();
+		if (!content) {
+			continue;
+		}
+
+		history.push({ role: entry.role, content });
+	}
+
+	const trimmedPrompt = currentPrompt.trim();
+	if (trimmedPrompt) {
+		const lastMessage = history.at(-1);
+		if (lastMessage?.role === 'user' && lastMessage.content === trimmedPrompt) {
+			history.pop();
+		}
+	}
+
+	return history;
 }

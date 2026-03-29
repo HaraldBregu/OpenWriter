@@ -8,6 +8,7 @@
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { toLangChainHistoryMessages } from '../../../core/history';
 import type { ResearcherState } from '../state';
 import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
@@ -21,7 +22,11 @@ export async function understandNode(
 	state: typeof ResearcherState.State,
 	model: BaseChatModel
 ): Promise<Partial<typeof ResearcherState.State>> {
-	const messages = [new SystemMessage(SYSTEM_PROMPT), new HumanMessage(state.prompt)];
+	const messages = [
+		new SystemMessage(SYSTEM_PROMPT),
+		...toLangChainHistoryMessages(state.history),
+		new HumanMessage(state.prompt),
+	];
 
 	const response = await model.invoke(messages);
 	const intent = typeof response.content === 'string' ? response.content.trim() : '';
