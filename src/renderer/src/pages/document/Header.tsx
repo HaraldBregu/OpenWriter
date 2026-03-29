@@ -129,6 +129,15 @@ const Header: React.FC<HeaderProps> = ({
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">
+					<HistoryMenu
+						entries={historyEntries}
+						currentEntryId={currentHistoryEntryId}
+						canUndo={canUndo}
+						canRedo={canRedo}
+						onUndo={onUndo}
+						onRedo={onRedo}
+						onRestoreEntry={onRestoreHistoryEntry}
+					/>
 					<AppButton
 						type="button"
 						variant="header-icon"
