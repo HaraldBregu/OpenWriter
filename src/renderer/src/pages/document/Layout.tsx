@@ -9,8 +9,9 @@ import { useTask } from '@/hooks/use-task';
 import Header from './Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
+import { useChatPersistence } from './panels/chat/hooks';
 import { useEditorInstance, useSidebarVisibility } from './providers';
-import { useDocumentDispatch, useChatPersistence, useDocumentHistory } from './hooks';
+import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 

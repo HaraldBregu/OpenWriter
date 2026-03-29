@@ -485,7 +485,6 @@ src/renderer/src/pages/
       state.ts
     hooks/
       index.ts
-      use-chat-persistence.ts
       use-document-actions.ts
       use-document-dispatch.ts
       use-document-history.ts
@@ -496,6 +495,8 @@ src/renderer/src/pages/
       chat/
         Provider.tsx
         index.tsx
+        hooks/
+          use-chat-persistence.ts
         components/
           Header.tsx
           Input.tsx
