@@ -38,6 +38,8 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 	onEnhanceWithAssistant,
 	onTextSubmit,
 	onImageSubmit,
+	onUndo,
+	onRedo,
 }) => {
 	return (
 		<div className="h-full flex flex-col min-w-0">
