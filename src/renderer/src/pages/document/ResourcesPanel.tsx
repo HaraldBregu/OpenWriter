@@ -79,7 +79,12 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ title, action, childr
 	</section>
 );
 
-const ResourceInfoCard: React.FC<ResourceInfoCardProps> = ({ icon: Icon, label, value, valueClassName }) => (
+const ResourceInfoCard: React.FC<ResourceInfoCardProps> = ({
+	icon: Icon,
+	label,
+	value,
+	valueClassName,
+}) => (
 	<div className="rounded-2xl border border-border/60 bg-background/75 px-3.5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
 		<div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
 			{label}
@@ -109,12 +114,18 @@ const ResourceActionButton: React.FC<ResourceActionButtonProps> = ({
 		<div
 			className={cn(
 				'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-muted/70 text-muted-foreground transition-colors group-hover:text-foreground',
-				danger && 'group-hover:border-destructive/20 group-hover:bg-destructive/10 group-hover:text-destructive'
+				danger &&
+					'group-hover:border-destructive/20 group-hover:bg-destructive/10 group-hover:text-destructive'
 			)}
 		>
 			<Icon className="h-4 w-4" aria-hidden="true" />
 		</div>
-		<span className={cn('text-sm font-medium text-foreground', danger && 'group-hover:text-destructive')}>
+		<span
+			className={cn(
+				'text-sm font-medium text-foreground',
+				danger && 'group-hover:text-destructive'
+			)}
+		>
 			{label}
 		</span>
 	</button>
@@ -291,7 +302,9 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										<Image className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
 									</div>
 									<div className="space-y-1">
-										<p className="text-sm font-medium text-foreground">{t('configSidebar.noImages')}</p>
+										<p className="text-sm font-medium text-foreground">
+											{t('configSidebar.noImages')}
+										</p>
 										<p className="text-xs text-muted-foreground">
 											{t('configSidebar.uploadImage')}
 										</p>

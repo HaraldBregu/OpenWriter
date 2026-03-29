@@ -141,8 +141,8 @@ const TextEditor = React.memo(
 						onImageFileSelect: (file) => onImageFileSelectRef.current?.(file),
 						onImageInsert: (file, insertAtPos) =>
 							handleImageFileInsertRef.current(file, insertAtPos),
-					onUndo: () => onUndoRef.current?.(),
-					onRedo: () => onRedoRef.current?.(),
+						onUndo: () => onUndoRef.current?.(),
+						onRedo: () => onRedoRef.current?.(),
 					}),
 				[]
 			);
