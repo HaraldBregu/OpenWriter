@@ -12,7 +12,7 @@ import ResourcesPanel from './ResourcesPanel';
 import ChatPanel from './ChatPanel';
 import EditorPanel from './EditorPanel';
 import { useEditorInstance, useSidebarVisibility, useChatState, useChatDispatch } from './context';
-import { useDocumentDispatch, useChatPersistence } from './hooks';
+import { useDocumentDispatch, useChatPersistence, useDocumentHistory, type HistoryEntry } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
