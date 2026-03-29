@@ -500,7 +500,6 @@ src/renderer/src/pages/
           Input.tsx
           Message.tsx
           index.ts
-          use-chat-persistence.ts
         context/
           actions.ts
           contexts.ts
