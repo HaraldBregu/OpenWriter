@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 interface ChatMessageProps {
 	readonly id: string;
 	readonly content: string;
+	readonly stateMessage?: string;
 	readonly role: 'user' | 'assistant';
 	readonly timestamp: Date | string;
 	readonly status?: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
@@ -19,6 +20,7 @@ function formatTime(timestamp: Date | string): string {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
 	content,
+	stateMessage,
 	role,
 	timestamp,
 	status,
@@ -29,6 +31,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 		!isUser &&
 		!content.trim() &&
 		(status === 'idle' || status === 'queued' || status === 'running');
+	const visibleStateMessage = stateMessage?.trim() || (isThinking ? 'Thinking' : undefined);
 
 	if (isUser) {
 		return (
@@ -46,9 +49,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 				<div className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
 					Assistant
 				</div>
-				{isThinking && (
+				{visibleStateMessage && (
 					<div className="mb-1 inline-flex items-center gap-1 text-xs text-muted-foreground/90">
-						<span>Thinking</span>
+						<span>{visibleStateMessage}</span>
 						<ChevronRight className="h-3.5 w-3.5" />
 					</div>
 				)}

@@ -58,6 +58,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 				message: {
 					id: userMessageId,
 					content,
+					stateMessage: undefined,
 					role: 'user',
 					timestamp,
 					taskId: null,
@@ -70,6 +71,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 				message: {
 					id: assistantMessageId,
 					content: '',
+					stateMessage: undefined,
 					role: 'assistant',
 					timestamp,
 					taskId: null,
@@ -120,6 +122,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 								key={message.id}
 								id={message.id}
 								content={message.content}
+								stateMessage={message.stateMessage}
 								role={message.role}
 								timestamp={message.timestamp}
 								status={message.status}

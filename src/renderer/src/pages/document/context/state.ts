@@ -15,6 +15,7 @@ export interface ChatSessionFile {
 export interface DocumentChatMessage {
 	readonly id: string;
 	readonly content: string;
+	readonly stateMessage?: string;
 	readonly role: 'user' | 'assistant';
 	readonly timestamp: string;
 	readonly taskId: string | null;

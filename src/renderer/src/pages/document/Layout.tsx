@@ -89,6 +89,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 		const taskId = chatActiveTaskId;
 		const messageId = chatActiveMessageId;
+		const getStateMessagePatch = (snapshot: TaskSnapshot) =>
+			snapshot.stateMessage !== undefined ? { stateMessage: snapshot.stateMessage } : {};
 
 		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
 			const metadataDocumentId = snapshot.metadata?.documentId;
@@ -106,27 +108,23 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						type: 'CHAT_MESSAGE_UPDATED',
 						id: messageId,
 						patch: {
-							content:
-								snapshot.stateMessage ?? t('agenticPanel.researcherThinking', 'Researching...'),
 							taskId,
 							status: 'queued',
+							...getStateMessagePatch(snapshot),
 						},
 					});
 					break;
 				case 'running':
-					if (snapshot.content) {
-						chatDispatch({
-							type: 'CHAT_MESSAGE_UPDATED',
-							id: messageId,
-							patch: { content: snapshot.content, taskId, status: 'running' },
-						});
-					} else if (snapshot.stateMessage) {
-						chatDispatch({
-							type: 'CHAT_MESSAGE_UPDATED',
-							id: messageId,
-							patch: { content: snapshot.stateMessage, taskId, status: 'running' },
-						});
-					}
+					chatDispatch({
+						type: 'CHAT_MESSAGE_UPDATED',
+						id: messageId,
+						patch: {
+							taskId,
+							status: 'running',
+							...(snapshot.content ? { content: snapshot.content } : {}),
+							...getStateMessagePatch(snapshot),
+						},
+					});
 					break;
 				case 'completed': {
 					const output = snapshot.result as ResearcherTaskOutput | undefined;
@@ -140,6 +138,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								t('agenticPanel.emptyResponse', 'No response received.'),
 							taskId,
 							status: 'completed',
+							...getStateMessagePatch(snapshot),
 						},
 					});
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
@@ -155,6 +154,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
 							taskId,
 							status: 'error',
+							...getStateMessagePatch(snapshot),
 						},
 					});
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
@@ -168,6 +168,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
 							taskId,
 							status: 'cancelled',
+							...getStateMessagePatch(snapshot),
 						},
 					});
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
