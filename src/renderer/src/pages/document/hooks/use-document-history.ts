@@ -11,7 +11,7 @@ import {
 
 export type { HistoryEntry };
 
-const SNAPSHOT_DEBOUNCE_MS = 5000;
+const SNAPSHOT_DEBOUNCE_MS = 1500;
 const RESTORE_COOLDOWN_MS = 200;
 
 interface UseDocumentHistoryOptions {
@@ -148,6 +148,9 @@ export function useDocumentHistory({
 
 	useEffect(
 		() => () => {
+			if (!isRestoringRef.current) {
+				debouncedSnapshot.flush();
+			}
 			debouncedSnapshot.cancel();
 		},
 		[debouncedSnapshot]

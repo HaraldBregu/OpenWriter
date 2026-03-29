@@ -316,6 +316,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	useEffect(() => {
 		return () => {
+			debouncedSave.flush();
 			debouncedSave.cancel();
 		};
 	}, [debouncedSave]);

@@ -4,12 +4,19 @@ import { useDocumentHistory } from '../../../../../src/renderer/src/pages/docume
 describe('useDocumentHistory', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		jest.useFakeTimers();
 
 		Object.assign(window.workspace, {
 			getDocumentPath: jest.fn().mockResolvedValue('/workspace/output/documents/doc-1'),
 			onOutputFileChange: jest.fn(),
 			listDir: jest.fn(),
+			createFolder: jest.fn().mockResolvedValue(undefined),
+			writeFile: jest.fn().mockResolvedValue(undefined),
 		});
+	});
+
+	afterEach(() => {
+		jest.useRealTimers();
 	});
 
 	it('reloads header history when history files are removed from the document folder', async () => {
@@ -70,5 +77,121 @@ describe('useDocumentHistory', () => {
 		await waitFor(() => {
 			expect(result.current.entries).toHaveLength(0);
 		});
+	});
+
+	it('stores the latest editor content after the debounce window', async () => {
+		const onRestore = jest.fn();
+		(window.workspace.onOutputFileChange as jest.Mock).mockReturnValue(jest.fn());
+		(window.workspace.listDir as jest.Mock).mockResolvedValue([]);
+
+		const { rerender } = renderHook(
+			(props: { documentId: string; content: string; title: string; loaded: boolean }) =>
+				useDocumentHistory({
+					...props,
+					onRestore,
+				}),
+			{
+				initialProps: {
+					documentId: 'doc-1',
+					content: 'Initial draft',
+					title: 'Draft',
+					loaded: false,
+				},
+			}
+		);
+
+		await waitFor(() => {
+			expect(window.workspace.getDocumentPath).toHaveBeenCalledWith('doc-1');
+		});
+
+		rerender({
+			documentId: 'doc-1',
+			content: 'Initial draft',
+			title: 'Draft',
+			loaded: true,
+		});
+		rerender({
+			documentId: 'doc-1',
+			content: 'Updated draft from editor',
+			title: 'Draft',
+			loaded: true,
+		});
+
+		expect(window.workspace.writeFile).not.toHaveBeenCalled();
+
+		await act(async () => {
+			jest.advanceTimersByTime(1499);
+		});
+
+		expect(window.workspace.writeFile).not.toHaveBeenCalled();
+
+		await act(async () => {
+			jest.advanceTimersByTime(1);
+		});
+
+		await waitFor(() => {
+			expect(window.workspace.writeFile).toHaveBeenCalledTimes(1);
+		});
+
+		expect(window.workspace.writeFile).toHaveBeenCalledWith(
+			expect.objectContaining({
+				filePath: expect.stringContaining('/history/'),
+				content: expect.stringContaining('Updated draft from editor'),
+			})
+		);
+	});
+
+	it('flushes a pending history snapshot on unmount so recent typing is not lost', async () => {
+		const onRestore = jest.fn();
+		(window.workspace.onOutputFileChange as jest.Mock).mockReturnValue(jest.fn());
+		(window.workspace.listDir as jest.Mock).mockResolvedValue([]);
+
+		const { rerender, unmount } = renderHook(
+			(props: { documentId: string; content: string; title: string; loaded: boolean }) =>
+				useDocumentHistory({
+					...props,
+					onRestore,
+				}),
+			{
+				initialProps: {
+					documentId: 'doc-1',
+					content: 'Initial draft',
+					title: 'Draft',
+					loaded: false,
+				},
+			}
+		);
+
+		await waitFor(() => {
+			expect(window.workspace.getDocumentPath).toHaveBeenCalledWith('doc-1');
+		});
+
+		rerender({
+			documentId: 'doc-1',
+			content: 'Initial draft',
+			title: 'Draft',
+			loaded: true,
+		});
+		rerender({
+			documentId: 'doc-1',
+			content: 'Unsaved typing',
+			title: 'Draft',
+			loaded: true,
+		});
+
+		await act(async () => {
+			unmount();
+		});
+
+		await waitFor(() => {
+			expect(window.workspace.writeFile).toHaveBeenCalledTimes(1);
+		});
+
+		expect(window.workspace.writeFile).toHaveBeenCalledWith(
+			expect.objectContaining({
+				filePath: expect.stringContaining('/history/'),
+				content: expect.stringContaining('Unsaved typing'),
+			})
+		);
 	});
 });
