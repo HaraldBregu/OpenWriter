@@ -67,6 +67,8 @@ export interface TextEditorProps {
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
 	onEditorReady?: (editor: Editor | null) => void;
+	onUndo?: () => void;
+	onRedo?: () => void;
 }
 
 function readFileAsDataUri(file: File): Promise<string> {
