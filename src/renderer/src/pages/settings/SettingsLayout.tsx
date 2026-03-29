@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
 
-const LINK_BASE = 'block px-3 py-1.5 rounded-md text-sm transition-colors';
+const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-3 sm:py-1.5';
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
 const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-accent/50';
 
@@ -25,10 +25,10 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex h-full w-full mx-auto pl-6 pr-0 py-8">
+		<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
-				<div className="px-3 pt-12 pb-4 space-y-0.5">
+				<div className="space-y-0.5 px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
 					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}

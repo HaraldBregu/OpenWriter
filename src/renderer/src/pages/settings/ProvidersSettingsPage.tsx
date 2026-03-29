@@ -579,7 +579,7 @@ const ProvidersSettingsPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="w-full max-w-2xl p-6">
+		<div className="w-full max-w-2xl p-4 sm:p-6">
 			<h1 className="text-xl font-normal mb-6">{t('settings.providers.title', 'Providers')}</h1>
 			<p className="text-sm text-muted-foreground -mt-4 mb-6">
 				{t(
