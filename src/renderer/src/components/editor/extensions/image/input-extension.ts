@@ -17,7 +17,7 @@ export interface ImageExtensionOptions {
 	 *
 	 * Defaults to converting the file to a data URI and calling setImage.
 	 */
-	onImageInsert: ImageInsertHandler;
+	onImageInsert?: ImageInsertHandler;
 }
 
 declare module '@tiptap/core' {
@@ -35,17 +35,7 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	draggable: true,
 
 	addOptions() {
-		return {
-			onImageInsert: (file, _insertAtPos) => {
-				fileToDataUri(file)
-					.then((src) => {
-						this.editor.commands.setImage({ src, alt: file.name });
-					})
-					.catch((err: unknown) => {
-						console.error('[ImageExtension] Failed to process image file:', err);
-					});
-			},
-		};
+		return {};
 	},
 
 	addStorage() {
@@ -97,7 +87,19 @@ export const ImageExtension = Node.create<ImageExtensionOptions>({
 	},
 
 	addProseMirrorPlugins() {
-		return [createImageDropPastePlugin(this.options.onImageInsert)];
+		const onImageInsert =
+			this.options.onImageInsert ??
+			((file: File, _insertAtPos: number | null) => {
+				fileToDataUri(file)
+					.then((src) => {
+						this.editor.commands.setImage({ src, alt: file.name });
+					})
+					.catch((err: unknown) => {
+						console.error('[ImageExtension] Failed to process image file:', err);
+					});
+			});
+
+		return [createImageDropPastePlugin(onImageInsert)];
 	},
 
 	addNodeView() {
