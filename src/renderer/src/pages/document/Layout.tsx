@@ -638,6 +638,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				onSearch={handleSearch}
 				onClearSearch={handleClearSearch}
 				onOpenFolder={handleOpenFolder}
+				historyEntries={historyEntries}
+				currentHistoryEntryId={currentHistoryEntryId}
+				canUndo={canUndo}
+				canRedo={canRedo}
+				onUndo={handleUndo}
+				onRedo={handleRedo}
+				onRestoreHistoryEntry={handleRestoreHistoryEntry}
 			/>
 
 			{/* Editor + Right Sidebar */}
