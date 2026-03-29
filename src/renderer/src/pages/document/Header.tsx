@@ -19,6 +19,8 @@ import {
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 import { useSidebarVisibility } from './context';
+import HistoryMenu from './HistoryMenu';
+import type { HistoryEntry } from './history-service';
 
 interface HeaderProps {
 	readonly title: string;
