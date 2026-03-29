@@ -58,6 +58,8 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 							onImageSubmit={onImageSubmit}
 							documentId={documentId}
 							onEditorReady={onEditorReady}
+							onUndo={onUndo}
+							onRedo={onRedo}
 						/>
 					)}
 				</div>
