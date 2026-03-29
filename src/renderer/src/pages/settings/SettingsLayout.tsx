@@ -25,34 +25,26 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex min-h-full w-full items-center justify-center p-6">
-			<div className="flex w-full max-w-6xl overflow-hidden rounded-3xl border bg-card shadow-sm max-h-[calc(100svh-7rem)] min-h-[36rem]">
-				{/* Left column — navigation */}
-				<div
-					className="w-64 shrink-0 overflow-y-auto border-r bg-muted/30"
-					role="navigation"
-					aria-label={t('settings.title')}
-				>
-					<div className="px-3 py-4 space-y-0.5">
-						{NAV_ITEMS.map((item) => (
-							<NavLink
-								key={item.path}
-								to={item.path}
-								end
-								className={({ isActive }) =>
-									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
-								}
-							>
-								{t(item.labelKey)}
-							</NavLink>
-						))}
-					</div>
+		<div className="flex h-full w-full mx-auto">
+			{/* Left column — navigation (1/4 width) */}
+			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+				<div className="px-3 py-4 space-y-0.5">
+					{NAV_ITEMS.map((item) => (
+						<NavLink
+							key={item.path}
+							to={item.path}
+							end
+							className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
+						>
+							{t(item.labelKey)}
+						</NavLink>
+					))}
 				</div>
+			</div>
 
-				{/* Right column — content */}
-				<div className="flex-1 overflow-y-auto">
-					<Outlet />
-				</div>
+			{/* Right column — content (3/4 width) */}
+			<div className="w-full overflow-y-auto">
+				<Outlet />
 			</div>
 		</div>
 	);
