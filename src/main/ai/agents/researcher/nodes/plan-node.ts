@@ -44,7 +44,7 @@ export async function planNode(
 ): Promise<Partial<typeof ResearcherState.State>> {
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
-		new HumanMessage(buildHumanMessage(state.prompt, state.intent)),
+		new HumanMessage(buildHumanMessage(state.prompt, state.intent, state.strategy)),
 	];
 
 	const response = await model.invoke(messages);
