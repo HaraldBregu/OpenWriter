@@ -155,6 +155,8 @@ It is responsible for:
 
 - rendering the current chat messages
 - creating a new session id when a conversation starts
+- loading the latest persisted session for the current document
+- persisting session changes back to disk
 - appending user and placeholder assistant messages
 - binding the active task id to the active assistant message
 - selecting between the `researcher` and `inventor` agents
@@ -531,9 +533,10 @@ It only:
 
 ### Hooks actively used in the current `Page` + `Layout` flow
 
-- `useChatPersistence`
 - `useDocumentHistory`
 - `useDocumentDispatch`
+
+Chat persistence is part of `panels/chat/index.tsx` now rather than a standalone shared hook.
 
 ### Hooks that expose document-context abstractions
 
