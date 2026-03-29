@@ -58,6 +58,7 @@ interface SessionEntry {
 /** Temperatures tuned per node role. */
 const NODE_TEMPERATURES = {
 	understand: 0.1,
+	evaluate: 0.2,
 	plan: 0.2,
 	research: 0.3,
 } as const;
