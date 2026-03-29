@@ -1,10 +1,5 @@
-import type { TaskPriority } from '../../shared/types';
-export type { TaskPriority };
-
-/**
- * Task status enumeration.
- */
-export type TaskStatus = 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
+import type { TaskPriority, TaskStatus } from '../../shared/types';
+export type { TaskPriority, TaskStatus };
 
 /**
  * Options for task submission.
@@ -67,6 +62,11 @@ export interface ActiveTask {
 	 * Task start timestamp
 	 */
 	startedAt?: number;
+
+	/**
+	 * Human-readable task state shown in the UI.
+	 */
+	stateMessage?: string;
 
 	/**
 	 * Task completion timestamp

@@ -50,6 +50,12 @@ export const ResearcherState = Annotation.Root({
 		default: () => '',
 	}),
 
+	/** Human-readable graph phase shown in the task UI. */
+	stateMessage: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
 	/** Final composed response produced by the compose node. */
 	response: Annotation<string>({
 		reducer: (_a, b) => b,

@@ -24,6 +24,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
 		type: t.type,
 		status: t.status,
 		priority: t.priority,
+		stateMessage: t.stateMessage,
 		startedAt: t.startedAt,
 		completedAt: t.completedAt,
 		windowId: t.windowId,

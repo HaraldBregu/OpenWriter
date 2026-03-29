@@ -6,6 +6,7 @@ import type { TaskStatus } from '../../../shared/types';
 export interface UseTaskListenerReturn<TResult = unknown> {
 	taskId: string | null;
 	status: TaskStatus | null;
+	stateMessage: string | undefined;
 	error: string | undefined;
 	result: TResult | undefined;
 	isIdle: boolean;
@@ -28,6 +29,7 @@ export function useTaskListener<TResult = unknown>(
 ): UseTaskListenerReturn<TResult> {
 	const [taskId, setTaskId] = useState<string | null>(null);
 	const [status, setStatus] = useState<TaskStatus | null>(null);
+	const [stateMessage, setStateMessage] = useState<string | undefined>(undefined);
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [result, setResult] = useState<TResult | undefined>(undefined);
 
@@ -45,6 +47,7 @@ export function useTaskListener<TResult = unknown>(
 			if (active) {
 				setTaskId(active.taskId);
 				setStatus(active.status);
+				setStateMessage(active.stateMessage);
 			}
 		});
 	}, [taskType]);
@@ -54,6 +57,7 @@ export function useTaskListener<TResult = unknown>(
 		return subscribeToTaskType(taskType, (newTaskId: string) => {
 			setTaskId(newTaskId);
 			setStatus('queued');
+			setStateMessage('Queued');
 			setError(undefined);
 			setResult(undefined);
 		});
@@ -66,12 +70,14 @@ export function useTaskListener<TResult = unknown>(
 		const existing = getTaskSnapshot(taskId);
 		if (existing) {
 			setStatus(existing.status as TaskStatus);
+			setStateMessage(existing.stateMessage);
 			if (existing.error !== undefined) setError(existing.error);
 			if (existing.result !== undefined) setResult(existing.result as TResult);
 		}
 
 		return subscribeToTask(taskId, (snap: TaskSnapshot) => {
 			setStatus(snap.status as TaskStatus);
+			setStateMessage(snap.stateMessage);
 			setError(snap.error);
 			setResult(snap.result as TResult | undefined);
 		});
@@ -81,6 +87,7 @@ export function useTaskListener<TResult = unknown>(
 		() => ({
 			taskId,
 			status,
+			stateMessage,
 			error,
 			result,
 			isIdle: taskId === null,
@@ -90,6 +97,6 @@ export function useTaskListener<TResult = unknown>(
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
 		}),
-		[taskId, status, error, result]
+		[taskId, status, stateMessage, error, result]
 	);
 }

@@ -9,6 +9,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { ResearcherState } from '../state';
+import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
 	'You are a research analyst. Classify the user query intent in 1-2 concise sentences. ' +
@@ -25,5 +26,8 @@ export async function understandNode(
 	const response = await model.invoke(messages);
 	const intent = typeof response.content === 'string' ? response.content.trim() : '';
 
-	return { intent };
+	return {
+		intent,
+		stateMessage: RESEARCHER_STATE_MESSAGES.EVALUATE,
+	};
 }

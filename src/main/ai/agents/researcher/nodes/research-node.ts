@@ -11,6 +11,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { ResearcherState } from '../state';
+import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
 	'You are a knowledgeable research expert. Synthesise comprehensive, accurate knowledge ' +
@@ -46,5 +47,8 @@ export async function researchNode(
 	const response = await model.invoke(messages);
 	const research = typeof response.content === 'string' ? response.content.trim() : '';
 
-	return { research };
+	return {
+		research,
+		stateMessage: RESEARCHER_STATE_MESSAGES.COMPOSE,
+	};
 }

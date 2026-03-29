@@ -10,6 +10,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { ResearcherState } from '../state';
+import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
 	'You are a research strategist. Given a user query, its classified intent, ' +
@@ -51,5 +52,8 @@ export async function planNode(
 	const content = typeof response.content === 'string' ? response.content : '';
 	const plan = parsePlanFromResponse(content, state.prompt);
 
-	return { plan };
+	return {
+		plan,
+		stateMessage: RESEARCHER_STATE_MESSAGES.RESEARCH,
+	};
 }

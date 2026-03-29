@@ -58,6 +58,7 @@ export interface TaskInfo {
 	type: string;
 	status: TaskStatus;
 	priority: TaskPriority;
+	stateMessage?: string;
 	startedAt?: number;
 	completedAt?: number;
 	windowId?: number;
@@ -74,60 +75,55 @@ export interface TaskQueueStatus {
 	completed: number;
 }
 
+interface TaskEventContext {
+	taskId: string;
+	metadata?: Record<string, unknown>;
+	stateMessage?: string;
+}
+
 export type TaskEvent =
 	| {
 			type: 'queued';
 			data: {
-				taskId: string;
 				taskType: string;
 				position: number;
-				metadata?: Record<string, unknown>;
-			};
+			} & TaskEventContext;
 	  }
 	| {
 			type: 'started';
-			data: {
-				taskId: string;
-				metadata?: Record<string, unknown>;
-			};
+			data: TaskEventContext;
 	  }
 	| {
 			type: 'progress';
 			data: {
-				taskId: string;
 				percent: number;
 				message?: string;
 				detail?: unknown;
-				metadata?: Record<string, unknown>;
-			};
+			} & TaskEventContext;
 	  }
 	| {
 			type: 'completed';
 			data: {
-				taskId: string;
 				result: unknown;
 				durationMs: number;
-				metadata?: Record<string, unknown>;
-			};
+			} & TaskEventContext;
 	  }
 	| {
 			type: 'error';
-			data: { taskId: string; message: string; code: string; metadata?: Record<string, unknown> };
+			data: { message: string; code: string } & TaskEventContext;
 	  }
-	| { type: 'cancelled'; data: { taskId: string; metadata?: Record<string, unknown> } }
-	| { type: 'stream'; data: { taskId: string; data: string; metadata?: Record<string, unknown> } }
+	| { type: 'cancelled'; data: TaskEventContext }
+	| { type: 'stream'; data: { data: string } & TaskEventContext }
 	| {
 			type: 'priority-changed';
 			data: {
-				taskId: string;
 				priority: TaskPriority;
 				position: number;
-				metadata?: Record<string, unknown>;
-			};
+			} & TaskEventContext;
 	  }
 	| {
 			type: 'queue-position';
-			data: { taskId: string; position: number; metadata?: Record<string, unknown> };
+			data: { position: number } & TaskEventContext;
 	  };
 
 // ---- Indexing -------------------------------------------------------------

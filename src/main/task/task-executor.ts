@@ -35,6 +35,14 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 	low: 1,
 };
 
+const TASK_STATE_MESSAGE = {
+	QUEUED: 'Queued',
+	RUNNING: 'Running',
+	COMPLETED: 'Completed',
+	FAILED: 'Failed',
+	CANCELLED: 'Cancelled',
+} as const;
+
 /** Queued task waiting for an execution slot. */
 interface QueuedTask {
 	taskId: string;
@@ -96,6 +104,7 @@ export class TaskExecutor implements Disposable {
 			type,
 			status: 'queued',
 			priority,
+			stateMessage: TASK_STATE_MESSAGE.QUEUED,
 			controller,
 			windowId: options?.windowId,
 			metadata,
@@ -136,7 +145,13 @@ export class TaskExecutor implements Disposable {
 			const position = this.queue.indexOf(queued) + 1;
 			this.send(windowId, 'task:event', {
 				type: 'queued',
-				data: { taskId, taskType: type, position, metadata },
+				data: {
+					taskId,
+					taskType: type,
+					position,
+					metadata,
+					stateMessage: activeTask.stateMessage,
+				},
 			} satisfies TaskEvent);
 
 			this.drainQueue();
@@ -171,11 +186,12 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'cancelled';
+		task.stateMessage = TASK_STATE_MESSAGE.CANCELLED;
 		task.completedAt = Date.now();
 
 		this.send(task.windowId, 'task:event', {
 			type: 'cancelled',
-			data: { taskId, metadata: task.metadata },
+			data: { taskId, metadata: task.metadata, stateMessage: task.stateMessage },
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:cancelled', { taskId, taskType: task.type, windowId: task.windowId });
@@ -196,11 +212,22 @@ export class TaskExecutor implements Disposable {
 	 */
 	listTasks(): ActiveTask[] {
 		return Array.from(this.activeTasks.values()).map(
-			({ taskId, type, status, priority, startedAt, completedAt, windowId, metadata }) => ({
+			({
 				taskId,
 				type,
 				status,
 				priority,
+				stateMessage,
+				startedAt,
+				completedAt,
+				windowId,
+				metadata,
+			}) => ({
+				taskId,
+				type,
+				status,
+				priority,
+				stateMessage,
 				startedAt,
 				completedAt,
 				windowId,
@@ -247,7 +274,13 @@ export class TaskExecutor implements Disposable {
 
 		this.send(task.windowId, 'task:event', {
 			type: 'priority-changed',
-			data: { taskId, priority: newPriority, position, metadata: task.metadata },
+			data: {
+				taskId,
+				priority: newPriority,
+				position,
+				metadata: task.metadata,
+				stateMessage: task.stateMessage,
+			},
 		} satisfies TaskEvent);
 
 		// Task log
@@ -351,6 +384,7 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'running';
+		task.stateMessage = task.stateMessage || TASK_STATE_MESSAGE.RUNNING;
 		task.startedAt = Date.now();
 
 		// Set up timeout if specified
@@ -363,7 +397,7 @@ export class TaskExecutor implements Disposable {
 
 		this.send(windowId, 'task:event', {
 			type: 'started',
-			data: { taskId, metadata },
+			data: { taskId, metadata, stateMessage: task.stateMessage },
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
@@ -378,9 +412,22 @@ export class TaskExecutor implements Disposable {
 					// Don't emit progress if task is already done
 					if (!this.activeTasks.has(taskId)) return;
 
+					if (message !== undefined) {
+						task.stateMessage = message;
+					} else if (!task.stateMessage) {
+						task.stateMessage = TASK_STATE_MESSAGE.RUNNING;
+					}
+
 					this.send(windowId, 'task:event', {
 						type: 'progress',
-						data: { taskId, percent, message, detail, metadata },
+						data: {
+							taskId,
+							percent,
+							message,
+							detail,
+							metadata,
+							stateMessage: task.stateMessage,
+						},
 					} satisfies TaskEvent);
 				},
 			};
@@ -390,7 +437,7 @@ export class TaskExecutor implements Disposable {
 					if (!this.activeTasks.has(taskId)) return;
 					this.send(windowId, 'task:event', {
 						type: 'stream',
-						data: { taskId, data, metadata },
+						data: { taskId, data, metadata, stateMessage: task.stateMessage },
 					} satisfies TaskEvent);
 				},
 			};
@@ -409,12 +456,13 @@ export class TaskExecutor implements Disposable {
 			const durationMs = Date.now() - task.startedAt!;
 
 			task.status = 'completed';
+			task.stateMessage = TASK_STATE_MESSAGE.COMPLETED;
 			task.completedAt = Date.now();
 			task.result = result;
 
 			this.send(windowId, 'task:event', {
 				type: 'completed',
-				data: { taskId, result, durationMs, metadata },
+				data: { taskId, result, durationMs, metadata, stateMessage: task.stateMessage },
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
@@ -433,11 +481,12 @@ export class TaskExecutor implements Disposable {
 			if (err instanceof Error && err.name === 'AbortError') {
 				// Task log
 				task.status = 'cancelled';
+				task.stateMessage = TASK_STATE_MESSAGE.CANCELLED;
 				task.completedAt = Date.now();
 
 				this.send(windowId, 'task:event', {
 					type: 'cancelled',
-					data: { taskId, metadata },
+					data: { taskId, metadata, stateMessage: task.stateMessage },
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId });
@@ -447,12 +496,13 @@ export class TaskExecutor implements Disposable {
 				// Task error, err)
 
 				task.status = 'error';
+				task.stateMessage = TASK_STATE_MESSAGE.FAILED;
 				task.completedAt = Date.now();
 				task.error = message;
 
 				this.send(windowId, 'task:event', {
 					type: 'error',
-					data: { taskId, message, code, metadata },
+					data: { taskId, message, code, metadata, stateMessage: task.stateMessage },
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:failed', {

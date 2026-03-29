@@ -1,5 +1,6 @@
 import type { AgentDefinition, GraphInputContext } from '../../core/definition';
 import { buildGraph, RESEARCHER_NODE } from './graph';
+import { RESEARCHER_STATE_MESSAGES } from './messages';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
 	[RESEARCHER_NODE.UNDERSTAND]: {
@@ -49,12 +50,17 @@ const definition: AgentDefinition = {
 			strategy: '',
 			plan: [],
 			research: '',
+			stateMessage: RESEARCHER_STATE_MESSAGES.UNDERSTAND,
 			response: '',
 		};
 	},
 
 	extractGraphOutput(state: Record<string, unknown>): string {
 		return typeof state['response'] === 'string' ? state['response'] : '';
+	},
+
+	extractStateMessage(state: Record<string, unknown>): string | undefined {
+		return typeof state['stateMessage'] === 'string' ? state['stateMessage'] : undefined;
 	},
 };
 

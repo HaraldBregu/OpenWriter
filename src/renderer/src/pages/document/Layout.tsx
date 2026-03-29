@@ -106,7 +106,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						type: 'CHAT_MESSAGE_UPDATED',
 						id: messageId,
 						patch: {
-							content: t('agenticPanel.researcherThinking', 'Researching...'),
+							content:
+								snapshot.stateMessage ?? t('agenticPanel.researcherThinking', 'Researching...'),
 							taskId,
 							status: 'queued',
 						},
@@ -118,6 +119,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 							type: 'CHAT_MESSAGE_UPDATED',
 							id: messageId,
 							patch: { content: snapshot.content, taskId, status: 'running' },
+						});
+					} else if (snapshot.stateMessage) {
+						chatDispatch({
+							type: 'CHAT_MESSAGE_UPDATED',
+							id: messageId,
+							patch: { content: snapshot.stateMessage, taskId, status: 'running' },
 						});
 					}
 					break;

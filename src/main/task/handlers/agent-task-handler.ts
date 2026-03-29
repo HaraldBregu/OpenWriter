@@ -9,7 +9,7 @@
 
 import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
-import type { AgentRegistry, AgentStreamEvent, NodeModelMap } from '../../ai';
+import type { AgentDefinition, AgentRegistry, AgentStreamEvent, NodeModelMap } from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { createChatModel } from '../../shared/chat-model-factory';
@@ -78,7 +78,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		if (!def) {
 			throw new Error(`Agent "${this.agentId}" not found in registry`);
 		}
-		reporter.progress(5, 'Resolved agent definition');
 
 		// 2. Resolve provider (task input overrides → definition default → global fallback)
 		const defaultCfg = def.defaultModel;
@@ -86,7 +85,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const modelId = input.modelId ?? defaultCfg?.modelId;
 
 		const provider = this.providerResolver.resolve({ providerId, modelId });
-		reporter.progress(10, 'Provider resolved');
 
 		// 3. Resolve per-node models when the definition declares them.
 		//
@@ -128,9 +126,27 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		let tokenCount = 0;
 		let tokensSinceLastProgress = 0;
 		let currentProgress = 10;
+		let lastStateMessage: string | undefined;
 
 		const resolvedTemperature = input.temperature ?? defaultCfg?.temperature ?? 0.7;
 		const resolvedMaxTokens = input.maxTokens ?? defaultCfg?.maxTokens;
+		const initialStateMessage = this.getInitialStateMessage(
+			def,
+			input.prompt,
+			provider.providerId,
+			provider.modelName,
+			provider.apiKey,
+			resolvedTemperature,
+			metadata
+		);
+
+		reporter.progress(5);
+		reporter.progress(10);
+		if (initialStateMessage) {
+			currentProgress = 15;
+			lastStateMessage = initialStateMessage;
+			reporter.progress(currentProgress, initialStateMessage);
+		}
 
 		const gen = executeAIAgentsStream({
 			runId: randomUUID(),
@@ -145,6 +161,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			buildGraph: def.buildGraph,
 			buildGraphInput: def.buildGraphInput,
 			extractGraphOutput: def.extractGraphOutput,
+			extractStateMessage: def.extractStateMessage,
 			streamableNodes: def.streamableNodes,
 			metadata,
 			logger: this.logger,
@@ -159,8 +176,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 					if (tokensSinceLastProgress >= 20 && currentProgress < 90) {
 						currentProgress = Math.min(currentProgress + 2, 90);
 						tokensSinceLastProgress = 0;
-						reporter.progress(currentProgress, 'Streaming…');
+						reporter.progress(currentProgress);
 					}
+				},
+				(message) => {
+					const nextMessage = message.trim();
+					if (!nextMessage || nextMessage === lastStateMessage) return;
+					lastStateMessage = nextMessage;
+					reporter.progress(currentProgress, nextMessage);
 				},
 				(tc) => {
 					tokenCount = tc;
@@ -171,7 +194,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			);
 		}
 
-		reporter.progress(100, 'Complete');
+		reporter.progress(100);
 		return { content, tokenCount, agentId: this.agentId };
 	}
 
@@ -183,6 +206,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		event: AgentStreamEvent,
 		streamReporter: StreamReporter | undefined,
 		onToken: () => void,
+		onThinking: (message: string) => void,
 		setTokenCount: (n: number) => void,
 		setContent: (s: string) => void
 	): void {
@@ -197,13 +221,40 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				setTokenCount(event.tokenCount);
 				break;
 
+			case 'thinking':
+				onThinking(event.content);
+				break;
+
 			case 'error':
 				if (event.code === 'abort') {
 					throw new DOMException('Aborted', 'AbortError');
 				}
 				throw new Error(event.error);
-
-			// 'thinking' events are informational — no action needed
 		}
+	}
+
+	private getInitialStateMessage(
+		def: AgentDefinition,
+		prompt: string,
+		providerId: string,
+		modelName: string,
+		apiKey: string,
+		temperature: number,
+		metadata?: Record<string, unknown>
+	): string | undefined {
+		if (!def.buildGraphInput || !def.extractStateMessage) {
+			return undefined;
+		}
+
+		const initialState = def.buildGraphInput({
+			prompt,
+			apiKey,
+			modelName,
+			providerId,
+			temperature,
+			metadata,
+		});
+
+		return def.extractStateMessage(initialState)?.trim() || undefined;
 	}
 }

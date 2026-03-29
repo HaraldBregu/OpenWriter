@@ -15,6 +15,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { ResearcherState } from '../state';
+import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
 	'You are a response strategist. Given a user query and its classified intent, ' +
@@ -47,5 +48,8 @@ export async function evaluateNode(
 	const response = await model.invoke(messages);
 	const strategy = typeof response.content === 'string' ? response.content.trim() : '';
 
-	return { strategy };
+	return {
+		strategy,
+		stateMessage: RESEARCHER_STATE_MESSAGES.PLAN,
+	};
 }

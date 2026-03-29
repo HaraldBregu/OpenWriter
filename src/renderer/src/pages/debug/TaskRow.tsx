@@ -30,11 +30,16 @@ export function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRo
 			</td>
 			<td className="px-4 py-2.5 text-xs capitalize text-muted-foreground">{task.priority}</td>
 			<td className="px-4 py-2.5">
-				<div className="flex items-center gap-2">
-					<ProgressBar percent={task.progress.percent} />
-					<span className="text-xs text-muted-foreground w-8 shrink-0">
-						{task.progress.percent}%
-					</span>
+				<div className="space-y-1">
+					<div className="flex items-center gap-2">
+						<ProgressBar percent={task.progress.percent} />
+						<span className="text-xs text-muted-foreground w-8 shrink-0">
+							{task.progress.percent}%
+						</span>
+					</div>
+					<div className="max-w-[220px] truncate text-[11px] text-muted-foreground">
+						{task.stateMessage || task.progress.message || '—'}
+					</div>
 				</div>
 			</td>
 			<td className="px-4 py-2.5 text-xs text-muted-foreground">

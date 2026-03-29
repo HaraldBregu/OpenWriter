@@ -119,6 +119,12 @@ export interface AgentDefinition {
 	 */
 	extractGraphOutput?: (state: Record<string, unknown>) => string;
 	/**
+	 * Optional hook for deriving a human-readable state message from the latest
+	 * graph state snapshot. When present, the executor emits `thinking` events
+	 * whenever the derived message changes.
+	 */
+	extractStateMessage?: (state: Record<string, unknown>) => string | undefined;
+	/**
 	 * Inclusion list of node names whose streaming tokens should be forwarded
 	 * to the caller. When present, the executor filters `messages` stream
 	 * events by `metadata.langgraph_node` and only yields tokens from listed

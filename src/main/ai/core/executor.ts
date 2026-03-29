@@ -62,6 +62,7 @@ export interface ExecutorInput {
 	 */
 	buildGraphInput?: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput?: (state: Record<string, unknown>) => string;
+	extractStateMessage?: (state: Record<string, unknown>) => string | undefined;
 	/**
 	 * When present, only tokens from these nodes are forwarded to the caller.
 	 * See `AgentDefinition.streamableNodes` for full documentation.
@@ -93,6 +94,7 @@ export async function* executeAIAgentsStream(
 		buildGraph,
 		buildGraphInput,
 		extractGraphOutput,
+		extractStateMessage,
 		streamableNodes,
 		metadata,
 		logger,
@@ -141,6 +143,7 @@ export async function* executeAIAgentsStream(
 			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
 			buildGraphInput: buildGraphInput as NonNullable<typeof buildGraphInput>,
 			extractGraphOutput: extractGraphOutput as NonNullable<typeof extractGraphOutput>,
+			extractStateMessage,
 			streamableNodes,
 			signal,
 			logger,
@@ -234,6 +237,7 @@ interface CustomStateGraphStreamInput {
 	) => CompiledStateGraph<any, any, any, any, any, any>;
 	buildGraphInput: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput: (state: Record<string, unknown>) => string;
+	extractStateMessage?: (state: Record<string, unknown>) => string | undefined;
 	streamableNodes?: string[];
 	signal?: AbortSignal;
 	logger?: LoggerService;
@@ -250,6 +254,7 @@ async function* executeCustomStateGraphStream(
 		buildGraph,
 		buildGraphInput,
 		extractGraphOutput,
+		extractStateMessage,
 		streamableNodes,
 		signal,
 		logger,
@@ -265,6 +270,7 @@ async function* executeCustomStateGraphStream(
 		let fullContent = '';
 		let tokenCount = 0;
 		let finalState: Record<string, unknown> = {};
+		let lastStateMessage: string | undefined;
 
 		// Combined stream mode: 'messages' for token-level streaming,
 		// 'values' for final state snapshots used by extractGraphOutput.
@@ -305,6 +311,11 @@ async function* executeCustomStateGraphStream(
 				}
 			} else if (mode === 'values') {
 				finalState = data as Record<string, unknown>;
+				const nextStateMessage = extractStateMessage?.(finalState)?.trim();
+				if (nextStateMessage && nextStateMessage !== lastStateMessage) {
+					lastStateMessage = nextStateMessage;
+					yield { type: 'thinking', content: nextStateMessage, runId };
+				}
 			}
 		}
 
