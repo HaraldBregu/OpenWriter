@@ -26,6 +26,8 @@ export interface ExtensionHandlers {
 	onImageSubmit: (prompt: string) => void;
 	onImageFileSelect: (file: File) => void;
 	onImageInsert: ImageInsertHandler;
+	onUndo: () => void;
+	onRedo: () => void;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
