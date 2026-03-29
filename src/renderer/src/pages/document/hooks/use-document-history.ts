@@ -85,7 +85,7 @@ export function useDocumentHistory({
             const entry = await saveHistorySnapshot(docPath, c, t);
             setEntries((prev) => {
               const without = prev.filter((e) => e.id !== entry.id);
-              return [...without, entry].slice(-MAX_HISTORY_ENTRIES_LIMIT);
+              return [...without, entry].slice(-MAX_HISTORY_ENTRIES);
             });
             setCurrentEntryId(null);
           } catch {
