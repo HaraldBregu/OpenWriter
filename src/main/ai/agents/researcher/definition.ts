@@ -8,6 +8,12 @@ const NODE_MODELS: AgentDefinition['nodeModels'] = {
 		temperature: 0.1,
 		maxTokens: 1024,
 	},
+	[RESEARCHER_NODE.EVALUATE]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.2,
+		maxTokens: 1024,
+	},
 	[RESEARCHER_NODE.PLAN]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
@@ -40,6 +46,7 @@ const definition: AgentDefinition = {
 		return {
 			prompt: ctx.prompt,
 			intent: '',
+			strategy: '',
 			plan: [],
 			research: '',
 			response: '',

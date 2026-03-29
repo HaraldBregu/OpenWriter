@@ -4,6 +4,7 @@ import {
   saveHistorySnapshot,
   listHistoryEntries,
   loadHistoryEntry,
+  MAX_HISTORY_ENTRIES,
   type HistoryEntry,
 } from '../history-service';
 
