@@ -197,8 +197,7 @@ export class ResearcherService implements Disposable {
 					const snapshot = data as Record<string, unknown>;
 
 					// Derive phase transitions from state snapshot fields becoming populated.
-					const hasIntent =
-						typeof snapshot['intent'] === 'string' && snapshot['intent'].length > 0;
+					const hasIntent = typeof snapshot['intent'] === 'string' && snapshot['intent'].length > 0;
 					const hasStrategy =
 						typeof snapshot['strategy'] === 'string' && snapshot['strategy'].length > 0;
 					const hasPlan = Array.isArray(snapshot['plan']) && snapshot['plan'].length > 0;
