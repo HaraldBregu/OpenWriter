@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, MessageSquarePlus, Search, Trash2 } from 'lucide-react';
+import { Clock3, Plus, Search, Trash2 } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import {
 	AppButton,
@@ -198,7 +198,7 @@ const ChatHeader: React.FC = () => {
 						aria-label={t('agenticPanel.newChat', 'Start new chat')}
 						onClick={handleNewChat}
 					>
-						<MessageSquarePlus className="h-4 w-4" />
+						<Plus className="h-4 w-4" />
 					</AppButton>
 				</div>
 			</div>
