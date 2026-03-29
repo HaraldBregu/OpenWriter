@@ -3,10 +3,11 @@
  *
  * Topology:
  *
- *   START → understand → plan → research → compose → END
+ *   START → understand → evaluate → plan → research → compose → END
  *
- * Four-node pipeline:
+ * Five-node pipeline:
  *   - understand : classifies query intent (non-streamed)
+ *   - evaluate   : determines optimal response strategy (non-streamed)
  *   - plan       : generates 3-5 research angles as JSON (non-streamed)
  *   - research   : synthesises knowledge from angles (non-streamed)
  *   - compose    : writes the final user-facing response (streamed)
@@ -21,12 +22,14 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { NodeModelMap } from '../../core/definition';
 import { ResearcherState } from './state';
 import { understandNode } from './nodes/understand-node';
+import { evaluateNode } from './nodes/evaluate-node';
 import { planNode } from './nodes/plan-node';
 import { researchNode } from './nodes/research-node';
 import { composeNode } from './nodes/compose-node';
 
 export const RESEARCHER_NODE = {
 	UNDERSTAND: 'understand',
+	EVALUATE: 'evaluate',
 	PLAN: 'plan_step',
 	RESEARCH: 'research_step',
 	COMPOSE: 'compose',
@@ -34,6 +37,7 @@ export const RESEARCHER_NODE = {
 
 export interface ResearcherNodeModels {
 	[RESEARCHER_NODE.UNDERSTAND]: BaseChatModel;
+	[RESEARCHER_NODE.EVALUATE]: BaseChatModel;
 	[RESEARCHER_NODE.PLAN]: BaseChatModel;
 	[RESEARCHER_NODE.RESEARCH]: BaseChatModel;
 	[RESEARCHER_NODE.COMPOSE]: BaseChatModel;
@@ -46,6 +50,9 @@ export function buildGraph(models: BaseChatModel | NodeModelMap) {
 		.addNode(RESEARCHER_NODE.UNDERSTAND, (state: typeof ResearcherState.State) =>
 			understandNode(state, m[RESEARCHER_NODE.UNDERSTAND])
 		)
+		.addNode(RESEARCHER_NODE.EVALUATE, (state: typeof ResearcherState.State) =>
+			evaluateNode(state, m[RESEARCHER_NODE.EVALUATE])
+		)
 		.addNode(RESEARCHER_NODE.PLAN, (state: typeof ResearcherState.State) =>
 			planNode(state, m[RESEARCHER_NODE.PLAN])
 		)
@@ -56,7 +63,8 @@ export function buildGraph(models: BaseChatModel | NodeModelMap) {
 			composeNode(state, m[RESEARCHER_NODE.COMPOSE])
 		)
 		.addEdge(START, RESEARCHER_NODE.UNDERSTAND)
-		.addEdge(RESEARCHER_NODE.UNDERSTAND, RESEARCHER_NODE.PLAN)
+		.addEdge(RESEARCHER_NODE.UNDERSTAND, RESEARCHER_NODE.EVALUATE)
+		.addEdge(RESEARCHER_NODE.EVALUATE, RESEARCHER_NODE.PLAN)
 		.addEdge(RESEARCHER_NODE.PLAN, RESEARCHER_NODE.RESEARCH)
 		.addEdge(RESEARCHER_NODE.RESEARCH, RESEARCHER_NODE.COMPOSE)
 		.addEdge(RESEARCHER_NODE.COMPOSE, END)
