@@ -16,7 +16,7 @@ export interface DocumentChatMessage {
 	readonly id: string;
 	readonly content: string;
 	readonly stateMessage?: string;
-	readonly role: 'user' | 'assistant';
+	readonly role: 'user' | 'assistant' | 'system';
 	readonly timestamp: string;
 	readonly taskId: string | null;
 	readonly status: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';

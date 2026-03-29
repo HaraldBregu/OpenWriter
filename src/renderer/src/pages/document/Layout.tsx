@@ -75,6 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 	const sidebarPanelRef = usePanelRef();
+	const lastRecordedTaskStateRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		if (activeSidebar) {
@@ -89,8 +90,27 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 		const taskId = chatActiveTaskId;
 		const messageId = chatActiveMessageId;
-		const getStateMessagePatch = (snapshot: TaskSnapshot) =>
-			snapshot.stateMessage !== undefined ? { stateMessage: snapshot.stateMessage } : {};
+		const mapTaskStatusToChatStatus = (
+			status: TaskSnapshot['status']
+		): 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled' => {
+			switch (status) {
+				case 'queued':
+				case 'started':
+					return 'queued';
+				case 'running':
+					return 'running';
+				case 'completed':
+					return 'completed';
+				case 'error':
+					return 'error';
+				case 'cancelled':
+					return 'cancelled';
+				default:
+					return 'running';
+			}
+		};
+
+		lastRecordedTaskStateRef.current = null;
 
 		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
 			const metadataDocumentId = snapshot.metadata?.documentId;
@@ -101,6 +121,27 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			if (targetDocumentId !== id) return;
 
+			const trimmedStateMessage = snapshot.stateMessage?.trim();
+			if (trimmedStateMessage) {
+				const dedupeKey = `${snapshot.status}:${trimmedStateMessage}`;
+				if (lastRecordedTaskStateRef.current !== dedupeKey) {
+					lastRecordedTaskStateRef.current = dedupeKey;
+					chatDispatch({
+						type: 'CHAT_MESSAGE_INSERTED_BEFORE',
+						beforeId: messageId,
+						message: {
+							id: crypto.randomUUID(),
+							content: trimmedStateMessage,
+							stateMessage: undefined,
+							role: 'system',
+							timestamp: new Date().toISOString(),
+							taskId,
+							status: mapTaskStatusToChatStatus(snapshot.status),
+						},
+					});
+				}
+			}
+
 			switch (snapshot.status) {
 				case 'queued':
 				case 'started':
@@ -110,7 +151,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						patch: {
 							taskId,
 							status: 'queued',
-							...getStateMessagePatch(snapshot),
 						},
 					});
 					break;
@@ -122,7 +162,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 							taskId,
 							status: 'running',
 							...(snapshot.content ? { content: snapshot.content } : {}),
-							...getStateMessagePatch(snapshot),
 						},
 					});
 					break;
@@ -138,9 +177,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								t('agenticPanel.emptyResponse', 'No response received.'),
 							taskId,
 							status: 'completed',
-							...getStateMessagePatch(snapshot),
 						},
 					});
+					lastRecordedTaskStateRef.current = null;
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
@@ -154,9 +193,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
 							taskId,
 							status: 'error',
-							...getStateMessagePatch(snapshot),
 						},
 					});
+					lastRecordedTaskStateRef.current = null;
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
@@ -168,9 +207,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
 							taskId,
 							status: 'cancelled',
-							...getStateMessagePatch(snapshot),
 						},
 					});
+					lastRecordedTaskStateRef.current = null;
 					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
@@ -179,7 +218,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			}
 		});
 
-		return unsubscribe;
+		return () => {
+			lastRecordedTaskStateRef.current = null;
+			unsubscribe();
+		};
 	}, [chatActiveTaskId, chatActiveMessageId, id, chatDispatch, t]);
 
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };

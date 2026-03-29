@@ -37,8 +37,22 @@ describe('ChatMessage', () => {
 		expect(screen.getByText('Here is the final answer.')).toBeInTheDocument();
 	});
 
-	it('falls back to Thinking while an assistant response is pending without a state message', () => {
+	it('renders system status messages as standalone timeline rows', () => {
 		render(
+			<ChatMessage
+				id="system-message"
+				content="Completed"
+				role="system"
+				timestamp="2026-03-29T12:00:00.000Z"
+				status="completed"
+			/>
+		);
+
+		expect(screen.getByText('Completed')).toBeInTheDocument();
+	});
+
+	it('does not render an empty assistant placeholder without content or state text', () => {
+		const { container } = render(
 			<ChatMessage
 				id="assistant-message"
 				content=""
@@ -48,6 +62,6 @@ describe('ChatMessage', () => {
 			/>
 		);
 
-		expect(screen.getByText('Thinking')).toBeInTheDocument();
+		expect(container).toBeEmptyDOMElement();
 	});
 });

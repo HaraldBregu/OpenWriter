@@ -17,6 +17,7 @@ export interface ChatSession {
 
 export type ChatAction =
 	| { type: 'CHAT_MESSAGE_ADDED'; message: DocumentChatMessage }
+	| { type: 'CHAT_MESSAGE_INSERTED_BEFORE'; beforeId: string; message: DocumentChatMessage }
 	| {
 			type: 'CHAT_MESSAGE_UPDATED';
 			id: string;
@@ -35,10 +36,22 @@ const INITIAL_CHAT_STATE: ChatSession = {
 	activeMessageId: null,
 };
 
-function chatReducer(state: ChatSession, action: ChatAction): ChatSession {
+export function chatReducer(state: ChatSession, action: ChatAction): ChatSession {
 	switch (action.type) {
 		case 'CHAT_MESSAGE_ADDED':
 			return { ...state, messages: [...state.messages, action.message] };
+		case 'CHAT_MESSAGE_INSERTED_BEFORE': {
+			const index = state.messages.findIndex((m) => m.id === action.beforeId);
+			if (index === -1) return { ...state, messages: [...state.messages, action.message] };
+			return {
+				...state,
+				messages: [
+					...state.messages.slice(0, index),
+					action.message,
+					...state.messages.slice(index),
+				],
+			};
+		}
 		case 'CHAT_MESSAGE_UPDATED': {
 			const index = state.messages.findIndex((m) => m.id === action.id);
 			if (index === -1) return state;

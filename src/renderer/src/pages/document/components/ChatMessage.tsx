@@ -7,7 +7,7 @@ interface ChatMessageProps {
 	readonly id: string;
 	readonly content: string;
 	readonly stateMessage?: string;
-	readonly role: 'user' | 'assistant';
+	readonly role: 'user' | 'assistant' | 'system';
 	readonly timestamp: Date | string;
 	readonly status?: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
 	readonly renderMarkdown?: boolean;
@@ -27,11 +27,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	renderMarkdown = false,
 }) => {
 	const isUser = role === 'user';
-	const isThinking =
-		!isUser &&
-		!content.trim() &&
-		(status === 'idle' || status === 'queued' || status === 'running');
-	const visibleStateMessage = stateMessage?.trim() || (isThinking ? 'Thinking' : undefined);
+	const isSystem = role === 'system';
+	const visibleStateMessage = stateMessage?.trim() || undefined;
 
 	if (isUser) {
 		return (
@@ -41,6 +38,28 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 				</div>
 			</div>
 		);
+	}
+
+	if (isSystem) {
+		return (
+			<div className="flex gap-2.5">
+				<div className="min-w-0 flex-1">
+					<div className="inline-flex items-center gap-1.5 px-0.5 text-xs text-muted-foreground/90">
+						<span>{content}</span>
+						{status !== 'completed' && status !== 'error' && status !== 'cancelled' && (
+							<ChevronRight className="h-3.5 w-3.5" />
+						)}
+					</div>
+					<div className="mt-0.5 px-0.5 text-[9px] text-muted-foreground">
+						{formatTime(timestamp)}
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (!content.trim() && !visibleStateMessage) {
+		return null;
 	}
 
 	return (
