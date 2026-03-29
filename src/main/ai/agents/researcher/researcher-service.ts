@@ -109,6 +109,14 @@ export class ResearcherService implements Disposable {
 					temperature: NODE_TEMPERATURES.understand,
 					maxTokens,
 				}),
+				[RESEARCHER_NODE.EVALUATE]: createChatModel({
+					providerId,
+					apiKey,
+					modelName,
+					streaming: false,
+					temperature: NODE_TEMPERATURES.evaluate,
+					maxTokens: 1024,
+				}),
 				[RESEARCHER_NODE.PLAN]: createChatModel({
 					providerId,
 					apiKey,
