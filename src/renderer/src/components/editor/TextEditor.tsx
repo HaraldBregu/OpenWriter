@@ -98,6 +98,8 @@ const TextEditor = React.memo(
 				onImageFileSelect,
 				documentId,
 				onEditorReady,
+				onUndo,
+				onRedo,
 			},
 			ref
 		) => {
