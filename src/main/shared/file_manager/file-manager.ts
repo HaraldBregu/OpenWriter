@@ -645,9 +645,9 @@ export class FileManager {
 	async listDir(dirPath: string): Promise<Array<{ name: string; isDirectory: boolean }>> {
 		const resolved = assertPathSafe(dirPath, this.extraRoots);
 
-		let entries: Awaited<ReturnType<typeof fs.readdir>>;
+		let entries;
 		try {
-			entries = await fs.readdir(resolved, { withFileTypes: true });
+			entries = await fs.readdir(resolved, { withFileTypes: true, encoding: 'utf8' });
 		} catch (err) {
 			const error = asErrno(err);
 			if (error.code === 'ENOENT') return [];
