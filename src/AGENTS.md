@@ -445,7 +445,113 @@ Reusable UI elements and editor-facing components.
 ### `pages/`
 
 Route-level features and page-local architecture.
-The document screen is a full feature area with its own hooks, context, components, and services.
+Use the current page tree as the reference structure for new route work.
+The document screen is the canonical full feature area with its own hooks, context, components, providers, services, and panels.
+
+## Current Renderer Page Structure
+
+The current `src/renderer/src/pages` tree is the best reference for how route code should be organized:
+
+```text
+src/renderer/src/pages/
+  WelcomePage.tsx
+  HomePage.tsx
+  agents/
+    AgentsPage.tsx
+  debug/
+    DebugPage.tsx
+    DebugReduxPage.tsx
+    DebugTasksPage.tsx
+    LogPanel.tsx
+    ProgressBar.tsx
+    ReduxStateTab.tsx
+    SliceSection.tsx
+    StatusBadge.tsx
+    TaskRow.tsx
+    TasksTab.tsx
+    debug-constants.ts
+    debug-helpers.ts
+  document/
+    AGENTS.md
+    Page.tsx
+    Layout.tsx
+    Header.tsx
+    components/
+      HistoryMenu.tsx
+    context/
+      actions.ts
+      index.ts
+      reducer.ts
+      state.ts
+    hooks/
+      index.ts
+      use-chat-persistence.ts
+      use-document-actions.ts
+      use-document-dispatch.ts
+      use-document-history.ts
+      use-document-persistence.ts
+      use-document-state.ts
+      use-document-ui.ts
+    panels/
+      chat/
+        Provider.tsx
+        index.tsx
+        components/
+          Header.tsx
+          Input.tsx
+          Message.tsx
+          index.ts
+        context/
+          actions.ts
+          contexts.tsx
+          index.ts
+          reducer.ts
+          state.ts
+        hooks/
+          index.ts
+          use-chat-dispatch.ts
+          use-chat-state.ts
+      resources/
+        ResourcesPanel.tsx
+        components/
+        context/
+        hooks/
+    providers/
+      Document.tsx
+      Editor.tsx
+      Sidebar.tsx
+      index.ts
+    services/
+      chat-session-storage.ts
+      history-service.ts
+  models/
+  resources/
+    ResourcePreviewSheet.tsx
+    ResourcesEmptyState.tsx
+    ResourcesHeader.tsx
+    ResourcesPage.tsx
+    ResourcesTable.tsx
+    constants.ts
+  settings/
+    AgentsSettingsPage.tsx
+    CollapsibleSection.tsx
+    GeneralSettingsPage.tsx
+    LanguageSelector.tsx
+    ProvidersSettingsPage.tsx
+    SettingsComponents.tsx
+    SettingsLayout.tsx
+    SystemSettingsPage.tsx
+    ThemeModeSelector.tsx
+    WorkspacePage.tsx
+```
+
+Apply these conventions when adding or moving page code:
+
+- small routes can stay as a single `*Page.tsx` file or a shallow feature folder
+- complex routes should follow `src/renderer/src/pages/document` as the reference shape
+- keep route-specific `components`, `hooks`, `context`, `providers`, `services`, and `panels` inside the feature folder before promoting anything to shared renderer directories
+- use `Page.tsx` as the route entry and `Layout.tsx` as the feature orchestrator when the screen is large enough to need both
+- keep page-only helpers close to the route instead of placing them in global `hooks/` or `services/` too early
 
 ### `store/`
 
@@ -462,6 +568,41 @@ Cross-app renderer providers that sit above individual pages.
 ### `hooks/`
 
 Shared renderer hooks that do not belong to one specific page feature folder.
+
+## Document-Related Ownership Across `src/`
+
+Several folders use the word "document", but they do not own the same thing.
+Keep these responsibilities distinct:
+
+```text
+src/main/workspace/
+  documents.ts
+  documents-watcher.ts
+  output-files.ts
+
+src/renderer/src/store/documents/
+  actions.ts
+  index.ts
+  reducer.ts
+  selectors.ts
+  state.ts
+  types.ts
+
+src/renderer/src/pages/document/
+  Page.tsx
+  Layout.tsx
+  Header.tsx
+  ...
+```
+
+Ownership is currently split like this:
+
+- `src/main/workspace/documents.ts` manages imported workspace files stored under `<workspace>/resources`
+- `src/main/workspace/output-files.ts` manages editable output entries stored under `<workspace>/output/documents`
+- `src/renderer/src/store/documents` is the Redux collection view of those output entries
+- `src/renderer/src/pages/document` is the route UI for one output document at `/content/:id`
+
+Do not treat imported workspace resources and editable output documents as the same subsystem.
 
 ## Design Constraints
 
