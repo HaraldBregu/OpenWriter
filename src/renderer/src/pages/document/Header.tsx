@@ -47,6 +47,13 @@ const Header: React.FC<HeaderProps> = ({
 	onSearch,
 	onClearSearch,
 	onOpenFolder,
+	historyEntries,
+	currentHistoryEntryId,
+	canUndo,
+	canRedo,
+	onUndo,
+	onRedo,
+	onRestoreHistoryEntry,
 }) => {
 	const { t } = useTranslation();
 	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
