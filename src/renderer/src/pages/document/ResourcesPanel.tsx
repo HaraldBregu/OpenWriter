@@ -103,7 +103,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 		'flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-foreground hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors';
 
 	return (
-		<div className="flex flex-col w-full overflow-y-auto overflow-x-hidden border-l border-border bg-muted/20">
+		<div className="flex flex-col w-full overflow-y-auto overflow-x-hidden border-l border-border bg-background">
 			<AppCard className="w-full flex flex-col flex-1 min-h-0 rounded-none border-none bg-transparent shadow-none">
 				{metadata && (
 					<AppCardHeader className="p-4 pb-0">
