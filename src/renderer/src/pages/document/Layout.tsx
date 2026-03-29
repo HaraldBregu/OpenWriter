@@ -667,6 +667,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						onEnhanceWithAssistant={onEnhanceWithAssistant}
 						onTextSubmit={onTextSubmit}
 						onImageSubmit={onImageSubmit}
+						onUndo={handleUndo}
+						onRedo={handleRedo}
 					/>
 				</ResizablePanel>
 
