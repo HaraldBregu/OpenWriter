@@ -10,6 +10,7 @@ interface EditorPanelProps {
 	readonly documentId: string | undefined;
 	readonly loaded: boolean;
 	readonly content: string;
+	readonly externalValueVersion: number;
 	readonly disabled: boolean;
 	readonly editorRef: React.RefObject<TextEditorElement | null>;
 	readonly onEditorReady: (editor: Editor | null) => void;
@@ -30,6 +31,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 	documentId,
 	loaded,
 	content,
+	externalValueVersion,
 	disabled,
 	editorRef,
 	onEditorReady,
@@ -51,6 +53,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
 							ref={editorRef}
 							key={documentId}
 							value={content}
+							externalValueVersion={externalValueVersion}
 							onChange={onContentChange}
 							onContinueWithAssistant={onContinueWithAssistant}
 							onEnhanceWithAssistant={onEnhanceWithAssistant}

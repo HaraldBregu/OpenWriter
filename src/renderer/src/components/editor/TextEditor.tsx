@@ -27,6 +27,7 @@ export interface ImageInsertOptions {
 }
 
 export interface TextEditorElement extends HTMLDivElement {
+	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
 	insertMarkdown: (
@@ -53,6 +54,7 @@ export interface TextEditorElement extends HTMLDivElement {
 export interface TextEditorProps {
 	value: string;
 	onChange: (value: string) => void;
+	externalValueVersion?: number;
 	autoFocus?: boolean;
 	className?: string;
 	disabled?: boolean;
@@ -86,6 +88,7 @@ const TextEditor = React.memo(
 			{
 				value,
 				onChange,
+				externalValueVersion = 0,
 				autoFocus,
 				className,
 				disabled,
@@ -148,6 +151,7 @@ const TextEditor = React.memo(
 			);
 
 			const lastEmittedRef = useRef<string>('');
+			const lastExternalValueVersionRef = useRef(externalValueVersion);
 			const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 			const initialValueRef = useRef(value);
 
@@ -272,6 +276,18 @@ const TextEditor = React.memo(
 			useImperativeHandle(ref, () => {
 				const el = rootRef.current!;
 				return Object.assign(el, {
+					setContent(
+						markdown: string,
+						options: { preventEditorUpdate?: boolean } = {
+							preventEditorUpdate: false,
+						}
+					) {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.setContent(markdown, {
+							emitUpdate: !(options.preventEditorUpdate ?? false),
+							contentType: 'markdown',
+						});
+					},
 					insertText(
 						text: string,
 						options: { preventEditorUpdate: boolean } = {
@@ -418,6 +434,10 @@ const TextEditor = React.memo(
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
 
+				const hasExternalValueVersionChanged =
+					lastExternalValueVersionRef.current !== externalValueVersion;
+				lastExternalValueVersionRef.current = externalValueVersion;
+
 				if (streamingContent !== undefined) {
 					const current = editor.getMarkdown();
 					if (current !== streamingContent) {
@@ -429,7 +449,7 @@ const TextEditor = React.memo(
 					return;
 				}
 
-				if (value === lastEmittedRef.current) {
+				if (!hasExternalValueVersionChanged && value === lastEmittedRef.current) {
 					return;
 				}
 
@@ -441,7 +461,7 @@ const TextEditor = React.memo(
 						contentType: 'markdown',
 					});
 				}
-			}, [value, streamingContent, editor]);
+			}, [value, streamingContent, editor, externalValueVersion]);
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;

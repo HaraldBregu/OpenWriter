@@ -42,6 +42,7 @@ export function useDocumentHistory({
 	const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
 	const [docPath, setDocPath] = useState<string | null>(null);
 	const isRestoringRef = useRef(false);
+	const liveDraftRef = useRef<{ content: string; title: string } | null>(null);
 
 	const stateRef = useRef({ content, title });
 	stateRef.current = { content, title };
@@ -72,7 +73,15 @@ export function useDocumentHistory({
 	// Reset pointer when document changes
 	useEffect(() => {
 		setCurrentEntryId(null);
+		liveDraftRef.current = null;
 	}, [documentId]);
+
+	// User edits while browsing history should return to the live document state.
+	useEffect(() => {
+		if (!loaded || isRestoringRef.current || currentEntryId === null) return;
+		setCurrentEntryId(null);
+		liveDraftRef.current = null;
+	}, [content, title, loaded, currentEntryId]);
 
 	// Debounced snapshot creator
 	const debouncedSnapshot = useMemo(
@@ -112,14 +121,21 @@ export function useDocumentHistory({
 	);
 
 	const currentIndex = currentEntryId ? entries.findIndex((e) => e.id === currentEntryId) : -1;
+	const hasHistorySelection = currentEntryId !== null && currentIndex >= 0;
 
-	const canUndo = entries.length > 0 && currentIndex !== 0;
-	const canRedo = currentEntryId !== null && currentIndex < entries.length - 1;
+	const canUndo = entries.length > 0 && (!hasHistorySelection || currentIndex > 0);
+	const canRedo =
+		hasHistorySelection &&
+		(currentIndex < entries.length - 1 || liveDraftRef.current !== null);
 
 	const undo = useCallback(async () => {
 		if (!docPath || entries.length === 0) return;
 
-		const targetIndex = currentEntryId === null ? entries.length - 1 : currentIndex - 1;
+		if (currentEntryId === null) {
+			liveDraftRef.current = { ...stateRef.current };
+		}
+
+		const targetIndex = hasHistorySelection ? currentIndex - 1 : entries.length - 1;
 		if (targetIndex < 0) return;
 
 		const target = entries[targetIndex];
@@ -137,14 +153,20 @@ export function useDocumentHistory({
 				isRestoringRef.current = false;
 			}, RESTORE_COOLDOWN_MS);
 		}
-	}, [docPath, entries, currentEntryId, currentIndex, onRestore]);
+	}, [docPath, entries, currentEntryId, currentIndex, hasHistorySelection, onRestore]);
 
 	const redo = useCallback(async () => {
-		if (!docPath || currentEntryId === null) return;
+		if (!docPath || !hasHistorySelection) return;
 
 		const targetIndex = currentIndex + 1;
 		if (targetIndex >= entries.length) {
+			const liveDraft = liveDraftRef.current;
+			if (!liveDraft) return;
+
+			liveDraftRef.current = null;
+			isRestoringRef.current = true;
 			setCurrentEntryId(null);
+			onRestore(liveDraft.content, liveDraft.title);
 			return;
 		}
 
@@ -163,11 +185,15 @@ export function useDocumentHistory({
 				isRestoringRef.current = false;
 			}, RESTORE_COOLDOWN_MS);
 		}
-	}, [docPath, entries, currentEntryId, currentIndex, onRestore]);
+	}, [docPath, entries, currentIndex, hasHistorySelection, onRestore]);
 
 	const restoreEntry = useCallback(
 		async (id: string) => {
 			if (!docPath) return;
+
+			if (currentEntryId === null) {
+				liveDraftRef.current = { ...stateRef.current };
+			}
 
 			isRestoringRef.current = true;
 			try {
@@ -182,7 +208,7 @@ export function useDocumentHistory({
 				}, RESTORE_COOLDOWN_MS);
 			}
 		},
-		[docPath, onRestore]
+		[currentEntryId, docPath, onRestore]
 	);
 
 	return {

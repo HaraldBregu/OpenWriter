@@ -59,6 +59,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
+	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 	const [isTrashing, setIsTrashing] = useState(false);
 
@@ -321,6 +322,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const handleHistoryRestore = useCallback(
 		(restoredContent: string, restoredTitle: string) => {
+			setEditorExternalValueVersion((currentVersion) => currentVersion + 1);
 			setContent(restoredContent);
 			setTitle(restoredTitle);
 			debouncedSave();
@@ -654,6 +656,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						documentId={id}
 						loaded={loaded}
 						content={content}
+						externalValueVersion={editorExternalValueVersion}
 						disabled={
 							textCompleterTask.isRunning ||
 							textEnhanceTask.isRunning ||
