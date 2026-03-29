@@ -30,6 +30,13 @@ interface HeaderProps {
 	readonly onSearch: (query: string) => void;
 	readonly onClearSearch: () => void;
 	readonly onOpenFolder: () => void;
+	readonly historyEntries: HistoryEntry[];
+	readonly currentHistoryEntryId: string | null;
+	readonly canUndo: boolean;
+	readonly canRedo: boolean;
+	readonly onUndo: () => void;
+	readonly onRedo: () => void;
+	readonly onRestoreHistoryEntry: (id: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
