@@ -53,8 +53,6 @@ src/renderer/src/pages/document/
     history-service.ts
   panels/
     chat/
-      hooks/
-        use-chat-persistence.ts
       index.tsx
       Provider.tsx
       components/
@@ -62,6 +60,7 @@ src/renderer/src/pages/document/
         Input.tsx
         Message.tsx
         index.ts
+        use-chat-persistence.ts
       context/
         actions.ts
         contexts.ts
@@ -324,7 +323,7 @@ Use this map when making changes:
 - live editor instance: `EditorInstanceProvider`
 - persisted document file: `window.workspace` output APIs
 - persisted history snapshots: `services/history-service.ts`
-- persisted chat sessions: `services/chat-session-storage.ts` plus `panels/chat/hooks/use-chat-persistence.ts`
+- persisted chat sessions: `services/chat-session-storage.ts` plus `panels/chat/components/use-chat-persistence.ts`
 
 ## Persistence and Disk Flow
 
@@ -372,7 +371,7 @@ Without it, the editor can miss history restores because the internal editor sta
 
 ### Chat session persistence flow
 
-`panels/chat/hooks/use-chat-persistence.ts` persists the agentic sidebar conversation per document.
+`panels/chat/components/use-chat-persistence.ts` persists the agentic sidebar conversation per document.
 
 Storage layout:
 
@@ -631,7 +630,7 @@ If the problem is mainly about:
 - load/save/history behavior: start with `Layout.tsx` and `use-document-history.ts`
 - header buttons or history dropdown: start with `Header.tsx` and `components/HistoryMenu.tsx`
 - agentic chat UI: start with `panels/chat/index.tsx`, `panels/chat/Provider.tsx`, `panels/chat/hooks/`, and `panels/chat/context/contexts.ts`
-- chat persistence to disk: start with `panels/chat/hooks/use-chat-persistence.ts`
+- chat persistence to disk: start with `panels/chat/components/use-chat-persistence.ts`
 - image uploads/sidebar metadata: start with `panels/resources/ResourcesPanel.tsx`
 - editor streaming behavior: start with `Layout.tsx`, then inspect `TextEditor`
 - document-scoped state ownership confusion: inspect `Layout.tsx` and `context/state.ts` together

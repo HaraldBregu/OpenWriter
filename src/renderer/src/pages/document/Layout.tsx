@@ -9,7 +9,7 @@ import { useTask } from '@/hooks/use-task';
 import Header from './Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
-import { useChatPersistence } from './panels/chat/hooks';
+import { useChatPersistence } from './panels/chat/components';
 import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';

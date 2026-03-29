@@ -495,13 +495,12 @@ src/renderer/src/pages/
       chat/
         Provider.tsx
         index.tsx
-        hooks/
-          use-chat-persistence.ts
         components/
           Header.tsx
           Input.tsx
           Message.tsx
           index.ts
+          use-chat-persistence.ts
         context/
           actions.ts
           contexts.ts
