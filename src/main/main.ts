@@ -3,6 +3,10 @@ import type { AppState } from './core/app-state';
 import type { WindowFactory } from './core/window-factory';
 import type { WindowContextManager } from './core/window-context';
 
+const DEFAULT_WINDOW_WIDTH = 1600;
+const DEFAULT_WINDOW_HEIGHT = 1000;
+const WORKSPACE_WINDOW_SCALE = 0.9;
+
 function getBackgroundColor(): string {
 	return nativeTheme.shouldUseDarkColors ? '#1A1A1A' : '#F7F7F7';
 }
@@ -56,8 +60,8 @@ export class Main {
 	create(): BrowserWindow {
 		const isMac = process.platform === 'darwin';
 		this.window = this.windowFactory.create({
-			width: 1200,
-			height: 800,
+			width: DEFAULT_WINDOW_WIDTH,
+			height: DEFAULT_WINDOW_HEIGHT,
 			minWidth: 800,
 			minHeight: 600,
 			frame: false,
@@ -149,8 +153,8 @@ export class Main {
 	createWindowForFile(filePath: string): BrowserWindow {
 		const isMac = process.platform === 'darwin';
 		const win = this.windowFactory.create({
-			width: 1600,
-			height: 1000,
+			width: DEFAULT_WINDOW_WIDTH,
+			height: DEFAULT_WINDOW_HEIGHT,
 			minWidth: 800,
 			minHeight: 600,
 			frame: false,
@@ -173,15 +177,15 @@ export class Main {
 	}
 
 	createWorkspaceWindow(): BrowserWindow {
-		// Get the main window dimensions to calculate 10% smaller size
+		// Size workspace windows relative to the main window when available.
 		const mainWindow = this.window;
-		let width = 1080; // 1200 * 0.9
-		let height = 720; // 800 * 0.9
+		let width = Math.floor(DEFAULT_WINDOW_WIDTH * WORKSPACE_WINDOW_SCALE);
+		let height = Math.floor(DEFAULT_WINDOW_HEIGHT * WORKSPACE_WINDOW_SCALE);
 
 		if (mainWindow) {
 			const [mainWidth, mainHeight] = mainWindow.getSize();
-			width = Math.floor(mainWidth * 0.9);
-			height = Math.floor(mainHeight * 0.9);
+			width = Math.floor(mainWidth * WORKSPACE_WINDOW_SCALE);
+			height = Math.floor(mainHeight * WORKSPACE_WINDOW_SCALE);
 		}
 
 		const isMac = process.platform === 'darwin';
