@@ -12,10 +12,10 @@ import type { ResearcherState } from '../state';
 import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
-	'You are a research analyst. Classify the user query intent in 1-2 concise sentences. ' +
-	'Describe what the user wants to know or research — be specific about the domain, ' +
-	'scope, and depth of information they are seeking. Output only the intent classification, ' +
-	'no additional commentary.';
+	'You are a request analyst. Classify the user query intent in 1-2 concise sentences. ' +
+	'Describe what the user wants, including whether this is casual conversation, a direct answer, ' +
+	'or a request that may benefit from explicit research. Be specific about the domain, scope, ' +
+	'and depth they are seeking. Output only the intent classification, no additional commentary.';
 
 export async function understandNode(
 	state: typeof ResearcherState.State,

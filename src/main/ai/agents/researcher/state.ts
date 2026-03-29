@@ -5,9 +5,10 @@
  * previous value. The service layer injects the initial `prompt`; all
  * remaining fields are populated progressively by the pipeline nodes.
  *
- * Topology: understand → evaluate → plan → research → compose
+ * Topology: understand → evaluate → (plan → research)? → compose
  *   - understand : classifies user intent         → intent
- *   - evaluate   : determines response strategy   → strategy
+ *   - evaluate   : determines response strategy   → strategy, requiresResearch,
+ *                                                      responseLength
  *   - plan       : generates sub-questions        → plan
  *   - research   : synthesises knowledge          → research
  *   - compose    : writes final response          → response
@@ -36,6 +37,21 @@ export const ResearcherState = Annotation.Root({
 	strategy: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
+	}),
+
+	/** Whether the query should go through the explicit research steps. */
+	requiresResearch: Annotation<boolean>({
+		reducer: (_a, b) => b,
+		default: () => false,
+	}),
+
+	/**
+	 * Coarse response-length target derived from user intent.
+	 * Valid values: short, medium, long.
+	 */
+	responseLength: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => 'medium',
 	}),
 
 	/** Ordered research angles / sub-questions produced by the plan node. */

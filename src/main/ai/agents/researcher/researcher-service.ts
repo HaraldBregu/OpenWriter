@@ -22,6 +22,7 @@ import { createChatModel } from '../../../shared/chat-model-factory';
 import { extractTokenFromChunk, classifyError, toUserMessage } from '../../../shared/ai-utils';
 import type { ResearcherPhase } from '../../../../shared/types';
 import { buildResearcherGraph, RESEARCHER_NODE } from './graph';
+import { RESEARCHER_STATE_MESSAGES } from './messages';
 
 const LOG_PREFIX = 'ResearcherService';
 
@@ -62,6 +63,13 @@ const NODE_TEMPERATURES = {
 	plan: 0.2,
 	research: 0.3,
 } as const;
+
+const STATE_MESSAGE_TO_PHASE: Partial<Record<string, ResearcherPhase>> = {
+	[RESEARCHER_STATE_MESSAGES.EVALUATE]: 'evaluating',
+	[RESEARCHER_STATE_MESSAGES.PLAN]: 'planning',
+	[RESEARCHER_STATE_MESSAGES.RESEARCH]: 'researching',
+	[RESEARCHER_STATE_MESSAGES.COMPOSE]: 'composing',
+};
 
 export class ResearcherService implements Disposable {
 	private readonly sessions = new Map<string, SessionEntry>();
@@ -156,11 +164,7 @@ export class ResearcherService implements Disposable {
 			let finalIntent = '';
 			let finalPlan: string[] = [];
 
-			// Track which phases have already been announced to avoid duplicates.
-			let evaluatingAnnounced = false;
-			let planningAnnounced = false;
-			let researchingAnnounced = false;
-			let composingAnnounced = false;
+			let lastStateMessage: string | undefined;
 
 			for await (const event of stream) {
 				if (controller.signal.aborted) break;
@@ -196,32 +200,14 @@ export class ResearcherService implements Disposable {
 				} else if (mode === 'values') {
 					const snapshot = data as Record<string, unknown>;
 
-					// Derive phase transitions from state snapshot fields becoming populated.
-					const hasIntent = typeof snapshot['intent'] === 'string' && snapshot['intent'].length > 0;
-					const hasStrategy =
-						typeof snapshot['strategy'] === 'string' && snapshot['strategy'].length > 0;
-					const hasPlan = Array.isArray(snapshot['plan']) && snapshot['plan'].length > 0;
-					const hasResearch =
-						typeof snapshot['research'] === 'string' && snapshot['research'].length > 0;
-
-					if (hasIntent && !evaluatingAnnounced) {
-						evaluatingAnnounced = true;
-						callbacks.onPhase?.('evaluating', sessionId);
-					}
-
-					if (hasStrategy && !planningAnnounced) {
-						planningAnnounced = true;
-						callbacks.onPhase?.('planning', sessionId);
-					}
-
-					if (hasPlan && !researchingAnnounced) {
-						researchingAnnounced = true;
-						callbacks.onPhase?.('researching', sessionId);
-					}
-
-					if (hasResearch && !composingAnnounced) {
-						composingAnnounced = true;
-						callbacks.onPhase?.('composing', sessionId);
+					const stateMessage =
+						typeof snapshot['stateMessage'] === 'string' ? snapshot['stateMessage'] : undefined;
+					if (stateMessage && stateMessage !== lastStateMessage) {
+						lastStateMessage = stateMessage;
+						const phase = STATE_MESSAGE_TO_PHASE[stateMessage];
+						if (phase) {
+							callbacks.onPhase?.(phase, sessionId);
+						}
 					}
 
 					// Capture final state values for the done callback.

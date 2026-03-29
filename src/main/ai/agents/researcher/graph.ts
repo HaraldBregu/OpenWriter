@@ -3,11 +3,12 @@
  *
  * Topology:
  *
- *   START → understand → evaluate → plan → research → compose → END
+ *   START → understand → evaluate → (plan → research)? → compose → END
  *
- * Five-node pipeline:
+ * Five-node pipeline with a conditional research branch:
  *   - understand : classifies query intent (non-streamed)
- *   - evaluate   : determines optimal response strategy (non-streamed)
+ *   - evaluate   : determines optimal response strategy and whether explicit
+ *                  research is needed (non-streamed)
  *   - plan       : generates 3-5 research angles as JSON (non-streamed)
  *   - research   : synthesises knowledge from angles (non-streamed)
  *   - compose    : writes the final user-facing response (streamed)
@@ -64,7 +65,12 @@ export function buildGraph(models: BaseChatModel | NodeModelMap) {
 		)
 		.addEdge(START, RESEARCHER_NODE.UNDERSTAND)
 		.addEdge(RESEARCHER_NODE.UNDERSTAND, RESEARCHER_NODE.EVALUATE)
-		.addEdge(RESEARCHER_NODE.EVALUATE, RESEARCHER_NODE.PLAN)
+		.addConditionalEdges(
+			RESEARCHER_NODE.EVALUATE,
+			(state: typeof ResearcherState.State) =>
+				state.requiresResearch ? RESEARCHER_NODE.PLAN : RESEARCHER_NODE.COMPOSE,
+			[RESEARCHER_NODE.PLAN, RESEARCHER_NODE.COMPOSE]
+		)
 		.addEdge(RESEARCHER_NODE.PLAN, RESEARCHER_NODE.RESEARCH)
 		.addEdge(RESEARCHER_NODE.RESEARCH, RESEARCHER_NODE.COMPOSE)
 		.addEdge(RESEARCHER_NODE.COMPOSE, END)

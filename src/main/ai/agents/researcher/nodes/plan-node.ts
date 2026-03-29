@@ -14,14 +14,25 @@ import { RESEARCHER_STATE_MESSAGES } from '../messages';
 
 const SYSTEM_PROMPT =
 	'You are a research strategist. Given a user query, its classified intent, ' +
-	'and a recommended response strategy, ' +
-	'create 3-5 focused research angles or sub-questions that together cover the topic comprehensively. ' +
+	'a recommended response strategy, and the target response length, ' +
+	'create a focused set of research angles or sub-questions that cover the topic without over-planning. ' +
+	'Use 2-3 angles for short answers, 3-4 for medium answers, and 4-5 for long answers. ' +
 	'Align the angles with the response strategy — depth, format, and scope should match it. ' +
 	'Return ONLY a valid JSON array of strings — no markdown fences, no explanation, no trailing text. ' +
 	'Example: ["What is X?", "How does Y affect X?", "What are the main challenges of X?"]';
 
-function buildHumanMessage(prompt: string, intent: string, strategy: string): string {
-	return `User query: ${prompt}\n\nClassified intent: ${intent}\n\nResponse strategy: ${strategy}`;
+function buildHumanMessage(
+	prompt: string,
+	intent: string,
+	strategy: string,
+	responseLength: string
+): string {
+	return (
+		`User query: ${prompt}\n\n` +
+		`Classified intent: ${intent}\n\n` +
+		`Target response length: ${responseLength}\n\n` +
+		`Response strategy: ${strategy}`
+	);
 }
 
 function parsePlanFromResponse(content: string, fallback: string): string[] {
@@ -45,7 +56,9 @@ export async function planNode(
 ): Promise<Partial<typeof ResearcherState.State>> {
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
-		new HumanMessage(buildHumanMessage(state.prompt, state.intent, state.strategy)),
+		new HumanMessage(
+			buildHumanMessage(state.prompt, state.intent, state.strategy, state.responseLength)
+		),
 	];
 
 	const response = await model.invoke(messages);

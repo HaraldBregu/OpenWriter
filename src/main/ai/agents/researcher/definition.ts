@@ -48,6 +48,8 @@ const definition: AgentDefinition = {
 			prompt: ctx.prompt,
 			intent: '',
 			strategy: '',
+			requiresResearch: false,
+			responseLength: 'medium',
 			plan: [],
 			research: '',
 			stateMessage: RESEARCHER_STATE_MESSAGES.UNDERSTAND,
