@@ -660,7 +660,7 @@ const Chat: React.FC = () => {
 							return (
 								<div
 									key={message.id}
-									className={index === 0 ? undefined : isGroupedWithPrevious ? 'mt-2' : 'mt-6'}
+									className={index === 0 ? undefined : isGroupedWithPrevious ? 'mt-2' : 'mt-4'}
 								>
 									<Message
 										id={message.id}
