@@ -157,6 +157,7 @@ export class ResearcherService implements Disposable {
 			let finalPlan: string[] = [];
 
 			// Track which phases have already been announced to avoid duplicates.
+			let evaluatingAnnounced = false;
 			let planningAnnounced = false;
 			let researchingAnnounced = false;
 			let composingAnnounced = false;
