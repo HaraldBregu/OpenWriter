@@ -10,21 +10,21 @@ import {
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 
-interface ChatAgentOption {
+interface AgentOption {
 	readonly id: string;
 	readonly label: string;
 }
 
-interface ChatInputProps {
+interface InputProps {
 	readonly onSend: (message: string) => void;
 	readonly disabled?: boolean;
-	readonly agentOptions?: readonly ChatAgentOption[];
+	readonly agentOptions?: readonly AgentOption[];
 	readonly selectedAgentId?: string;
 	readonly onAgentChange?: (agentId: string) => void;
 	readonly placeholder?: string;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({
+const Input: React.FC<InputProps> = ({
 	onSend,
 	disabled = false,
 	agentOptions,
@@ -144,5 +144,5 @@ const ChatInput: React.FC<ChatInputProps> = ({
 	);
 };
 
-export { ChatInput };
-export type { ChatInputProps, ChatAgentOption };
+export { Input };
+export type { InputProps, AgentOption };

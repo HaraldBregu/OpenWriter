@@ -51,8 +51,8 @@ jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/hooks', ()
 }));
 
 jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components', () => ({
-	ChatHeader: () => <div>header</div>,
-	ChatMessage: ({
+	Header: () => <div>header</div>,
+	Message: ({
 		id,
 		showStatusLoader,
 	}: {
@@ -63,7 +63,7 @@ jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components
 			message
 		</div>
 	),
-	ChatInput: ({
+	Input: ({
 		onSend,
 		disabled,
 	}: {
@@ -112,7 +112,7 @@ describe('Chat', () => {
 			expect(mockSubmit).toHaveBeenCalledWith(
 				'agent-researcher',
 				{ prompt: 'Analyze the code' },
-				{ documentId: 'doc-1', agentId: 'researcher' }
+				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'session-123' }
 			);
 		});
 
@@ -139,6 +139,32 @@ describe('Chat', () => {
 		expect(mockInitTaskMetadata).toHaveBeenCalledWith('task-123', {
 			documentId: 'doc-1',
 			agentId: 'researcher',
+			chatId: 'session-123',
+		});
+	});
+
+	it('reuses the existing chat id in task metadata when a session already exists', async () => {
+		mockChatState.sessionId = 'existing-session';
+		mockSubmit.mockResolvedValue({
+			success: true,
+			data: { taskId: 'task-123' },
+		});
+
+		render(<Chat />);
+
+		fireEvent.click(screen.getByRole('button', { name: 'send' }));
+
+		await waitFor(() => {
+			expect(mockSubmit).toHaveBeenCalledWith(
+				'agent-researcher',
+				{ prompt: 'Analyze the code' },
+				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'existing-session' }
+			);
+		});
+
+		expect(mockDispatch).not.toHaveBeenCalledWith({
+			type: 'CHAT_SESSION_STARTED',
+			sessionId: 'session-123',
 		});
 	});
 

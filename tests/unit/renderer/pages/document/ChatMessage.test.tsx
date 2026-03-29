@@ -18,12 +18,12 @@ jest.mock('remark-gfm', () => ({
 	default: jest.fn(),
 }));
 
-import { ChatMessage } from '../../../../../src/renderer/src/pages/document/panels/chat/components/Message';
+import { Message } from '../../../../../src/renderer/src/pages/document/panels/chat/components/Message';
 
-describe('ChatMessage', () => {
+describe('Message', () => {
 	it('renders the assistant response body', () => {
 		render(
-			<ChatMessage
+			<Message
 				id="assistant-message"
 				content="Here is the final answer."
 				role="assistant"
@@ -37,7 +37,7 @@ describe('ChatMessage', () => {
 
 	it('renders system status messages as standalone timeline rows', () => {
 		render(
-			<ChatMessage
+			<Message
 				id="system-message"
 				content="Completed"
 				role="system"
@@ -52,7 +52,7 @@ describe('ChatMessage', () => {
 
 	it('shows a loader for non-completed system status messages', () => {
 		render(
-			<ChatMessage
+			<Message
 				id="system-message"
 				content="Researching"
 				role="system"
@@ -68,7 +68,7 @@ describe('ChatMessage', () => {
 
 	it('does not show a loader for non-latest system status messages', () => {
 		render(
-			<ChatMessage
+			<Message
 				id="system-message"
 				content="Queued"
 				role="system"
@@ -83,7 +83,7 @@ describe('ChatMessage', () => {
 
 	it('does not render an empty assistant placeholder without content', () => {
 		const { container } = render(
-			<ChatMessage
+			<Message
 				id="assistant-message"
 				content=""
 				role="assistant"

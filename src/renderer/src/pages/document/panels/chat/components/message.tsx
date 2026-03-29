@@ -3,7 +3,7 @@ import { LoaderCircle } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-interface ChatMessageProps {
+interface MessageProps {
 	readonly id: string;
 	readonly content: string;
 	readonly role: 'user' | 'assistant' | 'system';
@@ -14,7 +14,7 @@ interface ChatMessageProps {
 	readonly showStatusLoader?: boolean;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({
+const Message: React.FC<MessageProps> = ({
 	content,
 	role,
 	timestamp: _timestamp,
@@ -77,5 +77,5 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	);
 };
 
-export { ChatMessage };
-export type { ChatMessageProps };
+export { Message };
+export type { MessageProps };

@@ -14,7 +14,7 @@ import { useChatState, useChatDispatch } from '../hooks';
 import type { ChatSessionFile } from '../context';
 import { syncChatSessionsFromDisk } from '../../../services/chat-session-storage';
 
-const ChatHeader: React.FC = () => {
+const Header: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
 	const docDispatch = useDocumentDispatch();
@@ -206,4 +206,4 @@ const ChatHeader: React.FC = () => {
 	);
 };
 
-export { ChatHeader };
+export { Header };

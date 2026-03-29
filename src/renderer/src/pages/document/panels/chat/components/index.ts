@@ -1,5 +1,5 @@
-export { ChatHeader } from './Header';
-export { ChatInput } from './Input';
-export { ChatMessage } from './Message';
-export type { ChatInputProps, ChatAgentOption } from './Input';
-export type { ChatMessageProps } from './Message';
+export { Header } from './Header';
+export { Input } from './Input';
+export { Message } from './Message';
+export type { InputProps, AgentOption } from './Input';
+export type { MessageProps } from './Message';

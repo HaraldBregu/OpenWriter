@@ -8,7 +8,7 @@ import {
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../../../services/task-event-bus';
-import { ChatHeader, ChatInput, ChatMessage } from './components';
+import { Header, Input, Message } from './components';
 import { useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch } from './hooks';
 import { ChatProvider } from './Provider';
@@ -185,9 +185,10 @@ const Chat: React.FC = () => {
 		async (content: string) => {
 			if (!documentId || isRunning) return;
 
+			const resolvedSessionId = sessionId ?? uuidv7();
+
 			if (!sessionId) {
-				const newSessionId = uuidv7();
-				dispatch({ type: 'CHAT_SESSION_STARTED', sessionId: newSessionId });
+				dispatch({ type: 'CHAT_SESSION_STARTED', sessionId: resolvedSessionId });
 			}
 
 			const userMessageId = crypto.randomUUID();
@@ -223,9 +224,11 @@ const Chat: React.FC = () => {
 
 			const taskType = selectedAgentId === 'inventor' ? 'agent-text-writer' : 'agent-researcher';
 			const taskInput: ResearcherTaskData = { prompt: content };
-			const metadata = documentId
-				? { documentId, agentId: selectedAgentId }
-				: { agentId: selectedAgentId };
+			const metadata = {
+				agentId: selectedAgentId,
+				...(documentId ? { documentId } : {}),
+				...(resolvedSessionId ? { chatId: resolvedSessionId } : {}),
+			};
 
 			if (typeof window.task?.submit !== 'function') {
 				dispatch({
@@ -289,7 +292,7 @@ const Chat: React.FC = () => {
 
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background">
-			<ChatHeader />
+			<Header />
 
 			<div
 				className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
@@ -333,7 +336,7 @@ const Chat: React.FC = () => {
 									key={message.id}
 									className={index === 0 ? undefined : isGroupedWithPrevious ? 'mt-2' : 'mt-6'}
 								>
-									<ChatMessage
+									<Message
 										id={message.id}
 										content={message.content}
 										role={message.role}
@@ -351,7 +354,7 @@ const Chat: React.FC = () => {
 				)}
 			</div>
 
-			<ChatInput
+			<Input
 				onSend={handleSend}
 				disabled={isRunning}
 				agentOptions={[
