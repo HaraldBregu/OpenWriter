@@ -1,5 +1,5 @@
 export const HISTORY_DIR_NAME = 'history';
-export const MAX_HISTORY_ENTRIES = 50;
+export const MAX_HISTORY_ENTRIES = 12;
 
 export interface HistoryEntry {
 	id: string;
