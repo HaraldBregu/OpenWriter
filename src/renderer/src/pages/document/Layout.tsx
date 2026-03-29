@@ -319,6 +319,31 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		};
 	}, [debouncedSave]);
 
+	const handleHistoryRestore = useCallback(
+		(restoredContent: string, restoredTitle: string) => {
+			setContent(restoredContent);
+			setTitle(restoredTitle);
+			debouncedSave();
+		},
+		[debouncedSave]
+	);
+
+	const {
+		entries: historyEntries,
+		currentEntryId: currentHistoryEntryId,
+		canUndo,
+		canRedo,
+		undo: handleUndo,
+		redo: handleRedo,
+		restoreEntry: handleRestoreHistoryEntry,
+	} = useDocumentHistory({
+		documentId: id,
+		content,
+		title,
+		loaded,
+		onRestore: handleHistoryRestore,
+	});
+
 	const handleTitleChange = useCallback(
 		(value: string) => {
 			setTitle(value);
