@@ -133,6 +133,250 @@ The task subsystem emits renderer-facing lifecycle events such as:
 - cancelled
 - priority-changed
 
+## Task Data Structure
+
+The task subsystem uses different shapes for the same task at different stages.
+
+Do not treat these as interchangeable.
+The public IPC payload, the executor's in-memory record, and the renderer-facing snapshot each serve a different purpose.
+
+### 1. Submission payload
+
+The renderer submits a task through the shared transport contract in `src/shared/types.ts`.
+
+The public payload shape is:
+
+```ts
+interface TaskSubmitPayload<TInput = unknown> {
+	type: string;
+	input: TInput;
+	options?: {
+		taskId?: string;
+		priority?: 'low' | 'normal' | 'high';
+		timeoutMs?: number;
+		windowId?: number;
+	};
+	metadata?: Record<string, unknown>;
+}
+```
+
+Field meaning:
+
+- `type`
+  The handler identifier, for example `agent-text-writer` or `index-resources`.
+
+- `input`
+  The handler-specific input payload.
+  This is intentionally opaque at the queue layer.
+
+- `options.taskId`
+  Optional caller-supplied id.
+  If omitted, the executor generates a UUID.
+
+- `options.priority`
+  Queue priority.
+  Higher priority tasks sort ahead of lower priority tasks.
+
+- `options.timeoutMs`
+  Optional timeout after which the executor aborts the task.
+
+- `options.windowId`
+  Part of the transport shape, but not trusted from the renderer.
+  `TaskManagerIpc` overwrites this with the real sender window id on the main side.
+
+- `metadata`
+  Arbitrary caller-supplied context that is copied onto the task and echoed in all emitted `TaskEvent`s.
+
+Important rule:
+
+- renderer input is not the final runtime task structure
+- `TaskManagerIpc` normalizes the payload before it reaches `TaskExecutor`
+- server-side code stamps `windowId` and moves `metadata` into executor options
+
+### 2. Executor submission options
+
+Inside `src/main/task/task-descriptor.ts`, the executor works with `TaskOptions`.
+
+Current shape:
+
+```ts
+interface TaskOptions {
+	taskId?: string;
+	priority?: 'low' | 'normal' | 'high';
+	timeoutMs?: number;
+	windowId?: number;
+	metadata?: Record<string, unknown>;
+}
+```
+
+This is the internal normalized shape used by `TaskExecutor.submit(...)`.
+
+Compared to the public payload:
+
+- `type` and `input` are already split into separate method parameters
+- `metadata` now lives inside `TaskOptions`
+- `windowId` is now trusted because it was stamped by `TaskManagerIpc`
+
+### 3. In-memory active task descriptor
+
+The authoritative runtime record is `ActiveTask` in `task-descriptor.ts`.
+
+Current shape:
+
+```ts
+interface ActiveTask {
+	taskId: string;
+	type: string;
+	status: 'queued' | 'started' | 'running' | 'completed' | 'error' | 'cancelled';
+	priority: 'low' | 'normal' | 'high';
+	startedAt?: number;
+	stateMessage?: string;
+	completedAt?: number;
+	controller: AbortController;
+	timeoutHandle?: NodeJS.Timeout;
+	windowId?: number;
+	result?: unknown;
+	error?: string;
+	metadata?: Record<string, unknown>;
+}
+```
+
+This is the full executor-side task state.
+
+Field meaning:
+
+- `taskId`
+  Stable identifier for lookup, cancellation, event correlation, and result retrieval.
+
+- `type`
+  The handler key resolved through `TaskHandlerRegistry`.
+
+- `status`
+  Current lifecycle status.
+  In practice the executor sets tasks to `queued`, then `running`, then one final terminal state.
+  `started` exists in the shared status union but the executor currently uses it as an event type, not as the long-lived in-memory status value.
+
+- `priority`
+  The current queue priority.
+  This can change while the task is still queued.
+
+- `startedAt` and `completedAt`
+  Execution timestamps used for duration and retention logic.
+
+- `stateMessage`
+  Human-readable UI message such as `Queued`, `Running`, `Completed`, `Failed`, or a handler-supplied progress message.
+
+- `controller`
+  The `AbortController` used for cancellation.
+  This is main-process only and never sent over IPC.
+
+- `timeoutHandle`
+  The timer used to enforce `timeoutMs`.
+  Also main-process only.
+
+- `windowId`
+  Ownership marker used to route events back to the originating window and to cancel tasks when that window closes.
+
+- `result`
+  Final handler result stored after successful completion.
+
+- `error`
+  Final error message stored when the task fails.
+
+- `metadata`
+  Opaque correlation data forwarded into every task event.
+
+### 4. Private queued task record
+
+`TaskExecutor` also maintains a private `QueuedTask` shape for tasks waiting on a concurrency slot.
+
+Current fields are:
+
+- `taskId`
+- `type`
+- `input`
+- `priority`
+- `windowId`
+- `timeoutMs`
+- `metadata`
+- `controller`
+- `queuedAt`
+
+This type is intentionally private to `task-executor.ts`.
+It exists because a queued task needs the original `input` and submission-time settings before execution starts, while `ActiveTask` is focused on runtime status and retention.
+
+### 5. IPC-safe task snapshot
+
+The renderer does not receive `ActiveTask` directly.
+
+`TaskManagerIpc` strips non-serializable fields and returns `TaskInfo`:
+
+```ts
+interface TaskInfo {
+	taskId: string;
+	type: string;
+	status: 'queued' | 'started' | 'running' | 'completed' | 'error' | 'cancelled';
+	priority: 'low' | 'normal' | 'high';
+	stateMessage?: string;
+	startedAt?: number;
+	completedAt?: number;
+	windowId?: number;
+	error?: string;
+	queuePosition?: number;
+	durationMs?: number;
+	metadata?: Record<string, unknown>;
+}
+```
+
+This is the transport-safe view used by:
+
+- `task:list`
+- `task:get-result`
+- renderer task state hydration
+
+Important difference:
+
+- `TaskInfo` has no `controller`
+- `TaskInfo` has no `timeoutHandle`
+- `TaskInfo` may include presentation-oriented values like `queuePosition` and `durationMs`
+
+### 6. Event stream shape
+
+Incremental task updates are emitted as `TaskEvent`.
+
+Current event union:
+
+- `queued`
+  Includes `taskId`, `taskType`, `position`, optional `metadata`, and optional `stateMessage`.
+
+- `started`
+  Includes `taskId`, optional `metadata`, and optional `stateMessage`.
+
+- `progress`
+  Includes `taskId`, `percent`, optional `message`, optional `detail`, optional `metadata`, and optional `stateMessage`.
+
+- `stream`
+  Includes `taskId`, streamed `data`, optional `metadata`, and optional `stateMessage`.
+
+- `completed`
+  Includes `taskId`, final `result`, `durationMs`, optional `metadata`, and optional `stateMessage`.
+
+- `error`
+  Includes `taskId`, `message`, `code`, optional `metadata`, and optional `stateMessage`.
+
+- `cancelled`
+  Includes `taskId`, optional `metadata`, and optional `stateMessage`.
+
+- `priority-changed`
+  Includes `taskId`, `priority`, `position`, optional `metadata`, and optional `stateMessage`.
+
+- `queue-position`
+  Includes `taskId`, `position`, optional `metadata`, and optional `stateMessage`.
+
+The event stream is the live feed.
+`TaskInfo` is a snapshot.
+Keep those concepts separate when adding new UI or IPC features.
+
 ### `task-reaction-handler.ts`
 
 This defines the interface for main-process side effects that should happen in response to task lifecycle events.
