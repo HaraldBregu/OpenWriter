@@ -36,7 +36,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Text,
 		Paragraph,
 		Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
-		History,
+		HistoryKeyboardExtension.configure({ onUndo: handlers.onUndo, onRedo: handlers.onRedo }),
 		Bold,
 		Italic,
 		Underline,
