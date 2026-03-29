@@ -1,5 +1,5 @@
 import { useContext, type Dispatch } from 'react';
-import { DocumentDispatchContext } from '../context/DocumentContext';
+import { DocumentDispatchContext } from '../providers';
 import type { DocumentAction } from '../context/actions';
 
 export function useDocumentDispatch(): Dispatch<DocumentAction> {

@@ -67,6 +67,6 @@ export async function planNode(
 
 	return {
 		plan,
-		stateMessage: RESEARCHER_STATE_MESSAGES.RESEARCH,
+		phaseLabel: RESEARCHER_STATE_MESSAGES.RESEARCH,
 	};
 }

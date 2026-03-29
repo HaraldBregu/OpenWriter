@@ -23,14 +23,12 @@ export function ReduxStateTab() {
 
 	const workspace = useAppSelector((s: RootState) => s.workspace);
 	const documents = useAppSelector((s: RootState) => s.documents);
-	const chat = useAppSelector((s: RootState) => s.chat);
 
 	void tick;
 
 	const slices: { name: SliceName; data: unknown }[] = [
 		{ name: 'workspace', data: workspace },
 		{ name: 'documents', data: documents },
-		{ name: 'chat', data: chat },
 	];
 
 	return (

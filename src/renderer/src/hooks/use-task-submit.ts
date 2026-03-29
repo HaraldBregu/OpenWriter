@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
+import { getTaskStatusText } from '../../../shared/task-metadata';
 import {
 	addTask,
 	getTrackedTask,
@@ -20,8 +21,8 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	taskId: string | null;
 	/** Current lifecycle status. Null before submit() is called. */
 	status: TaskStatus | null;
-	/** Current human-readable task state. */
-	stateMessage: string | undefined;
+	/** Task metadata returned by the main process. */
+	metadata: Record<string, unknown> | undefined;
 	/** Progress state — percent 0–100 and optional message. */
 	progress: TaskProgressState;
 	/** Optional human-readable progress message from the main process. */
@@ -94,8 +95,9 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 
 	const status: TaskStatus | null = taskState?.status ?? null;
 	const progressPercent: number = taskState?.progress.percent ?? 0;
-	const stateMessage: string | undefined = taskState?.stateMessage;
-	const progressMessage: string | undefined = taskState?.progress.message ?? stateMessage;
+	const metadata = taskState?.metadata;
+	const progressMessage: string | undefined =
+		taskState?.progress.message ?? getTaskStatusText(metadata);
 	const error: string | undefined = taskState?.error;
 	const result: TResult | undefined = taskState?.result as TResult | undefined;
 	const queuePosition: number | undefined = taskState?.queuePosition;
@@ -208,7 +210,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		() => ({
 			taskId,
 			status,
-			stateMessage,
+			metadata,
 			progress: { percent: progressPercent, message: progressMessage } as TaskProgressState,
 			progressMessage,
 			error,
@@ -230,7 +232,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			taskId,
 			status,
 			progressPercent,
-			stateMessage,
+			metadata,
 			progressMessage,
 			error,
 			result,

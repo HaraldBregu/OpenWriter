@@ -1,17 +1,15 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import type { TextEditorElement } from '@/components/editor/TextEditor';
+import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import Header from './Header';
-import ResourcesPanel from './ResourcesPanel';
-import ChatPanel from './ChatPanel';
-import EditorPanel from './EditorPanel';
-import { useEditorInstance, useSidebarVisibility, useChatState, useChatDispatch } from './context';
+import ResourcesPanel from './panels/resources/ResourcesPanel';
+import ChatPanel from './panels/chat/ChatPanel';
+import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useChatPersistence, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
@@ -32,30 +30,14 @@ type ImageGeneratorTaskData = {
 	prompt: string;
 };
 
-type ResearcherTaskData = {
-	prompt: string;
-};
-
-type ChatAgentId = 'researcher' | 'inventor';
-
 interface LayoutProps {
 	documentId: string | undefined;
 }
 
-interface ResearcherTaskOutput {
-	content: string;
-	tokenCount: number;
-	agentId: string;
-}
-
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
-	const { t } = useTranslation();
 	const dispatch = useDocumentDispatch();
 	useChatPersistence(id);
-
-	const chatDispatch = useChatDispatch();
-	const { activeTaskId: chatActiveTaskId, activeMessageId: chatActiveMessageId } = useChatState();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
@@ -75,7 +57,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const editorRef = useRef<TextEditorElement>(null);
 	const sidebarPanelRef = usePanelRef();
-	const lastRecordedTaskStateRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		if (activeSidebar) {
@@ -84,145 +65,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			sidebarPanelRef.current?.collapse();
 		}
 	}, [activeSidebar, sidebarPanelRef]);
-
-	useEffect(() => {
-		if (!chatActiveTaskId || !chatActiveMessageId) return;
-
-		const taskId = chatActiveTaskId;
-		const messageId = chatActiveMessageId;
-		const mapTaskStatusToChatStatus = (
-			status: TaskSnapshot['status']
-		): 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled' => {
-			switch (status) {
-				case 'queued':
-				case 'started':
-					return 'queued';
-				case 'running':
-					return 'running';
-				case 'completed':
-					return 'completed';
-				case 'error':
-					return 'error';
-				case 'cancelled':
-					return 'cancelled';
-				default:
-					return 'running';
-			}
-		};
-
-		lastRecordedTaskStateRef.current = null;
-
-		const unsubscribe = subscribeToTask(taskId, (snapshot: TaskSnapshot) => {
-			const metadataDocumentId = snapshot.metadata?.documentId;
-			const targetDocumentId =
-				typeof metadataDocumentId === 'string' && metadataDocumentId.length > 0
-					? metadataDocumentId
-					: id;
-
-			if (targetDocumentId !== id) return;
-
-			const trimmedStateMessage = snapshot.stateMessage?.trim();
-			if (trimmedStateMessage) {
-				const dedupeKey = `${snapshot.status}:${trimmedStateMessage}`;
-				if (lastRecordedTaskStateRef.current !== dedupeKey) {
-					lastRecordedTaskStateRef.current = dedupeKey;
-					chatDispatch({
-						type: 'CHAT_MESSAGE_INSERTED_BEFORE',
-						beforeId: messageId,
-						message: {
-							id: crypto.randomUUID(),
-							content: trimmedStateMessage,
-							stateMessage: undefined,
-							role: 'system',
-							timestamp: new Date().toISOString(),
-							taskId,
-							status: mapTaskStatusToChatStatus(snapshot.status),
-						},
-					});
-				}
-			}
-
-			switch (snapshot.status) {
-				case 'queued':
-				case 'started':
-					chatDispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: messageId,
-						patch: {
-							taskId,
-							status: 'queued',
-						},
-					});
-					break;
-				case 'running':
-					chatDispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: messageId,
-						patch: {
-							taskId,
-							status: 'running',
-							...(snapshot.content ? { content: snapshot.content } : {}),
-						},
-					});
-					break;
-				case 'completed': {
-					const output = snapshot.result as ResearcherTaskOutput | undefined;
-					chatDispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: messageId,
-						patch: {
-							content:
-								output?.content ||
-								snapshot.content ||
-								t('agenticPanel.emptyResponse', 'No response received.'),
-							taskId,
-							status: 'completed',
-						},
-					});
-					lastRecordedTaskStateRef.current = null;
-					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-				}
-				case 'error':
-					chatDispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: messageId,
-						patch: {
-							content:
-								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
-							taskId,
-							status: 'error',
-						},
-					});
-					lastRecordedTaskStateRef.current = null;
-					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-				case 'cancelled':
-					chatDispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: messageId,
-						patch: {
-							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
-							taskId,
-							status: 'cancelled',
-						},
-					});
-					lastRecordedTaskStateRef.current = null;
-					chatDispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					chatDispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
-				default:
-					break;
-			}
-		});
-
-		return () => {
-			lastRecordedTaskStateRef.current = null;
-			unsubscribe();
-		};
-	}, [chatActiveTaskId, chatActiveMessageId, id, chatDispatch, t]);
 
 	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
 	const textCompleterTask = useTask<TextCompleterTaskData>(
@@ -241,11 +83,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		'agent-image-generator',
 		imageGeneratorTaskData
 	);
-
-	const researcherTaskData: ResearcherTaskData = { prompt: '' };
-	const researcherTask = useTask<ResearcherTaskData>('agent-researcher', researcherTaskData);
-	const inventorTaskData: ResearcherTaskData = { prompt: '' };
-	const inventorTask = useTask<ResearcherTaskData>('agent-text-writer', inventorTaskData);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
@@ -644,30 +481,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[imageGeneratorTask, id]
 	);
 
-	const onChatSubmit = useCallback(
-		async (prompt: string, agentId: ChatAgentId | string) => {
-			const data: ResearcherTaskData = { prompt };
-			const metadata = id ? { documentId: id, agentId } : { agentId };
-			if (agentId === 'inventor') {
-				await inventorTask.submit(data, metadata);
-				return;
-			}
-			await researcherTask.submit(data, metadata);
-		},
-		[id, inventorTask, researcherTask]
-	);
-
-	const activeResearcherTaskId =
-		researcherTask.isQueued || researcherTask.isRunning ? researcherTask.taskId : null;
-	const activeInventorTaskId =
-		inventorTask.isQueued || inventorTask.isRunning ? inventorTask.taskId : null;
-	const activeChatTaskId = activeResearcherTaskId ?? activeInventorTaskId ?? null;
-	const isChatRunning =
-		researcherTask.isQueued ||
-		researcherTask.isRunning ||
-		inventorTask.isQueued ||
-		inventorTask.isRunning;
-
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
@@ -703,27 +516,35 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 				<ResizablePanel defaultSize="70%" minSize="40%">
-					<EditorPanel
-						documentId={id}
-						loaded={loaded}
-						content={content}
-						externalValueVersion={editorExternalValueVersion}
-						disabled={
-							textCompleterTask.isRunning ||
-							textEnhanceTask.isRunning ||
-							textWriterTask.isRunning ||
-							imageGeneratorTask.isRunning
-						}
-						editorRef={editorRef}
-						onEditorReady={handleEditorReady}
-						onContentChange={handleContentChange}
-						onContinueWithAssistant={onContinueWithAssistant}
-						onEnhanceWithAssistant={onEnhanceWithAssistant}
-						onTextSubmit={onTextSubmit}
-						onImageSubmit={onImageSubmit}
-						onUndo={handleUndo}
-						onRedo={handleRedo}
-					/>
+					<div className="h-full min-w-0 flex flex-col">
+						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+							<div className="mx-auto flex w-full max-w-4xl flex-col gap-2 px-10 py-10">
+								{loaded && (
+									<TextEditor
+										disabled={
+											textCompleterTask.isRunning ||
+											textEnhanceTask.isRunning ||
+											textWriterTask.isRunning ||
+											imageGeneratorTask.isRunning
+										}
+										ref={editorRef}
+										key={id}
+										value={content}
+										externalValueVersion={editorExternalValueVersion}
+										onChange={handleContentChange}
+										onContinueWithAssistant={onContinueWithAssistant}
+										onEnhanceWithAssistant={onEnhanceWithAssistant}
+										onTextSubmit={onTextSubmit}
+										onImageSubmit={onImageSubmit}
+										documentId={id}
+										onEditorReady={handleEditorReady}
+										onUndo={handleUndo}
+										onRedo={handleRedo}
+									/>
+								)}
+							</div>
+						</div>
+					</div>
 				</ResizablePanel>
 
 				{activeSidebar && <ResizableHandle />}
@@ -738,13 +559,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				>
 					<div className="h-full">
 						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && (
-							<ChatPanel
-								taskId={activeChatTaskId}
-								isRunning={isChatRunning}
-								onSend={onChatSubmit}
-							/>
-						)}
+						{activeSidebar === 'agentic' && <ChatPanel />}
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>

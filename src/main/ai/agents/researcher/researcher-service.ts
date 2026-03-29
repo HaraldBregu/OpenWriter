@@ -164,7 +164,7 @@ export class ResearcherService implements Disposable {
 			let finalIntent = '';
 			let finalPlan: string[] = [];
 
-			let lastStateMessage: string | undefined;
+			let lastPhaseLabel: string | undefined;
 
 			for await (const event of stream) {
 				if (controller.signal.aborted) break;
@@ -200,11 +200,11 @@ export class ResearcherService implements Disposable {
 				} else if (mode === 'values') {
 					const snapshot = data as Record<string, unknown>;
 
-					const stateMessage =
-						typeof snapshot['stateMessage'] === 'string' ? snapshot['stateMessage'] : undefined;
-					if (stateMessage && stateMessage !== lastStateMessage) {
-						lastStateMessage = stateMessage;
-						const phase = STATE_MESSAGE_TO_PHASE[stateMessage];
+					const phaseLabel =
+						typeof snapshot['phaseLabel'] === 'string' ? snapshot['phaseLabel'] : undefined;
+					if (phaseLabel && phaseLabel !== lastPhaseLabel) {
+						lastPhaseLabel = phaseLabel;
+						const phase = STATE_MESSAGE_TO_PHASE[phaseLabel];
 						if (phase) {
 							callbacks.onPhase?.(phase, sessionId);
 						}

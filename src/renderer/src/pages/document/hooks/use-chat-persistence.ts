@@ -1,14 +1,14 @@
 import { useEffect, useRef, useMemo, type Dispatch, type MutableRefObject } from 'react';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
-import { useChatState, useChatDispatch } from '../context';
-import type { ChatAction } from '../context';
+import { useChatState, useChatDispatch } from '../panels/chat/context';
+import type { ChatAction } from '../panels/chat/context';
 import type {
 	DocumentChatMessage,
 	ChatMessagesFile,
 	ChatSessionFile,
 	ChatSessionListItem,
-} from '../context/state';
+} from '../panels/chat/context';
 import type { DocumentAction } from '../context/actions';
 import { useDocumentDispatch } from './use-document-dispatch';
 import { useDocumentState } from './use-document-state';

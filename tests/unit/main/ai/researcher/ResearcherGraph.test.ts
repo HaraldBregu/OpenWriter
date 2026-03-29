@@ -34,7 +34,7 @@ describe('evaluateNode', () => {
 				responseLength: 'medium',
 				plan: [],
 				research: '',
-				stateMessage: '',
+				phaseLabel: '',
 				response: '',
 			},
 			model
@@ -42,7 +42,7 @@ describe('evaluateNode', () => {
 
 		expect(result.requiresResearch).toBe(false);
 		expect(result.responseLength).toBe('short');
-		expect(result.stateMessage).toBe(RESEARCHER_STATE_MESSAGES.COMPOSE);
+		expect(result.phaseLabel).toBe(RESEARCHER_STATE_MESSAGES.COMPOSE);
 		expect(result.strategy).toMatch(/briefly|conversationally|short/i);
 	});
 });

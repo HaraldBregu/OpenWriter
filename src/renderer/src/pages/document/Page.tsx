@@ -1,11 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import {
-	DocumentProvider,
-	EditorInstanceProvider,
-	SidebarVisibilityProvider,
-	ChatProvider,
-} from './context';
+import { DocumentProvider, EditorInstanceProvider, SidebarVisibilityProvider } from './providers';
+import { ChatProvider } from './panels/chat/providers';
 import { Layout } from './Layout';
 
 const Page: React.FC = () => {

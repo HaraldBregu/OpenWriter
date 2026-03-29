@@ -67,7 +67,7 @@ export const ResearcherState = Annotation.Root({
 	}),
 
 	/** Human-readable graph phase shown in the task UI. */
-	stateMessage: Annotation<string>({
+	phaseLabel: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),

@@ -64,11 +64,6 @@ export interface ActiveTask {
 	startedAt?: number;
 
 	/**
-	 * Human-readable task state shown in the UI.
-	 */
-	stateMessage?: string;
-
-	/**
 	 * Task completion timestamp
 	 */
 	completedAt?: number;
@@ -99,7 +94,8 @@ export interface ActiveTask {
 	error?: string;
 
 	/**
-	 * Caller-supplied metadata attached at submission time.
+	 * Caller-supplied metadata attached at submission time, plus any
+	 * executor-managed status text used to expose custom task details.
 	 * Included in every TaskEvent for this task.
 	 */
 	metadata?: Record<string, unknown>;

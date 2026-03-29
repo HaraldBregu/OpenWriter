@@ -1,4 +1,5 @@
 import type { TaskEvent, TaskInfo, TaskPriority, TaskStatus } from '../../../shared/types';
+import { withTaskStatusText } from '../../../shared/task-metadata';
 
 export type { TaskPriority, TaskStatus };
 
@@ -19,7 +20,6 @@ export interface TrackedTaskState {
 	type: string;
 	status: TaskStatus;
 	priority: TaskPriority;
-	stateMessage?: string;
 	progress: TaskProgressState;
 	queuePosition?: number;
 	durationMs?: number;
@@ -105,9 +105,8 @@ function createTrackedTask(input: AddTaskInput): TrackedTaskState {
 		type: input.type,
 		status: 'queued',
 		priority: input.priority ?? 'normal',
-		stateMessage: 'Queued',
 		progress: { percent: 0 },
-		metadata: input.metadata,
+		metadata: withTaskStatusText(input.metadata, 'Queued'),
 		streamBuffer: '',
 		events: [],
 	};
@@ -119,7 +118,6 @@ function createTrackedTaskFromInfo(task: TaskInfo): TrackedTaskState {
 		type: task.type,
 		status: task.status,
 		priority: task.priority,
-		stateMessage: task.stateMessage,
 		progress: { percent: task.status === 'completed' ? 100 : 0 },
 		queuePosition: task.queuePosition,
 		durationMs: task.durationMs,
@@ -138,7 +136,6 @@ function createTrackedTaskFromQueuedEvent(
 		type: event.data.taskType,
 		status: 'queued',
 		priority: 'normal',
-		stateMessage: event.data.stateMessage,
 		progress: { percent: 0 },
 		queuePosition: event.data.position,
 		metadata: event.data.metadata,
@@ -188,7 +185,6 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			type: activeTask.type || currentTask.type,
 			status: activeTask.status,
 			priority: activeTask.priority,
-			stateMessage: activeTask.stateMessage ?? currentTask.stateMessage,
 			queuePosition: activeTask.queuePosition,
 			durationMs: activeTask.durationMs ?? currentTask.durationMs,
 			error: activeTask.error ?? currentTask.error,
@@ -200,7 +196,6 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			currentTask.type !== mergedTask.type ||
 			currentTask.status !== mergedTask.status ||
 			currentTask.priority !== mergedTask.priority ||
-			currentTask.stateMessage !== mergedTask.stateMessage ||
 			currentTask.queuePosition !== mergedTask.queuePosition ||
 			currentTask.durationMs !== mergedTask.durationMs ||
 			currentTask.error !== mergedTask.error ||
@@ -257,15 +252,10 @@ export function applyTaskEvent(event: TaskEvent): void {
 	updateTrackedTask(
 		taskId,
 		(task) => {
-			const resolvedStateMessage =
-				event.data.stateMessage ??
-				(event.type === 'progress' ? event.data.message : undefined) ??
-				task.stateMessage;
 			const nextTask: TrackedTaskState = {
 				...task,
 				events: appendEvent(task, event),
 				metadata: event.data.metadata !== undefined ? event.data.metadata : task.metadata,
-				stateMessage: resolvedStateMessage,
 			};
 
 			switch (event.type) {

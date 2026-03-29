@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { DocumentStateContext } from '../context/DocumentContext';
+import { DocumentStateContext } from '../providers';
 import type { DocumentState } from '../context/state';
 
 export function useDocumentState(): DocumentState {

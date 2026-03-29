@@ -87,6 +87,6 @@ export async function composeNode(
 
 	return {
 		response,
-		stateMessage: RESEARCHER_STATE_MESSAGES.COMPLETE,
+		phaseLabel: RESEARCHER_STATE_MESSAGES.COMPLETE,
 	};
 }

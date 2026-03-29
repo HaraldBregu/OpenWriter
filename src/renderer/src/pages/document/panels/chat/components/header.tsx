@@ -9,10 +9,10 @@ import {
 	AppPopoverContent,
 	AppPopoverTrigger,
 } from '@/components/app';
-import { useDocumentDispatch, useDocumentState } from '../hooks';
+import { useDocumentDispatch, useDocumentState } from '../../../hooks';
 import { useChatState, useChatDispatch } from '../context';
-import type { ChatSessionFile } from '../context/state';
-import { syncChatSessionsFromDisk } from '../services/chat-session-storage';
+import type { ChatSessionFile } from '../context';
+import { syncChatSessionsFromDisk } from '../../../services/chat-session-storage';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();

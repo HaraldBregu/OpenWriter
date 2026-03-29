@@ -65,7 +65,7 @@ jest.mock('../../../../../src/renderer/src/components/app', () => {
 
 const toggleSidebar = jest.fn();
 
-jest.mock('../../../../../src/renderer/src/pages/document/context', () => ({
+jest.mock('../../../../../src/renderer/src/pages/document/providers', () => ({
 	useSidebarVisibility: () => ({
 		activeSidebar: null,
 		toggleSidebar,

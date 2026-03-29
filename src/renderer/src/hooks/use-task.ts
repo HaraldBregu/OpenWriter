@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
+import { getTaskStatusText } from '../../../shared/task-metadata';
 import { subscribeToTask, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
 import type { TaskStatus, TaskProgressState } from '@/services/task-store';
@@ -26,13 +27,13 @@ export function useTask<TInput = unknown, TResult = unknown>(
 	// Local state — replaces Redux-derived fields.
 	const [taskId, setTaskId] = useState<string | null>(null);
 	const [status, setStatus] = useState<TaskStatus | null>(null);
-	const [stateMessage, setStateMessage] = useState<string | undefined>(undefined);
+	const [metadata, setMetadata] = useState<Record<string, unknown> | undefined>(undefined);
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [result, setResult] = useState<TResult | undefined>(undefined);
 
 	// Progress not available from TaskSnapshot — always defaults.
 	const progressPercent = 0;
-	const progressMessage: string | undefined = stateMessage;
+	const progressMessage: string | undefined = getTaskStatusText(metadata);
 	// Queue position and duration not available from TaskSnapshot.
 	const queuePosition: number | undefined = undefined;
 	const durationMs: number | undefined = undefined;
@@ -48,10 +49,10 @@ export function useTask<TInput = unknown, TResult = unknown>(
 	// Ref to track previous snapshot values and skip no-op setStates.
 	const prevSnapRef = useRef<{
 		status: string | null;
-		stateMessage: string | undefined;
+		metadata: Record<string, unknown> | undefined;
 		error: string | undefined;
 		result: unknown | undefined;
-	}>({ status: null, stateMessage: undefined, error: undefined, result: undefined });
+	}>({ status: null, metadata: undefined, error: undefined, result: undefined });
 
 	// Release the running guard once a terminal status is observed.
 	useEffect(() => {
@@ -78,8 +79,8 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			if (existing.status !== prev.status) {
 				setStatus(existing.status as TaskStatus);
 			}
-			if (existing.stateMessage !== prev.stateMessage) {
-				setStateMessage(existing.stateMessage);
+			if (existing.metadata !== prev.metadata) {
+				setMetadata(existing.metadata);
 			}
 			if (existing.error !== prev.error) {
 				setError(existing.error);
@@ -89,7 +90,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			}
 			prevSnapRef.current = {
 				status: existing.status,
-				stateMessage: existing.stateMessage,
+				metadata: existing.metadata,
 				error: existing.error,
 				result: existing.result,
 			};
@@ -101,8 +102,8 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			if (snap.status !== prev.status) {
 				setStatus(snap.status as TaskStatus);
 			}
-			if (snap.stateMessage !== prev.stateMessage) {
-				setStateMessage(snap.stateMessage);
+			if (snap.metadata !== prev.metadata) {
+				setMetadata(snap.metadata);
 			}
 			if (snap.error !== prev.error) {
 				setError(snap.error);
@@ -113,7 +114,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 
 			prevSnapRef.current = {
 				status: snap.status,
-				stateMessage: snap.stateMessage,
+				metadata: snap.metadata,
 				error: snap.error,
 				result: snap.result,
 			};
@@ -171,14 +172,14 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			// Reset prev snapshot ref for the new task.
 			prevSnapRef.current = {
 				status: null,
-				stateMessage: undefined,
+				metadata: undefined,
 				error: undefined,
 				result: undefined,
 			};
 
 			// Set initial status to queued.
 			setStatus('queued');
-			setStateMessage('Queued');
+			setMetadata(undefined);
 			setError(undefined);
 			setResult(undefined);
 
@@ -215,13 +216,13 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		taskIdRef.current = null;
 		prevSnapRef.current = {
 			status: null,
-			stateMessage: undefined,
+			metadata: undefined,
 			error: undefined,
 			result: undefined,
 		};
 		setTaskId(null);
 		setStatus(null);
-		setStateMessage(undefined);
+		setMetadata(undefined);
 		setError(undefined);
 		setResult(undefined);
 	}, []);
@@ -230,7 +231,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		() => ({
 			taskId,
 			status,
-			stateMessage,
+			metadata,
 			progress: { percent: progressPercent, message: progressMessage } as TaskProgressState,
 			progressMessage,
 			error,
@@ -251,7 +252,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		[
 			taskId,
 			status,
-			stateMessage,
+			metadata,
 			progressMessage,
 			queuePosition,
 			durationMs,

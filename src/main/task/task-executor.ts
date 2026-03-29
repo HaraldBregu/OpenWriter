@@ -24,6 +24,7 @@ import type { TaskEvent } from './task-events';
 import type { ProgressReporter, StreamReporter } from './task-handler';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
+import { getTaskStatusText, withTaskStatusText } from '../../shared/task-metadata';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
 const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000; // 5 minutes
@@ -35,7 +36,7 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 	low: 1,
 };
 
-const TASK_STATE_MESSAGE = {
+const TASK_STATUS_TEXT = {
 	QUEUED: 'Queued',
 	RUNNING: 'Running',
 	COMPLETED: 'Completed',
@@ -104,10 +105,9 @@ export class TaskExecutor implements Disposable {
 			type,
 			status: 'queued',
 			priority,
-			stateMessage: TASK_STATE_MESSAGE.QUEUED,
 			controller,
 			windowId: options?.windowId,
-			metadata,
+			metadata: withTaskStatusText(metadata, TASK_STATUS_TEXT.QUEUED),
 		};
 
 		this.activeTasks.set(taskId, activeTask);
@@ -149,8 +149,7 @@ export class TaskExecutor implements Disposable {
 					taskId,
 					taskType: type,
 					position,
-					metadata,
-					stateMessage: activeTask.stateMessage,
+					metadata: activeTask.metadata,
 				},
 			} satisfies TaskEvent);
 
@@ -186,12 +185,12 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'cancelled';
-		task.stateMessage = TASK_STATE_MESSAGE.CANCELLED;
+		task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.CANCELLED);
 		task.completedAt = Date.now();
 
 		this.send(task.windowId, 'task:event', {
 			type: 'cancelled',
-			data: { taskId, metadata: task.metadata, stateMessage: task.stateMessage },
+			data: { taskId, metadata: task.metadata },
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:cancelled', { taskId, taskType: task.type, windowId: task.windowId });
@@ -217,7 +216,6 @@ export class TaskExecutor implements Disposable {
 				type,
 				status,
 				priority,
-				stateMessage,
 				startedAt,
 				completedAt,
 				windowId,
@@ -227,7 +225,6 @@ export class TaskExecutor implements Disposable {
 				type,
 				status,
 				priority,
-				stateMessage,
 				startedAt,
 				completedAt,
 				windowId,
@@ -279,7 +276,6 @@ export class TaskExecutor implements Disposable {
 				priority: newPriority,
 				position,
 				metadata: task.metadata,
-				stateMessage: task.stateMessage,
 			},
 		} satisfies TaskEvent);
 
@@ -384,7 +380,10 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'running';
-		task.stateMessage = task.stateMessage || TASK_STATE_MESSAGE.RUNNING;
+		task.metadata = withTaskStatusText(
+			task.metadata,
+			getTaskStatusText(task.metadata) ?? TASK_STATUS_TEXT.RUNNING
+		);
 		task.startedAt = Date.now();
 
 		// Set up timeout if specified
@@ -397,7 +396,7 @@ export class TaskExecutor implements Disposable {
 
 		this.send(windowId, 'task:event', {
 			type: 'started',
-			data: { taskId, metadata, stateMessage: task.stateMessage },
+			data: { taskId, metadata: task.metadata },
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
@@ -412,11 +411,10 @@ export class TaskExecutor implements Disposable {
 					// Don't emit progress if task is already done
 					if (!this.activeTasks.has(taskId)) return;
 
-					if (message !== undefined) {
-						task.stateMessage = message;
-					} else if (!task.stateMessage) {
-						task.stateMessage = TASK_STATE_MESSAGE.RUNNING;
-					}
+					task.metadata = withTaskStatusText(
+						task.metadata,
+						message ?? getTaskStatusText(task.metadata) ?? TASK_STATUS_TEXT.RUNNING
+					);
 
 					this.send(windowId, 'task:event', {
 						type: 'progress',
@@ -425,8 +423,7 @@ export class TaskExecutor implements Disposable {
 							percent,
 							message,
 							detail,
-							metadata,
-							stateMessage: task.stateMessage,
+							metadata: task.metadata,
 						},
 					} satisfies TaskEvent);
 				},
@@ -437,7 +434,7 @@ export class TaskExecutor implements Disposable {
 					if (!this.activeTasks.has(taskId)) return;
 					this.send(windowId, 'task:event', {
 						type: 'stream',
-						data: { taskId, data, metadata, stateMessage: task.stateMessage },
+						data: { taskId, data, metadata: task.metadata },
 					} satisfies TaskEvent);
 				},
 			};
@@ -456,13 +453,13 @@ export class TaskExecutor implements Disposable {
 			const durationMs = Date.now() - task.startedAt!;
 
 			task.status = 'completed';
-			task.stateMessage = TASK_STATE_MESSAGE.COMPLETED;
+			task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.COMPLETED);
 			task.completedAt = Date.now();
 			task.result = result;
 
 			this.send(windowId, 'task:event', {
 				type: 'completed',
-				data: { taskId, result, durationMs, metadata, stateMessage: task.stateMessage },
+				data: { taskId, result, durationMs, metadata: task.metadata },
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
@@ -481,12 +478,12 @@ export class TaskExecutor implements Disposable {
 			if (err instanceof Error && err.name === 'AbortError') {
 				// Task log
 				task.status = 'cancelled';
-				task.stateMessage = TASK_STATE_MESSAGE.CANCELLED;
+				task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.CANCELLED);
 				task.completedAt = Date.now();
 
 				this.send(windowId, 'task:event', {
 					type: 'cancelled',
-					data: { taskId, metadata, stateMessage: task.stateMessage },
+					data: { taskId, metadata: task.metadata },
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId });
@@ -496,13 +493,13 @@ export class TaskExecutor implements Disposable {
 				// Task error, err)
 
 				task.status = 'error';
-				task.stateMessage = TASK_STATE_MESSAGE.FAILED;
+				task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.FAILED);
 				task.completedAt = Date.now();
 				task.error = message;
 
 				this.send(windowId, 'task:event', {
 					type: 'error',
-					data: { taskId, message, code, metadata, stateMessage: task.stateMessage },
+					data: { taskId, message, code, metadata: task.metadata },
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:failed', {

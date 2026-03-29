@@ -1,4 +1,8 @@
-import type { ChatSessionFile, ChatSessionListItem, DocumentChatMessage } from '../context/state';
+import type {
+	ChatSessionFile,
+	ChatSessionListItem,
+	DocumentChatMessage,
+} from '../panels/chat/context';
 
 /**
  * Extract the creation timestamp embedded in a UUID v7 string.

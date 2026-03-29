@@ -187,7 +187,7 @@ export async function evaluateNode(
 		strategy: decision.strategy,
 		requiresResearch: decision.needsResearch,
 		responseLength: decision.responseLength,
-		stateMessage: decision.needsResearch
+		phaseLabel: decision.needsResearch
 			? RESEARCHER_STATE_MESSAGES.PLAN
 			: RESEARCHER_STATE_MESSAGES.COMPOSE,
 	};

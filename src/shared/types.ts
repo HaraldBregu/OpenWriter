@@ -58,7 +58,6 @@ export interface TaskInfo {
 	type: string;
 	status: TaskStatus;
 	priority: TaskPriority;
-	stateMessage?: string;
 	startedAt?: number;
 	completedAt?: number;
 	windowId?: number;
@@ -78,7 +77,6 @@ export interface TaskQueueStatus {
 interface TaskEventContext {
 	taskId: string;
 	metadata?: Record<string, unknown>;
-	stateMessage?: string;
 }
 
 export type TaskEvent =

@@ -43,5 +43,5 @@ export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: strin
 	},
 };
 
-export const SLICE_NAMES = ['workspace', 'documents', 'chat'] as const;
+export const SLICE_NAMES = ['workspace', 'documents'] as const;
 export type SliceName = (typeof SLICE_NAMES)[number];

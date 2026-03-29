@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { getTaskStatusText } from '../../../shared/task-metadata';
 import { subscribeToTask, subscribeToTaskType, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
 import type { TaskStatus } from '../../../shared/types';
@@ -6,7 +7,8 @@ import type { TaskStatus } from '../../../shared/types';
 export interface UseTaskListenerReturn<TResult = unknown> {
 	taskId: string | null;
 	status: TaskStatus | null;
-	stateMessage: string | undefined;
+	metadata: Record<string, unknown> | undefined;
+	progressMessage: string | undefined;
 	error: string | undefined;
 	result: TResult | undefined;
 	isIdle: boolean;
@@ -29,7 +31,7 @@ export function useTaskListener<TResult = unknown>(
 ): UseTaskListenerReturn<TResult> {
 	const [taskId, setTaskId] = useState<string | null>(null);
 	const [status, setStatus] = useState<TaskStatus | null>(null);
-	const [stateMessage, setStateMessage] = useState<string | undefined>(undefined);
+	const [metadata, setMetadata] = useState<Record<string, unknown> | undefined>(undefined);
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [result, setResult] = useState<TResult | undefined>(undefined);
 
@@ -47,7 +49,7 @@ export function useTaskListener<TResult = unknown>(
 			if (active) {
 				setTaskId(active.taskId);
 				setStatus(active.status);
-				setStateMessage(active.stateMessage);
+				setMetadata(active.metadata);
 			}
 		});
 	}, [taskType]);
@@ -57,7 +59,7 @@ export function useTaskListener<TResult = unknown>(
 		return subscribeToTaskType(taskType, (newTaskId: string) => {
 			setTaskId(newTaskId);
 			setStatus('queued');
-			setStateMessage('Queued');
+			setMetadata(undefined);
 			setError(undefined);
 			setResult(undefined);
 		});
@@ -70,24 +72,27 @@ export function useTaskListener<TResult = unknown>(
 		const existing = getTaskSnapshot(taskId);
 		if (existing) {
 			setStatus(existing.status as TaskStatus);
-			setStateMessage(existing.stateMessage);
+			setMetadata(existing.metadata);
 			if (existing.error !== undefined) setError(existing.error);
 			if (existing.result !== undefined) setResult(existing.result as TResult);
 		}
 
 		return subscribeToTask(taskId, (snap: TaskSnapshot) => {
 			setStatus(snap.status as TaskStatus);
-			setStateMessage(snap.stateMessage);
+			setMetadata(snap.metadata);
 			setError(snap.error);
 			setResult(snap.result as TResult | undefined);
 		});
 	}, [taskId]);
 
+	const progressMessage = getTaskStatusText(metadata);
+
 	return useMemo(
 		() => ({
 			taskId,
 			status,
-			stateMessage,
+			metadata,
+			progressMessage,
 			error,
 			result,
 			isIdle: taskId === null,
@@ -97,6 +102,6 @@ export function useTaskListener<TResult = unknown>(
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
 		}),
-		[taskId, status, stateMessage, error, result]
+		[taskId, status, metadata, progressMessage, error, result]
 	);
 }

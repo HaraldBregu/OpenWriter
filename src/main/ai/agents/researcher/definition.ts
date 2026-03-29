@@ -52,7 +52,7 @@ const definition: AgentDefinition = {
 			responseLength: 'medium',
 			plan: [],
 			research: '',
-			stateMessage: RESEARCHER_STATE_MESSAGES.UNDERSTAND,
+			phaseLabel: RESEARCHER_STATE_MESSAGES.UNDERSTAND,
 			response: '',
 		};
 	},
@@ -61,8 +61,8 @@ const definition: AgentDefinition = {
 		return typeof state['response'] === 'string' ? state['response'] : '';
 	},
 
-	extractStateMessage(state: Record<string, unknown>): string | undefined {
-		return typeof state['stateMessage'] === 'string' ? state['stateMessage'] : undefined;
+	extractThinkingLabel(state: Record<string, unknown>): string | undefined {
+		return typeof state['phaseLabel'] === 'string' ? state['phaseLabel'] : undefined;
 	},
 };
 

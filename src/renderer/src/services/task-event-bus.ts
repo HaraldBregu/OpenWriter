@@ -17,7 +17,6 @@ import type { TaskEvent } from '../../../shared/types';
 
 export interface TaskSnapshot {
 	status: string;
-	stateMessage?: string;
 	streamedContent: string; // latest delta token only
 	content: string; // seedContent + all AI tokens (full display text)
 	seedContent: string; // original text before AI enhancement (set by initTaskContent)
@@ -68,11 +67,6 @@ function ensureListening(): void {
 		// Extract metadata from any event that carries it.
 		const eventMetadata = (event.data as { metadata?: Record<string, unknown> }).metadata;
 		const metadataOverride = eventMetadata !== undefined ? { metadata: eventMetadata } : {};
-		const eventStateMessage =
-			(event.data as { stateMessage?: string }).stateMessage ??
-			(event.type === 'progress' ? (event.data as { message?: string }).message : undefined);
-		const stateMessageOverride =
-			eventStateMessage !== undefined ? { stateMessage: eventStateMessage } : {};
 
 		switch (event.type) {
 			case 'queued': {
@@ -80,7 +74,6 @@ function ensureListening(): void {
 					...prev,
 					status: 'queued',
 					...metadataOverride,
-					...stateMessageOverride,
 				};
 				const taskType = (event.data as { taskType?: string }).taskType;
 				if (taskType) {
@@ -89,7 +82,7 @@ function ensureListening(): void {
 				break;
 			}
 			case 'started':
-				next = { ...prev, status: 'started', ...metadataOverride, ...stateMessageOverride };
+				next = { ...prev, status: 'started', ...metadataOverride };
 				break;
 			case 'progress':
 				next = {
@@ -97,7 +90,6 @@ function ensureListening(): void {
 					status: 'running',
 					streamedContent: '',
 					...metadataOverride,
-					...stateMessageOverride,
 				};
 				break;
 			case 'stream': {
@@ -108,7 +100,6 @@ function ensureListening(): void {
 					streamedContent: sd.data ?? '',
 					content: (prev.seedContent ?? '') + (prev.content + (sd.data ?? '')),
 					...metadataOverride,
-					...stateMessageOverride,
 				};
 				break;
 			}
@@ -120,7 +111,6 @@ function ensureListening(): void {
 					streamedContent: '',
 					result: cd.result,
 					...metadataOverride,
-					...stateMessageOverride,
 				};
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
@@ -135,7 +125,6 @@ function ensureListening(): void {
 					status: 'error',
 					error: ed.message,
 					...metadataOverride,
-					...stateMessageOverride,
 				};
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
@@ -143,7 +132,7 @@ function ensureListening(): void {
 				return;
 			}
 			case 'cancelled':
-				next = { ...prev, status: 'cancelled', ...metadataOverride, ...stateMessageOverride };
+				next = { ...prev, status: 'cancelled', ...metadataOverride };
 				snapshots.set(taskId, next);
 				subscribers.get(taskId)?.forEach((cb) => cb(next));
 				setTimeout(() => snapshots.delete(taskId), 0);

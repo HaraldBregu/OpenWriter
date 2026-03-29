@@ -1,33 +1,6 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
-
-export interface ChatMessagesFile {
-	readonly version: 1;
-	readonly messages: DocumentChatMessage[];
-}
-
-export interface ChatSessionFile {
-	readonly version: 2;
-	readonly sessionId: string;
-	readonly createdAt: string; // ISO-8601
-	readonly messages: DocumentChatMessage[];
-}
-
-export interface DocumentChatMessage {
-	readonly id: string;
-	readonly content: string;
-	readonly stateMessage?: string;
-	readonly role: 'user' | 'assistant' | 'system';
-	readonly timestamp: string;
-	readonly taskId: string | null;
-	readonly status: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
-}
-
-export interface ChatSessionListItem {
-	readonly id: string;
-	readonly title: string;
-	readonly ageLabel: string;
-	readonly createdAt: string;
-}
+import type { ChatSession, ChatSessionListItem } from '../panels/chat/context';
+import { INITIAL_CHAT_STATE } from '../panels/chat/context';
 
 export interface DocumentState {
 	readonly documentId: string | undefined;
@@ -40,6 +13,7 @@ export interface DocumentState {
 	readonly sidebarOpen: boolean;
 	readonly agenticSidebarOpen: boolean;
 	readonly chatSessions: ChatSessionListItem[];
+	readonly chat: ChatSession;
 }
 
 export const INITIAL_DOCUMENT_STATE: DocumentState = {
@@ -53,4 +27,5 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	sidebarOpen: true,
 	agenticSidebarOpen: false,
 	chatSessions: [],
+	chat: INITIAL_CHAT_STATE,
 };

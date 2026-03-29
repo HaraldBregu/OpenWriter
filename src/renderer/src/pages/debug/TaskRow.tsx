@@ -1,4 +1,5 @@
 import { Square, EyeOff } from 'lucide-react';
+import { getTaskStatusText } from '../../../../shared/task-metadata';
 import type { TrackedTaskState } from '@/services/task-store';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
@@ -38,7 +39,7 @@ export function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRo
 						</span>
 					</div>
 					<div className="max-w-[220px] truncate text-[11px] text-muted-foreground">
-						{task.stateMessage || task.progress.message || '—'}
+						{task.progress.message || getTaskStatusText(task.metadata) || '—'}
 					</div>
 				</div>
 			</td>

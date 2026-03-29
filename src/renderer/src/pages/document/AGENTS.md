@@ -28,23 +28,18 @@ src/renderer/src/pages/document/
   Page.tsx
   Layout.tsx
   Header.tsx
-  EditorPanel.tsx
-  ChatPanel.tsx
-  ResourcesPanel.tsx
   components/
-    ChatHeader.tsx
-    ChatInput.tsx
-    ChatMessage.tsx
     HistoryMenu.tsx
   context/
-    DocumentContext.tsx
     actions.ts
-    chat-context.tsx
-    editor-instance-context.tsx
     index.ts
     reducer.ts
-    sidebar-visibility-context.tsx
     state.ts
+  providers/
+    Document.tsx
+    Editor.tsx
+    Sidebar.tsx
+    index.ts
   hooks/
     index.ts
     use-chat-persistence.ts
@@ -57,6 +52,21 @@ src/renderer/src/pages/document/
   services/
     chat-session-storage.ts
     history-service.ts
+  panels/
+    chat/
+      ChatPanel.tsx
+      components/
+        header.tsx
+        input.tsx
+        message.tsx
+      context/
+        actions.ts
+        index.ts
+        provider.tsx
+        reducer.ts
+        state.ts
+    resources/
+      ResourcesPanel.tsx
 ```
 
 ## Entry Points
@@ -91,7 +101,6 @@ Most of the runtime behavior currently lives here:
 - debounced saving
 - history restore wiring
 - editor task streaming
-- chat task submission
 - panel composition
 
 If you are debugging behavior on the document page, start here first.
@@ -106,14 +115,15 @@ The current page flow is:
 4. `Layout.tsx` stores the active `title`, `content`, `loaded`, and trash state in local React state.
 5. `Layout.tsx` loads images for the document and subscribes to output/image watcher events.
 6. `Header` exposes rename, search, undo, redo, history restore, sidebar toggles, and trash/open-folder actions.
-7. `EditorPanel` mounts `TextEditor` with the current content and editor callbacks.
+7. `Layout.tsx` mounts `TextEditor` directly with the current content and editor callbacks.
 8. Typing updates local page state and triggers a debounced document save.
 9. `useDocumentHistory(...)` creates debounced history snapshots and supports undo/redo/history restore.
 10. The right panel renders either:
-    - `ResourcesPanel` for metadata/images/actions
-    - `ChatPanel` for agentic chat
-11. Agent tasks are submitted through `useTask(...)` and streamed back through the renderer task event bus.
-12. Watchers keep metadata, images, and history menu state synchronized with disk.
+    - `panels/resources/ResourcesPanel.tsx` for metadata/images/actions
+    - `panels/chat/ChatPanel.tsx` for agentic chat
+11. Editor tasks are submitted through `useTask(...)` in `Layout.tsx` and streamed back through the renderer task event bus.
+12. Chat tasks are submitted and observed inside `ChatPanel.tsx`.
+13. Watchers keep metadata, images, and history menu state synchronized with disk.
 
 ## Component Responsibilities
 
@@ -133,22 +143,6 @@ It is responsible for:
 It is intentionally stateless relative to document persistence.
 `Layout.tsx` owns the handlers and passes state down.
 
-### `EditorPanel.tsx`
-
-This is a thin container around `TextEditor`.
-
-It passes through:
-
-- the current markdown value
-- `externalValueVersion` for forced external resyncs
-- disabled state while some AI tasks are active
-- editor command callbacks
-- image/text generation callbacks
-- undo/redo callbacks
-
-This component should stay thin.
-Editor behavior belongs either in `TextEditor` or in document-level orchestration code in `Layout.tsx`.
-
 ### `ChatPanel.tsx`
 
 This is the agentic sidebar UI.
@@ -160,10 +154,15 @@ It is responsible for:
 - appending user and placeholder assistant messages
 - binding the active task id to the active assistant message
 - selecting between the `researcher` and `inventor` agents
-- sending prompts back up through `onSend(...)`
+- submitting chat tasks through `window.task.submit(...)`
+- initializing task metadata for the event bus
+- subscribing to task snapshots for the active chat task
+- inserting system status messages derived from task metadata
+- patching the active assistant message as the task progresses
+- clearing the active task/message binding on terminal states
 
-It does not directly subscribe to IPC.
-`Layout.tsx` handles task execution and task-stream subscriptions, then patches the chat context state.
+Chat-specific task orchestration lives here now.
+`Layout.tsx` still owns editor-related task orchestration.
 
 ### `ResourcesPanel.tsx`
 
@@ -226,6 +225,7 @@ Its `DocumentState` shape contains:
 - `sidebarOpen`
 - `agenticSidebarOpen`
 - `chatSessions`
+- `chat`
 
 In the current implementation, this context is used primarily for:
 
@@ -233,6 +233,7 @@ In the current implementation, this context is used primarily for:
 - metadata updates
 - image lists
 - stored chat session summaries
+- the chat slice itself, via `state.chat`
 
 Important nuance:
 
@@ -248,7 +249,8 @@ Do not assume every exported hook is part of the current hot path.
 
 ### 3. `ChatProvider`
 
-`chat-context.tsx` owns the in-memory session currently open in the agentic sidebar.
+`panels/chat/context/provider.tsx` does not own an independent store.
+It exposes a chat-scoped view over `DocumentContext`, using `documentState.chat` and the shared document dispatch.
 
 `ChatSession` contains:
 
@@ -306,9 +308,9 @@ Use this map when making changes:
 - current document id: `DocumentContext`
 - metadata sidebar info: `DocumentContext`
 - image list: `DocumentContext`
-- visible chat messages: `ChatProvider`
-- visible chat session id: `ChatProvider`
-- list of saved chat sessions: `DocumentContext`
+- visible chat messages: `DocumentContext.chat` exposed through `ChatProvider`
+- visible chat session id: `DocumentContext.chat` exposed through `ChatProvider`
+- list of saved chat sessions: `DocumentContext.chatSessions`
 - active sidebar mode: `SidebarVisibilityProvider`
 - live editor instance: `EditorInstanceProvider`
 - persisted document file: `window.workspace` output APIs
@@ -414,7 +416,10 @@ aligned with disk mutations.
 
 ## AI and Task Integration
 
-This page integrates several task-backed capabilities through `useTask(...)`.
+This page integrates several task-backed capabilities through two paths:
+
+- `Layout.tsx` uses `useTask(...)` for editor-facing workflows
+- `ChatPanel.tsx` uses `window.task.submit(...)` plus `subscribeToTask(...)` for chat
 
 Current task types used here:
 
@@ -433,6 +438,8 @@ Current task types used here:
 - stores task id and local status
 - subscribes to task snapshots through `task-event-bus`
 - exposes booleans like `isQueued`, `isRunning`, `isCompleted`
+
+This hook is used for editor workflows in `Layout.tsx`, not for chat submission.
 
 ### Task event bus layer
 
@@ -466,18 +473,20 @@ These flows are tightly coupled to imperative methods exposed by `TextEditorElem
 
 ### Chat task flow
 
-Chat does not stream directly in `ChatPanel`.
+Chat submission and streaming are handled directly inside `ChatPanel.tsx`.
 
 The current flow is:
 
 1. `ChatPanel` dispatches local user and placeholder assistant messages.
-2. `Layout.tsx` submits the selected agent task.
-3. `Layout.tsx` subscribes to the active task id.
-4. task snapshots are filtered by `metadata.documentId` when present
-5. assistant message content and status are patched in chat context
-6. completion/error/cancellation clears the active task and active message ids
+2. `ChatPanel` submits the selected task with document-scoped metadata.
+3. `ChatPanel` stores the resolved task id on the active assistant message.
+4. `ChatPanel` subscribes to the active task id through `subscribeToTask(...)`.
+5. task snapshots are filtered by `metadata.documentId` when present.
+6. `getTaskStatusText(...)` is used to derive system status rows that are inserted before the active assistant reply.
+7. assistant message content and status are patched in chat context as the task progresses.
+8. completion/error/cancellation clears the active task and active message ids.
 
-This keeps chat rendering separate from the transport/event wiring.
+This keeps chat transport and chat rendering concerns inside the chat panel area rather than in `Layout.tsx`.
 
 ## Important Services
 
@@ -566,7 +575,7 @@ If the action is disk-backed, prefer using existing `window.workspace` APIs or e
 
 Update:
 
-- `sidebar-visibility-context.tsx`
+- `providers/Sidebar.tsx`
 - `Header.tsx`
 - `Layout.tsx`
 
@@ -576,13 +585,13 @@ Keep the panel itself in a dedicated component rather than growing `Layout.tsx` 
 
 Update:
 
-- `Layout.tsx` for submission and subscription wiring
-- `ChatPanel.tsx` only if the UI affordance belongs to chat
-- `EditorPanel.tsx` only if new editor props are required
+- `Layout.tsx` for editor-related submission and subscription wiring
+- `ChatPanel.tsx` for chat-related submission and subscription wiring
 
 Prefer keeping:
 
-- task submission in `Layout`
+- editor task submission in `Layout`
+- chat task submission in `ChatPanel`
 - rendering in child panels
 - disk helpers in `services/`
 
@@ -600,7 +609,8 @@ If the artifact belongs to one document folder, follow the existing pattern:
 - putting filesystem or serialization details into presentational components
 - writing directly to disk from multiple places without watcher-aware refresh paths
 - bypassing `externalValueVersion` when restoring editor content from history
-- pushing more orchestration into `ChatPanel` when it belongs in `Layout`
+- moving chat-specific task orchestration back into `Layout.tsx`
+- moving editor-specific orchestration into `ChatPanel.tsx`
 - duplicating chat session indexing logic instead of reusing `chat-session-storage.ts`
 - duplicating history file parsing instead of reusing `history-service.ts`
 
@@ -611,9 +621,9 @@ If the problem is mainly about:
 - route/provider lifecycle: start with `Page.tsx`
 - load/save/history behavior: start with `Layout.tsx` and `use-document-history.ts`
 - header buttons or history dropdown: start with `Header.tsx` and `components/HistoryMenu.tsx`
-- agentic chat UI: start with `ChatPanel.tsx` and `context/chat-context.tsx`
+- agentic chat UI: start with `panels/chat/ChatPanel.tsx` and `panels/chat/context/provider.tsx`
 - chat persistence to disk: start with `use-chat-persistence.ts`
-- image uploads/sidebar metadata: start with `ResourcesPanel.tsx`
+- image uploads/sidebar metadata: start with `panels/resources/ResourcesPanel.tsx`
 - editor streaming behavior: start with `Layout.tsx`, then inspect `TextEditor`
 - document-scoped state ownership confusion: inspect `Layout.tsx` and `context/state.ts` together
 

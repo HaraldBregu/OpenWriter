@@ -28,6 +28,6 @@ export async function understandNode(
 
 	return {
 		intent,
-		stateMessage: RESEARCHER_STATE_MESSAGES.EVALUATE,
+		phaseLabel: RESEARCHER_STATE_MESSAGES.EVALUATE,
 	};
 }

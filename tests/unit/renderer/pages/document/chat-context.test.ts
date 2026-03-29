@@ -1,4 +1,8 @@
-import { chatReducer, type ChatSession, type ChatAction } from '../../../../../src/renderer/src/pages/document/context/chat-context';
+import {
+	chatReducer,
+	type ChatSession,
+	type ChatAction,
+} from '../../../../../src/renderer/src/pages/document/panels/chat/context';
 
 describe('chatReducer', () => {
 	it('inserts system status messages before the assistant reply placeholder', () => {

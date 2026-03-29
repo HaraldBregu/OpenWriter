@@ -60,6 +60,6 @@ export async function researchNode(
 
 	return {
 		research,
-		stateMessage: RESEARCHER_STATE_MESSAGES.COMPOSE,
+		phaseLabel: RESEARCHER_STATE_MESSAGES.COMPOSE,
 	};
 }

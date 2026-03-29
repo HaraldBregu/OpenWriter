@@ -126,11 +126,11 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		let tokenCount = 0;
 		let tokensSinceLastProgress = 0;
 		let currentProgress = 10;
-		let lastStateMessage: string | undefined;
+		let lastThinkingLabel: string | undefined;
 
 		const resolvedTemperature = input.temperature ?? defaultCfg?.temperature ?? 0.7;
 		const resolvedMaxTokens = input.maxTokens ?? defaultCfg?.maxTokens;
-		const initialStateMessage = this.getInitialStateMessage(
+		const initialThinkingLabel = this.getInitialThinkingLabel(
 			def,
 			input.prompt,
 			provider.providerId,
@@ -142,10 +142,10 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
 		reporter.progress(5);
 		reporter.progress(10);
-		if (initialStateMessage) {
+		if (initialThinkingLabel) {
 			currentProgress = 15;
-			lastStateMessage = initialStateMessage;
-			reporter.progress(currentProgress, initialStateMessage);
+			lastThinkingLabel = initialThinkingLabel;
+			reporter.progress(currentProgress, initialThinkingLabel);
 		}
 
 		const gen = executeAIAgentsStream({
@@ -161,7 +161,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			buildGraph: def.buildGraph,
 			buildGraphInput: def.buildGraphInput,
 			extractGraphOutput: def.extractGraphOutput,
-			extractStateMessage: def.extractStateMessage,
+			extractThinkingLabel: def.extractThinkingLabel,
 			streamableNodes: def.streamableNodes,
 			metadata,
 			logger: this.logger,
@@ -181,8 +181,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				},
 				(message) => {
 					const nextMessage = message.trim();
-					if (!nextMessage || nextMessage === lastStateMessage) return;
-					lastStateMessage = nextMessage;
+					if (!nextMessage || nextMessage === lastThinkingLabel) return;
+					lastThinkingLabel = nextMessage;
 					reporter.progress(currentProgress, nextMessage);
 				},
 				(tc) => {
@@ -233,7 +233,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		}
 	}
 
-	private getInitialStateMessage(
+	private getInitialThinkingLabel(
 		def: AgentDefinition,
 		prompt: string,
 		providerId: string,
@@ -242,7 +242,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		temperature: number,
 		metadata?: Record<string, unknown>
 	): string | undefined {
-		if (!def.buildGraphInput || !def.extractStateMessage) {
+		if (!def.buildGraphInput || !def.extractThinkingLabel) {
 			return undefined;
 		}
 
@@ -255,6 +255,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			metadata,
 		});
 
-		return def.extractStateMessage(initialState)?.trim() || undefined;
+		return def.extractThinkingLabel(initialState)?.trim() || undefined;
 	}
 }

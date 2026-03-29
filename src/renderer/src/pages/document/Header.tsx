@@ -20,7 +20,7 @@ import {
 	AppDropdownMenuItem,
 	AppDropdownMenuTrigger,
 } from '@/components/app';
-import { useSidebarVisibility } from './context';
+import { useSidebarVisibility } from './providers';
 import HistoryMenu from './components/HistoryMenu';
 import type { HistoryEntry } from './services/history-service';
 

@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 jest.mock('lucide-react', () => {
 	const Icon = (props: Record<string, unknown>) => React.createElement('svg', props);
 	return {
-		ChevronRight: Icon,
+		LoaderCircle: Icon,
 	};
 });
 
@@ -18,22 +18,20 @@ jest.mock('remark-gfm', () => ({
 	default: jest.fn(),
 }));
 
-import { ChatMessage } from '../../../../../src/renderer/src/pages/document/components/ChatMessage';
+import { ChatMessage } from '../../../../../src/renderer/src/pages/document/panels/chat/components/message';
 
 describe('ChatMessage', () => {
-	it('shows the assistant state message separately from the response body', () => {
+	it('renders the assistant response body', () => {
 		render(
 			<ChatMessage
 				id="assistant-message"
 				content="Here is the final answer."
-				stateMessage="Composing response..."
 				role="assistant"
 				timestamp="2026-03-29T12:00:00.000Z"
 				status="running"
 			/>
 		);
 
-		expect(screen.getByText('Composing response...')).toBeInTheDocument();
 		expect(screen.getByText('Here is the final answer.')).toBeInTheDocument();
 	});
 
@@ -49,9 +47,41 @@ describe('ChatMessage', () => {
 		);
 
 		expect(screen.getByText('Completed')).toBeInTheDocument();
+		expect(screen.queryByTestId('status-loader')).not.toBeInTheDocument();
 	});
 
-	it('does not render an empty assistant placeholder without content or state text', () => {
+	it('shows a loader for non-completed system status messages', () => {
+		render(
+			<ChatMessage
+				id="system-message"
+				content="Researching"
+				role="system"
+				timestamp="2026-03-29T12:00:00.000Z"
+				status="running"
+				showStatusLoader
+			/>
+		);
+
+		expect(screen.getByText('Researching')).toBeInTheDocument();
+		expect(screen.getByTestId('status-loader')).toBeInTheDocument();
+	});
+
+	it('does not show a loader for non-latest system status messages', () => {
+		render(
+			<ChatMessage
+				id="system-message"
+				content="Queued"
+				role="system"
+				timestamp="2026-03-29T12:00:00.000Z"
+				status="queued"
+			/>
+		);
+
+		expect(screen.getByText('Queued')).toBeInTheDocument();
+		expect(screen.queryByTestId('status-loader')).not.toBeInTheDocument();
+	});
+
+	it('does not render an empty assistant placeholder without content', () => {
 		const { container } = render(
 			<ChatMessage
 				id="assistant-message"

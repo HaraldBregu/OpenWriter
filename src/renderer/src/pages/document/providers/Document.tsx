@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useMemo, type Dispatch, type ReactNode } from 'react';
-import { documentReducer } from './reducer';
-import { INITIAL_DOCUMENT_STATE, type DocumentState } from './state';
-import type { DocumentAction } from './actions';
+import { documentReducer } from '../context/reducer';
+import { INITIAL_DOCUMENT_STATE, type DocumentState } from '../context/state';
+import type { DocumentAction } from '../context/actions';
 
 export const DocumentStateContext = createContext<DocumentState | null>(null);
 export const DocumentDispatchContext = createContext<Dispatch<DocumentAction> | null>(null);
