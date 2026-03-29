@@ -65,9 +65,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	return (
 		<div className="flex gap-2.5">
 			<div className="min-w-0 flex-1">
-				<div className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-					Assistant
-				</div>
 				{visibleStateMessage && (
 					<div className="mb-1 inline-flex items-center gap-1 text-xs text-muted-foreground/90">
 						<span>{visibleStateMessage}</span>
