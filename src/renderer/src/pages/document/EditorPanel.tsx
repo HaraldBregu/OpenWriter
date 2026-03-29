@@ -18,6 +18,8 @@ interface EditorPanelProps {
 	readonly onEnhanceWithAssistant: (selectedText: string, from: number, to: number) => void;
 	readonly onTextSubmit: (before: string, after: string, cursorPos: number, input: string) => void;
 	readonly onImageSubmit: (prompt: string) => Promise<void>;
+	readonly onUndo?: () => void;
+	readonly onRedo?: () => void;
 }
 
 // ------------------------------------------------------------------
