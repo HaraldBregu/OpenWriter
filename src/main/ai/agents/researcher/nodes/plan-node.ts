@@ -2,9 +2,9 @@
  * Plan node for the Researcher agent.
  *
  * Generates 3-5 focused research angles / sub-questions as a JSON array of
- * strings. The intent produced by the understand node is included in context
- * so the plan is well-scoped. Falls back to the raw prompt as a single-item
- * plan when JSON parsing fails.
+ * strings. The intent and strategy produced by earlier nodes are included in
+ * context so the plan is well-scoped and aligned with the chosen approach.
+ * Falls back to the raw prompt as a single-item plan when JSON parsing fails.
  */
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
@@ -12,13 +12,15 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { ResearcherState } from '../state';
 
 const SYSTEM_PROMPT =
-	'You are a research strategist. Given a user query and its classified intent, ' +
+	'You are a research strategist. Given a user query, its classified intent, ' +
+	'and a recommended response strategy, ' +
 	'create 3-5 focused research angles or sub-questions that together cover the topic comprehensively. ' +
+	'Align the angles with the response strategy — depth, format, and scope should match it. ' +
 	'Return ONLY a valid JSON array of strings — no markdown fences, no explanation, no trailing text. ' +
 	'Example: ["What is X?", "How does Y affect X?", "What are the main challenges of X?"]';
 
-function buildHumanMessage(prompt: string, intent: string): string {
-	return `User query: ${prompt}\n\nClassified intent: ${intent}`;
+function buildHumanMessage(prompt: string, intent: string, strategy: string): string {
+	return `User query: ${prompt}\n\nClassified intent: ${intent}\n\nResponse strategy: ${strategy}`;
 }
 
 function parsePlanFromResponse(content: string, fallback: string): string[] {
