@@ -10,6 +10,8 @@ import {
 	Search,
 	X,
 	Bot,
+	Undo2,
+	Redo2,
 } from 'lucide-react';
 import {
 	AppButton,
@@ -19,8 +21,8 @@ import {
 	AppDropdownMenuTrigger,
 } from '@/components/app';
 import { useSidebarVisibility } from './context';
-import HistoryMenu from './HistoryMenu';
-import type { HistoryEntry } from './history-service';
+import HistoryMenu from './components/HistoryMenu';
+import type { HistoryEntry } from './services/history-service';
 
 interface HeaderProps {
 	readonly title: string;
@@ -129,13 +131,31 @@ const Header: React.FC<HeaderProps> = ({
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">
+					<AppButton
+						type="button"
+						variant="header-icon"
+						size="header-icon-sm"
+						title="Undo"
+						aria-label="Undo"
+						onClick={onUndo}
+						disabled={!canUndo}
+					>
+						<Undo2 aria-hidden="true" />
+					</AppButton>
+					<AppButton
+						type="button"
+						variant="header-icon"
+						size="header-icon-sm"
+						title="Redo"
+						aria-label="Redo"
+						onClick={onRedo}
+						disabled={!canRedo}
+					>
+						<Redo2 aria-hidden="true" />
+					</AppButton>
 					<HistoryMenu
 						entries={historyEntries}
 						currentEntryId={currentHistoryEntryId}
-						canUndo={canUndo}
-						canRedo={canRedo}
-						onUndo={onUndo}
-						onRedo={onRedo}
 						onRestoreEntry={onRestoreHistoryEntry}
 					/>
 					<AppButton

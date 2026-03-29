@@ -16,7 +16,7 @@ import {
 	formatRelativeTime,
 	syncChatSessionsFromDisk,
 	titleFromMessages,
-} from './chat-session-storage';
+} from '../services/chat-session-storage';
 
 // ---------------------------------------------------------------------------
 // Constants

@@ -1,22 +1,17 @@
 import React, { useMemo } from 'react';
-import { History, Undo2, Redo2, Check } from 'lucide-react';
+import { History, Check } from 'lucide-react';
 import {
 	AppButton,
 	AppDropdownMenu,
 	AppDropdownMenuContent,
 	AppDropdownMenuItem,
 	AppDropdownMenuTrigger,
-	AppSeparator,
 } from '@/components/app';
-import type { HistoryEntry } from './history-service';
+import type { HistoryEntry } from '../services/history-service';
 
 interface HistoryMenuProps {
 	readonly entries: HistoryEntry[];
 	readonly currentEntryId: string | null;
-	readonly canUndo: boolean;
-	readonly canRedo: boolean;
-	readonly onUndo: () => void;
-	readonly onRedo: () => void;
 	readonly onRestoreEntry: (id: string) => void;
 }
 
@@ -31,15 +26,7 @@ function formatSavedAt(isoString: string): string {
 	return new Intl.DateTimeFormat(undefined, DATE_FORMAT_OPTIONS).format(new Date(isoString));
 }
 
-const HistoryMenu: React.FC<HistoryMenuProps> = ({
-	entries,
-	currentEntryId,
-	canUndo,
-	canRedo,
-	onUndo,
-	onRedo,
-	onRestoreEntry,
-}) => {
+const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRestoreEntry }) => {
 	const reversedEntries = useMemo(() => [...entries].reverse(), [entries]);
 
 	return (
@@ -49,22 +36,13 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 					type="button"
 					variant="header-icon"
 					size="header-icon-sm"
-					title="History"
-					aria-label="History"
+					title="Version history"
+					aria-label="Version history"
 				>
 					<History aria-hidden="true" />
 				</AppButton>
 			</AppDropdownMenuTrigger>
 			<AppDropdownMenuContent align="end" className="w-64">
-				<AppDropdownMenuItem onClick={onUndo} disabled={!canUndo}>
-					<Undo2 className="h-4 w-4" />
-					Undo
-				</AppDropdownMenuItem>
-				<AppDropdownMenuItem onClick={onRedo} disabled={!canRedo}>
-					<Redo2 className="h-4 w-4" />
-					Redo
-				</AppDropdownMenuItem>
-				<AppSeparator className="my-1" />
 				<div className="max-h-72 overflow-y-auto">
 					{reversedEntries.length === 0 ? (
 						<p className="px-2 py-3 text-sm text-muted-foreground text-center">No history yet</p>

@@ -12,7 +12,7 @@ import {
 import { useDocumentDispatch, useDocumentState } from '../hooks';
 import { useChatState, useChatDispatch } from '../context';
 import type { ChatSessionFile } from '../context/state';
-import { syncChatSessionsFromDisk } from '../hooks/chat-session-storage';
+import { syncChatSessionsFromDisk } from '../services/chat-session-storage';
 
 const ChatHeader: React.FC = () => {
 	const { t } = useTranslation();

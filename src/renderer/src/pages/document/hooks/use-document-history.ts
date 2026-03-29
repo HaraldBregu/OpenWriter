@@ -5,8 +5,9 @@ import {
 	listHistoryEntries,
 	loadHistoryEntry,
 	MAX_HISTORY_ENTRIES,
+	isHistoryEntryFilePath,
 	type HistoryEntry,
-} from '../history-service';
+} from '../services/history-service';
 
 export type { HistoryEntry };
 
@@ -47,6 +48,27 @@ export function useDocumentHistory({
 	const stateRef = useRef({ content, title });
 	stateRef.current = { content, title };
 
+	const reloadEntries = useCallback(async () => {
+		if (!docPath) {
+			setEntries([]);
+			setCurrentEntryId(null);
+			return;
+		}
+
+		try {
+			const nextEntries = await listHistoryEntries(docPath);
+			setEntries(nextEntries);
+			setCurrentEntryId((previousEntryId) =>
+				previousEntryId && nextEntries.some((entry) => entry.id === previousEntryId)
+					? previousEntryId
+					: null
+			);
+		} catch {
+			setEntries([]);
+			setCurrentEntryId(null);
+		}
+	}, [docPath]);
+
 	// Resolve document path whenever documentId changes
 	useEffect(() => {
 		if (!documentId) {
@@ -63,12 +85,23 @@ export function useDocumentHistory({
 	useEffect(() => {
 		if (!docPath) {
 			setEntries([]);
+			setCurrentEntryId(null);
 			return;
 		}
-		listHistoryEntries(docPath)
-			.then(setEntries)
-			.catch(() => setEntries([]));
-	}, [docPath]);
+		void reloadEntries();
+	}, [docPath, reloadEntries]);
+
+	useEffect(() => {
+		if (!documentId || !docPath) return;
+
+		const unsubscribe = window.workspace.onOutputFileChange((event) => {
+			if (event.outputType !== 'documents' || event.fileId !== documentId) return;
+			if (!isHistoryEntryFilePath(event.filePath)) return;
+			void reloadEntries();
+		});
+
+		return unsubscribe;
+	}, [documentId, docPath, reloadEntries]);
 
 	// Reset pointer when document changes
 	useEffect(() => {
@@ -125,8 +158,7 @@ export function useDocumentHistory({
 
 	const canUndo = entries.length > 0 && (!hasHistorySelection || currentIndex > 0);
 	const canRedo =
-		hasHistorySelection &&
-		(currentIndex < entries.length - 1 || liveDraftRef.current !== null);
+		hasHistorySelection && (currentIndex < entries.length - 1 || liveDraftRef.current !== null);
 
 	const undo = useCallback(async () => {
 		if (!docPath || entries.length === 0) return;

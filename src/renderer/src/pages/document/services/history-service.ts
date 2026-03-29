@@ -1,4 +1,4 @@
-const HISTORY_DIR_NAME = 'history';
+export const HISTORY_DIR_NAME = 'history';
 export const MAX_HISTORY_ENTRIES = 50;
 
 export interface HistoryEntry {
@@ -22,8 +22,12 @@ function buildEntryId(): string {
 	return `${datePart}-${timePart}-${msPart}-${rand}`;
 }
 
-function historyDir(docPath: string): string {
+export function historyDir(docPath: string): string {
 	return `${docPath}/${HISTORY_DIR_NAME}`;
+}
+
+export function isHistoryEntryFilePath(filePath: string): boolean {
+	return filePath.replaceAll('\\', '/').includes(`/${HISTORY_DIR_NAME}/`);
 }
 
 export async function saveHistorySnapshot(
