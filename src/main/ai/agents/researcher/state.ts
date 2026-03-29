@@ -5,11 +5,12 @@
  * previous value. The service layer injects the initial `prompt`; all
  * remaining fields are populated progressively by the pipeline nodes.
  *
- * Topology: understand → plan → research → compose
- *   - understand : classifies user intent  → intent
- *   - plan       : generates sub-questions → plan
- *   - research   : synthesises knowledge   → research
- *   - compose    : writes final response   → response
+ * Topology: understand → evaluate → plan → research → compose
+ *   - understand : classifies user intent         → intent
+ *   - evaluate   : determines response strategy   → strategy
+ *   - plan       : generates sub-questions        → plan
+ *   - research   : synthesises knowledge          → research
+ *   - compose    : writes final response          → response
  */
 
 import { Annotation } from '@langchain/langgraph';
@@ -23,6 +24,16 @@ export const ResearcherState = Annotation.Root({
 
 	/** Intent classification produced by the understand node. */
 	intent: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	/**
+	 * Response strategy produced by the evaluate node.
+	 * Describes the optimal approach, depth level, format preferences,
+	 * and any special considerations for this query.
+	 */
+	strategy: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
