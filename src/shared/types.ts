@@ -461,7 +461,12 @@ export interface ProjectWorkspaceInfo {
  * Emitted as the graph transitions between nodes so the UI can show
  * progress indicators to the user.
  */
-export type ResearcherPhase = 'understanding' | 'planning' | 'researching' | 'composing';
+export type ResearcherPhase =
+	| 'understanding'
+	| 'evaluating'
+	| 'planning'
+	| 'researching'
+	| 'composing';
 
 /**
  * Payload sent from the renderer to start a researcher query.
