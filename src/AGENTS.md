@@ -503,7 +503,7 @@ src/renderer/src/pages/
           index.ts
         context/
           actions.ts
-          contexts.tsx
+          contexts.ts
           index.ts
           reducer.ts
           state.ts

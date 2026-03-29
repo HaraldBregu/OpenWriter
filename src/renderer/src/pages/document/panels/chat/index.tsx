@@ -8,11 +8,10 @@ import {
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../../../services/task-event-bus';
-import { ChatMessage } from './components/message';
-import { ChatInput } from './components/input';
-import { ChatHeader } from './components/header';
+import { ChatHeader, ChatInput, ChatMessage } from './components';
 import { useDocumentState } from '../../hooks';
-import { useChatState, useChatDispatch } from './context';
+import { useChatState, useChatDispatch } from './hooks';
+import { ChatProvider } from './Provider';
 
 type ResearcherTaskData = {
 	prompt: string;
@@ -38,7 +37,7 @@ function mapTaskStatusToChatStatus(
 	}
 }
 
-const ChatPanel: React.FC = () => {
+const Chat: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
 	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
@@ -369,5 +368,11 @@ const ChatPanel: React.FC = () => {
 		</div>
 	);
 };
+
+const ChatPanel: React.FC = () => (
+	<ChatProvider>
+		<Chat />
+	</ChatProvider>
+);
 
 export default ChatPanel;

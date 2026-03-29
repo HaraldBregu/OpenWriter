@@ -40,19 +40,18 @@ jest.mock('../../../../../src/renderer/src/services/task-event-bus', () => ({
 jest.mock('../../../../../src/renderer/src/pages/document/hooks', () => ({
 	useDocumentState: () => ({
 		documentId: 'doc-1',
+		chat: mockChatState,
 	}),
+	useDocumentDispatch: () => mockDispatch,
 }));
 
-jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/context', () => ({
+jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/hooks', () => ({
 	useChatDispatch: () => mockDispatch,
 	useChatState: () => mockChatState,
 }));
 
-jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components/header', () => ({
+jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components', () => ({
 	ChatHeader: () => <div>header</div>,
-}));
-
-jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components/message', () => ({
 	ChatMessage: ({
 		id,
 		showStatusLoader,
@@ -64,9 +63,6 @@ jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components
 			message
 		</div>
 	),
-}));
-
-jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components/input', () => ({
 	ChatInput: ({
 		onSend,
 		disabled,
@@ -80,9 +76,9 @@ jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components
 	),
 }));
 
-import ChatPanel from '../../../../../src/renderer/src/pages/document/panels/chat/ChatPanel';
+import Chat from '../../../../../src/renderer/src/pages/document/panels/chat';
 
-describe('ChatPanel', () => {
+describe('Chat', () => {
 	beforeEach(() => {
 		mockDispatch.mockReset();
 		mockInitTaskMetadata.mockReset();
@@ -108,7 +104,7 @@ describe('ChatPanel', () => {
 			data: { taskId: 'task-123' },
 		});
 
-		render(<ChatPanel />);
+		render(<Chat />);
 
 		fireEvent.click(screen.getByRole('button', { name: 'send' }));
 
@@ -160,7 +156,7 @@ describe('ChatPanel', () => {
 		mockChatState.activeTaskId = 'task-123';
 		mockChatState.activeMessageId = 'assistant-1';
 
-		render(<ChatPanel />);
+		render(<Chat />);
 
 		expect(mockSubscribeToTask).toHaveBeenCalledWith('task-123', expect.any(Function));
 		expect(taskListener).not.toBeNull();
@@ -259,7 +255,7 @@ describe('ChatPanel', () => {
 			},
 		];
 
-		render(<ChatPanel />);
+		render(<Chat />);
 
 		expect(screen.getByTestId('message-system-1')).toHaveAttribute('data-loader', 'false');
 		expect(screen.getByTestId('message-system-2')).toHaveAttribute('data-loader', 'true');
@@ -286,7 +282,7 @@ describe('ChatPanel', () => {
 			},
 		];
 
-		render(<ChatPanel />);
+		render(<Chat />);
 
 		expect(screen.getByTestId('message-system-1')).toHaveAttribute('data-loader', 'false');
 		expect(screen.getByTestId('message-system-2')).toHaveAttribute('data-loader', 'false');

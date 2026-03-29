@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
 import Header from './Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
-import ChatPanel from './panels/chat/ChatPanel';
+import Chat from './panels/chat';
 import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useChatPersistence, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
@@ -559,7 +559,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				>
 					<div className="h-full">
 						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <ChatPanel />}
+						{activeSidebar === 'agentic' && <Chat />}
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>

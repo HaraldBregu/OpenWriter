@@ -54,17 +54,23 @@ src/renderer/src/pages/document/
     history-service.ts
   panels/
     chat/
-      ChatPanel.tsx
+      index.tsx
+      Provider.tsx
       components/
-        header.tsx
-        input.tsx
-        message.tsx
+        Header.tsx
+        Input.tsx
+        Message.tsx
+        index.ts
       context/
         actions.ts
+        contexts.ts
         index.ts
-        provider.tsx
         reducer.ts
         state.ts
+      hooks/
+        index.ts
+        use-chat-dispatch.ts
+        use-chat-state.ts
     resources/
       ResourcesPanel.tsx
 ```
@@ -78,7 +84,6 @@ This is the route entry.
 It reads the `id` param from React Router and mounts the provider stack for one document session:
 
 - `DocumentProvider`
-- `ChatProvider`
 - `SidebarVisibilityProvider`
 - `EditorInstanceProvider`
 
@@ -120,9 +125,9 @@ The current page flow is:
 9. `useDocumentHistory(...)` creates debounced history snapshots and supports undo/redo/history restore.
 10. The right panel renders either:
     - `panels/resources/ResourcesPanel.tsx` for metadata/images/actions
-    - `panels/chat/ChatPanel.tsx` for agentic chat
+    - `panels/chat/index.tsx` for agentic chat
 11. Editor tasks are submitted through `useTask(...)` in `Layout.tsx` and streamed back through the renderer task event bus.
-12. Chat tasks are submitted and observed inside `ChatPanel.tsx`.
+12. Chat tasks are submitted and observed inside `panels/chat/index.tsx`.
 13. Watchers keep metadata, images, and history menu state synchronized with disk.
 
 ## Component Responsibilities
@@ -143,7 +148,7 @@ It is responsible for:
 It is intentionally stateless relative to document persistence.
 `Layout.tsx` owns the handlers and passes state down.
 
-### `ChatPanel.tsx`
+### `panels/chat/index.tsx`
 
 This is the agentic sidebar UI.
 
@@ -249,8 +254,11 @@ Do not assume every exported hook is part of the current hot path.
 
 ### 3. `ChatProvider`
 
-`panels/chat/context/provider.tsx` does not own an independent store.
-It exposes a chat-scoped view over `DocumentContext`, using `documentState.chat` and the shared document dispatch.
+`panels/chat/Provider.tsx` is mounted only by the chat panel.
+It does not own an independent store. It exposes a chat-scoped view over `DocumentContext`, using `documentState.chat` and the shared document dispatch.
+
+The React contexts live in `panels/chat/context/contexts.ts`.
+The chat hooks live in `panels/chat/hooks/`.
 
 `ChatSession` contains:
 
@@ -308,8 +316,8 @@ Use this map when making changes:
 - current document id: `DocumentContext`
 - metadata sidebar info: `DocumentContext`
 - image list: `DocumentContext`
-- visible chat messages: `DocumentContext.chat` exposed through `ChatProvider`
-- visible chat session id: `DocumentContext.chat` exposed through `ChatProvider`
+- visible chat messages: `DocumentContext.chat`, consumed through the chat panel's local `ChatProvider`
+- visible chat session id: `DocumentContext.chat`, consumed through the chat panel's local `ChatProvider`
 - list of saved chat sessions: `DocumentContext.chatSessions`
 - active sidebar mode: `SidebarVisibilityProvider`
 - live editor instance: `EditorInstanceProvider`
@@ -419,7 +427,7 @@ aligned with disk mutations.
 This page integrates several task-backed capabilities through two paths:
 
 - `Layout.tsx` uses `useTask(...)` for editor-facing workflows
-- `ChatPanel.tsx` uses `window.task.submit(...)` plus `subscribeToTask(...)` for chat
+- `panels/chat/index.tsx` uses `window.task.submit(...)` plus `subscribeToTask(...)` for chat
 
 Current task types used here:
 
@@ -473,14 +481,14 @@ These flows are tightly coupled to imperative methods exposed by `TextEditorElem
 
 ### Chat task flow
 
-Chat submission and streaming are handled directly inside `ChatPanel.tsx`.
+Chat submission and streaming are handled directly inside `panels/chat/index.tsx`.
 
 The current flow is:
 
-1. `ChatPanel` dispatches local user and placeholder assistant messages.
-2. `ChatPanel` submits the selected task with document-scoped metadata.
-3. `ChatPanel` stores the resolved task id on the active assistant message.
-4. `ChatPanel` subscribes to the active task id through `subscribeToTask(...)`.
+1. `panels/chat/index.tsx` dispatches local user and placeholder assistant messages.
+2. `panels/chat/index.tsx` submits the selected task with document-scoped metadata.
+3. `panels/chat/index.tsx` stores the resolved task id on the active assistant message.
+4. `panels/chat/index.tsx` subscribes to the active task id through `subscribeToTask(...)`.
 5. task snapshots are filtered by `metadata.documentId` when present.
 6. `getTaskStatusText(...)` is used to derive system status rows that are inserted before the active assistant reply.
 7. assistant message content and status are patched in chat context as the task progresses.
@@ -586,7 +594,7 @@ Keep the panel itself in a dedicated component rather than growing `Layout.tsx` 
 Update:
 
 - `Layout.tsx` for editor-related submission and subscription wiring
-- `ChatPanel.tsx` for chat-related submission and subscription wiring
+- `panels/chat/index.tsx` for chat-related submission and subscription wiring
 
 Prefer keeping:
 
@@ -610,7 +618,7 @@ If the artifact belongs to one document folder, follow the existing pattern:
 - writing directly to disk from multiple places without watcher-aware refresh paths
 - bypassing `externalValueVersion` when restoring editor content from history
 - moving chat-specific task orchestration back into `Layout.tsx`
-- moving editor-specific orchestration into `ChatPanel.tsx`
+- moving editor-specific orchestration into `panels/chat/index.tsx`
 - duplicating chat session indexing logic instead of reusing `chat-session-storage.ts`
 - duplicating history file parsing instead of reusing `history-service.ts`
 
@@ -621,7 +629,7 @@ If the problem is mainly about:
 - route/provider lifecycle: start with `Page.tsx`
 - load/save/history behavior: start with `Layout.tsx` and `use-document-history.ts`
 - header buttons or history dropdown: start with `Header.tsx` and `components/HistoryMenu.tsx`
-- agentic chat UI: start with `panels/chat/ChatPanel.tsx` and `panels/chat/context/provider.tsx`
+- agentic chat UI: start with `panels/chat/index.tsx`, `panels/chat/Provider.tsx`, `panels/chat/hooks/`, and `panels/chat/context/contexts.ts`
 - chat persistence to disk: start with `use-chat-persistence.ts`
 - image uploads/sidebar metadata: start with `panels/resources/ResourcesPanel.tsx`
 - editor streaming behavior: start with `Layout.tsx`, then inspect `TextEditor`

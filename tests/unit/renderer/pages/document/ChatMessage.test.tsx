@@ -18,7 +18,7 @@ jest.mock('remark-gfm', () => ({
 	default: jest.fn(),
 }));
 
-import { ChatMessage } from '../../../../../src/renderer/src/pages/document/panels/chat/components/message';
+import { ChatMessage } from '../../../../../src/renderer/src/pages/document/panels/chat/components/Message';
 
 describe('ChatMessage', () => {
 	it('renders the assistant response body', () => {

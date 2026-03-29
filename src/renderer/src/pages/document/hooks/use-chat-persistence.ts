@@ -1,8 +1,6 @@
 import { useEffect, useRef, useMemo, type Dispatch, type MutableRefObject } from 'react';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
-import { useChatState, useChatDispatch } from '../panels/chat/context';
-import type { ChatAction } from '../panels/chat/context';
 import type {
 	DocumentChatMessage,
 	ChatMessagesFile,
@@ -66,10 +64,10 @@ export function createdAtFromSessionId(sessionId: string, fallback: string): str
  * Returns a flush function that immediately writes pending changes.
  */
 export function useChatPersistence(documentId: string | undefined): () => void {
-	const chatDispatch = useChatDispatch();
 	const docDispatch = useDocumentDispatch();
-	const { chatSessions } = useDocumentState();
-	const { messages: chatMessages, sessionId } = useChatState();
+	const { chat, chatSessions } = useDocumentState();
+	const chatDispatch = docDispatch as Dispatch<DocumentAction>;
+	const { messages: chatMessages, sessionId } = chat;
 
 	const messagesRef = useRef(chatMessages);
 	messagesRef.current = chatMessages;
