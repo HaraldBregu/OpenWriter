@@ -25,7 +25,7 @@ export function SettingsLayout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex h-full w-full mx-auto px-6 py-8">
+		<div className="flex h-full w-full mx-auto pl-6 pr-0 py-8">
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
 				<div className="px-3 pt-12 pb-4 space-y-0.5">
