@@ -13,16 +13,11 @@ interface ChatMessageProps {
 	readonly renderMarkdown?: boolean;
 }
 
-function formatTime(timestamp: Date | string): string {
-	const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
-	return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
 const ChatMessage: React.FC<ChatMessageProps> = ({
 	content,
 	stateMessage,
 	role,
-	timestamp,
+	timestamp: _timestamp,
 	status,
 	renderMarkdown = false,
 }) => {
@@ -49,9 +44,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						{status !== 'completed' && status !== 'error' && status !== 'cancelled' && (
 							<ChevronRight className="h-3.5 w-3.5" />
 						)}
-					</div>
-					<div className="mt-0.5 px-0.5 text-[9px] text-muted-foreground">
-						{formatTime(timestamp)}
 					</div>
 				</div>
 			</div>
@@ -84,9 +76,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						)}
 					</div>
 				)}
-				<div className="mt-0.5 px-0.5 text-[9px] text-muted-foreground">
-					{formatTime(timestamp)}
-				</div>
 			</div>
 		</div>
 	);

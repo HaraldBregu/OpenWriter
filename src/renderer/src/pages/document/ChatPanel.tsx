@@ -116,19 +116,31 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ taskId, isRunning, onSend }) => {
 						</div>
 					</div>
 				) : (
-					<div className="flex flex-col gap-6">
-						{chatMessages.map((message) => (
-							<ChatMessage
-								key={message.id}
-								id={message.id}
-								content={message.content}
-								stateMessage={message.stateMessage}
-								role={message.role}
-								timestamp={message.timestamp}
-								status={message.status}
-								renderMarkdown={message.role === 'assistant'}
-							/>
-						))}
+					<div className="flex flex-col">
+						{chatMessages.map((message, index) => {
+							const previousMessage = index > 0 ? chatMessages[index - 1] : null;
+							const isGroupedWithPrevious =
+								previousMessage !== null &&
+								previousMessage.role !== 'user' &&
+								message.role !== 'user';
+
+							return (
+								<div
+									key={message.id}
+									className={index === 0 ? undefined : isGroupedWithPrevious ? 'mt-2' : 'mt-6'}
+								>
+									<ChatMessage
+										id={message.id}
+										content={message.content}
+										stateMessage={message.stateMessage}
+										role={message.role}
+										timestamp={message.timestamp}
+										status={message.status}
+										renderMarkdown={message.role === 'assistant'}
+									/>
+								</div>
+							);
+						})}
 						<div ref={bottomRef} />
 					</div>
 				)}
