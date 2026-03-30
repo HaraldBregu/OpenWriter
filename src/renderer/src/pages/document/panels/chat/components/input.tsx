@@ -168,6 +168,7 @@ const Input: React.FC<InputProps> = ({
 
 	const renderSelectionChip = (compact: boolean) => {
 		if (!selectionLabel) return null;
+		if (compact && !canClearSelection) return null;
 
 		return (
 			<div
