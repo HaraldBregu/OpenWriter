@@ -40,7 +40,7 @@ const Message: React.FC<MessageProps> = ({
 		return (
 			<div className="flex gap-2.5">
 				<div className="min-w-0 flex-1">
-					<div className="inline-flex items-center gap-1.5 rounded-full bg-muted/70 px-2 py-1 text-xs text-foreground/65 dark:bg-accent/80 dark:text-muted-foreground/95">
+					<div className="inline-flex items-center gap-1.5 px-0.5 text-xs text-foreground/65 dark:text-muted-foreground/95">
 						{shouldShowStatusLoader && (
 							<LoaderCircle
 								data-testid="status-loader"
