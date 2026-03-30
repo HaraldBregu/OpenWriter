@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, ChevronDown, Search, Type, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, Search, X } from 'lucide-react';
 import {
 	AppButton,
 	AppTextarea,
@@ -178,7 +178,6 @@ const Input: React.FC<InputProps> = ({
 				title={selectionLabel}
 				aria-label={selectionLabel}
 			>
-				{canClearSelection ? <Type className="h-3 w-3 shrink-0" aria-hidden="true" /> : null}
 				{compact ? null : <span className="min-w-0 truncate">{selectionLabel}</span>}
 				{canClearSelection ? (
 					<button

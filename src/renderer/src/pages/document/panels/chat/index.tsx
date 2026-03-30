@@ -424,7 +424,7 @@ const Chat: React.FC = () => {
 	const selectionLabel = useMemo(() => {
 		if (!selection) return null;
 		if (selection.from === selection.to) {
-			return `Cursor ${selection.from}`;
+			return `Position ${selection.from}`;
 		}
 		return `Selection ${selection.from}-${selection.to}`;
 	}, [selection]);
