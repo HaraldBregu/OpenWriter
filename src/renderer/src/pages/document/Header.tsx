@@ -5,7 +5,7 @@ import {
 	MoreHorizontal,
 	Copy,
 	Trash2,
-	FileText,
+	Files,
 	PenLine,
 	Search,
 	X,
@@ -178,7 +178,7 @@ const Header: React.FC<HeaderProps> = ({
 						aria-expanded={activeSidebar === 'config'}
 						onClick={() => toggleSidebar('config')}
 					>
-						<FileText aria-hidden="true" />
+						<Files aria-hidden="true" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
