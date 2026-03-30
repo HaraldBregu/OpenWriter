@@ -98,12 +98,13 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 		return iso ? formatDate(iso, i18n.language) : null;
 	}, [metadata?.updatedAt, metadata?.createdAt, i18n.language]);
 
-	const sectionClassName = 'rounded-xl border border-border/60 bg-background/55 p-3 shadow-sm';
+	const sectionClassName =
+		'rounded-2xl border border-border/70 bg-card/75 p-3 shadow-none backdrop-blur-sm dark:bg-background/45';
 	const actionButtonClassName =
-		'flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-foreground hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors';
+		'flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm text-foreground/85 transition-colors hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 	return (
-		<div className="flex flex-col w-full overflow-y-auto overflow-x-hidden border-l border-border bg-background">
+		<div className="flex w-full flex-col overflow-y-auto overflow-x-hidden border-l border-border/70 bg-card/55 dark:bg-background">
 			<AppCard className="w-full flex flex-col flex-1 min-h-0 rounded-none border-none bg-transparent shadow-none">
 				{metadata && (
 					<AppCardHeader className="p-4 pb-0">
@@ -112,7 +113,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 							<button
 								type="button"
 								onClick={onOpenFolder}
-								className="rounded p-1 text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+								className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 								aria-label={t('common.openFolder')}
 								title={t('common.openFolder')}
 							>
@@ -173,7 +174,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										{images.map((img) => (
 											<div
 												key={img.fileName}
-												className="group relative aspect-square overflow-hidden rounded-lg border border-border/70 bg-muted/40"
+												className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-accent/45 dark:bg-muted/40"
 											>
 												<img
 													src={toLocalResourceUrl(img.filePath)}
@@ -191,7 +192,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										<button
 											type="button"
 											onClick={handleUploadClick}
-											className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border bg-background/40 text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+											className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
 											aria-label={t('configSidebar.uploadImage')}
 											title={t('configSidebar.uploadImage')}
 										>
@@ -202,7 +203,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 									<button
 										type="button"
 										onClick={handleUploadClick}
-										className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background/40 px-3 py-4 text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+										className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-card/65 px-3 py-4 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
 										aria-label={t('configSidebar.uploadImage')}
 									>
 										<Image className="h-4 w-4 shrink-0" />
