@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, ChevronDown, Search, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, Search, Type, X } from 'lucide-react';
 import {
 	AppButton,
 	AppTextarea,
@@ -40,7 +40,11 @@ const Input: React.FC<InputProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
+	const [compactChipLabels, setCompactChipLabels] = useState(false);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const footerRef = useRef<HTMLDivElement>(null);
+	const chipMeasureRef = useRef<HTMLDivElement>(null);
+	const sendButtonRef = useRef<HTMLButtonElement>(null);
 
 	const adjustHeight = useCallback(() => {
 		const el = textareaRef.current;
@@ -82,9 +86,117 @@ const Input: React.FC<InputProps> = ({
 	const selectedAgent = agentOptions?.find((agent) => agent.id === selectedAgentId);
 	const agentLabel = selectedAgent?.label;
 
+	const updateChipLayout = useCallback(() => {
+		const footerEl = footerRef.current;
+		const chipMeasureEl = chipMeasureRef.current;
+		const sendButtonEl = sendButtonRef.current;
+
+		if (!footerEl || !chipMeasureEl || !sendButtonEl || !agentLabel) {
+			setCompactChipLabels(false);
+			return;
+		}
+
+		const availableWidth = footerEl.clientWidth - sendButtonEl.offsetWidth - 24;
+		setCompactChipLabels(chipMeasureEl.scrollWidth > Math.max(0, availableWidth));
+	}, [agentLabel]);
+
+	useEffect(() => {
+		updateChipLayout();
+	}, [agentLabel, selectionLabel, updateChipLayout]);
+
+	useEffect(() => {
+		const footerEl = footerRef.current;
+
+		if (!footerEl || typeof ResizeObserver === 'undefined') {
+			return;
+		}
+
+		const observer = new ResizeObserver(() => {
+			updateChipLayout();
+		});
+
+		observer.observe(footerEl);
+
+		if (sendButtonRef.current) {
+			observer.observe(sendButtonRef.current);
+		}
+
+		if (chipMeasureRef.current) {
+			observer.observe(chipMeasureRef.current);
+		}
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [updateChipLayout]);
+
+	const renderAgentTrigger = (compact: boolean) => (
+		<AppDropdownMenu>
+			<AppDropdownMenuTrigger asChild>
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="sm"
+					className={`h-7 rounded-full border border-border/80 bg-muted/80 text-xs text-foreground/80 shadow-none hover:bg-accent hover:text-foreground dark:border-border/90 dark:bg-accent dark:text-foreground/90 dark:hover:bg-accent/90 ${
+						compact ? 'gap-1 px-2' : 'max-w-[10rem] min-w-0 px-2.5'
+					}`}
+					disabled={disabled}
+					aria-label={t('agenticPanel.agentSelect', 'Select agent')}
+					title={agentLabel}
+				>
+					<Search className="h-3 w-3" aria-hidden="true" />
+					{compact ? null : <span className="min-w-0 truncate">{agentLabel}</span>}
+					<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
+				</AppButton>
+			</AppDropdownMenuTrigger>
+			<AppDropdownMenuContent
+				align="start"
+				className="min-w-40 rounded-xl border-border/80 bg-card shadow-none dark:border-border/90 dark:bg-card/95"
+			>
+				{agentOptions?.map((agent) => (
+					<AppDropdownMenuItem
+						key={agent.id}
+						onClick={() => onAgentChange?.(agent.id)}
+						className="text-xs"
+					>
+						{agent.label}
+					</AppDropdownMenuItem>
+				))}
+			</AppDropdownMenuContent>
+		</AppDropdownMenu>
+	);
+
+	const renderSelectionChip = (compact: boolean) => {
+		if (!selectionLabel) return null;
+
+		return (
+			<div
+				className={`flex items-center rounded-full border border-border/80 bg-muted/80 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-accent/85 dark:text-muted-foreground/95 ${
+					compact ? 'gap-1 px-2' : 'max-w-[11.5rem] gap-1 px-2.5'
+				}`}
+				title={selectionLabel}
+				aria-label={selectionLabel}
+			>
+				<Type className="h-3 w-3 shrink-0" aria-hidden="true" />
+				{compact ? null : <span className="min-w-0 truncate">{selectionLabel}</span>}
+				{canClearSelection ? (
+					<button
+						type="button"
+						onMouseDown={(event) => event.preventDefault()}
+						onClick={onClearSelection}
+						className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-background/80 dark:hover:text-foreground"
+						aria-label={t('agenticPanel.clearSelection', 'Clear selection')}
+					>
+						<X className="h-3 w-3" aria-hidden="true" />
+					</button>
+				) : null}
+			</div>
+		);
+	};
+
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
-			<div className="overflow-hidden rounded-[1.35rem] border border-border/80 bg-card shadow-none backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+			<div className="relative overflow-hidden rounded-[1.35rem] border border-border/80 bg-card shadow-none backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
@@ -100,62 +212,29 @@ const Input: React.FC<InputProps> = ({
 					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/70 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
 				/>
 
-				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
-					{agentLabel ? (
-						<div className="flex min-w-0 items-center gap-2">
-							<AppDropdownMenu>
-								<AppDropdownMenuTrigger asChild>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="sm"
-										className="h-7 rounded-full border border-border/80 bg-muted/80 px-2.5 text-xs text-foreground/80 shadow-none hover:bg-accent hover:text-foreground dark:border-border/90 dark:bg-accent dark:text-foreground/90 dark:hover:bg-accent/90"
-										disabled={disabled}
-										aria-label={t('agenticPanel.agentSelect', 'Select agent')}
-									>
-										<Search className="h-3 w-3" aria-hidden="true" />
-										<span>{agentLabel}</span>
-										<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
-									</AppButton>
-								</AppDropdownMenuTrigger>
-								<AppDropdownMenuContent
-									align="start"
-									className="min-w-40 rounded-xl border-border/80 bg-card shadow-none dark:border-border/90 dark:bg-card/95"
-								>
-									{agentOptions?.map((agent) => (
-										<AppDropdownMenuItem
-											key={agent.id}
-											onClick={() => onAgentChange?.(agent.id)}
-											className="text-xs"
-										>
-											{agent.label}
-										</AppDropdownMenuItem>
-									))}
-								</AppDropdownMenuContent>
-							</AppDropdownMenu>
+				{agentLabel ? (
+					<div
+						ref={chipMeasureRef}
+						aria-hidden="true"
+						className="pointer-events-none absolute left-3 top-0 -z-10 inline-flex w-max items-center gap-2 opacity-0"
+					>
+						{renderAgentTrigger(false)}
+						{renderSelectionChip(false)}
+					</div>
+				) : null}
 
-							{selectionLabel ? (
-								<div className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-muted/80 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-accent/85 dark:text-muted-foreground/95">
-									<span className="min-w-0 truncate">{selectionLabel}</span>
-									{canClearSelection ? (
-										<button
-											type="button"
-											onMouseDown={(event) => event.preventDefault()}
-											onClick={onClearSelection}
-											className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-background/80 dark:hover:text-foreground"
-											aria-label={t('agenticPanel.clearSelection', 'Clear selection')}
-										>
-											<X className="h-3 w-3" aria-hidden="true" />
-										</button>
-									) : null}
-								</div>
-							) : null}
+				<div ref={footerRef} className="flex items-center gap-2 px-3 pb-3 pt-1">
+					{agentLabel ? (
+						<div className="flex min-w-0 items-center gap-2 overflow-hidden">
+							{renderAgentTrigger(compactChipLabels)}
+							{renderSelectionChip(compactChipLabels)}
 						</div>
 					) : null}
 
 					<div className="flex-1" />
 
 					<AppButton
+						ref={sendButtonRef}
 						type="button"
 						variant={canSend ? 'default' : 'ghost'}
 						size="icon"
