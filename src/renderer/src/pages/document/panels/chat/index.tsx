@@ -652,15 +652,15 @@ const Chat: React.FC = () => {
 			>
 				{chatMessages.length === 0 ? (
 					<div className="flex h-full flex-col items-center justify-center px-6 text-center">
-						<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/80 bg-card/60 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
-							<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/70 dark:bg-accent/95">
+						<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/85 bg-card/82 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
+							<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/82 dark:bg-accent/95">
 								<Search className="h-5 w-5 text-foreground/70 dark:text-foreground/95" aria-hidden="true" />
 							</div>
 							<div className="space-y-1">
 								<p className="text-sm font-medium text-foreground">
 									{t('agenticPanel.emptyTitle', 'Ask the researcher')}
 								</p>
-								<p className="text-xs leading-5 text-muted-foreground dark:text-muted-foreground/90">
+								<p className="text-xs leading-5 text-foreground/68 dark:text-muted-foreground/90">
 									{t(
 										'agenticPanel.emptyDescription',
 										'Use it to gather context, facts, summaries, and writing directions.'

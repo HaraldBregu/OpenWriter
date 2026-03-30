@@ -84,7 +84,7 @@ const Input: React.FC<InputProps> = ({
 
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
-			<div className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-card/90 shadow-none backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+			<div className="overflow-hidden rounded-[1.35rem] border border-border/80 bg-card shadow-none backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
@@ -97,7 +97,7 @@ const Input: React.FC<InputProps> = ({
 						t('agenticPanel.inputPlaceholder', 'Ask the researcher for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/55 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
+					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/70 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
 				/>
 
 				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
@@ -109,7 +109,7 @@ const Input: React.FC<InputProps> = ({
 										type="button"
 										variant="ghost"
 										size="sm"
-										className="h-7 rounded-full border border-border/70 bg-accent/65 px-2.5 text-xs text-foreground/70 shadow-none hover:bg-accent hover:text-foreground dark:border-border/90 dark:bg-accent dark:text-foreground/90 dark:hover:bg-accent/90"
+										className="h-7 rounded-full border border-border/80 bg-muted/80 px-2.5 text-xs text-foreground/80 shadow-none hover:bg-accent hover:text-foreground dark:border-border/90 dark:bg-accent dark:text-foreground/90 dark:hover:bg-accent/90"
 										disabled={disabled}
 										aria-label={t('agenticPanel.agentSelect', 'Select agent')}
 									>
@@ -120,7 +120,7 @@ const Input: React.FC<InputProps> = ({
 								</AppDropdownMenuTrigger>
 								<AppDropdownMenuContent
 									align="start"
-									className="min-w-40 rounded-xl border-border/70 bg-card/95 shadow-none dark:border-border/90 dark:bg-card/95"
+									className="min-w-40 rounded-xl border-border/80 bg-card shadow-none dark:border-border/90 dark:bg-card/95"
 								>
 									{agentOptions?.map((agent) => (
 										<AppDropdownMenuItem
@@ -135,14 +135,14 @@ const Input: React.FC<InputProps> = ({
 							</AppDropdownMenu>
 
 							{selectionLabel ? (
-								<div className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/70 bg-card/80 px-2.5 py-1 text-xs text-muted-foreground shadow-none dark:border-border/90 dark:bg-accent/85 dark:text-muted-foreground/95">
+								<div className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-muted/80 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-accent/85 dark:text-muted-foreground/95">
 									<span className="min-w-0 truncate">{selectionLabel}</span>
 									{canClearSelection ? (
 										<button
 											type="button"
 											onMouseDown={(event) => event.preventDefault()}
 											onClick={onClearSelection}
-											className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-background/80 dark:hover:text-foreground"
+											className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-background/80 dark:hover:text-foreground"
 											aria-label={t('agenticPanel.clearSelection', 'Clear selection')}
 										>
 											<X className="h-3 w-3" aria-hidden="true" />
@@ -165,7 +165,7 @@ const Input: React.FC<InputProps> = ({
 						className={`h-7 w-7 rounded-lg shadow-none transition-colors ${
 							canSend
 								? 'bg-foreground text-background hover:bg-foreground/90 dark:bg-foreground dark:text-background dark:hover:bg-foreground/95'
-								: 'text-muted-foreground hover:bg-accent/70 hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground'
+								: 'text-muted-foreground hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground'
 						}`}
 					>
 						<ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
