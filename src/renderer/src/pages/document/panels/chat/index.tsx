@@ -44,6 +44,49 @@ type ResearcherTaskData = {
 const SAVE_DEBOUNCE_MS = 500;
 const INTERRUPTED_STATUSES = new Set<DocumentChatMessage['status']>(['idle', 'queued', 'running']);
 
+function getSelectedEditorText(
+	editor: ReturnType<typeof useEditorInstance>['editor'],
+	selection: ReturnType<typeof useDocumentState>['selection']
+): string | null {
+	if (!editor || editor.isDestroyed || !selection || selection.from === selection.to) {
+		return null;
+	}
+
+	const docSize = editor.state.doc.content.size;
+	const from = Math.max(0, Math.min(selection.from, docSize));
+	const to = Math.max(0, Math.min(selection.to, docSize));
+
+	if (from >= to) {
+		return null;
+	}
+
+	const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+	const serializer = storage.markdown?.serializer as { serialize: (node: unknown) => string } | undefined;
+	const rawSelection =
+		serializer?.serialize(editor.state.doc.cut(from, to)) ?? editor.state.doc.textBetween(from, to, '\n\n');
+	const selectedText = rawSelection.replace(/<[^>]*>/g, '').trim();
+
+	return selectedText.length > 0 ? selectedText : null;
+}
+
+function buildTaskPrompt(input: string, selectedText: string | null): string {
+	const prompt = input.trim();
+
+	if (!selectedText) {
+		return prompt;
+	}
+
+	return [
+		'User request:',
+		prompt,
+		'',
+		'Selected text from the current document:',
+		'```markdown',
+		selectedText,
+		'```',
+	].join('\n');
+}
+
 function sanitizeLoadedMessages(messages: DocumentChatMessage[]): DocumentChatMessage[] {
 	return messages.map((msg) =>
 		INTERRUPTED_STATUSES.has(msg.status)
@@ -535,6 +578,8 @@ const Chat: React.FC = () => {
 			if (!documentId || isRunning) return;
 
 			const resolvedSessionId = sessionId ?? uuidv7();
+			const selectedText = getSelectedEditorText(editor, selection);
+			const taskPrompt = buildTaskPrompt(content, selectedText);
 
 			if (!sessionId) {
 				dispatch({ type: 'CHAT_SESSION_STARTED', sessionId: resolvedSessionId });
@@ -572,7 +617,7 @@ const Chat: React.FC = () => {
 			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 
 			const taskType = selectedAgentId === 'inventor' ? 'agent-text-writer' : 'agent-researcher';
-			const taskInput: ResearcherTaskData = { prompt: content };
+			const taskInput: ResearcherTaskData = { prompt: taskPrompt };
 			const metadata = {
 				agentId: selectedAgentId,
 				...(documentId ? { documentId } : {}),
@@ -633,7 +678,7 @@ const Chat: React.FC = () => {
 				dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 			}
 		},
-		[dispatch, documentId, isRunning, selectedAgentId, sessionId, t]
+		[dispatch, documentId, editor, isRunning, selectedAgentId, selection, sessionId, t]
 	);
 	const latestSystemMessageId = [...chatMessages]
 		.reverse()

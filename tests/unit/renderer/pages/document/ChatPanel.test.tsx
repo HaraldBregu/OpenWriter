@@ -5,6 +5,17 @@ const mockDispatch = jest.fn();
 const mockInitTaskMetadata = jest.fn();
 const mockSubscribeToTask = jest.fn();
 const mockSubmit = jest.fn();
+let mockEditor: {
+	isDestroyed: boolean;
+	state: {
+		doc: {
+			content: { size: number };
+			cut: (from: number, to: number) => { from: number; to: number };
+			textBetween: (from: number, to: number, separator?: string) => string;
+		};
+	};
+	storage: Record<string, Record<string, unknown>>;
+} | null = null;
 let taskListener: ((snapshot: {
 	status: string;
 	streamedContent: string;
@@ -22,6 +33,12 @@ const mockChatState = {
 	activeMessageId: null,
 };
 
+const mockDocumentState = {
+	documentId: 'doc-1',
+	chat: mockChatState,
+	selection: null as { from: number; to: number } | null,
+};
+
 jest.mock('react-i18next', () => ({
 	useTranslation: () => ({
 		t: (_key: string, fallback?: string) => fallback ?? '',
@@ -37,12 +54,24 @@ jest.mock('../../../../../src/renderer/src/services/task-event-bus', () => ({
 	subscribeToTask: (...args: unknown[]) => mockSubscribeToTask(...args),
 }));
 
-jest.mock('../../../../../src/renderer/src/pages/document/hooks', () => ({
-	useDocumentState: () => ({
-		documentId: 'doc-1',
-		chat: mockChatState,
+jest.mock('../../../../../src/renderer/src/pages/document/services/chat-session-storage', () => ({
+	formatRelativeTime: () => 'just now',
+	syncChatSessionsFromDisk: jest.fn().mockResolvedValue({
+		latestSession: null,
+		sessionItems: [],
 	}),
+	titleFromMessages: () => 'Untitled',
+}));
+
+jest.mock('../../../../../src/renderer/src/pages/document/hooks', () => ({
+	useDocumentState: () => mockDocumentState,
 	useDocumentDispatch: () => mockDispatch,
+}));
+
+jest.mock('../../../../../src/renderer/src/pages/document/providers', () => ({
+	useEditorInstance: () => ({
+		editor: mockEditor,
+	}),
 }));
 
 jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/hooks', () => ({
@@ -89,10 +118,15 @@ describe('Chat', () => {
 		mockChatState.sessionId = null;
 		mockChatState.activeTaskId = null;
 		mockChatState.activeMessageId = null;
+		mockDocumentState.selection = null;
+		mockEditor = null;
 		mockSubscribeToTask.mockImplementation((_taskId: string, cb: typeof taskListener) => {
 			taskListener = cb;
 			return jest.fn();
 		});
+		(window as typeof window & { workspace?: unknown }).workspace = {
+			getDocumentPath: jest.fn().mockResolvedValue('C:/workspace/doc-1'),
+		} as Window['workspace'];
 		(window as typeof window & { task?: unknown }).task = {
 			submit: mockSubmit,
 		} as Window['task'];
@@ -165,6 +199,56 @@ describe('Chat', () => {
 		expect(mockDispatch).not.toHaveBeenCalledWith({
 			type: 'CHAT_SESSION_STARTED',
 			sessionId: 'session-123',
+		});
+	});
+
+	it('includes the selected editor text in the submitted task prompt when a selection exists', async () => {
+		mockDocumentState.selection = { from: 5, to: 22 };
+		mockEditor = {
+			isDestroyed: false,
+			state: {
+				doc: {
+					content: { size: 200 },
+					cut: (from: number, to: number) => ({ from, to }),
+					textBetween: jest.fn(() => 'Selected fallback'),
+				},
+			},
+			storage: {
+				markdown: {
+					serializer: {
+						serialize: (node: { from: number; to: number }) =>
+							node.from === 5 && node.to === 22 ? '## Selected context\n\nImportant excerpt' : '',
+					},
+				},
+			},
+		};
+		mockSubmit.mockResolvedValue({
+			success: true,
+			data: { taskId: 'task-123' },
+		});
+
+		render(<Chat />);
+
+		fireEvent.click(screen.getByRole('button', { name: 'send' }));
+
+		await waitFor(() => {
+			expect(mockSubmit).toHaveBeenCalledWith(
+				'agent-researcher',
+				{
+					prompt: [
+						'User request:',
+						'Analyze the code',
+						'',
+						'Selected text from the current document:',
+						'```markdown',
+						'## Selected context',
+						'',
+						'Important excerpt',
+						'```',
+					].join('\n'),
+				},
+				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'session-123' }
+			);
 		});
 	});
 
