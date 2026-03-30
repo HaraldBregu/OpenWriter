@@ -17,6 +17,7 @@ import Dropcursor from '@tiptap/extension-dropcursor';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
+import { SelectionMarkerExtension } from './extensions/selection-marker-extension';
 import { ContentGeneratorExtension } from './extensions/content_generator';
 import { ImageExtension, type ImageInsertHandler } from './extensions/image';
 import { Markdown } from '@tiptap/markdown';
@@ -50,6 +51,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Gapcursor,
 		ImageExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
+		SelectionMarkerExtension,
 		ContentGeneratorExtension.configure({
 			onTextSubmit: handlers.onTextSubmit,
 			onImageSubmit: handlers.onImageSubmit,
