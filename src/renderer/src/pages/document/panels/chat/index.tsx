@@ -677,6 +677,10 @@ const Chat: React.FC = () => {
 								previousMessage !== null &&
 								previousMessage.role !== 'user' &&
 								message.role !== 'user';
+							const isSystemGroupedWithPrevious =
+								previousMessage !== null &&
+								previousMessage.role === 'system' &&
+								message.role === 'system';
 							const showStatusLoader =
 								message.role === 'system' &&
 								message.id === latestSystemMessageId &&
@@ -685,7 +689,15 @@ const Chat: React.FC = () => {
 							return (
 								<div
 									key={message.id}
-									className={index === 0 ? undefined : isGroupedWithPrevious ? 'mt-2' : 'mt-4'}
+									className={
+										index === 0
+											? undefined
+											: isSystemGroupedWithPrevious
+												? undefined
+												: isGroupedWithPrevious
+													? 'mt-2'
+													: 'mt-4'
+									}
 								>
 									<Message
 										id={message.id}
