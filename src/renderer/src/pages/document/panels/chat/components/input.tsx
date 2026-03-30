@@ -140,6 +140,7 @@ const Input: React.FC<InputProps> = ({
 									{canClearSelection ? (
 										<button
 											type="button"
+											onMouseDown={(event) => event.preventDefault()}
 											onClick={onClearSelection}
 											className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 											aria-label={t('agenticPanel.clearSelection', 'Clear selection')}

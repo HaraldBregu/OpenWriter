@@ -389,10 +389,12 @@ const Chat: React.FC = () => {
 	const handleClearSelection = useCallback(() => {
 		if (!editor || editor.isDestroyed || !selection || selection.from === selection.to) return;
 
-		const collapsePos = selection.to;
-		const nextSelection = TextSelection.create(editor.state.doc, collapsePos);
+		const docSize = editor.state.doc.content.size;
+		const collapsePos = Math.max(0, Math.min(selection.to, docSize));
+		const nextSelection = TextSelection.near(editor.state.doc.resolve(collapsePos), -1);
 		const tr = editor.state.tr.setSelection(nextSelection).scrollIntoView();
 		editor.view.dispatch(tr);
+		editor.view.focus();
 	}, [editor, selection]);
 
 	messagesRef.current = chatMessages;
