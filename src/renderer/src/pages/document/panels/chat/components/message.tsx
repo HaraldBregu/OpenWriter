@@ -61,7 +61,7 @@ const Message: React.FC<MessageProps> = ({
 	return (
 		<div className="flex gap-2.5">
 			<div className="min-w-0 flex-1">
-				<div className="rounded-2xl border border-transparent bg-card/65 px-3.5 py-2.5 shadow-none dark:bg-background/70 sm:px-4 sm:py-3">
+				<div className="rounded-2xl border border-transparent bg-card/65 px-0 py-2.5 shadow-none dark:bg-background/70 sm:py-3">
 					{renderMarkdown ? (
 						<div className="prose prose-sm max-w-none text-[13px] leading-6 text-foreground/80 dark:prose-invert prose-p:my-1.5 prose-p:leading-6 prose-p:text-foreground/80 prose-headings:mb-1.5 prose-headings:mt-3 prose-headings:leading-snug prose-headings:text-foreground prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-li:text-foreground/75 prose-pre:my-2 prose-pre:overflow-x-auto prose-pre:rounded-xl prose-pre:border prose-pre:border-border/60 prose-pre:bg-muted/80 prose-pre:p-3 dark:prose-pre:bg-black/20 prose-code:rounded prose-code:bg-accent/70 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.75rem] prose-code:text-foreground/90 dark:prose-code:bg-background/60 prose-code:before:content-none prose-code:after:content-none prose-a:text-foreground prose-a:underline prose-strong:text-foreground prose-blockquote:my-2 prose-blockquote:border-l-border prose-blockquote:pl-3 prose-blockquote:text-foreground/70 prose-hr:my-3">
 							<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
