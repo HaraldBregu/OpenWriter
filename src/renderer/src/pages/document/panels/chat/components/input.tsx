@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, ChevronDown, Search } from 'lucide-react';
+import { ArrowUp, ChevronDown, Search, X } from 'lucide-react';
 import {
 	AppButton,
 	AppTextarea,
@@ -22,6 +22,8 @@ interface InputProps {
 	readonly selectedAgentId?: string;
 	readonly onAgentChange?: (agentId: string) => void;
 	readonly selectionLabel?: string | null;
+	readonly canClearSelection?: boolean;
+	readonly onClearSelection?: () => void;
 	readonly placeholder?: string;
 }
 
@@ -32,6 +34,8 @@ const Input: React.FC<InputProps> = ({
 	selectedAgentId,
 	onAgentChange,
 	selectionLabel,
+	canClearSelection = false,
+	onClearSelection,
 	placeholder,
 }) => {
 	const { t } = useTranslation();
@@ -131,8 +135,18 @@ const Input: React.FC<InputProps> = ({
 							</AppDropdownMenu>
 
 							{selectionLabel ? (
-								<div className="max-w-[9.5rem] truncate rounded-full border border-border/70 bg-card/80 px-2.5 py-1 text-xs text-muted-foreground shadow-none dark:bg-background/40">
-									{selectionLabel}
+								<div className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/70 bg-card/80 px-2.5 py-1 text-xs text-muted-foreground shadow-none dark:bg-background/40">
+									<span className="min-w-0 truncate">{selectionLabel}</span>
+									{canClearSelection ? (
+										<button
+											type="button"
+											onClick={onClearSelection}
+											className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+											aria-label={t('agenticPanel.clearSelection', 'Clear selection')}
+										>
+											<X className="h-3 w-3" aria-hidden="true" />
+										</button>
+									) : null}
 								</div>
 							) : null}
 						</div>

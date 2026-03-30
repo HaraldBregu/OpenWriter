@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
+import { TextSelection } from '@tiptap/pm/state';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
 import { getTaskStatusText } from '../../../../../../shared/task-metadata';
@@ -20,6 +21,7 @@ import {
 import { Header, Input, Message } from './components';
 import { useDocumentDispatch, useDocumentState } from '../../hooks';
 import type { DocumentAction } from '../../context/actions';
+import { useEditorInstance } from '../../providers';
 import {
 	formatRelativeTime,
 	syncChatSessionsFromDisk,
@@ -368,11 +370,13 @@ const Chat: React.FC = () => {
 	const dispatch = useChatDispatch();
 	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
 	const { documentId, selection } = useDocumentState();
+	const { editor } = useEditorInstance();
 	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const messagesRef = useRef(chatMessages);
 	const lastRecordedTaskStateRef = useRef<string | null>(null);
 	const isRunning = activeMessageId !== null || activeTaskId !== null;
+	const hasSelectionRange = !!selection && selection.from !== selection.to;
 
 	const selectionLabel = useMemo(() => {
 		if (!selection) return null;
@@ -381,6 +385,15 @@ const Chat: React.FC = () => {
 		}
 		return `Selection ${selection.from}-${selection.to}`;
 	}, [selection]);
+
+	const handleClearSelection = useCallback(() => {
+		if (!editor || editor.isDestroyed || !selection || selection.from === selection.to) return;
+
+		const collapsePos = selection.to;
+		const nextSelection = TextSelection.create(editor.state.doc, collapsePos);
+		const tr = editor.state.tr.setSelection(nextSelection).scrollIntoView();
+		editor.view.dispatch(tr);
+	}, [editor, selection]);
 
 	messagesRef.current = chatMessages;
 
@@ -700,6 +713,8 @@ const Chat: React.FC = () => {
 				selectedAgentId={selectedAgentId}
 				onAgentChange={setSelectedAgentId}
 				selectionLabel={selectionLabel}
+				canClearSelection={hasSelectionRange}
+				onClearSelection={handleClearSelection}
 				placeholder={t(
 					'agenticPanel.inputPlaceholder',
 					'Ask the researcher for context, facts, or ideas'
