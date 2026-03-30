@@ -109,7 +109,7 @@ const Header: React.FC = () => {
 	};
 
 	return (
-		<div className="shrink-0 border-b border-border bg-background/80 px-4 py-2">
+		<div className="shrink-0 border-b border-border/70 bg-card/75 px-4 py-2 backdrop-blur-sm dark:bg-background/85">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
 								type="button"
 								variant="ghost"
 								size="icon"
-								className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
+								className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent/80 hover:text-foreground"
 								aria-label={t('agenticPanel.openHistory', 'Open chat history')}
 							>
 								<Clock3 className="h-4 w-4" />
@@ -130,16 +130,16 @@ const Header: React.FC = () => {
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-80 rounded-lg border border-border/70 bg-background p-1.5"
+							className="w-80 rounded-xl border border-border/70 bg-card/95 p-1.5 shadow-none ring-1 ring-black/5 backdrop-blur-sm dark:bg-popover dark:ring-0"
 						>
 							<div className="border-b border-border/60 px-1.5 pb-1.5">
-								<div className="relative">
-									<Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+								<div className="relative rounded-lg bg-muted/45 px-2">
+									<Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 									<AppInput
 										value={search}
 										onChange={(event) => setSearch(event.target.value)}
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-										className="h-8 border-0 bg-transparent pl-7 pr-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+										className="h-8 border-0 bg-transparent pl-6 pr-1 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
 								</div>
 							</div>
@@ -155,8 +155,8 @@ const Header: React.FC = () => {
 									return (
 										<li
 											key={item.id}
-											className={`flex items-center gap-2 border-b border-border/50 px-1.5 py-1.5 last:border-b-0 ${
-												isSelected ? 'bg-muted/40' : ''
+											className={`flex items-center gap-2 rounded-lg border-b border-border/40 px-1.5 py-1.5 last:border-b-0 ${
+												isSelected ? 'bg-accent/70' : 'hover:bg-muted/40'
 											}`}
 										>
 											<button
@@ -174,7 +174,7 @@ const Header: React.FC = () => {
 													type="button"
 													variant="ghost"
 													size="icon-xs"
-													className="text-muted-foreground hover:bg-transparent hover:text-destructive"
+													className="text-muted-foreground shadow-none hover:bg-destructive/10 hover:text-destructive"
 													aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
 													disabled={isDeleting}
 													onClick={() => {
@@ -194,7 +194,7 @@ const Header: React.FC = () => {
 						type="button"
 						variant="ghost"
 						size="icon"
-						className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
+						className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent/80 hover:text-foreground"
 						aria-label={t('agenticPanel.newChat', 'Start new chat')}
 						onClick={handleNewChat}
 					>

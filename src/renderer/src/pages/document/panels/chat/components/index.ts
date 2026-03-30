@@ -1,5 +1,5 @@
-export { Header } from './Header';
-export { Input } from './Input';
-export { Message } from './Message';
-export type { InputProps, AgentOption } from './Input';
-export type { MessageProps } from './Message';
+export { Header } from './header';
+export { Input } from './input';
+export { Message } from './message';
+export type { InputProps, AgentOption } from './input';
+export type { MessageProps } from './message';

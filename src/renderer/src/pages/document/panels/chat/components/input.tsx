@@ -78,7 +78,7 @@ const Input: React.FC<InputProps> = ({
 
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
-			<div className="overflow-hidden rounded-2xl border border-border bg-background">
+			<div className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-card/90 shadow-none backdrop-blur-sm dark:bg-background">
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
@@ -91,7 +91,7 @@ const Input: React.FC<InputProps> = ({
 						t('agenticPanel.inputPlaceholder', 'Ask the researcher for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none bg-transparent px-3 pt-2 pb-1 text-sm text-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 leading-relaxed border-none shadow-none"
+					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/55 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
 				/>
 
 				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
@@ -102,7 +102,7 @@ const Input: React.FC<InputProps> = ({
 									type="button"
 									variant="ghost"
 									size="sm"
-									className="h-7 rounded-full border border-border bg-muted px-2.5 text-xs text-muted-foreground"
+									className="h-7 rounded-full border border-border/70 bg-accent/65 px-2.5 text-xs text-foreground/70 shadow-none hover:bg-accent hover:text-foreground"
 									disabled={disabled}
 									aria-label={t('agenticPanel.agentSelect', 'Select agent')}
 								>
@@ -111,7 +111,10 @@ const Input: React.FC<InputProps> = ({
 									<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
 								</AppButton>
 							</AppDropdownMenuTrigger>
-							<AppDropdownMenuContent align="start" className="min-w-40">
+							<AppDropdownMenuContent
+								align="start"
+								className="min-w-40 rounded-xl border-border/70 bg-card/95 shadow-none"
+							>
 								{agentOptions?.map((agent) => (
 									<AppDropdownMenuItem
 										key={agent.id}
@@ -134,7 +137,11 @@ const Input: React.FC<InputProps> = ({
 						onClick={handleSend}
 						disabled={!canSend}
 						aria-label={t('agenticPanel.send', 'Send message')}
-						className="h-7 w-7 rounded-lg transition-all"
+						className={`h-7 w-7 rounded-lg shadow-none transition-colors ${
+							canSend
+								? 'bg-foreground text-background hover:bg-foreground/90'
+								: 'text-muted-foreground hover:bg-accent/70 hover:text-foreground'
+						}`}
 					>
 						<ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
 					</AppButton>
