@@ -249,6 +249,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[debouncedSave]
 	);
 
+	const handleSelectionChange = useCallback(
+		(selection: { from: number; to: number } | null) => {
+			dispatch({ type: 'EDITOR_SELECTION_CHANGED', selection });
+		},
+		[dispatch]
+	);
+
 	const handleMoveToTrash = useCallback(async () => {
 		if (!id || isTrashing) return;
 
@@ -529,6 +536,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 										ref={editorRef}
 										key={id}
 										value={content}
+										onSelectionChange={handleSelectionChange}
 										externalValueVersion={editorExternalValueVersion}
 										onChange={handleContentChange}
 										onContinueWithAssistant={onContinueWithAssistant}

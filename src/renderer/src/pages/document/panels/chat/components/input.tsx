@@ -21,6 +21,7 @@ interface InputProps {
 	readonly agentOptions?: readonly AgentOption[];
 	readonly selectedAgentId?: string;
 	readonly onAgentChange?: (agentId: string) => void;
+	readonly selectionLabel?: string | null;
 	readonly placeholder?: string;
 }
 
@@ -30,6 +31,7 @@ const Input: React.FC<InputProps> = ({
 	agentOptions,
 	selectedAgentId,
 	onAgentChange,
+	selectionLabel,
 	placeholder,
 }) => {
 	const { t } = useTranslation();
@@ -96,36 +98,44 @@ const Input: React.FC<InputProps> = ({
 
 				<div className="flex items-center gap-2 px-3 pb-3 pt-1">
 					{agentLabel ? (
-						<AppDropdownMenu>
-							<AppDropdownMenuTrigger asChild>
-								<AppButton
-									type="button"
-									variant="ghost"
-									size="sm"
-									className="h-7 rounded-full border border-border/70 bg-accent/65 px-2.5 text-xs text-foreground/70 shadow-none hover:bg-accent hover:text-foreground"
-									disabled={disabled}
-									aria-label={t('agenticPanel.agentSelect', 'Select agent')}
-								>
-									<Search className="h-3 w-3" aria-hidden="true" />
-									<span>{agentLabel}</span>
-									<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
-								</AppButton>
-							</AppDropdownMenuTrigger>
-							<AppDropdownMenuContent
-								align="start"
-								className="min-w-40 rounded-xl border-border/70 bg-card/95 shadow-none"
-							>
-								{agentOptions?.map((agent) => (
-									<AppDropdownMenuItem
-										key={agent.id}
-										onClick={() => onAgentChange?.(agent.id)}
-										className="text-xs"
+						<div className="flex min-w-0 items-center gap-2">
+							<AppDropdownMenu>
+								<AppDropdownMenuTrigger asChild>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="sm"
+										className="h-7 rounded-full border border-border/70 bg-accent/65 px-2.5 text-xs text-foreground/70 shadow-none hover:bg-accent hover:text-foreground"
+										disabled={disabled}
+										aria-label={t('agenticPanel.agentSelect', 'Select agent')}
 									>
-										{agent.label}
-									</AppDropdownMenuItem>
-								))}
-							</AppDropdownMenuContent>
-						</AppDropdownMenu>
+										<Search className="h-3 w-3" aria-hidden="true" />
+										<span>{agentLabel}</span>
+										<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
+									</AppButton>
+								</AppDropdownMenuTrigger>
+								<AppDropdownMenuContent
+									align="start"
+									className="min-w-40 rounded-xl border-border/70 bg-card/95 shadow-none"
+								>
+									{agentOptions?.map((agent) => (
+										<AppDropdownMenuItem
+											key={agent.id}
+											onClick={() => onAgentChange?.(agent.id)}
+											className="text-xs"
+										>
+											{agent.label}
+										</AppDropdownMenuItem>
+									))}
+								</AppDropdownMenuContent>
+							</AppDropdownMenu>
+
+							{selectionLabel ? (
+								<div className="max-w-[9.5rem] truncate rounded-full border border-border/70 bg-card/80 px-2.5 py-1 text-xs text-muted-foreground shadow-none dark:bg-background/40">
+									{selectionLabel}
+								</div>
+							) : null}
+						</div>
 					) : null}
 
 					<div className="flex-1" />

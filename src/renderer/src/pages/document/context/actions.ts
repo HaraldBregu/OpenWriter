@@ -1,5 +1,6 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
 import type { ChatAction, ChatSessionListItem } from '../panels/chat/context';
+import type { DocumentSelection } from './state';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
@@ -9,6 +10,7 @@ export type DocumentAction =
 	| { type: 'CONTENT_CHANGED'; value: string }
 	| { type: 'METADATA_UPDATED'; metadata: OutputFileMetadata | null }
 	| { type: 'IMAGES_UPDATED'; images: DocumentImageInfo[] }
+	| { type: 'EDITOR_SELECTION_CHANGED'; selection: DocumentSelection | null }
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }

@@ -31,6 +31,9 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 		case 'IMAGES_UPDATED':
 			return { ...state, images: action.images };
 
+		case 'EDITOR_SELECTION_CHANGED':
+			return { ...state, selection: action.selection };
+
 		case 'TRASH_STARTED':
 			return { ...state, isTrashing: true };
 

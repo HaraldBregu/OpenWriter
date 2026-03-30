@@ -367,12 +367,20 @@ const Chat: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
 	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
-	const { documentId } = useDocumentState();
+	const { documentId, selection } = useDocumentState();
 	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const messagesRef = useRef(chatMessages);
 	const lastRecordedTaskStateRef = useRef<string | null>(null);
 	const isRunning = activeMessageId !== null || activeTaskId !== null;
+
+	const selectionLabel = useMemo(() => {
+		if (!selection) return null;
+		if (selection.from === selection.to) {
+			return `Cursor ${selection.from}`;
+		}
+		return `Selection ${selection.from}-${selection.to}`;
+	}, [selection]);
 
 	messagesRef.current = chatMessages;
 
@@ -691,6 +699,7 @@ const Chat: React.FC = () => {
 				]}
 				selectedAgentId={selectedAgentId}
 				onAgentChange={setSelectedAgentId}
+				selectionLabel={selectionLabel}
 				placeholder={t(
 					'agenticPanel.inputPlaceholder',
 					'Ask the researcher for context, facts, or ideas'

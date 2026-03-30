@@ -54,6 +54,7 @@ export interface TextEditorElement extends HTMLDivElement {
 export interface TextEditorProps {
 	value: string;
 	onChange: (value: string) => void;
+	onSelectionChange?: (selection: { from: number; to: number } | null) => void;
 	externalValueVersion?: number;
 	autoFocus?: boolean;
 	className?: string;
@@ -88,6 +89,7 @@ const TextEditor = React.memo(
 			{
 				value,
 				onChange,
+				onSelectionChange,
 				externalValueVersion = 0,
 				autoFocus,
 				className,
@@ -108,6 +110,9 @@ const TextEditor = React.memo(
 		) => {
 			const onChangeRef = useRef(onChange);
 			onChangeRef.current = onChange;
+
+			const onSelectionChangeRef = useRef(onSelectionChange);
+			onSelectionChangeRef.current = onSelectionChange;
 
 			const onTextSubmitRef = useRef(onTextSubmit);
 			onTextSubmitRef.current = onTextSubmit;
@@ -201,6 +206,23 @@ const TextEditor = React.memo(
 				onEditorReadyRef.current?.(editor);
 				return () => {
 					onEditorReadyRef.current?.(null);
+				};
+			}, [editor]);
+
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+
+				const emitSelection = (): void => {
+					const { from, to } = editor.state.selection;
+					onSelectionChangeRef.current?.({ from, to });
+				};
+
+				emitSelection();
+				editor.on('selectionUpdate', emitSelection);
+
+				return () => {
+					editor.off('selectionUpdate', emitSelection);
+					onSelectionChangeRef.current?.(null);
 				};
 			}, [editor]);
 

@@ -2,12 +2,18 @@ import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../share
 import type { ChatSession, ChatSessionListItem } from '../panels/chat/context';
 import { INITIAL_CHAT_STATE } from '../panels/chat/context';
 
+export interface DocumentSelection {
+	readonly from: number;
+	readonly to: number;
+}
+
 export interface DocumentState {
 	readonly documentId: string | undefined;
 	readonly title: string;
 	readonly content: string;
 	readonly metadata: OutputFileMetadata | null;
 	readonly images: DocumentImageInfo[];
+	readonly selection: DocumentSelection | null;
 	readonly loaded: boolean;
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
@@ -22,6 +28,7 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	content: '',
 	metadata: null,
 	images: [],
+	selection: null,
 	loaded: false,
 	isTrashing: false,
 	sidebarOpen: true,
