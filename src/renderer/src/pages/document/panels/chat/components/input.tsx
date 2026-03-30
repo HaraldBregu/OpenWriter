@@ -178,7 +178,7 @@ const Input: React.FC<InputProps> = ({
 				title={selectionLabel}
 				aria-label={selectionLabel}
 			>
-				<Type className="h-3 w-3 shrink-0" aria-hidden="true" />
+				{canClearSelection ? <Type className="h-3 w-3 shrink-0" aria-hidden="true" /> : null}
 				{compact ? null : <span className="min-w-0 truncate">{selectionLabel}</span>}
 				{canClearSelection ? (
 					<button
