@@ -75,15 +75,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 			<AppButton
 				variant="ghost"
 				size="icon"
-				aria-label="Text"
-				className={getMenuButtonClass({ isActive: editor.isActive('paragraph') })}
-				onClick={() => editor.chain().focus().setParagraph().run()}
-			>
-				<Type className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
-				variant="ghost"
-				size="icon"
 				aria-label="Bold"
 				className={getMenuButtonClass({ isActive: editor.isActive('bold') })}
 				onClick={() => editor.chain().focus().toggleBold().run()}
@@ -120,6 +111,15 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 
 			<div className={separatorClass} />
 
+			<AppButton
+				variant="ghost"
+				size="icon"
+				aria-label="Text"
+				className={getMenuButtonClass({ isActive: editor.isActive('paragraph') })}
+				onClick={() => editor.chain().focus().setParagraph().run()}
+			>
+				<Type className="h-3.5 w-3.5" />
+			</AppButton>
 			<AppButton
 				variant="ghost"
 				size="icon"
