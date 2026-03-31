@@ -17,6 +17,11 @@ export interface AgentConfig {
 
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	{
+		id: 'assistant',
+		name: 'Assistant',
+		description: 'Routes requests by intent and responds through the right specialist flow',
+	},
+	{
 		id: 'writer',
 		name: 'Writer',
 		description: 'Writes text from a prompt',

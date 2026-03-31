@@ -16,6 +16,7 @@ export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage
 
 // Agents
 export {
+	AssistantAgent,
 	TextCompleterAgent,
 	TextEnhanceAgent,
 	TextWriterAgent,

@@ -21,6 +21,7 @@ import { LoggerService } from './services/logger';
 import { FileManager } from './shared/file_manager';
 import {
 	AgentRegistry,
+	AssistantAgent,
 	TextCompleterAgent,
 	TextEnhanceAgent,
 	TextWriterAgent,
@@ -91,6 +92,7 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
+	agentRegistry.register(AssistantAgent);
 	agentRegistry.register(TextCompleterAgent);
 	agentRegistry.register(TextEnhanceAgent);
 	agentRegistry.register(TextWriterAgent);
