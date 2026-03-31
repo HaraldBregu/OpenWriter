@@ -14,18 +14,18 @@ import {
 import { DEFAULT_AGENTS } from '../../../../shared/ai-settings';
 import type { AgentConfig } from '../../../../shared/ai-settings';
 
-function getAgentIcon(name: string): {
+function getAgentIcon(agentId: string): {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	accentClassName: string;
 } {
-	switch (name) {
-		case 'Writer':
+	switch (agentId) {
+		case 'writer':
 			return { icon: PenTool, accentClassName: 'bg-primary/12 text-primary' };
-		case 'Researcher':
+		case 'researcher':
 			return { icon: Search, accentClassName: 'bg-emerald-500/12 text-emerald-600' };
-		case 'Narrator':
+		case 'text-writer':
 			return { icon: Mic, accentClassName: 'bg-sky-500/12 text-sky-600' };
-		case 'Painter':
+		case 'image-generator':
 			return { icon: Paintbrush, accentClassName: 'bg-warning/12 text-warning' };
 		default:
 			return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };
@@ -33,7 +33,7 @@ function getAgentIcon(name: string): {
 }
 
 const AgentTableRow = React.memo(function AgentTableRow({ agent }: { agent: AgentConfig }) {
-	const { icon: Icon, accentClassName } = getAgentIcon(agent.name);
+	const { icon: Icon, accentClassName } = getAgentIcon(agent.id);
 
 	return (
 		<AppTableRow>
@@ -81,7 +81,7 @@ const AgentsPage: React.FC = () => {
 								</AppTableHeader>
 								<AppTableBody>
 									{DEFAULT_AGENTS.map((agent) => (
-										<AgentTableRow key={agent.name} agent={agent} />
+										<AgentTableRow key={agent.id} agent={agent} />
 									))}
 								</AppTableBody>
 							</AppTable>

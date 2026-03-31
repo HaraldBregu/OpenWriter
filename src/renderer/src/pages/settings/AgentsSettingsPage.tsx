@@ -12,6 +12,10 @@ import {
 	AppSelectValue,
 } from '@/components/app';
 
+function getAgentKey(agent: (typeof DEFAULT_AGENTS)[number]): string {
+	return agent.id;
+}
+
 // ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
@@ -58,13 +62,15 @@ const AgentsSettingsPage: React.FC = () => {
 				const defaultProvider = uniqueProviders[0] ?? '';
 
 				for (const agent of DEFAULT_AGENTS) {
-					const savedProvider = saved[agent.name];
+					const agentKey = getAgentKey(agent);
+					const savedProvider =
+						typeof saved[agentKey] === 'string' ? saved[agentKey] : saved[agent.name];
 					const resolvedProvider =
 						typeof savedProvider === 'string' && uniqueProviders.includes(savedProvider)
 							? savedProvider
 							: defaultProvider;
-					nextSaved[agent.name] = resolvedProvider;
-					nextSelected[agent.name] = resolvedProvider;
+					nextSaved[agentKey] = resolvedProvider;
+					nextSelected[agentKey] = resolvedProvider;
 				}
 
 				setSavedProviders(nextSaved);
@@ -88,9 +94,10 @@ const AgentsSettingsPage: React.FC = () => {
 		setSelectedProviders((prev) => {
 			const next = { ...prev };
 			for (const agent of DEFAULT_AGENTS) {
-				const current = next[agent.name];
+				const agentKey = getAgentKey(agent);
+				const current = next[agentKey];
 				if (!current || !providers.includes(current)) {
-					next[agent.name] = fallbackProvider;
+					next[agentKey] = fallbackProvider;
 				}
 			}
 			return next;
@@ -130,7 +137,7 @@ const AgentsSettingsPage: React.FC = () => {
 			<div className="space-y-4">
 				{DEFAULT_AGENTS.map((agent) => (
 					<div
-						key={agent.name}
+						key={agent.id}
 						className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
 					>
 						<div className="mb-3">
@@ -144,8 +151,8 @@ const AgentsSettingsPage: React.FC = () => {
 							</AppLabel>
 							<div className="mt-1 flex items-center gap-2">
 								<AppSelect
-									value={selectedProviders[agent.name] ?? ''}
-									onValueChange={(value) => handleProviderChange(agent.name, value)}
+									value={selectedProviders[agent.id] ?? ''}
+									onValueChange={(value) => handleProviderChange(agent.id, value)}
 									disabled={providers.length === 0}
 								>
 									<AppSelectTrigger className="h-9 text-sm flex-1">
@@ -155,7 +162,7 @@ const AgentsSettingsPage: React.FC = () => {
 									</AppSelectTrigger>
 									<AppSelectContent>
 										{providers.map((provider) => (
-											<AppSelectItem key={`${agent.name}-${provider}`} value={provider}>
+											<AppSelectItem key={`${agent.id}-${provider}`} value={provider}>
 												{provider}
 											</AppSelectItem>
 										))}
@@ -168,15 +175,15 @@ const AgentsSettingsPage: React.FC = () => {
 									aria-label={t('settings.agents.saveProvider', 'Save provider')}
 									disabled={
 										providers.length === 0 ||
-										!selectedProviders[agent.name] ||
-										selectedProviders[agent.name] === savedProviders[agent.name] ||
-										Boolean(savingByAgent[agent.name])
+										!selectedProviders[agent.id] ||
+										selectedProviders[agent.id] === savedProviders[agent.id] ||
+										Boolean(savingByAgent[agent.id])
 									}
 									onClick={() => {
-										void handleSaveProvider(agent.name);
+										void handleSaveProvider(agent.id);
 									}}
 								>
-									{savingByAgent[agent.name] ? <Loader2 className="animate-spin" /> : <Check />}
+									{savingByAgent[agent.id] ? <Loader2 className="animate-spin" /> : <Check />}
 								</AppButton>
 							</div>
 						</div>

@@ -10,22 +10,30 @@
 // ---------------------------------------------------------------------------
 
 export interface AgentConfig {
+	id: string;
 	name: string;
 	description: string;
 }
 
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	{
+		id: 'writer',
 		name: 'Writer',
-		description: 'Writes, continues, and enhances text from a prompt or existing draft',
+		description: 'Writes text from a prompt',
 	},
 	{
+		id: 'researcher',
 		name: 'Researcher',
 		description: 'Finds, summarizes, and organizes information for your writing',
 	},
 	{
+		id: 'text-writer',
 		name: 'Narrator',
 		description: 'Shapes scenes, voice, and storytelling flow for narrative writing',
 	},
-	{ name: 'Painter', description: 'Generates images from a text prompt' },
+	{
+		id: 'image-generator',
+		name: 'Painter',
+		description: 'Generates images from a text prompt',
+	},
 ];
