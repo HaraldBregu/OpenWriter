@@ -25,26 +25,15 @@ const separatorClass = 'mx-0.5 h-4 w-px bg-border/80 dark:bg-border';
 function getMenuButtonClass({
 	isActive = false,
 	isAccent = false,
-	isTextButton = false,
 }: {
 	isActive?: boolean;
 	isAccent?: boolean;
-	isTextButton?: boolean;
 }): string {
 	if (isAccent) {
 		return cn(
 			'h-7 w-7 shadow-[inset_0_0_0_1px_hsl(var(--info)/0.22)]',
 			'bg-[hsl(var(--info)/0.14)] text-[hsl(var(--info))] hover:bg-[hsl(var(--info)/0.2)] hover:text-[hsl(var(--info))]',
 			'dark:bg-[hsl(var(--info))] dark:text-[hsl(var(--info-foreground))] dark:shadow-[inset_0_0_0_1px_hsl(var(--info)/0.4)] dark:hover:bg-[hsl(var(--info)/0.9)] dark:hover:text-[hsl(var(--info-foreground))]'
-		);
-	}
-
-	if (isTextButton) {
-		return cn(
-			'h-7 px-2.5 gap-1.5 text-xs font-medium',
-			isActive
-				? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70 dark:bg-accent/95 dark:text-foreground dark:ring-white/10'
-				: 'text-foreground/80 hover:bg-accent/95 hover:text-foreground dark:text-foreground/82 dark:hover:bg-accent dark:hover:text-foreground'
 		);
 	}
 
@@ -85,13 +74,12 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 		>
 			<AppButton
 				variant="ghost"
-				size="sm"
+				size="icon"
 				aria-label="Text"
-				className={getMenuButtonClass({ isActive: editor.isActive('paragraph'), isTextButton: true })}
+				className={getMenuButtonClass({ isActive: editor.isActive('paragraph') })}
 				onClick={() => editor.chain().focus().setParagraph().run()}
 			>
 				<Type className="h-3.5 w-3.5" />
-				<span>Text</span>
 			</AppButton>
 			<AppButton
 				variant="ghost"
