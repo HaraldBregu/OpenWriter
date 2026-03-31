@@ -108,25 +108,11 @@ export function AssistantNodeView({
 				className={[
 					'group/assistant relative my-2 flex flex-col overflow-hidden rounded-[28px]',
 					'border border-border/70 bg-popover/95 py-2 shadow-[0_18px_45px_hsl(var(--foreground)/0.12)]',
-					'transition-all duration-300 ease-out',
-					'hover:-translate-y-0.5 hover:border-[hsl(var(--info)/0.28)] hover:shadow-[0_24px_60px_hsl(var(--foreground)/0.16)]',
+					'transition-[border-color,box-shadow] duration-300 ease-out',
+					'hover:border-[hsl(var(--info)/0.38)] hover:shadow-[0_18px_45px_hsl(var(--foreground)/0.14)]',
 				].join(' ')}
 			>
-				<div
-					className={[
-						'pointer-events-none absolute inset-0 opacity-90 transition-opacity duration-300',
-						'bg-[radial-gradient(circle_at_top_left,hsl(var(--info)/0.16),transparent_36%),radial-gradient(circle_at_bottom_right,hsl(var(--primary)/0.12),transparent_34%)]',
-						'group-hover/assistant:opacity-100',
-					].join(' ')}
-				/>
-				<div
-					className={[
-						'pointer-events-none absolute -inset-24 opacity-35 blur-3xl',
-						'bg-[conic-gradient(from_180deg_at_50%_50%,transparent_0deg,hsl(var(--info)/0.18)_70deg,transparent_140deg,hsl(var(--primary)/0.16)_220deg,transparent_300deg)]',
-						'animate-[spin_18s_linear_infinite]',
-					].join(' ')}
-				/>
-				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--info)/0.5)] to-transparent opacity-70" />
+				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--info)/0.42)] to-transparent opacity-70" />
 				<AssistantContent
 					prompt={prompt}
 					loading={loading}
