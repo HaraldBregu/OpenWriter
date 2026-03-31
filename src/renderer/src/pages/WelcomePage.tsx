@@ -166,7 +166,11 @@ const WelcomePage: React.FC = () => {
 				{/* ── Hero ── */}
 				<div className="flex flex-col items-center mb-10">
 					<AppIconOpenWriter
-						className="mb-5 h-[84px] w-[84px] text-slate-900 dark:text-slate-100"
+						className="mb-5 text-slate-900 dark:text-slate-100"
+						style={{
+							width: 'clamp(104px, min(18vw, 18vh), 196px)',
+							height: 'clamp(104px, min(18vw, 18vh), 196px)',
+						}}
 						aria-label={t('appTitle')}
 						role="img"
 					/>
