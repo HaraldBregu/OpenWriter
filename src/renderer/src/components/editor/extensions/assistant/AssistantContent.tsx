@@ -27,11 +27,6 @@ export function AssistantContent({
 
 	return (
 		<>
-			<div className="flex items-center px-4 pb-1 pt-1 text-xs font-medium text-muted-foreground">
-				<span className="rounded-full border border-border/70 bg-background/60 px-2.5 py-1 text-[11px] tracking-[0.01em] shadow-sm">
-					{t('agenticPanel.systemMessage', 'Understanding request...')}
-				</span>
-			</div>
 			<AppTextarea
 				ref={textareaRef}
 				value={prompt}
@@ -40,10 +35,10 @@ export function AssistantContent({
 					onResize();
 				}}
 				disabled={!enable}
-				className="min-h-[40px] resize-none border-none bg-transparent px-4 pt-2 pb-1 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+				className="min-h-[180px] resize-none border-none bg-transparent px-4 pt-1 pb-3 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 				placeholder={t(
-					'agenticPanel.inputPlaceholder',
-					'Write your request here'
+					'agenticPanel.promptPlaceholder',
+					'Here the prompt'
 				)}
 				rows={1}
 			/>
