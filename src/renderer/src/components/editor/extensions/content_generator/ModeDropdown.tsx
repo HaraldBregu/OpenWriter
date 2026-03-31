@@ -6,17 +6,16 @@ import {
 	AppDropdownMenuContent,
 	AppDropdownMenuItem,
 } from '@components/app/AppDropdownMenu';
-import { ChevronDown, ImagePlus, Type } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import type { ContentGeneratorMode } from './input-extension';
 
 const MODE_OPTIONS: {
 	value: ContentGeneratorMode;
 	label: string;
 	menuLabel: string;
-	icon: React.ElementType;
 }[] = [
-	{ value: 'text', label: 'Text', menuLabel: 'Generate Text', icon: Type },
-	{ value: 'image', label: 'Image', menuLabel: 'Generate Image', icon: ImagePlus },
+	{ value: 'text', label: 'Text', menuLabel: 'Generate Text' },
+	{ value: 'image', label: 'Image', menuLabel: 'Generate Image' },
 ];
 
 interface ModeDropdownProps {
@@ -31,7 +30,6 @@ export function ModeDropdown({
 	onModeChange,
 }: ModeDropdownProps): React.JSX.Element {
 	const current = MODE_OPTIONS.find((o) => o.value === mode) ?? MODE_OPTIONS[0];
-	const CurrentIcon = current.icon;
 
 	return (
 		<AppDropdownMenu>
@@ -39,24 +37,19 @@ export function ModeDropdown({
 				<AppButton
 					variant="ghost"
 					size="sm"
-					className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
+					className="h-7 gap-1.5 rounded-lg px-2 text-xs font-medium text-muted-foreground"
 					disabled={disabled}
 				>
-					<CurrentIcon className="h-3.5 w-3.5" />
 					<span>{current.label}</span>
 					<ChevronDown className="h-3 w-3" />
 				</AppButton>
 			</AppDropdownMenuTrigger>
 			<AppDropdownMenuContent align="start" sideOffset={4}>
-				{MODE_OPTIONS.map((option) => {
-					const Icon = option.icon;
-					return (
-						<AppDropdownMenuItem key={option.value} onSelect={() => onModeChange(option.value)}>
-							<Icon className="mr-2 h-4 w-4" />
-							<span>{option.menuLabel}</span>
-						</AppDropdownMenuItem>
-					);
-				})}
+				{MODE_OPTIONS.map((option) => (
+					<AppDropdownMenuItem key={option.value} onSelect={() => onModeChange(option.value)}>
+						<span>{option.menuLabel}</span>
+					</AppDropdownMenuItem>
+				))}
 			</AppDropdownMenuContent>
 		</AppDropdownMenu>
 	);

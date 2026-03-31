@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
-import { AppCheckbox } from '@components/app/AppCheckbox';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
 import type { ContentGeneratorMode } from './input-extension';
 import { ModeDropdown } from './ModeDropdown';
@@ -48,28 +47,18 @@ export function TextGeneratorContent({
 			/>
 			<div className="flex items-center justify-between px-3 pb-2">
 				<ModeDropdown mode={mode} disabled={!enable} onModeChange={onModeChange} />
-				<div className="flex items-center gap-3">
-					<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-						<AppCheckbox className="h-3.5 w-3.5" disabled={!enable} />
-						{t('agentPrompt.search')}
-					</label>
-					<label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-						<AppCheckbox className="h-3.5 w-3.5" disabled={!enable} />
-						{t('agentPrompt.rag')}
-					</label>
-					<AppButton
-						variant="prompt-submit"
-						size="prompt-submit-md"
-						className="shrink-0"
-						disabled={!enable || loading || !prompt.trim()}
-						onMouseDown={(e) => {
-							e.preventDefault();
-							if (!loading) submitRef.current?.();
-						}}
-					>
-						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-					</AppButton>
-				</div>
+				<AppButton
+					variant="prompt-submit"
+					size="prompt-submit-md"
+					className="shrink-0"
+					disabled={!enable || loading || !prompt.trim()}
+					onMouseDown={(e) => {
+						e.preventDefault();
+						if (!loading) submitRef.current?.();
+					}}
+				>
+					{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+				</AppButton>
 			</div>
 		</>
 	);

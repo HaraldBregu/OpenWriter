@@ -58,13 +58,16 @@ export function ImageGeneratorContent({
 			/>
 
 			{previewUrls.length > 0 && (
-				<div className="flex gap-2 overflow-x-auto px-4 scrollbar-none">
+				<div className="flex flex-wrap gap-2 px-3 pt-1">
 					{previewUrls.map((url, index) => (
-						<div key={index} className="group/thumb relative shrink-0">
+						<div
+							key={index}
+							className="group/thumb relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border/70 bg-muted/40"
+						>
 							<img
 								src={url}
 								alt={files[index]?.name ?? ''}
-								className="h-10 w-10 rounded-lg object-cover"
+								className="h-full w-full object-cover"
 							/>
 							<AppButton
 								variant="ghost"
@@ -101,12 +104,12 @@ export function ImageGeneratorContent({
 			/>
 
 			<div className="flex items-center justify-between px-3 pb-2">
-				<div className="flex items-center gap-1">
+				<div className="flex items-center gap-1.5">
 					<ModeDropdown mode={mode} disabled={loading} onModeChange={onModeChange} />
 					<AppButton
 						variant="ghost"
-						size="icon"
-						className="h-7 w-7 text-muted-foreground"
+						size="sm"
+						className="h-7 gap-1 rounded-lg px-2 text-xs font-medium text-muted-foreground"
 						disabled={loading}
 						onMouseDown={(e) => {
 							e.preventDefault();
@@ -116,7 +119,8 @@ export function ImageGeneratorContent({
 							defaultValue: 'Add image',
 						})}
 					>
-						<Plus className="h-4 w-4" />
+						<Plus className="h-3.5 w-3.5" />
+						<span>{t('imagePlaceholder.addImage', { defaultValue: 'Add image' })}</span>
 					</AppButton>
 				</div>
 				<AppButton
