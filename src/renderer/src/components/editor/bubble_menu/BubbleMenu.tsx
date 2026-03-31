@@ -21,6 +21,11 @@ interface BubbleMenuProps {
 
 const pluginKey = new PluginKey('bubbleMenu');
 
+const menuContainerClass =
+	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border/90 dark:bg-popover dark:ring-white/10 dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.55)]';
+
+const separatorClass = 'mx-0.5 h-4 w-px bg-border/80 dark:bg-border';
+
 function getMenuButtonClass({
 	isActive = false,
 	isAccent = false,
@@ -30,17 +35,17 @@ function getMenuButtonClass({
 }): string {
 	if (isAccent) {
 		return cn(
-			'h-7 w-7 shadow-[inset_0_0_0_1px_hsl(var(--info)/0.18)]',
-			'bg-[hsl(var(--info)/0.12)] text-[hsl(var(--info))]',
-			'hover:bg-[hsl(var(--info)/0.18)] hover:text-[hsl(var(--info))]'
+			'h-7 w-7 shadow-[inset_0_0_0_1px_hsl(var(--info)/0.22)]',
+			'bg-[hsl(var(--info)/0.14)] text-[hsl(var(--info))] hover:bg-[hsl(var(--info)/0.2)] hover:text-[hsl(var(--info))]',
+			'dark:bg-[hsl(var(--info))] dark:text-[hsl(var(--info-foreground))] dark:shadow-[inset_0_0_0_1px_hsl(var(--info)/0.4)] dark:hover:bg-[hsl(var(--info)/0.9)] dark:hover:text-[hsl(var(--info-foreground))]'
 		);
 	}
 
 	return cn(
 		'h-7 w-7',
 		isActive
-			? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70'
-			: 'text-foreground/70 hover:bg-accent/90 hover:text-foreground'
+			? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70 dark:bg-accent/95 dark:text-foreground dark:ring-white/10'
+			: 'text-foreground/80 hover:bg-accent/95 hover:text-foreground dark:text-foreground/82 dark:hover:bg-accent dark:hover:text-foreground'
 	);
 }
 
@@ -78,7 +83,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	return (
 		<div
 			ref={menuRef}
-			className="z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] backdrop-blur-md"
+			className={menuContainerClass}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<AppButton
@@ -118,7 +123,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				<Strikethrough className="h-3.5 w-3.5" />
 			</AppButton>
 
-			<div className="mx-0.5 h-4 w-px bg-border" />
+			<div className={separatorClass} />
 
 			<AppButton
 				variant="ghost"
@@ -150,7 +155,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 
 			{onEnhanceWithAssistant && (
 				<>
-					<div className="mx-0.5 h-4 w-px bg-border" />
+					<div className={separatorClass} />
 					<AppButton
 						variant="ghost"
 						size="icon"

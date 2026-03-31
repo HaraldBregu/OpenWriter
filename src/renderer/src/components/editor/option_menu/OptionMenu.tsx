@@ -108,6 +108,33 @@ const MENU_ITEMS: MenuItem[] = [
 
 const pluginKey = new PluginKey('optionMenu');
 
+const menuContainerClass =
+	'z-50 flex min-w-[220px] flex-col rounded-xl border border-border/80 bg-popover/95 p-1.5 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border/90 dark:bg-popover dark:ring-white/10 dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.55)]';
+
+function getItemClass(tone: MenuItem['tone'], isSelected: boolean): string {
+	if (tone === 'ai') {
+		return isSelected
+			? 'bg-[hsl(var(--info)/0.22)] text-[hsl(var(--info-foreground))] shadow-sm ring-1 ring-[hsl(var(--info)/0.34)] dark:bg-[hsl(var(--info)/0.28)] dark:text-[hsl(var(--info-foreground))] dark:ring-[hsl(var(--info)/0.42)]'
+			: 'bg-[hsl(var(--info)/0.1)] text-popover-foreground hover:bg-[hsl(var(--info)/0.16)] dark:bg-[hsl(var(--info)/0.14)] dark:text-popover-foreground dark:hover:bg-[hsl(var(--info)/0.2)]';
+	}
+
+	return isSelected
+		? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70 dark:bg-accent/95 dark:text-foreground dark:ring-white/10'
+		: 'text-popover-foreground hover:bg-accent/95 hover:text-foreground dark:text-popover-foreground dark:hover:bg-accent dark:hover:text-foreground';
+}
+
+function getIconClass(tone: MenuItem['tone'], isSelected: boolean): string {
+	if (tone === 'ai') {
+		return isSelected
+			? 'bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))] shadow-sm'
+			: 'bg-[hsl(var(--info)/0.16)] text-[hsl(var(--info))] dark:bg-[hsl(var(--info)/0.22)] dark:text-[hsl(var(--info))]';
+	}
+
+	return isSelected
+		? 'bg-background/80 text-foreground shadow-sm dark:bg-background/70 dark:text-foreground'
+		: 'text-foreground/72 dark:text-foreground/82';
+}
+
 export function OptionMenu({
 	onContinueWithAssistant,
 	onInsertImage,
@@ -277,7 +304,7 @@ export function OptionMenu({
 	return (
 		<div
 			ref={menuRef}
-			className="z-50 flex min-w-[220px] flex-col rounded-xl border border-border/80 bg-popover/95 p-1.5 shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] backdrop-blur-md"
+			className={menuContainerClass}
 			style={{ visibility: 'hidden', position: 'absolute', minWidth: '220px' }}
 		>
 			{filteredItems.length > 0 ? (
@@ -295,17 +322,11 @@ export function OptionMenu({
 
 					return (
 						<React.Fragment key={item.label}>
-							{isFirstAiItem && <hr className="my-1 border-border" />}
+							{isFirstAiItem && <hr className="my-1 border-border/80 dark:border-border" />}
 							<button
 								className={cn(
 									'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
-									tone === 'ai'
-										? isSelected
-											? 'bg-[hsl(var(--info)/0.18)] text-popover-foreground ring-1 ring-[hsl(var(--info)/0.24)]'
-											: 'bg-[hsl(var(--info)/0.08)] text-popover-foreground hover:bg-[hsl(var(--info)/0.14)]'
-										: isSelected
-											? 'bg-accent text-accent-foreground'
-											: 'text-popover-foreground hover:bg-accent/90 hover:text-accent-foreground'
+									getItemClass(tone, isSelected)
 								)}
 								onMouseEnter={() => setSelectedIndex(index)}
 								onMouseDown={(e) => {
@@ -316,13 +337,7 @@ export function OptionMenu({
 								<span
 									className={cn(
 										'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-										tone === 'ai'
-											? isSelected
-												? 'bg-[hsl(var(--info)/0.24)] text-[hsl(var(--info))]'
-												: 'bg-[hsl(var(--info)/0.16)] text-[hsl(var(--info))]'
-											: isSelected
-												? 'bg-background/70 text-foreground shadow-sm dark:bg-background/40'
-												: 'text-foreground/60'
+										getIconClass(tone, isSelected)
 									)}
 								>
 									<Icon className="h-4 w-4 shrink-0" />
