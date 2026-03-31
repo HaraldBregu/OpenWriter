@@ -1,5 +1,5 @@
 /**
- * Graph state annotation for the Image Generator agent.
+ * Graph state annotation for the Painter agent.
  *
  * Two nodes populate this state in sequence:
  *

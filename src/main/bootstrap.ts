@@ -25,7 +25,7 @@ import {
 	TextEnhanceAgent,
 	TextWriterAgent,
 	WriterAgent,
-	ImageGeneratorAgent,
+	PainterAgent,
 	ResearcherAgent,
 } from './ai';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
@@ -95,7 +95,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(TextEnhanceAgent);
 	agentRegistry.register(TextWriterAgent);
 	agentRegistry.register(WriterAgent);
-	agentRegistry.register(ImageGeneratorAgent);
+	agentRegistry.register(PainterAgent);
 	agentRegistry.register(ResearcherAgent);
 
 	// Task system -- handler registry + executor

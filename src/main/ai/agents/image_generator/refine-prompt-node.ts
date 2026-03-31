@@ -1,5 +1,5 @@
 /**
- * Refine-prompt node for the Image Generator agent.
+ * Refine-prompt node for the Painter agent.
  *
  * Uses the injected LLM to rewrite the user's raw image description into a
  * high-quality DALL-E 3 prompt. The refined text is stored in `refinedPrompt`

@@ -1,5 +1,5 @@
 /**
- * LangGraph definition for the Image Generator agent.
+ * LangGraph definition for the Painter agent.
  *
  * Topology:
  *

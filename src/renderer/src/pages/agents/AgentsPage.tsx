@@ -25,7 +25,7 @@ function getAgentIcon(agentId: string): {
 			return { icon: Search, accentClassName: 'bg-emerald-500/12 text-emerald-600' };
 		case 'text-writer':
 			return { icon: Mic, accentClassName: 'bg-sky-500/12 text-sky-600' };
-		case 'image-generator':
+		case 'painter':
 			return { icon: Paintbrush, accentClassName: 'bg-warning/12 text-warning' };
 		default:
 			return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };

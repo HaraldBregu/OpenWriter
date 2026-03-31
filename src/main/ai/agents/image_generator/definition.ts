@@ -1,5 +1,5 @@
 /**
- * ImageGenerator — generates images from a text prompt via DALL-E 3.
+ * Painter — generates images from a text prompt via DALL-E 3.
  *
  * Runs as a two-node LangGraph StateGraph:
  *   START → refine-prompt → generate-image → END
@@ -35,8 +35,8 @@ const NODE_MODELS: AgentDefinition['nodeModels'] = {
 };
 
 const definition: AgentDefinition = {
-	id: 'image-generator',
-	name: 'Image Generator',
+	id: 'painter',
+	name: 'Painter',
 	category: 'utility',
 	nodeModels: NODE_MODELS,
 	streamableNodes: ['refine-prompt'],
@@ -61,4 +61,4 @@ const definition: AgentDefinition = {
 	},
 };
 
-export { definition as ImageGeneratorAgent };
+export { definition as PainterAgent };

@@ -14,7 +14,7 @@ const MODE_OPTIONS: {
 	label: string;
 }[] = [
 	{ value: 'text', label: 'Text Writer' },
-	{ value: 'image', label: 'Image Generator' },
+	{ value: 'image', label: 'Painter' },
 ];
 
 interface ModeDropdownProps {

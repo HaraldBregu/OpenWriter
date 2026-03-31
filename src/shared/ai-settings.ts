@@ -32,7 +32,7 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		description: 'Shapes scenes, voice, and storytelling flow for narrative writing',
 	},
 	{
-		id: 'image-generator',
+		id: 'painter',
 		name: 'Painter',
 		description: 'Generates images from a text prompt',
 	},

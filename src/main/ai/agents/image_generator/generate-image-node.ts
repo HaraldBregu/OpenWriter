@@ -1,5 +1,5 @@
 /**
- * Generate-image node for the Image Generator agent.
+ * Generate-image node for the Painter agent.
  *
  * Calls the OpenAI Images API (gpt-image-1) using the refined prompt
  * produced by the upstream `refine-prompt` node. The API key is read directly

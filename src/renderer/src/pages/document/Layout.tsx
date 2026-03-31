@@ -79,7 +79,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const imageGeneratorTaskData: ImageGeneratorTaskData = { prompt: '' };
 	const imageGeneratorTask = useTask<ImageGeneratorTaskData>(
-		'agent-image-generator',
+		'agent-painter',
 		imageGeneratorTaskData
 	);
 
