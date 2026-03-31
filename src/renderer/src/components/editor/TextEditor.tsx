@@ -390,7 +390,7 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						const { doc } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
+							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
 								editor
 									.chain()
 									.deleteRange({ from: pos, to: pos + node.nodeSize })
@@ -404,7 +404,7 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
+							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
 								return false;
 							}
@@ -416,7 +416,7 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
+							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, enable });
 								return false;
 							}
@@ -570,7 +570,8 @@ const TextEditor = React.memo(
 								const pos = editor.state.doc.resolve(p).before(1);
 								const node = editor.state.doc.nodeAt(pos);
 								// Skip transient UI-only nodes (not part of markdown output).
-								if (node && node.type.name === 'contentGenerator') return null;
+								if (node && (node.type.name === 'contentGenerator' || node.type.name === 'assistant'))
+									return null;
 								return { dom: child, pos };
 							} catch {
 								return null;
