@@ -35,14 +35,14 @@ export function AssistantContent({
 					onResize();
 				}}
 				disabled={!enable}
-				className="min-h-[180px] resize-none border-none bg-transparent px-4 pt-1 pb-3 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+				className="min-h-[120px] resize-none border-none bg-transparent px-4 pt-1 pb-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 				placeholder={t(
 					'agenticPanel.promptPlaceholder',
 					'Here the prompt'
 				)}
 				rows={1}
 			/>
-			<div className="flex items-center justify-end px-3 pb-2">
+			<div className="flex items-center justify-end px-3 pb-1.5">
 				<AppButton
 					variant="prompt-submit"
 					size="prompt-submit-md"
