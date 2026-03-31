@@ -87,7 +87,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	// -------------------------------------------------------------------------
 	// Documents list — sourced from Redux (loaded/watched at app startup)
 	// -------------------------------------------------------------------------
-	const documents = useAppSelector(selectAllDocuments);
+	const documents = [...useAppSelector(selectAllDocuments)].sort(
+		(a, b) => b.createdAt - a.createdAt
+	);
 
 	// -------------------------------------------------------------------------
 	// New document handler — optimistic Redux update
