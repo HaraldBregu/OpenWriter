@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
 	Bold,
 	Italic,
@@ -13,10 +13,6 @@ import { PluginKey } from '@tiptap/pm/state';
 import { AppButton } from '../../app/AppButton';
 import { useEditorContext } from '../EditorContext';
 import { cn } from '@/lib/utils';
-
-interface BubbleMenuProps {
-	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
-}
 
 const pluginKey = new PluginKey('bubbleMenu');
 
@@ -48,9 +44,7 @@ function getMenuButtonClass({
 	);
 }
 
-export const BubbleMenu = React.memo(function BubbleMenu({
-	onEnhanceWithAssistant,
-}: BubbleMenuProps): React.JSX.Element {
+export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -70,14 +64,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			editor.unregisterPlugin(pluginKey);
 		};
 	}, [editor]);
-
-	const handleEnhanceWithAI = useCallback(() => {
-		const { from, to } = editor.state.selection;
-		const selectedText = editor.state.doc.textBetween(from, to, ' ');
-		if (selectedText.trim().length > 0) {
-			onEnhanceWithAssistant?.(selectedText, from, to);
-		}
-	}, [editor, onEnhanceWithAssistant]);
 
 	return (
 		<div
@@ -151,21 +137,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			>
 				<Heading3 className="h-3.5 w-3.5" />
 			</AppButton>
-
-			{onEnhanceWithAssistant && (
-				<>
-					<div className={separatorClass} />
-					<AppButton
-						variant="ghost"
-						size="sm"
-						aria-label="Enhance with AI"
-						className={cn(getMenuButtonClass({ isAccent: true }), 'w-auto px-2')}
-						onClick={handleEnhanceWithAI}
-					>
-						<span className="text-xs font-medium">Enhance</span>
-					</AppButton>
-				</>
-			)}
 		</div>
 	);
 });

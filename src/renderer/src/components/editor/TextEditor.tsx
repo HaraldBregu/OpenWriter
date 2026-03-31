@@ -62,7 +62,6 @@ export interface TextEditorProps {
 	id?: string;
 	streamingContent?: string;
 	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
-	onEnhanceWithAssistant?: (selectedText: string, from: number, to: number) => void;
 	onTextSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onImageSubmit?: (prompt: string) => void;
 	onImageFileSelect?: (file: File) => void;
@@ -97,7 +96,6 @@ const TextEditor = React.memo(
 				id,
 				streamingContent,
 				onContinueWithAssistant,
-				onEnhanceWithAssistant,
 				onTextSubmit,
 				onImageSubmit,
 				onImageFileSelect,
@@ -629,7 +627,7 @@ const TextEditor = React.memo(
 								<EditorProvider editor={editor}>
 									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
-									<BubbleMenu onEnhanceWithAssistant={onEnhanceWithAssistant} />
+									<BubbleMenu />
 									<OptionMenu
 										onContinueWithAssistant={onContinueWithAssistant}
 										onInsertImage={handleInsertImage}

@@ -449,15 +449,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[textCompleterTask]
 	);
 
-	const onEnhanceWithAssistant = useCallback(
-		(selectedText: string, from: number, to: number) => {
-			const data: TextEnhanceTaskData = { prompt: selectedText };
-			const metadata = { type: 'replace_text', from, to };
-			textEnhanceTask.submit(data, metadata);
-		},
-		[textEnhanceTask]
-	);
-
 	const onTextSubmit = useCallback(
 		(before: string, after: string, cursorPos: number, input: string) => {
 			editorRef.current?.setContentGeneratorEnable(false);
@@ -540,7 +531,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 										externalValueVersion={editorExternalValueVersion}
 										onChange={handleContentChange}
 										onContinueWithAssistant={onContinueWithAssistant}
-										onEnhanceWithAssistant={onEnhanceWithAssistant}
 										onTextSubmit={onTextSubmit}
 										onImageSubmit={onImageSubmit}
 										documentId={id}
