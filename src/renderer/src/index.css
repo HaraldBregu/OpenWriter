@@ -189,14 +189,11 @@
 	background-color: hsl(var(--info) / 0.3);
 	-webkit-box-decoration-break: clone;
 	box-decoration-break: clone;
-	border-radius: 0.18rem;
 	padding-block: max(0px, calc((1lh - 1em) / 2));
-	box-shadow: inset 0 0 0 1px hsl(var(--info) / 0.24);
 }
 
 .dark .ProseMirror .selection-marker {
 	background-color: hsl(var(--info) / 0.18);
-	box-shadow: inset 0 0 0 1px hsl(var(--info) / 0.14);
 }
 
 .ProseMirror .ProseMirror-gapcursor::after {
