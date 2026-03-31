@@ -106,7 +106,7 @@ export function AssistantNodeView({
 			<div
 				ref={wrapperRef}
 				className={[
-					'group/assistant relative my-2 flex flex-col overflow-hidden rounded-[28px]',
+					'group/assistant relative my-2 flex flex-col overflow-hidden rounded-2xl',
 					'border border-border/70 bg-popover/95 py-2 shadow-[0_18px_45px_hsl(var(--foreground)/0.12)]',
 					'transition-[border-color,box-shadow] duration-300 ease-out',
 					'hover:border-[hsl(var(--info)/0.38)] hover:shadow-[0_18px_45px_hsl(var(--foreground)/0.14)]',
