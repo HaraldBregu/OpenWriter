@@ -12,10 +12,9 @@ import type { ContentGeneratorMode } from './input-extension';
 const MODE_OPTIONS: {
 	value: ContentGeneratorMode;
 	label: string;
-	menuLabel: string;
 }[] = [
-	{ value: 'text', label: 'Text', menuLabel: 'Generate Text' },
-	{ value: 'image', label: 'Image', menuLabel: 'Generate Image' },
+	{ value: 'text', label: 'Text Writer' },
+	{ value: 'image', label: 'Image Generator' },
 ];
 
 interface ModeDropdownProps {
@@ -47,7 +46,7 @@ export function ModeDropdown({
 			<AppDropdownMenuContent align="start" sideOffset={4}>
 				{MODE_OPTIONS.map((option) => (
 					<AppDropdownMenuItem key={option.value} onSelect={() => onModeChange(option.value)}>
-						<span>{option.menuLabel}</span>
+						<span>{option.label}</span>
 					</AppDropdownMenuItem>
 				))}
 			</AppDropdownMenuContent>
