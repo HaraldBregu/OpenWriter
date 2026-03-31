@@ -144,9 +144,9 @@ describe('Chat', () => {
 
 		await waitFor(() => {
 			expect(mockSubmit).toHaveBeenCalledWith(
-				'agent-researcher',
+				'agent-assistant',
 				{ prompt: 'Analyze the code' },
-				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'session-123' }
+				{ documentId: 'doc-1', agentId: 'assistant', chatId: 'session-123' }
 			);
 		});
 
@@ -172,7 +172,7 @@ describe('Chat', () => {
 		});
 		expect(mockInitTaskMetadata).toHaveBeenCalledWith('task-123', {
 			documentId: 'doc-1',
-			agentId: 'researcher',
+			agentId: 'assistant',
 			chatId: 'session-123',
 		});
 	});
@@ -190,9 +190,9 @@ describe('Chat', () => {
 
 		await waitFor(() => {
 			expect(mockSubmit).toHaveBeenCalledWith(
-				'agent-researcher',
+				'agent-assistant',
 				{ prompt: 'Analyze the code' },
-				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'existing-session' }
+				{ documentId: 'doc-1', agentId: 'assistant', chatId: 'existing-session' }
 			);
 		});
 
@@ -233,7 +233,7 @@ describe('Chat', () => {
 
 		await waitFor(() => {
 			expect(mockSubmit).toHaveBeenCalledWith(
-				'agent-researcher',
+				'agent-assistant',
 				{
 					prompt: [
 						'User request:',
@@ -247,7 +247,7 @@ describe('Chat', () => {
 						'```',
 					].join('\n'),
 				},
-				{ documentId: 'doc-1', agentId: 'researcher', chatId: 'session-123' }
+				{ documentId: 'doc-1', agentId: 'assistant', chatId: 'session-123' }
 			);
 		});
 	});

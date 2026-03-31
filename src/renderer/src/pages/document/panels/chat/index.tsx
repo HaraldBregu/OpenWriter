@@ -2,13 +2,12 @@ import React, {
 	useRef,
 	useEffect,
 	useCallback,
-	useState,
 	useMemo,
 	type Dispatch,
 	type MutableRefObject,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { TextSelection } from '@tiptap/pm/state';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
@@ -37,7 +36,7 @@ import type {
 	DocumentChatMessage,
 } from './context';
 
-type ResearcherTaskData = {
+type AssistantTaskData = {
 	prompt: string;
 };
 
@@ -411,7 +410,6 @@ function mapTaskStatusToChatStatus(
 const Chat: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
-	const [selectedAgentId, setSelectedAgentId] = useState('researcher');
 	const { documentId, selection } = useDocumentState();
 	const { editor } = useEditorInstance();
 	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
@@ -539,7 +537,7 @@ const Chat: React.FC = () => {
 						id: activeMessageId,
 						patch: {
 							content:
-								snapshot.error || t('agenticPanel.error', 'The researcher failed to respond.'),
+								snapshot.error || t('agenticPanel.error', 'The assistant failed to respond.'),
 							taskId: activeTaskId,
 							status: 'error',
 						},
@@ -553,7 +551,7 @@ const Chat: React.FC = () => {
 						type: 'CHAT_MESSAGE_UPDATED',
 						id: activeMessageId,
 						patch: {
-							content: t('agenticPanel.cancelled', 'The researcher request was cancelled.'),
+							content: t('agenticPanel.cancelled', 'The assistant request was cancelled.'),
 							taskId: activeTaskId,
 							status: 'cancelled',
 						},
@@ -616,10 +614,10 @@ const Chat: React.FC = () => {
 			dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: assistantMessageId });
 			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 
-			const taskType = selectedAgentId === 'inventor' ? 'agent-text-writer' : 'agent-researcher';
-			const taskInput: ResearcherTaskData = { prompt: taskPrompt };
+			const taskType = 'agent-assistant';
+			const taskInput: AssistantTaskData = { prompt: taskPrompt };
 			const metadata = {
-				agentId: selectedAgentId,
+				agentId: 'assistant',
 				...(documentId ? { documentId } : {}),
 				...(resolvedSessionId ? { chatId: resolvedSessionId } : {}),
 			};
@@ -629,7 +627,7 @@ const Chat: React.FC = () => {
 					type: 'CHAT_MESSAGE_UPDATED',
 					id: assistantMessageId,
 					patch: {
-						content: t('agenticPanel.error', 'The researcher failed to respond.'),
+						content: t('agenticPanel.error', 'The assistant failed to respond.'),
 						status: 'error',
 					},
 				});
@@ -647,7 +645,7 @@ const Chat: React.FC = () => {
 						patch: {
 							content:
 								ipcResult.error.message ||
-								t('agenticPanel.error', 'The researcher failed to respond.'),
+								t('agenticPanel.error', 'The assistant failed to respond.'),
 							status: 'error',
 						},
 					});
@@ -671,14 +669,14 @@ const Chat: React.FC = () => {
 					type: 'CHAT_MESSAGE_UPDATED',
 					id: assistantMessageId,
 					patch: {
-						content: t('agenticPanel.error', 'The researcher failed to respond.'),
+						content: t('agenticPanel.error', 'The assistant failed to respond.'),
 						status: 'error',
 					},
 				});
 				dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 			}
 		},
-		[dispatch, documentId, editor, isRunning, selectedAgentId, selection, sessionId, t]
+		[dispatch, documentId, editor, isRunning, selection, sessionId, t]
 	);
 	const latestSystemMessageId = [...chatMessages]
 		.reverse()
@@ -699,16 +697,16 @@ const Chat: React.FC = () => {
 					<div className="flex h-full flex-col items-center justify-center px-6 text-center">
 						<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/85 bg-card/82 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
 							<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/82 dark:bg-accent/95">
-								<Search className="h-5 w-5 text-foreground/70 dark:text-foreground/95" aria-hidden="true" />
+								<Bot className="h-5 w-5 text-foreground/70 dark:text-foreground/95" aria-hidden="true" />
 							</div>
 							<div className="space-y-1">
 								<p className="text-sm font-medium text-foreground">
-									{t('agenticPanel.emptyTitle', 'Ask the researcher')}
+									{t('agenticPanel.emptyTitle', 'Ask the assistant')}
 								</p>
 								<p className="text-xs leading-5 text-foreground/68 dark:text-muted-foreground/90">
 									{t(
 										'agenticPanel.emptyDescription',
-										'Use it to gather context, facts, summaries, and writing directions.'
+										'Use it for writing, editing, research, conversation, and image ideas.'
 									)}
 								</p>
 							</div>
@@ -765,18 +763,12 @@ const Chat: React.FC = () => {
 			<Input
 				onSend={handleSend}
 				disabled={isRunning}
-				agentOptions={[
-					{ id: 'researcher', label: t('agenticPanel.researcherLabel', 'Researcher') },
-					{ id: 'inventor', label: t('agenticPanel.inventorLabel', 'Inventor') },
-				]}
-				selectedAgentId={selectedAgentId}
-				onAgentChange={setSelectedAgentId}
 				selectionLabel={selectionLabel}
 				canClearSelection={hasSelectionRange}
 				onClearSelection={handleClearSelection}
 				placeholder={t(
 					'agenticPanel.inputPlaceholder',
-					'Ask the researcher for context, facts, or ideas'
+					'Ask the assistant for help with writing, research, editing, or image prompts'
 				)}
 			/>
 		</div>
