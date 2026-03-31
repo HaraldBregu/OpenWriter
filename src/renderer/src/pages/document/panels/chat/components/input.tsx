@@ -85,20 +85,21 @@ const Input: React.FC<InputProps> = ({
 	const canSend = value.trim().length > 0 && !disabled;
 	const selectedAgent = agentOptions?.find((agent) => agent.id === selectedAgentId);
 	const agentLabel = selectedAgent?.label;
+	const hasFooterChips = Boolean(agentLabel || selectionLabel);
 
 	const updateChipLayout = useCallback(() => {
 		const footerEl = footerRef.current;
 		const chipMeasureEl = chipMeasureRef.current;
 		const sendButtonEl = sendButtonRef.current;
 
-		if (!footerEl || !chipMeasureEl || !sendButtonEl || !agentLabel) {
+		if (!footerEl || !chipMeasureEl || !sendButtonEl || !hasFooterChips) {
 			setCompactChipLabels(false);
 			return;
 		}
 
 		const availableWidth = footerEl.clientWidth - sendButtonEl.offsetWidth - 24;
 		setCompactChipLabels(chipMeasureEl.scrollWidth > Math.max(0, availableWidth));
-	}, [agentLabel]);
+	}, [hasFooterChips]);
 
 	useEffect(() => {
 		updateChipLayout();
@@ -212,21 +213,21 @@ const Input: React.FC<InputProps> = ({
 					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/70 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
 				/>
 
-				{agentLabel ? (
+				{hasFooterChips ? (
 					<div
 						ref={chipMeasureRef}
 						aria-hidden="true"
 						className="pointer-events-none absolute left-3 top-0 -z-10 inline-flex w-max items-center gap-2 opacity-0"
 					>
-						{renderAgentTrigger(false)}
+						{agentLabel ? renderAgentTrigger(false) : null}
 						{renderSelectionChip(false)}
 					</div>
 				) : null}
 
 				<div ref={footerRef} className="flex items-center gap-2 px-3 pb-3 pt-1">
-					{agentLabel ? (
+					{hasFooterChips ? (
 						<div className="flex min-w-0 items-center gap-2 overflow-hidden">
-							{renderAgentTrigger(compactChipLabels)}
+							{agentLabel ? renderAgentTrigger(compactChipLabels) : null}
 							{renderSelectionChip(compactChipLabels)}
 						</div>
 					) : null}
