@@ -7,7 +7,6 @@ import {
 	Heading1,
 	Heading2,
 	Heading3,
-	Sparkles,
 } from 'lucide-react';
 import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
@@ -158,12 +157,12 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 					<div className={separatorClass} />
 					<AppButton
 						variant="ghost"
-						size="icon"
+						size="sm"
 						aria-label="Enhance with AI"
-						className={getMenuButtonClass({ isAccent: true })}
+						className={cn(getMenuButtonClass({ isAccent: true }), 'w-auto px-2')}
 						onClick={handleEnhanceWithAI}
 					>
-						<Sparkles className="h-3.5 w-3.5" />
+						<span className="text-xs font-medium">Enhance</span>
 					</AppButton>
 				</>
 			)}
