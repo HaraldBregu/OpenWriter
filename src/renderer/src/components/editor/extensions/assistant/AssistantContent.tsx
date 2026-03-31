@@ -28,8 +28,15 @@ export function AssistantContent({
 	return (
 		<>
 			<div className="flex items-center gap-2 px-4 pt-2 text-xs font-medium text-muted-foreground">
-				<Bot className="h-3.5 w-3.5" />
-				<span>{t('agenticPanel.assistantLabel', 'Assistant')}</span>
+				<span className="flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--info)/0.14)] text-[hsl(var(--info))] shadow-[inset_0_0_0_1px_hsl(var(--info)/0.18)]">
+					<Bot className="h-3.5 w-3.5" />
+				</span>
+				<div className="flex flex-col">
+					<span className="leading-none">{t('agenticPanel.assistantLabel', 'Assistant')}</span>
+					<span className="mt-0.5 text-[10px] font-normal text-muted-foreground/80">
+						{t('agenticPanel.assistantHint', 'AI guided response')}
+					</span>
+				</div>
 			</div>
 			<AppTextarea
 				ref={textareaRef}
