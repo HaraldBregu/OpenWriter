@@ -61,7 +61,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Placeholder.configure({
 			placeholder: ({ node }) => {
 				if (node.type.name === 'paragraph') {
-					return 'Type space for assistance and / for commands';
+					return 'Type `space` for assistance and `/` for commands';
 				}
 				if (node.type.name === 'heading') {
 					return `Heading ${node.attrs.level}`;
