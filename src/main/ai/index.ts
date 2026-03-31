@@ -19,6 +19,7 @@ export {
 	TextCompleterAgent,
 	TextEnhanceAgent,
 	TextWriterAgent,
+	WriterAgent,
 	ImageGeneratorAgent,
 	ResearcherAgent,
 } from './agents';

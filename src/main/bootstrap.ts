@@ -24,6 +24,7 @@ import {
 	TextCompleterAgent,
 	TextEnhanceAgent,
 	TextWriterAgent,
+	WriterAgent,
 	ImageGeneratorAgent,
 	ResearcherAgent,
 } from './ai';
@@ -93,6 +94,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(TextCompleterAgent);
 	agentRegistry.register(TextEnhanceAgent);
 	agentRegistry.register(TextWriterAgent);
+	agentRegistry.register(WriterAgent);
 	agentRegistry.register(ImageGeneratorAgent);
 	agentRegistry.register(ResearcherAgent);
 
