@@ -27,6 +27,11 @@ export function AssistantContent({
 
 	return (
 		<>
+			<div className="flex items-center px-4 pb-1 pt-1 text-xs font-medium text-muted-foreground">
+				<span className="rounded-full border border-border/70 bg-background/60 px-2.5 py-1 text-[11px] tracking-[0.01em] shadow-sm">
+					{t('agenticPanel.systemMessage', 'Understanding request...')}
+				</span>
+			</div>
 			<AppTextarea
 				ref={textareaRef}
 				value={prompt}
