@@ -594,7 +594,7 @@ It combines:
 
 - concrete agent behavior in `agents/`
 - reusable execution infrastructure in `core/`
-- indexing and retrieval-preparation infrastructure in `indexing/`
+- indexing and retrieval-preparation infrastructure in `rag/`
 
 If this subsystem expands, keep those layers cleanly separated:
 
