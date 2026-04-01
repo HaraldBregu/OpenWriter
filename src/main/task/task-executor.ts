@@ -145,15 +145,10 @@ export class TaskExecutor implements Disposable {
 			const position = this.queue.indexOf(queued) + 1;
 			this.send(windowId, 'task:event', {
 				type: 'queued',
-				data: {
-					data: {
-						taskId,
-						taskType: type,
-						position,
-						metadata: activeTask.metadata,
-					},
-					error: null,
-				},
+				taskId,
+				data: { taskType: type, position },
+				error: null,
+				metadata: activeTask.metadata,
 			} satisfies TaskEvent);
 
 			this.drainQueue();
