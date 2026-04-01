@@ -51,8 +51,7 @@ function ensureListening(): void {
 	if (typeof window.task?.onEvent !== 'function') return;
 
 	globalUnsub = window.task.onEvent((event: TaskEvent) => {
-		const payload = event.data;
-		const taskId = payload.data?.taskId ?? payload.error?.taskId;
+		const { taskId } = event;
 		if (!taskId) return;
 
 		// Build or update snapshot for this task.
@@ -64,8 +63,11 @@ function ensureListening(): void {
 		};
 		let next: TaskSnapshot;
 
-		// Extract metadata from the data or error side of the response.
-		const eventMetadata = payload.data?.metadata ?? payload.error?.metadata;
+		// Extract metadata from the flat event.
+		const eventMetadata =
+			event.metadata !== undefined && event.metadata !== null
+				? (event.metadata as Record<string, unknown>)
+				: undefined;
 		const metadataOverride = eventMetadata !== undefined ? { metadata: eventMetadata } : {};
 
 		switch (event.type) {
@@ -75,7 +77,7 @@ function ensureListening(): void {
 					status: 'queued',
 					...metadataOverride,
 				};
-				const taskType = (payload.data as { taskType?: string } | null)?.taskType;
+				const taskType = event.data?.taskType;
 				if (taskType) {
 					typeSubscribers.get(taskType)?.forEach((cb) => cb(taskId));
 				}
@@ -93,7 +95,7 @@ function ensureListening(): void {
 				};
 				break;
 			case 'stream': {
-				const streamData = (payload.data as { data?: string } | null)?.data ?? '';
+				const streamData = event.data?.data ?? '';
 				next = {
 					...prev,
 					status: 'running',
@@ -104,7 +106,7 @@ function ensureListening(): void {
 				break;
 			}
 			case 'completed': {
-				const completedResult = (payload.data as { result?: unknown } | null)?.result;
+				const completedResult = event.data?.result;
 				next = {
 					...prev,
 					status: 'completed',
@@ -119,7 +121,15 @@ function ensureListening(): void {
 				return;
 			}
 			case 'error': {
-				const errorMessage = payload.error?.message;
+				const errorPayload = event.error;
+				const errorMessage =
+					typeof errorPayload === 'object' &&
+					errorPayload !== null &&
+					'message' in errorPayload
+						? String((errorPayload as { message: unknown }).message)
+						: typeof errorPayload === 'string'
+							? errorPayload
+							: undefined;
 				next = {
 					...prev,
 					status: 'error',
