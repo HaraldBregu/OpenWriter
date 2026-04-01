@@ -178,6 +178,14 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
+													path="/debug/logs"
+													element={
+														<RouteWrapper>
+															<DebugLogsPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
 													path="/resources"
 													element={
 														<RouteWrapper>
