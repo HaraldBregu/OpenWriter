@@ -81,8 +81,12 @@ export class Workspace implements Disposable {
 		await this.projectWorkspace.getOrCreate();
 	}
 
-	getRecent(): Array<{ path: string; lastOpened: number }> {
-		return this.workspace.getRecent();
+	getRecent(): WorkspaceInfo[] {
+		return this.workspace.getRecent().map((w) => ({
+			...w,
+			data: path.join(w.path, DATA_DIR),
+			resources: path.join(w.path, RESOURCES_DIR),
+		}));
 	}
 
 	clear(): void {
