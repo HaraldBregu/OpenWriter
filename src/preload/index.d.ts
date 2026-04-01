@@ -287,5 +287,6 @@ declare global {
 		win?: WindowApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
+		logs: LogsApi;
 	}
 }
