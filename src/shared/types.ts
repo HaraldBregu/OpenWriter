@@ -8,6 +8,18 @@
 // This file must be valid in all three process contexts.
 // ---------------------------------------------------------------------------
 
+// ---- Logs -----------------------------------------------------------------
+
+export type AppLogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
+
+/** Serializable log entry passed over IPC to the renderer. */
+export interface AppLogEntry {
+	timestamp: string;
+	level: AppLogLevel;
+	source: string;
+	message: string;
+}
+
 // ---- Workspace ------------------------------------------------------------
 
 export interface WorkspaceInfo {
