@@ -11,7 +11,7 @@ export interface TaskProgressState {
 
 export interface TaskEventRecord {
 	type: TaskEvent['type'];
-	data: TaskEvent['data'];
+	data: { taskId: string; data: unknown; error: unknown; metadata: unknown };
 	receivedAt: number;
 }
 
