@@ -13,17 +13,17 @@ import { ragNode } from '../../../../../src/main/ai/agents/assistant/nodes/rag-n
 // Mocks
 // ---------------------------------------------------------------------------
 
-jest.mock('../../../../../src/main/ai/indexing/json-vector-store', () => {
+jest.mock('../../../../../src/main/ai/rag/vector-store', () => {
 	return {
-		JsonVectorStore: {
+		VectorStore: {
 			load: jest.fn(),
 		},
 	};
 });
 
-import { JsonVectorStore } from '../../../../../src/main/ai/indexing/json-vector-store';
+import { VectorStore } from '../../../../../src/main/ai/rag/vector-store';
 
-const mockLoad = JsonVectorStore.load as jest.Mock;
+const mockLoad = VectorStore.load as jest.Mock;
 
 function makeStore(
 	entries: Array<{ pageContent: string; metadata: Record<string, unknown>; score: number }>
