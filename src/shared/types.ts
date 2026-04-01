@@ -25,6 +25,8 @@ export interface AppLogEntry {
 export interface WorkspaceInfo {
 	path: string;
 	lastOpened: number;
+	data: string;
+	resources: string;
 }
 
 export interface WorkspaceChangedEvent {
