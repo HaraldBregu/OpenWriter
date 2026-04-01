@@ -389,7 +389,7 @@ This folder is where both agentic inference and indexing infrastructure live.
 The important split is:
 
 - `agents/` handles inference behavior
-- `indexing/` handles retrieval preparation and storage
+- `rag/` handles retrieval preparation and storage
 
 At the moment, indexing is implemented as a separate pipeline rather than as a fully retrieval-aware generation agent.
 
