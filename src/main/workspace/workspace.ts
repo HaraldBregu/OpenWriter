@@ -116,8 +116,8 @@ export class Workspace implements Disposable {
 	getDataFolderPath(): string {
 		const currentWorkspace = this.requireWorkspace();
 		const dataDir = path.join(currentWorkspace, DATA_DIR);
-		if (!fs.existsSync(dataDir) || !fs.statSync(dataDir).isDirectory()) {
-			throw new Error('Data folder does not exist. Run indexing first.');
+		if (!fs.existsSync(dataDir)) {
+			fs.mkdirSync(dataDir, { recursive: true });
 		}
 		return dataDir;
 	}
