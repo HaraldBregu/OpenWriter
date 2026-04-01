@@ -19,13 +19,12 @@ import type {
 	NodeModelMap,
 } from '../../ai';
 import { executeAIAgentsStream } from '../../ai';
+import type { AgentRuntimeContext } from '../../ai/core';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
-import type { AgentRuntimeContext } from '../../ai';
-import type { WorkspaceService } from '../../workspace/workspace-service';
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)
@@ -178,20 +177,20 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			reporter.progress(currentProgress, initialThinkingLabel);
 		}
 
-		const gen = executeAIAgentsStream({
-			runId: randomUUID(),
-			provider,
+			const gen = executeAIAgentsStream({
+				runId: randomUUID(),
+				provider,
 			systemPrompt: '',
 			temperature: resolvedTemperature,
-			maxTokens: resolvedMaxTokens,
-			history,
-			prompt: input.prompt,
-			signal,
-			nodeModels,
-			buildGraph: def.buildGraph,
-			buildGraphInput: def.buildGraphInput,
-			extractGraphOutput: def.extractGraphOutput,
-			extractThinkingLabel: def.extractThinkingLabel,
+				maxTokens: resolvedMaxTokens,
+				history,
+				prompt: input.prompt,
+				signal,
+				nodeModels,
+				buildGraph: effectiveBuildGraph,
+				buildGraphInput: def.buildGraphInput,
+				extractGraphOutput: def.extractGraphOutput,
+				extractThinkingLabel: def.extractThinkingLabel,
 			streamableNodes: def.streamableNodes,
 			metadata,
 			logger: this.logger,
@@ -261,6 +260,24 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				}
 				throw new Error(event.error);
 		}
+	}
+
+	private resolveRuntimeContext(
+		windowId: number | undefined,
+		provider: { providerId: string; apiKey: string }
+	): AgentRuntimeContext {
+		const windowContext = typeof windowId === 'number' ? this.windowContextManager.tryGet(windowId) : undefined;
+		const workspacePath = windowContext?.container.has('workspace')
+			? windowContext.container
+					.get<import('../../workspace/workspace-service').WorkspaceService>('workspace')
+					.getCurrent() ?? undefined
+			: undefined;
+
+		return {
+			workspacePath,
+			apiKey: provider.apiKey,
+			providerId: provider.providerId,
+		};
 	}
 
 	private getInitialThinkingLabel(
