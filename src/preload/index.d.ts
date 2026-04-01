@@ -20,7 +20,6 @@ import type {
 	TaskSubmitPayload,
 	TaskInfo,
 	TaskEvent,
-	TaskEventResponse,
 	TaskPriority,
 	TaskQueueStatus,
 	OutputFile,
