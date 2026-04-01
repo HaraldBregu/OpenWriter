@@ -61,11 +61,14 @@ interface LogEntry {
  */
 export class LoggerService implements Disposable {
 	private buffer: LogEntry[] = [];
+	private recentBuffer: LogEntry[] = [];
 	private currentLogFile: string | null = null;
 	private currentDate: string | null = null;
 	private flushTimer: NodeJS.Timeout | null = null;
 	private isShuttingDown = false;
 	private logDirectory: string | null = null;
+
+	private static readonly RECENT_BUFFER_MAX = 1000;
 
 	private readonly minLevel: LogLevel;
 	private readonly maxRetentionDays: number;
