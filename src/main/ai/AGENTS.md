@@ -545,7 +545,7 @@ Do not put generic execution abstractions into concrete agent folders.
 
 If logic is generic across multiple agents, it probably belongs in `core/`, not in one agent folder.
 
-### Keep `indexing/` isolated
+### Keep `rag/` isolated
 
 Do not duplicate extraction, chunking, or vector-store logic inside agents.
 
