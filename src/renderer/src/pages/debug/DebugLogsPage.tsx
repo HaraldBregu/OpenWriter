@@ -80,7 +80,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 			);
 		}
 		return true;
-	});
+	}).reverse();
 
 	return (
 		<div className="flex flex-col h-full">
