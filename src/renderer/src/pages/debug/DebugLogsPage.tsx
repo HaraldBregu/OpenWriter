@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollText, RefreshCw, FolderOpen } from 'lucide-react';
 import type { AppLogEntry } from '../../../../shared/types';
-import { AppButton } from '@components/app';
+import {
+	AppButton,
+	AppSelect,
+	AppSelectTrigger,
+	AppSelectValue,
+	AppSelectContent,
+	AppSelectItem,
+} from '@components/app';
 
 type LogLevel = AppLogEntry['level'];
 
@@ -117,8 +124,8 @@ export default function DebugLogsPage(): React.JSX.Element {
 				</AppButton>
 
 				<AppButton
-					variant="ghost"
-					size="icon"
+					variant="header-icon"
+					size="icon-xs"
 					onClick={fetchLogs}
 					disabled={loading}
 					aria-label={t('debug.refresh', 'Refresh')}
@@ -127,8 +134,8 @@ export default function DebugLogsPage(): React.JSX.Element {
 				</AppButton>
 
 				<AppButton
-					variant="ghost"
-					size="icon"
+					variant="header-icon"
+					size="icon-xs"
 					onClick={() => window.app.openLogsFolder()}
 					aria-label={t('debug.openLogsFolder', 'Open logs folder')}
 				>
