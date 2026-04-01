@@ -393,7 +393,7 @@ The important split is:
 
 At the moment, indexing is implemented as a separate pipeline rather than as a fully retrieval-aware generation agent.
 
-### What `indexing/` Currently Provides
+### What `rag/` Currently Provides
 
 - `document-extractor.ts`
   Common extractor contract
