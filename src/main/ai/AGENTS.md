@@ -129,7 +129,7 @@ It re-exports:
 
 - core registry and executor types/functions
 - concrete agents from `agents/`
-- extractors, chunking, manifest, and vector store from `indexing/`
+- extractors, chunking, manifest, and vector store from `rag/`
 
 This is the primary import surface for the rest of the main process.
 
