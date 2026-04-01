@@ -158,6 +158,8 @@ export const AppChannels = {
 	deleteProvider: 'store-delete-provider',
 	getAgentProviders: 'store-get-agent-providers',
 	setAgentProvider: 'store-set-agent-provider',
+	// Logs
+	openLogsFolder: 'app:open-logs-folder',
 } as const;
 
 // ===========================================================================
