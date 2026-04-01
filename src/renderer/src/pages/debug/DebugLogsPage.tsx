@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollText, RefreshCw, Trash2, FolderOpen } from 'lucide-react';
+import { ScrollText, RefreshCw, FolderOpen } from 'lucide-react';
 import type { AppLogEntry } from '../../../../shared/types';
 import {
 	AppButton,
