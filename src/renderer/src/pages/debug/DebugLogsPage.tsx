@@ -116,36 +116,25 @@ export default function DebugLogsPage(): React.JSX.Element {
 						{t('debug.autoRefresh', 'Auto-refresh')}
 					</AppButton>
 
-					<AppTooltip>
-						<AppTooltipTrigger asChild>
-							<AppButton
-								variant="outline"
-								size="icon"
-								onClick={fetchLogs}
-								disabled={loading}
-								aria-label={t('debug.refresh', 'Refresh')}
-							>
-								<RefreshCw className={loading ? 'animate-spin' : ''} />
-							</AppButton>
-						</AppTooltipTrigger>
-						<AppTooltipContent>{t('debug.refresh', 'Refresh')}</AppTooltipContent>
-					</AppTooltip>
+					<AppButton
+						variant="outline"
+						size="icon"
+						onClick={fetchLogs}
+						disabled={loading}
+						aria-label={t('debug.refresh', 'Refresh')}
+					>
+						<RefreshCw className={loading ? 'animate-spin' : ''} />
+					</AppButton>
 
-					<AppTooltip>
-						<AppTooltipTrigger asChild>
-							<AppButton
-								variant="outline"
-								size="icon"
-								onClick={() => window.app.openLogsFolder()}
-								aria-label={t('debug.openLogsFolder', 'Open logs folder')}
-							>
-								<FolderOpen />
-							</AppButton>
-						</AppTooltipTrigger>
-						<AppTooltipContent>{t('debug.openLogsFolder', 'Open logs folder')}</AppTooltipContent>
-					</AppTooltip>
+					<AppButton
+						variant="outline"
+						size="icon"
+						onClick={() => window.app.openLogsFolder()}
+						aria-label={t('debug.openLogsFolder', 'Open logs folder')}
+					>
+						<FolderOpen />
+					</AppButton>
 				</div>
-			</AppTooltipProvider>
 
 			{/* Stats bar */}
 			<div className="flex items-center gap-4 px-4 py-1.5 border-b shrink-0 text-xs text-muted-foreground bg-muted/30">
