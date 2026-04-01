@@ -22,7 +22,7 @@ OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, pre
 - Task store: `src/renderer/src/services/task-store.ts` (replaces Redux store for task state)
 - Handlers: `src/main/ai/` directory (moved from src/main/tasks/handlers/)
 - Agent bootstrap: `src/main/bootstrap.ts` (agent registration + AgentTaskHandler wiring)
-- AgentTaskHandler: `src/main/task_manager/handlers/agent-task-handler.ts`
+- AgentTaskHandler: `src/main/task/handlers/agent-task-handler.ts`
 - AI executor: `src/main/ai/core/executor.ts`
 - Agent definitions: `src/main/ai/core/definition.ts`
 
