@@ -35,7 +35,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 	const fetchLogs = useCallback(async () => {
 		setLoading(true);
 		try {
-			const result = await window.logs.getLogs(FETCH_LIMIT);
+			const result = await window.app.getLogs(FETCH_LIMIT);
 			setEntries(result);
 		} finally {
 			setLoading(false);
