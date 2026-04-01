@@ -275,6 +275,7 @@ export interface InvokeChannelMap {
 
 	// ---- Logs (IpcResult-wrapped) ----
 	[LogChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
+	[AppChannels.openLogsFolder]: { args: []; result: void };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
