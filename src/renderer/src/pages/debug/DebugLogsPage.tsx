@@ -152,19 +152,6 @@ export default function DebugLogsPage(): React.JSX.Element {
 						<AppTooltipContent>{t('debug.openLogsFolder', 'Open logs folder')}</AppTooltipContent>
 					</AppTooltip>
 
-					<AppTooltip>
-						<AppTooltipTrigger asChild>
-							<AppButton
-								variant="outline"
-								size="icon"
-								onClick={() => setEntries([])}
-								aria-label={t('debug.clearLogs', 'Clear')}
-							>
-								<Trash2 />
-							</AppButton>
-						</AppTooltipTrigger>
-						<AppTooltipContent>{t('debug.clearLogs', 'Clear')}</AppTooltipContent>
-					</AppTooltip>
 				</div>
 			</AppTooltipProvider>
 
