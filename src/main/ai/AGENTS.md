@@ -509,7 +509,7 @@ If this subsystem adds true RAG agents, keep the boundaries explicit.
 Recommended split:
 
 - retrieval/query orchestration in the new agent folder
-- extractor and vector-store mechanics in `indexing/`
+- extractor and vector-store mechanics in `rag/`
 - provider/model resolution in shared factories and resolver
 
 Suggested layout:
