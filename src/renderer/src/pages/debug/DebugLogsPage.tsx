@@ -94,12 +94,12 @@ export default function DebugLogsPage(): React.JSX.Element {
 
 			{/* Toolbar */}
 			<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
-				<input
+				<AppInput
 					type="text"
 					placeholder={t('debug.logsSearch', 'Search logs…')}
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
-					className="flex-1 min-w-0 h-8 rounded-md border border-input bg-transparent px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+					className="h-8 flex-1 min-w-0 text-sm"
 				/>
 
 				<AppSelect value={filterLevel} onValueChange={(v) => setFilterLevel(v as LogLevel | 'ALL')}>
