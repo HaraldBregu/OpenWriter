@@ -8,8 +8,11 @@ import { writingNode } from './nodes/writing-node';
 import { editingNode } from './nodes/editing-node';
 import { researchNode } from './nodes/research-node';
 import { imageNode } from './nodes/image-node';
+import { ragNode } from './nodes/rag-node';
+import type { RagRetriever } from './nodes/rag-retriever';
 
 export const ASSISTANT_NODE = {
+	RAG: 'rag',
 	UNDERSTAND: 'understand',
 	CONVERSATION: 'conversation',
 	WRITING: 'writing',
@@ -42,10 +45,13 @@ function nodeForIntent(intent: string): keyof AssistantNodeModels {
 	}
 }
 
-export function buildGraph(models: BaseChatModel | NodeModelMap) {
+export function buildGraph(models: BaseChatModel | NodeModelMap, retriever?: RagRetriever) {
 	const m = models as unknown as AssistantNodeModels;
 
 	return new StateGraph(AssistantState)
+		.addNode(ASSISTANT_NODE.RAG, (state: typeof AssistantState.State) =>
+			retriever ? ragNode(state, retriever) : { ragContext: '' }
+		)
 		.addNode(ASSISTANT_NODE.UNDERSTAND, (state: typeof AssistantState.State) =>
 			understandNode(state, m[ASSISTANT_NODE.UNDERSTAND])
 		)
@@ -64,7 +70,8 @@ export function buildGraph(models: BaseChatModel | NodeModelMap) {
 		.addNode(ASSISTANT_NODE.IMAGE, (state: typeof AssistantState.State) =>
 			imageNode(state, m[ASSISTANT_NODE.IMAGE])
 		)
-		.addEdge(START, ASSISTANT_NODE.UNDERSTAND)
+		.addEdge(START, ASSISTANT_NODE.RAG)
+		.addEdge(ASSISTANT_NODE.RAG, ASSISTANT_NODE.UNDERSTAND)
 		.addConditionalEdges(
 			ASSISTANT_NODE.UNDERSTAND,
 			(state: typeof AssistantState.State) => nodeForIntent(state.intent),
