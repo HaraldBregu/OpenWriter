@@ -368,7 +368,6 @@ It defines grouped channel namespaces such as:
 - `WorkspaceChannels`
 - `WindowChannels`
 - `TaskChannels`
-- `ResearcherChannels`
 - `AppChannels`
 
 It also describes invoke/send event shapes through typed maps.

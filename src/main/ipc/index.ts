@@ -8,4 +8,3 @@ export { AppIpc } from './app-ipc';
 export { TaskManagerIpc } from './task-manager-ipc';
 export { WorkspaceIpc } from './workspace-ipc';
 export { WindowIpc } from './window-ipc';
-export { ResearcherIpc } from './researcher-ipc';

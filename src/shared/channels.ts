@@ -44,8 +44,6 @@ import type {
 	DocumentImageInfo,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
-	ResearcherQueryPayload,
-	ResearcherEvent,
 } from './types';
 import type { ServiceProvider } from './provider-defaults';
 
@@ -135,12 +133,6 @@ export const TaskChannels = {
 	updatePriority: 'task:update-priority',
 	getResult: 'task:get-result',
 	queueStatus: 'task:queue-status',
-} as const;
-
-export const ResearcherChannels = {
-	query: 'researcher:query',
-	cancel: 'researcher:cancel',
-	event: 'researcher:event',
 } as const;
 
 export const AppChannels = {
@@ -281,13 +273,6 @@ export interface InvokeChannelMap {
 		args: [description: string];
 		result: ProjectWorkspaceInfo;
 	};
-
-	// ---- Researcher ----
-	[ResearcherChannels.query]: {
-		args: [payload: ResearcherQueryPayload];
-		result: { sessionId: string };
-	};
-	[ResearcherChannels.cancel]: { args: [sessionId: string]; result: boolean };
 }
 
 /**
@@ -326,5 +311,4 @@ export interface EventChannelMap {
 	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
 	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
-	[ResearcherChannels.event]: { data: ResearcherEvent };
 }

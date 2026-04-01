@@ -30,8 +30,8 @@ flowchart TB
 
 	subgraph Main[Main Process]
 		Bootstrap[bootstrapServices()<br/>bootstrapIpcModules()]
-		IpcModules[IPC modules<br/>AppIpc | WindowIpc | WorkspaceIpc | TaskManagerIpc | ResearcherIpc]
-		GlobalServices[Global services<br/>StoreService | FileManager | LoggerService | WindowFactory | WindowContextManager | AgentRegistry | ProviderResolver | ResearcherService | TaskExecutor | ExtractorRegistry]
+		IpcModules[IPC modules<br/>AppIpc | WindowIpc | WorkspaceIpc | TaskManagerIpc]
+		GlobalServices[Global services<br/>StoreService | FileManager | LoggerService | WindowFactory | WindowContextManager | AgentRegistry | ProviderResolver | TaskExecutor | ExtractorRegistry]
 
 		subgraph WindowScope[Per-window services<br/>created by WindowContextManager]
 			WorkspaceService[WorkspaceService]
@@ -77,8 +77,7 @@ The screenshot was not accurate for the current codebase.
 - The actual runtime has a global IPC layer and a global service layer above the domain services.
 - Workspace logic is split into per-window services managed by `WindowContextManager`.
 - `Task` runs through `TaskExecutor` and registered handlers, not directly as a child of `Workspace`.
-- AI is not a single block under `Task`; it is reached through task handlers and also has a separate `ResearcherIpc` path in main.
-- `ResearcherIpc` exists in `main`, but it is not currently exposed by `src/preload/index.ts`, so it is not part of the public preload API.
+- AI is not a single block under `Task`; it is reached through task handlers, including the registered `researcher` agent.
 
 ## Preload To Main Mapping
 
@@ -88,7 +87,6 @@ The screenshot was not accurate for the current codebase.
 | `window.win` | `WindowIpc` | `BrowserWindow` state and application menu access |
 | `window.workspace` | `WorkspaceIpc` | Per-window `workspaceManager` facade and Electron dialog/shell helpers |
 | `window.task` | `TaskManagerIpc` | Global `TaskExecutor`, `TaskHandlerRegistry`, and task events |
-| not exposed in preload | `ResearcherIpc` | Global `ResearcherService` streaming pipeline |
 
 ## Ownership And Dependencies
 
@@ -109,8 +107,8 @@ It registers:
 
 - core infrastructure: `ServiceContainer`, `EventBus`, `AppState`, `WindowFactory`, `WindowContextManager`
 - shared services: `StoreService`, `FileManager`, `LoggerService`
-- AI/task services: `AgentRegistry`, `ProviderResolver`, `ResearcherService`, `TaskExecutor`, `ExtractorRegistry`
-- IPC modules: `AppIpc`, `WorkspaceIpc`, `TaskManagerIpc`, `WindowIpc`, `ResearcherIpc`
+- AI/task services: `AgentRegistry`, `ProviderResolver`, `TaskExecutor`, `ExtractorRegistry`
+- IPC modules: `AppIpc`, `WorkspaceIpc`, `TaskManagerIpc`, `WindowIpc`
 
 ### Main Window-Scoped Layer
 
@@ -180,7 +178,6 @@ Renderer
 - [src/main/ipc/task-manager-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\task-manager-ipc.ts)
 - [src/main/ipc/app-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\app-ipc.ts)
 - [src/main/ipc/window-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\window-ipc.ts)
-- [src/main/ipc/researcher-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\researcher-ipc.ts)
 
 ## Related Docs
 

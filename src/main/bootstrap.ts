@@ -36,7 +36,6 @@ import { TaskReactionBus } from './task/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
-import { ResearcherService } from './ai/agents/researcher/researcher-service';
 import { TextEnhanceTaskReaction } from './task/reactions';
 
 // Indexing infrastructure
@@ -44,7 +43,7 @@ import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } fr
 
 // IPC modules
 import type { IpcModule } from './ipc';
-import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc, ResearcherIpc } from './ipc';
+import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc } from './ipc';
 
 export interface BootstrapResult {
 	container: ServiceContainer;
@@ -104,7 +103,6 @@ export function bootstrapServices(): BootstrapResult {
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
 	const providerResolver = new ProviderResolver(storeService);
 	container.register('providerResolver', providerResolver);
-	container.register('researcherService', new ResearcherService(providerResolver, logger));
 	for (const def of agentRegistry.list()) {
 		taskHandlerRegistry.register(
 			new AgentTaskHandler(def.id, agentRegistry, providerResolver, windowContextManager, logger)
@@ -151,7 +149,6 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 		new WorkspaceIpc(),
 		new TaskManagerIpc(),
 		new WindowIpc(),
-		new ResearcherIpc(),
 	];
 
 	for (const module of ipcModules) {
