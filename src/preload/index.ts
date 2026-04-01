@@ -1,7 +1,13 @@
 import { contextBridge } from 'electron';
 import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } from './typed-ipc';
-import { AppChannels, WindowChannels, WorkspaceChannels, TaskChannels } from '../shared/channels';
-import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
+import {
+	AppChannels,
+	WindowChannels,
+	WorkspaceChannels,
+	TaskChannels,
+	LogChannels,
+} from '../shared/channels';
+import type { AppApi, WindowApi, WorkspaceApi, TaskApi, LogsApi } from './index.d';
 import type { ServiceProvider } from '../shared/provider-defaults';
 
 // ---------------------------------------------------------------------------
