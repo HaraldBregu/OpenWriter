@@ -65,14 +65,14 @@ src/main/ai/
     executor.ts
     index.ts
     types.ts
-  indexing/
-    document-extractor.ts
+  rag/
     extractor-registry.ts
     index.ts
-    indexing-manifest.ts
-    json-vector-store.ts
+    rag-manifest.ts
     text-chunker.ts
+    vector-store.ts
     extractors/
+      document-extractor.ts
       docx-extractor.ts
       pdf-extractor.ts
       plain-text-extractor.ts
