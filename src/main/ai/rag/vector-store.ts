@@ -1,5 +1,5 @@
 /**
- * JsonVectorStore — a lightweight, JSON-serializable vector store.
+ * VectorStore — a lightweight, JSON-serializable vector store.
  *
  * Designed for the document volumes typical in a writing app (hundreds,
  * not millions). Uses brute-force cosine similarity search, which is
