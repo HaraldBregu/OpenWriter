@@ -9,6 +9,7 @@ import {
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type { ServiceProvider } from '../shared/provider-defaults';
+import type { WorkspaceInfo } from '../shared/types';
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
