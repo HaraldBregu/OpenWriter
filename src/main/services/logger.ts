@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
+import type { AppLogEntry } from '../../shared/types';
 
 /**
  * Log levels in order of severity
