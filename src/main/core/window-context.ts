@@ -55,8 +55,16 @@ export class WindowContext {
 		const factory = config.serviceFactory || createDefaultWindowScopedServiceFactory();
 		this.initializeServices(config.globalContainer, factory);
 
+		this.eventBus.emit('window:created', {
+			windowId: this.windowId,
+			type: 'browser-window',
+		});
+
 		// Cleanup when window is closed
 		this.window.on('closed', () => {
+			this.eventBus.emit('window:closed', {
+				windowId: this.windowId,
+			});
 			this.destroy();
 		});
 	}

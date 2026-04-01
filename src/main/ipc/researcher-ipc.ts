@@ -67,7 +67,7 @@ function validatePayload(payload: unknown): ResearcherQueryPayload {
 export class ResearcherIpc implements IpcModule {
 	readonly name = 'researcher';
 
-	register(container: ServiceContainer, _eventBus: EventBus): void {
+	register(container: ServiceContainer, eventBus: EventBus): void {
 		const service = container.get<ResearcherService>('researcherService');
 		const logger = container.get<LoggerService>('logger');
 
@@ -139,6 +139,17 @@ export class ResearcherIpc implements IpcModule {
 				return false;
 			}
 			return service.cancel(sessionId);
+		});
+
+		eventBus.on('window:closed', (event) => {
+			const { windowId } = event.payload as { windowId: number };
+			const cancelledCount = service.cancelByWindow(windowId);
+			if (cancelledCount > 0) {
+				logger.info(
+					'ResearcherIpc',
+					`Cancelled ${cancelledCount} researcher session(s) for closed window ${windowId}`
+				);
+			}
 		});
 
 		logger.info('ResearcherIpc', `Registered ${this.name} module`);
