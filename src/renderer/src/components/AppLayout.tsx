@@ -304,6 +304,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													</Link>
 												</AppSidebarMenuButton>
 											</AppSidebarMenuItem>
+											<AppSidebarMenuItem>
+												<AppSidebarMenuButton
+													asChild
+													className="h-9 px-3"
+													isActive={location.pathname === '/debug/logs'}
+												>
+													<Link to="/debug/logs">
+														<ScrollText className="h-4 w-4 shrink-0" />
+														<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
+													</Link>
+												</AppSidebarMenuButton>
+											</AppSidebarMenuItem>
 										</AppSidebarMenu>
 									</AppSidebarGroupContent>
 								</AppCollapsiblePanel>
