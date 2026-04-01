@@ -1,6 +1,8 @@
-import type { AgentDefinition, GraphInputContext } from '../../core/definition';
+import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../../core/definition';
 import { buildGraph, ASSISTANT_NODE } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
+import { RagRetriever } from './nodes/rag-retriever';
+import { createEmbeddingModel } from '../../../shared/embedding-factory';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
 	[ASSISTANT_NODE.UNDERSTAND]: {
@@ -54,6 +56,21 @@ const definition: AgentDefinition = {
 		ASSISTANT_NODE.IMAGE,
 	],
 	buildGraph,
+
+	prepareGraph(
+		baseBuildGraph: NonNullable<AgentDefinition['buildGraph']>,
+		context: AgentRuntimeContext
+	): NonNullable<AgentDefinition['buildGraph']> {
+		if (!context.workspacePath) return baseBuildGraph;
+
+		const embeddings = createEmbeddingModel({
+			providerId: context.providerId,
+			apiKey: context.apiKey,
+		});
+		const retriever = new RagRetriever({ workspacePath: context.workspacePath, embeddings });
+
+		return (models) => buildGraph(models, retriever);
+	},
 
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
 		return {
