@@ -26,4 +26,14 @@ export const AssistantState = Annotation.Root({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
+
+	/**
+	 * Concatenated text from vector store documents retrieved for the current
+	 * prompt. Empty string when no workspace is open or the vector store has
+	 * not been built yet. Populated by the rag-node before specialist nodes run.
+	 */
+	ragContext: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
 });
