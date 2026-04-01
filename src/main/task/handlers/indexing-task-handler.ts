@@ -134,7 +134,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		});
 
 		// Fresh in-memory vector store (no loading from disk)
-		const vectorStore = new JsonVectorStore(embeddingModel);
+		const vectorStore = new VectorStore(embeddingModel);
 
 		const failedIds: string[] = [];
 		let indexedCount = 0;
