@@ -19,11 +19,7 @@ OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, pre
 - useTaskSubmit hook: `src/renderer/src/hooks/use-task-submit.ts`
 - useTask hook: `src/renderer/src/hooks/use-task.ts`
 - Task event bus: `src/renderer/src/services/task-event-bus.ts`
-- Redux store types: `src/renderer/src/store/tasks/types.ts`
-- Redux reducer: `src/renderer/src/store/tasks/reducer.ts`
-- Redux selectors: `src/renderer/src/store/tasks/selectors.ts`
-- Redux actions: `src/renderer/src/store/tasks/actions.ts`
-- IPC->Redux bridge: `src/renderer/src/App.tsx` (top-level onEvent listener)
+- Task store: `src/renderer/src/services/task-store.ts` (replaces Redux store for task state)
 - Handlers: `src/main/ai/` directory (moved from src/main/tasks/handlers/)
 - Agent bootstrap: `src/main/bootstrap.ts` (agent registration + AgentTaskHandler wiring)
 - AgentTaskHandler: `src/main/task_manager/handlers/agent-task-handler.ts`
