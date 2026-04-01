@@ -107,7 +107,7 @@ It defines:
 
 This folder is the abstraction layer between task handlers and concrete agents.
 
-### `indexing/`
+### `rag/`
 
 This folder contains the document indexing pipeline primitives used for retrieval-oriented flows.
 
