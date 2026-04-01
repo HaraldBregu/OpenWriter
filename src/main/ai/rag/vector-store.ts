@@ -30,13 +30,13 @@ interface StoreData {
 	entries: VectorEntry[];
 }
 
-export class JsonVectorStore {
+export class VectorStore {
 	private entries: VectorEntry[] = [];
 
 	constructor(private readonly embeddings: EmbeddingsInterface) {}
 
-	static async load(storePath: string, embeddings: EmbeddingsInterface): Promise<JsonVectorStore> {
-		const store = new JsonVectorStore(embeddings);
+	static async load(storePath: string, embeddings: EmbeddingsInterface): Promise<VectorStore> {
+		const store = new VectorStore(embeddings);
 		const filePath = path.join(storePath, STORE_FILE);
 
 		try {
