@@ -2,13 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollText, RefreshCw, FolderOpen } from 'lucide-react';
 import type { AppLogEntry } from '../../../../shared/types';
-import {
-	AppButton,
-	AppTooltip,
-	AppTooltipTrigger,
-	AppTooltipContent,
-	AppTooltipProvider,
-} from '@components/app';
+import { AppButton } from '@components/app';
 
 type LogLevel = AppLogEntry['level'];
 
@@ -151,7 +145,6 @@ export default function DebugLogsPage(): React.JSX.Element {
 						</AppTooltipTrigger>
 						<AppTooltipContent>{t('debug.openLogsFolder', 'Open logs folder')}</AppTooltipContent>
 					</AppTooltip>
-
 				</div>
 			</AppTooltipProvider>
 
