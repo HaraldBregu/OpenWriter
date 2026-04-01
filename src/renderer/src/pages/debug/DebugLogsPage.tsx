@@ -4,6 +4,7 @@ import { ScrollText, RefreshCw, FolderOpen } from 'lucide-react';
 import type { AppLogEntry } from '../../../../shared/types';
 import {
 	AppButton,
+	AppInput,
 	AppSelect,
 	AppSelectTrigger,
 	AppSelectValue,
