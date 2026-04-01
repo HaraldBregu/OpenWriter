@@ -21,6 +21,7 @@ jest.mock('../../../../../src/main/ai/agents/assistant/IMAGE_SYSTEM.md?raw', () 
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { buildGraph, ASSISTANT_NODE } from '../../../../../src/main/ai/agents/assistant/graph';
+import type { RagRetriever } from '../../../../../src/main/ai/agents/assistant/nodes/rag-retriever';
 
 function makeInvokeModel(content: string) {
 	return {
@@ -38,6 +39,18 @@ function makeStreamModel(...chunks: string[]) {
 			})()
 		),
 	} as unknown as BaseChatModel & { stream: jest.Mock };
+}
+
+function makeRetriever(pageContents: string[]): RagRetriever {
+	return {
+		retrieve: jest.fn().mockResolvedValue(
+			pageContents.map((pageContent, index) => ({
+				pageContent,
+				metadata: { source: `doc-${index}.md` },
+				score: 1 - index * 0.1,
+			}))
+		),
+	} as unknown as RagRetriever;
 }
 
 describe('buildAssistantGraph', () => {
@@ -103,5 +116,50 @@ describe('buildAssistantGraph', () => {
 		expect(imageModel.stream).toHaveBeenCalledTimes(1);
 		expect(writingModel.stream).not.toHaveBeenCalled();
 		expect(researchModel.stream).not.toHaveBeenCalled();
+	});
+
+	it('passes retrieved workspace context to the specialist prompt', async () => {
+		const understandModel = makeInvokeModel('writing');
+		const conversationModel = makeStreamModel('unused');
+		const writingModel = makeStreamModel('Draft', ' ready');
+		const editingModel = makeStreamModel('unused');
+		const researchModel = makeStreamModel('unused');
+		const imageModel = makeStreamModel('unused');
+		const retriever = makeRetriever([
+			'Notebook specs: recycled paper, lay-flat binding.',
+			'Target audience: students and researchers.',
+		]);
+
+		const graph = buildGraph(
+			{
+				[ASSISTANT_NODE.UNDERSTAND]: understandModel,
+				[ASSISTANT_NODE.CONVERSATION]: conversationModel,
+				[ASSISTANT_NODE.WRITING]: writingModel,
+				[ASSISTANT_NODE.EDITING]: editingModel,
+				[ASSISTANT_NODE.RESEARCH]: researchModel,
+				[ASSISTANT_NODE.IMAGE]: imageModel,
+			},
+			retriever
+		);
+
+		const result = await graph.invoke({
+			prompt: 'Write a launch blurb for the notebook.',
+			history: [],
+			intent: 'conversation',
+			phaseLabel: 'Understanding request...',
+			response: '',
+			ragContext: '',
+		});
+
+		const messages = writingModel.stream.mock.calls[0][0] as Array<{ content: string }>;
+		const userMessage = messages[messages.length - 1];
+
+		expect(result.ragContext).toContain('Notebook specs: recycled paper, lay-flat binding.');
+		expect(userMessage.content).toContain('Retrieved workspace context:');
+		expect(userMessage.content).toContain('Notebook specs: recycled paper, lay-flat binding.');
+		expect(userMessage.content).toContain('Target audience: students and researchers.');
+		expect((retriever.retrieve as jest.Mock)).toHaveBeenCalledWith(
+			'Write a launch blurb for the notebook.'
+		);
 	});
 });

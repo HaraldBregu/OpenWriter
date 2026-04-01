@@ -5,8 +5,23 @@ import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../state';
 
-function buildHumanMessage(prompt: string, intent: string): string {
-	return `Detected intent: ${intent}\n\nUser request:\n${prompt}`;
+function buildHumanMessage(prompt: string, intent: string, ragContext: string): string {
+	const parts = [`Detected intent: ${intent}`];
+	const trimmedRagContext = ragContext.trim();
+
+	if (trimmedRagContext) {
+		parts.push(
+			'',
+			'Retrieved workspace context:',
+			'Use this context when it is relevant to the user request.',
+			'<workspace_context>',
+			trimmedRagContext,
+			'</workspace_context>'
+		);
+	}
+
+	parts.push('', 'User request:', prompt);
+	return parts.join('\n');
 }
 
 export async function respondWithSpecialist(
@@ -17,7 +32,7 @@ export async function respondWithSpecialist(
 	const messages: BaseMessage[] = [
 		new SystemMessage(systemPrompt),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state.prompt, state.intent)),
+		new HumanMessage(buildHumanMessage(state.prompt, state.intent, state.ragContext)),
 	];
 
 	let response = '';
