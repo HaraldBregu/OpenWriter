@@ -48,6 +48,7 @@ import type {
 	DocumentImageInfo,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	AppLogEntry,
 } from '../shared/types';
 import type { IpcResult } from '../shared/ipc-result';
 import type { ServiceProvider } from '../shared/provider-defaults';
