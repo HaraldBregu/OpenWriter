@@ -146,10 +146,13 @@ export class TaskExecutor implements Disposable {
 			this.send(windowId, 'task:event', {
 				type: 'queued',
 				data: {
-					taskId,
-					taskType: type,
-					position,
-					metadata: activeTask.metadata,
+					data: {
+						taskId,
+						taskType: type,
+						position,
+						metadata: activeTask.metadata,
+					},
+					error: null,
 				},
 			} satisfies TaskEvent);
 
