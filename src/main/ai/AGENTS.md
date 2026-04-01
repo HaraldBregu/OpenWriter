@@ -581,7 +581,7 @@ When adding a new inference agent:
 
 When adding new indexing capability:
 
-1. Extend `src/main/ai/indexing/`.
+1. Extend `src/main/ai/rag/`.
 2. Register new extractors in `src/main/bootstrap.ts`.
 3. Keep orchestration in `indexing-task-handler.ts`.
 4. Only connect agents to retrieval once the retrieval contract is explicit.
