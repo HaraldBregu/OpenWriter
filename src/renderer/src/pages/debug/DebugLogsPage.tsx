@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollText, RefreshCw, Trash2, FolderOpen } from 'lucide-react';
-import type { AppLogEntry } from '../../../../../preload/index.d';
+import type { AppLogEntry } from '../../../../shared/types';
 import {
 	AppButton,
 	AppTooltip,
 	AppTooltipTrigger,
 	AppTooltipContent,
 	AppTooltipProvider,
-} from '../../../components/app';
+} from '@components/app';
 
 type LogLevel = AppLogEntry['level'];
 
