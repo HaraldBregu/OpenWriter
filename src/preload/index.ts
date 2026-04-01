@@ -70,6 +70,7 @@ const app: AppApi = {
 	setAgentProvider: (agentName: string, providerName: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.setAgentProvider, agentName, providerName);
 	},
+	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
