@@ -313,9 +313,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 				case 'error': {
 					const errorPayload = event.error;
 					const errorMessage =
-						typeof errorPayload === 'object' &&
-						errorPayload !== null &&
-						'message' in errorPayload
+						typeof errorPayload === 'object' && errorPayload !== null && 'message' in errorPayload
 							? String((errorPayload as { message: unknown }).message)
 							: typeof errorPayload === 'string'
 								? errorPayload
