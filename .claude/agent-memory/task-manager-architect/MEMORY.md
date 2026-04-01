@@ -44,6 +44,7 @@ OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, pre
 - Redux: taskEventReceived auto-creates tasks on 'queued' event if not already tracked
 - Custom-state graph: extractGraphOutput is authoritative for final content (fixed 2026-03-16)
 - Non-LLM nodes: nodes that make direct API calls (e.g. DALL-E) don't need nodeModels entries; read apiKey from state
+- TaskEvent response shape (refactored 2026-04-02): every event.data is `TaskEventResponse<T> = { data: (T & TaskEventContext) | null; error: {...} | null }`. Success events set data+null error; error events set null data+error object. Consumers access `event.data.data?.taskId` or `event.data.error?.taskId`.
 
 ## Known Issues
 - Preload uses `typedInvokeRaw` for task API (inconsistent with rest of app using `typedInvokeUnwrap`)
