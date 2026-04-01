@@ -427,7 +427,7 @@ The repo already has:
 
 The repo does not yet have a first-class retrieval-aware agent under `agents/` that queries the vector store during generation.
 
-If a retrieval agent is added later, it should live under `agents/` and depend on `indexing/` as its retrieval layer, not duplicate indexing code inside the agent folder.
+If a retrieval agent is added later, it should live under `agents/` and depend on `rag/` as its retrieval layer, not duplicate RAG code inside the agent folder.
 
 ## Runtime Dependencies Used Here
 
