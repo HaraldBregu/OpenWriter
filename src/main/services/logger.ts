@@ -417,6 +417,20 @@ export class LoggerService implements Disposable {
 	}
 
 	/**
+	 * Get the most recent log entries (up to `limit`, default 200).
+	 * Returns entries in chronological order (oldest first).
+	 */
+	getRecentLogs(limit = 200): AppLogEntry[] {
+		const entries = this.recentBuffer.slice(-limit);
+		return entries.map((e) => ({
+			timestamp: e.timestamp,
+			level: e.level as AppLogEntry['level'],
+			source: e.source,
+			message: e.message,
+		}));
+	}
+
+	/**
 	 * Get the current log directory path.
 	 */
 	getLogDirectory(): string | null {
