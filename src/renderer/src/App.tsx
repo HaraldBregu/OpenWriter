@@ -51,6 +51,7 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
 const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
+const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const DataPage = lazy(() => import('./pages/data/Page'));
