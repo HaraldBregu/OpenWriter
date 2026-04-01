@@ -85,8 +85,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 			</div>
 
 			{/* Toolbar */}
-			<AppTooltipProvider>
-				<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
+			<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
 					<input
 						type="text"
 						placeholder={t('debug.logsSearch', 'Search logs…')}
