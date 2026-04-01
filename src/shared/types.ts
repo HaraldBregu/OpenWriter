@@ -88,63 +88,57 @@ export interface TaskQueueStatus {
 	completed: number;
 }
 
-interface TaskEventContext {
-	taskId: string;
-	metadata?: Record<string, unknown>;
-}
-
 /**
- * Consistent response shape for every TaskEvent emission.
- * `data` carries the event-specific payload (null when the event is an error).
- * `error` carries error details (null when the event is successful).
+ * Base fields present on every TaskEvent variant.
+ *
+ * - `taskId`  — unique identifier of the task this event belongs to.
+ * - `data`    — success payload (shape varies per event type); null on error events.
+ * - `error`   — error payload; null on success events.
+ * - `metadata` — caller-supplied metadata attached at submit time; always present.
  */
-export interface TaskEventResponse<TData = unknown> {
-	data: (TData & TaskEventContext) | null;
-	error: {
-		message: string;
-		code: string;
-		taskId: string;
-		metadata?: Record<string, unknown>;
-	} | null;
+interface TaskEventBase {
+	taskId: string;
+	error: unknown | null;
+	metadata: unknown;
 }
 
 export type TaskEvent =
-	| {
+	| (TaskEventBase & {
 			type: 'queued';
-			data: TaskEventResponse<{ taskType: string; position: number }>;
-	  }
-	| {
+			data: { taskType: string; position: number } | null;
+	  })
+	| (TaskEventBase & {
 			type: 'started';
-			data: TaskEventResponse<Record<string, unknown>>;
-	  }
-	| {
+			data: Record<string, unknown> | null;
+	  })
+	| (TaskEventBase & {
 			type: 'progress';
-			data: TaskEventResponse<{ percent: number; message?: string; detail?: unknown }>;
-	  }
-	| {
+			data: { percent: number; message?: string; detail?: unknown } | null;
+	  })
+	| (TaskEventBase & {
 			type: 'completed';
-			data: TaskEventResponse<{ result: unknown; durationMs: number }>;
-	  }
-	| {
+			data: { result: unknown; durationMs: number } | null;
+	  })
+	| (TaskEventBase & {
 			type: 'error';
-			data: TaskEventResponse<never>;
-	  }
-	| {
+			data: null;
+	  })
+	| (TaskEventBase & {
 			type: 'cancelled';
-			data: TaskEventResponse<Record<string, unknown>>;
-	  }
-	| {
+			data: Record<string, unknown> | null;
+	  })
+	| (TaskEventBase & {
 			type: 'stream';
-			data: TaskEventResponse<{ data: string }>;
-	  }
-	| {
+			data: { data: string } | null;
+	  })
+	| (TaskEventBase & {
 			type: 'priority-changed';
-			data: TaskEventResponse<{ priority: TaskPriority; position: number }>;
-	  }
-	| {
+			data: { priority: TaskPriority; position: number } | null;
+	  })
+	| (TaskEventBase & {
 			type: 'queue-position';
-			data: TaskEventResponse<{ position: number }>;
-	  };
+			data: { position: number } | null;
+	  });
 
 // ---- Indexing -------------------------------------------------------------
 
