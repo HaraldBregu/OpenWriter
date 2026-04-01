@@ -172,6 +172,7 @@ Preload should:
 - unwrap IPC results when appropriate
 - normalize event subscription ergonomics
 - expose only approved capabilities
+- ask before creating any new public API namespace or expanding the bridge with a new top-level API surface
 
 Preload should not:
 
@@ -179,6 +180,8 @@ Preload should not:
 - validate domain rules that belong in main-process services
 - hold long-lived application state
 - duplicate shared contract definitions
+
+Do not create another preload API beyond the current public surfaces without explicit user approval first.
 
 ### Shared contracts belong in `src/shared`
 
