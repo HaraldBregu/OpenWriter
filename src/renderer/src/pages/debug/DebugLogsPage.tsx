@@ -86,55 +86,55 @@ export default function DebugLogsPage(): React.JSX.Element {
 
 			{/* Toolbar */}
 			<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
-					<input
-						type="text"
-						placeholder={t('debug.logsSearch', 'Search logs…')}
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="flex-1 min-w-0 h-8 rounded-md border border-input bg-transparent px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-					/>
+				<input
+					type="text"
+					placeholder={t('debug.logsSearch', 'Search logs…')}
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					className="flex-1 min-w-0 h-8 rounded-md border border-input bg-transparent px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+				/>
 
-					<select
-						value={filterLevel}
-						onChange={(e) => setFilterLevel(e.target.value as LogLevel | 'ALL')}
-						className="h-8 rounded-md border border-input bg-transparent px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-					>
-						{LEVEL_OPTIONS.map((opt) => (
-							<option key={opt.value} value={opt.value}>
-								{opt.label}
-							</option>
-						))}
-					</select>
+				<select
+					value={filterLevel}
+					onChange={(e) => setFilterLevel(e.target.value as LogLevel | 'ALL')}
+					className="h-8 rounded-md border border-input bg-transparent px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+				>
+					{LEVEL_OPTIONS.map((opt) => (
+						<option key={opt.value} value={opt.value}>
+							{opt.label}
+						</option>
+					))}
+				</select>
 
-					<AppButton
-						variant={autoRefresh ? 'default' : 'outline'}
-						size="sm"
-						onClick={() => setAutoRefresh((v) => !v)}
-						aria-pressed={autoRefresh}
-					>
-						<RefreshCw className={autoRefresh ? 'animate-spin' : ''} />
-						{t('debug.autoRefresh', 'Auto-refresh')}
-					</AppButton>
+				<AppButton
+					variant={autoRefresh ? 'default' : 'outline'}
+					size="sm"
+					onClick={() => setAutoRefresh((v) => !v)}
+					aria-pressed={autoRefresh}
+				>
+					<RefreshCw className={autoRefresh ? 'animate-spin' : ''} />
+					{t('debug.autoRefresh', 'Auto-refresh')}
+				</AppButton>
 
-					<AppButton
-						variant="outline"
-						size="icon"
-						onClick={fetchLogs}
-						disabled={loading}
-						aria-label={t('debug.refresh', 'Refresh')}
-					>
-						<RefreshCw className={loading ? 'animate-spin' : ''} />
-					</AppButton>
+				<AppButton
+					variant="ghost"
+					size="icon"
+					onClick={fetchLogs}
+					disabled={loading}
+					aria-label={t('debug.refresh', 'Refresh')}
+				>
+					<RefreshCw className={loading ? 'animate-spin' : ''} />
+				</AppButton>
 
-					<AppButton
-						variant="outline"
-						size="icon"
-						onClick={() => window.app.openLogsFolder()}
-						aria-label={t('debug.openLogsFolder', 'Open logs folder')}
-					>
-						<FolderOpen />
-					</AppButton>
-				</div>
+				<AppButton
+					variant="ghost"
+					size="icon"
+					onClick={() => window.app.openLogsFolder()}
+					aria-label={t('debug.openLogsFolder', 'Open logs folder')}
+				>
+					<FolderOpen />
+				</AppButton>
+			</div>
 
 			{/* Stats bar */}
 			<div className="flex items-center gap-4 px-4 py-1.5 border-b shrink-0 text-xs text-muted-foreground bg-muted/30">
