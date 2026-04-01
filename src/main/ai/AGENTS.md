@@ -600,4 +600,4 @@ If this subsystem expands, keep those layers cleanly separated:
 
 - behavior in `agents/`
 - execution in `core/`
-- retrieval preparation in `indexing/`
+- retrieval preparation in `rag/`
