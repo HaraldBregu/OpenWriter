@@ -115,7 +115,7 @@ const workspace: WorkspaceApi = {
 	setCurrent: (workspacePath: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.setCurrent, workspacePath);
 	},
-	getRecent: (): Promise<Array<{ path: string; lastOpened: number }>> => {
+	getRecent: (): Promise<WorkspaceInfo[]> => {
 		return typedInvokeUnwrap(WorkspaceChannels.getRecent);
 	},
 	clear: (): Promise<void> => {
