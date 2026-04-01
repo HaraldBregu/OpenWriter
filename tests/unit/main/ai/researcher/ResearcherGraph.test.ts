@@ -1,5 +1,8 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { buildResearcherGraph, RESEARCHER_NODE } from '../../../../../src/main/ai/agents/researcher/graph';
+import {
+	buildResearcherGraph,
+	RESEARCHER_NODE,
+} from '../../../../../src/main/ai/agents/researcher/graph';
 import { RESEARCHER_STATE_MESSAGES } from '../../../../../src/main/ai/agents/researcher/messages';
 import { evaluateNode } from '../../../../../src/main/ai/agents/researcher/nodes/evaluate-node';
 

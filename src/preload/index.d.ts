@@ -125,6 +125,8 @@ export interface AppApi {
 	deleteProvider: (id: string) => Promise<void>;
 	getAgentProviders: () => Promise<Record<string, string>>;
 	setAgentProvider: (agentName: string, providerName: string) => Promise<void>;
+	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */
+	getLogs: (limit?: number) => Promise<AppLogEntry[]>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */

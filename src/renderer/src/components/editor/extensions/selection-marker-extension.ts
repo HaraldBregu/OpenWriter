@@ -82,15 +82,11 @@ export const SelectionMarkerExtension = Extension.create({
 				props: {
 					handleDOMEvents: {
 						focus: (view) => {
-							view.dispatch(
-								view.state.tr.setMeta(selectionMarkerPluginKey, { focused: true })
-							);
+							view.dispatch(view.state.tr.setMeta(selectionMarkerPluginKey, { focused: true }));
 							return false;
 						},
 						blur: (view) => {
-							view.dispatch(
-								view.state.tr.setMeta(selectionMarkerPluginKey, { focused: false })
-							);
+							view.dispatch(view.state.tr.setMeta(selectionMarkerPluginKey, { focused: false }));
 							return false;
 						},
 					},

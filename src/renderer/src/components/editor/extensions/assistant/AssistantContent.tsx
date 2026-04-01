@@ -36,10 +36,7 @@ export function AssistantContent({
 				}}
 				disabled={!enable}
 				className="min-h-30 resize-none border-none bg-transparent px-4 pt-1 pb-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-				placeholder={t(
-					'agenticPanel.promptPlaceholder',
-					'Here the prompt'
-				)}
+				placeholder={t('agenticPanel.promptPlaceholder', 'Here the prompt')}
 				rows={1}
 			/>
 			<div className="flex items-center justify-end px-3 pb-1.5">

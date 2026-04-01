@@ -20,10 +20,7 @@ const Layout: React.FC = () => {
 							{t('dataPage.emptyTitle', 'No data view yet')}
 						</h2>
 						<p className="text-sm text-muted-foreground">
-							{t(
-								'dataPage.emptyDescription',
-								'This page is ready for future data features.'
-							)}
+							{t('dataPage.emptyDescription', 'This page is ready for future data features.')}
 						</p>
 					</div>
 				</div>

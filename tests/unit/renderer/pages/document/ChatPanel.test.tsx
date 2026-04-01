@@ -16,15 +16,17 @@ let mockEditor: {
 	};
 	storage: Record<string, Record<string, unknown>>;
 } | null = null;
-let taskListener: ((snapshot: {
-	status: string;
-	streamedContent: string;
-	content: string;
-	seedContent: string;
-	metadata?: Record<string, unknown>;
-	result?: unknown;
-	error?: string;
-}) => void) | null = null;
+let taskListener:
+	| ((snapshot: {
+			status: string;
+			streamedContent: string;
+			content: string;
+			seedContent: string;
+			metadata?: Record<string, unknown>;
+			result?: unknown;
+			error?: string;
+	  }) => void)
+	| null = null;
 
 const mockChatState = {
 	messages: [],
@@ -81,24 +83,12 @@ jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/hooks', ()
 
 jest.mock('../../../../../src/renderer/src/pages/document/panels/chat/components', () => ({
 	Header: () => <div>header</div>,
-	Message: ({
-		id,
-		showStatusLoader,
-	}: {
-		id: string;
-		showStatusLoader?: boolean;
-	}) => (
+	Message: ({ id, showStatusLoader }: { id: string; showStatusLoader?: boolean }) => (
 		<div data-testid={`message-${id}`} data-loader={showStatusLoader ? 'true' : 'false'}>
 			message
 		</div>
 	),
-	Input: ({
-		onSend,
-		disabled,
-	}: {
-		onSend: (message: string) => void;
-		disabled?: boolean;
-	}) => (
+	Input: ({ onSend, disabled }: { onSend: (message: string) => void; disabled?: boolean }) => (
 		<button type="button" onClick={() => onSend('Analyze the code')} disabled={disabled}>
 			send
 		</button>

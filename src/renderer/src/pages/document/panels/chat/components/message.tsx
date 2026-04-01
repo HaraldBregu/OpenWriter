@@ -42,10 +42,7 @@ const Message: React.FC<MessageProps> = ({
 				<div className="min-w-0 flex-1">
 					<div className="inline-flex items-center gap-1.5 px-0.5 text-xs text-foreground/65 dark:text-muted-foreground/95">
 						{shouldShowStatusLoader && (
-							<LoaderCircle
-								data-testid="status-loader"
-								className="h-3.5 w-3.5 animate-spin"
-							/>
+							<LoaderCircle data-testid="status-loader" className="h-3.5 w-3.5 animate-spin" />
 						)}
 						<span>{content}</span>
 					</div>

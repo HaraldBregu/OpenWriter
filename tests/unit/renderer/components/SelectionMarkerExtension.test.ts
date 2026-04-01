@@ -11,8 +11,7 @@ describe('SelectionMarkerExtension', () => {
 	let host: HTMLDivElement;
 	let editor: Editor;
 
-	const getDecorations = () =>
-		selectionMarkerPluginKey.getState(editor.state)?.deco.find() ?? [];
+	const getDecorations = () => selectionMarkerPluginKey.getState(editor.state)?.deco.find() ?? [];
 
 	beforeEach(() => {
 		host = document.createElement('div');

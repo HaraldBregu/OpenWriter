@@ -211,16 +211,7 @@ export class TaskExecutor implements Disposable {
 	 */
 	listTasks(): ActiveTask[] {
 		return Array.from(this.activeTasks.values()).map(
-			({
-				taskId,
-				type,
-				status,
-				priority,
-				startedAt,
-				completedAt,
-				windowId,
-				metadata,
-			}) => ({
+			({ taskId, type, status, priority, startedAt, completedAt, windowId, metadata }) => ({
 				taskId,
 				type,
 				status,

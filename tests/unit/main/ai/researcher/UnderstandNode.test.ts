@@ -20,7 +20,9 @@ import { understandNode } from '../../../../../src/main/ai/agents/researcher/nod
 describe('understandNode', () => {
 	it('includes persisted chat history when classifying the next prompt', async () => {
 		const model = {
-			invoke: jest.fn().mockResolvedValue({ content: 'The user is following up on the prior answer.' }),
+			invoke: jest
+				.fn()
+				.mockResolvedValue({ content: 'The user is following up on the prior answer.' }),
 		} as unknown as BaseChatModel & { invoke: jest.Mock };
 
 		await understandNode(

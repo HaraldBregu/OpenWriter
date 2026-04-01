@@ -308,7 +308,10 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const chatsDir = path.resolve(documentDir, 'chats');
 		const sessionDir = path.resolve(chatsDir, chatId);
 		if (!sessionDir.startsWith(`${chatsDir}${path.sep}`)) {
-			this.logger?.warn('AgentTaskHandler', `Rejected chat history path outside chats dir: ${chatId}`);
+			this.logger?.warn(
+				'AgentTaskHandler',
+				`Rejected chat history path outside chats dir: ${chatId}`
+			);
 			return [];
 		}
 
@@ -328,10 +331,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 	}
 }
 
-function toAgentHistoryMessages(
-	messages: unknown,
-	currentPrompt: string
-): AgentHistoryMessage[] {
+function toAgentHistoryMessages(messages: unknown, currentPrompt: string): AgentHistoryMessage[] {
 	if (!Array.isArray(messages)) {
 		return [];
 	}

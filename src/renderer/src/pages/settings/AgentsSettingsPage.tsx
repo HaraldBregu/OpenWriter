@@ -77,7 +77,7 @@ const AgentsSettingsPage: React.FC = () => {
 					const savedProvider =
 						typeof saved[agentKey] === 'string'
 							? saved[agentKey]
-							: legacySavedProvider ?? saved[agent.name];
+							: (legacySavedProvider ?? saved[agent.name]);
 					const resolvedProvider =
 						typeof savedProvider === 'string' && uniqueProviders.includes(savedProvider)
 							? savedProvider

@@ -81,12 +81,12 @@ The screenshot was not accurate for the current codebase.
 
 ## Preload To Main Mapping
 
-| Preload namespace | Main IPC module | Backing runtime |
-| --- | --- | --- |
-| `window.app` | `AppIpc` | Electron menus/theme/sound plus `StoreService` provider settings |
-| `window.win` | `WindowIpc` | `BrowserWindow` state and application menu access |
-| `window.workspace` | `WorkspaceIpc` | Per-window `workspaceManager` facade and Electron dialog/shell helpers |
-| `window.task` | `TaskManagerIpc` | Global `TaskExecutor`, `TaskHandlerRegistry`, and task events |
+| Preload namespace  | Main IPC module  | Backing runtime                                                        |
+| ------------------ | ---------------- | ---------------------------------------------------------------------- |
+| `window.app`       | `AppIpc`         | Electron menus/theme/sound plus `StoreService` provider settings       |
+| `window.win`       | `WindowIpc`      | `BrowserWindow` state and application menu access                      |
+| `window.workspace` | `WorkspaceIpc`   | Per-window `workspaceManager` facade and Electron dialog/shell helpers |
+| `window.task`      | `TaskManagerIpc` | Global `TaskExecutor`, `TaskHandlerRegistry`, and task events          |
 
 ## Ownership And Dependencies
 

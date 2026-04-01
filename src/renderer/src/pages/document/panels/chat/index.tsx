@@ -60,9 +60,12 @@ function getSelectedEditorText(
 	}
 
 	const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-	const serializer = storage.markdown?.serializer as { serialize: (node: unknown) => string } | undefined;
+	const serializer = storage.markdown?.serializer as
+		| { serialize: (node: unknown) => string }
+		| undefined;
 	const rawSelection =
-		serializer?.serialize(editor.state.doc.cut(from, to)) ?? editor.state.doc.textBetween(from, to, '\n\n');
+		serializer?.serialize(editor.state.doc.cut(from, to)) ??
+		editor.state.doc.textBetween(from, to, '\n\n');
 	const selectedText = rawSelection.replace(/<[^>]*>/g, '').trim();
 
 	return selectedText.length > 0 ? selectedText : null;
@@ -697,7 +700,10 @@ const Chat: React.FC = () => {
 					<div className="flex h-full flex-col items-center justify-center px-6 text-center">
 						<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/85 bg-card/82 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
 							<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/82 dark:bg-accent/95">
-								<Bot className="h-5 w-5 text-foreground/70 dark:text-foreground/95" aria-hidden="true" />
+								<Bot
+									className="h-5 w-5 text-foreground/70 dark:text-foreground/95"
+									aria-hidden="true"
+								/>
 							</div>
 							<div className="space-y-1">
 								<p className="text-sm font-medium text-foreground">
