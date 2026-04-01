@@ -31,24 +31,24 @@ interface ManifestData {
 	entries: Record<string, ManifestEntry>;
 }
 
-export class IndexingManifest {
+export class RagManifest {
 	private entries: Record<string, ManifestEntry>;
 
 	private constructor(entries: Record<string, ManifestEntry>) {
 		this.entries = entries;
 	}
 
-	static async load(storePath: string): Promise<IndexingManifest> {
+	static async load(storePath: string): Promise<RagManifest> {
 		const manifestPath = path.join(storePath, MANIFEST_FILE);
 		try {
 			const raw = await fs.readFile(manifestPath, 'utf-8');
 			const data = JSON.parse(raw) as ManifestData;
 			if (data.version !== MANIFEST_VERSION) {
-				return new IndexingManifest({});
+				return new RagManifest({});
 			}
-			return new IndexingManifest(data.entries);
+			return new RagManifest(data.entries);
 		} catch {
-			return new IndexingManifest({});
+			return new RagManifest({});
 		}
 	}
 
