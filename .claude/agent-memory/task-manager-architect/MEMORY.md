@@ -4,13 +4,13 @@
 OpenWriter task manager: Electron main-process TaskExecutor with IPC bridge, preload API, and React hooks.
 
 ## Key Files
-- Executor: `src/main/task_manager/task-executor.ts`
-- Registry: `src/main/task_manager/task-handler-registry.ts`
-- Handler interface: `src/main/task_manager/task-handler.ts`
-- Descriptors: `src/main/task_manager/task-descriptor.ts`
-- Events re-export: `src/main/task_manager/task-events.ts`
-- Reaction bus: `src/main/task_manager/task-reaction-bus.ts`
-- Reaction registry: `src/main/task_manager/task-reaction-registry.ts`
+- Executor: `src/main/task/task-executor.ts`
+- Registry: `src/main/task/task-handler-registry.ts`
+- Handler interface: `src/main/task/task-handler.ts`
+- Descriptors: `src/main/task/task-descriptor.ts`
+- Events re-export: `src/main/task/task-events.ts`
+- Reaction bus: `src/main/task/task-reaction-bus.ts`
+- Reaction registry: `src/main/task/task-reaction-registry.ts`
 - IPC: `src/main/ipc/task-manager-ipc.ts`
 - Shared types: `src/shared/types.ts` (TaskSubmitPayload, TaskInfo, TaskEvent, etc.)
 - Channels: `src/shared/channels.ts` (TaskChannels)
