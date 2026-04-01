@@ -25,12 +25,12 @@ export {
 	ResearcherAgent,
 } from './agents';
 
-// Indexing
-export type { DocumentExtractor, ExtractedContent } from './indexing';
-export { ExtractorRegistry } from './indexing';
-export { PlainTextExtractor } from './indexing';
-export { PdfExtractor } from './indexing';
-export { DocxExtractor } from './indexing';
-export { chunkText, type ChunkOptions } from './indexing';
-export { IndexingManifest, type ManifestEntry } from './indexing';
-export { JsonVectorStore, type VectorEntry } from './indexing';
+// RAG
+export type { DocumentExtractor, ExtractedContent } from './rag';
+export { ExtractorRegistry } from './rag';
+export { PlainTextExtractor } from './rag';
+export { PdfExtractor } from './rag';
+export { DocxExtractor } from './rag';
+export { chunkText, type ChunkOptions } from './rag';
+export { RagManifest, type ManifestEntry } from './rag';
+export { VectorStore, type VectorEntry } from './rag';
