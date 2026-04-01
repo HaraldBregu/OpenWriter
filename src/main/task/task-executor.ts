@@ -468,7 +468,10 @@ export class TaskExecutor implements Disposable {
 
 			this.send(windowId, 'task:event', {
 				type: 'completed',
-				data: { taskId, result, durationMs, metadata: task.metadata },
+				data: {
+					data: { taskId, result, durationMs, metadata: task.metadata },
+					error: null,
+				},
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
