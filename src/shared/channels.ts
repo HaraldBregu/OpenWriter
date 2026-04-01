@@ -271,6 +271,9 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
 	[WorkspaceChannels.fsListDir]: { args: [params: FsListDirParams]; result: FsListDirEntry[] };
 
+	// ---- Logs (IpcResult-wrapped) ----
+	[LogChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
+
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
