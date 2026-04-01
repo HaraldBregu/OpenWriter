@@ -50,6 +50,7 @@ import {
 	Info,
 	LogOut,
 	Plus,
+	ScrollText,
 } from 'lucide-react';
 import { useCurrentUser } from '../contexts';
 
