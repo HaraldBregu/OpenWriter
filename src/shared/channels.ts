@@ -44,6 +44,7 @@ import type {
 	DocumentImageInfo,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	AppLogEntry,
 } from './types';
 import type { ServiceProvider } from './provider-defaults';
 
