@@ -1,4 +1,8 @@
-import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../../core/definition';
+import type {
+	AgentDefinition,
+	AgentRuntimeContext,
+	GraphInputContext,
+} from '../../core/definition';
 import { buildGraph, ASSISTANT_NODE } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
 import { RagRetriever } from './nodes/rag-retriever';

@@ -177,20 +177,20 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			reporter.progress(currentProgress, initialThinkingLabel);
 		}
 
-			const gen = executeAIAgentsStream({
-				runId: randomUUID(),
-				provider,
+		const gen = executeAIAgentsStream({
+			runId: randomUUID(),
+			provider,
 			systemPrompt: '',
 			temperature: resolvedTemperature,
-				maxTokens: resolvedMaxTokens,
-				history,
-				prompt: input.prompt,
-				signal,
-				nodeModels,
-				buildGraph: effectiveBuildGraph,
-				buildGraphInput: def.buildGraphInput,
-				extractGraphOutput: def.extractGraphOutput,
-				extractThinkingLabel: def.extractThinkingLabel,
+			maxTokens: resolvedMaxTokens,
+			history,
+			prompt: input.prompt,
+			signal,
+			nodeModels,
+			buildGraph: effectiveBuildGraph,
+			buildGraphInput: def.buildGraphInput,
+			extractGraphOutput: def.extractGraphOutput,
+			extractThinkingLabel: def.extractThinkingLabel,
 			streamableNodes: def.streamableNodes,
 			metadata,
 			logger: this.logger,
@@ -266,11 +266,12 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		windowId: number | undefined,
 		provider: { providerId: string; apiKey: string }
 	): AgentRuntimeContext {
-		const windowContext = typeof windowId === 'number' ? this.windowContextManager.tryGet(windowId) : undefined;
+		const windowContext =
+			typeof windowId === 'number' ? this.windowContextManager.tryGet(windowId) : undefined;
 		const workspacePath = windowContext?.container.has('workspace')
-			? windowContext.container
+			? (windowContext.container
 					.get<import('../../workspace/workspace-service').WorkspaceService>('workspace')
-					.getCurrent() ?? undefined
+					.getCurrent() ?? undefined)
 			: undefined;
 
 		return {

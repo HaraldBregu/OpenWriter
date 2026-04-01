@@ -51,8 +51,8 @@ function ensureListening(): void {
 	if (typeof window.task?.onEvent !== 'function') return;
 
 	globalUnsub = window.task.onEvent((event: TaskEvent) => {
-		const data = event.data as { taskId?: string };
-		const taskId = data?.taskId;
+		const payload = event.data;
+		const taskId = payload.data?.taskId ?? payload.error?.taskId;
 		if (!taskId) return;
 
 		// Build or update snapshot for this task.
@@ -64,8 +64,8 @@ function ensureListening(): void {
 		};
 		let next: TaskSnapshot;
 
-		// Extract metadata from any event that carries it.
-		const eventMetadata = (event.data as { metadata?: Record<string, unknown> }).metadata;
+		// Extract metadata from the data or error side of the response.
+		const eventMetadata = payload.data?.metadata ?? payload.error?.metadata;
 		const metadataOverride = eventMetadata !== undefined ? { metadata: eventMetadata } : {};
 
 		switch (event.type) {
@@ -75,7 +75,7 @@ function ensureListening(): void {
 					status: 'queued',
 					...metadataOverride,
 				};
-				const taskType = (event.data as { taskType?: string }).taskType;
+				const taskType = (payload.data as { taskType?: string } | null)?.taskType;
 				if (taskType) {
 					typeSubscribers.get(taskType)?.forEach((cb) => cb(taskId));
 				}
@@ -93,23 +93,23 @@ function ensureListening(): void {
 				};
 				break;
 			case 'stream': {
-				const sd = event.data as { data?: string };
+				const streamData = (payload.data as { data?: string } | null)?.data ?? '';
 				next = {
 					...prev,
 					status: 'running',
-					streamedContent: sd.data ?? '',
-					content: (prev.seedContent ?? '') + (prev.content + (sd.data ?? '')),
+					streamedContent: streamData,
+					content: (prev.seedContent ?? '') + (prev.content + streamData),
 					...metadataOverride,
 				};
 				break;
 			}
 			case 'completed': {
-				const cd = event.data as { result?: unknown };
+				const completedResult = (payload.data as { result?: unknown } | null)?.result;
 				next = {
 					...prev,
 					status: 'completed',
 					streamedContent: '',
-					result: cd.result,
+					result: completedResult,
 					...metadataOverride,
 				};
 				snapshots.set(taskId, next);
@@ -119,11 +119,11 @@ function ensureListening(): void {
 				return;
 			}
 			case 'error': {
-				const ed = event.data as { message?: string };
+				const errorMessage = payload.error?.message;
 				next = {
 					...prev,
 					status: 'error',
-					error: ed.message,
+					error: errorMessage,
 					...metadataOverride,
 				};
 				snapshots.set(taskId, next);

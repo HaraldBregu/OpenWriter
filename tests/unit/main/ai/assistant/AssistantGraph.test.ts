@@ -158,7 +158,7 @@ describe('buildAssistantGraph', () => {
 		expect(userMessage.content).toContain('Retrieved workspace context:');
 		expect(userMessage.content).toContain('Notebook specs: recycled paper, lay-flat binding.');
 		expect(userMessage.content).toContain('Target audience: students and researchers.');
-		expect((retriever.retrieve as jest.Mock)).toHaveBeenCalledWith(
+		expect(retriever.retrieve as jest.Mock).toHaveBeenCalledWith(
 			'Write a launch blurb for the notebook.'
 		);
 	});

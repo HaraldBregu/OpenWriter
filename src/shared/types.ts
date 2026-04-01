@@ -100,7 +100,12 @@ interface TaskEventContext {
  */
 export interface TaskEventResponse<TData = unknown> {
 	data: (TData & TaskEventContext) | null;
-	error: { message: string; code: string; taskId: string; metadata?: Record<string, unknown> } | null;
+	error: {
+		message: string;
+		code: string;
+		taskId: string;
+		metadata?: Record<string, unknown>;
+	} | null;
 }
 
 export type TaskEvent =
