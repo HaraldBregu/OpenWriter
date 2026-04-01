@@ -135,9 +135,22 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			}
 		}
 
+		// 4. Prepare graph with runtime context (e.g. RAG retriever injection).
+		//
+		// When the definition declares `prepareGraph`, we resolve the runtime
+		// context (workspace path, provider credentials) and let the definition
+		// wrap `buildGraph` with any workspace-bound resources. The executor
+		// receives a standard `buildGraph` function — it remains unaware of the
+		// injection.
+		let effectiveBuildGraph = def.buildGraph;
+		if (def.prepareGraph && effectiveBuildGraph) {
+			const runtimeContext = this.resolveRuntimeContext(input.windowId, provider);
+			effectiveBuildGraph = def.prepareGraph(effectiveBuildGraph, runtimeContext);
+		}
+
 		const history = await this.loadHistory(input, metadata);
 
-		// 4. Stream via executor directly
+		// 5. Stream via executor directly
 		let content = '';
 		let tokenCount = 0;
 		let tokensSinceLastProgress = 0;
