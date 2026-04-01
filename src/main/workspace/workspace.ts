@@ -125,8 +125,8 @@ export class Workspace implements Disposable {
 	getResourcesFolderPath(): string {
 		const currentWorkspace = this.requireWorkspace();
 		const resourcesDir = path.join(currentWorkspace, RESOURCES_DIR);
-		if (!fs.existsSync(resourcesDir) || !fs.statSync(resourcesDir).isDirectory()) {
-			throw new Error('Resources folder does not exist. Import resources first.');
+		if (!fs.existsSync(resourcesDir)) {
+			fs.mkdirSync(resourcesDir, { recursive: true });
 		}
 		return resourcesDir;
 	}
