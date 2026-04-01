@@ -24,6 +24,8 @@ import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
+import type { AgentRuntimeContext } from '../../ai';
+import type { WorkspaceService } from '../../workspace/workspace-service';
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)
