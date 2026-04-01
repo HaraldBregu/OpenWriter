@@ -195,6 +195,17 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.setAgentProvider)
 		);
 
+		// Open logs folder in system file explorer
+		ipcMain.handle(
+			AppChannels.openLogsFolder,
+			wrapSimpleHandler(async () => {
+				const logsDir = logger.getLogDirectory();
+				if (logsDir) {
+					await shell.openPath(logsDir);
+				}
+			}, AppChannels.openLogsFolder)
+		);
+
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
