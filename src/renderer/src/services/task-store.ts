@@ -296,8 +296,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 						...nextTask,
 						status: 'running',
 						streamBuffer:
-							(nextTask.streamBuffer ?? '') +
-							((sd as { data?: string } | null)?.data ?? ''),
+							(nextTask.streamBuffer ?? '') + ((sd as { data?: string } | null)?.data ?? ''),
 					};
 				}
 				case 'completed': {
@@ -331,8 +330,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 					const pcd = event.data.data;
 					return {
 						...nextTask,
-						priority:
-							(pcd as { priority?: TaskPriority } | null)?.priority ?? nextTask.priority,
+						priority: (pcd as { priority?: TaskPriority } | null)?.priority ?? nextTask.priority,
 						queuePosition: (pcd as { position?: number } | null)?.position,
 					};
 				}

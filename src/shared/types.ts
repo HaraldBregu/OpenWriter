@@ -115,7 +115,7 @@ export type TaskEvent =
 	  }
 	| {
 			type: 'started';
-			data: TaskEventResponse<Record<string, never>>;
+			data: TaskEventResponse<Record<string, unknown>>;
 	  }
 	| {
 			type: 'progress';
