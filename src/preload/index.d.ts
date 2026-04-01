@@ -250,12 +250,6 @@ export interface WorkspaceApi {
 	listDir: (params: FsListDirParams) => Promise<FsListDirEntry[]>;
 }
 
-/** Application logs — exposes the main-process log ring buffer to the renderer */
-export interface LogsApi {
-	/** Fetch the most recent log entries. `limit` defaults to 200, max 1000. */
-	getLogs: (limit?: number) => Promise<AppLogEntry[]>;
-}
-
 /** Background task queue */
 export interface TaskApi {
 	submit: (
