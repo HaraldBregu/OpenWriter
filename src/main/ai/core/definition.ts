@@ -123,6 +123,18 @@ export interface AgentDefinition {
 		models: BaseChatModel | NodeModelMap
 	) => CompiledStateGraph<any, any, any, any, any, any>;
 	/**
+	 * Optional hook called by AgentTaskHandler before the graph is built.
+	 * Receives the base `buildGraph` function and resolved runtime context.
+	 * Returns a new `buildGraph` function that closes over any injected
+	 * runtime resources (e.g. a workspace-bound RagRetriever).
+	 *
+	 * When absent, `buildGraph` is used as-is with no runtime injection.
+	 */
+	prepareGraph?: (
+		buildGraph: NonNullable<AgentDefinition['buildGraph']>,
+		context: AgentRuntimeContext
+	) => NonNullable<AgentDefinition['buildGraph']>;
+	/**
 	 * Maps executor-resolved context to the graph's initial state object.
 	 *
 	 * Required when the graph uses a custom state shape (not `{ messages }`).
