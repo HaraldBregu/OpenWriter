@@ -69,18 +69,20 @@ export default function DebugLogsPage(): React.JSX.Element {
 		};
 	}, [autoRefresh, fetchLogs]);
 
-	const filtered = entries.filter((e) => {
-		if (filterLevel !== 'ALL' && e.level !== filterLevel) return false;
-		if (search) {
-			const q = search.toLowerCase();
-			return (
-				e.source.toLowerCase().includes(q) ||
-				e.message.toLowerCase().includes(q) ||
-				e.level.toLowerCase().includes(q)
-			);
-		}
-		return true;
-	}).reverse();
+	const filtered = entries
+		.filter((e) => {
+			if (filterLevel !== 'ALL' && e.level !== filterLevel) return false;
+			if (search) {
+				const q = search.toLowerCase();
+				return (
+					e.source.toLowerCase().includes(q) ||
+					e.message.toLowerCase().includes(q) ||
+					e.level.toLowerCase().includes(q)
+				);
+			}
+			return true;
+		})
+		.reverse();
 
 	return (
 		<div className="flex flex-col h-full">
