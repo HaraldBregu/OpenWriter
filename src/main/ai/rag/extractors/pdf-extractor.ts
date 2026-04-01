@@ -6,7 +6,7 @@
 
 import fs from 'node:fs/promises';
 import { PDFParse } from 'pdf-parse';
-import type { DocumentExtractor, ExtractedContent } from '../document-extractor';
+import type { DocumentExtractor, ExtractedContent } from './document-extractor';
 
 export class PdfExtractor implements DocumentExtractor {
 	readonly extensions = ['.pdf'] as const;

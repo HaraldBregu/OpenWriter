@@ -6,7 +6,7 @@
  * the concrete implementation.
  */
 
-import type { DocumentExtractor } from './document-extractor';
+import type { DocumentExtractor } from './extractors/document-extractor';
 
 export class ExtractorRegistry {
 	private readonly map = new Map<string, DocumentExtractor>();

@@ -1,5 +1,5 @@
 /**
- * IndexingManifest — tracks which files have been indexed and when.
+ * RagManifest — tracks which files have been indexed and when.
  *
  * Enables incremental indexing: on re-index, files whose lastModified
  * timestamp has not changed are skipped. Uses content hash as a secondary

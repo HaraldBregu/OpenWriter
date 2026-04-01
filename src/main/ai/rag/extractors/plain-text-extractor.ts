@@ -6,7 +6,7 @@
  */
 
 import fs from 'node:fs/promises';
-import type { DocumentExtractor, ExtractedContent } from '../document-extractor';
+import type { DocumentExtractor, ExtractedContent } from './document-extractor';
 
 export class PlainTextExtractor implements DocumentExtractor {
 	readonly extensions = ['.txt', '.md', '.csv', '.json', '.html'] as const;

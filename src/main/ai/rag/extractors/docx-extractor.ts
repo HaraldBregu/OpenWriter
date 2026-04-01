@@ -6,7 +6,7 @@
 
 import fs from 'node:fs/promises';
 import mammoth from 'mammoth';
-import type { DocumentExtractor, ExtractedContent } from '../document-extractor';
+import type { DocumentExtractor, ExtractedContent } from './document-extractor';
 
 export class DocxExtractor implements DocumentExtractor {
 	readonly extensions = ['.docx'] as const;
