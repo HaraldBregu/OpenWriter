@@ -71,6 +71,7 @@ const app: AppApi = {
 		return typedInvokeUnwrap(AppChannels.setAgentProvider, agentName, providerName);
 	},
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
+	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
