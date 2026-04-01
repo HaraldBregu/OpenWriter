@@ -136,6 +136,10 @@ export const TaskChannels = {
 	queueStatus: 'task:queue-status',
 } as const;
 
+export const LogChannels = {
+	getLogs: 'log:get-logs',
+} as const;
+
 export const AppChannels = {
 	playSound: 'play-sound',
 	setTheme: 'set-theme',
