@@ -131,14 +131,15 @@ function createTrackedTaskFromInfo(task: TaskInfo): TrackedTaskState {
 function createTrackedTaskFromQueuedEvent(
 	event: Extract<TaskEvent, { type: 'queued' }>
 ): TrackedTaskState {
+	const payload = event.data.data;
 	return {
-		taskId: event.data.taskId,
-		type: event.data.taskType,
+		taskId: payload?.taskId ?? '',
+		type: (payload as { taskType?: string } | null)?.taskType ?? '',
 		status: 'queued',
 		priority: 'normal',
 		progress: { percent: 0 },
-		queuePosition: event.data.position,
-		metadata: event.data.metadata,
+		queuePosition: (payload as { position?: number } | null)?.position,
+		metadata: payload?.metadata,
 		streamBuffer: '',
 		events: [],
 	};
