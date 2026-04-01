@@ -32,6 +32,7 @@ import type {
 	FsListDirParams,
 	FsListDirEntry,
 	ProjectWorkspaceInfo,
+	WorkspaceInfo,
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';
 import { FileManager } from '../shared/file_manager';
