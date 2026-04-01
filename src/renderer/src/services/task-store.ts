@@ -247,8 +247,11 @@ export function removeTask(taskId: string): void {
 }
 
 export function applyTaskEvent(event: TaskEvent): void {
-	const taskId = event.data.taskId;
+	const payload = event.data;
+	const taskId = payload.data?.taskId ?? payload.error?.taskId;
 	if (!taskId) return;
+
+	const eventMetadata = payload.data?.metadata ?? payload.error?.metadata;
 
 	updateTrackedTask(
 		taskId,
@@ -256,54 +259,64 @@ export function applyTaskEvent(event: TaskEvent): void {
 			const nextTask: TrackedTaskState = {
 				...task,
 				events: appendEvent(task, event),
-				metadata: event.data.metadata !== undefined ? event.data.metadata : task.metadata,
+				metadata: eventMetadata !== undefined ? eventMetadata : task.metadata,
 			};
 
 			switch (event.type) {
-				case 'queued':
+				case 'queued': {
+					const qd = event.data.data;
 					return {
 						...nextTask,
-						type: event.data.taskType || nextTask.type,
+						type: (qd as { taskType?: string } | null)?.taskType || nextTask.type,
 						status: 'queued',
-						queuePosition: event.data.position,
+						queuePosition: (qd as { position?: number } | null)?.position,
 					};
+				}
 				case 'started':
 					return {
 						...nextTask,
 						status: 'started',
 						queuePosition: undefined,
 					};
-				case 'progress':
+				case 'progress': {
+					const pd = event.data.data;
 					return {
 						...nextTask,
 						status: 'running',
 						progress: {
-							percent: event.data.percent,
-							message: event.data.message,
-							detail: event.data.detail,
+							percent: (pd as { percent?: number } | null)?.percent ?? 0,
+							message: (pd as { message?: string } | null)?.message,
+							detail: (pd as { detail?: unknown } | null)?.detail,
 						},
 					};
-				case 'stream':
+				}
+				case 'stream': {
+					const sd = event.data.data;
 					return {
 						...nextTask,
 						status: 'running',
-						streamBuffer: (nextTask.streamBuffer ?? '') + event.data.data,
+						streamBuffer:
+							(nextTask.streamBuffer ?? '') +
+							((sd as { data?: string } | null)?.data ?? ''),
 					};
-				case 'completed':
+				}
+				case 'completed': {
+					const cd = event.data.data;
 					return {
 						...nextTask,
 						status: 'completed',
 						progress: { percent: 100 },
-						result: event.data.result,
-						durationMs: event.data.durationMs,
+						result: (cd as { result?: unknown } | null)?.result,
+						durationMs: (cd as { durationMs?: number } | null)?.durationMs,
 						queuePosition: undefined,
 						streamBuffer: '',
 					};
+				}
 				case 'error':
 					return {
 						...nextTask,
 						status: 'error',
-						error: event.data.message,
+						error: event.data.error?.message,
 						queuePosition: undefined,
 						streamBuffer: '',
 					};
@@ -314,17 +327,22 @@ export function applyTaskEvent(event: TaskEvent): void {
 						queuePosition: undefined,
 						streamBuffer: '',
 					};
-				case 'priority-changed':
+				case 'priority-changed': {
+					const pcd = event.data.data;
 					return {
 						...nextTask,
-						priority: event.data.priority,
-						queuePosition: event.data.position,
+						priority:
+							(pcd as { priority?: TaskPriority } | null)?.priority ?? nextTask.priority,
+						queuePosition: (pcd as { position?: number } | null)?.position,
 					};
-				case 'queue-position':
+				}
+				case 'queue-position': {
+					const qpd = event.data.data;
 					return {
 						...nextTask,
-						queuePosition: event.data.position,
+						queuePosition: (qpd as { position?: number } | null)?.position,
 					};
+				}
 			}
 		},
 		() => (event.type === 'queued' ? createTrackedTaskFromQueuedEvent(event) : null)
