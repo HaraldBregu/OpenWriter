@@ -94,6 +94,7 @@ export type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	ServiceProvider,
+	AppLogEntry,
 };
 
 // ---------------------------------------------------------------------------
