@@ -426,13 +426,6 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
-// window.logs — Application log ring buffer
-// ---------------------------------------------------------------------------
-const logs: LogsApi = {
-	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
-} satisfies LogsApi;
-
-// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -441,7 +434,6 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('win', win);
 		contextBridge.exposeInMainWorld('workspace', workspace);
 		contextBridge.exposeInMainWorld('task', task);
-		contextBridge.exposeInMainWorld('logs', logs);
 	} catch (error) {
 		console.error('[preload] Failed to expose IPC APIs:', error);
 	}
@@ -454,6 +446,4 @@ if (process.contextIsolated) {
 	globalThis.workspace = workspace;
 	// @ts-ignore (define in dts)
 	globalThis.task = task;
-	// @ts-ignore (define in dts)
-	globalThis.logs = logs;
 }
