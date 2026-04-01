@@ -243,6 +243,18 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<AppSidebarMenuButton
 											asChild
 											className="h-9 px-3"
+											isActive={location.pathname === '/data'}
+										>
+											<Link to="/data">
+												<Database className="h-4 w-4 shrink-0" />
+												<span className="flex-1 truncate">{t('appLayout.data', 'Data')}</span>
+											</Link>
+										</AppSidebarMenuButton>
+									</AppSidebarMenuItem>
+									<AppSidebarMenuItem>
+										<AppSidebarMenuButton
+											asChild
+											className="h-9 px-3"
 											isActive={location.pathname === '/agents'}
 										>
 											<Link to="/agents">
