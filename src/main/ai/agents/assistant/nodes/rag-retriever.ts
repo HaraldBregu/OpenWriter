@@ -34,7 +34,7 @@ export interface RetrievedDocument {
 }
 
 export class RagRetriever {
-	private store: JsonVectorStore | null = null;
+	private store: VectorStore | null = null;
 	private loaded = false;
 
 	constructor(private readonly options: RagRetrieverOptions) {}
@@ -66,7 +66,7 @@ export class RagRetriever {
 		const storePath = path.join(this.options.workspacePath, VECTOR_STORE_SUBDIR);
 
 		try {
-			this.store = await JsonVectorStore.load(storePath, this.options.embeddings);
+			this.store = await VectorStore.load(storePath, this.options.embeddings);
 		} catch {
 			// Store directory is missing or unreadable — leave store as null
 			this.store = null;
