@@ -229,6 +229,12 @@ export class LoggerService implements Disposable {
 
 		this.buffer.push(entry);
 
+		// Keep recent entries for IPC queries (ring buffer)
+		this.recentBuffer.push(entry);
+		if (this.recentBuffer.length > LoggerService.RECENT_BUFFER_MAX) {
+			this.recentBuffer.shift();
+		}
+
 		// Console output if enabled
 		if (this.consoleOutput) {
 			const formatted = this.formatLogEntry(entry);
