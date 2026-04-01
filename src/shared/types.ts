@@ -131,7 +131,7 @@ export type TaskEvent =
 	  }
 	| {
 			type: 'cancelled';
-			data: TaskEventResponse<Record<string, never>>;
+			data: TaskEventResponse<Record<string, unknown>>;
 	  }
 	| {
 			type: 'stream';
