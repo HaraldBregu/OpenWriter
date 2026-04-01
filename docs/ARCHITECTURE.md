@@ -1,105 +1,189 @@
 # Architecture Overview
 
-OpenWriter is an Electron application structured in three distinct layers: **Renderer**, **Preload / API**, and **Main**. Each layer has a clear responsibility and communicates only through the defined boundaries below.
+OpenWriter is split into four runtime layers:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         Renderer                            │
-│   React UI, pages, components, Redux store, TipTap editor  │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                    (contextBridge IPC)
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                       Preload / API                         │
-│                                                             │
-│   ┌───────────┐  ┌────────┐  ┌──────────┐  ┌─────────┐    │
-│   │ Workspace │  │  Task  │  │  Window  │  │   App   │    │
-│   └─────:─────┘  └───:────┘  └──────────┘  └─────────┘    │
-└─────────:────────────:────────────────────────────────────  ┘
-          :            :  (ipcMain.handle)
-          :     ┌──────:──────────────────────────────────────┐
-          :     │      ▼                                      │
-          :     │  ┌──────────────┐                           │
-          :     │  │ Task Manager │                           │
-          :     │  └──────┬───────┘                           │
-          :     │         │                                   │
-          :     │         ▼                                   │
-          :     │  ┌─────────────┐                            │
-          :     │  │  AI Manager │                     Main   │
-          :     │  └──────○──────┘                            │
-          :     │         ○                                   │
-          :     │  ┌──────┴───────┐                           │
-          └......▶ │  Workspace   │                           │
-                │  └──────────────┘                           │
-                └────────────────────────────────────────────-┘
-```
+1. `renderer` for React UI
+2. `preload` for the typed browser-safe bridge
+3. `shared` for IPC contracts and DTOs
+4. `main` for privileged Electron, filesystem, task, and AI orchestration
 
-**Legend**
+The current `main` and `preload` architecture is shown below.
 
-- `│` solid line — direct call / ownership
-- `:` dotted line — IPC channel (Preload → Main)
-- `○` interface connector — AI Manager uses Workspace via a defined interface
+```mermaid
+flowchart TB
+	Renderer[Renderer<br/>React UI]
 
----
+	subgraph Preload[Preload API<br/>src/preload/index.ts]
+		AppApi[window.app]
+		WinApi[window.win]
+		WorkspaceApi[window.workspace]
+		TaskApi[window.task]
+		TypedIPC[typedInvoke / typedInvokeUnwrap / typedInvokeRaw / typedSend / typedOn]
 
-## Layers
+		AppApi --> TypedIPC
+		WinApi --> TypedIPC
+		WorkspaceApi --> TypedIPC
+		TaskApi --> TypedIPC
+	end
 
-### Renderer
+	Shared[Shared IPC contracts<br/>src/shared/channels.ts]
 
-The browser-side process. Contains all React UI code: pages, components, hooks, and the Redux store. Has no direct access to Node.js APIs or the file system — all system interactions go through the Preload API.
+	subgraph Main[Main Process]
+		Bootstrap[bootstrapServices()<br/>bootstrapIpcModules()]
+		IpcModules[IPC modules<br/>AppIpc | WindowIpc | WorkspaceIpc | TaskManagerIpc | ResearcherIpc]
+		GlobalServices[Global services<br/>StoreService | FileManager | LoggerService | WindowFactory | WindowContextManager | AgentRegistry | ProviderResolver | ResearcherService | TaskExecutor | ExtractorRegistry]
 
-Key directories: `src/renderer/src/`
+		subgraph WindowScope[Per-window services<br/>created by WindowContextManager]
+			WorkspaceService[WorkspaceService]
+			WorkspaceMetadata[WorkspaceMetadataService]
+			DocumentsWatcher[DocumentsWatcherService]
+			OutputFiles[OutputFilesService]
+			ProjectWorkspace[ProjectWorkspaceService]
+			WorkspaceFacade[Workspace facade<br/>workspaceManager]
 
----
+			WorkspaceService --> WorkspaceMetadata
+			WorkspaceService --> DocumentsWatcher
+			WorkspaceService --> OutputFiles
+			WorkspaceService --> ProjectWorkspace
+			WorkspaceService --> WorkspaceFacade
+			WorkspaceMetadata --> WorkspaceFacade
+			DocumentsWatcher --> WorkspaceFacade
+			OutputFiles --> WorkspaceFacade
+			ProjectWorkspace --> WorkspaceFacade
+		end
 
-### Preload / API
+		TaskHandlers[Task handlers<br/>AgentTaskHandler | IndexResourcesTaskHandler]
+		AI[AI and indexing<br/>agent graphs | embeddings | vector store]
 
-The bridge layer exposed via Electron's `contextBridge`. Defines the typed surface the Renderer can call. Each namespace maps to a set of IPC channels.
+		Bootstrap --> IpcModules
+		Bootstrap --> GlobalServices
+		GlobalServices --> WindowScope
+		GlobalServices --> TaskHandlers
+		TaskHandlers --> AI
+	end
 
-| Namespace   | Responsibility                                              |
-| ----------- | ----------------------------------------------------------- |
-| `Workspace` | Open, close, and watch workspace folders                    |
-| `Task`      | Create, cancel, and stream background tasks                 |
-| `Window`    | Control the BrowserWindow (maximize, minimize, close, etc.) |
-| `App`       | App-level utilities (version, platform, theme, etc.)        |
-
-Key files: `src/preload/index.ts`, `src/preload/index.d.ts`
-
----
-
-### Main
-
-The Node.js process. Handles all privileged operations: file system, AI model calls, and long-running background work.
-
-| Module         | Responsibility                                             | Depends on   |
-| -------------- | ---------------------------------------------------------- | ------------ |
-| `Task Manager` | Priority queue, concurrent task execution, progress stream | —            |
-| `AI Manager`   | LLM orchestration via LangChain/LangGraph, prompt routing  | Task Manager |
-| `Workspace`    | File system watch, folder read/write, recent files         | AI Manager ○ |
-
-> `○` — AI Manager accesses Workspace through an interface (not a direct import), keeping the dependency inverted.
-
-Key directories: `src/main/`
-
----
-
-## Communication Flow
-
-```
-Renderer  →  window.api.<namespace>.<method>()
-          →  IPC channel (ipcRenderer.invoke / ipcRenderer.send)
-          →  Main process handler (ipcMain.handle)
-          →  Module (Workspace / TaskManager / AIManager)
-          ←  Result / stream events back to Renderer
+	Renderer --> Preload
+	TypedIPC --> Shared
+	Shared --> IpcModules
 ```
 
-The Preload layer is the only place where `ipcRenderer` is used. The Renderer never calls Electron APIs directly.
+## What The Image Needed To Show
 
----
+The screenshot was not accurate for the current codebase.
 
-## Related docs
+- `preload` is correct about the four exposed namespaces: `app`, `win`, `workspace`, and `task`.
+- The `main` side is not just `Workspace`, `Task`, `Window`, and `App`.
+- `Workspace` is not the parent container of `Task`, `Window`, and `App`.
+- The actual runtime has a global IPC layer and a global service layer above the domain services.
+- Workspace logic is split into per-window services managed by `WindowContextManager`.
+- `Task` runs through `TaskExecutor` and registered handlers, not directly as a child of `Workspace`.
+- AI is not a single block under `Task`; it is reached through task handlers and also has a separate `ResearcherIpc` path in main.
+- `ResearcherIpc` exists in `main`, but it is not currently exposed by `src/preload/index.ts`, so it is not part of the public preload API.
 
-- [TASK_MANAGER.md](./TASK_MANAGER.md) — TaskManager queue, concurrency, and streaming
-- [TASK_MANAGER_AI_HANDLERS.md](./TASK_MANAGER_AI_HANDLERS.md) — AI task handler patterns
-- [WORKSPACE_STATE_MANAGEMENT_PHASE1.md](./WORKSPACE_STATE_MANAGEMENT_PHASE1.md) — Workspace state design
+## Preload To Main Mapping
+
+| Preload namespace | Main IPC module | Backing runtime |
+| --- | --- | --- |
+| `window.app` | `AppIpc` | Electron menus/theme/sound plus `StoreService` provider settings |
+| `window.win` | `WindowIpc` | `BrowserWindow` state and application menu access |
+| `window.workspace` | `WorkspaceIpc` | Per-window `workspaceManager` facade and Electron dialog/shell helpers |
+| `window.task` | `TaskManagerIpc` | Global `TaskExecutor`, `TaskHandlerRegistry`, and task events |
+| not exposed in preload | `ResearcherIpc` | Global `ResearcherService` streaming pipeline |
+
+## Ownership And Dependencies
+
+### Preload
+
+`src/preload/index.ts` is a transport layer only.
+
+- it exposes `window.app`, `window.win`, `window.workspace`, and `window.task`
+- it does not implement business logic
+- it delegates all IPC transport through `src/preload/typed-ipc.ts`
+- all channel names and payload types come from `src/shared/channels.ts`
+
+### Main Global Layer
+
+`src/main/bootstrap.ts` builds the global runtime.
+
+It registers:
+
+- core infrastructure: `ServiceContainer`, `EventBus`, `AppState`, `WindowFactory`, `WindowContextManager`
+- shared services: `StoreService`, `FileManager`, `LoggerService`
+- AI/task services: `AgentRegistry`, `ProviderResolver`, `ResearcherService`, `TaskExecutor`, `ExtractorRegistry`
+- IPC modules: `AppIpc`, `WorkspaceIpc`, `TaskManagerIpc`, `WindowIpc`, `ResearcherIpc`
+
+### Main Window-Scoped Layer
+
+Each `BrowserWindow` gets its own `WindowContext`.
+
+That context creates isolated instances of:
+
+- `WorkspaceService`
+- `WorkspaceMetadataService`
+- `DocumentsWatcherService`
+- `OutputFilesService`
+- `ProjectWorkspaceService`
+- `Workspace` facade registered as `workspaceManager`
+
+This is the key architectural point the screenshot missed: workspace state is per-window, not one shared global singleton for every window.
+
+## Data Flow
+
+### App And Window Flow
+
+```text
+Renderer
+  -> window.app / window.win
+  -> preload typed IPC
+  -> AppIpc / WindowIpc
+  -> Electron APIs and StoreService
+```
+
+### Workspace Flow
+
+```text
+Renderer
+  -> window.workspace
+  -> preload typed IPC
+  -> WorkspaceIpc
+  -> window-scoped workspaceManager
+  -> WorkspaceService / metadata / watchers / output files / project workspace
+  -> EventBus broadcast
+  -> preload event subscription
+  -> renderer updates UI state
+```
+
+### Task And AI Flow
+
+```text
+Renderer
+  -> window.task.submit(...)
+  -> TaskManagerIpc
+  -> TaskExecutor
+  -> TaskHandlerRegistry
+  -> AgentTaskHandler or IndexResourcesTaskHandler
+  -> AI agents / indexing pipeline
+  -> TaskExecutor emits task:event through EventBus
+  -> preload onEvent subscription
+  -> renderer task store
+```
+
+## Related Files
+
+- [src/preload/index.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\preload\index.ts)
+- [src/preload/typed-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\preload\typed-ipc.ts)
+- [src/shared/channels.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\shared\channels.ts)
+- [src/main/bootstrap.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\bootstrap.ts)
+- [src/main/core/window-context.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\core\window-context.ts)
+- [src/main/core/window-scoped-service-factory.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\core\window-scoped-service-factory.ts)
+- [src/main/ipc/workspace-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\workspace-ipc.ts)
+- [src/main/ipc/task-manager-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\task-manager-ipc.ts)
+- [src/main/ipc/app-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\app-ipc.ts)
+- [src/main/ipc/window-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\window-ipc.ts)
+- [src/main/ipc/researcher-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\researcher-ipc.ts)
+
+## Related Docs
+
+- [TASK_MANAGER.md](./TASK_MANAGER.md)
+- [TASK_MANAGER_AI_HANDLERS.md](./TASK_MANAGER_AI_HANDLERS.md)
+- [WORKSPACE_STATE_MANAGEMENT_PHASE1.md](./WORKSPACE_STATE_MANAGEMENT_PHASE1.md)
