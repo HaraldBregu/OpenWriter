@@ -53,3 +53,13 @@ See [researcher-architecture.md](researcher-architecture.md) for complete specif
 - `src/main/ai/researcher/` — self-contained module
 - Channels: `researcher:query`, `researcher:cancel`, `researcher:event`
 - Window API: `window.researcher.query(...)`, `window.researcher.cancel(...)`, `window.researcher.onEvent(...)`
+
+## RAG System (implemented 2026-04)
+- `src/main/ai/indexing/json-vector-store.ts` — `JsonVectorStore` — brute-force cosine similarity, JSON-file backed; `load(storePath, embeddings)`, `similaritySearchWithScore(query, k)`
+- Vector store path: `{workspacePath}/data/vector_store/` (populated by `IndexResourcesTaskHandler`)
+- `src/main/ai/agents/assistant/nodes/rag-retriever.ts` — `RagRetriever` class; wraps `JsonVectorStore.load()`; lazy-loads once; gracefully returns `[]` when store is missing
+- `src/main/ai/agents/assistant/nodes/rag-node.ts` — `ragNode(state, retriever) → { ragContext }` — node function; skips retrieval on empty prompt; joins docs with `\n\n---\n\n`
+- `src/main/ai/agents/assistant/state.ts` — `AssistantState` includes `ragContext: Annotation<string>` (overwrite reducer)
+- Tests: `tests/unit/main/ai/assistant/RagNode.test.ts` — 16 tests covering RagRetriever + ragNode; mocks `JsonVectorStore.load` at module level
+- Embedding: `src/main/shared/embedding-factory.ts` — `createEmbeddingModel(opts) → OpenAIEmbeddings`
+- Pre-existing TypeScript error in `src/preload/index.ts` (WorkspaceInfo shape mismatch) — not caused by RAG work

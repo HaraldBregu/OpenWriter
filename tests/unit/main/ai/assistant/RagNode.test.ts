@@ -30,9 +30,11 @@ function makeStore(
 ) {
 	return {
 		size: entries.length,
-		similaritySearchWithScore: jest.fn().mockResolvedValue(
-			entries.map(({ pageContent, metadata, score }) => [{ pageContent, metadata }, score])
-		),
+		similaritySearchWithScore: jest
+			.fn()
+			.mockResolvedValue(
+				entries.map(({ pageContent, metadata, score }) => [{ pageContent, metadata }, score])
+			),
 	};
 }
 
@@ -264,7 +266,7 @@ describe('ragNode', () => {
 		const result = await ragNode(state, retriever);
 
 		expect(result.ragContext).toBe('');
-		expect((retriever.retrieve as jest.Mock)).not.toHaveBeenCalled();
+		expect(retriever.retrieve as jest.Mock).not.toHaveBeenCalled();
 	});
 
 	it('calls retrieve with the trimmed prompt text', async () => {
@@ -273,7 +275,7 @@ describe('ragNode', () => {
 
 		await ragNode(state, retriever);
 
-		expect((retriever.retrieve as jest.Mock)).toHaveBeenCalledWith('What is recursion?');
+		expect(retriever.retrieve as jest.Mock).toHaveBeenCalledWith('What is recursion?');
 	});
 
 	it('returns ragContext as a single string for a single retrieved document', async () => {
@@ -288,9 +290,7 @@ describe('ragNode', () => {
 	});
 
 	it('does not mutate the state object', async () => {
-		const retriever = makeRetriever([
-			{ pageContent: 'Some content.', metadata: {}, score: 0.8 },
-		]);
+		const retriever = makeRetriever([{ pageContent: 'Some content.', metadata: {}, score: 0.8 }]);
 		const state = makeState({ prompt: 'A query.' });
 		const originalState = { ...state };
 
@@ -300,9 +300,7 @@ describe('ragNode', () => {
 	});
 
 	it('only returns the ragContext field in the partial update', async () => {
-		const retriever = makeRetriever([
-			{ pageContent: 'Context doc.', metadata: {}, score: 0.75 },
-		]);
+		const retriever = makeRetriever([{ pageContent: 'Context doc.', metadata: {}, score: 0.75 }]);
 		const state = makeState({ prompt: 'Query.' });
 
 		const result = await ragNode(state, retriever);
