@@ -160,9 +160,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 				{filtered.length === 0 ? (
 					<div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
 						<ScrollText className="h-10 w-10 opacity-20" />
-						<p className="text-sm font-sans">
-							{t('debug.noLogsYet', 'No log entries yet')}
-						</p>
+						<p className="text-sm font-sans">{t('debug.noLogsYet', 'No log entries yet')}</p>
 					</div>
 				) : (
 					<table className="w-full text-left border-collapse">
