@@ -16,6 +16,7 @@ import type {
 	TaskSubmitPayload,
 	TaskInfo,
 	TaskEvent,
+	TaskEventResponse,
 	TaskQueueStatus,
 	TaskPriority,
 	ResourceInfo,
