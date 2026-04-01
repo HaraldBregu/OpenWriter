@@ -1,4 +1,5 @@
 export const ASSISTANT_STATE_MESSAGES = {
+	RAG: 'Searching documents...',
 	UNDERSTAND: 'Understanding request...',
 	CONVERSATION: 'Responding...',
 	WRITING: 'Writing response...',
