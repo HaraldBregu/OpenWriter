@@ -91,61 +91,82 @@ export default function DebugLogsPage(): React.JSX.Element {
 			</div>
 
 			{/* Toolbar */}
-			<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
-				<input
-					type="text"
-					placeholder={t('debug.logsSearch', 'Search logs…')}
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-					className="flex-1 min-w-0 h-8 rounded-md border border-input bg-transparent px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-				/>
+			<AppTooltipProvider>
+				<div className="flex items-center gap-2 px-4 py-2 border-b shrink-0 bg-background">
+					<input
+						type="text"
+						placeholder={t('debug.logsSearch', 'Search logs…')}
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+						className="flex-1 min-w-0 h-8 rounded-md border border-input bg-transparent px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+					/>
 
-				<select
-					value={filterLevel}
-					onChange={(e) => setFilterLevel(e.target.value as LogLevel | 'ALL')}
-					className="h-8 rounded-md border border-input bg-transparent px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-				>
-					{LEVEL_OPTIONS.map((opt) => (
-						<option key={opt.value} value={opt.value}>
-							{opt.label}
-						</option>
-					))}
-				</select>
+					<select
+						value={filterLevel}
+						onChange={(e) => setFilterLevel(e.target.value as LogLevel | 'ALL')}
+						className="h-8 rounded-md border border-input bg-transparent px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+					>
+						{LEVEL_OPTIONS.map((opt) => (
+							<option key={opt.value} value={opt.value}>
+								{opt.label}
+							</option>
+						))}
+					</select>
 
-				<button
-					type="button"
-					onClick={() => setAutoRefresh((v) => !v)}
-					className={`flex items-center gap-1.5 h-8 rounded-md border px-3 text-sm transition-colors ${
-						autoRefresh
-							? 'border-primary bg-primary text-primary-foreground'
-							: 'border-input hover:bg-accent hover:text-accent-foreground'
-					}`}
-					aria-pressed={autoRefresh}
-					title={t('debug.autoRefresh', 'Auto-refresh')}
-				>
-					<RefreshCw className={`h-3.5 w-3.5 ${autoRefresh ? 'animate-spin' : ''}`} />
-					<span>{t('debug.autoRefresh', 'Auto-refresh')}</span>
-				</button>
+					<AppButton
+						variant={autoRefresh ? 'default' : 'outline'}
+						size="sm"
+						onClick={() => setAutoRefresh((v) => !v)}
+						aria-pressed={autoRefresh}
+					>
+						<RefreshCw className={autoRefresh ? 'animate-spin' : ''} />
+						{t('debug.autoRefresh', 'Auto-refresh')}
+					</AppButton>
 
-				<button
-					type="button"
-					onClick={fetchLogs}
-					disabled={loading}
-					className="flex items-center gap-1.5 h-8 rounded-md border border-input px-3 text-sm hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50"
-					title={t('debug.refresh', 'Refresh')}
-				>
-					<RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-				</button>
+					<AppTooltip>
+						<AppTooltipTrigger asChild>
+							<AppButton
+								variant="outline"
+								size="icon"
+								onClick={fetchLogs}
+								disabled={loading}
+								aria-label={t('debug.refresh', 'Refresh')}
+							>
+								<RefreshCw className={loading ? 'animate-spin' : ''} />
+							</AppButton>
+						</AppTooltipTrigger>
+						<AppTooltipContent>{t('debug.refresh', 'Refresh')}</AppTooltipContent>
+					</AppTooltip>
 
-				<button
-					type="button"
-					onClick={() => setEntries([])}
-					className="flex items-center gap-1.5 h-8 rounded-md border border-input px-3 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-					title={t('debug.clearLogs', 'Clear')}
-				>
-					<Trash2 className="h-3.5 w-3.5" />
-				</button>
-			</div>
+					<AppTooltip>
+						<AppTooltipTrigger asChild>
+							<AppButton
+								variant="outline"
+								size="icon"
+								onClick={() => window.app.openLogsFolder()}
+								aria-label={t('debug.openLogsFolder', 'Open logs folder')}
+							>
+								<FolderOpen />
+							</AppButton>
+						</AppTooltipTrigger>
+						<AppTooltipContent>{t('debug.openLogsFolder', 'Open logs folder')}</AppTooltipContent>
+					</AppTooltip>
+
+					<AppTooltip>
+						<AppTooltipTrigger asChild>
+							<AppButton
+								variant="outline"
+								size="icon"
+								onClick={() => setEntries([])}
+								aria-label={t('debug.clearLogs', 'Clear')}
+							>
+								<Trash2 />
+							</AppButton>
+						</AppTooltipTrigger>
+						<AppTooltipContent>{t('debug.clearLogs', 'Clear')}</AppTooltipContent>
+					</AppTooltip>
+				</div>
+			</AppTooltipProvider>
 
 			{/* Stats bar */}
 			<div className="flex items-center gap-4 px-4 py-1.5 border-b shrink-0 text-xs text-muted-foreground bg-muted/30">
