@@ -2,7 +2,7 @@
  * ai/index.ts — AI subsystem barrel.
  *
  * Covers the core agent infrastructure, concrete agent implementations, and
- * the indexing subsystem (document extraction, chunking, vector storage).
+ * the RAG subsystem (document extraction, chunking, vector storage).
  *
  * Definitions are plain exported constants. Registration is done explicitly
  * in bootstrapServices() via AgentRegistry.register(), following the same
