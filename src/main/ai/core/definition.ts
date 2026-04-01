@@ -57,6 +57,25 @@ export interface GraphInputContext {
 }
 
 // ---------------------------------------------------------------------------
+// Runtime graph context
+// ---------------------------------------------------------------------------
+
+/**
+ * Runtime context resolved by AgentTaskHandler before the graph is built.
+ * Passed to `AgentDefinition.prepareGraph` so definitions can inject
+ * workspace-bound resources (e.g. a RAG retriever) as graph node closures
+ * without leaking them through the executor's generic model interface.
+ */
+export interface AgentRuntimeContext {
+	/** Absolute path to the open workspace, if any. */
+	workspacePath?: string;
+	/** Resolved API key for the agent's primary provider. */
+	apiKey: string;
+	/** Primary provider identifier (e.g. 'openai'). */
+	providerId: string;
+}
+
+// ---------------------------------------------------------------------------
 // Core definition
 // ---------------------------------------------------------------------------
 
