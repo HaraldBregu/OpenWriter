@@ -134,16 +134,13 @@ function createTrackedTaskFromInfo(task: TaskInfo): TrackedTaskState {
 	};
 }
 
-function createTrackedTaskFromQueuedEvent(
-	event: Extract<TaskEvent, { type: 'queued' }>
-): TrackedTaskState {
+function createTrackedTaskFromQueuedEvent(event: TaskEvent): TrackedTaskState {
 	return {
 		taskId: event.taskId,
-		type: event.data?.taskType ?? '',
+		type: '',
 		status: 'queued',
 		priority: 'normal',
 		progress: { percent: 0 },
-		queuePosition: event.data?.position,
 		metadata:
 			event.metadata !== undefined && event.metadata !== null
 				? (event.metadata as Record<string, unknown>)
