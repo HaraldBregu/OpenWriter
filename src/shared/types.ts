@@ -76,7 +76,6 @@ export interface TaskInfo {
 	completedAt?: number;
 	windowId?: number;
 	error?: string;
-	queuePosition?: number;
 	durationMs?: number;
 	metadata?: Record<string, unknown>;
 }
