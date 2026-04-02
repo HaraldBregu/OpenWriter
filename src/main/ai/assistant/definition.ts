@@ -37,7 +37,11 @@ const definition: AgentDefinition = {
 		baseBuildGraph: NonNullable<AgentDefinition['buildGraph']>,
 		context: AgentRuntimeContext
 	): NonNullable<AgentDefinition['buildGraph']> {
-		if (!context.workspacePath) return baseBuildGraph;
+		const logger = context.logger;
+
+		if (!context.workspacePath) {
+			return (models) => buildGraph(models, undefined, logger);
+		}
 
 		const embeddings = createEmbeddingModel({
 			providerId: context.providerId,
@@ -45,7 +49,7 @@ const definition: AgentDefinition = {
 		});
 		const retriever = new RagRetriever({ workspacePath: context.workspacePath, embeddings });
 
-		return (models) => buildGraph(models, retriever);
+		return (models) => buildGraph(models, retriever, logger);
 	},
 
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
