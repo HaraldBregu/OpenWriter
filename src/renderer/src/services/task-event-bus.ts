@@ -74,7 +74,7 @@ function ensureListening(): void {
 		// Carry forward metadata when present.
 		const metadataOverride = event.metadata !== undefined ? { metadata: event.metadata } : {};
 
-		switch (event.type) {
+		switch (event.state) {
 			case 'queued': {
 				next = {
 					...prev,
