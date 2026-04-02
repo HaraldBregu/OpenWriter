@@ -60,8 +60,11 @@ export class RagRetriever {
 		}
 
 		const k = this.options.topK ?? DEFAULT_TOP_K;
+		const minScore = this.options.minScore ?? MIN_SCORE_THRESHOLD;
 		const results = await this.store.similaritySearchWithScore(query, k);
-		return results.map(([doc, score]) => toRetrievedDocument(doc, score));
+		return results
+			.filter(([, score]) => score >= minScore)
+			.map(([doc, score]) => toRetrievedDocument(doc, score));
 	}
 
 	private async loadStore(): Promise<void> {
