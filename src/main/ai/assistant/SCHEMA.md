@@ -81,9 +81,14 @@ Initial graph state produced by the assistant:
 {
   prompt: ctx.prompt,
   history: ctx.history,
+  normalizedPrompt: '',
+  intentFindings: '',
+  needsRetrieval: false,
+  needsImageGeneration: false,
+  textFindings: '',
   ragFindings: '',
-  grammarFindings: '',
-  phaseLabel: 'Running assistant checks...',
+  imageFindings: '',
+  phaseLabel: 'Classifying request...',
   response: ''
 }
 ```
@@ -99,8 +104,13 @@ interface AssistantGraphState {
 		role: 'user' | 'assistant';
 		content: string;
 	}>;
+	normalizedPrompt: string;
+	intentFindings: string;
+	needsRetrieval: boolean;
+	needsImageGeneration: boolean;
+	textFindings: string;
 	ragFindings: string;
-	grammarFindings: string;
+	imageFindings: string;
 	phaseLabel: string;
 	response: string;
 }
@@ -110,8 +120,13 @@ Field semantics:
 
 - `prompt`: raw user input for the current turn
 - `history`: prior conversation turns passed into the run
+- `normalizedPrompt`: classifier-normalized version of the request
+- `intentFindings`: internal routing note used by downstream workers
+- `needsRetrieval`: whether the RAG branch should query workspace context
+- `needsImageGeneration`: whether the image branch should prepare visual guidance
+- `textFindings`: internal text draft generated before aggregation
 - `ragFindings`: internal note generated from retrieved workspace context
-- `grammarFindings`: internal note generated from grammar and clarity review
+- `imageFindings`: internal image note or no-op marker
 - `phaseLabel`: current progress label surfaced to the UI
 - `response`: final text emitted by the aggregator node
 
@@ -121,8 +136,10 @@ Routing contract:
 
 ```text
 START
+  -> intent_classification
+  -> text_generation
   -> rag_query
-  -> grammar_check
+  -> image_generation
   -> aggregate
   -> END
 ```
@@ -130,8 +147,9 @@ START
 Execution detail:
 
 ```text
-rag_query and grammar_check run in parallel,
-then aggregate waits for both and produces the final output.
+intent_classification runs first,
+then text_generation, rag_query, and image_generation run in parallel,
+then aggregate waits for all three and produces the final output.
 ```
 
 ## Node Model Schema
@@ -139,7 +157,12 @@ then aggregate waits for both and produces the final output.
 The assistant is configured as a per-node model map:
 
 ```ts
-type AssistantNodeName = 'rag_query' | 'grammar_check' | 'aggregate';
+type AssistantNodeName =
+	| 'intent_classification'
+	| 'text_generation'
+	| 'rag_query'
+	| 'image_generation'
+	| 'aggregate';
 
 interface NodeModelConfig {
 	providerId: string;
@@ -155,9 +178,11 @@ Current configured values:
 
 ```ts
 {
-  rag_query:     { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
-  grammar_check: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 512 },
-  aggregate:     { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.6, maxTokens: 4096 }
+  intent_classification: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 512 },
+  text_generation:       { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
+  rag_query:             { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
+  image_generation:      { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 768 },
+  aggregate:             { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.5, maxTokens: 4096 }
 }
 ```
 
@@ -203,7 +228,8 @@ Known labels emitted by the assistant:
 
 ```ts
 {
-  PARALLEL_CHECKS: 'Running assistant checks...',
+  INTENT_CLASSIFICATION: 'Classifying request...',
+  PARALLEL_WORKERS: 'Running assistant specialists...',
   AGGREGATE: 'Composing response...'
 }
 ```

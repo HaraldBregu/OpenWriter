@@ -12,12 +12,37 @@ export const AssistantState = Annotation.Root({
 		default: () => [],
 	}),
 
+	normalizedPrompt: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	intentFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	needsRetrieval: Annotation<boolean>({
+		reducer: (_a, b) => b,
+		default: () => false,
+	}),
+
+	needsImageGeneration: Annotation<boolean>({
+		reducer: (_a, b) => b,
+		default: () => false,
+	}),
+
+	textFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
 	ragFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
-	grammarFindings: Annotation<string>({
+	imageFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),

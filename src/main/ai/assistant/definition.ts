@@ -5,22 +5,34 @@ import { RagRetriever } from './nodes/rag/rag-retriever';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
+	[ASSISTANT_NODE.INTENT_CLASSIFICATION]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.1,
+		maxTokens: 512,
+	},
+	[ASSISTANT_NODE.TEXT_GENERATION]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.4,
+		maxTokens: 2048,
+	},
 	[ASSISTANT_NODE.RAG_QUERY]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.GRAMMAR_CHECK]: {
+	[ASSISTANT_NODE.IMAGE_GENERATION]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.1,
-		maxTokens: 512,
+		temperature: 0.4,
+		maxTokens: 768,
 	},
 	[ASSISTANT_NODE.AGGREGATE]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.6,
+		temperature: 0.5,
 		maxTokens: 4096,
 	},
 };
@@ -34,7 +46,7 @@ const definition: AgentDefinition = {
 	buildGraph,
 
 	prepareGraph(
-		baseBuildGraph: NonNullable<AgentDefinition['buildGraph']>,
+		_baseBuildGraph: NonNullable<AgentDefinition['buildGraph']>,
 		context: AgentRuntimeContext
 	): NonNullable<AgentDefinition['buildGraph']> {
 		const logger = context.logger;
@@ -56,9 +68,14 @@ const definition: AgentDefinition = {
 		return {
 			prompt: ctx.prompt,
 			history: ctx.history,
+			normalizedPrompt: '',
+			intentFindings: '',
+			needsRetrieval: false,
+			needsImageGeneration: false,
+			textFindings: '',
 			ragFindings: '',
-			grammarFindings: '',
-			phaseLabel: ASSISTANT_STATE_MESSAGES.PARALLEL_CHECKS,
+			imageFindings: '',
+			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_CLASSIFICATION,
 			response: '',
 		};
 	},

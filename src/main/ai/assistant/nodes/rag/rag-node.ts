@@ -9,6 +9,9 @@ import SYSTEM_PROMPT from './RAG_QUERY_SYSTEM.md?raw';
 
 const CONTEXT_SEPARATOR = '\n\n---\n\n';
 const NO_CONTEXT_FINDING = 'No relevant workspace context was found for this request.';
+const RAG_SKIPPED_FINDING = 'Workspace retrieval was not required for this request.';
+const RAG_UNAVAILABLE_FINDING =
+	'Workspace retrieval was requested, but no workspace knowledge base is available.';
 
 function buildRagContext(documents: Awaited<ReturnType<RagRetriever['retrieve']>>): string {
 	return documents
@@ -32,10 +35,18 @@ function getSourceLabel(metadata: Record<string, unknown>, index: number): strin
 	return `document-${index + 1}`;
 }
 
-function buildHumanMessage(prompt: string, ragContext: string): string {
+function buildHumanMessage(prompt: string, normalizedPrompt: string, intentFindings: string, ragContext: string): string {
 	return [
 		'User request:',
 		prompt,
+		'',
+		'Normalized request:',
+		normalizedPrompt,
+		'',
+		'Intent classification:',
+		'<intent_findings>',
+		intentFindings,
+		'</intent_findings>',
 		'',
 		'Retrieved workspace context:',
 		'<workspace_context>',
@@ -50,14 +61,23 @@ export async function ragQueryNode(
 	retriever?: RagRetriever,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	const query = state.prompt.trim();
+	const query = (state.normalizedPrompt || state.prompt).trim();
 
-	if (query.length === 0 || retriever === undefined) {
+	if (!state.needsRetrieval) {
+		logger?.debug('RagQueryNode', 'Skipping RAG query because retrieval was not requested');
+		return { ragFindings: RAG_SKIPPED_FINDING };
+	}
+
+	if (query.length === 0) {
 		logger?.debug('RagQueryNode', 'Skipping RAG query', {
 			queryEmpty: query.length === 0,
-			retrieverUndefined: retriever === undefined,
 		});
 		return { ragFindings: NO_CONTEXT_FINDING };
+	}
+
+	if (retriever === undefined) {
+		logger?.debug('RagQueryNode', 'Skipping RAG query because no retriever is available');
+		return { ragFindings: RAG_UNAVAILABLE_FINDING };
 	}
 
 	logger?.debug('RagQueryNode', 'Starting RAG query', { queryLength: query.length });
@@ -73,7 +93,7 @@ export async function ragQueryNode(
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(query, ragContext)),
+		new HumanMessage(buildHumanMessage(state.prompt, query, state.intentFindings, ragContext)),
 	];
 	const response = await model.invoke(messages);
 	const ragFindings = extractTokenFromChunk(response.content).trim();

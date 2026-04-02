@@ -1,4 +1,5 @@
 export const ASSISTANT_STATE_MESSAGES = {
-	PARALLEL_CHECKS: 'Running assistant checks...',
+	INTENT_CLASSIFICATION: 'Classifying request...',
+	PARALLEL_WORKERS: 'Running assistant specialists...',
 	AGGREGATE: 'Composing response...',
 } as const;

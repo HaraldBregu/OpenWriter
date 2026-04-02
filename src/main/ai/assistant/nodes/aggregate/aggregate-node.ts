@@ -7,20 +7,36 @@ import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './AGGREGATE_SYSTEM.md?raw';
 
-function buildHumanMessage(prompt: string, ragFindings: string, grammarFindings: string): string {
+function buildHumanMessage(
+	prompt: string,
+	intentFindings: string,
+	textFindings: string,
+	ragFindings: string,
+	imageFindings: string
+): string {
 	return [
 		'Original user request:',
 		prompt,
 		'',
-		'RAG findings:',
+		'Intent classification:',
+		'<intent_findings>',
+		intentFindings || 'No intent findings available.',
+		'</intent_findings>',
+		'',
+		'Text generation output:',
+		'<text_findings>',
+		textFindings || 'No text draft was generated.',
+		'</text_findings>',
+		'',
+		'RAG output:',
 		'<rag_findings>',
 		ragFindings || 'No relevant workspace context was found for this request.',
 		'</rag_findings>',
 		'',
-		'Grammar and clarity findings:',
-		'<grammar_findings>',
-		grammarFindings || 'No grammar findings available.',
-		'</grammar_findings>',
+		'Image generation output:',
+		'<image_findings>',
+		imageFindings || 'No image output was requested.',
+		'</image_findings>',
 	].join('\n');
 }
 
@@ -29,11 +45,19 @@ export async function aggregateNode(
 	model: BaseChatModel,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	const humanMessage = buildHumanMessage(state.prompt, state.ragFindings, state.grammarFindings);
+	const humanMessage = buildHumanMessage(
+		state.prompt,
+		state.intentFindings,
+		state.textFindings,
+		state.ragFindings,
+		state.imageFindings
+	);
 	logger?.debug('AggregateNode', 'Starting aggregate generation', {
 		promptLength: state.prompt.length,
+		intentFindingsLength: state.intentFindings.length,
+		textFindingsLength: state.textFindings.length,
 		ragFindingsLength: state.ragFindings.length,
-		grammarFindingsLength: state.grammarFindings.length,
+		imageFindingsLength: state.imageFindings.length,
 	});
 
 	const messages = [
