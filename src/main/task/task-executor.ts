@@ -382,7 +382,7 @@ export class TaskExecutor implements Disposable {
 		}
 
 		this.send(windowId, 'task:event', {
-			type: 'started',
+			state: 'started',
 			taskId,
 			data: {},
 			error: null,
