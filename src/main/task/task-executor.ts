@@ -24,7 +24,7 @@ import type { TaskEvent } from './task-events';
 import type { ProgressReporter, StreamReporter } from './task-handler';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
-import { getTaskStatusText, withTaskStatusText } from '../../shared/task-metadata';
+import { getTaskStatusText, withTaskStatusText } from '../../shared/types';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
 const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000; // 5 minutes
