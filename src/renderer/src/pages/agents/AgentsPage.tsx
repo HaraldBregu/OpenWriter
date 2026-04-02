@@ -11,8 +11,8 @@ import {
 	AppTableHeader,
 	AppTableRow,
 } from '@/components/app';
-import { DEFAULT_AGENTS } from '../../../../shared/ai-settings';
-import type { AgentConfig } from '../../../../shared/ai-settings';
+import { DEFAULT_AGENTS } from '../../../../shared/types';
+import type { AgentConfig } from '../../../../shared/types';
 
 function getAgentIcon(agentId: string): {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
