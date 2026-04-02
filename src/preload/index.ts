@@ -8,7 +8,7 @@ import {
 	LogChannels,
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
-import type { ServiceProvider } from '../shared/provider-defaults';
+import type { ServiceProvider } from '../shared/provider-constants';
 import type { WorkspaceInfo } from '../shared/types';
 
 // ---------------------------------------------------------------------------
