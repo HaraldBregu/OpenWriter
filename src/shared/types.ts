@@ -519,24 +519,4 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		name: 'Assistant',
 		description: 'Routes requests by intent and responds through the right specialist flow',
 	},
-	{
-		id: 'writer',
-		name: 'Writer',
-		description: 'Writes text from a prompt',
-	},
-	{
-		id: 'researcher',
-		name: 'Researcher',
-		description: 'Finds, summarizes, and organizes information for your writing',
-	},
-	{
-		id: 'text-writer',
-		name: 'Narrator',
-		description: 'Shapes scenes, voice, and storytelling flow for narrative writing',
-	},
-	{
-		id: 'painter',
-		name: 'Painter',
-		description: 'Generates images from a text prompt',
-	},
 ];

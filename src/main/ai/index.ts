@@ -15,15 +15,7 @@ export { toAgentDefinitionInfo, AgentRegistry, executeAIAgentsStream } from './c
 export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage } from './core';
 
 // Agents
-export {
-	AssistantAgent,
-	TextCompleterAgent,
-	TextEnhanceAgent,
-	TextWriterAgent,
-	WriterAgent,
-	PainterAgent,
-	ResearcherAgent,
-} from './agents';
+export { AssistantAgent } from './assistant/definition';
 
 // RAG
 export type { DocumentExtractor, ExtractedContent } from './rag';

@@ -59,7 +59,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
-
 	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
 	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);
 
@@ -248,7 +247,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		},
 		[dispatch]
 	);
-
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
@@ -481,7 +479,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				cursorPos,
 				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
 			);
-
 		},
 		[handleAssistantSend]
 	);
@@ -536,7 +533,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								{loaded && (
 									<TextEditor
 										disabled={
-			textEnhanceTask.isRunning ||
+											textEnhanceTask.isRunning ||
 											textWriterTask.isRunning ||
 											imageGeneratorTask.isRunning ||
 											assistantIsRunning
