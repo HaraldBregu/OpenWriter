@@ -26,12 +26,20 @@ function buildHumanMessage(prompt: string, ragFindings: string, grammarFindings:
 
 export async function aggregateNode(
 	state: typeof AssistantState.State,
-	model: BaseChatModel
+	model: BaseChatModel,
+	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
+	const humanMessage = buildHumanMessage(state.prompt, state.ragFindings, state.grammarFindings);
+	logger?.debug('AggregateNode', 'Starting aggregate generation', {
+		promptLength: state.prompt.length,
+		ragFindingsLength: state.ragFindings.length,
+		grammarFindingsLength: state.grammarFindings.length,
+	});
+
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state.prompt, state.ragFindings, state.grammarFindings)),
+		new HumanMessage(humanMessage),
 	];
 
 	let response = '';
@@ -42,6 +50,10 @@ export async function aggregateNode(
 			response += token;
 		}
 	}
+
+	logger?.info('AggregateNode', 'Aggregate response generated', {
+		responseLength: response.length,
+	});
 
 	return {
 		phaseLabel: ASSISTANT_STATE_MESSAGES.AGGREGATE,
