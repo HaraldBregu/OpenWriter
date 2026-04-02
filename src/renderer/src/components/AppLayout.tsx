@@ -178,9 +178,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 									<AppSidebarMenuItem>
-										<AppSidebarMenuButton className="h-9 px-3">
-											<Search className="h-4 w-4 shrink-0" />
-											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
+										<AppSidebarMenuButton
+											asChild
+											className="h-9 px-3"
+											isActive={location.pathname === '/search'}
+										>
+											<Link to="/search">
+												<Search className="h-4 w-4 shrink-0" />
+												<span className="flex-1 truncate">
+													{t('menu.search', 'Search')}
+												</span>
+											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 								</AppSidebarMenu>

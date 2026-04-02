@@ -55,6 +55,7 @@ const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const DataPage = lazy(() => import('./pages/data/Page'));
+const SearchPage = lazy(() => import('./pages/search/SearchPage'));
 
 // Lazy-loaded settings pages
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
@@ -182,6 +183,14 @@ const App: React.FC = () => {
 													element={
 														<RouteWrapper>
 															<DebugLogsPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/search"
+													element={
+														<RouteWrapper>
+															<SearchPage />
 														</RouteWrapper>
 													}
 												/>
