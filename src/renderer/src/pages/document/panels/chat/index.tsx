@@ -11,7 +11,7 @@ import { Bot } from 'lucide-react';
 import { TextSelection } from '@tiptap/pm/state';
 import { debounce } from 'lodash';
 import { v7 as uuidv7 } from 'uuid';
-import { getTaskStatusText } from '../../../../../../shared/task-metadata';
+import { getTaskStatusText } from '../../../../../../shared/types';
 import {
 	initTaskMetadata,
 	subscribeToTask,
