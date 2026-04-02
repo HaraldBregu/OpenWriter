@@ -1,6 +1,6 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { toLangChainHistoryMessages } from '../../../../core/history';
+import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../../state';
 import { phaseLabelForIntent } from '../../messages';
 import SYSTEM_PROMPT from './UNDERSTAND_SYSTEM.md?raw';
