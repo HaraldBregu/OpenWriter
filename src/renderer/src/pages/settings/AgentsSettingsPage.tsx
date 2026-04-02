@@ -63,13 +63,8 @@ const AgentsSettingsPage: React.FC = () => {
 
 				for (const agent of DEFAULT_AGENTS) {
 					const agentKey = getAgentKey(agent);
-					const legacySavedProvider = getLegacyAgentKeys(agent)
-						.map((key) => saved[key])
-						.find((value): value is string => typeof value === 'string');
 					const savedProvider =
-						typeof saved[agentKey] === 'string'
-							? saved[agentKey]
-							: (legacySavedProvider ?? saved[agent.name]);
+						typeof saved[agentKey] === 'string' ? saved[agentKey] : saved[agent.name];
 					const resolvedProvider =
 						typeof savedProvider === 'string' && uniqueProviders.includes(savedProvider)
 							? savedProvider
