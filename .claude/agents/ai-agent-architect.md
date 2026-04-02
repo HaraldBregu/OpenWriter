@@ -348,6 +348,11 @@ src/
 - ❌ Ignoring error states in the graph (always have error handling edges)
 - ❌ Using string-based routing instead of typed enums/constants
 - ❌ Skipping checkpointing for long-running agent workflows
+- ❌ Using overwrite reducers on fields written by parallel branches (causes race conditions)
+- ❌ Building RAG without metadata filtering — always store and leverage source metadata
+- ❌ Designing swarms without a clear termination condition — always define a `__end__` handoff
+- ❌ Calling all tools sequentially when they are independent — use parallel tool calling
+- ❌ Mixing multi-agent architectures without a deliberate topology choice — pick the right pattern for the problem
 
 ## Communication Style
 
