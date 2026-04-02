@@ -444,10 +444,18 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	}, [assistantActiveTaskId]);
 
 	const handleAssistantSend = useCallback(
-		async (content: string) => {
+		async (before: string, after: string, cursorPos: number, input: string) => {
 			if (!id || assistantIsRunning) return;
 
 			editorRef.current?.setContentGeneratorEnable(false);
+
+			const prompt = `
+			${before}
+
+			⬢ ${input} ⬢
+
+			${after}
+			`;
 
 			const resolvedSessionId = assistantSessionId ?? uuidv7();
 			if (!assistantSessionId) {
@@ -458,11 +466,14 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			try {
 				const taskType = 'agent-assistant';
-				const taskInput = { prompt: content };
+				const taskInput = { prompt };
 				const metadata = {
 					agentId: 'assistant',
 					documentId: id,
 					chatId: resolvedSessionId,
+					before,
+					after,
+					cursorPos,
 				};
 
 				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
