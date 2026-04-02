@@ -507,23 +507,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[textCompleterTask]
 	);
 
-	const onTextSubmit = useCallback(
-		(before: string, after: string, cursorPos: number, input: string) => {
-			editorRef.current?.setContentGeneratorEnable(false);
-			const prompt = `
-			${before}
-
-			⬢ ${input} ⬢
-
-			${after}
-			`;
-			const data: TextWriterTaskData = { prompt };
-			const metadata = { before, after, cursorPos };
-			textWriterTask.submit(data, metadata);
-		},
-		[textWriterTask]
-	);
-
 	const onImageSubmit = useCallback(
 		async (prompt: string) => {
 			if (!id) return;
