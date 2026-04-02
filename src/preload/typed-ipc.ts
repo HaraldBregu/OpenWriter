@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------------------
 
 import { ipcRenderer } from 'electron';
-import type { IpcResult } from '../shared/ipc-result';
+import type { IpcResult } from '../shared/types';
 import type { InvokeChannelMap, SendChannelMap, EventChannelMap } from '../shared/channels';
 
 // ---------------------------------------------------------------------------
