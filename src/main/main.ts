@@ -57,9 +57,9 @@ export class Main {
 		});
 	}
 
-	create(): BrowserWindow {
+	private createWindowOptions(trafficLightPosition = { x: 16, y: 16 }) {
 		const isMac = process.platform === 'darwin';
-		this.window = this.windowFactory.create({
+		return {
 			width: DEFAULT_WINDOW_WIDTH,
 			height: DEFAULT_WINDOW_HEIGHT,
 			minWidth: 800,
@@ -69,104 +69,127 @@ export class Main {
 			// Only use it on macOS where it hides the title bar while keeping traffic lights.
 			...(isMac && {
 				titleBarStyle: 'hidden' as const,
-				trafficLightPosition: { x: 16, y: 16 },
+				trafficLightPosition,
 			}),
 			backgroundColor: getBackgroundColor(),
+		};
+	}
+
+	private trackWindowVisibility(win: BrowserWindow): void {
+		win.on('show', () => {
+			this.onWindowVisibilityChange?.();
 		});
+
+		win.on('hide', () => {
+			this.onWindowVisibilityChange?.();
+		});
+
+		win.on('closed', () => {
+			if (this.window?.id === win.id) {
+				this.window = null;
+			}
+			this.onWindowVisibilityChange?.();
+		});
+	}
+
+	private createLauncherWindow(options: {
+		closeToTray?: boolean;
+		onReadyToShow?: (win: BrowserWindow) => void;
+	} = {}): BrowserWindow {
+		const { closeToTray = false, onReadyToShow } = options;
+		const win = this.windowFactory.create(this.createWindowOptions());
 
 		// Create window context for isolated services
-		this.windowContextManager.create(this.window);
+		this.windowContextManager.create(win);
 
-		// Attach common window handlers (shared with workspace windows)
-		this.attachCommonWindowHandlers(this.window);
+		this.attachCommonWindowHandlers(win);
+		this.trackWindowVisibility(win);
 
-		this.window.once('ready-to-show', () => {
-			this.window?.show();
+		win.once('ready-to-show', () => {
+			win.show();
+			onReadyToShow?.(win);
 		});
 
-		// Minimize to tray instead of closing
-		this.window.on('close', (event) => {
-			if (!this.appState.isQuitting) {
+		if (closeToTray) {
+			win.on('close', (event) => {
+				if (this.appState.isQuitting) {
+					return;
+				}
+
 				event.preventDefault();
-				this.window?.hide();
+				win.hide();
 				this.onWindowVisibilityChange?.();
-			}
-		});
+			});
+			this.window = win;
+		}
 
-		// Update tray menu when window is shown/hidden
-		this.window.on('show', () => {
-			this.onWindowVisibilityChange?.();
-		});
+		return win;
+	}
 
-		this.window.on('hide', () => {
-			this.onWindowVisibilityChange?.();
-		});
+	private getPreferredWindow(): BrowserWindow | null {
+		if (this.window && !this.window.isDestroyed()) {
+			return this.window;
+		}
 
-		this.window.on('closed', () => {
-			this.window = null;
-		});
+		return BrowserWindow.getAllWindows()[0] ?? null;
+	}
 
-		return this.window;
+	create(): BrowserWindow {
+		return this.createLauncherWindow({ closeToTray: true });
 	}
 
 	showOrCreate(): void {
-		const windows = BrowserWindow.getAllWindows();
-		if (windows.length > 0) {
-			windows[0].show();
-			windows[0].focus();
-		} else {
+		const preferredWindow = this.getPreferredWindow();
+		if (!preferredWindow) {
 			this.create();
+			return;
 		}
+
+		preferredWindow.show();
+		preferredWindow.focus();
 	}
 
 	hide(): void {
-		const windows = BrowserWindow.getAllWindows();
-		if (windows.length > 0) {
-			windows[0].hide();
-		}
+		BrowserWindow.getAllWindows().forEach((win) => {
+			win.hide();
+		});
 	}
 
 	toggleVisibility(): void {
-		const windows = BrowserWindow.getAllWindows();
-		if (windows.length > 0) {
-			const mainWindow = windows[0];
-			if (mainWindow.isVisible()) {
-				mainWindow.hide();
-			} else {
-				mainWindow.show();
-				mainWindow.focus();
-			}
-		} else {
-			this.create();
+		if (!this.isVisible()) {
+			this.showOrCreate();
+			return;
 		}
+
+		const windows = BrowserWindow.getAllWindows();
+		if (windows.length === 0) {
+			this.create();
+			return;
+		}
+
+		windows.forEach((win) => {
+			win.hide();
+		});
 	}
 
 	isVisible(): boolean {
-		const windows = BrowserWindow.getAllWindows();
-		return windows.length > 0 && windows[0].isVisible();
+		return BrowserWindow.getAllWindows().some((win) => win.isVisible());
 	}
 
 	setOnWindowVisibilityChange(callback: () => void): void {
 		this.onWindowVisibilityChange = callback;
 	}
 
-	createWindowForFile(filePath: string): BrowserWindow {
-		const isMac = process.platform === 'darwin';
-		const win = this.windowFactory.create({
-			width: DEFAULT_WINDOW_WIDTH,
-			height: DEFAULT_WINDOW_HEIGHT,
-			minWidth: 800,
-			minHeight: 600,
-			frame: false,
-			...(isMac && {
-				titleBarStyle: 'hidden' as const,
-				trafficLightPosition: { x: 9, y: 9 },
-			}),
-			backgroundColor: getBackgroundColor(),
-		});
+	createAdditionalWindow(): BrowserWindow {
+		return this.createLauncherWindow();
+	}
 
-		// Create window context for isolated services
+	createWindowForFile(filePath: string): BrowserWindow {
+		const win = this.windowFactory.create(this.createWindowOptions({ x: 9, y: 9 }));
+
 		this.windowContextManager.create(win);
+		this.attachCommonWindowHandlers(win);
+		this.trackWindowVisibility(win);
 
 		win.once('ready-to-show', () => {
 			win.show();

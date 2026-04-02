@@ -88,6 +88,10 @@ const menuManager = new Menu({
 			win.webContents.send('change-theme', theme);
 		});
 	},
+	onNewWindow: () => {
+		logger.info('Menu', 'Creating new launcher window');
+		mainWindow.createAdditionalWindow();
+	},
 	onNewWorkspace: async () => {
 		// Show folder selection dialog
 		const result = await dialog.showOpenDialog({
