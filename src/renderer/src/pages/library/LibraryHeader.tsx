@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Library, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
-interface ResourcesHeaderProps {
+interface LibraryHeaderProps {
 	uploading: boolean;
 	onUpload: () => void;
 	editing: boolean;
@@ -16,7 +16,7 @@ interface ResourcesHeaderProps {
 	onOpenFolder: () => void;
 }
 
-export const ResourcesHeader = memo(function ResourcesHeader({
+export const LibraryHeader = memo(function LibraryHeader({
 	uploading,
 	onUpload,
 	editing,
@@ -27,13 +27,13 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 	indexing,
 	onIndex,
 	onOpenFolder,
-}: ResourcesHeaderProps) {
+}: LibraryHeaderProps) {
 	const { t } = useTranslation();
 	return (
 		<div className="px-6 py-3 border-b shrink-0">
 			<div className="flex items-center gap-2">
 				<Library className="h-5 w-5 text-muted-foreground" />
-				<h1 className="text-lg font-semibold">{t('resources.title')}</h1>
+				<h1 className="text-lg font-semibold">{t('library.title')}</h1>
 				<div className="ml-auto flex items-center gap-2">
 					<AppButton
 						size="icon"
@@ -65,7 +65,7 @@ export const ResourcesHeader = memo(function ResourcesHeader({
 					{editing && selectedCount > 0 && (
 						<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
 							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
-							{t('resources.removeWithCount', { count: selectedCount })}
+							{t('library.removeWithCount', { count: selectedCount })}
 						</AppButton>
 					)}
 					<AppButton

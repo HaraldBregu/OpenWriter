@@ -26,13 +26,13 @@ import {
 } from '../../store/workspace';
 import { useTaskListener } from '../../hooks/use-task-listener';
 import { SUPPORTED_EXTENSIONS } from './constants';
-import { ResourcesHeader } from './ResourcesHeader';
-import { ResourcesEmptyState } from './ResourcesEmptyState';
-import { ResourcesTable } from './ResourcesTable';
+import { LibraryHeader } from './LibraryHeader';
+import { LibraryEmptyState } from './LibraryEmptyState';
+import { LibraryTable } from './LibraryTable';
 
 const RESOURCES_DIR = 'resources';
 
-export default function ResourcesPage() {
+export default function LibraryPage() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const resources = useAppSelector(selectResources);
@@ -111,7 +111,7 @@ export default function ResourcesPage() {
 
 	return (
 		<div className="flex flex-col h-full">
-			<ResourcesHeader
+			<LibraryHeader
 				uploading={uploading}
 				onUpload={handleUpload}
 				editing={editing}
@@ -128,7 +128,7 @@ export default function ResourcesPage() {
 				<div className="px-6 py-3 border-b shrink-0">
 					<div className="flex items-center gap-2">
 						<Loader2 className="h-4 w-4 animate-spin text-primary" />
-						<span className="text-sm text-muted-foreground">{t('resources.indexing')}</span>
+						<span className="text-sm text-muted-foreground">{t('library.indexing')}</span>
 					</div>
 				</div>
 			)}
@@ -137,17 +137,17 @@ export default function ResourcesPage() {
 				<div className="px-6 py-3 border-b shrink-0">
 					<div className="flex items-center gap-4 text-xs text-muted-foreground">
 						<span>
-							{t('resources.lastIndexed')} {new Date(indexingInfo.lastIndexedAt).toLocaleString()}
+							{t('library.lastIndexed')} {new Date(indexingInfo.lastIndexedAt).toLocaleString()}
 						</span>
 						<span>
-							{indexingInfo.indexedCount} {t('resources.documents')}
+							{indexingInfo.indexedCount} {t('library.documents')}
 						</span>
 						<span>
-							{indexingInfo.totalChunks} {t('resources.chunks')}
+							{indexingInfo.totalChunks} {t('library.chunks')}
 						</span>
 						{indexingInfo.failedCount > 0 && (
 							<span className="text-destructive">
-								{indexingInfo.failedCount} {t('resources.failed')}
+								{indexingInfo.failedCount} {t('library.failed')}
 							</span>
 						)}
 						<AppButton
@@ -166,7 +166,7 @@ export default function ResourcesPage() {
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<Loader2 className="h-4 w-4 animate-spin" />
-						<span>{t('resources.loading')}</span>
+						<span>{t('library.loading')}</span>
 					</div>
 				)}
 
@@ -177,11 +177,11 @@ export default function ResourcesPage() {
 				)}
 
 				{!loading && !error && resources.length === 0 && (
-					<ResourcesEmptyState uploading={uploading} onUpload={handleUpload} />
+					<LibraryEmptyState uploading={uploading} onUpload={handleUpload} />
 				)}
 
 				{!loading && !error && resources.length > 0 && (
-					<ResourcesTable
+					<LibraryTable
 						documents={resources}
 						editing={editing}
 						selected={selected}
@@ -193,9 +193,9 @@ export default function ResourcesPage() {
 			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AppAlertDialogContent>
 					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>{t('resources.removeResources')}</AppAlertDialogTitle>
+						<AppAlertDialogTitle>{t('library.removeItems')}</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
-							{t('resources.removeConfirm', { count: selected.size })}
+							{t('library.removeConfirm', { count: selected.size })}
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
@@ -204,7 +204,7 @@ export default function ResourcesPage() {
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleConfirmRemove}
 						>
-							{t('resources.remove')}
+							{t('library.remove')}
 						</AppAlertDialogAction>
 					</AppAlertDialogFooter>
 				</AppAlertDialogContent>

@@ -137,7 +137,7 @@ function PdfPreview({ path }: { path: string }) {
 		return (
 			<div className="flex items-center gap-2 text-sm text-muted-foreground">
 				<Loader2 className="h-4 w-4 animate-spin" />
-				{t('resources.loadingPdf')}
+				{t('library.loadingPdf')}
 			</div>
 		);
 	}
@@ -151,7 +151,7 @@ function CsvPreview({ content }: { content: string }) {
 	const [header, ...body] = rows;
 
 	if (rows.length === 0) {
-		return <p className="text-sm text-muted-foreground">{t('resources.emptyCsv')}</p>;
+		return <p className="text-sm text-muted-foreground">{t('library.emptyCsv')}</p>;
 	}
 
 	return (
@@ -239,7 +239,7 @@ function UnsupportedPreview({ mimeType }: { mimeType: string }) {
 	return (
 		<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
 			<FileWarning className="h-10 w-10" />
-			<p className="text-sm">{t('resources.previewNotAvailable', { mimeType })}</p>
+			<p className="text-sm">{t('library.previewNotAvailable', { mimeType })}</p>
 		</div>
 	);
 }
@@ -281,12 +281,12 @@ function FileContentView({ doc, content }: { doc: ResourceInfo; content: string 
 	return <PlainTextPreview content={content} />;
 }
 
-interface ResourcePreviewSheetProps {
+interface LibraryPreviewSheetProps {
 	doc: ResourceInfo | null;
 	onClose: () => void;
 }
 
-export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps) {
+export function LibraryPreviewSheet({ doc, onClose }: LibraryPreviewSheetProps) {
 	const { t } = useTranslation();
 	const [content, setContent] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -343,7 +343,7 @@ export function ResourcePreviewSheet({ doc, onClose }: ResourcePreviewSheetProps
 					{loading && (
 						<div className="flex items-center gap-2 text-sm text-muted-foreground">
 							<Loader2 className="h-4 w-4 animate-spin" />
-							{t('resources.loadingPreview')}
+							{t('library.loadingPreview')}
 						</div>
 					)}
 					{error && (

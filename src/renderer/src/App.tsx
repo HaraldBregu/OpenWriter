@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AppProvider } from './contexts';
@@ -52,7 +52,7 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
-const ResourcesPage = lazy(() => import('./pages/resources/ResourcesPage'));
+const LibraryPage = lazy(() => import('./pages/library/LibraryPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const DataPage = lazy(() => import('./pages/data/Page'));
 const SearchPage = lazy(() => import('./pages/search/SearchPage'));
@@ -195,13 +195,14 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/resources"
+													path="/library"
 													element={
 														<RouteWrapper>
-															<ResourcesPage />
+															<LibraryPage />
 														</RouteWrapper>
 													}
 												/>
+												<Route path="/resources" element={<Navigate to="/library" replace />} />
 												<Route
 													path="/data"
 													element={

@@ -3,20 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload } from 'lucide-react';
 import { AppButton } from '../../components/app';
 
-interface ResourcesEmptyStateProps {
+interface LibraryEmptyStateProps {
 	uploading: boolean;
 	onUpload: () => void;
 }
 
-export const ResourcesEmptyState = memo(function ResourcesEmptyState({
+export const LibraryEmptyState = memo(function LibraryEmptyState({
 	uploading,
 	onUpload,
-}: ResourcesEmptyStateProps) {
+}: LibraryEmptyStateProps) {
 	const { t } = useTranslation();
 	return (
 		<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
 			<FolderOpen className="h-10 w-10 mb-3 opacity-40" />
-			<p className="text-sm">{t('resources.noResourcesYet')}</p>
+			<p className="text-sm">{t('library.empty')}</p>
 			<AppButton
 				variant="outline"
 				size="sm"
@@ -25,7 +25,7 @@ export const ResourcesEmptyState = memo(function ResourcesEmptyState({
 				disabled={uploading}
 			>
 				<Upload className="h-3.5 w-3.5 mr-1.5" />
-				{t('resources.uploadResources')}
+				{t('library.upload')}
 			</AppButton>
 		</div>
 	);

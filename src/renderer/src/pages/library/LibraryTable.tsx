@@ -22,8 +22,8 @@ import {
 import type { ResourceInfo } from '../../../../shared/types';
 import { formatBytes, formatDate } from './constants';
 
-const ResourcePreviewSheet = lazy(() =>
-	import('./ResourcePreviewSheet').then((m) => ({ default: m.ResourcePreviewSheet }))
+const LibraryPreviewSheet = lazy(() =>
+	import('./LibraryPreviewSheet').then((m) => ({ default: m.LibraryPreviewSheet }))
 );
 
 const ALL_TYPES_VALUE = 'all';
@@ -32,11 +32,11 @@ type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
 type SortDirection = 'none' | 'asc' | 'desc';
 
 const COLUMN_KEYS: { key: SortKey; i18nKey: string; className?: string }[] = [
-	{ key: 'name', i18nKey: 'resources.name' },
-	{ key: 'mimeType', i18nKey: 'resources.type' },
-	{ key: 'size', i18nKey: 'resources.size', className: 'text-right' },
-	{ key: 'importedAt', i18nKey: 'resources.imported' },
-	{ key: 'lastModified', i18nKey: 'resources.lastModified' },
+	{ key: 'name', i18nKey: 'library.name' },
+	{ key: 'mimeType', i18nKey: 'library.type' },
+	{ key: 'size', i18nKey: 'library.size', className: 'text-right' },
+	{ key: 'importedAt', i18nKey: 'library.imported' },
+	{ key: 'lastModified', i18nKey: 'library.lastModified' },
 ];
 
 function compareDocs(a: ResourceInfo, b: ResourceInfo, key: SortKey, dir: SortDirection): number {
@@ -108,19 +108,19 @@ const ResourceRow = memo(function ResourceRow({
 	);
 });
 
-interface ResourcesTableProps {
+interface LibraryTableProps {
 	documents: ResourceInfo[];
 	editing: boolean;
 	selected: Set<string>;
 	onSelectedChange: (selected: Set<string>) => void;
 }
 
-export const ResourcesTable = memo(function ResourcesTable({
+export const LibraryTable = memo(function LibraryTable({
 	documents,
 	editing,
 	selected,
 	onSelectedChange,
-}: ResourcesTableProps) {
+}: LibraryTableProps) {
 	const { t } = useTranslation();
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
@@ -194,7 +194,7 @@ export const ResourcesTable = memo(function ResourcesTable({
 				<div className="relative flex-1">
 					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 					<Input
-						placeholder={t('resources.searchPlaceholder')}
+						placeholder={t('library.searchPlaceholder')}
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						className="pl-9"
@@ -202,10 +202,10 @@ export const ResourcesTable = memo(function ResourcesTable({
 				</div>
 				<Select value={typeFilter} onValueChange={setTypeFilter}>
 					<SelectTrigger className="w-[200px]">
-						<SelectValue placeholder={t('resources.allTypes')} />
+						<SelectValue placeholder={t('library.allTypes')} />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value={ALL_TYPES_VALUE}>{t('resources.allTypes')}</SelectItem>
+						<SelectItem value={ALL_TYPES_VALUE}>{t('library.allTypes')}</SelectItem>
 						{mimeTypes.map((type) => (
 							<SelectItem key={type} value={type}>
 								{type}
@@ -258,7 +258,7 @@ export const ResourcesTable = memo(function ResourcesTable({
 
 			{previewDoc && (
 				<Suspense fallback={null}>
-					<ResourcePreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+					<LibraryPreviewSheet doc={previewDoc} onClose={() => setPreviewDoc(null)} />
 				</Suspense>
 			)}
 		</div>

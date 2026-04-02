@@ -90,13 +90,13 @@ src/renderer/src/pages/
     services/
       chat-session-storage.ts
       history-service.ts
-  resources/
+  library/
     constants.ts
-    ResourcePreviewSheet.tsx
-    ResourcesEmptyState.tsx
-    ResourcesHeader.tsx
-    ResourcesPage.tsx
-    ResourcesTable.tsx
+    LibraryPreviewSheet.tsx
+    LibraryEmptyState.tsx
+    LibraryHeader.tsx
+    LibraryPage.tsx
+    LibraryTable.tsx
   settings/
     AgentsSettingsPage.tsx
     CollapsibleSection.tsx
@@ -134,7 +134,8 @@ Current route map:
 - `/settings/agents` -> `settings/AgentsSettingsPage.tsx`
 - `/settings/system` -> `settings/SystemSettingsPage.tsx`
 - `/content/:id` -> `document/Page.tsx`
-- `/resources` -> `resources/ResourcesPage.tsx`
+- `/library` -> `library/LibraryPage.tsx`
+- `/resources` -> redirects to `/library`
 - `/agents` -> `agents/AgentsPage.tsx`
 - `/debug/tasks` -> `debug/DebugTasksPage.tsx`
 - `/debug/redux` -> `debug/DebugReduxPage.tsx`
@@ -362,7 +363,7 @@ If the issue is mainly about:
 - the standalone landing flow: start with `WelcomePage.tsx`
 - in-app home/document navigation: start with `HomePage.tsx`
 - single-document editing: start with `document/AGENTS.md`, then `document/Page.tsx` and `document/Layout.tsx`
-- resource browsing: start with `resources/ResourcesPage.tsx`
+- library browsing: start with `library/LibraryPage.tsx`
 - settings routing/layout: start with `settings/SettingsLayout.tsx`
 - agent list/settings page behavior: start with `agents/AgentsPage.tsx` or the relevant `settings/*`
 - diagnostics UI: start with `debug/`
