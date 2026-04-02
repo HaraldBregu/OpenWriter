@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 const pluginKey = new PluginKey('bubbleMenu');
 
 const menuContainerClass =
-	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border/90 dark:bg-popover dark:ring-white/10 dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.55)]';
+	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border dark:bg-popover dark:ring-[hsl(var(--border)/0.7)] dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.46)]';
 
 const separatorClass = 'mx-0.5 h-4 w-px bg-border/80 dark:bg-border';
 
@@ -40,7 +40,7 @@ function getMenuButtonClass({
 	return cn(
 		'h-7 w-7',
 		isActive
-			? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70 dark:bg-accent/95 dark:text-foreground dark:ring-white/10'
+			? 'bg-accent text-foreground shadow-sm ring-1 ring-border/70 dark:bg-accent/95 dark:text-foreground dark:ring-[hsl(var(--border)/0.7)]'
 			: 'text-foreground/80 hover:bg-accent/95 hover:text-foreground dark:text-foreground/82 dark:hover:bg-accent dark:hover:text-foreground'
 	);
 }

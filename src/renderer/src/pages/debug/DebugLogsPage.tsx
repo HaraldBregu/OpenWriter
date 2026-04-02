@@ -16,8 +16,8 @@ type LogLevel = AppLogEntry['level'];
 
 const LEVEL_STYLES: Record<LogLevel, string> = {
 	DEBUG: 'text-muted-foreground bg-muted/50',
-	INFO: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/40',
-	WARN: 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/40',
+	INFO: 'text-[hsl(var(--info))] bg-[hsl(var(--info)/0.12)] dark:text-[hsl(var(--info))] dark:bg-[hsl(var(--info)/0.18)]',
+	WARN: 'text-[hsl(var(--warning))] bg-[hsl(var(--warning)/0.14)] dark:text-[hsl(var(--warning))] dark:bg-[hsl(var(--warning)/0.18)]',
 	ERROR: 'text-destructive bg-destructive/10',
 };
 

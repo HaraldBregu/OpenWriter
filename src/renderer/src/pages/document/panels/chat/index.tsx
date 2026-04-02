@@ -453,6 +453,8 @@ const Chat: React.FC = () => {
 		lastRecordedTaskStateRef.current = null;
 
 		const unsubscribe = subscribeToTask(activeTaskId, (snapshot: TaskSnapshot) => {
+
+			
 			const metadataDocumentId = snapshot.metadata?.documentId;
 			const targetDocumentId =
 				typeof metadataDocumentId === 'string' && metadataDocumentId.length > 0

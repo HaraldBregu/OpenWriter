@@ -9,7 +9,7 @@
  * This avoids the need for a React context to distribute task events.
  */
 
-import type { TaskEvent } from '../../../shared/types';
+import type { TaskEvent, TaskStatus } from '../../../shared/types';
 
 /** Safely extract a property from an unknown payload. */
 function dataField<T>(data: unknown, key: string): T | undefined {

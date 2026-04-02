@@ -12,7 +12,7 @@ const AppIconOpenWriter = React.memo(function AppIconOpenWriter({
 			viewBox="0 0 749 796"
 			fill="none"
 			aria-hidden="true"
-			className={cn('text-slate-900 dark:text-slate-100', className)}
+			className={cn('text-foreground', className)}
 			{...props}
 		>
 			<path

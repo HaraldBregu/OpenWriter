@@ -44,39 +44,39 @@
 
 	.dark {
 		color-scheme: dark;
-		--background: 0 0% 6%;
-		--foreground: 0 0% 94%;
-		--card: 0 0% 9%;
-		--card-foreground: 0 0% 94%;
-		--popover: 0 0% 9%;
-		--popover-foreground: 0 0% 94%;
-		--primary: 0 0% 95%;
-		--primary-foreground: 0 0% 8%;
-		--secondary: 0 0% 13%;
-		--secondary-foreground: 0 0% 94%;
-		--muted: 0 0% 14%;
-		--muted-foreground: 0 0% 65%;
-		--accent: 0 0% 17%;
-		--accent-foreground: 0 0% 94%;
-		--destructive: 0 70% 57%;
+		--background: 220 5% 8%;
+		--foreground: 30 14% 86%;
+		--card: 24 6% 13%;
+		--card-foreground: 30 14% 86%;
+		--popover: 24 6% 13%;
+		--popover-foreground: 30 14% 86%;
+		--primary: 23 45% 52%;
+		--primary-foreground: 24 18% 10%;
+		--secondary: 24 5% 16%;
+		--secondary-foreground: 30 12% 84%;
+		--muted: 24 5% 16%;
+		--muted-foreground: 28 10% 67%;
+		--accent: 24 9% 19%;
+		--accent-foreground: 30 14% 86%;
+		--destructive: 0 72% 61%;
 		--destructive-foreground: 0 0% 98%;
-		--border: 0 0% 19%;
-		--input: 0 0% 19%;
-		--ring: 0 0% 72%;
-		--success: 148 59% 55%;
-		--success-foreground: 150 30% 10%;
-		--warning: 38 92% 58%;
-		--warning-foreground: 32 88% 10%;
-		--info: 215 78% 66%;
-		--info-foreground: 215 40% 10%;
-		--sidebar-background: 0 0% 7%;
-		--sidebar-foreground: 0 0% 91%;
-		--sidebar-primary: 0 0% 95%;
-		--sidebar-primary-foreground: 0 0% 8%;
-		--sidebar-accent: 0 0% 14%;
-		--sidebar-accent-foreground: 0 0% 94%;
-		--sidebar-border: 0 0% 16%;
-		--sidebar-ring: 0 0% 72%;
+		--border: 24 6% 22%;
+		--input: 24 6% 22%;
+		--ring: 23 32% 58%;
+		--success: 148 42% 52%;
+		--success-foreground: 148 28% 10%;
+		--warning: 30 72% 60%;
+		--warning-foreground: 28 40% 12%;
+		--info: 205 46% 63%;
+		--info-foreground: 210 40% 10%;
+		--sidebar-background: 220 5% 9%;
+		--sidebar-foreground: 30 14% 84%;
+		--sidebar-primary: 23 45% 52%;
+		--sidebar-primary-foreground: 24 18% 10%;
+		--sidebar-accent: 24 7% 16%;
+		--sidebar-accent-foreground: 30 14% 86%;
+		--sidebar-border: 24 6% 18%;
+		--sidebar-ring: 23 32% 58%;
 	}
 }
 
@@ -109,6 +109,13 @@
 		color: hsl(var(--foreground));
 		background-image:
 			radial-gradient(circle at top, hsl(var(--foreground) / 0.05), transparent 34%),
+			linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
+	}
+
+	.dark body {
+		background-image:
+			radial-gradient(circle at top, hsl(var(--primary) / 0.12), transparent 26%),
+			radial-gradient(circle at top, hsl(var(--foreground) / 0.04), transparent 38%),
 			linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
 	}
 
