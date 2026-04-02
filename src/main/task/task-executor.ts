@@ -143,7 +143,7 @@ export class TaskExecutor implements Disposable {
 		const windowId = options?.windowId;
 		setImmediate(() => {
 			this.send(windowId, 'task:event', {
-				type: 'queued',
+				state: 'queued',
 				taskId,
 				data: {},
 				error: null,
