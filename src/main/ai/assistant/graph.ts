@@ -1,6 +1,6 @@
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { NodeModelMap } from '../../core/definition';
+import type { NodeModelMap } from '../core/definition';
 import { AssistantState } from './state';
 import { understandNode, type AssistantIntent } from './nodes/understand/understand-node';
 import { conversationNode } from './nodes/conversation/conversation-node';
