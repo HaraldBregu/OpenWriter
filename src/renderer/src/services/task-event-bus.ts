@@ -11,6 +11,14 @@
 
 import type { TaskEvent } from '../../../shared/types';
 
+/** Safely extract a property from an unknown payload. */
+function dataField<T>(data: unknown, key: string): T | undefined {
+	if (typeof data === 'object' && data !== null && key in data) {
+		return (data as Record<string, unknown>)[key] as T;
+	}
+	return undefined;
+}
+
 // ---------------------------------------------------------------------------
 // Snapshot shape delivered to per-task subscribers
 // ---------------------------------------------------------------------------
