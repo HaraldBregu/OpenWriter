@@ -5,7 +5,6 @@ import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { v7 as uuidv7 } from 'uuid';
 import { debounce } from 'lodash';
-import { useTask } from '@/hooks/use-task';
 import Header from './components/Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
