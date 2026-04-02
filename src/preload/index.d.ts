@@ -50,7 +50,7 @@ import type {
 	ProjectWorkspaceInfo,
 	AppLogEntry,
 } from '../shared/types';
-import type { IpcResult } from '../shared/ipc-result';
+import type { IpcResult } from '../shared/types';
 import type { ServiceProvider } from '../shared/provider-defaults';
 
 // ---------------------------------------------------------------------------
