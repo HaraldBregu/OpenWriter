@@ -16,14 +16,6 @@ function getAgentKey(agent: (typeof DEFAULT_AGENTS)[number]): string {
 	return agent.id;
 }
 
-function getLegacyAgentKeys(agent: (typeof DEFAULT_AGENTS)[number]): string[] {
-	if (agent.id === 'painter') {
-		return ['image-generator'];
-	}
-
-	return [];
-}
-
 // ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------

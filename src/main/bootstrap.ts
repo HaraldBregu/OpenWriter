@@ -27,7 +27,6 @@ import { TaskReactionBus } from './task/task-reaction-bus';
 import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
-import { TextEnhanceTaskReaction } from './task/reactions';
 
 // RAG infrastructure
 import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './ai/rag';
