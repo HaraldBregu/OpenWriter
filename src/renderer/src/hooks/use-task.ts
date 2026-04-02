@@ -34,8 +34,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 	// Progress not available from TaskSnapshot — always defaults.
 	const progressPercent = 0;
 	const progressMessage: string | undefined = getTaskStatusText(metadata);
-	// Queue position and duration not available from TaskSnapshot.
-	const queuePosition: number | undefined = undefined;
+	// Duration not available from TaskSnapshot.
 	const durationMs: number | undefined = undefined;
 
 	// Refs for stable callbacks.
