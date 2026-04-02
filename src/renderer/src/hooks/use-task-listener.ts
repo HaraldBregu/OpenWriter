@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getTaskStatusText } from '../../../shared/task-metadata';
+import { getTaskStatusText } from '../../../shared/types';
 import { subscribeToTask, subscribeToTaskType, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
 import type { TaskStatus } from '../../../shared/types';
