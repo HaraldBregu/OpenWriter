@@ -104,7 +104,7 @@ function ensureListening(): void {
 					...prev,
 					status: 'running',
 					streamedContent: streamData,
-					content: (prev.seedContent ?? '') + (prev.content + streamData),
+					content: prev.content + streamData,
 					...metadataOverride,
 				};
 				break;

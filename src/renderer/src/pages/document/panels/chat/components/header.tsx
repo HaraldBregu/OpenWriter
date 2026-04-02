@@ -109,12 +109,12 @@ const Header: React.FC = () => {
 	};
 
 	return (
-		<div className="shrink-0 border-b border-border/80 bg-card/92 px-4 py-1 backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+		<div className="shrink-0 border-b border-border/80 bg-card/92 px-2 py-1 backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
 				</h2>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-1">
 					<AppPopover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<AppPopoverTrigger asChild>
 							<AppButton
