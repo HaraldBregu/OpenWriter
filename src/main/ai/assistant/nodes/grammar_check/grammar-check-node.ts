@@ -22,9 +22,7 @@ export async function grammarCheckNode(
 	const prompt = state.prompt.trim();
 
 	if (prompt.length === 0) {
-		return {
-			grammarFindings: 'Corrected request: \nInterpretation notes: No request provided.\nAmbiguities: Missing user input.',
-		};
+		return { grammarFindings: EMPTY_PROMPT_FINDINGS };
 	}
 
 	const messages = [
