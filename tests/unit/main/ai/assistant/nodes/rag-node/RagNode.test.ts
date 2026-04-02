@@ -5,9 +5,9 @@
  * or requiring an embedding model API key.
  */
 
-import type { RetrievedDocument } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag-retriever';
-import { RagRetriever } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag-retriever';
-import { ragNode } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag-node';
+import type { RetrievedDocument } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag/rag-retriever';
+import { RagRetriever } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag/rag-retriever';
+import { ragNode } from '../../../../../../../src/main/ai/agents/assistant/nodes/rag/rag-node';
 
 // ---------------------------------------------------------------------------
 // Mocks
