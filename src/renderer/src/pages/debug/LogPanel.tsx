@@ -34,7 +34,7 @@ export function LogPanel({ task, onClose }: LogPanelProps) {
 					[...task.events].reverse().map((ev, i) => (
 						<div key={i} className="rounded border bg-background p-2 text-xs">
 							<div className="flex items-center justify-between mb-1 gap-2">
-								<span className="font-medium shrink-0">{ev.type}</span>
+								<span className="font-medium shrink-0">{ev.state}</span>
 								<span className="text-muted-foreground shrink-0">
 									{formatEventTime(ev.receivedAt)}
 								</span>
