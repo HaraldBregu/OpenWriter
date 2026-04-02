@@ -109,8 +109,8 @@ export type TaskEventType =
 export interface TaskEvent {
 	type: TaskEventType;
 	taskId: string;
-	data: unknown | null;
-	error: unknown | null;
+	data: unknown;
+	error: unknown;
 	metadata: unknown;
 }
 
@@ -451,3 +451,93 @@ export interface AgentDefinitionInfo {
 	name: string;
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 }
+
+// ---- IPC Result
+
+/**
+ * Standardized IPC error response.
+ */
+export interface IpcError {
+	success: false;
+	error: {
+		code: string;
+		message: string;
+		stack?: string;
+	};
+}
+
+/**
+ * Standardized IPC success response.
+ */
+export interface IpcSuccess<T> {
+	success: true;
+	data: T;
+}
+
+/**
+ * Union type for IPC responses.
+ */
+export type IpcResult<T> = IpcSuccess<T> | IpcError;
+
+// ---- Task Metadata
+
+export const TASK_STATUS_TEXT_KEY = 'statusText';
+
+export function getTaskStatusText(metadata?: Record<string, unknown>): string | undefined {
+	const value = metadata?.[TASK_STATUS_TEXT_KEY];
+	if (typeof value !== 'string') return undefined;
+	const trimmed = value.trim();
+	return trimmed.length > 0 ? trimmed : undefined;
+}
+
+export function withTaskStatusText(
+	metadata: Record<string, unknown> | undefined,
+	statusText: string | undefined
+): Record<string, unknown> | undefined {
+	const next = { ...(metadata ?? {}) };
+	const trimmed = statusText?.trim();
+
+	if (trimmed) {
+		next[TASK_STATUS_TEXT_KEY] = trimmed;
+	} else {
+		delete next[TASK_STATUS_TEXT_KEY];
+	}
+
+	return Object.keys(next).length > 0 ? next : undefined;
+}
+
+// ---- Agent Settings
+
+export interface AgentConfig {
+	id: string;
+	name: string;
+	description: string;
+}
+
+export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
+	{
+		id: 'assistant',
+		name: 'Assistant',
+		description: 'Routes requests by intent and responds through the right specialist flow',
+	},
+	{
+		id: 'writer',
+		name: 'Writer',
+		description: 'Writes text from a prompt',
+	},
+	{
+		id: 'researcher',
+		name: 'Researcher',
+		description: 'Finds, summarizes, and organizes information for your writing',
+	},
+	{
+		id: 'text-writer',
+		name: 'Narrator',
+		description: 'Shapes scenes, voice, and storytelling flow for narrative writing',
+	},
+	{
+		id: 'painter',
+		name: 'Painter',
+		description: 'Generates images from a text prompt',
+	},
+];
