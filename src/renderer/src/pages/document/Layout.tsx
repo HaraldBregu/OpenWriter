@@ -566,7 +566,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 											textCompleterTask.isRunning ||
 											textEnhanceTask.isRunning ||
 											textWriterTask.isRunning ||
-											imageGeneratorTask.isRunning
+											imageGeneratorTask.isRunning ||
+											assistantIsRunning
 										}
 										ref={editorRef}
 										key={id}
