@@ -486,15 +486,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
 			);
 
-			// const prompt = `
-			// ${cleanBefore}
-			//
-			// ⬢ CONTINUE WRITING HERE WITH 15 WORDS MAX ⬢
-			//
-			// ${cleanAfter}
-			// `;
-			// const data: TextCompleterTaskData = { prompt };
-			// textCompleterTask.submit(data);
 		},
 		[handleAssistantSend]
 	);
