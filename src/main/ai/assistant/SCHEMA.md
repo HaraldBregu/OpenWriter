@@ -29,15 +29,15 @@ External request shape accepted by the AI executor:
 
 ```ts
 interface AgentRequest {
-  prompt: string;
-  messages?: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-  }>;
-  providerId?: string;
-  modelId?: string;
-  temperature?: number;
-  maxTokens?: number;
+	prompt: string;
+	messages?: Array<{
+		role: 'user' | 'assistant';
+		content: string;
+	}>;
+	providerId?: string;
+	modelId?: string;
+	temperature?: number;
+	maxTokens?: number;
 }
 ```
 
@@ -47,9 +47,9 @@ Runtime context injected before graph construction:
 
 ```ts
 interface AgentRuntimeContext {
-  workspacePath?: string;
-  apiKey: string;
-  providerId: string;
+	workspacePath?: string;
+	apiKey: string;
+	providerId: string;
 }
 ```
 
@@ -62,16 +62,16 @@ Executor-resolved context available to `buildGraphInput(ctx)`:
 
 ```ts
 interface GraphInputContext {
-  prompt: string;
-  apiKey: string;
-  modelName: string;
-  providerId: string;
-  temperature: number;
-  metadata?: Record<string, unknown>;
-  history: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-  }>;
+	prompt: string;
+	apiKey: string;
+	modelName: string;
+	providerId: string;
+	temperature: number;
+	metadata?: Record<string, unknown>;
+	history: Array<{
+		role: 'user' | 'assistant';
+		content: string;
+	}>;
 }
 ```
 
@@ -94,15 +94,15 @@ Canonical assistant graph state:
 
 ```ts
 interface AssistantGraphState {
-  prompt: string;
-  history: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-  }>;
-  ragFindings: string;
-  grammarFindings: string;
-  phaseLabel: string;
-  response: string;
+	prompt: string;
+	history: Array<{
+		role: 'user' | 'assistant';
+		content: string;
+	}>;
+	ragFindings: string;
+	grammarFindings: string;
+	phaseLabel: string;
+	response: string;
 }
 ```
 
@@ -139,16 +139,13 @@ then aggregate waits for both and produces the final output.
 The assistant is configured as a per-node model map:
 
 ```ts
-type AssistantNodeName =
-  | 'rag_query'
-  | 'grammar_check'
-  | 'aggregate';
+type AssistantNodeName = 'rag_query' | 'grammar_check' | 'aggregate';
 
 interface NodeModelConfig {
-  providerId: string;
-  modelId: string;
-  temperature: number;
-  maxTokens?: number;
+	providerId: string;
+	modelId: string;
+	temperature: number;
+	maxTokens?: number;
 }
 
 type AssistantNodeModels = Record<AssistantNodeName, NodeModelConfig>;
@@ -169,9 +166,7 @@ Current configured values:
 Only the aggregator node is streamable:
 
 ```ts
-[
-  'aggregate'
-]
+['aggregate'];
 ```
 
 The worker nodes are intentionally excluded from token streaming.
@@ -187,7 +182,7 @@ extractGraphOutput(state): string
 Returned value:
 
 ```ts
-typeof state.response === 'string' ? state.response : ''
+typeof state.response === 'string' ? state.response : '';
 ```
 
 Thinking label extraction:
@@ -199,7 +194,7 @@ extractThinkingLabel(state): string | undefined
 Returned value:
 
 ```ts
-typeof state.phaseLabel === 'string' ? state.phaseLabel : undefined
+typeof state.phaseLabel === 'string' ? state.phaseLabel : undefined;
 ```
 
 ## Phase Label Schema

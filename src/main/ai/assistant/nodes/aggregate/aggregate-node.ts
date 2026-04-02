@@ -6,11 +6,7 @@ import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './AGGREGATE_SYSTEM.md?raw';
 
-function buildHumanMessage(
-	prompt: string,
-	ragFindings: string,
-	grammarFindings: string
-): string {
+function buildHumanMessage(prompt: string, ragFindings: string, grammarFindings: string): string {
 	return [
 		'Original user request:',
 		prompt,
