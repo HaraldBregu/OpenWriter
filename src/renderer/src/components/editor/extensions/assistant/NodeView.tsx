@@ -18,6 +18,16 @@ export function AssistantNodeView({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
 
+	const handlePromptChange = useCallback(
+		(value: string) => {
+			setPrompt(value);
+			if ((node.attrs.prompt as string) !== value) {
+				updateAttributes({ prompt: value });
+			}
+		},
+		[node.attrs.prompt, updateAttributes],
+	);
+
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
 		if (typeof pos !== 'number') return;
