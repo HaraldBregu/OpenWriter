@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2 } from 'lucide-react';
-import { DEFAULT_AGENTS } from '../../../../shared/ai-settings';
+import { DEFAULT_AGENTS } from '../../../../shared/types';
 import {
 	AppButton,
 	AppLabel,
