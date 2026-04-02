@@ -14,18 +14,6 @@ import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
-type TextEnhanceTaskData = {
-	prompt: string;
-};
-
-type TextWriterTaskData = {
-	prompt: string;
-};
-
-type ImageGeneratorTaskData = {
-	prompt: string;
-};
-
 interface LayoutProps {
 	documentId: string | undefined;
 }
