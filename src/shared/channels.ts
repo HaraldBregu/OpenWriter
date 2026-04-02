@@ -46,7 +46,7 @@ import type {
 	ProjectWorkspaceInfo,
 	AppLogEntry,
 } from './types';
-import type { ServiceProvider } from './provider-defaults';
+import type { ServiceProvider } from './provider-constants';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
