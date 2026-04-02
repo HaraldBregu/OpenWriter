@@ -88,57 +88,32 @@ export interface TaskQueueStatus {
 	completed: number;
 }
 
+export type TaskEventType =
+	| 'queued'
+	| 'started'
+	| 'progress'
+	| 'completed'
+	| 'error'
+	| 'cancelled'
+	| 'stream'
+	| 'priority-changed';
+
 /**
- * Base fields present on every TaskEvent variant.
+ * Flat task event shape — every variant has the same fields.
  *
- * - `taskId`  — unique identifier of the task this event belongs to.
- * - `data`    — success payload (shape varies per event type); null on error events.
- * - `error`   — error payload; null on success events.
+ * - `type`     — discriminant identifying the lifecycle stage.
+ * - `taskId`   — unique identifier of the task this event belongs to.
+ * - `data`     — success payload (shape varies per event type); null on error events.
+ * - `error`    — error payload; null on success events.
  * - `metadata` — caller-supplied metadata attached at submit time; always present.
  */
-interface TaskEventBase {
+export interface TaskEvent {
+	type: TaskEventType;
 	taskId: string;
+	data: unknown | null;
 	error: unknown | null;
 	metadata: unknown;
 }
-
-export type TaskEvent =
-	| (TaskEventBase & {
-			type: 'queued';
-			data: { taskType: string; position: number } | null;
-	  })
-	| (TaskEventBase & {
-			type: 'started';
-			data: Record<string, unknown> | null;
-	  })
-	| (TaskEventBase & {
-			type: 'progress';
-			data: { percent: number; message?: string; detail?: unknown } | null;
-	  })
-	| (TaskEventBase & {
-			type: 'completed';
-			data: { result: unknown; durationMs: number } | null;
-	  })
-	| (TaskEventBase & {
-			type: 'error';
-			data: null;
-	  })
-	| (TaskEventBase & {
-			type: 'cancelled';
-			data: Record<string, unknown> | null;
-	  })
-	| (TaskEventBase & {
-			type: 'stream';
-			data: { data: string } | null;
-	  })
-	| (TaskEventBase & {
-			type: 'priority-changed';
-			data: { priority: TaskPriority; position: number } | null;
-	  })
-	| (TaskEventBase & {
-			type: 'queue-position';
-			data: { position: number } | null;
-	  });
 
 // ---- Indexing -------------------------------------------------------------
 
