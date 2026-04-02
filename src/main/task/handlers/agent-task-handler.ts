@@ -278,6 +278,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			workspacePath,
 			apiKey: provider.apiKey,
 			providerId: provider.providerId,
+			logger: this.logger,
 		};
 	}
 
