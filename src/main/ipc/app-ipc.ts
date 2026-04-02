@@ -12,7 +12,7 @@ import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import type { WritingContextMenuAction } from '../../shared/types';
-import type { ServiceProvider } from '../../shared/provider-defaults';
+import type { ServiceProvider } from '../../shared/provider-constants';
 
 const execFileAsync = promisify(execFile);
 
