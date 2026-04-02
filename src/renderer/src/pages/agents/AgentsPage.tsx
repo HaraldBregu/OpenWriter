@@ -14,22 +14,11 @@ import {
 import { DEFAULT_AGENTS } from '../../../../shared/types';
 import type { AgentConfig } from '../../../../shared/types';
 
-function getAgentIcon(agentId: string): {
+function getAgentIcon(_agentId: string): {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	accentClassName: string;
 } {
-	switch (agentId) {
-		case 'writer':
-			return { icon: PenTool, accentClassName: 'bg-primary/12 text-primary' };
-		case 'researcher':
-			return { icon: Search, accentClassName: 'bg-emerald-500/12 text-emerald-600' };
-		case 'text-writer':
-			return { icon: Mic, accentClassName: 'bg-sky-500/12 text-sky-600' };
-		case 'painter':
-			return { icon: Paintbrush, accentClassName: 'bg-warning/12 text-warning' };
-		default:
-			return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };
-	}
+	return { icon: Bot, accentClassName: 'bg-muted text-muted-foreground' };
 }
 
 const AgentTableRow = React.memo(function AgentTableRow({ agent }: { agent: AgentConfig }) {
