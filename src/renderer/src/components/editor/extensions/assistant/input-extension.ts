@@ -43,6 +43,11 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 				parseHTML: () => true,
 				renderHTML: () => ({}),
 			},
+			prompt: {
+				default: '',
+				parseHTML: () => '',
+				renderHTML: () => ({}),
+			},
 		};
 	},
 
