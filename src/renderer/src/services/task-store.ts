@@ -295,8 +295,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 						...nextTask,
 						status: 'running',
 						streamBuffer:
-							(nextTask.streamBuffer ?? '') +
-							(dataField<string>(event.data, 'data') ?? ''),
+							(nextTask.streamBuffer ?? '') + (dataField<string>(event.data, 'data') ?? ''),
 					};
 				}
 				case 'completed': {
@@ -312,9 +311,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 				case 'error': {
 					const errorPayload = event.error;
 					const errorMessage =
-						typeof errorPayload === 'object' &&
-						errorPayload !== null &&
-						'message' in errorPayload
+						typeof errorPayload === 'object' && errorPayload !== null && 'message' in errorPayload
 							? String((errorPayload as { message: unknown }).message)
 							: typeof errorPayload === 'string'
 								? errorPayload
@@ -335,8 +332,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 				case 'priority-changed': {
 					return {
 						...nextTask,
-						priority:
-							dataField<TaskPriority>(event.data, 'priority') ?? nextTask.priority,
+						priority: dataField<TaskPriority>(event.data, 'priority') ?? nextTask.priority,
 					};
 				}
 			}
