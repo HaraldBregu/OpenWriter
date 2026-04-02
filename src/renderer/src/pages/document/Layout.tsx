@@ -348,12 +348,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 							<div className="mx-auto flex w-full max-w-4xl flex-col gap-2 px-10 py-10">
 								{loaded && (
 									<TextEditor
-										disabled={
-											textEnhanceTask.isRunning ||
-											textWriterTask.isRunning ||
-											imageGeneratorTask.isRunning ||
-											assistantIsRunning
-										}
+										disabled={assistantIsRunning}
 										ref={editorRef}
 										key={id}
 										value={content}
@@ -362,7 +357,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 										onChange={handleContentChange}
 										onContinueWithAssistant={onContinueWithAssistant}
 										onTextSubmit={handleAssistantSend}
-										onImageSubmit={onImageSubmit}
 										documentId={id}
 										onEditorReady={handleEditorReady}
 										onUndo={handleUndo}
