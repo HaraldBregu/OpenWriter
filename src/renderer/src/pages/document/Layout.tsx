@@ -417,6 +417,67 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		return unsub;
 	}, [imageGeneratorTask.taskId]);
 
+	useEffect(() => {
+		if (!assistantActiveTaskId) return;
+
+		const unsub = subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
+			if (snap.status === 'started') {
+				editorRef.current?.setContentGeneratorLoading(true);
+				return;
+			}
+
+			const completed = snap.status === 'completed';
+			const output = snap.result as { content?: string } | undefined;
+			const streamContent = output?.content ?? snap.streamedContent ?? '';
+
+			if (streamContent) {
+				editorRef.current?.insertText(streamContent, { preventEditorUpdate: !completed });
+			}
+
+			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
+				editorRef.current?.removeContentGenerator();
+				setAssistantActiveTaskId(null);
+			}
+		});
+
+		return unsub;
+	}, [assistantActiveTaskId]);
+
+	const handleAssistantSend = useCallback(
+		async (content: string) => {
+			if (!id || assistantIsRunning) return;
+
+			editorRef.current?.setContentGeneratorEnable(false);
+
+			const resolvedSessionId = assistantSessionId ?? uuidv7();
+			if (!assistantSessionId) {
+				setAssistantSessionId(resolvedSessionId);
+			}
+
+			if (typeof window.task?.submit !== 'function') return;
+
+			try {
+				const taskType = 'agent-assistant';
+				const taskInput = { prompt: content };
+				const metadata = {
+					agentId: 'assistant',
+					documentId: id,
+					chatId: resolvedSessionId,
+				};
+
+				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
+				if (!ipcResult.success) return;
+
+				const resolvedTaskId = ipcResult.data.taskId;
+				initTaskMetadata(resolvedTaskId, metadata);
+				setAssistantActiveTaskId(resolvedTaskId);
+			} catch {
+				// submission failed
+			}
+		},
+		[assistantIsRunning, assistantSessionId, id]
+	);
+
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, _cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
