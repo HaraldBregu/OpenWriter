@@ -1,5 +1,5 @@
 jest.mock(
-	'../../../../../../../src/main/ai/agents/assistant/UNDERSTAND_SYSTEM.md?raw',
+	'../../../../../../../src/main/ai/agents/assistant/nodes/understand/UNDERSTAND_SYSTEM.md?raw',
 	() => 'Route',
 	{
 		virtual: true,
@@ -7,7 +7,7 @@ jest.mock(
 );
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { understandNode } from '../../../../../../../src/main/ai/agents/assistant/nodes/understand-node';
+import { understandNode } from '../../../../../../../src/main/ai/agents/assistant/nodes/understand/understand-node';
 
 describe('assistant understandNode', () => {
 	it('falls back to image intent when the classifier returns descriptive text instead of a raw label', async () => {
