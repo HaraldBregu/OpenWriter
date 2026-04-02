@@ -118,7 +118,6 @@ function createTrackedTaskFromInfo(task: TaskInfo): TrackedTaskState {
 		status: task.status,
 		priority: task.priority,
 		progress: { percent: task.status === 'completed' ? 100 : 0 },
-		queuePosition: task.queuePosition,
 		durationMs: task.durationMs,
 		error: task.error,
 		metadata: task.metadata,
