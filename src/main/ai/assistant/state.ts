@@ -1,5 +1,5 @@
 import { Annotation } from '@langchain/langgraph';
-import type { AgentHistoryMessage } from '../../core/types';
+import type { AgentHistoryMessage } from '../core/types';
 
 export const AssistantState = Annotation.Root({
 	prompt: Annotation<string>({
