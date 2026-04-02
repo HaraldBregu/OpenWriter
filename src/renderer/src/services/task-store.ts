@@ -21,7 +21,6 @@ export interface TrackedTaskState {
 	status: TaskStatus;
 	priority: TaskPriority;
 	progress: TaskProgressState;
-	queuePosition?: number;
 	durationMs?: number;
 	error?: string;
 	result?: unknown;
