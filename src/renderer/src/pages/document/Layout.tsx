@@ -311,18 +311,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[handleAssistantSend]
 	);
 
-	const onImageSubmit = useCallback(
-		async (prompt: string) => {
-			if (!id) return;
-			editorRef.current?.setContentGeneratorEnable(false);
-			const documentPath = await window.workspace.getDocumentPath(id);
-			const data: ImageGeneratorTaskData = { prompt };
-			const metadata = { documentPath };
-			imageGeneratorTask.submit(data, metadata);
-		},
-		[imageGeneratorTask, id]
-	);
-
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
