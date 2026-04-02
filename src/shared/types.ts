@@ -104,14 +104,14 @@ export type TaskEventType =
  * - `taskId`   — unique identifier of the task this event belongs to.
  * - `data`     — success payload (shape varies per event type); null on error events.
  * - `error`    — error payload; null on success events.
- * - `metadata` — caller-supplied metadata attached at submit time; always present.
+ * - `metadata` — caller-supplied metadata attached at submit time; matches TaskSubmitPayload.metadata.
  */
 export interface TaskEvent {
 	type: TaskEventType;
 	taskId: string;
 	data: unknown;
 	error: unknown;
-	metadata: unknown;
+	metadata?: Record<string, unknown>;
 }
 
 // ---- Indexing -------------------------------------------------------------
