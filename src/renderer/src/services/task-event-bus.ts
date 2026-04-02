@@ -99,7 +99,7 @@ function ensureListening(): void {
 				};
 				break;
 			case 'stream': {
-				const streamData = event.data?.data ?? '';
+				const streamData = dataField<string>(event.data, 'data') ?? '';
 				next = {
 					...prev,
 					status: 'running',
@@ -110,7 +110,7 @@ function ensureListening(): void {
 				break;
 			}
 			case 'completed': {
-				const completedResult = event.data?.result;
+				const completedResult = dataField<unknown>(event.data, 'result');
 				next = {
 					...prev,
 					status: 'completed',
