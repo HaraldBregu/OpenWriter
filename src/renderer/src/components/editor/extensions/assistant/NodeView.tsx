@@ -129,7 +129,7 @@ export function AssistantNodeView({
 					enable={enable}
 					textareaRef={textareaRef}
 					submitRef={submitRef}
-					onPromptChange={setPrompt}
+					onPromptChange={handlePromptChange}
 					onResize={resizeTextarea}
 				/>
 			</div>
