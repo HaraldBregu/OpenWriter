@@ -63,11 +63,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
-	const textCompleterTaskData: TextCompleterTaskData = { prompt: '' };
-	const textCompleterTask = useTask<TextCompleterTaskData>(
-		'agent-text-completer',
-		textCompleterTaskData
-	);
 
 	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
 	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);
@@ -494,7 +489,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
 			const cleanAfter = after.replaceAll('⬢', '').trimStart();
 
-			handleAssistantSend(cleanBefore, cleanAfter, cursorPos, 'CONTINUE WRITING HERE WITH 15 WORDS MAX');
+			handleAssistantSend(
+				cleanBefore,
+				cleanAfter,
+				cursorPos,
+				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
+			);
 
 			// const prompt = `
 			// ${cleanBefore}
