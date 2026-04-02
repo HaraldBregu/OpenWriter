@@ -142,11 +142,10 @@ export class TaskExecutor implements Disposable {
 		// and the renderer misses them because its listener isn't set up yet.
 		const windowId = options?.windowId;
 		setImmediate(() => {
-			const position = this.queue.indexOf(queued) + 1;
 			this.send(windowId, 'task:event', {
 				type: 'queued',
 				taskId,
-				data: { taskType: type, position },
+				data: {},
 				error: null,
 				metadata: activeTask.metadata,
 			} satisfies TaskEvent);
