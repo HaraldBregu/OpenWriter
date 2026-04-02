@@ -9,13 +9,14 @@ export function AssistantNodeView({
 	node,
 	getPos,
 	extension,
+	updateAttributes,
 }: NodeViewProps): React.JSX.Element {
 	const loading = node.attrs.loading as boolean;
 	const enable = node.attrs.enable as boolean;
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
-	const [prompt, setPrompt] = useState('');
+	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
 
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
