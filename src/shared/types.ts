@@ -107,7 +107,7 @@ export type TaskEventState =
  * - `metadata` — caller-supplied metadata attached at submit time; matches TaskSubmitPayload.metadata.
  */
 export interface TaskEvent {
-	type: TaskEventType;
+	state: TaskEventState;
 	taskId: string;
 	data: unknown;
 	error: unknown;
