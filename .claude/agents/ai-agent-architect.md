@@ -81,6 +81,188 @@ const AgentState = Annotation.Root({
 4. **Map-Reduce**: Parallel processing of subtasks with aggregation
 5. **Human-in-the-Loop**: Checkpointing with interrupt nodes for human approval
 6. **Reflection Pattern**: Agent critiques its own output and iterates
+7. **RAG Pattern**: Retrieval node fetches relevant context, generation node produces grounded response
+8. **Agent Swarm**: Autonomous peer agents collaborate without a fixed supervisor; emergent task routing
+9. **Mixture-of-Agents (MoA)**: Multiple LLMs/agents each produce a response; aggregator synthesizes the best answer
+10. **Debate/Critique Loop**: Two or more agents argue positions; a judge node picks the winner or merges outputs
+
+---
+
+## RAG Architecture
+
+### Pipeline Stages
+1. **Ingestion**: Chunk documents, generate embeddings, store in a vector DB
+2. **Retrieval Node**: Take user query → embed → similarity search → return top-k chunks
+3. **Reranking Node** *(optional)*: Cross-encoder rerank to improve precision
+4. **Context Injection**: Merge retrieved chunks into agent state for the generation node
+5. **Generation Node**: LLM call with retrieved context + conversation history
+
+### Implementation Pattern
+```typescript
+import { Annotation } from "@langchain/langgraph";
+import { VectorStore } from "@langchain/core/vectorstores";
+
+const RAGState = Annotation.Root({
+  query: Annotation<string>({ reducer: (_, next) => next, default: () => "" }),
+  retrievedDocs: Annotation<Document[]>({
+    reducer: (_, next) => next,
+    default: () => [],
+  }),
+  messages: Annotation<BaseMessage[]>({
+    reducer: (prev, next) => [...prev, ...next],
+    default: () => [],
+  }),
+});
+
+// Retrieval node — keep it atomic and testable
+async function retrievalNode(state: typeof RAGState.State) {
+  const docs = await vectorStore.similaritySearch(state.query, 5);
+  return { retrievedDocs: docs };
+}
+
+// Generation node — inject retrieved context into the prompt
+async function generationNode(state: typeof RAGState.State) {
+  const context = state.retrievedDocs.map((d) => d.pageContent).join("\n\n");
+  const response = await llm.invoke([
+    new SystemMessage(`Use the following context:\n${context}`),
+    ...state.messages,
+  ]);
+  return { messages: [response] };
+}
+```
+
+### Best Practices
+- Use **hybrid retrieval** (dense + sparse/BM25) for better recall on short queries
+- Apply **query transformation** (HyDE, step-back prompting) when direct retrieval underperforms
+- Chunk strategy matters: prefer semantic chunking over fixed-size chunking for complex documents
+- Store metadata (source, date, section) alongside embeddings for filtered retrieval
+
+---
+
+## Tool-Augmented Agents
+
+### Tool Design Principles
+- Every tool must have a **Zod schema** for input validation — no raw strings
+- Tools should return **structured data** (typed objects), never free-form text
+- Implement **timeout + retry** logic inside each tool, not in the node
+- Group related tools into **toolkits** and bind them to specific agent nodes
+
+### Parallel Tool Calling
+```typescript
+// LangChain supports parallel tool calling natively via tool_choice: "auto"
+const agentNode = async (state: AgentState) => {
+  const response = await llm.bindTools(tools).invoke(state.messages);
+  // response.tool_calls may contain multiple calls — execute them in parallel
+  return { messages: [response] };
+};
+
+const toolNode = async (state: AgentState) => {
+  // ToolNode from @langchain/langgraph/prebuilt handles parallel execution
+  return toolExecutor.invoke(state);
+};
+```
+
+---
+
+## Agent Swarm Architecture
+
+A swarm is a collection of autonomous agents that coordinate without a fixed central supervisor. Each agent can hand off to any peer.
+
+### Design Principles
+1. **Role-Based Agents**: Each agent has a well-defined role (researcher, writer, critic, coder)
+2. **Handoff Protocol**: Agents signal handoffs via a shared `nextAgent` field in state
+3. **Shared Memory Bus**: All agents read/write to a common state; use reducers to prevent conflicts
+4. **No Central Bottleneck**: The graph router reads `nextAgent` and dispatches — no supervisor LLM call needed for routing
+
+### Swarm State Pattern
+```typescript
+const SwarmState = Annotation.Root({
+  messages: Annotation<BaseMessage[]>({
+    reducer: (prev, next) => [...prev, ...next],
+    default: () => [],
+  }),
+  nextAgent: Annotation<string>({ reducer: (_, next) => next, default: () => "researcher" }),
+  completedAgents: Annotation<string[]>({
+    reducer: (prev, next) => [...new Set([...prev, ...next])],
+    default: () => [],
+  }),
+});
+
+// Router reads nextAgent and dispatches
+function swarmRouter(state: typeof SwarmState.State): string {
+  return state.nextAgent === "__end__" ? END : state.nextAgent;
+}
+```
+
+---
+
+## Parallel Agent Execution
+
+### Fan-Out / Fan-In Pattern
+Run multiple agents concurrently, then merge their outputs.
+
+```typescript
+// Fan-out: send work to N parallel branches
+graph.addConditionalEdges("dispatcher", fanOutRouter, {
+  branch_0: "agent_0",
+  branch_1: "agent_1",
+  branch_2: "agent_2",
+});
+
+// Fan-in: all branches converge to aggregator
+graph.addEdge("agent_0", "aggregator");
+graph.addEdge("agent_1", "aggregator");
+graph.addEdge("agent_2", "aggregator");
+```
+
+### Map-Reduce with `Send` API
+```typescript
+import { Send } from "@langchain/langgraph";
+
+// Map: dispatcher creates one Send per subtask
+function dispatchSubtasks(state: OrchestratorState) {
+  return state.subtasks.map(
+    (task) => new Send("worker_agent", { ...state, currentTask: task })
+  );
+}
+
+// Each worker runs independently; results accumulate via reducer
+const OrchestratorState = Annotation.Root({
+  subtasks: Annotation<string[]>({ reducer: (_, next) => next, default: () => [] }),
+  results: Annotation<string[]>({
+    reducer: (prev, next) => [...prev, ...next], // append reducer enables safe merging
+    default: () => [],
+  }),
+});
+```
+
+### Best Practices for Parallel Agents
+- Use **append reducers** for fields written by multiple parallel branches — never overwrite reducers
+- Set a **max_concurrency** limit on the graph config to avoid rate-limit bursts
+- Implement **error isolation**: a failure in one branch should not abort all others
+- Use **checkpointing** before fan-out so partial progress is recoverable
+
+---
+
+## Multi-Agent Architecture Patterns
+
+| Pattern | When to Use | Key Mechanism |
+|---|---|---|
+| **Supervisor / Worker** | Known task taxonomy, clear delegation | Supervisor LLM routes to workers |
+| **Hierarchical Teams** | Large systems with sub-domains | Nested supervisor subgraphs |
+| **Peer-to-Peer (Swarm)** | Dynamic tasks, emergent coordination | `nextAgent` handoff in shared state |
+| **Mixture-of-Agents** | Improve answer quality via ensemble | Parallel generation + aggregator |
+| **Debate / Critique** | High-stakes decisions, adversarial review | Proposer → critic → judge loop |
+| **RAG + Agent** | Knowledge-intensive tasks | Retrieval node feeds generation node |
+| **Parallel Map-Reduce** | Bulk processing, independent subtasks | `Send` API fan-out + append reducer |
+
+### Choosing the Right Architecture
+- **Single task, needs tools** → ReAct or Plan-and-Execute with tool nodes
+- **Single task, needs knowledge** → RAG pipeline agent
+- **Multiple tasks, clear roles** → Supervisor/Worker
+- **Multiple tasks, dynamic roles** → Agent Swarm
+- **Need best possible answer** → Mixture-of-Agents or Debate loop
+- **Large volume, parallelizable** → Map-Reduce with `Send` API
 
 ## Electron.js Agent Architecture
 
