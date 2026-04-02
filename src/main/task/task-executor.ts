@@ -420,7 +420,7 @@ export class TaskExecutor implements Disposable {
 				stream: (data: string) => {
 					if (!this.activeTasks.has(taskId)) return;
 					this.send(windowId, 'task:event', {
-						type: 'stream',
+						state: 'stream',
 						taskId,
 						data: { data },
 						error: null,
