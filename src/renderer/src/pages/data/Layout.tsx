@@ -6,9 +6,13 @@ import Header from './Header';
 const Layout: React.FC = () => {
 	const { t } = useTranslation();
 
+	const handleOpenDataFolder = (): void => {
+		window.workspace.openDataFolder();
+	};
+
 	return (
 		<div className="flex h-full flex-col">
-			<Header />
+			<Header onOpenFolder={handleOpenDataFolder} />
 
 			<div className="flex flex-1 items-center justify-center p-6">
 				<div className="flex max-w-md flex-col items-center gap-4 text-center">
