@@ -570,7 +570,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 										externalValueVersion={editorExternalValueVersion}
 										onChange={handleContentChange}
 										onContinueWithAssistant={onContinueWithAssistant}
-										onTextSubmit={onTextSubmit}
+										onTextSubmit={handleAssistantSend}
 										onImageSubmit={onImageSubmit}
 										documentId={id}
 										onEditorReady={handleEditorReady}
