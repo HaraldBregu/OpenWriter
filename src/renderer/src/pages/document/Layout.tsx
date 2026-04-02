@@ -10,6 +10,7 @@ import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
 import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
+import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
@@ -255,13 +256,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 			editorRef.current?.setContentGeneratorEnable(false);
 
-			const prompt = `
-			${before}
-
-			⬢ ${input} ⬢
-
-			${after}
-			`;
+			const prompt = buildTaskPrompt(before, after, input);
 
 			const resolvedSessionId = assistantSessionId ?? uuidv7();
 			if (!assistantSessionId) {
@@ -297,8 +292,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, cursorPos: number) => {
-			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
-			const cleanAfter = after.replaceAll('⬢', '').trimStart();
+			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(
+				before,
+				after
+			);
 
 			handleAssistantSend(
 				cleanBefore,
