@@ -1,5 +1,5 @@
 import { Square, EyeOff } from 'lucide-react';
-import { getTaskStatusText } from '../../../../shared/task-metadata';
+import { getTaskStatusText } from '../../../../shared/types';
 import type { TrackedTaskState } from '@/services/task-store';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
