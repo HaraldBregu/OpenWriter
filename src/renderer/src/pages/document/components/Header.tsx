@@ -5,13 +5,13 @@ import {
 	MoreHorizontal,
 	Copy,
 	Trash2,
-	Files,
 	PenLine,
 	Search,
 	X,
 	Bot,
 	Undo2,
 	Redo2,
+	Info,
 } from 'lucide-react';
 import {
 	AppButton,
@@ -19,10 +19,11 @@ import {
 	AppDropdownMenuContent,
 	AppDropdownMenuItem,
 	AppDropdownMenuTrigger,
+	AppInput,
 } from '@/components/app';
-import { useSidebarVisibility } from './providers';
-import HistoryMenu from './components/HistoryMenu';
-import type { HistoryEntry } from './services/history-service';
+import { useSidebarVisibility } from '../providers';
+import HistoryMenu from './HistoryMenu';
+import type { HistoryEntry } from '../services/history-service';
 
 interface HeaderProps {
 	readonly title: string;
@@ -98,13 +99,13 @@ const Header: React.FC<HeaderProps> = ({
 			{searchOpen && (
 				<div className="flex items-center gap-2 px-6 py-2 border-b border-border bg-muted/50 shrink-0">
 					<Search className="h-4 w-4 text-muted-foreground shrink-0" />
-					<input
+					<AppInput
 						ref={searchInputRef}
-						type="text"
+						type="search"
 						value={searchQuery}
 						onChange={(e) => handleSearchChange(e.target.value)}
 						placeholder={t('common.search')}
-						className="flex-1 text-sm bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+						className="h-auto flex-1 border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
 					<AppButton
 						type="button"
@@ -122,12 +123,12 @@ const Header: React.FC<HeaderProps> = ({
 			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
 					<PenLine className="h-4 w-4 text-foreground/80 shrink-0" />
-					<input
+					<AppInput
 						type="text"
 						value={title}
 						onChange={(e) => onTitleChange(e.target.value)}
 						placeholder={t('writing.titlePlaceholder')}
-						className="text-xl font-semibold text-foreground bg-transparent border-none outline-none placeholder:text-muted-foreground/50 w-full min-w-0"
+						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 text-xl font-semibold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">
@@ -178,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({
 						aria-expanded={activeSidebar === 'config'}
 						onClick={() => toggleSidebar('config')}
 					>
-						<Files aria-hidden="true" />
+						<Info aria-hidden="true" />
 					</AppButton>
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>

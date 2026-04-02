@@ -6,7 +6,7 @@ import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { debounce } from 'lodash';
 import { useTask } from '@/hooks/use-task';
-import Header from './Header';
+import Header from './components/Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
 import { useEditorInstance, useSidebarVisibility } from './providers';

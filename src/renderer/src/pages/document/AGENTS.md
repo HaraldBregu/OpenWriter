@@ -27,8 +27,8 @@ src/renderer/src/pages/document/
   AGENTS.md
   Page.tsx
   Layout.tsx
-  Header.tsx
   components/
+    Header.tsx
     HistoryMenu.tsx
   context/
     actions.ts
@@ -131,7 +131,7 @@ The current page flow is:
 
 ## Component Responsibilities
 
-### `Header.tsx`
+### `components/Header.tsx`
 
 This is the document page header.
 
