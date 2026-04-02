@@ -34,8 +34,6 @@ export async function grammarCheckNode(
 	const grammarFindings = extractTokenFromChunk(response.content).trim();
 
 	return {
-		grammarFindings:
-			grammarFindings ||
-			`Corrected request: ${prompt}\nInterpretation notes: No material grammar issues detected.\nAmbiguities: None.`,
+		grammarFindings: grammarFindings || NO_ISSUES_FINDINGS(prompt),
 	};
 }
