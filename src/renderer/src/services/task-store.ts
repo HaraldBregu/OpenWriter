@@ -271,25 +271,22 @@ export function applyTaskEvent(event: TaskEvent): void {
 				case 'queued': {
 					return {
 						...nextTask,
-						type: event.data?.taskType || nextTask.type,
 						status: 'queued',
-						queuePosition: event.data?.position,
 					};
 				}
 				case 'started':
 					return {
 						...nextTask,
 						status: 'started',
-						queuePosition: undefined,
 					};
 				case 'progress': {
 					return {
 						...nextTask,
 						status: 'running',
 						progress: {
-							percent: event.data?.percent ?? 0,
-							message: event.data?.message,
-							detail: event.data?.detail,
+							percent: dataField<number>(event.data, 'percent') ?? 0,
+							message: dataField<string>(event.data, 'message'),
+							detail: dataField<unknown>(event.data, 'detail'),
 						},
 					};
 				}
@@ -297,7 +294,9 @@ export function applyTaskEvent(event: TaskEvent): void {
 					return {
 						...nextTask,
 						status: 'running',
-						streamBuffer: (nextTask.streamBuffer ?? '') + (event.data?.data ?? ''),
+						streamBuffer:
+							(nextTask.streamBuffer ?? '') +
+							(dataField<string>(event.data, 'data') ?? ''),
 					};
 				}
 				case 'completed': {
@@ -305,16 +304,17 @@ export function applyTaskEvent(event: TaskEvent): void {
 						...nextTask,
 						status: 'completed',
 						progress: { percent: 100 },
-						result: event.data?.result,
-						durationMs: event.data?.durationMs,
-						queuePosition: undefined,
+						result: dataField<unknown>(event.data, 'result'),
+						durationMs: dataField<number>(event.data, 'durationMs'),
 						streamBuffer: '',
 					};
 				}
 				case 'error': {
 					const errorPayload = event.error;
 					const errorMessage =
-						typeof errorPayload === 'object' && errorPayload !== null && 'message' in errorPayload
+						typeof errorPayload === 'object' &&
+						errorPayload !== null &&
+						'message' in errorPayload
 							? String((errorPayload as { message: unknown }).message)
 							: typeof errorPayload === 'string'
 								? errorPayload
@@ -323,7 +323,6 @@ export function applyTaskEvent(event: TaskEvent): void {
 						...nextTask,
 						status: 'error',
 						error: errorMessage,
-						queuePosition: undefined,
 						streamBuffer: '',
 					};
 				}
@@ -331,20 +330,13 @@ export function applyTaskEvent(event: TaskEvent): void {
 					return {
 						...nextTask,
 						status: 'cancelled',
-						queuePosition: undefined,
 						streamBuffer: '',
 					};
 				case 'priority-changed': {
 					return {
 						...nextTask,
-						priority: event.data?.priority ?? nextTask.priority,
-						queuePosition: event.data?.position,
-					};
-				}
-				case 'queue-position': {
-					return {
-						...nextTask,
-						queuePosition: event.data?.position,
+						priority:
+							dataField<TaskPriority>(event.data, 'priority') ?? nextTask.priority,
 					};
 				}
 			}
