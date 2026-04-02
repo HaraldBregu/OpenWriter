@@ -47,18 +47,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
-	const textEnhanceTaskData: TextEnhanceTaskData = { prompt: '' };
-	const textEnhanceTask = useTask<TextEnhanceTaskData>('agent-text-enhance', textEnhanceTaskData);
-
-	const textWriterTaskData: TextWriterTaskData = { prompt: '' };
-	const textWriterTask = useTask<TextWriterTaskData>('agent-text-writer', textWriterTaskData);
-
-	const imageGeneratorTaskData: ImageGeneratorTaskData = { prompt: '' };
-	const imageGeneratorTask = useTask<ImageGeneratorTaskData>(
-		'agent-painter',
-		imageGeneratorTaskData
-	);
-
 	const [assistantSessionId, setAssistantSessionId] = useState<string | null>(null);
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const assistantIsRunning = assistantActiveTaskId !== null;
