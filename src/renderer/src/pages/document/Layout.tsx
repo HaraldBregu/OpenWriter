@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask } from '../../services/task-event-bus';
@@ -35,14 +34,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
-	const navigate = useNavigate();
 	const dispatch = useDocumentDispatch();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
 	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
-	const [isTrashing, setIsTrashing] = useState(false);
 
 	const { activeSidebar } = useSidebarVisibility();
 	const { setEditor } = useEditorInstance();
@@ -255,22 +252,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		},
 		[dispatch]
 	);
-
-	const handleMoveToTrash = useCallback(async () => {
-		if (!id || isTrashing) return;
-
-		setIsTrashing(true);
-
-		debouncedSave.cancel();
-
-		try {
-			await window.workspace.trashOutput({ type: 'documents', id });
-			navigate('/home');
-		} catch (err) {
-			console.error('[Layout] Failed to trash writing:', err);
-			setIsTrashing(false);
-		}
-	}, [id, isTrashing, navigate, debouncedSave]);
 
 	useEffect(() => {
 		if (!textCompleterTask.taskId) return;
@@ -496,11 +477,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			<Header
 				title={title}
 				onTitleChange={handleTitleChange}
-				isTrashing={isTrashing}
-				onMoveToTrash={handleMoveToTrash}
 				onSearch={handleSearch}
 				onClearSearch={handleClearSearch}
-				onOpenFolder={handleOpenFolder}
 				historyEntries={historyEntries}
 				currentHistoryEntryId={currentHistoryEntryId}
 				canUndo={canUndo}

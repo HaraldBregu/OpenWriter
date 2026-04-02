@@ -1,26 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	FolderOpen,
-	MoreHorizontal,
-	Copy,
-	Trash2,
-	PenLine,
-	Search,
-	X,
-	Bot,
-	Undo2,
-	Redo2,
-	Info,
-} from 'lucide-react';
-import {
-	AppButton,
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-	AppDropdownMenuTrigger,
-	AppInput,
-} from '@/components/app';
+import { PenLine, Search, X, Bot, Undo2, Redo2, Info } from 'lucide-react';
+import { AppButton, AppInput, AppSeparator } from '@/components/app';
 import { useSidebarVisibility } from '../providers';
 import HistoryMenu from './HistoryMenu';
 import type { HistoryEntry } from '../services/history-service';
@@ -28,11 +9,8 @@ import type { HistoryEntry } from '../services/history-service';
 interface HeaderProps {
 	readonly title: string;
 	readonly onTitleChange: (value: string) => void;
-	readonly isTrashing: boolean;
-	readonly onMoveToTrash: () => void;
 	readonly onSearch: (query: string) => void;
 	readonly onClearSearch: () => void;
-	readonly onOpenFolder: () => void;
 	readonly historyEntries: HistoryEntry[];
 	readonly currentHistoryEntryId: string | null;
 	readonly canUndo: boolean;
@@ -45,11 +23,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
 	title,
 	onTitleChange,
-	isTrashing,
-	onMoveToTrash,
 	onSearch,
 	onClearSearch,
-	onOpenFolder,
 	historyEntries,
 	currentHistoryEntryId,
 	canUndo,
@@ -159,6 +134,7 @@ const Header: React.FC<HeaderProps> = ({
 						currentEntryId={currentHistoryEntryId}
 						onRestoreEntry={onRestoreHistoryEntry}
 					/>
+					<AppSeparator orientation="vertical" className="mx-2 h-5" />
 					<AppButton
 						type="button"
 						variant="header-icon"
@@ -181,36 +157,6 @@ const Header: React.FC<HeaderProps> = ({
 					>
 						<Info aria-hidden="true" />
 					</AppButton>
-					<AppDropdownMenu>
-						<AppDropdownMenuTrigger asChild>
-							<AppButton
-								type="button"
-								variant="header-icon"
-								size="header-icon-sm"
-								title={t('common.moreOptions')}
-							>
-								<MoreHorizontal />
-							</AppButton>
-						</AppDropdownMenuTrigger>
-						<AppDropdownMenuContent align="end">
-							<AppDropdownMenuItem onClick={onOpenFolder}>
-								<FolderOpen className="h-4 w-4" />
-								{t('common.openFolder')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem>
-								<Copy className="h-4 w-4" />
-								{t('common.duplicate')}
-							</AppDropdownMenuItem>
-							<AppDropdownMenuItem
-								className="text-destructive focus:text-destructive"
-								disabled={isTrashing}
-								onClick={onMoveToTrash}
-							>
-								<Trash2 className="h-4 w-4" />
-								{t('common.moveToTrash')}
-							</AppDropdownMenuItem>
-						</AppDropdownMenuContent>
-					</AppDropdownMenu>
 				</div>
 			</div>
 		</>
