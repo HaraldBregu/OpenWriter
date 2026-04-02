@@ -12,9 +12,14 @@ export const AssistantState = Annotation.Root({
 		default: () => [],
 	}),
 
-	intent: Annotation<string>({
+	ragFindings: Annotation<string>({
 		reducer: (_a, b) => b,
-		default: () => 'conversation',
+		default: () => '',
+	}),
+
+	grammarFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
 	}),
 
 	phaseLabel: Annotation<string>({
@@ -23,16 +28,6 @@ export const AssistantState = Annotation.Root({
 	}),
 
 	response: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
-	}),
-
-	/**
-	 * Concatenated text from vector store documents retrieved for the current
-	 * prompt. Empty string when no workspace is open or the vector store has
-	 * not been built yet. Populated by the rag-node before specialist nodes run.
-	 */
-	ragContext: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),

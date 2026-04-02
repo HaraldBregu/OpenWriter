@@ -19,6 +19,24 @@ The task system invokes this subsystem, and the renderer consumes its streamed r
 ```text
 src/main/ai/
   AGENTS.md
+  assistant/
+    AGENTS.md
+    SCHEMA.md
+    definition.ts
+    graph.ts
+    messages.ts
+    state.ts
+    nodes/
+      aggregate/
+        AGGREGATE_SYSTEM.md
+        aggregate-node.ts
+      grammar_check/
+        GRAMMAR_CHECK_SYSTEM.md
+        grammar-check-node.ts
+      rag/
+        RAG_QUERY_SYSTEM.md
+        rag-node.ts
+        rag-retriever.ts
   index.ts
   agents/
     index.ts
@@ -137,6 +155,7 @@ This is the primary import surface for the rest of the main process.
 
 The current registered agents are:
 
+- `assistant`
 - `text-writer`
 - `text-completer`
 - `text-enhance`

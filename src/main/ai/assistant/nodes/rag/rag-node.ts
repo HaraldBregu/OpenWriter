@@ -1,43 +1,74 @@
-/**
- * ragNode — LangGraph node that retrieves relevant workspace documents and
- * augments the assistant state with a `ragContext` string.
- *
- * Runs before specialist nodes so that writing, research, and conversation
- * nodes can include retrieved context in their prompts when available.
- *
- * When no workspace is open, or the vector store is empty, ragContext is set
- * to an empty string and execution continues without interruption.
- */
-
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { extractTokenFromChunk } from '../../../../shared/ai-utils';
+import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../../state';
 import type { RagRetriever } from './rag-retriever';
+import SYSTEM_PROMPT from './RAG_QUERY_SYSTEM.md?raw';
 
 const CONTEXT_SEPARATOR = '\n\n---\n\n';
+const NO_CONTEXT_FINDING = 'No relevant workspace context was found for this request.';
 
-/**
- * Format retrieved document snippets into a single context block.
- * Returns an empty string when the documents array is empty.
- */
-function buildRagContext(snippets: string[]): string {
-	if (snippets.length === 0) {
-		return '';
-	}
-	return snippets.join(CONTEXT_SEPARATOR);
+function buildRagContext(documents: Awaited<ReturnType<RagRetriever['retrieve']>>): string {
+	return documents
+		.map((doc, index) => {
+			const sourceLabel = getSourceLabel(doc.metadata, index);
+			return [`Source: ${sourceLabel}`, doc.pageContent.trim()].join('\n');
+		})
+		.filter(Boolean)
+		.join(CONTEXT_SEPARATOR);
 }
 
-export async function ragNode(
+function getSourceLabel(metadata: Record<string, unknown>, index: number): string {
+	if (typeof metadata['fileName'] === 'string' && metadata['fileName'].trim().length > 0) {
+		return metadata['fileName'];
+	}
+
+	if (typeof metadata['source'] === 'string' && metadata['source'].trim().length > 0) {
+		return metadata['source'];
+	}
+
+	return `document-${index + 1}`;
+}
+
+function buildHumanMessage(prompt: string, ragContext: string): string {
+	return [
+		'User request:',
+		prompt,
+		'',
+		'Retrieved workspace context:',
+		'<workspace_context>',
+		ragContext,
+		'</workspace_context>',
+	].join('\n');
+}
+
+export async function ragQueryNode(
 	state: typeof AssistantState.State,
-	retriever: RagRetriever
+	model: BaseChatModel,
+	retriever?: RagRetriever
 ): Promise<Partial<typeof AssistantState.State>> {
 	const query = state.prompt.trim();
 
-	if (query.length === 0) {
-		return { ragContext: '' };
+	if (query.length === 0 || retriever === undefined) {
+		return { ragFindings: NO_CONTEXT_FINDING };
 	}
 
 	const documents = await retriever.retrieve(query);
-	const snippets = documents.map((doc) => doc.pageContent);
-	const ragContext = buildRagContext(snippets);
+	if (documents.length === 0) {
+		return { ragFindings: NO_CONTEXT_FINDING };
+	}
 
-	return { ragContext };
+	const ragContext = buildRagContext(documents);
+	const messages = [
+		new SystemMessage(SYSTEM_PROMPT),
+		...toLangChainHistoryMessages(state.history),
+		new HumanMessage(buildHumanMessage(state.prompt, ragContext)),
+	];
+	const response = await model.invoke(messages);
+	const ragFindings = extractTokenFromChunk(response.content).trim();
+
+	return {
+		ragFindings: ragFindings || NO_CONTEXT_FINDING,
+	};
 }

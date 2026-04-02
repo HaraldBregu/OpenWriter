@@ -9,41 +9,23 @@ import { RagRetriever } from './nodes/rag/rag-retriever';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
-	[ASSISTANT_NODE.UNDERSTAND]: {
+	[ASSISTANT_NODE.RAG_QUERY]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
-		maxTokens: 64,
+		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.CONVERSATION]: {
+	[ASSISTANT_NODE.GRAMMAR_CHECK]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.7,
-		maxTokens: 2048,
+		temperature: 0.1,
+		maxTokens: 512,
 	},
-	[ASSISTANT_NODE.WRITING]: {
+	[ASSISTANT_NODE.AGGREGATE]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.8,
+		temperature: 0.6,
 		maxTokens: 4096,
-	},
-	[ASSISTANT_NODE.EDITING]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.5,
-		maxTokens: 4096,
-	},
-	[ASSISTANT_NODE.RESEARCH]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.4,
-		maxTokens: 4096,
-	},
-	[ASSISTANT_NODE.IMAGE]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.7,
-		maxTokens: 1024,
 	},
 };
 
@@ -52,13 +34,7 @@ const definition: AgentDefinition = {
 	name: 'Assistant',
 	category: 'utility',
 	nodeModels: NODE_MODELS,
-	streamableNodes: [
-		ASSISTANT_NODE.CONVERSATION,
-		ASSISTANT_NODE.WRITING,
-		ASSISTANT_NODE.EDITING,
-		ASSISTANT_NODE.RESEARCH,
-		ASSISTANT_NODE.IMAGE,
-	],
+	streamableNodes: [ASSISTANT_NODE.AGGREGATE],
 	buildGraph,
 
 	prepareGraph(
@@ -80,8 +56,9 @@ const definition: AgentDefinition = {
 		return {
 			prompt: ctx.prompt,
 			history: ctx.history,
-			intent: 'conversation',
-			phaseLabel: ASSISTANT_STATE_MESSAGES.UNDERSTAND,
+			ragFindings: '',
+			grammarFindings: '',
+			phaseLabel: ASSISTANT_STATE_MESSAGES.PARALLEL_CHECKS,
 			response: '',
 		};
 	},

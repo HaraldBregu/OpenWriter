@@ -2,48 +2,44 @@
 
 ## Purpose
 
-`src/main/ai/assistant` implements the routed assistant used for general chat,
-writing, editing, research, and image-oriented requests.
+`src/main/ai/assistant` implements the assistant used for general chat,
+writing, editing, research, and other general requests.
 
 The architecture is a small multi-agent graph:
 
-- a retrieval step enriches the request with workspace context
-- a router step classifies the user intent
-- a specialist node handles the final response
+- a RAG worker analyzes workspace context
+- a grammar worker analyzes the request wording
+- an aggregator produces the final response from both results
 
 ## Visual Graph
 
 ```mermaid
 flowchart LR
-	Start([START]) --> RAG["rag<br/>optional workspace retrieval<br/>sets ragContext"]
-	RAG --> Understand["understand<br/>classifies intent<br/>sets phaseLabel"]
+	Start([START]) --> RagQuery["rag_query<br/>retrieves workspace context<br/>writes ragFindings"]
+	Start([START]) --> GrammarCheck["grammar_check<br/>checks grammar and clarity<br/>writes grammarFindings"]
 
-	Understand -->|conversation| Conversation["conversation<br/>general assistant reply"]
-	Understand -->|writing| Writing["writing<br/>drafting and composition"]
-	Understand -->|editing| Editing["editing<br/>revision and rewriting"]
-	Understand -->|research| Research["research<br/>researched response"]
-	Understand -->|image| Image["image<br/>image-oriented response"]
+	RagQuery --> Aggregate["aggregate<br/>combines worker outputs<br/>streams final response"]
+	GrammarCheck --> Aggregate
 
-	Conversation --> End([END])
-	Writing --> End
-	Editing --> End
-	Research --> End
-	Image --> End
+	Aggregate --> End([END])
 ```
 
 ## Runtime Flow
 
-1. `rag`
-   Looks up workspace context through `RagRetriever` when a workspace path is available.
-   If retrieval is unavailable, it returns an empty `ragContext`.
+1. `rag_query`
+   Retrieves relevant workspace snippets through `RagRetriever` when a workspace
+   path is available, then turns them into a concise internal note stored in
+   `ragFindings`.
 
-2. `understand`
-   Uses the understanding prompt and chat history to classify the request into one of:
-   `conversation`, `writing`, `editing`, `research`, or `image`.
+2. `grammar_check`
+   Reviews the latest request for grammar, clarity, and ambiguity, then stores
+   a concise internal note in `grammarFindings`.
 
-3. specialist node
-   Routes to exactly one final node:
-   `conversation`, `writing`, `editing`, `research`, or `image`.
+3. `aggregate`
+   Reads the original request, conversation history, `ragFindings`, and
+   `grammarFindings`, then produces the final user-facing response.
+
+`rag_query` and `grammar_check` run in parallel. `aggregate` waits for both.
 
 ## State Shape
 
@@ -51,10 +47,10 @@ The shared graph state in `state.ts` contains:
 
 - `prompt`: current user input
 - `history`: prior chat turns
-- `intent`: routed destination, defaulting to `conversation`
+- `ragFindings`: retrieval worker summary for the current request
+- `grammarFindings`: grammar and clarity worker summary
 - `phaseLabel`: UI-visible progress label
-- `response`: final specialist output
-- `ragContext`: retrieved workspace context for downstream nodes
+- `response`: final aggregator output
 
 ## Files
 
@@ -66,26 +62,15 @@ The shared graph state in `state.ts` contains:
   Builds the LangGraph topology shown above.
 
 - `messages.ts`
-  Defines phase labels such as `Understanding request...` and
-  `Preparing researched response...`.
-
-- `nodes/understand/`
-  Router logic that selects the specialist path.
-
-- `nodes/conversation/`
-  Default conversational answer path.
-
-- `nodes/writing/`
-  Drafting and long-form generation path.
-
-- `nodes/editing/`
-  Revision and rewrite path.
-
-- `nodes/research/`
-  Research-oriented answer path.
-
-- `nodes/image/`
-  Image-request handling path.
+  Defines phase labels such as `Running assistant checks...` and
+  `Composing response...`.
 
 - `nodes/rag/`
-  Workspace retrieval path that prepares `ragContext`.
+  Retrieval worker that queries indexed workspace context and produces
+  `ragFindings`.
+
+- `nodes/grammar_check/`
+  Grammar and clarity worker that produces `grammarFindings`.
+
+- `nodes/aggregate/`
+  Final response writer that combines both worker outputs into `response`.

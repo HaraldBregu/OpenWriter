@@ -81,14 +81,12 @@ Initial graph state produced by the assistant:
 {
   prompt: ctx.prompt,
   history: ctx.history,
-  intent: 'conversation',
-  phaseLabel: 'Understanding request...',
+  ragFindings: '',
+  grammarFindings: '',
+  phaseLabel: 'Running assistant checks...',
   response: ''
 }
 ```
-
-`ragContext` is not initialized explicitly here because it is supplied by the
-state default and later populated by the `rag` node.
 
 ## Graph State Schema
 
@@ -101,10 +99,10 @@ interface AssistantGraphState {
     role: 'user' | 'assistant';
     content: string;
   }>;
-  intent: AssistantIntent;
+  ragFindings: string;
+  grammarFindings: string;
   phaseLabel: string;
   response: string;
-  ragContext: string;
 }
 ```
 
@@ -112,30 +110,28 @@ Field semantics:
 
 - `prompt`: raw user input for the current turn
 - `history`: prior conversation turns passed into the run
-- `intent`: route selected by the `understand` node
+- `ragFindings`: internal note generated from retrieved workspace context
+- `grammarFindings`: internal note generated from grammar and clarity review
 - `phaseLabel`: current progress label surfaced to the UI
-- `response`: final text emitted by the selected specialist node
-- `ragContext`: concatenated retrieval context from the workspace vector store
+- `response`: final text emitted by the aggregator node
 
-## Route Enum Schema
-
-```ts
-type AssistantIntent =
-  | 'conversation'
-  | 'writing'
-  | 'editing'
-  | 'research'
-  | 'image';
-```
+## Routing Schema
 
 Routing contract:
 
 ```text
 START
-  -> rag
-  -> understand
-  -> one of conversation | writing | editing | research | image
+  -> rag_query
+  -> grammar_check
+  -> aggregate
   -> END
+```
+
+Execution detail:
+
+```text
+rag_query and grammar_check run in parallel,
+then aggregate waits for both and produces the final output.
 ```
 
 ## Node Model Schema
@@ -144,12 +140,9 @@ The assistant is configured as a per-node model map:
 
 ```ts
 type AssistantNodeName =
-  | 'understand'
-  | 'conversation'
-  | 'writing'
-  | 'editing'
-  | 'research'
-  | 'image';
+  | 'rag_query'
+  | 'grammar_check'
+  | 'aggregate';
 
 interface NodeModelConfig {
   providerId: string;
@@ -165,30 +158,23 @@ Current configured values:
 
 ```ts
 {
-  understand:   { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 64 },
-  conversation: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.7, maxTokens: 2048 },
-  writing:      { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.8, maxTokens: 4096 },
-  editing:      { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.5, maxTokens: 4096 },
-  research:     { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 4096 },
-  image:        { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.7, maxTokens: 1024 }
+  rag_query:     { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
+  grammar_check: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 512 },
+  aggregate:     { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.6, maxTokens: 4096 }
 }
 ```
 
 ## Streaming Schema
 
-Only specialist nodes are streamable:
+Only the aggregator node is streamable:
 
 ```ts
 [
-  'conversation',
-  'writing',
-  'editing',
-  'research',
-  'image'
+  'aggregate'
 ]
 ```
 
-The router and retrieval nodes are intentionally excluded from token streaming.
+The worker nodes are intentionally excluded from token streaming.
 
 ## Output Schema
 
@@ -222,12 +208,7 @@ Known labels emitted by the assistant:
 
 ```ts
 {
-  RAG: 'Searching documents...',
-  UNDERSTAND: 'Understanding request...',
-  CONVERSATION: 'Responding...',
-  WRITING: 'Writing response...',
-  EDITING: 'Editing response...',
-  RESEARCH: 'Preparing researched response...',
-  IMAGE: 'Preparing image response...'
+  PARALLEL_CHECKS: 'Running assistant checks...',
+  AGGREGATE: 'Composing response...'
 }
 ```
