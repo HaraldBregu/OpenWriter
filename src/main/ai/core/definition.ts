@@ -8,6 +8,7 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { AgentHistoryMessage } from './types';
+import type { LoggerService } from '../../services/logger';
 // AgentDefinitionInfo is the canonical IPC-safe snapshot type shared across
 // all three process contexts (main, preload, renderer).
 export type { AgentDefinitionInfo } from '../../../shared/types';
