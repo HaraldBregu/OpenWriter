@@ -65,12 +65,21 @@ export interface TaskSubmitPayload<TInput = unknown> {
 	metadata?: Record<string, unknown>;
 }
 
-export type TaskStatus = 'queued' | 'started' | 'running' | 'completed' | 'error' | 'cancelled';
+export type TaskState =
+	| 'queued'
+	| 'started'
+	| 'running'
+	| 'progress'
+	| 'completed'
+	| 'error'
+	| 'cancelled'
+	| 'stream'
+	| 'priority-changed';
 
 export interface TaskInfo {
 	taskId: string;
 	type: string;
-	status: TaskStatus;
+	status: TaskState;
 	priority: TaskPriority;
 	startedAt?: number;
 	completedAt?: number;
@@ -87,16 +96,6 @@ export interface TaskQueueStatus {
 	completed: number;
 }
 
-export type TaskEventState =
-	| 'queued'
-	| 'started'
-	| 'progress'
-	| 'completed'
-	| 'error'
-	| 'cancelled'
-	| 'stream'
-	| 'priority-changed';
-
 /**
  * Flat task event shape — every variant has the same fields.
  *
@@ -107,7 +106,7 @@ export type TaskEventState =
  * - `metadata` — caller-supplied metadata attached at submit time; matches TaskSubmitPayload.metadata.
  */
 export interface TaskEvent {
-	state: TaskEventState;
+	state: TaskState;
 	taskId: string;
 	data: unknown;
 	error: unknown;

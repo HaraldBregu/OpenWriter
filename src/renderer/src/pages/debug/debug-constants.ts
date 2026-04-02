@@ -1,6 +1,6 @@
 import React from 'react';
 import { Zap, Clock, Radio, AlertTriangle } from 'lucide-react';
-import type { TaskStatus } from '@/services/task-store';
+import type { TaskState } from '@/services/task-store';
 
 export type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error';
 
@@ -16,7 +16,7 @@ export const DEMO_VARIANTS: {
 	{ variant: 'error', label: 'Error', icon: AlertTriangle, description: 'Fails at 60 %' },
 ];
 
-export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: string }> = {
+export const STATUS_CONFIG: Record<TaskState, { label: string; className: string }> = {
 	queued: {
 		label: 'Queued',
 		className: 'border border-warning/20 bg-warning/12 text-warning',
@@ -26,6 +26,10 @@ export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: strin
 		className: 'border border-warning/20 bg-warning/12 text-warning',
 	},
 	running: {
+		label: 'Running',
+		className: 'border border-info/20 bg-info/12 text-info',
+	},
+	progress: {
 		label: 'Running',
 		className: 'border border-info/20 bg-info/12 text-info',
 	},
@@ -40,6 +44,14 @@ export const STATUS_CONFIG: Record<TaskStatus, { label: string; className: strin
 	cancelled: {
 		label: 'Cancelled',
 		className: 'border border-border bg-muted/70 text-muted-foreground',
+	},
+	stream: {
+		label: 'Running',
+		className: 'border border-info/20 bg-info/12 text-info',
+	},
+	'priority-changed': {
+		label: 'Queued',
+		className: 'border border-warning/20 bg-warning/12 text-warning',
 	},
 };
 

@@ -1,4 +1,4 @@
-import type { TaskEvent, TaskInfo, TaskPriority, TaskStatus } from '../../../shared/types';
+import type { TaskEvent, TaskInfo, TaskPriority, TaskState } from '../../../shared/types';
 import { withTaskStatusText } from '../../../shared/types';
 
 /** Safely extract a property from an unknown payload. */
@@ -9,7 +9,7 @@ function dataField<T>(data: unknown, key: string): T | undefined {
 	return undefined;
 }
 
-export type { TaskPriority, TaskStatus };
+export type { TaskPriority, TaskState };
 
 export interface TaskProgressState {
 	percent: number;
@@ -26,7 +26,7 @@ export interface TaskEventRecord {
 export interface TrackedTaskState {
 	taskId: string;
 	type: string;
-	status: TaskStatus;
+	status: TaskState;
 	priority: TaskPriority;
 	progress: TaskProgressState;
 	durationMs?: number;
@@ -335,6 +335,9 @@ export function applyTaskEvent(event: TaskEvent): void {
 						priority: dataField<TaskPriority>(event.data, 'priority') ?? nextTask.priority,
 					};
 				}
+				case 'running':
+				default:
+					return nextTask;
 			}
 		},
 		() => (event.state === 'queued' ? createTrackedTaskFromQueuedEvent(event) : null)

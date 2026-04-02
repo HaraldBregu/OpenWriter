@@ -1,5 +1,5 @@
-import type { TaskPriority, TaskStatus } from '../../shared/types';
-export type { TaskPriority, TaskStatus };
+import type { TaskPriority, TaskState } from '../../shared/types';
+export type { TaskPriority, TaskState };
 
 /**
  * Options for task submission.
@@ -51,7 +51,7 @@ export interface ActiveTask {
 	/**
 	 * Current task status
 	 */
-	status: TaskStatus;
+	status: TaskState;
 
 	/**
 	 * Task priority

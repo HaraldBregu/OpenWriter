@@ -9,7 +9,7 @@
  * This avoids the need for a React context to distribute task events.
  */
 
-import type { TaskEvent, TaskStatus } from '../../../shared/types';
+import type { TaskEvent, TaskState } from '../../../shared/types';
 
 /** Safely extract a property from an unknown payload. */
 function dataField<T>(data: unknown, key: string): T | undefined {
@@ -24,7 +24,7 @@ function dataField<T>(data: unknown, key: string): T | undefined {
 // ---------------------------------------------------------------------------
 
 export interface TaskSnapshot {
-	status: TaskStatus;
+	status: TaskState;
 	streamedContent: string; // latest delta token only
 	content: string; // seedContent + all AI tokens (full display text)
 	seedContent: string; // original text before AI enhancement (set by initTaskContent)

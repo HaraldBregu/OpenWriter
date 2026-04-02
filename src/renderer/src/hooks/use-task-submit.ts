@@ -6,7 +6,7 @@ import {
 	getTrackedTask,
 	removeTask,
 	subscribeToTaskStore,
-	type TaskStatus,
+	type TaskState,
 	type TaskProgressState,
 } from '@/services/task-store';
 
@@ -14,13 +14,13 @@ import {
 // Types
 // ---------------------------------------------------------------------------
 
-export type { TaskStatus, TaskProgressState };
+export type { TaskState, TaskProgressState };
 
 export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	/** Task ID assigned by the main process. Null before submit() is called. */
 	taskId: string | null;
 	/** Current lifecycle status. Null before submit() is called. */
-	status: TaskStatus | null;
+	status: TaskState | null;
 	/** Task metadata returned by the main process. */
 	metadata: Record<string, unknown> | undefined;
 	/** Progress state — percent 0–100 and optional message. */
@@ -64,7 +64,7 @@ export interface TaskOptions {
 	timeoutMs?: number;
 }
 
-const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set(['completed', 'error', 'cancelled']);
+const TERMINAL_STATUSES: ReadonlySet<TaskState> = new Set(['completed', 'error', 'cancelled']);
 
 /**
  * useTaskSubmit — manages the full lifecycle of a single task submission.
@@ -91,7 +91,7 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		() => undefined
 	);
 
-	const status: TaskStatus | null = taskState?.status ?? null;
+	const status: TaskState | null = taskState?.status ?? null;
 	const progressPercent: number = taskState?.progress.percent ?? 0;
 	const metadata = taskState?.metadata;
 	const progressMessage: string | undefined =

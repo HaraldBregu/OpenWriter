@@ -3,11 +3,11 @@ import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
 import { getTaskStatusText } from '../../../shared/types';
 import { subscribeToTask, getTaskSnapshot } from '@/services/task-event-bus';
 import type { TaskSnapshot } from '@/services/task-event-bus';
-import type { TaskStatus, TaskProgressState } from '@/services/task-store';
+import type { TaskState, TaskProgressState } from '@/services/task-store';
 import type { UseTaskSubmitReturn, TaskOptions } from './use-task-submit';
 
 // Terminal statuses — the task cannot change state again (except via a new submit).
-const TERMINAL_STATUSES: ReadonlySet<TaskStatus> = new Set(['completed', 'error', 'cancelled']);
+const TERMINAL_STATUSES: ReadonlySet<TaskState> = new Set(['completed', 'error', 'cancelled']);
 
 /**
  * useTask — manages the full lifecycle of a single task submission using
@@ -26,7 +26,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 ): UseTaskSubmitReturn<TInput, TResult> {
 	// Local state — replaces Redux-derived fields.
 	const [taskId, setTaskId] = useState<string | null>(null);
-	const [status, setStatus] = useState<TaskStatus | null>(null);
+	const [status, setStatus] = useState<TaskState | null>(null);
 	const [metadata, setMetadata] = useState<Record<string, unknown> | undefined>(undefined);
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [result, setResult] = useState<TResult | undefined>(undefined);
@@ -76,7 +76,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		if (existing) {
 			const prev = prevSnapRef.current;
 			if (existing.status !== prev.status) {
-				setStatus(existing.status as TaskStatus);
+				setStatus(existing.status);
 			}
 			if (existing.metadata !== prev.metadata) {
 				setMetadata(existing.metadata);
@@ -99,7 +99,7 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			const prev = prevSnapRef.current;
 
 			if (snap.status !== prev.status) {
-				setStatus(snap.status as TaskStatus);
+				setStatus(snap.status);
 			}
 			if (snap.metadata !== prev.metadata) {
 				setMetadata(snap.metadata);

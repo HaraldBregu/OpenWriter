@@ -1,7 +1,7 @@
 // ---- Task system types ---------------------------------------------------
 // Note: Individual task type files are co-located with their domain code.
 // Import directly from the specific file when needed within the taskManager subtree.
-export type { TaskPriority, TaskStatus, TaskOptions, ActiveTask } from './task/task-descriptor';
+export type { TaskPriority, TaskState, TaskOptions, ActiveTask } from './task/task-descriptor';
 
 export type { ProgressReporter, StreamReporter, TaskHandler } from './task/task-handler';
 

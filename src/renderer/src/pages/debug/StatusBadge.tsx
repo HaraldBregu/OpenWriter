@@ -1,7 +1,7 @@
-import type { TaskStatus } from '@/services/task-store';
+import type { TaskState } from '@/services/task-store';
 import { STATUS_CONFIG } from './debug-constants';
 
-export function StatusBadge({ status }: { status: TaskStatus }) {
+export function StatusBadge({ status }: { status: TaskState }) {
 	const cfg = STATUS_CONFIG[status] ?? {
 		label: status,
 		className: 'border border-border bg-muted/70 text-muted-foreground',

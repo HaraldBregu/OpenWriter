@@ -105,7 +105,7 @@ Important types:
 - `TaskOptions`
 - `ActiveTask`
 - re-exported `TaskPriority`
-- re-exported `TaskStatus`
+- re-exported `TaskState`
 
 This is where queue-level metadata lives, including:
 
