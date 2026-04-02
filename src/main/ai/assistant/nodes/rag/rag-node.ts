@@ -47,15 +47,24 @@ function buildHumanMessage(prompt: string, ragContext: string): string {
 export async function ragQueryNode(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
-	retriever?: RagRetriever
+	retriever?: RagRetriever,
+	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	const query = state.prompt.trim();
 
 	if (query.length === 0 || retriever === undefined) {
+		logger?.debug('RagQueryNode', 'Skipping RAG query', {
+			queryEmpty: query.length === 0,
+			retrieverUndefined: retriever === undefined,
+		});
 		return { ragFindings: NO_CONTEXT_FINDING };
 	}
 
+	logger?.debug('RagQueryNode', 'Starting RAG query', { queryLength: query.length });
+
 	const documents = await retriever.retrieve(query);
+	logger?.info('RagQueryNode', 'RAG documents retrieved', { documentCount: documents.length });
+
 	if (documents.length === 0) {
 		return { ragFindings: NO_CONTEXT_FINDING };
 	}
@@ -68,6 +77,8 @@ export async function ragQueryNode(
 	];
 	const response = await model.invoke(messages);
 	const ragFindings = extractTokenFromChunk(response.content).trim();
+
+	logger?.info('RagQueryNode', 'RAG findings generated', { findingsLength: ragFindings.length });
 
 	return {
 		ragFindings: ragFindings || NO_CONTEXT_FINDING,
