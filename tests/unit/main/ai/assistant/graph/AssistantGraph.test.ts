@@ -1,31 +1,43 @@
 jest.mock(
-	'../../../../../../src/main/ai/agents/assistant/UNDERSTAND_SYSTEM.md?raw',
+	'../../../../../../src/main/ai/agents/assistant/nodes/understand/UNDERSTAND_SYSTEM.md?raw',
 	() => 'Route',
 	{
 		virtual: true,
 	}
 );
 jest.mock(
-	'../../../../../../src/main/ai/agents/assistant/CONVERSATION_SYSTEM.md?raw',
+	'../../../../../../src/main/ai/agents/assistant/nodes/conversation/CONVERSATION_SYSTEM.md?raw',
 	() => 'Conversation',
 	{ virtual: true }
 );
-jest.mock('../../../../../../src/main/ai/agents/assistant/WRITING_SYSTEM.md?raw', () => 'Writing', {
-	virtual: true,
-});
-jest.mock('../../../../../../src/main/ai/agents/assistant/EDITING_SYSTEM.md?raw', () => 'Editing', {
-	virtual: true,
-});
 jest.mock(
-	'../../../../../../src/main/ai/agents/assistant/RESEARCH_SYSTEM.md?raw',
+	'../../../../../../src/main/ai/agents/assistant/nodes/writing/WRITING_SYSTEM.md?raw',
+	() => 'Writing',
+	{
+		virtual: true,
+	}
+);
+jest.mock(
+	'../../../../../../src/main/ai/agents/assistant/nodes/editing/EDITING_SYSTEM.md?raw',
+	() => 'Editing',
+	{
+		virtual: true,
+	}
+);
+jest.mock(
+	'../../../../../../src/main/ai/agents/assistant/nodes/research/RESEARCH_SYSTEM.md?raw',
 	() => 'Research',
 	{
 		virtual: true,
 	}
 );
-jest.mock('../../../../../../src/main/ai/agents/assistant/IMAGE_SYSTEM.md?raw', () => 'Image', {
-	virtual: true,
-});
+jest.mock(
+	'../../../../../../src/main/ai/agents/assistant/nodes/image/IMAGE_SYSTEM.md?raw',
+	() => 'Image',
+	{
+		virtual: true,
+	}
+);
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { buildGraph, ASSISTANT_NODE } from '../../../../../../src/main/ai/agents/assistant/graph';
