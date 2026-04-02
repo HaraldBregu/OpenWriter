@@ -55,7 +55,7 @@ const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const LibraryPage = lazy(() => import('./pages/library/LibraryPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const DataPage = lazy(() => import('./pages/data/Page'));
-const SearchPage = lazy(() => import('./pages/search/SearchPage'));
+const SearchPage = lazy(() => import('./pages/search/Page'));
 
 // Lazy-loaded settings pages
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
