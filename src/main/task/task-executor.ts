@@ -448,7 +448,7 @@ export class TaskExecutor implements Disposable {
 			task.result = result;
 
 			this.send(windowId, 'task:event', {
-				type: 'completed',
+				state: 'completed',
 				taskId,
 				data: { result, durationMs },
 				error: null,
