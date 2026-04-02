@@ -5,6 +5,12 @@ import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './GRAMMAR_CHECK_SYSTEM.md?raw';
 
+const EMPTY_PROMPT_FINDINGS =
+	'Corrected request: \nInterpretation notes: No request provided.\nAmbiguities: Missing user input.';
+
+const NO_ISSUES_FINDINGS = (prompt: string) =>
+	`Corrected request: ${prompt}\nInterpretation notes: No material grammar issues detected.\nAmbiguities: None.`;
+
 function buildHumanMessage(prompt: string): string {
 	return ['Latest user request:', prompt].join('\n');
 }
