@@ -540,8 +540,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								{loaded && (
 									<TextEditor
 										disabled={
-											textCompleterTask.isRunning ||
-											textEnhanceTask.isRunning ||
+			textEnhanceTask.isRunning ||
 											textWriterTask.isRunning ||
 											imageGeneratorTask.isRunning ||
 											assistantIsRunning
