@@ -87,7 +87,7 @@ export interface TaskQueueStatus {
 	completed: number;
 }
 
-export type TaskEventType =
+export type TaskEventState =
 	| 'queued'
 	| 'started'
 	| 'progress'
