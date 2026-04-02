@@ -191,7 +191,6 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			type: activeTask.type || currentTask.type,
 			status: activeTask.status,
 			priority: activeTask.priority,
-			queuePosition: activeTask.queuePosition,
 			durationMs: activeTask.durationMs ?? currentTask.durationMs,
 			error: activeTask.error ?? currentTask.error,
 			metadata: activeTask.metadata ?? currentTask.metadata,
@@ -202,7 +201,6 @@ function mergeActiveTasks(activeTasks: TaskInfo[]): void {
 			currentTask.type !== mergedTask.type ||
 			currentTask.status !== mergedTask.status ||
 			currentTask.priority !== mergedTask.priority ||
-			currentTask.queuePosition !== mergedTask.queuePosition ||
 			currentTask.durationMs !== mergedTask.durationMs ||
 			currentTask.error !== mergedTask.error ||
 			currentTask.metadata !== mergedTask.metadata ||
