@@ -1,5 +1,5 @@
 import type { TaskEvent, TaskInfo, TaskPriority, TaskStatus } from '../../../shared/types';
-import { withTaskStatusText } from '../../../shared/task-metadata';
+import { withTaskStatusText } from '../../../shared/types';
 
 /** Safely extract a property from an unknown payload. */
 function dataField<T>(data: unknown, key: string): T | undefined {
