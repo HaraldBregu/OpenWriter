@@ -1,6 +1,7 @@
 import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { NodeModelMap } from '../core/definition';
+import type { LoggerService } from '../../services/logger';
 import { AssistantState } from './state';
 import { aggregateNode } from './nodes/aggregate/aggregate-node';
 import { grammarCheckNode } from './nodes/grammar_check/grammar-check-node';
