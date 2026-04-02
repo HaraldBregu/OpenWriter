@@ -31,8 +31,6 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	error: string | undefined;
 	/** Result payload from the completed event, typed by TResult. */
 	result: TResult | undefined;
-	/** Current queue position when status is 'queued'. */
-	queuePosition: number | undefined;
 	/** Wall-clock duration of the task in milliseconds, set on completion. */
 	durationMs: number | undefined;
 	/** Submit the task. */
