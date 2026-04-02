@@ -96,7 +96,7 @@ function ensureTaskStoreInitialized(): void {
 
 function appendEvent(task: TrackedTaskState, event: TaskEvent): TaskEventRecord[] {
 	const record: TaskEventRecord = {
-		type: event.type,
+		state: event.state,
 		data: { taskId: event.taskId, data: event.data, error: event.error, metadata: event.metadata },
 		receivedAt: Date.now(),
 	};
