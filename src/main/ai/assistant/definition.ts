@@ -2,11 +2,11 @@ import type {
 	AgentDefinition,
 	AgentRuntimeContext,
 	GraphInputContext,
-} from '../../core/definition';
+} from '../core/definition';
 import { buildGraph, ASSISTANT_NODE } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
-import { RagRetriever } from './nodes/rag-retriever';
-import { createEmbeddingModel } from '../../../shared/embedding-factory';
+import { RagRetriever } from './nodes/rag/rag-retriever';
+import { createEmbeddingModel } from '../../shared/embedding-factory';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
 	[ASSISTANT_NODE.UNDERSTAND]: {
