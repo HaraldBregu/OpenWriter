@@ -77,10 +77,6 @@ function ensureListening(): void {
 					status: 'queued',
 					...metadataOverride,
 				};
-				const taskType = event.data?.taskType;
-				if (taskType) {
-					typeSubscribers.get(taskType)?.forEach((cb) => cb(taskId));
-				}
 				break;
 			}
 			case 'started':
