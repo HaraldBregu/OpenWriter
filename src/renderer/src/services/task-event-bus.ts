@@ -71,12 +71,8 @@ function ensureListening(): void {
 		};
 		let next: TaskSnapshot;
 
-		// Extract metadata from the flat event.
-		const eventMetadata =
-			event.metadata !== undefined && event.metadata !== null
-				? (event.metadata as Record<string, unknown>)
-				: undefined;
-		const metadataOverride = eventMetadata !== undefined ? { metadata: eventMetadata } : {};
+		// Carry forward metadata when present.
+		const metadataOverride = event.metadata !== undefined ? { metadata: event.metadata } : {};
 
 		switch (event.type) {
 			case 'queued': {
