@@ -1,6 +1,14 @@
 import type { TaskEvent, TaskInfo, TaskPriority, TaskStatus } from '../../../shared/types';
 import { withTaskStatusText } from '../../../shared/task-metadata';
 
+/** Safely extract a property from an unknown payload. */
+function dataField<T>(data: unknown, key: string): T | undefined {
+	if (typeof data === 'object' && data !== null && key in data) {
+		return (data as Record<string, unknown>)[key] as T;
+	}
+	return undefined;
+}
+
 export type { TaskPriority, TaskStatus };
 
 export interface TaskProgressState {
