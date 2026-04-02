@@ -186,7 +186,7 @@ export class TaskExecutor implements Disposable {
 		task.completedAt = Date.now();
 
 		this.send(task.windowId, 'task:event', {
-			type: 'cancelled',
+			state: 'cancelled',
 			taskId,
 			data: {},
 			error: null,
