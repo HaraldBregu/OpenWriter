@@ -35,7 +35,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 				<AppButton
 					type="button"
 					variant="header-icon"
-					size="header-icon-sm"
+					size="header-icon-md"
 					title="Version history"
 					aria-label="Version history"
 				>

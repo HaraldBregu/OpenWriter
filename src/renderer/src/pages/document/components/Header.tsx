@@ -110,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({
 					<AppButton
 						type="button"
 						variant="header-icon"
-						size="header-icon-sm"
+						size="header-icon-md"
 						title="Undo"
 						aria-label="Undo"
 						onClick={onUndo}
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
 					<AppButton
 						type="button"
 						variant="header-icon"
-						size="header-icon-sm"
+						size="header-icon-md"
 						title="Redo"
 						aria-label="Redo"
 						onClick={onRedo}
@@ -138,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
 					<AppButton
 						type="button"
 						variant="header-icon"
-						size="header-icon-sm"
+						size="header-icon-md"
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
 						aria-expanded={activeSidebar === 'agentic'}
@@ -149,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({
 					<AppButton
 						type="button"
 						variant="header-icon"
-						size="header-icon-sm"
+						size="header-icon-md"
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
 						aria-expanded={activeSidebar === 'config'}
