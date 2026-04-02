@@ -1,6 +1,10 @@
-jest.mock('../../../../../../src/main/ai/agents/assistant/UNDERSTAND_SYSTEM.md?raw', () => 'Route', {
-	virtual: true,
-});
+jest.mock(
+	'../../../../../../src/main/ai/agents/assistant/UNDERSTAND_SYSTEM.md?raw',
+	() => 'Route',
+	{
+		virtual: true,
+	}
+);
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { understandNode } from '../../../../../../src/main/ai/agents/assistant/nodes/understand-node';

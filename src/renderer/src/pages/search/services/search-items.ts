@@ -129,7 +129,7 @@ export function buildSearchSections({
 					icon: icons.document,
 				},
 			}))
-			.filter((entry) => !hasQuery || entry.score > 0),
+			.filter((entry) => !hasQuery || entry.score > 0)
 	)
 		.slice(0, SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
@@ -149,7 +149,7 @@ export function buildSearchSections({
 					icon: icons.resource,
 				},
 			}))
-			.filter((entry) => !hasQuery || entry.score > 0),
+			.filter((entry) => !hasQuery || entry.score > 0)
 	)
 		.slice(0, SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);

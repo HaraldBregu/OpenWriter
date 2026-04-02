@@ -26,10 +26,7 @@ const SearchResultCard: React.FC<SearchResultCardProps> = ({ item, onSelect }) =
 				<div className="flex items-center gap-2">
 					<p className="truncate text-sm font-medium text-foreground">{item.title}</p>
 					<span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-						{t(
-							`search.kind.${item.kind}`,
-							SEARCH_RESULT_KIND_LABELS[item.kind] ?? item.kind,
-						)}
+						{t(`search.kind.${item.kind}`, SEARCH_RESULT_KIND_LABELS[item.kind] ?? item.kind)}
 					</span>
 				</div>
 				<p className="line-clamp-2 text-xs text-muted-foreground">{item.description}</p>

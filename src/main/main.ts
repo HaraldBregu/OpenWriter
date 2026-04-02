@@ -92,10 +92,12 @@ export class Main {
 		});
 	}
 
-	private createLauncherWindow(options: {
-		closeToTray?: boolean;
-		onReadyToShow?: (win: BrowserWindow) => void;
-	} = {}): BrowserWindow {
+	private createLauncherWindow(
+		options: {
+			closeToTray?: boolean;
+			onReadyToShow?: (win: BrowserWindow) => void;
+		} = {}
+	): BrowserWindow {
 		const { closeToTray = false, onReadyToShow } = options;
 		const win = this.windowFactory.create(this.createWindowOptions());
 

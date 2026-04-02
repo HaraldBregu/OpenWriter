@@ -185,9 +185,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										>
 											<Link to="/search">
 												<Search className="h-4 w-4 shrink-0" />
-												<span className="flex-1 truncate">
-													{t('menu.search', 'Search')}
-												</span>
+												<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
@@ -240,7 +238,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<AppSidebarMenuButton
 											asChild
 											className="h-9 px-3"
-											isActive={location.pathname === '/library' || location.pathname === '/resources'}
+											isActive={
+												location.pathname === '/library' || location.pathname === '/resources'
+											}
 										>
 											<Link to="/library">
 												<Library className="h-4 w-4 shrink-0" />

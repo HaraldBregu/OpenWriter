@@ -269,10 +269,7 @@ export function useChatPersistence(documentId: string | undefined): () => void {
 
 					const docPath = await window.workspace.getDocumentPath(currentDocumentId);
 					const sessionFilePath = `${docPath}/chats/${currentSessionId}/messages.json`;
-					const createdAt = createdAtFromSessionId(
-						currentSessionId,
-						new Date().toISOString()
-					);
+					const createdAt = createdAtFromSessionId(currentSessionId, new Date().toISOString());
 
 					const sessionFile: ChatSessionFile = {
 						version: 2,

@@ -1,9 +1,4 @@
-import React, {
-	useRef,
-	useEffect,
-	useCallback,
-	useMemo,
-} from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot } from 'lucide-react';
 import { TextSelection } from '@tiptap/pm/state';

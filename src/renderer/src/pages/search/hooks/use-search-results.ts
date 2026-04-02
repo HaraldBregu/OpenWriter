@@ -37,18 +37,15 @@ export function useSearchResults(query: string) {
 				title: t('search.quickActionsTitle', 'Quick actions'),
 				description: t(
 					'search.quickActionsDescription',
-					'Common routes and entry points you can jump to immediately.',
+					'Common routes and entry points you can jump to immediately.'
 				),
-				emptyCopy: t(
-					'search.quickActionsEmpty',
-					'No quick actions are available for this search.',
-				),
+				emptyCopy: t('search.quickActionsEmpty', 'No quick actions are available for this search.'),
 			},
 			documents: {
 				title: t('search.documentsTitle', 'Documents'),
 				description: t(
 					'search.documentsDescription',
-					'Recent writing outputs matched against title and path.',
+					'Recent writing outputs matched against title and path.'
 				),
 				emptyCopy: t('search.documentsEmpty', 'No documents in this workspace yet.'),
 			},
@@ -56,7 +53,7 @@ export function useSearchResults(query: string) {
 				title: t('search.resourcesTitle', 'Resources'),
 				description: t(
 					'search.resourcesDescription',
-					'Imported files matched against file name, type, and path.',
+					'Imported files matched against file name, type, and path.'
 				),
 				emptyCopy: t('search.resourcesEmpty', 'No imported resources yet.'),
 			},

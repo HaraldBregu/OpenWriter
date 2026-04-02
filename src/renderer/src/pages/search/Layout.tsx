@@ -20,7 +20,7 @@ const Layout: React.FC = () => {
 					<p className="text-sm text-muted-foreground">
 						{t(
 							'search.placeholderCopy',
-							'Find documents, resources, and app shortcuts from one place.',
+							'Find documents, resources, and app shortcuts from one place.'
 						)}
 					</p>
 				</div>
@@ -45,7 +45,7 @@ const Layout: React.FC = () => {
 								})
 							: t(
 									'search.browseSummary',
-									'Browse recent documents, imported resources, and quick actions.',
+									'Browse recent documents, imported resources, and quick actions.'
 								)}
 					</p>
 					{hasQuery && (

@@ -100,7 +100,10 @@
       "Bash(node -e \"console.log\\(require.resolve\\(''./node_modules/react-resizable-panels''\\)\\)\")",
       "Bash(sed -i '' 's/DocumentHeaderProps/HeaderProps/g; s/DocumentHeader/Header/g' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/pages/document/Header.tsx)",
       "Bash(sed -i '' 's/DocumentLayoutProps/LayoutProps/g; s/DocumentLayout/Layout/g; s/DocumentHeader/Header/g; s|DocumentHeader|Header|g' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/src/renderer/src/pages/document/Layout.tsx)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(for f:*)",
+      "Read(//c/Users/BRGHLD87H/Documents/OpenWriter/src/main/ai/agents/assistant/**)",
+      "Bash(done)"
     ],
     "deny": [
       "Bash(git push --force:*)",
