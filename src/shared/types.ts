@@ -100,7 +100,7 @@ export type TaskEventState =
 /**
  * Flat task event shape — every variant has the same fields.
  *
- * - `type`     — discriminant identifying the lifecycle stage.
+ * - `state`    — discriminant identifying the lifecycle stage.
  * - `taskId`   — unique identifier of the task this event belongs to.
  * - `data`     — success payload (shape varies per event type); null on error events.
  * - `error`    — error payload; null on success events.
