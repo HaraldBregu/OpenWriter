@@ -12,7 +12,6 @@ import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
-import { InlineAssistant } from './panels/inline_assistant/InlineAssistant';
 
 type TextCompleterTaskData = {
 	prompt: string;
