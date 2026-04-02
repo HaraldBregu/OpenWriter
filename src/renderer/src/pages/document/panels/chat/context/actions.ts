@@ -1,4 +1,4 @@
-import type { DocumentChatMessage } from './state';
+import type { DocumentChatMessage } from '../shared';
 
 export type ChatAction =
 	| { type: 'CHAT_MESSAGE_ADDED'; message: DocumentChatMessage }

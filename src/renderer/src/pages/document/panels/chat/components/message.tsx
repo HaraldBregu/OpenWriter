@@ -2,14 +2,15 @@ import React from 'react';
 import { LoaderCircle } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { ChatMessageStatus, DocumentChatMessageRole } from '../shared';
 
 interface MessageProps {
 	readonly id: string;
 	readonly content: string;
-	readonly role: 'user' | 'assistant' | 'system';
+	readonly role: DocumentChatMessageRole;
 	readonly taskId?: string | null;
 	readonly timestamp: Date | string;
-	readonly status?: 'idle' | 'queued' | 'running' | 'completed' | 'error' | 'cancelled';
+	readonly status?: ChatMessageStatus;
 	readonly renderMarkdown?: boolean;
 	readonly showStatusLoader?: boolean;
 }

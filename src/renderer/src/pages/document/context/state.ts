@@ -1,5 +1,5 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
-import type { ChatSession, ChatSessionListItem } from '../panels/chat/context';
+import type { ChatSession, ChatSessionListItem } from '../panels/chat/shared';
 import { INITIAL_CHAT_STATE } from '../panels/chat/context';
 
 export interface DocumentSelection {

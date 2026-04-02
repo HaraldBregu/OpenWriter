@@ -1,5 +1,5 @@
 import type { ChatAction } from './actions';
-import type { ChatSession } from './state';
+import type { ChatSession } from '../shared';
 
 export function chatReducer(state: ChatSession, action: ChatAction): ChatSession {
 	switch (action.type) {

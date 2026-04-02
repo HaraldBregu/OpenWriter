@@ -11,7 +11,7 @@ import {
 } from '@/components/app';
 import { useDocumentDispatch, useDocumentState } from '../../../hooks';
 import { useChatState, useChatDispatch } from '../hooks';
-import type { ChatSessionFile } from '../context';
+import type { ChatSessionFile } from '../shared';
 import { syncChatSessionsFromDisk } from '../../../services/chat-session-storage';
 
 const Header: React.FC = () => {

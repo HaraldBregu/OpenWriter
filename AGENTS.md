@@ -23,7 +23,7 @@ The codebase is TypeScript-first. Prettier uses tabs, single quotes, semicolons,
 
 ## Testing Guidelines
 
-Jest is configured as a multi-project suite: `main` runs in Node, `renderer` runs in jsdom. Playwright covers full Electron flows in `tests/e2e/*.spec.ts`. Maintain the global coverage floor of 50% for branches, functions, lines, and statements. Add tests beside the matching layer, and prefer `render-with-providers.tsx` plus the existing Electron/preload mocks instead of custom bootstrapping.
+Jest is configured as a multi-project suite: `main` runs in Node, `renderer` runs in jsdom. Playwright covers full Electron flows in `tests/e2e/*.spec.ts`. Maintain the global coverage floor of 50% for branches, functions, lines, and statements. Only add or update tests when the user specifically requests test implementation. When tests are requested, add them beside the matching layer and prefer `render-with-providers.tsx` plus the existing Electron/preload mocks instead of custom bootstrapping.
 
 ## Commit & Pull Request Guidelines
 
@@ -31,7 +31,7 @@ Recent history uses short, imperative commit subjects such as `Add ConfigPanel a
 
 ## Configuration & Security
 
-Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/ai/agents/**/*.md` and IPC surfaces as sensitive interfaces: update tests when changing them.
+Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/ai/agents/**/*.md` and IPC surfaces as sensitive interfaces. If test updates are needed for those changes, only implement them when the user specifically requests tests.
 
 ## Git
 

@@ -1,5 +1,6 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
-import type { ChatAction, ChatSessionListItem } from '../panels/chat/context';
+import type { ChatAction } from '../panels/chat/context';
+import type { ChatSessionListItem } from '../panels/chat/shared';
 import type { DocumentSelection } from './state';
 
 export type DocumentAction =
