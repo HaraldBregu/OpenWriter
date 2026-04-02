@@ -63,7 +63,7 @@ export async function ragQueryNode(
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state.prompt, ragContext)),
+		new HumanMessage(buildHumanMessage(query, ragContext)),
 	];
 	const response = await model.invoke(messages);
 	const ragFindings = extractTokenFromChunk(response.content).trim();
