@@ -2,14 +2,14 @@ import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { NodeModelMap } from '../../core/definition';
 import { AssistantState } from './state';
-import { understandNode, type AssistantIntent } from './nodes/understand-node';
-import { conversationNode } from './nodes/conversation-node';
-import { writingNode } from './nodes/writing-node';
-import { editingNode } from './nodes/editing-node';
-import { researchNode } from './nodes/research-node';
-import { imageNode } from './nodes/image-node';
-import { ragNode } from './nodes/rag-node';
-import type { RagRetriever } from './nodes/rag-retriever';
+import { understandNode, type AssistantIntent } from './nodes/understand/understand-node';
+import { conversationNode } from './nodes/conversation/conversation-node';
+import { writingNode } from './nodes/writing/writing-node';
+import { editingNode } from './nodes/editing/editing-node';
+import { researchNode } from './nodes/research/research-node';
+import { imageNode } from './nodes/image/image-node';
+import { ragNode } from './nodes/rag/rag-node';
+import type { RagRetriever } from './nodes/rag/rag-retriever';
 
 export const ASSISTANT_NODE = {
 	RAG: 'rag',
