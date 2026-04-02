@@ -1,8 +1,8 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { BaseMessage } from '@langchain/core/messages';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { extractTokenFromChunk } from '../../../../../shared/ai-utils';
-import { toLangChainHistoryMessages } from '../../../../core/history';
+import { extractTokenFromChunk } from '../../../../shared/ai-utils';
+import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../../state';
 
 function buildHumanMessage(prompt: string, intent: string, ragContext: string): string {
