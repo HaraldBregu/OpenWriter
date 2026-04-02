@@ -207,7 +207,7 @@ const Input: React.FC<InputProps> = ({
 					rows={3}
 					placeholder={
 						placeholder ??
-						t('agenticPanel.inputPlaceholder', 'Ask the researcher for context, facts, or ideas')
+						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
 					className="w-full resize-none border-none bg-transparent px-3 pt-3 pb-1 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/70 shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
