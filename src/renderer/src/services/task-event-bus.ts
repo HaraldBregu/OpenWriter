@@ -24,7 +24,7 @@ function dataField<T>(data: unknown, key: string): T | undefined {
 // ---------------------------------------------------------------------------
 
 export interface TaskSnapshot {
-	status: string;
+	status: TaskStatus;
 	streamedContent: string; // latest delta token only
 	content: string; // seedContent + all AI tokens (full display text)
 	seedContent: string; // original text before AI enhancement (set by initTaskContent)
