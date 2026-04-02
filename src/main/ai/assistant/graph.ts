@@ -20,18 +20,22 @@ export interface AssistantNodeModels {
 	[ASSISTANT_NODE.AGGREGATE]: BaseChatModel;
 }
 
-export function buildGraph(models: BaseChatModel | NodeModelMap, retriever?: RagRetriever) {
+export function buildGraph(
+	models: BaseChatModel | NodeModelMap,
+	retriever?: RagRetriever,
+	logger?: LoggerService
+) {
 	const m = models as unknown as AssistantNodeModels;
 
 	return new StateGraph(AssistantState)
 		.addNode(ASSISTANT_NODE.RAG_QUERY, (state: typeof AssistantState.State) =>
-			ragQueryNode(state, m[ASSISTANT_NODE.RAG_QUERY], retriever)
+			ragQueryNode(state, m[ASSISTANT_NODE.RAG_QUERY], retriever, logger)
 		)
 		.addNode(ASSISTANT_NODE.GRAMMAR_CHECK, (state: typeof AssistantState.State) =>
-			grammarCheckNode(state, m[ASSISTANT_NODE.GRAMMAR_CHECK])
+			grammarCheckNode(state, m[ASSISTANT_NODE.GRAMMAR_CHECK], logger)
 		)
 		.addNode(ASSISTANT_NODE.AGGREGATE, (state: typeof AssistantState.State) =>
-			aggregateNode(state, m[ASSISTANT_NODE.AGGREGATE])
+			aggregateNode(state, m[ASSISTANT_NODE.AGGREGATE], logger)
 		)
 		.addEdge(START, ASSISTANT_NODE.RAG_QUERY)
 		.addEdge(START, ASSISTANT_NODE.GRAMMAR_CHECK)
