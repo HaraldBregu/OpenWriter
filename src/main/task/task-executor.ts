@@ -258,12 +258,10 @@ export class TaskExecutor implements Disposable {
 
 		this.sortQueue();
 
-		const position = queued ? this.queue.indexOf(queued) + 1 : 1;
-
 		this.send(task.windowId, 'task:event', {
 			type: 'priority-changed',
 			taskId,
-			data: { priority: newPriority, position },
+			data: { priority: newPriority },
 			error: null,
 			metadata: task.metadata,
 		} satisfies TaskEvent);
