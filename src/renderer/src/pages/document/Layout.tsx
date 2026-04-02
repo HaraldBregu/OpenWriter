@@ -519,7 +519,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 								)}
 							</div>
 						</div>
-						<InlineAssistant />
 					</div>
 				</ResizablePanel>
 
