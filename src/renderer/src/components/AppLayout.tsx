@@ -260,6 +260,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</Link>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
+									<AppSidebarSeparator className="my-1" />
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
