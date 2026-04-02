@@ -74,6 +74,8 @@ export interface AgentRuntimeContext {
 	apiKey: string;
 	/** Primary provider identifier (e.g. 'openai'). */
 	providerId: string;
+	/** Optional logger service for recording graph execution. */
+	logger?: LoggerService;
 }
 
 // ---------------------------------------------------------------------------
