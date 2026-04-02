@@ -18,13 +18,17 @@ function buildHumanMessage(prompt: string): string {
 
 export async function grammarCheckNode(
 	state: typeof AssistantState.State,
-	model: BaseChatModel
+	model: BaseChatModel,
+	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	const prompt = state.prompt.trim();
 
 	if (prompt.length === 0) {
+		logger?.debug('GrammarCheckNode', 'Skipping grammar check for empty prompt');
 		return { grammarFindings: EMPTY_PROMPT_FINDINGS };
 	}
+
+	logger?.debug('GrammarCheckNode', 'Starting grammar check', { promptLength: prompt.length });
 
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
@@ -33,6 +37,10 @@ export async function grammarCheckNode(
 	];
 	const response = await model.invoke(messages);
 	const grammarFindings = extractTokenFromChunk(response.content).trim();
+
+	logger?.info('GrammarCheckNode', 'Grammar check completed', {
+		findingsLength: grammarFindings.length,
+	});
 
 	return {
 		grammarFindings: grammarFindings || NO_ISSUES_FINDINGS(prompt),
