@@ -17,6 +17,7 @@ const DATA_DIR = 'data';
 const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');
 
 const DEFAULT_TOP_K = 4;
+const MIN_SCORE_THRESHOLD = 0.3;
 
 export interface RagRetrieverOptions {
 	/** Absolute path to the workspace root. */
@@ -25,6 +26,8 @@ export interface RagRetrieverOptions {
 	embeddings: EmbeddingsInterface;
 	/** Number of documents to retrieve per query. Defaults to 4. */
 	topK?: number;
+	/** Minimum cosine similarity score to include a document. Defaults to 0.3. */
+	minScore?: number;
 }
 
 export interface RetrievedDocument {
