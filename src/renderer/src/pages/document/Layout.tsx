@@ -292,10 +292,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, cursorPos: number) => {
-			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(
-				before,
-				after
-			);
+			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
 
 			handleAssistantSend(
 				cleanBefore,

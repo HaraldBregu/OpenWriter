@@ -114,7 +114,7 @@ const menuContainerClass =
 function getItemClass(tone: MenuItem['tone'], isSelected: boolean): string {
 	if (tone === 'ai') {
 		return isSelected
-			? 'bg-[hsl(var(--info)/0.22)] text-[hsl(var(--info-foreground))] shadow-sm ring-1 ring-[hsl(var(--info)/0.34)] dark:bg-[hsl(var(--info)/0.28)] dark:text-[hsl(var(--info-foreground))] dark:ring-[hsl(var(--info)/0.42)]'
+			? 'bg-[hsl(var(--info)/0.22)] text-[hsl(var(--info))] shadow-sm ring-1 ring-[hsl(var(--info)/0.34)] dark:bg-[hsl(var(--info)/0.28)] dark:text-[hsl(var(--info))] dark:ring-[hsl(var(--info)/0.42)]'
 			: 'bg-[hsl(var(--info)/0.1)] text-popover-foreground hover:bg-[hsl(var(--info)/0.16)] dark:bg-[hsl(var(--info)/0.14)] dark:text-popover-foreground dark:hover:bg-[hsl(var(--info)/0.2)]';
 	}
 

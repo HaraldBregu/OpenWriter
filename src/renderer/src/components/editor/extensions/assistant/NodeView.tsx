@@ -25,7 +25,7 @@ export function AssistantNodeView({
 				updateAttributes({ prompt: value });
 			}
 		},
-		[node.attrs.prompt, updateAttributes],
+		[node.attrs.prompt, updateAttributes]
 	);
 
 	const deleteNode = useCallback(() => {
