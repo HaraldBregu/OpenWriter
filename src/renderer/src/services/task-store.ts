@@ -337,7 +337,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 				}
 			}
 		},
-		() => (event.type === 'queued' ? createTrackedTaskFromQueuedEvent(event) : null)
+		() => (event.state === 'queued' ? createTrackedTaskFromQueuedEvent(event) : null)
 	);
 }
 
