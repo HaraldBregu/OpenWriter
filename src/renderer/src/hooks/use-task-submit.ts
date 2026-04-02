@@ -98,7 +98,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 		taskState?.progress.message ?? getTaskStatusText(metadata);
 	const error: string | undefined = taskState?.error;
 	const result: TResult | undefined = taskState?.result as TResult | undefined;
-	const queuePosition: number | undefined = taskState?.queuePosition;
 	const durationMs: number | undefined = taskState?.durationMs;
 
 	useEffect(() => {
