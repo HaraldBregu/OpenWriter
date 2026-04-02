@@ -14,10 +14,6 @@ import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
-type TextCompleterTaskData = {
-	prompt: string;
-};
-
 type TextEnhanceTaskData = {
 	prompt: string;
 };
