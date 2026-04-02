@@ -98,7 +98,6 @@ export function bootstrapServices(): BootstrapResult {
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
-	taskReactionRegistry.register(new TextEnhanceTaskReaction(logger));
 	const taskReactionBus = container.register(
 		'taskReactionBus',
 		new TaskReactionBus(taskReactionRegistry, eventBus, logger)
