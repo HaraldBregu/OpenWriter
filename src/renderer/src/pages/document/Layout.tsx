@@ -490,21 +490,23 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	);
 
 	const onContinueWithAssistant = useCallback(
-		(before: string, after: string, _cursorPos: number) => {
+		(before: string, after: string, cursorPos: number) => {
 			const cleanBefore = before.replaceAll('⬢', '').trimEnd();
 			const cleanAfter = after.replaceAll('⬢', '').trimStart();
-			const prompt = `
-			${cleanBefore}
 
-			⬢ CONTINUE WRITING HERE WITH 15 WORDS MAX ⬢
+			handleAssistantSend(cleanBefore, cleanAfter, cursorPos, 'CONTINUE WRITING HERE WITH 15 WORDS MAX');
 
-			${cleanAfter}
-			`;
-
-			const data: TextCompleterTaskData = { prompt };
-			textCompleterTask.submit(data);
+			// const prompt = `
+			// ${cleanBefore}
+			//
+			// ⬢ CONTINUE WRITING HERE WITH 15 WORDS MAX ⬢
+			//
+			// ${cleanAfter}
+			// `;
+			// const data: TextCompleterTaskData = { prompt };
+			// textCompleterTask.submit(data);
 		},
-		[textCompleterTask]
+		[handleAssistantSend]
 	);
 
 	const onImageSubmit = useCallback(
