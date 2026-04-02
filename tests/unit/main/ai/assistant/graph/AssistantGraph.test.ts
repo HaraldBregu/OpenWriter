@@ -41,7 +41,7 @@ jest.mock(
 
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { buildGraph, ASSISTANT_NODE } from '../../../../../../src/main/ai/agents/assistant/graph';
-import type { RagRetriever } from '../../../../../../src/main/ai/agents/assistant/nodes/rag-retriever';
+import type { RagRetriever } from '../../../../../../src/main/ai/agents/assistant/nodes/rag/rag-retriever';
 
 function makeInvokeModel(content: string) {
 	return {
