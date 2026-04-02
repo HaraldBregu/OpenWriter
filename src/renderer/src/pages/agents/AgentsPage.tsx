@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, Mic, Paintbrush, PenTool, Search } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import {
 	AppCard,
 	AppCardContent,
