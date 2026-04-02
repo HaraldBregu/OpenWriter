@@ -267,7 +267,7 @@ export function applyTaskEvent(event: TaskEvent): void {
 				metadata: eventMetadata !== undefined ? eventMetadata : task.metadata,
 			};
 
-			switch (event.type) {
+			switch (event.state) {
 				case 'queued': {
 					return {
 						...nextTask,
