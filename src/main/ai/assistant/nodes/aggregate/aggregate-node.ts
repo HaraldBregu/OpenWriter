@@ -1,5 +1,6 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
