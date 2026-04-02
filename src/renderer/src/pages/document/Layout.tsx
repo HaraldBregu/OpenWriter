@@ -253,16 +253,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[dispatch]
 	);
 
-	useEffect(() => {
-		if (!textCompleterTask.taskId) return;
-		const unsub = subscribeToTask(textCompleterTask.taskId, (snap: TaskSnapshot) => {
-			const completed = snap.status === 'completed';
-			editorRef.current?.insertText(snap.streamedContent, {
-				preventEditorUpdate: !completed,
-			});
-		});
-		return unsub;
-	}, [textCompleterTask.taskId]);
 
 	useEffect(() => {
 		if (!textEnhanceTask.taskId) return;
