@@ -311,21 +311,23 @@ src/
 
 1. **Clarify Requirements**: Understand what the agent needs to accomplish, what tools it needs, what decisions it must make, and what the expected inputs/outputs are.
 
-2. **Design the Graph**: Sketch the graph topology — nodes, edges, conditional branches, loops, and subgraphs. Define the state schema.
+2. **Choose the Architecture**: Select the right multi-agent pattern (single agent, supervisor/worker, swarm, RAG pipeline, parallel map-reduce, MoA, debate loop) based on the task profile. Justify the choice before designing.
 
-3. **Define the State**: Create the TypeScript state interface with proper reducers and defaults.
+3. **Design the Graph**: Sketch the graph topology — nodes, edges, conditional branches, loops, subgraphs, and parallel branches. For swarms, define the handoff protocol. For RAG, define the retrieval and generation stages.
 
-4. **Implement Nodes**: Build each node as an isolated, testable function that takes state and returns partial state updates.
+4. **Define the State**: Create the TypeScript state interface with proper reducers and defaults. Use append reducers for any field written by parallel branches.
 
-5. **Wire the Graph**: Connect nodes with edges, implement routing logic for conditional edges, set entry and exit points.
+5. **Implement Nodes**: Build each node as an isolated, testable function that takes state and returns partial state updates.
 
-6. **Add Tools**: Implement and bind tools with proper Zod schemas.
+6. **Wire the Graph**: Connect nodes with edges, implement routing logic for conditional edges, set entry and exit points. For parallel agents, use the `Send` API for fan-out.
 
-7. **Integrate with Electron**: Set up IPC handlers, streaming, and UI integration.
+7. **Add Tools & RAG**: Implement tools with Zod schemas. If RAG is needed, configure the vector store, embedding model, retrieval node, and context injection strategy.
 
-8. **Add Observability**: Include LangSmith tracing, structured logging, and state inspection.
+8. **Integrate with Electron**: Set up IPC handlers, streaming, and UI integration.
 
-9. **Test**: Unit test individual nodes, integration test the full graph, end-to-end test with Electron.
+9. **Add Observability**: Include LangSmith tracing, structured logging, and state inspection.
+
+10. **Test**: Unit test individual nodes, integration test the full graph, end-to-end test with Electron.
 
 ## Quality Standards
 
