@@ -27,6 +27,7 @@ export class OptionMenuView {
 	private onShow: () => void;
 	private onHide: () => void;
 	private onQueryChange: (query: string, slashPos: number) => void;
+	private getIsLocked: () => boolean;
 
 	constructor(view: EditorView, props: OptionMenuPluginProps) {
 		this.editor = props.editor;
@@ -35,6 +36,7 @@ export class OptionMenuView {
 		this.onShow = props.onShow;
 		this.onHide = props.onHide;
 		this.onQueryChange = props.onQueryChange;
+		this.getIsLocked = props.getIsLocked ?? (() => false);
 
 		this.element.style.visibility = 'hidden';
 		this.element.style.position = 'absolute';
