@@ -198,7 +198,13 @@ const Input: React.FC<InputProps> = ({
 
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
-			<div className="relative overflow-hidden rounded-[1.35rem] border border-border/80 bg-card shadow-none backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+			<div
+				className={`relative overflow-hidden rounded-[1.35rem] border bg-card shadow-none backdrop-blur-sm transition-colors duration-150 ${
+					isFocused
+						? 'border-foreground/30 dark:border-foreground/25'
+						: 'border-border/80 hover:border-foreground/20 dark:border-border/90 dark:hover:border-foreground/15'
+				} dark:bg-card/95`}
+			>
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
