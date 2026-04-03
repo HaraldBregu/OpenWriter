@@ -91,7 +91,7 @@ The shared graph state in `state.ts` contains:
 ## Files
 
 - `definition.ts`
-  Declares assistant metadata, per-node model map, graph preparation, and
+  Declares assistant metadata, per-specialist model map, graph preparation, and
   input/output extraction.
 
 - `graph.ts`
@@ -101,32 +101,32 @@ The shared graph state in `state.ts` contains:
   Defines phase labels such as `Planning response...` and
   `Preparing image generation response...`.
 
-- `node-output.ts`
+- `agent-output.ts`
   Small helpers for parsing labeled LLM outputs.
 
-- `nodes/intent_classification/`
+- `agents/intent_detector/`
   Detects the primary route and writes routing fields.
 
-- `nodes/planner/`
+- `agents/planner/`
   Builds the text-branch execution brief and specialist queries.
 
-- `nodes/rag/`
+- `agents/rag_agent/`
   Retrieves indexed workspace context and produces `ragFindings`.
 
-- `nodes/duckduckgo_search/`
+- `agents/duckduckgo_search/`
   Performs best-effort DuckDuckGo search and produces `webFindings`.
 
-- `nodes/text_generation/`
+- `agents/text_generator/`
   Produces the base answer draft in `textFindings`.
 
-- `nodes/analyzer/`
+- `agents/analyzer/`
   Evaluates the specialist outputs and decides whether to retry.
 
-- `nodes/enhancer/`
+- `agents/enhancer/`
   Produces the final user-facing text response.
 
-- `nodes/image_prompt_enhancer/`
+- `agents/image_prompt_enhancer/`
   Produces the enhanced prompt for image requests.
 
-- `nodes/image_generation/`
+- `agents/image_generator/`
   Produces the final user-facing image-branch response.

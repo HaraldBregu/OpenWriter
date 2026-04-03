@@ -4,7 +4,7 @@ import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
-import { readLabeledValue } from '../../node-output';
+import { readLabeledValue } from '../../agent-output';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './IMAGE_PROMPT_ENHANCER_SYSTEM.md?raw';
 
@@ -74,14 +74,14 @@ function buildHumanMessage(
 	].join('\n');
 }
 
-export async function imagePromptEnhancerNode(
+export async function imagePromptEnhancerAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	if (!state.needsImageGeneration) {
 		logger?.debug(
-			'ImagePromptEnhancerNode',
+			'ImagePromptEnhancerAgent',
 			'Skipping image prompt enhancement because no image was requested'
 		);
 		return {
@@ -93,7 +93,7 @@ export async function imagePromptEnhancerNode(
 	const prompt = state.prompt.trim();
 	const normalizedPrompt = (state.normalizedPrompt || state.prompt).trim();
 
-	logger?.debug('ImagePromptEnhancerNode', 'Starting image prompt enhancement', {
+	logger?.debug('ImagePromptEnhancerAgent', 'Starting image prompt enhancement', {
 		promptLength: prompt.length,
 		normalizedPromptLength: normalizedPrompt.length,
 	});
@@ -107,7 +107,7 @@ export async function imagePromptEnhancerNode(
 	const rawFindings = extractTokenFromChunk(response.content).trim();
 	const parsed = parseImagePrompt(rawFindings, state);
 
-	logger?.info('ImagePromptEnhancerNode', 'Image prompt enhancement completed', {
+	logger?.info('ImagePromptEnhancerAgent', 'Image prompt enhancement completed', {
 		imagePromptLength: parsed.imagePrompt.length,
 		findingsLength: parsed.imageFindings.length,
 	});

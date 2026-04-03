@@ -201,12 +201,12 @@ TEXT route:
 
 The analyzer retry budget is bounded in `graph.ts`.
 
-## Node Model Schema
+## Specialist Model Schema
 
-The assistant is configured as a per-node model map:
+The assistant is configured as a per-specialist model map:
 
 ```ts
-type AssistantNodeName =
+type AssistantSpecialistName =
 	| 'intent_detector'
 	| 'planner'
 	| 'rag_agent'
@@ -224,7 +224,7 @@ interface NodeModelConfig {
 	maxTokens?: number;
 }
 
-type AssistantNodeModels = Record<AssistantNodeName, NodeModelConfig>;
+type AssistantSpecialistModels = Record<AssistantSpecialistName, NodeModelConfig>;
 ```
 
 Current configured values:
@@ -251,7 +251,7 @@ Only the final branch nodes stream user-facing tokens:
 ['enhancer', 'image_generator'];
 ```
 
-The planner, analyzer, and specialist nodes are intentionally excluded from
+The planner, analyzer, and intermediate specialist agents are intentionally excluded from
 token streaming.
 
 ## Output Schema

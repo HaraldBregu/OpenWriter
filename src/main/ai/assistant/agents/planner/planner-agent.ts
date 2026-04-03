@@ -4,7 +4,7 @@ import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
-import { readLabeledValue } from '../../node-output';
+import { readLabeledValue } from '../../agent-output';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './PLANNER_SYSTEM.md?raw';
 
@@ -98,7 +98,7 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export async function plannerNode(
+export async function plannerAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
@@ -107,7 +107,7 @@ export async function plannerNode(
 
 	if (prompt.length === 0) {
 		const fallback = buildFallback(state);
-		logger?.debug('PlannerNode', 'Skipping planning for empty prompt');
+		logger?.debug('PlannerAgent', 'Skipping planning for empty prompt');
 		return {
 			plannerFindings: fallback.plannerFindings,
 			ragQuery: fallback.ragQuery,
@@ -117,7 +117,7 @@ export async function plannerNode(
 		};
 	}
 
-	logger?.debug('PlannerNode', 'Starting planning stage', {
+	logger?.debug('PlannerAgent', 'Starting planning stage', {
 		promptLength: prompt.length,
 		reviewCount: state.reviewCount,
 		needsRetrieval: state.needsRetrieval,
@@ -133,7 +133,7 @@ export async function plannerNode(
 	const rawPlan = extractTokenFromChunk(response.content).trim();
 	const parsed = parsePlanner(rawPlan, state);
 
-	logger?.info('PlannerNode', 'Planner brief generated', {
+	logger?.info('PlannerAgent', 'Planner brief generated', {
 		plannerFindingsLength: parsed.plannerFindings.length,
 		ragQueryLength: parsed.ragQuery.length,
 		webSearchQueryLength: parsed.webSearchQuery.length,

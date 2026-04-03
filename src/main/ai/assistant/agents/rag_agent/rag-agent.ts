@@ -5,7 +5,7 @@ import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import type { AssistantState } from '../../state';
 import type { RagRetriever } from './rag-retriever';
-import SYSTEM_PROMPT from './RAG_QUERY_SYSTEM.md?raw';
+import SYSTEM_PROMPT from './RAG_AGENT_SYSTEM.md?raw';
 
 const CONTEXT_SEPARATOR = '\n\n---\n\n';
 const NO_CONTEXT_FINDING = 'No relevant workspace context was found for this request.';
@@ -66,7 +66,7 @@ function buildHumanMessage(
 	].join('\n');
 }
 
-export async function ragQueryNode(
+export async function ragAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	retriever?: RagRetriever,
@@ -75,26 +75,26 @@ export async function ragQueryNode(
 	const query = (state.ragQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (!state.needsRetrieval) {
-		logger?.debug('RagQueryNode', 'Skipping RAG query because retrieval was not requested');
+		logger?.debug('RagAgent', 'Skipping RAG query because retrieval was not requested');
 		return { ragFindings: RAG_SKIPPED_FINDING };
 	}
 
 	if (query.length === 0) {
-		logger?.debug('RagQueryNode', 'Skipping RAG query', {
+		logger?.debug('RagAgent', 'Skipping RAG query', {
 			queryEmpty: query.length === 0,
 		});
 		return { ragFindings: NO_CONTEXT_FINDING };
 	}
 
 	if (retriever === undefined) {
-		logger?.debug('RagQueryNode', 'Skipping RAG query because no retriever is available');
+		logger?.debug('RagAgent', 'Skipping RAG query because no retriever is available');
 		return { ragFindings: RAG_UNAVAILABLE_FINDING };
 	}
 
-	logger?.debug('RagQueryNode', 'Starting RAG query', { queryLength: query.length });
+	logger?.debug('RagAgent', 'Starting RAG query', { queryLength: query.length });
 
 	const documents = await retriever.retrieve(query);
-	logger?.info('RagQueryNode', 'RAG documents retrieved', { documentCount: documents.length });
+	logger?.info('RagAgent', 'RAG documents retrieved', { documentCount: documents.length });
 
 	if (documents.length === 0) {
 		return { ragFindings: NO_CONTEXT_FINDING };
@@ -117,7 +117,7 @@ export async function ragQueryNode(
 	const response = await model.invoke(messages);
 	const ragFindings = extractTokenFromChunk(response.content).trim();
 
-	logger?.info('RagQueryNode', 'RAG findings generated', { findingsLength: ragFindings.length });
+	logger?.info('RagAgent', 'RAG findings generated', { findingsLength: ragFindings.length });
 
 	return {
 		ragFindings: ragFindings || NO_CONTEXT_FINDING,

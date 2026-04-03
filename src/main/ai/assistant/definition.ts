@@ -1,61 +1,61 @@
 import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../core/definition';
-import { buildGraph, ASSISTANT_NODE } from './graph';
+import { buildGraph, ASSISTANT_SPECIALIST } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
-import { RagRetriever } from './nodes/rag/rag-retriever';
+import { RagRetriever } from './agents/rag_agent/rag-retriever';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 
 const LOG_SOURCE = 'AssistantAgent';
 
-const NODE_MODELS: AgentDefinition['nodeModels'] = {
-	[ASSISTANT_NODE.INTENT_DETECTOR]: {
+const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
+	[ASSISTANT_SPECIALIST.INTENT_DETECTOR]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 512,
 	},
-	[ASSISTANT_NODE.PLANNER]: {
+	[ASSISTANT_SPECIALIST.PLANNER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.2,
 		maxTokens: 1024,
 	},
-	[ASSISTANT_NODE.RAG_AGENT]: {
+	[ASSISTANT_SPECIALIST.RAG_AGENT]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.DUCKDUCKGO_SEARCH]: {
+	[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.TEXT_GENERATOR]: {
+	[ASSISTANT_SPECIALIST.TEXT_GENERATOR]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
 		maxTokens: 2048,
 	},
-	[ASSISTANT_NODE.ANALYZER]: {
+	[ASSISTANT_SPECIALIST.ANALYZER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.ENHANCER]: {
+	[ASSISTANT_SPECIALIST.ENHANCER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.5,
 		maxTokens: 4096,
 	},
-	[ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER]: {
+	[ASSISTANT_SPECIALIST.IMAGE_PROMPT_ENHANCER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.IMAGE_GENERATOR]: {
+	[ASSISTANT_SPECIALIST.IMAGE_GENERATOR]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
@@ -67,8 +67,8 @@ const definition: AgentDefinition = {
 	id: 'assistant',
 	name: 'Assistant',
 	category: 'utility',
-	nodeModels: NODE_MODELS,
-	streamableNodes: [ASSISTANT_NODE.ENHANCER, ASSISTANT_NODE.IMAGE_GENERATOR],
+	nodeModels: SPECIALIST_MODELS,
+	streamableNodes: [ASSISTANT_SPECIALIST.ENHANCER, ASSISTANT_SPECIALIST.IMAGE_GENERATOR],
 	buildGraph,
 
 	prepareGraph(

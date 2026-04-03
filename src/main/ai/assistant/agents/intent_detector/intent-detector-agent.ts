@@ -4,11 +4,11 @@ import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
-import { parseYesNo, readLabeledValue } from '../../node-output';
+import { parseYesNo, readLabeledValue } from '../../agent-output';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './INTENT_CLASSIFICATION_SYSTEM.md?raw';
+import SYSTEM_PROMPT from './INTENT_DETECTOR_SYSTEM.md?raw';
 
-interface IntentClassificationResult {
+interface IntentDetectorResult {
 	readonly normalizedPrompt: string;
 	readonly route: 'text' | 'image';
 	readonly intentFindings: string;
@@ -41,7 +41,7 @@ function buildIntentFindings(
 	].join('\n');
 }
 
-function buildFallback(prompt: string): IntentClassificationResult {
+function buildFallback(prompt: string): IntentDetectorResult {
 	const normalizedPrompt = prompt.trim() || 'No request provided.';
 	const route = IMAGE_REQUEST_PATTERN.test(normalizedPrompt) ? 'image' : 'text';
 	const needsRetrieval = route === 'text' && RETRIEVAL_PATTERN.test(normalizedPrompt);
@@ -63,7 +63,7 @@ function buildFallback(prompt: string): IntentClassificationResult {
 	};
 }
 
-function parseClassification(raw: string, prompt: string): IntentClassificationResult {
+function parseClassification(raw: string, prompt: string): IntentDetectorResult {
 	const fallback = buildFallback(prompt);
 	const normalizedPrompt =
 		readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt;
@@ -102,7 +102,7 @@ function buildHumanMessage(prompt: string): string {
 	return ['Latest user request:', prompt].join('\n');
 }
 
-export async function intentClassificationNode(
+export async function intentDetectorAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
@@ -111,7 +111,7 @@ export async function intentClassificationNode(
 
 	if (prompt.length === 0) {
 		const fallback = buildFallback(prompt);
-		logger?.debug('IntentClassificationNode', 'Skipping classification for empty prompt');
+		logger?.debug('IntentDetectorAgent', 'Skipping classification for empty prompt');
 		return {
 			normalizedPrompt: fallback.normalizedPrompt,
 			route: fallback.route,
@@ -126,7 +126,7 @@ export async function intentClassificationNode(
 		};
 	}
 
-	logger?.debug('IntentClassificationNode', 'Starting intent classification', {
+	logger?.debug('IntentDetectorAgent', 'Starting intent detection', {
 		promptLength: prompt.length,
 	});
 
@@ -139,7 +139,7 @@ export async function intentClassificationNode(
 	const rawClassification = extractTokenFromChunk(response.content).trim();
 	const parsed = parseClassification(rawClassification, prompt);
 
-	logger?.info('IntentClassificationNode', 'Intent classification completed', {
+	logger?.info('IntentDetectorAgent', 'Intent detection completed', {
 		route: parsed.route,
 		needsRetrieval: parsed.needsRetrieval,
 		needsWebSearch: parsed.needsWebSearch,

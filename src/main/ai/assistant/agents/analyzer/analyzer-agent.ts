@@ -4,7 +4,7 @@ import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
-import { parseYesNo, readLabeledValue } from '../../node-output';
+import { parseYesNo, readLabeledValue } from '../../agent-output';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './ANALYZER_SYSTEM.md?raw';
 
@@ -41,12 +41,12 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export async function analyzerNode(
+export async function analyzerAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	logger?.debug('AnalyzerNode', 'Starting analyzer stage', {
+	logger?.debug('AnalyzerAgent', 'Starting analyzer stage', {
 		reviewCount: state.reviewCount,
 		textFindingsLength: state.textFindings.length,
 		ragFindingsLength: state.ragFindings.length,
@@ -71,7 +71,7 @@ export async function analyzerNode(
 	].join('\n');
 	const shouldRetry = !isConsistent;
 
-	logger?.info('AnalyzerNode', 'Analyzer completed', {
+	logger?.info('AnalyzerAgent', 'Analyzer completed', {
 		shouldRetry,
 		reviewCount: state.reviewCount + 1,
 	});

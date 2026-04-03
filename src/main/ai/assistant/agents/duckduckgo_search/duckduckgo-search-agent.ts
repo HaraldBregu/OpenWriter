@@ -50,7 +50,7 @@ function buildHumanMessage(
 	].join('\n');
 }
 
-export async function duckDuckGoSearchNode(
+export async function duckDuckGoSearchAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
@@ -58,21 +58,21 @@ export async function duckDuckGoSearchNode(
 	const query = (state.webSearchQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (!state.needsWebSearch) {
-		logger?.debug('DuckDuckGoSearchNode', 'Skipping web search because it was not requested');
+		logger?.debug('DuckDuckGoSearchAgent', 'Skipping web search because it was not requested');
 		return { webFindings: WEB_SEARCH_SKIPPED_FINDING };
 	}
 
 	if (query.length === 0) {
-		logger?.debug('DuckDuckGoSearchNode', 'Skipping web search because the query is empty');
+		logger?.debug('DuckDuckGoSearchAgent', 'Skipping web search because the query is empty');
 		return { webFindings: WEB_SEARCH_EMPTY_FINDING };
 	}
 
-	logger?.debug('DuckDuckGoSearchNode', 'Starting DuckDuckGo search', {
+	logger?.debug('DuckDuckGoSearchAgent', 'Starting DuckDuckGo search', {
 		queryLength: query.length,
 	});
 
 	const results = await searchDuckDuckGo(query, logger);
-	logger?.info('DuckDuckGoSearchNode', 'DuckDuckGo search completed', {
+	logger?.info('DuckDuckGoSearchAgent', 'DuckDuckGo search completed', {
 		resultCount: results.length,
 	});
 
@@ -95,7 +95,7 @@ export async function duckDuckGoSearchNode(
 	const response = await model.invoke(messages);
 	const webFindings = extractTokenFromChunk(response.content).trim();
 
-	logger?.info('DuckDuckGoSearchNode', 'DuckDuckGo findings generated', {
+	logger?.info('DuckDuckGoSearchAgent', 'DuckDuckGo findings generated', {
 		findingsLength: webFindings.length,
 	});
 

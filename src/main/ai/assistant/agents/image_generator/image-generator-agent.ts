@@ -3,16 +3,18 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
+import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './TEXT_GENERATION_SYSTEM.md?raw';
+import SYSTEM_PROMPT from './IMAGE_GENERATOR_SYSTEM.md?raw';
 
-const EMPTY_TEXT_FINDINGS = 'No text draft was generated because no user request was provided.';
+const NO_IMAGE_FINDINGS = 'No image output requested.';
 
 function buildHumanMessage(
 	prompt: string,
 	normalizedPrompt: string,
 	intentFindings: string,
-	plannerFindings: string
+	imagePrompt: string,
+	imageFindings: string
 ): string {
 	return [
 		'Original user request:',
@@ -26,27 +28,38 @@ function buildHumanMessage(
 		intentFindings,
 		'</intent_findings>',
 		'',
-		'Planner brief:',
-		'<planner_findings>',
-		plannerFindings || 'No planner brief was provided.',
-		'</planner_findings>',
+		'Enhanced image prompt:',
+		'<image_prompt>',
+		imagePrompt || normalizedPrompt,
+		'</image_prompt>',
+		'',
+		'Image prompt enhancer findings:',
+		'<image_findings>',
+		imageFindings || 'No image prompt findings were produced.',
+		'</image_findings>',
 	].join('\n');
 }
 
-export async function textGenerationNode(
+export async function imageGeneratorAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
+	if (!state.needsImageGeneration) {
+		logger?.debug(
+			'ImageGeneratorAgent',
+			'Skipping image generation because no image was requested'
+		);
+		return {
+			imageFindings: NO_IMAGE_FINDINGS,
+			response: NO_IMAGE_FINDINGS,
+		};
+	}
+
 	const prompt = state.prompt.trim();
 	const normalizedPrompt = (state.normalizedPrompt || state.prompt).trim();
 
-	if (prompt.length === 0) {
-		logger?.debug('TextGenerationNode', 'Skipping text generation for empty prompt');
-		return { textFindings: EMPTY_TEXT_FINDINGS };
-	}
-
-	logger?.debug('TextGenerationNode', 'Starting text generation', {
+	logger?.debug('ImageGeneratorAgent', 'Starting image generation planning', {
 		promptLength: prompt.length,
 		normalizedPromptLength: normalizedPrompt.length,
 	});
@@ -59,18 +72,27 @@ export async function textGenerationNode(
 				state.prompt,
 				normalizedPrompt,
 				state.intentFindings,
-				state.plannerFindings
+				state.imagePrompt,
+				state.imageFindings
 			)
 		),
 	];
-	const response = await model.invoke(messages);
-	const textFindings = extractTokenFromChunk(response.content).trim();
 
-	logger?.info('TextGenerationNode', 'Text draft generated', {
-		findingsLength: textFindings.length,
+	let response = '';
+	const stream = await model.stream(messages);
+	for await (const chunk of stream) {
+		const token = extractTokenFromChunk(chunk.content);
+		if (token) {
+			response += token;
+		}
+	}
+
+	logger?.info('ImageGeneratorAgent', 'Image generation response produced', {
+		responseLength: response.length,
 	});
 
 	return {
-		textFindings: textFindings || EMPTY_TEXT_FINDINGS,
+		phaseLabel: ASSISTANT_STATE_MESSAGES.IMAGE_GENERATOR,
+		response: response || NO_IMAGE_FINDINGS,
 	};
 }

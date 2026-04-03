@@ -44,12 +44,12 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export async function enhancerNode(
+export async function enhancerAgent(
 	state: typeof AssistantState.State,
 	model: BaseChatModel,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	logger?.debug('EnhancerNode', 'Starting enhancer generation', {
+	logger?.debug('EnhancerAgent', 'Starting enhancer generation', {
 		promptLength: state.prompt.length,
 		plannerFindingsLength: state.plannerFindings.length,
 		textFindingsLength: state.textFindings.length,
@@ -73,7 +73,7 @@ export async function enhancerNode(
 		}
 	}
 
-	logger?.info('EnhancerNode', 'Enhancer response generated', {
+	logger?.info('EnhancerAgent', 'Enhancer response generated', {
 		responseLength: response.length,
 	});
 
