@@ -77,7 +77,7 @@ const definition: AgentDefinition = {
 	},
 
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
-		const initialState = {
+		return {
 			prompt: ctx.prompt,
 			history: ctx.history,
 			normalizedPrompt: '',
@@ -90,14 +90,10 @@ const definition: AgentDefinition = {
 			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_CLASSIFICATION,
 			response: '',
 		};
-
-		console;
-		return initialState;
 	},
 
 	extractGraphOutput(state: Record<string, unknown>): string {
-		const response = typeof state['response'] === 'string' ? state['response'] : '';
-		return response;
+		return typeof state['response'] === 'string' ? state['response'] : '';
 	},
 
 	extractThinkingLabel(state: Record<string, unknown>): string | undefined {
