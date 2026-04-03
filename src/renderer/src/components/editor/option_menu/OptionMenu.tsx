@@ -344,6 +344,9 @@ export function OptionMenu({
 						showSeparator &&
 						index === filteredItems.findIndex((i) => i.section === 'ai');
 
+					const isAssistantItem = item.label === 'Continue with assistant';
+					const showSpinner = isAssistantItem && loadingAssistant;
+
 					return (
 						<React.Fragment key={item.label}>
 							{isFirstAiItem && <hr className="my-1 border-border/80 dark:border-border" />}
@@ -355,8 +358,11 @@ export function OptionMenu({
 								onMouseEnter={() => setSelectedIndex(index)}
 								onMouseDown={(e) => {
 									e.preventDefault();
-									executeCommand(item);
+									if (!showSpinner) {
+										executeCommand(item);
+									}
 								}}
+								disabled={showSpinner}
 							>
 								<span
 									className={cn(
@@ -364,7 +370,11 @@ export function OptionMenu({
 										getIconClass(tone, isSelected)
 									)}
 								>
-									<Icon className="h-4 w-4 shrink-0" />
+									{showSpinner ? (
+										<Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+									) : (
+										<Icon className="h-4 w-4 shrink-0" />
+									)}
 								</span>
 								<span className="truncate">{item.label}</span>
 							</button>
