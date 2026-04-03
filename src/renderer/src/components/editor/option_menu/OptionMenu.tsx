@@ -140,10 +140,7 @@ function getIconClass(tone: MenuItem['tone'], isSelected: boolean): string {
 		: 'text-foreground/72 dark:text-foreground/82';
 }
 
-export function OptionMenu({
-	onContinueWithAssistant,
-	onInsertImage,
-}: OptionMenuProps): React.JSX.Element {
+export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
