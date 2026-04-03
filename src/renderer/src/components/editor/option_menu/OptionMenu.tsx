@@ -176,8 +176,8 @@ export function OptionMenu({
 					ed.chain()
 						.focus()
 						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
+						.insertImagePlaceholder()
 						.run();
-					onInsertImageRef.current?.();
 				},
 			},
 			{
