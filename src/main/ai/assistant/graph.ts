@@ -3,35 +3,60 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
 import { AssistantState } from './state';
-import { aggregateNode } from './nodes/aggregate/aggregate-node';
+import { analyzerNode } from './nodes/analyzer/analyzer-node';
+import { duckDuckGoSearchNode } from './nodes/duckduckgo_search/duckduckgo-search-node';
+import { enhancerNode } from './nodes/enhancer/enhancer-node';
 import { imageGenerationNode } from './nodes/image_generation/image-generation-node';
+import { imagePromptEnhancerNode } from './nodes/image_prompt_enhancer/image-prompt-enhancer-node';
 import { intentClassificationNode } from './nodes/intent_classification/intent-classification-node';
+import { plannerNode } from './nodes/planner/planner-node';
 import { ragQueryNode } from './nodes/rag/rag-node';
 import { textGenerationNode } from './nodes/text_generation/text-generation-node';
 import type { RagRetriever } from './nodes/rag/rag-retriever';
 
 const LOG_SOURCE = 'AssistantGraph';
+const MAX_REVIEW_PASSES = 2;
 
 export const ASSISTANT_NODE = {
-	INTENT_CLASSIFICATION: 'intent_classification',
-	TEXT_GENERATION: 'text_generation',
-	RAG_QUERY: 'rag_query',
-	IMAGE_GENERATION: 'image_generation',
-	AGGREGATE: 'aggregate',
+	INTENT_DETECTOR: 'intent_detector',
+	PLANNER: 'planner',
+	RAG_AGENT: 'rag_agent',
+	DUCKDUCKGO_SEARCH: 'duckduckgo_search',
+	TEXT_GENERATOR: 'text_generator',
+	ANALYZER: 'analyzer',
+	ENHANCER: 'enhancer',
+	IMAGE_PROMPT_ENHANCER: 'image_prompt_enhancer',
+	IMAGE_GENERATOR: 'image_generator',
 } as const;
 
 export interface AssistantNodeModels {
-	[ASSISTANT_NODE.INTENT_CLASSIFICATION]: BaseChatModel;
-	[ASSISTANT_NODE.TEXT_GENERATION]: BaseChatModel;
-	[ASSISTANT_NODE.RAG_QUERY]: BaseChatModel;
-	[ASSISTANT_NODE.IMAGE_GENERATION]: BaseChatModel;
-	[ASSISTANT_NODE.AGGREGATE]: BaseChatModel;
+	[ASSISTANT_NODE.INTENT_DETECTOR]: BaseChatModel;
+	[ASSISTANT_NODE.PLANNER]: BaseChatModel;
+	[ASSISTANT_NODE.RAG_AGENT]: BaseChatModel;
+	[ASSISTANT_NODE.DUCKDUCKGO_SEARCH]: BaseChatModel;
+	[ASSISTANT_NODE.TEXT_GENERATOR]: BaseChatModel;
+	[ASSISTANT_NODE.ANALYZER]: BaseChatModel;
+	[ASSISTANT_NODE.ENHANCER]: BaseChatModel;
+	[ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER]: BaseChatModel;
+	[ASSISTANT_NODE.IMAGE_GENERATOR]: BaseChatModel;
 }
 
 type AssistantNodeName = (typeof ASSISTANT_NODE)[keyof typeof ASSISTANT_NODE];
 type AssistantGraphState = typeof AssistantState.State;
 type AssistantNodeResult = Partial<AssistantGraphState>;
 type AssistantNodeRunner = (state: AssistantGraphState) => Promise<AssistantNodeResult>;
+
+function routeAfterIntent(state: AssistantGraphState): 'image_branch' | 'text_branch' {
+	return state.route === 'image' ? 'image_branch' : 'text_branch';
+}
+
+function routeAfterAnalysis(state: AssistantGraphState): 'retry' | 'enhance' {
+	if (state.shouldRetry && state.reviewCount < MAX_REVIEW_PASSES) {
+		return 'retry';
+	}
+
+	return 'enhance';
+}
 
 function withNodeLogging(
 	nodeName: AssistantNodeName,
@@ -81,43 +106,81 @@ export function buildGraph(
 
 	return new StateGraph(AssistantState)
 		.addNode(
-			ASSISTANT_NODE.INTENT_CLASSIFICATION,
-			withNodeLogging(ASSISTANT_NODE.INTENT_CLASSIFICATION, logger, (state) =>
-				intentClassificationNode(state, m[ASSISTANT_NODE.INTENT_CLASSIFICATION], logger)
+			ASSISTANT_NODE.INTENT_DETECTOR,
+			withNodeLogging(ASSISTANT_NODE.INTENT_DETECTOR, logger, (state) =>
+				intentClassificationNode(state, m[ASSISTANT_NODE.INTENT_DETECTOR], logger)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.TEXT_GENERATION,
-			withNodeLogging(ASSISTANT_NODE.TEXT_GENERATION, logger, (state) =>
-				textGenerationNode(state, m[ASSISTANT_NODE.TEXT_GENERATION], logger)
+			ASSISTANT_NODE.PLANNER,
+			withNodeLogging(ASSISTANT_NODE.PLANNER, logger, (state) =>
+				plannerNode(state, m[ASSISTANT_NODE.PLANNER], logger)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.RAG_QUERY,
-			withNodeLogging(ASSISTANT_NODE.RAG_QUERY, logger, (state) =>
-				ragQueryNode(state, m[ASSISTANT_NODE.RAG_QUERY], retriever, logger)
+			ASSISTANT_NODE.RAG_AGENT,
+			withNodeLogging(ASSISTANT_NODE.RAG_AGENT, logger, (state) =>
+				ragQueryNode(state, m[ASSISTANT_NODE.RAG_AGENT], retriever, logger)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.IMAGE_GENERATION,
-			withNodeLogging(ASSISTANT_NODE.IMAGE_GENERATION, logger, (state) =>
-				imageGenerationNode(state, m[ASSISTANT_NODE.IMAGE_GENERATION], logger)
+			ASSISTANT_NODE.DUCKDUCKGO_SEARCH,
+			withNodeLogging(ASSISTANT_NODE.DUCKDUCKGO_SEARCH, logger, (state) =>
+				duckDuckGoSearchNode(state, m[ASSISTANT_NODE.DUCKDUCKGO_SEARCH], logger)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.AGGREGATE,
-			withNodeLogging(ASSISTANT_NODE.AGGREGATE, logger, (state) =>
-				aggregateNode(state, m[ASSISTANT_NODE.AGGREGATE], logger)
+			ASSISTANT_NODE.TEXT_GENERATOR,
+			withNodeLogging(ASSISTANT_NODE.TEXT_GENERATOR, logger, (state) =>
+				textGenerationNode(state, m[ASSISTANT_NODE.TEXT_GENERATOR], logger)
 			)
 		)
-		.addEdge(START, ASSISTANT_NODE.INTENT_CLASSIFICATION)
-		.addEdge(ASSISTANT_NODE.INTENT_CLASSIFICATION, ASSISTANT_NODE.TEXT_GENERATION)
-		.addEdge(ASSISTANT_NODE.INTENT_CLASSIFICATION, ASSISTANT_NODE.RAG_QUERY)
-		.addEdge(ASSISTANT_NODE.INTENT_CLASSIFICATION, ASSISTANT_NODE.IMAGE_GENERATION)
+		.addNode(
+			ASSISTANT_NODE.ANALYZER,
+			withNodeLogging(ASSISTANT_NODE.ANALYZER, logger, (state) =>
+				analyzerNode(state, m[ASSISTANT_NODE.ANALYZER], logger)
+			)
+		)
+		.addNode(
+			ASSISTANT_NODE.ENHANCER,
+			withNodeLogging(ASSISTANT_NODE.ENHANCER, logger, (state) =>
+				enhancerNode(state, m[ASSISTANT_NODE.ENHANCER], logger)
+			)
+		)
+		.addNode(
+			ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER,
+			withNodeLogging(ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER, logger, (state) =>
+				imagePromptEnhancerNode(state, m[ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER], logger)
+			)
+		)
+		.addNode(
+			ASSISTANT_NODE.IMAGE_GENERATOR,
+			withNodeLogging(ASSISTANT_NODE.IMAGE_GENERATOR, logger, (state) =>
+				imageGenerationNode(state, m[ASSISTANT_NODE.IMAGE_GENERATOR], logger)
+			)
+		)
+		.addEdge(START, ASSISTANT_NODE.INTENT_DETECTOR)
+		.addConditionalEdges(ASSISTANT_NODE.INTENT_DETECTOR, routeAfterIntent, {
+			image_branch: ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER,
+			text_branch: ASSISTANT_NODE.PLANNER,
+		})
+		.addEdge(ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER, ASSISTANT_NODE.IMAGE_GENERATOR)
+		.addEdge(ASSISTANT_NODE.IMAGE_GENERATOR, END)
+		.addEdge(ASSISTANT_NODE.PLANNER, ASSISTANT_NODE.RAG_AGENT)
+		.addEdge(ASSISTANT_NODE.PLANNER, ASSISTANT_NODE.DUCKDUCKGO_SEARCH)
+		.addEdge(ASSISTANT_NODE.PLANNER, ASSISTANT_NODE.TEXT_GENERATOR)
 		.addEdge(
-			[ASSISTANT_NODE.TEXT_GENERATION, ASSISTANT_NODE.RAG_QUERY, ASSISTANT_NODE.IMAGE_GENERATION],
-			ASSISTANT_NODE.AGGREGATE
+			[
+				ASSISTANT_NODE.RAG_AGENT,
+				ASSISTANT_NODE.DUCKDUCKGO_SEARCH,
+				ASSISTANT_NODE.TEXT_GENERATOR,
+			],
+			ASSISTANT_NODE.ANALYZER
 		)
-		.addEdge(ASSISTANT_NODE.AGGREGATE, END)
+		.addConditionalEdges(ASSISTANT_NODE.ANALYZER, routeAfterAnalysis, {
+			retry: ASSISTANT_NODE.PLANNER,
+			enhance: ASSISTANT_NODE.ENHANCER,
+		})
+		.addEdge(ASSISTANT_NODE.ENHANCER, END)
 		.compile();
 }

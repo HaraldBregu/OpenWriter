@@ -11,7 +11,8 @@ const EMPTY_TEXT_FINDINGS = 'No text draft was generated because no user request
 function buildHumanMessage(
 	prompt: string,
 	normalizedPrompt: string,
-	intentFindings: string
+	intentFindings: string,
+	plannerFindings: string
 ): string {
 	return [
 		'Original user request:',
@@ -24,6 +25,11 @@ function buildHumanMessage(
 		'<intent_findings>',
 		intentFindings,
 		'</intent_findings>',
+		'',
+		'Planner brief:',
+		'<planner_findings>',
+		plannerFindings || 'No planner brief was provided.',
+		'</planner_findings>',
 	].join('\n');
 }
 
@@ -48,7 +54,14 @@ export async function textGenerationNode(
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state.prompt, normalizedPrompt, state.intentFindings)),
+		new HumanMessage(
+			buildHumanMessage(
+				state.prompt,
+				normalizedPrompt,
+				state.intentFindings,
+				state.plannerFindings
+			)
+		),
 	];
 	const response = await model.invoke(messages);
 	const textFindings = extractTokenFromChunk(response.content).trim();

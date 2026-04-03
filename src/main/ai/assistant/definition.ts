@@ -7,35 +7,59 @@ import { createEmbeddingModel } from '../../shared/embedding-factory';
 const LOG_SOURCE = 'AssistantAgent';
 
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
-	[ASSISTANT_NODE.INTENT_CLASSIFICATION]: {
+	[ASSISTANT_NODE.INTENT_DETECTOR]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 512,
 	},
-	[ASSISTANT_NODE.TEXT_GENERATION]: {
+	[ASSISTANT_NODE.PLANNER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.4,
-		maxTokens: 2048,
+		temperature: 0.2,
+		maxTokens: 1024,
 	},
-	[ASSISTANT_NODE.RAG_QUERY]: {
+	[ASSISTANT_NODE.RAG_AGENT]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.IMAGE_GENERATION]: {
+	[ASSISTANT_NODE.DUCKDUCKGO_SEARCH]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.1,
+		maxTokens: 768,
+	},
+	[ASSISTANT_NODE.TEXT_GENERATOR]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.4,
+		maxTokens: 2048,
+	},
+	[ASSISTANT_NODE.ANALYZER]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.1,
+		maxTokens: 768,
+	},
+	[ASSISTANT_NODE.ENHANCER]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.5,
+		maxTokens: 4096,
+	},
+	[ASSISTANT_NODE.IMAGE_PROMPT_ENHANCER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
 		maxTokens: 768,
 	},
-	[ASSISTANT_NODE.AGGREGATE]: {
+	[ASSISTANT_NODE.IMAGE_GENERATOR]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
-		temperature: 0.5,
-		maxTokens: 4096,
+		temperature: 0.4,
+		maxTokens: 1024,
 	},
 };
 
@@ -44,7 +68,7 @@ const definition: AgentDefinition = {
 	name: 'Assistant',
 	category: 'utility',
 	nodeModels: NODE_MODELS,
-	streamableNodes: [ASSISTANT_NODE.AGGREGATE],
+	streamableNodes: [ASSISTANT_NODE.ENHANCER, ASSISTANT_NODE.IMAGE_GENERATOR],
 	buildGraph,
 
 	prepareGraph(
@@ -81,13 +105,23 @@ const definition: AgentDefinition = {
 			prompt: ctx.prompt,
 			history: ctx.history,
 			normalizedPrompt: '',
+			route: 'text',
 			intentFindings: '',
 			needsRetrieval: false,
+			needsWebSearch: false,
 			needsImageGeneration: false,
+			plannerFindings: '',
+			ragQuery: '',
+			webSearchQuery: '',
 			textFindings: '',
 			ragFindings: '',
+			webFindings: '',
+			analysisFindings: '',
+			shouldRetry: false,
+			reviewCount: 0,
+			imagePrompt: '',
 			imageFindings: '',
-			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_CLASSIFICATION,
+			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_DETECTOR,
 			response: '',
 		};
 	},

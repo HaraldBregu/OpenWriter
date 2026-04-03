@@ -38,6 +38,7 @@ function getSourceLabel(metadata: Record<string, unknown>, index: number): strin
 function buildHumanMessage(
 	prompt: string,
 	normalizedPrompt: string,
+	plannerFindings: string,
 	intentFindings: string,
 	ragContext: string
 ): string {
@@ -53,6 +54,11 @@ function buildHumanMessage(
 		intentFindings,
 		'</intent_findings>',
 		'',
+		'Planner brief:',
+		'<planner_findings>',
+		plannerFindings || 'No planner brief was provided.',
+		'</planner_findings>',
+		'',
 		'Retrieved workspace context:',
 		'<workspace_context>',
 		ragContext,
@@ -66,7 +72,7 @@ export async function ragQueryNode(
 	retriever?: RagRetriever,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	const query = (state.normalizedPrompt || state.prompt).trim();
+	const query = (state.ragQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (!state.needsRetrieval) {
 		logger?.debug('RagQueryNode', 'Skipping RAG query because retrieval was not requested');
@@ -98,7 +104,15 @@ export async function ragQueryNode(
 	const messages = [
 		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state.prompt, query, state.intentFindings, ragContext)),
+		new HumanMessage(
+			buildHumanMessage(
+				state.prompt,
+				query,
+				state.plannerFindings,
+				state.intentFindings,
+				ragContext
+			)
+		),
 	];
 	const response = await model.invoke(messages);
 	const ragFindings = extractTokenFromChunk(response.content).trim();

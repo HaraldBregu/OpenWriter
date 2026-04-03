@@ -17,6 +17,11 @@ export const AssistantState = Annotation.Root({
 		default: () => '',
 	}),
 
+	route: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => 'text',
+	}),
+
 	intentFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
@@ -32,12 +37,57 @@ export const AssistantState = Annotation.Root({
 		default: () => false,
 	}),
 
+	needsWebSearch: Annotation<boolean>({
+		reducer: (_a, b) => b,
+		default: () => false,
+	}),
+
+	plannerFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	ragQuery: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	webSearchQuery: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
 	textFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
 	ragFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	webFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	analysisFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	shouldRetry: Annotation<boolean>({
+		reducer: (_a, b) => b,
+		default: () => false,
+	}),
+
+	reviewCount: Annotation<number>({
+		reducer: (_a, b) => b,
+		default: () => 0,
+	}),
+
+	imagePrompt: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),

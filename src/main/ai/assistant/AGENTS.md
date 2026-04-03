@@ -2,59 +2,65 @@
 
 ## Purpose
 
-`src/main/ai/assistant` implements the general assistant used for chat,
-writing, research, and broader helper workflows.
+`src/main/ai/assistant` implements the general-purpose assistant used for chat.
 
-The architecture now mirrors a classifier-first multi-agent flow:
+The runtime now tracks the reference design much more closely:
 
-- an intent-classification worker determines which capabilities are needed
-- a text-generation worker drafts the primary answer
-- a RAG worker retrieves workspace context when needed
-- an image-generation worker prepares visual guidance when the user asks for an image
-- an aggregator produces the final user-facing response
+- an intent detector chooses the primary `TEXT` or `IMAGE` route
+- the image route runs `image_prompt_enhancer -> image_generator`
+- the text route runs `planner -> parallel specialists -> analyzer -> enhancer`
+- the analyzer can send the text route back through the planner for one more pass
+
+The main pragmatic deviation is transport, not orchestration:
+
+- the image branch still returns a text response package for chat because the
+  assistant contract currently streams text, not a binary image artifact
 
 ## Visual Graph
 
 ```mermaid
 flowchart LR
-	Start([START]) --> IntentClassification["intent_classification<br/>normalizes request and detects TEXT/RAG/IMAGE"]
+	Start([START]) --> Intent["intent_detector<br/>normalizes request and chooses TEXT or IMAGE"]
 
-	IntentClassification --> TextGeneration["text_generation<br/>drafts the core text response<br/>writes textFindings"]
-	IntentClassification --> RagQuery["rag_query<br/>retrieves workspace context when needed<br/>writes ragFindings"]
-	IntentClassification --> ImageGeneration["image_generation<br/>prepares image guidance or prompt ideas<br/>writes imageFindings"]
+	Intent -->|IMAGE| ImagePrompt["image_prompt_enhancer<br/>writes imagePrompt + imageFindings"]
+	ImagePrompt --> ImageGenerator["image_generator<br/>writes final text-mode image response"]
+	ImageGenerator --> End([END])
 
-	TextGeneration --> Aggregate["aggregate<br/>merges worker outputs<br/>streams final response"]
-	RagQuery --> Aggregate
-	ImageGeneration --> Aggregate
+	Intent -->|TEXT| Planner["planner<br/>creates execution brief + queries"]
+	Planner --> Rag["rag_agent<br/>retrieves workspace context<br/>writes ragFindings"]
+	Planner --> Web["duckduckgo_search<br/>retrieves external context<br/>writes webFindings"]
+	Planner --> Text["text_generator<br/>drafts base answer<br/>writes textFindings"]
 
-	Aggregate --> End([END])
+	Rag --> Analyzer["analyzer<br/>checks alignment and completeness"]
+	Web --> Analyzer
+	Text --> Analyzer
+
+	Analyzer -->|retry| Planner
+	Analyzer -->|enhance| Enhancer["enhancer<br/>writes final user-facing response"]
+	Enhancer --> End
 ```
 
 ## Runtime Flow
 
-1. `intent_classification`
-   Rewrites the request into a normalized form and flags whether the request
-   needs a text answer, workspace retrieval, and image guidance.
+1. `intent_detector`
+   Normalizes the request, chooses the primary route, and flags whether the
+   text branch should use workspace retrieval or DuckDuckGo search.
 
-2. `text_generation`
-   Produces the best standalone text draft it can without workspace retrieval.
+2. Image branch
+   `image_prompt_enhancer` strengthens the prompt.
+   `image_generator` turns that into the final chat response for image requests.
 
-3. `rag_query`
-   Retrieves relevant workspace snippets through `RagRetriever` when the
-   classifier says retrieval is needed and a workspace index is available.
+3. Text branch
+   `planner` creates the execution brief and specialist queries.
+   `rag_agent`, `duckduckgo_search`, and `text_generator` run in parallel.
 
-4. `image_generation`
-   Produces a concise internal note for visual requests. Because the current
-   task/chat contract is text-only, this node prepares prompt guidance rather
-   than returning a binary image asset.
+4. `analyzer`
+   Reviews the specialist outputs against the prompt.
+   If they are materially misaligned, it routes back to `planner`.
 
-5. `aggregate`
-   Reads the original request, conversation history, intent findings, text
-   draft, retrieval findings, and image note, then produces the final
-   user-facing response.
-
-`text_generation`, `rag_query`, and `image_generation` run in parallel after
-`intent_classification`. `aggregate` waits for all three.
+5. `enhancer`
+   Produces the final user-facing text response once the analyzer accepts the
+   text branch output or the retry budget is exhausted.
 
 ## State Shape
 
@@ -62,42 +68,65 @@ The shared graph state in `state.ts` contains:
 
 - `prompt`: current user input
 - `history`: prior chat turns
-- `normalizedPrompt`: classifier-normalized version of the request
-- `intentFindings`: internal note describing detected intents and routing
-- `needsRetrieval`: whether the RAG branch should use workspace context
-- `needsImageGeneration`: whether the image branch should prepare visual guidance
-- `textFindings`: internal text draft from the text-generation worker
-- `ragFindings`: retrieval worker summary for the current request
-- `imageFindings`: image guidance note or a no-op marker
+- `normalizedPrompt`: intent-normalized request
+- `route`: primary branch, `text` or `image`
+- `intentFindings`: internal routing note
+- `needsRetrieval`: whether the text branch should use workspace retrieval
+- `needsWebSearch`: whether the text branch should use DuckDuckGo search
+- `needsImageGeneration`: whether the image branch should run
+- `plannerFindings`: planner brief for the text branch
+- `ragQuery`: planner-specified workspace query
+- `webSearchQuery`: planner-specified external search query
+- `textFindings`: internal text draft from the text generator
+- `ragFindings`: workspace retrieval summary
+- `webFindings`: DuckDuckGo search summary
+- `analysisFindings`: analyzer verdict and retry guidance
+- `shouldRetry`: whether the analyzer requested another planning pass
+- `reviewCount`: completed analyzer passes
+- `imagePrompt`: enhanced image-generation prompt
+- `imageFindings`: internal image-branch note
 - `phaseLabel`: UI-visible progress label
-- `response`: final aggregator output
+- `response`: final user-facing output
 
 ## Files
 
 - `definition.ts`
-  Declares the assistant agent metadata, per-node model map, graph preparation,
-  and input/output extraction.
+  Declares assistant metadata, per-node model map, graph preparation, and
+  input/output extraction.
 
 - `graph.ts`
-  Builds the classifier-first LangGraph topology shown above.
+  Builds the branch-based LangGraph topology shown above.
 
 - `messages.ts`
-  Defines phase labels such as `Classifying request...` and
-  `Running assistant specialists...`.
+  Defines phase labels such as `Planning response...` and
+  `Preparing image generation response...`.
+
+- `node-output.ts`
+  Small helpers for parsing labeled LLM outputs.
 
 - `nodes/intent_classification/`
-  Detects the request shape and writes `normalizedPrompt`, `intentFindings`,
-  `needsRetrieval`, and `needsImageGeneration`.
+  Detects the primary route and writes routing fields.
 
-- `nodes/text_generation/`
-  Produces the primary text draft in `textFindings`.
+- `nodes/planner/`
+  Builds the text-branch execution brief and specialist queries.
 
 - `nodes/rag/`
-  Retrieval worker that queries indexed workspace context and produces
-  `ragFindings`.
+  Retrieves indexed workspace context and produces `ragFindings`.
+
+- `nodes/duckduckgo_search/`
+  Performs best-effort DuckDuckGo search and produces `webFindings`.
+
+- `nodes/text_generation/`
+  Produces the base answer draft in `textFindings`.
+
+- `nodes/analyzer/`
+  Evaluates the specialist outputs and decides whether to retry.
+
+- `nodes/enhancer/`
+  Produces the final user-facing text response.
+
+- `nodes/image_prompt_enhancer/`
+  Produces the enhanced prompt for image requests.
 
 - `nodes/image_generation/`
-  Produces visual guidance in `imageFindings` for requests that ask for an image.
-
-- `nodes/aggregate/`
-  Final response writer that combines all worker outputs into `response`.
+  Produces the final user-facing image-branch response.

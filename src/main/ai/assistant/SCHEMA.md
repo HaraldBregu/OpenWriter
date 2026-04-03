@@ -82,13 +82,23 @@ Initial graph state produced by the assistant:
   prompt: ctx.prompt,
   history: ctx.history,
   normalizedPrompt: '',
+  route: 'text',
   intentFindings: '',
   needsRetrieval: false,
+  needsWebSearch: false,
   needsImageGeneration: false,
+  plannerFindings: '',
+  ragQuery: '',
+  webSearchQuery: '',
   textFindings: '',
   ragFindings: '',
+  webFindings: '',
+  analysisFindings: '',
+  shouldRetry: false,
+  reviewCount: 0,
+  imagePrompt: '',
   imageFindings: '',
-  phaseLabel: 'Classifying request...',
+  phaseLabel: 'Detecting intent...',
   response: ''
 }
 ```
@@ -105,11 +115,21 @@ interface AssistantGraphState {
 		content: string;
 	}>;
 	normalizedPrompt: string;
+	route: 'text' | 'image';
 	intentFindings: string;
 	needsRetrieval: boolean;
+	needsWebSearch: boolean;
 	needsImageGeneration: boolean;
+	plannerFindings: string;
+	ragQuery: string;
+	webSearchQuery: string;
 	textFindings: string;
 	ragFindings: string;
+	webFindings: string;
+	analysisFindings: string;
+	shouldRetry: boolean;
+	reviewCount: number;
+	imagePrompt: string;
 	imageFindings: string;
 	phaseLabel: string;
 	response: string;
@@ -120,15 +140,25 @@ Field semantics:
 
 - `prompt`: raw user input for the current turn
 - `history`: prior conversation turns passed into the run
-- `normalizedPrompt`: classifier-normalized version of the request
-- `intentFindings`: internal routing note used by downstream workers
-- `needsRetrieval`: whether the RAG branch should query workspace context
-- `needsImageGeneration`: whether the image branch should prepare visual guidance
-- `textFindings`: internal text draft generated before aggregation
+- `normalizedPrompt`: intent-normalized version of the request
+- `route`: primary branch chosen by the intent detector
+- `intentFindings`: internal routing note used downstream
+- `needsRetrieval`: whether the text branch should query workspace context
+- `needsWebSearch`: whether the text branch should query DuckDuckGo
+- `needsImageGeneration`: whether the image branch should run
+- `plannerFindings`: internal execution brief for the text branch
+- `ragQuery`: planner-produced workspace query
+- `webSearchQuery`: planner-produced external search query
+- `textFindings`: internal draft from the text generator
 - `ragFindings`: internal note generated from retrieved workspace context
-- `imageFindings`: internal image note or no-op marker
+- `webFindings`: internal note generated from DuckDuckGo search results
+- `analysisFindings`: analyzer verdict and retry guidance
+- `shouldRetry`: whether the analyzer requested another pass
+- `reviewCount`: number of completed analyzer passes
+- `imagePrompt`: enhanced prompt for the image branch
+- `imageFindings`: internal image-branch note
 - `phaseLabel`: current progress label surfaced to the UI
-- `response`: final text emitted by the aggregator node
+- `response`: final text emitted by the enhancer or image generator
 
 ## Routing Schema
 
@@ -136,21 +166,40 @@ Routing contract:
 
 ```text
 START
-  -> intent_classification
-  -> text_generation
-  -> rag_query
-  -> image_generation
-  -> aggregate
+  -> intent_detector
+  -> image_prompt_enhancer
+  -> image_generator
+  -> END
+
+START
+  -> intent_detector
+  -> planner
+  -> rag_agent
+  -> duckduckgo_search
+  -> text_generator
+  -> analyzer
+  -> planner | enhancer
   -> END
 ```
 
 Execution detail:
 
 ```text
-intent_classification runs first,
-then text_generation, rag_query, and image_generation run in parallel,
-then aggregate waits for all three and produces the final output.
+intent_detector runs first,
+then either:
+
+IMAGE route:
+  image_prompt_enhancer -> image_generator -> END
+
+TEXT route:
+  planner runs first,
+  rag_agent, duckduckgo_search, and text_generator run in parallel,
+  analyzer reviews all three outputs,
+  analyzer either retries planner or continues to enhancer,
+  enhancer produces the final response.
 ```
+
+The analyzer retry budget is bounded in `graph.ts`.
 
 ## Node Model Schema
 
@@ -158,11 +207,15 @@ The assistant is configured as a per-node model map:
 
 ```ts
 type AssistantNodeName =
-	| 'intent_classification'
-	| 'text_generation'
-	| 'rag_query'
-	| 'image_generation'
-	| 'aggregate';
+	| 'intent_detector'
+	| 'planner'
+	| 'rag_agent'
+	| 'duckduckgo_search'
+	| 'text_generator'
+	| 'analyzer'
+	| 'enhancer'
+	| 'image_prompt_enhancer'
+	| 'image_generator';
 
 interface NodeModelConfig {
 	providerId: string;
@@ -178,23 +231,28 @@ Current configured values:
 
 ```ts
 {
-  intent_classification: { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 512 },
-  text_generation:       { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
-  rag_query:             { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
-  image_generation:      { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 768 },
-  aggregate:             { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.5, maxTokens: 4096 }
+  intent_detector:        { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 512 },
+  planner:                { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.2, maxTokens: 1024 },
+  rag_agent:              { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
+  duckduckgo_search:      { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
+  text_generator:         { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 2048 },
+  analyzer:               { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.1, maxTokens: 768 },
+  enhancer:               { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.5, maxTokens: 4096 },
+  image_prompt_enhancer:  { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 768 },
+  image_generator:        { providerId: 'openai', modelId: 'gpt-4o', temperature: 0.4, maxTokens: 1024 }
 }
 ```
 
 ## Streaming Schema
 
-Only the aggregator node is streamable:
+Only the final branch nodes stream user-facing tokens:
 
 ```ts
-['aggregate'];
+['enhancer', 'image_generator'];
 ```
 
-The worker nodes are intentionally excluded from token streaming.
+The planner, analyzer, and specialist nodes are intentionally excluded from
+token streaming.
 
 ## Output Schema
 
@@ -228,8 +286,12 @@ Known labels emitted by the assistant:
 
 ```ts
 {
-  INTENT_CLASSIFICATION: 'Classifying request...',
-  PARALLEL_WORKERS: 'Running assistant specialists...',
-  AGGREGATE: 'Composing response...'
+  INTENT_DETECTOR: 'Detecting intent...',
+  PLANNER: 'Planning response...',
+  PARALLEL_SPECIALISTS: 'Running specialist agents...',
+  ANALYZER: 'Reviewing specialist outputs...',
+  ENHANCER: 'Polishing response...',
+  IMAGE_PROMPT_ENHANCER: 'Enhancing image prompt...',
+  IMAGE_GENERATOR: 'Preparing image generation response...'
 }
 ```

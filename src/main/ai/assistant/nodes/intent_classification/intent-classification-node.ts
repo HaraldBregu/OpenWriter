@@ -4,13 +4,16 @@ import type { LoggerService } from '../../../../services/logger';
 import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
+import { parseYesNo, readLabeledValue } from '../../node-output';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './INTENT_CLASSIFICATION_SYSTEM.md?raw';
 
 interface IntentClassificationResult {
 	readonly normalizedPrompt: string;
+	readonly route: 'text' | 'image';
 	readonly intentFindings: string;
 	readonly needsRetrieval: boolean;
+	readonly needsWebSearch: boolean;
 	readonly needsImageGeneration: boolean;
 }
 
@@ -18,88 +21,80 @@ const IMAGE_REQUEST_PATTERN =
 	/\b(image|illustration|picture|photo|render|visual|show me|generate an image|draw|sketch)\b/i;
 const RETRIEVAL_PATTERN =
 	/\b(workspace|codebase|repo|repository|project|document|docs|notes|context|from the files|from the repo|from the project|based on the workspace)\b/i;
-
-function escapeRegExp(value: string): string {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function readLabel(raw: string, label: string): string | undefined {
-	const match = raw.match(new RegExp(`^${escapeRegExp(label)}\\s*:\\s*(.+)$`, 'im'));
-	return match?.[1]?.trim();
-}
-
-function parseYesNo(value: string | undefined, fallback: boolean): boolean {
-	if (!value) return fallback;
-	if (/^(yes|true)\b/i.test(value)) return true;
-	if (/^(no|false)\b/i.test(value)) return false;
-	return fallback;
-}
+const WEB_SEARCH_PATTERN =
+	/\b(latest|current|recent|today|news|weather|price|stock|market|up to date|up-to-date|search the web|browse the web|internet|online)\b/i;
 
 function buildIntentFindings(
 	normalizedPrompt: string,
-	needsTextResponse: boolean,
+	route: 'text' | 'image',
 	needsRetrieval: boolean,
-	needsImageGeneration: boolean,
+	needsWebSearch: boolean,
 	reasoning: string
 ): string {
-	const detectedIntents = [
-		needsTextResponse ? 'TEXT' : null,
-		needsRetrieval ? 'RAG' : null,
-		needsImageGeneration ? 'IMAGE' : null,
-	]
-		.filter((value): value is string => value !== null)
-		.join(', ');
-
 	return [
 		`Normalized request: ${normalizedPrompt}`,
-		`Detected intents: ${detectedIntents || 'TEXT'}`,
+		`Primary route: ${route.toUpperCase()}`,
+		`Workspace retrieval: ${needsRetrieval ? 'yes' : 'no'}`,
+		`Web search: ${needsWebSearch ? 'yes' : 'no'}`,
+		`Image branch: ${route === 'image' ? 'yes' : 'no'}`,
 		`Routing notes: ${reasoning}`,
 	].join('\n');
 }
 
 function buildFallback(prompt: string): IntentClassificationResult {
 	const normalizedPrompt = prompt.trim() || 'No request provided.';
-	const needsImageGeneration = IMAGE_REQUEST_PATTERN.test(normalizedPrompt);
-	const needsRetrieval = RETRIEVAL_PATTERN.test(normalizedPrompt);
+	const route = IMAGE_REQUEST_PATTERN.test(normalizedPrompt) ? 'image' : 'text';
+	const needsRetrieval = route === 'text' && RETRIEVAL_PATTERN.test(normalizedPrompt);
+	const needsWebSearch = route === 'text' && WEB_SEARCH_PATTERN.test(normalizedPrompt);
 
 	return {
 		normalizedPrompt,
+		route,
 		intentFindings: buildIntentFindings(
 			normalizedPrompt,
-			true,
+			route,
 			needsRetrieval,
-			needsImageGeneration,
+			needsWebSearch,
 			'Used fallback heuristics because structured classification output was unavailable.'
 		),
 		needsRetrieval,
-		needsImageGeneration,
+		needsWebSearch,
+		needsImageGeneration: route === 'image',
 	};
 }
 
 function parseClassification(raw: string, prompt: string): IntentClassificationResult {
 	const fallback = buildFallback(prompt);
-	const normalizedPrompt = readLabel(raw, 'Normalized request') || fallback.normalizedPrompt;
-	const needsTextResponse = parseYesNo(readLabel(raw, 'Text response required'), true);
-	const needsRetrieval = parseYesNo(readLabel(raw, 'RAG required'), fallback.needsRetrieval);
-	const needsImageGeneration = parseYesNo(
-		readLabel(raw, 'Image required'),
-		fallback.needsImageGeneration
+	const normalizedPrompt =
+		readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt;
+	const routeLabel = readLabeledValue(raw, 'Primary route');
+	const route =
+		routeLabel !== undefined && /^image\b/i.test(routeLabel) ? 'image' : fallback.route;
+	const needsRetrieval = parseYesNo(
+		readLabeledValue(raw, 'RAG required'),
+		route === 'text' ? fallback.needsRetrieval : false
+	);
+	const needsWebSearch = parseYesNo(
+		readLabeledValue(raw, 'Web search required'),
+		route === 'text' ? fallback.needsWebSearch : false
 	);
 	const reasoning =
-		readLabel(raw, 'Reasoning') ||
+		readLabeledValue(raw, 'Reasoning') ||
 		'Structured classification succeeded without additional routing notes.';
 
 	return {
 		normalizedPrompt,
+		route,
 		intentFindings: buildIntentFindings(
 			normalizedPrompt,
-			needsTextResponse,
+			route,
 			needsRetrieval,
-			needsImageGeneration,
+			needsWebSearch,
 			reasoning
 		),
 		needsRetrieval,
-		needsImageGeneration,
+		needsWebSearch,
+		needsImageGeneration: route === 'image',
 	};
 }
 
@@ -119,10 +114,15 @@ export async function intentClassificationNode(
 		logger?.debug('IntentClassificationNode', 'Skipping classification for empty prompt');
 		return {
 			normalizedPrompt: fallback.normalizedPrompt,
+			route: fallback.route,
 			intentFindings: fallback.intentFindings,
 			needsRetrieval: fallback.needsRetrieval,
+			needsWebSearch: fallback.needsWebSearch,
 			needsImageGeneration: fallback.needsImageGeneration,
-			phaseLabel: ASSISTANT_STATE_MESSAGES.PARALLEL_WORKERS,
+			phaseLabel:
+				fallback.route === 'image'
+					? ASSISTANT_STATE_MESSAGES.IMAGE_PROMPT_ENHANCER
+					: ASSISTANT_STATE_MESSAGES.PLANNER,
 		};
 	}
 
@@ -140,16 +140,23 @@ export async function intentClassificationNode(
 	const parsed = parseClassification(rawClassification, prompt);
 
 	logger?.info('IntentClassificationNode', 'Intent classification completed', {
+		route: parsed.route,
 		needsRetrieval: parsed.needsRetrieval,
+		needsWebSearch: parsed.needsWebSearch,
 		needsImageGeneration: parsed.needsImageGeneration,
 		normalizedPromptLength: parsed.normalizedPrompt.length,
 	});
 
 	return {
 		normalizedPrompt: parsed.normalizedPrompt,
+		route: parsed.route,
 		intentFindings: parsed.intentFindings,
 		needsRetrieval: parsed.needsRetrieval,
+		needsWebSearch: parsed.needsWebSearch,
 		needsImageGeneration: parsed.needsImageGeneration,
-		phaseLabel: ASSISTANT_STATE_MESSAGES.PARALLEL_WORKERS,
+		phaseLabel:
+			parsed.route === 'image'
+				? ASSISTANT_STATE_MESSAGES.IMAGE_PROMPT_ENHANCER
+				: ASSISTANT_STATE_MESSAGES.PLANNER,
 	};
 }
