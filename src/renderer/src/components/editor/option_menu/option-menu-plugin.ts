@@ -4,6 +4,10 @@ import { type EditorState, Plugin, PluginKey } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { computePosition, offset, shift, flip } from '@floating-ui/dom';
 
+export interface OptionMenuControls {
+	forceHide: () => void;
+}
+
 export interface OptionMenuPluginProps {
 	pluginKey: PluginKey | string;
 	editor: Editor;
@@ -13,6 +17,7 @@ export interface OptionMenuPluginProps {
 	onQueryChange: (query: string, slashPos: number) => void;
 	onKeyEvent: (event: KeyboardEvent) => boolean;
 	getIsLocked?: () => boolean;
+	controls?: OptionMenuControls;
 }
 
 export class OptionMenuView {
