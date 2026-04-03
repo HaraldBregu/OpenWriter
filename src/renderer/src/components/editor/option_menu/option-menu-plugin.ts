@@ -165,7 +165,7 @@ export class OptionMenuView {
 	}
 
 	destroy(): void {
-		this.hide();
+		this.forceHide();
 	}
 }
 
