@@ -42,6 +42,7 @@ const Input: React.FC<InputProps> = ({
 	const [value, setValue] = useState('');
 	const [compactChipLabels, setCompactChipLabels] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
+	const wrapperRef = useRef<HTMLDivElement>(null);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const footerRef = useRef<HTMLDivElement>(null);
 	const chipMeasureRef = useRef<HTMLDivElement>(null);
