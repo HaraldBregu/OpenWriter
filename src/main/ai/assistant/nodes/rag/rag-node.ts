@@ -35,7 +35,12 @@ function getSourceLabel(metadata: Record<string, unknown>, index: number): strin
 	return `document-${index + 1}`;
 }
 
-function buildHumanMessage(prompt: string, normalizedPrompt: string, intentFindings: string, ragContext: string): string {
+function buildHumanMessage(
+	prompt: string,
+	normalizedPrompt: string,
+	intentFindings: string,
+	ragContext: string
+): string {
 	return [
 		'User request:',
 		prompt,

@@ -8,7 +8,11 @@ import SYSTEM_PROMPT from './IMAGE_GENERATION_SYSTEM.md?raw';
 
 const NO_IMAGE_FINDINGS = 'No image output requested.';
 
-function buildHumanMessage(prompt: string, normalizedPrompt: string, intentFindings: string): string {
+function buildHumanMessage(
+	prompt: string,
+	normalizedPrompt: string,
+	intentFindings: string
+): string {
 	return [
 		'Original user request:',
 		prompt,
@@ -29,7 +33,10 @@ export async function imageGenerationNode(
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	if (!state.needsImageGeneration) {
-		logger?.debug('ImageGenerationNode', 'Skipping image generation because no image was requested');
+		logger?.debug(
+			'ImageGenerationNode',
+			'Skipping image generation because no image was requested'
+		);
 		return { imageFindings: NO_IMAGE_FINDINGS };
 	}
 

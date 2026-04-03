@@ -307,12 +307,15 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			}
 			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
 			pendingCloseMenuRef.current = closeMenu;
-			handleAssistantSend(cleanBefore, cleanAfter, cursorPos, 'CONTINUE WRITING HERE WITH 15 WORDS MAX').catch(
-				() => {
-					pendingCloseMenuRef.current = null;
-					closeMenu();
-				}
-			);
+			handleAssistantSend(
+				cleanBefore,
+				cleanAfter,
+				cursorPos,
+				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
+			).catch(() => {
+				pendingCloseMenuRef.current = null;
+				closeMenu();
+			});
 		},
 		[assistantIsRunning, handleAssistantSend]
 	);

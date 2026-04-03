@@ -8,7 +8,11 @@ import SYSTEM_PROMPT from './TEXT_GENERATION_SYSTEM.md?raw';
 
 const EMPTY_TEXT_FINDINGS = 'No text draft was generated because no user request was provided.';
 
-function buildHumanMessage(prompt: string, normalizedPrompt: string, intentFindings: string): string {
+function buildHumanMessage(
+	prompt: string,
+	normalizedPrompt: string,
+	intentFindings: string
+): string {
 	return [
 		'Original user request:',
 		prompt,

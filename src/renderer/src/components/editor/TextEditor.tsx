@@ -182,7 +182,7 @@ const TextEditor = React.memo(
 							contentType: 'markdown',
 						});
 					},
-					onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: any }) => {
+					onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: Transaction }) => {
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
