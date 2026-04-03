@@ -247,6 +247,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			}
 
 			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
+				if (pendingCloseMenuRef.current) {
+					pendingCloseMenuRef.current();
+					pendingCloseMenuRef.current = null;
+				}
 				editorRef.current?.removeContentGenerator();
 				setAssistantActiveTaskId(null);
 			}

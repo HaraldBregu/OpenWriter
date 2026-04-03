@@ -4,6 +4,8 @@ import { ASSISTANT_STATE_MESSAGES } from './messages';
 import { RagRetriever } from './nodes/rag/rag-retriever';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 
+const LOG_SOURCE = 'AssistantAgent';
+
 const NODE_MODELS: AgentDefinition['nodeModels'] = {
 	[ASSISTANT_NODE.INTENT_CLASSIFICATION]: {
 		providerId: 'openai',
@@ -51,7 +53,13 @@ const definition: AgentDefinition = {
 	): NonNullable<AgentDefinition['buildGraph']> {
 		const logger = context.logger;
 
+		logger?.info(LOG_SOURCE, 'Preparing assistant graph', {
+			hasWorkspacePath: Boolean(context.workspacePath),
+			providerId: context.providerId,
+		});
+
 		if (!context.workspacePath) {
+			logger?.debug(LOG_SOURCE, 'Assistant graph will run without workspace retriever');
 			return (models) => buildGraph(models, undefined, logger);
 		}
 
@@ -61,11 +69,15 @@ const definition: AgentDefinition = {
 		});
 		const retriever = new RagRetriever({ workspacePath: context.workspacePath, embeddings });
 
+		logger?.info(LOG_SOURCE, 'Assistant graph prepared with workspace retriever', {
+			workspacePath: context.workspacePath,
+		});
+
 		return (models) => buildGraph(models, retriever, logger);
 	},
 
 	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
-		return {
+		const initialState = {
 			prompt: ctx.prompt,
 			history: ctx.history,
 			normalizedPrompt: '',
@@ -78,10 +90,14 @@ const definition: AgentDefinition = {
 			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_CLASSIFICATION,
 			response: '',
 		};
+
+		console;
+		return initialState;
 	},
 
 	extractGraphOutput(state: Record<string, unknown>): string {
-		return typeof state['response'] === 'string' ? state['response'] : '';
+		const response = typeof state['response'] === 'string' ? state['response'] : '';
+		return response;
 	},
 
 	extractThinkingLabel(state: Record<string, unknown>): string | undefined {
