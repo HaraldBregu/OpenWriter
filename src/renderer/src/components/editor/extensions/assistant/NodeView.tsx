@@ -112,17 +112,22 @@ export function AssistantNodeView({
 		return () => document.removeEventListener('mousedown', handleMouseDown, true);
 	}, []);
 
+	const wrapperClassName = [
+		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.4rem]',
+		'border bg-card/95 text-card-foreground ring-1 ring-black/5 backdrop-blur-sm',
+		'transition-[border-color,box-shadow,background-color] duration-200 ease-out',
+		loading
+			? 'border-primary/35 shadow-[0_20px_50px_hsl(var(--primary)/0.16)]'
+			: 'border-border/85 shadow-[0_18px_45px_hsl(var(--foreground)/0.1)] hover:border-foreground/15 hover:shadow-[0_22px_52px_hsl(var(--foreground)/0.14)]',
+		!enable && !loading ? 'bg-muted/55' : '',
+		'focus-within:border-primary/45 focus-within:shadow-[0_24px_56px_hsl(var(--foreground)/0.16)] dark:border-border/90 dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]',
+	].join(' ');
+
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<div
-				ref={wrapperRef}
-				className={[
-					'group/assistant relative my-3 flex flex-col overflow-hidden rounded-2xl',
-					'border border-border/70 bg-popover/95 py-2 shadow-[0_18px_45px_hsl(var(--foreground)/0.12)]',
-					'transition-[border-color,box-shadow] duration-300 ease-out',
-					'hover:border-[hsl(var(--info)/0.38)] hover:shadow-[0_18px_45px_hsl(var(--foreground)/0.14)]',
-				].join(' ')}
-			>
+			<div ref={wrapperRef} className={wrapperClassName}>
+				<div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/12 via-primary/5 to-transparent" />
+				<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 				<AssistantContent
 					prompt={prompt}
 					loading={loading}
