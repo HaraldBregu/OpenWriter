@@ -148,7 +148,10 @@ export function OptionMenu({
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [loadingAssistant, setLoadingAssistant] = useState(false);
 	const slashPosRef = useRef<number | null>(null);
+	const menuControlsRef = useRef<OptionMenuControls>({ forceHide: () => undefined });
+	const isLockedRef = useRef(false);
 
 	const queryRef = useRef(query);
 	queryRef.current = query;
