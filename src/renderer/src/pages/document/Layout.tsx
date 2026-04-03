@@ -297,17 +297,20 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const onContinueWithAssistant = useCallback(
 		(before: string, after: string, cursorPos: number, closeMenu: () => void) => {
+			if (assistantIsRunning) {
+				closeMenu();
+				return;
+			}
 			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
-
 			pendingCloseMenuRef.current = closeMenu;
-			handleAssistantSend(
-				cleanBefore,
-				cleanAfter,
-				cursorPos,
-				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
+			handleAssistantSend(cleanBefore, cleanAfter, cursorPos, 'CONTINUE WRITING HERE WITH 15 WORDS MAX').catch(
+				() => {
+					pendingCloseMenuRef.current = null;
+					closeMenu();
+				}
 			);
 		},
-		[handleAssistantSend]
+		[assistantIsRunning, handleAssistantSend]
 	);
 
 	const handleOpenFolder = useCallback(() => {
