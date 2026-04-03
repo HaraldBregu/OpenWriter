@@ -1,8 +1,12 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
-import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
+import {
+	createAssistantSpecialistAgent,
+	invokeAssistantSpecialist,
+	type AssistantSpecialistAgent,
+} from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './DUCKDUCKGO_SEARCH_SYSTEM.md?raw';
 import { searchDuckDuckGo } from './duckduckgo-search';
@@ -50,9 +54,13 @@ function buildHumanMessage(
 	].join('\n');
 }
 
+export function createDuckDuckGoSearchAgent(model: BaseChatModel): AssistantSpecialistAgent {
+	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+}
+
 export async function duckDuckGoSearchAgent(
 	state: typeof AssistantState.State,
-	model: BaseChatModel,
+	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	const query = (state.webSearchQuery || state.normalizedPrompt || state.prompt).trim();
@@ -81,7 +89,6 @@ export async function duckDuckGoSearchAgent(
 	}
 
 	const messages = [
-		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(
 			buildHumanMessage(
@@ -92,8 +99,7 @@ export async function duckDuckGoSearchAgent(
 			)
 		),
 	];
-	const response = await model.invoke(messages);
-	const webFindings = extractTokenFromChunk(response.content).trim();
+	const webFindings = await invokeAssistantSpecialist(agent, messages);
 
 	logger?.info('DuckDuckGoSearchAgent', 'DuckDuckGo findings generated', {
 		findingsLength: webFindings.length,

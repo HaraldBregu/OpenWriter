@@ -4,29 +4,22 @@
 
 `src/main/ai/assistant` implements the general-purpose assistant used for chat.
 
-The runtime now tracks the reference design much more closely:
+The assistant is now text-only:
 
-- an intent detector chooses the primary `TEXT` or `IMAGE` route
-- the image route runs `image_prompt_enhancer -> image_generator`
+- an intent detector normalizes the request and decides whether retrieval or
+  web search are needed
 - the text route runs `planner -> parallel specialists -> analyzer -> enhancer`
 - the analyzer can send the text route back through the planner for one more pass
 
-The main pragmatic deviation is transport, not orchestration:
-
-- the image branch still returns a text response package for chat because the
-  assistant contract currently streams text, not a binary image artifact
+If the user asks for an image or other visual asset, the assistant answers in
+text and makes the limitation explicit instead of trying to generate media.
 
 ## Visual Graph
 
 ```mermaid
 flowchart LR
-	Start([START]) --> Intent["intent_detector<br/>normalizes request and chooses TEXT or IMAGE"]
-
-	Intent -->|IMAGE| ImagePrompt["image_prompt_enhancer<br/>writes imagePrompt + imageFindings"]
-	ImagePrompt --> ImageGenerator["image_generator<br/>writes final text-mode image response"]
-	ImageGenerator --> End([END])
-
-	Intent -->|TEXT| Planner["planner<br/>creates execution brief + queries"]
+	Start([START]) --> Intent["intent_detector<br/>normalizes request and flags RAG / Web search"]
+	Intent --> Planner["planner<br/>creates execution brief + queries"]
 	Planner --> Rag["rag_agent<br/>retrieves workspace context<br/>writes ragFindings"]
 	Planner --> Web["duckduckgo_search<br/>retrieves external context<br/>writes webFindings"]
 	Planner --> Text["text_generator<br/>drafts base answer<br/>writes textFindings"]
@@ -37,21 +30,19 @@ flowchart LR
 
 	Analyzer -->|retry| Planner
 	Analyzer -->|enhance| Enhancer["enhancer<br/>writes final user-facing response"]
-	Enhancer --> End
+	Enhancer --> End([END])
 ```
 
 ## Runtime Flow
 
 1. `intent_detector`
-   Normalizes the request, chooses the primary route, and flags whether the
-   text branch should use workspace retrieval or DuckDuckGo search.
+   Normalizes the request and flags whether the text branch should use
+   workspace retrieval or DuckDuckGo search.
 
-2. Image branch
-   `image_prompt_enhancer` strengthens the prompt.
-   `image_generator` turns that into the final chat response for image requests.
+2. `planner`
+   Creates the execution brief and specialist queries.
 
-3. Text branch
-   `planner` creates the execution brief and specialist queries.
+3. Parallel specialists
    `rag_agent`, `duckduckgo_search`, and `text_generator` run in parallel.
 
 4. `analyzer`
@@ -60,7 +51,7 @@ flowchart LR
 
 5. `enhancer`
    Produces the final user-facing text response once the analyzer accepts the
-   text branch output or the retry budget is exhausted.
+   branch output or the retry budget is exhausted.
 
 ## State Shape
 
@@ -69,12 +60,10 @@ The shared graph state in `state.ts` contains:
 - `prompt`: current user input
 - `history`: prior chat turns
 - `normalizedPrompt`: intent-normalized request
-- `route`: primary branch, `text` or `image`
 - `intentFindings`: internal routing note
-- `needsRetrieval`: whether the text branch should use workspace retrieval
-- `needsWebSearch`: whether the text branch should use DuckDuckGo search
-- `needsImageGeneration`: whether the image branch should run
-- `plannerFindings`: planner brief for the text branch
+- `needsRetrieval`: whether the assistant should use workspace retrieval
+- `needsWebSearch`: whether the assistant should use DuckDuckGo search
+- `plannerFindings`: planner brief
 - `ragQuery`: planner-specified workspace query
 - `webSearchQuery`: planner-specified external search query
 - `textFindings`: internal text draft from the text generator
@@ -83,8 +72,6 @@ The shared graph state in `state.ts` contains:
 - `analysisFindings`: analyzer verdict and retry guidance
 - `shouldRetry`: whether the analyzer requested another planning pass
 - `reviewCount`: completed analyzer passes
-- `imagePrompt`: enhanced image-generation prompt
-- `imageFindings`: internal image-branch note
 - `phaseLabel`: UI-visible progress label
 - `response`: final user-facing output
 
@@ -95,20 +82,20 @@ The shared graph state in `state.ts` contains:
   input/output extraction.
 
 - `graph.ts`
-  Builds the branch-based LangGraph topology shown above.
+  Builds the LangGraph topology shown above.
 
 - `messages.ts`
   Defines phase labels such as `Planning response...` and
-  `Preparing image generation response...`.
+  `Polishing response...`.
 
 - `agent-output.ts`
   Small helpers for parsing labeled LLM outputs.
 
 - `agents/intent_detector/`
-  Detects the primary route and writes routing fields.
+  Detects retrieval/search needs and writes routing fields.
 
 - `agents/planner/`
-  Builds the text-branch execution brief and specialist queries.
+  Builds the execution brief and specialist queries.
 
 - `agents/rag_agent/`
   Retrieves indexed workspace context and produces `ragFindings`.
@@ -124,9 +111,3 @@ The shared graph state in `state.ts` contains:
 
 - `agents/enhancer/`
   Produces the final user-facing text response.
-
-- `agents/image_prompt_enhancer/`
-  Produces the enhanced prompt for image requests.
-
-- `agents/image_generator/`
-  Produces the final user-facing image-branch response.

@@ -1,10 +1,14 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
-import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import { parseYesNo, readLabeledValue } from '../../agent-output';
+import {
+	createAssistantSpecialistAgent,
+	invokeAssistantSpecialist,
+	type AssistantSpecialistAgent,
+} from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './ANALYZER_SYSTEM.md?raw';
 
@@ -41,9 +45,13 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
+export function createAnalyzerAgent(model: BaseChatModel): AssistantSpecialistAgent {
+	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+}
+
 export async function analyzerAgent(
 	state: typeof AssistantState.State,
-	model: BaseChatModel,
+	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	logger?.debug('AnalyzerAgent', 'Starting analyzer stage', {
@@ -54,12 +62,10 @@ export async function analyzerAgent(
 	});
 
 	const messages = [
-		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(buildHumanMessage(state)),
 	];
-	const response = await model.invoke(messages);
-	const rawAnalysis = extractTokenFromChunk(response.content).trim();
+	const rawAnalysis = await invokeAssistantSpecialist(agent, messages);
 	const isConsistent = parseYesNo(readLabeledValue(rawAnalysis, 'Consistency with prompt'), true);
 	const reasoning = readLabeledValue(rawAnalysis, 'Reasoning') || DEFAULT_REASONING;
 	const retryGuidance =

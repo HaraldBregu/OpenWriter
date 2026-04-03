@@ -1,9 +1,13 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
-import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
+import {
+	createAssistantSpecialistAgent,
+	streamAssistantSpecialist,
+	type AssistantSpecialistAgent,
+} from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './ENHANCER_SYSTEM.md?raw';
 
@@ -44,9 +48,13 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
+export function createEnhancerAgent(model: BaseChatModel): AssistantSpecialistAgent {
+	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+}
+
 export async function enhancerAgent(
 	state: typeof AssistantState.State,
-	model: BaseChatModel,
+	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	logger?.debug('EnhancerAgent', 'Starting enhancer generation', {
@@ -59,19 +67,10 @@ export async function enhancerAgent(
 	});
 
 	const messages = [
-		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(buildHumanMessage(state)),
 	];
-
-	let response = '';
-	const stream = await model.stream(messages);
-	for await (const chunk of stream) {
-		const token = extractTokenFromChunk(chunk.content);
-		if (token) {
-			response += token;
-		}
-	}
+	const response = await streamAssistantSpecialist(agent, messages);
 
 	logger?.info('EnhancerAgent', 'Enhancer response generated', {
 		responseLength: response.length,

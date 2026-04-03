@@ -17,22 +17,12 @@ export const AssistantState = Annotation.Root({
 		default: () => '',
 	}),
 
-	route: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => 'text',
-	}),
-
 	intentFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
 	needsRetrieval: Annotation<boolean>({
-		reducer: (_a, b) => b,
-		default: () => false,
-	}),
-
-	needsImageGeneration: Annotation<boolean>({
 		reducer: (_a, b) => b,
 		default: () => false,
 	}),
@@ -85,16 +75,6 @@ export const AssistantState = Annotation.Root({
 	reviewCount: Annotation<number>({
 		reducer: (_a, b) => b,
 		default: () => 0,
-	}),
-
-	imagePrompt: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
-	}),
-
-	imageFindings: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
 	}),
 
 	phaseLabel: Annotation<string>({

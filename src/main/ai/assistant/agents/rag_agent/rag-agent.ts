@@ -1,8 +1,12 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
-import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
+import {
+	createAssistantSpecialistAgent,
+	invokeAssistantSpecialist,
+	type AssistantSpecialistAgent,
+} from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import type { RagRetriever } from './rag-retriever';
 import SYSTEM_PROMPT from './RAG_AGENT_SYSTEM.md?raw';
@@ -66,9 +70,13 @@ function buildHumanMessage(
 	].join('\n');
 }
 
+export function createRagAgent(model: BaseChatModel): AssistantSpecialistAgent {
+	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+}
+
 export async function ragAgent(
 	state: typeof AssistantState.State,
-	model: BaseChatModel,
+	agent: AssistantSpecialistAgent,
 	retriever?: RagRetriever,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
@@ -102,7 +110,6 @@ export async function ragAgent(
 
 	const ragContext = buildRagContext(documents);
 	const messages = [
-		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(
 			buildHumanMessage(
@@ -114,8 +121,7 @@ export async function ragAgent(
 			)
 		),
 	];
-	const response = await model.invoke(messages);
-	const ragFindings = extractTokenFromChunk(response.content).trim();
+	const ragFindings = await invokeAssistantSpecialist(agent, messages);
 
 	logger?.info('RagAgent', 'RAG findings generated', { findingsLength: ragFindings.length });
 

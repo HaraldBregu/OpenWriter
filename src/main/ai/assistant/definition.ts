@@ -49,18 +49,6 @@ const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
 		temperature: 0.5,
 		maxTokens: 4096,
 	},
-	[ASSISTANT_SPECIALIST.IMAGE_PROMPT_ENHANCER]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.4,
-		maxTokens: 768,
-	},
-	[ASSISTANT_SPECIALIST.IMAGE_GENERATOR]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.4,
-		maxTokens: 1024,
-	},
 };
 
 const definition: AgentDefinition = {
@@ -68,7 +56,7 @@ const definition: AgentDefinition = {
 	name: 'Assistant',
 	category: 'utility',
 	nodeModels: SPECIALIST_MODELS,
-	streamableNodes: [ASSISTANT_SPECIALIST.ENHANCER, ASSISTANT_SPECIALIST.IMAGE_GENERATOR],
+	streamableNodes: [ASSISTANT_SPECIALIST.ENHANCER],
 	buildGraph,
 
 	prepareGraph(
@@ -105,11 +93,9 @@ const definition: AgentDefinition = {
 			prompt: ctx.prompt,
 			history: ctx.history,
 			normalizedPrompt: '',
-			route: 'text',
 			intentFindings: '',
 			needsRetrieval: false,
 			needsWebSearch: false,
-			needsImageGeneration: false,
 			plannerFindings: '',
 			ragQuery: '',
 			webSearchQuery: '',
@@ -119,8 +105,6 @@ const definition: AgentDefinition = {
 			analysisFindings: '',
 			shouldRetry: false,
 			reviewCount: 0,
-			imagePrompt: '',
-			imageFindings: '',
 			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_DETECTOR,
 			response: '',
 		};

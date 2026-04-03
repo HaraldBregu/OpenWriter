@@ -1,8 +1,12 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../../services/logger';
-import { extractTokenFromChunk } from '../../../../shared/ai-utils';
 import { toLangChainHistoryMessages } from '../../../core/history';
+import {
+	createAssistantSpecialistAgent,
+	invokeAssistantSpecialist,
+	type AssistantSpecialistAgent,
+} from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import SYSTEM_PROMPT from './TEXT_GENERATOR_SYSTEM.md?raw';
 
@@ -33,9 +37,13 @@ function buildHumanMessage(
 	].join('\n');
 }
 
+export function createTextGeneratorAgent(model: BaseChatModel): AssistantSpecialistAgent {
+	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+}
+
 export async function textGeneratorAgent(
 	state: typeof AssistantState.State,
-	model: BaseChatModel,
+	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
 	const prompt = state.prompt.trim();
@@ -52,7 +60,6 @@ export async function textGeneratorAgent(
 	});
 
 	const messages = [
-		new SystemMessage(SYSTEM_PROMPT),
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(
 			buildHumanMessage(
@@ -63,8 +70,7 @@ export async function textGeneratorAgent(
 			)
 		),
 	];
-	const response = await model.invoke(messages);
-	const textFindings = extractTokenFromChunk(response.content).trim();
+	const textFindings = await invokeAssistantSpecialist(agent, messages);
 
 	logger?.info('TextGeneratorAgent', 'Text draft generated', {
 		findingsLength: textFindings.length,
