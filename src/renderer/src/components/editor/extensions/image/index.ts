@@ -4,3 +4,6 @@ export type { ImageExtensionOptions } from './input-extension';
 export { createImageDropPastePlugin, fileToDataUri } from './image-drop-paste-plugin';
 export type { ImageInsertHandler } from './image-drop-paste-plugin';
 export { ImageEditor } from './ImageEditor';
+export { ImagePlaceholderExtension } from './image-placeholder-extension';
+export type { ImagePlaceholderOptions } from './image-placeholder-extension';
+export { ImagePlaceholderNodeView } from './ImagePlaceholderNodeView';
