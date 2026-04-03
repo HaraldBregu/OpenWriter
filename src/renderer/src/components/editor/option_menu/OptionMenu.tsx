@@ -160,9 +160,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
 	onContinueWithAssistantRef.current = onContinueWithAssistant;
 
-	const onInsertImageRef = useRef(onInsertImage);
-	onInsertImageRef.current = onInsertImage;
-
 	const allItems = useMemo<MenuItem[]>(
 		() => [
 			...MENU_ITEMS,
