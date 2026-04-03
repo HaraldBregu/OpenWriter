@@ -29,7 +29,7 @@ const Message: React.FC<MessageProps> = ({
 
 	if (isUser) {
 		return (
-			<div className="rounded-2xl border border-border/80 bg-accent/72 px-3.5 py-2 shadow-none sm:px-4 sm:py-2.5 dark:border-border/90 dark:bg-accent/90">
+			<div className="rounded-xl border border-border/80 bg-accent/72 px-3.5 py-2 shadow-none sm:px-4 sm:py-2.5 dark:border-border/90 dark:bg-accent/90">
 				<div className="whitespace-pre-wrap text-[13px] font-medium leading-relaxed text-foreground/90 dark:text-foreground/95">
 					{content}
 				</div>
