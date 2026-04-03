@@ -298,6 +298,8 @@ export function OptionMenu({
 			element: el,
 			onShow: () => {},
 			onHide: () => {
+				isLockedRef.current = false;
+				setLoadingAssistant(false);
 				setQuery('');
 				setSelectedIndex(0);
 				slashPosRef.current = null;
@@ -307,6 +309,8 @@ export function OptionMenu({
 				slashPosRef.current = slashPos;
 			},
 			onKeyEvent,
+			getIsLocked: () => isLockedRef.current,
+			controls: menuControlsRef.current,
 		});
 
 		editor.registerPlugin(plugin);
