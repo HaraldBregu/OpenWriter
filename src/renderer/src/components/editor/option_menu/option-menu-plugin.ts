@@ -12,6 +12,7 @@ export interface OptionMenuPluginProps {
 	onHide: () => void;
 	onQueryChange: (query: string, slashPos: number) => void;
 	onKeyEvent: (event: KeyboardEvent) => boolean;
+	getIsLocked?: () => boolean;
 }
 
 export class OptionMenuView {
