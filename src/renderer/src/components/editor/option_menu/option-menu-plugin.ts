@@ -133,10 +133,18 @@ export class OptionMenuView {
 		this.onHide();
 	}
 
+	forceHide(): void {
+		if (!this.visible) return;
+		this.visible = false;
+		this.slashPos = null;
+		this.element.style.visibility = 'hidden';
+		this.onHide();
+	}
+
 	dismiss(): void {
 		this.dismissed = true;
 		this.dismissedSlashPos = this.slashPos;
-		this.hide();
+		this.forceHide();
 	}
 
 	isVisible(): boolean {
