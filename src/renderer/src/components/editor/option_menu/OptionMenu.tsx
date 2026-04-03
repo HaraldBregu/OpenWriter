@@ -216,7 +216,19 @@ export function OptionMenu({
 						serializer?.serialize(subDocBefore) ?? ed.state.doc.textBetween(0, from, '\n');
 					const markdownAfterCursor =
 						serializer?.serialize(subDocAfter) ?? ed.state.doc.textBetween(from, docSize, '\n');
-					onContinueWithAssistantRef.current?.(markdownBeforeCursor, markdownAfterCursor, from);
+					isLockedRef.current = true;
+					setLoadingAssistant(true);
+					const closeMenu = (): void => {
+						isLockedRef.current = false;
+						setLoadingAssistant(false);
+						menuControlsRef.current.forceHide();
+					};
+					onContinueWithAssistantRef.current?.(
+						markdownBeforeCursor,
+						markdownAfterCursor,
+						from,
+						closeMenu
+					);
 				},
 			},
 		],
