@@ -20,7 +20,11 @@ import { SearchExtension } from './extensions/search-extension';
 import { SelectionMarkerExtension } from './extensions/selection-marker-extension';
 import { AssistantExtension } from './extensions/assistant';
 import { ContentGeneratorExtension } from './extensions/content_generator';
-import { ImageExtension, type ImageInsertHandler } from './extensions/image';
+import {
+	ImageExtension,
+	ImagePlaceholderExtension,
+	type ImageInsertHandler,
+} from './extensions/image';
 import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
