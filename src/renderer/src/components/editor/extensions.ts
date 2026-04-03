@@ -55,6 +55,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Dropcursor,
 		Gapcursor,
 		ImageExtension.configure({ onImageInsert: handlers.onImageInsert }),
+		ImagePlaceholderExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
 		SelectionMarkerExtension,
 		AssistantExtension.configure({
