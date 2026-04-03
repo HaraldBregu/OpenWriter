@@ -207,14 +207,12 @@ const Input: React.FC<InputProps> = ({
 			<div
 				ref={wrapperRef}
 				onBlur={handleWrapperBlur}
-				className={`relative overflow-hidden rounded-[1.4rem] border bg-card/95 text-card-foreground ring-1 ring-black/6 shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 ${
+				className={`relative overflow-hidden rounded-[1.4rem] border bg-card/95 text-card-foreground shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 ${
 					isFocused
 						? 'border-primary/45 dark:border-primary/55'
 						: 'border-border/85 hover:border-foreground/15 dark:border-border/90 dark:hover:border-foreground/15'
-				} dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]`}
+				} dark:bg-card/95`}
 			>
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-primary/12 via-primary/5 to-transparent" />
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 				<AppTextarea
 					ref={textareaRef}
 					value={value}
