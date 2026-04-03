@@ -197,13 +197,20 @@ const Input: React.FC<InputProps> = ({
 		);
 	};
 
+	const handleWrapperBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+		if (wrapperRef.current?.contains(e.relatedTarget as Node | null)) return;
+		setIsFocused(false);
+	}, []);
+
 	return (
 		<div className="px-3 pb-3 pt-1 shrink-0">
 			<div
+				ref={wrapperRef}
+				onBlur={handleWrapperBlur}
 				className={`relative overflow-hidden rounded-[1.35rem] border bg-card shadow-none backdrop-blur-sm transition-colors duration-150 ${
 					isFocused
-						? 'border-foreground/30 dark:border-foreground/25'
-						: 'border-border/80 hover:border-foreground/20 dark:border-border/90 dark:hover:border-foreground/15'
+						? 'border-ring/55 dark:border-ring/65'
+						: 'border-border/80 hover:border-border dark:border-border/90 dark:hover:border-border/95'
 				} dark:bg-card/95`}
 			>
 				<AppTextarea
@@ -212,7 +219,6 @@ const Input: React.FC<InputProps> = ({
 					onChange={handleChange}
 					onKeyDown={handleKeyDown}
 					onFocus={() => setIsFocused(true)}
-					onBlur={() => setIsFocused(false)}
 					disabled={disabled}
 					rows={3}
 					placeholder={
