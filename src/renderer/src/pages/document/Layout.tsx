@@ -50,6 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const [assistantSessionId, setAssistantSessionId] = useState<string | null>(null);
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const assistantIsRunning = assistantActiveTaskId !== null;
+	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
 	const stateRef = useRef({ title, content });
 	stateRef.current = { title, content };
