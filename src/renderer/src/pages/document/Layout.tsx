@@ -231,6 +231,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		const unsub = subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
 				editorRef.current?.setContentGeneratorLoading(true);
+				if (pendingCloseMenuRef.current) {
+					pendingCloseMenuRef.current();
+					pendingCloseMenuRef.current = null;
+				}
 				return;
 			}
 
