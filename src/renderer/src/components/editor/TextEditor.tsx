@@ -61,7 +61,12 @@ export interface TextEditorProps {
 	disabled?: boolean;
 	id?: string;
 	streamingContent?: string;
-	onContinueWithAssistant?: (before: string, after: string, cursorPos: number) => void;
+	onContinueWithAssistant?: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		closeMenu: () => void
+	) => void;
 	onTextSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onImageSubmit?: (prompt: string) => void;
 	onImageFileSelect?: (file: File) => void;
