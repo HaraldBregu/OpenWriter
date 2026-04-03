@@ -210,6 +210,8 @@ const Input: React.FC<InputProps> = ({
 					value={value}
 					onChange={handleChange}
 					onKeyDown={handleKeyDown}
+					onFocus={() => setIsFocused(true)}
+					onBlur={() => setIsFocused(false)}
 					disabled={disabled}
 					rows={3}
 					placeholder={
