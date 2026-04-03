@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
-import { ArrowUp, LoaderCircle, Sparkles } from 'lucide-react';
+import { ArrowUp, LoaderCircle } from 'lucide-react';
 
 export interface AssistantContentProps {
 	prompt: string;
@@ -24,11 +24,6 @@ export function AssistantContent({
 	onResize,
 }: AssistantContentProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const headerTitle = t('agenticPanel.emptyTitle', 'Ask the assistant');
-	const description = t(
-		'assistantNode.description',
-		'Describe what should happen at this point in the document.'
-	);
 	const footerHint = loading
 		? t('assistantNode.generating', 'Generating response...')
 		: enable
@@ -37,15 +32,6 @@ export function AssistantContent({
 
 	return (
 		<>
-			<div className="px-4 pt-3 pb-2">
-				<div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
-					<Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-					{headerTitle}
-				</div>
-				<p className="mt-2 max-w-xl text-xs leading-5 text-foreground/70 dark:text-muted-foreground/90">
-					{description}
-				</p>
-			</div>
 			<AppTextarea
 				ref={textareaRef}
 				value={prompt}
@@ -54,7 +40,7 @@ export function AssistantContent({
 					onResize();
 				}}
 				disabled={!enable}
-				className="min-h-[88px] w-full resize-none border-none bg-transparent px-4 pt-1 pb-3 text-sm leading-6 text-foreground placeholder:text-foreground/45 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 dark:placeholder:text-muted-foreground/75"
+				className="min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground placeholder:text-foreground/45 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 dark:placeholder:text-muted-foreground/75"
 				placeholder={t(
 					'assistantNode.placeholder',
 					'Ask the assistant to continue, rewrite, or generate from here.'

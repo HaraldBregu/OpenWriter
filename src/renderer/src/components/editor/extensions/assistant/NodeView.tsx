@@ -114,13 +114,13 @@ export function AssistantNodeView({
 
 	const wrapperClassName = [
 		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.4rem]',
-		'border bg-card/95 text-card-foreground ring-1 ring-black/5 backdrop-blur-sm',
+		'border bg-card/95 text-card-foreground ring-1 ring-black/6 backdrop-blur-sm',
 		'transition-[border-color,box-shadow,background-color] duration-200 ease-out',
 		loading
-			? 'border-primary/35 shadow-[0_20px_50px_hsl(var(--primary)/0.16)]'
-			: 'border-border/85 shadow-[0_18px_45px_hsl(var(--foreground)/0.1)] hover:border-foreground/15 hover:shadow-[0_22px_52px_hsl(var(--foreground)/0.14)]',
+			? 'border-primary/35 shadow-[0_20px_44px_hsl(var(--primary)/0.14),0_34px_80px_hsl(var(--foreground)/0.14)]'
+			: 'border-border/85 shadow-[0_16px_34px_hsl(var(--foreground)/0.08),0_28px_72px_hsl(var(--foreground)/0.12)] hover:border-foreground/15 hover:shadow-[0_20px_44px_hsl(var(--foreground)/0.1),0_36px_88px_hsl(var(--foreground)/0.16)]',
 		!enable && !loading ? 'bg-muted/55' : '',
-		'focus-within:border-primary/45 focus-within:shadow-[0_24px_56px_hsl(var(--foreground)/0.16)] dark:border-border/90 dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]',
+		'focus-within:border-primary/45 focus-within:shadow-[0_22px_48px_hsl(var(--primary)/0.12),0_36px_92px_hsl(var(--foreground)/0.18)] dark:border-border/90 dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]',
 	].join(' ');
 
 	return (
