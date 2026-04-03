@@ -296,9 +296,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	);
 
 	const onContinueWithAssistant = useCallback(
-		(before: string, after: string, cursorPos: number) => {
+		(before: string, after: string, cursorPos: number, closeMenu: () => void) => {
 			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
 
+			pendingCloseMenuRef.current = closeMenu;
 			handleAssistantSend(
 				cleanBefore,
 				cleanAfter,
