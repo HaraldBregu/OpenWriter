@@ -43,6 +43,10 @@ export class OptionMenuView {
 		this.onQueryChange = props.onQueryChange;
 		this.getIsLocked = props.getIsLocked ?? (() => false);
 
+		if (props.controls) {
+			props.controls.forceHide = () => this.forceHide();
+		}
+
 		this.element.style.visibility = 'hidden';
 		this.element.style.position = 'absolute';
 	}
