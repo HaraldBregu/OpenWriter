@@ -28,7 +28,7 @@ import {
 	ExtractorRegistry,
 	VectorIndexingPipeline,
 	type VectorIndexingProgressEvent,
-} from '../../ai/rag';
+} from '../../rag';
 import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';

@@ -29,7 +29,7 @@ import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 
 // RAG infrastructure
-import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './ai/rag';
+import { ExtractorRegistry, PlainTextExtractor, PdfExtractor, DocxExtractor } from './rag';
 
 // IPC modules
 import type { IpcModule } from './ipc';

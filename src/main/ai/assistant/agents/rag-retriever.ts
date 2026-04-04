@@ -11,7 +11,7 @@
 import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
-import { VectorStore } from '../../rag/vector-store';
+import { VectorStore } from '../../../rag/vector-store';
 
 const DATA_DIR = 'data';
 const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');

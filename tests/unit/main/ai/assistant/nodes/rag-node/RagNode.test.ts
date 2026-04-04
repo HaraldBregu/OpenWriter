@@ -13,7 +13,7 @@ import { ragNode } from '../../../../../../../src/main/ai/agents/assistant/nodes
 // Mocks
 // ---------------------------------------------------------------------------
 
-jest.mock('../../../../../../../src/main/ai/rag/vector-store', () => {
+jest.mock('../../../../../../../src/main/rag/vector-store', () => {
 	return {
 		VectorStore: {
 			load: jest.fn(),
@@ -21,7 +21,7 @@ jest.mock('../../../../../../../src/main/ai/rag/vector-store', () => {
 	};
 });
 
-import { VectorStore } from '../../../../../../../src/main/ai/rag/vector-store';
+import { VectorStore } from '../../../../../../../src/main/rag/vector-store';
 
 const mockLoad = VectorStore.load as jest.Mock;
 
