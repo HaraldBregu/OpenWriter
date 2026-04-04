@@ -2,7 +2,7 @@
  * RagRetriever — loads the workspace vector store and provides similarity
  * search for the RAG node.
  *
- * The vector store path is resolved via RagPaths using the WorkspaceService,
+ * The vector store path is resolved via WorkspaceService.getVectorStorePath(),
  * so there are no hardcoded paths. When no store file exists yet (first
  * run, or workspace never indexed), retrieve() silently returns an empty
  * array so downstream nodes degrade gracefully.
@@ -11,7 +11,7 @@
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import type { WorkspaceService } from '../../../workspace/workspace-service';
-import { VectorStore, RagPaths } from '../../../rag';
+import { VectorStore } from '../../../rag';
 
 const DEFAULT_TOP_K = 4;
 const MIN_SCORE_THRESHOLD = 0.3;
