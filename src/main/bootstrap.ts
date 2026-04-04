@@ -24,7 +24,7 @@ import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
 import { TaskReactionRegistry } from './task/task-reaction-registry';
 import { TaskReactionBus } from './task/task-reaction-bus';
-import { IndexResourcesTaskHandler } from './task/handlers/indexing-task-handler';
+import { RagIndexingTaskHandler } from './task/handlers/rag-indexing-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 
