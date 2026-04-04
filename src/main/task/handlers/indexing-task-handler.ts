@@ -29,13 +29,12 @@ import {
 	ExtractorRegistry,
 	VectorIndexingPipeline,
 	type VectorIndexingProgressEvent,
+	RagPaths,
 } from '../../rag';
 import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';
 const DATA_DIR = 'data';
-const RAG_INDEX_SUBDIR = path.join(DATA_DIR, 'rag_index');
-const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /** Progress weight allocation for each pipeline phase. */
