@@ -23,7 +23,7 @@ export class ExtractorRegistry {
 	/**
 	 * Resolve an extractor for the given file extension.
 	 *
-	 * @param extension - File extension including the dot (e.g., '.pdf')
+	 * @param extension - File extension including the dot (e.g., '.txt')
 	 * @returns The matching extractor, or null if unsupported
 	 */
 	resolve(extension: string): DocumentExtractor | null {

@@ -1,4 +1,4 @@
-export const SUPPORTED_EXTENSIONS = ['.pdf', '.docx', '.txt', '.md', '.html', '.csv', '.json'];
+export const SUPPORTED_EXTENSIONS = ['.txt', '.md', '.html', '.csv', '.json'];
 
 export function formatBytes(bytes: number): string {
 	if (bytes === 0) return '0 B';

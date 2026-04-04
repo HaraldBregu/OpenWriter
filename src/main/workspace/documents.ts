@@ -56,7 +56,7 @@ export class DocumentsService {
 	 *
 	 * @param workspacePath - Path to the workspace
 	 * @param filePaths - Array of file paths to import
-	 * @param allowedExtensions - Optional list of allowed extensions (e.g. ['.pdf', '.docx']).
+	 * @param allowedExtensions - Optional list of allowed extensions (e.g. ['.txt', '.md']).
 	 *   When provided, files are validated against this list instead of the default text-only check.
 	 * @returns Array of file metadata for imported files
 	 */
