@@ -66,14 +66,21 @@ export class Embedder {
 		const failedIds: string[] = [];
 		let indexedCount = 0;
 
+		const outputPath = input.workspaceService.getVectorStorePath();
+		const indexOutputPath = input.workspaceService.getDocumentIndexPath();
+
+		if (!outputPath || !indexOutputPath) {
+			throw new Error('Failed to resolve RAG paths from workspace');
+		}
+
 		if (input.clearExisting !== false) {
-			await fs.rm(input.outputPath, { recursive: true, force: true });
-			await fs.rm(input.indexOutputPath, { recursive: true, force: true });
+			await fs.rm(outputPath, { recursive: true, force: true });
+			await fs.rm(indexOutputPath, { recursive: true, force: true });
 			this.options.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
-				outputPath: input.outputPath,
+				outputPath,
 			});
 			this.options.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
-				outputPath: input.indexOutputPath,
+				outputPath: indexOutputPath,
 			});
 		}
 
