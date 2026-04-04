@@ -8,13 +8,9 @@
  * array so downstream nodes degrade gracefully.
  */
 
-import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
-import { VectorStore } from '../../../rag';
-
-const DATA_DIR = 'data';
-const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');
+import { VectorStore, RagPaths } from '../../../rag';
 
 const DEFAULT_TOP_K = 4;
 const MIN_SCORE_THRESHOLD = 0.3;
