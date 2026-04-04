@@ -24,7 +24,11 @@ import type { WorkspaceService } from '../../workspace/workspace-service';
 import { DocumentsService } from '../../workspace/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import { ExtractorRegistry, VectorStore, chunkText } from '../../ai/rag';
+import {
+	ExtractorRegistry,
+	VectorIndexingPipeline,
+	type VectorIndexingProgressEvent,
+} from '../../ai/rag';
 import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';
@@ -114,16 +118,12 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		throwIfAborted(signal);
 
-		// Delete existing vector store folder for a clean re-index
 		const resolvedStorePath = path.resolve(vectorStorePath);
 		const resolvedWorkspace = path.resolve(workspacePath);
 		if (!resolvedStorePath.startsWith(resolvedWorkspace + path.sep)) {
 			throw new Error('Vector store path is outside the workspace');
 		}
-		await fs.rm(vectorStorePath, { recursive: true, force: true });
-		logger?.info('IndexResources', 'Cleared existing vector store');
 
-		// Resolve embedding model via ProviderResolver
 		const storeService =
 			this.globalContainer.get<import('../../services/store').StoreService>('store');
 		const providerResolver = new ProviderResolver(storeService);
@@ -133,107 +133,21 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			apiKey: resolved.apiKey,
 		});
 
-		// Fresh in-memory vector store (no loading from disk)
-		const vectorStore = new VectorStore(embeddingModel);
-
-		const failedIds: string[] = [];
-		let indexedCount = 0;
-		const total = documents.length;
-
-		// Phase 1: Extract text and chunk documents
+		const pipeline = new VectorIndexingPipeline({
+			extractorRegistry: this.extractorRegistry,
+			logger,
+		});
 		reporter.progress(1, 'Extracting text from documents');
-		const pendingChunks: Array<{
-			fileId: string;
-			filePath: string;
-			chunks: import('@langchain/core/documents').Document[];
-		}> = [];
+		const { indexedCount, failedIds, totalChunks } = await pipeline.run({
+			documents,
+			embeddings: embeddingModel,
+			outputPath: vectorStorePath,
+			signal,
+			onProgress: (event) => {
+				reporter.progress(mapIndexingProgressToPercent(event), event.message);
+			},
+		});
 
-		for (let i = 0; i < total; i++) {
-			throwIfAborted(signal);
-
-			const doc = documents[i];
-			const ext = path.extname(doc.name).toLowerCase();
-
-			const extractor = this.extractorRegistry.resolve(ext);
-			if (!extractor) {
-				logger?.warn('IndexResources', `No extractor for extension: ${ext} (${doc.name})`);
-				failedIds.push(doc.id);
-				continue;
-			}
-
-			try {
-				const extracted = await extractor.extract(doc.path, signal);
-
-				if (extracted.content.trim().length === 0) {
-					logger?.warn('IndexResources', `Empty content extracted from: ${doc.name}`);
-					failedIds.push(doc.id);
-					continue;
-				}
-
-				const chunks = await chunkText(extracted.content, {
-					fileId: doc.id,
-					fileName: doc.name,
-					source: doc.path,
-				});
-
-				pendingChunks.push({
-					fileId: doc.id,
-					filePath: doc.path,
-					chunks,
-				});
-
-				const percent = Math.round(((i + 1) / total) * PHASE_EXTRACT);
-				reporter.progress(percent, `Extracted: ${doc.name} (${chunks.length} chunks)`);
-			} catch (err) {
-				if (err instanceof Error && err.name === 'AbortError') {
-					throw err;
-				}
-				logger?.error('IndexResources', `Failed to extract ${doc.name}`, err);
-				failedIds.push(doc.id);
-			}
-		}
-
-		throwIfAborted(signal);
-
-		// Phase 2: Generate embeddings and add to vector store
-		if (pendingChunks.length > 0) {
-			reporter.progress(PHASE_EXTRACT, 'Generating embeddings');
-
-			for (let i = 0; i < pendingChunks.length; i++) {
-				throwIfAborted(signal);
-
-				const pending = pendingChunks[i];
-
-				try {
-					await vectorStore.addDocuments(pending.chunks);
-
-					indexedCount++;
-					const percent =
-						PHASE_EXTRACT + Math.round(((i + 1) / pendingChunks.length) * PHASE_EMBED);
-					reporter.progress(percent, `Embedded: ${path.basename(pending.filePath)}`);
-				} catch (err) {
-					if (err instanceof Error && err.name === 'AbortError') {
-						throw err;
-					}
-					logger?.error(
-						'IndexResources',
-						`Failed to embed ${path.basename(pending.filePath)}`,
-						err
-					);
-					failedIds.push(pending.fileId);
-				}
-			}
-		}
-
-		throwIfAborted(signal);
-
-		// Phase 3: Save vector store and indexing info to disk
-		reporter.progress(PHASE_EXTRACT + PHASE_EMBED, 'Saving vector store');
-		await vectorStore.save(vectorStorePath);
-
-		const totalChunks = vectorStore.size;
-
-		// Write indexing info JSON alongside the vector store
 		const dataDir = path.join(workspacePath, DATA_DIR);
 		const indexingInfo: IndexingInfo = {
 			lastIndexedAt: Date.now(),
@@ -257,6 +171,26 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		return { indexedCount, failedIds, totalChunks };
 	}
+}
+
+function mapIndexingProgressToPercent(event: VectorIndexingProgressEvent): number {
+	if (event.phase === 'extract') {
+		return scaleProgress(event.completed, event.total, 0, PHASE_EXTRACT);
+	}
+
+	if (event.phase === 'embed') {
+		return scaleProgress(event.completed, event.total, PHASE_EXTRACT, PHASE_EXTRACT + PHASE_EMBED);
+	}
+
+	return PHASE_EXTRACT + PHASE_EMBED;
+}
+
+function scaleProgress(completed: number, total: number, start: number, end: number): number {
+	if (total <= 0) {
+		return start;
+	}
+
+	return start + Math.round((completed / total) * (end - start));
 }
 
 // ---------------------------------------------------------------------------
