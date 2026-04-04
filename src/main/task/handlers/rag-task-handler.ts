@@ -88,19 +88,7 @@ export class RagIndexingTaskHandler implements TaskHandler<
 				throw new Error('No workspace is open for this window');
 			}
 
-			const documentIndexPath = workspaceService.getDocumentIndexPath();
-			const vectorStorePath = workspaceService.getVectorStorePath();
-
-			// if (!documentIndexPath || !vectorStorePath) {
-			// 	throw new Error('Failed to derive RAG paths from workspace');
-			// }
-
-			// logger?.info('RagIndexing', `Starting indexing for workspace: ${workspacePath}`);
-			// logger?.info('RagIndexing', `Document index: ${documentIndexPath}`);
-			// logger?.info('RagIndexing', `Vector store: ${vectorStorePath}`);
-
-			// // Validate paths are within workspace (prevent directory traversal)
-			// this.validatePaths(workspacePath, documentIndexPath, vectorStorePath);
+			logger?.info('RagIndexing', `Starting indexing for workspace: ${workspacePath}`);
 
 			// Load documents metadata
 			reporter.progress(0, 'Loading documents');
