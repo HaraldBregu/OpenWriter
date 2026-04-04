@@ -119,13 +119,13 @@ export class RagIndexingTaskHandler implements TaskHandler<
 			// Run RAG indexing pipeline
 			const embedder = new Embedder({
 				extractorRegistry: this.extractorRegistry,
+				workspaceService,
 				logger,
 			});
 			reporter.progress(1, 'Extracting text from documents');
 			const { indexedCount, failedIds, totalChunks } = await embedder.run({
 				documents,
 				embeddings: embeddingModel,
-				workspaceService,
 				signal,
 				clearExisting: true,
 				onProgress: (event) => {
