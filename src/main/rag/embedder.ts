@@ -64,7 +64,8 @@ export class Embedder {
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
 		// Create embeddings model
-		const storeService = this.globalContainer.get<import('../services/store').StoreService>('store');
+		const storeService =
+			this.globalContainer.get<import('../services/store').StoreService>('store');
 		const providerResolver = new ProviderResolver(storeService);
 		const resolved = providerResolver.resolve({ providerId: 'openai' });
 		const embeddingModel = createEmbeddingModel({
