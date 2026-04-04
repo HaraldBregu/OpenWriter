@@ -1,5 +1,5 @@
 /**
- * Resource processing domain.
+ * Processing domain.
  *
  * Intended for pipelines that transform or prepare workspace resources before
  * they are consumed elsewhere in the app, for example:
@@ -10,4 +10,4 @@
  * - indexing preparation
  */
 
-export const RESOURCE_PROCESSING_DOMAIN = 'resource-processing';
+export const PROCESSING_DOMAIN = 'processing';
