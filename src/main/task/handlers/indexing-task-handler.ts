@@ -25,12 +25,7 @@ import type { WorkspaceService } from '../../workspace/workspace-service';
 import { DocumentsService } from '../../workspace/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import {
-	ExtractorRegistry,
-	Embedder,
-	type VectorIndexingProgressEvent,
-	RagPaths,
-} from '../../rag';
+import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent, RagPaths } from '../../rag';
 import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';
@@ -41,6 +36,7 @@ const INDEXING_INFO_FILE = 'indexing-info.json';
 const PHASE_EXTRACT = 30;
 const PHASE_INDEX = 20;
 const PHASE_EMBED = 40;
+const PHASE_SAVE = 10;
 
 export interface IndexResourcesInput {
 	/** Injected server-side by task-manager-ipc. */
