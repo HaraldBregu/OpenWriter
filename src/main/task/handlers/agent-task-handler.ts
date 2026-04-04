@@ -265,8 +265,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
 	private resolveRuntimeContext(
 		input: AgentTaskInput,
-		provider: { providerId: string; apiKey: string },
-		metadata?: Record<string, unknown>
+		provider: { providerId: string; apiKey: string }
 	): AgentRuntimeContext {
 		const workspaceService = this.resolveWorkspaceService(input);
 		return {
