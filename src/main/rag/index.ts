@@ -4,16 +4,16 @@ export {
 	type ExtractedContent,
 	ExtractorRegistry,
 	PlainTextExtractor,
-	chunkText,
-	type ChunkOptions,
-} from './ingestion';
+} from './document-loaders';
+export { chunkText, type ChunkOptions } from './text-splitter';
 export {
-	VectorIndexingPipeline,
+	Embedder,
 	type VectorIndexingDocument,
 	type VectorIndexingPhase,
 	type VectorIndexingProgressEvent,
 	type VectorIndexingResult,
 	type RunVectorIndexingInput,
-	type VectorIndexingPipelineOptions,
-} from './pipeline';
-export { VectorStore, DocumentIndexStore, type IndexedDocumentRecord } from './store';
+	type EmbedderOptions,
+} from './embedder';
+export { VectorStore } from './vector-store';
+export { DocumentIndexStore, type IndexedDocumentRecord } from './document-index-store';

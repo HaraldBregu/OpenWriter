@@ -22,7 +22,6 @@ After implementing or modifying code, verify it follows SonarQube best practices
 - **No security hotspots**: Review usage of cryptography, file system access, HTTP requests, and dynamic code execution.
 - **Maintainability**: Keep functions short and focused (single responsibility). Limit function parameters (max ~4). Avoid deeply nested control flow (max 3 levels).
 - **Reliability**: Handle all error cases explicitly. Avoid empty catch blocks. Do not ignore return values.
-- **Test coverage**: New or modified code should have corresponding tests. Aim for meaningful coverage, not just line coverage.
 - **Code quality rules**:
   - Do not use `any` type in TypeScript — use proper types or `unknown`.
   - Prefer `const` over `let`; never use `var`.
