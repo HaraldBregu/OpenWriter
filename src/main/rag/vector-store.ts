@@ -20,10 +20,7 @@ import { HNSWLib } from '@langchain/community/vectorstores/hnswlib';
 export class VectorStore {
 	private store: HNSWLib;
 
-	private constructor(
-		private readonly embeddings: EmbeddingsInterface,
-		store: HNSWLib
-	) {
+	private constructor(store: HNSWLib) {
 		this.store = store;
 	}
 
