@@ -9,16 +9,10 @@ import {
 	duckDuckGoSearchAgent,
 } from './agents/duckduckgo-search-agent';
 import { createEnhancerAgent, enhancerAgent } from './agents/enhancer-agent';
-import {
-	createIntentDetectorAgent,
-	intentDetectorAgent,
-} from './agents/intent-detector-agent';
+import { createIntentDetectorAgent, intentDetectorAgent } from './agents/intent-detector-agent';
 import { createPlannerAgent, plannerAgent } from './agents/planner-agent';
 import { createRagAgent, ragAgent } from './agents/rag-agent';
-import {
-	createTextGeneratorAgent,
-	textGeneratorAgent,
-} from './agents/text-generator-agent';
+import { createTextGeneratorAgent, textGeneratorAgent } from './agents/text-generator-agent';
 import type { RagRetriever } from './agents/rag-retriever';
 
 const LOG_SOURCE = 'AssistantGraph';

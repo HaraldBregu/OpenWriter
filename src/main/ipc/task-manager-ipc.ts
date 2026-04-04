@@ -76,11 +76,11 @@ export class TaskManagerIpc implements IpcModule {
 
 			const workspacePath =
 				typeof windowId === 'number'
-					? container
+					? (container
 							.get<WindowContextManager>('windowContextManager')
 							.tryGet(windowId)
 							?.container.get<WorkspaceService>('workspace')
-							.getCurrent() ?? undefined
+							.getCurrent() ?? undefined)
 					: undefined;
 
 			const metadata =

@@ -235,7 +235,10 @@ function createWriterChatModel(
 }
 
 function createWriterEmbeddings(
-	options: Pick<CreateWorkspaceWriterWorkflowOptions, 'apiKey' | 'providerId' | 'embeddingModelName'>
+	options: Pick<
+		CreateWorkspaceWriterWorkflowOptions,
+		'apiKey' | 'providerId' | 'embeddingModelName'
+	>
 ): OpenAIEmbeddings {
 	const baseURL = EMBEDDING_PROVIDER_BASE_URLS[options.providerId];
 
@@ -275,7 +278,8 @@ function buildFallbackAnalysis(prompt: string): WriterPromptAnalysis {
 	return {
 		normalizedPrompt,
 		taskType: 'answer',
-		responsePlan: 'Answer the request directly and use workspace context only when it is clearly relevant.',
+		responsePlan:
+			'Answer the request directly and use workspace context only when it is clearly relevant.',
 		retrievalStrategy: retrievalNeeded ? 'helpful' : 'skip',
 		retrievalQuery: retrievalNeeded ? normalizedPrompt : '',
 		answerConstraints:
@@ -397,7 +401,9 @@ async function retrieveWorkspaceContext(
 	retriever: WriterRetriever | undefined,
 	maxDocuments: number | undefined,
 	logger?: CreateWriterWorkflowOptions['logger']
-): Promise<Pick<WriterWorkflowRuntimeState, 'retrievedDocuments' | 'retrievalStatus' | 'retrievalContext'>> {
+): Promise<
+	Pick<WriterWorkflowRuntimeState, 'retrievedDocuments' | 'retrievalStatus' | 'retrievalContext'>
+> {
 	if (analysis.retrievalStrategy === 'skip') {
 		return {
 			retrievedDocuments: [],
@@ -407,7 +413,10 @@ async function retrieveWorkspaceContext(
 	}
 
 	if (!retriever) {
-		logger?.warn?.(LOG_SOURCE, 'Writer workflow requested retrieval without a configured retriever');
+		logger?.warn?.(
+			LOG_SOURCE,
+			'Writer workflow requested retrieval without a configured retriever'
+		);
 		return {
 			retrievedDocuments: [],
 			retrievalStatus: RETRIEVAL_UNAVAILABLE,

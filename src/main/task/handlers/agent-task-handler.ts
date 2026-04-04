@@ -395,8 +395,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				: undefined;
 
 		if (windowContext?.container.has('workspaceManager')) {
-			return windowContext
-				.container.get<Workspace>('workspaceManager')
+			return windowContext.container
+				.get<Workspace>('workspaceManager')
 				.getDocumentFolderPath(documentId);
 		}
 

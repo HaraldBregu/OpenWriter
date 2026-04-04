@@ -47,37 +47,37 @@ flowchart LR
 
 ## Status Legend
 
-| Status | Meaning |
-| --- | --- |
-| Implemented | The pattern is explicit in the runtime and used in normal execution. |
-| Partial | The pattern exists in limited form, or only part of its usual design is present. |
-| Candidate | The pattern is not meaningfully implemented yet. |
+| Status      | Meaning                                                                          |
+| ----------- | -------------------------------------------------------------------------------- |
+| Implemented | The pattern is explicit in the runtime and used in normal execution.             |
+| Partial     | The pattern exists in limited form, or only part of its usual design is present. |
+| Candidate   | The pattern is not meaningfully implemented yet.                                 |
 
 ## Pattern Matrix
 
-| Pattern | Status | OpenWriter Mapping |
-| --- | --- | --- |
-| Prompt Chaining | Implemented | Sequential specialist pipeline from intent detection to enhancement. |
-| Routing | Implemented | Task routing by handler type and prompt routing by intent classification. |
-| Parallelization | Implemented | Planner fans out to RAG, web search, and text generation in parallel. |
-| Reflection | Implemented | Analyzer can send the flow back to planner for another pass. |
-| Tool Use | Implemented | Filesystem, retrieval, embeddings, DuckDuckGo, IPC, and task APIs. |
-| Planning | Implemented | Planner agent generates execution brief, queries, and success criteria. |
-| Multi-Agent Collaboration | Implemented | Specialist graph with shared state and role-specific models. |
-| Memory Management | Implemented | Conversation history plus workspace vector-store retrieval. |
-| Learning And Adaptation | Candidate | No persistent feedback loop or self-improving policy exists yet. |
-| Model Context Protocol | Candidate | No MCP-style standardized external tool/server layer in the app runtime. |
-| Goal Setting And Monitoring | Partial | Planner defines success criteria; executor reports progress; no goal scorer. |
-| Exception Handling And Recovery | Implemented | Cancellation, retries, graceful empty-result fallbacks, and TTL task retention. |
-| Human-In-The-Loop | Candidate | No approval, review, or interactive correction checkpoint in agent flows. |
-| Knowledge Retrieval (RAG) | Implemented | Workspace indexing and semantic retrieval pipeline. |
-| Inter-Agent Communication (A2A) | Partial | Agents communicate through shared graph state, not direct message protocols. |
-| Resource-Aware Optimization | Partial | Concurrency limits and node-specific models exist; dynamic budgeting does not. |
-| Reasoning Techniques | Partial | Structured prompts exist, but reusable reasoning policies are not formalized. |
-| Guardrails / Safety Patterns | Implemented | Path safety, source-bound answers, provider resolution, and tool boundaries. |
-| Evaluation And Monitoring | Implemented | Logger, task events, analyzer feedback, and reaction bus support observability. |
-| Prioritization | Implemented | TaskExecutor queue priorities reorder execution before start. |
-| Exploration And Discovery | Partial | Retrieval and web search discover evidence, but not open-ended exploration loops. |
+| Pattern                         | Status      | OpenWriter Mapping                                                                |
+| ------------------------------- | ----------- | --------------------------------------------------------------------------------- |
+| Prompt Chaining                 | Implemented | Sequential specialist pipeline from intent detection to enhancement.              |
+| Routing                         | Implemented | Task routing by handler type and prompt routing by intent classification.         |
+| Parallelization                 | Implemented | Planner fans out to RAG, web search, and text generation in parallel.             |
+| Reflection                      | Implemented | Analyzer can send the flow back to planner for another pass.                      |
+| Tool Use                        | Implemented | Filesystem, retrieval, embeddings, DuckDuckGo, IPC, and task APIs.                |
+| Planning                        | Implemented | Planner agent generates execution brief, queries, and success criteria.           |
+| Multi-Agent Collaboration       | Implemented | Specialist graph with shared state and role-specific models.                      |
+| Memory Management               | Implemented | Conversation history plus workspace vector-store retrieval.                       |
+| Learning And Adaptation         | Candidate   | No persistent feedback loop or self-improving policy exists yet.                  |
+| Model Context Protocol          | Candidate   | No MCP-style standardized external tool/server layer in the app runtime.          |
+| Goal Setting And Monitoring     | Partial     | Planner defines success criteria; executor reports progress; no goal scorer.      |
+| Exception Handling And Recovery | Implemented | Cancellation, retries, graceful empty-result fallbacks, and TTL task retention.   |
+| Human-In-The-Loop               | Candidate   | No approval, review, or interactive correction checkpoint in agent flows.         |
+| Knowledge Retrieval (RAG)       | Implemented | Workspace indexing and semantic retrieval pipeline.                               |
+| Inter-Agent Communication (A2A) | Partial     | Agents communicate through shared graph state, not direct message protocols.      |
+| Resource-Aware Optimization     | Partial     | Concurrency limits and node-specific models exist; dynamic budgeting does not.    |
+| Reasoning Techniques            | Partial     | Structured prompts exist, but reusable reasoning policies are not formalized.     |
+| Guardrails / Safety Patterns    | Implemented | Path safety, source-bound answers, provider resolution, and tool boundaries.      |
+| Evaluation And Monitoring       | Implemented | Logger, task events, analyzer feedback, and reaction bus support observability.   |
+| Prioritization                  | Implemented | TaskExecutor queue priorities reorder execution before start.                     |
+| Exploration And Discovery       | Partial     | Retrieval and web search discover evidence, but not open-ended exploration loops. |
 
 ## Core Patterns Already In Use
 
@@ -417,14 +417,14 @@ Avoid these anti-patterns:
 
 ## Key File Map
 
-| Area | Files |
-| --- | --- |
+| Area               | Files                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
 | Task orchestration | `src/main/task/task-executor.ts`, `src/main/task/task-handler-registry.ts`, `src/main/ipc/task-manager-ipc.ts` |
-| Agent bridge | `src/main/task/handlers/agent-task-handler.ts` |
-| Assistant graph | `src/main/ai/assistant/definition.ts`, `src/main/ai/assistant/graph.ts`, `src/main/ai/assistant/state.ts` |
-| Specialist nodes | `src/main/ai/assistant/agents/*.ts` |
-| Retrieval pipeline | `src/main/task/handlers/indexing-task-handler.ts`, `src/main/ai/rag/*.ts` |
-| Runtime services | `src/main/bootstrap.ts`, `src/main/core/event-bus.ts`, `src/main/services/logger.ts` |
+| Agent bridge       | `src/main/task/handlers/agent-task-handler.ts`                                                                 |
+| Assistant graph    | `src/main/ai/assistant/definition.ts`, `src/main/ai/assistant/graph.ts`, `src/main/ai/assistant/state.ts`      |
+| Specialist nodes   | `src/main/ai/assistant/agents/*.ts`                                                                            |
+| Retrieval pipeline | `src/main/task/handlers/indexing-task-handler.ts`, `src/main/ai/rag/*.ts`                                      |
+| Runtime services   | `src/main/bootstrap.ts`, `src/main/core/event-bus.ts`, `src/main/services/logger.ts`                           |
 
 ## Summary
 
