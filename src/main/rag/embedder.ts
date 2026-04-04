@@ -105,7 +105,7 @@ export class Embedder {
 
 			const document = input.documents[index];
 			const extension = path.extname(document.name).toLowerCase();
-			const extractor = this.options.extractorRegistry.resolve(extension);
+			const extractor = this.extractorRegistry.resolve(extension);
 
 			if (!extractor) {
 				this.logger?.warn(
