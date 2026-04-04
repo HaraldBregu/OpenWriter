@@ -27,7 +27,7 @@ import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 import {
 	ExtractorRegistry,
-	VectorIndexingPipeline,
+	Embedder,
 	type VectorIndexingProgressEvent,
 	RagPaths,
 } from '../../rag';
