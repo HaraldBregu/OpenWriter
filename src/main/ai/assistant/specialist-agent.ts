@@ -45,7 +45,7 @@ export async function streamAssistantSpecialist(
 	agent: AssistantSpecialistAgent,
 	messages: BaseMessage[]
 ): Promise<string> {
-	const stream = agent.model.stream(buildMessages(agent, messages));
+	const stream = await agent.model.stream(buildMessages(agent, messages));
 	let accumulated = '';
 
 	for await (const chunk of stream) {
