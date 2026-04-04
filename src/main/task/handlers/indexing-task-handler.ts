@@ -198,24 +198,37 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 }
 
 function mapIndexingProgressToPercent(event: VectorIndexingProgressEvent): number {
-	if (event.phase === 'extract') {
-		return scaleProgress(event.completed, event.total, 0, PHASE_EXTRACT);
-	}
+	switch (event.phase) {
+		case 'extract':
+			return scaleProgress(event.completed, event.total, 0, PHASE_EXTRACT);
 
-	if (event.phase === 'index') {
-		return scaleProgress(event.completed, event.total, PHASE_EXTRACT, PHASE_EXTRACT + PHASE_INDEX);
-	}
+		case 'index':
+			return scaleProgress(
+				event.completed,
+				event.total,
+				PHASE_EXTRACT,
+				PHASE_EXTRACT + PHASE_INDEX
+			);
 
-	if (event.phase === 'embed') {
-		return scaleProgress(
-			event.completed,
-			event.total,
-			PHASE_EXTRACT + PHASE_INDEX,
-			PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED
-		);
-	}
+		case 'embed':
+			return scaleProgress(
+				event.completed,
+				event.total,
+				PHASE_EXTRACT + PHASE_INDEX,
+				PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED
+			);
 
-	return PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED;
+		case 'save':
+			return scaleProgress(
+				event.completed,
+				event.total,
+				PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED,
+				PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED + PHASE_SAVE
+			);
+
+		default:
+			return 0;
+	}
 }
 
 function scaleProgress(completed: number, total: number, start: number, end: number): number {
