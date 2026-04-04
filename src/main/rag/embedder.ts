@@ -207,7 +207,7 @@ export class Embedder {
 			total: 1,
 			message: 'Saving vector store',
 		});
-		await vectorStore.save(input.outputPath);
+		await vectorStore.save(outputPath);
 		input.onProgress?.({
 			phase: 'save',
 			completed: 1,
