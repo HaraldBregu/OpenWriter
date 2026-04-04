@@ -10,7 +10,26 @@ import {
 } from '../../specialist-agent';
 import { parseYesNo, readLabeledValue } from '../../agent-output';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './INTENT_DETECTOR_SYSTEM.md?raw';
+
+const SYSTEM_PROMPT = `You are the intent detector in a multi-agent assistant.
+
+You receive the user's latest request and conversation history.
+
+Decide whether the request needs:
+
+- workspace or knowledge-base retrieval (\`RAG\`)
+- live external search (\`Web search\`)
+
+Interpret "RAG" as workspace or indexed knowledge-base retrieval only.
+Interpret "Web search" as looking up current external information.
+
+Return exactly five lines in this format:
+
+Normalized request: ...
+Visual request: yes|no
+RAG required: yes|no
+Web search required: yes|no
+Reasoning: ...`;
 
 interface IntentDetectorResult {
 	readonly normalizedPrompt: string;
@@ -64,16 +83,12 @@ function buildFallback(prompt: string): IntentDetectorResult {
 
 function parseClassification(raw: string, prompt: string): IntentDetectorResult {
 	const fallback = buildFallback(prompt);
-	const normalizedPrompt =
-		readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt;
+	const normalizedPrompt = readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt;
 	const visualRequested = parseYesNo(
 		readLabeledValue(raw, 'Visual request'),
 		IMAGE_REQUEST_PATTERN.test(normalizedPrompt)
 	);
-	const needsRetrieval = parseYesNo(
-		readLabeledValue(raw, 'RAG required'),
-		fallback.needsRetrieval
-	);
+	const needsRetrieval = parseYesNo(readLabeledValue(raw, 'RAG required'), fallback.needsRetrieval);
 	const needsWebSearch = parseYesNo(
 		readLabeledValue(raw, 'Web search required'),
 		fallback.needsWebSearch

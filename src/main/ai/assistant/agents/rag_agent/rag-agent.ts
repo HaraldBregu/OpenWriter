@@ -9,7 +9,23 @@ import {
 } from '../../specialist-agent';
 import type { AssistantState } from '../../state';
 import type { RagRetriever } from './rag-retriever';
-import SYSTEM_PROMPT from './RAG_AGENT_SYSTEM.md?raw';
+
+const SYSTEM_PROMPT = `You are the RAG specialist in a multi-agent assistant.
+
+You receive the user's request, a normalized request, the planner brief, intent
+classification, and retrieved workspace snippets.
+
+Produce an internal note for another assistant, not a user-facing reply.
+
+Rules:
+
+- Follow the planner's RAG intent and focus.
+- Use only the retrieved workspace context.
+- Summarize the facts most relevant to answering the user's request.
+- Mention source labels when they materially support a claim.
+- If the context is partial, say what is missing or uncertain.
+- Do not invent facts beyond the provided snippets.
+- Keep the note concise and directly useful for a final response writer.`;
 
 const CONTEXT_SEPARATOR = '\n\n---\n\n';
 const NO_CONTEXT_FINDING = 'No relevant workspace context was found for this request.';

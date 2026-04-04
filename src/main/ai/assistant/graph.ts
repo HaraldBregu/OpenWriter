@@ -44,13 +44,10 @@ export interface AssistantSpecialistModels {
 	[ASSISTANT_SPECIALIST.ENHANCER]: BaseChatModel;
 }
 
-type AssistantSpecialistName =
-	(typeof ASSISTANT_SPECIALIST)[keyof typeof ASSISTANT_SPECIALIST];
+type AssistantSpecialistName = (typeof ASSISTANT_SPECIALIST)[keyof typeof ASSISTANT_SPECIALIST];
 type AssistantGraphState = typeof AssistantState.State;
 type AssistantSpecialistResult = Partial<AssistantGraphState>;
-type AssistantSpecialistRunner = (
-	state: AssistantGraphState
-) => Promise<AssistantSpecialistResult>;
+type AssistantSpecialistRunner = (state: AssistantGraphState) => Promise<AssistantSpecialistResult>;
 
 function routeAfterAnalysis(state: AssistantGraphState): 'retry' | 'enhance' {
 	if (state.shouldRetry && state.reviewCount < MAX_REVIEW_PASSES) {
@@ -143,11 +140,7 @@ export function buildGraph(
 		.addNode(
 			ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH,
 			withSpecialistLogging(ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH, logger, (state) =>
-				duckDuckGoSearchAgent(
-					state,
-					specialists[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH],
-					logger
-				)
+				duckDuckGoSearchAgent(state, specialists[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH], logger)
 			)
 		)
 		.addNode(

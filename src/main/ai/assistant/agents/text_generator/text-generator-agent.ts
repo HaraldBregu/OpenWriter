@@ -8,7 +8,24 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './TEXT_GENERATOR_SYSTEM.md?raw';
+
+const SYSTEM_PROMPT = `You are the text generator agent in a multi-agent assistant.
+
+You receive the user's request, a normalized request, an intent note, and the
+planner's execution brief.
+
+Produce an internal text draft for another assistant, not a final user-facing
+reply.
+
+Rules:
+
+- Follow the planner's brief closely.
+- Draft the strongest direct text response you can before retrieval and web
+  search findings are merged in.
+- If the user asked for an image or other visual, do not pretend it has already
+  been generated or attached. Offer text-only help instead.
+- Keep the draft concise, useful, and easy to merge with retrieval findings.
+- Do not mention internal routing or hidden analysis.`;
 
 const EMPTY_TEXT_FINDINGS = 'No text draft was generated because no user request was provided.';
 
@@ -62,12 +79,7 @@ export async function textGeneratorAgent(
 	const messages = [
 		...toLangChainHistoryMessages(state.history),
 		new HumanMessage(
-			buildHumanMessage(
-				state.prompt,
-				normalizedPrompt,
-				state.intentFindings,
-				state.plannerFindings
-			)
+			buildHumanMessage(state.prompt, normalizedPrompt, state.intentFindings, state.plannerFindings)
 		),
 	];
 	const textFindings = await invokeAssistantSpecialist(agent, messages);

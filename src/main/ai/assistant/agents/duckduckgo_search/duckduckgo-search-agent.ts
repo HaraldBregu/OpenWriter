@@ -8,8 +8,22 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './DUCKDUCKGO_SEARCH_SYSTEM.md?raw';
 import { searchDuckDuckGo } from './duckduckgo-search';
+
+const SYSTEM_PROMPT = `You are the DuckDuckGo search specialist in a multi-agent assistant.
+
+You receive the user's request, the planner brief, and best-effort external
+search results.
+
+Produce an internal note for another assistant, not a user-facing reply.
+
+Rules:
+
+- Use only the provided search results.
+- Highlight the findings most relevant to answering the user's request.
+- Mention source domains or URLs when they materially support a claim.
+- If the search results are weak, partial, or stale, say so plainly.
+- Keep the note concise and directly useful for a final response writer.`;
 
 const WEB_SEARCH_SKIPPED_FINDING = 'DuckDuckGo search was not required for this request.';
 const WEB_SEARCH_EMPTY_FINDING =
@@ -17,14 +31,13 @@ const WEB_SEARCH_EMPTY_FINDING =
 
 function buildSearchContext(results: Awaited<ReturnType<typeof searchDuckDuckGo>>): string {
 	return results
-		.map(
-			(result, index) =>
-				[
-					`Result ${index + 1}: ${result.title}`,
-					`URL: ${result.url}`,
-					`Source: ${result.source}`,
-					`Snippet: ${result.snippet}`,
-				].join('\n')
+		.map((result, index) =>
+			[
+				`Result ${index + 1}: ${result.title}`,
+				`URL: ${result.url}`,
+				`Source: ${result.source}`,
+				`Snippet: ${result.snippet}`,
+			].join('\n')
 		)
 		.join('\n\n---\n\n');
 }

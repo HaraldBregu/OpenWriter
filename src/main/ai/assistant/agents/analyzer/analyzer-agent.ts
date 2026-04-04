@@ -10,9 +10,30 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import type { AssistantState } from '../../state';
-import SYSTEM_PROMPT from './ANALYZER_SYSTEM.md?raw';
 
-const DEFAULT_REASONING = 'The specialist outputs are coherent enough to continue to final polishing.';
+const SYSTEM_PROMPT = `You are the analyzer in a multi-agent assistant.
+
+You receive the user's request, the planner brief, and the outputs from the
+text, RAG, and DuckDuckGo search specialists.
+
+Decide whether the text branch is coherent and sufficiently aligned with the
+prompt, or whether it should run another pass with a refined plan.
+
+Return exactly three lines in this format:
+
+Consistency with prompt: yes|no
+Reasoning: ...
+Retry guidance: ...
+
+Rules:
+
+- Answer \`no\` only when another planning/research pass would materially improve
+  the response.
+- If one specialist is weak but the answer is still good enough, answer \`yes\`.
+- Keep the reasoning specific so the planner can act on it when needed.`;
+
+const DEFAULT_REASONING =
+	'The specialist outputs are coherent enough to continue to final polishing.';
 const DEFAULT_RETRY_GUIDANCE = 'None.';
 
 function buildHumanMessage(state: typeof AssistantState.State): string {
@@ -68,8 +89,7 @@ export async function analyzerAgent(
 	const rawAnalysis = await invokeAssistantSpecialist(agent, messages);
 	const isConsistent = parseYesNo(readLabeledValue(rawAnalysis, 'Consistency with prompt'), true);
 	const reasoning = readLabeledValue(rawAnalysis, 'Reasoning') || DEFAULT_REASONING;
-	const retryGuidance =
-		readLabeledValue(rawAnalysis, 'Retry guidance') || DEFAULT_RETRY_GUIDANCE;
+	const retryGuidance = readLabeledValue(rawAnalysis, 'Retry guidance') || DEFAULT_RETRY_GUIDANCE;
 	const analysisFindings = [
 		`Consistency with prompt: ${isConsistent ? 'yes' : 'no'}`,
 		`Reasoning: ${reasoning}`,
@@ -86,8 +106,6 @@ export async function analyzerAgent(
 		analysisFindings,
 		shouldRetry,
 		reviewCount: state.reviewCount + 1,
-		phaseLabel: shouldRetry
-			? ASSISTANT_STATE_MESSAGES.PLANNER
-			: ASSISTANT_STATE_MESSAGES.ENHANCER,
+		phaseLabel: shouldRetry ? ASSISTANT_STATE_MESSAGES.PLANNER : ASSISTANT_STATE_MESSAGES.ENHANCER,
 	};
 }
