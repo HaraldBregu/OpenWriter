@@ -66,8 +66,8 @@ export class Embedder {
 		const failedIds: string[] = [];
 		let indexedCount = 0;
 
-		const outputPath = input.workspaceService.getVectorStorePath();
-		const indexOutputPath = input.workspaceService.getDocumentIndexPath();
+		const outputPath = this.options.workspaceService.getVectorStorePath();
+		const indexOutputPath = this.options.workspaceService.getDocumentIndexPath();
 
 		if (!outputPath || !indexOutputPath) {
 			throw new Error('Failed to resolve RAG paths from workspace');
