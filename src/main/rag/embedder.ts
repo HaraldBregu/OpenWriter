@@ -8,14 +8,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
-import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../workspace/workspace-service';
+import type { ServiceContainer } from '../core/service-container';
 import type { ChunkOptions } from './text-splitter';
 import { chunkText } from './text-splitter';
 import type { ExtractorRegistry } from './document-loaders';
 import { DocumentIndexStore } from './document-index-store';
 import { VectorStore } from './vector-store';
+import { ProviderResolver } from '../shared/provider-resolver';
+import { createEmbeddingModel } from '../shared/embedding-factory';
 
 const LOG_SOURCE = 'Embedder';
 

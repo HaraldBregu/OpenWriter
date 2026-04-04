@@ -147,7 +147,6 @@ export class RagIndexingTaskHandler implements TaskHandler<
 			throw error;
 		}
 	}
-
 }
 
 function mapRagIndexingProgressToPercent(event: VectorIndexingProgressEvent): number {
