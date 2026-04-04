@@ -268,12 +268,27 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		provider: { providerId: string; apiKey: string },
 		metadata?: Record<string, unknown>
 	): AgentRuntimeContext {
+		const workspaceService = this.resolveWorkspaceService(input);
 		return {
-			workspacePath: this.resolveWorkspacePath(input, metadata),
+			workspaceService,
 			apiKey: provider.apiKey,
 			providerId: provider.providerId,
 			logger: this.logger,
 		};
+	}
+
+	private resolveWorkspaceService(
+		input: AgentTaskInput
+	): import('../../workspace/workspace-service').WorkspaceService | undefined {
+		const windowContext =
+			typeof input.windowId === 'number'
+				? this.windowContextManager.tryGet(input.windowId)
+				: undefined;
+		return windowContext?.container.has('workspace')
+			? windowContext.container.get<import('../../workspace/workspace-service').WorkspaceService>(
+					'workspace'
+				)
+			: undefined;
 	}
 
 	private resolveWorkspacePath(
