@@ -2,22 +2,23 @@
  * RagRetriever — loads the workspace vector store and provides similarity
  * search for the RAG node.
  *
- * The vector store lives at `{workspacePath}/data/vector_store/` and is
- * built by IndexResourcesTaskHandler. When no store file exists yet (first
+ * The vector store path is resolved via RagPaths using the WorkspaceService,
+ * so there are no hardcoded paths. When no store file exists yet (first
  * run, or workspace never indexed), retrieve() silently returns an empty
  * array so downstream nodes degrade gracefully.
  */
 
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
+import type { WorkspaceService } from '../../../workspace/workspace-service';
 import { VectorStore, RagPaths } from '../../../rag';
 
 const DEFAULT_TOP_K = 4;
 const MIN_SCORE_THRESHOLD = 0.3;
 
 export interface RagRetrieverOptions {
-	/** Absolute path to the workspace root. */
-	workspacePath: string;
+	/** WorkspaceService used to resolve RAG storage paths. */
+	workspaceService: WorkspaceService;
 	/** Embedding model used to embed the query at retrieval time. */
 	embeddings: EmbeddingsInterface;
 	/** Number of documents to retrieve per query. Defaults to 4. */
@@ -65,12 +66,12 @@ export class RagRetriever {
 
 	private async loadStore(): Promise<void> {
 		this.loaded = true;
-		const ragPaths = new RagPaths(this.options.workspacePath);
 
 		try {
+			const ragPaths = new RagPaths(this.options.workspaceService);
 			this.store = await VectorStore.load(ragPaths.vectorStore, this.options.embeddings);
 		} catch {
-			// Store directory is missing or unreadable — leave store as null
+			// Workspace not open, store missing, or unreadable — degrade gracefully
 			this.store = null;
 		}
 	}
