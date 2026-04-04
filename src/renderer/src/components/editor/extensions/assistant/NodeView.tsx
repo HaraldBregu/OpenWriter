@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
+import { TextSelection } from '@tiptap/pm/state';
 import type { AssistantOptions } from './input-extension';
 import { AssistantContent } from './AssistantContent';
 
@@ -31,11 +32,22 @@ export function AssistantNodeView({
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
 		if (typeof pos !== 'number') return;
-		editor
-			.chain()
-			.focus()
-			.deleteRange({ from: pos, to: pos + node.nodeSize })
-			.run();
+
+		const paragraph = editor.state.schema.nodes.paragraph;
+		if (!paragraph) {
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: pos, to: pos + node.nodeSize })
+				.run();
+			return;
+		}
+
+		// Keep an editable block in place when the assistant UI is dismissed.
+		const tr = editor.state.tr.replaceWith(pos, pos + node.nodeSize, paragraph.create());
+		tr.setSelection(TextSelection.create(tr.doc, Math.min(pos + 1, tr.doc.content.size)));
+		editor.view.dispatch(tr.scrollIntoView());
+		editor.view.focus();
 	}, [editor, getPos, node.nodeSize]);
 
 	const submit = useCallback(() => {
