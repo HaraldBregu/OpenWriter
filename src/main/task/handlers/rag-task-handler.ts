@@ -149,22 +149,6 @@ export class RagIndexingTaskHandler implements TaskHandler<
 		}
 	}
 
-	private validatePaths(
-		workspacePath: string,
-		documentIndexPath: string,
-		vectorStorePath: string
-	): void {
-		const resolved = path.resolve(workspacePath);
-		const resolvedIndex = path.resolve(documentIndexPath);
-		const resolvedStore = path.resolve(vectorStorePath);
-
-		if (!resolvedIndex.startsWith(resolved + path.sep)) {
-			throw new Error('Document index path is outside the workspace boundary');
-		}
-		if (!resolvedStore.startsWith(resolved + path.sep)) {
-			throw new Error('Vector store path is outside the workspace boundary');
-		}
-	}
 }
 
 function mapRagIndexingProgressToPercent(event: VectorIndexingProgressEvent): number {
