@@ -69,8 +69,8 @@ export interface GraphInputContext {
  * without leaking them through the executor's generic model interface.
  */
 export interface AgentRuntimeContext {
-	/** Absolute path to the open workspace, if any. */
-	workspacePath?: string;
+	/** Workspace service for the open workspace, if any. */
+	workspaceService?: WorkspaceService;
 	/** Resolved API key for the agent's primary provider. */
 	apiKey: string;
 	/** Primary provider identifier (e.g. 'openai'). */
