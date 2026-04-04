@@ -37,6 +37,7 @@ export interface AgentTaskInput {
 	temperature?: number;
 	maxTokens?: number;
 	windowId?: number;
+	workspacePath?: string;
 }
 
 export interface AgentTaskOutput {
@@ -143,7 +144,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		// injection.
 		let effectiveBuildGraph = def.buildGraph;
 		if (def.prepareGraph && effectiveBuildGraph) {
-			const runtimeContext = this.resolveRuntimeContext(input.windowId, provider);
+			const runtimeContext = this.resolveRuntimeContext(input, provider, metadata);
 			effectiveBuildGraph = def.prepareGraph(effectiveBuildGraph, runtimeContext);
 		}
 
@@ -263,23 +264,48 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 	}
 
 	private resolveRuntimeContext(
-		windowId: number | undefined,
-		provider: { providerId: string; apiKey: string }
+		input: AgentTaskInput,
+		provider: { providerId: string; apiKey: string },
+		metadata?: Record<string, unknown>
 	): AgentRuntimeContext {
+		return {
+			workspacePath: this.resolveWorkspacePath(input, metadata),
+			apiKey: provider.apiKey,
+			providerId: provider.providerId,
+			logger: this.logger,
+		};
+	}
+
+	private resolveWorkspacePath(
+		input: AgentTaskInput,
+		metadata?: Record<string, unknown>
+	): string | undefined {
 		const windowContext =
-			typeof windowId === 'number' ? this.windowContextManager.tryGet(windowId) : undefined;
-		const workspacePath = windowContext?.container.has('workspace')
+			typeof input.windowId === 'number'
+				? this.windowContextManager.tryGet(input.windowId)
+				: undefined;
+		const workspacePathFromContext = windowContext?.container.has('workspace')
 			? (windowContext.container
 					.get<import('../../workspace/workspace-service').WorkspaceService>('workspace')
 					.getCurrent() ?? undefined)
 			: undefined;
 
-		return {
-			workspacePath,
-			apiKey: provider.apiKey,
-			providerId: provider.providerId,
-			logger: this.logger,
-		};
+		if (workspacePathFromContext) {
+			return workspacePathFromContext;
+		}
+
+		const workspacePathFromInput =
+			typeof input.workspacePath === 'string' && input.workspacePath.trim().length > 0
+				? path.resolve(input.workspacePath)
+				: undefined;
+
+		if (workspacePathFromInput) {
+			return workspacePathFromInput;
+		}
+
+		return typeof metadata?.workspacePath === 'string' && metadata.workspacePath.trim().length > 0
+			? path.resolve(metadata.workspacePath)
+			: undefined;
 	}
 
 	private getInitialThinkingLabel(
@@ -313,24 +339,18 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		input: AgentTaskInput,
 		metadata?: Record<string, unknown>
 	): Promise<AgentHistoryMessage[]> {
-		const windowId = input.windowId;
 		const documentId =
 			typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : undefined;
 		const chatId = typeof metadata?.chatId === 'string' ? metadata.chatId.trim() : undefined;
+		const workspacePath = this.resolveWorkspacePath(input, metadata);
 
-		if (!windowId || !documentId || !chatId) {
-			return [];
-		}
-
-		const windowContext = this.windowContextManager.tryGet(windowId);
-		if (!windowContext) {
+		if (!documentId || !chatId || !workspacePath) {
 			return [];
 		}
 
 		let documentDir: string;
 		try {
-			const workspace = windowContext.container.get<Workspace>('workspaceManager');
-			documentDir = workspace.getDocumentFolderPath(documentId);
+			documentDir = this.resolveDocumentDirectory(input, workspacePath, documentId);
 		} catch (error) {
 			this.logger?.warn(
 				'AgentTaskHandler',
@@ -362,6 +382,35 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			}
 			return [];
 		}
+	}
+
+	private resolveDocumentDirectory(
+		input: AgentTaskInput,
+		workspacePath: string,
+		documentId: string
+	): string {
+		const windowContext =
+			typeof input.windowId === 'number'
+				? this.windowContextManager.tryGet(input.windowId)
+				: undefined;
+
+		if (windowContext?.container.has('workspaceManager')) {
+			return windowContext
+				.container.get<Workspace>('workspaceManager')
+				.getDocumentFolderPath(documentId);
+		}
+
+		if (!documentId || typeof documentId !== 'string') {
+			throw new Error('Invalid document ID: must be a non-empty string');
+		}
+
+		const documentsRoot = path.resolve(workspacePath, 'output', 'documents');
+		const documentDir = path.resolve(documentsRoot, documentId);
+		if (!documentDir.startsWith(`${documentsRoot}${path.sep}`)) {
+			throw new Error(`Rejected document path outside workspace for ID "${documentId}".`);
+		}
+
+		return documentDir;
 	}
 }
 

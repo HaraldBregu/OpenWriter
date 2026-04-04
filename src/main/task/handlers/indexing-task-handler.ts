@@ -39,7 +39,7 @@ const PHASE_EMBED = 50;
 export interface IndexResourcesInput {
 	/** Injected server-side by task-manager-ipc. */
 	windowId: number;
-	/** Workspace root path supplied by the renderer (used for intent only). */
+	/** Current workspace path stamped server-side by task-manager-ipc. */
 	workspacePath: string;
 	/** Path to the workspace resources directory (used for intent only). */
 	resourcesPath: string;
@@ -85,7 +85,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		// Derive all paths from the trusted WorkspaceService
 		const windowContext = this.windowContextManager.get(windowId);
 		const workspaceService = windowContext.container.get<WorkspaceService>('workspace');
-		const workspacePath = workspaceService.getCurrent();
+		const workspacePath = workspaceService.getCurrent() ?? input.workspacePath;
 
 		if (!workspacePath) {
 			throw new Error('No workspace is open for this window');

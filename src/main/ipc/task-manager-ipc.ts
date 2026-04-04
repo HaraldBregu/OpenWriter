@@ -3,9 +3,11 @@ import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
+import type { WindowContextManager } from '../core/window-context';
 import type { TaskExecutor } from '../task/task-executor';
 import type { TaskOptions, ActiveTask } from '../task/task-descriptor';
 import type { TaskInfo, TaskPriority } from '../../shared/types';
+import type { WorkspaceService } from '../workspace/workspace-service';
 import { registerQuery, registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { TaskChannels } from '../../shared/channels';
 
@@ -71,15 +73,38 @@ export class TaskManagerIpc implements IpcModule {
 			const senderWindow = BrowserWindow.fromWebContents(event.sender);
 			const windowId = senderWindow?.id;
 			options.windowId = windowId;
-			if (payload.metadata !== undefined) {
-				options.metadata = payload.metadata;
+
+			const workspacePath =
+				typeof windowId === 'number'
+					? container
+							.get<WindowContextManager>('windowContextManager')
+							.tryGet(windowId)
+							?.container.get<WorkspaceService>('workspace')
+							.getCurrent() ?? undefined
+					: undefined;
+
+			const metadata =
+				payload.metadata !== undefined || workspacePath !== undefined
+					? {
+							...(payload.metadata ?? {}),
+							...(workspacePath !== undefined ? { workspacePath } : {}),
+						}
+					: undefined;
+
+			if (metadata !== undefined) {
+				options.metadata = metadata;
 			}
 
-			// Inject server-stamped windowId into object inputs so handlers can
-			// resolve window-scoped services.
+			// Inject server-stamped runtime context into object inputs so handlers
+			// can resolve window-scoped services and still retain the workspace
+			// path if the workspace facade is not yet available.
 			const input =
 				typeof payload.input === 'object' && payload.input !== null
-					? { ...(payload.input as Record<string, unknown>), windowId }
+					? {
+							...(payload.input as Record<string, unknown>),
+							windowId,
+							...(workspacePath !== undefined ? { workspacePath } : {}),
+						}
 					: payload.input;
 
 			const taskId = await executor.submit(payload.type, input, options);
