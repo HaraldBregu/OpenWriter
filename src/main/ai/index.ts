@@ -17,10 +17,3 @@ export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage
 // Agents
 export { AssistantAgent } from './assistant/definition';
 
-// RAG
-export type { DocumentExtractor, ExtractedContent } from '../rag';
-export { ExtractorRegistry } from '../rag';
-export { PlainTextExtractor } from '../rag';
-export { chunkText, type ChunkOptions } from '../rag';
-export { RagManifest, type ManifestEntry } from '../rag';
-export { VectorStore, type VectorEntry } from '../rag';
