@@ -154,7 +154,7 @@ export class Embedder {
 					throw error;
 				}
 
-				this.options.logger?.error(LOG_SOURCE, `Failed to extract ${document.name}`, error);
+				this.logger?.error(LOG_SOURCE, `Failed to extract ${document.name}`, error);
 				failedIds.push(document.id);
 			}
 		}
@@ -205,7 +205,7 @@ export class Embedder {
 					throw error;
 				}
 
-				this.options.logger?.error(LOG_SOURCE, `Failed to embed ${pending.document.name}`, error);
+				this.logger?.error(LOG_SOURCE, `Failed to embed ${pending.document.name}`, error);
 				failedIds.push(pending.document.id);
 			}
 		}
