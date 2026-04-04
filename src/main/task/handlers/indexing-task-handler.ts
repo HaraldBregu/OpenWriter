@@ -121,8 +121,8 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		throwIfAborted(signal);
 
-		const resolvedIndexPath = path.resolve(ragIndexPath);
-		const resolvedStorePath = path.resolve(vectorStorePath);
+		const resolvedIndexPath = path.resolve(ragPaths.documentIndex);
+		const resolvedStorePath = path.resolve(ragPaths.vectorStore);
 		const resolvedWorkspace = path.resolve(workspacePath);
 		if (!resolvedIndexPath.startsWith(resolvedWorkspace + path.sep)) {
 			throw new Error('Document index path is outside the workspace');
