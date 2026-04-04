@@ -98,13 +98,12 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		}
 
 		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
-		const ragIndexPath = path.join(workspacePath, RAG_INDEX_SUBDIR);
-		const vectorStorePath = path.join(workspacePath, VECTOR_STORE_SUBDIR);
+		const ragPaths = new RagPaths(workspacePath);
 
 		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
 		logger?.info('IndexResources', `Resources: ${resourcesPath}`);
-		logger?.info('IndexResources', `Document index: ${ragIndexPath}`);
-		logger?.info('IndexResources', `Vector store: ${vectorStorePath}`);
+		logger?.info('IndexResources', `Document index: ${ragPaths.documentIndex}`);
+		logger?.info('IndexResources', `Vector store: ${ragPaths.vectorStore}`);
 
 		// Load documents metadata
 		reporter.progress(0, 'Loading documents');
