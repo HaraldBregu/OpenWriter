@@ -71,10 +71,10 @@ export class RagIndexingTaskHandler implements TaskHandler<RagIndexingTaskInput,
 	}
 
 	async execute(
-		input: RagIndexingInput,
+		input: RagIndexingTaskInput,
 		signal: AbortSignal,
 		reporter: ProgressReporter
-	): Promise<RagIndexingOutput> {
+	): Promise<RagIndexingTaskOutput> {
 		const { windowId } = input;
 		const logger = this.globalContainer.has('logger')
 			? this.globalContainer.get<LoggerService>('logger')
