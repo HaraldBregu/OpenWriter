@@ -110,7 +110,7 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Register handlers that depend on WindowContextManager
 	taskHandlerRegistry.register(
-		new IndexResourcesTaskHandler(windowContextManager, container, extractorRegistry)
+		new RagIndexingTaskHandler(windowContextManager, container, extractorRegistry)
 	);
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
