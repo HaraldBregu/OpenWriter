@@ -106,26 +106,16 @@ export class RagIndexingTaskHandler implements TaskHandler<
 
 			throwIfAborted(signal);
 
-			// Create embedding model
-			const storeService =
-				this.globalContainer.get<import('../../services/store').StoreService>('store');
-			const providerResolver = new ProviderResolver(storeService);
-			const resolved = providerResolver.resolve({ providerId: 'openai' });
-			const embeddingModel = createEmbeddingModel({
-				providerId: resolved.providerId,
-				apiKey: resolved.apiKey,
-			});
-
 			// Run RAG indexing pipeline
-			const embedder = new Embedder({
-				extractorRegistry: this.extractorRegistry,
+			const embedder = new Embedder(
+				this.globalContainer,
+				this.extractorRegistry,
 				workspaceService,
-				logger,
-			});
+				logger
+			);
 			reporter.progress(1, 'Extracting text from documents');
 			const { indexedCount, failedIds, totalChunks } = await embedder.run({
 				documents,
-				embeddings: embeddingModel,
 				signal,
 				clearExisting: true,
 				onProgress: (event) => {
