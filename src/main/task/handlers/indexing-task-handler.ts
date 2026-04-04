@@ -28,7 +28,6 @@ import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent, RagPaths } from '../../rag';
 import type { IndexingInfo } from '../../../shared/types';
 
-const RESOURCES_DIR = 'resources';
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
