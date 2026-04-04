@@ -132,7 +132,7 @@ export class Embedder {
 						fileName: document.name,
 						source: document.path,
 					},
-					input.chunkOptions ?? this.options.defaultChunkOptions
+					input.chunkOptions ?? this.defaultChunkOptions
 				);
 
 				pendingChunks.push({
