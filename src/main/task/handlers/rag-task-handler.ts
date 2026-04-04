@@ -46,7 +46,7 @@ export interface RagIndexingTaskInput {
 	resourcesPath: string;
 }
 
-export interface RagIndexingOutput {
+export interface RagIndexingTaskOutput {
 	/** Number of documents successfully indexed. */
 	indexedCount: number;
 	/** IDs that failed (if any). */
