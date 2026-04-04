@@ -1,69 +1,59 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { AIMessage, type BaseMessage } from '@langchain/core/messages';
-import { createAgent } from 'langchain';
+import { SystemMessage, type BaseMessage } from '@langchain/core/messages';
 import { extractTokenFromChunk } from '../../shared/ai-utils';
 
-export function createAssistantSpecialistAgent(model: BaseChatModel, systemPrompt: string) {
-	return createAgent({
-		model,
-		tools: [],
-		systemPrompt,
-	});
+/**
+ * A tool-less specialist agent that wraps a chat model with a fixed system
+ * prompt. All specialists in the assistant graph are stateless LLM nodes —
+ * no tool loop is needed, so we invoke the model directly rather than wrapping
+ * it in a ReAct agent.
+ */
+export interface AssistantSpecialistAgent {
+	readonly model: BaseChatModel;
+	readonly systemPrompt: string;
 }
 
-export type AssistantSpecialistAgent = ReturnType<typeof createAssistantSpecialistAgent>;
-
-function getMessageText(message: { content: unknown }): string {
-	return extractTokenFromChunk(message.content).trim();
+export function createAssistantSpecialistAgent(
+	model: BaseChatModel,
+	systemPrompt: string
+): AssistantSpecialistAgent {
+	return { model, systemPrompt };
 }
 
-function getLastAIMessageText(messages: BaseMessage[]): string {
-	for (let index = messages.length - 1; index >= 0; index -= 1) {
-		const message = messages[index];
-		if (message instanceof AIMessage) {
-			return getMessageText(message);
-		}
-	}
-
-	return '';
+function buildMessages(agent: AssistantSpecialistAgent, messages: BaseMessage[]): BaseMessage[] {
+	return [new SystemMessage(agent.systemPrompt), ...messages];
 }
 
+/**
+ * Invoke the specialist and return the full response text.
+ * Uses `model.invoke()` for a single-shot LLM call with no streaming.
+ */
 export async function invokeAssistantSpecialist(
 	agent: AssistantSpecialistAgent,
 	messages: BaseMessage[]
 ): Promise<string> {
-	const result = await agent.invoke({ messages });
-	return getLastAIMessageText(result.messages);
+	const result = await agent.model.invoke(buildMessages(agent, messages));
+	return extractTokenFromChunk(result.content).trim();
 }
 
+/**
+ * Invoke the specialist with streaming and return the accumulated response.
+ * Uses `model.stream()` to consume incremental `AIMessageChunk` tokens and
+ * concatenate them into the final string.
+ */
 export async function streamAssistantSpecialist(
 	agent: AssistantSpecialistAgent,
 	messages: BaseMessage[]
 ): Promise<string> {
-	let streamedResponse = '';
-	let finalResponse = '';
+	const stream = agent.model.stream(buildMessages(agent, messages));
+	let accumulated = '';
 
-	const stream = await agent.stream({ messages }, { streamMode: 'messages' });
-
-	for await (const event of stream) {
-		const [chunk] = Array.isArray(event) ? event : [event];
-
-		if (!chunk || typeof chunk !== 'object' || !('content' in chunk)) {
-			continue;
+	for await (const chunk of stream) {
+		const token = extractTokenFromChunk(chunk.content);
+		if (token) {
+			accumulated += token;
 		}
-
-		const text = getMessageText(chunk as { content: unknown });
-		if (!text) {
-			continue;
-		}
-
-		if (chunk instanceof AIMessage) {
-			finalResponse = text;
-			continue;
-		}
-
-		streamedResponse += text;
 	}
 
-	return streamedResponse.trim() || finalResponse;
+	return accumulated.trim();
 }

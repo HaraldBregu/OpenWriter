@@ -103,7 +103,9 @@
       "Bash(cd:*)",
       "Bash(for f:*)",
       "Read(//c/Users/BRGHLD87H/Documents/OpenWriter/src/main/ai/agents/assistant/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__docs-langchain__search_docs_by_lang_chain",
+      "mcp__docs-langchain__get_page_docs_by_lang_chain"
     ],
     "deny": [
       "Bash(git push --force:*)",
