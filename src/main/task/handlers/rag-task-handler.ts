@@ -13,7 +13,6 @@
  * to resolve everything.
  */
 
-import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
@@ -55,7 +54,10 @@ export interface RagIndexingTaskOutput {
 	totalChunks: number;
 }
 
-export class RagIndexingTaskHandler implements TaskHandler<RagIndexingTaskInput, RagIndexingTaskOutput> {
+export class RagIndexingTaskHandler implements TaskHandler<
+	RagIndexingTaskInput,
+	RagIndexingTaskOutput
+> {
 	readonly type = 'index-resources';
 
 	constructor(
