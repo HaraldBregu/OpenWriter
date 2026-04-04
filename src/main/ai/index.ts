@@ -16,6 +16,18 @@ export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage
 
 // Agents
 export { AssistantAgent } from './assistant/definition';
+export { BaseCreatorAgent, CreatorAgentRegistry, CreatorRouterAgent, CreatorSystem } from './creator';
+export type {
+	CreatorAgent,
+	CreatorAgentId,
+	CreatorIntent,
+	CreatorIntentCandidate,
+	CreatorMessage,
+	CreatorRequest,
+	CreatorRouteDecision,
+	IntentRouteConfig,
+} from './creator';
+export { CREATOR_ROUTER_AGENT_ID } from './creator';
 
 // RAG
 export type { DocumentExtractor, ExtractedContent } from './rag';
