@@ -142,22 +142,6 @@ export class RagIndexingTaskHandler implements TaskHandler<
 				},
 			});
 
-			// Save indexing metadata
-			reporter.progress(PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED, 'Saving indexing metadata');
-			const dataDir = path.join(workspacePath, DATA_DIR);
-			const indexingInfo: IndexingInfo = {
-				lastIndexedAt: Date.now(),
-				indexedCount,
-				failedCount: failedIds.length,
-				totalChunks,
-			};
-			await fs.mkdir(dataDir, { recursive: true });
-			await fs.writeFile(
-				path.join(dataDir, INDEXING_INFO_FILE),
-				JSON.stringify(indexingInfo, null, 2),
-				'utf-8'
-			);
-
 			reporter.progress(100, 'Indexing complete');
 
 			logger?.info(
