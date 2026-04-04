@@ -68,8 +68,12 @@ export class RagRetriever {
 		this.loaded = true;
 
 		try {
-			const ragPaths = new RagPaths(this.options.workspaceService);
-			this.store = await VectorStore.load(ragPaths.vectorStore, this.options.embeddings);
+			const vectorStorePath = this.options.workspaceService.getVectorStorePath();
+			if (!vectorStorePath) {
+				this.store = null;
+				return;
+			}
+			this.store = await VectorStore.load(vectorStorePath, this.options.embeddings);
 		} catch {
 			// Workspace not open, store missing, or unreadable — degrade gracefully
 			this.store = null;
