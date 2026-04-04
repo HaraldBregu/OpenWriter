@@ -195,6 +195,12 @@ export class VectorIndexingPipeline {
 			message: 'Saving vector store',
 		});
 		await vectorStore.save(input.outputPath);
+		input.onProgress?.({
+			phase: 'save',
+			completed: 1,
+			total: 1,
+			message: 'Saved vector store',
+		});
 
 		return {
 			indexedCount,
