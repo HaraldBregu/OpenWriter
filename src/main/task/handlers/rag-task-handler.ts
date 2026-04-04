@@ -21,8 +21,6 @@ import type { DocumentsWatcherService } from '../../workspace/documents-watcher'
 import type { LoggerService } from '../../services/logger';
 import type { WorkspaceService } from '../../workspace/workspace-service';
 import { DocumentsService } from '../../workspace/documents';
-import { ProviderResolver } from '../../shared/provider-resolver';
-import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent } from '../../rag';
 
 /** Progress weight allocation for each RAG indexing phase. */
