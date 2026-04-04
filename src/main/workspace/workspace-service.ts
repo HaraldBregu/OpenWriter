@@ -179,6 +179,39 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
+	 * Get the vector store directory path for the current workspace.
+	 * Returns null if no workspace is set.
+	 */
+	getVectorStorePath(): string | null {
+		if (!this.currentPath) {
+			return null;
+		}
+		return path.join(this.currentPath, 'data', 'vector_store');
+	}
+
+	/**
+	 * Get the document index directory path for the current workspace.
+	 * Returns null if no workspace is set.
+	 */
+	getDocumentIndexPath(): string | null {
+		if (!this.currentPath) {
+			return null;
+		}
+		return path.join(this.currentPath, 'data', 'rag_index');
+	}
+
+	/**
+	 * Get the resources directory path for the current workspace.
+	 * Returns null if no workspace is set.
+	 */
+	getResourcesPath(): string | null {
+		if (!this.currentPath) {
+			return null;
+		}
+		return path.join(this.currentPath, 'resources');
+	}
+
+	/**
 	 * Cleanup on shutdown.
 	 */
 	destroy(): void {

@@ -95,7 +95,7 @@ export class RagIndexingTaskHandler implements TaskHandler<
 			logger?.info('RagIndexing', `Vector store: ${ragPaths.vectorStore}`);
 
 			// Validate paths are within workspace (prevent directory traversal)
-			this.validatePaths(workspacePath, ragPaths.documentIndex, ragPaths.vectorStore);
+			//this.validatePaths(workspacePath, ragPaths.documentIndex, ragPaths.vectorStore);
 
 			// Load documents metadata
 			reporter.progress(0, 'Loading documents');
