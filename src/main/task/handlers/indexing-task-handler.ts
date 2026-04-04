@@ -91,14 +91,14 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		// Derive all paths from the trusted WorkspaceService
 		const windowContext = this.windowContextManager.get(windowId);
 		const workspaceService = windowContext.container.get<WorkspaceService>('workspace');
-		const workspacePath = workspaceService.getCurrent() ?? input.workspacePath;
+		const workspacePath = workspaceService.getCurrent();
 
 		if (!workspacePath) {
 			throw new Error('No workspace is open for this window');
 		}
 
 		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
-		const ragPaths = new RagPaths(workspacePath);
+		const ragPaths = new RagPaths(workspaceService);
 
 		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
 		logger?.info('IndexResources', `Resources: ${resourcesPath}`);
