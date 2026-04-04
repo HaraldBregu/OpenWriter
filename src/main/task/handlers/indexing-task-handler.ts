@@ -84,96 +84,116 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			? this.globalContainer.get<LoggerService>('logger')
 			: undefined;
 
-		// Derive all paths from the trusted WorkspaceService
-		const windowContext = this.windowContextManager.get(windowId);
-		const workspaceService = windowContext.container.get<WorkspaceService>('workspace');
-		const workspacePath = workspaceService.getCurrent();
+		try {
+			// Derive all paths from the trusted WorkspaceService
+			const windowContext = this.windowContextManager.get(windowId);
+			const workspaceService = windowContext.container.get<WorkspaceService>('workspace');
+			const workspacePath = workspaceService.getCurrent();
 
-		if (!workspacePath) {
-			throw new Error('No workspace is open for this window');
+			if (!workspacePath) {
+				throw new Error('No workspace is open for this window');
+			}
+
+			const ragPaths = new RagPaths(workspaceService);
+
+			logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
+			logger?.info('IndexResources', `Document index: ${ragPaths.documentIndex}`);
+			logger?.info('IndexResources', `Vector store: ${ragPaths.vectorStore}`);
+
+			// Validate paths are within workspace (prevent directory traversal)
+			this.validatePaths(workspacePath, ragPaths.documentIndex, ragPaths.vectorStore);
+
+			// Load documents metadata
+			reporter.progress(0, 'Loading documents');
+			const fileManagement = this.globalContainer.get<FileManager>('fileManagement');
+			const watcher = windowContext.container.has('documentsWatcher')
+				? windowContext.container.get<DocumentsWatcherService>('documentsWatcher')
+				: null;
+			const documentsService = new DocumentsService(fileManagement, watcher, logger);
+			const documents = await documentsService.loadAll(workspacePath);
+
+			if (documents.length === 0) {
+				reporter.progress(100, 'No documents to index');
+				logger?.info('IndexResources', 'No documents found to index');
+				return { indexedCount: 0, failedIds: [], totalChunks: 0 };
+			}
+
+			throwIfAborted(signal);
+
+			// Create embedding model
+			const storeService =
+				this.globalContainer.get<import('../../services/store').StoreService>('store');
+			const providerResolver = new ProviderResolver(storeService);
+			const resolved = providerResolver.resolve({ providerId: 'openai' });
+			const embeddingModel = createEmbeddingModel({
+				providerId: resolved.providerId,
+				apiKey: resolved.apiKey,
+			});
+
+			// Run indexing pipeline
+			const embedder = new Embedder({
+				extractorRegistry: this.extractorRegistry,
+				logger,
+			});
+			reporter.progress(1, 'Extracting text from documents');
+			const { indexedCount, failedIds, totalChunks } = await embedder.run({
+				documents,
+				embeddings: embeddingModel,
+				outputPath: ragPaths.vectorStore,
+				indexOutputPath: ragPaths.documentIndex,
+				signal,
+				clearExisting: true,
+				onProgress: (event) => {
+					reporter.progress(mapIndexingProgressToPercent(event), event.message);
+				},
+			});
+
+			// Save indexing metadata
+			reporter.progress(PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED, 'Saving indexing metadata');
+			const dataDir = path.join(workspacePath, DATA_DIR);
+			const indexingInfo: IndexingInfo = {
+				lastIndexedAt: Date.now(),
+				indexedCount,
+				failedCount: failedIds.length,
+				totalChunks,
+			};
+			await fs.mkdir(dataDir, { recursive: true });
+			await fs.writeFile(
+				path.join(dataDir, INDEXING_INFO_FILE),
+				JSON.stringify(indexingInfo, null, 2),
+				'utf-8'
+			);
+
+			reporter.progress(100, 'Indexing complete');
+
+			logger?.info(
+				'IndexResources',
+				`Indexing complete: ${indexedCount} indexed, ${failedIds.length} failed, ${totalChunks} total chunks`
+			);
+
+			return { indexedCount, failedIds, totalChunks };
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			logger?.error('IndexResources', `Indexing failed: ${errorMessage}`, error);
+			throw error;
 		}
+	}
 
-		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
-		const ragPaths = new RagPaths(workspaceService);
+	private validatePaths(
+		workspacePath: string,
+		documentIndexPath: string,
+		vectorStorePath: string
+	): void {
+		const resolved = path.resolve(workspacePath);
+		const resolvedIndex = path.resolve(documentIndexPath);
+		const resolvedStore = path.resolve(vectorStorePath);
 
-		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
-		logger?.info('IndexResources', `Resources: ${resourcesPath}`);
-		logger?.info('IndexResources', `Document index: ${ragPaths.documentIndex}`);
-		logger?.info('IndexResources', `Vector store: ${ragPaths.vectorStore}`);
-
-		// Load documents metadata
-		reporter.progress(0, 'Loading documents');
-		const fileManagement = this.globalContainer.get<FileManager>('fileManagement');
-		const watcher = windowContext.container.has('documentsWatcher')
-			? windowContext.container.get<DocumentsWatcherService>('documentsWatcher')
-			: null;
-		const documentsService = new DocumentsService(fileManagement, watcher, logger);
-		const documents = await documentsService.loadAll(workspacePath);
-
-		if (documents.length === 0) {
-			reporter.progress(100, 'No documents to index');
-			return { indexedCount: 0, failedIds: [], totalChunks: 0 };
+		if (!resolvedIndex.startsWith(resolved + path.sep)) {
+			throw new Error('Document index path is outside the workspace boundary');
 		}
-
-		throwIfAborted(signal);
-
-		const resolvedIndexPath = path.resolve(ragPaths.documentIndex);
-		const resolvedStorePath = path.resolve(ragPaths.vectorStore);
-		const resolvedWorkspace = path.resolve(workspacePath);
-		if (!resolvedIndexPath.startsWith(resolvedWorkspace + path.sep)) {
-			throw new Error('Document index path is outside the workspace');
+		if (!resolvedStore.startsWith(resolved + path.sep)) {
+			throw new Error('Vector store path is outside the workspace boundary');
 		}
-		if (!resolvedStorePath.startsWith(resolvedWorkspace + path.sep)) {
-			throw new Error('Vector store path is outside the workspace');
-		}
-
-		const storeService =
-			this.globalContainer.get<import('../../services/store').StoreService>('store');
-		const providerResolver = new ProviderResolver(storeService);
-		const resolved = providerResolver.resolve({ providerId: 'openai' });
-		const embeddingModel = createEmbeddingModel({
-			providerId: resolved.providerId,
-			apiKey: resolved.apiKey,
-		});
-
-		const embedder = new Embedder({
-			extractorRegistry: this.extractorRegistry,
-			logger,
-		});
-		reporter.progress(1, 'Extracting text from documents');
-		const { indexedCount, failedIds, totalChunks } = await embedder.run({
-			documents,
-			embeddings: embeddingModel,
-			outputPath: ragPaths.vectorStore,
-			indexOutputPath: ragPaths.documentIndex,
-			signal,
-			onProgress: (event) => {
-				reporter.progress(mapIndexingProgressToPercent(event), event.message);
-			},
-		});
-
-		const dataDir = path.join(workspacePath, DATA_DIR);
-		const indexingInfo: IndexingInfo = {
-			lastIndexedAt: Date.now(),
-			indexedCount,
-			failedCount: failedIds.length,
-			totalChunks,
-		};
-		await fs.mkdir(dataDir, { recursive: true });
-		await fs.writeFile(
-			path.join(dataDir, INDEXING_INFO_FILE),
-			JSON.stringify(indexingInfo, null, 2),
-			'utf-8'
-		);
-
-		reporter.progress(100, 'Indexing complete');
-
-		logger?.info(
-			'IndexResources',
-			`Indexing complete: ${indexedCount} indexed, ${failedIds.length} failed, ${totalChunks} total chunks`
-		);
-
-		return { indexedCount, failedIds, totalChunks };
 	}
 }
 
