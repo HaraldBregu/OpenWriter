@@ -39,8 +39,7 @@ export interface VectorIndexingProgressEvent {
 export interface RunVectorIndexingInput {
 	documents: VectorIndexingDocument[];
 	embeddings: EmbeddingsInterface;
-	outputPath: string;
-	indexOutputPath: string;
+	workspaceService: WorkspaceService;
 	signal: AbortSignal;
 	onProgress?: (event: VectorIndexingProgressEvent) => void;
 	clearExisting?: boolean;
