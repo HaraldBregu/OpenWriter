@@ -63,12 +63,21 @@ export class Embedder {
 	) {}
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
-		const vectorStore = VectorStore.create(input.embeddings);
+		// Create embeddings model
+		const storeService = this.globalContainer.get<import('../services/store').StoreService>('store');
+		const providerResolver = new ProviderResolver(storeService);
+		const resolved = providerResolver.resolve({ providerId: 'openai' });
+		const embeddingModel = createEmbeddingModel({
+			providerId: resolved.providerId,
+			apiKey: resolved.apiKey,
+		});
+
+		const vectorStore = VectorStore.create(embeddingModel);
 		const failedIds: string[] = [];
 		let indexedCount = 0;
 
-		const outputPath = this.options.workspaceService.getVectorStorePath();
-		const indexOutputPath = this.options.workspaceService.getDocumentIndexPath();
+		const outputPath = this.workspaceService.getVectorStorePath();
+		const indexOutputPath = this.workspaceService.getDocumentIndexPath();
 
 		if (!outputPath || !indexOutputPath) {
 			throw new Error('Failed to resolve RAG paths from workspace');
