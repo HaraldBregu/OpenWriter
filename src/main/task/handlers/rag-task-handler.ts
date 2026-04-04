@@ -37,7 +37,7 @@ const PHASE_INDEX = 20;
 const PHASE_EMBED = 40;
 const PHASE_SAVE = 10;
 
-export interface RagIndexingInput {
+export interface RagIndexingTaskInput {
 	/** Injected server-side by task-manager-ipc. */
 	windowId: number;
 	/** Current workspace path stamped server-side by task-manager-ipc. */
