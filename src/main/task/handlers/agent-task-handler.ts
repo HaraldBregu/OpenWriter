@@ -295,28 +295,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		input: AgentTaskInput,
 		metadata?: Record<string, unknown>
 	): string | undefined {
-		const windowContext =
-			typeof input.windowId === 'number'
-				? this.windowContextManager.tryGet(input.windowId)
-				: undefined;
-		const workspacePathFromContext = windowContext?.container.has('workspace')
-			? (windowContext.container
-					.get<import('../../workspace/workspace-service').WorkspaceService>('workspace')
-					.getCurrent() ?? undefined)
-			: undefined;
+		const fromService = this.resolveWorkspaceService(input)?.getCurrent() ?? undefined;
+		if (fromService) return fromService;
 
-		if (workspacePathFromContext) {
-			return workspacePathFromContext;
-		}
-
-		const workspacePathFromInput =
+		const fromInput =
 			typeof input.workspacePath === 'string' && input.workspacePath.trim().length > 0
 				? path.resolve(input.workspacePath)
 				: undefined;
-
-		if (workspacePathFromInput) {
-			return workspacePathFromInput;
-		}
+		if (fromInput) return fromInput;
 
 		return typeof metadata?.workspacePath === 'string' && metadata.workspacePath.trim().length > 0
 			? path.resolve(metadata.workspacePath)
