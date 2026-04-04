@@ -13,7 +13,6 @@
  * to resolve everything.
  */
 
-import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { ServiceContainer } from '../../core/service-container';
