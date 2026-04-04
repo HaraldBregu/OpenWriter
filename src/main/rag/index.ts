@@ -15,7 +15,5 @@ export {
 	type VectorIndexingResult,
 	type RunVectorIndexingInput,
 	type VectorIndexingPipelineOptions,
-	RagManifest,
-	type ManifestEntry,
 } from './pipeline';
 export { VectorStore, DocumentIndexStore, type IndexedDocumentRecord } from './store';
