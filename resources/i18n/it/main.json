@@ -701,6 +701,8 @@
 		"share": "Condividi",
 		"shareLink": "Copia Link di Condivisione",
 		"deletePermanently": "Elimina definitivamente",
+		"deleteDocumentTitle": "Elimina definitivamente il documento",
+		"deleteDocumentConfirm": "Sei sicuro di voler eliminare definitivamente questo documento dall'area di lavoro? Questa azione non può essere annullata.",
 		"actions": "Azioni",
 		"duplicate": "Duplica"
 	},

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus';
@@ -20,6 +21,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const dispatch = useDocumentDispatch();
+	const navigate = useNavigate();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
@@ -57,11 +59,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const loadedRef = useRef(false);
 	loadedRef.current = loaded;
+	const documentDeletedRef = useRef(false);
 
 	useEffect(() => {
 		if (!id) return;
 		let cancelled = false;
 
+		documentDeletedRef.current = false;
 		setLoaded(false);
 		setTitle('');
 		setContent('');
@@ -75,7 +79,11 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				});
 
 				if (cancelled || !output) {
-					if (!cancelled) setLoaded(true);
+					if (!cancelled) {
+						documentDeletedRef.current = true;
+						setLoaded(true);
+						navigate('/home', { replace: true });
+					}
 					return;
 				}
 
@@ -92,7 +100,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		return () => {
 			cancelled = true;
 		};
-	}, [id, dispatch]);
+	}, [id, dispatch, navigate]);
 
 	// Load images
 	const loadImages = useCallback(async () => {
@@ -119,6 +127,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		const unsubscribe = window.workspace.onOutputFileChange((event) => {
 			if (event.outputType !== 'documents' || event.fileId !== id) return;
 
+			if (event.type === 'removed') {
+				documentDeletedRef.current = true;
+				navigate('/home', { replace: true });
+				return;
+			}
+
 			if (event.type === 'changed') {
 				window.workspace
 					.loadOutput({ type: 'documents', id })
@@ -136,7 +150,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		});
 
 		return unsubscribe;
-	}, [id, loadImages, dispatch]);
+	}, [id, loadImages, dispatch, navigate]);
 
 	// Image-watcher: refresh images on add/change/remove events
 	useEffect(() => {
@@ -154,7 +168,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		() =>
 			debounce(
 				() => {
-					if (!id || !loadedRef.current) return;
+					if (!id || !loadedRef.current || documentDeletedRef.current) return;
 					const { title: t, content: c } = stateRef.current;
 					window.workspace.updateOutput({
 						type: 'documents',
@@ -171,7 +185,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	useEffect(() => {
 		return () => {
-			debouncedSave.flush();
+			if (!documentDeletedRef.current) {
+				debouncedSave.flush();
+			}
 			debouncedSave.cancel();
 		};
 	}, [debouncedSave]);

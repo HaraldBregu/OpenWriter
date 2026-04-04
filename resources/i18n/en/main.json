@@ -701,6 +701,8 @@
 		"share": "Share",
 		"shareLink": "Copy Share Link",
 		"deletePermanently": "Delete permanently",
+		"deleteDocumentTitle": "Delete document permanently",
+		"deleteDocumentConfirm": "Are you sure you want to permanently delete this document from the workspace? This action cannot be undone.",
 		"actions": "Actions",
 		"duplicate": "Duplicate"
 	},
