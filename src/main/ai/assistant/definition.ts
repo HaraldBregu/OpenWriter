@@ -66,11 +66,11 @@ const definition: AgentDefinition = {
 		const logger = context.logger;
 
 		logger?.info(LOG_SOURCE, 'Preparing assistant graph', {
-			hasWorkspacePath: Boolean(context.workspacePath),
+			hasWorkspace: Boolean(context.workspaceService?.getCurrent()),
 			providerId: context.providerId,
 		});
 
-		if (!context.workspacePath) {
+		if (!context.workspaceService?.getCurrent()) {
 			logger?.debug(LOG_SOURCE, 'Assistant graph will run without workspace retriever');
 			return (models) => buildGraph(models, undefined, logger);
 		}
@@ -79,10 +79,10 @@ const definition: AgentDefinition = {
 			providerId: context.providerId,
 			apiKey: context.apiKey,
 		});
-		const retriever = new RagRetriever({ workspacePath: context.workspacePath, embeddings });
+		const retriever = new RagRetriever({ workspaceService: context.workspaceService, embeddings });
 
 		logger?.info(LOG_SOURCE, 'Assistant graph prepared with workspace retriever', {
-			workspacePath: context.workspacePath,
+			workspacePath: context.workspaceService.getCurrent(),
 		});
 
 		return (models) => buildGraph(models, retriever, logger);
