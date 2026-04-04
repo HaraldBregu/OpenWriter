@@ -145,7 +145,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			logger,
 		});
 		reporter.progress(1, 'Extracting text from documents');
-		const { indexedCount, failedIds, totalChunks } = await pipeline.run({
+		const { indexedCount, failedIds, totalChunks } = await embedder.run({
 			documents,
 			embeddings: embeddingModel,
 			outputPath: ragPaths.vectorStore,
