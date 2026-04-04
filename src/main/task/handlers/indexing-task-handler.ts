@@ -148,8 +148,8 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		const { indexedCount, failedIds, totalChunks } = await pipeline.run({
 			documents,
 			embeddings: embeddingModel,
-			outputPath: vectorStorePath,
-			indexOutputPath: ragIndexPath,
+			outputPath: ragPaths.vectorStore,
+			indexOutputPath: ragPaths.documentIndex,
 			signal,
 			onProgress: (event) => {
 				reporter.progress(mapIndexingProgressToPercent(event), event.message);
