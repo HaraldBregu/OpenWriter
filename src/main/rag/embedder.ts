@@ -157,7 +157,7 @@ export class Embedder {
 			message: 'Saving document index',
 		});
 		await DocumentIndexStore.save(
-			input.indexOutputPath,
+			indexOutputPath,
 			pendingChunks.map((pending) => ({
 				fileId: pending.document.id,
 				fileName: pending.document.name,
