@@ -25,7 +25,6 @@ import { DocumentsService } from '../../workspace/documents';
 import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent, RagPaths } from '../../rag';
-import type { IndexingInfo } from '../../../shared/types';
 
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
