@@ -53,6 +53,7 @@ export interface VectorIndexingResult {
 
 export interface EmbedderOptions {
 	extractorRegistry: ExtractorRegistry;
+	workspaceService: WorkspaceService;
 	logger?: LoggerService;
 	defaultChunkOptions?: ChunkOptions;
 }
