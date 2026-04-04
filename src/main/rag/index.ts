@@ -1,4 +1,3 @@
-export { RagPaths } from './rag-paths';
 export {
 	type DocumentExtractor,
 	type ExtractedContent,
