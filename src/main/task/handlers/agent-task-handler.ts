@@ -144,7 +144,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		// injection.
 		let effectiveBuildGraph = def.buildGraph;
 		if (def.prepareGraph && effectiveBuildGraph) {
-			const runtimeContext = this.resolveRuntimeContext(input, provider, metadata);
+			const runtimeContext = this.resolveRuntimeContext(input, provider);
 			effectiveBuildGraph = def.prepareGraph(effectiveBuildGraph, runtimeContext);
 		}
 
