@@ -12,7 +12,6 @@ export {
 	type VectorIndexingProgressEvent,
 	type VectorIndexingResult,
 	type RunVectorIndexingInput,
-	type EmbedderOptions,
 } from './embedder';
 export { VectorStore } from './vector-store';
 export { DocumentIndexStore, type IndexedDocumentRecord } from './document-index-store';
