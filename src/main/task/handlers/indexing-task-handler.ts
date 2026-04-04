@@ -140,7 +140,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			apiKey: resolved.apiKey,
 		});
 
-		const pipeline = new VectorIndexingPipeline({
+		const embedder = new Embedder({
 			extractorRegistry: this.extractorRegistry,
 			logger,
 		});
