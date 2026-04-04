@@ -1,5 +1,5 @@
 /**
- * Processing domain.
+ * Prep domain.
  *
  * Intended for pipelines that transform or prepare workspace resources before
  * they are consumed elsewhere in the app, for example:
@@ -10,4 +10,4 @@
  * - indexing preparation
  */
 
-export const PROCESSING_DOMAIN = 'processing';
+export const PREP_DOMAIN = 'prep';

@@ -19,7 +19,7 @@ Use Yarn and Node 22.
 
 ## Coding Style & Naming Conventions
 
-The codebase is TypeScript-first. Prettier uses tabs, single quotes, semicolons, trailing commas, and a 100-column width. Run `yarn format` or `yarn format:check` before opening a PR. Follow existing naming patterns: React components and classes use `PascalCase`, hooks use `use-*.ts(x)`, helpers and modules use `kebab-case` or descriptive lowercase names, and tests mirror the source name with `.test.ts` or `.test.tsx`.
+The codebase is TypeScript-first. Prettier uses tabs, single quotes, semicolons, trailing commas, and a 100-column width. Run `yarn format` or `yarn format:check` before opening a PR. Follow existing naming patterns: React components and classes use `PascalCase`, hooks use `use-*.ts(x)`, helpers and modules use `kebab-case` or descriptive lowercase names, and tests mirror the source name with `.test.ts` or `.test.tsx`. Do not add comments throughout the code; only add comments for the most important or non-obvious logic.
 
 ## Testing Guidelines
 
