@@ -86,10 +86,10 @@ export class Embedder {
 		if (input.clearExisting !== false) {
 			await fs.rm(outputPath, { recursive: true, force: true });
 			await fs.rm(indexOutputPath, { recursive: true, force: true });
-			this.options.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
+			this.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
 				outputPath,
 			});
-			this.options.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
+			this.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
 				outputPath: indexOutputPath,
 			});
 		}
