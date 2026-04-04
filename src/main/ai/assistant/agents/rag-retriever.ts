@@ -65,10 +65,10 @@ export class RagRetriever {
 
 	private async loadStore(): Promise<void> {
 		this.loaded = true;
-		const storePath = path.join(this.options.workspacePath, VECTOR_STORE_SUBDIR);
+		const ragPaths = new RagPaths(this.options.workspacePath);
 
 		try {
-			this.store = await VectorStore.load(storePath, this.options.embeddings);
+			this.store = await VectorStore.load(ragPaths.vectorStore, this.options.embeddings);
 		} catch {
 			// Store directory is missing or unreadable — leave store as null
 			this.store = null;
