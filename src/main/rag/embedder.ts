@@ -53,15 +53,14 @@ export interface VectorIndexingResult {
 	totalChunks: number;
 }
 
-export interface EmbedderOptions {
-	extractorRegistry: ExtractorRegistry;
-	workspaceService: WorkspaceService;
-	logger?: LoggerService;
-	defaultChunkOptions?: ChunkOptions;
-}
-
 export class Embedder {
-	constructor(private readonly options: EmbedderOptions) {}
+	constructor(
+		private readonly globalContainer: ServiceContainer,
+		private readonly extractorRegistry: ExtractorRegistry,
+		private readonly workspaceService: WorkspaceService,
+		private readonly logger?: LoggerService,
+		private readonly defaultChunkOptions?: ChunkOptions
+	) {}
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
 		const vectorStore = VectorStore.create(input.embeddings);
