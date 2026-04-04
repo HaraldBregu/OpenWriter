@@ -1,22 +1,45 @@
-import type { BaseMessage } from '@langchain/core/messages';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { AIMessage, HumanMessage, type BaseMessage } from '@langchain/core/messages';
 import { StringOutputParser, StructuredOutputParser } from '@langchain/core/output_parsers';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableLambda, RunnableSequence } from '@langchain/core/runnables';
-import { createChatModel } from '../../../shared/chat-model-factory';
-import { createEmbeddingModel } from '../../../shared/embedding-factory';
-import { toLangChainHistoryMessages } from '../../core/history';
-import { RagRetriever, type RetrievedDocument } from '../../assistant/agents/rag-retriever';
+import type { EmbeddingsInterface } from '@langchain/core/embeddings';
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import type {
 	CreateWorkspaceWriterWorkflowOptions,
 	CreateWriterWorkflowOptions,
+	WriterHistoryMessage,
 	WriterPromptAnalysis,
+	WriterRetrievedDocument,
 	WriterRetrievalStrategy,
+	WriterRetriever,
 	WriterWorkflow,
 	WriterWorkflowInput,
 	WriterWorkflowResult,
 } from './types';
 
 const LOG_SOURCE = 'WriterWorkflow';
+const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small';
+const DEFAULT_TOP_K = 4;
+const DEFAULT_MIN_SCORE = 0.3;
+const VECTOR_STORE_PATH = ['data', 'vector_store', 'vector-store.json'] as const;
+
+const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
+	openai: undefined,
+	anthropic: 'https://api.anthropic.com/v1/',
+	google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+	meta: 'https://api.llama.com/compat/v1/',
+	mistral: 'https://api.mistral.ai/v1/',
+};
+
+const EMBEDDING_PROVIDER_BASE_URLS: Record<string, string | undefined> = {
+	openai: undefined,
+	google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+	mistral: 'https://api.mistral.ai/v1/',
+};
+
+const REASONING_MODEL_PREFIXES = ['o1', 'o3', 'o3-mini', 'o1-mini', 'o1-preview'] as const;
 
 const WORKSPACE_RETRIEVAL_PATTERN =
 	/\b(workspace|codebase|repo|repository|project|document|docs|notes|from the files|from the repo|from the project|based on the workspace)\b/i;
@@ -24,6 +47,85 @@ const WORKSPACE_RETRIEVAL_PATTERN =
 const NO_RETRIEVAL_CONTEXT = 'No workspace context was used for this request.';
 const NO_RETRIEVAL_RESULTS = 'No relevant workspace context was retrieved for this request.';
 const RETRIEVAL_UNAVAILABLE = 'Workspace retrieval was requested, but no retriever is configured.';
+
+interface StoredVectorEntry {
+	id: string;
+	embedding: number[];
+	content: string;
+	metadata: Record<string, unknown>;
+}
+
+interface StoredVectorFile {
+	version: number;
+	entries: StoredVectorEntry[];
+}
+
+interface WriterWorkflowRuntimeState {
+	prompt: string;
+	history: BaseMessage[];
+	analysis: WriterPromptAnalysis;
+	retrievedDocuments: WriterRetrievedDocument[];
+	retrievalStatus: string;
+	retrievalContext: string;
+}
+
+interface LocalWriterRetrieverOptions {
+	workspacePath: string;
+	embeddings: EmbeddingsInterface;
+	topK?: number;
+	minScore?: number;
+}
+
+class LocalWriterRetriever implements WriterRetriever {
+	private entries: StoredVectorEntry[] | null = null;
+
+	constructor(private readonly options: LocalWriterRetrieverOptions) {}
+
+	async retrieve(query: string): Promise<WriterRetrievedDocument[]> {
+		const normalizedQuery = query.trim();
+
+		if (normalizedQuery.length === 0) {
+			return [];
+		}
+
+		const entries = await this.loadEntries();
+		if (entries.length === 0) {
+			return [];
+		}
+
+		const queryEmbedding = await this.options.embeddings.embedQuery(normalizedQuery);
+		const topK = this.options.topK ?? DEFAULT_TOP_K;
+		const minScore = this.options.minScore ?? DEFAULT_MIN_SCORE;
+
+		return entries
+			.map((entry) => ({
+				pageContent: entry.content,
+				metadata: entry.metadata,
+				score: cosineSimilarity(queryEmbedding, entry.embedding),
+			}))
+			.filter((entry) => entry.score >= minScore)
+			.sort((a, b) => b.score - a.score)
+			.slice(0, topK);
+	}
+
+	private async loadEntries(): Promise<StoredVectorEntry[]> {
+		if (this.entries !== null) {
+			return this.entries;
+		}
+
+		const filePath = path.join(this.options.workspacePath, ...VECTOR_STORE_PATH);
+
+		try {
+			const raw = await fs.readFile(filePath, 'utf-8');
+			const parsed = JSON.parse(raw) as StoredVectorFile;
+			this.entries = Array.isArray(parsed.entries) ? parsed.entries : [];
+		} catch {
+			this.entries = [];
+		}
+
+		return this.entries;
+	}
+}
 
 const analysisParser = StructuredOutputParser.fromNamesAndDescriptions({
 	normalizedPrompt:
@@ -106,13 +208,64 @@ Retrieved workspace context:
 	],
 ]);
 
-interface WriterWorkflowRuntimeState {
-	prompt: string;
-	history: BaseMessage[];
-	analysis: WriterPromptAnalysis;
-	retrievedDocuments: RetrievedDocument[];
-	retrievalStatus: string;
-	retrievalContext: string;
+function isReasoningModel(modelName: string): boolean {
+	const normalized = modelName.trim().toLowerCase();
+
+	return REASONING_MODEL_PREFIXES.some(
+		(prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
+	);
+}
+
+function createWriterChatModel(
+	options: Pick<
+		CreateWorkspaceWriterWorkflowOptions,
+		'apiKey' | 'providerId' | 'modelName' | 'temperature' | 'maxTokens'
+	>
+): ChatOpenAI {
+	const baseURL = PROVIDER_BASE_URLS[options.providerId];
+
+	return new ChatOpenAI({
+		apiKey: options.apiKey,
+		model: options.modelName,
+		streaming: false,
+		...(isReasoningModel(options.modelName) ? {} : { temperature: options.temperature }),
+		...(options.maxTokens ? { maxTokens: options.maxTokens } : {}),
+		...(baseURL ? { configuration: { baseURL } } : {}),
+	});
+}
+
+function createWriterEmbeddings(
+	options: Pick<CreateWorkspaceWriterWorkflowOptions, 'apiKey' | 'providerId' | 'embeddingModelName'>
+): OpenAIEmbeddings {
+	const baseURL = EMBEDDING_PROVIDER_BASE_URLS[options.providerId];
+
+	return new OpenAIEmbeddings({
+		openAIApiKey: options.apiKey,
+		modelName: options.embeddingModelName ?? DEFAULT_EMBEDDING_MODEL,
+		...(baseURL ? { configuration: { baseURL } } : {}),
+	});
+}
+
+function toLangChainHistoryMessages(history: WriterHistoryMessage[] | undefined): BaseMessage[] {
+	return (history ?? []).map((message) =>
+		message.role === 'user' ? new HumanMessage(message.content) : new AIMessage(message.content)
+	);
+}
+
+function cosineSimilarity(a: number[], b: number[]): number {
+	let dot = 0;
+	let normA = 0;
+	let normB = 0;
+
+	const length = Math.min(a.length, b.length);
+	for (let index = 0; index < length; index++) {
+		dot += a[index] * b[index];
+		normA += a[index] * a[index];
+		normB += b[index] * b[index];
+	}
+
+	const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+	return denominator === 0 ? 0 : dot / denominator;
 }
 
 function buildFallbackAnalysis(prompt: string): WriterPromptAnalysis {
@@ -140,10 +293,7 @@ function normalizeRetrievalStrategy(value: string | undefined): WriterRetrievalS
 	return 'skip';
 }
 
-function normalizeAnalysis(
-	raw: Record<string, string>,
-	prompt: string
-): WriterPromptAnalysis {
+function normalizeAnalysis(raw: Record<string, string>, prompt: string): WriterPromptAnalysis {
 	const fallback = buildFallbackAnalysis(prompt);
 	const retrievalStrategy = normalizeRetrievalStrategy(raw['retrievalStrategy']);
 	const retrievalQuery = raw['retrievalQuery']?.trim();
@@ -175,7 +325,7 @@ function getSourceLabel(metadata: Record<string, unknown>, index: number): strin
 	return `document-${index + 1}`;
 }
 
-function formatRetrievedDocuments(documents: RetrievedDocument[]): string {
+function formatRetrievedDocuments(documents: WriterRetrievedDocument[]): string {
 	if (documents.length === 0) {
 		return NO_RETRIEVAL_RESULTS;
 	}
@@ -201,7 +351,7 @@ async function analyzeRequest(
 	const history = toLangChainHistoryMessages(input.history);
 
 	if (prompt.length === 0) {
-		logger?.debug(LOG_SOURCE, 'Skipping analysis for empty prompt');
+		logger?.debug?.(LOG_SOURCE, 'Skipping analysis for empty prompt');
 		return {
 			prompt,
 			history,
@@ -212,7 +362,7 @@ async function analyzeRequest(
 	const analysisChain = analyzePrompt.pipe(model).pipe(analysisParser);
 
 	try {
-		logger?.debug(LOG_SOURCE, 'Analyzing writer request', {
+		logger?.debug?.(LOG_SOURCE, 'Analyzing writer request', {
 			promptLength: prompt.length,
 			historyLength: input.history?.length ?? 0,
 		});
@@ -224,7 +374,7 @@ async function analyzeRequest(
 		});
 		const analysis = normalizeAnalysis(rawAnalysis, prompt);
 
-		logger?.info(LOG_SOURCE, 'Writer request analyzed', {
+		logger?.info?.(LOG_SOURCE, 'Writer request analyzed', {
 			retrievalStrategy: analysis.retrievalStrategy,
 			retrievalQueryLength: analysis.retrievalQuery.length,
 		});
@@ -232,8 +382,7 @@ async function analyzeRequest(
 		return { prompt, history, analysis };
 	} catch (error: unknown) {
 		const message = error instanceof Error ? error.message : String(error);
-
-		logger?.warn(LOG_SOURCE, `Falling back to heuristic writer analysis: ${message}`);
+		logger?.warn?.(LOG_SOURCE, `Falling back to heuristic writer analysis: ${message}`);
 
 		return {
 			prompt,
@@ -245,7 +394,7 @@ async function analyzeRequest(
 
 async function retrieveWorkspaceContext(
 	analysis: WriterPromptAnalysis,
-	retriever: RagRetriever | undefined,
+	retriever: WriterRetriever | undefined,
 	maxDocuments: number | undefined,
 	logger?: CreateWriterWorkflowOptions['logger']
 ): Promise<Pick<WriterWorkflowRuntimeState, 'retrievedDocuments' | 'retrievalStatus' | 'retrievalContext'>> {
@@ -258,7 +407,7 @@ async function retrieveWorkspaceContext(
 	}
 
 	if (!retriever) {
-		logger?.warn(LOG_SOURCE, 'Writer workflow requested retrieval without a configured retriever');
+		logger?.warn?.(LOG_SOURCE, 'Writer workflow requested retrieval without a configured retriever');
 		return {
 			retrievedDocuments: [],
 			retrievalStatus: RETRIEVAL_UNAVAILABLE,
@@ -266,7 +415,7 @@ async function retrieveWorkspaceContext(
 		};
 	}
 
-	logger?.debug(LOG_SOURCE, 'Retrieving workspace context', {
+	logger?.debug?.(LOG_SOURCE, 'Retrieving workspace context', {
 		retrievalStrategy: analysis.retrievalStrategy,
 		queryLength: analysis.retrievalQuery.length,
 	});
@@ -276,7 +425,7 @@ async function retrieveWorkspaceContext(
 		maxDocuments ?? Number.POSITIVE_INFINITY
 	);
 
-	logger?.info(LOG_SOURCE, 'Workspace retrieval completed', {
+	logger?.info?.(LOG_SOURCE, 'Workspace retrieval completed', {
 		documentCount: retrievedDocuments.length,
 	});
 
@@ -300,7 +449,7 @@ async function generateResponse(
 	state: WriterWorkflowRuntimeState,
 	logger?: CreateWriterWorkflowOptions['logger']
 ): Promise<WriterWorkflowResult> {
-	logger?.debug(LOG_SOURCE, 'Generating writer response', {
+	logger?.debug?.(LOG_SOURCE, 'Generating writer response', {
 		retrievalStatus: state.retrievalStatus,
 		documentCount: state.retrievedDocuments.length,
 	});
@@ -319,7 +468,7 @@ async function generateResponse(
 		})
 	).trim();
 
-	logger?.info(LOG_SOURCE, 'Writer response generated', {
+	logger?.info?.(LOG_SOURCE, 'Writer response generated', {
 		responseLength: response.length,
 	});
 
@@ -368,22 +517,11 @@ export function createWriterWorkflow(options: CreateWriterWorkflowOptions): Writ
 export function createWorkspaceWriterWorkflow(
 	options: CreateWorkspaceWriterWorkflowOptions
 ): WriterWorkflow {
-	const model = createChatModel({
-		providerId: options.providerId,
-		apiKey: options.apiKey,
-		modelName: options.modelName,
-		streaming: false,
-		temperature: options.temperature,
-		maxTokens: options.maxTokens,
-	});
-
+	const model = createWriterChatModel(options);
 	const retriever = options.workspacePath
-		? new RagRetriever({
+		? new LocalWriterRetriever({
 				workspacePath: options.workspacePath,
-				embeddings: createEmbeddingModel({
-					providerId: options.providerId,
-					apiKey: options.apiKey,
-				}),
+				embeddings: createWriterEmbeddings(options),
 			})
 		: undefined;
 

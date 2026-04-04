@@ -1,9 +1,24 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { AgentHistoryMessage } from '../../core/types';
-import type { RagRetriever, RetrievedDocument } from '../../assistant/agents/rag-retriever';
-import type { LoggerService } from '../../../services/logger';
 
 export type WriterRetrievalStrategy = 'required' | 'helpful' | 'skip';
+
+export interface WriterHistoryMessage {
+	role: 'user' | 'assistant';
+	content: string;
+}
+
+export interface WriterRetrievedDocument {
+	pageContent: string;
+	metadata: Record<string, unknown>;
+	score: number;
+}
+
+export interface WriterWorkflowLogger {
+	debug?(source: string, message: string, data?: unknown): void;
+	info?(source: string, message: string, data?: unknown): void;
+	warn?(source: string, message: string, data?: unknown): void;
+	error?(source: string, message: string, data?: unknown): void;
+}
 
 export interface WriterPromptAnalysis {
 	normalizedPrompt: string;
@@ -16,15 +31,19 @@ export interface WriterPromptAnalysis {
 
 export interface WriterWorkflowInput {
 	prompt: string;
-	history?: AgentHistoryMessage[];
+	history?: WriterHistoryMessage[];
 }
 
 export interface WriterWorkflowResult {
 	analysis: WriterPromptAnalysis;
-	retrievedDocuments: RetrievedDocument[];
+	retrievedDocuments: WriterRetrievedDocument[];
 	retrievalStatus: string;
 	retrievalContext: string;
 	response: string;
+}
+
+export interface WriterRetriever {
+	retrieve(query: string): Promise<WriterRetrievedDocument[]>;
 }
 
 export interface WriterWorkflow {
@@ -33,8 +52,8 @@ export interface WriterWorkflow {
 
 export interface CreateWriterWorkflowOptions {
 	model: BaseChatModel;
-	retriever?: RagRetriever;
-	logger?: LoggerService;
+	retriever?: WriterRetriever;
+	logger?: WriterWorkflowLogger;
 	maxDocuments?: number;
 }
 
@@ -45,6 +64,7 @@ export interface CreateWorkspaceWriterWorkflowOptions {
 	workspacePath?: string;
 	temperature?: number;
 	maxTokens?: number;
-	logger?: LoggerService;
+	logger?: WriterWorkflowLogger;
 	maxDocuments?: number;
+	embeddingModelName?: string;
 }
