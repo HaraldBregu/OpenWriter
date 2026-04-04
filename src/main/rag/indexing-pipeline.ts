@@ -6,6 +6,7 @@ import type { LoggerService } from '../services/logger';
 import type { ChunkOptions } from './text-chunker';
 import { chunkText } from './text-chunker';
 import type { ExtractorRegistry } from './extractor-registry';
+import { DocumentIndexStore } from './document-index-store';
 import { VectorStore } from './vector-store';
 
 const LOG_SOURCE = 'VectorIndexingPipeline';
@@ -16,7 +17,7 @@ export interface VectorIndexingDocument {
 	path: string;
 }
 
-export type VectorIndexingPhase = 'extract' | 'embed' | 'save';
+export type VectorIndexingPhase = 'extract' | 'index' | 'embed' | 'save';
 
 export interface VectorIndexingProgressEvent {
 	phase: VectorIndexingPhase;
@@ -32,6 +33,7 @@ export interface RunVectorIndexingInput {
 	documents: VectorIndexingDocument[];
 	embeddings: EmbeddingsInterface;
 	outputPath: string;
+	indexOutputPath: string;
 	signal: AbortSignal;
 	onProgress?: (event: VectorIndexingProgressEvent) => void;
 	clearExisting?: boolean;
@@ -60,13 +62,18 @@ export class VectorIndexingPipeline {
 
 		if (input.clearExisting !== false) {
 			await fs.rm(input.outputPath, { recursive: true, force: true });
+			await fs.rm(input.indexOutputPath, { recursive: true, force: true });
 			this.options.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
 				outputPath: input.outputPath,
+			});
+			this.options.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
+				outputPath: input.indexOutputPath,
 			});
 		}
 
 		const pendingChunks: Array<{
 			document: VectorIndexingDocument;
+			extractedMetadata: Record<string, unknown>;
 			chunks: Document[];
 		}> = [];
 
@@ -105,7 +112,11 @@ export class VectorIndexingPipeline {
 					input.chunkOptions ?? this.options.defaultChunkOptions
 				);
 
-				pendingChunks.push({ document, chunks });
+				pendingChunks.push({
+					document,
+					extractedMetadata: extracted.metadata,
+					chunks,
+				});
 				input.onProgress?.({
 					phase: 'extract',
 					completed: index + 1,
@@ -124,6 +135,30 @@ export class VectorIndexingPipeline {
 				failedIds.push(document.id);
 			}
 		}
+
+		throwIfAborted(input.signal);
+		input.onProgress?.({
+			phase: 'index',
+			completed: 0,
+			total: 1,
+			message: 'Saving document index',
+		});
+		await DocumentIndexStore.save(
+			input.indexOutputPath,
+			pendingChunks.map((pending) => ({
+				fileId: pending.document.id,
+				fileName: pending.document.name,
+				source: pending.document.path,
+				extractedMetadata: pending.extractedMetadata,
+				chunks: pending.chunks,
+			}))
+		);
+		input.onProgress?.({
+			phase: 'index',
+			completed: 1,
+			total: 1,
+			message: 'Saved document index',
+		});
 
 		for (let index = 0; index < pendingChunks.length; index += 1) {
 			throwIfAborted(input.signal);

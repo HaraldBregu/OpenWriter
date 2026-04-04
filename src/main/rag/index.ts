@@ -1,4 +1,5 @@
 export { type DocumentExtractor, type ExtractedContent } from './extractors/document-extractor';
+export { DocumentIndexStore, type IndexedDocumentRecord } from './document-index-store';
 export { ExtractorRegistry } from './extractor-registry';
 export { PlainTextExtractor } from './extractors/plain-text-extractor';
 export {

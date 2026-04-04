@@ -1,10 +1,11 @@
 /**
  * IndexResourcesTaskHandler — indexes workspace resources into a vector store.
  *
- * Pipeline: delete old store → load documents → extract text → chunk → embed → store.
+ * Pipeline: delete old stores → load documents → extract text → chunk →
+ * persist document index → embed → save vector store.
  *
- * Every invocation performs a full re-index: the existing vector store folder
- * is deleted before processing begins.
+ * Every invocation performs a full re-index: the existing document-index and
+ * vector-store folders are deleted before processing begins.
  *
  * All file paths are derived server-side from WorkspaceService to prevent
  * path traversal attacks from the renderer. The renderer only needs to
@@ -33,12 +34,14 @@ import type { IndexingInfo } from '../../../shared/types';
 
 const RESOURCES_DIR = 'resources';
 const DATA_DIR = 'data';
+const RAG_INDEX_SUBDIR = path.join(DATA_DIR, 'rag_index');
 const VECTOR_STORE_SUBDIR = path.join(DATA_DIR, 'vector_store');
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /** Progress weight allocation for each pipeline phase. */
-const PHASE_EXTRACT = 40;
-const PHASE_EMBED = 50;
+const PHASE_EXTRACT = 30;
+const PHASE_INDEX = 20;
+const PHASE_EMBED = 40;
 
 export interface IndexResourcesInput {
 	/** Injected server-side by task-manager-ipc. */
@@ -96,10 +99,12 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 		}
 
 		const resourcesPath = path.join(workspacePath, RESOURCES_DIR);
+		const ragIndexPath = path.join(workspacePath, RAG_INDEX_SUBDIR);
 		const vectorStorePath = path.join(workspacePath, VECTOR_STORE_SUBDIR);
 
 		logger?.info('IndexResources', `Starting indexing for workspace: ${workspacePath}`);
 		logger?.info('IndexResources', `Resources: ${resourcesPath}`);
+		logger?.info('IndexResources', `Document index: ${ragIndexPath}`);
 		logger?.info('IndexResources', `Vector store: ${vectorStorePath}`);
 
 		// Load documents metadata
@@ -118,8 +123,12 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 
 		throwIfAborted(signal);
 
+		const resolvedIndexPath = path.resolve(ragIndexPath);
 		const resolvedStorePath = path.resolve(vectorStorePath);
 		const resolvedWorkspace = path.resolve(workspacePath);
+		if (!resolvedIndexPath.startsWith(resolvedWorkspace + path.sep)) {
+			throw new Error('Document index path is outside the workspace');
+		}
 		if (!resolvedStorePath.startsWith(resolvedWorkspace + path.sep)) {
 			throw new Error('Vector store path is outside the workspace');
 		}
@@ -142,6 +151,7 @@ export class IndexResourcesTaskHandler implements TaskHandler<
 			documents,
 			embeddings: embeddingModel,
 			outputPath: vectorStorePath,
+			indexOutputPath: ragIndexPath,
 			signal,
 			onProgress: (event) => {
 				reporter.progress(mapIndexingProgressToPercent(event), event.message);
@@ -178,11 +188,20 @@ function mapIndexingProgressToPercent(event: VectorIndexingProgressEvent): numbe
 		return scaleProgress(event.completed, event.total, 0, PHASE_EXTRACT);
 	}
 
-	if (event.phase === 'embed') {
-		return scaleProgress(event.completed, event.total, PHASE_EXTRACT, PHASE_EXTRACT + PHASE_EMBED);
+	if (event.phase === 'index') {
+		return scaleProgress(event.completed, event.total, PHASE_EXTRACT, PHASE_EXTRACT + PHASE_INDEX);
 	}
 
-	return PHASE_EXTRACT + PHASE_EMBED;
+	if (event.phase === 'embed') {
+		return scaleProgress(
+			event.completed,
+			event.total,
+			PHASE_EXTRACT + PHASE_INDEX,
+			PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED
+		);
+	}
+
+	return PHASE_EXTRACT + PHASE_INDEX + PHASE_EMBED;
 }
 
 function scaleProgress(completed: number, total: number, start: number, end: number): number {
