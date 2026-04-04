@@ -1,8 +1,10 @@
-export { type DocumentExtractor, type ExtractedContent } from './extractors/document-extractor';
-export { DocumentIndexStore, type IndexedDocumentRecord } from './document-index-store';
-export { ExtractorRegistry } from './extractor-registry';
-export { PlainTextExtractor } from './extractors/plain-text-extractor';
 export {
+	type DocumentExtractor,
+	type ExtractedContent,
+	DocumentIndexStore,
+	type IndexedDocumentRecord,
+	ExtractorRegistry,
+	PlainTextExtractor,
 	VectorIndexingPipeline,
 	type VectorIndexingDocument,
 	type VectorIndexingPhase,
@@ -10,7 +12,9 @@ export {
 	type VectorIndexingResult,
 	type RunVectorIndexingInput,
 	type VectorIndexingPipelineOptions,
-} from './indexing-pipeline';
-export { chunkText, type ChunkOptions } from './text-chunker';
-export { RagManifest, type ManifestEntry } from './rag-manifest';
+	chunkText,
+	type ChunkOptions,
+	RagManifest,
+	type ManifestEntry,
+} from './indexing';
 export { VectorStore, type VectorEntry } from './vector-store';

@@ -2,12 +2,12 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../../services/logger';
 import type { ChunkOptions } from './text-chunker';
 import { chunkText } from './text-chunker';
 import type { ExtractorRegistry } from './extractor-registry';
 import { DocumentIndexStore } from './document-index-store';
-import { VectorStore } from './vector-store';
+import { VectorStore } from '../vector-store';
 
 const LOG_SOURCE = 'VectorIndexingPipeline';
 
