@@ -56,7 +56,7 @@ export class VectorIndexingPipeline {
 	constructor(private readonly options: VectorIndexingPipelineOptions) {}
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
-		const vectorStore = new VectorStore(input.embeddings);
+		const vectorStore = VectorStore.create(input.embeddings);
 		const failedIds: string[] = [];
 		let indexedCount = 0;
 
