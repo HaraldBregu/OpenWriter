@@ -18,9 +18,4 @@ export {
 	RagManifest,
 	type ManifestEntry,
 } from './pipeline';
-export {
-	VectorStore,
-	type VectorEntry,
-	DocumentIndexStore,
-	type IndexedDocumentRecord,
-} from './store';
+export { VectorStore, DocumentIndexStore, type IndexedDocumentRecord } from './store';
