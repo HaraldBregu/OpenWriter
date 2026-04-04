@@ -108,7 +108,7 @@ export class Embedder {
 			const extractor = this.options.extractorRegistry.resolve(extension);
 
 			if (!extractor) {
-				this.options.logger?.warn(
+				this.logger?.warn(
 					LOG_SOURCE,
 					`No extractor for extension: ${extension} (${document.name})`
 				);
@@ -120,7 +120,7 @@ export class Embedder {
 				const extracted = await extractor.extract(document.path, input.signal);
 
 				if (extracted.content.trim().length === 0) {
-					this.options.logger?.warn(LOG_SOURCE, `Empty content extracted from: ${document.name}`);
+					this.logger?.warn(LOG_SOURCE, `Empty content extracted from: ${document.name}`);
 					failedIds.push(document.id);
 					continue;
 				}
