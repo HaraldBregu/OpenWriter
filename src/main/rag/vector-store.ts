@@ -26,12 +26,12 @@ export class VectorStore {
 
 	static create(embeddings: EmbeddingsInterface): VectorStore {
 		const store = new HNSWLib(embeddings, { space: 'cosine' });
-		return new VectorStore(embeddings, store);
+		return new VectorStore(store);
 	}
 
 	static async load(directory: string, embeddings: EmbeddingsInterface): Promise<VectorStore> {
 		const store = await HNSWLib.load(directory, embeddings);
-		return new VectorStore(embeddings, store);
+		return new VectorStore(store);
 	}
 
 	async save(directory: string): Promise<void> {
