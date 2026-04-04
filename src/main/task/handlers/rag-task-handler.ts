@@ -64,7 +64,7 @@ export class RagIndexingTaskHandler implements TaskHandler<RagIndexingTaskInput,
 		private readonly extractorRegistry: ExtractorRegistry
 	) {}
 
-	validate(input: RagIndexingInput): void {
+	validate(input: RagIndexingTaskInput): void {
 		if (!input?.windowId) {
 			throw new Error('windowId is required (injected server-side)');
 		}
