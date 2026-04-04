@@ -1,10 +1,12 @@
 export {
 	type DocumentExtractor,
 	type ExtractedContent,
-	DocumentIndexStore,
-	type IndexedDocumentRecord,
 	ExtractorRegistry,
 	PlainTextExtractor,
+	chunkText,
+	type ChunkOptions,
+} from './ingestion';
+export {
 	VectorIndexingPipeline,
 	type VectorIndexingDocument,
 	type VectorIndexingPhase,
@@ -12,9 +14,7 @@ export {
 	type VectorIndexingResult,
 	type RunVectorIndexingInput,
 	type VectorIndexingPipelineOptions,
-	chunkText,
-	type ChunkOptions,
 	RagManifest,
 	type ManifestEntry,
-} from './indexing';
-export { VectorStore, type VectorEntry } from './vector-store';
+} from './pipeline';
+export { VectorStore, type VectorEntry, DocumentIndexStore, type IndexedDocumentRecord } from './store';
