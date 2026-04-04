@@ -6,6 +6,7 @@
  */
 
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import type { LoggerService } from '../services/logger';
