@@ -26,9 +26,6 @@ import { ProviderResolver } from '../../shared/provider-resolver';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent, RagPaths } from '../../rag';
 
-const DATA_DIR = 'data';
-const INDEXING_INFO_FILE = 'indexing-info.json';
-
 /** Progress weight allocation for each RAG indexing phase. */
 const PHASE_EXTRACT = 30;
 const PHASE_INDEX = 20;
