@@ -1,13 +1,13 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage } from '@langchain/core/messages';
-import type { LoggerService } from '../../../../services/logger';
-import { toLangChainHistoryMessages } from '../../../core/history';
+import type { LoggerService } from '../../../services/logger';
+import { toLangChainHistoryMessages } from '../../core/history';
 import {
 	createAssistantSpecialistAgent,
 	invokeAssistantSpecialist,
 	type AssistantSpecialistAgent,
-} from '../../specialist-agent';
-import type { AssistantState } from '../../state';
+} from '../specialist-agent';
+import type { AssistantState } from '../state';
 import { searchDuckDuckGo } from './duckduckgo-search';
 
 const SYSTEM_PROMPT = `You are the DuckDuckGo search specialist in a multi-agent assistant.

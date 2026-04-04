@@ -92,25 +92,31 @@ The shared graph state in `state.ts` contains:
 - `agent-output.ts`
   Small helpers for parsing labeled LLM outputs.
 
-- `agents/intent_detector/`
+- `agents/intent-detector-agent.ts`
   Detects retrieval/search needs and writes routing fields.
 
-- `agents/planner/`
+- `agents/planner-agent.ts`
   Builds the execution brief and specialist queries.
 
-- `agents/rag_agent/`
+- `agents/rag-agent.ts`
   Retrieves indexed workspace context and produces `ragFindings`.
 
-- `agents/duckduckgo_search/`
+- `agents/rag-retriever.ts`
+  Loads the workspace vector store used by the RAG agent.
+
+- `agents/duckduckgo-search-agent.ts`
   Performs best-effort DuckDuckGo search and produces `webFindings`.
 
-- `agents/text_generator/`
+- `agents/duckduckgo-search.ts`
+  Contains the DuckDuckGo fetch and result normalization logic.
+
+- `agents/text-generator-agent.ts`
   Produces the base answer draft in `textFindings`.
 
-- `agents/analyzer/`
+- `agents/analyzer-agent.ts`
   Evaluates the specialist outputs and decides whether to retry.
 
-- `agents/enhancer/`
+- `agents/enhancer-agent.ts`
   Produces the final user-facing text response.
 */
 

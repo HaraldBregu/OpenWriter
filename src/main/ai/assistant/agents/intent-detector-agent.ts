@@ -1,15 +1,15 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage } from '@langchain/core/messages';
-import type { LoggerService } from '../../../../services/logger';
-import { toLangChainHistoryMessages } from '../../../core/history';
-import { ASSISTANT_STATE_MESSAGES } from '../../messages';
+import type { LoggerService } from '../../../services/logger';
+import { toLangChainHistoryMessages } from '../../core/history';
+import { ASSISTANT_STATE_MESSAGES } from '../messages';
 import {
 	createAssistantSpecialistAgent,
 	invokeAssistantSpecialist,
 	type AssistantSpecialistAgent,
-} from '../../specialist-agent';
-import { parseYesNo, readLabeledValue } from '../../agent-output';
-import type { AssistantState } from '../../state';
+} from '../specialist-agent';
+import { parseYesNo, readLabeledValue } from '../agent-output';
+import type { AssistantState } from '../state';
 
 const SYSTEM_PROMPT = `You are the intent detector in a multi-agent assistant.
 

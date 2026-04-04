@@ -3,23 +3,23 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
 import { AssistantState } from './state';
-import { analyzerAgent, createAnalyzerAgent } from './agents/analyzer/analyzer-agent';
+import { analyzerAgent, createAnalyzerAgent } from './agents/analyzer-agent';
 import {
 	createDuckDuckGoSearchAgent,
 	duckDuckGoSearchAgent,
-} from './agents/duckduckgo_search/duckduckgo-search-agent';
-import { createEnhancerAgent, enhancerAgent } from './agents/enhancer/enhancer-agent';
+} from './agents/duckduckgo-search-agent';
+import { createEnhancerAgent, enhancerAgent } from './agents/enhancer-agent';
 import {
 	createIntentDetectorAgent,
 	intentDetectorAgent,
-} from './agents/intent_detector/intent-detector-agent';
-import { createPlannerAgent, plannerAgent } from './agents/planner/planner-agent';
-import { createRagAgent, ragAgent } from './agents/rag_agent/rag-agent';
+} from './agents/intent-detector-agent';
+import { createPlannerAgent, plannerAgent } from './agents/planner-agent';
+import { createRagAgent, ragAgent } from './agents/rag-agent';
 import {
 	createTextGeneratorAgent,
 	textGeneratorAgent,
-} from './agents/text_generator/text-generator-agent';
-import type { RagRetriever } from './agents/rag_agent/rag-retriever';
+} from './agents/text-generator-agent';
+import type { RagRetriever } from './agents/rag-retriever';
 
 const LOG_SOURCE = 'AssistantGraph';
 const MAX_REVIEW_PASSES = 2;

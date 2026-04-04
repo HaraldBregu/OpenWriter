@@ -1,14 +1,14 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage } from '@langchain/core/messages';
-import type { LoggerService } from '../../../../services/logger';
-import { toLangChainHistoryMessages } from '../../../core/history';
-import { ASSISTANT_STATE_MESSAGES } from '../../messages';
+import type { LoggerService } from '../../../services/logger';
+import { toLangChainHistoryMessages } from '../../core/history';
+import { ASSISTANT_STATE_MESSAGES } from '../messages';
 import {
 	createAssistantSpecialistAgent,
 	streamAssistantSpecialist,
 	type AssistantSpecialistAgent,
-} from '../../specialist-agent';
-import type { AssistantState } from '../../state';
+} from '../specialist-agent';
+import type { AssistantState } from '../state';
 
 const SYSTEM_PROMPT = `You are the enhancer in a multi-agent assistant.
 

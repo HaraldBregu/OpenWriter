@@ -1,4 +1,4 @@
-import type { LoggerService } from '../../../../services/logger';
+import type { LoggerService } from '../../../services/logger';
 
 interface DuckDuckGoTopic {
 	readonly Text?: string;
