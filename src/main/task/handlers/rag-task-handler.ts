@@ -55,7 +55,7 @@ export interface RagIndexingTaskOutput {
 	totalChunks: number;
 }
 
-export class RagIndexingTaskHandler implements TaskHandler<RagIndexingInput, RagIndexingOutput> {
+export class RagIndexingTaskHandler implements TaskHandler<RagIndexingTaskInput, RagIndexingTaskOutput> {
 	readonly type = 'index-resources';
 
 	constructor(
