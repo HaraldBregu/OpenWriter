@@ -126,8 +126,7 @@ export class RagIndexingTaskHandler implements TaskHandler<
 			const { indexedCount, failedIds, totalChunks } = await embedder.run({
 				documents,
 				embeddings: embeddingModel,
-				outputPath: vectorStorePath,
-				indexOutputPath: documentIndexPath,
+				workspaceService,
 				signal,
 				clearExisting: true,
 				onProgress: (event) => {
