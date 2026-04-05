@@ -107,56 +107,6 @@ const WelcomePage: React.FC<WelcomePageProps> = ({
 		[loadRecentProjects]
 	);
 
-	const handleSaveConfiguration = useCallback(
-		async (event: React.FormEvent<HTMLFormElement>) => {
-			event.preventDefault();
-
-			if (
-				isSavingConfiguration ||
-				typeof window.app?.completeFirstRunConfiguration !== 'function'
-			) {
-				return;
-			}
-
-			setIsSavingConfiguration(true);
-			setConfigurationError(null);
-
-			try {
-				const providers: ServiceProvider[] = PROVIDER_IDS.map((providerId) => ({
-					name: providerId,
-					apikey: tokens[providerId].trim(),
-					baseurl: '',
-				}));
-				const nextStartupInfo = await window.app.completeFirstRunConfiguration(providers);
-				setTokens({ ...EMPTY_TOKENS });
-				onConfigured?.(nextStartupInfo);
-			} catch (error) {
-				setConfigurationError(
-					error instanceof Error
-						? error.message
-						: t(
-								'startup.firstTime.error',
-								'Unable to save your provider tokens right now. Please try again.'
-							)
-				);
-			} finally {
-				setIsSavingConfiguration(false);
-			}
-		},
-		[isSavingConfiguration, onConfigured, t, tokens]
-	);
-
-	const handleTokenChange = useCallback(
-		(providerId: ProviderId, value: string) => {
-			setTokens((current) => ({ ...current, [providerId]: value }));
-
-			if (configurationError) {
-				setConfigurationError(null);
-			}
-		},
-		[configurationError]
-	);
-
 	const formatPath = (path: string) => {
 		if (typeof path !== 'string') return '';
 		if (path.includes('/Users/')) {
