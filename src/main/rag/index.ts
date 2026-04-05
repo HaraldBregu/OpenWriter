@@ -7,7 +7,6 @@ export {
 export { chunkText, type ChunkOptions } from './text-splitter';
 export {
 	Embedder,
-	type VectorIndexingDocument,
 	type VectorIndexingPhase,
 	type VectorIndexingProgressEvent,
 	type VectorIndexingResult,

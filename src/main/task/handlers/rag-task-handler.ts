@@ -1,11 +1,12 @@
 /**
  * RagIndexingTaskHandler — indexes workspace resources into a RAG vector store.
  *
- * Pipeline: delete old stores → load documents → extract text → chunk →
- * persist document index → embed → save vector store.
+ * Pipeline: delete old stores → extract text → chunk → persist document index
+ * → embed → save vector store.
  *
- * Every invocation performs a full re-index: the existing document-index and
- * vector-store folders are deleted before processing begins.
+ * When documents are present, each invocation performs a full re-index:
+ * the existing document-index and vector-store folders are deleted before
+ * processing begins.
  *
  * All file paths are derived server-side from WorkspaceService to prevent
  * path traversal attacks from the renderer. The renderer only needs to
@@ -16,11 +17,8 @@
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { ServiceContainer } from '../../core/service-container';
-import type { FileManager } from '../../shared/file_manager';
-import type { DocumentsWatcherService } from '../../workspace/documents-watcher';
 import type { LoggerService } from '../../services/logger';
 import type { WorkspaceService } from '../../workspace/workspace-service';
-import { DocumentsService } from '../../workspace/documents';
 import { ExtractorRegistry, Embedder, type VectorIndexingProgressEvent } from '../../rag';
 
 /** Progress weight allocation for each RAG indexing phase. */
@@ -32,10 +30,6 @@ const PHASE_SAVE = 10;
 export interface RagIndexingTaskInput {
 	/** Injected server-side by task-manager-ipc. */
 	windowId: number;
-	/** Current workspace path stamped server-side by task-manager-ipc. */
-	workspacePath: string;
-	/** Path to the workspace resources directory (used for intent only). */
-	resourcesPath: string;
 }
 
 export interface RagIndexingTaskOutput {
@@ -87,24 +81,9 @@ export class RagIndexingTaskHandler implements TaskHandler<
 
 			logger?.info('RagIndexing', `Starting indexing for workspace: ${workspacePath}`);
 
-			// Load documents metadata
-			reporter.progress(0, 'Loading documents');
-			const fileManagement = this.globalContainer.get<FileManager>('fileManagement');
-			const watcher = windowContext.container.has('documentsWatcher')
-				? windowContext.container.get<DocumentsWatcherService>('documentsWatcher')
-				: null;
-			const documentsService = new DocumentsService(fileManagement, watcher, logger);
-			const documents = await documentsService.loadAll(workspacePath);
-
-			if (documents.length === 0) {
-				reporter.progress(100, 'No documents to index');
-				logger?.info('RagIndexing', 'No documents found to index');
-				return { indexedCount: 0, failedIds: [], totalChunks: 0 };
-			}
-
 			throwIfAborted(signal);
 
-			// Run RAG indexing pipeline
+			reporter.progress(0, 'Preparing RAG indexing');
 			const embedder = new Embedder(
 				this.globalContainer,
 				this.extractorRegistry,
@@ -113,7 +92,6 @@ export class RagIndexingTaskHandler implements TaskHandler<
 			);
 			reporter.progress(1, 'Extracting text from documents');
 			const { indexedCount, failedIds, totalChunks } = await embedder.run({
-				documents,
 				signal,
 				clearExisting: true,
 				onProgress: (event) => {
@@ -121,7 +99,12 @@ export class RagIndexingTaskHandler implements TaskHandler<
 				},
 			});
 
-			reporter.progress(100, 'Indexing complete');
+			reporter.progress(
+				100,
+				indexedCount === 0 && failedIds.length === 0 && totalChunks === 0
+					? 'No documents to index'
+					: 'Indexing complete'
+			);
 
 			logger?.info(
 				'RagIndexing',

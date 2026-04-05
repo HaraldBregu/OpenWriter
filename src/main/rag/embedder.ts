@@ -11,6 +11,8 @@ import type { Document } from '@langchain/core/documents';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../workspace/workspace-service';
 import type { ServiceContainer } from '../core/service-container';
+import type { FileManager, FileMetadata } from '../shared/file_manager';
+import { DocumentsService } from '../workspace/documents';
 import type { ChunkOptions } from './text-splitter';
 import { chunkText } from './text-splitter';
 import type { ExtractorRegistry } from './document-loaders';
@@ -20,12 +22,6 @@ import { ProviderResolver } from '../shared/provider-resolver';
 import { createEmbeddingModel } from '../shared/embedding-factory';
 
 const LOG_SOURCE = 'Embedder';
-
-export interface VectorIndexingDocument {
-	id: string;
-	name: string;
-	path: string;
-}
 
 export type VectorIndexingPhase = 'extract' | 'index' | 'embed' | 'save';
 
@@ -40,7 +36,6 @@ export interface VectorIndexingProgressEvent {
 }
 
 export interface RunVectorIndexingInput {
-	documents: VectorIndexingDocument[];
 	signal: AbortSignal;
 	onProgress?: (event: VectorIndexingProgressEvent) => void;
 	clearExisting?: boolean;
@@ -63,6 +58,20 @@ export class Embedder {
 	) {}
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
+		const workspacePath = this.workspaceService.getCurrent();
+		if (!workspacePath) {
+			throw new Error('No workspace is open for RAG indexing');
+		}
+
+		const fileManagement = this.globalContainer.get<FileManager>('fileManagement');
+		const documentsService = new DocumentsService(fileManagement, null, this.logger);
+		const documents = await documentsService.loadAll(workspacePath);
+
+		if (documents.length === 0) {
+			this.logger?.info(LOG_SOURCE, 'No documents found to index');
+			return { indexedCount: 0, failedIds: [], totalChunks: 0 };
+		}
+
 		// Create embeddings model
 		const storeService =
 			this.globalContainer.get<import('../services/store').StoreService>('store');
@@ -96,15 +105,15 @@ export class Embedder {
 		}
 
 		const pendingChunks: Array<{
-			document: VectorIndexingDocument;
+			document: FileMetadata;
 			extractedMetadata: Record<string, unknown>;
 			chunks: Document[];
 		}> = [];
 
-		for (let index = 0; index < input.documents.length; index += 1) {
+		for (let index = 0; index < documents.length; index += 1) {
 			throwIfAborted(input.signal);
 
-			const document = input.documents[index];
+			const document = documents[index];
 			const extension = path.extname(document.name).toLowerCase();
 			const extractor = this.extractorRegistry.resolve(extension);
 
@@ -144,7 +153,7 @@ export class Embedder {
 				input.onProgress?.({
 					phase: 'extract',
 					completed: index + 1,
-					total: input.documents.length,
+					total: documents.length,
 					message: `Extracted: ${document.name} (${chunks.length} chunks)`,
 					documentId: document.id,
 					documentName: document.name,
