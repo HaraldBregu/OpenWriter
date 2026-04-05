@@ -11,7 +11,7 @@ import {
 } from '../../../../shared/provider-constants';
 import type { AppStartupInfo } from '../../../../shared/types';
 
-interface FirstTimeConfigurationPageProps {
+interface ConfigPageProps {
 	onConfigured: (startupInfo: AppStartupInfo) => void;
 }
 
@@ -23,7 +23,7 @@ const PROVIDER_LABELS = Object.fromEntries(
 	PROVIDER_CATALOGUE.map((provider) => [provider.id, provider.name])
 ) as Record<ProviderId, string>;
 
-const FirstTimeConfigurationPage: React.FC<FirstTimeConfigurationPageProps> = ({
+const ConfigPage: React.FC<ConfigPageProps> = ({
 	onConfigured,
 }) => {
 	const { t } = useTranslation();
