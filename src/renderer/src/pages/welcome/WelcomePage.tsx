@@ -18,7 +18,6 @@ interface RecentProject {
 
 interface WelcomePageProps {
 	startupInfo?: AppStartupInfo;
-	onConfigured?: (startupInfo: AppStartupInfo) => void;
 }
 
 const DEFAULT_STARTUP_INFO: AppStartupInfo = {
