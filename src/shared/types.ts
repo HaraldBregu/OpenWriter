@@ -20,6 +20,12 @@ export interface AppLogEntry {
 	message: string;
 }
 
+export interface AppStartupInfo {
+	startupCount: number;
+	isFirstRun: boolean;
+	isInitialized: boolean;
+}
+
 // ---- Workspace ------------------------------------------------------------
 
 export interface WorkspaceInfo {

@@ -68,6 +68,16 @@ export class StoreValidators {
 			throw new Error('Provider name exceeds maximum length');
 		}
 	}
+
+	static validateProviderConfigs(providers: ServiceProvider[]): void {
+		if (!Array.isArray(providers)) {
+			throw new Error('Providers must be an array');
+		}
+
+		providers.forEach((provider) => {
+			this.validateModelConfig(provider);
+		});
+	}
 }
 
 /**

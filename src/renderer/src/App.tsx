@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
@@ -6,6 +6,8 @@ import { AppProvider } from './contexts';
 import { AppLayout } from './components/AppLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
+import type { AppStartupInfo } from '../../shared/types';
+import FirstTimeConfigurationPage from './pages/FirstTimeConfigurationPage';
 import WelcomePage from './pages/WelcomePage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { initializeTaskStore } from './services/task-store';
@@ -63,6 +65,12 @@ const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
 const AgentsSettingsPage = lazy(() => import('./pages/settings/AgentsSettingsPage'));
 const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
 
+const FALLBACK_STARTUP_INFO: AppStartupInfo = {
+	startupCount: 0,
+	isFirstRun: false,
+	isInitialized: true,
+};
+
 function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
 		<ErrorBoundary level="route">
@@ -72,147 +80,204 @@ function RouteWrapper({ children }: { children: React.ReactNode }) {
 }
 
 const App: React.FC = () => {
+	const [startupInfo, setStartupInfo] = useState<AppStartupInfo | null>(null);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadStartupInfo = async () => {
+			if (typeof window.app?.getStartupInfo !== 'function') {
+				if (isMounted) {
+					setStartupInfo(FALLBACK_STARTUP_INFO);
+				}
+				return;
+			}
+
+			try {
+				const info = await window.app.getStartupInfo();
+				if (isMounted) {
+					setStartupInfo(info);
+				}
+			} catch {
+				if (isMounted) {
+					setStartupInfo(FALLBACK_STARTUP_INFO);
+				}
+			}
+		};
+
+		void loadStartupInfo();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
+	if (!startupInfo) {
+		return (
+			<ErrorBoundary level="root">
+				<Provider store={store}>
+					<AppProvider>
+						<LoadingSkeleton />
+					</AppProvider>
+				</Provider>
+			</ErrorBoundary>
+		);
+	}
+
+	const requiresFirstTimeConfiguration = !startupInfo.isInitialized;
+
 	return (
 		<ErrorBoundary level="root">
 			<Provider store={store}>
 				<AppProvider>
 					<Router>
 						<Routes>
-							{/* Welcome page - standalone, shown first */}
-							<Route path="/" element={<WelcomePage />} />
+							<Route
+								path="/"
+								element={
+									requiresFirstTimeConfiguration ? (
+										<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
+									) : (
+										<WelcomePage />
+									)
+								}
+							/>
 
-							{/* All other routes use AppLayout */}
 							<Route
 								path="*"
 								element={
-									<AppLayout>
-										<Suspense fallback={<LoadingSkeleton />}>
-											<Routes>
-												<Route
-													path="/home"
-													element={
-														<RouteWrapper>
-															<HomePage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/settings/*"
-													element={
-														<RouteWrapper>
-															<SettingsLayout />
-														</RouteWrapper>
-													}
-												>
+									requiresFirstTimeConfiguration ? (
+										<Navigate to="/" replace />
+									) : (
+										<AppLayout>
+											<Suspense fallback={<LoadingSkeleton />}>
+												<Routes>
 													<Route
-														index
+														path="/home"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<GeneralSettingsPage />
-															</Suspense>
+															<RouteWrapper>
+																<HomePage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="general"
+														path="/settings/*"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<GeneralSettingsPage />
-															</Suspense>
+															<RouteWrapper>
+																<SettingsLayout />
+															</RouteWrapper>
+														}
+													>
+														<Route
+															index
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<GeneralSettingsPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="general"
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<GeneralSettingsPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="workspace"
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<WorkspacePage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="providers"
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<ProvidersSettingsPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="agents"
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<AgentsSettingsPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="system"
+															element={
+																<Suspense fallback={<LoadingSkeleton />}>
+																	<SystemSettingsPage />
+																</Suspense>
+															}
+														/>
+													</Route>
+													<Route
+														path="/content/:id"
+														element={
+															<RouteWrapper>
+																<DocumentPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="workspace"
+														path="/debug/tasks"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<WorkspacePage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugTasksPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="providers"
+														path="/debug/redux"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<ProvidersSettingsPage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugReduxPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="agents"
+														path="/debug/logs"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<AgentsSettingsPage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugLogsPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="system"
+														path="/search"
 														element={
-															<Suspense fallback={<LoadingSkeleton />}>
-																<SystemSettingsPage />
-															</Suspense>
+															<RouteWrapper>
+																<SearchPage />
+															</RouteWrapper>
 														}
 													/>
-												</Route>
-												<Route
-													path="/content/:id"
-													element={
-														<RouteWrapper>
-															<DocumentPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/tasks"
-													element={
-														<RouteWrapper>
-															<DebugTasksPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/redux"
-													element={
-														<RouteWrapper>
-															<DebugReduxPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/logs"
-													element={
-														<RouteWrapper>
-															<DebugLogsPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/search"
-													element={
-														<RouteWrapper>
-															<SearchPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/library"
-													element={
-														<RouteWrapper>
-															<LibraryPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route path="/resources" element={<Navigate to="/library" replace />} />
-												<Route
-													path="/agents"
-													element={
-														<RouteWrapper>
-															<AgentsPage />
-														</RouteWrapper>
-													}
-												/>
-											</Routes>
-										</Suspense>
-									</AppLayout>
+													<Route
+														path="/library"
+														element={
+															<RouteWrapper>
+																<LibraryPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route path="/resources" element={<Navigate to="/library" replace />} />
+													<Route
+														path="/agents"
+														element={
+															<RouteWrapper>
+																<AgentsPage />
+															</RouteWrapper>
+														}
+													/>
+												</Routes>
+											</Suspense>
+										</AppLayout>
+									)
 								}
 							/>
 						</Routes>

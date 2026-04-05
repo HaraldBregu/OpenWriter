@@ -45,6 +45,7 @@ import type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	AppLogEntry,
+	AppStartupInfo,
 } from './types';
 import type { ServiceProvider } from './provider-constants';
 
@@ -158,6 +159,8 @@ export const AppChannels = {
 	deleteProvider: 'store-delete-provider',
 	getAgentProviders: 'store-get-agent-providers',
 	setAgentProvider: 'store-set-agent-provider',
+	getStartupInfo: 'app:get-startup-info',
+	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
 	openLogsFolder: 'app:open-logs-folder',
 } as const;
@@ -186,6 +189,11 @@ export interface InvokeChannelMap {
 	[AppChannels.setAgentProvider]: {
 		args: [agentName: string, providerName: string];
 		result: void;
+	};
+	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
+	[AppChannels.completeFirstRunConfiguration]: {
+		args: [providers: ServiceProvider[]];
+		result: AppStartupInfo;
 	};
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };

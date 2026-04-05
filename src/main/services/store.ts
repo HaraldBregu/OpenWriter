@@ -1,6 +1,12 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import { toProviderConfig, type ServiceProvider } from '../../shared/provider-constants';
+import {
+	PROVIDER_IDS,
+	toProviderConfig,
+	type ProviderId,
+	type ServiceProvider,
+} from '../../shared/provider-constants';
+import type { AppStartupInfo } from '../../shared/types';
 
 export interface WorkspaceInfo {
 	path: string;
@@ -12,6 +18,8 @@ export interface StoreSchema {
 	agentProviders: Record<string, string>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
+	startupCount: number;
+	isInitialized: boolean;
 }
 
 const DEFAULTS: StoreSchema = {
@@ -19,6 +27,8 @@ const DEFAULTS: StoreSchema = {
 	agentProviders: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
+	startupCount: 0,
+	isInitialized: false,
 };
 
 type SettingsStore = {
@@ -85,6 +95,10 @@ function cloneProvider(provider: ServiceProvider): ServiceProvider {
 	return { ...provider };
 }
 
+function isDefaultProviderName(name: string): name is ProviderId {
+	return (PROVIDER_IDS as readonly string[]).includes(name);
+}
+
 export class StoreService {
 	private store: SettingsStore;
 
@@ -97,6 +111,7 @@ export class StoreService {
 
 		this.migrateLegacyProviderSettings();
 		this.normalizeStoredProviders();
+		this.incrementStartupCount();
 	}
 
 	// --- Provider methods ---
@@ -144,6 +159,34 @@ export class StoreService {
 		const next = { ...current };
 		next[agentName] = providerName;
 		this.store.set('agentProviders', next);
+	}
+
+	getStartupInfo(): AppStartupInfo {
+		const startupCount = this.store.get('startupCount');
+		return {
+			startupCount,
+			isFirstRun: startupCount === 1,
+			isInitialized: this.store.get('isInitialized'),
+		};
+	}
+
+	completeFirstRunConfiguration(providers: ServiceProvider[]): AppStartupInfo {
+		const preservedCustomProviders = this.store
+			.get('providers')
+			.filter((provider) => !isDefaultProviderName(provider.name))
+			.map(cloneProvider);
+		const configuredDefaultProviders = normalizeProviders(providers)
+			.map((provider) => ({
+				name: provider.name.trim(),
+				apikey: provider.apikey.trim(),
+				baseurl: provider.baseurl.trim(),
+			}))
+			.filter((provider) => provider.apikey.length > 0);
+
+		this.store.set('providers', [...preservedCustomProviders, ...configuredDefaultProviders]);
+		this.store.set('isInitialized', true);
+
+		return this.getStartupInfo();
 	}
 
 	// --- Workspace settings ---
@@ -217,5 +260,10 @@ export class StoreService {
 		if (needsRewrite) {
 			this.store.set('providers', normalized);
 		}
+	}
+
+	private incrementStartupCount(): void {
+		const startupCount = this.store.get('startupCount');
+		this.store.set('startupCount', startupCount + 1);
 	}
 }

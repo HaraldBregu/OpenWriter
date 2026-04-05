@@ -71,6 +71,12 @@ const app: AppApi = {
 	setAgentProvider: (agentName: string, providerName: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.setAgentProvider, agentName, providerName);
 	},
+	getStartupInfo: () => {
+		return typedInvokeUnwrap(AppChannels.getStartupInfo);
+	},
+	completeFirstRunConfiguration: (providers: ServiceProvider[]) => {
+		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, providers);
+	},
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 } satisfies AppApi;
