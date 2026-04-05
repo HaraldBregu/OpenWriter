@@ -16,15 +16,7 @@ interface RecentProject {
 	exists?: boolean;
 }
 
-interface WelcomePageProps {
-	startupInfo?: AppStartupInfo;
-}
-
-const DEFAULT_STARTUP_INFO: AppStartupInfo = {
-	startupCount: 0,
-	isFirstRun: false,
-	isInitialized: true,
-};
+interface WelcomePageProps {}
 
 
 const WelcomePage: React.FC<WelcomePageProps> = () => {
