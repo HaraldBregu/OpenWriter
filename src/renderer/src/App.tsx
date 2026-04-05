@@ -54,7 +54,6 @@ const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const LibraryPage = lazy(() => import('./pages/library/LibraryPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
-const DataPage = lazy(() => import('./pages/data/Page'));
 const SearchPage = lazy(() => import('./pages/search/Page'));
 
 // Lazy-loaded settings pages
@@ -203,14 +202,6 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route path="/resources" element={<Navigate to="/library" replace />} />
-												<Route
-													path="/data"
-													element={
-														<RouteWrapper>
-															<DataPage />
-														</RouteWrapper>
-													}
-												/>
 												<Route
 													path="/agents"
 													element={
