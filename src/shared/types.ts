@@ -520,6 +520,12 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		description: 'Routes requests by intent and responds through the right specialist flow',
 	},
 	{
+		id: 'painter',
+		name: 'Painter',
+		description:
+			'Interprets a visual goal, writes an image prompt, generates the image, and checks alignment before delivery',
+	},
+	{
 		id: 'writer',
 		name: 'Agent Writer',
 		description:
