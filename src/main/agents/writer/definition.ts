@@ -35,7 +35,7 @@ const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
 
 const definition: AgentDefinition = {
 	id: 'writer',
-	name: 'Writer',
+	name: 'Agent Writer',
 	category: 'writing',
 	nodeModels: SPECIALIST_MODELS,
 	streamableNodes: [WRITER_SPECIALIST.AGGREGATOR],

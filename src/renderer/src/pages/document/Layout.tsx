@@ -19,6 +19,9 @@ interface LayoutProps {
 	documentId: string | undefined;
 }
 
+const DOCUMENT_AGENT_ID = 'writer';
+const DOCUMENT_AGENT_TASK_TYPE = 'agent-writer';
+
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const dispatch = useDocumentDispatch();
 	const navigate = useNavigate();
@@ -291,10 +294,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			if (typeof window.task?.submit !== 'function') return;
 
 			try {
-				const taskType = 'agent-assistant';
+				const taskType = DOCUMENT_AGENT_TASK_TYPE;
 				const taskInput = { prompt };
 				const metadata = {
-					agentId: 'assistant',
+					agentId: DOCUMENT_AGENT_ID,
 					documentId: id,
 					chatId: resolvedSessionId,
 					before,

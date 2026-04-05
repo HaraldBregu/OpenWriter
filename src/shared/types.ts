@@ -521,7 +521,7 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	},
 	{
 		id: 'writer',
-		name: 'Writer',
+		name: 'Agent Writer',
 		description:
 			'Routes requests through direct response, workspace retrieval, live search, and final aggregation',
 	},
