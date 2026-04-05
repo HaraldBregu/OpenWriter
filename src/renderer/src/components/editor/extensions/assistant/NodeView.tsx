@@ -108,7 +108,8 @@ export function AssistantNodeView({
 
 	const submit = useCallback(() => {
 		const trimmedPrompt = prompt.trim();
-		if (!trimmedPrompt) {
+		const canSubmitWithFiles = agentId === 'painter' && files.length > 0;
+		if (!trimmedPrompt && !canSubmitWithFiles) {
 			deleteNode();
 			return;
 		}
@@ -132,8 +133,9 @@ export function AssistantNodeView({
 				? 'Create an image inspired by the uploaded reference images.'
 				: trimmedPrompt;
 
+		updateAttributes({ loading: true, enable: false });
 		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, effectivePrompt, agentId, files);
-	}, [agentId, files, prompt, deleteNode, editor, extension.options]);
+	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
 	submitRef.current = submit;

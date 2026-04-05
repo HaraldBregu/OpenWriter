@@ -331,30 +331,39 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			agentId: AssistantAgentId = 'writer',
 			files: File[] = []
 		) => {
-			if (!id || assistantIsRunning) return;
-
-			editorRef.current?.setContentGeneratorEnable(false);
-
-			const savedReferenceImages =
-				agentId === 'painter' && files.length > 0
-					? await saveAssistantReferenceImages(id, files)
-					: [];
-			const referenceNote =
-				agentId === 'painter' && savedReferenceImages.length > 0
-					? `\n\nReference images saved in the document:\n${savedReferenceImages
-							.map((image) => `- images/${image.fileName}`)
-							.join('\n')}`
-					: '';
-			const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
-
-			const resolvedSessionId = assistantSessionId ?? uuidv7();
-			if (!assistantSessionId) {
-				setAssistantSessionId(resolvedSessionId);
+			if (!id || assistantIsRunning) {
+				editorRef.current?.setContentGeneratorLoading(false);
+				editorRef.current?.setContentGeneratorEnable(true);
+				return;
 			}
 
-			if (typeof window.task?.submit !== 'function') return;
+			editorRef.current?.setContentGeneratorLoading(true);
+			editorRef.current?.setContentGeneratorEnable(false);
 
 			try {
+				const savedReferenceImages =
+					agentId === 'painter' && files.length > 0
+						? await saveAssistantReferenceImages(id, files)
+						: [];
+				const referenceNote =
+					agentId === 'painter' && savedReferenceImages.length > 0
+						? `\n\nReference images saved in the document:\n${savedReferenceImages
+								.map((image) => `- images/${image.fileName}`)
+								.join('\n')}`
+						: '';
+				const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
+
+				const resolvedSessionId = assistantSessionId ?? uuidv7();
+				if (!assistantSessionId) {
+					setAssistantSessionId(resolvedSessionId);
+				}
+
+				if (typeof window.task?.submit !== 'function') {
+					editorRef.current?.setContentGeneratorLoading(false);
+					editorRef.current?.setContentGeneratorEnable(true);
+					return;
+				}
+
 				const taskType = DOCUMENT_AGENT_TASK_TYPES[agentId];
 				const taskInput = { prompt };
 				const metadata = {
@@ -368,14 +377,19 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				};
 
 				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
-				if (!ipcResult.success) return;
+				if (!ipcResult.success) {
+					editorRef.current?.setContentGeneratorLoading(false);
+					editorRef.current?.setContentGeneratorEnable(true);
+					return;
+				}
 
 				const resolvedTaskId = ipcResult.data.taskId;
 				initTaskMetadata(resolvedTaskId, metadata);
 				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(resolvedTaskId);
 			} catch {
-				// submission failed
+				editorRef.current?.setContentGeneratorLoading(false);
+				editorRef.current?.setContentGeneratorEnable(true);
 			}
 		},
 		[assistantIsRunning, assistantSessionId, id]
