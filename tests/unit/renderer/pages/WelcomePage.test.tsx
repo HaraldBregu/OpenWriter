@@ -40,7 +40,7 @@ jest.mock('../../../../src/renderer/src/components/TitleBar', () => ({
 // Mock logo import (handled as a static asset)
 jest.mock('@resources/icons/icon.png', () => 'test-logo.png');
 
-import WelcomePage from '../../../../src/renderer/src/pages/WelcomePage';
+import WelcomePage from '../../../../src/renderer/src/pages/welcome/WelcomePage';
 
 function renderWelcomePage() {
 	const store = configureStore({

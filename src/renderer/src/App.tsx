@@ -7,7 +7,7 @@ import { AppLayout } from './components/AppLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
-import WelcomePage from './pages/WelcomePage';
+import WelcomePage from './pages/welcome/WelcomePage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
