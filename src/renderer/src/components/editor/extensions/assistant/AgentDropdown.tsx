@@ -60,7 +60,7 @@ export function AgentDropdown({
 			<AppDropdownMenuContent
 				align="start"
 				sideOffset={6}
-				className="min-w-[10rem] rounded-2xl border border-border/75 bg-background/94 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+				className="flex min-w-[10rem] flex-col gap-1 rounded-2xl border border-border/75 bg-background/94 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
 			>
 				{ASSISTANT_AGENT_OPTIONS.map((option) => (
 					<AppDropdownMenuItem
