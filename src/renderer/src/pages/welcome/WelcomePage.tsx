@@ -33,13 +33,6 @@ const DEFAULT_STARTUP_INFO: AppStartupInfo = {
 	isInitialized: true,
 };
 
-const EMPTY_TOKENS = Object.fromEntries(
-	PROVIDER_IDS.map((providerId) => [providerId, ''])
-) as Record<ProviderId, string>;
-
-const PROVIDER_LABELS = Object.fromEntries(
-	PROVIDER_CATALOGUE.map((provider) => [provider.id, provider.name])
-) as Record<ProviderId, string>;
 
 const WelcomePage: React.FC<WelcomePageProps> = ({
 	startupInfo = DEFAULT_STARTUP_INFO,
