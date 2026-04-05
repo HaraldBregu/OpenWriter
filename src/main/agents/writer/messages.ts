@@ -1,8 +1,5 @@
-export const WRITER_PHASE_MESSAGES = {
-	ROUTER: 'Routing request',
-	BRAINSTORM: 'Brainstorming ideas',
-	OUTLINE: 'Building outline',
-	DRAFT_PLAN: 'Planning draft',
-	DRAFT: 'Writing draft',
-	REWRITE: 'Rewriting text',
+export const WRITER_STATE_MESSAGES = {
+	ROUTER: 'Routing request...',
+	RESEARCH: 'Running research specialists...',
+	AGGREGATOR: 'Writing response...',
 } as const;

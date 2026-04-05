@@ -522,6 +522,7 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	{
 		id: 'writer',
 		name: 'Writer',
-		description: 'Routes writing requests through brainstorming, outlining, drafting, and rewrite specialists',
+		description:
+			'Routes requests through direct response, workspace retrieval, live search, and final aggregation',
 	},
 ];
