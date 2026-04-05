@@ -15,7 +15,6 @@ export interface WorkspaceInfo {
 
 export interface StoreSchema {
 	providers: ServiceProvider[];
-	agentProviders: Record<string, string>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;

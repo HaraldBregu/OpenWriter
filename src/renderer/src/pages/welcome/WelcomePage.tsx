@@ -17,7 +17,6 @@ interface RecentProject {
 
 interface WelcomePageProps {}
 
-
 const WelcomePage: React.FC<WelcomePageProps> = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
