@@ -8,12 +8,6 @@ import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
-import {
-	PROVIDER_CATALOGUE,
-	PROVIDER_IDS,
-	type ProviderId,
-	type ServiceProvider,
-} from '../../../../shared/provider-constants';
 import type { AppStartupInfo } from '../../../../shared/types';
 
 interface RecentProject {
