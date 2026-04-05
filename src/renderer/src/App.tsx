@@ -140,7 +140,7 @@ const App: React.FC = () => {
 											<WelcomePage />
 										) : (
 											<RouteWrapper>
-												<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
+												<ConfigPage onConfigured={setStartupInfo} />
 											</RouteWrapper>
 										)
 									}
@@ -149,7 +149,7 @@ const App: React.FC = () => {
 									path="config"
 									element={
 										<RouteWrapper>
-											<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
+											<ConfigPage onConfigured={setStartupInfo} />
 										</RouteWrapper>
 									}
 								/>
