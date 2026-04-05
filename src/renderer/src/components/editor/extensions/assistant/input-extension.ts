@@ -9,7 +9,8 @@ export interface AssistantOptions {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		agentId?: AssistantAgentId
+		agentId?: AssistantAgentId,
+		files?: File[]
 	) => void;
 }
 
@@ -39,7 +40,8 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 				_after: string,
 				_cursorPos: number,
 				_prompt: string,
-				_agentId?: AssistantAgentId
+				_agentId?: AssistantAgentId,
+				_files?: File[]
 			) => {},
 		};
 	},

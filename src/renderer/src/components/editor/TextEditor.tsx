@@ -74,7 +74,8 @@ export interface TextEditorProps {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		agentId?: AssistantAgentId
+		agentId?: AssistantAgentId,
+		files?: File[]
 	) => void;
 	onImageSubmit?: (prompt: string) => void;
 	onImageFileSelect?: (file: File) => void;
@@ -154,8 +155,8 @@ const TextEditor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onTextSubmit: (before, after, cursorPos, prompt, agentId) =>
-							onTextSubmitRef.current?.(before, after, cursorPos, prompt, agentId),
+						onTextSubmit: (before, after, cursorPos, prompt, agentId, files) =>
+							onTextSubmitRef.current?.(before, after, cursorPos, prompt, agentId, files),
 						onImageSubmit: (prompt) => onImageSubmitRef.current?.(prompt),
 						onImageFileSelect: (file) => onImageFileSelectRef.current?.(file),
 						onImageInsert: (file, insertAtPos) =>

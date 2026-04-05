@@ -33,7 +33,8 @@ export interface ExtensionHandlers {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		agentId?: 'writer' | 'painter'
+		agentId?: 'writer' | 'painter',
+		files?: File[]
 	) => void;
 	onImageSubmit: (prompt: string) => void;
 	onImageFileSelect: (file: File) => void;

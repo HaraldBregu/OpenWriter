@@ -6,6 +6,7 @@ import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { v7 as uuidv7 } from 'uuid';
 import { debounce } from 'lodash';
+import type { AssistantAgentId } from '@/components/editor/extensions/assistant';
 import Header from './components/Header';
 import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
@@ -14,10 +15,43 @@ import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
-import type { AssistantAgentId } from '@/components/editor/extensions/assistant';
 
 interface LayoutProps {
 	documentId: string | undefined;
+}
+
+function readFileAsDataUri(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = (): void => resolve(reader.result as string);
+		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
+		reader.readAsDataURL(file);
+	});
+}
+
+async function saveAssistantReferenceImages(
+	documentId: string,
+	files: File[]
+): Promise<Array<{ fileName: string; filePath: string }>> {
+	const saved: Array<{ fileName: string; filePath: string }> = [];
+
+	for (const file of files) {
+		const dataUri = await readFileAsDataUri(file);
+		const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
+		if (!match) continue;
+
+		const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+		const base64 = match[2];
+		const fileName = `${crypto.randomUUID()}.${ext}`;
+		const result = await window.workspace.saveDocumentImage({
+			documentId,
+			fileName,
+			base64,
+		});
+		saved.push(result);
+	}
+
+	return saved;
 }
 
 const DOCUMENT_AGENT_TASK_TYPES: Record<AssistantAgentId, string> = {
@@ -294,13 +328,24 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			after: string,
 			cursorPos: number,
 			input: string,
-			agentId: AssistantAgentId = 'writer'
+			agentId: AssistantAgentId = 'writer',
+			files: File[] = []
 		) => {
 			if (!id || assistantIsRunning) return;
 
 			editorRef.current?.setContentGeneratorEnable(false);
 
-			const prompt = buildTaskPrompt(before, after, input);
+			const savedReferenceImages =
+				agentId === 'painter' && files.length > 0
+					? await saveAssistantReferenceImages(id, files)
+					: [];
+			const referenceNote =
+				agentId === 'painter' && savedReferenceImages.length > 0
+					? `\n\nReference images saved in the document:\n${savedReferenceImages
+							.map((image) => `- images/${image.fileName}`)
+							.join('\n')}`
+					: '';
+			const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
 
 			const resolvedSessionId = assistantSessionId ?? uuidv7();
 			if (!assistantSessionId) {
@@ -319,6 +364,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					before,
 					after,
 					cursorPos,
+					referenceImages: savedReferenceImages,
 				};
 
 				const ipcResult = await window.task.submit(taskType, taskInput, metadata);

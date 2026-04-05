@@ -6,6 +6,15 @@ import type { AssistantOptions } from './input-extension';
 import { AssistantContent } from './AssistantContent';
 import type { AssistantAgentId } from './agents';
 
+function readFileAsDataUri(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = (): void => resolve(reader.result as string);
+		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
+		reader.readAsDataURL(file);
+	});
+}
+
 export function AssistantNodeView({
 	editor,
 	node,
@@ -18,8 +27,12 @@ export function AssistantNodeView({
 	const agentId = (node.attrs.agentId as AssistantAgentId) ?? 'writer';
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
+	const [files, setFiles] = useState<File[]>([]);
+	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+	const [isDragOver, setIsDragOver] = useState(false);
 
 	const handlePromptChange = useCallback(
 		(value: string) => {
@@ -39,6 +52,38 @@ export function AssistantNodeView({
 		},
 		[node.attrs.agentId, updateAttributes]
 	);
+
+	const addFile = useCallback((newFile: File) => {
+		setFiles((prev) => [...prev, newFile]);
+		readFileAsDataUri(newFile)
+			.then((result) => {
+				setPreviewUrls((prev) => [...prev, result]);
+			})
+			.catch(() => {});
+	}, []);
+
+	const removeFile = useCallback((index: number) => {
+		setFiles((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
+		setPreviewUrls((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
+	}, []);
+
+	const handleFileInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const selected = e.target.files;
+			if (!selected) return;
+			for (const file of Array.from(selected)) {
+				if (file.type.startsWith('image/')) {
+					addFile(file);
+				}
+			}
+			e.target.value = '';
+		},
+		[addFile]
+	);
+
+	const handleOpenFilePicker = useCallback(() => {
+		fileInputRef.current?.click();
+	}, []);
 
 	const deleteNode = useCallback(() => {
 		const pos = getPos();
@@ -82,9 +127,13 @@ export function AssistantNodeView({
 		const rawAfter =
 			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
 		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
+		const effectivePrompt =
+			agentId === 'painter' && !trimmedPrompt && files.length > 0
+				? 'Create an image inspired by the uploaded reference images.'
+				: trimmedPrompt;
 
-		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt, agentId);
-	}, [agentId, prompt, deleteNode, editor, extension.options]);
+		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, effectivePrompt, agentId, files);
+	}, [agentId, files, prompt, deleteNode, editor, extension.options]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
 	submitRef.current = submit;
@@ -135,6 +184,32 @@ export function AssistantNodeView({
 		return () => document.removeEventListener('mousedown', handleMouseDown, true);
 	}, []);
 
+	const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+		if (agentId !== 'painter') return;
+		e.preventDefault();
+		setIsDragOver(true);
+	}, [agentId]);
+
+	const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+		if (agentId !== 'painter') return;
+		e.preventDefault();
+		setIsDragOver(false);
+	}, [agentId]);
+
+	const handleDrop = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'painter') return;
+			e.preventDefault();
+			setIsDragOver(false);
+			for (const file of Array.from(e.dataTransfer.files)) {
+				if (file.type.startsWith('image/')) {
+					addFile(file);
+				}
+			}
+		},
+		[addFile, agentId]
+	);
+
 	const wrapperClassName = [
 		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.4rem]',
 		'border bg-card/95 text-card-foreground ring-1 ring-black/6 backdrop-blur-sm',
@@ -142,24 +217,37 @@ export function AssistantNodeView({
 		loading
 			? 'border-primary/35 shadow-[0_20px_44px_hsl(var(--primary)/0.14),0_34px_80px_hsl(var(--foreground)/0.14)]'
 			: 'border-border/85 shadow-[0_16px_34px_hsl(var(--foreground)/0.08),0_28px_72px_hsl(var(--foreground)/0.12)] hover:border-foreground/15 hover:shadow-[0_20px_44px_hsl(var(--foreground)/0.1),0_36px_88px_hsl(var(--foreground)/0.16)]',
+		agentId === 'painter' && isDragOver ? 'border-primary/45 bg-primary/5' : '',
 		!enable && !loading ? 'bg-muted/55' : '',
 		'focus-within:border-primary/45 focus-within:shadow-[0_22px_48px_hsl(var(--primary)/0.12),0_36px_92px_hsl(var(--foreground)/0.18)] dark:border-border/90 dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]',
 	].join(' ');
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<div ref={wrapperRef} className={wrapperClassName}>
+			<div
+				ref={wrapperRef}
+				className={wrapperClassName}
+				onDragOver={agentId === 'painter' ? handleDragOver : undefined}
+				onDragLeave={agentId === 'painter' ? handleDragLeave : undefined}
+				onDrop={agentId === 'painter' ? handleDrop : undefined}
+			>
 				<div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/12 via-primary/5 to-transparent" />
 				<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 				<AssistantContent
 					prompt={prompt}
 					agentId={agentId}
+					files={files}
+					previewUrls={previewUrls}
 					loading={loading}
 					enable={enable}
 					textareaRef={textareaRef}
+					fileInputRef={fileInputRef}
 					submitRef={submitRef}
 					onPromptChange={handlePromptChange}
 					onAgentChange={handleAgentChange}
+					onRemoveFile={removeFile}
+					onFileInputChange={handleFileInputChange}
+					onOpenFilePicker={handleOpenFilePicker}
 					onResize={resizeTextarea}
 				/>
 			</div>
