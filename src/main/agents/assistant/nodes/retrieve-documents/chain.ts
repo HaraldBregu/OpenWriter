@@ -9,10 +9,10 @@ import {
 } from '../../specialist-agent';
 import type { RagRetriever } from './retriever';
 
-const SYSTEM_PROMPT = `You are the RAG specialist in a multi-agent assistant.
+const SYSTEM_PROMPT = `You are the retrieval specialist in a multi-agent assistant.
 
-You receive the user's request, a normalized request, routing guidance, intent
-classification, and retrieved workspace snippets.
+You receive the user's request, a normalized request, routing guidance, and
+retrieved workspace snippets.
 
 Produce an internal note for another assistant, not a user-facing reply.
 
@@ -165,7 +165,7 @@ function buildHumanMessage(
 		'Normalized request:',
 		normalizedPrompt,
 		'',
-		'Intent classification:',
+		'Routing context:',
 		'<intent_findings>',
 		intentFindings,
 		'</intent_findings>',

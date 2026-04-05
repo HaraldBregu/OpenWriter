@@ -2,30 +2,48 @@ import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '..
 import { buildGraph, ASSISTANT_SPECIALIST } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import { RagRetriever } from './nodes/rag-retrieval';
+import { RagRetriever } from './nodes/retrieve-documents';
 
 const LOG_SOURCE = 'AssistantAgent';
 
 const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
-	[ASSISTANT_SPECIALIST.INTENT_ANALYZER]: {
+	[ASSISTANT_SPECIALIST.ROUTE_QUESTION]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
-		maxTokens: 1024,
+		maxTokens: 512,
 	},
-	[ASSISTANT_SPECIALIST.RAG_RETRIEVAL]: {
+	[ASSISTANT_SPECIALIST.GENERATE_DIRECT_ANSWER]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.4,
+		maxTokens: 4096,
+	},
+	[ASSISTANT_SPECIALIST.RETRIEVE_DOCUMENTS]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_SPECIALIST.WEB_RESEARCH]: {
+	[ASSISTANT_SPECIALIST.GRADE_DOCUMENTS]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
-		maxTokens: 768,
+		maxTokens: 256,
 	},
-	[ASSISTANT_SPECIALIST.RESPONSE_PREPARER]: {
+	[ASSISTANT_SPECIALIST.REWRITE_QUERY]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.1,
+		maxTokens: 256,
+	},
+	[ASSISTANT_SPECIALIST.RETURN_FALLBACK_RESPONSE]: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.3,
+		maxTokens: 512,
+	},
+	[ASSISTANT_SPECIALIST.GENERATE_ANSWER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
@@ -38,7 +56,11 @@ const definition: AgentDefinition = {
 	name: 'Assistant',
 	category: 'utility',
 	nodeModels: SPECIALIST_MODELS,
-	streamableNodes: [ASSISTANT_SPECIALIST.RESPONSE_PREPARER],
+	streamableNodes: [
+		ASSISTANT_SPECIALIST.GENERATE_DIRECT_ANSWER,
+		ASSISTANT_SPECIALIST.RETURN_FALLBACK_RESPONSE,
+		ASSISTANT_SPECIALIST.GENERATE_ANSWER,
+	],
 	buildGraph,
 
 	prepareGraph(
@@ -75,16 +97,16 @@ const definition: AgentDefinition = {
 			prompt: ctx.prompt,
 			history: ctx.history,
 			normalizedPrompt: '',
-			intentFindings: '',
-			intentCategory: 'question',
-			needsParallelResearch: false,
-			needsRetrieval: false,
-			needsWebSearch: false,
-			ragQuery: '',
-			webSearchQuery: '',
-			ragFindings: '',
-			webFindings: '',
-			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_ANALYZER,
+			routingFindings: '',
+			routeDecision: 'direct',
+			retrievalQuery: '',
+			retrievedContext: '',
+			retrievalStatus: 'idle',
+			documentsRelevant: false,
+			gradeFindings: '',
+			retryCount: 0,
+			maxRetries: 2,
+			phaseLabel: ASSISTANT_STATE_MESSAGES.ROUTE_QUESTION,
 			response: '',
 		};
 	},

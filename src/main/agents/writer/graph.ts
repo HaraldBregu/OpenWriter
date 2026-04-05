@@ -2,7 +2,7 @@ import { END, START, StateGraph } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
-import type { RagRetriever } from '../assistant/nodes/rag-retrieval';
+import type { RagRetriever } from '../assistant/nodes/retrieve-documents';
 import { WriterState } from './state';
 import { aggregatorAgent, createAggregatorAgent } from './agents/aggregator-agent';
 import { createRagRetrievalAgent, ragRetrievalAgent } from './agents/rag-retrieval-agent';

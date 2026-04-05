@@ -3,7 +3,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
 import { assistantNodeDefinitions, ASSISTANT_NODE, type AssistantNodeName } from './nodes';
-import type { RagRetriever } from './nodes/rag-retrieval';
+import type { RagRetriever } from './nodes/retrieve-documents';
 import type { AssistantSpecialistAgent } from './specialist-agent';
 import { AssistantState, type AssistantGraphState } from './state';
 
@@ -12,25 +12,46 @@ const LOG_SOURCE = 'AssistantGraph';
 export const ASSISTANT_SPECIALIST = ASSISTANT_NODE;
 
 export interface AssistantSpecialistModels {
-	[ASSISTANT_NODE.INTENT_ANALYZER]: BaseChatModel;
-	[ASSISTANT_NODE.RAG_RETRIEVAL]: BaseChatModel;
-	[ASSISTANT_NODE.WEB_RESEARCH]: BaseChatModel;
-	[ASSISTANT_NODE.RESPONSE_PREPARER]: BaseChatModel;
+	[ASSISTANT_NODE.ROUTE_QUESTION]: BaseChatModel;
+	[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER]: BaseChatModel;
+	[ASSISTANT_NODE.RETRIEVE_DOCUMENTS]: BaseChatModel;
+	[ASSISTANT_NODE.GRADE_DOCUMENTS]: BaseChatModel;
+	[ASSISTANT_NODE.REWRITE_QUERY]: BaseChatModel;
+	[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE]: BaseChatModel;
+	[ASSISTANT_NODE.GENERATE_ANSWER]: BaseChatModel;
 }
 
 type AssistantSpecialistResult = Partial<AssistantGraphState>;
 type AssistantSpecialistRunner = (state: AssistantGraphState) => Promise<AssistantSpecialistResult>;
 
-function routeAfterIntent(
+function routeAfterQuestion(
 	state: AssistantGraphState
-):
-	| typeof ASSISTANT_NODE.RESPONSE_PREPARER
-	| [typeof ASSISTANT_NODE.RAG_RETRIEVAL, typeof ASSISTANT_NODE.WEB_RESEARCH] {
-	if (!state.needsParallelResearch) {
-		return ASSISTANT_NODE.RESPONSE_PREPARER;
+): typeof ASSISTANT_NODE.GENERATE_DIRECT_ANSWER | typeof ASSISTANT_NODE.RETRIEVE_DOCUMENTS {
+	if (state.routeDecision === 'direct') {
+		return ASSISTANT_NODE.GENERATE_DIRECT_ANSWER;
 	}
 
-	return [ASSISTANT_NODE.RAG_RETRIEVAL, ASSISTANT_NODE.WEB_RESEARCH];
+	return ASSISTANT_NODE.RETRIEVE_DOCUMENTS;
+}
+
+function routeAfterGrade(
+	state: AssistantGraphState
+): typeof ASSISTANT_NODE.GENERATE_ANSWER | typeof ASSISTANT_NODE.REWRITE_QUERY {
+	if (state.documentsRelevant) {
+		return ASSISTANT_NODE.GENERATE_ANSWER;
+	}
+
+	return ASSISTANT_NODE.REWRITE_QUERY;
+}
+
+function routeAfterRewrite(
+	state: AssistantGraphState
+): typeof ASSISTANT_NODE.RETRIEVE_DOCUMENTS | typeof ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE {
+	if (state.retryCount < state.maxRetries) {
+		return ASSISTANT_NODE.RETRIEVE_DOCUMENTS;
+	}
+
+	return ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE;
 }
 
 function withNodeLogging(
@@ -75,21 +96,33 @@ export function buildGraph(
 	const m = models as unknown as AssistantSpecialistModels;
 	const nodeContext = { logger, retriever };
 	const nodes: Record<AssistantNodeName, AssistantSpecialistAgent> = {
-		[ASSISTANT_NODE.INTENT_ANALYZER]:
-			assistantNodeDefinitions[ASSISTANT_NODE.INTENT_ANALYZER].create(
-				m[ASSISTANT_NODE.INTENT_ANALYZER]
+		[ASSISTANT_NODE.ROUTE_QUESTION]:
+			assistantNodeDefinitions[ASSISTANT_NODE.ROUTE_QUESTION].create(
+				m[ASSISTANT_NODE.ROUTE_QUESTION]
 			),
-		[ASSISTANT_NODE.RAG_RETRIEVAL]:
-			assistantNodeDefinitions[ASSISTANT_NODE.RAG_RETRIEVAL].create(
-				m[ASSISTANT_NODE.RAG_RETRIEVAL]
+		[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER]:
+			assistantNodeDefinitions[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER].create(
+				m[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER]
 			),
-		[ASSISTANT_NODE.WEB_RESEARCH]:
-			assistantNodeDefinitions[ASSISTANT_NODE.WEB_RESEARCH].create(
-				m[ASSISTANT_NODE.WEB_RESEARCH]
+		[ASSISTANT_NODE.RETRIEVE_DOCUMENTS]:
+			assistantNodeDefinitions[ASSISTANT_NODE.RETRIEVE_DOCUMENTS].create(
+				m[ASSISTANT_NODE.RETRIEVE_DOCUMENTS]
 			),
-		[ASSISTANT_NODE.RESPONSE_PREPARER]:
-			assistantNodeDefinitions[ASSISTANT_NODE.RESPONSE_PREPARER].create(
-				m[ASSISTANT_NODE.RESPONSE_PREPARER]
+		[ASSISTANT_NODE.GRADE_DOCUMENTS]:
+			assistantNodeDefinitions[ASSISTANT_NODE.GRADE_DOCUMENTS].create(
+				m[ASSISTANT_NODE.GRADE_DOCUMENTS]
+			),
+		[ASSISTANT_NODE.REWRITE_QUERY]:
+			assistantNodeDefinitions[ASSISTANT_NODE.REWRITE_QUERY].create(
+				m[ASSISTANT_NODE.REWRITE_QUERY]
+			),
+		[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE]:
+			assistantNodeDefinitions[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE].create(
+				m[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE]
+			),
+		[ASSISTANT_NODE.GENERATE_ANSWER]:
+			assistantNodeDefinitions[ASSISTANT_NODE.GENERATE_ANSWER].create(
+				m[ASSISTANT_NODE.GENERATE_ANSWER]
 			),
 	};
 
@@ -100,55 +133,91 @@ export function buildGraph(
 
 	return new StateGraph(AssistantState)
 		.addNode(
-			ASSISTANT_NODE.INTENT_ANALYZER,
-			withNodeLogging(ASSISTANT_NODE.INTENT_ANALYZER, logger, (state) =>
-				assistantNodeDefinitions[ASSISTANT_NODE.INTENT_ANALYZER].run(
+			ASSISTANT_NODE.ROUTE_QUESTION,
+			withNodeLogging(ASSISTANT_NODE.ROUTE_QUESTION, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.ROUTE_QUESTION].run(
 					state,
-					nodes[ASSISTANT_NODE.INTENT_ANALYZER],
+					nodes[ASSISTANT_NODE.ROUTE_QUESTION],
 					nodeContext
 				)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.RAG_RETRIEVAL,
-			withNodeLogging(ASSISTANT_NODE.RAG_RETRIEVAL, logger, (state) =>
-				assistantNodeDefinitions[ASSISTANT_NODE.RAG_RETRIEVAL].run(
+			ASSISTANT_NODE.GENERATE_DIRECT_ANSWER,
+			withNodeLogging(ASSISTANT_NODE.GENERATE_DIRECT_ANSWER, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER].run(
 					state,
-					nodes[ASSISTANT_NODE.RAG_RETRIEVAL],
+					nodes[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER],
 					nodeContext
 				)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.WEB_RESEARCH,
-			withNodeLogging(ASSISTANT_NODE.WEB_RESEARCH, logger, (state) =>
-				assistantNodeDefinitions[ASSISTANT_NODE.WEB_RESEARCH].run(
+			ASSISTANT_NODE.RETRIEVE_DOCUMENTS,
+			withNodeLogging(ASSISTANT_NODE.RETRIEVE_DOCUMENTS, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.RETRIEVE_DOCUMENTS].run(
 					state,
-					nodes[ASSISTANT_NODE.WEB_RESEARCH],
+					nodes[ASSISTANT_NODE.RETRIEVE_DOCUMENTS],
 					nodeContext
 				)
 			)
 		)
 		.addNode(
-			ASSISTANT_NODE.RESPONSE_PREPARER,
-			withNodeLogging(ASSISTANT_NODE.RESPONSE_PREPARER, logger, (state) =>
-				assistantNodeDefinitions[ASSISTANT_NODE.RESPONSE_PREPARER].run(
+			ASSISTANT_NODE.GRADE_DOCUMENTS,
+			withNodeLogging(ASSISTANT_NODE.GRADE_DOCUMENTS, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.GRADE_DOCUMENTS].run(
 					state,
-					nodes[ASSISTANT_NODE.RESPONSE_PREPARER],
+					nodes[ASSISTANT_NODE.GRADE_DOCUMENTS],
 					nodeContext
 				)
 			)
 		)
-		.addEdge(START, ASSISTANT_NODE.INTENT_ANALYZER)
-		.addConditionalEdges(ASSISTANT_NODE.INTENT_ANALYZER, routeAfterIntent, [
-			ASSISTANT_NODE.RAG_RETRIEVAL,
-			ASSISTANT_NODE.WEB_RESEARCH,
-			ASSISTANT_NODE.RESPONSE_PREPARER,
+		.addNode(
+			ASSISTANT_NODE.REWRITE_QUERY,
+			withNodeLogging(ASSISTANT_NODE.REWRITE_QUERY, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.REWRITE_QUERY].run(
+					state,
+					nodes[ASSISTANT_NODE.REWRITE_QUERY],
+					nodeContext
+				)
+			)
+		)
+		.addNode(
+			ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE,
+			withNodeLogging(ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE].run(
+					state,
+					nodes[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE],
+					nodeContext
+				)
+			)
+		)
+		.addNode(
+			ASSISTANT_NODE.GENERATE_ANSWER,
+			withNodeLogging(ASSISTANT_NODE.GENERATE_ANSWER, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.GENERATE_ANSWER].run(
+					state,
+					nodes[ASSISTANT_NODE.GENERATE_ANSWER],
+					nodeContext
+				)
+			)
+		)
+		.addEdge(START, ASSISTANT_NODE.ROUTE_QUESTION)
+		.addConditionalEdges(ASSISTANT_NODE.ROUTE_QUESTION, routeAfterQuestion, [
+			ASSISTANT_NODE.GENERATE_DIRECT_ANSWER,
+			ASSISTANT_NODE.RETRIEVE_DOCUMENTS,
 		])
-		.addEdge(
-			[ASSISTANT_NODE.RAG_RETRIEVAL, ASSISTANT_NODE.WEB_RESEARCH],
-			ASSISTANT_NODE.RESPONSE_PREPARER
-		)
-		.addEdge(ASSISTANT_NODE.RESPONSE_PREPARER, END)
+		.addEdge(ASSISTANT_NODE.RETRIEVE_DOCUMENTS, ASSISTANT_NODE.GRADE_DOCUMENTS)
+		.addConditionalEdges(ASSISTANT_NODE.GRADE_DOCUMENTS, routeAfterGrade, [
+			ASSISTANT_NODE.GENERATE_ANSWER,
+			ASSISTANT_NODE.REWRITE_QUERY,
+		])
+		.addConditionalEdges(ASSISTANT_NODE.REWRITE_QUERY, routeAfterRewrite, [
+			ASSISTANT_NODE.RETRIEVE_DOCUMENTS,
+			ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE,
+		])
+		.addEdge(ASSISTANT_NODE.GENERATE_DIRECT_ANSWER, END)
+		.addEdge(ASSISTANT_NODE.GENERATE_ANSWER, END)
+		.addEdge(ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE, END)
 		.compile();
 }

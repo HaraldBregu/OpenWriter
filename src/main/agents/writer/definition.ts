@@ -2,7 +2,7 @@ import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '..
 import { buildGraph, WRITER_SPECIALIST } from './graph';
 import { WRITER_STATE_MESSAGES } from './messages';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
-import { RagRetriever } from '../assistant/nodes/rag-retrieval';
+import { RagRetriever } from '../assistant/nodes/retrieve-documents';
 
 const LOG_SOURCE = 'WriterAgent';
 

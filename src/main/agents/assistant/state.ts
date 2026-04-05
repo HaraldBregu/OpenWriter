@@ -1,6 +1,9 @@
 import { Annotation } from '@langchain/langgraph';
 import type { AgentHistoryMessage } from '../core/types';
 
+export type AssistantRouteDecision = 'direct' | 'rag';
+export type AssistantRetrievalStatus = 'idle' | 'found' | 'empty' | 'unavailable';
+
 export const AssistantState = Annotation.Root({
 	prompt: Annotation<string>({
 		reducer: (_a, b) => b,
@@ -17,49 +20,49 @@ export const AssistantState = Annotation.Root({
 		default: () => '',
 	}),
 
-	intentFindings: Annotation<string>({
+	routingFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
-	intentCategory: Annotation<string>({
+	routeDecision: Annotation<AssistantRouteDecision>({
 		reducer: (_a, b) => b,
-		default: () => 'question',
+		default: () => 'direct',
 	}),
 
-	needsParallelResearch: Annotation<boolean>({
+	retrievalQuery: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	retrievedContext: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	retrievalStatus: Annotation<AssistantRetrievalStatus>({
+		reducer: (_a, b) => b,
+		default: () => 'idle',
+	}),
+
+	documentsRelevant: Annotation<boolean>({
 		reducer: (_a, b) => b,
 		default: () => false,
 	}),
 
-	needsRetrieval: Annotation<boolean>({
-		reducer: (_a, b) => b,
-		default: () => false,
-	}),
-
-	needsWebSearch: Annotation<boolean>({
-		reducer: (_a, b) => b,
-		default: () => false,
-	}),
-
-	ragQuery: Annotation<string>({
+	gradeFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
-	webSearchQuery: Annotation<string>({
+	retryCount: Annotation<number>({
 		reducer: (_a, b) => b,
-		default: () => '',
+		default: () => 0,
 	}),
 
-	ragFindings: Annotation<string>({
+	maxRetries: Annotation<number>({
 		reducer: (_a, b) => b,
-		default: () => '',
-	}),
-
-	webFindings: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
+		default: () => 2,
 	}),
 
 	phaseLabel: Annotation<string>({

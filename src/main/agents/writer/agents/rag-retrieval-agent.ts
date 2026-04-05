@@ -5,7 +5,7 @@ import {
 	NO_CONTEXT_FINDING,
 	runRagChain,
 	type RagRetriever,
-} from '../../assistant/nodes/rag-retrieval';
+} from '../../assistant/nodes/retrieve-documents';
 import { WriterState } from '../state';
 
 const RAG_SKIPPED_FINDING = 'Workspace retrieval was not required for this request.';

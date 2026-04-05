@@ -2,7 +2,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../services/logger';
 import { toLangChainHistoryMessages } from '../../core/history';
-import { searchDuckDuckGo } from '../../assistant/nodes/web-research/duckduckgo-search';
+import { searchDuckDuckGo } from './duckduckgo-search';
 import {
 	createWriterSpecialistAgent,
 	invokeWriterSpecialist,
