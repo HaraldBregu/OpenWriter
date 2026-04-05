@@ -53,7 +53,9 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
-const LibraryPage = lazy(() => import('./pages/library/LibraryPage'));
+const DocumentsPage = lazy(() => import('./pages/resources/Documents/DocumentsPage'));
+const ImagesPage = lazy(() => import('./pages/resources/Images/ImagesPage'));
+const FilesPage = lazy(() => import('./pages/resources/Files/FilesPage'));
 const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const SearchPage = lazy(() => import('./pages/search/Page'));
 
@@ -246,14 +248,37 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/library"
+													path="/resources/documents"
 													element={
 														<RouteWrapper>
-															<LibraryPage />
+															<DocumentsPage />
 														</RouteWrapper>
 													}
 												/>
-												<Route path="/resources" element={<Navigate to="/library" replace />} />
+												<Route
+													path="/resources/images"
+													element={
+														<RouteWrapper>
+															<ImagesPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/resources/files"
+													element={
+														<RouteWrapper>
+															<FilesPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/library"
+													element={<Navigate to="/resources/documents" replace />}
+												/>
+												<Route
+													path="/resources"
+													element={<Navigate to="/resources/documents" replace />}
+												/>
 												<Route
 													path="/agents"
 													element={

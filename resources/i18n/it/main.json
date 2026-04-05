@@ -423,7 +423,7 @@
 		"noRecentWritings": "Nessuna scrittura ancora. Creane una per iniziare.",
 		"viewAll": "Vedi tutti",
 		"documents": "Documenti",
-		"documentsDescription": "Sfoglia i tuoi file",
+		"documentsDescription": "Sfoglia i documenti importati",
 		"integrations": "Integrazioni",
 		"integrationsDescription": "Connetti i tuoi strumenti",
 		"chat": "Nuova Chat",
@@ -739,6 +739,33 @@
 		"undo": "Annulla",
 		"redo": "Ripeti"
 	},
+	"resources": {
+		"title": "Risorse",
+		"removeItems": "Rimuovi elementi",
+		"removeConfirm_one": "Sei sicuro di voler rimuovere {{count}} elemento da questa sezione? Questa azione non può essere annullata.",
+		"removeConfirm_other": "Sei sicuro di voler rimuovere {{count}} elementi da questa sezione? Questa azione non può essere annullata.",
+		"remove": "Rimuovi",
+		"removeWithCount": "Rimuovi ({{count}})",
+		"documents": {
+			"loading": "Caricamento documenti…",
+			"indexing": "Indicizzazione documenti…",
+			"empty": "Nessun documento in questa sezione.",
+			"upload": "Importa documenti",
+			"searchPlaceholder": "Cerca documenti..."
+		},
+		"images": {
+			"loading": "Caricamento immagini…",
+			"empty": "Nessuna immagine in questa sezione.",
+			"upload": "Importa immagini",
+			"searchPlaceholder": "Cerca immagini..."
+		},
+		"files": {
+			"loading": "Caricamento file…",
+			"empty": "Nessun file in questa sezione.",
+			"upload": "Importa file",
+			"searchPlaceholder": "Cerca file..."
+		}
+	},
 	"library": {
 		"title": "Libreria",
 		"indexing": "Indicizzazione libreria…",
@@ -846,9 +873,11 @@
 	"appLayout": {
 		"untitled": "Senza titolo",
 		"library": "Libreria",
+		"resources": "Risorse",
 		"documents": "Documenti",
 		"media": "Media",
 		"images": "Immagini",
+		"files": "File",
 		"integrations": "Integrazioni",
 		"socialMedia": "Social media",
 		"debug": "Debug",

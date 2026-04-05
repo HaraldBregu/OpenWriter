@@ -144,9 +144,9 @@ export function buildSearchSections({
 					kind: 'resource' as const,
 					title: resource.name,
 					description: resource.path,
-					meta: `${resource.mimeType || 'File'} / Imported ${formatRelativeTime(resource.importedAt)}`,
-					href: '/library',
-					icon: icons.resource,
+					meta: `${resource.categoryLabel} / ${resource.mimeType || 'File'} / Imported ${formatRelativeTime(resource.importedAt)}`,
+					href: resource.href,
+					icon: resource.icon || icons.resource,
 				},
 			}))
 			.filter((entry) => !hasQuery || entry.score > 0)

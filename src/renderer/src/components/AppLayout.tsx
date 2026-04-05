@@ -9,6 +9,10 @@ import { selectProjectName, selectWorkspaceName } from '../store/workspace/selec
 import { loadCurrentWorkspace, loadProjectName } from '../store/workspace/actions';
 import { selectAllDocuments } from '../store/documents/selectors';
 import { documentAdded } from '../store/documents/actions';
+import {
+	RESOURCE_SECTION_ORDER,
+	RESOURCE_SECTIONS,
+} from '../pages/resources/shared/resource-sections';
 import { TitleBar } from './TitleBar';
 import {
 	AppCollapsible,
@@ -38,7 +42,6 @@ import {
 	ChevronRight,
 	ChevronsUpDown,
 	Database,
-	Library,
 	Search,
 	Bot,
 	ListTodo,
@@ -230,25 +233,39 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 						<AppSidebarSeparator />
 
-						{/* Library group */}
+						{/* Resources */}
+						<AppSidebarGroup className="py-0">
+							<AppSidebarGroupLabel>{t('appLayout.resources', 'Resources')}</AppSidebarGroupLabel>
+							<AppSidebarGroupContent>
+								<AppSidebarMenu>
+									{RESOURCE_SECTION_ORDER.map((sectionId) => {
+										const section = RESOURCE_SECTIONS[sectionId];
+										const Icon = section.icon;
+
+										return (
+											<AppSidebarMenuItem key={section.id}>
+												<AppSidebarMenuButton
+													asChild
+													className="h-9 px-3"
+													isActive={location.pathname === section.route}
+												>
+													<Link to={section.route}>
+														<Icon className="h-4 w-4 shrink-0" />
+														<span className="flex-1 truncate">{t(section.titleKey)}</span>
+													</Link>
+												</AppSidebarMenuButton>
+											</AppSidebarMenuItem>
+										);
+									})}
+								</AppSidebarMenu>
+							</AppSidebarGroupContent>
+						</AppSidebarGroup>
+
+						<AppSidebarSeparator />
+
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
-									<AppSidebarMenuItem>
-										<AppSidebarMenuButton
-											asChild
-											className="h-9 px-3"
-											isActive={
-												location.pathname === '/library' || location.pathname === '/resources'
-											}
-										>
-											<Link to="/library">
-												<Library className="h-4 w-4 shrink-0" />
-												<span className="flex-1 truncate">{t('appLayout.library')}</span>
-											</Link>
-										</AppSidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarSeparator className="my-1" />
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild

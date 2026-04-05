@@ -14,18 +14,18 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
 	AppSheet,
 	AppSheetContent,
+	AppSheetDescription,
 	AppSheetHeader,
 	AppSheetTitle,
-	AppSheetDescription,
 	AppTable,
-	AppTableHeader,
 	AppTableBody,
-	AppTableHead,
-	AppTableRow,
 	AppTableCell,
-} from '../../components/app';
-import type { ResourceInfo } from '../../../../shared/types';
-import { formatBytes } from './constants';
+	AppTableHead,
+	AppTableHeader,
+	AppTableRow,
+} from '@/components/app';
+import type { ResourceInfo } from '../../../../../shared/types';
+import { formatBytes } from './resource-utils';
 
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('xml', xml);
@@ -58,12 +58,12 @@ function parseCsv(text: string): string[][] {
 	let inQuotes = false;
 	let row: string[] = [];
 
-	for (let i = 0; i < text.length; i++) {
+	for (let i = 0; i < text.length; i += 1) {
 		const char = text[i];
 		if (inQuotes) {
 			if (char === '"' && text[i + 1] === '"') {
 				current += '"';
-				i++;
+				i += 1;
 			} else if (char === '"') {
 				inQuotes = false;
 			} else {
@@ -79,51 +79,70 @@ function parseCsv(text: string): string[][] {
 			current = '';
 			rows.push(row);
 			row = [];
-			if (char === '\r') i++;
+			if (char === '\r') i += 1;
 		} else {
 			current += char;
 		}
 	}
+
 	if (current || row.length > 0) {
 		row.push(current);
 		rows.push(row);
 	}
+
 	return rows;
 }
 
-function PdfPreview({ path }: { path: string }) {
-	const { t } = useTranslation();
-	const [dataUrl, setDataUrl] = useState<string | null>(null);
+function useBlobUrl(path: string, mimeType: string) {
+	const [blobUrl, setBlobUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		let cancelled = false;
+		let objectUrl: string | null = null;
+
+		setLoading(true);
+		setError(null);
+		setBlobUrl(null);
 
 		window.workspace
 			.readFile({ filePath: path, encoding: 'latin1' })
 			.then((raw) => {
 				if (cancelled) return;
 				const bytes = new Uint8Array(raw.length);
-				for (let i = 0; i < raw.length; i++) {
+				for (let i = 0; i < raw.length; i += 1) {
 					bytes[i] = raw.charCodeAt(i);
 				}
-				const blob = new Blob([bytes], { type: 'application/pdf' });
-				setDataUrl(URL.createObjectURL(blob));
+				const blob = new Blob([bytes], { type: mimeType });
+				objectUrl = URL.createObjectURL(blob);
+				setBlobUrl(objectUrl);
 			})
 			.catch((err: unknown) => {
 				if (!cancelled) {
-					setError(err instanceof Error ? err.message : 'Failed to load PDF');
+					setError(err instanceof Error ? err.message : 'Failed to load preview');
+				}
+			})
+			.finally(() => {
+				if (!cancelled) {
+					setLoading(false);
 				}
 			});
 
 		return () => {
 			cancelled = true;
-			setDataUrl((prev) => {
-				if (prev) URL.revokeObjectURL(prev);
-				return null;
-			});
+			if (objectUrl) {
+				URL.revokeObjectURL(objectUrl);
+			}
 		};
-	}, [path]);
+	}, [mimeType, path]);
+
+	return { blobUrl, error, loading };
+}
+
+function ImagePreview({ path, mimeType }: { path: string; mimeType: string }) {
+	const { blobUrl, error, loading } = useBlobUrl(path, mimeType);
+	const { t } = useTranslation();
 
 	if (error) {
 		return (
@@ -133,7 +152,35 @@ function PdfPreview({ path }: { path: string }) {
 		);
 	}
 
-	if (!dataUrl) {
+	if (loading || !blobUrl) {
+		return (
+			<div className="flex items-center gap-2 text-sm text-muted-foreground">
+				<Loader2 className="h-4 w-4 animate-spin" />
+				{t('library.loadingPreview')}
+			</div>
+		);
+	}
+
+	return (
+		<div className="flex h-full items-center justify-center rounded-md border bg-muted/20 p-4">
+			<img src={blobUrl} alt="" className="max-h-full max-w-full rounded object-contain" />
+		</div>
+	);
+}
+
+function PdfPreview({ path }: { path: string }) {
+	const { blobUrl, error, loading } = useBlobUrl(path, 'application/pdf');
+	const { t } = useTranslation();
+
+	if (error) {
+		return (
+			<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+				{error}
+			</div>
+		);
+	}
+
+	if (loading || !blobUrl) {
 		return (
 			<div className="flex items-center gap-2 text-sm text-muted-foreground">
 				<Loader2 className="h-4 w-4 animate-spin" />
@@ -142,7 +189,7 @@ function PdfPreview({ path }: { path: string }) {
 		);
 	}
 
-	return <iframe title="PDF preview" src={dataUrl} className="h-full w-full border-0" />;
+	return <iframe title="PDF preview" src={blobUrl} className="h-full w-full border-0" />;
 }
 
 function CsvPreview({ content }: { content: string }) {
@@ -155,22 +202,22 @@ function CsvPreview({ content }: { content: string }) {
 	}
 
 	return (
-		<div className="rounded-md border overflow-auto">
+		<div className="overflow-auto rounded-md border">
 			<AppTable>
 				{header && (
 					<AppTableHeader>
 						<AppTableRow>
-							{header.map((cell, i) => (
-								<AppTableHead key={i}>{cell}</AppTableHead>
+							{header.map((cell, index) => (
+								<AppTableHead key={index}>{cell}</AppTableHead>
 							))}
 						</AppTableRow>
 					</AppTableHeader>
 				)}
 				<AppTableBody>
-					{body.map((row, ri) => (
-						<AppTableRow key={ri}>
-							{row.map((cell, ci) => (
-								<AppTableCell key={ci} className="text-sm">
+					{body.map((row, rowIndex) => (
+						<AppTableRow key={rowIndex}>
+							{row.map((cell, cellIndex) => (
+								<AppTableCell key={cellIndex} className="text-sm">
 									{cell}
 								</AppTableCell>
 							))}
@@ -187,7 +234,7 @@ function HtmlPreview({ content }: { content: string }) {
 		<iframe
 			title="HTML preview"
 			srcDoc={content}
-			className="h-full w-full border-0 bg-white rounded"
+			className="h-full w-full rounded border-0 bg-white"
 			sandbox="allow-same-origin"
 		/>
 	);
@@ -195,7 +242,7 @@ function HtmlPreview({ content }: { content: string }) {
 
 function MarkdownPreview({ content }: { content: string }) {
 	return (
-		<div className="prose prose-sm dark:prose-invert max-w-none">
+		<div className="prose prose-sm max-w-none dark:prose-invert">
 			<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
 		</div>
 	);
@@ -228,7 +275,7 @@ function JsonPreview({ content }: { content: string }) {
 
 function PlainTextPreview({ content }: { content: string }) {
 	return (
-		<pre className="whitespace-pre-wrap break-words text-sm font-mono text-foreground">
+		<pre className="whitespace-pre-wrap break-words font-mono text-sm text-foreground">
 			{content}
 		</pre>
 	);
@@ -236,6 +283,7 @@ function PlainTextPreview({ content }: { content: string }) {
 
 function UnsupportedPreview({ mimeType }: { mimeType: string }) {
 	const { t } = useTranslation();
+
 	return (
 		<div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
 			<FileWarning className="h-10 w-10" />
@@ -244,36 +292,46 @@ function UnsupportedPreview({ mimeType }: { mimeType: string }) {
 	);
 }
 
-function FileContentView({ doc, content }: { doc: ResourceInfo; content: string | null }) {
-	const { mimeType } = doc;
-
-	if (mimeType === 'application/pdf') {
-		return <PdfPreview path={doc.path} />;
+function FileContentView({
+	resource,
+	content,
+}: {
+	resource: ResourceInfo;
+	content: string | null;
+}) {
+	if (resource.mimeType.startsWith('image/')) {
+		return <ImagePreview path={resource.path} mimeType={resource.mimeType} />;
 	}
 
-	if (BINARY_MIME_TYPES.has(mimeType)) {
-		return <UnsupportedPreview mimeType={mimeType} />;
+	if (resource.mimeType === 'application/pdf') {
+		return <PdfPreview path={resource.path} />;
 	}
 
-	if (content === null) return null;
+	if (BINARY_MIME_TYPES.has(resource.mimeType)) {
+		return <UnsupportedPreview mimeType={resource.mimeType} />;
+	}
 
-	if (mimeType === 'text/csv') {
+	if (content === null) {
+		return null;
+	}
+
+	if (resource.mimeType === 'text/csv') {
 		return <CsvPreview content={content} />;
 	}
 
-	if (mimeType === 'text/html') {
+	if (resource.mimeType === 'text/html') {
 		return <HtmlPreview content={content} />;
 	}
 
-	if (mimeType === 'text/markdown') {
+	if (resource.mimeType === 'text/markdown') {
 		return <MarkdownPreview content={content} />;
 	}
 
-	if (mimeType === 'application/json') {
+	if (resource.mimeType === 'application/json') {
 		return <JsonPreview content={content} />;
 	}
 
-	const language = MIME_TO_LANGUAGE[mimeType];
+	const language = MIME_TO_LANGUAGE[resource.mimeType];
 	if (language) {
 		return <CodePreview content={content} language={language} />;
 	}
@@ -281,35 +339,43 @@ function FileContentView({ doc, content }: { doc: ResourceInfo; content: string 
 	return <PlainTextPreview content={content} />;
 }
 
-interface LibraryPreviewSheetProps {
-	doc: ResourceInfo | null;
-	onClose: () => void;
+interface ResourcePreviewSheetProps {
+	readonly resource: ResourceInfo | null;
+	readonly onClose: () => void;
 }
 
-export function LibraryPreviewSheet({ doc, onClose }: LibraryPreviewSheetProps) {
+export function ResourcePreviewSheet({ resource, onClose }: ResourcePreviewSheetProps) {
 	const { t } = useTranslation();
 	const [content, setContent] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const isBinary = doc !== null && BINARY_MIME_TYPES.has(doc.mimeType);
+	const isBinary =
+		resource !== null &&
+		(BINARY_MIME_TYPES.has(resource.mimeType) ||
+			resource.mimeType === 'application/pdf' ||
+			resource.mimeType.startsWith('image/'));
 
 	useEffect(() => {
-		if (!doc || isBinary) {
+		if (!resource || isBinary) {
 			setContent(null);
 			setError(null);
+			setLoading(false);
 			return;
 		}
 
 		let cancelled = false;
+
 		setLoading(true);
 		setError(null);
 		setContent(null);
 
 		window.workspace
-			.readFile({ filePath: doc.path })
+			.readFile({ filePath: resource.path })
 			.then((text) => {
-				if (!cancelled) setContent(text);
+				if (!cancelled) {
+					setContent(text);
+				}
 			})
 			.catch((err: unknown) => {
 				if (!cancelled) {
@@ -317,29 +383,33 @@ export function LibraryPreviewSheet({ doc, onClose }: LibraryPreviewSheetProps) 
 				}
 			})
 			.finally(() => {
-				if (!cancelled) setLoading(false);
+				if (!cancelled) {
+					setLoading(false);
+				}
 			});
 
 		return () => {
 			cancelled = true;
 		};
-	}, [doc, isBinary]);
+	}, [isBinary, resource]);
 
 	return (
 		<AppSheet
-			open={doc !== null}
+			open={resource !== null}
 			onOpenChange={(open) => {
-				if (!open) onClose();
+				if (!open) {
+					onClose();
+				}
 			}}
 		>
-			<AppSheetContent className="sm:max-w-xl flex flex-col">
+			<AppSheetContent className="flex flex-col sm:max-w-xl">
 				<AppSheetHeader>
-					<AppSheetTitle className="truncate">{doc?.name}</AppSheetTitle>
+					<AppSheetTitle className="truncate">{resource?.name}</AppSheetTitle>
 					<AppSheetDescription>
-						{doc?.mimeType} &middot; {doc ? formatBytes(doc.size) : ''}
+						{resource?.mimeType} &middot; {resource ? formatBytes(resource.size) : ''}
 					</AppSheetDescription>
 				</AppSheetHeader>
-				<div className="flex-1 min-h-0 overflow-auto mt-4">
+				<div className="mt-4 flex-1 min-h-0 overflow-auto">
 					{loading && (
 						<div className="flex items-center gap-2 text-sm text-muted-foreground">
 							<Loader2 className="h-4 w-4 animate-spin" />
@@ -351,7 +421,9 @@ export function LibraryPreviewSheet({ doc, onClose }: LibraryPreviewSheetProps) 
 							{error}
 						</div>
 					)}
-					{!loading && !error && doc && <FileContentView doc={doc} content={content} />}
+					{!loading && !error && resource && (
+						<FileContentView resource={resource} content={content} />
+					)}
 				</div>
 			</AppSheetContent>
 		</AppSheet>

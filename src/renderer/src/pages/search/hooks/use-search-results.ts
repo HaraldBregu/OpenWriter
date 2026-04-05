@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, LibraryBig } from 'lucide-react';
 import { useAppSelector } from '@/store';
+import { getResourceSection, RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
 import { selectAllDocuments } from '@/store/documents';
 import { selectResources } from '@/store/workspace';
 import { SEARCH_ACTIONS } from '../constants';
@@ -19,14 +20,22 @@ export function useSearchResults(query: string) {
 			path: document.path,
 			updatedAt: document.updatedAt,
 		})),
-		resources: resources.map((resource) => ({
-			id: resource.id,
-			name: resource.name,
-			path: resource.path,
-			mimeType: resource.mimeType,
-			importedAt: resource.importedAt,
-			lastModified: resource.lastModified,
-		})),
+		resources: resources.map((resource) => {
+			const sectionId = getResourceSection(resource);
+			const section = RESOURCE_SECTIONS[sectionId];
+
+			return {
+				id: resource.id,
+				name: resource.name,
+				path: resource.path,
+				mimeType: resource.mimeType,
+				importedAt: resource.importedAt,
+				lastModified: resource.lastModified,
+				href: section.route,
+				categoryLabel: t(section.titleKey),
+				icon: section.icon,
+			};
+		}),
 		actions: SEARCH_ACTIONS,
 		icons: {
 			document: FolderOpen,

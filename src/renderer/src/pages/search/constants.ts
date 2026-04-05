@@ -1,5 +1,6 @@
-import { Bot, FolderOpen, Home, LibraryBig, type LucideIcon } from 'lucide-react';
+import { Bot, FolderOpen, Home, type LucideIcon } from 'lucide-react';
 import type { SearchActionDefinition } from './types';
+import { RESOURCE_SECTIONS } from '../resources/shared/resource-sections';
 
 export const SEARCH_RESULTS_PER_SECTION = 6;
 
@@ -19,16 +20,32 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 		meta: 'Route',
 	},
 	{
-		id: 'library',
-		title: 'Open Library',
-		description: 'Browse imported resources and manage indexing.',
-		href: '/library',
-		icon: LibraryBig,
+		id: 'resources-documents',
+		title: 'Open Documents',
+		description: 'Browse imported documents and manage indexing.',
+		href: RESOURCE_SECTIONS.documents.route,
+		icon: RESOURCE_SECTIONS.documents.icon,
+		meta: 'Route',
+	},
+	{
+		id: 'resources-images',
+		title: 'Open Images',
+		description: 'Browse imported images in the resources section.',
+		href: RESOURCE_SECTIONS.images.route,
+		icon: RESOURCE_SECTIONS.images.icon,
+		meta: 'Route',
+	},
+	{
+		id: 'resources-files',
+		title: 'Open Files',
+		description: 'Browse imported files and binary assets.',
+		href: RESOURCE_SECTIONS.files.route,
+		icon: RESOURCE_SECTIONS.files.icon,
 		meta: 'Route',
 	},
 	{
 		id: 'documents',
-		title: 'Browse Documents',
+		title: 'Browse Writings',
 		description: 'Open recent writing outputs from your workspace.',
 		href: '/home',
 		icon: FolderOpen,
@@ -47,5 +64,5 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 export const SEARCH_SECTION_ICONS: Record<string, LucideIcon> = {
 	actions: Home,
 	documents: FolderOpen,
-	resources: LibraryBig,
+	resources: RESOURCE_SECTIONS.documents.icon,
 };

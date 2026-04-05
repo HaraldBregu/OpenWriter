@@ -423,7 +423,7 @@
 		"noRecentWritings": "No writings yet. Create one to get started.",
 		"viewAll": "View all",
 		"documents": "Documents",
-		"documentsDescription": "Browse your files",
+		"documentsDescription": "Browse imported documents",
 		"integrations": "Integrations",
 		"integrationsDescription": "Connect your tools",
 		"chat": "New Chat",
@@ -739,6 +739,33 @@
 		"undo": "Undo",
 		"redo": "Redo"
 	},
+	"resources": {
+		"title": "Resources",
+		"removeItems": "Remove items",
+		"removeConfirm_one": "Are you sure you want to remove {{count}} item from this section? This action cannot be undone.",
+		"removeConfirm_other": "Are you sure you want to remove {{count}} items from this section? This action cannot be undone.",
+		"remove": "Remove",
+		"removeWithCount": "Remove ({{count}})",
+		"documents": {
+			"loading": "Loading documents…",
+			"indexing": "Indexing documents…",
+			"empty": "No documents in this section yet.",
+			"upload": "Import documents",
+			"searchPlaceholder": "Search documents..."
+		},
+		"images": {
+			"loading": "Loading images…",
+			"empty": "No images in this section yet.",
+			"upload": "Import images",
+			"searchPlaceholder": "Search images..."
+		},
+		"files": {
+			"loading": "Loading files…",
+			"empty": "No files in this section yet.",
+			"upload": "Import files",
+			"searchPlaceholder": "Search files..."
+		}
+	},
 	"library": {
 		"title": "Library",
 		"indexing": "Indexing library…",
@@ -846,9 +873,11 @@
 	"appLayout": {
 		"untitled": "Untitled",
 		"library": "Library",
+		"resources": "Resources",
 		"documents": "Documents",
 		"media": "Media",
 		"images": "Images",
+		"files": "Files",
 		"integrations": "Integrations",
 		"socialMedia": "Social media",
 		"debug": "Debug",

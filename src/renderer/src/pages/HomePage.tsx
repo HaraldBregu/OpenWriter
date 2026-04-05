@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
 							labelKey="home.documents"
 							descriptionKey="home.documentsDescription"
 							accent="bg-muted text-foreground"
-							onClick={() => navigate('/library')}
+							onClick={() => navigate('/resources/documents')}
 						/>
 						<CategoryCard
 							icon={Bot}

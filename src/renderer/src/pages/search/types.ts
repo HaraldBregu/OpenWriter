@@ -43,4 +43,7 @@ export interface SearchableResource {
 	mimeType: string;
 	importedAt: number;
 	lastModified: number;
+	href: string;
+	categoryLabel: string;
+	icon: LucideIcon;
 }

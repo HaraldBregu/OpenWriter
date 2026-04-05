@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Loader2 } from 'lucide-react';
 import {
@@ -11,36 +11,50 @@ import {
 	AppAlertDialogHeader,
 	AppAlertDialogTitle,
 	AppButton,
-} from '../../components/app';
-import { useAppDispatch, useAppSelector } from '../../store';
+} from '@/components/app';
+import { useTaskListener } from '@/hooks/use-task-listener';
+import { useAppDispatch, useAppSelector } from '@/store';
 import {
-	selectResources,
-	selectResourcesStatus,
-	selectResourcesError,
-	selectImporting,
-	selectCurrentWorkspacePath,
-	selectIndexingInfo,
-	removeResources,
 	importResourcesRequested,
 	loadIndexingInfo,
-} from '../../store/workspace';
-import { useTaskListener } from '../../hooks/use-task-listener';
-import { SUPPORTED_EXTENSIONS } from './constants';
-import { LibraryHeader } from './LibraryHeader';
-import { LibraryEmptyState } from './LibraryEmptyState';
-import { LibraryTable } from './LibraryTable';
+	removeResources,
+	selectCurrentWorkspacePath,
+	selectImporting,
+	selectIndexingInfo,
+	selectResources,
+	selectResourcesError,
+	selectResourcesStatus,
+} from '@/store/workspace';
+import { ResourceEmptyState } from './ResourceEmptyState';
+import { ResourceSectionHeader } from './ResourceSectionHeader';
+import {
+	filterResourcesBySection,
+	RESOURCE_SECTIONS,
+	type ResourceSectionId,
+} from './resource-sections';
+import { ResourceTable } from './ResourceTable';
 
 const RESOURCES_DIR = 'resources';
 
-export default function LibraryPage() {
+interface ResourceCollectionPageProps {
+	readonly sectionId: ResourceSectionId;
+}
+
+export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProps) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const resources = useAppSelector(selectResources);
+	const section = RESOURCE_SECTIONS[sectionId];
+	const allResources = useAppSelector(selectResources);
 	const status = useAppSelector(selectResourcesStatus);
 	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 	const indexingInfo = useAppSelector(selectIndexingInfo);
+
+	const resources = useMemo(
+		() => filterResourcesBySection(allResources, sectionId),
+		[allResources, sectionId]
+	);
 
 	const indexingTask = useTaskListener<{
 		indexedCount: number;
@@ -49,49 +63,65 @@ export default function LibraryPage() {
 	}>('index-resources');
 
 	const loading = status === 'idle' || status === 'loading';
-	const indexing = indexingTask.isRunning || indexingTask.isQueued;
+	const indexing = section.supportsIndexing && (indexingTask.isRunning || indexingTask.isQueued);
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
-	// Load indexing info on mount
 	useEffect(() => {
-		dispatch(loadIndexingInfo());
-	}, [dispatch]);
-
-	// Reload indexing info after indexing completes
-	useEffect(() => {
-		if (indexingTask.isCompleted) {
+		if (section.supportsIndexing) {
 			dispatch(loadIndexingInfo());
 		}
-	}, [indexingTask.isCompleted, dispatch]);
+	}, [dispatch, section.supportsIndexing]);
+
+	useEffect(() => {
+		if (section.supportsIndexing && indexingTask.isCompleted) {
+			dispatch(loadIndexingInfo());
+		}
+	}, [dispatch, indexingTask.isCompleted, section.supportsIndexing]);
+
+	useEffect(() => {
+		setSelected((current) => {
+			const resourceIds = new Set(resources.map((resource) => resource.id));
+			const nextSelected = new Set([...current].filter((id) => resourceIds.has(id)));
+			const hasChanged =
+				nextSelected.size !== current.size || [...current].some((id) => !resourceIds.has(id));
+			return hasChanged ? nextSelected : current;
+		});
+	}, [resources]);
 
 	const handleIndex = useCallback(() => {
-		if (!workspacePath || indexing) return;
-		const resourcesPath = `${workspacePath}/${RESOURCES_DIR}`;
-		window.task.submit('index-resources', { workspacePath, resourcesPath });
-	}, [workspacePath, indexing]);
+		if (!section.supportsIndexing || !workspacePath || indexing) {
+			return;
+		}
+
+		window.task.submit('index-resources', {
+			workspacePath,
+			resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
+		});
+	}, [indexing, section.supportsIndexing, workspacePath]);
 
 	const handleUpload = useCallback(() => {
-		dispatch(importResourcesRequested(SUPPORTED_EXTENSIONS));
-	}, [dispatch]);
+		dispatch(importResourcesRequested(section.uploadExtensions));
+	}, [dispatch, section.uploadExtensions]);
 
 	const handleToggleEdit = useCallback(() => {
-		setEditing((prev) => {
-			if (prev) setSelected(new Set());
-			return !prev;
+		setEditing((current) => {
+			if (current) {
+				setSelected(new Set());
+			}
+			return !current;
 		});
-	}, []);
-
-	const handleOpenConfirm = useCallback(() => {
-		setConfirmOpen(true);
 	}, []);
 
 	const handleConfirmRemove = useCallback(async () => {
 		setConfirmOpen(false);
 		const ids = [...selected];
-		if (ids.length === 0) return;
+		if (ids.length === 0) {
+			return;
+		}
+
 		setRemoving(true);
 		try {
 			await dispatch(removeResources(ids)).unwrap();
@@ -99,7 +129,7 @@ export default function LibraryPage() {
 		} finally {
 			setRemoving(false);
 		}
-	}, [selected, dispatch]);
+	}, [dispatch, selected]);
 
 	const handleOpenDataFolder = useCallback(() => {
 		window.workspace.openDataFolder();
@@ -110,31 +140,37 @@ export default function LibraryPage() {
 	}, []);
 
 	return (
-		<div className="flex flex-col h-full">
-			<LibraryHeader
+		<div className="flex h-full flex-col">
+			<ResourceSectionHeader
+				title={t(section.titleKey)}
+				icon={section.icon}
 				uploading={uploading}
+				uploadLabel={t(section.uploadKey)}
 				onUpload={handleUpload}
 				editing={editing}
 				onToggleEdit={handleToggleEdit}
 				selectedCount={selected.size}
 				removing={removing}
-				onRemove={handleOpenConfirm}
+				onRemove={() => setConfirmOpen(true)}
 				indexing={indexing}
+				showIndexButton={section.supportsIndexing}
 				onIndex={handleIndex}
 				onOpenFolder={handleOpenResourcesFolder}
 			/>
 
 			{indexing && (
-				<div className="px-6 py-3 border-b shrink-0">
+				<div className="border-b px-6 py-3 shrink-0">
 					<div className="flex items-center gap-2">
 						<Loader2 className="h-4 w-4 animate-spin text-primary" />
-						<span className="text-sm text-muted-foreground">{t('library.indexing')}</span>
+						<span className="text-sm text-muted-foreground">
+							{t('resources.documents.indexing')}
+						</span>
 					</div>
 				</div>
 			)}
 
-			{!indexing && indexingInfo && (
-				<div className="px-6 py-3 border-b shrink-0">
+			{section.supportsIndexing && !indexing && indexingInfo && (
+				<div className="border-b px-6 py-3 shrink-0">
 					<div className="flex items-center gap-4 text-xs text-muted-foreground">
 						<span>
 							{t('library.lastIndexed')} {new Date(indexingInfo.lastIndexedAt).toLocaleString()}
@@ -162,11 +198,11 @@ export default function LibraryPage() {
 				</div>
 			)}
 
-			<div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col">
+			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto p-6">
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<Loader2 className="h-4 w-4 animate-spin" />
-						<span>{t('library.loading')}</span>
+						<span>{t(section.loadingKey)}</span>
 					</div>
 				)}
 
@@ -177,12 +213,19 @@ export default function LibraryPage() {
 				)}
 
 				{!loading && !error && resources.length === 0 && (
-					<LibraryEmptyState uploading={uploading} onUpload={handleUpload} />
+					<ResourceEmptyState
+						icon={section.icon}
+						message={t(section.emptyKey)}
+						uploadLabel={t(section.uploadKey)}
+						uploading={uploading}
+						onUpload={handleUpload}
+					/>
 				)}
 
 				{!loading && !error && resources.length > 0 && (
-					<LibraryTable
-						documents={resources}
+					<ResourceTable
+						resources={resources}
+						searchPlaceholder={t(section.searchPlaceholderKey)}
 						editing={editing}
 						selected={selected}
 						onSelectedChange={setSelected}
@@ -193,9 +236,9 @@ export default function LibraryPage() {
 			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AppAlertDialogContent>
 					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>{t('library.removeItems')}</AppAlertDialogTitle>
+						<AppAlertDialogTitle>{t('resources.removeItems')}</AppAlertDialogTitle>
 						<AppAlertDialogDescription>
-							{t('library.removeConfirm', { count: selected.size })}
+							{t('resources.removeConfirm', { count: selected.size })}
 						</AppAlertDialogDescription>
 					</AppAlertDialogHeader>
 					<AppAlertDialogFooter>
@@ -204,7 +247,7 @@ export default function LibraryPage() {
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleConfirmRemove}
 						>
-							{t('library.remove')}
+							{t('resources.remove')}
 						</AppAlertDialogAction>
 					</AppAlertDialogFooter>
 				</AppAlertDialogContent>
