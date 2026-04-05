@@ -197,23 +197,23 @@ export function AssistantNodeView({
 	);
 
 	const wrapperClassName = cn(
-		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.55rem] border text-card-foreground backdrop-blur-xl',
+		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.55rem] border-[0.5px] text-card-foreground backdrop-blur-xl',
 		'bg-[linear-gradient(180deg,hsl(var(--card))_0%,hsl(var(--card)/0.96)_100%)]',
 		'shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_10px_28px_hsl(var(--foreground)/0.06)]',
 		'transition-[border-color,box-shadow,background-color,transform] duration-200 ease-out',
 		'dark:bg-[linear-gradient(180deg,hsl(var(--card)/0.98)_0%,hsl(var(--card)/0.92)_100%)]',
 		'dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_12px_30px_hsl(var(--background)/0.5)]',
 		loading
-			? 'border-primary/45 shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.12),0_12px_30px_hsl(var(--primary)/0.12)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)]'
+			? 'border-primary/45 shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.12),0_12px_30px_hsl(var(--primary)/0.12)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)]'
 			: 'border-border/85 hover:-translate-y-[1px] hover:border-foreground/14 hover:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_12px_30px_hsl(var(--foreground)/0.07)] dark:border-white/12 dark:hover:border-white/18 dark:hover:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_14px_34px_hsl(var(--background)/0.56)]',
 		agentId === 'painter' && isDragOver
-			? 'border-primary/55 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08)_0%,hsl(var(--card)/0.96)_32%,hsl(var(--card))_100%)] shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.14)_0%,hsl(var(--card)/0.94)_34%,hsl(var(--card)/0.92)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.18),0_16px_38px_hsl(var(--primary)/0.16)]'
+			? 'border-primary/55 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08)_0%,hsl(var(--card)/0.96)_32%,hsl(var(--card))_100%)] shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.14)_0%,hsl(var(--card)/0.94)_34%,hsl(var(--card)/0.92)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.18),0_16px_38px_hsl(var(--primary)/0.16)]'
 			: '',
 		!enable && !loading
 			? 'border-border/70 bg-[linear-gradient(180deg,hsl(var(--muted)/0.72)_0%,hsl(var(--muted)/0.6)_100%)] shadow-[0_1px_0_hsl(var(--background)/0.9)_inset,0_6px_16px_hsl(var(--foreground)/0.04)] dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.34)_0%,hsl(var(--muted)/0.24)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.06)_inset,0_10px_24px_hsl(var(--background)/0.4)]'
 			: '',
-		'focus-within:border-primary/45 focus-within:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.12),0_14px_36px_hsl(var(--primary)/0.12)]',
-		'dark:focus-within:border-primary/45 dark:focus-within:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.15),0_16px_40px_hsl(var(--primary)/0.14)]'
+		'focus-within:border-primary/45 focus-within:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.12),0_14px_36px_hsl(var(--primary)/0.12)]',
+		'dark:focus-within:border-primary/45 dark:focus-within:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.15),0_16px_40px_hsl(var(--primary)/0.14)]'
 	);
 
 	return (
@@ -224,7 +224,6 @@ export function AssistantNodeView({
 				onDragLeave={agentId === 'painter' ? handleDragLeave : undefined}
 				onDrop={agentId === 'painter' ? handleDrop : undefined}
 			>
-				<div className="pointer-events-none absolute inset-[1px] rounded-[calc(1.55rem-1px)] border border-white/55 opacity-80 dark:border-white/8" />
 				<div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/14 via-primary/4 to-transparent dark:from-primary/18 dark:via-primary/6" />
 				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-primary/55 to-transparent dark:via-primary/65" />
 				<AssistantContent
