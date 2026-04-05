@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
-import { AppButton, AppIconOpenWriter } from '@/components/app';
+import { FolderOpen, Clock, X, AlertTriangle, Loader2 } from 'lucide-react';
+import { AppButton, AppIconOpenWriter, AppInput, AppLabel } from '@/components/app';
 import { TitleBar } from '@/components/TitleBar';
 import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
+import {
+	PROVIDER_CATALOGUE,
+	PROVIDER_IDS,
+	type ProviderId,
+	type ServiceProvider,
+} from '../../../shared/provider-constants';
+import type { AppStartupInfo } from '../../../shared/types';
 
 interface RecentProject {
 	path: string;
@@ -15,23 +22,43 @@ interface RecentProject {
 	exists?: boolean;
 }
 
-const WelcomePage: React.FC = () => {
+interface WelcomePageProps {
+	startupInfo?: AppStartupInfo;
+	onConfigured?: (startupInfo: AppStartupInfo) => void;
+}
+
+const DEFAULT_STARTUP_INFO: AppStartupInfo = {
+	startupCount: 0,
+	isFirstRun: false,
+	isInitialized: true,
+};
+
+const EMPTY_TOKENS = Object.fromEntries(
+	PROVIDER_IDS.map((providerId) => [providerId, ''])
+) as Record<ProviderId, string>;
+
+const PROVIDER_LABELS = Object.fromEntries(
+	PROVIDER_CATALOGUE.map((provider) => [provider.id, provider.name])
+) as Record<ProviderId, string>;
+
+const WelcomePage: React.FC<WelcomePageProps> = ({
+	startupInfo = DEFAULT_STARTUP_INFO,
+	onConfigured,
+}) => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+	const [tokens, setTokens] = useState<Record<ProviderId, string>>({ ...EMPTY_TOKENS });
+	const [isSavingConfiguration, setIsSavingConfiguration] = useState(false);
+	const [configurationError, setConfigurationError] = useState<string | null>(null);
 	const deletionReason = useWorkspaceDeletionReason();
 	const clearDeletion = useClearDeletionReason();
+	const showFirstTimeConfiguration = startupInfo.isFirstRun && !startupInfo.isInitialized;
 
-	useEffect(() => {
-		loadRecentProjects();
-	}, []);
-
-	const loadRecentProjects = async () => {
+	const loadRecentProjects = useCallback(async () => {
 		try {
 			const projects = await window.workspace.getRecent();
-
-			// Filter out entries with missing path, then check if each directory exists
-			const validProjects = projects.filter((p) => typeof p.path === 'string');
+			const validProjects = projects.filter((project) => typeof project.path === 'string');
 			const projectsWithExistence = await Promise.all(
 				validProjects.map(async (project) => {
 					try {
@@ -48,19 +75,18 @@ const WelcomePage: React.FC = () => {
 			console.error('Failed to load recent projects:', error);
 			setRecentProjects([]);
 		}
-	};
+	}, []);
+
+	useEffect(() => {
+		void loadRecentProjects();
+	}, [loadRecentProjects]);
 
 	const handleOpenProject = useCallback(async () => {
 		try {
 			const folderPath = await window.workspace.selectFolder();
 
 			if (folderPath) {
-				// Set workspace in current window.
-				// useOutputFiles (mounted in AppLayout) listens to workspace.onChange
-				// and will reload output items automatically when this fires.
 				await window.workspace.setCurrent(folderPath);
-
-				// Navigate current window to home
 				navigate('/home');
 			}
 		} catch (error) {
@@ -70,18 +96,12 @@ const WelcomePage: React.FC = () => {
 
 	const handleOpenRecentProject = useCallback(
 		async (path: string, exists: boolean) => {
-			// Don't allow opening non-existent directories
 			if (!exists) {
 				return;
 			}
 
 			try {
-				// Set workspace in current window.
-				// useOutputFiles (mounted in AppLayout) listens to workspace.onChange
-				// and will reload output items automatically when this fires.
 				await window.workspace.setCurrent(path);
-
-				// Navigate current window to home
 				navigate('/home');
 			} catch (error) {
 				console.error('Failed to open recent project:', error);
@@ -90,18 +110,69 @@ const WelcomePage: React.FC = () => {
 		[navigate]
 	);
 
-	const handleRemoveRecentProject = useCallback(async (path: string, event: React.MouseEvent) => {
-		// Prevent opening the project when clicking the remove button
-		event.stopPropagation();
+	const handleRemoveRecentProject = useCallback(
+		async (path: string, event: React.MouseEvent) => {
+			event.stopPropagation();
 
-		try {
-			await window.workspace.removeRecent(path);
-			// Reload the recent projects list
-			loadRecentProjects();
-		} catch (error) {
-			console.error('Failed to remove recent project:', error);
-		}
-	}, []);
+			try {
+				await window.workspace.removeRecent(path);
+				await loadRecentProjects();
+			} catch (error) {
+				console.error('Failed to remove recent project:', error);
+			}
+		},
+		[loadRecentProjects]
+	);
+
+	const handleSaveConfiguration = useCallback(
+		async (event: React.FormEvent<HTMLFormElement>) => {
+			event.preventDefault();
+
+			if (
+				isSavingConfiguration ||
+				typeof window.app?.completeFirstRunConfiguration !== 'function'
+			) {
+				return;
+			}
+
+			setIsSavingConfiguration(true);
+			setConfigurationError(null);
+
+			try {
+				const providers: ServiceProvider[] = PROVIDER_IDS.map((providerId) => ({
+					name: providerId,
+					apikey: tokens[providerId].trim(),
+					baseurl: '',
+				}));
+				const nextStartupInfo = await window.app.completeFirstRunConfiguration(providers);
+				setTokens({ ...EMPTY_TOKENS });
+				onConfigured?.(nextStartupInfo);
+			} catch (error) {
+				setConfigurationError(
+					error instanceof Error
+						? error.message
+						: t(
+								'startup.firstTime.error',
+								'Unable to save your provider tokens right now. Please try again.'
+							)
+				);
+			} finally {
+				setIsSavingConfiguration(false);
+			}
+		},
+		[isSavingConfiguration, onConfigured, t, tokens]
+	);
+
+	const handleTokenChange = useCallback(
+		(providerId: ProviderId, value: string) => {
+			setTokens((current) => ({ ...current, [providerId]: value }));
+
+			if (configurationError) {
+				setConfigurationError(null);
+			}
+		},
+		[configurationError]
+	);
 
 	const formatPath = (path: string) => {
 		if (typeof path !== 'string') return '';
@@ -142,7 +213,6 @@ const WelcomePage: React.FC = () => {
 		<div className="flex flex-col h-screen bg-background">
 			<TitleBar title="OpenWriter" />
 
-			{/* Workspace deletion notification banner */}
 			{deletionReason && (
 				<div className="mx-8 mt-4 mb-0 flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
 					<AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
@@ -161,9 +231,7 @@ const WelcomePage: React.FC = () => {
 				</div>
 			)}
 
-			{/* Main content */}
 			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-y-auto">
-				{/* ── Hero ── */}
 				<div className="flex flex-col items-center mb-10">
 					<AppIconOpenWriter
 						className="mb-5 text-foreground"
@@ -188,10 +256,83 @@ const WelcomePage: React.FC = () => {
 					</p>
 				</div>
 
-				{/* ── Workspace section ── */}
+				{showFirstTimeConfiguration && (
+					<div className="w-full max-w-2xl mb-8">
+						<div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+							<div className="mb-6">
+								<p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
+									{t('startup.firstTime.eyebrow', 'First-time configuration')}
+								</p>
+								<h2 className="text-xl font-semibold text-foreground">
+									{t('startup.firstTime.title', 'Connect your providers before you start writing')}
+								</h2>
+								<p className="mt-2 text-sm leading-6 text-muted-foreground">
+									{t(
+										'startup.firstTime.description',
+										'Add the API tokens you want OpenWriter to use on this device. Leave any provider blank if you want to configure it later in Settings.'
+									)}
+								</p>
+							</div>
+
+							<form onSubmit={handleSaveConfiguration} noValidate>
+								<div className="grid gap-4 sm:grid-cols-2">
+									{PROVIDER_IDS.map((providerId) => (
+										<div key={providerId} className="space-y-2">
+											<AppLabel
+												htmlFor={`welcome-first-run-${providerId}`}
+												className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+											>
+												{PROVIDER_LABELS[providerId]}
+											</AppLabel>
+											<AppInput
+												id={`welcome-first-run-${providerId}`}
+												type="password"
+												value={tokens[providerId]}
+												onChange={(event) => handleTokenChange(providerId, event.target.value)}
+												placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
+												autoComplete="off"
+												spellCheck={false}
+												className="h-11 font-mono text-sm"
+											/>
+										</div>
+									))}
+								</div>
+
+								{configurationError && (
+									<p className="mt-5 rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+										{configurationError}
+									</p>
+								)}
+
+								<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+									<p className="max-w-xl text-xs leading-5 text-muted-foreground">
+										{t(
+											'startup.firstTime.footer',
+											'You can revisit provider tokens at any time from the Providers settings page.'
+										)}
+									</p>
+									<AppButton
+										type="submit"
+										className="min-w-44 self-start sm:self-auto"
+										disabled={isSavingConfiguration}
+									>
+										{isSavingConfiguration ? (
+											<>
+												<Loader2 className="animate-spin" />
+												{t('startup.firstTime.saving', 'Saving...')}
+											</>
+										) : (
+											t('startup.firstTime.save', 'Save and Continue')
+										)}
+									</AppButton>
+								</div>
+							</form>
+						</div>
+					</div>
+				)}
+
 				<div className="w-full max-w-2xl mb-8">
 					<div className="rounded-xl border border-border p-6 flex items-center justify-between gap-6">
-						{/* Left: Title and description */}
 						<div className="flex flex-col gap-2">
 							<h2 className="text-lg font-semibold text-foreground">
 								{t('welcome.openWorkspace')}
@@ -201,7 +342,6 @@ const WelcomePage: React.FC = () => {
 							</p>
 						</div>
 
-						{/* Right: Button */}
 						<AppButton
 							variant="outline"
 							className="h-14 px-6 flex items-center gap-3 rounded-lg border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors shrink-0"
@@ -213,7 +353,6 @@ const WelcomePage: React.FC = () => {
 					</div>
 				</div>
 
-				{/* ── Recent projects ── */}
 				{recentProjects.length > 0 && (
 					<div className="w-full max-w-2xl flex flex-col min-h-0">
 						<div className="flex items-center justify-between mb-3">
@@ -227,7 +366,7 @@ const WelcomePage: React.FC = () => {
 
 						<div className="rounded-xl border border-border overflow-y-auto max-h-96">
 							{recentProjects.slice(0, 5).map((project, index) => {
-								const exists = project.exists !== false; // Default to true if not checked yet
+								const exists = project.exists !== false;
 
 								return (
 									<div
@@ -239,7 +378,6 @@ const WelcomePage: React.FC = () => {
                     ${exists ? 'hover:bg-accent opacity-100' : 'opacity-40'}
                   `}
 									>
-										{/* Left: Folder icon and content */}
 										<button
 											onClick={() => handleOpenRecentProject(project.path, exists)}
 											disabled={!exists}
@@ -248,12 +386,10 @@ const WelcomePage: React.FC = () => {
                       ${exists ? 'cursor-pointer' : 'cursor-not-allowed'}
                     `}
 										>
-											{/* Folder color indicator */}
 											<div className="h-8 w-8 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
 												<FolderOpen className="h-4 w-4 text-primary" />
 											</div>
 
-											{/* Name + path */}
 											<div className="flex flex-col items-start min-w-0">
 												<span className="text-sm font-medium truncate text-foreground text-left">
 													{getProjectName(project.path)}
@@ -265,16 +401,14 @@ const WelcomePage: React.FC = () => {
 											</div>
 										</button>
 
-										{/* Right: Timestamp and remove button */}
 										<div className="flex items-center gap-2 shrink-0">
 											<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
 												<Clock className="h-3 w-3" />
 												<span>{formatRelativeTime(project.lastOpened)}</span>
 											</div>
 
-											{/* Remove button */}
 											<button
-												onClick={(e) => handleRemoveRecentProject(project.path, e)}
+												onClick={(event) => handleRemoveRecentProject(project.path, event)}
 												className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
 												title={t('welcome.removeFromRecent')}
 											>

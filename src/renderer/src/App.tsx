@@ -7,7 +7,6 @@ import { AppLayout } from './components/AppLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
-import FirstTimeConfigurationPage from './pages/FirstTimeConfigurationPage';
 import WelcomePage from './pages/WelcomePage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { initializeTaskStore } from './services/task-store';
@@ -124,8 +123,6 @@ const App: React.FC = () => {
 		);
 	}
 
-	const requiresFirstTimeConfiguration = !startupInfo.isInitialized;
-
 	return (
 		<ErrorBoundary level="root">
 			<Provider store={store}>
@@ -134,150 +131,140 @@ const App: React.FC = () => {
 						<Routes>
 							<Route
 								path="/"
-								element={
-									requiresFirstTimeConfiguration ? (
-										<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
-									) : (
-										<WelcomePage />
-									)
-								}
+								element={<WelcomePage startupInfo={startupInfo} onConfigured={setStartupInfo} />}
 							/>
 
 							<Route
 								path="*"
 								element={
-									requiresFirstTimeConfiguration ? (
-										<Navigate to="/" replace />
-									) : (
-										<AppLayout>
-											<Suspense fallback={<LoadingSkeleton />}>
-												<Routes>
+									<AppLayout>
+										<Suspense fallback={<LoadingSkeleton />}>
+											<Routes>
+												<Route
+													path="/home"
+													element={
+														<RouteWrapper>
+															<HomePage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/settings/*"
+													element={
+														<RouteWrapper>
+															<SettingsLayout />
+														</RouteWrapper>
+													}
+												>
 													<Route
-														path="/home"
+														index
 														element={
-															<RouteWrapper>
-																<HomePage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<GeneralSettingsPage />
+															</Suspense>
 														}
 													/>
 													<Route
-														path="/settings/*"
+														path="general"
 														element={
-															<RouteWrapper>
-																<SettingsLayout />
-															</RouteWrapper>
-														}
-													>
-														<Route
-															index
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<GeneralSettingsPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="general"
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<GeneralSettingsPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="workspace"
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<WorkspacePage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="providers"
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<ProvidersSettingsPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="agents"
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<AgentsSettingsPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="system"
-															element={
-																<Suspense fallback={<LoadingSkeleton />}>
-																	<SystemSettingsPage />
-																</Suspense>
-															}
-														/>
-													</Route>
-													<Route
-														path="/content/:id"
-														element={
-															<RouteWrapper>
-																<DocumentPage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<GeneralSettingsPage />
+															</Suspense>
 														}
 													/>
 													<Route
-														path="/debug/tasks"
+														path="workspace"
 														element={
-															<RouteWrapper>
-																<DebugTasksPage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<WorkspacePage />
+															</Suspense>
 														}
 													/>
 													<Route
-														path="/debug/redux"
+														path="providers"
 														element={
-															<RouteWrapper>
-																<DebugReduxPage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<ProvidersSettingsPage />
+															</Suspense>
 														}
 													/>
 													<Route
-														path="/debug/logs"
+														path="agents"
 														element={
-															<RouteWrapper>
-																<DebugLogsPage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<AgentsSettingsPage />
+															</Suspense>
 														}
 													/>
 													<Route
-														path="/search"
+														path="system"
 														element={
-															<RouteWrapper>
-																<SearchPage />
-															</RouteWrapper>
+															<Suspense fallback={<LoadingSkeleton />}>
+																<SystemSettingsPage />
+															</Suspense>
 														}
 													/>
-													<Route
-														path="/library"
-														element={
-															<RouteWrapper>
-																<LibraryPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route path="/resources" element={<Navigate to="/library" replace />} />
-													<Route
-														path="/agents"
-														element={
-															<RouteWrapper>
-																<AgentsPage />
-															</RouteWrapper>
-														}
-													/>
-												</Routes>
-											</Suspense>
-										</AppLayout>
-									)
+												</Route>
+												<Route
+													path="/content/:id"
+													element={
+														<RouteWrapper>
+															<DocumentPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/debug/tasks"
+													element={
+														<RouteWrapper>
+															<DebugTasksPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/debug/redux"
+													element={
+														<RouteWrapper>
+															<DebugReduxPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/debug/logs"
+													element={
+														<RouteWrapper>
+															<DebugLogsPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/search"
+													element={
+														<RouteWrapper>
+															<SearchPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/library"
+													element={
+														<RouteWrapper>
+															<LibraryPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route path="/resources" element={<Navigate to="/library" replace />} />
+												<Route
+													path="/agents"
+													element={
+														<RouteWrapper>
+															<AgentsPage />
+														</RouteWrapper>
+													}
+												/>
+											</Routes>
+										</Suspense>
+									</AppLayout>
 								}
 							/>
 						</Routes>

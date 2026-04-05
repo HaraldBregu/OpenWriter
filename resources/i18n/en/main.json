@@ -19,6 +19,18 @@
 		"featureSkills": "Skills",
 		"featureSkillsDesc": "Use AI-powered skills to enhance your writing workflow"
 	},
+	"startup": {
+		"firstTime": {
+			"eyebrow": "First-time configuration",
+			"title": "Connect your providers before you start writing",
+			"description": "Add the API tokens you want OpenWriter to use on this device. Leave any provider blank if you want to configure it later in Settings.",
+			"tokenPlaceholder": "Paste API token",
+			"footer": "You can revisit provider tokens at any time from the Providers settings page.",
+			"save": "Save and Continue",
+			"saving": "Saving...",
+			"error": "Unable to save your provider tokens right now. Please try again."
+		}
+	},
 	"subtitle": "Clean & Simple",
 	"description": "A modern, advanced desktop application",
 	"focusMessage": "Focus on what matters with a streamlined interface",

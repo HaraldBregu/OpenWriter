@@ -111,6 +111,7 @@ export class StoreService {
 
 		this.migrateLegacyProviderSettings();
 		this.normalizeStoredProviders();
+		this.reconcileStartupState();
 		this.incrementStartupCount();
 	}
 
@@ -260,6 +261,24 @@ export class StoreService {
 		if (needsRewrite) {
 			this.store.set('providers', normalized);
 		}
+	}
+
+	private reconcileStartupState(): void {
+		if (this.store.get('startupCount') > 0 || this.store.get('isInitialized')) {
+			return;
+		}
+
+		const hasProviders = this.store.get('providers').length > 0;
+		const hasAgentProviders = Object.keys(this.store.get('agentProviders')).length > 0;
+		const hasWorkspaceHistory =
+			this.store.get('currentWorkspace') !== null || this.store.get('recentWorkspaces').length > 0;
+
+		if (!hasProviders && !hasAgentProviders && !hasWorkspaceHistory) {
+			return;
+		}
+
+		this.store.set('startupCount', 1);
+		this.store.set('isInitialized', true);
 	}
 
 	private incrementStartupCount(): void {
