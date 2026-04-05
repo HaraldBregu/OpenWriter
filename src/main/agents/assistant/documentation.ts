@@ -3,7 +3,7 @@
 
 ## Purpose
 
-`src/main/ai/assistant` implements the general-purpose assistant used for chat.
+`src/main/agents/assistant` implements the general-purpose assistant used for chat.
 
 The assistant is now text-only:
 

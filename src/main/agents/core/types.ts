@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // Stream events — canonical definition lives in src/shared/types.ts.
-// Re-exported here so ai/core consumers can import from a single local path.
+// Re-exported here so agents/core consumers can import from a single local path.
 // ---------------------------------------------------------------------------
 
 export type { AgentStreamEvent } from '../../../shared/types';

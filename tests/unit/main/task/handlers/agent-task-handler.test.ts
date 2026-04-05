@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const mockExecuteAIAgentsStream = jest.fn();
 
-jest.mock('../../../../../src/main/ai', () => ({
+jest.mock('../../../../../src/main/agents', () => ({
 	executeAIAgentsStream: (...args: unknown[]) => mockExecuteAIAgentsStream(...args),
 }));
 

@@ -1,5 +1,5 @@
 /**
- * ai/index.ts — AI subsystem barrel.
+ * agents/index.ts — agents subsystem barrel.
  *
  * Covers the core agent infrastructure, concrete agent implementations, and
  * the RAG subsystem (document extraction, chunking, vector storage).

@@ -17,9 +17,9 @@ import type {
 	AgentRegistry,
 	AgentStreamEvent,
 	NodeModelMap,
-} from '../../ai';
-import { executeAIAgentsStream } from '../../ai';
-import type { AgentRuntimeContext } from '../../ai/core';
+} from '../../agents';
+import { executeAIAgentsStream } from '../../agents';
+import type { AgentRuntimeContext } from '../../agents/core';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';

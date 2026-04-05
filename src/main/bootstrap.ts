@@ -19,7 +19,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { FileManager } from './shared/file_manager';
-import { AgentRegistry, AssistantAgent } from './ai';
+import { AgentRegistry, AssistantAgent } from './agents';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
 import { TaskReactionRegistry } from './task/task-reaction-registry';

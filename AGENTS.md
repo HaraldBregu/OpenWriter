@@ -31,7 +31,7 @@ Recent history uses short, imperative commit subjects such as `Add ConfigPanel a
 
 ## Configuration & Security
 
-Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/ai/agents/**/*.md` and IPC surfaces as sensitive interfaces. If test updates are needed for those changes, only implement them when the user specifically requests tests.
+Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/agents/**/*.md` and IPC surfaces as sensitive interfaces. If test updates are needed for those changes, only implement them when the user specifically requests tests.
 
 ## Git
 
