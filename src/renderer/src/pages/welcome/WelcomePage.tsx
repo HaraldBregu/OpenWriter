@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Clock, X, AlertTriangle, Loader2 } from 'lucide-react';
-import { AppButton, AppIconOpenWriter, AppInput, AppLabel } from '@/components/app';
+import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
+import { AppButton, AppIconOpenWriter } from '@/components/app';
 import { TitleBar } from '@/components/TitleBar';
 import {
 	useWorkspaceDeletionReason,
