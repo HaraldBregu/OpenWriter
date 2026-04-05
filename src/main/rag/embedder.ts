@@ -8,6 +8,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Document } from '@langchain/core/documents';
+import type { WindowContextManager } from '../core/window-context';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../workspace/workspace-service';
 import type { ServiceContainer } from '../core/service-container';
@@ -20,6 +21,7 @@ import { DocumentIndexStore } from './document-index-store';
 import { VectorStore } from './vector-store';
 import { ProviderResolver } from '../shared/provider-resolver';
 import { createEmbeddingModel } from '../shared/embedding-factory';
+import { getTaskExecutionContext } from '../task/task-execution-context';
 
 const LOG_SOURCE = 'Embedder';
 
@@ -36,10 +38,7 @@ export interface VectorIndexingProgressEvent {
 }
 
 export interface RunVectorIndexingInput {
-	signal: AbortSignal;
 	onProgress?: (event: VectorIndexingProgressEvent) => void;
-	clearExisting?: boolean;
-	chunkOptions?: ChunkOptions;
 }
 
 export interface VectorIndexingResult {
@@ -49,16 +48,28 @@ export interface VectorIndexingResult {
 }
 
 export class Embedder {
-	constructor(
-		private readonly globalContainer: ServiceContainer,
-		private readonly extractorRegistry: ExtractorRegistry,
-		private readonly workspaceService: WorkspaceService,
-		private readonly logger?: LoggerService,
-		private readonly defaultChunkOptions?: ChunkOptions
-	) {}
+	private static globalContainer?: ServiceContainer;
+
+	private readonly extractorRegistry: ExtractorRegistry;
+	private readonly globalContainer: ServiceContainer;
+	private readonly logger?: LoggerService;
+
+	static configure(globalContainer: ServiceContainer): void {
+		Embedder.globalContainer = globalContainer;
+	}
+
+	constructor(private readonly defaultChunkOptions?: ChunkOptions) {
+		this.globalContainer = Embedder.resolveGlobalContainer();
+		this.extractorRegistry = this.globalContainer.get<ExtractorRegistry>('extractorRegistry');
+		this.logger = this.globalContainer.has('logger')
+			? this.globalContainer.get<LoggerService>('logger')
+			: undefined;
+	}
 
 	async run(input: RunVectorIndexingInput): Promise<VectorIndexingResult> {
-		const workspacePath = this.workspaceService.getCurrent();
+		const taskContext = this.resolveTaskExecutionContext();
+		const workspaceService = this.resolveWorkspaceService();
+		const workspacePath = workspaceService.getCurrent();
 		if (!workspacePath) {
 			throw new Error('No workspace is open for RAG indexing');
 		}
@@ -86,23 +97,21 @@ export class Embedder {
 		const failedIds: string[] = [];
 		let indexedCount = 0;
 
-		const outputPath = this.workspaceService.getVectorStorePath();
-		const indexOutputPath = this.workspaceService.getDocumentIndexPath();
+		const outputPath = workspaceService.getVectorStorePath();
+		const indexOutputPath = workspaceService.getDocumentIndexPath();
 
 		if (!outputPath || !indexOutputPath) {
 			throw new Error('Failed to resolve RAG paths from workspace');
 		}
 
-		if (input.clearExisting !== false) {
-			await fs.rm(outputPath, { recursive: true, force: true });
-			await fs.rm(indexOutputPath, { recursive: true, force: true });
-			this.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
-				outputPath,
-			});
-			this.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
-				outputPath: indexOutputPath,
-			});
-		}
+		await fs.rm(outputPath, { recursive: true, force: true });
+		await fs.rm(indexOutputPath, { recursive: true, force: true });
+		this.logger?.info(LOG_SOURCE, 'Cleared existing vector store', {
+			outputPath,
+		});
+		this.logger?.info(LOG_SOURCE, 'Cleared existing document index', {
+			outputPath: indexOutputPath,
+		});
 
 		const pendingChunks: Array<{
 			document: FileMetadata;
@@ -111,7 +120,7 @@ export class Embedder {
 		}> = [];
 
 		for (let index = 0; index < documents.length; index += 1) {
-			throwIfAborted(input.signal);
+			throwIfAborted(taskContext.signal);
 
 			const document = documents[index];
 			const extension = path.extname(document.name).toLowerCase();
@@ -127,7 +136,7 @@ export class Embedder {
 			}
 
 			try {
-				const extracted = await extractor.extract(document.path, input.signal);
+				const extracted = await extractor.extract(document.path, taskContext.signal);
 
 				if (extracted.content.trim().length === 0) {
 					this.logger?.warn(LOG_SOURCE, `Empty content extracted from: ${document.name}`);
@@ -142,7 +151,7 @@ export class Embedder {
 						fileName: document.name,
 						source: document.path,
 					},
-					input.chunkOptions ?? this.defaultChunkOptions
+					this.defaultChunkOptions
 				);
 
 				pendingChunks.push({
@@ -169,7 +178,7 @@ export class Embedder {
 			}
 		}
 
-		throwIfAborted(input.signal);
+		throwIfAborted(taskContext.signal);
 		input.onProgress?.({
 			phase: 'index',
 			completed: 0,
@@ -194,7 +203,7 @@ export class Embedder {
 		});
 
 		for (let index = 0; index < pendingChunks.length; index += 1) {
-			throwIfAborted(input.signal);
+			throwIfAborted(taskContext.signal);
 
 			const pending = pendingChunks[index];
 
@@ -220,7 +229,7 @@ export class Embedder {
 			}
 		}
 
-		throwIfAborted(input.signal);
+		throwIfAborted(taskContext.signal);
 		input.onProgress?.({
 			phase: 'save',
 			completed: 0,
@@ -240,6 +249,34 @@ export class Embedder {
 			failedIds,
 			totalChunks: vectorStore.size,
 		};
+	}
+
+	private resolveWorkspaceService(): WorkspaceService {
+		const taskContext = this.resolveTaskExecutionContext();
+		if (taskContext.windowId === undefined) {
+			throw new Error('Embedder requires a window-scoped task context');
+		}
+
+		const windowContextManager =
+			this.globalContainer.get<WindowContextManager>('windowContextManager');
+		return windowContextManager.get(taskContext.windowId).container.get<WorkspaceService>('workspace');
+	}
+
+	private static resolveGlobalContainer(): ServiceContainer {
+		if (!Embedder.globalContainer) {
+			throw new Error('Embedder has not been configured');
+		}
+
+		return Embedder.globalContainer;
+	}
+
+	private resolveTaskExecutionContext() {
+		const context = getTaskExecutionContext();
+		if (!context) {
+			throw new Error('Embedder must run inside a task execution context');
+		}
+
+		return context;
 	}
 }
 

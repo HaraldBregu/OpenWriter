@@ -25,6 +25,7 @@ import type { ProgressReporter, StreamReporter } from './task-handler';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
 import { getTaskStatusText, withTaskStatusText } from '../../shared/types';
+import { runWithTaskExecutionContext } from './task-execution-context';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
 const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000; // 5 minutes
@@ -429,12 +430,15 @@ export class TaskExecutor implements Disposable {
 				},
 			};
 
-			const result = await handler.execute(
-				input,
-				controller.signal,
-				reporter,
-				streamReporter,
-				metadata
+			const result = await runWithTaskExecutionContext(
+				{
+					taskId,
+					taskType: type,
+					signal: controller.signal,
+					windowId,
+					metadata,
+				},
+				() => handler.execute(input, controller.signal, reporter, streamReporter, metadata)
 			);
 
 			// Task may have been cancelled during execution

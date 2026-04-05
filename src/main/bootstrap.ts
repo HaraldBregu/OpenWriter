@@ -29,7 +29,7 @@ import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 
 // RAG infrastructure
-import { ExtractorRegistry, PlainTextExtractor } from './rag';
+import { ExtractorRegistry, PlainTextExtractor, Embedder } from './rag';
 
 // IPC modules
 import type { IpcModule } from './ipc';
@@ -107,11 +107,10 @@ export function bootstrapServices(): BootstrapResult {
 	// Document extractor registry — Strategy pattern for file-type-specific text extraction
 	const extractorRegistry = container.register('extractorRegistry', new ExtractorRegistry());
 	extractorRegistry.register(new PlainTextExtractor());
+	Embedder.configure(container);
 
 	// Register handlers that depend on WindowContextManager
-	taskHandlerRegistry.register(
-		new RagIndexingTaskHandler(windowContextManager, container, extractorRegistry)
-	);
+	taskHandlerRegistry.register(new RagIndexingTaskHandler());
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
