@@ -1,8 +1,8 @@
 import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../core/definition';
-import { RagRetriever } from '../rag';
 import { buildGraph, WRITER_SPECIALIST } from './graph';
 import { WRITER_STATE_MESSAGES } from './messages';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
+import { RagRetriever } from '../assistant/nodes/rag-retrieval';
 
 const LOG_SOURCE = 'WriterAgent';
 

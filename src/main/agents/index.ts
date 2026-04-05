@@ -19,4 +19,4 @@ export { AssistantAgent } from './assistant/definition';
 export { WriterAgent } from './writer/definition';
 
 // Agent-side RAG
-export { createRagChain, NO_CONTEXT_FINDING, runRagChain, RagRetriever } from './rag';
+export { createRagChain, NO_CONTEXT_FINDING, runRagChain, RagRetriever } from './assistant/nodes/rag-retrieval';

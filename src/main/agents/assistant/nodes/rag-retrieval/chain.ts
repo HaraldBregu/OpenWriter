@@ -1,12 +1,12 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { HumanMessage } from '@langchain/core/messages';
-import { toLangChainHistoryMessages } from '../core/history';
-import type { AgentHistoryMessage } from '../core/types';
+import { toLangChainHistoryMessages } from '../../../core/history';
+import type { AgentHistoryMessage } from '../../../core/types';
 import {
 	createAssistantSpecialistAgent,
 	invokeAssistantSpecialist,
 	type AssistantSpecialistAgent,
-} from '../assistant/specialist-agent';
+} from '../../specialist-agent';
 import type { RagRetriever } from './retriever';
 
 const SYSTEM_PROMPT = `You are the RAG specialist in a multi-agent assistant.

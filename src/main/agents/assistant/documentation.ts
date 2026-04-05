@@ -61,18 +61,21 @@ flowchart LR
 - `nodes/index.ts`
   Defines the live node registry used by the graph.
 
-- `agents/intent-detector-agent.ts`
+- `nodes/intent-analyzer/index.ts`
   Implements the `intent_analyzer` node.
 
-- `agents/rag-agent.ts`
+- `nodes/rag-retrieval/index.ts`
   Implements the `rag_retrieval` node.
 
-- `agents/duckduckgo-search-agent.ts`
+- `nodes/rag-retrieval/retriever.ts`
+  Loads the workspace vector store and document index for retrieval.
+
+- `nodes/rag-retrieval/chain.ts`
+  Summarizes retrieved workspace context into assistant findings.
+
+- `nodes/web-research/index.ts`
   Implements the `web_research` node.
 
-- `agents/enhancer-agent.ts`
+- `nodes/response-preparer/index.ts`
   Implements the `response_preparer` node.
-
-- `../rag/retriever.ts`
-  Loads the workspace vector store and document index for retrieval.
 */

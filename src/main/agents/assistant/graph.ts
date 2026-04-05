@@ -2,8 +2,8 @@ import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
-import type { RagRetriever } from '../rag';
 import { assistantNodeDefinitions, ASSISTANT_NODE, type AssistantNodeName } from './nodes';
+import type { RagRetriever } from './nodes/rag-retrieval';
 import type { AssistantSpecialistAgent } from './specialist-agent';
 import { AssistantState, type AssistantGraphState } from './state';
 

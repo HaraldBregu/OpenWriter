@@ -1,15 +1,17 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { RagRetriever } from '../../rag';
 import type { LoggerService } from '../../../services/logger';
+import type { AssistantSpecialistAgent } from '../specialist-agent';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../state';
+import {
+	createIntentDetectorAgent,
+	intentDetectorAgent,
+} from './intent-analyzer';
+import { createRagAgent, ragAgent, type RagRetriever } from './rag-retrieval';
 import {
 	createDuckDuckGoSearchAgent,
 	duckDuckGoSearchAgent,
-} from '../agents/duckduckgo-search-agent';
-import { createEnhancerAgent, enhancerAgent } from '../agents/enhancer-agent';
-import { createIntentDetectorAgent, intentDetectorAgent } from '../agents/intent-detector-agent';
-import { createRagAgent, ragAgent } from '../agents/rag-agent';
-import type { AssistantSpecialistAgent } from '../specialist-agent';
-import type { AssistantGraphState, AssistantGraphUpdate } from '../state';
+} from './web-research';
+import { createEnhancerAgent, enhancerAgent } from './response-preparer';
 
 export const ASSISTANT_NODE = {
 	INTENT_ANALYZER: 'intent_analyzer',

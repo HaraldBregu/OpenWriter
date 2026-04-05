@@ -3,9 +3,9 @@ import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import type {
 	DocumentIndexSnapshot,
 	IndexedDocumentRecord,
-} from '../../rag/document-index-store';
-import type { WorkspaceService } from '../../workspace/workspace-service';
-import { DocumentIndexStore, VectorStore } from '../../rag';
+} from '../../../../rag/document-index-store';
+import type { WorkspaceService } from '../../../../workspace/workspace-service';
+import { DocumentIndexStore, VectorStore } from '../../../../rag';
 
 const DEFAULT_TOP_K = 4;
 const DEFAULT_FETCH_K_MULTIPLIER = 3;
@@ -73,10 +73,7 @@ export class RagRetriever {
 		}
 
 		const topK = this.options.topK ?? DEFAULT_TOP_K;
-		const fetchK = Math.max(
-			topK,
-			this.options.fetchK ?? topK * DEFAULT_FETCH_K_MULTIPLIER
-		);
+		const fetchK = Math.max(topK, this.options.fetchK ?? topK * DEFAULT_FETCH_K_MULTIPLIER);
 		const maxDistance = this.options.maxDistance ?? DEFAULT_MAX_DISTANCE;
 		const candidates = await this.collectCandidates(normalizedQueries, fetchK, maxDistance);
 		if (candidates.length === 0) {

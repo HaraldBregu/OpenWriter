@@ -1,19 +1,20 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { LoggerService } from '../../../services/logger';
-import type { AssistantSpecialistAgent } from '../specialist-agent';
-import type { AssistantState } from '../state';
-import {
-	createRagChain,
-	NO_CONTEXT_FINDING,
-	runRagChain,
-	type RagRetriever,
-} from '../../rag';
+import type { LoggerService } from '../../../../services/logger';
+import type { AssistantSpecialistAgent } from '../../specialist-agent';
+import type { AssistantState } from '../../state';
+import { createRagChain, NO_CONTEXT_FINDING, runRagChain } from './chain';
+import type { RagRetriever } from './retriever';
 
 const RAG_SKIPPED_FINDING = 'Workspace retrieval was not required for this request.';
 const RAG_UNAVAILABLE_FINDING =
 	'Workspace retrieval was requested, but no workspace knowledge base is available.';
 
-export function createRagAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export { createRagChain, NO_CONTEXT_FINDING, runRagChain, type RunRagChainInput } from './chain';
+export { RagRetriever, type RagRetrieverOptions, type RetrievedDocument } from './retriever';
+
+type AssistantRagNodeAgent = ReturnType<typeof createRagChain>;
+
+export function createRagAgent(model: BaseChatModel): AssistantRagNodeAgent {
 	return createRagChain(model);
 }
 
