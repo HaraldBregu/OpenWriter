@@ -10,69 +10,49 @@ import {
 } from '../specialist-agent';
 import type { AssistantState } from '../state';
 
-const SYSTEM_PROMPT = `You are the enhancer in a multi-agent assistant.
+const SYSTEM_PROMPT = `You are the Response Preparer in a multi-node assistant.
 
 You receive:
 
 - the user's original request
 - prior conversation history
-- the intent note
-- the planner brief
-- the text-generator draft
-- the workspace retrieval note
-- the DuckDuckGo search note
-- the analyzer verdict
+- the intent analysis
+- optional workspace retrieval findings
+- optional online research findings
 
 Produce the final user-facing response.
 
 Rules:
 
-- Answer the user's request directly.
-- Use the planner brief to preserve the intended answer shape.
-- Merge the text, RAG, and web findings only when they are relevant and
-  reliable.
-- If the user asked for an image or other visual asset, state clearly that this
-  assistant does not generate images in chat and provide the most useful
-  text-only substitute you can.
-- If retrieval or web search came back weak, be explicit about that rather than
-  inventing facts.
+- If the request was a direct question and research agents were skipped, answer directly.
+- If the request was generation or research, merge the RAG and web findings only when they help.
+- If retrieval or online research were weak, unavailable, or skipped, say so plainly rather than inventing facts.
+- If the user asked for an image or other visual asset, state clearly that this assistant replies in text and provide the best useful text substitute.
 - Follow the user's requested tone, format, and level of detail.
-- Do not mention internal agents, routing, or hidden analysis.`;
+- Do not mention internal nodes, routing, or hidden analysis.`;
 
 function buildHumanMessage(state: typeof AssistantState.State): string {
 	return [
 		'Original user request:',
 		state.prompt,
 		'',
-		'Intent findings:',
+		'Normalized request:',
+		state.normalizedPrompt || state.prompt,
+		'',
+		'Intent analysis:',
 		'<intent_findings>',
 		state.intentFindings || 'No intent findings available.',
 		'</intent_findings>',
 		'',
-		'Planner brief:',
-		'<planner_findings>',
-		state.plannerFindings || 'No planner brief available.',
-		'</planner_findings>',
-		'',
-		'Text generator output:',
-		'<text_findings>',
-		state.textFindings || 'No text draft was generated.',
-		'</text_findings>',
-		'',
-		'Workspace retrieval output:',
+		'Workspace retrieval findings:',
 		'<rag_findings>',
-		state.ragFindings || 'No relevant workspace context was found for this request.',
+		state.ragFindings || 'No workspace findings were generated.',
 		'</rag_findings>',
 		'',
-		'DuckDuckGo search output:',
+		'Online research findings:',
 		'<web_findings>',
-		state.webFindings || 'No external findings were generated.',
+		state.webFindings || 'No online research findings were generated.',
 		'</web_findings>',
-		'',
-		'Analyzer verdict:',
-		'<analysis_findings>',
-		state.analysisFindings || 'No analyzer verdict available.',
-		'</analysis_findings>',
 	].join('\n');
 }
 
@@ -85,13 +65,12 @@ export async function enhancerAgent(
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
 ): Promise<Partial<typeof AssistantState.State>> {
-	logger?.debug('EnhancerAgent', 'Starting enhancer generation', {
+	logger?.debug('ResponsePreparerAgent', 'Starting final response generation', {
 		promptLength: state.prompt.length,
-		plannerFindingsLength: state.plannerFindings.length,
-		textFindingsLength: state.textFindings.length,
+		intentCategory: state.intentCategory,
+		needsParallelResearch: state.needsParallelResearch,
 		ragFindingsLength: state.ragFindings.length,
 		webFindingsLength: state.webFindings.length,
-		analysisFindingsLength: state.analysisFindings.length,
 	});
 
 	const messages = [
@@ -100,12 +79,12 @@ export async function enhancerAgent(
 	];
 	const response = await streamAssistantSpecialist(agent, messages);
 
-	logger?.info('EnhancerAgent', 'Enhancer response generated', {
+	logger?.info('ResponsePreparerAgent', 'Final response generated', {
 		responseLength: response.length,
 	});
 
 	return {
-		phaseLabel: ASSISTANT_STATE_MESSAGES.ENHANCER,
+		phaseLabel: ASSISTANT_STATE_MESSAGES.RESPONSE_PREPARER,
 		response,
 	};
 }

@@ -13,4 +13,9 @@ export {
 	type RunVectorIndexingInput,
 } from './embedder';
 export { VectorStore } from './vector-store';
-export { DocumentIndexStore, type IndexedDocumentRecord } from './document-index-store';
+export {
+	DocumentIndexStore,
+	type DocumentIndexSnapshot,
+	type IndexedDocumentChunkRecord,
+	type IndexedDocumentRecord,
+} from './document-index-store';

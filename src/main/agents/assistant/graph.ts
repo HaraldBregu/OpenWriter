@@ -2,72 +2,54 @@ import { StateGraph, START, END } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
-import { AssistantState } from './state';
-import { analyzerAgent, createAnalyzerAgent } from './agents/analyzer-agent';
-import {
-	createDuckDuckGoSearchAgent,
-	duckDuckGoSearchAgent,
-} from './agents/duckduckgo-search-agent';
-import { createEnhancerAgent, enhancerAgent } from './agents/enhancer-agent';
-import { createIntentDetectorAgent, intentDetectorAgent } from './agents/intent-detector-agent';
-import { createPlannerAgent, plannerAgent } from './agents/planner-agent';
-import { createRagAgent, ragAgent } from './agents/rag-agent';
-import { createTextGeneratorAgent, textGeneratorAgent } from './agents/text-generator-agent';
 import type { RagRetriever } from '../rag';
+import { assistantNodeDefinitions, ASSISTANT_NODE, type AssistantNodeName } from './nodes';
+import type { AssistantSpecialistAgent } from './specialist-agent';
+import { AssistantState, type AssistantGraphState } from './state';
 
 const LOG_SOURCE = 'AssistantGraph';
-const MAX_REVIEW_PASSES = 2;
 
-export const ASSISTANT_SPECIALIST = {
-	INTENT_DETECTOR: 'intent_detector',
-	PLANNER: 'planner',
-	RAG_AGENT: 'rag_agent',
-	DUCKDUCKGO_SEARCH: 'duckduckgo_search',
-	TEXT_GENERATOR: 'text_generator',
-	ANALYZER: 'analyzer',
-	ENHANCER: 'enhancer',
-} as const;
+export const ASSISTANT_SPECIALIST = ASSISTANT_NODE;
 
 export interface AssistantSpecialistModels {
-	[ASSISTANT_SPECIALIST.INTENT_DETECTOR]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.PLANNER]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.RAG_AGENT]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.TEXT_GENERATOR]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.ANALYZER]: BaseChatModel;
-	[ASSISTANT_SPECIALIST.ENHANCER]: BaseChatModel;
+	[ASSISTANT_NODE.INTENT_ANALYZER]: BaseChatModel;
+	[ASSISTANT_NODE.RAG_RETRIEVAL]: BaseChatModel;
+	[ASSISTANT_NODE.WEB_RESEARCH]: BaseChatModel;
+	[ASSISTANT_NODE.RESPONSE_PREPARER]: BaseChatModel;
 }
 
-type AssistantSpecialistName = (typeof ASSISTANT_SPECIALIST)[keyof typeof ASSISTANT_SPECIALIST];
-type AssistantGraphState = typeof AssistantState.State;
 type AssistantSpecialistResult = Partial<AssistantGraphState>;
 type AssistantSpecialistRunner = (state: AssistantGraphState) => Promise<AssistantSpecialistResult>;
 
-function routeAfterAnalysis(state: AssistantGraphState): 'retry' | 'enhance' {
-	if (state.shouldRetry && state.reviewCount < MAX_REVIEW_PASSES) {
-		return 'retry';
+function routeAfterIntent(
+	state: AssistantGraphState
+):
+	| typeof ASSISTANT_NODE.RESPONSE_PREPARER
+	| [typeof ASSISTANT_NODE.RAG_RETRIEVAL, typeof ASSISTANT_NODE.WEB_RESEARCH] {
+	if (!state.needsParallelResearch) {
+		return ASSISTANT_NODE.RESPONSE_PREPARER;
 	}
 
-	return 'enhance';
+	return [ASSISTANT_NODE.RAG_RETRIEVAL, ASSISTANT_NODE.WEB_RESEARCH];
 }
 
-function withSpecialistLogging(
-	specialistName: AssistantSpecialistName,
+function withNodeLogging(
+	nodeName: AssistantNodeName,
 	logger: LoggerService | undefined,
-	runSpecialist: AssistantSpecialistRunner
+	runNode: AssistantSpecialistRunner
 ): AssistantSpecialistRunner {
 	return async (state) => {
 		const startedAt = Date.now();
 
-		logger?.debug(LOG_SOURCE, `Entering specialist ${specialistName}`, {
+		logger?.debug(LOG_SOURCE, `Entering node ${nodeName}`, {
 			phaseLabel: state.phaseLabel,
 			promptLength: state.prompt.length,
 		});
 
 		try {
-			const result = await runSpecialist(state);
+			const result = await runNode(state);
 
-			logger?.info(LOG_SOURCE, `Completed specialist ${specialistName}`, {
+			logger?.info(LOG_SOURCE, `Completed node ${nodeName}`, {
 				durationMs: Date.now() - startedAt,
 				updatedKeys: Object.keys(result),
 				nextPhaseLabel:
@@ -77,7 +59,7 @@ function withSpecialistLogging(
 			return result;
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
-			logger?.error(LOG_SOURCE, `Specialist ${specialistName} failed: ${message}`, {
+			logger?.error(LOG_SOURCE, `Node ${nodeName} failed: ${message}`, {
 				durationMs: Date.now() - startedAt,
 			});
 			throw error;
@@ -91,87 +73,82 @@ export function buildGraph(
 	logger?: LoggerService
 ) {
 	const m = models as unknown as AssistantSpecialistModels;
-	const specialists = {
-		[ASSISTANT_SPECIALIST.INTENT_DETECTOR]: createIntentDetectorAgent(
-			m[ASSISTANT_SPECIALIST.INTENT_DETECTOR]
-		),
-		[ASSISTANT_SPECIALIST.PLANNER]: createPlannerAgent(m[ASSISTANT_SPECIALIST.PLANNER]),
-		[ASSISTANT_SPECIALIST.RAG_AGENT]: createRagAgent(m[ASSISTANT_SPECIALIST.RAG_AGENT]),
-		[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH]: createDuckDuckGoSearchAgent(
-			m[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH]
-		),
-		[ASSISTANT_SPECIALIST.TEXT_GENERATOR]: createTextGeneratorAgent(
-			m[ASSISTANT_SPECIALIST.TEXT_GENERATOR]
-		),
-		[ASSISTANT_SPECIALIST.ANALYZER]: createAnalyzerAgent(m[ASSISTANT_SPECIALIST.ANALYZER]),
-		[ASSISTANT_SPECIALIST.ENHANCER]: createEnhancerAgent(m[ASSISTANT_SPECIALIST.ENHANCER]),
+	const nodeContext = { logger, retriever };
+	const nodes: Record<AssistantNodeName, AssistantSpecialistAgent> = {
+		[ASSISTANT_NODE.INTENT_ANALYZER]:
+			assistantNodeDefinitions[ASSISTANT_NODE.INTENT_ANALYZER].create(
+				m[ASSISTANT_NODE.INTENT_ANALYZER]
+			),
+		[ASSISTANT_NODE.RAG_RETRIEVAL]:
+			assistantNodeDefinitions[ASSISTANT_NODE.RAG_RETRIEVAL].create(
+				m[ASSISTANT_NODE.RAG_RETRIEVAL]
+			),
+		[ASSISTANT_NODE.WEB_RESEARCH]:
+			assistantNodeDefinitions[ASSISTANT_NODE.WEB_RESEARCH].create(
+				m[ASSISTANT_NODE.WEB_RESEARCH]
+			),
+		[ASSISTANT_NODE.RESPONSE_PREPARER]:
+			assistantNodeDefinitions[ASSISTANT_NODE.RESPONSE_PREPARER].create(
+				m[ASSISTANT_NODE.RESPONSE_PREPARER]
+			),
 	};
 
 	logger?.info(LOG_SOURCE, 'Building assistant graph', {
 		hasRetriever: retriever !== undefined,
-		specialistCount: Object.keys(ASSISTANT_SPECIALIST).length,
+		nodeCount: Object.keys(ASSISTANT_NODE).length,
 	});
 
 	return new StateGraph(AssistantState)
 		.addNode(
-			ASSISTANT_SPECIALIST.INTENT_DETECTOR,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.INTENT_DETECTOR, logger, (state) =>
-				intentDetectorAgent(state, specialists[ASSISTANT_SPECIALIST.INTENT_DETECTOR], logger)
+			ASSISTANT_NODE.INTENT_ANALYZER,
+			withNodeLogging(ASSISTANT_NODE.INTENT_ANALYZER, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.INTENT_ANALYZER].run(
+					state,
+					nodes[ASSISTANT_NODE.INTENT_ANALYZER],
+					nodeContext
+				)
 			)
 		)
 		.addNode(
-			ASSISTANT_SPECIALIST.PLANNER,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.PLANNER, logger, (state) =>
-				plannerAgent(state, specialists[ASSISTANT_SPECIALIST.PLANNER], logger)
+			ASSISTANT_NODE.RAG_RETRIEVAL,
+			withNodeLogging(ASSISTANT_NODE.RAG_RETRIEVAL, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.RAG_RETRIEVAL].run(
+					state,
+					nodes[ASSISTANT_NODE.RAG_RETRIEVAL],
+					nodeContext
+				)
 			)
 		)
 		.addNode(
-			ASSISTANT_SPECIALIST.RAG_AGENT,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.RAG_AGENT, logger, (state) =>
-				ragAgent(state, specialists[ASSISTANT_SPECIALIST.RAG_AGENT], retriever, logger)
+			ASSISTANT_NODE.WEB_RESEARCH,
+			withNodeLogging(ASSISTANT_NODE.WEB_RESEARCH, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.WEB_RESEARCH].run(
+					state,
+					nodes[ASSISTANT_NODE.WEB_RESEARCH],
+					nodeContext
+				)
 			)
 		)
 		.addNode(
-			ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH, logger, (state) =>
-				duckDuckGoSearchAgent(state, specialists[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH], logger)
+			ASSISTANT_NODE.RESPONSE_PREPARER,
+			withNodeLogging(ASSISTANT_NODE.RESPONSE_PREPARER, logger, (state) =>
+				assistantNodeDefinitions[ASSISTANT_NODE.RESPONSE_PREPARER].run(
+					state,
+					nodes[ASSISTANT_NODE.RESPONSE_PREPARER],
+					nodeContext
+				)
 			)
 		)
-		.addNode(
-			ASSISTANT_SPECIALIST.TEXT_GENERATOR,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.TEXT_GENERATOR, logger, (state) =>
-				textGeneratorAgent(state, specialists[ASSISTANT_SPECIALIST.TEXT_GENERATOR], logger)
-			)
-		)
-		.addNode(
-			ASSISTANT_SPECIALIST.ANALYZER,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.ANALYZER, logger, (state) =>
-				analyzerAgent(state, specialists[ASSISTANT_SPECIALIST.ANALYZER], logger)
-			)
-		)
-		.addNode(
-			ASSISTANT_SPECIALIST.ENHANCER,
-			withSpecialistLogging(ASSISTANT_SPECIALIST.ENHANCER, logger, (state) =>
-				enhancerAgent(state, specialists[ASSISTANT_SPECIALIST.ENHANCER], logger)
-			)
-		)
-		.addEdge(START, ASSISTANT_SPECIALIST.INTENT_DETECTOR)
-		.addEdge(ASSISTANT_SPECIALIST.INTENT_DETECTOR, ASSISTANT_SPECIALIST.PLANNER)
-		.addEdge(ASSISTANT_SPECIALIST.PLANNER, ASSISTANT_SPECIALIST.RAG_AGENT)
-		.addEdge(ASSISTANT_SPECIALIST.PLANNER, ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH)
-		.addEdge(ASSISTANT_SPECIALIST.PLANNER, ASSISTANT_SPECIALIST.TEXT_GENERATOR)
+		.addEdge(START, ASSISTANT_NODE.INTENT_ANALYZER)
+		.addConditionalEdges(ASSISTANT_NODE.INTENT_ANALYZER, routeAfterIntent, [
+			ASSISTANT_NODE.RAG_RETRIEVAL,
+			ASSISTANT_NODE.WEB_RESEARCH,
+			ASSISTANT_NODE.RESPONSE_PREPARER,
+		])
 		.addEdge(
-			[
-				ASSISTANT_SPECIALIST.RAG_AGENT,
-				ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH,
-				ASSISTANT_SPECIALIST.TEXT_GENERATOR,
-			],
-			ASSISTANT_SPECIALIST.ANALYZER
+			[ASSISTANT_NODE.RAG_RETRIEVAL, ASSISTANT_NODE.WEB_RESEARCH],
+			ASSISTANT_NODE.RESPONSE_PREPARER
 		)
-		.addConditionalEdges(ASSISTANT_SPECIALIST.ANALYZER, routeAfterAnalysis, {
-			retry: ASSISTANT_SPECIALIST.PLANNER,
-			enhance: ASSISTANT_SPECIALIST.ENHANCER,
-		})
-		.addEdge(ASSISTANT_SPECIALIST.ENHANCER, END)
+		.addEdge(ASSISTANT_NODE.RESPONSE_PREPARER, END)
 		.compile();
 }

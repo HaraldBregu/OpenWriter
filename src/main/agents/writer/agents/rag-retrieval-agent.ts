@@ -51,7 +51,7 @@ export async function ragRetrievalAgent(
 	const ragFindings = await runRagChain(agent, retriever, {
 		prompt: state.prompt,
 		normalizedPrompt: state.normalizedPrompt || state.prompt,
-		plannerFindings: state.routingFindings,
+		researchGuidance: state.routingFindings,
 		intentFindings: state.routingFindings,
 		query,
 		history: state.history,

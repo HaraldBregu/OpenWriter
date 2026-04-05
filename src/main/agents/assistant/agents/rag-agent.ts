@@ -26,33 +26,35 @@ export async function ragAgent(
 	const query = (state.ragQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (!state.needsRetrieval) {
-		logger?.debug('RagAgent', 'Skipping RAG query because retrieval was not requested');
+		logger?.debug('RagRetrievalAgent', 'Skipping RAG query because retrieval was not requested');
 		return { ragFindings: RAG_SKIPPED_FINDING };
 	}
 
 	if (query.length === 0) {
-		logger?.debug('RagAgent', 'Skipping RAG query', {
+		logger?.debug('RagRetrievalAgent', 'Skipping RAG query', {
 			queryEmpty: query.length === 0,
 		});
 		return { ragFindings: NO_CONTEXT_FINDING };
 	}
 
 	if (retriever === undefined) {
-		logger?.debug('RagAgent', 'Skipping RAG query because no retriever is available');
+		logger?.debug('RagRetrievalAgent', 'Skipping RAG query because no retriever is available');
 		return { ragFindings: RAG_UNAVAILABLE_FINDING };
 	}
 
-	logger?.debug('RagAgent', 'Starting RAG query', { queryLength: query.length });
+	logger?.debug('RagRetrievalAgent', 'Starting RAG query', { queryLength: query.length });
 	const ragFindings = await runRagChain(agent, retriever, {
 		prompt: state.prompt,
 		normalizedPrompt: query,
-		plannerFindings: state.plannerFindings,
+		researchGuidance: state.intentFindings,
 		intentFindings: state.intentFindings,
 		query,
 		history: state.history,
 	});
 
-	logger?.info('RagAgent', 'RAG findings generated', { findingsLength: ragFindings.length });
+	logger?.info('RagRetrievalAgent', 'RAG findings generated', {
+		findingsLength: ragFindings.length,
+	});
 
 	return {
 		ragFindings,

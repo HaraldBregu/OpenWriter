@@ -12,6 +12,11 @@ import type { Document } from '@langchain/core/documents';
 const STORE_FILE = 'documents.json';
 const STORE_VERSION = 1;
 
+export interface IndexedDocumentChunkRecord {
+	pageContent: string;
+	metadata: Record<string, unknown>;
+}
+
 export interface IndexedDocumentRecord {
 	fileId: string;
 	fileName: string;
@@ -19,13 +24,10 @@ export interface IndexedDocumentRecord {
 	extractedMetadata: Record<string, unknown>;
 	indexedAt: number;
 	chunkCount: number;
-	chunks: Array<{
-		pageContent: string;
-		metadata: Record<string, unknown>;
-	}>;
+	chunks: IndexedDocumentChunkRecord[];
 }
 
-interface IndexStoreData {
+export interface DocumentIndexSnapshot {
 	version: number;
 	generatedAt: number;
 	totalDocuments: number;
@@ -60,7 +62,7 @@ export class DocumentIndexStore {
 			})),
 		}));
 
-		const data: IndexStoreData = {
+		const data: DocumentIndexSnapshot = {
 			version: STORE_VERSION,
 			generatedAt: indexedAt,
 			totalDocuments: records.length,
@@ -69,5 +71,20 @@ export class DocumentIndexStore {
 		};
 
 		await fs.writeFile(path.join(storePath, STORE_FILE), JSON.stringify(data, null, 2), 'utf-8');
+	}
+
+	static async load(storePath: string): Promise<DocumentIndexSnapshot | null> {
+		try {
+			const raw = await fs.readFile(path.join(storePath, STORE_FILE), 'utf-8');
+			const data = JSON.parse(raw) as DocumentIndexSnapshot;
+
+			if (data.version !== STORE_VERSION || !Array.isArray(data.documents)) {
+				return null;
+			}
+
+			return data;
+		} catch {
+			return null;
+		}
 	}
 }

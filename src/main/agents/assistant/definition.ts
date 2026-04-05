@@ -7,46 +7,28 @@ import { createEmbeddingModel } from '../../shared/embedding-factory';
 const LOG_SOURCE = 'AssistantAgent';
 
 const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
-	[ASSISTANT_SPECIALIST.INTENT_DETECTOR]: {
+	[ASSISTANT_SPECIALIST.INTENT_ANALYZER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
-		maxTokens: 512,
-	},
-	[ASSISTANT_SPECIALIST.PLANNER]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.2,
 		maxTokens: 1024,
 	},
-	[ASSISTANT_SPECIALIST.RAG_AGENT]: {
+	[ASSISTANT_SPECIALIST.RAG_RETRIEVAL]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_SPECIALIST.DUCKDUCKGO_SEARCH]: {
+	[ASSISTANT_SPECIALIST.WEB_RESEARCH]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.1,
 		maxTokens: 768,
 	},
-	[ASSISTANT_SPECIALIST.TEXT_GENERATOR]: {
+	[ASSISTANT_SPECIALIST.RESPONSE_PREPARER]: {
 		providerId: 'openai',
 		modelId: 'gpt-4o',
 		temperature: 0.4,
-		maxTokens: 2048,
-	},
-	[ASSISTANT_SPECIALIST.ANALYZER]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.1,
-		maxTokens: 768,
-	},
-	[ASSISTANT_SPECIALIST.ENHANCER]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.5,
 		maxTokens: 4096,
 	},
 };
@@ -56,7 +38,7 @@ const definition: AgentDefinition = {
 	name: 'Assistant',
 	category: 'utility',
 	nodeModels: SPECIALIST_MODELS,
-	streamableNodes: [ASSISTANT_SPECIALIST.ENHANCER],
+	streamableNodes: [ASSISTANT_SPECIALIST.RESPONSE_PREPARER],
 	buildGraph,
 
 	prepareGraph(
@@ -94,18 +76,15 @@ const definition: AgentDefinition = {
 			history: ctx.history,
 			normalizedPrompt: '',
 			intentFindings: '',
+			intentCategory: 'question',
+			needsParallelResearch: false,
 			needsRetrieval: false,
 			needsWebSearch: false,
-			plannerFindings: '',
 			ragQuery: '',
 			webSearchQuery: '',
-			textFindings: '',
 			ragFindings: '',
 			webFindings: '',
-			analysisFindings: '',
-			shouldRetry: false,
-			reviewCount: 0,
-			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_DETECTOR,
+			phaseLabel: ASSISTANT_STATE_MESSAGES.INTENT_ANALYZER,
 			response: '',
 		};
 	},

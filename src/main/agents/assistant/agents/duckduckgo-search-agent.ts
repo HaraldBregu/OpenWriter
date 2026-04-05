@@ -12,7 +12,7 @@ import { searchDuckDuckGo } from './duckduckgo-search';
 
 const SYSTEM_PROMPT = `You are the DuckDuckGo search specialist in a multi-agent assistant.
 
-You receive the user's request, the planner brief, and best-effort external
+You receive the user's request, the intent analysis, and best-effort external
 search results.
 
 Produce an internal note for another assistant, not a user-facing reply.
@@ -45,7 +45,7 @@ function buildSearchContext(results: Awaited<ReturnType<typeof searchDuckDuckGo>
 function buildHumanMessage(
 	prompt: string,
 	normalizedPrompt: string,
-	plannerFindings: string,
+	intentFindings: string,
 	searchContext: string
 ): string {
 	return [
@@ -55,10 +55,10 @@ function buildHumanMessage(
 		'Normalized request:',
 		normalizedPrompt,
 		'',
-		'Planner brief:',
-		'<planner_findings>',
-		plannerFindings,
-		'</planner_findings>',
+		'Intent analysis:',
+		'<intent_findings>',
+		intentFindings,
+		'</intent_findings>',
 		'',
 		'DuckDuckGo search results:',
 		'<web_search_results>',
@@ -79,21 +79,21 @@ export async function duckDuckGoSearchAgent(
 	const query = (state.webSearchQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (!state.needsWebSearch) {
-		logger?.debug('DuckDuckGoSearchAgent', 'Skipping web search because it was not requested');
+		logger?.debug('WebResearchAgent', 'Skipping web research because it was not requested');
 		return { webFindings: WEB_SEARCH_SKIPPED_FINDING };
 	}
 
 	if (query.length === 0) {
-		logger?.debug('DuckDuckGoSearchAgent', 'Skipping web search because the query is empty');
+		logger?.debug('WebResearchAgent', 'Skipping web research because the query is empty');
 		return { webFindings: WEB_SEARCH_EMPTY_FINDING };
 	}
 
-	logger?.debug('DuckDuckGoSearchAgent', 'Starting DuckDuckGo search', {
+	logger?.debug('WebResearchAgent', 'Starting online research', {
 		queryLength: query.length,
 	});
 
 	const results = await searchDuckDuckGo(query, logger);
-	logger?.info('DuckDuckGoSearchAgent', 'DuckDuckGo search completed', {
+	logger?.info('WebResearchAgent', 'Online research completed', {
 		resultCount: results.length,
 	});
 
@@ -107,14 +107,14 @@ export async function duckDuckGoSearchAgent(
 			buildHumanMessage(
 				state.prompt,
 				state.normalizedPrompt || state.prompt,
-				state.plannerFindings,
+				state.intentFindings,
 				buildSearchContext(results)
 			)
 		),
 	];
 	const webFindings = await invokeAssistantSpecialist(agent, messages);
 
-	logger?.info('DuckDuckGoSearchAgent', 'DuckDuckGo findings generated', {
+	logger?.info('WebResearchAgent', 'Online research findings generated', {
 		findingsLength: webFindings.length,
 	});
 

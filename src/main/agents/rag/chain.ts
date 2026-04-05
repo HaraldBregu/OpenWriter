@@ -11,14 +11,14 @@ import type { RagRetriever } from './retriever';
 
 const SYSTEM_PROMPT = `You are the RAG specialist in a multi-agent assistant.
 
-You receive the user's request, a normalized request, the planner brief, intent
+You receive the user's request, a normalized request, routing guidance, intent
 classification, and retrieved workspace snippets.
 
 Produce an internal note for another assistant, not a user-facing reply.
 
 Rules:
 
-- Follow the planner's RAG intent and focus.
+- Follow the routing guidance and focus.
 - Use only the retrieved workspace context.
 - Summarize the facts most relevant to answering the user's request.
 - Mention source labels when they materially support a claim.
@@ -32,7 +32,7 @@ export const NO_CONTEXT_FINDING = 'No relevant workspace context was found for t
 export interface RunRagChainInput {
 	prompt: string;
 	normalizedPrompt: string;
-	plannerFindings: string;
+	researchGuidance: string;
 	intentFindings: string;
 	query: string;
 	history?: AgentHistoryMessage[];
@@ -47,7 +47,9 @@ export async function runRagChain(
 	retriever: RagRetriever,
 	input: RunRagChainInput
 ): Promise<string> {
-	const documents = await retriever.retrieve(input.query);
+	const documents = await retriever.retrieveMany(
+		buildRetrievalQueries(input.query, input.normalizedPrompt, input.prompt)
+	);
 	if (documents.length === 0) {
 		return NO_CONTEXT_FINDING;
 	}
@@ -58,7 +60,7 @@ export async function runRagChain(
 			buildHumanMessage(
 				input.prompt,
 				input.normalizedPrompt,
-				input.plannerFindings,
+				input.researchGuidance,
 				input.intentFindings,
 				buildRagContext(documents)
 			)
@@ -73,7 +75,11 @@ function buildRagContext(documents: Awaited<ReturnType<RagRetriever['retrieve']>
 	return documents
 		.map((document, index) => {
 			const sourceLabel = getSourceLabel(document.metadata, index);
-			return [`Source: ${sourceLabel}`, document.pageContent.trim()].join('\n');
+			const chunkRange = getChunkRangeLabel(document.metadata);
+			return [
+				`Source: ${chunkRange ? `${sourceLabel} (${chunkRange})` : sourceLabel}`,
+				document.pageContent.trim(),
+			].join('\n');
 		})
 		.filter(Boolean)
 		.join(CONTEXT_SEPARATOR);
@@ -91,10 +97,64 @@ function getSourceLabel(metadata: Record<string, unknown>, index: number): strin
 	return `document-${index + 1}`;
 }
 
+function getChunkRangeLabel(metadata: Record<string, unknown>): string | undefined {
+	const chunkStart = readChunkBound(metadata['chunkStart']);
+	const chunkEnd = readChunkBound(metadata['chunkEnd']);
+
+	if (chunkStart === undefined && chunkEnd === undefined) {
+		return undefined;
+	}
+
+	if (chunkStart !== undefined && chunkEnd !== undefined) {
+		if (chunkStart === chunkEnd) {
+			return `chunk ${chunkStart + 1}`;
+		}
+
+		return `chunks ${chunkStart + 1}-${chunkEnd + 1}`;
+	}
+
+	const chunkIndex = chunkStart ?? chunkEnd;
+	return chunkIndex === undefined ? undefined : `chunk ${chunkIndex + 1}`;
+}
+
+function readChunkBound(value: unknown): number | undefined {
+	if (typeof value === 'number' && Number.isInteger(value)) {
+		return value;
+	}
+
+	if (typeof value === 'string' && /^\d+$/.test(value)) {
+		return Number(value);
+	}
+
+	return undefined;
+}
+
+function buildRetrievalQueries(...queries: string[]): string[] {
+	const seen = new Set<string>();
+	const normalized: string[] = [];
+
+	for (const query of queries) {
+		const cleaned = query.replace(/\s+/g, ' ').trim();
+		if (cleaned.length === 0) {
+			continue;
+		}
+
+		const key = cleaned.toLowerCase();
+		if (seen.has(key)) {
+			continue;
+		}
+
+		seen.add(key);
+		normalized.push(cleaned);
+	}
+
+	return normalized;
+}
+
 function buildHumanMessage(
 	prompt: string,
 	normalizedPrompt: string,
-	plannerFindings: string,
+	researchGuidance: string,
 	intentFindings: string,
 	ragContext: string
 ): string {
@@ -110,10 +170,10 @@ function buildHumanMessage(
 		intentFindings,
 		'</intent_findings>',
 		'',
-		'Planner brief:',
-		'<planner_findings>',
-		plannerFindings || 'No planner brief was provided.',
-		'</planner_findings>',
+		'Routing guidance:',
+		'<research_guidance>',
+		researchGuidance || 'No routing guidance was provided.',
+		'</research_guidance>',
 		'',
 		'Retrieved workspace context:',
 		'<workspace_context>',

@@ -11,103 +11,171 @@ import {
 import { parseYesNo, readLabeledValue } from '../agent-output';
 import type { AssistantState } from '../state';
 
-const SYSTEM_PROMPT = `You are the intent detector in a multi-agent assistant.
+const SYSTEM_PROMPT = `You are the Intent Analyzer in a multi-node assistant.
 
 You receive the user's latest request and conversation history.
 
-Decide whether the request needs:
+Classify the request into one of these intents:
 
-- workspace or knowledge-base retrieval (\`RAG\`)
-- live external search (\`Web search\`)
+- question: a direct question that can be answered without launching parallel research agents
+- generation: the user wants drafted, rewritten, structured, or otherwise generated content
+- research: the user wants investigation, supporting evidence, comparison, or up-to-date information
 
-Interpret "RAG" as workspace or indexed knowledge-base retrieval only.
-Interpret "Web search" as looking up current external information.
-
-Return exactly five lines in this format:
+Return exactly six lines in this format:
 
 Normalized request: ...
-Visual request: yes|no
-RAG required: yes|no
-Web search required: yes|no
-Reasoning: ...`;
+Intent: question|generation|research
+Launch research agents: yes|no
+RAG query: ...
+Web search query: ...
+Reasoning: ...
+
+Rules:
+
+- If the intent is generation or research, set \`Launch research agents\` to \`yes\`.
+- If \`Launch research agents\` is \`no\`, use \`Skip\` for both queries.
+- Preserve exact file paths, symbol names, and domain-specific terms in the RAG query.
+- Keep the web query focused on what should be looked up externally.
+- If the request asks for an image or visual asset, classify it as generation.`;
+
+type AssistantIntentCategory = 'question' | 'generation' | 'research';
 
 interface IntentDetectorResult {
 	readonly normalizedPrompt: string;
+	readonly intentCategory: AssistantIntentCategory;
 	readonly intentFindings: string;
+	readonly needsParallelResearch: boolean;
 	readonly needsRetrieval: boolean;
 	readonly needsWebSearch: boolean;
+	readonly ragQuery: string;
+	readonly webSearchQuery: string;
 }
 
+const SKIP_QUERY = 'Skip';
 const IMAGE_REQUEST_PATTERN =
 	/\b(image|illustration|picture|photo|render|visual|show me|generate an image|draw|sketch)\b/i;
-const RETRIEVAL_PATTERN =
-	/\b(workspace|codebase|repo|repository|project|document|docs|notes|context|from the files|from the repo|from the project|based on the workspace)\b/i;
 const WEB_SEARCH_PATTERN =
 	/\b(latest|current|recent|today|news|weather|price|stock|market|up to date|up-to-date|search the web|browse the web|internet|online)\b/i;
+const GENERATION_PATTERN =
+	/\b(write|draft|compose|generate|create|rewrite|rephrase|summarize|outline|brainstorm|plan|improve|refactor)\b/i;
+const RESEARCH_PATTERN =
+	/\b(research|investigate|compare|analyze|analysis|find|look up|verify|evidence|sources|facts)\b/i;
+
+function normalizeQuery(value: string | undefined): string {
+	if (!value || /^skip\b/i.test(value)) {
+		return '';
+	}
+
+	return value.trim();
+}
 
 function buildIntentFindings(
 	normalizedPrompt: string,
-	visualRequested: boolean,
-	needsRetrieval: boolean,
-	needsWebSearch: boolean,
+	intentCategory: AssistantIntentCategory,
+	needsParallelResearch: boolean,
+	ragQuery: string,
+	webSearchQuery: string,
 	reasoning: string
 ): string {
 	return [
 		`Normalized request: ${normalizedPrompt}`,
-		`Visual request: ${visualRequested ? 'yes' : 'no'}`,
-		`Workspace retrieval: ${needsRetrieval ? 'yes' : 'no'}`,
-		`Web search: ${needsWebSearch ? 'yes' : 'no'}`,
+		`Intent: ${intentCategory}`,
+		`Launch research agents: ${needsParallelResearch ? 'yes' : 'no'}`,
+		`RAG query: ${ragQuery || SKIP_QUERY}`,
+		`Web search query: ${webSearchQuery || SKIP_QUERY}`,
 		`Routing notes: ${reasoning}`,
 	].join('\n');
 }
 
+function inferIntentCategory(prompt: string): AssistantIntentCategory {
+	if (IMAGE_REQUEST_PATTERN.test(prompt) || GENERATION_PATTERN.test(prompt)) {
+		return 'generation';
+	}
+
+	if (WEB_SEARCH_PATTERN.test(prompt) || RESEARCH_PATTERN.test(prompt)) {
+		return 'research';
+	}
+
+	return 'question';
+}
+
 function buildFallback(prompt: string): IntentDetectorResult {
 	const normalizedPrompt = prompt.trim() || 'No request provided.';
-	const visualRequested = IMAGE_REQUEST_PATTERN.test(normalizedPrompt);
-	const needsRetrieval = RETRIEVAL_PATTERN.test(normalizedPrompt);
-	const needsWebSearch = WEB_SEARCH_PATTERN.test(normalizedPrompt);
+	const intentCategory = inferIntentCategory(normalizedPrompt);
+	const needsParallelResearch = intentCategory !== 'question';
+	const ragQuery = needsParallelResearch ? normalizedPrompt : '';
+	const webSearchQuery = needsParallelResearch ? normalizedPrompt : '';
 
 	return {
 		normalizedPrompt,
+		intentCategory,
 		intentFindings: buildIntentFindings(
 			normalizedPrompt,
-			visualRequested,
-			needsRetrieval,
-			needsWebSearch,
+			intentCategory,
+			needsParallelResearch,
+			ragQuery,
+			webSearchQuery,
 			'Used fallback heuristics because structured classification output was unavailable.'
 		),
-		needsRetrieval,
-		needsWebSearch,
+		needsParallelResearch,
+		needsRetrieval: needsParallelResearch,
+		needsWebSearch: needsParallelResearch,
+		ragQuery,
+		webSearchQuery,
 	};
+}
+
+function parseIntentCategory(value: string | undefined, fallback: AssistantIntentCategory) {
+	if (!value) {
+		return fallback;
+	}
+
+	const normalized = value.trim().toLowerCase();
+	if (normalized === 'question' || normalized === 'generation' || normalized === 'research') {
+		return normalized;
+	}
+
+	return fallback;
 }
 
 function parseClassification(raw: string, prompt: string): IntentDetectorResult {
 	const fallback = buildFallback(prompt);
 	const normalizedPrompt = readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt;
-	const visualRequested = parseYesNo(
-		readLabeledValue(raw, 'Visual request'),
-		IMAGE_REQUEST_PATTERN.test(normalizedPrompt)
+	const intentCategory = parseIntentCategory(readLabeledValue(raw, 'Intent'), fallback.intentCategory);
+	const needsParallelResearch = parseYesNo(
+		readLabeledValue(raw, 'Launch research agents'),
+		intentCategory !== 'question'
 	);
-	const needsRetrieval = parseYesNo(readLabeledValue(raw, 'RAG required'), fallback.needsRetrieval);
-	const needsWebSearch = parseYesNo(
-		readLabeledValue(raw, 'Web search required'),
-		fallback.needsWebSearch
-	);
+	const ragQuery = needsParallelResearch
+		? normalizeQuery(
+				readLabeledValue(raw, 'RAG query') || fallback.ragQuery || normalizedPrompt
+			)
+		: '';
+	const webSearchQuery = needsParallelResearch
+		? normalizeQuery(
+				readLabeledValue(raw, 'Web search query') || fallback.webSearchQuery || normalizedPrompt
+			)
+		: '';
 	const reasoning =
 		readLabeledValue(raw, 'Reasoning') ||
 		'Structured classification succeeded without additional routing notes.';
 
 	return {
 		normalizedPrompt,
+		intentCategory,
 		intentFindings: buildIntentFindings(
 			normalizedPrompt,
-			visualRequested,
-			needsRetrieval,
-			needsWebSearch,
+			intentCategory,
+			needsParallelResearch,
+			ragQuery,
+			webSearchQuery,
 			reasoning
 		),
-		needsRetrieval,
-		needsWebSearch,
+		needsParallelResearch,
+		needsRetrieval: needsParallelResearch,
+		needsWebSearch: needsParallelResearch,
+		ragQuery,
+		webSearchQuery,
 	};
 }
 
@@ -128,17 +196,23 @@ export async function intentDetectorAgent(
 
 	if (prompt.length === 0) {
 		const fallback = buildFallback(prompt);
-		logger?.debug('IntentDetectorAgent', 'Skipping classification for empty prompt');
+		logger?.debug('IntentAnalyzerAgent', 'Skipping classification for empty prompt');
 		return {
 			normalizedPrompt: fallback.normalizedPrompt,
+			intentCategory: fallback.intentCategory,
 			intentFindings: fallback.intentFindings,
+			needsParallelResearch: fallback.needsParallelResearch,
 			needsRetrieval: fallback.needsRetrieval,
 			needsWebSearch: fallback.needsWebSearch,
-			phaseLabel: ASSISTANT_STATE_MESSAGES.PLANNER,
+			ragQuery: fallback.ragQuery,
+			webSearchQuery: fallback.webSearchQuery,
+			phaseLabel: fallback.needsParallelResearch
+				? ASSISTANT_STATE_MESSAGES.PARALLEL_RESEARCH
+				: ASSISTANT_STATE_MESSAGES.RESPONSE_PREPARER,
 		};
 	}
 
-	logger?.debug('IntentDetectorAgent', 'Starting intent detection', {
+	logger?.debug('IntentAnalyzerAgent', 'Starting intent analysis', {
 		promptLength: prompt.length,
 	});
 
@@ -149,17 +223,24 @@ export async function intentDetectorAgent(
 	const rawClassification = await invokeAssistantSpecialist(agent, messages);
 	const parsed = parseClassification(rawClassification, prompt);
 
-	logger?.info('IntentDetectorAgent', 'Intent detection completed', {
-		needsRetrieval: parsed.needsRetrieval,
-		needsWebSearch: parsed.needsWebSearch,
-		normalizedPromptLength: parsed.normalizedPrompt.length,
+	logger?.info('IntentAnalyzerAgent', 'Intent analysis completed', {
+		intentCategory: parsed.intentCategory,
+		needsParallelResearch: parsed.needsParallelResearch,
+		ragQueryLength: parsed.ragQuery.length,
+		webSearchQueryLength: parsed.webSearchQuery.length,
 	});
 
 	return {
 		normalizedPrompt: parsed.normalizedPrompt,
+		intentCategory: parsed.intentCategory,
 		intentFindings: parsed.intentFindings,
+		needsParallelResearch: parsed.needsParallelResearch,
 		needsRetrieval: parsed.needsRetrieval,
 		needsWebSearch: parsed.needsWebSearch,
-		phaseLabel: ASSISTANT_STATE_MESSAGES.PLANNER,
+		ragQuery: parsed.ragQuery,
+		webSearchQuery: parsed.webSearchQuery,
+		phaseLabel: parsed.needsParallelResearch
+			? ASSISTANT_STATE_MESSAGES.PARALLEL_RESEARCH
+			: ASSISTANT_STATE_MESSAGES.RESPONSE_PREPARER,
 	};
 }
