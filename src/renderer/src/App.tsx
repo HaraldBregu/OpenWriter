@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AppProvider } from './contexts';
@@ -8,6 +8,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
 import WelcomePage from './pages/welcome/WelcomePage';
+import FirstTimeConfigurationPage from './pages/welcome/FirstTimeConfigurationPage';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
