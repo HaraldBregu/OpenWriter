@@ -14,13 +14,16 @@ import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
+import type { AssistantAgentId } from '@/components/editor/extensions/assistant';
 
 interface LayoutProps {
 	documentId: string | undefined;
 }
 
-const DOCUMENT_AGENT_ID = 'writer';
-const DOCUMENT_AGENT_TASK_TYPE = 'agent-writer';
+const DOCUMENT_AGENT_TASK_TYPES: Record<AssistantAgentId, string> = {
+	writer: 'agent-writer',
+	painter: 'agent-painter',
+};
 
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const dispatch = useDocumentDispatch();
@@ -54,6 +57,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const [assistantSessionId, setAssistantSessionId] = useState<string | null>(null);
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
+	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<AssistantAgentId>('writer');
 	const assistantIsRunning = assistantActiveTaskId !== null;
 	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
@@ -262,7 +266,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			const streamContent = output?.content ?? snap.streamedContent ?? '';
 
 			if (streamContent) {
-				editorRef.current?.insertText(streamContent, { preventEditorUpdate: !completed });
+				if (completed && assistantActiveAgentId === 'painter') {
+					editorRef.current?.insertMarkdownText(streamContent, {
+						preventEditorUpdate: !completed,
+					});
+				} else {
+					editorRef.current?.insertText(streamContent, { preventEditorUpdate: !completed });
+				}
 			}
 
 			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
@@ -276,10 +286,16 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		});
 
 		return unsub;
-	}, [assistantActiveTaskId]);
+	}, [assistantActiveAgentId, assistantActiveTaskId]);
 
 	const handleAssistantSend = useCallback(
-		async (before: string, after: string, cursorPos: number, input: string) => {
+		async (
+			before: string,
+			after: string,
+			cursorPos: number,
+			input: string,
+			agentId: AssistantAgentId = 'writer'
+		) => {
 			if (!id || assistantIsRunning) return;
 
 			editorRef.current?.setContentGeneratorEnable(false);
@@ -294,10 +310,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			if (typeof window.task?.submit !== 'function') return;
 
 			try {
-				const taskType = DOCUMENT_AGENT_TASK_TYPE;
+				const taskType = DOCUMENT_AGENT_TASK_TYPES[agentId];
 				const taskInput = { prompt };
 				const metadata = {
-					agentId: DOCUMENT_AGENT_ID,
+					agentId,
 					documentId: id,
 					chatId: resolvedSessionId,
 					before,
@@ -310,6 +326,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 				const resolvedTaskId = ipcResult.data.taskId;
 				initTaskMetadata(resolvedTaskId, metadata);
+				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(resolvedTaskId);
 			} catch {
 				// submission failed
@@ -330,7 +347,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				cleanBefore,
 				cleanAfter,
 				cursorPos,
-				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
+				'CONTINUE WRITING HERE WITH 15 WORDS MAX',
+				'writer'
 			).catch(() => {
 				pendingCloseMenuRef.current = null;
 				closeMenu();

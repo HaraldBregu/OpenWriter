@@ -1,9 +1,16 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { AssistantNodeView } from './NodeView';
+import type { AssistantAgentId } from './agents';
 
 export interface AssistantOptions {
-	onSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onSubmit: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		agentId?: AssistantAgentId
+	) => void;
 }
 
 declare module '@tiptap/core' {
@@ -27,7 +34,13 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 
 	addOptions() {
 		return {
-			onSubmit: (_before: string, _after: string, _cursorPos: number, _prompt: string) => {},
+			onSubmit: (
+				_before: string,
+				_after: string,
+				_cursorPos: number,
+				_prompt: string,
+				_agentId?: AssistantAgentId
+			) => {},
 		};
 	},
 
@@ -47,6 +60,16 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 				default: '',
 				parseHTML: () => '',
 				renderHTML: () => ({}),
+			},
+			agentId: {
+				default: 'writer' as AssistantAgentId,
+				parseHTML: (element) => {
+					const value = element.getAttribute('data-agent-id');
+					return value === 'painter' ? 'painter' : 'writer';
+				},
+				renderHTML: (attributes) => ({
+					'data-agent-id': attributes.agentId as AssistantAgentId,
+				}),
 			},
 		};
 	},

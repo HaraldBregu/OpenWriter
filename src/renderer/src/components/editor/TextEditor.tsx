@@ -18,6 +18,7 @@ import { OptionMenu } from './option_menu';
 import { InsertImageDialog } from './InsertImageDialog';
 
 import { createExtensions } from './extensions';
+import type { AssistantAgentId } from './extensions/assistant';
 import { type ImageInsertHandler } from './extensions/image';
 import { EditorProvider } from './EditorContext';
 
@@ -68,7 +69,13 @@ export interface TextEditorProps {
 		cursorPos: number,
 		closeMenu: () => void
 	) => void;
-	onTextSubmit?: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onTextSubmit?: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		agentId?: AssistantAgentId
+	) => void;
 	onImageSubmit?: (prompt: string) => void;
 	onImageFileSelect?: (file: File) => void;
 	/** Document UUID — needed to save image files into the document folder. */
@@ -147,8 +154,8 @@ const TextEditor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onTextSubmit: (before, after, cursorPos, prompt) =>
-							onTextSubmitRef.current?.(before, after, cursorPos, prompt),
+						onTextSubmit: (before, after, cursorPos, prompt, agentId) =>
+							onTextSubmitRef.current?.(before, after, cursorPos, prompt, agentId),
 						onImageSubmit: (prompt) => onImageSubmitRef.current?.(prompt),
 						onImageFileSelect: (file) => onImageFileSelectRef.current?.(file),
 						onImageInsert: (file, insertAtPos) =>

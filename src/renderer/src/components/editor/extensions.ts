@@ -28,7 +28,13 @@ import {
 import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
-	onTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onTextSubmit: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		agentId?: 'writer' | 'painter'
+	) => void;
 	onImageSubmit: (prompt: string) => void;
 	onImageFileSelect: (file: File) => void;
 	onImageInsert: ImageInsertHandler;

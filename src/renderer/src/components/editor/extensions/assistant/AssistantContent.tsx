@@ -3,24 +3,30 @@ import { useTranslation } from 'react-i18next';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
+import { AgentDropdown } from './AgentDropdown';
+import type { AssistantAgentId } from './agents';
 
 export interface AssistantContentProps {
 	prompt: string;
+	agentId: AssistantAgentId;
 	loading: boolean;
 	enable: boolean;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	submitRef: React.RefObject<(() => void) | null>;
 	onPromptChange: (value: string) => void;
+	onAgentChange: (agentId: AssistantAgentId) => void;
 	onResize: () => void;
 }
 
 export function AssistantContent({
 	prompt,
+	agentId,
 	loading,
 	enable,
 	textareaRef,
 	submitRef,
 	onPromptChange,
+	onAgentChange,
 	onResize,
 }: AssistantContentProps): React.JSX.Element {
 	const { t } = useTranslation();
@@ -48,9 +54,16 @@ export function AssistantContent({
 				rows={1}
 			/>
 			<div className="flex items-center justify-between gap-3 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
-				<span className="text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
-					{footerHint}
-				</span>
+				<div className="flex min-w-0 items-center gap-2">
+					<AgentDropdown
+						agentId={agentId}
+						disabled={!enable || loading}
+						onAgentChange={onAgentChange}
+					/>
+					<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
+						{footerHint}
+					</span>
+				</div>
 				<AppButton
 					variant="prompt-submit"
 					size="prompt-submit-md"

@@ -4,6 +4,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import type { AssistantOptions } from './input-extension';
 import { AssistantContent } from './AssistantContent';
+import type { AssistantAgentId } from './agents';
 
 export function AssistantNodeView({
 	editor,
@@ -14,6 +15,7 @@ export function AssistantNodeView({
 }: NodeViewProps): React.JSX.Element {
 	const loading = node.attrs.loading as boolean;
 	const enable = node.attrs.enable as boolean;
+	const agentId = (node.attrs.agentId as AssistantAgentId) ?? 'writer';
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
@@ -27,6 +29,15 @@ export function AssistantNodeView({
 			}
 		},
 		[node.attrs.prompt, updateAttributes]
+	);
+
+	const handleAgentChange = useCallback(
+		(value: AssistantAgentId) => {
+			if ((node.attrs.agentId as AssistantAgentId) !== value) {
+				updateAttributes({ agentId: value });
+			}
+		},
+		[node.attrs.agentId, updateAttributes]
 	);
 
 	const deleteNode = useCallback(() => {
@@ -72,8 +83,8 @@ export function AssistantNodeView({
 			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
 		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
 
-		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt);
-	}, [prompt, deleteNode, editor, extension.options]);
+		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt, agentId);
+	}, [agentId, prompt, deleteNode, editor, extension.options]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
 	submitRef.current = submit;
@@ -142,11 +153,13 @@ export function AssistantNodeView({
 				<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 				<AssistantContent
 					prompt={prompt}
+					agentId={agentId}
 					loading={loading}
 					enable={enable}
 					textareaRef={textareaRef}
 					submitRef={submitRef}
 					onPromptChange={handlePromptChange}
+					onAgentChange={handleAgentChange}
 					onResize={resizeTextarea}
 				/>
 			</div>
