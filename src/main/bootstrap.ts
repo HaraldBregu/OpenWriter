@@ -19,7 +19,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { FileManager } from './shared/file_manager';
-import { AgentRegistry, AssistantAgent } from './agents';
+import { AgentRegistry, AssistantAgent, WriterAgent } from './agents';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
 import { TaskReactionRegistry } from './task/task-reaction-registry';
@@ -82,6 +82,7 @@ export function bootstrapServices(): BootstrapResult {
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
 	agentRegistry.register(AssistantAgent);
+	agentRegistry.register(WriterAgent);
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());

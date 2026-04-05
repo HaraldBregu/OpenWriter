@@ -519,4 +519,9 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		name: 'Assistant',
 		description: 'Routes requests by intent and responds through the right specialist flow',
 	},
+	{
+		id: 'writer',
+		name: 'Writer',
+		description: 'Routes writing requests through brainstorming, outlining, drafting, and rewrite specialists',
+	},
 ];

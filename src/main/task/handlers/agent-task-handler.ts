@@ -117,7 +117,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		// single-model path entirely. This keeps the executor agnostic to
 		// multi-provider orchestration logic.
 		let nodeModels: NodeModelMap | undefined;
-		if (def.nodeModels) {
+		if (def.nodeModels && !def.execute) {
 			nodeModels = {};
 			for (const [nodeName, cfg] of Object.entries(def.nodeModels)) {
 				const nodeProvider = this.providerResolver.resolve({
@@ -143,8 +143,9 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		// receives a standard `buildGraph` function — it remains unaware of the
 		// injection.
 		let effectiveBuildGraph = def.buildGraph;
-		if (def.prepareGraph && effectiveBuildGraph) {
-			const runtimeContext = this.resolveRuntimeContext(input, provider);
+		const runtimeContext =
+			def.prepareGraph || def.execute ? this.resolveRuntimeContext(input, provider) : undefined;
+		if (def.prepareGraph && effectiveBuildGraph && runtimeContext) {
 			effectiveBuildGraph = def.prepareGraph(effectiveBuildGraph, runtimeContext);
 		}
 
@@ -178,24 +179,38 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			reporter.progress(currentProgress, initialThinkingLabel);
 		}
 
-		const gen = executeAIAgentsStream({
-			runId: randomUUID(),
-			provider,
-			systemPrompt: '',
-			temperature: resolvedTemperature,
-			maxTokens: resolvedMaxTokens,
-			history,
-			prompt: input.prompt,
-			signal,
-			nodeModels,
-			buildGraph: effectiveBuildGraph,
-			buildGraphInput: def.buildGraphInput,
-			extractGraphOutput: def.extractGraphOutput,
-			extractThinkingLabel: def.extractThinkingLabel,
-			streamableNodes: def.streamableNodes,
-			metadata,
-			logger: this.logger,
-		});
+		const runId = randomUUID();
+		const gen = def.execute
+			? def.execute({
+					runId,
+					provider,
+					prompt: input.prompt,
+					temperature: resolvedTemperature,
+					maxTokens: resolvedMaxTokens,
+					history,
+					signal,
+					metadata,
+					runtime: runtimeContext ?? this.resolveRuntimeContext(input, provider),
+					logger: this.logger,
+				})
+			: executeAIAgentsStream({
+					runId,
+					provider,
+					systemPrompt: '',
+					temperature: resolvedTemperature,
+					maxTokens: resolvedMaxTokens,
+					history,
+					prompt: input.prompt,
+					signal,
+					nodeModels,
+					buildGraph: effectiveBuildGraph,
+					buildGraphInput: def.buildGraphInput,
+					extractGraphOutput: def.extractGraphOutput,
+					extractThinkingLabel: def.extractThinkingLabel,
+					streamableNodes: def.streamableNodes,
+					metadata,
+					logger: this.logger,
+				});
 
 		for await (const event of gen) {
 			this.handleStreamEvent(

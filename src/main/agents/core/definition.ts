@@ -8,8 +8,10 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { AgentHistoryMessage } from './types';
+import type { AgentStreamEvent } from './types';
 import type { LoggerService } from '../../services/logger';
 import type { WorkspaceService } from '../../workspace/workspace-service';
+import type { ResolvedProvider } from '../../shared/provider-resolver';
 // AgentDefinitionInfo is the canonical IPC-safe snapshot type shared across
 // all three process contexts (main, preload, renderer).
 export type { AgentDefinitionInfo } from '../../../shared/types';
@@ -76,6 +78,19 @@ export interface AgentRuntimeContext {
 	/** Primary provider identifier (e.g. 'openai'). */
 	providerId: string;
 	/** Optional logger service for recording graph execution. */
+	logger?: LoggerService;
+}
+
+export interface CustomAgentExecutionInput {
+	runId: string;
+	provider: ResolvedProvider;
+	prompt: string;
+	temperature: number;
+	maxTokens?: number;
+	history: AgentHistoryMessage[];
+	signal?: AbortSignal;
+	metadata?: Record<string, unknown>;
+	runtime: AgentRuntimeContext;
 	logger?: LoggerService;
 }
 
@@ -172,6 +187,12 @@ export interface AgentDefinition {
 	 * produce internal output (e.g. JSON) not intended for the user.
 	 */
 	streamableNodes?: string[];
+	/**
+	 * Optional custom executor for agents that do not use LangChain or LangGraph.
+	 * When present, AgentTaskHandler delegates execution to this hook instead of
+	 * the default executor.
+	 */
+	execute?: (input: CustomAgentExecutionInput) => AsyncGenerator<AgentStreamEvent>;
 }
 
 // ---------------------------------------------------------------------------
