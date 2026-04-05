@@ -35,12 +35,8 @@ const WelcomePage: React.FC<WelcomePageProps> = ({
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
-	const [tokens, setTokens] = useState<Record<ProviderId, string>>({ ...EMPTY_TOKENS });
-	const [isSavingConfiguration, setIsSavingConfiguration] = useState(false);
-	const [configurationError, setConfigurationError] = useState<string | null>(null);
 	const deletionReason = useWorkspaceDeletionReason();
 	const clearDeletion = useClearDeletionReason();
-	const showFirstTimeConfiguration = startupInfo.isFirstRun && !startupInfo.isInitialized;
 
 	const loadRecentProjects = useCallback(async () => {
 		try {
