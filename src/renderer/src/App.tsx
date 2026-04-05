@@ -135,7 +135,7 @@ const App: React.FC = () => {
 							<Route path="/">
 								<Route
 									index
-									element={<WelcomePage startupInfo={startupInfo} onConfigured={setStartupInfo} />}
+									element={<WelcomePage />}
 								/>
 								<Route
 									path="config"
