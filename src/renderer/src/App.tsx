@@ -132,10 +132,20 @@ const App: React.FC = () => {
 				<AppProvider>
 					<Router>
 						<Routes>
-							<Route
-								path="/"
-								element={<WelcomePage startupInfo={startupInfo} onConfigured={setStartupInfo} />}
-							/>
+							<Route path="/">
+								<Route
+									index
+									element={<WelcomePage startupInfo={startupInfo} onConfigured={setStartupInfo} />}
+								/>
+								<Route
+									path="config"
+									element={
+										<RouteWrapper>
+											<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
+										</RouteWrapper>
+									}
+								/>
+							</Route>
 
 							<Route
 								path="*"
