@@ -254,11 +254,10 @@ export class StoreService {
 		}
 
 		const hasProviders = this.store.get('providers').length > 0;
-		const hasAgentProviders = Object.keys(this.store.get('agentProviders')).length > 0;
 		const hasWorkspaceHistory =
 			this.store.get('currentWorkspace') !== null || this.store.get('recentWorkspaces').length > 0;
 
-		if (!hasProviders && !hasAgentProviders && !hasWorkspaceHistory) {
+		if (!hasProviders && !hasWorkspaceHistory) {
 			return;
 		}
 
