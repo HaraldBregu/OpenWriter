@@ -8,7 +8,6 @@ import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
-import type { AppStartupInfo } from '../../../../shared/types';
 
 interface RecentProject {
 	path: string;
