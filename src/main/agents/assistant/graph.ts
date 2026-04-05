@@ -13,7 +13,7 @@ import { createIntentDetectorAgent, intentDetectorAgent } from './agents/intent-
 import { createPlannerAgent, plannerAgent } from './agents/planner-agent';
 import { createRagAgent, ragAgent } from './agents/rag-agent';
 import { createTextGeneratorAgent, textGeneratorAgent } from './agents/text-generator-agent';
-import type { RagRetriever } from './agents/rag-retriever';
+import type { RagRetriever } from '../rag';
 
 const LOG_SOURCE = 'AssistantGraph';
 const MAX_REVIEW_PASSES = 2;

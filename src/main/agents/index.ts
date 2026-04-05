@@ -16,3 +16,6 @@ export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage
 
 // Agents
 export { AssistantAgent } from './assistant/definition';
+
+// Agent-side RAG
+export { createRagChain, NO_CONTEXT_FINDING, runRagChain, RagRetriever } from './rag';

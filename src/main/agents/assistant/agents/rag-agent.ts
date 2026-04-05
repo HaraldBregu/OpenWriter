@@ -1,93 +1,20 @@
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
 import type { LoggerService } from '../../../services/logger';
-import { toLangChainHistoryMessages } from '../../core/history';
-import {
-	createAssistantSpecialistAgent,
-	invokeAssistantSpecialist,
-	type AssistantSpecialistAgent,
-} from '../specialist-agent';
+import type { AssistantSpecialistAgent } from '../specialist-agent';
 import type { AssistantState } from '../state';
-import type { RagRetriever } from './rag-retriever';
+import {
+	createRagChain,
+	NO_CONTEXT_FINDING,
+	runRagChain,
+	type RagRetriever,
+} from '../../rag';
 
-const SYSTEM_PROMPT = `You are the RAG specialist in a multi-agent assistant.
-
-You receive the user's request, a normalized request, the planner brief, intent
-classification, and retrieved workspace snippets.
-
-Produce an internal note for another assistant, not a user-facing reply.
-
-Rules:
-
-- Follow the planner's RAG intent and focus.
-- Use only the retrieved workspace context.
-- Summarize the facts most relevant to answering the user's request.
-- Mention source labels when they materially support a claim.
-- If the context is partial, say what is missing or uncertain.
-- Do not invent facts beyond the provided snippets.
-- Keep the note concise and directly useful for a final response writer.`;
-
-const CONTEXT_SEPARATOR = '\n\n---\n\n';
-const NO_CONTEXT_FINDING = 'No relevant workspace context was found for this request.';
 const RAG_SKIPPED_FINDING = 'Workspace retrieval was not required for this request.';
 const RAG_UNAVAILABLE_FINDING =
 	'Workspace retrieval was requested, but no workspace knowledge base is available.';
 
-function buildRagContext(documents: Awaited<ReturnType<RagRetriever['retrieve']>>): string {
-	return documents
-		.map((doc, index) => {
-			const sourceLabel = getSourceLabel(doc.metadata, index);
-			return [`Source: ${sourceLabel}`, doc.pageContent.trim()].join('\n');
-		})
-		.filter(Boolean)
-		.join(CONTEXT_SEPARATOR);
-}
-
-function getSourceLabel(metadata: Record<string, unknown>, index: number): string {
-	if (typeof metadata['fileName'] === 'string' && metadata['fileName'].trim().length > 0) {
-		return metadata['fileName'];
-	}
-
-	if (typeof metadata['source'] === 'string' && metadata['source'].trim().length > 0) {
-		return metadata['source'];
-	}
-
-	return `document-${index + 1}`;
-}
-
-function buildHumanMessage(
-	prompt: string,
-	normalizedPrompt: string,
-	plannerFindings: string,
-	intentFindings: string,
-	ragContext: string
-): string {
-	return [
-		'User request:',
-		prompt,
-		'',
-		'Normalized request:',
-		normalizedPrompt,
-		'',
-		'Intent classification:',
-		'<intent_findings>',
-		intentFindings,
-		'</intent_findings>',
-		'',
-		'Planner brief:',
-		'<planner_findings>',
-		plannerFindings || 'No planner brief was provided.',
-		'</planner_findings>',
-		'',
-		'Retrieved workspace context:',
-		'<workspace_context>',
-		ragContext,
-		'</workspace_context>',
-	].join('\n');
-}
-
 export function createRagAgent(model: BaseChatModel): AssistantSpecialistAgent {
-	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
+	return createRagChain(model);
 }
 
 export async function ragAgent(
@@ -116,32 +43,18 @@ export async function ragAgent(
 	}
 
 	logger?.debug('RagAgent', 'Starting RAG query', { queryLength: query.length });
-
-	const documents = await retriever.retrieve(query);
-	logger?.info('RagAgent', 'RAG documents retrieved', { documentCount: documents.length });
-
-	if (documents.length === 0) {
-		return { ragFindings: NO_CONTEXT_FINDING };
-	}
-
-	const ragContext = buildRagContext(documents);
-	const messages = [
-		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(
-			buildHumanMessage(
-				state.prompt,
-				query,
-				state.plannerFindings,
-				state.intentFindings,
-				ragContext
-			)
-		),
-	];
-	const ragFindings = await invokeAssistantSpecialist(agent, messages);
+	const ragFindings = await runRagChain(agent, retriever, {
+		prompt: state.prompt,
+		normalizedPrompt: query,
+		plannerFindings: state.plannerFindings,
+		intentFindings: state.intentFindings,
+		query,
+		history: state.history,
+	});
 
 	logger?.info('RagAgent', 'RAG findings generated', { findingsLength: ragFindings.length });
 
 	return {
-		ragFindings: ragFindings || NO_CONTEXT_FINDING,
+		ragFindings,
 	};
 }

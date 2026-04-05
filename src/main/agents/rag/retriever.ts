@@ -1,29 +1,15 @@
-/**
- * RagRetriever — loads the workspace vector store and provides similarity
- * search for the RAG node.
- *
- * The vector store path is resolved via WorkspaceService.getVectorStorePath(),
- * so there are no hardcoded paths. When no store file exists yet (first
- * run, or workspace never indexed), retrieve() silently returns an empty
- * array so downstream nodes degrade gracefully.
- */
-
 import type { Document } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
-import type { WorkspaceService } from '../../../workspace/workspace-service';
-import { VectorStore } from '../../../rag';
+import type { WorkspaceService } from '../../workspace/workspace-service';
+import { VectorStore } from '../../rag';
 
 const DEFAULT_TOP_K = 4;
 const MIN_SCORE_THRESHOLD = 0.3;
 
 export interface RagRetrieverOptions {
-	/** WorkspaceService used to resolve RAG storage paths. */
 	workspaceService: WorkspaceService;
-	/** Embedding model used to embed the query at retrieval time. */
 	embeddings: EmbeddingsInterface;
-	/** Number of documents to retrieve per query. Defaults to 4. */
 	topK?: number;
-	/** Minimum cosine similarity score to include a document. Defaults to 0.3. */
 	minScore?: number;
 }
 
@@ -39,14 +25,6 @@ export class RagRetriever {
 
 	constructor(private readonly options: RagRetrieverOptions) {}
 
-	/**
-	 * Perform a similarity search against the workspace vector store.
-	 *
-	 * Returns an empty array when:
-	 *   - The vector store has not been built yet
-	 *   - The workspace has no indexed documents
-	 *   - An error occurs loading the store
-	 */
 	async retrieve(query: string): Promise<RetrievedDocument[]> {
 		if (!this.loaded) {
 			await this.loadStore();
@@ -73,9 +51,9 @@ export class RagRetriever {
 				this.store = null;
 				return;
 			}
+
 			this.store = await VectorStore.load(vectorStorePath, this.options.embeddings);
 		} catch {
-			// Workspace not open, store missing, or unreadable — degrade gracefully
 			this.store = null;
 		}
 	}

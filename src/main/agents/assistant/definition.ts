@@ -1,7 +1,7 @@
 import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../core/definition';
+import { RagRetriever } from '../rag';
 import { buildGraph, ASSISTANT_SPECIALIST } from './graph';
 import { ASSISTANT_STATE_MESSAGES } from './messages';
-import { RagRetriever } from './agents/rag-retriever';
 import { createEmbeddingModel } from '../../shared/embedding-factory';
 
 const LOG_SOURCE = 'AssistantAgent';

@@ -101,8 +101,11 @@ The shared graph state in `state.ts` contains:
 - `agents/rag-agent.ts`
   Retrieves indexed workspace context and produces `ragFindings`.
 
-- `agents/rag-retriever.ts`
-  Loads the workspace vector store used by the RAG agent.
+- `../rag/retriever.ts`
+  Loads the workspace vector store and retrieves similar chunks for AI RAG.
+
+- `../rag/chain.ts`
+  Passes retrieved workspace context into the RAG LLM step.
 
 - `agents/duckduckgo-search-agent.ts`
   Performs best-effort DuckDuckGo search and produces `webFindings`.
