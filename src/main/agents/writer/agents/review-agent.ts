@@ -88,13 +88,12 @@ export async function reviewAgent(
 		const canRefine = state.revisionCount < state.maxRefinements;
 		const guidance = 'Produce a complete response before returning it.';
 
-		logger?.debug('WriterReviewAgent', 'Marking response for refinement because the aligned response is empty');
+		logger?.debug(
+			'WriterReviewAgent',
+			'Marking response for refinement because the aligned response is empty'
+		);
 		return {
-			reviewFindings: buildReviewFindings(
-				false,
-				guidance,
-				'The aligned response was empty.'
-			),
+			reviewFindings: buildReviewFindings(false, guidance, 'The aligned response was empty.'),
 			needsRefinement: canRefine,
 			refinementGuidance: guidance,
 			phaseLabel: canRefine ? WRITER_STATE_MESSAGES.REFINE : WRITER_STATE_MESSAGES.RETURN,
@@ -111,10 +110,7 @@ export async function reviewAgent(
 		new HumanMessage(buildHumanMessage(state)),
 	];
 	const rawReview = await invokeWriterSpecialist(agent, messages);
-	const parsedSatisfactory = parseYesNo(
-		readLabeledValue(rawReview, 'Satisfactory'),
-		true
-	);
+	const parsedSatisfactory = parseYesNo(readLabeledValue(rawReview, 'Satisfactory'), true);
 	const refinementGuidance =
 		readLabeledValue(rawReview, 'Refinement guidance') || 'No refinement guidance provided.';
 	const reasoning =

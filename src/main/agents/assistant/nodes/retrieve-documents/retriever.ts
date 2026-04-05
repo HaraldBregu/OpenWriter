@@ -129,7 +129,9 @@ export class RagRetriever {
 		for (const candidate of candidates) {
 			const window = this.toIndexedWindow(candidate, contextWindow);
 			if (!window) {
-				if (!expanded.some((entry) => !isIndexedWindow(entry) && sameRawDocument(entry, candidate))) {
+				if (
+					!expanded.some((entry) => !isIndexedWindow(entry) && sameRawDocument(entry, candidate))
+				) {
 					expanded.push(candidate);
 				}
 				continue;
@@ -204,12 +206,19 @@ export class RagRetriever {
 		candidate: RetrievalCandidate,
 		contextWindow: number
 	): IndexedWindow | undefined {
-		if (!candidate.record || candidate.recordKey === undefined || candidate.chunkIndex === undefined) {
+		if (
+			!candidate.record ||
+			candidate.recordKey === undefined ||
+			candidate.chunkIndex === undefined
+		) {
 			return undefined;
 		}
 
 		const chunkStart = Math.max(0, candidate.chunkIndex - contextWindow);
-		const chunkEnd = Math.min(candidate.record.chunkCount - 1, candidate.chunkIndex + contextWindow);
+		const chunkEnd = Math.min(
+			candidate.record.chunkCount - 1,
+			candidate.chunkIndex + contextWindow
+		);
 
 		return {
 			record: candidate.record,
@@ -304,12 +313,7 @@ function compareRetrievedDocuments(a: RetrievedDocument, b: RetrievedDocument): 
 	return a.score - b.score;
 }
 
-function rangesOverlapOrTouch(
-	startA: number,
-	endA: number,
-	startB: number,
-	endB: number
-): boolean {
+function rangesOverlapOrTouch(startA: number, endA: number, startB: number, endB: number): boolean {
 	return startA <= endB + 1 && startB <= endA + 1;
 }
 
@@ -370,7 +374,11 @@ function readString(value: unknown): string | undefined {
 }
 
 function readSourceKey(metadata: Record<string, unknown>): string | undefined {
-	return readString(metadata['source']) ?? readString(metadata['fileName']) ?? readString(metadata['fileId']);
+	return (
+		readString(metadata['source']) ??
+		readString(metadata['fileName']) ??
+		readString(metadata['fileId'])
+	);
 }
 
 function getRecordKey(record: IndexedDocumentRecord): string {

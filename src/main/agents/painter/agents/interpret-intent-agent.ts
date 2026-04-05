@@ -46,16 +46,14 @@ function buildHistory(history: PainterGraphState['history']): string {
 }
 
 function buildHumanMessage(state: PainterGraphState): string {
-	return [
-		'User request:',
-		state.prompt,
-		'',
-		'Recent history:',
-		buildHistory(state.history),
-	].join('\n');
+	return ['User request:', state.prompt, '', 'Recent history:', buildHistory(state.history)].join(
+		'\n'
+	);
 }
 
-export function createInterpretIntentAgent(model: PainterSpecialistAgent['model']): PainterSpecialistAgent {
+export function createInterpretIntentAgent(
+	model: PainterSpecialistAgent['model']
+): PainterSpecialistAgent {
 	return createPainterSpecialistAgent(model, SYSTEM_PROMPT);
 }
 

@@ -82,7 +82,9 @@ export async function rewriteQueryAgent(
 		nextRetryCount,
 	});
 
-	const rawRewrite = await invokeAssistantSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
+	const rawRewrite = await invokeAssistantSpecialist(agent, [
+		new HumanMessage(buildHumanMessage(state)),
+	]);
 	const rewrittenQuery =
 		normalizeQuery(readLabeledValue(rawRewrite, 'Rewritten query')) || fallbackQuery;
 

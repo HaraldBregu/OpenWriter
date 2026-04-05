@@ -2,19 +2,13 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { LoggerService } from '../../../services/logger';
 import type { AssistantSpecialistAgent } from '../specialist-agent';
 import type { AssistantGraphState, AssistantGraphUpdate } from '../state';
-import {
-	createRouteQuestionAgent,
-	routeQuestionAgent,
-} from './route-question';
+import { createRouteQuestionAgent, routeQuestionAgent } from './route-question';
 import {
 	createRetrieveDocumentsAgent,
 	retrieveDocumentsAgent,
 	type RagRetriever,
 } from './retrieve-documents';
-import {
-	createGradeDocumentsAgent,
-	gradeDocumentsAgent,
-} from './grade-documents';
+import { createGradeDocumentsAgent, gradeDocumentsAgent } from './grade-documents';
 import { createRewriteQueryAgent, rewriteQueryAgent } from './rewrite-query';
 import {
 	createGenerateDirectAnswerAgent,

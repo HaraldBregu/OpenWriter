@@ -8,10 +8,7 @@ import {
 } from '@components/app/AppDropdownMenu';
 import { ChevronDown, Palette, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-	ASSISTANT_AGENT_OPTIONS,
-	type AssistantAgentId,
-} from './agents';
+import { ASSISTANT_AGENT_OPTIONS, type AssistantAgentId } from './agents';
 
 function getAgentIcon(agentId: AssistantAgentId): React.JSX.Element {
 	switch (agentId) {

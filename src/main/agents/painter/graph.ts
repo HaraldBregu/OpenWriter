@@ -2,18 +2,12 @@ import { END, START, StateGraph } from '@langchain/langgraph';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { LoggerService } from '../../services/logger';
 import { PainterState, type PainterGraphState } from './state';
-import {
-	createInterpretIntentAgent,
-	interpretIntentAgent,
-} from './agents/interpret-intent-agent';
+import { createInterpretIntentAgent, interpretIntentAgent } from './agents/interpret-intent-agent';
 import {
 	createCreateImagePromptAgent,
 	createImagePromptAgent,
 } from './agents/create-image-prompt-agent';
-import {
-	createCheckAlignmentAgent,
-	checkAlignmentAgent,
-} from './agents/check-alignment-agent';
+import { createCheckAlignmentAgent, checkAlignmentAgent } from './agents/check-alignment-agent';
 import { deliverImageAgent } from './agents/deliver-image-agent';
 import { generateImageAgent, type PainterImageGenerator } from './agents/generate-image-agent';
 

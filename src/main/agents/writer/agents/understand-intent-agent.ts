@@ -108,8 +108,7 @@ function parseIntentResult(raw: string, prompt: string): IntentResult {
 	const fallback = buildFallback(prompt);
 
 	return {
-		normalizedPrompt:
-			readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt,
+		normalizedPrompt: readLabeledValue(raw, 'Normalized request') || fallback.normalizedPrompt,
 		intent: normalizeIntent(readLabeledValue(raw, 'Intent'), fallback.intent),
 		audienceGuidance: readLabeledValue(raw, 'Audience') || fallback.audienceGuidance,
 		toneGuidance: readLabeledValue(raw, 'Tone') || fallback.toneGuidance,

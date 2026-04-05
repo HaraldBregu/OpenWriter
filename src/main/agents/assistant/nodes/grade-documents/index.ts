@@ -35,7 +35,8 @@ interface GradeDocumentsResult {
 }
 
 function buildFallback(state: typeof AssistantState.State): GradeDocumentsResult {
-	const documentsRelevant = state.retrievalStatus === 'found' && state.retrievedContext.trim().length > 0;
+	const documentsRelevant =
+		state.retrievalStatus === 'found' && state.retrievedContext.trim().length > 0;
 	const gradeFindings = documentsRelevant
 		? 'Fallback grading marked the retrieved context as relevant.'
 		: `Fallback grading marked the retrieval as not relevant because status was ${state.retrievalStatus}.`;
@@ -55,9 +56,7 @@ function parseGradeOutput(raw: string, state: typeof AssistantState.State): Grad
 	const fallback = buildFallback(state);
 	return {
 		documentsRelevant: parseDecision(readLabeledValue(raw, 'Decision'), fallback.documentsRelevant),
-		gradeFindings:
-			readLabeledValue(raw, 'Reasoning') ||
-			fallback.gradeFindings,
+		gradeFindings: readLabeledValue(raw, 'Reasoning') || fallback.gradeFindings,
 	};
 }
 
@@ -90,9 +89,13 @@ export async function gradeDocumentsAgent(
 ): Promise<Partial<typeof AssistantState.State>> {
 	if (state.retrievalStatus !== 'found') {
 		const fallback = buildFallback(state);
-		logger?.debug('GradeDocumentsAgent', 'Skipping LLM grading because retrieval did not produce findings', {
-			retrievalStatus: state.retrievalStatus,
-		});
+		logger?.debug(
+			'GradeDocumentsAgent',
+			'Skipping LLM grading because retrieval did not produce findings',
+			{
+				retrievalStatus: state.retrievalStatus,
+			}
+		);
 		return {
 			documentsRelevant: fallback.documentsRelevant,
 			gradeFindings: fallback.gradeFindings,
@@ -106,7 +109,9 @@ export async function gradeDocumentsAgent(
 		retrievedContextLength: state.retrievedContext.length,
 	});
 
-	const rawGrade = await invokeAssistantSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
+	const rawGrade = await invokeAssistantSpecialist(agent, [
+		new HumanMessage(buildHumanMessage(state)),
+	]);
 	const parsed = parseGradeOutput(rawGrade, state);
 
 	logger?.info('GradeDocumentsAgent', 'Document grading completed', {

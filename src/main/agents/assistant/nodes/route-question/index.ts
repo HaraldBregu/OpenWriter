@@ -45,7 +45,8 @@ interface RouteQuestionResult {
 const SKIP_QUERY = 'Skip';
 const WORKSPACE_PATTERN =
 	/\b(repo|repository|codebase|workspace|project|file|folder|module|class|function|component|config|implementation|error|stack trace|source)\b/i;
-const PATH_PATTERN = /(?:^|\s)(?:\.{0,2}\/|\/)?[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)+(?:\.[A-Za-z0-9]+)?/;
+const PATH_PATTERN =
+	/(?:^|\s)(?:\.{0,2}\/|\/)?[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)+(?:\.[A-Za-z0-9]+)?/;
 const SYMBOL_PATTERN = /\b[A-Z][A-Za-z0-9]+(?:[A-Z][A-Za-z0-9]+)+\b|\b[a-z_][A-Za-z0-9_]*\(/;
 
 function normalizeQuery(value: string | undefined): string {
@@ -110,7 +111,8 @@ function parseRouteDecision(
 
 function parseRoutingOutput(raw: string, prompt: string): RouteQuestionResult {
 	const fallback = buildFallback(prompt);
-	const normalizedPrompt = readLabeledValue(raw, 'Normalized question') || fallback.normalizedPrompt;
+	const normalizedPrompt =
+		readLabeledValue(raw, 'Normalized question') || fallback.normalizedPrompt;
 	const routeDecision = parseRouteDecision(readLabeledValue(raw, 'Route'), fallback.routeDecision);
 	const retrievalQuery =
 		routeDecision === 'rag'
@@ -119,8 +121,7 @@ function parseRoutingOutput(raw: string, prompt: string): RouteQuestionResult {
 				)
 			: '';
 	const reasoning =
-		readLabeledValue(raw, 'Reasoning') ||
-		'Structured routing succeeded without additional notes.';
+		readLabeledValue(raw, 'Reasoning') || 'Structured routing succeeded without additional notes.';
 
 	return {
 		normalizedPrompt,

@@ -134,7 +134,14 @@ export function AssistantNodeView({
 				: trimmedPrompt;
 
 		updateAttributes({ loading: true, enable: false });
-		options.onSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, effectivePrompt, agentId, files);
+		options.onSubmit(
+			stripHtml(rawBefore),
+			stripHtml(rawAfter),
+			from,
+			effectivePrompt,
+			agentId,
+			files
+		);
 	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
@@ -172,17 +179,23 @@ export function AssistantNodeView({
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, [resizeTextarea]);
 
-	const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-		if (agentId !== 'painter') return;
-		e.preventDefault();
-		setIsDragOver(true);
-	}, [agentId]);
+	const handleDragOver = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'painter') return;
+			e.preventDefault();
+			setIsDragOver(true);
+		},
+		[agentId]
+	);
 
-	const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-		if (agentId !== 'painter') return;
-		e.preventDefault();
-		setIsDragOver(false);
-	}, [agentId]);
+	const handleDragLeave = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'painter') return;
+			e.preventDefault();
+			setIsDragOver(false);
+		},
+		[agentId]
+	);
 
 	const handleDrop = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {

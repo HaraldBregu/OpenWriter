@@ -8,8 +8,8 @@ import {
 	PROVIDER_IDS,
 	type ProviderId,
 	type ServiceProvider,
-} from '../../../shared/provider-constants';
-import type { AppStartupInfo } from '../../../shared/types';
+} from '../../../../shared/provider-constants';
+import type { AppStartupInfo } from '../../../../shared/types';
 
 interface FirstTimeConfigurationPageProps {
 	onConfigured: (startupInfo: AppStartupInfo) => void;

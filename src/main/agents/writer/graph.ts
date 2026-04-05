@@ -79,10 +79,7 @@ function withSpecialistLogging(
 	};
 }
 
-export function buildGraph(
-	models: BaseChatModel | NodeModelMap,
-	logger?: LoggerService
-) {
+export function buildGraph(models: BaseChatModel | NodeModelMap, logger?: LoggerService) {
 	const m = models as unknown as WriterSpecialistModels;
 	const specialists = {
 		[WRITER_SPECIALIST.UNDERSTAND_INTENT]: createUnderstandIntentAgent(

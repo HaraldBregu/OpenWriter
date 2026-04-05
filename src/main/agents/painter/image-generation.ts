@@ -30,10 +30,15 @@ function withTrailingSlash(value: string): string {
 }
 
 function resolveImagesEndpoint(baseUrl?: string): string {
-	return new URL(OPENAI_IMAGES_PATH, withTrailingSlash(baseUrl ?? 'https://api.openai.com/v1/')).toString();
+	return new URL(
+		OPENAI_IMAGES_PATH,
+		withTrailingSlash(baseUrl ?? 'https://api.openai.com/v1/')
+	).toString();
 }
 
-function mapAspectRatioToSize(aspectRatio: PainterAspectRatio): '1024x1024' | '1024x1536' | '1536x1024' {
+function mapAspectRatioToSize(
+	aspectRatio: PainterAspectRatio
+): '1024x1024' | '1024x1536' | '1536x1024' {
 	switch (aspectRatio) {
 		case 'square':
 			return '1024x1024';
@@ -65,10 +70,7 @@ function getWorkspacePath(
 		: undefined;
 }
 
-function resolveDocumentImageDirectory(
-	workspacePath: string,
-	documentId: string
-): string {
+function resolveDocumentImageDirectory(workspacePath: string, documentId: string): string {
 	const documentsRoot = path.resolve(workspacePath, 'output', 'documents');
 	const documentDir = path.resolve(documentsRoot, documentId);
 	if (!documentDir.startsWith(`${documentsRoot}${path.sep}`)) {
@@ -82,8 +84,7 @@ function resolveOutputDirectory(
 	workspacePath: string | undefined,
 	metadata?: Record<string, unknown>
 ): string {
-	const documentId =
-		typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : '';
+	const documentId = typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : '';
 
 	if (workspacePath && documentId) {
 		return resolveDocumentImageDirectory(workspacePath, documentId);
@@ -102,7 +103,12 @@ function extractApiErrorMessage(payload: unknown, fallbackStatus: number): strin
 	}
 
 	const error = (payload as { error?: unknown }).error;
-	if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+	if (
+		error &&
+		typeof error === 'object' &&
+		'message' in error &&
+		typeof error.message === 'string'
+	) {
 		return error.message;
 	}
 

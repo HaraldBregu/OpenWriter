@@ -45,9 +45,7 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export function createReturnFallbackResponseAgent(
-	model: BaseChatModel
-): AssistantSpecialistAgent {
+export function createReturnFallbackResponseAgent(model: BaseChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
@@ -61,7 +59,9 @@ export async function returnFallbackResponseAgent(
 		maxRetries: state.maxRetries,
 	});
 
-	const response = await streamAssistantSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
+	const response = await streamAssistantSpecialist(agent, [
+		new HumanMessage(buildHumanMessage(state)),
+	]);
 
 	logger?.info('ReturnFallbackResponseAgent', 'Fallback response generated', {
 		responseLength: response.length,

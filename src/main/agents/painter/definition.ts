@@ -30,7 +30,13 @@ function buildPainterModels(
 ): PainterSpecialistModels {
 	return {
 		[PAINTER_SPECIALIST.INTERPRET_INTENT]: createNodeModel(apiKey, baseUrl, modelName, 0.2, 512),
-		[PAINTER_SPECIALIST.CREATE_IMAGE_PROMPT]: createNodeModel(apiKey, baseUrl, modelName, 0.4, 1024),
+		[PAINTER_SPECIALIST.CREATE_IMAGE_PROMPT]: createNodeModel(
+			apiKey,
+			baseUrl,
+			modelName,
+			0.4,
+			1024
+		),
 		[PAINTER_SPECIALIST.CHECK_ALIGNMENT]: createNodeModel(apiKey, baseUrl, modelName, 0.2, 512),
 	};
 }
@@ -116,19 +122,23 @@ const definition: AgentDefinition = {
 			signal: input.signal,
 			nodeModels,
 			buildGraph: (models) =>
-				createPainterGraph(models as unknown as PainterSpecialistModels, {
-					generate: (state) =>
-						generatePainterImage({
-							prompt: state.imagePrompt,
-							aspectRatio: normalizeAspectRatio(state.aspectRatio),
-							apiKey: input.provider.apiKey,
-							baseUrl: input.provider.baseUrl,
-							signal: input.signal,
-							metadata: input.metadata,
-							workspacePath: input.runtime.workspaceService?.getCurrent(),
-							logger: input.logger,
-						}),
-				}, input.logger),
+				createPainterGraph(
+					models as unknown as PainterSpecialistModels,
+					{
+						generate: (state) =>
+							generatePainterImage({
+								prompt: state.imagePrompt,
+								aspectRatio: normalizeAspectRatio(state.aspectRatio),
+								apiKey: input.provider.apiKey,
+								baseUrl: input.provider.baseUrl,
+								signal: input.signal,
+								metadata: input.metadata,
+								workspacePath: input.runtime.workspaceService?.getCurrent(),
+								logger: input.logger,
+							}),
+					},
+					input.logger
+				),
 			buildGraphInput: buildPainterGraphInput,
 			extractGraphOutput: extractPainterGraphOutput,
 			extractThinkingLabel: extractPainterThinkingLabel,

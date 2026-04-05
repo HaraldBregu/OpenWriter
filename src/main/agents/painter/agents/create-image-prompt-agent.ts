@@ -63,10 +63,8 @@ export async function createImagePromptAgent(
 	agent: PainterSpecialistAgent
 ): Promise<Partial<PainterGraphState>> {
 	const raw = await invokePainterSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
-	const nextPrompt =
-		readLabeledValue(raw, 'PROMPT') || state.visualGoal || state.prompt;
-	const nextAltText =
-		readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
+	const nextPrompt = readLabeledValue(raw, 'PROMPT') || state.visualGoal || state.prompt;
+	const nextAltText = readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
 
 	return {
 		imagePrompt: nextPrompt,

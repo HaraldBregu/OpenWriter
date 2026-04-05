@@ -259,7 +259,9 @@ export class Embedder {
 
 		const windowContextManager =
 			this.globalContainer.get<WindowContextManager>('windowContextManager');
-		return windowContextManager.get(taskContext.windowId).container.get<WorkspaceService>('workspace');
+		return windowContextManager
+			.get(taskContext.windowId)
+			.container.get<WorkspaceService>('workspace');
 	}
 
 	private static resolveGlobalContainer(): ServiceContainer {
