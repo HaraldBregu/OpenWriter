@@ -27,10 +27,7 @@ const DEFAULT_STARTUP_INFO: AppStartupInfo = {
 };
 
 
-const WelcomePage: React.FC<WelcomePageProps> = ({
-	startupInfo = DEFAULT_STARTUP_INFO,
-	onConfigured,
-}) => {
+const WelcomePage: React.FC<WelcomePageProps> = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
