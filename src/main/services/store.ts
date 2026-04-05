@@ -147,19 +147,6 @@ export class StoreService {
 		this.store.set('providers', providers);
 	}
 
-	// --- Agent provider settings ---
-
-	getAgentProviders(): Record<string, string> {
-		return { ...this.store.get('agentProviders') };
-	}
-
-	setAgentProvider(agentName: string, providerName: string): void {
-		const current = this.store.get('agentProviders');
-		const next = { ...current };
-		next[agentName] = providerName;
-		this.store.set('agentProviders', next);
-	}
-
 	getStartupInfo(): AppStartupInfo {
 		const startupCount = this.store.get('startupCount');
 		return {
