@@ -135,7 +135,15 @@ const App: React.FC = () => {
 							<Route path="/">
 								<Route
 									index
-									element={<WelcomePage />}
+									element={
+										startupInfo.isInitialized ? (
+											<WelcomePage />
+										) : (
+											<RouteWrapper>
+												<FirstTimeConfigurationPage onConfigured={setStartupInfo} />
+											</RouteWrapper>
+										)
+									}
 								/>
 								<Route
 									path="config"
