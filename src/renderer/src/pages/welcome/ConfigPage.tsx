@@ -152,4 +152,4 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
 	);
 };
 
-export default FirstTimeConfigurationPage;
+export default ConfigPage;
