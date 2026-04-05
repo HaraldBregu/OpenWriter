@@ -1,6 +1,17 @@
 import { Annotation } from '@langchain/langgraph';
 import type { AgentHistoryMessage } from '../core/types';
 
+export const WRITER_INTENT = {
+	CONTINUE: 'continue',
+	IMPROVE: 'improve',
+	TRANSFORM: 'transform',
+	EXPAND: 'expand',
+	CONDENSE: 'condense',
+	UNCLEAR: 'unclear',
+} as const;
+
+export type WriterIntent = (typeof WRITER_INTENT)[keyof typeof WRITER_INTENT];
+
 export const WriterState = Annotation.Root({
 	prompt: Annotation<string>({
 		reducer: (_a, b) => b,
@@ -17,44 +28,64 @@ export const WriterState = Annotation.Root({
 		default: () => '',
 	}),
 
-	routingFindings: Annotation<string>({
+	intent: Annotation<WriterIntent>({
+		reducer: (_a, b) => b,
+		default: () => WRITER_INTENT.UNCLEAR,
+	}),
+
+	intentFindings: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
-	simpleResponse: Annotation<boolean>({
+	audienceGuidance: Annotation<string>({
 		reducer: (_a, b) => b,
-		default: () => true,
+		default: () => '',
 	}),
 
-	needsRetrieval: Annotation<boolean>({
+	toneGuidance: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	lengthGuidance: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	draftResponse: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	alignedResponse: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	reviewFindings: Annotation<string>({
+		reducer: (_a, b) => b,
+		default: () => '',
+	}),
+
+	needsRefinement: Annotation<boolean>({
 		reducer: (_a, b) => b,
 		default: () => false,
 	}),
 
-	needsWebSearch: Annotation<boolean>({
-		reducer: (_a, b) => b,
-		default: () => false,
-	}),
-
-	ragQuery: Annotation<string>({
+	refinementGuidance: Annotation<string>({
 		reducer: (_a, b) => b,
 		default: () => '',
 	}),
 
-	webSearchQuery: Annotation<string>({
+	revisionCount: Annotation<number>({
 		reducer: (_a, b) => b,
-		default: () => '',
+		default: () => 0,
 	}),
 
-	ragFindings: Annotation<string>({
+	maxRefinements: Annotation<number>({
 		reducer: (_a, b) => b,
-		default: () => '',
-	}),
-
-	webFindings: Annotation<string>({
-		reducer: (_a, b) => b,
-		default: () => '',
+		default: () => 2,
 	}),
 
 	phaseLabel: Annotation<string>({

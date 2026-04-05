@@ -523,6 +523,6 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		id: 'writer',
 		name: 'Agent Writer',
 		description:
-			'Routes requests through direct response, workspace retrieval, live search, and final aggregation',
+			'Understands writing intent, drafts, aligns tone and length, and refines before returning',
 	},
 ];
