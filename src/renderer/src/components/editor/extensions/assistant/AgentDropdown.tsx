@@ -7,6 +7,7 @@ import {
 	AppDropdownMenuTrigger,
 } from '@components/app/AppDropdownMenu';
 import { ChevronDown, Palette, PenLine } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
 	ASSISTANT_AGENT_OPTIONS,
 	type AssistantAgentId,
@@ -43,7 +44,12 @@ export function AgentDropdown({
 				<AppButton
 					variant="ghost"
 					size="sm"
-					className="h-7 gap-1.5 rounded-lg px-2 text-xs font-medium text-muted-foreground"
+					className={cn(
+						'h-7 gap-1.5 rounded-full border border-border/75 bg-background/72 px-2.5 text-xs font-medium text-muted-foreground',
+						'shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)]',
+						'hover:border-foreground/15 hover:bg-background hover:text-foreground',
+						'dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.04)_inset,0_6px_16px_hsl(var(--background)/0.3)] dark:hover:border-white/16 dark:hover:bg-white/[0.06]'
+					)}
 					disabled={disabled}
 				>
 					<span className="text-muted-foreground">{getAgentIcon(current.value)}</span>
@@ -51,9 +57,22 @@ export function AgentDropdown({
 					<ChevronDown className="h-3 w-3" />
 				</AppButton>
 			</AppDropdownMenuTrigger>
-			<AppDropdownMenuContent align="start" sideOffset={4}>
+			<AppDropdownMenuContent
+				align="start"
+				sideOffset={6}
+				className="min-w-[10rem] rounded-2xl border border-border/75 bg-background/94 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+			>
 				{ASSISTANT_AGENT_OPTIONS.map((option) => (
-					<AppDropdownMenuItem key={option.value} onSelect={() => onAgentChange(option.value)}>
+					<AppDropdownMenuItem
+						key={option.value}
+						onSelect={() => onAgentChange(option.value)}
+						className={cn(
+							'rounded-xl px-2.5 py-2 text-sm',
+							option.value === agentId
+								? 'border border-border/70 bg-accent/75 text-foreground dark:border-white/12 dark:bg-white/[0.08]'
+								: ''
+						)}
+					>
 						<span className="mr-2 text-muted-foreground">{getAgentIcon(option.value)}</span>
 						<span>{option.label}</span>
 					</AppDropdownMenuItem>

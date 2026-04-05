@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { AppButton } from '@components/app/AppButton';
 import { ArrowUp, ImagePlus, LoaderCircle, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { AgentDropdown } from './AgentDropdown';
 import type { AssistantAgentId } from './agents';
 
@@ -68,12 +69,12 @@ export function AssistantContent({
 				/>
 			)}
 			{isPainter && (
-				<div className="border-b border-border/70 px-3.5 pt-3 pb-2 dark:border-border/80">
+				<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
 					<div className="flex items-center gap-2 overflow-x-auto pb-1">
 						<AppButton
 							variant="ghost"
 							size="sm"
-							className="h-16 shrink-0 rounded-2xl border border-dashed border-border/75 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+							className="h-16 shrink-0 rounded-[1.15rem] border border-dashed border-border/80 bg-background/76 px-3 text-xs font-medium text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
 							disabled={!enable || loading}
 							onMouseDown={(e) => {
 								e.preventDefault();
@@ -88,7 +89,7 @@ export function AssistantContent({
 						{previewUrls.map((url, index) => (
 							<div
 								key={`${files[index]?.name ?? 'image'}-${index}`}
-								className="group/thumb relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-border/70 bg-muted/40"
+								className="group/thumb relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]"
 							>
 								<img
 									src={url}
@@ -98,7 +99,7 @@ export function AssistantContent({
 								<AppButton
 									variant="ghost"
 									size="icon-xs"
-									className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-background/90 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground"
+									className="absolute -right-1 -top-1 h-5 w-5 rounded-full border border-border/70 bg-background/92 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background/88"
 									onMouseDown={(e) => {
 										e.preventDefault();
 										onRemoveFile(index);
@@ -120,7 +121,11 @@ export function AssistantContent({
 					onResize();
 				}}
 				disabled={!enable}
-				className="min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground placeholder:text-foreground/45 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 dark:placeholder:text-muted-foreground/75"
+				className={cn(
+					'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+					'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
+					'disabled:cursor-not-allowed disabled:opacity-60'
+				)}
 				placeholder={
 					isPainter
 						? t(
@@ -134,7 +139,7 @@ export function AssistantContent({
 				}
 				rows={1}
 			/>
-			<div className="flex items-center justify-between gap-3 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
+			<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
 				<div className="flex min-w-0 items-center gap-2">
 					<AgentDropdown
 						agentId={agentId}
@@ -150,7 +155,7 @@ export function AssistantContent({
 				<AppButton
 					variant="prompt-submit"
 					size="prompt-submit-md"
-					className="h-7 w-7 shrink-0 rounded-full"
+					className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
 					disabled={isSubmitDisabled}
 					onMouseDown={(e) => {
 						e.preventDefault();

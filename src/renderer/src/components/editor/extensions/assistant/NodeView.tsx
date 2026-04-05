@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
+import { cn } from '@/lib/utils';
 import type { AssistantOptions } from './input-extension';
 import { AssistantContent } from './AssistantContent';
 import type { AssistantAgentId } from './agents';
@@ -28,7 +29,6 @@ export function AssistantNodeView({
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const wrapperRef = useRef<HTMLDivElement>(null);
 	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -170,20 +170,6 @@ export function AssistantNodeView({
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, [resizeTextarea]);
 
-	useEffect(() => {
-		const handleMouseDown = (e: MouseEvent): void => {
-			const wrapper = wrapperRef.current;
-			if (!wrapper) return;
-			if (wrapper.contains(e.target as Node)) return;
-			const target = e.target as Element;
-			if (target.closest('[data-radix-popper-content-wrapper]')) return;
-			deleteNodeRef.current();
-		};
-
-		document.addEventListener('mousedown', handleMouseDown, true);
-		return () => document.removeEventListener('mousedown', handleMouseDown, true);
-	}, []);
-
 	const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
 		if (agentId !== 'painter') return;
 		e.preventDefault();
@@ -210,29 +196,37 @@ export function AssistantNodeView({
 		[addFile, agentId]
 	);
 
-	const wrapperClassName = [
-		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.4rem]',
-		'border bg-card/95 text-card-foreground ring-1 ring-black/6 backdrop-blur-sm',
-		'transition-[border-color,box-shadow,background-color] duration-200 ease-out',
+	const wrapperClassName = cn(
+		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.55rem] border text-card-foreground backdrop-blur-xl',
+		'bg-[linear-gradient(180deg,hsl(var(--card))_0%,hsl(var(--card)/0.96)_100%)]',
+		'shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_10px_28px_hsl(var(--foreground)/0.06)]',
+		'transition-[border-color,box-shadow,background-color,transform] duration-200 ease-out',
+		'dark:bg-[linear-gradient(180deg,hsl(var(--card)/0.98)_0%,hsl(var(--card)/0.92)_100%)]',
+		'dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_12px_30px_hsl(var(--background)/0.5)]',
 		loading
-			? 'border-primary/35 shadow-[0_20px_44px_hsl(var(--primary)/0.14),0_34px_80px_hsl(var(--foreground)/0.14)]'
-			: 'border-border/85 shadow-[0_16px_34px_hsl(var(--foreground)/0.08),0_28px_72px_hsl(var(--foreground)/0.12)] hover:border-foreground/15 hover:shadow-[0_20px_44px_hsl(var(--foreground)/0.1),0_36px_88px_hsl(var(--foreground)/0.16)]',
-		agentId === 'painter' && isDragOver ? 'border-primary/45 bg-primary/5' : '',
-		!enable && !loading ? 'bg-muted/55' : '',
-		'focus-within:border-primary/45 focus-within:shadow-[0_22px_48px_hsl(var(--primary)/0.12),0_36px_92px_hsl(var(--foreground)/0.18)] dark:border-border/90 dark:bg-card/95 dark:ring-[hsl(var(--border)/0.55)]',
-	].join(' ');
+			? 'border-primary/45 shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.12),0_12px_30px_hsl(var(--primary)/0.12)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)]'
+			: 'border-border/85 hover:-translate-y-[1px] hover:border-foreground/14 hover:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_12px_30px_hsl(var(--foreground)/0.07)] dark:border-white/12 dark:hover:border-white/18 dark:hover:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_14px_34px_hsl(var(--background)/0.56)]',
+		agentId === 'painter' && isDragOver
+			? 'border-primary/55 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08)_0%,hsl(var(--card)/0.96)_32%,hsl(var(--card))_100%)] shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.14)_0%,hsl(var(--card)/0.94)_34%,hsl(var(--card)/0.92)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.18),0_16px_38px_hsl(var(--primary)/0.16)]'
+			: '',
+		!enable && !loading
+			? 'border-border/70 bg-[linear-gradient(180deg,hsl(var(--muted)/0.72)_0%,hsl(var(--muted)/0.6)_100%)] shadow-[0_1px_0_hsl(var(--background)/0.9)_inset,0_6px_16px_hsl(var(--foreground)/0.04)] dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.34)_0%,hsl(var(--muted)/0.24)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.06)_inset,0_10px_24px_hsl(var(--background)/0.4)]'
+			: '',
+		'focus-within:border-primary/45 focus-within:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_1px_hsl(var(--primary)/0.12),0_14px_36px_hsl(var(--primary)/0.12)]',
+		'dark:focus-within:border-primary/45 dark:focus-within:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_1px_hsl(var(--primary)/0.15),0_16px_40px_hsl(var(--primary)/0.14)]'
+	);
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
 			<div
-				ref={wrapperRef}
 				className={wrapperClassName}
 				onDragOver={agentId === 'painter' ? handleDragOver : undefined}
 				onDragLeave={agentId === 'painter' ? handleDragLeave : undefined}
 				onDrop={agentId === 'painter' ? handleDrop : undefined}
 			>
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/12 via-primary/5 to-transparent" />
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+				<div className="pointer-events-none absolute inset-[1px] rounded-[calc(1.55rem-1px)] border border-white/55 opacity-80 dark:border-white/8" />
+				<div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/14 via-primary/4 to-transparent dark:from-primary/18 dark:via-primary/6" />
+				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-primary/55 to-transparent dark:via-primary/65" />
 				<AssistantContent
 					prompt={prompt}
 					agentId={agentId}
