@@ -122,74 +122,59 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 								>
 									{t('models.form.apiKey', 'API Key')}
 								</AppLabel>
-								<div className="mt-1 relative flex items-center">
-									<AppInput
-										id={`${uid}-${provider}-apikey`}
-										type={visible[provider] ? 'text' : 'password'}
-										value={displayValue}
-										onChange={(e) => handleApiKeyChange(provider, e.target.value)}
-										placeholder={
-											existing.length > 0
-												? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
-												: t('models.form.apiKeyPlaceholder', 'Enter API key…')
-										}
-										autoComplete="off"
-										spellCheck={false}
-										className="h-9 text-sm font-mono pr-8"
-									/>
+								<div className="mt-1 flex items-center gap-2">
+									<div className="relative flex flex-1 items-center">
+										<AppInput
+											id={`${uid}-${provider}-apikey`}
+											type={visible[provider] ? 'text' : 'password'}
+											value={displayValue}
+											onChange={(e) => handleApiKeyChange(provider, e.target.value)}
+											placeholder={
+												existing.length > 0
+													? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
+													: t('models.form.apiKeyPlaceholder', 'Enter API key…')
+											}
+											autoComplete="off"
+											spellCheck={false}
+											className="h-9 text-sm font-mono pr-8"
+										/>
+										<AppButton
+											type="button"
+											variant="ghost"
+											size="icon-xs"
+											aria-label={visibilityLabel}
+											onClick={() => handleToggleVisibility(provider)}
+											className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+										>
+											{visible[provider] ? <EyeOff /> : <Eye />}
+										</AppButton>
+									</div>
 									<AppButton
 										type="button"
 										variant="ghost"
 										size="icon-xs"
-										aria-label={visibilityLabel}
-										onClick={() => handleToggleVisibility(provider)}
-										className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+										aria-label={t('models.form.save', 'Save')}
+										disabled={!hasInputValue || isSaving || isDeleting}
+										onClick={() => {
+											void handleSaveProvider(provider);
+										}}
 									>
-										{visible[provider] ? <EyeOff /> : <Eye />}
+										{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
+									</AppButton>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon-xs"
+										aria-label={t('models.deleteProvider', 'Delete')}
+										disabled={isDeleting || isSaving}
+										onClick={() => {
+											void handleDeleteProvider(provider);
+										}}
+										className="text-muted-foreground hover:text-destructive"
+									>
+										{isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
 									</AppButton>
 								</div>
-							</div>
-
-							<div className="mt-3 flex gap-2">
-								<AppButton
-									type="button"
-									size="sm"
-									disabled={!hasInputValue || isSaving || isDeleting}
-									onClick={() => {
-										void handleSaveProvider(provider);
-									}}
-								>
-									{isSaving ? (
-										<>
-											<Loader2 className="animate-spin" />
-											{t('models.saving', 'Saving…')}
-										</>
-									) : (
-										t('models.form.save', 'Save')
-									)}
-								</AppButton>
-								<AppButton
-									type="button"
-									size="sm"
-									variant="ghost"
-									disabled={isDeleting || isSaving}
-									onClick={() => {
-										void handleDeleteProvider(provider);
-									}}
-									className="text-muted-foreground hover:text-destructive"
-								>
-									{isDeleting ? (
-										<>
-											<Loader2 className="animate-spin" />
-											{t('models.deleting', 'Deleting…')}
-										</>
-									) : (
-										<>
-											<Trash2 />
-											{t('models.deleteProvider', 'Delete')}
-										</>
-									)}
-								</AppButton>
 							</div>
 						</div>
 					);
