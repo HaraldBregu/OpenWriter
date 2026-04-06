@@ -89,17 +89,19 @@ export function AssistantContent({
 						{previewUrls.map((url, index) => (
 							<div
 								key={`${files[index]?.name ?? 'image'}-${index}`}
-								className="group/thumb relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]"
+								className="group/thumb relative h-16 w-16 shrink-0"
 							>
-								<img
-									src={url}
-									alt={files[index]?.name ?? ''}
-									className="h-full w-full object-cover"
-								/>
+								<div className="h-full w-full overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
+									<img
+										src={url}
+										alt={files[index]?.name ?? ''}
+										className="h-full w-full object-cover"
+									/>
+								</div>
 								<AppButton
 									variant="ghost"
 									size="icon-xs"
-									className="absolute -right-1 -top-1 h-5 w-5 rounded-full border border-border/70 bg-background/92 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background/88"
+									className="absolute -right-1.5 -top-1.5 z-10 h-5 w-5 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-sm transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background"
 									onMouseDown={(e) => {
 										e.preventDefault();
 										onRemoveFile(index);
