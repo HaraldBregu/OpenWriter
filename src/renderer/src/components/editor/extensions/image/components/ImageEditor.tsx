@@ -183,7 +183,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							aria-label={t('imageNode.editTools', 'Edit tools')}
 						>
 							<ToolbarButton
-								icon={<Crop />}
+								icon={<CropIcon />}
 								label={t('imageNode.crop')}
 								onClick={() => handleModeChange('crop')}
 								active={activeMode === 'crop'}
