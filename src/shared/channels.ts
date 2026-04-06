@@ -161,8 +161,6 @@ export const AppChannels = {
 	getProviders: 'store-get-providers',
 	addProvider: 'store-add-provider',
 	deleteProvider: 'store-delete-provider',
-	getAgentProviders: 'store-get-agent-providers',
-	setAgentProvider: 'store-set-agent-provider',
 	getStartupInfo: 'app:get-startup-info',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
