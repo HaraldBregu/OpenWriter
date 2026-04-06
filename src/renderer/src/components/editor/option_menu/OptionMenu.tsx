@@ -178,19 +178,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				},
 			},
 			{
-				label: 'Generate image',
-				icon: ImagePlus,
-				section: 'ai' as const,
-				tone: 'ai',
-				command: (ed, slashPos, queryLength) => {
-					ed.chain()
-						.focus()
-						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-						.insertContentGenerator('image')
-						.run();
-				},
-			},
-			{
 				label: 'Continue with assistant',
 				icon: Sparkles,
 				section: 'ai' as const,
