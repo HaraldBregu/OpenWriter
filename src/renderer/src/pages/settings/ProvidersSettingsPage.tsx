@@ -173,12 +173,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				</div>
 			</div>
 
-			<div className="flex justify-end gap-2 mt-4">
-				<AppButton type="button" size="sm" variant="ghost" onClick={onCancel}>
-					{t('models.form.cancel', 'Cancel')}
-				</AppButton>
+			<div className="flex gap-2 mt-4">
 				<AppButton type="submit" size="sm" disabled={!isValid}>
 					{t('models.form.save', 'Save')}
+				</AppButton>
+				<AppButton type="button" size="sm" variant="ghost" onClick={onCancel}>
+					{t('models.form.cancel', 'Cancel')}
 				</AppButton>
 			</div>
 		</form>
@@ -279,9 +279,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							</AppCardHeader>
 							<AppCardContent className="pb-3">
 								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="sr-only">
-									{t('models.apiKeyFor', '{{name}} API key', {
-										name: PROVIDER_LABELS[provider],
-									})}
+									{PROVIDER_LABELS[provider]}
 								</AppLabel>
 								<div className="relative flex items-center">
 									<AppInput
@@ -315,14 +313,13 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 									type="button"
 									size="sm"
 									disabled={!hasInputValue || isSaving || isDeleting}
-									aria-busy={isSaving}
 									onClick={() => {
 										void handleSaveProvider(provider);
 									}}
 								>
 									{isSaving ? (
 										<>
-											<Loader2 aria-hidden="true" className="animate-spin" />
+											<Loader2 className="animate-spin" />
 											{t('models.saving', 'Saving…')}
 										</>
 									) : (
@@ -334,10 +331,6 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 									size="sm"
 									variant="ghost"
 									disabled={isDeleting || isSaving}
-									aria-busy={isDeleting}
-									aria-label={t('models.deleteProviderLabel', 'Delete {{name}} API key', {
-										name: PROVIDER_LABELS[provider],
-									})}
 									onClick={() => {
 										void handleDeleteProvider(provider);
 									}}
@@ -345,12 +338,12 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 								>
 									{isDeleting ? (
 										<>
-											<Loader2 aria-hidden="true" className="animate-spin" />
+											<Loader2 className="animate-spin" />
 											{t('models.deleting', 'Deleting…')}
 										</>
 									) : (
 										<>
-											<Trash2 aria-hidden="true" />
+											<Trash2 />
 											{t('models.deleteProvider', 'Delete')}
 										</>
 									)}
@@ -460,10 +453,9 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 							? t('models.customProvider.hide', 'Hide custom provider')
 							: t('models.customProvider.cta', 'Add custom provider')
 					}
-					aria-expanded={showRegistrationForm}
 					onClick={onToggleRegistrationForm}
 				>
-					<Plus aria-hidden="true" />
+					<Plus />
 				</AppButton>
 			</div>
 			<p className="text-xs text-muted-foreground mt-0.5 mb-4">
@@ -510,7 +502,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 								</AppCardHeader>
 								<AppCardContent className="pb-3">
 									<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="sr-only">
-										{t('models.apiKeyFor', '{{name}} API key', { name: provider })}
+										{provider}
 									</AppLabel>
 									<div className="relative flex items-center">
 										<AppInput
@@ -544,14 +536,13 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 										type="button"
 										size="sm"
 										disabled={!hasInputValue || isSaving || isDeleting}
-										aria-busy={isSaving}
 										onClick={() => {
 											void handleSaveProvider(provider);
 										}}
 									>
 										{isSaving ? (
 											<>
-												<Loader2 aria-hidden="true" className="animate-spin" />
+												<Loader2 className="animate-spin" />
 												{t('models.saving', 'Saving…')}
 											</>
 										) : (
@@ -563,10 +554,6 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 										size="sm"
 										variant="ghost"
 										disabled={isDeleting || isSaving}
-										aria-busy={isDeleting}
-										aria-label={t('models.deleteProviderLabel', 'Delete {{name}} API key', {
-											name: provider,
-										})}
 										onClick={() => {
 											void handleDeleteProvider(provider);
 										}}
@@ -574,12 +561,12 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 									>
 										{isDeleting ? (
 											<>
-												<Loader2 aria-hidden="true" className="animate-spin" />
+												<Loader2 className="animate-spin" />
 												{t('models.deleting', 'Deleting…')}
 											</>
 										) : (
 											<>
-												<Trash2 aria-hidden="true" />
+												<Trash2 />
 												{t('models.deleteProvider', 'Delete')}
 											</>
 										)}
