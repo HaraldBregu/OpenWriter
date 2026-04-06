@@ -62,11 +62,6 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		AssistantExtension.configure({
 			onSubmit: handlers.onTextSubmit,
 		}),
-		ContentGeneratorExtension.configure({
-			onTextSubmit: handlers.onTextSubmit,
-			onImageSubmit: handlers.onImageSubmit,
-			onFileSelect: handlers.onImageFileSelect,
-		}),
 		Markdown,
 		Placeholder.configure({
 			placeholder: ({ node }) => {
