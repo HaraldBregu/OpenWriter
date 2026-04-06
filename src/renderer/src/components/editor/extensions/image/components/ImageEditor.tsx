@@ -57,8 +57,12 @@ export function ImageEditor({
 	const [activeMode, setActiveMode] = useState<EditMode | null>(initialMode ?? null);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 	const [aiPrompt, setAIPrompt] = useState('');
+	const [aiFiles, setAIFiles] = useState<File[]>([]);
+	const [aiPreviewUrls, setAIPreviewUrls] = useState<string[]>([]);
+	const [isDragOver, setIsDragOver] = useState(false);
 	const editorRef = useRef<HTMLDivElement>(null);
 	const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
+	const aiFileInputRef = useRef<HTMLInputElement>(null);
 	const {
 		canvasRef,
 		state,
