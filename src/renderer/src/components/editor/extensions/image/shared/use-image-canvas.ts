@@ -214,6 +214,30 @@ function applyFiltersToCanvas(ctx: CanvasRenderingContext2D, filters: DetectedFi
 	ctx.putImageData(imageData, 0, 0);
 }
 
+export type ImageEffectType = DetectedFilter['type'];
+
+export type ImageEffectOption = {
+	type: ImageEffectType;
+	labelKey: string;
+	descriptionKey?: string;
+};
+
+export const IMAGE_EFFECT_OPTIONS: ImageEffectOption[] = [
+	{ type: 'grayscale', labelKey: 'imageNode.effectGrayscale' },
+	{ type: 'blur', labelKey: 'imageNode.effectBlur' },
+	{ type: 'brightness', labelKey: 'imageNode.effectBrightness' },
+	{ type: 'saturation', labelKey: 'imageNode.effectSaturation' },
+	{ type: 'sepia', labelKey: 'imageNode.effectSepia' },
+	{ type: 'invert', labelKey: 'imageNode.effectInvert' },
+	{ type: 'sharpen', labelKey: 'imageNode.effectSharpen' },
+];
+
+const EFFECT_DEFAULT_INTENSITIES: Partial<Record<ImageEffectType, number>> = {
+	blur: 2,
+	brightness: 40,
+	saturation: 1.5,
+};
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -247,6 +271,7 @@ export interface UseImageCanvasReturn {
 	setCropRegion: (region: CropRegion | null) => void;
 	applyResize: (width: number, height: number) => void;
 	applyAI: (prompt: string) => void;
+	applyEffect: (effect: ImageEffectType) => void;
 	undo: () => void;
 	canUndo: boolean;
 	exportDataUri: () => string | null;
@@ -519,22 +544,48 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 	// AI Filters
 	// ---------------------------------------------------------------------------
 
-	const applyAI = useCallback(
-		(prompt: string): void => {
-			const canvas = canvasRef.current;
-			if (!canvas) return;
-			const ctx = canvas.getContext('2d');
-			if (!ctx) return;
+const applyAI = useCallback(
+	(prompt: string): void => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
 
-			// Snapshot before mutation
-			pushSnapshot(state.rotation);
+		// Snapshot before mutation
+		pushSnapshot(state.rotation);
 
-			// Detect filters from prompt and apply them
-			const filters = detectFiltersFromPrompt(prompt);
-			applyFiltersToCanvas(ctx, filters);
-		},
-		[state.rotation, pushSnapshot]
-	);
+		// Detect filters from prompt and apply them
+		const filters = detectFiltersFromPrompt(prompt);
+		applyFiltersToCanvas(ctx, filters);
+	},
+	[state.rotation, pushSnapshot]
+);
+
+const applyEffect = useCallback(
+	(effect: ImageEffectType): void => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		// Snapshot before mutation
+		pushSnapshot(state.rotation);
+
+		const intensity = EFFECT_DEFAULT_INTENSITIES[effect];
+		const filter: DetectedFilter =
+			intensity !== undefined
+				? {
+						type: effect,
+						intensity,
+				  }
+				: {
+						type: effect,
+				  };
+
+		applyFiltersToCanvas(ctx, [filter]);
+	},
+	[state.rotation, pushSnapshot]
+);
 
 	// ---------------------------------------------------------------------------
 	// Undo
@@ -570,6 +621,7 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 		setCropRegion,
 		applyResize,
 		applyAI,
+		applyEffect,
 		undo,
 		canUndo,
 		exportDataUri,

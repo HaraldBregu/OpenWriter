@@ -10,11 +10,12 @@ import {
 	Check,
 	X,
 	Sparkles,
+	WandSparkles,
 } from 'lucide-react';
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { MIN_CROP_SIZE } from '../shared';
-import { useImageCanvas } from '../use-image-canvas';
+import { useImageCanvas, IMAGE_EFFECT_OPTIONS } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { CropOverlay } from './CropOverlay';
 import { ResizeControls } from './ResizeControls';
@@ -27,7 +28,7 @@ export interface ImageEditorProps {
 	onCancel: () => void;
 }
 
-type EditMode = 'crop' | 'resize' | 'rotate';
+type EditMode = 'crop' | 'resize' | 'rotate' | 'effects';
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
@@ -44,6 +45,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		setCropRegion,
 		applyResize,
 		applyAI,
+		applyEffect,
 		undo,
 		canUndo,
 		exportDataUri,
@@ -110,6 +112,14 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							label={t('imageNode.rotate')}
 							onClick={() => handleModeChange('rotate')}
 							active={activeMode === 'rotate'}
+						/>
+
+						<ToolbarButton
+							icon={<WandSparkles />}
+							label={t('imageNode.effects')}
+							onClick={() => handleModeChange('effects')}
+							active={activeMode === 'effects'}
+							disabled={!state.isLoaded}
 						/>
 
 						<div className="mx-1 h-4 w-px bg-border" />
@@ -202,6 +212,25 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 								/>
 								<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
 							</>
+						)}
+
+						{activeMode === 'effects' && (
+							<div className="flex w-full flex-col gap-2">
+								<p className="text-xs text-muted-foreground">{t('imageNode.effectsInfo')}</p>
+								<div className="flex flex-wrap gap-2">
+									{IMAGE_EFFECT_OPTIONS.map((effect) => (
+										<AppButton
+											key={effect.type}
+											size="sm"
+											onClick={() => applyEffect(effect.type)}
+											className="h-7 px-2 text-xs"
+											disabled={!state.isLoaded}
+										>
+											{t(effect.labelKey)}
+										</AppButton>
+									))}
+								</div>
+							</div>
 						)}
 					</div>
 				</div>
