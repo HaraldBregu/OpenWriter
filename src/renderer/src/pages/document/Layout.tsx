@@ -314,7 +314,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					pendingCloseMenuRef.current();
 					pendingCloseMenuRef.current = null;
 				}
-				editorRef.current?.removeContentGenerator();
+				editorRef.current?.removeAssistant();
 				setAssistantActiveTaskId(null);
 			}
 		});
