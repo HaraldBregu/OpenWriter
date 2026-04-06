@@ -5,6 +5,7 @@ import {
 	AppAlertDialogTrigger,
 	AppAlertDialogContent,
 	AppAlertDialogHeader,
+	AppAlertDialogFooter,
 	AppAlertDialogTitle,
 	AppAlertDialogDescription,
 	AppAlertDialogAction,
@@ -32,15 +33,15 @@ export function DeleteConfirmDialog({
 						{t('imageNode.deleteImageDescription')}
 					</AppAlertDialogDescription>
 				</AppAlertDialogHeader>
-				<div className="flex justify-end gap-2">
+				<AppAlertDialogFooter>
 					<AppAlertDialogCancel>{t('imageNode.cancel')}</AppAlertDialogCancel>
 					<AppAlertDialogAction
 						onClick={onConfirm}
-						className="bg-destructive hover:bg-destructive/90"
+						className="bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive"
 					>
 						{t('imageNode.delete')}
 					</AppAlertDialogAction>
-				</div>
+				</AppAlertDialogFooter>
 			</AppAlertDialogContent>
 		</AppAlertDialog>
 	);
