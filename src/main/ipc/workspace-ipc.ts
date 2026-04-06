@@ -502,6 +502,27 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		// -------------------------------------------------------------------------
+		// Agent configs
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getAgentConfigs,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent) => this.mgr(event, container).getAgentConfigs(),
+				WorkspaceChannels.getAgentConfigs
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.setAgentConfig,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, agentId: string, provider: string, model: string) =>
+					this.mgr(event, container).setAgentConfig(agentId, provider, model),
+				WorkspaceChannels.setAgentConfig
+			)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
