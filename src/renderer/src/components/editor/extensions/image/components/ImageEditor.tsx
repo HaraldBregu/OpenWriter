@@ -244,7 +244,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 								<div className="flex flex-wrap items-center gap-2">
 									<AppButton
 										size="sm"
-										onClick={applyCrop}
+										onClick={handleApplyCrop}
 										disabled={!hasCropSelection}
 										className="h-7 px-2 text-xs"
 									>
@@ -253,7 +253,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 									<AppButton
 										variant="outline"
 										size="sm"
-										onClick={resetCrop}
+										onClick={handleResetCrop}
 										disabled={!state.cropRegion}
 										className="h-7 px-2 text-xs"
 									>
