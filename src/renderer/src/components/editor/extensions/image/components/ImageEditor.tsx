@@ -298,7 +298,7 @@ export function ImageEditor({
 								size="icon-xs"
 								aria-label={t('imageNode.cancel')}
 								onClick={onCancel}
-								className="h-6 w-6 text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
+								className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<X />
 							</AppButton>
@@ -308,7 +308,7 @@ export function ImageEditor({
 								aria-label={t('imageNode.save')}
 								onClick={handleSave}
 								disabled={!state.isLoaded}
-								className="h-6 w-6 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-3.5 [&_svg]:w-3.5"
+								className="h-8 w-8 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<Check />
 							</AppButton>
