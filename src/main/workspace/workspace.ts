@@ -32,6 +32,7 @@ import type {
 	FsListDirParams,
 	FsListDirEntry,
 	ProjectWorkspaceInfo,
+	AgentProviderConfig,
 	WorkspaceInfo,
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';

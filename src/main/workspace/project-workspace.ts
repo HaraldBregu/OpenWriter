@@ -345,9 +345,7 @@ export class ProjectWorkspaceService {
 	 * Parse and validate the agentConfigs field from the file.
 	 * Returns undefined if no valid configs are found.
 	 */
-	private parseAgentConfigs(
-		value: unknown
-	): Record<string, AgentProviderConfig> | undefined {
+	private parseAgentConfigs(value: unknown): Record<string, AgentProviderConfig> | undefined {
 		if (value === null || typeof value !== 'object' || Array.isArray(value)) {
 			return undefined;
 		}
