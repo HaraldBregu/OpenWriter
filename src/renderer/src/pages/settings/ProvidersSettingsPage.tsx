@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
+import { Check, Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
 import type { ServiceProvider } from '../../../../shared/provider-constants';
 import {
 	PROVIDER_IDS,
@@ -112,9 +112,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
 						>
 							<div className="mb-3">
-								<h2 className="text-sm font-medium text-foreground">
-									{PROVIDER_LABELS[provider]}
-								</h2>
+								<h2 className="text-sm font-medium text-foreground">{PROVIDER_LABELS[provider]}</h2>
 							</div>
 
 							<div>
