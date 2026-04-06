@@ -480,12 +480,10 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 							: t('models.showApiKey', 'Show API key');
 
 						return (
-							<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-end">
-								<div className="flex flex-col gap-1.5">
-									<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
-										{provider}
-									</AppLabel>
-								</div>
+							<div key={provider} className="flex flex-col gap-2">
+								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
+									{provider}
+								</AppLabel>
 								<div className="relative flex items-center">
 									<AppInput
 										id={`${uid}-${provider}-apikey`}
@@ -512,33 +510,45 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 										{isVisible ? <EyeOff /> : <Eye />}
 									</AppButton>
 								</div>
-								<div className="flex items-center justify-end gap-2">
+								<div className="flex gap-2">
 									<AppButton
 										type="button"
-										variant="ghost"
-										size="icon-xs"
-										aria-label={
-											isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')
-										}
+										size="sm"
 										disabled={!hasInputValue || isSaving || isDeleting}
 										onClick={() => {
 											void handleSaveProvider(provider);
 										}}
 									>
-										{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
+										{isSaving ? (
+											<>
+												<Loader2 className="animate-spin" />
+												{t('models.saving', 'Saving…')}
+											</>
+										) : (
+											t('models.form.save', 'Save')
+										)}
 									</AppButton>
 									<AppButton
 										type="button"
+										size="sm"
 										variant="ghost"
-										size="icon-xs"
-										aria-label={t('models.deleteProvider', 'Delete provider')}
 										disabled={isDeleting || isSaving}
 										onClick={() => {
 											void handleDeleteProvider(provider);
 										}}
 										className="text-muted-foreground hover:text-destructive"
 									>
-										<Trash2 />
+										{isDeleting ? (
+											<>
+												<Loader2 className="animate-spin" />
+												{t('models.deleting', 'Deleting…')}
+											</>
+										) : (
+											<>
+												<Trash2 />
+												{t('models.deleteProvider', 'Delete')}
+											</>
+										)}
 									</AppButton>
 								</div>
 							</div>
