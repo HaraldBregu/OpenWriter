@@ -107,6 +107,24 @@ export const TitleBar = React.memo(function TitleBar({
 							<PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
 						</button>
 					)}
+
+					<button
+						type="button"
+						onClick={onNavigateBack}
+						className={btnNoHover}
+						title={t('titleBar.navigateBack')}
+					>
+						<ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+					</button>
+
+					<button
+						type="button"
+						onClick={onNavigateForward}
+						className={btnNoHover}
+						title={t('titleBar.navigateForward')}
+					>
+						<ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.5} />
+					</button>
 				</div>
 			) : (
 				onToggleSidebar && (
