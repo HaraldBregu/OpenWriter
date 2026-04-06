@@ -117,10 +117,14 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		setEditing(true);
 	}, []);
 
+	const handleImageClick = useCallback((): void => {
+		setPreviewing(true);
+	}, []);
+
 	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>): void => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			setEditing(true);
+			setPreviewing(true);
 		}
 	}, []);
 
