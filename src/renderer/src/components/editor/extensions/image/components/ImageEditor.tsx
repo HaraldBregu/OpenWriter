@@ -370,124 +370,121 @@ export function ImageEditor({
 									</span>
 								</div>
 							)}
-
-							{activeMode === 'ai' && (
-								<div
-									className={cn('flex flex-col', isDragOver && 'ring-2 ring-inset ring-primary/40')}
-									onDragOver={handleAIDragOver}
-									onDragLeave={handleAIDragLeave}
-									onDrop={handleAIDrop}
-								>
-									{/* Hidden file input */}
-									<input
-										ref={aiFileInputRef}
-										type="file"
-										accept={ACCEPTED_IMAGE_TYPES}
-										className="hidden"
-										onChange={handleAIFileInputChange}
-										aria-hidden="true"
-										tabIndex={-1}
-										multiple
-									/>
-									{/* Image strip: current image + uploaded references */}
-									<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
-										<div className="flex items-center gap-2 overflow-x-auto pb-1">
-											{/* Current image thumbnail */}
-											<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
-												<img src={src} alt={alt ?? ''} className="h-full w-full object-cover" />
-											</div>
-											{/* Uploaded reference thumbnails */}
-											{aiPreviewUrls.map((url, index) => (
-												<div
-													key={`${aiFiles[index]?.name ?? 'ref'}-${index}`}
-													className="group/thumb relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]"
-												>
-													<img
-														src={url}
-														alt={aiFiles[index]?.name ?? ''}
-														className="h-full w-full object-cover"
-													/>
-													<AppButton
-														variant="ghost"
-														size="icon-xs"
-														className="absolute -right-1 -top-1 h-5 w-5 rounded-full border border-border/70 bg-background/92 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background/88"
-														onMouseDown={(e) => {
-															e.preventDefault();
-															removeAIFile(index);
-														}}
-														aria-label={t('imageNode.removeImage', 'Remove image')}
-													>
-														<X className="h-3 w-3" />
-													</AppButton>
-												</div>
-											))}
-											{/* Add image button */}
-											<AppButton
-												variant="ghost"
-												size="sm"
-												className="h-16 shrink-0 rounded-[1.15rem] border border-dashed border-border/80 bg-background/76 px-3 text-xs font-medium text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-												disabled={isProcessingAI}
-												onMouseDown={(e) => {
-													e.preventDefault();
-													aiFileInputRef.current?.click();
-												}}
-											>
-												<div className="flex flex-col items-center gap-1">
-													<ImagePlus className="h-4 w-4" />
-													<span>{t('imageNode.addImage', 'Add image')}</span>
-												</div>
-											</AppButton>
-										</div>
-									</div>
-									{/* Prompt textarea */}
-									<AppTextarea
-										ref={aiTextareaRef}
-										id="ai-prompt"
-										value={aiPrompt}
-										onChange={(e) => setAIPrompt(e.target.value)}
-										onKeyDown={handlePromptKeyDown}
-										placeholder={t(
-											'imageNode.aiPromptPlaceholder',
-											'Describe the image you want to create. You can also drop reference images here.'
-										)}
-										aria-label={t('imageNode.aiPromptLabel', 'AI transform prompt')}
-										className={cn(
-											'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
-											'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
-											'disabled:cursor-not-allowed disabled:opacity-60'
-										)}
-										disabled={isProcessingAI}
-										rows={1}
-									/>
-									{/* Footer with status + submit */}
-									<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
-										<div className="flex min-w-0 items-center gap-2">
-											{isProcessingAI && (
-												<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
-													{t('imageNode.aiProcessing', 'Processing...')}
-												</span>
-											)}
-										</div>
-										<AppButton
-											variant="prompt-submit"
-											size="prompt-submit-md"
-											className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
-											disabled={!aiPrompt.trim() || isProcessingAI}
-											onMouseDown={(e) => {
-												e.preventDefault();
-												if (!isProcessingAI) handleAISubmit();
-											}}
-											aria-label={t('imageNode.aiApply', 'Apply AI transform')}
-										>
-											{isProcessingAI ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-										</AppButton>
-									</div>
-								</div>
-							)}
 						</div>
 					)}
 				</div>
 			</AppTooltipProvider>
+
+			{/* AI transform panel — full-width, matches AssistantContent painter style */}
+			{activeMode === 'ai' && (
+				<div
+					className={cn('flex flex-col', isDragOver && 'ring-2 ring-inset ring-primary/40')}
+					onDragOver={handleAIDragOver}
+					onDragLeave={handleAIDragLeave}
+					onDrop={handleAIDrop}
+				>
+					{/* Hidden file input */}
+					<input
+						ref={aiFileInputRef}
+						type="file"
+						accept={ACCEPTED_IMAGE_TYPES}
+						className="hidden"
+						onChange={handleAIFileInputChange}
+						aria-hidden="true"
+						tabIndex={-1}
+						multiple
+					/>
+					{/* Image strip */}
+					<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
+						<div className="flex items-center gap-2 overflow-x-auto pb-1">
+							{/* Add image button */}
+							<AppButton
+								variant="ghost"
+								size="sm"
+								className="h-16 shrink-0 rounded-[1.15rem] border border-dashed border-border/80 bg-background/76 px-3 text-xs font-medium text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
+								disabled={isProcessingAI}
+								onMouseDown={(e) => {
+									e.preventDefault();
+									aiFileInputRef.current?.click();
+								}}
+							>
+								<div className="flex flex-col items-center gap-1">
+									<ImagePlus className="h-4 w-4" />
+									<span>{t('imageNode.addImage', 'Add image')}</span>
+								</div>
+							</AppButton>
+							{/* Uploaded reference thumbnails */}
+							{aiPreviewUrls.map((url, index) => (
+								<div
+									key={`${aiFiles[index]?.name ?? 'ref'}-${index}`}
+									className="group/thumb relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]"
+								>
+									<img
+										src={url}
+										alt={aiFiles[index]?.name ?? ''}
+										className="h-full w-full object-cover"
+									/>
+									<AppButton
+										variant="ghost"
+										size="icon-xs"
+										className="absolute -right-1 -top-1 h-5 w-5 rounded-full border border-border/70 bg-background/92 text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background/88"
+										onMouseDown={(e) => {
+											e.preventDefault();
+											removeAIFile(index);
+										}}
+										aria-label={t('imageNode.removeImage', 'Remove image')}
+									>
+										<X className="h-3 w-3" />
+									</AppButton>
+								</div>
+							))}
+						</div>
+					</div>
+					{/* Prompt textarea */}
+					<AppTextarea
+						ref={aiTextareaRef}
+						id="ai-prompt"
+						value={aiPrompt}
+						onChange={(e) => setAIPrompt(e.target.value)}
+						onKeyDown={handlePromptKeyDown}
+						placeholder={t(
+							'imageNode.aiPromptPlaceholder',
+							'Describe the image you want to create. You can also drop reference images here.'
+						)}
+						aria-label={t('imageNode.aiPromptLabel', 'AI transform prompt')}
+						className={cn(
+							'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+							'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
+							'disabled:cursor-not-allowed disabled:opacity-60'
+						)}
+						disabled={isProcessingAI}
+						rows={1}
+					/>
+					{/* Footer */}
+					<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
+						<div className="flex min-w-0 items-center gap-2">
+							{isProcessingAI && (
+								<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
+									{t('imageNode.aiProcessing', 'Processing...')}
+								</span>
+							)}
+						</div>
+						<AppButton
+							variant="prompt-submit"
+							size="prompt-submit-md"
+							className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
+							disabled={!aiPrompt.trim() || isProcessingAI}
+							onMouseDown={(e) => {
+								e.preventDefault();
+								if (!isProcessingAI) handleAISubmit();
+							}}
+							aria-label={t('imageNode.aiApply', 'Apply AI transform')}
+						>
+							{isProcessingAI ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+						</AppButton>
+					</div>
+				</div>
+			)}
 
 			{/* Canvas area — hidden during AI transform (thumbnail shown in AI panel) */}
 			<div
