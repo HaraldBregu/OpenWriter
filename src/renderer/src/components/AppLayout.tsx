@@ -234,32 +234,41 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						<AppSidebarSeparator />
 
 						{/* Resources */}
-						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupLabel>{t('appLayout.resources', 'Resources')}</AppSidebarGroupLabel>
-							<AppSidebarGroupContent>
-								<AppSidebarMenu>
-									{RESOURCE_SECTION_ORDER.map((sectionId) => {
-										const section = RESOURCE_SECTIONS[sectionId];
-										const Icon = section.icon;
+						<AppCollapsible defaultOpen className="py-0">
+							<AppSidebarGroup className="py-0">
+								<AppSidebarGroupLabel asChild>
+									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
+										{t('appLayout.resources', 'Resources')}
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
+									</AppCollapsibleTrigger>
+								</AppSidebarGroupLabel>
+								<AppCollapsiblePanel>
+									<AppSidebarGroupContent>
+										<AppSidebarMenu>
+											{RESOURCE_SECTION_ORDER.map((sectionId) => {
+												const section = RESOURCE_SECTIONS[sectionId];
+												const Icon = section.icon;
 
-										return (
-											<AppSidebarMenuItem key={section.id}>
-												<AppSidebarMenuButton
-													asChild
-													className="h-9 px-3"
-													isActive={location.pathname === section.route}
-												>
-													<Link to={section.route}>
-														<Icon className="h-4 w-4 shrink-0" />
-														<span className="flex-1 truncate">{t(section.titleKey)}</span>
-													</Link>
-												</AppSidebarMenuButton>
-											</AppSidebarMenuItem>
-										);
-									})}
-								</AppSidebarMenu>
-							</AppSidebarGroupContent>
-						</AppSidebarGroup>
+												return (
+													<AppSidebarMenuItem key={section.id}>
+														<AppSidebarMenuButton
+															asChild
+															className="h-9 px-3"
+															isActive={location.pathname === section.route}
+														>
+															<Link to={section.route}>
+																<Icon className="h-4 w-4 shrink-0" />
+																<span className="flex-1 truncate">{t(section.titleKey)}</span>
+															</Link>
+														</AppSidebarMenuButton>
+													</AppSidebarMenuItem>
+												);
+											})}
+										</AppSidebarMenu>
+									</AppSidebarGroupContent>
+								</AppCollapsiblePanel>
+							</AppSidebarGroup>
+						</AppCollapsible>
 
 						<AppSidebarSeparator />
 

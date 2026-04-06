@@ -23,9 +23,7 @@ const PROVIDER_LABELS = Object.fromEntries(
 	PROVIDER_CATALOGUE.map((provider) => [provider.id, provider.name])
 ) as Record<ProviderId, string>;
 
-const ConfigPage: React.FC<ConfigPageProps> = ({
-	onConfigured,
-}) => {
+const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 	const { t } = useTranslation();
 	const [tokens, setTokens] = useState<Record<ProviderId, string>>(EMPTY_TOKENS);
 	const [isSaving, setIsSaving] = useState(false);
