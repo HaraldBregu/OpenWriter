@@ -11,6 +11,7 @@ import {
 	Undo2,
 	Check,
 	X,
+	Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
@@ -21,6 +22,7 @@ import {
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
 import { useImageCanvas, type CropRegion } from './use-image-canvas';
+import { AIPromptDialog } from './AIPromptDialog';
 
 // ---------------------------------------------------------------------------
 // Constants
