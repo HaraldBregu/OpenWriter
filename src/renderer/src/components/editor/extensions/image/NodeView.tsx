@@ -80,6 +80,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	const [loadError, setLoadError] = useState(false);
 	const [hovered, setHovered] = useState(false);
 	const [editing, setEditing] = useState(false);
+	const [showMoreActions, setShowMoreActions] = useState(false);
 	const prevSrcRef = useRef(resolvedSrc);
 
 	useEffect(() => {
