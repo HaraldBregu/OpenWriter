@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@/store';
-import { selectAllDocuments } from '@/store/documents';
 import { AppIconOpenWriter } from '@/components/app/icons/AppIconOpenWriter';
 
 const SplashPage: React.FC = () => {
 	const navigate = useNavigate();
-	const allDocuments = useAppSelector(selectAllDocuments);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {

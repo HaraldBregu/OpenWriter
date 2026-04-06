@@ -120,7 +120,7 @@ const App: React.FC = () => {
 		if (startupInfo) {
 			const splashTimer = setTimeout(() => {
 				setShowSplash(false);
-			}, 2000);
+			}, 3000);
 
 			return () => clearTimeout(splashTimer);
 		}
