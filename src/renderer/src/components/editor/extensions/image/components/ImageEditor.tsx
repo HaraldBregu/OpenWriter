@@ -12,6 +12,7 @@ import {
 	ImageOff,
 	ArrowUp,
 	LoaderCircle,
+	ImagePlus,
 } from 'lucide-react';
 import ReactCrop from 'react-image-crop';
 import type { PixelCrop } from 'react-image-crop';
