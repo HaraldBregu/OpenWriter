@@ -11,17 +11,8 @@ import {
 	AppTooltipContent,
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
-import {
-	AppAlertDialog,
-	AppAlertDialogTrigger,
-	AppAlertDialogContent,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-	AppAlertDialogDescription,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-} from '@/components/app/AppAlertDialog';
 import { ImageEditor } from './ImageEditor';
+import { DeleteConfirmDialog } from './dialogs';
 
 interface ImageAttrs {
 	src: string | null;
