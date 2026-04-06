@@ -17,27 +17,25 @@ const SplashPage: React.FC = () => {
 	}, [navigate]);
 
 	return (
-		<div className="flex items-center justify-center h-screen w-screen bg-gradient-to-br from-background to-background/95">
-			<div className="text-center space-y-6 animate-fade-in">
+		<div className="flex items-center justify-center h-screen w-screen bg-gradient-to-br from-background via-background to-background/95">
+			<div className="text-center space-y-8 animate-fade-in">
 				<div className="flex justify-center">
-					<div className="w-20 h-20 rounded-2xl bg-foreground/5 border border-foreground/10 flex items-center justify-center animate-pulse">
-						<svg className="w-10 h-10 text-foreground" fill="currentColor" viewBox="0 0 24 24">
-							<path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
-						</svg>
+					<div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-foreground/10 to-foreground/5 border border-foreground/10 flex items-center justify-center shadow-xl animate-bounce-slow">
+						<AppIconOpenWriter className="w-16 h-16" />
 					</div>
 				</div>
 
-				<div className="space-y-2">
-					<h1 className="text-3xl font-semibold text-foreground tracking-tight">OpenWriter</h1>
-					<p className="text-sm text-muted-foreground">
+				<div className="space-y-3">
+					<h1 className="text-4xl font-bold text-foreground tracking-tight">OpenWriter</h1>
+					<p className="text-base text-muted-foreground font-light">
 						{allDocuments.length > 0 ? 'Welcome back' : 'Getting started'}
 					</p>
 				</div>
 
-				<div className="flex justify-center gap-1.5">
-					<div className="w-1.5 h-1.5 rounded-full bg-foreground/30 animate-bounce" />
-					<div className="w-1.5 h-1.5 rounded-full bg-foreground/30 animate-bounce delay-100" />
-					<div className="w-1.5 h-1.5 rounded-full bg-foreground/30 animate-bounce delay-200" />
+				<div className="flex justify-center gap-2">
+					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" />
+					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce delay-100" />
+					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce delay-200" />
 				</div>
 			</div>
 
