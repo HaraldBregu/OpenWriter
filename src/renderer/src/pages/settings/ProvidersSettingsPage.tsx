@@ -107,17 +107,24 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 						: t('models.showApiKey', 'Show API key');
 
 					return (
-						<AppCard key={provider}>
-							<AppCardHeader className="pb-3">
-								<AppCardTitle className="text-sm font-medium">
+						<div
+							key={provider}
+							className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
+						>
+							<div className="mb-3">
+								<h2 className="text-sm font-medium text-foreground">
 									{PROVIDER_LABELS[provider]}
-								</AppCardTitle>
-							</AppCardHeader>
-							<AppCardContent className="pb-3">
-								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="sr-only">
-									{PROVIDER_LABELS[provider]}
+								</h2>
+							</div>
+
+							<div>
+								<AppLabel
+									htmlFor={`${uid}-${provider}-apikey`}
+									className="text-xs font-medium text-muted-foreground"
+								>
+									{t('models.form.apiKey', 'API Key')}
 								</AppLabel>
-								<div className="relative flex items-center">
+								<div className="mt-1 relative flex items-center">
 									<AppInput
 										id={`${uid}-${provider}-apikey`}
 										type={visible[provider] ? 'text' : 'password'}
@@ -143,8 +150,9 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 										{visible[provider] ? <EyeOff /> : <Eye />}
 									</AppButton>
 								</div>
-							</AppCardContent>
-							<AppCardFooter className="flex gap-2 pt-0">
+							</div>
+
+							<div className="mt-3 flex gap-2">
 								<AppButton
 									type="button"
 									size="sm"
@@ -184,8 +192,8 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 										</>
 									)}
 								</AppButton>
-							</AppCardFooter>
-						</AppCard>
+							</div>
+						</div>
 					);
 				})}
 			</div>
