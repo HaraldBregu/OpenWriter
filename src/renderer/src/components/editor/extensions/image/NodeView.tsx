@@ -11,7 +11,7 @@ import {
 	AppTooltipContent,
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
-import { ImageEditor } from './ImageEditor';
+import { ImageEditor } from './components/ImageEditor';
 import { DeleteConfirmDialog } from './components';
 
 interface ImageAttrs {
