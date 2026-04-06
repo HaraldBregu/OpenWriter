@@ -315,8 +315,8 @@ export function ImageEditor({
 						</div>
 					</div>
 
-					{/* Context controls row — only visible when a mode is active */}
-					{hasContextControls && (
+					{/* Context controls row — crop / rotate */}
+					{(activeMode === 'crop' || activeMode === 'rotate') && (
 						<div className="border-t border-border/60 bg-muted/30 px-2 py-1.5">
 							{activeMode === 'crop' && (
 								<div className="flex flex-wrap items-center gap-2">
