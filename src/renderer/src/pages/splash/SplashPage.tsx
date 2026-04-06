@@ -37,14 +37,6 @@ const SplashPage: React.FC = () => {
 				.animate-bounce-slow {
 					animation: bounce-slow 2s infinite;
 				}
-
-				.delay-100 {
-					animation-delay: 0.1s;
-				}
-
-				.delay-200 {
-					animation-delay: 0.2s;
-				}
 			`}</style>
 		</div>
 	);
