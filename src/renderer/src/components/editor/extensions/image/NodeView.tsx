@@ -127,8 +127,20 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		link.click();
 	}, [resolvedSrc, alt]);
 
-	const handleEnhance = useCallback(() => {
-		/* TODO: integrate AI enhance flow */
+	const handleAskAI = useCallback(() => {
+		/* TODO: integrate AI ask flow */
+	}, []);
+
+	const handleComment = useCallback(() => {
+		/* TODO: integrate comment flow */
+	}, []);
+
+	const handleMaximize = useCallback(() => {
+		/* TODO: integrate fullscreen/preview modal */
+	}, []);
+
+	const handleZoom = useCallback(() => {
+		/* TODO: integrate zoom flow */
 	}, []);
 
 	const handleEdit = useCallback(() => {
