@@ -32,7 +32,7 @@ type EditMode = 'crop' | 'resize' | 'rotate' | 'effects';
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const [activeMode, setActiveMode] = useState<EditMode>('crop');
+	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
 	const [showAIDialog, setShowAIDialog] = useState(false);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 
