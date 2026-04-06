@@ -197,6 +197,10 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 	const [saving, setSaving] = useState<Record<ProviderId, boolean>>(
 		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
 	);
+	const [deleting, setDeleting] = useState<Record<ProviderId, boolean>>(
+		() =>
+			Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
+	);
 
 	const handleApiKeyChange = useCallback((provider: ProviderId, value: string) => {
 		setApiKeys((prev) => ({ ...prev, [provider]: value }));
@@ -222,6 +226,22 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 			}
 		},
 		[apiKeys, onSaveProviderApiKey, saving]
+	);
+
+	const handleDeleteProvider = useCallback(
+		async (provider: ProviderId) => {
+			if (deleting[provider]) return;
+			setDeleting((prev) => ({ ...prev, [provider]: true }));
+			try {
+				await onDeleteProvider(provider);
+				setApiKeys((prev) => ({ ...prev, [provider]: '' }));
+			} catch {
+				// Deletion failed — keep current state
+			} finally {
+				setDeleting((prev) => ({ ...prev, [provider]: false }));
+			}
+		},
+		[deleting, onDeleteProvider]
 	);
 
 	return (
