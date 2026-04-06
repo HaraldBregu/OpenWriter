@@ -437,6 +437,19 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		[activeMode, resetCrop]
 	);
 
+	const handleAISubmit = useCallback(
+		(prompt: string): void => {
+			setIsProcessingAI(true);
+			// Simulate processing delay for better UX
+			setTimeout(() => {
+				applyAI(prompt);
+				setShowAIDialog(false);
+				setIsProcessingAI(false);
+			}, 300);
+		},
+		[applyAI]
+	);
+
 	const currentWidth = state.dimensions?.width ?? 0;
 	const currentHeight = state.dimensions?.height ?? 0;
 	const hasCropSelection =
