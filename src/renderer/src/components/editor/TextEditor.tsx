@@ -125,12 +125,6 @@ const TextEditor = React.memo(
 			const onTextSubmitRef = useRef(onTextSubmit);
 			onTextSubmitRef.current = onTextSubmit;
 
-			const onImageSubmitRef = useRef(onImageSubmit);
-			onImageSubmitRef.current = onImageSubmit;
-
-			const onImageFileSelectRef = useRef(onImageFileSelect);
-			onImageFileSelectRef.current = onImageFileSelect;
-
 			const documentIdRef = useRef(documentId);
 			documentIdRef.current = documentId;
 
