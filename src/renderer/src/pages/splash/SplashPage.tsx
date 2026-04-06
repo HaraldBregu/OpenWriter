@@ -49,8 +49,21 @@ const SplashPage: React.FC = () => {
 					}
 				}
 
+				@keyframes bounce-slow {
+					0%, 100% {
+						transform: translateY(0);
+					}
+					50% {
+						transform: translateY(-12px);
+					}
+				}
+
 				.animate-fade-in {
 					animation: fade-in 0.6s ease-in-out;
+				}
+
+				.animate-bounce-slow {
+					animation: bounce-slow 2s infinite;
 				}
 
 				.delay-100 {
