@@ -84,6 +84,7 @@ function RouteWrapper({ children }: { children: React.ReactNode }) {
 
 const App: React.FC = () => {
 	const [startupInfo, setStartupInfo] = useState<AppStartupInfo | null>(null);
+	const [showSplash, setShowSplash] = useState(true);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -114,6 +115,16 @@ const App: React.FC = () => {
 			isMounted = false;
 		};
 	}, []);
+
+	useEffect(() => {
+		if (startupInfo) {
+			const splashTimer = setTimeout(() => {
+				setShowSplash(false);
+			}, 2000);
+
+			return () => clearTimeout(splashTimer);
+		}
+	}, [startupInfo]);
 
 	if (!startupInfo) {
 		return (
