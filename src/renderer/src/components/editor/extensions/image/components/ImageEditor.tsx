@@ -240,7 +240,6 @@ export function ImageEditor({
 		? `${Math.round(cropWidth)} x ${Math.round(cropHeight)} px`
 		: `${currentWidth} x ${currentHeight} px`;
 
-	const hasContextControls = activeMode !== null;
 
 	return (
 		<div
