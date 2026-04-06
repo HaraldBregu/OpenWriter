@@ -35,9 +35,10 @@ interface ActionButtonProps {
 	icon: React.ReactNode;
 	label: string;
 	onClick: () => void;
+	destructive?: boolean;
 }
 
-function ActionButton({ icon, label, onClick }: ActionButtonProps): React.JSX.Element {
+function ActionButton({ icon, label, onClick, destructive }: ActionButtonProps): React.JSX.Element {
 	return (
 		<AppTooltip>
 			<AppTooltipTrigger asChild>
@@ -46,7 +47,12 @@ function ActionButton({ icon, label, onClick }: ActionButtonProps): React.JSX.El
 					size="icon-xs"
 					aria-label={label}
 					onClick={onClick}
-					className="h-5 w-5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
+					className={cn(
+						'h-5 w-5 [&_svg]:h-3 [&_svg]:w-3',
+						destructive
+							? 'text-muted-foreground hover:text-destructive'
+							: 'text-muted-foreground hover:text-foreground'
+					)}
 				>
 					{icon}
 				</AppButton>
