@@ -271,37 +271,44 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 						: t('models.showApiKey', 'Show API key');
 
 					return (
-						<div key={provider} className="flex flex-col gap-2">
-							<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
-								{PROVIDER_LABELS[provider]}
-							</AppLabel>
-							<div className="relative flex items-center">
-								<AppInput
-									id={`${uid}-${provider}-apikey`}
-									type={visible[provider] ? 'text' : 'password'}
-									value={displayValue}
-									onChange={(e) => handleApiKeyChange(provider, e.target.value)}
-									placeholder={
-										existing.length > 0
-											? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
-											: t('models.form.apiKeyPlaceholder', 'Enter API key…')
-									}
-									autoComplete="off"
-									spellCheck={false}
-									className="h-9 text-sm font-mono pr-8"
-								/>
-								<AppButton
-									type="button"
-									variant="ghost"
-									size="icon-xs"
-									aria-label={visibilityLabel}
-									onClick={() => handleToggleVisibility(provider)}
-									className="absolute right-1.5 text-muted-foreground hover:text-foreground"
-								>
-									{visible[provider] ? <EyeOff /> : <Eye />}
-								</AppButton>
-							</div>
-							<div className="flex gap-2">
+						<AppCard key={provider}>
+							<AppCardHeader className="pb-3">
+								<AppCardTitle className="text-sm font-medium">
+									{PROVIDER_LABELS[provider]}
+								</AppCardTitle>
+							</AppCardHeader>
+							<AppCardContent className="pb-3">
+								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="sr-only">
+									{PROVIDER_LABELS[provider]}
+								</AppLabel>
+								<div className="relative flex items-center">
+									<AppInput
+										id={`${uid}-${provider}-apikey`}
+										type={visible[provider] ? 'text' : 'password'}
+										value={displayValue}
+										onChange={(e) => handleApiKeyChange(provider, e.target.value)}
+										placeholder={
+											existing.length > 0
+												? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
+												: t('models.form.apiKeyPlaceholder', 'Enter API key…')
+										}
+										autoComplete="off"
+										spellCheck={false}
+										className="h-9 text-sm font-mono pr-8"
+									/>
+									<AppButton
+										type="button"
+										variant="ghost"
+										size="icon-xs"
+										aria-label={visibilityLabel}
+										onClick={() => handleToggleVisibility(provider)}
+										className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+									>
+										{visible[provider] ? <EyeOff /> : <Eye />}
+									</AppButton>
+								</div>
+							</AppCardContent>
+							<AppCardFooter className="flex gap-2 pt-0">
 								<AppButton
 									type="button"
 									size="sm"
@@ -341,8 +348,8 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 										</>
 									)}
 								</AppButton>
-							</div>
-						</div>
+							</AppCardFooter>
+						</AppCard>
 					);
 				})}
 			</div>
