@@ -42,6 +42,8 @@ export interface TitleBarProps {
 export const TitleBar = React.memo(function TitleBar({
 	title = 'Application Name',
 	onToggleSidebar,
+	onNavigateBack,
+	onNavigateForward,
 	className = '',
 }: TitleBarProps) {
 	const { t } = useTranslation();

@@ -289,6 +289,16 @@ export interface InvokeChannelMap {
 		args: [description: string];
 		result: ProjectWorkspaceInfo;
 	};
+
+	// ---- Agent configs (workspace-scoped, IpcResult-wrapped) ----
+	[WorkspaceChannels.getAgentConfigs]: {
+		args: [];
+		result: Record<string, AgentProviderConfig>;
+	};
+	[WorkspaceChannels.setAgentConfig]: {
+		args: [agentId: string, provider: string, model: string];
+		result: void;
+	};
 }
 
 /**
