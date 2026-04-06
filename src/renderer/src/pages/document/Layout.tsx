@@ -287,7 +287,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 		const unsub = subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
-				editorRef.current?.setContentGeneratorLoading(true);
+				editorRef.current?.setAssistantLoading(true);
 				if (pendingCloseMenuRef.current) {
 					pendingCloseMenuRef.current();
 					pendingCloseMenuRef.current = null;
@@ -332,12 +332,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			files: File[] = []
 		) => {
 			if (!id || assistantIsRunning) {
-				editorRef.current?.setContentGeneratorLoading(false);
+				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setContentGeneratorEnable(true);
 				return;
 			}
 
-			editorRef.current?.setContentGeneratorLoading(true);
+			editorRef.current?.setAssistantLoading(true);
 			editorRef.current?.setContentGeneratorEnable(false);
 
 			try {
@@ -359,7 +359,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				}
 
 				if (typeof window.task?.submit !== 'function') {
-					editorRef.current?.setContentGeneratorLoading(false);
+					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setContentGeneratorEnable(true);
 					return;
 				}
@@ -378,7 +378,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
 				if (!ipcResult.success) {
-					editorRef.current?.setContentGeneratorLoading(false);
+					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setContentGeneratorEnable(true);
 					return;
 				}
@@ -388,7 +388,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(resolvedTaskId);
 			} catch {
-				editorRef.current?.setContentGeneratorLoading(false);
+				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setContentGeneratorEnable(true);
 			}
 		},
