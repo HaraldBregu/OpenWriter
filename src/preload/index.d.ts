@@ -48,6 +48,7 @@ import type {
 	DocumentImageInfo,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
+	AgentProviderConfig,
 	AppLogEntry,
 	AppStartupInfo,
 } from '../shared/types';
