@@ -187,11 +187,6 @@ export interface InvokeChannelMap {
 		result: ServiceProvider & { id: string };
 	};
 	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
-	[AppChannels.getAgentProviders]: { args: []; result: Record<string, string> };
-	[AppChannels.setAgentProvider]: {
-		args: [agentName: string, providerName: string];
-		result: void;
-	};
 	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
 	[AppChannels.completeFirstRunConfiguration]: {
 		args: [providers: ServiceProvider[]];
