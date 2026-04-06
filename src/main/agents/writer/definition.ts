@@ -53,6 +53,7 @@ const definition: AgentDefinition = {
 		const logger = context.logger;
 
 		logger?.info(LOG_SOURCE, 'Preparing writer graph', {
+			hasWorkspace: Boolean(context.workspaceService?.getCurrent()),
 			providerId: context.providerId,
 		});
 
