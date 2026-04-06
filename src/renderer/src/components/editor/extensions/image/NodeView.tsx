@@ -153,7 +153,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		setEditing(false);
 	}, []);
 
-	const showToolbar = hovered && !loadError && resolvedSrc;
+	const showToolbar = (hovered || focused) && !loadError && resolvedSrc;
 
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
@@ -166,29 +166,41 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 				/>
 			) : (
 				<div
+					ref={figureRef}
 					className="inline-block max-w-full"
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
+					onFocus={() => setFocused(true)}
+					onBlur={() => setFocused(false)}
+					onKeyDown={handleKeyDown}
+					tabIndex={loadError || !resolvedSrc ? -1 : 0}
+					role="img"
+					aria-label={alt ?? t('imageNode.imageLabel')}
 				>
 					<figure className="relative inline-block max-w-full rounded-md">
 						{/* Floating toolbar overlay */}
 						<AppTooltipProvider delayDuration={300}>
 							<div
 								className={cn(
-									'absolute top-3 right-3 z-10',
+									'absolute top-2 right-2 z-10',
 									'flex items-center gap-0.5 rounded-xl',
 									'border border-border/80 bg-popover/95 p-1.5',
 									'backdrop-blur-md shadow-lg',
-									'pointer-events-none opacity-0 transition-opacity duration-150',
-									showToolbar && 'pointer-events-auto opacity-100'
+									'pointer-events-none opacity-0',
+									'transition-all duration-200 ease-out',
+									'-translate-y-1 scale-95',
+									showToolbar &&
+										'pointer-events-auto opacity-100 translate-y-0 scale-100'
 								)}
+								role="toolbar"
+								aria-label={t('imageNode.imageToolbar')}
 							>
 								<AppButton
 									variant="ghost"
 									size="icon-xs"
 									aria-label={t('imageNode.askAI')}
 									onClick={handleAskAI}
-									className="flex items-center gap-1 w-auto px-1.5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
+									className="flex h-5 w-auto items-center gap-1 px-1.5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
 								>
 									<Sparkles />
 									<span className="text-xs font-medium">Ask AI</span>
@@ -203,8 +215,9 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 									trigger={
 										<button
 											className={cn(
-												'relative h-5 w-5 rounded p-0 text-muted-foreground hover:text-foreground',
-												'flex items-center justify-center cursor-pointer transition-colors'
+												'relative h-5 w-5 rounded p-0',
+												'flex items-center justify-center cursor-pointer transition-colors',
+												'text-muted-foreground hover:text-destructive'
 											)}
 											aria-label={t('imageNode.delete')}
 											title={t('imageNode.delete')}
@@ -217,8 +230,17 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 						</AppTooltipProvider>
 
 						{loadError || !resolvedSrc ? (
-							<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
-								{alt ?? t('imageNode.notFound')}
+							<div
+								className={cn(
+									'flex h-32 w-64 flex-col items-center justify-center gap-2',
+									'rounded-md border border-dashed border-border bg-muted/50',
+									'text-muted-foreground'
+								)}
+								role="img"
+								aria-label={alt ?? t('imageNode.notFound')}
+							>
+								<ImageOff className="h-6 w-6 opacity-40" aria-hidden="true" />
+								<span className="text-xs">{alt ?? t('imageNode.notFound')}</span>
 							</div>
 						) : (
 							<img
