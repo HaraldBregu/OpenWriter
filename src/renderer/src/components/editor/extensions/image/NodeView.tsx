@@ -111,11 +111,6 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		/* TODO: integrate AI ask flow */
 	}, []);
 
-	const handleDeleteConfirm = useCallback(() => {
-		handleDelete();
-		setShowDeleteConfirm(false);
-	}, [handleDelete]);
-
 	const handleEdit = useCallback(() => {
 		setEditing(true);
 	}, []);
