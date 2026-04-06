@@ -604,6 +604,14 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					)}
 				</div>
 			</AppTooltipProvider>
+
+			{/* AI Prompt Dialog */}
+			<AIPromptDialog
+				isOpen={showAIDialog}
+				onClose={() => setShowAIDialog(false)}
+				onSubmit={handleAISubmit}
+				isProcessing={isProcessingAI}
+			/>
 		</div>
 	);
 }
