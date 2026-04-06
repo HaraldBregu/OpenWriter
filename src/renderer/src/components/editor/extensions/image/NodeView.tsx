@@ -109,10 +109,12 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	}, [editor, getPos, node.nodeSize]);
 
 	const handleAskAI = useCallback(() => {
-		/* TODO: integrate AI ask flow */
+		setEditInitialMode('ai');
+		setEditing(true);
 	}, []);
 
 	const handleEdit = useCallback(() => {
+		setEditInitialMode(undefined);
 		setEditing(true);
 	}, []);
 
