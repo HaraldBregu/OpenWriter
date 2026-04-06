@@ -224,21 +224,13 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 									label={t('imageNode.comment')}
 									onClick={handleComment}
 								/>
-								<ActionButton
-									icon={<Copy />}
-									label={t('imageNode.copy')}
-									onClick={handleCopy}
-								/>
+								<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
 								<ActionButton
 									icon={<Maximize2 />}
 									label={t('imageNode.fullscreen')}
 									onClick={handleMaximize}
 								/>
-								<ActionButton
-									icon={<ZoomIn />}
-									label={t('imageNode.zoom')}
-									onClick={handleZoom}
-								/>
+								<ActionButton icon={<ZoomIn />} label={t('imageNode.zoom')} onClick={handleZoom} />
 								<ActionButton
 									icon={<Download />}
 									label={t('imageNode.download')}
