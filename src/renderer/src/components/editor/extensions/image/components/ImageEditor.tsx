@@ -29,12 +29,11 @@ export interface ImageEditorProps {
 	onCancel: () => void;
 }
 
-type EditMode = 'crop' | 'resize' | 'rotate' | 'effects';
+type EditMode = 'crop' | 'resize' | 'rotate' | 'effects' | 'ai';
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
-	const [showAIPrompt, setShowAIPrompt] = useState(false);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 	const [aiPrompt, setAIPrompt] = useState('');
 
@@ -77,21 +76,20 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		setTimeout(() => {
 			applyAI(aiPrompt.trim());
 			setAIPrompt('');
-			setShowAIPrompt(false);
+			setActiveMode(null);
 			setIsProcessingAI(false);
 		}, 300);
 	}, [aiPrompt, applyAI]);
 
 	const handleAIButtonClick = useCallback((): void => {
 		if (isProcessingAI) return;
-		handleModeChange('effects');
-		setShowAIPrompt(true);
+		handleModeChange('ai');
 	}, [isProcessingAI, handleModeChange]);
 
 	const handleCancelAI = useCallback((): void => {
 		if (isProcessingAI) return;
-		setShowAIPrompt(false);
 		setAIPrompt('');
+		setActiveMode(null);
 	}, [isProcessingAI]);
 
 	const handlePromptKeyDown = useCallback(
@@ -251,7 +249,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							</div>
 						)}
 					</div>
-					{showAIPrompt && (
+					{activeMode === 'ai' && (
 						<div className="border-t border-border px-2 py-3">
 							<div className="border border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
 								<AppTextarea
