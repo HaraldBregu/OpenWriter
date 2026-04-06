@@ -4,7 +4,6 @@ import {
 	RotateCcw,
 	RotateCw,
 	Crop,
-	Maximize2,
 	RefreshCcw,
 	Undo2,
 	Check,
@@ -19,7 +18,6 @@ import { MIN_CROP_SIZE } from '../shared';
 import { useImageCanvas, IMAGE_EFFECT_OPTIONS } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { CropOverlay } from './CropOverlay';
-import { ResizeControls } from './ResizeControls';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
 export interface ImageEditorProps {
@@ -29,7 +27,7 @@ export interface ImageEditorProps {
 	onCancel: () => void;
 }
 
-type EditMode = 'crop' | 'resize' | 'rotate' | 'effects' | 'ai';
+type EditMode = 'crop' | 'rotate' | 'effects' | 'ai';
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
@@ -44,7 +42,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		applyCrop,
 		resetCrop,
 		setCropRegion,
-		applyResize,
 		applyAI,
 		applyEffect,
 		undo,
@@ -125,12 +122,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							active={activeMode === 'crop'}
 						/>
 						<ToolbarButton
-							icon={<Maximize2 />}
-							label={t('imageNode.resize')}
-							onClick={() => handleModeChange('resize')}
-							active={activeMode === 'resize'}
-						/>
-						<ToolbarButton
 							icon={<RefreshCcw />}
 							label={t('imageNode.rotate')}
 							onClick={() => handleModeChange('rotate')}
@@ -207,14 +198,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 										: `${currentWidth} x ${currentHeight} px`}
 								</span>
 							</>
-						)}
-
-						{activeMode === 'resize' && state.isLoaded && (
-							<ResizeControls
-								currentWidth={currentWidth}
-								currentHeight={currentHeight}
-								onApply={applyResize}
-							/>
 						)}
 
 						{activeMode === 'rotate' && (
