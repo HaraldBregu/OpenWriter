@@ -350,7 +350,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 							<button
 								className={cn(
 									'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
-									getItemClass(tone, isSelected)
+									getItemClass(isSelected)
 								)}
 								onMouseEnter={() => setSelectedIndex(index)}
 								onMouseDown={(e) => {
