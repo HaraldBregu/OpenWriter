@@ -3,6 +3,9 @@ import { cn } from '@/lib/utils';
 import type { CropRegion } from '../shared/use-image-canvas';
 import { MIN_CROP_SIZE } from '../shared';
 
+const RULE_OF_THIRDS_DIVISIONS = 3;
+const CORNER_HANDLE_OFFSET = '-6px';
+
 interface PointerPosition {
 	x: number;
 	y: number;
@@ -13,6 +16,39 @@ interface CropOverlayProps {
 	canvasHeight: number;
 	cropRegion: CropRegion | null;
 	onCropChange: (region: CropRegion | null) => void;
+}
+
+type CornerKey = 'tl' | 'tr' | 'bl' | 'br';
+
+const CORNER_CLASSES: Record<CornerKey, string> = {
+	tl: '-left-1.5 -top-1.5',
+	tr: '-right-1.5 -top-1.5',
+	bl: '-bottom-1.5 -left-1.5',
+	br: '-bottom-1.5 -right-1.5',
+};
+
+function RuleOfThirdsGrid(): React.JSX.Element {
+	const lines: React.JSX.Element[] = [];
+	for (let i = 1; i < RULE_OF_THIRDS_DIVISIONS; i++) {
+		const pct = `${(i / RULE_OF_THIRDS_DIVISIONS) * 100}%`;
+		lines.push(
+			<div
+				key={`v${i}`}
+				className="absolute inset-y-0 w-px bg-white/30"
+				style={{ left: pct }}
+				aria-hidden="true"
+			/>
+		);
+		lines.push(
+			<div
+				key={`h${i}`}
+				className="absolute inset-x-0 h-px bg-white/30"
+				style={{ top: pct }}
+				aria-hidden="true"
+			/>
+		);
+	}
+	return <>{lines}</>;
 }
 
 export function CropOverlay({
@@ -104,18 +140,21 @@ export function CropOverlay({
 			role="presentation"
 			aria-label="Crop selection area"
 		>
-			{hasSelection && (
+			{hasSelection && cropRegion && (
 				<>
+					{/* Dark overlay: top */}
 					<div
 						className="absolute inset-x-0 top-0 bg-black/50"
 						style={{ height: `${(cropRegion.y / canvasHeight) * 100}%` }}
 					/>
+					{/* Dark overlay: bottom */}
 					<div
 						className="absolute inset-x-0 bottom-0 bg-black/50"
 						style={{
 							top: `${((cropRegion.y + cropRegion.height) / canvasHeight) * 100}%`,
 						}}
 					/>
+					{/* Dark overlay: left */}
 					<div
 						className="absolute bg-black/50"
 						style={{
@@ -125,6 +164,7 @@ export function CropOverlay({
 							height: `${(cropRegion.height / canvasHeight) * 100}%`,
 						}}
 					/>
+					{/* Dark overlay: right */}
 					<div
 						className="absolute bg-black/50"
 						style={{
@@ -134,26 +174,47 @@ export function CropOverlay({
 							height: `${(cropRegion.height / canvasHeight) * 100}%`,
 						}}
 					/>
+
+					{/* Selection border + rule-of-thirds + handles */}
 					<div
-						className="pointer-events-none absolute box-border border-2 border-white"
+						className="pointer-events-none absolute box-border border border-white/80"
 						style={selectionStyle}
 					>
-						{(['tl', 'tr', 'bl', 'br'] as const).map((corner) => (
+						{/* Rule-of-thirds grid */}
+						<RuleOfThirdsGrid />
+
+						{/* Corner handles */}
+						{(Object.keys(CORNER_CLASSES) as CornerKey[]).map((corner) => (
 							<div
 								key={corner}
 								className={cn(
-									'absolute h-3 w-3 rounded-sm border-2 border-white bg-white/90 shadow',
-									corner === 'tl' && '-left-1.5 -top-1.5',
-									corner === 'tr' && '-right-1.5 -top-1.5',
-									corner === 'bl' && '-bottom-1.5 -left-1.5',
-									corner === 'br' && '-bottom-1.5 -right-1.5'
+									'absolute h-3 w-3 rounded-sm',
+									'border-2 border-white bg-white shadow-md',
+									CORNER_CLASSES[corner]
 								)}
 							/>
 						))}
-						<div className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
-						<div className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
-						<div className="absolute left-[-6px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
-						<div className="absolute right-[-6px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm border-2 border-white bg-white/90 shadow" />
+
+						{/* Edge handles: top-center */}
+						<div
+							className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white shadow-md"
+							style={{ top: CORNER_HANDLE_OFFSET }}
+						/>
+						{/* Edge handles: bottom-center */}
+						<div
+							className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rounded-sm border-2 border-white bg-white shadow-md"
+							style={{ bottom: CORNER_HANDLE_OFFSET }}
+						/>
+						{/* Edge handles: left-center */}
+						<div
+							className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm border-2 border-white bg-white shadow-md"
+							style={{ left: CORNER_HANDLE_OFFSET }}
+						/>
+						{/* Edge handles: right-center */}
+						<div
+							className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm border-2 border-white bg-white shadow-md"
+							style={{ right: CORNER_HANDLE_OFFSET }}
+						/>
 					</div>
 				</>
 			)}
