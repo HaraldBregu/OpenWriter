@@ -180,8 +180,9 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 								<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
 
-								<AppAlertDialog>
-									<AppAlertDialogTrigger asChild>
+								<DeleteConfirmDialog
+									onConfirm={handleDelete}
+									trigger={
 										<button
 											className={cn(
 												'relative h-5 w-5 rounded p-0 text-muted-foreground hover:text-foreground',
@@ -192,25 +193,8 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 										>
 											<Trash2 className="h-3 w-3" />
 										</button>
-									</AppAlertDialogTrigger>
-									<AppAlertDialogContent>
-										<AppAlertDialogHeader>
-											<AppAlertDialogTitle>{t('imageNode.deleteImage')}</AppAlertDialogTitle>
-											<AppAlertDialogDescription>
-												{t('imageNode.deleteImageDescription')}
-											</AppAlertDialogDescription>
-										</AppAlertDialogHeader>
-										<div className="flex gap-2">
-											<AppAlertDialogCancel>{t('imageNode.cancel')}</AppAlertDialogCancel>
-											<AppAlertDialogAction
-												onClick={handleDelete}
-												className="bg-destructive hover:bg-destructive/90"
-											>
-												{t('imageNode.delete')}
-											</AppAlertDialogAction>
-										</div>
-									</AppAlertDialogContent>
-								</AppAlertDialog>
+									}
+								/>
 							</div>
 						</AppTooltipProvider>
 
