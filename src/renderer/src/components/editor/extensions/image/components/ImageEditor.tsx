@@ -51,6 +51,35 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		exportDataUri,
 	} = useImageCanvas(src);
 
+	const [crop, setCrop] = useState<PixelCrop>();
+
+	const handleCropChange = useCallback(
+		(pixelCrop: PixelCrop): void => {
+			setCrop(pixelCrop);
+			const canvas = canvasRef.current;
+			if (!canvas || canvas.clientWidth === 0 || canvas.clientHeight === 0) return;
+			const scaleX = canvas.width / canvas.clientWidth;
+			const scaleY = canvas.height / canvas.clientHeight;
+			setCropRegion({
+				x: Math.round(pixelCrop.x * scaleX),
+				y: Math.round(pixelCrop.y * scaleY),
+				width: Math.round(pixelCrop.width * scaleX),
+				height: Math.round(pixelCrop.height * scaleY),
+			});
+		},
+		[canvasRef, setCropRegion]
+	);
+
+	const handleApplyCrop = useCallback((): void => {
+		applyCrop();
+		setCrop(undefined);
+	}, [applyCrop]);
+
+	const handleResetCrop = useCallback((): void => {
+		resetCrop();
+		setCrop(undefined);
+	}, [resetCrop]);
+
 	const handleSave = useCallback((): void => {
 		const dataUri = exportDataUri();
 		if (dataUri) {
