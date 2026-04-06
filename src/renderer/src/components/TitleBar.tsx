@@ -31,6 +31,10 @@ export interface TitleBarProps {
 	title?: string;
 	/** Called when the sidebar toggle button is clicked */
 	onToggleSidebar?: () => void;
+	/** Called when the back navigation button is clicked */
+	onNavigateBack?: () => void;
+	/** Called when the forward navigation button is clicked */
+	onNavigateForward?: () => void;
 	/** Extra Tailwind classes applied to the root element */
 	className?: string;
 }
