@@ -205,21 +205,10 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 const ProvidersSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [providers, setProviders] = useState<Array<ServiceProvider & { id: string }>>([]);
-	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-	const [providerSuggestions, setProviderSuggestions] = useState<string[]>([...PROVIDER_IDS]);
 
 	const loadProviders = useCallback(async () => {
 		const loaded = await window.app.getProviders();
 		setProviders(loaded);
-		setProviderSuggestions((prev) => {
-			const next = new Set(prev);
-			loaded.forEach((model) => {
-				if (model.name.trim().length > 0) {
-					next.add(model.name.trim());
-				}
-			});
-			return Array.from(next);
-		});
 		return loaded;
 	}, []);
 
@@ -228,20 +217,6 @@ const ProvidersSettingsPage: React.FC = () => {
 			setProviders([]);
 		});
 	}, [loadProviders]);
-
-	const handleRegister = useCallback(
-		(entry: ServiceProvider) => {
-			window.app
-				.addProvider(entry)
-				.then(() => {
-					return loadProviders();
-				})
-				.catch(() => {
-					// Addition failed — no local state update
-				});
-		},
-		[loadProviders]
-	);
 
 	const handleSaveProviderApiKey = useCallback(
 		async (provider: string, apiKey: string) => {
@@ -269,15 +244,6 @@ const ProvidersSettingsPage: React.FC = () => {
 		[loadProviders, providers]
 	);
 
-	const handleProviderAdded = useCallback((provider: string) => {
-		const normalized = provider.trim();
-		if (normalized.length === 0) return;
-		setProviderSuggestions((prev) => {
-			if (prev.includes(normalized)) return prev;
-			return [...prev, normalized];
-		});
-	}, []);
-
 	return (
 		<div className="w-full max-w-2xl p-4 sm:p-6">
 			<h1 className="text-xl font-normal mb-6">{t('settings.providers.title', 'Providers')}</h1>
@@ -288,27 +254,11 @@ const ProvidersSettingsPage: React.FC = () => {
 				)}
 			</p>
 
-			<div className="space-y-10">
-				<DefaultProvidersSection
-					providers={providers}
-					onSaveProviderApiKey={handleSaveProviderApiKey}
-					onDeleteProvider={handleDeleteProvider}
-				/>
-
-				<AppSeparator />
-
-				<CustomProvidersSection
-					providers={providers}
-					onSaveProviderApiKey={handleSaveProviderApiKey}
-					onDeleteProvider={handleDeleteProvider}
-					showRegistrationForm={showRegistrationForm}
-					onToggleRegistrationForm={() => setShowRegistrationForm((prev) => !prev)}
-					providerSuggestions={providerSuggestions}
-					onRegister={handleRegister}
-					onProviderAdded={handleProviderAdded}
-					onCancelRegistrationForm={() => setShowRegistrationForm(false)}
-				/>
-			</div>
+			<DefaultProvidersSection
+				providers={providers}
+				onSaveProviderApiKey={handleSaveProviderApiKey}
+				onDeleteProvider={handleDeleteProvider}
+			/>
 		</div>
 	);
 };
