@@ -178,11 +178,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 interface DefaultProvidersSectionProps {
 	providers: Array<ServiceProvider & { id: string }>;
 	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
+	onDeleteProvider: (provider: string) => Promise<void>;
 }
 
 const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 	providers,
 	onSaveProviderApiKey,
+	onDeleteProvider,
 }) => {
 	const { t } = useTranslation();
 	const uid = useId();

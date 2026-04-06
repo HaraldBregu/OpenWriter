@@ -570,8 +570,7 @@ const TextEditor = React.memo(
 								const pos = editor.state.doc.resolve(p).before(1);
 								const node = editor.state.doc.nodeAt(pos);
 								// Skip transient UI-only nodes (not part of markdown output).
-								if (node && node.type.name === 'assistant')
-									return null;
+								if (node && node.type.name === 'assistant') return null;
 								return { dom: child, pos };
 							} catch {
 								return null;
