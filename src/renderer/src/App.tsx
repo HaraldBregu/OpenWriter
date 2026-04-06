@@ -144,11 +144,23 @@ const App: React.FC = () => {
 				<AppProvider>
 					<Router>
 						<Routes>
+							<Route
+								path="/splash"
+								element={
+									<RouteWrapper>
+										<SplashPage />
+									</RouteWrapper>
+								}
+							/>
 							<Route path="/">
 								<Route
 									index
 									element={
-										startupInfo.isInitialized ? (
+										showSplash ? (
+											<RouteWrapper>
+												<SplashPage />
+											</RouteWrapper>
+										) : startupInfo.isInitialized ? (
 											<WelcomePage />
 										) : (
 											<RouteWrapper>
