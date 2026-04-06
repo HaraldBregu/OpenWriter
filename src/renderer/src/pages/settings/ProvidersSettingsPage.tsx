@@ -7,16 +7,7 @@ import {
 	type ProviderId,
 	PROVIDER_CATALOGUE,
 } from '../../../../shared/provider-constants';
-import {
-	AppButton,
-	AppCard,
-	AppCardContent,
-	AppCardFooter,
-	AppCardHeader,
-	AppCardTitle,
-	AppInput,
-	AppLabel,
-} from '@/components/app';
+import { AppButton, AppInput, AppLabel } from '@/components/app';
 
 const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	(acc, providerId) => {
