@@ -69,6 +69,12 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		[resetCrop]
 	);
 
+	useEffect(() => {
+		if (activeMode === 'ai') {
+			aiTextareaRef.current?.focus();
+		}
+	}, [activeMode]);
+
 	const handleAISubmit = useCallback((): void => {
 		if (!aiPrompt.trim()) return;
 		setIsProcessingAI(true);
