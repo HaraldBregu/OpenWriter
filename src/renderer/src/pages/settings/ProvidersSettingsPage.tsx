@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useId, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Loader2, Plus, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
 import type { ServiceProvider } from '../../../../shared/provider-constants';
 import {
 	PROVIDER_IDS,
@@ -16,12 +16,7 @@ import {
 	AppCardTitle,
 	AppInput,
 	AppLabel,
-	AppSeparator,
 } from '@/components/app';
-
-function isDefaultProvider(provider: string): provider is ProviderId {
-	return (PROVIDER_IDS as readonly string[]).includes(provider);
-}
 
 const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	(acc, providerId) => {
