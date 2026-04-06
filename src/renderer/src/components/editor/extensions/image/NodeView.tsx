@@ -102,25 +102,6 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 			.run();
 	}, [editor, getPos, node.nodeSize]);
 
-	const handleCopy = useCallback(async () => {
-		if (!resolvedSrc) return;
-		try {
-			const response = await fetch(resolvedSrc);
-			const blob = await response.blob();
-			await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-		} catch {
-			/* clipboard write may not be supported for all image types */
-		}
-	}, [resolvedSrc]);
-
-	const handleDownload = useCallback(() => {
-		if (!resolvedSrc) return;
-		const link = document.createElement('a');
-		link.href = resolvedSrc;
-		link.download = alt ?? 'image';
-		link.click();
-	}, [resolvedSrc, alt]);
-
 	const handleAskAI = useCallback(() => {
 		/* TODO: integrate AI ask flow */
 	}, []);
