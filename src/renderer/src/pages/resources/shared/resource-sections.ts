@@ -22,7 +22,7 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 	documents: {
 		id: 'documents',
 		route: '/resources/documents',
-		titleKey: 'appLayout.documents',
+		titleKey: 'appLayout.media',
 		emptyKey: 'resources.documents.empty',
 		loadingKey: 'resources.documents.loading',
 		uploadKey: 'resources.documents.upload',
