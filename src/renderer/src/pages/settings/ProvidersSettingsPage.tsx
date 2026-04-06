@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
-import type { ServiceProvider } from '../../../../shared/provider-constants';
+import type { ServiceProvider } from '../../../../shared/provider-constants'; // eslint-disable-line @typescript-eslint/no-unused-vars -- used by window.app API
 import {
 	PROVIDER_IDS,
 	type ProviderId,
