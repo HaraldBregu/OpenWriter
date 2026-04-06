@@ -441,6 +441,8 @@ export interface ProjectWorkspaceInfo {
 	updatedAt: string;
 	/** Application version that created this project file. */
 	appVersion: string;
+	/** Per-agent provider and model configuration. */
+	agentConfigs?: Record<string, AgentProviderConfig>;
 }
 
 // ---- AI Agents ------------------------------------------------------------
