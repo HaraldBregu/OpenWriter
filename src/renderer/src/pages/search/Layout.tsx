@@ -11,8 +11,8 @@ const Layout: React.FC = () => {
 	const { sections, totalCount } = useSearchResults(deferredQuery);
 
 	return (
-		<div className="flex h-full min-h-0 justify-center px-6 py-10">
-			<div className="flex w-full max-w-6xl min-h-0 flex-col gap-6">
+		<div className="flex min-h-full justify-center px-6 py-10">
+			<div className="flex w-full max-w-6xl flex-col gap-6">
 				<div className="space-y-1">
 					<h1 className="text-2xl font-medium tracking-tight text-foreground">
 						{t('menu.search', 'Search')}
@@ -62,7 +62,7 @@ const Layout: React.FC = () => {
 				{totalCount === 0 ? (
 					<SearchEmptyState query={deferredQuery} onClear={clearQuery} />
 				) : (
-					<div className="grid min-h-0 gap-4 xl:grid-cols-3">
+					<div className="grid items-start gap-4 xl:grid-cols-3">
 						{sections.map((section) => (
 							<SearchSection
 								key={section.id}

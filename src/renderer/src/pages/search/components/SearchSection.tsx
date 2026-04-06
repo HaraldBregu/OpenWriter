@@ -14,7 +14,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({ section, onSelect }) => {
 	const Icon = SEARCH_SECTION_ICONS[section.id];
 
 	return (
-		<section className="flex min-h-0 flex-col rounded-3xl border border-border bg-card/70 p-5">
+		<section className="flex flex-col rounded-3xl border border-border bg-card/70 p-5">
 			<div className="mb-4 flex items-start gap-3">
 				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
 					<Icon className="h-4 w-4" />
@@ -27,7 +27,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({ section, onSelect }) => {
 				</div>
 			</div>
 
-			<div className="flex min-h-0 flex-col gap-3">
+			<div className="flex flex-col gap-3">
 				{section.items.length > 0 ? (
 					section.items.map((item) => (
 						<SearchResultCard key={item.id} item={item} onSelect={onSelect} />
