@@ -24,18 +24,25 @@ import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
+export type EditMode = 'crop' | 'rotate' | 'ai';
+
 export interface ImageEditorProps {
 	src: string;
 	alt: string | null;
+	initialMode?: EditMode;
 	onSave: (dataUri: string) => void;
 	onCancel: () => void;
 }
 
-type EditMode = 'crop' | 'rotate' | 'ai';
-
-export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
+export function ImageEditor({
+	src,
+	alt,
+	initialMode,
+	onSave,
+	onCancel,
+}: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
+	const [activeMode, setActiveMode] = useState<EditMode | null>(initialMode ?? null);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 	const [aiPrompt, setAIPrompt] = useState('');
 	const editorRef = useRef<HTMLDivElement>(null);
@@ -301,11 +308,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 									<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
 										<div className="flex items-center gap-2 pb-1">
 											<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
-												<img
-													src={src}
-													alt={alt ?? ''}
-													className="h-full w-full object-cover"
-												/>
+												<img src={src} alt={alt ?? ''} className="h-full w-full object-cover" />
 											</div>
 										</div>
 									</div>
@@ -349,11 +352,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 											}}
 											aria-label={t('imageNode.aiApply', 'Apply AI transform')}
 										>
-											{isProcessingAI ? (
-												<LoaderCircle className="animate-spin" />
-											) : (
-												<ArrowUp />
-											)}
+											{isProcessingAI ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 										</AppButton>
 									</div>
 								</div>
