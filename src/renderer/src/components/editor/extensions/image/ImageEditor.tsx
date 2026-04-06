@@ -484,6 +484,14 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 
 					<div className="mx-1 h-4 w-px bg-border" />
 
+					{/* AI Button */}
+					<ToolbarButton
+						icon={<Sparkles />}
+						label="AI Transform"
+						onClick={() => setShowAIDialog(true)}
+						disabled={!state.isLoaded}
+					/>
+
 					{/* Undo */}
 					<ToolbarButton icon={<Undo2 />} label="Undo" onClick={undo} disabled={!canUndo} />
 
