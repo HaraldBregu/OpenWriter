@@ -42,6 +42,7 @@ export interface UseImageCanvasReturn {
 	resetCrop: () => void;
 	setCropRegion: (region: CropRegion | null) => void;
 	applyResize: (width: number, height: number) => void;
+	applyAI: (prompt: string) => void;
 	undo: () => void;
 	canUndo: boolean;
 	exportDataUri: () => string | null;
