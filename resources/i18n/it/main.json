@@ -843,6 +843,8 @@
 		"height": "Altezza",
 		"lockAspectRatio": "Blocca proporzioni",
 		"unlockAspectRatio": "Sblocca proporzioni",
+		"deleteImage": "Elimina immagine",
+		"deleteImageDescription": "Sei sicuro di voler eliminare questa immagine? Questa azione non può essere annullata.",
 		"cancel": "Annulla"
 	},
 	"debug": {
