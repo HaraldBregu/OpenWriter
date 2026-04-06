@@ -168,6 +168,21 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Agent configs
+	// -------------------------------------------------------------------------
+
+	async getAgentConfigs(): Promise<Record<string, AgentProviderConfig>> {
+		if (!this.workspace.getCurrent()) {
+			return {};
+		}
+		return this.projectWorkspace.getAgentConfigs();
+	}
+
+	async setAgentConfig(agentId: string, provider: string, model: string): Promise<void> {
+		return this.projectWorkspace.setAgentConfig(agentId, provider, model);
+	}
+
+	// -------------------------------------------------------------------------
 	// Documents
 	// -------------------------------------------------------------------------
 

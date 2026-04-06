@@ -128,38 +128,38 @@ export const TitleBar = React.memo(function TitleBar({
 				</div>
 			) : (
 				<div
-						className={`flex items-center h-full z-10 ${isFullScreen ? 'ml-2' : 'ml-20 mt-1'}`}
-						style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+					className={`flex items-center h-full z-10 ${isFullScreen ? 'ml-2' : 'ml-20 mt-1'}`}
+					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+				>
+					{onToggleSidebar && (
+						<button
+							type="button"
+							onClick={onToggleSidebar}
+							className="flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground"
+							title={t('titleBar.toggleSidebar')}
+						>
+							<PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
+						</button>
+					)}
+
+					<button
+						type="button"
+						onClick={onNavigateBack}
+						className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
+						title={t('titleBar.navigateBack')}
 					>
-						{onToggleSidebar && (
-							<button
-								type="button"
-								onClick={onToggleSidebar}
-								className="flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground"
-								title={t('titleBar.toggleSidebar')}
-							>
-								<PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-							</button>
-						)}
+						<ChevronLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
+					</button>
 
-						<button
-							type="button"
-							onClick={onNavigateBack}
-							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-							title={t('titleBar.navigateBack')}
-						>
-							<ChevronLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-						</button>
-
-						<button
-							type="button"
-							onClick={onNavigateForward}
-							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-							title={t('titleBar.navigateForward')}
-						>
-							<ChevronRight className="h-[16px] w-[16px]" strokeWidth={1.5} />
-						</button>
-					</div>
+					<button
+						type="button"
+						onClick={onNavigateForward}
+						className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
+						title={t('titleBar.navigateForward')}
+					>
+						<ChevronRight className="h-[16px] w-[16px]" strokeWidth={1.5} />
+					</button>
+				</div>
 			)}
 
 			{/* ── Center: app title (absolutely placed so it's always truly centered) ── */}
