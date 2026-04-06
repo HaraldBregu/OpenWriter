@@ -225,6 +225,36 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 							</div>
 						</AppTooltipProvider>
 
+						{/* Delete Confirm Dialog */}
+						{showDeleteConfirm && (
+							<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+								<div className="rounded-lg border border-border bg-card p-4 shadow-lg">
+									<h2 className="mb-2 text-sm font-semibold">Delete image</h2>
+									<p className="mb-4 text-xs text-muted-foreground">
+										Are you sure you want to delete this image? This action cannot be undone.
+									</p>
+									<div className="flex gap-2">
+										<AppButton
+											variant="outline"
+											size="sm"
+											onClick={() => setShowDeleteConfirm(false)}
+											className="h-8 text-xs"
+										>
+											Cancel
+										</AppButton>
+										<AppButton
+											variant="destructive"
+											size="sm"
+											onClick={handleDeleteConfirm}
+											className="h-8 text-xs"
+										>
+											Delete
+										</AppButton>
+									</div>
+								</div>
+							</div>
+						)}
+
 						{loadError || !resolvedSrc ? (
 							<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
 								{alt ?? t('imageNode.notFound')}
