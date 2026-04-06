@@ -43,9 +43,9 @@ export interface TextEditorElement extends HTMLDivElement {
 	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
-	removeContentGenerator: () => void;
-	setContentGeneratorLoading: (loading: boolean) => void;
-	setContentGeneratorEnable: (enable: boolean) => void;
+	removeAssistant: () => void;
+	setAssistantLoading: (loading: boolean) => void;
+	setAssistantEnable: (enable: boolean) => void;
 	splitBlock: () => void;
 	setHeading: (level: 1 | 2 | 3 | 4 | 5 | 6) => void;
 	ensureBulletList: () => void;
