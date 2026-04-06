@@ -128,7 +128,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	const handleDeleteConfirm = useCallback(() => {
 		handleDelete();
 		setShowDeleteConfirm(false);
-	}, []);
+	}, [handleDelete]);
 
 	const handleEdit = useCallback(() => {
 		setEditing(true);
