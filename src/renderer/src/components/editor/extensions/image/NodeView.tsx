@@ -78,6 +78,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 	const [hovered, setHovered] = useState(false);
 	const [focused, setFocused] = useState(false);
 	const [editing, setEditing] = useState(false);
+	const [editInitialMode, setEditInitialMode] = useState<'ai' | undefined>(undefined);
 	const [previewing, setPreviewing] = useState(false);
 	const prevSrcRef = useRef(resolvedSrc);
 	const figureRef = useRef<HTMLDivElement>(null);
