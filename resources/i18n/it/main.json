@@ -845,7 +845,23 @@
 		"unlockAspectRatio": "Sblocca proporzioni",
 		"deleteImage": "Elimina immagine",
 		"deleteImageDescription": "Sei sicuro di voler eliminare questa immagine? Questa azione non può essere annullata.",
-		"cancel": "Annulla"
+		"cancel": "Annulla",
+		"aiEditTitle": "Modifica con IA",
+		"aiPromptLabel": "Descrivi cosa vorresti cambiare:",
+		"aiPromptPlaceholder": "es., rendila in bianco e nero, aggiungi sfocatura, aumenta la luminosità...",
+		"aiExamplesLabel": "Prova questi:",
+		"aiSupportedFilters": "✨ Supporta: bianco e nero, sfocatura, luminosità, vivido, seppia, inverti, nitidezza",
+		"aiProcessing": "Elaborazione...",
+		"aiApply": "Applica",
+		"aiExamples": [
+			"Rendila in bianco e nero",
+			"Aggiungi effetto sfocatura",
+			"Aumenta la luminosità",
+			"Rendi i colori più vivaci",
+			"Applica tono seppia",
+			"Inverti i colori",
+			"Aumenta la nitidezza"
+		]
 	},
 	"debug": {
 		"title": "Debug",
