@@ -193,37 +193,94 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
 				>
-					{/* Action buttons above the image */}
-					<AppTooltipProvider delayDuration={300}>
-						<div
-							className={cn(
-								'mb-1 flex items-center gap-0.5',
-								'pointer-events-none opacity-0 transition-opacity duration-150',
-								showToolbar && 'pointer-events-auto opacity-100'
-							)}
-						>
-							<ActionButton
-								icon={<Sparkles />}
-								label={t('imageNode.enhance')}
-								onClick={handleEnhance}
-							/>
-							<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
-							<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
-							<ActionButton
-								icon={<Download />}
-								label={t('imageNode.download')}
-								onClick={handleDownload}
-							/>
-							<div className="mx-0.5 h-3.5 w-px bg-border" />
-							<ActionButton
-								icon={<Trash2 />}
-								label={t('imageNode.delete')}
-								onClick={handleDelete}
-							/>
-						</div>
-					</AppTooltipProvider>
-
 					<figure className="relative inline-block max-w-full rounded-md">
+						{/* Floating toolbar overlay */}
+						<AppTooltipProvider delayDuration={300}>
+							<div
+								className={cn(
+									'absolute top-3 right-3 z-10',
+									'flex items-center gap-0.5 rounded-xl',
+									'border border-border/80 bg-popover/95 p-1.5',
+									'backdrop-blur-md shadow-lg',
+									'pointer-events-none opacity-0 transition-opacity duration-150',
+									showToolbar && 'pointer-events-auto opacity-100'
+								)}
+							>
+								<AppButton
+									variant="ghost"
+									size="icon-xs"
+									aria-label={t('imageNode.askAI')}
+									onClick={handleAskAI}
+									className="flex items-center gap-1 w-auto px-1.5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
+								>
+									<Sparkles />
+									<span className="text-xs font-medium">Ask AI</span>
+								</AppButton>
+
+								<div className="h-4 w-px bg-border/50" />
+
+								<ActionButton
+									icon={<MessageSquare />}
+									label={t('imageNode.comment')}
+									onClick={handleComment}
+								/>
+								<ActionButton
+									icon={<Copy />}
+									label={t('imageNode.copy')}
+									onClick={handleCopy}
+								/>
+								<ActionButton
+									icon={<Maximize2 />}
+									label={t('imageNode.fullscreen')}
+									onClick={handleMaximize}
+								/>
+								<ActionButton
+									icon={<ZoomIn />}
+									label={t('imageNode.zoom')}
+									onClick={handleZoom}
+								/>
+								<ActionButton
+									icon={<Download />}
+									label={t('imageNode.download')}
+									onClick={handleDownload}
+								/>
+
+								<button
+									className={cn(
+										'relative h-5 w-5 rounded p-0 text-muted-foreground hover:text-foreground',
+										'flex items-center justify-center cursor-pointer transition-colors'
+									)}
+									onClick={() => setShowMoreActions(!showMoreActions)}
+									aria-label={t('imageNode.more')}
+									title={t('imageNode.more')}
+								>
+									<Ellipsis className="h-3 w-3" />
+								</button>
+
+								{/* More actions (edit, delete) */}
+								{showMoreActions && (
+									<div className="absolute top-full right-0 mt-1 flex flex-col gap-0.5 rounded-lg border border-border/80 bg-popover/95 p-1 backdrop-blur-md shadow-lg">
+										<ActionButton
+											icon={<Pencil />}
+											label={t('imageNode.edit')}
+											onClick={() => {
+												handleEdit();
+												setShowMoreActions(false);
+											}}
+										/>
+										<ActionButton
+											icon={<Trash2 />}
+											label={t('imageNode.delete')}
+											onClick={() => {
+												handleDelete();
+												setShowMoreActions(false);
+											}}
+										/>
+									</div>
+								)}
+							</div>
+						</AppTooltipProvider>
+
 						{loadError || !resolvedSrc ? (
 							<div className="flex h-32 w-64 items-center justify-center rounded-md border border-dashed border-border bg-muted text-sm text-muted-foreground">
 								{alt ?? t('imageNode.notFound')}
