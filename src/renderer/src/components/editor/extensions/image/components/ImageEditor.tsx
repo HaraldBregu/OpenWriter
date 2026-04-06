@@ -124,9 +124,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 	const cropWidth = state.cropRegion?.width ?? 0;
 	const cropHeight = state.cropRegion?.height ?? 0;
 	const hasCropSelection =
-		state.cropRegion !== null &&
-		cropWidth >= MIN_CROP_SIZE &&
-		cropHeight >= MIN_CROP_SIZE;
+		state.cropRegion !== null && cropWidth >= MIN_CROP_SIZE && cropHeight >= MIN_CROP_SIZE;
 
 	const cropDimensionLabel = hasCropSelection
 		? `${Math.round(cropWidth)} x ${Math.round(cropHeight)} px`

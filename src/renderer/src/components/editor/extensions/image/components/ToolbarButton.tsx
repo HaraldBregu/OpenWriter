@@ -25,11 +25,12 @@ export function ToolbarButton({
 					variant="ghost"
 					size="icon-xs"
 					aria-label={label}
+					aria-pressed={active}
 					onClick={onClick}
 					disabled={disabled}
 					className={cn(
-						'h-6 w-6 text-muted-foreground hover:text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5',
-						active && 'bg-accent text-foreground'
+						'h-6 w-6 text-muted-foreground transition-colors hover:text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5',
+						active && 'bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary'
 					)}
 				>
 					{icon}
