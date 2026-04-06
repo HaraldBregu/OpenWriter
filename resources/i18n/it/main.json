@@ -502,7 +502,9 @@
 		"minimize": "Riduci a icona",
 		"maximize": "Ingrandisci",
 		"restore": "Ripristina",
-		"close": "Chiudi"
+		"close": "Chiudi",
+		"navigateBack": "Naviga indietro",
+		"navigateForward": "Naviga avanti"
 	},
 	"documents": {
 		"title": "Documenti",
