@@ -746,12 +746,12 @@
 		"removeConfirm_other": "Are you sure you want to remove {{count}} items from this section? This action cannot be undone.",
 		"remove": "Remove",
 		"removeWithCount": "Remove ({{count}})",
-		"documents": {
+		"media": {
 			"loading": "Loading documents…",
-			"indexing": "Indexing documents…",
-			"empty": "No documents in this section yet.",
-			"upload": "Import documents",
-			"searchPlaceholder": "Search documents..."
+			"indexing": "Indexing media…",
+			"empty": "No media in this section yet.",
+			"upload": "Import media",
+			"searchPlaceholder": "Search media..."
 		},
 		"images": {
 			"loading": "Loading images…",

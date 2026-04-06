@@ -1,7 +1,7 @@
-import { File, FolderOpen, ImageIcon, type LucideIcon } from 'lucide-react';
+import { File, Film, ImageIcon, type LucideIcon } from 'lucide-react';
 import type { ResourceInfo } from '../../../../../shared/types';
 
-export type ResourceSectionId = 'documents' | 'images' | 'files';
+export type ResourceSectionId = 'media' | 'images' | 'files';
 
 export interface ResourceSectionConfig {
 	readonly id: ResourceSectionId;
@@ -16,18 +16,18 @@ export interface ResourceSectionConfig {
 	readonly supportsIndexing: boolean;
 }
 
-export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['documents', 'images', 'files'];
+export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['media', 'images', 'files'];
 
 export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig> = {
-	documents: {
-		id: 'documents',
+	media: {
+		id: 'media',
 		route: '/resources/documents',
 		titleKey: 'appLayout.media',
-		emptyKey: 'resources.documents.empty',
-		loadingKey: 'resources.documents.loading',
-		uploadKey: 'resources.documents.upload',
-		searchPlaceholderKey: 'resources.documents.searchPlaceholder',
-		icon: FolderOpen,
+		emptyKey: 'resources.media.empty',
+		loadingKey: 'resources.media.loading',
+		uploadKey: 'resources.media.upload',
+		searchPlaceholderKey: 'resources.media.searchPlaceholder',
+		icon: Film,
 		uploadExtensions: ['.txt', '.md', '.html', '.csv', '.json'],
 		supportsIndexing: true,
 	},
@@ -89,7 +89,7 @@ export function getResourceSection(resource: ResourceInfo): ResourceSectionId {
 	}
 
 	if (resource.mimeType.startsWith('text/') || DOCUMENT_MIME_TYPES.has(resource.mimeType)) {
-		return 'documents';
+		return 'media';
 	}
 
 	return 'files';

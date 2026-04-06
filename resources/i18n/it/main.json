@@ -746,12 +746,12 @@
 		"removeConfirm_other": "Sei sicuro di voler rimuovere {{count}} elementi da questa sezione? Questa azione non può essere annullata.",
 		"remove": "Rimuovi",
 		"removeWithCount": "Rimuovi ({{count}})",
-		"documents": {
+		"media": {
 			"loading": "Caricamento documenti…",
-			"indexing": "Indicizzazione documenti…",
-			"empty": "Nessun documento in questa sezione.",
-			"upload": "Importa documenti",
-			"searchPlaceholder": "Cerca documenti..."
+			"indexing": "Indicizzazione media…",
+			"empty": "Nessun media in questa sezione.",
+			"upload": "Importa media",
+			"searchPlaceholder": "Cerca media..."
 		},
 		"images": {
 			"loading": "Caricamento immagini…",

@@ -1,5 +1,5 @@
 import { ResourceCollectionPage } from '../shared/ResourceCollectionPage';
 
 export default function DocumentsPage() {
-	return <ResourceCollectionPage sectionId="documents" />;
+	return <ResourceCollectionPage sectionId="media" />;
 }
