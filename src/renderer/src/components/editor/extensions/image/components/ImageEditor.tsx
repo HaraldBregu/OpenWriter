@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	RotateCcw,
@@ -19,8 +19,6 @@ import { useImageCanvas, IMAGE_EFFECT_OPTIONS } from '../shared/use-image-canvas
 import { ToolbarButton } from './ToolbarButton';
 import { CropOverlay } from './CropOverlay';
 import { ResizeControls } from './ResizeControls';
-import { AppBadge } from '@/components/app/AppBadge';
-import { AppLabel } from '@/components/app/AppLabel';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
 export interface ImageEditorProps {
@@ -69,11 +67,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 			setActiveMode(mode);
 		},
 		[activeMode, resetCrop]
-	);
-
-	const examplePrompts = useMemo(
-		() => (t('imageNode.aiExamples', { returnObjects: true }) as string[]) ?? [],
-		[t]
 	);
 
 	const handleAISubmit = useCallback((): void => {
@@ -261,41 +254,15 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					</div>
 					{showAIPrompt && (
 						<div className="flex flex-col gap-2 border-t border-border px-2 py-2">
-							<div className="flex flex-col gap-1">
-								<AppLabel htmlFor="ai-prompt" className="text-xs text-muted-foreground">
-									{t('imageNode.aiPromptLabel')}
-								</AppLabel>
-								<AppTextarea
-									id="ai-prompt"
-									value={aiPrompt}
-									onChange={(e) => setAIPrompt(e.target.value)}
-									onKeyDown={handlePromptKeyDown}
-									placeholder={t('imageNode.aiPromptPlaceholder')}
-									className="h-20 text-xs"
-									disabled={isProcessingAI}
-								/>
-							</div>
-							{examplePrompts.length > 0 && (
-								<div className="flex flex-wrap gap-1.5">
-									{examplePrompts.map((example) => (
-										<button
-											key={example}
-											type="button"
-											onClick={() => setAIPrompt(example)}
-											disabled={isProcessingAI}
-											className="cursor-pointer rounded-full border border-border/50 bg-muted px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-										>
-											{example}
-										</button>
-									))}
-								</div>
-							)}
-							<AppBadge
-								variant="secondary"
-								className="w-full justify-start rounded-sm text-xs font-normal text-muted-foreground"
-							>
-								{t('imageNode.aiSupportedFilters')}
-							</AppBadge>
+							<AppTextarea
+								id="ai-prompt"
+								value={aiPrompt}
+								onChange={(e) => setAIPrompt(e.target.value)}
+								onKeyDown={handlePromptKeyDown}
+								placeholder={t('imageNode.aiPromptPlaceholder')}
+								className="h-20 text-xs"
+								disabled={isProcessingAI}
+							/>
 							<div className="flex gap-2">
 								<AppButton
 									variant="outline"
