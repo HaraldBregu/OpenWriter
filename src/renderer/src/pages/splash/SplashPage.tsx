@@ -15,24 +15,9 @@ const SplashPage: React.FC = () => {
 
 	return (
 		<div className="flex items-center justify-center h-screen w-screen bg-gradient-to-br from-background via-background to-background/95">
-			<div className="text-center space-y-8 animate-fade-in">
-				<div className="flex justify-center">
-					<div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-foreground/10 to-foreground/5 border border-foreground/10 flex items-center justify-center shadow-xl animate-bounce-slow">
-						<AppIconOpenWriter className="w-16 h-16" />
-					</div>
-				</div>
-
-				<div className="space-y-3">
-					<h1 className="text-4xl font-bold text-foreground tracking-tight">OpenWriter</h1>
-					<p className="text-base text-muted-foreground font-light">
-						{allDocuments.length > 0 ? 'Welcome back' : 'Getting started'}
-					</p>
-				</div>
-
-				<div className="flex justify-center gap-2">
-					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" />
-					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce delay-100" />
-					<div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce delay-200" />
+			<div className="animate-fade-in">
+				<div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-foreground/10 to-foreground/5 border border-foreground/10 flex items-center justify-center shadow-xl animate-bounce-slow">
+					<AppIconOpenWriter className="w-20 h-20" />
 				</div>
 			</div>
 
