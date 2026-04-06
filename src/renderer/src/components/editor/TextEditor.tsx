@@ -77,8 +77,6 @@ export interface TextEditorProps {
 		agentId?: AssistantAgentId,
 		files?: File[]
 	) => void;
-	onImageSubmit?: (prompt: string) => void;
-	onImageFileSelect?: (file: File) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
