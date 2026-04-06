@@ -246,7 +246,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 
 	return (
 		<section>
-			<div className="space-y-3">
+			<div className="space-y-4">
 				{PROVIDER_IDS.map((provider) => {
 					const existing = providers.find((m) => m.name === provider)?.apikey ?? '';
 					const hasInputValue = apiKeys[provider].trim().length > 0;
@@ -256,17 +256,16 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							? MASKED_API_KEY
 							: '';
 					const isSaving = saving[provider];
+					const isDeleting = deleting[provider];
 					const visibilityLabel = visible[provider]
 						? t('models.hideApiKey', 'Hide API key')
 						: t('models.showApiKey', 'Show API key');
 
 					return (
-						<div key={provider} className="grid grid-cols-[120px_1fr_auto] gap-3 items-center">
-							<div className="flex flex-col gap-1.5">
-								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
-									{PROVIDER_LABELS[provider]}
-								</AppLabel>
-							</div>
+						<div key={provider} className="flex flex-col gap-2">
+							<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
+								{PROVIDER_LABELS[provider]}
+							</AppLabel>
 							<div className="relative flex items-center">
 								<AppInput
 									id={`${uid}-${provider}-apikey`}
@@ -293,20 +292,47 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 									{visible[provider] ? <EyeOff /> : <Eye />}
 								</AppButton>
 							</div>
-							<AppButton
-								type="button"
-								variant="ghost"
-								size="icon-xs"
-								aria-label={
-									isSaving ? t('models.saving', 'Saving…') : t('models.form.save', 'Save')
-								}
-								disabled={!hasInputValue || isSaving}
-								onClick={() => {
-									void handleSaveProvider(provider);
-								}}
-							>
-								{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
-							</AppButton>
+							<div className="flex gap-2">
+								<AppButton
+									type="button"
+									size="sm"
+									disabled={!hasInputValue || isSaving || isDeleting}
+									onClick={() => {
+										void handleSaveProvider(provider);
+									}}
+								>
+									{isSaving ? (
+										<>
+											<Loader2 className="animate-spin" />
+											{t('models.saving', 'Saving…')}
+										</>
+									) : (
+										t('models.form.save', 'Save')
+									)}
+								</AppButton>
+								<AppButton
+									type="button"
+									size="sm"
+									variant="ghost"
+									disabled={isDeleting || isSaving}
+									onClick={() => {
+										void handleDeleteProvider(provider);
+									}}
+									className="text-muted-foreground hover:text-destructive"
+								>
+									{isDeleting ? (
+										<>
+											<Loader2 className="animate-spin" />
+											{t('models.deleting', 'Deleting…')}
+										</>
+									) : (
+										<>
+											<Trash2 />
+											{t('models.deleteProvider', 'Delete')}
+										</>
+									)}
+								</AppButton>
+							</div>
 						</div>
 					);
 				})}
