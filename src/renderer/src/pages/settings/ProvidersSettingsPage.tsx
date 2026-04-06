@@ -650,6 +650,7 @@ const ProvidersSettingsPage: React.FC = () => {
 				<DefaultProvidersSection
 					providers={providers}
 					onSaveProviderApiKey={handleSaveProviderApiKey}
+					onDeleteProvider={handleDeleteProvider}
 				/>
 
 				<AppSeparator />
