@@ -95,6 +95,57 @@ export function ImageEditor({
 		[canvasRef, setCropRegion]
 	);
 
+	const addAIFile = useCallback((newFile: File) => {
+		setAIFiles((prev) => [...prev, newFile]);
+		readFileAsDataUri(newFile)
+			.then((result) => {
+				setAIPreviewUrls((prev) => [...prev, result]);
+			})
+			.catch(() => {});
+	}, []);
+
+	const removeAIFile = useCallback((index: number) => {
+		setAIFiles((prev) => prev.filter((_, i) => i !== index));
+		setAIPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+	}, []);
+
+	const handleAIFileInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const selected = e.target.files;
+			if (!selected) return;
+			for (const file of Array.from(selected)) {
+				if (file.type.startsWith('image/')) {
+					addAIFile(file);
+				}
+			}
+			e.target.value = '';
+		},
+		[addAIFile]
+	);
+
+	const handleAIDragOver = useCallback((e: React.DragEvent<HTMLDivElement>): void => {
+		e.preventDefault();
+		setIsDragOver(true);
+	}, []);
+
+	const handleAIDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>): void => {
+		e.preventDefault();
+		setIsDragOver(false);
+	}, []);
+
+	const handleAIDrop = useCallback(
+		(e: React.DragEvent<HTMLDivElement>): void => {
+			e.preventDefault();
+			setIsDragOver(false);
+			for (const file of Array.from(e.dataTransfer.files)) {
+				if (file.type.startsWith('image/')) {
+					addAIFile(file);
+				}
+			}
+		},
+		[addAIFile]
+	);
+
 	const handleApplyCrop = useCallback((): void => {
 		applyCrop();
 		setCrop(undefined);
