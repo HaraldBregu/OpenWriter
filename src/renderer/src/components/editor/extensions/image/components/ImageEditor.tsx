@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	RotateCcw,
 	RotateCw,
-	Crop,
+	Crop as CropIcon,
 	RefreshCcw,
 	Undo2,
 	Check,
@@ -11,13 +11,15 @@ import {
 	Sparkles,
 	ImageOff,
 } from 'lucide-react';
+import ReactCrop from 'react-image-crop';
+import type { PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { MIN_CROP_SIZE } from '../shared';
 import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
-import { CropOverlay } from './CropOverlay';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
 export interface ImageEditorProps {
