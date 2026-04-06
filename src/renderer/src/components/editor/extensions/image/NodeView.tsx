@@ -166,6 +166,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 				<ImageEditor
 					src={resolvedSrc}
 					alt={alt}
+					initialMode={editInitialMode}
 					onSave={handleEditorSave}
 					onCancel={handleEditorCancel}
 				/>
