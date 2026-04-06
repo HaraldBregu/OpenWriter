@@ -215,9 +215,8 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						)}
 
 						{activeMode === 'effects' && (
-							<div className="flex w-full flex-col gap-2">
-								<p className="text-xs text-muted-foreground">{t('imageNode.effectsInfo')}</p>
-								<div className="flex flex-wrap gap-2">
+						<div className="flex w-full flex-col gap-2">
+							<div className="flex flex-wrap gap-2">
 									{IMAGE_EFFECT_OPTIONS.map((effect) => (
 										<AppButton
 											key={effect.type}
