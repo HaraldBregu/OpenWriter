@@ -513,6 +513,11 @@ export function withTaskStatusText(
 
 // ---- Agent Settings
 
+export interface AgentProviderConfig {
+	provider: string;
+	model: string;
+}
+
 export interface AgentConfig {
 	id: string;
 	name: string;
