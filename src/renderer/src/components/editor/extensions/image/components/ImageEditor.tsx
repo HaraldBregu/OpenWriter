@@ -357,20 +357,22 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 				)}
 				{!state.hasError && (
 					<div className="relative inline-block max-w-full">
-						<canvas
-							ref={canvasRef}
-							className="block max-w-full rounded"
-							role="img"
-							aria-label={alt ?? t('imageNode.canvasLabel', 'Image being edited')}
-						/>
-						{activeMode === 'crop' && state.isLoaded && currentWidth > 0 && (
-							<CropOverlay
-								canvasWidth={currentWidth}
-								canvasHeight={currentHeight}
-								cropRegion={state.cropRegion}
-								onCropChange={setCropRegion}
+						<ReactCrop
+							crop={activeMode === 'crop' ? crop : undefined}
+							onChange={handleCropChange}
+							ruleOfThirds={activeMode === 'crop'}
+							minWidth={MIN_CROP_SIZE}
+							minHeight={MIN_CROP_SIZE}
+							disabled={activeMode !== 'crop'}
+							className="max-w-full"
+						>
+							<canvas
+								ref={canvasRef}
+								className="block max-w-full rounded"
+								role="img"
+								aria-label={alt ?? t('imageNode.canvasLabel', 'Image being edited')}
 							/>
-						)}
+						</ReactCrop>
 					</div>
 				)}
 			</div>
