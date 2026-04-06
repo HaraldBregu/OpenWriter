@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { detectFiltersFromPrompt, applyFiltersToCanvas } from './ai-filters';
 
 // ---------------------------------------------------------------------------
 // Constants
