@@ -393,8 +393,8 @@ export function ImageEditor({
 						multiple
 					/>
 					{/* Image strip */}
-					<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
-						<div className="flex items-center gap-2 overflow-x-auto pb-1">
+					<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
+						<div className="flex items-center gap-2 overflow-x-auto pt-3 pb-1">
 							{/* Current image thumbnail */}
 							<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
 								<img src={src} alt={alt ?? ''} className="h-full w-full object-cover" />
