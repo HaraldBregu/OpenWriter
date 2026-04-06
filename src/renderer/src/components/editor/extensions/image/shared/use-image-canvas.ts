@@ -544,48 +544,48 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 	// AI Filters
 	// ---------------------------------------------------------------------------
 
-const applyAI = useCallback(
-	(prompt: string): void => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext('2d');
-		if (!ctx) return;
+	const applyAI = useCallback(
+		(prompt: string): void => {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			if (!ctx) return;
 
-		// Snapshot before mutation
-		pushSnapshot(state.rotation);
+			// Snapshot before mutation
+			pushSnapshot(state.rotation);
 
-		// Detect filters from prompt and apply them
-		const filters = detectFiltersFromPrompt(prompt);
-		applyFiltersToCanvas(ctx, filters);
-	},
-	[state.rotation, pushSnapshot]
-);
+			// Detect filters from prompt and apply them
+			const filters = detectFiltersFromPrompt(prompt);
+			applyFiltersToCanvas(ctx, filters);
+		},
+		[state.rotation, pushSnapshot]
+	);
 
-const applyEffect = useCallback(
-	(effect: ImageEffectType): void => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext('2d');
-		if (!ctx) return;
+	const applyEffect = useCallback(
+		(effect: ImageEffectType): void => {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			if (!ctx) return;
 
-		// Snapshot before mutation
-		pushSnapshot(state.rotation);
+			// Snapshot before mutation
+			pushSnapshot(state.rotation);
 
-		const intensity = EFFECT_DEFAULT_INTENSITIES[effect];
-		const filter: DetectedFilter =
-			intensity !== undefined
-				? {
-						type: effect,
-						intensity,
-				  }
-				: {
-						type: effect,
-				  };
+			const intensity = EFFECT_DEFAULT_INTENSITIES[effect];
+			const filter: DetectedFilter =
+				intensity !== undefined
+					? {
+							type: effect,
+							intensity,
+						}
+					: {
+							type: effect,
+						};
 
-		applyFiltersToCanvas(ctx, [filter]);
-	},
-	[state.rotation, pushSnapshot]
-);
+			applyFiltersToCanvas(ctx, [filter]);
+		},
+		[state.rotation, pushSnapshot]
+	);
 
 	// ---------------------------------------------------------------------------
 	// Undo

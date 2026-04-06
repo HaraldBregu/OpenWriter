@@ -162,9 +162,7 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 				<div className="border-b px-6 py-3 shrink-0">
 					<div className="flex items-center gap-2">
 						<Loader2 className="h-4 w-4 animate-spin text-primary" />
-						<span className="text-sm text-muted-foreground">
-							{t('resources.media.indexing')}
-						</span>
+						<span className="text-sm text-muted-foreground">{t('resources.media.indexing')}</span>
 					</div>
 				</div>
 			)}

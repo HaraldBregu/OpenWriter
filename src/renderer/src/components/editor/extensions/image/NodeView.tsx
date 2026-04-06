@@ -114,15 +114,12 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		setEditing(true);
 	}, []);
 
-	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLDivElement>): void => {
-			if (e.key === 'Enter' || e.key === ' ') {
-				e.preventDefault();
-				setEditing(true);
-			}
-		},
-		[]
-	);
+	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>): void => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			setEditing(true);
+		}
+	}, []);
 
 	const handleEditorSave = useCallback(
 		async (dataUri: string) => {
@@ -189,8 +186,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 									'pointer-events-none opacity-0',
 									'transition-all duration-200 ease-out',
 									'-translate-y-1 scale-95',
-									showToolbar &&
-										'pointer-events-auto opacity-100 translate-y-0 scale-100'
+									showToolbar && 'pointer-events-auto opacity-100 translate-y-0 scale-100'
 								)}
 								role="toolbar"
 								aria-label={t('imageNode.imageToolbar')}
