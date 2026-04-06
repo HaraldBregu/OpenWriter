@@ -7,7 +7,17 @@ import {
 	type ProviderId,
 	PROVIDER_CATALOGUE,
 } from '../../../../shared/provider-constants';
-import { AppButton, AppInput, AppLabel, AppSeparator } from '@/components/app';
+import {
+	AppButton,
+	AppCard,
+	AppCardContent,
+	AppCardFooter,
+	AppCardHeader,
+	AppCardTitle,
+	AppInput,
+	AppLabel,
+	AppSeparator,
+} from '@/components/app';
 
 function isDefaultProvider(provider: string): provider is ProviderId {
 	return (PROVIDER_IDS as readonly string[]).includes(provider);
@@ -198,8 +208,7 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
 	);
 	const [deleting, setDeleting] = useState<Record<ProviderId, boolean>>(
-		() =>
-			Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
+		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
 	);
 
 	const handleApiKeyChange = useCallback((provider: ProviderId, value: string) => {
