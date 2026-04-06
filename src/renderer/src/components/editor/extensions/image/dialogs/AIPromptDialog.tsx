@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Sparkles } from 'lucide-react';
 import {
 	Dialog,
@@ -19,23 +20,16 @@ interface AIPromptDialogProps {
 	isProcessing?: boolean;
 }
 
-const EXAMPLE_PROMPTS = [
-	'Make it black and white',
-	'Add a blur effect',
-	'Increase brightness',
-	'Make colors more vibrant',
-	'Apply sepia tone',
-	'Invert colors',
-	'Sharpen the image',
-];
-
 export function AIPromptDialog({
 	isOpen,
 	onClose,
 	onSubmit,
 	isProcessing = false,
 }: AIPromptDialogProps): React.JSX.Element {
+	const { t } = useTranslation();
 	const [prompt, setPrompt] = useState('');
+
+	const examplePrompts: string[] = t('imageNode.aiExamples', { returnObjects: true }) as string[];
 
 	const handleSubmit = useCallback(() => {
 		if (prompt.trim()) {
@@ -66,21 +60,21 @@ export function AIPromptDialog({
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2 text-sm font-semibold">
 						<Sparkles className="h-4 w-4 text-amber-500" />
-						Edit with AI
+						{t('imageNode.aiEditTitle')}
 					</DialogTitle>
 				</DialogHeader>
 
 				{/* Prompt Input */}
 				<div className="flex flex-col gap-2">
 					<AppLabel htmlFor="ai-prompt" className="text-xs text-muted-foreground">
-						Describe what you'd like to change:
+						{t('imageNode.aiPromptLabel')}
 					</AppLabel>
 					<AppTextarea
 						id="ai-prompt"
 						value={prompt}
 						onChange={(e) => setPrompt(e.target.value)}
 						onKeyDown={handleKeyDown}
-						placeholder="e.g., make it black and white, add blur, brighten it..."
+						placeholder={t('imageNode.aiPromptPlaceholder')}
 						disabled={isProcessing}
 						className="h-20 resize-none text-xs"
 					/>
@@ -88,18 +82,21 @@ export function AIPromptDialog({
 
 				{/* Example Prompts */}
 				<div className="flex flex-col gap-1.5">
-					<AppLabel className="text-xs text-muted-foreground">Try these:</AppLabel>
+					<AppLabel className="text-xs text-muted-foreground">
+						{t('imageNode.aiExamplesLabel')}
+					</AppLabel>
 					<div className="flex flex-wrap gap-1.5">
-						{EXAMPLE_PROMPTS.map((example) => (
-							<button
-								key={example}
-								onClick={() => setPrompt(example)}
-								disabled={isProcessing}
-								className="cursor-pointer rounded-full border border-border/50 bg-muted px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-							>
-								{example}
-							</button>
-						))}
+						{Array.isArray(examplePrompts) &&
+							examplePrompts.map((example) => (
+								<button
+									key={example}
+									onClick={() => setPrompt(example)}
+									disabled={isProcessing}
+									className="cursor-pointer rounded-full border border-border/50 bg-muted px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+								>
+									{example}
+								</button>
+							))}
 					</div>
 				</div>
 
@@ -108,7 +105,7 @@ export function AIPromptDialog({
 					variant="secondary"
 					className="w-full justify-start rounded-sm text-xs font-normal text-muted-foreground"
 				>
-					✨ Supports: black & white, blur, brightness, vibrant, sepia, invert, sharpen
+					{t('imageNode.aiSupportedFilters')}
 				</AppBadge>
 
 				<DialogFooter className="gap-2 sm:gap-2">
@@ -119,7 +116,7 @@ export function AIPromptDialog({
 						disabled={isProcessing}
 						className="flex-1 text-xs"
 					>
-						Cancel
+						{t('imageNode.cancel')}
 					</AppButton>
 					<AppButton
 						size="sm"
@@ -127,7 +124,7 @@ export function AIPromptDialog({
 						disabled={!prompt.trim() || isProcessing}
 						className="flex-1 text-xs"
 					>
-						{isProcessing ? 'Processing...' : 'Apply'}
+						{isProcessing ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
 					</AppButton>
 				</DialogFooter>
 			</DialogContent>
