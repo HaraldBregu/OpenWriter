@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Sparkles, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
