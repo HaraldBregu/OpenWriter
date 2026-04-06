@@ -373,10 +373,7 @@ export function ImageEditor({
 
 							{activeMode === 'ai' && (
 								<div
-									className={cn(
-										'flex flex-col',
-										isDragOver && 'ring-2 ring-inset ring-primary/40'
-									)}
+									className={cn('flex flex-col', isDragOver && 'ring-2 ring-inset ring-primary/40')}
 									onDragOver={handleAIDragOver}
 									onDragLeave={handleAIDragLeave}
 									onDrop={handleAIDrop}
@@ -397,11 +394,7 @@ export function ImageEditor({
 										<div className="flex items-center gap-2 overflow-x-auto pb-1">
 											{/* Current image thumbnail */}
 											<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
-												<img
-													src={src}
-													alt={alt ?? ''}
-													className="h-full w-full object-cover"
-												/>
+												<img src={src} alt={alt ?? ''} className="h-full w-full object-cover" />
 											</div>
 											{/* Uploaded reference thumbnails */}
 											{aiPreviewUrls.map((url, index) => (
@@ -422,10 +415,7 @@ export function ImageEditor({
 															e.preventDefault();
 															removeAIFile(index);
 														}}
-														aria-label={t(
-															'imageNode.removeImage',
-															'Remove image'
-														)}
+														aria-label={t('imageNode.removeImage', 'Remove image')}
 													>
 														<X className="h-3 w-3" />
 													</AppButton>
@@ -444,9 +434,7 @@ export function ImageEditor({
 											>
 												<div className="flex flex-col items-center gap-1">
 													<ImagePlus className="h-4 w-4" />
-													<span>
-														{t('imageNode.addImage', 'Add image')}
-													</span>
+													<span>{t('imageNode.addImage', 'Add image')}</span>
 												</div>
 											</AppButton>
 										</div>
@@ -462,10 +450,7 @@ export function ImageEditor({
 											'imageNode.aiPromptPlaceholder',
 											'Describe the image you want to create. You can also drop reference images here.'
 										)}
-										aria-label={t(
-											'imageNode.aiPromptLabel',
-											'AI transform prompt'
-										)}
+										aria-label={t('imageNode.aiPromptLabel', 'AI transform prompt')}
 										className={cn(
 											'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 											'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
@@ -492,16 +477,9 @@ export function ImageEditor({
 												e.preventDefault();
 												if (!isProcessingAI) handleAISubmit();
 											}}
-											aria-label={t(
-												'imageNode.aiApply',
-												'Apply AI transform'
-											)}
+											aria-label={t('imageNode.aiApply', 'Apply AI transform')}
 										>
-											{isProcessingAI ? (
-												<LoaderCircle className="animate-spin" />
-											) : (
-												<ArrowUp />
-											)}
+											{isProcessingAI ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 										</AppButton>
 									</div>
 								</div>
