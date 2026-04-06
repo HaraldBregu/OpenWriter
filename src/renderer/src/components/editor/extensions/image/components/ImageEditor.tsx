@@ -362,8 +362,13 @@ export function ImageEditor({
 				</div>
 			</AppTooltipProvider>
 
-			{/* Canvas area */}
-			<div className="relative flex items-center justify-center p-3">
+			{/* Canvas area — hidden during AI transform (thumbnail shown in AI panel) */}
+			<div
+				className={cn(
+					'relative flex items-center justify-center p-3',
+					activeMode === 'ai' && 'hidden'
+				)}
+			>
 				{state.hasError && (
 					<div
 						className={cn(
