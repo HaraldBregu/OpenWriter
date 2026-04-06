@@ -1,4 +1,3 @@
-export { AIPromptDialog } from './AIPromptDialog';
 export { CropOverlay } from './CropOverlay';
 export { DeleteConfirmDialog } from './DeleteConfirmDialog';
 export { ResizeControls } from './ResizeControls';

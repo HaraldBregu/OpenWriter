@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	RotateCcw,
@@ -19,7 +19,9 @@ import { useImageCanvas, IMAGE_EFFECT_OPTIONS } from '../shared/use-image-canvas
 import { ToolbarButton } from './ToolbarButton';
 import { CropOverlay } from './CropOverlay';
 import { ResizeControls } from './ResizeControls';
-import { AIPromptDialog } from './AIPromptDialog';
+import { AppBadge } from '@/components/app/AppBadge';
+import { AppLabel } from '@/components/app/AppLabel';
+import { AppTextarea } from '@/components/app/AppTextarea';
 
 export interface ImageEditorProps {
 	src: string;
@@ -33,8 +35,9 @@ type EditMode = 'crop' | 'resize' | 'rotate' | 'effects';
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
-	const [showAIDialog, setShowAIDialog] = useState(false);
+	const [showAIPrompt, setShowAIPrompt] = useState(false);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
+	const [aiPrompt, setAIPrompt] = useState('');
 
 	const {
 		canvasRef,
@@ -68,17 +71,41 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		[activeMode, resetCrop]
 	);
 
-	const handleAISubmit = useCallback(
-		(prompt: string): void => {
-			setIsProcessingAI(true);
-			// Simulate processing delay for better UX
-			setTimeout(() => {
-				applyAI(prompt);
-				setShowAIDialog(false);
-				setIsProcessingAI(false);
-			}, 300);
+	const examplePrompts = useMemo(
+		() => (t('imageNode.aiExamples', { returnObjects: true }) as string[]) ?? [],
+		[t]
+	);
+
+	const handleAISubmit = useCallback((): void => {
+		if (!aiPrompt.trim()) return;
+		setIsProcessingAI(true);
+		// Simulate processing delay for better UX
+		setTimeout(() => {
+			applyAI(aiPrompt.trim());
+			setAIPrompt('');
+			setShowAIPrompt(false);
+			setIsProcessingAI(false);
+		}, 300);
+	}, [aiPrompt, applyAI]);
+
+	const handleAIButtonClick = useCallback((): void => {
+		if (isProcessingAI) return;
+		setShowAIPrompt(true);
+	}, [isProcessingAI]);
+
+	const handleCancelAI = useCallback((): void => {
+		if (isProcessingAI) return;
+		setShowAIPrompt(false);
+		setAIPrompt('');
+	}, [isProcessingAI]);
+
+	const handlePromptKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+			if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+				handleAISubmit();
+			}
 		},
-		[applyAI]
+		[handleAISubmit]
 	);
 
 	const currentWidth = state.dimensions?.width ?? 0;
@@ -128,8 +155,8 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						<ToolbarButton
 							icon={<Sparkles />}
 							label="AI Transform"
-							onClick={() => setShowAIDialog(true)}
-							disabled={!state.isLoaded}
+							onClick={handleAIButtonClick}
+							disabled={!state.isLoaded || isProcessingAI}
 						/>
 
 						{/* Undo */}
@@ -232,6 +259,64 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							</div>
 						)}
 					</div>
+					{showAIPrompt && (
+						<div className="flex flex-col gap-2 border-t border-border px-2 py-2">
+							<div className="flex flex-col gap-1">
+								<AppLabel htmlFor="ai-prompt" className="text-xs text-muted-foreground">
+									{t('imageNode.aiPromptLabel')}
+								</AppLabel>
+								<AppTextarea
+									id="ai-prompt"
+									value={aiPrompt}
+									onChange={(e) => setAIPrompt(e.target.value)}
+									onKeyDown={handlePromptKeyDown}
+									placeholder={t('imageNode.aiPromptPlaceholder')}
+									className="h-20 text-xs"
+									disabled={isProcessingAI}
+								/>
+							</div>
+							{examplePrompts.length > 0 && (
+								<div className="flex flex-wrap gap-1.5">
+									{examplePrompts.map((example) => (
+										<button
+											key={example}
+											type="button"
+											onClick={() => setAIPrompt(example)}
+											disabled={isProcessingAI}
+											className="cursor-pointer rounded-full border border-border/50 bg-muted px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+										>
+											{example}
+										</button>
+									))}
+								</div>
+							)}
+							<AppBadge
+								variant="secondary"
+								className="w-full justify-start rounded-sm text-xs font-normal text-muted-foreground"
+							>
+								{t('imageNode.aiSupportedFilters')}
+							</AppBadge>
+							<div className="flex gap-2">
+								<AppButton
+									variant="outline"
+									size="sm"
+									onClick={handleCancelAI}
+									disabled={isProcessingAI}
+									className="flex-1 text-xs"
+								>
+									{t('imageNode.cancel')}
+								</AppButton>
+								<AppButton
+									size="sm"
+									onClick={handleAISubmit}
+									disabled={!aiPrompt.trim() || isProcessingAI}
+									className="flex-1 text-xs"
+								>
+									{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
+								</AppButton>
+							</div>
+						</div>
+					)}
 				</div>
 			</AppTooltipProvider>
 
@@ -261,13 +346,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 				)}
 			</div>
 
-			{/* AI Prompt Dialog */}
-			<AIPromptDialog
-				isOpen={showAIDialog}
-				onClose={() => setShowAIDialog(false)}
-				onSubmit={handleAISubmit}
-				isProcessing={isProcessingAI}
-			/>
 		</div>
 	);
 }
