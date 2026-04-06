@@ -84,8 +84,9 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 
 	const handleAIButtonClick = useCallback((): void => {
 		if (isProcessingAI) return;
+		handleModeChange('effects');
 		setShowAIPrompt(true);
-	}, [isProcessingAI]);
+	}, [isProcessingAI, handleModeChange]);
 
 	const handleCancelAI = useCallback((): void => {
 		if (isProcessingAI) return;
@@ -143,9 +144,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							disabled={!state.isLoaded}
 						/>
 
-						<div className="mx-1 h-4 w-px bg-border" />
-
-						{/* AI Button */}
 						<ToolbarButton
 							icon={<Sparkles />}
 							label="AI Transform"
