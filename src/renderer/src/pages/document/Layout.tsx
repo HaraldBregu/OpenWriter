@@ -333,12 +333,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		) => {
 			if (!id || assistantIsRunning) {
 				editorRef.current?.setAssistantLoading(false);
-				editorRef.current?.setContentGeneratorEnable(true);
+				editorRef.current?.setAssistantEnable(true);
 				return;
 			}
 
 			editorRef.current?.setAssistantLoading(true);
-			editorRef.current?.setContentGeneratorEnable(false);
+			editorRef.current?.setAssistantEnable(false);
 
 			try {
 				const savedReferenceImages =
@@ -360,7 +360,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 				if (typeof window.task?.submit !== 'function') {
 					editorRef.current?.setAssistantLoading(false);
-					editorRef.current?.setContentGeneratorEnable(true);
+					editorRef.current?.setAssistantEnable(true);
 					return;
 				}
 
@@ -379,7 +379,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
 				if (!ipcResult.success) {
 					editorRef.current?.setAssistantLoading(false);
-					editorRef.current?.setContentGeneratorEnable(true);
+					editorRef.current?.setAssistantEnable(true);
 					return;
 				}
 
@@ -389,7 +389,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				setAssistantActiveTaskId(resolvedTaskId);
 			} catch {
 				editorRef.current?.setAssistantLoading(false);
-				editorRef.current?.setContentGeneratorEnable(true);
+				editorRef.current?.setAssistantEnable(true);
 			}
 		},
 		[assistantIsRunning, assistantSessionId, id]
