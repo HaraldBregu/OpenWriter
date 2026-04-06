@@ -12,7 +12,7 @@ import {
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
 import { ImageEditor } from './ImageEditor';
-import { DeleteConfirmDialog } from './dialogs';
+import { DeleteConfirmDialog } from './components';
 
 interface ImageAttrs {
 	src: string | null;
