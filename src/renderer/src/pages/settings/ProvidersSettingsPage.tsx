@@ -460,9 +460,10 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 							? t('models.customProvider.hide', 'Hide custom provider')
 							: t('models.customProvider.cta', 'Add custom provider')
 					}
+					aria-expanded={showRegistrationForm}
 					onClick={onToggleRegistrationForm}
 				>
-					<Plus />
+					<Plus aria-hidden="true" />
 				</AppButton>
 			</div>
 			<p className="text-xs text-muted-foreground mt-0.5 mb-4">
