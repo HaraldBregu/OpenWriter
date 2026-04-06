@@ -4,3 +4,4 @@ export type { ImageExtensionOptions } from './input-extension';
 export { createImageDropPastePlugin, fileToDataUri } from './image-drop-paste-plugin';
 export type { ImageInsertHandler } from './image-drop-paste-plugin';
 export { ImageEditor } from './ImageEditor';
+export { AIPromptDialog } from './AIPromptDialog';
