@@ -203,6 +203,8 @@ export function ImageEditor({
 	const handleCancelAI = useCallback((): void => {
 		if (isProcessingAI) return;
 		setAIPrompt('');
+		setAIFiles([]);
+		setAIPreviewUrls([]);
 		setActiveMode(null);
 	}, [isProcessingAI]);
 
