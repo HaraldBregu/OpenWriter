@@ -403,6 +403,8 @@ function ToolbarButton({
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const [activeMode, setActiveMode] = useState<EditMode>('crop');
+	const [showAIDialog, setShowAIDialog] = useState(false);
+	const [isProcessingAI, setIsProcessingAI] = useState(false);
 
 	const {
 		canvasRef,
@@ -412,6 +414,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		resetCrop,
 		setCropRegion,
 		applyResize,
+		applyAI,
 		undo,
 		canUndo,
 		exportDataUri,
