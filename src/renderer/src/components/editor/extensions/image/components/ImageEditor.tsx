@@ -93,6 +93,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 				const nextMode = prevMode === mode ? null : mode;
 				if (prevMode === 'crop' && nextMode !== 'crop') {
 					resetCrop();
+					setCrop(undefined);
 				}
 				return nextMode;
 			});
