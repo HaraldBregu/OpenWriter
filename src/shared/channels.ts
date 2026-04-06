@@ -114,6 +114,9 @@ export const WorkspaceChannels = {
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
 	updateProjectDescription: 'project-workspace:update-description',
+	// Agent configs (stored in project_workspace.openwriter)
+	getAgentConfigs: 'workspace:get-agent-configs',
+	setAgentConfig: 'workspace:set-agent-config',
 } as const;
 
 export const WindowChannels = {
