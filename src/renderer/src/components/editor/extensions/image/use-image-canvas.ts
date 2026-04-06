@@ -365,6 +365,7 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 		resetCrop,
 		setCropRegion,
 		applyResize,
+		applyAI,
 		undo,
 		canUndo,
 		exportDataUri,
