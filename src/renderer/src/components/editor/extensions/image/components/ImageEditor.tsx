@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	RotateCcw,
@@ -9,17 +9,12 @@ import {
 	Check,
 	X,
 	Sparkles,
-	WandSparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { MIN_CROP_SIZE } from '../shared';
-import {
-	useImageCanvas,
-	IMAGE_EFFECT_OPTIONS,
-	type ImageEffectType,
-} from '../shared/use-image-canvas';
+import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { CropOverlay } from './CropOverlay';
 import { AppTextarea } from '@/components/app/AppTextarea';
@@ -31,26 +26,13 @@ export interface ImageEditorProps {
 	onCancel: () => void;
 }
 
-type EditMode = 'crop' | 'rotate' | 'effects' | 'ai';
-
-const createEffectState = (): Record<ImageEffectType, boolean> =>
-	IMAGE_EFFECT_OPTIONS.reduce(
-		(acc, effect) => {
-			acc[effect.type] = false;
-			return acc;
-		},
-		{} as Record<ImageEffectType, boolean>
-	);
+type EditMode = 'crop' | 'rotate' | 'ai';
 
 export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 	const [aiPrompt, setAIPrompt] = useState('');
-	const [activeEffects, setActiveEffects] = useState<Record<ImageEffectType, boolean>>(() =>
-		createEffectState()
-	);
-
 	const {
 		canvasRef,
 		state,
@@ -59,7 +41,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		resetCrop,
 		setCropRegion,
 		applyAI,
-		applyEffect,
 		undo,
 		canUndo,
 		exportDataUri,
@@ -124,23 +105,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		state.cropRegion.width >= MIN_CROP_SIZE &&
 		state.cropRegion.height >= MIN_CROP_SIZE;
 
-	const handleEffectToggle = useCallback(
-		(effect: ImageEffectType): void => {
-			setActiveEffects((prev) => {
-				const nextState = !prev[effect];
-				if (nextState) {
-					applyEffect(effect);
-				}
-				return { ...prev, [effect]: nextState };
-			});
-		},
-		[applyEffect]
-	);
-
-	useEffect(() => {
-		setActiveEffects(createEffectState());
-	}, [src]);
-
 	return (
 		<div className="overflow-hidden rounded-lg border border-border bg-card/90">
 			{/* Top toolbar: mode buttons + undo + save/cancel */}
@@ -159,14 +123,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							label={t('imageNode.rotate')}
 							onClick={() => handleModeChange('rotate')}
 							active={activeMode === 'rotate'}
-						/>
-
-						<ToolbarButton
-							icon={<WandSparkles />}
-							label={t('imageNode.effects')}
-							onClick={() => handleModeChange('effects')}
-							active={activeMode === 'effects'}
-							disabled={!state.isLoaded}
 						/>
 
 						<ToolbarButton
@@ -249,34 +205,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 								/>
 								<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
 							</>
-						)}
-
-						{activeMode === 'effects' && (
-							<div className="flex w-full flex-col gap-2">
-								<div className="flex flex-wrap gap-2">
-									{IMAGE_EFFECT_OPTIONS.map((effect) => {
-										const isActive = activeEffects[effect.type];
-										return (
-											<AppButton
-												key={effect.type}
-												size="sm"
-												variant="ghost"
-												onClick={() => handleEffectToggle(effect.type)}
-												disabled={!state.isLoaded}
-												className={cn(
-													'h-7 rounded-full px-3 text-xs transition-colors',
-													isActive
-														? 'bg-foreground text-background hover:bg-foreground/90'
-														: 'text-muted-foreground hover:text-foreground'
-												)}
-												aria-pressed={isActive}
-											>
-												{t(effect.labelKey)}
-											</AppButton>
-										);
-									})}
-								</div>
-							</div>
 						)}
 
 						{activeMode === 'ai' && (
