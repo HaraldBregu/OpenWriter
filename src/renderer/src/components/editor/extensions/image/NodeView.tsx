@@ -213,56 +213,15 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								<div className="h-4 w-px bg-border/50" />
 
 								<ActionButton
-									icon={<MessageSquare />}
-									label={t('imageNode.comment')}
-									onClick={handleComment}
+									icon={<Pencil />}
+									label={t('imageNode.edit')}
+									onClick={handleEdit}
 								/>
-								<ActionButton icon={<Copy />} label={t('imageNode.copy')} onClick={handleCopy} />
 								<ActionButton
-									icon={<Maximize2 />}
-									label={t('imageNode.fullscreen')}
-									onClick={handleMaximize}
+									icon={<Trash2 />}
+									label={t('imageNode.delete')}
+									onClick={() => setShowDeleteConfirm(true)}
 								/>
-								<ActionButton icon={<ZoomIn />} label={t('imageNode.zoom')} onClick={handleZoom} />
-								<ActionButton
-									icon={<Download />}
-									label={t('imageNode.download')}
-									onClick={handleDownload}
-								/>
-
-								<button
-									className={cn(
-										'relative h-5 w-5 rounded p-0 text-muted-foreground hover:text-foreground',
-										'flex items-center justify-center cursor-pointer transition-colors'
-									)}
-									onClick={() => setShowMoreActions(!showMoreActions)}
-									aria-label={t('imageNode.more')}
-									title={t('imageNode.more')}
-								>
-									<Ellipsis className="h-3 w-3" />
-								</button>
-
-								{/* More actions (edit, delete) */}
-								{showMoreActions && (
-									<div className="absolute top-full right-0 mt-1 flex flex-col gap-0.5 rounded-lg border border-border/80 bg-popover/95 p-1 backdrop-blur-md shadow-lg">
-										<ActionButton
-											icon={<Pencil />}
-											label={t('imageNode.edit')}
-											onClick={() => {
-												handleEdit();
-												setShowMoreActions(false);
-											}}
-										/>
-										<ActionButton
-											icon={<Trash2 />}
-											label={t('imageNode.delete')}
-											onClick={() => {
-												handleDelete();
-												setShowMoreActions(false);
-											}}
-										/>
-									</div>
-								)}
 							</div>
 						</AppTooltipProvider>
 
