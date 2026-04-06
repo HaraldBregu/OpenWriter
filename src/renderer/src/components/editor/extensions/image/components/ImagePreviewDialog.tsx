@@ -28,7 +28,7 @@ export function ImagePreviewDialog({
 					className={cn(
 						'fixed inset-0 z-[9999] flex items-center justify-center p-8',
 						'data-[state=open]:animate-in data-[state=closed]:animate-out',
-						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
 					)}
 					onClick={() => onOpenChange(false)}
 				>
@@ -37,7 +37,7 @@ export function ImagePreviewDialog({
 							'absolute right-4 top-4 z-10 rounded-full p-2',
 							'bg-black/50 text-white backdrop-blur-sm',
 							'transition-opacity hover:bg-black/70',
-							'focus:outline-none focus:ring-2 focus:ring-white/50',
+							'focus:outline-none focus:ring-2 focus:ring-white/50'
 						)}
 					>
 						<X className="h-5 w-5" />
