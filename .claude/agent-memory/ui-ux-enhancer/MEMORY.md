@@ -1,0 +1,1 @@
+- [OpenWriter Design System Conventions](project_design_system.md) — App component library, Tailwind tokens, accessibility patterns, image extension structure, and i18n conventions
