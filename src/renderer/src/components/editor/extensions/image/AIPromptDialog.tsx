@@ -3,11 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
-import {
-	AppTooltip,
-	AppTooltipTrigger,
-	AppTooltipContent,
-} from '@/components/app/AppTooltip';
+import { AppTooltip, AppTooltipTrigger, AppTooltipContent } from '@/components/app/AppTooltip';
 
 interface AIPromptDialogProps {
 	isOpen: boolean;
@@ -32,7 +28,6 @@ export function AIPromptDialog({
 	onSubmit,
 	isProcessing = false,
 }: AIPromptDialogProps): React.JSX.Element | null {
-	const { t } = useTranslation();
 	const [prompt, setPrompt] = useState('');
 
 	const handleSubmit = useCallback(() => {
@@ -42,12 +37,9 @@ export function AIPromptDialog({
 		}
 	}, [prompt, onSubmit]);
 
-	const handleExampleClick = useCallback(
-		(example: string) => {
-			setPrompt(example);
-		},
-		[]
-	);
+	const handleExampleClick = useCallback((example: string) => {
+		setPrompt(example);
+	}, []);
 
 	const handleKeyDown = useCallback(
 		(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -132,7 +124,8 @@ export function AIPromptDialog({
 
 				{/* Note */}
 				<div className="mb-4 rounded-sm bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
-					✨ Example transformations: black & white, blur, brightness, vibrant, sepia, invert, sharpen
+					✨ Example transformations: black & white, blur, brightness, vibrant, sepia, invert,
+					sharpen
 				</div>
 
 				{/* Action Buttons */}
