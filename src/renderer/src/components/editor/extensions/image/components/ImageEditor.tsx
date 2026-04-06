@@ -14,7 +14,7 @@ import {
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { AIPromptDialog, CropOverlay, ResizeControls, ToolbarButton } from './components';
-import { MIN_CROP_SIZE } from './image-editor-constants';
+import { MIN_CROP_SIZE } from '../shared';
 import { useImageCanvas } from './use-image-canvas';
 
 export interface ImageEditorProps {

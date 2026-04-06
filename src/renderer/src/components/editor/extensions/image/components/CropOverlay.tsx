@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import type { CropRegion } from '../use-image-canvas';
-import { MIN_CROP_SIZE } from '../image-editor-constants';
+import { MIN_CROP_SIZE } from '../shared';
 
 interface PointerPosition {
 	x: number;

@@ -7,7 +7,7 @@ import {
 	AppTooltipContent,
 	AppTooltipTrigger,
 } from '@/components/app/AppTooltip';
-import { MAX_DIMENSION, MIN_DIMENSION } from '../image-editor-constants';
+import { MAX_DIMENSION, MIN_DIMENSION } from '../shared';
 
 interface ResizeControlsProps {
 	currentWidth: number;
