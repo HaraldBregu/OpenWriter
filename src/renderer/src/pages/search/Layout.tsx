@@ -25,14 +25,14 @@ const Layout: React.FC = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col gap-3">
+				<div className="sticky top-10 z-20 w-full rounded-3xl border border-border/50 bg-background/80 p-5 backdrop-blur">
 					<SearchInput
 						value={query}
 						onChange={setQuery}
 						onClear={clearQuery}
 						placeholder={t('menu.search', 'Search')}
 					/>
-					<div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+					<div className="mt-4 flex items-center justify-between gap-3 text-xs text-muted-foreground">
 						<p className="max-w-3xl text-foreground/80">
 							{hasQuery
 								? t('search.resultsSummary', {
@@ -66,7 +66,7 @@ const Layout: React.FC = () => {
 							<SearchEmptyState query={deferredQuery} onClear={clearQuery} />
 						</div>
 					) : (
-						<div className="flex h-full flex-col overflow-y-auto">
+						<div className="flex h-full flex-col overflow-y-auto pt-4">
 							<div className="grid items-start gap-4 xl:grid-cols-3">
 								{sections.map((section) => (
 									<SearchSection
