@@ -103,8 +103,20 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 			if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
 				handleAISubmit();
 			}
+			if (e.key === 'Escape') {
+				handleCancelAI();
+			}
 		},
-		[handleAISubmit]
+		[handleAISubmit, handleCancelAI]
+	);
+
+	const handleEditorKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>): void => {
+			if (e.key === 'Escape') {
+				onCancel();
+			}
+		},
+		[onCancel]
 	);
 
 	const currentWidth = state.dimensions?.width ?? 0;
