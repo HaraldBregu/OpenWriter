@@ -502,7 +502,9 @@
 		"minimize": "Minimize",
 		"maximize": "Maximize",
 		"restore": "Restore",
-		"close": "Close"
+		"close": "Close",
+		"navigateBack": "Navigate back",
+		"navigateForward": "Navigate forward"
 	},
 	"documents": {
 		"title": "Documents",

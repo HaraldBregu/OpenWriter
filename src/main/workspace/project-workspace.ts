@@ -277,6 +277,7 @@ export class ProjectWorkspaceService {
 				typeof record['appVersion'] === 'string'
 					? (record['appVersion'] as string)
 					: this.getAppVersion(),
+			agentConfigs: this.parseAgentConfigs(record['agentConfigs']),
 		};
 	}
 
