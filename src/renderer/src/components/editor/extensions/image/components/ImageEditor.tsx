@@ -61,12 +61,15 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 
 	const handleModeChange = useCallback(
 		(mode: EditMode): void => {
-			if (activeMode === 'crop' && mode !== 'crop') {
-				resetCrop();
-			}
-			setActiveMode(mode);
+			setActiveMode((prevMode) => {
+				const nextMode = prevMode === mode ? null : mode;
+				if (prevMode === 'crop' && nextMode !== 'crop') {
+					resetCrop();
+				}
+				return nextMode;
+			});
 		},
-		[activeMode, resetCrop]
+		[resetCrop]
 	);
 
 	const handleAISubmit = useCallback((): void => {
@@ -146,6 +149,7 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							icon={<Sparkles />}
 							label="AI Transform"
 							onClick={handleAIButtonClick}
+							active={activeMode === 'ai'}
 							disabled={!state.isLoaded || isProcessingAI}
 						/>
 
