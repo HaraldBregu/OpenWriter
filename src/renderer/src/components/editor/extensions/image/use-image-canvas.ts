@@ -312,6 +312,27 @@ export function useImageCanvas(src: string): UseImageCanvasReturn {
 	);
 
 	// ---------------------------------------------------------------------------
+	// AI Filters
+	// ---------------------------------------------------------------------------
+
+	const applyAI = useCallback(
+		(prompt: string): void => {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			if (!ctx) return;
+
+			// Snapshot before mutation
+			pushSnapshot(state.rotation);
+
+			// Detect filters from prompt and apply them
+			const filters = detectFiltersFromPrompt(prompt);
+			applyFiltersToCanvas(ctx, filters);
+		},
+		[state.rotation, pushSnapshot]
+	);
+
+	// ---------------------------------------------------------------------------
 	// Undo
 	// ---------------------------------------------------------------------------
 
