@@ -32,8 +32,6 @@ export interface ExtensionHandlers {
 		agentId?: 'writer' | 'painter',
 		files?: File[]
 	) => void;
-	onImageSubmit: (prompt: string) => void;
-	onImageFileSelect: (file: File) => void;
 	onImageInsert: ImageInsertHandler;
 	onUndo: () => void;
 	onRedo: () => void;
