@@ -12,6 +12,7 @@ import {
 	Sparkles,
 	WandSparkles,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { MIN_CROP_SIZE } from '../shared';
@@ -253,17 +254,26 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						)}
 					</div>
 					{showAIPrompt && (
-						<div className="flex flex-col gap-2 border-t border-border px-2 py-2">
-							<AppTextarea
-								id="ai-prompt"
-								value={aiPrompt}
-								onChange={(e) => setAIPrompt(e.target.value)}
-								onKeyDown={handlePromptKeyDown}
-								placeholder={t('imageNode.aiPromptPlaceholder')}
-								className="h-20 text-xs"
-								disabled={isProcessingAI}
-							/>
-							<div className="flex gap-2">
+						<div className="border-t border-border px-2 py-3">
+							<div className="border border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
+								<AppTextarea
+									id="ai-prompt"
+									value={aiPrompt}
+									onChange={(e) => setAIPrompt(e.target.value)}
+									onKeyDown={handlePromptKeyDown}
+									placeholder={t(
+										'imageNode.aiPromptPlaceholder',
+										'Describe the image you want to create. You can also drop reference images here.'
+									)}
+									className={cn(
+										'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+										'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
+										'disabled:cursor-not-allowed disabled:opacity-60'
+									)}
+									disabled={isProcessingAI}
+								/>
+							</div>
+							<div className="flex gap-2 pt-2">
 								<AppButton
 									variant="outline"
 									size="sm"
