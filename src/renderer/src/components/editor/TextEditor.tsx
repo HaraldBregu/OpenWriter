@@ -109,8 +109,6 @@ const TextEditor = React.memo(
 				streamingContent,
 				onContinueWithAssistant,
 				onTextSubmit,
-				onImageSubmit,
-				onImageFileSelect,
 				documentId,
 				onEditorReady,
 				onUndo,
