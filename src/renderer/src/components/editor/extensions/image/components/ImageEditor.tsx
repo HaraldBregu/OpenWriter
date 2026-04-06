@@ -25,6 +25,17 @@ import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { AppTextarea } from '@/components/app/AppTextarea';
 
+const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
+
+function readFileAsDataUri(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = (): void => resolve(reader.result as string);
+		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
+		reader.readAsDataURL(file);
+	});
+}
+
 export type EditMode = 'crop' | 'rotate' | 'ai';
 
 export interface ImageEditorProps {
