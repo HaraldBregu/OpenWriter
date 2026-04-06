@@ -386,11 +386,11 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.clearSearch();
 					},
-					removeContentGenerator() {
+					removeAssistant() {
 						if (!editor || editor.isDestroyed) return;
 						const { doc } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
+							if (node.type.name === 'assistant') {
 								editor
 									.chain()
 									.deleteRange({ from: pos, to: pos + node.nodeSize })
@@ -400,11 +400,11 @@ const TextEditor = React.memo(
 							return true;
 						});
 					},
-					setContentGeneratorLoading(loading: boolean) {
+					setAssistantLoading(loading: boolean) {
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
+							if (node.type.name === 'assistant') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
 								return false;
 							}
@@ -412,11 +412,11 @@ const TextEditor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
-					setContentGeneratorEnable(enable: boolean) {
+					setAssistantEnable(enable: boolean) {
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator' || node.type.name === 'assistant') {
+							if (node.type.name === 'assistant') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, enable });
 								return false;
 							}
