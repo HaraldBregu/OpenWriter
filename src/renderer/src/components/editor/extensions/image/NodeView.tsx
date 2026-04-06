@@ -191,13 +191,16 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 								<AppAlertDialog>
 									<AppAlertDialogTrigger asChild>
-										<ActionButton
-											icon={<Trash2 />}
-											label={t('imageNode.delete')}
-											onClick={(e) => {
-												e.preventDefault();
-											}}
-										/>
+										<button
+											className={cn(
+												'relative h-5 w-5 rounded p-0 text-muted-foreground hover:text-foreground',
+												'flex items-center justify-center cursor-pointer transition-colors'
+											)}
+											aria-label={t('imageNode.delete')}
+											title={t('imageNode.delete')}
+										>
+											<Trash2 className="h-3 w-3" />
+										</button>
 									</AppAlertDialogTrigger>
 									<AppAlertDialogContent>
 										<AppAlertDialogHeader>
@@ -208,7 +211,10 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 										</AppAlertDialogHeader>
 										<div className="flex gap-2">
 											<AppAlertDialogCancel>{t('imageNode.cancel')}</AppAlertDialogCancel>
-											<AppAlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+											<AppAlertDialogAction
+												onClick={handleDelete}
+												className="bg-destructive hover:bg-destructive/90"
+											>
 												{t('imageNode.delete')}
 											</AppAlertDialogAction>
 										</div>
