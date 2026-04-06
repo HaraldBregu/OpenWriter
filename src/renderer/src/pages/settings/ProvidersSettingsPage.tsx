@@ -478,7 +478,7 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 					{t('models.customProviders.empty', 'No custom providers yet.')}
 				</p>
 			) : (
-				<div className="space-y-3">
+				<div className="space-y-4">
 					{customProviders.map((provider) => {
 						const existing = providers.find((m) => m.name === provider)?.apikey ?? '';
 						const inputValue = apiKeys[provider] ?? '';
@@ -496,37 +496,42 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 							: t('models.showApiKey', 'Show API key');
 
 						return (
-							<div key={provider} className="flex flex-col gap-2">
-								<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="text-xs font-medium">
-									{provider}
-								</AppLabel>
-								<div className="relative flex items-center">
-									<AppInput
-										id={`${uid}-${provider}-apikey`}
-										type={isVisible ? 'text' : 'password'}
-										value={displayValue}
-										onChange={(e) => handleApiKeyChange(provider, e.target.value)}
-										placeholder={
-											existing.length > 0
-												? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
-												: t('models.form.apiKeyPlaceholder', 'Enter API key…')
-										}
-										autoComplete="off"
-										spellCheck={false}
-										className="h-9 text-sm font-mono pr-8"
-									/>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon-xs"
-										aria-label={visibilityLabel}
-										onClick={() => handleToggleVisibility(provider)}
-										className="absolute right-1.5 text-muted-foreground hover:text-foreground"
-									>
-										{isVisible ? <EyeOff /> : <Eye />}
-									</AppButton>
-								</div>
-								<div className="flex gap-2">
+							<AppCard key={provider}>
+								<AppCardHeader className="pb-3">
+									<AppCardTitle className="text-sm font-medium">{provider}</AppCardTitle>
+								</AppCardHeader>
+								<AppCardContent className="pb-3">
+									<AppLabel htmlFor={`${uid}-${provider}-apikey`} className="sr-only">
+										{provider}
+									</AppLabel>
+									<div className="relative flex items-center">
+										<AppInput
+											id={`${uid}-${provider}-apikey`}
+											type={isVisible ? 'text' : 'password'}
+											value={displayValue}
+											onChange={(e) => handleApiKeyChange(provider, e.target.value)}
+											placeholder={
+												existing.length > 0
+													? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
+													: t('models.form.apiKeyPlaceholder', 'Enter API key…')
+											}
+											autoComplete="off"
+											spellCheck={false}
+											className="h-9 text-sm font-mono pr-8"
+										/>
+										<AppButton
+											type="button"
+											variant="ghost"
+											size="icon-xs"
+											aria-label={visibilityLabel}
+											onClick={() => handleToggleVisibility(provider)}
+											className="absolute right-1.5 text-muted-foreground hover:text-foreground"
+										>
+											{isVisible ? <EyeOff /> : <Eye />}
+										</AppButton>
+									</div>
+								</AppCardContent>
+								<AppCardFooter className="flex gap-2 pt-0">
 									<AppButton
 										type="button"
 										size="sm"
@@ -566,8 +571,8 @@ const CustomProvidersSection: React.FC<CustomProvidersSectionProps> = ({
 											</>
 										)}
 									</AppButton>
-								</div>
-							</div>
+								</AppCardFooter>
+							</AppCard>
 						);
 					})}
 				</div>
