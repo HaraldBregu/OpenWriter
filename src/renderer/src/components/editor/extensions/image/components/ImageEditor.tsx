@@ -121,161 +121,208 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 
 	const currentWidth = state.dimensions?.width ?? 0;
 	const currentHeight = state.dimensions?.height ?? 0;
+	const cropWidth = state.cropRegion?.width ?? 0;
+	const cropHeight = state.cropRegion?.height ?? 0;
 	const hasCropSelection =
 		state.cropRegion !== null &&
-		state.cropRegion.width >= MIN_CROP_SIZE &&
-		state.cropRegion.height >= MIN_CROP_SIZE;
+		cropWidth >= MIN_CROP_SIZE &&
+		cropHeight >= MIN_CROP_SIZE;
+
+	const cropDimensionLabel = hasCropSelection
+		? `${Math.round(cropWidth)} x ${Math.round(cropHeight)} px`
+		: `${currentWidth} x ${currentHeight} px`;
+
+	const hasContextControls = activeMode !== null;
 
 	return (
-		<div className="overflow-hidden rounded-lg border border-border bg-card/90">
-			{/* Top toolbar: mode buttons + undo + save/cancel */}
+		<div
+			ref={editorRef}
+			className="overflow-hidden rounded-lg border border-border bg-card/90"
+			role="dialog"
+			aria-modal="true"
+			aria-label={t('imageNode.editorLabel', 'Image editor')}
+			onKeyDown={handleEditorKeyDown}
+		>
 			<AppTooltipProvider delayDuration={300}>
 				<div className="border-b border-border">
+					{/* Primary toolbar row */}
 					<div className="flex items-center gap-1 px-2 py-1.5">
-						{/* Mode buttons */}
-						<ToolbarButton
-							icon={<Crop />}
-							label={t('imageNode.crop')}
-							onClick={() => handleModeChange('crop')}
-							active={activeMode === 'crop'}
-						/>
-						<ToolbarButton
-							icon={<RefreshCcw />}
-							label={t('imageNode.rotate')}
-							onClick={() => handleModeChange('rotate')}
-							active={activeMode === 'rotate'}
-						/>
+						<div
+							className="flex items-center gap-0.5"
+							role="toolbar"
+							aria-label={t('imageNode.editTools', 'Edit tools')}
+						>
+							<ToolbarButton
+								icon={<Crop />}
+								label={t('imageNode.crop')}
+								onClick={() => handleModeChange('crop')}
+								active={activeMode === 'crop'}
+							/>
+							<ToolbarButton
+								icon={<RefreshCcw />}
+								label={t('imageNode.rotate')}
+								onClick={() => handleModeChange('rotate')}
+								active={activeMode === 'rotate'}
+							/>
+							<ToolbarButton
+								icon={<Sparkles />}
+								label="AI Transform"
+								onClick={handleAIButtonClick}
+								active={activeMode === 'ai'}
+								disabled={!state.isLoaded || isProcessingAI}
+							/>
+						</div>
 
-						<ToolbarButton
-							icon={<Sparkles />}
-							label="AI Transform"
-							onClick={handleAIButtonClick}
-							active={activeMode === 'ai'}
-							disabled={!state.isLoaded || isProcessingAI}
-						/>
+						<div className="mx-1 h-4 w-px bg-border/60" aria-hidden="true" />
 
-						{/* Undo */}
 						<ToolbarButton icon={<Undo2 />} label="Undo" onClick={undo} disabled={!canUndo} />
 
-						{/* Spacer */}
 						<div className="flex-1" />
 
-						{/* Save / Cancel */}
-						<AppButton
-							variant="ghost"
-							size="icon-xs"
-							aria-label={t('imageNode.cancel')}
-							onClick={onCancel}
-							className="h-6 w-6 text-muted-foreground hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
+						{/* Save / Cancel — visually distinct */}
+						<div
+							className="flex items-center gap-0.5"
+							role="group"
+							aria-label={t('imageNode.saveOrCancel', 'Save or cancel')}
 						>
-							<X />
-						</AppButton>
-						<AppButton
-							variant="ghost"
-							size="icon-xs"
-							aria-label={t('imageNode.save')}
-							onClick={handleSave}
-							disabled={!state.isLoaded}
-							className="h-6 w-6 text-muted-foreground hover:text-success [&_svg]:h-3.5 [&_svg]:w-3.5"
-						>
-							<Check />
-						</AppButton>
+							<AppButton
+								variant="ghost"
+								size="icon-xs"
+								aria-label={t('imageNode.cancel')}
+								onClick={onCancel}
+								className="h-6 w-6 text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
+							>
+								<X />
+							</AppButton>
+							<AppButton
+								variant="ghost"
+								size="icon-xs"
+								aria-label={t('imageNode.save')}
+								onClick={handleSave}
+								disabled={!state.isLoaded}
+								className="h-6 w-6 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-3.5 [&_svg]:w-3.5"
+							>
+								<Check />
+							</AppButton>
+						</div>
 					</div>
 
-					<div className="flex flex-wrap items-center gap-2 border-t border-border px-2 py-1.5">
-						{activeMode === 'crop' && (
-							<>
-								<AppButton
-									size="sm"
-									onClick={applyCrop}
-									disabled={!hasCropSelection}
-									className="h-7 px-2 text-xs"
-								>
-									{t('imageNode.applyCrop')}
-								</AppButton>
-								<AppButton
-									variant="outline"
-									size="sm"
-									onClick={resetCrop}
-									disabled={!state.cropRegion}
-									className="h-7 px-2 text-xs"
-								>
-									{t('imageNode.resetCrop')}
-								</AppButton>
-								<span className="ml-1 text-xs text-muted-foreground">
-									{hasCropSelection
-										? `${Math.round(state.cropRegion!.width)} x ${Math.round(state.cropRegion!.height)} px`
-										: `${currentWidth} x ${currentHeight} px`}
-								</span>
-							</>
-						)}
-
-						{activeMode === 'rotate' && (
-							<>
-								<ToolbarButton
-									icon={<RotateCcw />}
-									label={t('imageNode.rotateLeft')}
-									onClick={() => applyRotation('left')}
-									disabled={!state.isLoaded}
-								/>
-								<ToolbarButton
-									icon={<RotateCw />}
-									label={t('imageNode.rotateRight')}
-									onClick={() => applyRotation('right')}
-									disabled={!state.isLoaded}
-								/>
-								<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
-							</>
-						)}
-
-						{activeMode === 'ai' && (
-							<div className="border-t border-border px-2 py-3">
-								<AppTextarea
-									id="ai-prompt"
-									value={aiPrompt}
-									onChange={(e) => setAIPrompt(e.target.value)}
-									onKeyDown={handlePromptKeyDown}
-									placeholder={t(
-										'imageNode.aiPromptPlaceholder',
-										'Describe the image you want to create. You can also drop reference images here.'
-									)}
-									className={cn(
-										'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
-										'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
-										'disabled:cursor-not-allowed disabled:opacity-60'
-									)}
-									disabled={isProcessingAI}
-								/>
-								<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
+					{/* Context controls row — only visible when a mode is active */}
+					{hasContextControls && (
+						<div className="border-t border-border/60 bg-muted/30 px-2 py-1.5">
+							{activeMode === 'crop' && (
+								<div className="flex flex-wrap items-center gap-2">
+									<AppButton
+										size="sm"
+										onClick={applyCrop}
+										disabled={!hasCropSelection}
+										className="h-7 px-2 text-xs"
+									>
+										{t('imageNode.applyCrop')}
+									</AppButton>
 									<AppButton
 										variant="outline"
 										size="sm"
-										onClick={handleCancelAI}
-										disabled={isProcessingAI}
-										className="flex-1 text-xs"
+										onClick={resetCrop}
+										disabled={!state.cropRegion}
+										className="h-7 px-2 text-xs"
 									>
-										{t('imageNode.cancel')}
+										{t('imageNode.resetCrop')}
 									</AppButton>
-									<AppButton
-										size="sm"
-										onClick={handleAISubmit}
-										disabled={!aiPrompt.trim() || isProcessingAI}
-										className="flex-1 text-xs"
+									<span
+										className="ml-1 text-xs tabular-nums text-muted-foreground"
+										aria-live="polite"
+										aria-atomic="true"
 									>
-										{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
-									</AppButton>
+										{cropDimensionLabel}
+									</span>
 								</div>
-							</div>
-						)}
-					</div>
+							)}
+
+							{activeMode === 'rotate' && (
+								<div className="flex flex-wrap items-center gap-2">
+									<ToolbarButton
+										icon={<RotateCcw />}
+										label={t('imageNode.rotateLeft')}
+										onClick={() => applyRotation('left')}
+										disabled={!state.isLoaded}
+									/>
+									<ToolbarButton
+										icon={<RotateCw />}
+										label={t('imageNode.rotateRight')}
+										onClick={() => applyRotation('right')}
+										disabled={!state.isLoaded}
+									/>
+									<span
+										className="ml-1 text-xs tabular-nums text-muted-foreground"
+										aria-live="polite"
+										aria-atomic="true"
+									>
+										{state.rotation}&deg;
+									</span>
+								</div>
+							)}
+
+							{activeMode === 'ai' && (
+								<div className="flex flex-col gap-0">
+									<AppTextarea
+										ref={aiTextareaRef}
+										id="ai-prompt"
+										value={aiPrompt}
+										onChange={(e) => setAIPrompt(e.target.value)}
+										onKeyDown={handlePromptKeyDown}
+										placeholder={t(
+											'imageNode.aiPromptPlaceholder',
+											'Describe the image you want to create. You can also drop reference images here.'
+										)}
+										aria-label={t('imageNode.aiPromptLabel', 'AI transform prompt')}
+										className={cn(
+											'min-h-[80px] w-full resize-none border-none bg-transparent px-1 pt-2 pb-1 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+											'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
+											'disabled:cursor-not-allowed disabled:opacity-60'
+										)}
+										disabled={isProcessingAI}
+									/>
+									<div className="flex items-center justify-end gap-2 pt-1.5">
+										<AppButton
+											variant="outline"
+											size="sm"
+											onClick={handleCancelAI}
+											disabled={isProcessingAI}
+											className="h-7 px-3 text-xs"
+										>
+											{t('imageNode.cancel')}
+										</AppButton>
+										<AppButton
+											size="sm"
+											onClick={handleAISubmit}
+											disabled={!aiPrompt.trim() || isProcessingAI}
+											className="h-7 px-3 text-xs"
+										>
+											{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
+										</AppButton>
+									</div>
+								</div>
+							)}
+						</div>
+					)}
 				</div>
 			</AppTooltipProvider>
 
 			{/* Canvas area */}
 			<div className="relative flex items-center justify-center p-3">
 				{state.hasError && (
-					<div className="flex h-32 items-center justify-center text-sm text-destructive">
-						{alt ?? t('imageNode.notFound')}
+					<div
+						className={cn(
+							'flex h-32 w-64 flex-col items-center justify-center gap-2',
+							'rounded-md border border-dashed border-destructive/40 bg-destructive/5',
+							'text-destructive/70'
+						)}
+						role="alert"
+						aria-live="assertive"
+					>
+						<ImageOff className="h-6 w-6 opacity-50" aria-hidden="true" />
+						<span className="text-xs">{alt ?? t('imageNode.notFound')}</span>
 					</div>
 				)}
 				{!state.hasError && (
@@ -283,7 +330,8 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						<canvas
 							ref={canvasRef}
 							className="block max-w-full rounded"
-							aria-label={alt ?? 'Image being edited'}
+							role="img"
+							aria-label={alt ?? t('imageNode.canvasLabel', 'Image being edited')}
 						/>
 						{activeMode === 'crop' && state.isLoaded && currentWidth > 0 && (
 							<CropOverlay
