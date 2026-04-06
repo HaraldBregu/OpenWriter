@@ -13,9 +13,12 @@ import {
 } from 'lucide-react';
 import { AppButton } from '@/components/app/AppButton';
 import { AppTooltipProvider } from '@/components/app/AppTooltip';
-import { AIPromptDialog, CropOverlay, ResizeControls, ToolbarButton } from './components';
 import { MIN_CROP_SIZE } from '../shared';
-import { useImageCanvas } from './use-image-canvas';
+import { useImageCanvas } from '../use-image-canvas';
+import { ToolbarButton } from './ToolbarButton';
+import { CropOverlay } from './CropOverlay';
+import { ResizeControls } from './ResizeControls';
+import { AIPromptDialog } from './AIPromptDialog';
 
 export interface ImageEditorProps {
 	src: string;
@@ -87,63 +90,120 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 		<div className="overflow-hidden rounded-lg border border-border bg-card/90">
 			{/* Top toolbar: mode buttons + undo + save/cancel */}
 			<AppTooltipProvider delayDuration={300}>
-				<div className="flex items-center gap-1 border-b border-border px-2 py-1.5">
-					{/* Mode buttons */}
-					<ToolbarButton
-						icon={<Crop />}
-						label={t('imageNode.crop')}
-						onClick={() => handleModeChange('crop')}
-						active={activeMode === 'crop'}
-					/>
-					<ToolbarButton
-						icon={<Maximize2 />}
-						label={t('imageNode.resize')}
-						onClick={() => handleModeChange('resize')}
-						active={activeMode === 'resize'}
-					/>
-					<ToolbarButton
-						icon={<RefreshCcw />}
-						label={t('imageNode.rotate')}
-						onClick={() => handleModeChange('rotate')}
-						active={activeMode === 'rotate'}
-					/>
+				<div className="border-b border-border">
+					<div className="flex items-center gap-1 px-2 py-1.5">
+						{/* Mode buttons */}
+						<ToolbarButton
+							icon={<Crop />}
+							label={t('imageNode.crop')}
+							onClick={() => handleModeChange('crop')}
+							active={activeMode === 'crop'}
+						/>
+						<ToolbarButton
+							icon={<Maximize2 />}
+							label={t('imageNode.resize')}
+							onClick={() => handleModeChange('resize')}
+							active={activeMode === 'resize'}
+						/>
+						<ToolbarButton
+							icon={<RefreshCcw />}
+							label={t('imageNode.rotate')}
+							onClick={() => handleModeChange('rotate')}
+							active={activeMode === 'rotate'}
+						/>
 
-					<div className="mx-1 h-4 w-px bg-border" />
+						<div className="mx-1 h-4 w-px bg-border" />
 
-					{/* AI Button */}
-					<ToolbarButton
-						icon={<Sparkles />}
-						label="AI Transform"
-						onClick={() => setShowAIDialog(true)}
-						disabled={!state.isLoaded}
-					/>
+						{/* AI Button */}
+						<ToolbarButton
+							icon={<Sparkles />}
+							label="AI Transform"
+							onClick={() => setShowAIDialog(true)}
+							disabled={!state.isLoaded}
+						/>
 
-					{/* Undo */}
-					<ToolbarButton icon={<Undo2 />} label="Undo" onClick={undo} disabled={!canUndo} />
+						{/* Undo */}
+						<ToolbarButton icon={<Undo2 />} label="Undo" onClick={undo} disabled={!canUndo} />
 
-					{/* Spacer */}
-					<div className="flex-1" />
+						{/* Spacer */}
+						<div className="flex-1" />
 
-					{/* Save / Cancel */}
-					<AppButton
-						variant="ghost"
-						size="icon-xs"
-						aria-label={t('imageNode.cancel')}
-						onClick={onCancel}
-						className="h-6 w-6 text-muted-foreground hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
-					>
-						<X />
-					</AppButton>
-					<AppButton
-						variant="ghost"
-						size="icon-xs"
-						aria-label={t('imageNode.save')}
-						onClick={handleSave}
-						disabled={!state.isLoaded}
-						className="h-6 w-6 text-muted-foreground hover:text-success [&_svg]:h-3.5 [&_svg]:w-3.5"
-					>
-						<Check />
-					</AppButton>
+						{/* Save / Cancel */}
+						<AppButton
+							variant="ghost"
+							size="icon-xs"
+							aria-label={t('imageNode.cancel')}
+							onClick={onCancel}
+							className="h-6 w-6 text-muted-foreground hover:text-destructive [&_svg]:h-3.5 [&_svg]:w-3.5"
+						>
+							<X />
+						</AppButton>
+						<AppButton
+							variant="ghost"
+							size="icon-xs"
+							aria-label={t('imageNode.save')}
+							onClick={handleSave}
+							disabled={!state.isLoaded}
+							className="h-6 w-6 text-muted-foreground hover:text-success [&_svg]:h-3.5 [&_svg]:w-3.5"
+						>
+							<Check />
+						</AppButton>
+					</div>
+
+					<div className="flex flex-wrap items-center gap-2 border-t border-border px-2 py-1.5">
+						{activeMode === 'crop' && (
+							<>
+								<AppButton
+									size="sm"
+									onClick={applyCrop}
+									disabled={!hasCropSelection}
+									className="h-7 px-2 text-xs"
+								>
+									{t('imageNode.applyCrop')}
+								</AppButton>
+								<AppButton
+									variant="outline"
+									size="sm"
+									onClick={resetCrop}
+									disabled={!state.cropRegion}
+									className="h-7 px-2 text-xs"
+								>
+									{t('imageNode.resetCrop')}
+								</AppButton>
+								<span className="ml-1 text-xs text-muted-foreground">
+									{hasCropSelection
+										? `${Math.round(state.cropRegion!.width)} x ${Math.round(state.cropRegion!.height)} px`
+										: `${currentWidth} x ${currentHeight} px`}
+								</span>
+							</>
+						)}
+
+						{activeMode === 'resize' && state.isLoaded && (
+							<ResizeControls
+								currentWidth={currentWidth}
+								currentHeight={currentHeight}
+								onApply={applyResize}
+							/>
+						)}
+
+						{activeMode === 'rotate' && (
+							<>
+								<ToolbarButton
+									icon={<RotateCcw />}
+									label={t('imageNode.rotateLeft')}
+									onClick={() => applyRotation('left')}
+									disabled={!state.isLoaded}
+								/>
+								<ToolbarButton
+									icon={<RotateCw />}
+									label={t('imageNode.rotateRight')}
+									onClick={() => applyRotation('right')}
+									disabled={!state.isLoaded}
+								/>
+								<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
+							</>
+						)}
+					</div>
 				</div>
 			</AppTooltipProvider>
 
@@ -172,64 +232,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					</div>
 				)}
 			</div>
-
-			{/* Bottom controls — mode-specific */}
-			<AppTooltipProvider delayDuration={300}>
-				<div className="flex items-center gap-2 border-t border-border px-2 py-1.5">
-					{activeMode === 'crop' && (
-						<>
-							<AppButton
-								size="sm"
-								onClick={applyCrop}
-								disabled={!hasCropSelection}
-								className="h-7 px-2 text-xs"
-							>
-								{t('imageNode.applyCrop')}
-							</AppButton>
-							<AppButton
-								variant="outline"
-								size="sm"
-								onClick={resetCrop}
-								disabled={!state.cropRegion}
-								className="h-7 px-2 text-xs"
-							>
-								{t('imageNode.resetCrop')}
-							</AppButton>
-							<span className="ml-1 text-xs text-muted-foreground">
-								{hasCropSelection
-									? `${Math.round(state.cropRegion!.width)} x ${Math.round(state.cropRegion!.height)} px`
-									: `${currentWidth} x ${currentHeight} px`}
-							</span>
-						</>
-					)}
-
-					{activeMode === 'resize' && state.isLoaded && (
-						<ResizeControls
-							currentWidth={currentWidth}
-							currentHeight={currentHeight}
-							onApply={applyResize}
-						/>
-					)}
-
-					{activeMode === 'rotate' && (
-						<>
-							<ToolbarButton
-								icon={<RotateCcw />}
-								label={t('imageNode.rotateLeft')}
-								onClick={() => applyRotation('left')}
-								disabled={!state.isLoaded}
-							/>
-							<ToolbarButton
-								icon={<RotateCw />}
-								label={t('imageNode.rotateRight')}
-								onClick={() => applyRotation('right')}
-								disabled={!state.isLoaded}
-							/>
-							<span className="ml-1 text-xs text-muted-foreground">{state.rotation}</span>
-						</>
-					)}
-				</div>
-			</AppTooltipProvider>
 
 			{/* AI Prompt Dialog */}
 			<AIPromptDialog
