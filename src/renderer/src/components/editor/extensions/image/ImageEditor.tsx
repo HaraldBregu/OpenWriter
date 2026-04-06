@@ -22,7 +22,7 @@ import {
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
 import { useImageCanvas, type CropRegion } from './use-image-canvas';
-import { AIPromptDialog } from './AIPromptDialog';
+import { AIPromptDialog } from './dialogs';
 
 // ---------------------------------------------------------------------------
 // Constants
