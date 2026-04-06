@@ -236,8 +236,8 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 						)}
 
 						{activeMode === 'effects' && (
-						<div className="flex w-full flex-col gap-2">
-							<div className="flex flex-wrap gap-2">
+							<div className="flex w-full flex-col gap-2">
+								<div className="flex flex-wrap gap-2">
 									{IMAGE_EFFECT_OPTIONS.map((effect) => (
 										<AppButton
 											key={effect.type}
@@ -252,10 +252,9 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 								</div>
 							</div>
 						)}
-					</div>
-					{activeMode === 'ai' && (
-						<div className="border-t border-border px-2 py-3">
-							<div className="border border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
+
+						{activeMode === 'ai' && (
+							<div className="border-t border-border px-2 py-3">
 								<AppTextarea
 									id="ai-prompt"
 									value={aiPrompt}
@@ -272,28 +271,28 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 									)}
 									disabled={isProcessingAI}
 								/>
+								<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
+									<AppButton
+										variant="outline"
+										size="sm"
+										onClick={handleCancelAI}
+										disabled={isProcessingAI}
+										className="flex-1 text-xs"
+									>
+										{t('imageNode.cancel')}
+									</AppButton>
+									<AppButton
+										size="sm"
+										onClick={handleAISubmit}
+										disabled={!aiPrompt.trim() || isProcessingAI}
+										className="flex-1 text-xs"
+									>
+										{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
+									</AppButton>
+								</div>
 							</div>
-							<div className="flex gap-2 pt-2">
-								<AppButton
-									variant="outline"
-									size="sm"
-									onClick={handleCancelAI}
-									disabled={isProcessingAI}
-									className="flex-1 text-xs"
-								>
-									{t('imageNode.cancel')}
-								</AppButton>
-								<AppButton
-									size="sm"
-									onClick={handleAISubmit}
-									disabled={!aiPrompt.trim() || isProcessingAI}
-									className="flex-1 text-xs"
-								>
-									{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
-								</AppButton>
-							</div>
-						</div>
-					)}
+						)}
+					</div>
 				</div>
 			</AppTooltipProvider>
 
@@ -322,7 +321,6 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 					</div>
 				)}
 			</div>
-
 		</div>
 	);
 }
