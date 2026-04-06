@@ -2,11 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import {
-	Sparkles,
-	Pencil,
-	Trash2,
-} from 'lucide-react';
+import { Sparkles, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppButton } from '@/components/app/AppButton';
 import {
@@ -15,6 +11,16 @@ import {
 	AppTooltipContent,
 	AppTooltipProvider,
 } from '@/components/app/AppTooltip';
+import {
+	AppAlertDialog,
+	AppAlertDialogTrigger,
+	AppAlertDialogContent,
+	AppAlertDialogHeader,
+	AppAlertDialogTitle,
+	AppAlertDialogDescription,
+	AppAlertDialogAction,
+	AppAlertDialogCancel,
+} from '@/components/app/AppAlertDialog';
 import { ImageEditor } from './ImageEditor';
 
 interface ImageAttrs {
@@ -187,11 +193,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 								<div className="h-4 w-px bg-border/50" />
 
-								<ActionButton
-									icon={<Pencil />}
-									label={t('imageNode.edit')}
-									onClick={handleEdit}
-								/>
+								<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
 								<ActionButton
 									icon={<Trash2 />}
 									label={t('imageNode.delete')}
