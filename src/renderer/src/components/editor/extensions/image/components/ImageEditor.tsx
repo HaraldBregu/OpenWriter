@@ -296,7 +296,20 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 							)}
 
 							{activeMode === 'ai' && (
-								<div className="flex flex-col gap-0">
+								<div className="flex flex-col">
+									{/* Current image thumbnail */}
+									<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pt-3 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
+										<div className="flex items-center gap-2 pb-1">
+											<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
+												<img
+													src={src}
+													alt={alt ?? ''}
+													className="h-full w-full object-cover"
+												/>
+											</div>
+										</div>
+									</div>
+									{/* Prompt textarea */}
 									<AppTextarea
 										ref={aiTextareaRef}
 										id="ai-prompt"
@@ -309,29 +322,38 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 										)}
 										aria-label={t('imageNode.aiPromptLabel', 'AI transform prompt')}
 										className={cn(
-											'min-h-[80px] w-full resize-none border-none bg-transparent px-1 pt-2 pb-1 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+											'min-h-[92px] w-full resize-none border-none bg-transparent px-4 pt-4 pb-3 text-sm leading-6 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 											'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/70',
 											'disabled:cursor-not-allowed disabled:opacity-60'
 										)}
 										disabled={isProcessingAI}
+										rows={1}
 									/>
-									<div className="flex items-center justify-end gap-2 pt-1.5">
+									{/* Footer with status + submit */}
+									<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
+										<div className="flex min-w-0 items-center gap-2">
+											{isProcessingAI && (
+												<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
+													{t('imageNode.aiProcessing', 'Processing...')}
+												</span>
+											)}
+										</div>
 										<AppButton
-											variant="outline"
-											size="sm"
-											onClick={handleCancelAI}
-											disabled={isProcessingAI}
-											className="h-7 px-3 text-xs"
-										>
-											{t('imageNode.cancel')}
-										</AppButton>
-										<AppButton
-											size="sm"
-											onClick={handleAISubmit}
+											variant="prompt-submit"
+											size="prompt-submit-md"
+											className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
 											disabled={!aiPrompt.trim() || isProcessingAI}
-											className="h-7 px-3 text-xs"
+											onMouseDown={(e) => {
+												e.preventDefault();
+												if (!isProcessingAI) handleAISubmit();
+											}}
+											aria-label={t('imageNode.aiApply', 'Apply AI transform')}
 										>
-											{isProcessingAI ? t('imageNode.aiProcessing') : t('imageNode.aiApply')}
+											{isProcessingAI ? (
+												<LoaderCircle className="animate-spin" />
+											) : (
+												<ArrowUp />
+											)}
 										</AppButton>
 									</div>
 								</div>
