@@ -34,6 +34,8 @@ export function ImageEditor({ src, alt, onSave, onCancel }: ImageEditorProps): R
 	const [activeMode, setActiveMode] = useState<EditMode | null>(null);
 	const [isProcessingAI, setIsProcessingAI] = useState(false);
 	const [aiPrompt, setAIPrompt] = useState('');
+	const editorRef = useRef<HTMLDivElement>(null);
+	const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
 	const {
 		canvasRef,
 		state,
