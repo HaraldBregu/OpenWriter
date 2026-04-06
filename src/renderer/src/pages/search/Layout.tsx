@@ -11,8 +11,8 @@ const Layout: React.FC = () => {
 	const { sections, totalCount } = useSearchResults(deferredQuery);
 
 	return (
-		<div className="flex min-h-full justify-center px-6 py-10">
-			<div className="flex w-full max-w-6xl flex-col gap-6">
+		<div className="flex min-h-full justify-start px-6 py-10">
+			<div className="flex h-full w-full max-w-6xl flex-col gap-6">
 				<div className="space-y-1">
 					<h1 className="text-2xl font-medium tracking-tight text-foreground">
 						{t('menu.search', 'Search')}
@@ -25,53 +25,60 @@ const Layout: React.FC = () => {
 					</p>
 				</div>
 
-				<SearchInput
-					value={query}
-					onChange={setQuery}
-					onClear={clearQuery}
-					placeholder={t('menu.search', 'Search')}
-				/>
-
-				<div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-					<p>
-						{hasQuery
-							? t('search.resultsSummary', {
-									count: totalCount,
-									query: deferredQuery,
-									defaultValue:
-										totalCount === 1
-											? '1 result for "{{query}}"'
-											: '{{count}} results for "{{query}}"',
-								})
-							: t(
-									'search.browseSummary',
-									'Browse recent documents, imported resources, and quick actions.'
-								)}
-					</p>
-					{hasQuery && (
-						<button
-							type="button"
-							onClick={clearQuery}
-							className="font-medium text-foreground transition-colors hover:text-primary"
-						>
-							{t('common.clear', 'Clear')}
-						</button>
-					)}
+				<div className="flex flex-col gap-3">
+					<SearchInput
+						value={query}
+						onChange={setQuery}
+						onClear={clearQuery}
+						placeholder={t('menu.search', 'Search')}
+					/>
+					<div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+						<p className="max-w-3xl text-foreground/80">
+							{hasQuery
+								? t('search.resultsSummary', {
+										count: totalCount,
+										query: deferredQuery,
+										defaultValue:
+											totalCount === 1
+												? '1 result for "{{query}}"'
+												: '{{count}} results for "{{query}}"',
+									})
+								: t(
+										'search.browseSummary',
+										'Browse recent documents, imported resources, and quick actions.'
+									)}
+						</p>
+						{hasQuery && (
+							<button
+								type="button"
+								onClick={clearQuery}
+								className="font-medium text-foreground transition-colors hover:text-primary"
+							>
+								{t('common.clear', 'Clear')}
+							</button>
+						)}
+					</div>
 				</div>
 
-				{totalCount === 0 ? (
-					<SearchEmptyState query={deferredQuery} onClear={clearQuery} />
-				) : (
-					<div className="grid items-start gap-4 xl:grid-cols-3">
-						{sections.map((section) => (
-							<SearchSection
-								key={section.id}
-								section={section}
-								onSelect={(item) => navigate(item.href)}
-							/>
-						))}
-					</div>
-				)}
+				<div className="flex flex-1 min-h-0 flex-col overflow-hidden">
+					{totalCount === 0 ? (
+						<div className="flex h-full w-full">
+							<SearchEmptyState query={deferredQuery} onClear={clearQuery} />
+						</div>
+					) : (
+						<div className="flex h-full flex-col overflow-y-auto">
+							<div className="grid items-start gap-4 xl:grid-cols-3">
+								{sections.map((section) => (
+									<SearchSection
+										key={section.id}
+										section={section}
+										onSelect={(item) => navigate(item.href)}
+									/>
+								))}
+							</div>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
