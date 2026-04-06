@@ -131,16 +131,9 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 		/* TODO: integrate AI ask flow */
 	}, []);
 
-	const handleComment = useCallback(() => {
-		/* TODO: integrate comment flow */
-	}, []);
-
-	const handleMaximize = useCallback(() => {
-		/* TODO: integrate fullscreen/preview modal */
-	}, []);
-
-	const handleZoom = useCallback(() => {
-		/* TODO: integrate zoom flow */
+	const handleDeleteConfirm = useCallback(() => {
+		handleDelete();
+		setShowDeleteConfirm(false);
 	}, []);
 
 	const handleEdit = useCallback(() => {
