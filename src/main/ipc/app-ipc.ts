@@ -182,20 +182,6 @@ export class AppIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			AppChannels.getAgentProviders,
-			wrapSimpleHandler(() => store.getAgentProviders(), AppChannels.getAgentProviders)
-		);
-
-		ipcMain.handle(
-			AppChannels.setAgentProvider,
-			wrapSimpleHandler((agentName: string, providerName: string) => {
-				StoreValidators.validateAgentName(agentName);
-				StoreValidators.validateProviderName(providerName);
-				return store.setAgentProvider(agentName.trim(), providerName.trim());
-			}, AppChannels.setAgentProvider)
-		);
-
-		ipcMain.handle(
 			AppChannels.getStartupInfo,
 			wrapSimpleHandler(() => store.getStartupInfo(), AppChannels.getStartupInfo)
 		);
