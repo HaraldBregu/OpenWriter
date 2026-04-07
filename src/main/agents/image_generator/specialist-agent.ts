@@ -1,30 +1,36 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { SystemMessage, type BaseMessage } from '@langchain/core/messages';
-import { extractTokenFromChunk } from '../../shared/ai-utils';
+import OpenAI from 'openai';
 
 export interface ImageGeneratorSpecialistAgent {
-	readonly model: BaseChatModel;
+	readonly client: OpenAI;
 	readonly systemPrompt: string;
+	readonly model: string;
+	readonly temperature: number;
+	readonly maxTokens: number;
 }
 
 export function createImageGeneratorSpecialistAgent(
-	model: BaseChatModel,
-	systemPrompt: string
+	client: OpenAI,
+	systemPrompt: string,
+	model: string,
+	temperature: number,
+	maxTokens: number
 ): ImageGeneratorSpecialistAgent {
-	return { model, systemPrompt };
-}
-
-function buildMessages(
-	agent: ImageGeneratorSpecialistAgent,
-	messages: BaseMessage[]
-): BaseMessage[] {
-	return [new SystemMessage(agent.systemPrompt), ...messages];
+	return { client, systemPrompt, model, temperature, maxTokens };
 }
 
 export async function invokeImageGeneratorSpecialist(
 	agent: ImageGeneratorSpecialistAgent,
-	messages: BaseMessage[]
+	userMessage: string
 ): Promise<string> {
-	const result = await agent.model.invoke(buildMessages(agent, messages));
-	return extractTokenFromChunk(result.content).trim();
+	const response = await agent.client.chat.completions.create({
+		model: agent.model,
+		temperature: agent.temperature,
+		max_tokens: agent.maxTokens,
+		messages: [
+			{ role: 'system', content: agent.systemPrompt },
+			{ role: 'user', content: userMessage },
+		],
+	});
+
+	return (response.choices[0]?.message?.content ?? '').trim();
 }
