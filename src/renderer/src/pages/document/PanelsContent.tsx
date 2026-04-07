@@ -23,4 +23,4 @@ const PanelsContent: React.FC<PanelsContentProps> = ({ documentId }) => {
 	);
 };
 
-export default SidePanelsContent;
+export default PanelsContent;
