@@ -24,7 +24,9 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
 	title,
+	emoji,
 	onTitleChange,
+	onEmojiChange,
 	onSearch,
 	onClearSearch,
 	historyEntries,
