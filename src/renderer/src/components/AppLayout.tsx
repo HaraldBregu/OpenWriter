@@ -225,7 +225,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 														>
 															<Link to={`/content/${w.id}`}>
 																{w.emoji && (
-																	<span aria-hidden="true" className="shrink-0 text-base leading-none">
+																	<span
+																		aria-hidden="true"
+																		className="shrink-0 text-base leading-none"
+																	>
 																		{w.emoji}
 																	</span>
 																)}
