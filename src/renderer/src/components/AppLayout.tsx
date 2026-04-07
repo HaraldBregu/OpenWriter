@@ -191,7 +191,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
-											className="h-9 px-3"
+											className="group h-9 px-3"
 											isActive={location.pathname === '/search'}
 										>
 											<Link to="/search">
