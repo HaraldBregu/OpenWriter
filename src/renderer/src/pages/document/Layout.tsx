@@ -137,6 +137,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				setEmoji(output.metadata.emoji || '');
 				setContent(output.content || '');
 				dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
+				dispatch({ type: 'CONTENT_CHANGED', value: output.content || '' });
 				setLoaded(true);
 			} catch {
 				if (!cancelled) setLoaded(true);
