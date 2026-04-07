@@ -64,6 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const navigate = useNavigate();
 
 	const [title, setTitle] = useState('');
+	const [emoji, setEmoji] = useState('');
 	const [content, setContent] = useState('');
 	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);

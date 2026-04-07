@@ -272,18 +272,46 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 							</>
 						)}
 
-						{documentId && (
+						{documentId && metadata && (
 							<div className={sectionClassName}>
-								<div className="mb-2">
+								<div className="mb-3">
 									<span className="text-xs font-medium text-muted-foreground/70">
 										{t('configSidebar.export')}
 									</span>
 								</div>
+								<div className="mb-3 overflow-hidden rounded-xl border border-border/70">
+									<PDFViewer
+										width="100%"
+										height={300}
+										showToolbar={false}
+										style={{ border: 'none', display: 'block' }}
+									>
+										<DocumentPdfTemplate
+											title={title}
+											content={content}
+											metadata={metadata}
+										/>
+									</PDFViewer>
+								</div>
 								<div className="space-y-1">
-									<button type="button" className={actionButtonClassName}>
-										<FileDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										{t('configSidebar.exportPdf')}
-									</button>
+									<PDFDownloadLink
+										document={
+											<DocumentPdfTemplate
+												title={title}
+												content={content}
+												metadata={metadata}
+											/>
+										}
+										fileName={`${title || 'document'}.pdf`}
+										className={actionButtonClassName}
+									>
+										{({ loading }) => (
+											<>
+												<FileDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+												{loading ? t('common.loading') : t('configSidebar.exportPdf')}
+											</>
+										)}
+									</PDFDownloadLink>
 									<button type="button" className={actionButtonClassName}>
 										<FileType className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 										{t('configSidebar.exportMd')}
