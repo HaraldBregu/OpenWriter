@@ -117,8 +117,7 @@ type MarkdownBlock =
 
 function parseInline(text: string): InlineSegment[] {
 	const segments: InlineSegment[] = [];
-	const regex =
-		/(\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|__(.+?)__|_(.+?)_|\*(.+?)\*|`(.+?)`)/g;
+	const regex = /(\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|__(.+?)__|_(.+?)_|\*(.+?)\*|`(.+?)`)/g;
 	let lastIndex = 0;
 	let match: RegExpExecArray | null;
 
@@ -195,7 +194,12 @@ function parseMarkdown(content: string): MarkdownBlock[] {
 		}
 
 		if (/^[-*+] /.test(line)) {
-			blocks.push({ type: 'list-item', segments: parseInline(line.slice(2)), ordered: false, index: 0 });
+			blocks.push({
+				type: 'list-item',
+				segments: parseInline(line.slice(2)),
+				ordered: false,
+				index: 0,
+			});
 			orderedIndex = 0;
 			i++;
 			continue;
@@ -276,7 +280,13 @@ function InlineText({ segments }: { readonly segments: InlineSegment[] }): React
 	);
 }
 
-function BlockRenderer({ block, index }: { readonly block: MarkdownBlock; readonly index: number }): React.ReactElement | null {
+function BlockRenderer({
+	block,
+	index,
+}: {
+	readonly block: MarkdownBlock;
+	readonly index: number;
+}): React.ReactElement | null {
 	switch (block.type) {
 		case 'h1':
 			return (

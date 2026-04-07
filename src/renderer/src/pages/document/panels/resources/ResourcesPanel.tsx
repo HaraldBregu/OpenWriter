@@ -286,21 +286,13 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										showToolbar={false}
 										style={{ border: 'none', display: 'block' }}
 									>
-										<DocumentPdfTemplate
-											title={title}
-											content={content}
-											metadata={metadata}
-										/>
+										<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 									</PDFViewer>
 								</div>
 								<div className="space-y-1">
 									<PDFDownloadLink
 										document={
-											<DocumentPdfTemplate
-												title={title}
-												content={content}
-												metadata={metadata}
-											/>
+											<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 										}
 										fileName={`${title || 'document'}.pdf`}
 										className={actionButtonClassName}

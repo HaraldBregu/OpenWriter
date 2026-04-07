@@ -110,6 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		documentDeletedRef.current = false;
 		setLoaded(false);
 		setTitle('');
+		setEmoji('');
 		setContent('');
 		dispatch({ type: 'METADATA_UPDATED', metadata: null });
 
