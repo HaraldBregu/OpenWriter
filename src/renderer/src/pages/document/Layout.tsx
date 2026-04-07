@@ -270,6 +270,14 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[debouncedSave]
 	);
 
+	const handleEmojiChange = useCallback(
+		(value: string) => {
+			setEmoji(value);
+			debouncedSave();
+		},
+		[debouncedSave]
+	);
+
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
