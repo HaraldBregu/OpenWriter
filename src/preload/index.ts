@@ -380,6 +380,12 @@ const workspace: WorkspaceApi = {
 	updateProjectDescription: (description: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
 	// -------------------------------------------------------------------------
+	// Agent configs
+	// -------------------------------------------------------------------------
+	getAgentConfigs: () => typedInvokeUnwrap(WorkspaceChannels.getAgentConfigs),
+	setAgentConfig: (agentId: string, provider: string, model: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.setAgentConfig, agentId, provider, model),
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
