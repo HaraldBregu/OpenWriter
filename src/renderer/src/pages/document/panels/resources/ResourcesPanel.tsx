@@ -216,7 +216,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 												<button
 													type="button"
 													key={img.fileName}
-													className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+													className="group relative aspect-square overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
 													onClick={() =>
 														setPreviewImage({
 															src: toLocalResourceUrl(img.filePath),
