@@ -240,7 +240,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 											<button
 												type="button"
 												onClick={handleUploadClick}
-												className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
+												className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
 												aria-label={t('configSidebar.uploadImage')}
 												title={t('configSidebar.uploadImage')}
 											>
