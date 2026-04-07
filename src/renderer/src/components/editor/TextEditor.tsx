@@ -18,7 +18,6 @@ import { OptionMenu } from './option_menu';
 import { InsertImageDialog } from './InsertImageDialog';
 
 import { createExtensions } from './extensions';
-import type { AssistantAgentId } from './extensions/assistant';
 import { type ImageInsertHandler } from './extensions/image';
 import { EditorProvider } from './EditorContext';
 
