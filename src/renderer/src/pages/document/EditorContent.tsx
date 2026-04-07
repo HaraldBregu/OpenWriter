@@ -6,7 +6,7 @@ import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { v7 as uuidv7 } from 'uuid';
 import { useEditorInstance } from './providers';
-import { useDocumentDispatch } from './hooks';
+import { useDocumentDispatch, useImageTaskSubmit } from './hooks';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 
 export interface EditorContentElement {
