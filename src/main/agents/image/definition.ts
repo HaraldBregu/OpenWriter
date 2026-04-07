@@ -43,15 +43,9 @@ const definition: AgentDefinition = {
 				logger: input.logger,
 			});
 
-			const response = [
-				`![Generated image](<${result.localUrl}>)`,
-				'',
-				`Saved image: \`${result.filePath}\``,
-			].join('\n');
-
 			yield {
 				type: 'done',
-				content: response,
+				content: `![Generated image](<${result.localUrl}>)`,
 				tokenCount: 0,
 				runId: input.runId,
 			} satisfies AgentStreamEvent;
