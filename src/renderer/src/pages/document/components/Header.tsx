@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({
 						value={title}
 						onChange={(e) => onTitleChange(e.target.value)}
 						placeholder={t('writing.titlePlaceholder')}
-						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 text-7xl font-bold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 !text-lg font-medium shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">

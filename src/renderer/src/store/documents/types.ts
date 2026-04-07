@@ -7,6 +7,7 @@
 export interface DocumentItem {
 	id: string;
 	title: string;
+	emoji?: string;
 	path: string;
 	createdAt: number;
 	updatedAt: number;
