@@ -129,7 +129,7 @@ export function AssistantNodeView({
 			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
 		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
 		const effectivePrompt =
-			agentId === 'painter' && !trimmedPrompt && files.length > 0
+			agentId === 'image' && !trimmedPrompt && files.length > 0
 				? 'Create an image inspired by the uploaded reference images.'
 				: trimmedPrompt;
 
