@@ -3,18 +3,20 @@ import os from 'node:os';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
-import type { VisionAgent, GenerateImageInput, GeneratedImage } from './types';
+import type { ImageGenerationConfig, GenerateImageInput, GeneratedImage } from './types';
 
-export function createVisionAgent(overrides?: Partial<VisionAgent>): VisionAgent {
-	return {
-		apiKey: overrides?.apiKey ?? '',
-		url: overrides?.url,
-		provider: overrides?.provider ?? 'openai',
-		model: overrides?.model ?? 'gpt-image-1',
-		size: overrides?.size ?? '1024x1024',
-		quality: overrides?.quality ?? 'medium',
-		format: overrides?.format ?? 'png',
-	};
+const DEFAULT_CONFIG: ImageGenerationConfig = {
+	apiKey: '',
+	model: 'gpt-image-1',
+	size: '1024x1024',
+	quality: 'medium',
+	format: 'png',
+};
+
+export function createImageGenerationConfig(
+	overrides?: Partial<ImageGenerationConfig>
+): ImageGenerationConfig {
+	return { ...DEFAULT_CONFIG, ...overrides };
 }
 
 function toLocalResourceUrl(filePath: string): string {
@@ -59,20 +61,20 @@ function resolveWorkspacePath(
 }
 
 export async function generateImage(input: GenerateImageInput): Promise<GeneratedImage> {
-	const { agent, prompt, signal, metadata, workspacePath, logger } = input;
+	const { config, prompt, signal, metadata, workspacePath, logger } = input;
 
 	const client = new OpenAI({
-		apiKey: agent.apiKey,
-		...(agent.url ? { baseURL: agent.url } : {}),
+		apiKey: config.apiKey,
+		...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
 	});
 
 	const response = await client.images.generate(
 		{
-			model: agent.model,
+			model: config.model,
 			prompt,
-			size: agent.size,
-			quality: agent.quality,
-			output_format: agent.format,
+			size: config.size,
+			quality: config.quality,
+			output_format: config.format,
 			moderation: 'auto',
 			n: 1,
 		},
@@ -88,7 +90,7 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
 	const outputDir = resolveOutputDirectory(resolved, metadata);
 	await fs.mkdir(outputDir, { recursive: true });
 
-	const fileName = `image-generator-${randomUUID()}.${agent.format}`;
+	const fileName = `image-${randomUUID()}.${config.format}`;
 	const filePath = path.join(outputDir, fileName);
 	await fs.writeFile(filePath, Buffer.from(base64, 'base64'));
 
