@@ -102,6 +102,9 @@ export function bootstrapServices(): BootstrapResult {
 			new AgentTaskHandler(def.id, agentRegistry, providerResolver, windowContextManager, logger)
 		);
 	}
+	taskHandlerRegistry.register(
+		new VisionTaskHandler(providerResolver, windowContextManager, logger)
+	);
 
 	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
