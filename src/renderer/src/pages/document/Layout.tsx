@@ -287,7 +287,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 					collapsible
 					collapsedSize="0%"
 				>
-					<SidePanelsContent documentId={id} />
+					<PanelsContent documentId={id} />
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>
