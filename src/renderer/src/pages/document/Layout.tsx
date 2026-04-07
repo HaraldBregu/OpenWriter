@@ -2,15 +2,12 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import Header from './Header';
-import EditorContent, { type EditorContentElement } from './EditorContent';
-import ResourcesPanel from './panels/resources/ResourcesPanel';
-import Chat from './panels/chat';
-import { useSidebarVisibility } from './providers';
+import EditorPanelContent, { type EditorPanelContentElement } from './EditorPanelContent';
+import SidePanelsContent from './SidePanelsContent';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
-import { usePanelRef } from 'react-resizable-panels';
+import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/Resizable';
 
 interface LayoutProps {
 	documentId: string | undefined;
@@ -27,18 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 
-	const { activeSidebar } = useSidebarVisibility();
-
-	const editorContentRef = useRef<EditorContentElement>(null);
-	const sidebarPanelRef = usePanelRef();
-
-	useEffect(() => {
-		if (activeSidebar) {
-			sidebarPanelRef.current?.expand();
-		} else {
-			sidebarPanelRef.current?.collapse();
-		}
-	}, [activeSidebar, sidebarPanelRef]);
+	const editorPanelContentRef = useRef<EditorPanelContentElement>(null);
 
 	const stateRef = useRef({ title, emoji, content });
 	stateRef.current = { title, emoji, content };
@@ -238,17 +224,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[debouncedSave]
 	);
 
-	const handleOpenFolder = useCallback(() => {
-		if (!id) return;
-		window.workspace.openDocumentFolder(id);
-	}, [id]);
-
 	const handleSearch = useCallback((query: string) => {
-		editorContentRef.current?.setSearch(query);
+		editorPanelContentRef.current?.setSearch(query);
 	}, []);
 
 	const handleClearSearch = useCallback(() => {
-		editorContentRef.current?.clearSearch();
+		editorPanelContentRef.current?.clearSearch();
 	}, []);
 
 	return (
@@ -272,9 +253,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 				<ResizablePanel defaultSize="70%" minSize="40%">
-					<EditorContent
+					<EditorPanelContent
 						key={id}
-						ref={editorContentRef}
+						ref={editorPanelContentRef}
 						documentId={id}
 						loaded={loaded}
 						content={content}
@@ -284,22 +265,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						onRedo={handleRedo}
 					/>
 				</ResizablePanel>
-
-				{activeSidebar && <ResizableHandle />}
-
-				<ResizablePanel
-					panelRef={sidebarPanelRef}
-					defaultSize="30%"
-					minSize="30%"
-					maxSize="50%"
-					collapsible
-					collapsedSize="0%"
-				>
-					<div className="h-full">
-						{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
-						{activeSidebar === 'agentic' && <Chat />}
-					</div>
-				</ResizablePanel>
+				<SidePanelsContent documentId={id} />
 			</ResizablePanelGroup>
 		</div>
 	);
