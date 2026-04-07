@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { FileDown, Eye } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
-import type { OutputFileMetadata } from '../../../../../../../shared/types';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 import { PdfPreviewDialog } from './PdfPreviewDialog';
 
