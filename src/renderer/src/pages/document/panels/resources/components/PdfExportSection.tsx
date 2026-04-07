@@ -31,9 +31,9 @@ export function PdfExportSection({
 	const metadataCreatedAt = metadata?.createdAt;
 
 	const templateProps: DocumentPdfTemplateProps = useMemo(
-		() => ({ title, content }),
+		() => ({ title, content, images }),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[title, content, metadataType, metadataCreatedAt]
+		[title, content, images, metadataType, metadataCreatedAt]
 	);
 
 	const pdfDocument = useMemo(() => <DocumentPdfTemplate {...templateProps} />, [templateProps]);
