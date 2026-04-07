@@ -34,8 +34,9 @@ export function ImagePreviewDialog({
 				>
 					<button
 						type="button"
-						onClick={(e) => {
+						onPointerDown={(e) => {
 							e.stopPropagation();
+							e.preventDefault();
 							onOpenChange(false);
 						}}
 						className={cn(
