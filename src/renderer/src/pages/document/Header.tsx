@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, X, Bot, Undo2, Redo2, Info } from 'lucide-react';
 import { AppButton, AppInput, AppSeparator, AppEmojiPicker } from '@/components/app';
 import { useSidebarVisibility } from './providers';
-import HistoryMenu from './HistoryMenu';
+import HistoryMenu from './components/HistoryMenu';
 import type { HistoryEntry } from './services/history-service';
 
 interface HeaderProps {
