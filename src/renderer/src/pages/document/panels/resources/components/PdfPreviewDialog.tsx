@@ -3,10 +3,9 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
 import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle } from '@/components/app';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { useDocumentState } from '../../../hooks';
-import { DocumentPdfTemplate } from './DocumentPdfTemplate';
+import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPdfTemplate';
 
-interface PdfPreviewDialogProps {
+interface PdfPreviewDialogProps extends DocumentPdfTemplateProps {
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
 	readonly closeLabel: string;
@@ -16,8 +15,11 @@ export function PdfPreviewDialog({
 	open,
 	onOpenChange,
 	closeLabel,
+	title,
+	content,
+	metadata,
 }: PdfPreviewDialogProps): React.ReactElement {
-	const { title } = useDocumentState();
+	const templateProps: DocumentPdfTemplateProps = { title, content, metadata };
 
 	return (
 		<AppDialog open={open} onOpenChange={onOpenChange}>
