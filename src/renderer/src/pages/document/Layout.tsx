@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import Header from './Header';
+import HeaderContent from './HeaderContent';
 import EditorContent, { type EditorContentElement } from './EditorContent';
 import PanelsContent from './PanelsContent';
 import { useSidebarVisibility } from './providers';
