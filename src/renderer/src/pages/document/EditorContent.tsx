@@ -14,7 +14,7 @@ export interface EditorContentElement {
 	clearSearch: () => void;
 }
 
-interface EditorPanelContentProps {
+interface EditorContentProps {
 	readonly documentId: string | undefined;
 	readonly loaded: boolean;
 	readonly content: string;
