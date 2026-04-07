@@ -113,6 +113,7 @@
 		"lodash": "^4.17.23",
 		"lucide-react": "^0.575.0",
 		"mammoth": "^1.11.0",
+		"openai": "^6.33.0",
 		"pdf-parse": "^2.4.5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",

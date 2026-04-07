@@ -184,7 +184,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										>
 											<Plus className="h-4 w-4 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
-											<span className="text-xs text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
+											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 												Ctrl+Alt+N
 											</span>
 										</AppSidebarMenuButton>
@@ -198,7 +198,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											<Link to="/search">
 												<Search className="h-4 w-4 shrink-0" />
 												<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
-												<span className="text-xs text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
+												<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 													Ctrl+K
 												</span>
 											</Link>
