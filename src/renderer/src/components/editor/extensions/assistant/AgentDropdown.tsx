@@ -12,8 +12,6 @@ import { ASSISTANT_AGENT_OPTIONS, type AssistantAgentId } from './agents';
 
 function getAgentIcon(agentId: AssistantAgentId): React.JSX.Element {
 	switch (agentId) {
-		case 'painter':
-			return <Palette className="h-3.5 w-3.5" />;
 		case 'image':
 			return <ImageIcon className="h-3.5 w-3.5" />;
 		case 'writer':
