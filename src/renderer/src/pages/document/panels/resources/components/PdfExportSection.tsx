@@ -1,9 +1,14 @@
 import { useCallback, useState } from 'react';
 import { FileDown, Loader2, Eye, X } from 'lucide-react';
 import { usePDF } from '@react-pdf/renderer';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { Dialog, DialogPortal, DialogOverlay } from '@/components/ui/Dialog';
 import { cn } from '@/lib/utils';
+import {
+	AppDialog,
+	AppDialogPortal,
+	AppDialogOverlay,
+	AppDialogTitle,
+} from '@/components/app';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import type { OutputFileMetadata } from '../../../../../../../shared/types';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 
@@ -19,6 +24,8 @@ export interface PdfExportSectionProps {
 
 const ICON_BUTTON_CLASS =
 	'rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
+
+const SHADOW_CROP = 6;
 
 export function PdfExportSection({
 	title,
@@ -71,27 +78,33 @@ export function PdfExportSection({
 						</button>
 					</div>
 				</div>
-				<div className="overflow-hidden rounded-xl border border-border/70">
+				<div className="h-[300px] overflow-hidden rounded-xl">
 					{loading ? (
-						<div className="flex h-[300px] items-center justify-center bg-muted/30">
+						<div className="flex h-full items-center justify-center bg-muted/30">
 							<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
 						</div>
 					) : (
 						<iframe
 							src={url ? `${url}#toolbar=0&navpanes=0&scrollbar=0` : undefined}
-							width="100%"
-							height={300}
 							scrolling="no"
-							style={{ display: 'block', border: 'none', overflow: 'hidden' }}
 							title={title}
+							style={{
+								display: 'block',
+								border: 'none',
+								overflow: 'hidden',
+								width: `calc(100% + ${SHADOW_CROP * 2}px)`,
+								height: 300 + SHADOW_CROP * 2,
+								marginTop: -SHADOW_CROP,
+								marginLeft: -SHADOW_CROP,
+							}}
 						/>
 					)}
 				</div>
 			</div>
 
-			<Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-				<DialogPortal>
-					<DialogOverlay />
+			<AppDialog open={previewOpen} onOpenChange={setPreviewOpen}>
+				<AppDialogPortal>
+					<AppDialogOverlay />
 					<DialogPrimitive.Content
 						className={cn(
 							'fixed inset-0 z-[9999] flex flex-col',
@@ -99,7 +112,7 @@ export function PdfExportSection({
 							'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
 						)}
 					>
-						<DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
+						<AppDialogTitle className="sr-only">{title}</AppDialogTitle>
 						<button
 							type="button"
 							onClick={() => setPreviewOpen(false)}
@@ -123,8 +136,8 @@ export function PdfExportSection({
 							/>
 						)}
 					</DialogPrimitive.Content>
-				</DialogPortal>
-			</Dialog>
+				</AppDialogPortal>
+			</AppDialog>
 		</>
 	);
 }
