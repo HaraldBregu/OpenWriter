@@ -17,13 +17,7 @@
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"removeComments": false,
-		"types": [
-			"./src/types",
-			"electron-vite/node",
-			"node"
-		]
+		"types": ["./src/types", "electron-vite/node", "node"]
 	},
-	"exclude": [
-		"node_modules"
-	]
+	"exclude": ["node_modules"]
 }

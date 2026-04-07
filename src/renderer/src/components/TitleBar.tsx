@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, PanelLeft, Minus, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, PanelLeft, Minus, X, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // Synchronous platform check — no hooks, no async, no state.
