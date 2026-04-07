@@ -176,11 +176,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 						referenceImages: [],
 					};
 
-					const ipcResult = await window.task.submit(
-						DOCUMENT_AGENT_TASK_TYPES.writer,
-						taskInput,
-						metadata
-					);
+					const ipcResult = await window.task.submit('agent-writer', taskInput, metadata);
 					if (!ipcResult.success) {
 						editorRef.current?.setAssistantLoading(false);
 						editorRef.current?.setAssistantEnable(true);
