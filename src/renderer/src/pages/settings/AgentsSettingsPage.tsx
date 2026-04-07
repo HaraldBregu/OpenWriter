@@ -23,47 +23,35 @@ import {
 
 const AgentsSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [providers, setProviders] = useState<string[]>([]);
 	const [selectedConfigs, setSelectedConfigs] = useState<Record<string, AgentProviderConfig>>({});
 	const [savedConfigs, setSavedConfigs] = useState<Record<string, AgentProviderConfig>>({});
 	const [savingByAgent, setSavingByAgent] = useState<Record<string, boolean>>({});
 
-	const fallbackProvider = useMemo(() => providers[0] ?? '', [providers]);
+	const catalogueProviders = useMemo(() => getProvidersForDisplay(), []);
+	const defaultProviderId = catalogueProviders[0]?.id ?? '';
 
 	useEffect(() => {
 		let active = true;
 
 		async function load(): Promise<void> {
-			if (
-				typeof window.app?.getProviders !== 'function' ||
-				typeof window.workspace?.getAgentConfigs !== 'function'
-			) {
+			if (typeof window.workspace?.getAgentConfigs !== 'function') {
 				return;
 			}
 
 			try {
-				const [entries, saved] = await Promise.all([
-					window.app.getProviders(),
-					window.workspace.getAgentConfigs(),
-				]);
+				const saved = await window.workspace.getAgentConfigs();
 				if (!active) return;
 
-				const uniqueProviders = Array.from(
-					new Set(entries.map((entry) => entry.name.trim()).filter((name) => name.length > 0))
-				).sort((a, b) => a.localeCompare(b));
-
-				setProviders(uniqueProviders);
-
-				const defaultProvider = uniqueProviders[0] ?? '';
+				const providerIds = catalogueProviders.map((p) => p.id);
 				const nextSaved: Record<string, AgentProviderConfig> = {};
 				const nextSelected: Record<string, AgentProviderConfig> = {};
 
 				for (const agent of DEFAULT_AGENTS) {
 					const savedConfig = saved[agent.id];
 					const provider =
-						savedConfig?.provider && uniqueProviders.includes(savedConfig.provider)
+						savedConfig?.provider && providerIds.includes(savedConfig.provider)
 							? savedConfig.provider
-							: defaultProvider;
+							: defaultProviderId;
 					const models = getChatModelsForProvider(provider);
 					const model =
 						savedConfig?.model && models.some((m) => m.id === savedConfig.model)
@@ -78,7 +66,6 @@ const AgentsSettingsPage: React.FC = () => {
 				setSelectedConfigs(nextSelected);
 			} catch {
 				if (!active) return;
-				setProviders([]);
 				setSavedConfigs({});
 				setSelectedConfigs({});
 			}
@@ -89,22 +76,7 @@ const AgentsSettingsPage: React.FC = () => {
 		return () => {
 			active = false;
 		};
-	}, []);
-
-	useEffect(() => {
-		setSelectedConfigs((prev) => {
-			const next = { ...prev };
-			for (const agent of DEFAULT_AGENTS) {
-				const current = next[agent.id];
-				if (!current?.provider || !providers.includes(current.provider)) {
-					const provider = fallbackProvider;
-					const model = getFirstChatModel(provider);
-					next[agent.id] = { provider, model };
-				}
-			}
-			return next;
-		});
-	}, [fallbackProvider, providers]);
+	}, [catalogueProviders, defaultProviderId]);
 
 	const handleProviderChange = useCallback((agentId: string, providerName: string) => {
 		const model = getFirstChatModel(providerName);
