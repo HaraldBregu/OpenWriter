@@ -1,6 +1,6 @@
 import type { AgentDefinition } from '../core/definition';
 import type { AgentStreamEvent } from '../core/types';
-import { generateImage } from './image-generation';
+import { createVisionAgent, generateImage } from './image-generation';
 
 const definition: AgentDefinition = {
 	id: 'image-generator',
@@ -29,10 +29,15 @@ const definition: AgentDefinition = {
 		} satisfies AgentStreamEvent;
 
 		try {
-			const result = await generateImage({
-				prompt: input.prompt,
+			const agent = createVisionAgent({
 				apiKey: input.provider.apiKey,
-				baseUrl: input.provider.baseUrl,
+				url: input.provider.baseUrl,
+				provider: 'openai',
+			});
+
+			const result = await generateImage({
+				agent,
+				prompt: input.prompt,
 				signal: input.signal,
 				metadata: input.metadata,
 				workspacePath: input.runtime.workspaceService?.getCurrent(),
