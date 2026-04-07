@@ -17,7 +17,7 @@ export function PdfPreviewDialog({
 	onOpenChange,
 	closeLabel,
 }: PdfPreviewDialogProps): React.ReactElement {
-	const { title, content, metadata } = useDocumentState();
+	const { title } = useDocumentState();
 
 	return (
 		<AppDialog open={open} onOpenChange={onOpenChange}>
@@ -44,14 +44,14 @@ export function PdfPreviewDialog({
 						<X className="h-5 w-5" />
 						<span className="sr-only">{closeLabel}</span>
 					</button>
-					{open && metadata && (
+					{open && (
 						<PDFViewer
 							width="100%"
 							height="100%"
 							showToolbar={false}
 							style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
 						>
-							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+							<DocumentPdfTemplate />
 						</PDFViewer>
 					)}
 				</DialogPrimitive.Content>
