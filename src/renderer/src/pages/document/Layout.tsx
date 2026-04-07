@@ -26,7 +26,18 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 
+	const { activeSidebar } = useSidebarVisibility();
+
 	const editorPanelContentRef = useRef<EditorPanelContentElement>(null);
+	const sidebarPanelRef = usePanelRef();
+
+	useEffect(() => {
+		if (activeSidebar) {
+			sidebarPanelRef.current?.expand();
+		} else {
+			sidebarPanelRef.current?.collapse();
+		}
+	}, [activeSidebar, sidebarPanelRef]);
 
 	const stateRef = useRef({ title, emoji, content });
 	stateRef.current = { title, emoji, content };
