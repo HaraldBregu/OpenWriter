@@ -254,10 +254,6 @@ const AgentsSettingsPage: React.FC = () => {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getChatModelsForProvider(providerName: string): readonly ModelDescriptor[] {
-	return getChatModelsForProvider(providerName);
-}
-
 function getFirstChatModel(providerName: string): string {
 	const catalogue = PROVIDER_CATALOGUE.find((p) => p.id === providerName);
 	const chatModel = catalogue?.models.find((m) => m.category === 'chat');
