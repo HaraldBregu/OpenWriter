@@ -22,12 +22,13 @@ import {
 function toDocumentItem(f: {
 	id: string;
 	path: string;
-	metadata: { title?: string };
+	metadata: { title?: string; emoji?: string };
 	savedAt: number;
 }): DocumentItem {
 	return {
 		id: f.id,
 		title: (f.metadata.title as string) || '',
+		emoji: (f.metadata.emoji as string) || undefined,
 		path: f.path,
 		createdAt: f.savedAt,
 		updatedAt: f.savedAt,
