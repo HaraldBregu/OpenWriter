@@ -130,7 +130,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 	return (
 		<>
-			<TitleBar title={displayWorkspaceName} onToggleSidebar={toggleSidebar} />
+			<TitleBar
+				title={displayWorkspaceName}
+				onToggleSidebar={toggleSidebar}
+				onNavigateBack={handleNavigateBack}
+				onNavigateForward={handleNavigateForward}
+			/>
 
 			<div className="flex flex-1 min-h-0 w-full">
 				<AppSidebar collapsible="icon" className="border-r top-12 h-[calc(100svh-3rem)]">
