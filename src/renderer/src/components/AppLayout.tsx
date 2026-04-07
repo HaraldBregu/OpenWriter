@@ -192,13 +192,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
 											asChild
-											className="group h-9 px-3"
+											className="group/btn h-9 px-3"
 											isActive={location.pathname === '/search'}
 										>
 											<Link to="/search">
 												<Search className="h-4 w-4 shrink-0" />
 												<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
-												<span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
+												<span className="text-xs text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 													Ctrl+K
 												</span>
 											</Link>
