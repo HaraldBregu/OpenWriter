@@ -2,8 +2,7 @@ import { useCallback, useState } from 'react';
 import { FileDown, Loader2, Eye, X } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
-import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle } from '@/components/app';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle, AppDialogContent } from '@/components/app';
 import type { OutputFileMetadata } from '../../../../../../../shared/types';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 
@@ -101,7 +100,7 @@ export function PdfExportSection({
 			<AppDialog open={previewOpen} onOpenChange={setPreviewOpen}>
 				<AppDialogPortal>
 					<AppDialogOverlay />
-					<DialogPrimitive.Content
+					<AppDialogContent
 						className={cn(
 							'fixed inset-0 z-[9999] flex flex-col',
 							'data-[state=open]:animate-in data-[state=closed]:animate-out',
@@ -125,7 +124,7 @@ export function PdfExportSection({
 						<PDFViewer width="100%" height="100%" showToolbar={false} style={{ flex: 1 }}>
 							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 						</PDFViewer>
-					</DialogPrimitive.Content>
+					</AppDialogContent>
 				</AppDialogPortal>
 			</AppDialog>
 		</>
