@@ -6,8 +6,7 @@ import type { WindowContextManager } from '../../core/window-context';
 import {
 	createVisionAgent,
 	generateImage,
-	type GeneratedImage,
-} from '../../agents/image/image-generation';
+ } from '../../agents/image/image-generation';
 import type { VisionSize, VisionQuality, VisionFormat } from '../../agents/image/types';
 
 // ---------------------------------------------------------------------------
