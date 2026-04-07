@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({
 			{/* Header */}
 			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
-					<PenLine className="h-4 w-4 text-foreground/80 shrink-0" />
+					<AppEmojiPicker value={emoji} onSelect={onEmojiChange} />
 					<AppInput
 						type="text"
 						value={title}
