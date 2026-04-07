@@ -213,12 +213,12 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
-					const { title: t, content: c } = stateRef.current;
+					const { title: t, emoji: e, content: c } = stateRef.current;
 					window.workspace.updateOutput({
 						type: 'documents',
 						id,
 						content: c,
-						metadata: { title: t },
+						metadata: { title: t, emoji: e },
 					});
 				},
 				1500,
