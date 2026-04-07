@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	const { activeSidebar } = useSidebarVisibility();
 
-	const editorPanelContentRef = useRef<EditorPanelContentElement>(null);
+	const editorContentRef = useRef<EditorContentElement>(null);
 	const sidebarPanelRef = usePanelRef();
 
 	useEffect(() => {
