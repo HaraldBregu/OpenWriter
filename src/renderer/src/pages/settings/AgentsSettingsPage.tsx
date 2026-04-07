@@ -203,7 +203,7 @@ const AgentsSettingsPage: React.FC = () => {
 											size="icon-xs"
 											aria-label={t('settings.agents.saveProvider', 'Save provider')}
 											disabled={
-												providers.length === 0 ||
+												catalogueProviders.length === 0 ||
 												!isChanged(agent.id) ||
 												Boolean(savingByAgent[agent.id])
 											}
