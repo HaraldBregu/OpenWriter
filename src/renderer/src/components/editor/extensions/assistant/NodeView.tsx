@@ -235,9 +235,9 @@ export function AssistantNodeView({
 		<NodeViewWrapper contentEditable={false}>
 			<div
 				className={wrapperClassName}
-				onDragOver={agentId === 'painter' ? handleDragOver : undefined}
-				onDragLeave={agentId === 'painter' ? handleDragLeave : undefined}
-				onDrop={agentId === 'painter' ? handleDrop : undefined}
+				onDragOver={agentId === 'image' ? handleDragOver : undefined}
+				onDragLeave={agentId === 'image' ? handleDragLeave : undefined}
+				onDrop={agentId === 'image' ? handleDrop : undefined}
 			>
 				<div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/14 via-primary/4 to-transparent dark:from-primary/18 dark:via-primary/6" />
 				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-primary/55 to-transparent dark:via-primary/65" />
