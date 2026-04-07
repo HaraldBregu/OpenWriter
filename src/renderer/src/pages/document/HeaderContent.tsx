@@ -6,7 +6,7 @@ import { useSidebarVisibility } from './providers';
 import HistoryMenu from './components/HistoryMenu';
 import type { HistoryEntry } from './services/history-service';
 
-interface HeaderProps {
+interface HeaderContentProps {
 	readonly title: string;
 	readonly emoji: string;
 	readonly onTitleChange: (value: string) => void;
