@@ -278,7 +278,17 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						onRedo={handleRedo}
 					/>
 				</ResizablePanel>
-				<SidePanelsContent documentId={id} />
+				{activeSidebar && <ResizableHandle />}
+				<ResizablePanel
+					panelRef={sidebarPanelRef}
+					defaultSize="30%"
+					minSize="30%"
+					maxSize="50%"
+					collapsible
+					collapsedSize="0%"
+				>
+					<SidePanelsContent documentId={id} />
+				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>
 	);
