@@ -25,10 +25,12 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const { title } = useDocumentState();
+	const { title, content, metadata } = useDocumentState();
+
+	const templateProps: DocumentPdfTemplateProps = { title, content, metadata };
 
 	const [{ loading: downloadLoading, url }] = usePDF({
-		document: <DocumentPdfTemplate />,
+		document: <DocumentPdfTemplate {...templateProps} />,
 	});
 
 	const [previewOpen, setPreviewOpen] = useState(false);
