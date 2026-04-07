@@ -40,13 +40,18 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 
 	addOptions() {
 		return {
-			onSubmit: (
+			onGenerateTextSubmit: (
+				_before: string,
+				_after: string,
+				_cursorPos: number,
+				_prompt: string
+			) => {},
+			onGenerateImageSubmit: (
 				_before: string,
 				_after: string,
 				_cursorPos: number,
 				_prompt: string,
-				_agentId?: AssistantAgentId,
-				_files?: File[]
+				_files: File[]
 			) => {},
 		};
 	},
